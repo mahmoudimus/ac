@@ -4,6 +4,7 @@ import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
+import it.util.TestUser;
 import org.apache.http.auth.AuthenticationException;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpPut;
@@ -15,8 +16,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import static it.util.TestConstants.ADMIN_USERNAME;
 
 public class LicenseStatusBannerHelper
 {
@@ -41,7 +40,7 @@ public class LicenseStatusBannerHelper
             HttpPut request = new HttpPut(product.getProductInstance().getBaseUrl() + DISABLE_LICENSE_BANNER_PATH);
             request.setHeader("Content-Type", "application/vnd.atl.plugins.plugin.module+json");
             request.setEntity(new StringEntity(new JSONObject(ImmutableMap.<String, Object>of("enabled", "false")).toString()));
-            request.addHeader(BasicScheme.authenticate(new UsernamePasswordCredentials(ADMIN_USERNAME, ADMIN_USERNAME), Charsets.UTF_8.toString(), false));
+            request.addHeader(BasicScheme.authenticate(new UsernamePasswordCredentials(TestUser.ADMIN.getUsername(), TestUser.ADMIN.getPassword()), Charsets.UTF_8.toString(), false));
             client.execute(request, new BasicResponseHandler());
             licenseBannerRemoved.set(true);
         }

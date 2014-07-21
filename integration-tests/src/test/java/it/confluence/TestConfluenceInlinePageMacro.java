@@ -1,13 +1,13 @@
 package it.confluence;
 
-import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.OAuthUtils;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageMacroPage;
-import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.connect.test.server.XMLAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.MacroPageModule;
 import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -24,22 +24,18 @@ import java.util.concurrent.TimeUnit;
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.test.HttpUtils.renderHtml;
 import static com.atlassian.plugin.connect.test.Utils.loadResourceAsString;
-import static com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps.ConfluenceUser;
-import static it.util.TestConstants.ADMIN_USERNAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @XmlDescriptor
 public final class TestConfluenceInlinePageMacro extends ConfluenceWebDriverTestBase
 {
-    private static final Option<ConfluenceUser> ADMIN_CONFLUENCE_USER = some(new ConfluenceUser(ADMIN_USERNAME, ADMIN_USERNAME));
-
-    private static AtlassianConnectAddOnRunner remotePlugin;
+    private static XMLAddOnRunner remotePlugin;
 
     @BeforeClass
     public static void setupConfluenceAndStartConnectAddOn() throws Exception
     {
-        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
+        remotePlugin = new XMLAddOnRunner(product.getProductInstance().getBaseUrl())
                 .addOAuth()
                 .addPermission("read_content")
                 .addPermission("read_users_and_groups")
@@ -65,9 +61,9 @@ public final class TestConfluenceInlinePageMacro extends ConfluenceWebDriverTest
     @Test
     public void testInlinePageMacro() throws XmlRpcFault, IOException
     {
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(ADMIN_CONFLUENCE_USER, "ds", "testinlineMacro", loadResourceAsString("confluence/test-page-macro.xhtml"));
-        loginAsBetty();
-        ConfluencePageMacroPage page = product.visit(ConfluencePageMacroPage.class, pageData.getTitle(), "app1-page-0");
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(TestUser.ADMIN), "ds", "testinlineMacro", loadResourceAsString("confluence/test-page-macro.xhtml"));
+
+        ConfluencePageMacroPage page = loginAndVisit(TestUser.BETTY, ConfluencePageMacroPage.class, pageData.getTitle(), "app1-page-0");
 
         assertTrue(page.getContainerDiv().getAttribute("class").contains("ap-inline"));
         assertEquals("Success", page.getMessage());

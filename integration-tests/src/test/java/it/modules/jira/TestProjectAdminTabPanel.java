@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.ParameterCapturingConditionServlet;
+import it.util.TestUser;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsCollectionContaining;
@@ -87,8 +88,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
     @Test
     public void testViewProjectAdminTab() throws Exception
     {
-        loginAsAdmin();
-        final ProjectSummaryPageTab page = product.visit(ProjectSummaryPageTab.class, project.getKey());
+        final ProjectSummaryPageTab page = loginAndVisit(TestUser.ADMIN, ProjectSummaryPageTab.class, project.getKey());
 
         assertThat(page.getTabs().getTabs(), IsCollectionContaining.<ProjectConfigTabs.Tab>hasItem(projectConfigTabMatcher(PROJECT_CONFIG_TAB_NAME)));
 
@@ -110,9 +110,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
     @Test
     public void tabIsNotAccessibleWithFalseCondition() throws RemoteException
     {
-        loginAsAdmin();
-
-        ProjectSummaryPageTab page = product.visit(ProjectSummaryPageTab.class, project.getKey());
+        ProjectSummaryPageTab page = loginAndVisit(TestUser.ADMIN, ProjectSummaryPageTab.class, project.getKey());
         assertThat("AddOn project config tab should be present", page.getTabs().getTabs(),
                 IsCollectionContaining.<ProjectConfigTabs.Tab>hasItem(projectConfigTabMatcher(PROJECT_CONFIG_TAB_NAME)));
 

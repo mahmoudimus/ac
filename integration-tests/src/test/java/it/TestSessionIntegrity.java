@@ -10,7 +10,7 @@ import com.google.common.collect.Maps;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
 import it.util.JwtAuthorizationGenerator;
-import it.util.TestConstants;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -66,7 +66,7 @@ public class TestSessionIntegrity extends ConnectWebDriverTestBase
     @Test
     public void addOnUserDoesNotInheritTheSession() throws Exception
     {
-        loginAsAdmin();
+        login(TestUser.ADMIN);
 
         InstallHandlerServlet.InstallPayload installPayload = installHandler.getInstallPayload();
 
@@ -99,7 +99,7 @@ public class TestSessionIntegrity extends ConnectWebDriverTestBase
         driver.get(baseUrl + "/rest/remoteplugintest/1/user");
 
         // We destroy the session, so 'anonymous' is expected, not the add-on user
-        assertTrue(driver.getPageSource().contains("<user><name>" + TestConstants.ANONYMOUS + "</name></user>"));
+        assertTrue(driver.getPageSource().contains("<user><name>anonymous</name></user>"));
     }
 
 }

@@ -22,10 +22,6 @@ import org.junit.Rule;
 
 import java.io.IOException;
 
-import static it.util.TestConstants.ADMIN_USERNAME;
-import static it.util.TestConstants.BARNEY_USERNAME;
-import static it.util.TestConstants.BETTY_USERNAME;
-
 public abstract class ConnectWebDriverTestBase
 {
     protected static TestedProduct<WebDriverTester> product = OwnerOfTestedProduct.INSTANCE;
@@ -51,42 +47,6 @@ public abstract class ConnectWebDriverTestBase
     {
         currentUsername = null;
         product.getTester().getDriver().manage().deleteAllCookies();
-    }
-
-    @Deprecated
-    protected void loginAsAdmin()
-    {
-        if(!ADMIN_USERNAME.equals(currentUsername))
-        {
-            loginAs(ADMIN_USERNAME, ADMIN_USERNAME);
-            currentUsername = ADMIN_USERNAME;
-        }
-    }
-
-    @Deprecated
-    protected void loginAsBetty()
-    {
-        if(!BETTY_USERNAME.equals(currentUsername))
-        {
-            loginAs(BETTY_USERNAME, BETTY_USERNAME);
-            currentUsername = BETTY_USERNAME;
-        }
-    }
-
-    @Deprecated
-    protected void loginAsBarney()
-    {
-        if(!BARNEY_USERNAME.equals(currentUsername))
-        {
-            loginAs(BARNEY_USERNAME, BARNEY_USERNAME);
-            currentUsername = BARNEY_USERNAME;
-        }
-    }
-
-    @Deprecated
-    protected void loginAs(String username, String password)
-    {
-        loginAndVisit(username, password, HomePage.class);
     }
 
     protected void login(TestUser user)

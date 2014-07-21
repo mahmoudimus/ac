@@ -10,6 +10,7 @@ import hudson.plugins.jira.soap.RemoteIssue;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.EchoQueryParametersServlet;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -70,7 +71,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     @Test
     public void verifyEntryIsPresentWhenLoggedIn() throws Exception
     {
-        loginAsAdmin();
+        login(TestUser.ADMIN);
         IssueNavigatorViewsMenu.ViewEntry entry = findSearchRequestViewEntry();
 
         assertThat(entry.isPresent(), is(true));
@@ -87,7 +88,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     @Test
     public void verifyEntryIsNotPresentWhenAddOnConditionIsFalse() throws Exception
     {
-        loginAsAdmin();
+        login(TestUser.ADMIN);
 
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
@@ -98,7 +99,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     @Test
     public void verifyIssueKeyIsPartOfUrl() throws Exception
     {
-        loginAsAdmin();
+        login(TestUser.ADMIN);
         RemoteIssue issue = createIssue();
         findSearchRequestViewEntry().click();
         NameValuePairs queryParameters = searchRequestViewServlet.waitForQueryParameters();
@@ -132,7 +133,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
 
     private NameValuePairs logInAndGetSearchRequestViewQueryParameters() throws Exception
     {
-        loginAsAdmin();
+        login(TestUser.ADMIN);
         createIssue();
         findSearchRequestViewEntry().click();
         NameValuePairs queryParameters = searchRequestViewServlet.waitForQueryParameters();

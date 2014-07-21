@@ -282,7 +282,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroInOrderedTable() throws Exception
     {
-        loginAsAdmin();
+        login(TestUser.ADMIN);
         EditContentPage editPage = createAndEditPage(TABLE_MACRO_NAME, loadResourceAsString("confluence/test-page-table-macro.xhtml"));
         savedPage = editPage.save();
 

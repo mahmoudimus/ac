@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.ParameterCapturingConditionServlet;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -101,8 +102,7 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
     public void tabIsNotAccessibleWithFalseCondition() throws Exception
     {
         AppProjectTabPage.defaultProjectKey = project.getKey();
-        loginAsAdmin();
-        BrowseProjectPage browseProjectPage = product.visit(BrowseProjectPage.class, project.getKey());
+        BrowseProjectPage browseProjectPage = loginAndVisit(TestUser.ADMIN, BrowseProjectPage.class, project.getKey());
         assertThat("AddOn project tab should be present", browseProjectPage.hasTab(AppProjectTabPage.class), is(true));
         remotePlugin.setToggleableConditionShouldDisplay(false);
         browseProjectPage = product.visit(BrowseProjectPage.class, project.getKey());

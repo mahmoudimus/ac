@@ -6,9 +6,8 @@ import com.atlassian.pageobjects.page.AdminHomePage;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
+import it.util.TestUser;
 import org.openqa.selenium.By;
-
-import static it.util.TestConstants.ADMIN_USERNAME;
 
 public abstract class LicenseUtils
 {
@@ -19,7 +18,7 @@ public abstract class LicenseUtils
     public static void addPluginLicenses(TestedProduct<WebDriverTester> product)
     {
         logout(product);
-        product.visit(LoginPage.class).login(ADMIN_USERNAME, ADMIN_USERNAME, HomePage.class);
+        product.visit(LoginPage.class).login(TestUser.ADMIN.getUsername(), TestUser.ADMIN.getPassword(), HomePage.class);
 
         if("jira".equalsIgnoreCase(product.getProductInstance().getInstanceId()))
         {
@@ -40,7 +39,7 @@ public abstract class LicenseUtils
     public static void resetLicenses(TestedProduct<WebDriverTester> product)
     {
         logout(product);
-        product.visit(LoginPage.class).login(ADMIN_USERNAME, ADMIN_USERNAME, HomePage.class);
+        product.visit(LoginPage.class).login(TestUser.ADMIN.getUsername(), TestUser.ADMIN.getPassword(), HomePage.class);
 
         if("jira".equalsIgnoreCase(product.getProductInstance().getInstanceId()))
         {

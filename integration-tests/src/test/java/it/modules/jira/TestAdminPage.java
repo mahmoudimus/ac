@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdministrationHome
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -72,8 +73,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
-        loginAsAdmin();
-        product.visit(JiraAdministrationHomePage.class);
+        loginAndVisit(TestUser.ADMIN, JiraAdministrationHomePage.class);
 
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, ModuleKeyUtils.addonAndModuleKey(PLUGIN_KEY,PAGE_KEY));
 
@@ -89,8 +89,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     @Test
     public void addonPageIsFullSize() throws MalformedURLException, URISyntaxException
     {
-        loginAsAdmin();
-        product.visit(JiraAdministrationHomePage.class);
+        loginAndVisit(TestUser.ADMIN, JiraAdministrationHomePage.class);
 
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, ModuleKeyUtils.addonAndModuleKey(PLUGIN_KEY, PAGE_KEY));
 
@@ -103,8 +102,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     @Test
     public void nonAdminCanNotSeePage()
     {
-        loginAsBarney();
-        InsufficientPermissionsPage page = product.visit(InsufficientPermissionsPage.class, PLUGIN_KEY, PAGE_KEY);
+        InsufficientPermissionsPage page = loginAndVisit(TestUser.BARNEY, InsufficientPermissionsPage.class, PLUGIN_KEY, PAGE_KEY);
         assertThat(page.getErrorMessage(), containsString("You do not have the correct permissions"));
         assertThat(page.getErrorMessage(), containsString("My Admin Page"));
     }
@@ -114,7 +112,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     {
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
-        loginAsAdmin();
+        login(TestUser.ADMIN);
 
         // web item should not be displayed
         product.visit(JiraAdminHomePage.class);

@@ -12,7 +12,6 @@ import org.junit.Test;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.test.webhook.WebHookTestServlet.runInJsonRunner;
-import static it.util.TestConstants.ADMIN_USERNAME;
 import static org.junit.Assert.assertNotNull;
 
 public class TestConfluenceWebHooks extends AbstractBrowserlessTest

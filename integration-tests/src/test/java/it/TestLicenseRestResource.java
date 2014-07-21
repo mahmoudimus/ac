@@ -3,7 +3,7 @@ package it;
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.rest.license.LicenseDetailsRepresentation;
 import com.atlassian.plugin.connect.test.LicenseUtils;
-import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.connect.test.server.XMLAddOnRunner;
 import com.google.gson.Gson;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -22,12 +22,12 @@ public class TestLicenseRestResource extends ConnectWebDriverTestBase
     @Test
     public void anonymousReturnsLicense() throws Exception
     {
-        AtlassianConnectAddOnRunner runner = null;
+        XMLAddOnRunner runner = null;
         try
         {
             LicenseUtils.addPluginLicenses(product);
 
-            runner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
+            runner = new XMLAddOnRunner(product.getProductInstance().getBaseUrl())
             .addOAuth()
             .enableLicensing()
             .addPermission("read_license")

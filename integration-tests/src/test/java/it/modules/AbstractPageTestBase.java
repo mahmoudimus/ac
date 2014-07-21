@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPag
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.ConnectWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Rule;
@@ -32,10 +33,10 @@ public class AbstractPageTestBase extends ConnectWebDriverTestBase
     protected static final String URL = "/" + MY_AWESOME_PAGE_KEY;
 
     protected static ConnectRunner runner;
-    
+
     protected String pluginKey;
     protected String awesomePageModuleKey;
-    
+
 
     @Rule
     public TestRule resetToggleableCondition = runner.resetToggleableConditionRule();
@@ -76,18 +77,18 @@ public class AbstractPageTestBase extends ConnectWebDriverTestBase
             runner.stopAndUninstall();
         }
     }
-    
+
     @Before
     public void beforeEachTestBase()
     {
         this.pluginKey = runner.getAddon().getKey();
-        this.awesomePageModuleKey = addonAndModuleKey(pluginKey,MY_AWESOME_PAGE_KEY);
+        this.awesomePageModuleKey = addonAndModuleKey(pluginKey, MY_AWESOME_PAGE_KEY);
     }
 
     protected <T extends Page> RemotePluginEmbeddedTestPage runCanClickOnPageLinkAndSeeAddonContents(Class<T> pageClass, Option<String> linkText)
             throws MalformedURLException, URISyntaxException
     {
-        loginAsAdmin();
+        login(TestUser.ADMIN);
 
         T page = product.visit(pageClass);
         revealLinkIfNecessary(page);

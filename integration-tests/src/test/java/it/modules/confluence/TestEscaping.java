@@ -131,8 +131,7 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     @Test
     public void testGeneralPage() throws Exception
     {
-        loginAsAdmin();
-        ConnectConfluenceAdminHomePage adminHomePage = product.visit(ConnectConfluenceAdminHomePage.class);
+        ConnectConfluenceAdminHomePage adminHomePage = loginAndVisit(TestUser.ADMIN, ConnectConfluenceAdminHomePage.class);
         adminHomePage.openHelpMenu();
         RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(GENERAL_PAGE_KEY), Optional.<String>absent());
         assertIsEscaped(webItem.getLinkText());
@@ -141,7 +140,7 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     @Test
     public void testWebItem() throws Exception
     {
-        loginAsAdmin();
+        login(TestUser.ADMIN);
         RemoteWebItem webItem = findViewPageWebItem(getModuleKey(WEB_ITEM_KEY));
         assertIsEscaped(webItem.getLinkText());
     }
@@ -149,7 +148,7 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     @Test
     public void testWebItemTooltip() throws Exception
     {
-        loginAsAdmin();
+        login(TestUser.ADMIN);
         RemoteWebItem webItem = findViewPageWebItem(getModuleKey(WEB_ITEM_KEY));
         assertIsEscaped(webItem.getTitle());
     }
@@ -157,8 +156,7 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     @Test
     public void testAdminPage() throws Exception
     {
-        loginAsAdmin();
-        product.visit(ConfluenceAdminHomePage.class);
+        loginAndVisit(TestUser.ADMIN, ConfluenceAdminHomePage.class);
         ConfluenceAdminPage adminPage = product.getPageBinder().bind(ConfluenceAdminPage.class, getModuleKey(ADMIN_PAGE_KEY));
         assertIsEscaped(adminPage.getRemotePluginLinkText());
     }
@@ -222,8 +220,7 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     @Test
     public void testProfilePage() throws Exception
     {
-        loginAsAdmin();
-        product.visit(ConfluenceUserProfilePage.class);
+        loginAndVisit(TestUser.ADMIN, ConfluenceUserProfilePage.class);
         RemoteWebItem webItem = connectPageOperations.findWebItem(RemoteWebItem.ItemMatchingMode.JQUERY,
                 "a[href*='" + getServletPath(PROFILE_PAGE_KEY) + "']", Optional.<String>absent());
         assertIsEscaped(webItem.getLinkText());
@@ -232,8 +229,7 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     @Test
     public void testSpaceAdminTab() throws Exception
     {
-        loginAsAdmin();
-        product.visit(SpaceTemplatesPage.class, "ds");
+        loginAndVisit(TestUser.ADMIN, SpaceTemplatesPage.class, "ds");
         LinkedRemoteContent addonPage = connectPageOperations.findTabPanel(
                 getModuleKey(SPACE_TOOLS_TAB_KEY) + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX,
                 Option.<String>none(), getModuleKey(SPACE_TOOLS_TAB_KEY));
@@ -244,8 +240,7 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     @Test
     public void testSpaceToolsTab() throws Exception
     {
-        loginAsAdmin();
-        product.visit(SpaceTemplatesPage.class, "ts");
+        loginAndVisit(TestUser.ADMIN, SpaceTemplatesPage.class, "ts");
         RemoteWebItem webItem = connectPageOperations.findWebItem(RemoteWebItem.ItemMatchingMode.JQUERY,
                 "li[data-web-item-key='" + getModuleKey(SPACE_TOOLS_TAB_KEY) + "'] > a", Optional.<String>absent());
         assertIsEscaped(webItem.getLinkText());

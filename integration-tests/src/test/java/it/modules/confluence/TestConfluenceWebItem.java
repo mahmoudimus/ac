@@ -15,6 +15,7 @@ import com.google.common.base.Optional;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.CheckUsernameConditionServlet;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,8 +28,6 @@ import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
-import static it.util.TestConstants.BARNEY_USERNAME;
-import static it.util.TestConstants.BETTY_USERNAME;
 import static it.matcher.IsInteger.isInteger;
 import static it.modules.ConnectAsserts.verifyStandardAddOnRelativeQueryParameters;
 import static org.hamcrest.CoreMatchers.*;
@@ -100,8 +99,8 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                                 )
                                 .build())
 
-                .addRoute("/onlyBarneyCondition", new CheckUsernameConditionServlet(BARNEY_USERNAME))
-                .addRoute("/onlyBettyCondition", new CheckUsernameConditionServlet(BETTY_USERNAME))
+                .addRoute("/onlyBarneyCondition", new CheckUsernameConditionServlet(TestUser.BARNEY))
+                .addRoute("/onlyBettyCondition", new CheckUsernameConditionServlet(TestUser.BETTY))
                 .addRoute("/irwi?page_id={page.id}", ConnectAppServlets.helloWorldServlet())
                 .start();
     }
@@ -118,7 +117,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void testAbsoluteWebItem() throws Exception
     {
-        loginAsBetty();
+        login(TestUser.BETTY);
 
         RemoteWebItem webItem = findViewPageWebItem(getModuleKey(ABSOLUTE_WEBITEM)).right();
         assertNotNull("Web item should be found", webItem);
@@ -131,7 +130,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void testRelativeWebItem() throws Exception
     {
-        loginAsAdmin();
+        login(TestUser.ADMIN);
 
         Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(getModuleKey(ADDON_WEBITEM));
         RemoteWebItem webItem = pageAndWebItem.right();
@@ -147,7 +146,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void testAddonDirectWebItem() throws Exception
     {
-        loginAsAdmin();
+        login(TestUser.ADMIN);
 
         Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(getModuleKey(ADDON_DIRECT_WEBITEM));
         RemoteWebItem webItem = pageAndWebItem.right();
@@ -162,11 +161,11 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void testProductWebItem() throws Exception
     {
-        loginAsAdmin();
+        login(TestUser.ADMIN);
 
         ConfluenceViewPage viewPage = createAndVisitViewPage();
 
-        RemoteWebItem webItem = viewPage.findWebItem(getModuleKey(PRODUCT_WEBITEM), Optional.<String>of("action-menu-link"));
+        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(PRODUCT_WEBITEM), Optional.of("action-menu-link"));
         assertNotNull("Web item should be found", webItem);
 
         webItem.click();
@@ -179,7 +178,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void bettyCanSeeWebItem() throws Exception
     {
-        loginAsBetty();
+        login(TestUser.BETTY);
 
         RemoteWebItem webItem = findViewPageWebItem(getModuleKey(ABSOLUTE_WEBITEM)).right();
 
@@ -189,16 +188,16 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void adminCannotSeeBettyWebItem() throws Exception
     {
-        loginAsAdmin();
-        ConfluenceViewPage viewPage = createAndVisitViewPage();
-        assertFalse("Web item should NOT be found", viewPage.existsWebItem(getModuleKey(ABSOLUTE_WEBITEM)));
+        login(TestUser.ADMIN);
+        createAndVisitViewPage();
+        assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(ABSOLUTE_WEBITEM)));
     }
 
 
     @Test
     public void testAddonWebItemInlineDialog() throws Exception
     {
-        loginAsAdmin();
+        login(TestUser.ADMIN);
 
         Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(getModuleKey(ADDON_WEBITEM_INLINE_DIALOG));
         RemoteWebItem webItem = pageAndWebItem.right();
@@ -211,7 +210,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     private Pair<ConfluenceViewPage, RemoteWebItem> findViewPageWebItem(String webItemId) throws Exception
     {
         ConfluenceViewPage viewPage = createAndVisitViewPage();
-        return Pair.pair(viewPage, viewPage.findWebItem(webItemId, Optional.<String>absent()));
+        return Pair.pair(viewPage, connectPageOperations.findWebItem(webItemId, Optional.<String>absent()));
     }
 
     private ConfluenceViewPage createAndVisitViewPage() throws Exception
@@ -228,7 +227,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
 
     private ConfluenceOps.ConfluencePageData createPage() throws MalformedURLException, XmlRpcFault
     {
-        return confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), SPACE, "Page with webitem", "some page content");
+        return confluenceOps.setPage(some(TestUser.ADMIN), SPACE, "Page with webitem", "some page content");
     }
 
 

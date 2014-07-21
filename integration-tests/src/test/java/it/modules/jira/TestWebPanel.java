@@ -13,21 +13,18 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import hudson.plugins.jira.soap.RemoteIssue;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.rmi.RemoteException;
 
-import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
-import static it.util.TestUser.ADMIN;
-import static it.util.TestConstants.ADMIN_USERNAME;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
+import static it.util.TestUser.ADMIN;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 /**
  * Test of remote web panels in JIRA.
@@ -141,11 +138,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
         RemoteWebPanel panel = projectAdministrationPage.findWebPanel(getModuleKey(runner, PROJECT_CONFIG_PANEL_KEY)).waitUntilContentLoaded();
 
         assertEquals(project.getId(), panel.getProjectId());
-        assertEquals(ADMIN_USERNAME, panel.getUserId());
-        assertNotNull(panel.getUserKey());
-
-        assertEquals(project.getId(), panel.getProjectId());
-        assertEquals(ADMIN_USERNAME, panel.getUserId());
+        assertEquals(TestUser.ADMIN.getUsername(), panel.getUserId());
         assertNotNull(panel.getUserKey());
 
         assertEquals("pcp-OK", panel.getCustomMessage());
@@ -161,7 +154,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
 
         assertEquals(project.getId(), panel.getProjectId());
         assertEquals(issue.getId(), panel.getIssueId());
-        assertEquals(ADMIN_USERNAME, panel.getUserId());
+        assertEquals(TestUser.ADMIN.getUsername(), panel.getUserId());
         assertNotNull(panel.getUserKey());
 
         assertEquals("ilwp-OK", panel.getCustomMessage());
@@ -177,7 +170,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
 
         assertEquals(project.getId(), panel.getProjectId());
         assertEquals(issue.getId(), panel.getIssueId());
-        assertEquals(ADMIN_USERNAME, panel.getUserId());
+        assertEquals(TestUser.ADMIN.getUsername(), panel.getUserId());
         assertNotNull(panel.getUserKey());
 
         assertEquals("irwp-OK", panel.getCustomMessage());
@@ -190,7 +183,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
         RemoteWebPanel panel = projectAdministrationPage.findWebPanel(getModuleKey(runner, PROJECT_CONFIG_HEADER_KEY)).waitUntilContentLoaded();
 
         assertEquals(project.getId(), panel.getProjectId());
-        assertEquals(ADMIN_USERNAME, panel.getUserId());
+        assertEquals(TestUser.ADMIN.getUsername(), panel.getUserId());
         assertNotNull(panel.getUserKey());
 
         assertEquals("pch-OK", panel.getCustomMessage());
@@ -206,7 +199,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
 
         assertEquals(userProfileName, panel.getFromQueryString("profile_user_key"));
         assertEquals(userProfileName, panel.getFromQueryString("profile_user_name"));
-        assertEquals(ADMIN_USERNAME, panel.getUserId());
+        assertEquals(TestUser.ADMIN.getUsername(), panel.getUserId());
         assertNotNull(panel.getUserKey());
 
         assertEquals("up-OK", panel.getCustomMessage());

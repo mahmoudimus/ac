@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.ParameterCapturingConditionServlet;
+import it.util.TestUser;
 import org.junit.*;
 import org.junit.rules.TestRule;
 
@@ -98,9 +99,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
-        loginAsAdmin();
-
-        product.visit(JiraViewProjectPage.class, project.getKey());
+        loginAndVisit(TestUser.ADMIN, JiraViewProjectPage.class, project.getKey());
 
         JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, KEY_MY_AWESOME_PAGE, PAGE_NAME, addonKey);
 
@@ -122,7 +121,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
     @Test
     public void pageIsNotAccessibleWithFalseCondition()
     {
-        loginAsAdmin();
+        login(TestUser.ADMIN);
 
         // web item should be displayed
         assertThat("Expected web-item for page to be present", connectPageOperations.existsWebItem(awesomePageModuleKey), is(true));
@@ -143,7 +142,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
     @Test
     public void remoteConditionWithParamsIsCorrect() throws Exception
     {
-        loginAsAdmin();
+        login(TestUser.ADMIN);
 
         remotePlugin.setToggleableConditionShouldDisplay(false);
         
