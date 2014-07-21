@@ -15,12 +15,12 @@
 In this tutorial, you'll learn about:
 
 * [Configuring your development environment](#environment)  
-* [Adding a _Stats_ link in the navigation header](#stats-header)  
+* [Adding a _Activity_ link in the navigation header](#stats-header)  
 * [Creating the D3.js table to display your projects](#architect-stats-page)
 * [Adding data and verifying your add-on works](#check)
 
 To display your JIRA projects in a table, you'll build a static Connect add-on 
-accessible via a _Stats_ link in the header. 
+accessible via a _Activity_ link in the header. 
 
 Your static page will use the [JIRA REST API](https://jira.atlassian.com/plugins/servlet/restbrowser#/) 
 to retrieve information about projects in your JIRA instance. You'll use the [Node.js](http://nodejs.org/) 
@@ -79,7 +79,7 @@ For these steps, you might need to enter sudo mode in your terminal. Let's get s
 	This should be [http://localhost:2990/jira](http://localhost:2990/jira).  
 1. Log in with `admin/admin`. 
 
-## <a name="stats-header"></a> Install your add-on and add a _Stats_ link
+## <a name="stats-header"></a> Install your add-on and add a _Activity_ link
 
 You now have the basic architecture for your plugin. If you open your new `project-table` project, 
 you'll see essentials like the [`atlassian-connect.json` descriptor](../modules/) in the 
@@ -105,7 +105,7 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	    }
     ]
    ````
-   This adds a _Stats_ link in the `system.top.navigation.bar`, or in other words, the JIRA 
+   This adds a _Activity_ link in the `system.top.navigation.bar`, or in other words, the JIRA 
    header. It also provides a condition that the link only appears to authenticated users, 
    and sets a URL for your add-on to use under `/stats`.
 1. Add a `read` scope inside the main object:
@@ -163,7 +163,7 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	<pre><code data-lang="text">$ node app.js</code></pre> 
 	Your add-on is automatically registered in JIRA for you. 
 1. Refresh JIRA in your browser.  
-	You'll see the _Stats_ label in the header: 
+	You'll see the _Activity_ label in the header: 
 	<img src="../assets/images/geiger-1-1.png" width="80%" style="border:1px solid #999;margin-top:10px;" />  
 1. Open `routes/index.js`.
 	From here, you'll add the `/stats` route to your app.
@@ -211,12 +211,12 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	    });
 	};
 	````
-	This route titles your __Stats__ page "Project stats", and ensures that your add-on 
+	This route titles your __Activity__ page "Project stats", and ensures that your add-on 
 	is authenticated.  
 1. Close and save your `atlassian-connect.json` and `routes/index.js` files.  
  
 
-## <a name="architect-stats-page"></a> Build the static _Stats_ page  
+## <a name="architect-stats-page"></a> Build the static _Activity_ page  
 
 You've added a link in the JIRA header, but your page doesn't have anything 
 except a title right now. In this step, you'll add the capability for your add-on 
@@ -348,7 +348,7 @@ to use D3.js, and define how the page should look.
 1. Restart the node app. 
 	You can shut down the app with __CTRL+C__ and re-run the __`node app.js`__ 
 	command.
-1. Click __Stats__ in the header.  
+1. Click __Activity__ in the header.  
 	You'll see an empty page with your "Project stats" title:  
 	<img src="../assets/images/geiger-1-2.png" width="80%" style="border:1px solid #999;margin-top:10px;" />   
 	Your page is blank since your JIRA instance doesn't yet have any data, but you'll 
@@ -364,7 +364,7 @@ issues, and validate that your chart reflects the changes.
 	Run through the prompts and create a project.  
 1. Repeat as desired.  
 1. Check your add-on between adding data.  
-	You should see your __Stats__ table update accordingly, each time you click the 
+	You should see your __Activity__ table update accordingly, each time you click the 
 	link.  
 	Here's an example what you'll see (using two projects, "Test" and "Another test"): 
 	<img src="../assets/images/geiger-1-3.png" width="80%" style="border:1px solid #999;margin-top:10px;" /> 
