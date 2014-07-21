@@ -64,5 +64,8 @@
 
     <properties>
         <mvnCommand>/usr/bin/mvn</mvnCommand>
+        <od.testing.configuration>
+            use-maven,3
+        </od.testing.configuration>
     </properties>
 </project>
