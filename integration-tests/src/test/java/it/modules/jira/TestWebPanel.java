@@ -23,6 +23,7 @@ import java.rmi.RemoteException;
 import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static it.util.TestUser.ADMIN;
+import static it.util.TestUser.BARNEY;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
@@ -192,7 +193,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     @Test
     public void testWebPanelInUserProfile()
     {
-        final String userProfileName = "barney";
+        final String userProfileName = BARNEY.getUsername();
 
         JiraViewProfilePage jiraViewProfilePage = product.visit(JiraViewProfilePage.class, userProfileName);
         RemoteWebPanel panel = jiraViewProfilePage.findWebPanel(getModuleKey(runner, USER_PROFILE_KEY)).waitUntilContentLoaded();

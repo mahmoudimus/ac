@@ -2,9 +2,9 @@ package it.util;
 
 public class TestUser
 {
-    public static final TestUser ADMIN = new TestUser("admin", "admin_s3cr7", "Administrator", "admin@example.com");
-    public static final TestUser BARNEY = new TestUser("barney", "i<3betty", "Administrator", "admin@example.com");
-    public static final TestUser BETTY = new TestUser("betty", "(foreveralone)", "Administrator", "admin@example.com");
+    public static final TestUser ADMIN = new TestUser("admin", "admin", "Administrator", "admin@example.com");
+    public static final TestUser BARNEY = new TestUser("barney", "barney", "Barney", "barney@example.com");
+    public static final TestUser BETTY = new TestUser("betty", "betty", "Betty", "betty@example.com");
 
     private final String username;
     private final String password;
