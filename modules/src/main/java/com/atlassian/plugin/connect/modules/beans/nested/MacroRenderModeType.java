@@ -14,7 +14,9 @@ public enum MacroRenderModeType {
     mobile,
 
     /**
-     * Indicates your macro should out for desktop rendering
+     * Indicates your macro should out for desktop rendering.
+     *
+     * This is the default if a render mode is not specified.
      */
     desktop;
 
