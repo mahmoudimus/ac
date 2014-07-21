@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.test.pageobjects.jira;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.elements.PageElementFinder;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteXdmEventPanel;
@@ -17,7 +18,6 @@ import javax.inject.Inject;
 public class JiraViewIssuePage implements Page
 {
     private String issueKey;
-    private String extraPrefix;
 
     @Inject
     private com.atlassian.webdriver.AtlassianWebDriver driver;
@@ -28,14 +28,7 @@ public class JiraViewIssuePage implements Page
 
     public JiraViewIssuePage(String issueKey)
     {
-        this(issueKey, "");
-    }
-
-    @Deprecated // takes an extra ID prefix for modules provided by XML modules
-    public JiraViewIssuePage(String issueKey, String extraPrefix)
-    {
         this.issueKey = issueKey;
-        this.extraPrefix = extraPrefix;
     }
 
     @Override
@@ -44,20 +37,9 @@ public class JiraViewIssuePage implements Page
         return "/browse/" + issueKey;
     }
 
-    public void addLabelViaInlineEdit(String label)
-    {
-        driver.waitUntilElementIsVisible(By.cssSelector(".editable-field .labels"));
-        driver.findElement(By.className("labels")).click();
-        driver.waitUntilElementIsVisible(By.id("labels-textarea"));
-        driver.findElement(By.id("labels-textarea")).sendKeys(label + "\t");
-        driver.waitUntilElementIsVisible(By.cssSelector("#labels-form .submit"));
-        driver.findElement(By.cssSelector("#labels-form .submit")).click();
-        driver.waitUntilElementIsVisible(By.className("labels"));
-    }
-
     public RemoteWebPanel findWebPanel(String panelId)
     {
-        return pageBinder.bind(RemoteWebPanel.class, panelId, extraPrefix);
+        return pageBinder.bind(RemoteWebPanel.class, panelId);
     }
 
     public RemoteXdmEventPanel findXdmEventPanel(String addOnId, String moduleId)

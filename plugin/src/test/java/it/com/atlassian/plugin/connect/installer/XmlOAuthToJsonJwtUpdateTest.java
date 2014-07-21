@@ -1,25 +1,34 @@
 package it.com.atlassian.plugin.connect.installer;
 
 import com.atlassian.applinks.api.ApplicationLink;
+import com.atlassian.jwt.core.JwtUtil;
 import com.atlassian.modzdetector.IOUtils;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.module.page.GeneralPageModuleDescriptor;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipBuilder;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipHandler;
 import com.atlassian.plugin.connect.spi.Filenames;
+import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnaphot;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+import com.atlassian.sal.api.ApplicationProperties;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
+import it.com.atlassian.plugin.connect.TestConstants;
+import it.com.atlassian.plugin.connect.util.RequestUtil;
+import net.oauth.*;
+import net.oauth.signature.OAuthSignatureMethod;
+import net.oauth.signature.RSA_SHA1;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -29,7 +38,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
@@ -38,18 +50,13 @@ import static org.junit.Assert.*;
 /**
  * Ensure that Connect supports add-ons updating from XML + OAuth to JSON + JWT.
  */
+@XmlDescriptor
 @RunWith(AtlassianPluginsTestRunner.class)
 public class XmlOAuthToJsonJwtUpdateTest
 {
     private static final Logger LOG = LoggerFactory.getLogger(XmlOAuthToJsonJwtUpdateTest.class);
     private static final String OLD_PLUGIN_KEY = "myaddon_helloworld";
     private static final String INSTALLED_URL_SUFFIX = "/installed";
-    private static final String OLD_PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----\n" +
-            "                MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCuNwJVGkY9XWtuNe7p8PMOEr8O\n" +
-            "                WetSAqMxWldFfmNYTbRsI/8ZX/S/5gm4UKZyFUDOICtVddYv1tWW/P31OA5khyQT\n" +
-            "                XLp8sYpyNDBuwg00kfmBGleBgcKvePxMAr2y4La1OBz4aE+xK1HJojl2ToAubVY+\n" +
-            "                qikVwxXolycVkz8AzQIDAQAB\n" +
-            "                -----END PUBLIC KEY-----";
 
     private static final String JWT_VERSION = "jwt-version";
     private static final String JWT_VERSION_SLASHED = "/" + JWT_VERSION;
@@ -61,6 +68,7 @@ public class XmlOAuthToJsonJwtUpdateTest
     private final ConnectAddonRegistry connectAddonRegistry;
     private final AddonTestFilterResults testFilterResults;
     private final ConnectApplinkManager connectApplinkManager;
+    private final RequestUtil requestUtil;
 
     private Plugin oAuthPlugin;
     private Plugin jwtPlugin;
@@ -69,17 +77,19 @@ public class XmlOAuthToJsonJwtUpdateTest
                                        TestAuthenticator testAuthenticator,
                                        ConnectAddonRegistry connectAddonRegistry,
                                        AddonTestFilterResults testFilterResults,
-                                       ConnectApplinkManager connectApplinkManager)
+                                       ConnectApplinkManager connectApplinkManager,
+                                       ApplicationProperties applicationProperties)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
         this.connectAddonRegistry = connectAddonRegistry;
         this.testFilterResults = testFilterResults;
         this.connectApplinkManager = connectApplinkManager;
+        this.requestUtil = new RequestUtil(applicationProperties);
     }
 
     @BeforeClass
-    public void setUp() throws IOException, URISyntaxException
+    public void setUp() throws IOException, URISyntaxException, OAuthException
     {
         testAuthenticator.authenticateUser("admin");
         oAuthPlugin = testPluginInstaller.installPlugin(createXmlDescriptorFile());
@@ -94,6 +104,9 @@ public class XmlOAuthToJsonJwtUpdateTest
             assertTrue(moduleDescriptor instanceof GeneralPageModuleDescriptor);
             ApplicationLink appLink = connectApplinkManager.getAppLink(oAuthPlugin.getKey());
             assertEquals(getOldBaseUrl(), appLink.getDisplayUrl().toString());
+
+            // old xml add-on can send requests
+            assertEquals("old xml add-on should be able to make requests", 200, requestUtil.makeRequest(constructOAuthRequestFromAddOn()).getStatusCode());
         }
 
         jwtPlugin = testPluginInstaller.installAddon(createJwtAddOn(oAuthPlugin));
@@ -167,7 +180,7 @@ public class XmlOAuthToJsonJwtUpdateTest
     @Test
     public void sharedSecretIsNotOldPublicKey()
     {
-        assertFalse(OLD_PUBLIC_KEY.equals(connectAddonRegistry.getSecret(jwtPlugin.getKey())));
+        assertFalse(TestConstants.XML_ADDON_PUBLIC_KEY.equals(connectAddonRegistry.getSecret(jwtPlugin.getKey())));
     }
 
     @Test
@@ -232,7 +245,7 @@ public class XmlOAuthToJsonJwtUpdateTest
     private String getOldXmlDescriptorContent() throws IOException
     {
         String oldBaseUrl = getOldBaseUrl();
-        String xml = IOUtils.toString(XmlOAuthToJsonJwtUpdateTest.class.getResourceAsStream("/com/atlassian/connect/xml_oauth_descriptor.xml"))
+        String xml = IOUtils.toString(XmlOAuthToJsonJwtUpdateTest.class.getResourceAsStream(TestConstants.XML_ADDON_RESOURCE_PATH))
                 .replace("{{localBaseUrl}}", oldBaseUrl)
                 .replace("{{user}}", "admin")
                 .replace("{{currentTimeMillis}}", String.valueOf(System.currentTimeMillis()));
@@ -242,7 +255,7 @@ public class XmlOAuthToJsonJwtUpdateTest
             String displayUrlText = String.format("display-url=\"%s\"", oldBaseUrl);
             assertTrue(String.format("%s should contain %s", xml, displayUrlText), xml.indexOf(displayUrlText) > 0);
 
-            String publicKeyText = String.format("<public-key>%s</public-key>", OLD_PUBLIC_KEY);
+            String publicKeyText = String.format("<public-key>%s</public-key>", TestConstants.XML_ADDON_PUBLIC_KEY);
             assertTrue(String.format("%s should contain %s", xml, publicKeyText), xml.indexOf(publicKeyText) > 0);
 
             String pluginKeyText = String.format("key=\"%s\"", OLD_PLUGIN_KEY);
@@ -274,5 +287,57 @@ public class XmlOAuthToJsonJwtUpdateTest
                     .withName(new I18nProperty("Greeting", "greeting"))
                     .build())
                 .build();
+    }
+
+    private RequestUtil.Request constructOAuthRequestFromAddOn() throws IOException, OAuthException, URISyntaxException
+    {
+        final HttpMethod httpMethod = HttpMethod.GET;
+        URI uri = URI.create(requestUtil.getApplicationRestUrl("/applinks/1.0/manifest"));
+        uri = signOAuthUri(httpMethod, uri);
+
+        return requestUtil.requestBuilder()
+                .setMethod(httpMethod)
+                .setUri(uri)
+                .build();
+    }
+
+    private URI signOAuthUri(HttpMethod httpMethod, URI uri) throws IOException, OAuthException, URISyntaxException
+    {
+        final Map<String, String> oAuthParams = new HashMap<String, String>();
+        {
+            oAuthParams.put(OAuth.OAUTH_SIGNATURE_METHOD, OAuth.RSA_SHA1);
+            oAuthParams.put(OAuth.OAUTH_VERSION, "1.0");
+            oAuthParams.put(OAuth.OAUTH_CONSUMER_KEY, oAuthPlugin.getKey());
+            oAuthParams.put(OAuth.OAUTH_NONCE, String.valueOf(System.nanoTime()));
+            oAuthParams.put(OAuth.OAUTH_TIMESTAMP, String.valueOf(System.currentTimeMillis() / 1000));
+        }
+        final OAuthMessage oAuthMessage = new OAuthMessage(httpMethod.toString(), uri.toString(), oAuthParams.entrySet());
+        final OAuthConsumer oAuthConsumer = new OAuthConsumer(null, oAuthPlugin.getKey(), TestConstants.XML_ADDON_PRIVATE_KEY, new OAuthServiceProvider(null, null, null));
+        oAuthConsumer.setProperty(RSA_SHA1.PRIVATE_KEY, TestConstants.XML_ADDON_PRIVATE_KEY);
+        final OAuthSignatureMethod oAuthSignatureMethod = OAuthSignatureMethod.newSigner(oAuthMessage, new OAuthAccessor(oAuthConsumer));
+        oAuthSignatureMethod.sign(oAuthMessage);
+        return addOAuthParamsToRequest(uri, oAuthMessage);
+    }
+
+    private static URI addOAuthParamsToRequest(URI uri, OAuthMessage oAuthMessage) throws IOException
+    {
+        StringBuilder sb = new StringBuilder("?");
+        {
+            boolean isFirst = true;
+
+            for (Map.Entry<String, String> entry : oAuthMessage.getParameters())
+            {
+                if (!isFirst)
+                {
+                    sb.append('&');
+                }
+
+                isFirst = false;
+                sb.append(entry.getKey()).append('=').append(JwtUtil.percentEncode(entry.getValue())); // for JWT use the same encoding as OAuth 1
+            }
+
+            uri = URI.create(uri + sb.toString());
+        }
+        return uri;
     }
 }

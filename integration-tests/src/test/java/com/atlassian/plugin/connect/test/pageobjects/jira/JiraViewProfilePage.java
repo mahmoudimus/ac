@@ -70,8 +70,4 @@ public class JiraViewProfilePage extends ViewProfilePage
         return pageBinder.bind(RemoteWebPanel.class, panelId);
     }
 
-    public RemoteWebPanel findWebPanelFromXMLAddOn(String panelId)
-    {
-        return pageBinder.bind(RemoteWebPanel.class, panelId, "remote-web-panel-");
-    }
 }
