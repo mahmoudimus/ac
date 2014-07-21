@@ -8,7 +8,7 @@ import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import org.openqa.selenium.By;
 
-import static it.TestConstants.ADMIN_USERNAME;
+import static it.util.TestConstants.ADMIN_USERNAME;
 
 public abstract class LicenseUtils
 {

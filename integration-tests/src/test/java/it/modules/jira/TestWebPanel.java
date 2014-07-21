@@ -21,11 +21,10 @@ import java.rmi.RemoteException;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
-import static it.TestConstants.ADMIN;
-import static it.TestConstants.ADMIN_USERNAME;
+import static it.util.TestUser.ADMIN;
+import static it.util.TestConstants.ADMIN_USERNAME;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;

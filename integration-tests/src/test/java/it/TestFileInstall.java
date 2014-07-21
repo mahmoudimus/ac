@@ -1,7 +1,5 @@
 package it;
 
-import com.atlassian.pageobjects.page.HomePage;
-import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.test.HttpUtils;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
@@ -14,7 +12,6 @@ import org.junit.Test;
 import java.io.File;
 import java.util.Collections;
 
-import static it.TestConstants.BETTY_USERNAME;
 import static org.apache.commons.io.FileUtils.cleanDirectory;
 import static org.junit.Assert.assertTrue;
 

@@ -22,7 +22,7 @@ import java.util.Map;
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.test.Utils.loadResourceAsString;
 import static com.google.common.collect.Maps.newHashMap;
-import static it.TestConstants.BETTY_USERNAME;
+import static it.util.TestConstants.BETTY_USERNAME;
 import static it.servlet.ConnectAppServlets.macroExtended;
 import static org.junit.Assert.*;
 

@@ -16,7 +16,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static it.TestConstants.ADMIN_USERNAME;
+import static it.util.TestConstants.ADMIN_USERNAME;
 
 public class LicenseStatusBannerHelper
 {

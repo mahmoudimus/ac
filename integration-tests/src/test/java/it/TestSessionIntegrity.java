@@ -10,6 +10,7 @@ import com.google.common.collect.Maps;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
 import it.util.JwtAuthorizationGenerator;
+import it.util.TestConstants;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

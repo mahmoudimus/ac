@@ -22,6 +22,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectConfluenc
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
 import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -165,7 +166,7 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     @Test
     public void testMacroTitle() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
         try
         {
@@ -182,7 +183,7 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     @Test
     public void testMacroEditorTitle() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
         try
         {
@@ -200,7 +201,7 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     @Test
     public void testMacroParameter() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
         try
         {

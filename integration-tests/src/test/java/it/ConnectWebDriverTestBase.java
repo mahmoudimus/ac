@@ -14,6 +14,7 @@ import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
+import it.util.TestUser;
 import org.apache.http.auth.AuthenticationException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -21,9 +22,9 @@ import org.junit.Rule;
 
 import java.io.IOException;
 
-import static it.TestConstants.ADMIN_USERNAME;
-import static it.TestConstants.BARNEY_USERNAME;
-import static it.TestConstants.BETTY_USERNAME;
+import static it.util.TestConstants.ADMIN_USERNAME;
+import static it.util.TestConstants.BARNEY_USERNAME;
+import static it.util.TestConstants.BETTY_USERNAME;
 
 public abstract class ConnectWebDriverTestBase
 {
@@ -88,7 +89,7 @@ public abstract class ConnectWebDriverTestBase
         loginAndVisit(username, password, HomePage.class);
     }
 
-    protected void login(TestConstants.TestUser user)
+    protected void login(TestUser user)
     {
         if (product instanceof JiraTestedProduct)
         {
@@ -101,7 +102,7 @@ public abstract class ConnectWebDriverTestBase
         }
     }
 
-    protected <P extends Page> P loginAndVisit(TestConstants.TestUser user, final Class<P> page, final Object... args)
+    protected <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args)
     {
         return loginAndVisit(user.getUsername(), user.getPassword(), page, args);
     }

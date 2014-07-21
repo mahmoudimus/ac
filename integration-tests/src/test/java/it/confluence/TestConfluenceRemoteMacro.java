@@ -31,7 +31,7 @@ import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps.ConfluenceUser;
 import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newServlet;
 import static com.google.common.base.Strings.nullToEmpty;
-import static it.TestConstants.ADMIN_USERNAME;
+import static it.util.TestConstants.ADMIN_USERNAME;
 import static it.confluence.ContextParameters.*;
 import static java.lang.String.format;
 import static org.junit.Assert.*;
