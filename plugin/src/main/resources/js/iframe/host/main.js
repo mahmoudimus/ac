@@ -155,9 +155,10 @@ if (!_AP.create) {
   });
 }
 
-if(typeof ConfluenceMobile !== "undefined"){
+// Disabled, See: AC-1210
+//if(typeof ConfluenceMobile !== "undefined"){
   //confluence will not run scripts loaded in the body of mobile pages by default.
-  ConfluenceMobile.contentEventAggregator.on("render:pre:after-content", function(a, b, content) {
-    window['eval'].call(window, $(content.attributes.body).find(".ap-iframe-body-script").html());
-  });
-}
+  // ConfluenceMobile.contentEventAggregator.on("render:pre:after-content", function(a, b, content) {
+  //   window['eval'].call(window, $(content.attributes.body).find(".ap-iframe-body-script").html());
+  //});
+//}
