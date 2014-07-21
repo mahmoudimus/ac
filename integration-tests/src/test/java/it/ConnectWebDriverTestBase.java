@@ -1,6 +1,5 @@
 package it;
 
-import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.pageobjects.Page;
@@ -64,20 +63,15 @@ public abstract class ConnectWebDriverTestBase
 
     protected <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args)
     {
-        return loginAndVisit(user.getUsername(), user.getPassword(), page, args);
-    }
-
-    protected <P extends Page> P loginAndVisit(String username, String password, final Class<P> page, final Object... args)
-    {
         if (product instanceof JiraTestedProduct)
         {
             JiraTestedProduct jiraTestedProduct = (JiraTestedProduct) product;
-            return jiraTestedProduct.quickLogin(username, password, page, args);
+            return jiraTestedProduct.quickLogin(user.getUsername(), user.getPassword(), page, args);
         }
         else if (product instanceof ConfluenceTestedProduct)
         {
             ConfluenceTestedProduct confluenceTestedProduct = (ConfluenceTestedProduct) product;
-            return confluenceTestedProduct.login(new User(username, password, "Dis. Guided.", "snoop@pi.com"), page, args);
+            return confluenceTestedProduct.login(user.confUser(), page, args);
         }
         else
         {
