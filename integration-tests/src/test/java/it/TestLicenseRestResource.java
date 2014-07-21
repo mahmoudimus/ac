@@ -1,44 +1,57 @@
 package it;
 
-import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.rest.license.LicenseDetailsRepresentation;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.LicenseUtils;
-import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.gson.Gson;
+import it.servlet.ConnectAppServlets;
+import it.servlet.InstallHandlerServlet;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 
+import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static org.junit.Assert.*;
 
 /**
  * @since 1.0
  */
-@XmlDescriptor
 public class TestLicenseRestResource extends ConnectWebDriverTestBase
 {
     @Test
     public void anonymousReturnsLicense() throws Exception
     {
-        AtlassianConnectAddOnRunner runner = null;
+        ConnectRunner runner = null;
         try
         {
             LicenseUtils.addPluginLicenses(product);
 
-            runner = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
-            .addOAuth()
-            .enableLicensing()
-            .addPermission("read_license")
-            .start();
+            final InstallHandlerServlet installHandlerServlet = new InstallHandlerServlet();
+            final String productBaseUrl = product.getProductInstance().getBaseUrl();
+            runner = new ConnectRunner(productBaseUrl, AddonTestUtils.randomAddOnKey())
+                    .addJWT()
+                    .addInstallLifecycle()
+                    .addRoute(ConnectRunner.INSTALLED_PATH, installHandlerServlet)
+                    .enableLicensing()
+                    .addScope(ScopeName.READ)
+                    .addModule("generalPages", newPageBean()
+                            .withKey(AddonTestUtils.randomModuleKey())
+                            .withName(new I18nProperty("Hello World", null))
+                            .withUrl("/hello_world")
+                            .build())
+                    .addRoute("/hello_world", ConnectAppServlets.helloWorldServlet())
+                    .start();
 
 
-            URL url = new URL(product.getProductInstance().getBaseUrl() + "/rest/atlassian-connect/1/license");
-            HttpURLConnection yc = (HttpURLConnection) url.openConnection();
-
+            URI url = URI.create(productBaseUrl + "/rest/atlassian-connect/1/license");
+            url = AddonTestUtils.signWithJwt(url, runner.getAddon().getKey(), installHandlerServlet.getInstallPayload().getSharedSecret(), productBaseUrl, null);
+            HttpURLConnection yc = (HttpURLConnection) url.toURL().openConnection();
             yc.setRequestMethod("GET");
-            runner.getSignedRequestHandler().get().sign(url.toURI(), "GET", null, yc);
 
             assertNotNull(yc.getResponseCode());
             assertEquals(200, yc.getResponseCode());
@@ -52,14 +65,18 @@ public class TestLicenseRestResource extends ConnectWebDriverTestBase
         }
         finally
         {
-            //NOTE: the timebomb license disables the ability to delete plugins!
-            LicenseUtils.resetLicenses(product);
-
-            if(null != runner)
+            try
             {
-                runner.stopAndUninstall();
+                //NOTE: the timebomb license disables the ability to delete plugins!
+                LicenseUtils.resetLicenses(product);
+            }
+            finally
+            {
+                if (null != runner)
+                {
+                    runner.stopAndUninstall();
+                }
             }
         }
-
     }
 }
