@@ -9,9 +9,9 @@ public enum MacroRenderModeType {
     /**
      * Indicates your macro should output for mobile rendering.
      *
-     * Note: Currently disabled, see AC-1210
+     * Note: Currently disabled, see AC-1210 and ACDEV-1400
      */
-    mobile,
+//    mobile,
 
     /**
      * Indicates your macro should out for desktop rendering.
