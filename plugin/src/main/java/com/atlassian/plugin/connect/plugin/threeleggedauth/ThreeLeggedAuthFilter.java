@@ -114,7 +114,7 @@ public class ThreeLeggedAuthFilter implements Filter
     private boolean requestIsFromAJsonJwtAddOn(String addOnKey, ConnectAddonBean addOnBean)
     {
         return StringUtils.isEmpty(addOnKey) || legacyAddOnIdentifierService.isConnectAddOn(addOnKey) ||
-            null == addOnBean || null == addOnBean.getAuthentication().getType() || !AuthenticationType.JWT.equals(addOnBean.getAuthentication().getType());
+            null == addOnBean || null == addOnBean.getAuthentication() || addOnBean.getAuthentication().getType() != AuthenticationType.JWT;
     }
 
     private void processAddOnRequest(FilterChain filterChain, HttpServletRequest request, HttpServletResponse response, ConnectAddonBean addOnBean) throws IOException, ServletException
