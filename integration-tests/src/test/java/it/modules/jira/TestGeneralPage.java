@@ -121,7 +121,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
     @Test
     public void pageIsNotAccessibleWithFalseCondition()
     {
-        login(TestUser.ADMIN);
+        loginAndVisit(TestUser.ADMIN, HomePage.class);
 
         // web item should be displayed
         assertThat("Expected web-item for page to be present", connectPageOperations.existsWebItem(awesomePageModuleKey), is(true));
@@ -142,7 +142,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
     @Test
     public void remoteConditionWithParamsIsCorrect() throws Exception
     {
-        login(TestUser.ADMIN);
+        loginAndVisit(TestUser.ADMIN, HomePage.class);
 
         remotePlugin.setToggleableConditionShouldDisplay(false);
         
