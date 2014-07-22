@@ -39,7 +39,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 
 @XmlDescriptor
-public final class AtlassianConnectAddOnRunner
+public final class XMLAddOnRunner
 {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -53,13 +53,13 @@ public final class AtlassianConnectAddOnRunner
     private Server server;
     private Option<? extends SignedRequestHandler> signedRequestHandler;
 
-    public AtlassianConnectAddOnRunner(String baseUrl)
+    public XMLAddOnRunner(String baseUrl)
     {
         // Converting 3->4 is a temporary workaround for JRADEV-23912
         this(baseUrl, RandomStringUtils.randomAlphanumeric(20).replaceAll("3", "4").toLowerCase());
     }
 
-    public AtlassianConnectAddOnRunner(String baseUrl, String pluginKey)
+    public XMLAddOnRunner(String baseUrl, String pluginKey)
     {
         this.baseUrl = checkNotNull(baseUrl);
         this.pluginKey = checkNotNull(pluginKey);
@@ -80,14 +80,14 @@ public final class AtlassianConnectAddOnRunner
         installer = new AtlassianConnectRestClient(baseUrl, "admin", "admin");
     }
 
-    public AtlassianConnectAddOnRunner add(Module module)
+    public XMLAddOnRunner add(Module module)
     {
         module.update(doc.getRootElement());
         addResources(module);
         return this;
     }
 
-    public AtlassianConnectAddOnRunner addRoute(String path, HttpServlet servlet)
+    public XMLAddOnRunner addRoute(String path, HttpServlet servlet)
     {
         routes.put(path, servlet);
         return this;
@@ -101,12 +101,12 @@ public final class AtlassianConnectAddOnRunner
         }
     }
 
-    public AtlassianConnectAddOnRunner addOAuth() throws NoSuchAlgorithmException, IOException
+    public XMLAddOnRunner addOAuth() throws NoSuchAlgorithmException, IOException
     {
         return addOAuth(createSignedRequestHandler(pluginKey));
     }
 
-    public AtlassianConnectAddOnRunner addOAuth(RunnerSignedRequestHandler signedRequestHandler) throws NoSuchAlgorithmException, IOException
+    public XMLAddOnRunner addOAuth(RunnerSignedRequestHandler signedRequestHandler) throws NoSuchAlgorithmException, IOException
     {
         this.signedRequestHandler = some(signedRequestHandler);
         doc.getRootElement().element("remote-plugin-container")
@@ -117,7 +117,7 @@ public final class AtlassianConnectAddOnRunner
         return addPermission(Permissions.CREATE_OAUTH_LINK);
     }
 
-    public AtlassianConnectAddOnRunner addPermission(String apiScopeKey)
+    public XMLAddOnRunner addPermission(String apiScopeKey)
     {
         Element permissions = doc.getRootElement().element("plugin-info").element("permissions");
         if (permissions == null)
@@ -128,28 +128,28 @@ public final class AtlassianConnectAddOnRunner
         return this;
     }
 
-    public AtlassianConnectAddOnRunner enableLicensing()
+    public XMLAddOnRunner enableLicensing()
     {
         Element info = doc.getRootElement().element("plugin-info");
         info.addElement("param").addAttribute("name", "atlassian-licensing-enabled").setText("true");
         return this;
     }
 
-    public AtlassianConnectAddOnRunner addInfoParam(String name, String value)
+    public XMLAddOnRunner addInfoParam(String name, String value)
     {
         Element info = doc.getRootElement().element("plugin-info");
         info.addElement("param").addAttribute("name", name).setText(value);
         return this;
     }
 
-    public AtlassianConnectAddOnRunner addUnknownModule(String key)
+    public XMLAddOnRunner addUnknownModule(String key)
     {
         doc.getRootElement().addElement("unknown")
            .addAttribute("key", key);
         return this;
     }
 
-    public AtlassianConnectAddOnRunner description(String foo)
+    public XMLAddOnRunner description(String foo)
     {
         doc.getRootElement().element("plugin-info").elements().add(0,
                 DocumentFactory.getInstance().createElement("description").addText(foo));
@@ -187,7 +187,7 @@ public final class AtlassianConnectAddOnRunner
         uninstall();
     }
 
-    public static void stopAndUninstallQuietly(AtlassianConnectAddOnRunner runner)
+    public static void stopAndUninstallQuietly(XMLAddOnRunner runner)
     {
         if (runner != null)
         {
@@ -202,7 +202,7 @@ public final class AtlassianConnectAddOnRunner
         }
     }
 
-    public AtlassianConnectAddOnRunner start() throws Exception
+    public XMLAddOnRunner start() throws Exception
     {
         port = Utils.pickFreePort();
         final String displayUrl = "http://localhost:" + port;

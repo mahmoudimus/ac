@@ -1,10 +1,10 @@
 package it.jira;
 
+import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import hudson.plugins.jira.soap.RemoteProject;
 import it.ConnectWebDriverTestBase;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import java.rmi.RemoteException;
@@ -13,32 +13,32 @@ import java.util.concurrent.Callable;
 public class JiraWebDriverTestBase extends ConnectWebDriverTestBase
 {
     protected static JiraOps jiraOps;
-    protected RemoteProject project;
+    protected static RemoteProject project;
 
     @BeforeClass
-    public static void setup()
+    public static void beforeClass() throws RemoteException
     {
         jiraOps = new JiraOps(product.getProductInstance());
-    }
-
-    @Before
-    public void prepare() throws RemoteException
-    {
         project = jiraOps.createProject();
     }
 
-    @After
-    public void tearDown() throws RemoteException
+    @AfterClass
+    public static void afterClass() throws RemoteException
     {
         jiraOps.deleteProject(project.getKey());
     }
 
     protected void testLoggedInAndAnonymous(Callable runnable) throws Exception
     {
-        loginAsAdmin();
+        getProduct().quickLoginAsAdmin();
         runnable.call();
         logout();
         runnable.call();
+    }
+
+    protected static JiraTestedProduct getProduct()
+    {
+        return (JiraTestedProduct) product;
     }
 
 }

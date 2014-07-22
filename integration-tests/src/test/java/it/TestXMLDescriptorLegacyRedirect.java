@@ -1,7 +1,7 @@
 package it;
 
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
-import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.connect.test.server.XMLAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.GeneralPageModule;
 import it.servlet.ConnectAppServlets;
 import org.apache.http.HttpStatus;
@@ -21,7 +21,7 @@ public class TestXMLDescriptorLegacyRedirect extends AbstractBrowserlessTest
     private static final String ADDON_GENERALPAGE = "ac-general-page";
     private static final String ADDON_GENERALPAGE_NAME = "AC General Page";
 
-    private static AtlassianConnectAddOnRunner remotePlugin;
+    private static XMLAddOnRunner remotePlugin;
 
     @BeforeClass
     public static void setupUrlHandlers()
@@ -38,7 +38,7 @@ public class TestXMLDescriptorLegacyRedirect extends AbstractBrowserlessTest
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
+        remotePlugin = new XMLAddOnRunner(product.getProductInstance().getBaseUrl())
                 .add(GeneralPageModule.key(ADDON_GENERALPAGE)
                         .name(ADDON_GENERALPAGE_NAME)
                         .path("/pg")

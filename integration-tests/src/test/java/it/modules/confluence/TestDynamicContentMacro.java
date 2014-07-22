@@ -15,6 +15,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
@@ -149,7 +150,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroIsRendered() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Simple Macro on Page"));
 
         selectMacro(editorPage, SIMPLE_MACRO_NAME);
@@ -164,7 +165,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testBodyInclusion() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Short Body Macro"));
 
         selectMacro(editorPage, SHORT_BODY_MACRO_NAME);
@@ -182,7 +183,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testBodyHashInclusion() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Long Body Macro"));
 
         selectMacro(editorPage, LONG_BODY_MACRO_NAME);
@@ -202,7 +203,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testParameterInclusion() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Parameter Page"));
 
         MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
@@ -223,7 +224,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMultipleMacrosOnPage() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Multiple Macros"));
 
         selectMacro(editorPage, SIMPLE_MACRO_NAME);
@@ -246,7 +247,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroDimensions() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Small Inline Macro"));
 
         selectMacro(editorPage, SMALL_INLINE_MACRO_NAME);
@@ -261,7 +262,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroEditorSavesParameters() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN, TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Macro Editor"));
 
         MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
@@ -281,7 +282,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroInOrderedTable() throws Exception
     {
-        loginAsAdmin();
+        login(TestUser.ADMIN);
         EditContentPage editPage = createAndEditPage(TABLE_MACRO_NAME, loadResourceAsString("confluence/test-page-table-macro.xhtml"));
         savedPage = editPage.save();
 
@@ -353,8 +354,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
     private EditContentPage createAndEditPage(String pageName, String pageContent) throws Exception
     {
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(ConfluenceOps.ConfluenceUser.ADMIN),
-                TestSpace.DEMO.getKey(), pageName, pageContent);
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(TestUser.ADMIN), TestSpace.DEMO.getKey(), pageName, pageContent);
         return product.visit(EditContentPage.class, new Page(Long.parseLong(pageData.getId())));
     }
 }

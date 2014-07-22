@@ -21,6 +21,7 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
 import hudson.plugins.jira.soap.RemoteIssue;
 import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
 import org.junit.*;
 
 import java.rmi.RemoteException;
@@ -30,7 +31,6 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.n
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
-import static it.TestConstants.ADMIN_FULL_NAME;
 import static org.junit.Assert.*;
 
 public class TestJira extends JiraWebDriverTestBase
@@ -93,7 +93,7 @@ public class TestJira extends JiraWebDriverTestBase
     @XmlDescriptor(comment="partly ported from xml to json: see comments")
     public void testLoadDialogFromIssueNavigatorActionCog() throws RemoteException
     {
-        loginAsAdmin();
+        login(TestUser.ADMIN);
         // ensure one issue
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for dialog action cog test");
 
@@ -164,30 +164,28 @@ public class TestJira extends JiraWebDriverTestBase
     @Test
     public void testAdminPageInJiraSpecificLocation() throws Exception
     {
-        loginAsAdmin();
         String addonKey = runner.getAddon().getKey();
-        product.visit(JiraAdminHomePage.class);
+        loginAndVisit(TestUser.ADMIN, JiraAdminHomePage.class);
 
         RemoteWebItem adminPageLink = getAdminPageLink(addonKey, ADVANCED_ADMIN_KEY);
 
         adminPageLink.click();
 
         ConnectAddOnEmbeddedTestPage nextPage = connectPageOperations.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, addonKey, ADVANCED_ADMIN_KEY, true);
-        assertEquals(ADMIN_FULL_NAME, nextPage.getFullName());
+        assertEquals(TestUser.ADMIN.getDisplayName(), nextPage.getFullName());
     }
 
     @Test
     public void testGeneralAdminPage() throws Exception
     {
-        loginAsAdmin();
         String addonKey = runner.getAddon().getKey();
-        product.visit(JiraAdminHomePage.class);
+        loginAndVisit(TestUser.ADMIN, JiraAdminHomePage.class);
 
         RemoteWebItem adminPageLink = getAdminPageLink(addonKey, ADMIN_KEY);
         adminPageLink.click();
 
         ConnectAddOnEmbeddedTestPage nextPage = connectPageOperations.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, addonKey, ADMIN_KEY, true);
-        assertEquals(ADMIN_FULL_NAME, nextPage.getFullName());
+        assertEquals(TestUser.ADMIN.getDisplayName(), nextPage.getFullName());
     }
 
     private RemoteWebItem getAdminPageLink(String addonKey, String adminPageWebItemKey)

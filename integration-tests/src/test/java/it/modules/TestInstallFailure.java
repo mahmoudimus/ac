@@ -22,6 +22,7 @@ import com.google.common.collect.ImmutableMap;
 import it.ConnectWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -114,7 +115,7 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
     @Test
     public void pageLinkWorksAfterFirstAddonInstallFailed() throws MalformedURLException, URISyntaxException, JwtVerificationException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtParseException
     {
-        loginAsAdmin();
+        login(TestUser.ADMIN);
 
         PluginManager page = product.visit(PluginManager.class);
         revealLinkIfNecessary(page);
