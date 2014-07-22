@@ -57,7 +57,7 @@ public class ConnectIsLoadedTest
         assertEquals(200, connection.getResponseCode());
 
         String responseText = IOUtils.toString(connection.getInputStream());
-        Collection<JsonObject> acPlugins = findAcPlugins(new JsonParser().parse(responseText).getAsJsonArray());
+        Collection<JsonObject> acPlugins = findAcPlugins(new JsonParser().parse(responseText).getAsJsonObject().get("plugins").getAsJsonArray());
 
         final String reason = String.format("Expecting exactly 1 plugin to have key '%s' but found %d. Connect appears to not be installed. Plugins listing: %s",
                 CONNECT_PLUGIN_KEY, acPlugins.size(), responseText);
