@@ -93,7 +93,7 @@ public abstract class AbstractAddonLifecycleTest
                                 .build()
                 )
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(addonKey))
-                .withScopes(newHashSet(ScopeName.READ))
+                .withScopes(newHashSet(ScopeName.ADMIN))
                 .build();
 
         addonKey = ModuleKeyUtils.randomName(pluginKeyPrefix);
