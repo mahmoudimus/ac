@@ -30,6 +30,26 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -61,6 +81,18 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>ondemand-acceptance-tests</id>
+            <properties>
+                <!-- variables provided by the test runner https://extranet.atlassian.com/display/JIRADEV/Tested+Product+configuration -->
+                <baseurl.jira>${ondemand.baseurl}${context.jira.path}</baseurl.jira>
+                <baseurl.confluence>${ondemand.baseurl}${context.confluence.path}</baseurl.confluence>
+                <baseurl.bamboo>${ondemand.baseurl}${context.bamboo.path}</baseurl.bamboo>
+            </properties>
+        </profile>
+    </profiles>
 
     <properties>
         <mvnCommand>/usr/bin/mvn</mvnCommand>
