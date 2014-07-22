@@ -12,30 +12,38 @@ import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnaphot;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.gson.JsonParser;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
-import org.bouncycastle.openssl.PEMWriter;
+import it.com.atlassian.plugin.connect.TestConstants;
+import it.com.atlassian.plugin.connect.util.RequestUtil;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.StringWriter;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@Ignore("not needed now that OAuth is deprecated and failing with 'NoClassDefFoundError: org/bouncycastle/openssl/PEMWriter' @ new PEMWriter() invocation")
 @OAuth
 @RunWith(AtlassianPluginsTestRunner.class)
 public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
 {
-    protected AddonLifecycleOAuthTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, AddonTestFilterResults testFilterResults, ConnectApplinkManager connectApplinkManager, ConnectAddOnUserService connectAddOnUserService,UserManager userManager,ApplicationService applicationService,ApplicationManager applicationManager)
+    private final RequestUtil requestUtil;
+
+    protected AddonLifecycleOAuthTest(TestPluginInstaller testPluginInstaller,
+                                      TestAuthenticator testAuthenticator,
+                                      AddonTestFilterResults testFilterResults,
+                                      ConnectApplinkManager connectApplinkManager,
+                                      ConnectAddOnUserService connectAddOnUserService,
+                                      UserManager userManager,
+                                      ApplicationService applicationService,
+                                      ApplicationManager applicationManager,
+                                      ApplicationProperties applicationProperties)
     {
         super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService, userManager, applicationService, applicationManager);
+        requestUtil = new RequestUtil(applicationProperties);
     }
 
     @BeforeClass
@@ -43,16 +51,9 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
     {
         testAuthenticator.authenticateUser("admin");
 
-        KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
-        KeyPair oauthKeyPair = gen.generateKeyPair();
-        StringWriter publicKeyWriter = new StringWriter();
-        PEMWriter pubWriter = new PEMWriter(publicKeyWriter);
-        pubWriter.writeObject(oauthKeyPair.getPublic());
-        pubWriter.close();
-        
         initBeans(newAuthenticationBean()
                 .withType(AuthenticationType.OAUTH)
-                .withPublicKey(publicKeyWriter.toString())
+                .withPublicKey(TestConstants.XML_ADDON_PUBLIC_KEY)
                 .build());
     }
 
@@ -135,7 +136,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
                             .get("oauth").getAsString().endsWith("/rest/atlassian-connect/latest/oauth");
                 
             assertTrue("OAuth link not found in request payload: " + payload, hasOauthLink);
-
+            assertEquals("old xml add-on should be able to make requests", 200, requestUtil.makeRequest(requestUtil.constructOAuthRequestFromAddOn(installOnlyBean.getKey())).getStatusCode());
         }
         finally
         {
@@ -247,8 +248,5 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
                 testPluginInstaller.uninstallJsonAddon(plugin);
             }
         }
-
-
     }
-
 }
