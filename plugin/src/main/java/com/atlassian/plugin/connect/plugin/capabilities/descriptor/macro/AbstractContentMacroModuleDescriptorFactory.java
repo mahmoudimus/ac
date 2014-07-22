@@ -31,7 +31,8 @@ import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.LinkBean.newLinkBean;
 
-public abstract class AbstractContentMacroModuleDescriptorFactory<B extends BaseContentMacroModuleBean> implements ConnectModuleDescriptorFactory<B, XhtmlMacroModuleDescriptor>
+public abstract class AbstractContentMacroModuleDescriptorFactory<B extends BaseContentMacroModuleBean>
+        implements ConnectModuleDescriptorFactory<B, XhtmlMacroModuleDescriptor>
 {
     private final AbsoluteAddOnUrlConverter urlConverter;
 
@@ -62,7 +63,8 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
 
     private void updateDefaultParameterLabels(List<MacroParameter> macroParameters, List<MacroParameterBean> macroParameterBeans)
     {
-        Map<String, MacroParameter> parameterMap = Maps.uniqueIndex(macroParameters, new Function<MacroParameter, String>() {
+        Map<String, MacroParameter> parameterMap = Maps.uniqueIndex(macroParameters, new Function<MacroParameter, String>()
+        {
             @Override
             public String apply(MacroParameter parameter)
             {
@@ -100,24 +102,27 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         element.setAttribute("class", PageMacro.class.getName());
         element.setAttribute("state", "enabled");
 
-        if(bean.hasRenderModes())
-        {
-            for(MacroRenderModeBean renderMode : bean.getRenderModes())
-            {
-                if(renderMode.getRenderModeType() == MacroRenderModeType.mobile)
-                {
-                    element.addElement("device-type").addText("mobile");
-                } else {
-                    // help vendors find errors in their descriptors
-                    throw new PluginInstallException("Unsupported render type '"
-                            + renderMode.getRenderModeType()
-                            + "' - "
-                            + addon.getName()
-                            + "' (" + addon.getKey() + ")");
-
-                }
-            }
-        }
+//        See ACDEV-1400 AC-1210
+//        if (bean.hasRenderModes())
+//        {
+//            for (MacroRenderModeBean renderMode : bean.getRenderModes())
+//            {
+//                if (renderMode.getRenderModeType() == MacroRenderModeType.mobile)
+//                {
+//                    element.addElement("device-type").addText("mobile");
+//                }
+//                else
+//                {
+//                    // help vendors find errors in their descriptors
+//                    throw new PluginInstallException("Unsupported render type '"
+//                            + renderMode.getRenderModeType()
+//                            + "' - "
+//                            + addon.getName()
+//                            + "' (" + addon.getKey() + ")");
+//
+//                }
+//            }
+//        }
 
         if (bean.hasDocumentation())
         {
