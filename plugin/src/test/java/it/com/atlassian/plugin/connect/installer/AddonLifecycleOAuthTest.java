@@ -136,7 +136,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
                             .get("oauth").getAsString().endsWith("/rest/atlassian-connect/latest/oauth");
                 
             assertTrue("OAuth link not found in request payload: " + payload, hasOauthLink);
-            assertEquals("old xml add-on should be able to make requests", 200, requestUtil.makeRequest(requestUtil.constructOAuthRequestFromAddOn(installOnlyBean.getKey())).getStatusCode());
+            assertEquals("add-on with OAuth authentication should be able to make requests", 200, requestUtil.makeRequest(requestUtil.constructOAuthRequestFromAddOn(installOnlyBean.getKey())).getStatusCode());
         }
         finally
         {
