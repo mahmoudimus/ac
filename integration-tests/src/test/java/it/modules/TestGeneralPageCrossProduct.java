@@ -1,10 +1,13 @@
 package it.modules;
 
+import com.atlassian.fugue.Option;
+import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.*;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.google.common.base.Optional;
 import it.ConnectWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
@@ -194,7 +197,7 @@ public class TestGeneralPageCrossProduct extends ConnectWebDriverTestBase
     public void testEncodedSpaceInPageModuleUrl()
     {
         // Regression test for AC-885 (ensure descriptor query strings are not decoded before parsing)
-        login(TestUser.BETTY);
+        loginAndVisit(TestUser.BETTY, HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "encodedSpaces", "Encoded Spaces", remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
@@ -205,8 +208,12 @@ public class TestGeneralPageCrossProduct extends ConnectWebDriverTestBase
     @Test
     public void testAmd()
     {
-        login(TestUser.BETTY);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "amdTest", "AMD Test app1 General", remotePlugin.getAddon().getKey());
+        loginAndVisit(TestUser.BETTY, HomePage.class);
+
+        String LINK_TEXT = "AMD Test app1 General";
+//        RemoteWebItem webItem = connectPageOperations.findWebItem(RemoteWebItem.ItemMatchingMode.LINK_TEXT, LINK_TEXT, Optional.<String>absent());
+
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "amdTest", LINK_TEXT, remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
 
@@ -218,7 +225,7 @@ public class TestGeneralPageCrossProduct extends ConnectWebDriverTestBase
     @Test
     public void testSizeToParent()
     {
-        login(TestUser.BETTY);
+        loginAndVisit(TestUser.BETTY, HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParent", "Size to parent general page", remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();

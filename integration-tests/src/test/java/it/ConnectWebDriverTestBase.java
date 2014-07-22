@@ -50,7 +50,7 @@ public abstract class ConnectWebDriverTestBase
 
     protected void login(TestUser user)
     {
-        if (!user.getUsername().equals(currentUsername))
+        if (!isAlreadyLoggedIn(user))
         {
             logout();
             currentUsername = user.getUsername();
@@ -66,8 +66,20 @@ public abstract class ConnectWebDriverTestBase
         }
     }
 
+    private boolean isAlreadyLoggedIn(final TestUser user)
+    {
+        return user != null && user.getUsername().equals(currentUsername);
+    }
+
     protected <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args)
     {
+        if (isAlreadyLoggedIn(user))
+        {
+            return product.visit(page, args);
+        }
+
+        logout();
+        currentUsername = user.getUsername();
         if (product instanceof JiraTestedProduct)
         {
             JiraTestedProduct jiraTestedProduct = (JiraTestedProduct) product;

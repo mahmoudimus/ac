@@ -1,5 +1,6 @@
 package it.modules;
 
+import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -152,7 +153,7 @@ public class TestDialog extends ConnectWebDriverTestBase
 
     private void testOpenAndClose(String pageKey, String pageName, String moduleKey)
     {
-        login(TestUser.ADMIN);
+        loginAndVisit(TestUser.ADMIN, HomePage.class);
         GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, pageKey, pageName, runner.getAddon().getKey());
         remotePage.clickAddOnLink();
 
@@ -192,7 +193,7 @@ public class TestDialog extends ConnectWebDriverTestBase
     @Test
     public void testLoadGeneralDialog()
     {
-        login(TestUser.BETTY);
+        loginAndVisit(TestUser.BETTY, HomePage.class);
 
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginDialog", "Remotable Plugin app1 Dialog", runner.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
@@ -213,7 +214,7 @@ public class TestDialog extends ConnectWebDriverTestBase
     @Test
     public void testSizeToParentDoesNotWorkInDialog()
     {
-        login(TestUser.BETTY);
+        loginAndVisit(TestUser.BETTY, HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParentDialog", "Size to parent dialog page", runner.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();

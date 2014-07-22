@@ -1,5 +1,6 @@
 package it.modules;
 
+import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
@@ -55,7 +56,7 @@ public class TestMessage extends ConnectWebDriverTestBase
     @Test
     public void testCreateInfoMessage() throws Exception
     {
-        login(TestUser.ADMIN);
+        loginAndVisit(TestUser.ADMIN, HomePage.class);
         GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, ADDON_GENERALPAGE, ADDON_GENERALPAGE_NAME, remotePlugin.getAddon().getKey());
         remotePage.clickAddOnLink();
         RemoteMessageGeneralPage remoteMessagePage = product.getPageBinder().bind(RemoteMessageGeneralPage.class, AddonTestUtils.escapedAddonAndModuleKey(remotePlugin.getAddon().getKey(), ADDON_GENERALPAGE));
