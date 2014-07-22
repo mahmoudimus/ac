@@ -150,15 +150,6 @@ public class TestGeneralPageCrossProduct extends ConnectWebDriverTestBase
     }
 
     @Test
-    @Ignore("Need to wait for menu to open w/o waiting for page link name")
-    public void testRemoteConditionFails()
-    {
-        login(TestUser.BARNEY);
-        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty", "Only Betty", remotePlugin.getAddon().getKey());
-        assertFalse(page.isRemotePluginLinkPresent());
-    }
-
-    @Test
     public void testRemoteConditionSucceeds()
     {
         login(TestUser.BETTY);

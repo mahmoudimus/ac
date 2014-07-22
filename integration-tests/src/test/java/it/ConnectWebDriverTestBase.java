@@ -50,14 +50,19 @@ public abstract class ConnectWebDriverTestBase
 
     protected void login(TestUser user)
     {
-        if (product instanceof JiraTestedProduct)
+        if (!user.getUsername().equals(currentUsername))
         {
-            JiraTestedProduct jiraTestedProduct = (JiraTestedProduct) product;
-            jiraTestedProduct.quickLogin(user.getUsername(), user.getPassword());
-        }
-        else
-        {
-            product.visit(LoginPage.class).login(user.getUsername(), user.getPassword(), HomePage.class);
+            logout();
+            currentUsername = user.getUsername();
+            if (product instanceof JiraTestedProduct)
+            {
+                JiraTestedProduct jiraTestedProduct = (JiraTestedProduct) product;
+                jiraTestedProduct.quickLogin(user.getUsername(), user.getPassword());
+            }
+            else
+            {
+                product.visit(LoginPage.class).login(user.getUsername(), user.getPassword(), HomePage.class);
+            }
         }
     }
 
