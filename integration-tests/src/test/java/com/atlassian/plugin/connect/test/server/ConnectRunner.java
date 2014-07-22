@@ -1,11 +1,13 @@
 package com.atlassian.plugin.connect.test.server;
 
+import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.api.xmldescriptor.OAuth;
 import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.Environment;
 import com.atlassian.plugin.connect.test.HttpUtils;
 import com.atlassian.plugin.connect.test.Utils;
@@ -53,7 +55,7 @@ public class ConnectRunner
     public static final String UNINSTALLED_PATH = "/uninstalled-lifecycle";
     private static final String REGISTRATION_ROUTE = "/register";
 
-    private final String baseUrl;
+    private final String productBaseUrl;
     private final AtlassianConnectRestClient installer;
     private final ConnectAddonBeanBuilder addonBuilder;
     private final String pluginKey;
@@ -68,17 +70,41 @@ public class ConnectRunner
     private final Map<String, HttpServlet> routes = newHashMap();
     private boolean checkInstallationStatus = true;
 
-    public ConnectRunner(String baseUrl, String pluginKey)
+    /**
+     * Create a ConnectRunner for an add-on with randomly generated key
+     * @param testedProduct the product to install the add-on into
+     */
+    public ConnectRunner(TestedProduct testedProduct)
     {
-        this.baseUrl = checkNotNull(baseUrl);
-        this.pluginKey = checkNotNull(pluginKey);
+        this(testedProduct, AddonTestUtils.randomAddOnKey());
+    }
+
+    /**
+     * Create a ConnectRunner for an add-on with a specified key
+     * @param testedProduct the product to install the add-on into
+     * @param key the key for the add-on
+     */
+    public ConnectRunner(TestedProduct testedProduct, String key)
+    {
+        this(testedProduct.getProductInstance().getBaseUrl(), key);
+    }
+
+    /**
+     * Create a ConnectRunner for an add-on with a specified key
+     * @param productBaseUrl the url of the product to install the add-on into
+     * @param key the key for the add-on
+     */
+    public ConnectRunner(String productBaseUrl, String key)
+    {
+        this.productBaseUrl = checkNotNull(productBaseUrl);
+        this.pluginKey = checkNotNull(key);
 
         this.addonBuilder = newConnectAddonBean()
-                .withKey(pluginKey)
-                .withName(pluginKey)
+                .withKey(key)
+                .withName(key)
                 .withVersion("1.0");
 
-        this.installer = new AtlassianConnectRestClient(baseUrl, "admin", "admin");
+        this.installer = new AtlassianConnectRestClient(productBaseUrl, "admin", "admin");
     }
 
     public void register() throws Exception
@@ -325,7 +351,7 @@ public class ConnectRunner
 
     private ImmutableMap<String, Object> getBaseContext()
     {
-        return ImmutableMap.<String, Object>of("port", port, "baseurl", baseUrl);
+        return ImmutableMap.<String, Object>of("port", port, "baseurl", productBaseUrl);
     }
 
     private static final class MustacheServlet extends ContextServlet

@@ -6,6 +6,7 @@ import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.jwt.core.http.auth.SimplePrincipal;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
@@ -98,18 +99,25 @@ public class ThreeLeggedAuthFilter implements Filter
                     new Object[]{JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME, addOnKeyObject.getClass().getSimpleName(), addOnKeyObject});
         }
 
-        // potentially reject only if the request comes from an add-on
-        if (StringUtils.isEmpty(addOnKey) || legacyAddOnIdentifierService.isConnectAddOn(addOnKey))
+        final ConnectAddonBean addOnBean = connectAddonManager.getExistingAddon(addOnKey);
+
+        if (requestIsFromAJsonJwtAddOn(addOnKey, addOnBean))
         {
             filterChain.doFilter(request, response);
         }
         else
         {
-            processAddOnRequest(filterChain, request, response, addOnKey);
+            processAddOnRequest(filterChain, request, response, addOnBean);
         }
     }
 
-    private void processAddOnRequest(FilterChain filterChain, HttpServletRequest request, HttpServletResponse response, String addOnKey) throws IOException, ServletException
+    private boolean requestIsFromAJsonJwtAddOn(String addOnKey, ConnectAddonBean addOnBean)
+    {
+        return StringUtils.isEmpty(addOnKey) || legacyAddOnIdentifierService.isConnectAddOn(addOnKey) ||
+            null == addOnBean || null == addOnBean.getAuthentication() || addOnBean.getAuthentication().getType() != AuthenticationType.JWT;
+    }
+
+    private void processAddOnRequest(FilterChain filterChain, HttpServletRequest request, HttpServletResponse response, ConnectAddonBean addOnBean) throws IOException, ServletException
     {
         Object subjectObject = request.getAttribute(JwtConstants.HttpRequests.JWT_SUBJECT_ATTRIBUTE_NAME);
         String subject = subjectObject instanceof String ? (String) subjectObject : null;
@@ -117,7 +125,7 @@ public class ThreeLeggedAuthFilter implements Filter
         // an empty-string subject claim would be nonsensical and may indicate a programming error in the add-on
         if ("".equals(subject))
         {
-            rejectEmptyStringSubject(request, response, addOnKey, subject);
+            rejectEmptyStringSubject(request, response, addOnBean.getKey(), subject);
         }
         else
         {
@@ -125,13 +133,13 @@ public class ThreeLeggedAuthFilter implements Filter
             HttpSession session = request.getSession(false); // don't create a session if there is none
             try
             {
-                if (null != subject && shouldAllowImpersonation(request, response, addOnKey, subject))
+                if (null != subject && shouldAllowImpersonation(request, response, subject, addOnBean))
                 {
                     impersonateSubject(filterChain, request, response, subject);
                 }
                 else
                 {
-                    actAsAddOnUser(filterChain, request, response, addOnKey);
+                    actAsAddOnUser(filterChain, request, response, addOnBean.getKey());
                 }
             }
             catch (InvalidSubjectException e)
@@ -155,38 +163,36 @@ public class ThreeLeggedAuthFilter implements Filter
         fail(request, response, externallyVisibleMessage, HttpServletResponse.SC_BAD_REQUEST);
     }
 
-    private boolean shouldAllowImpersonation(HttpServletRequest request, HttpServletResponse response, String addOnKey, String subject) throws InvalidSubjectException
+    private boolean shouldAllowImpersonation(HttpServletRequest request, HttpServletResponse response, String subject, ConnectAddonBean addOnBean) throws InvalidSubjectException
     {
         boolean allowImpersonation = false;
 
         if (getBoolean(SYS_PROP_ALLOW_IMPERSONATION))
         {
-            log.warn("Allowing add-on '{}' to impersonate user '{}' because the system property '{}' is set to true.", new String[]{ addOnKey, subject, SYS_PROP_ALLOW_IMPERSONATION });
-            getUserKey(request, response, addOnKey, subject);
+            log.warn("Allowing add-on '{}' to impersonate user '{}' because the system property '{}' is set to true.", new String[]{ addOnBean.getKey(), subject, SYS_PROP_ALLOW_IMPERSONATION });
+            getUserKey(request, response, addOnBean.getKey(), subject);
             allowImpersonation = true;
         }
         else
         {
-            ConnectAddonBean addOnBean = connectAddonManager.getExistingAddon(addOnKey);
-
             if (threeLeggedAuthService.shouldSilentlyIgnoreUserAgencyRequest(subject, addOnBean))
             {
                 log.warn("Ignoring subject claim '{}' on incoming request '{}' from Connect add-on '{}' because the {} said so.",
-                        new String[]{subject, request.getRequestURI(), addOnKey, threeLeggedAuthService.getClass().getSimpleName()});
+                        new String[]{subject, request.getRequestURI(), addOnBean.getKey(), threeLeggedAuthService.getClass().getSimpleName()});
             }
             else
             {
-                final UserKey userKey = getUserKey(request, response, addOnKey, subject);
+                final UserKey userKey = getUserKey(request, response, addOnBean.getKey(), subject);
 
                 // a valid grant must exist
                 if (threeLeggedAuthService.hasGrant(userKey, addOnBean))
                 {
-                    log.info("Allowing add-on '{}' to impersonate user '{}' because a user-agent grant exists.", addOnKey, subject);
+                    log.info("Allowing add-on '{}' to impersonate user '{}' because a user-agent grant exists.", addOnBean.getKey(), subject);
                     allowImpersonation = true;
                 }
                 else
                 {
-                    String externallyVisibleMessage = String.format(MSG_FORMAT_NOT_ALLOWING_IMPERSONATION, addOnKey, subject);
+                    String externallyVisibleMessage = String.format(MSG_FORMAT_NOT_ALLOWING_IMPERSONATION, addOnBean.getKey(), subject);
                     log.warn("{} because this user has not granted user-agent rights to this add-on, or the grant has expired.", externallyVisibleMessage);
                     fail(request, response, externallyVisibleMessage, HttpServletResponse.SC_FORBIDDEN);
                     throw new InvalidSubjectException(subject);

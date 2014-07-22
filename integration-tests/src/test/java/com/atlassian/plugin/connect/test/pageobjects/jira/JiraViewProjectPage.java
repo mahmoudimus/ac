@@ -39,11 +39,6 @@ public class JiraViewProjectPage implements Page
         return pageBinder.bind(RemoteWebPanel.class, panelId);
     }
 
-    public RemoteWebPanel findWebPanelFromXMLAddOn(String panelId)
-    {
-        return pageBinder.bind(RemoteWebPanel.class, panelId, "remote-web-panel-");
-    }
-
     public RemoteWebItem findWebItem(String webItemId, Optional<String> dropDownMenuId)
     {
         return pageBinder.bind(RemoteWebItem.class, webItemId, dropDownMenuId);

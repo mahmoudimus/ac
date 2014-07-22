@@ -34,7 +34,6 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
   * @param {Options} options These values come from the velocity template and can be overridden using uiParams
   */
   function create(options) {
-
     $.extend(options, uiParams.fromUrl(options.src));
 
     var ns = options.ns,
@@ -111,7 +110,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
     }
     if(typeof ConfluenceMobile !== "undefined"){
       doCreate();
-    } else if ($.isReady) {
+    } else if (AJS.$.isReady) {
       // if the dom is ready then this is being run during an ajax update;
       // in that case, defer creation until the next event loop tick to ensure
       // that updates to the desired container node's parents have completed
@@ -157,8 +156,10 @@ if (!_AP.create) {
 }
 
 if(typeof ConfluenceMobile !== "undefined"){
+  // Disabled, See: AC-1210
+  AJS.log('Connect add-ons on confluence mobile are temporarily disabled., See: https://ecosystem.atlassian.net/browse/AC-1210');
   //confluence will not run scripts loaded in the body of mobile pages by default.
-  ConfluenceMobile.contentEventAggregator.on("render:pre:after-content", function(a, b, content) {
-    window['eval'].call(window, $(content.attributes.body).find(".ap-iframe-body-script").html());
-  });
+  // ConfluenceMobile.contentEventAggregator.on("render:pre:after-content", function(a, b, content) {
+  //   window['eval'].call(window, $(content.attributes.body).find(".ap-iframe-body-script").html());
+  //});
 }

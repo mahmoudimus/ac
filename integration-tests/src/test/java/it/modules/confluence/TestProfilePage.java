@@ -40,7 +40,7 @@ public class TestProfilePage extends AbstractPageTestBase
     @Test
     public void pageIsNotAccessibleWithFalseCondition()
     {
-        remotePlugin.setToggleableConditionShouldDisplay(false);
+        runner.setToggleableConditionShouldDisplay(false);
 
         loginAsAdmin();
 
