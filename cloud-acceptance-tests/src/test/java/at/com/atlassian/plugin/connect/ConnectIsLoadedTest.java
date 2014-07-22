@@ -28,7 +28,7 @@ public class ConnectIsLoadedTest
     private final static String USERNAME = "admin";
     private final static String PASSWORD = "admin";
     private final static String CONNECT_PLUGIN_KEY = "com.atlassian.plugins.atlassian-connect-plugin";
-    public static final String KEY_PROPERTY = "key";
+    private final static String KEY_PROPERTY = "key";
 
     @Category(OnDemandAcceptanceTest.class)
     @Test
