@@ -86,6 +86,7 @@
         <profile>
             <id>ondemand-acceptance-tests</id>
             <properties>
+                <skipTests>false</skipTests>
                 <!-- variables provided by the test runner https://extranet.atlassian.com/display/JIRADEV/Tested+Product+configuration -->
                 <baseurl.jira>${ondemand.baseurl}${context.jira.path}</baseurl.jira>
                 <baseurl.confluence>${ondemand.baseurl}${context.confluence.path}</baseurl.confluence>
@@ -96,6 +97,7 @@
 
     <properties>
         <mvnCommand>/usr/bin/mvn</mvnCommand>
+        <skipTests>true</skipTests>
         <od.testing.configuration>
             use-maven,3
         </od.testing.configuration>
