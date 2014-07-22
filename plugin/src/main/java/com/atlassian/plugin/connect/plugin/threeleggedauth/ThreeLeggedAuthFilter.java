@@ -6,6 +6,7 @@ import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.jwt.core.http.auth.SimplePrincipal;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
@@ -98,18 +99,21 @@ public class ThreeLeggedAuthFilter implements Filter
                     new Object[]{JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME, addOnKeyObject.getClass().getSimpleName(), addOnKeyObject});
         }
 
-        // potentially reject only if the request comes from an add-on
-        if (StringUtils.isEmpty(addOnKey) || legacyAddOnIdentifierService.isConnectAddOn(addOnKey))
+        final ConnectAddonBean addOnBean = connectAddonManager.getExistingAddon(addOnKey);
+
+        // potentially reject only if the request comes from a JSON-descriptor add-on with JWT authentication
+        if (StringUtils.isEmpty(addOnKey) || legacyAddOnIdentifierService.isConnectAddOn(addOnKey) ||
+            null == addOnBean || null == addOnBean.getAuthentication().getType() || !AuthenticationType.JWT.equals(addOnBean.getAuthentication().getType()))
         {
             filterChain.doFilter(request, response);
         }
         else
         {
-            processAddOnRequest(filterChain, request, response, addOnKey);
+            processAddOnRequest(filterChain, request, response, addOnKey, addOnBean);
         }
     }
 
-    private void processAddOnRequest(FilterChain filterChain, HttpServletRequest request, HttpServletResponse response, String addOnKey) throws IOException, ServletException
+    private void processAddOnRequest(FilterChain filterChain, HttpServletRequest request, HttpServletResponse response, String addOnKey, ConnectAddonBean addOnBean) throws IOException, ServletException
     {
         Object subjectObject = request.getAttribute(JwtConstants.HttpRequests.JWT_SUBJECT_ATTRIBUTE_NAME);
         String subject = subjectObject instanceof String ? (String) subjectObject : null;
@@ -125,7 +129,7 @@ public class ThreeLeggedAuthFilter implements Filter
             HttpSession session = request.getSession(false); // don't create a session if there is none
             try
             {
-                if (null != subject && shouldAllowImpersonation(request, response, addOnKey, subject))
+                if (null != subject && shouldAllowImpersonation(request, response, addOnKey, subject, addOnBean))
                 {
                     impersonateSubject(filterChain, request, response, subject);
                 }
@@ -155,7 +159,7 @@ public class ThreeLeggedAuthFilter implements Filter
         fail(request, response, externallyVisibleMessage, HttpServletResponse.SC_BAD_REQUEST);
     }
 
-    private boolean shouldAllowImpersonation(HttpServletRequest request, HttpServletResponse response, String addOnKey, String subject) throws InvalidSubjectException
+    private boolean shouldAllowImpersonation(HttpServletRequest request, HttpServletResponse response, String addOnKey, String subject, ConnectAddonBean addOnBean) throws InvalidSubjectException
     {
         boolean allowImpersonation = false;
 
@@ -167,8 +171,6 @@ public class ThreeLeggedAuthFilter implements Filter
         }
         else
         {
-            ConnectAddonBean addOnBean = connectAddonManager.getExistingAddon(addOnKey);
-
             if (threeLeggedAuthService.shouldSilentlyIgnoreUserAgencyRequest(subject, addOnBean))
             {
                 log.warn("Ignoring subject claim '{}' on incoming request '{}' from Connect add-on '{}' because the {} said so.",
