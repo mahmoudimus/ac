@@ -156,8 +156,10 @@ if (!_AP.create) {
 }
 
 if(typeof ConfluenceMobile !== "undefined"){
+  // Disabled, See: AC-1210
+  AJS.log('Connect add-ons on confluence mobile are temporarily disabled., See: https://ecosystem.atlassian.net/browse/AC-1210');
   //confluence will not run scripts loaded in the body of mobile pages by default.
-  ConfluenceMobile.contentEventAggregator.on("render:pre:after-content", function(a, b, content) {
-    window['eval'].call(window, $(content.attributes.body).find(".ap-iframe-body-script").html());
-  });
+  // ConfluenceMobile.contentEventAggregator.on("render:pre:after-content", function(a, b, content) {
+  //   window['eval'].call(window, $(content.attributes.body).find(".ap-iframe-body-script").html());
+  //});
 }
