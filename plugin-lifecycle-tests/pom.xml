@@ -121,7 +121,7 @@
                     </testBundleExcludes>
                     <instructions>
                         <Spring-Context>*</Spring-Context>
-                        <Atlassian-Plugin-Key>${groupId}.${artifactId}</Atlassian-Plugin-Key>
+                        <Atlassian-Plugin-Key>${project.groupId}.${project.artifactId}</Atlassian-Plugin-Key>
                         <!-- DO NOT put Atlassian-Plugin-Key here!! it will bypass all transforms and component-imports will break -->
                     </instructions>
                     <systemPropertyVariables>

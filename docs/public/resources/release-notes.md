@@ -1,8 +1,17 @@
 
 # Release Notes
 
-## [1.1.0-rc.1](../release-notes/1-1-0.html)
-* __If you read one thing, read about [breaking changes](../release-notes/1-1-0.html#breaking-changes)__
+## [1.1.0-rc.3](../release-notes/1-1-0.html#rc3)
+* __Read about [breaking changes](../release-notes/1-1-0.html#breaking-changes)__
+* Fixed OAuth authenticated requests
+* Temporarily removed support for Confluence Mobile
+
+## [1.1.0-rc.2](../release-notes/1-1-0.html#rc2)
+* __Read about [breaking changes](../release-notes/1-1-0.html#breaking-changes)__
+* Whitelist Confluence Questions context params for webitems and webpanels
+
+## [1.1.0-rc.1](../release-notes/1-1-0.html#rc1)
+* __Read about [breaking changes](../release-notes/1-1-0.html#breaking-changes)__
 * JavaScript API: removed deprecated function `AP.fireEvent()`
 * New feature: condition for checking dark features
 * Fixed: web-sections which rely on add-on-provided web-items fail to register
@@ -12,7 +21,7 @@
 * Docs: web panels are not to be used for dialog content
 
 ## [1.1.0-beta.5](../release-notes/1-1-0.html)
-* __If you read one thing, read about [breaking changes](../release-notes/1-1-0.html#breaking-changes)__
+* __Read about [breaking changes](../release-notes/1-1-0.html#breaking-changes)__
 * XML descriptor servlet paths redirect to new JSON descriptor paths
 * Manage cookies through the [javascript cookie api](../javascript/module-cookie.html)
 * Manage browser history through the [javascript history api](../javascript/module-history.html)
