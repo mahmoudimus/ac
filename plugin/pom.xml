@@ -975,6 +975,13 @@
                         </goals>
                         <phase>process-resources</phase>
                     </execution>
+                    <execution>
+                        <id>process-test</id>
+                        <goals>
+                            <goal>process-test</goal>
+                        </goals>
+                        <phase>generate-test-sources</phase>
+                    </execution>
                 </executions>
                 <configuration>
                     <additionalSourceDirectories>
