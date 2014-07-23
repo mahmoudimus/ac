@@ -975,19 +975,6 @@
                         </goals>
                         <phase>process-resources</phase>
                     </execution>
-                </executions>
-                <configuration>
-                    <additionalSourceDirectories>
-                        <additionalSourceDirectory>../modules/src/main/java/</additionalSourceDirectory>
-                        <additionalSourceDirectory>../api-parent/spi/src/main/java/</additionalSourceDirectory>
-                    </additionalSourceDirectories>
-                </configuration>
-            </plugin>
-            <!-- Run annotation processors on src/test/java sources -->
-            <plugin>
-                <groupId>org.bsc.maven</groupId>
-                <artifactId>maven-processor-plugin</artifactId>
-                <executions>
                     <execution>
                         <id>process-test</id>
                         <goals>
@@ -996,6 +983,12 @@
                         <phase>generate-test-sources</phase>
                     </execution>
                 </executions>
+                <configuration>
+                    <additionalSourceDirectories>
+                        <additionalSourceDirectory>../modules/src/main/java/</additionalSourceDirectory>
+                        <additionalSourceDirectory>../api-parent/spi/src/main/java/</additionalSourceDirectory>
+                    </additionalSourceDirectories>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -1007,7 +1000,7 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
-            
+
         </plugins>
     </build>
 
