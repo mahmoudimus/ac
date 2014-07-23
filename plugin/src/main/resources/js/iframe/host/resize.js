@@ -10,14 +10,14 @@ _AP.define("resize", ["_dollar", "_rpc"], function ($, rpc) {
 
         return {
             init: function (config, xdm) {
-                xdm.resize = _.debounce(function resize ($, width, height) {
-                    $(this.iframe).css({width: width, height: height});
-                });
+                xdm.resize = _.throttle(function(iframe, width, height){
+                    $(iframe).css({width: width, height: height});
+                }, 150);
             },
             internals: {
                 resize: function(width, height) {
                     if(!this.uiParams.isDialog){
-                        this.resize($, width, height);
+                        this.resize(this.iframe, width, height);
                     }
                 },
                 sizeToParent: _.debounce(function() {
