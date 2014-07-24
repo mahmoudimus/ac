@@ -177,6 +177,7 @@ AP.define("dialog", ["_dollar", "_rpc", "_ui-params", "_uri"],
           * });
           */
           bind: function (listener) {
+            remote.dialogListenerBound();
             var list = listeners[name];
             if (!list) {
               list = listeners[name] = [];
@@ -237,6 +238,7 @@ AP.define("dialog", ["_dollar", "_rpc", "_ui-params", "_uri"],
       },
 
       stubs: [
+        "dialogListenerBound",
         "setDialogButtonEnabled",
         "isDialogButtonEnabled",
         "createDialog",
