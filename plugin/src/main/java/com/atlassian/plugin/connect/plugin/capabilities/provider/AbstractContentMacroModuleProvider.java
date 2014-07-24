@@ -21,6 +21,7 @@ import com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonI18nM
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
 import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.slf4j.Logger;
@@ -175,6 +176,8 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     private void createEditorIFrame(ConnectAddonBean addon, T macroBean)
     {
         MacroEditorBean editor = macroBean.getEditor();
+        String width = StringUtils.isBlank(editor.getWidth()) ? "100%" : editor.getWidth();
+        String height = StringUtils.isBlank(editor.getHeight()) ? "100%" : editor.getHeight();
 
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                 .addOn(addon.getKey())
@@ -182,7 +185,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .dialogTemplate()
                 .urlTemplate(editor.getUrl())
                 .title(macroBean.getDisplayName())
-                .dimensions(editor.getWidth(), editor.getHeight())
+                .dimensions(width, height)
                 .simpleDialog(true)
                 .build();
 
