@@ -358,7 +358,6 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
-            <version>${hamcrest.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -1209,5 +1208,9 @@
         <mvnCommand>/usr/bin/mvn</mvnCommand>
         <debugSchemaGen>false</debugSchemaGen>
         <ao.version>0.25.2</ao.version>
+        <od.testing.configuration>
+            use-maven,3
+            include-artifact,com.atlassian.plugins:atlassian-connect-cloud-acceptance-tests
+        </od.testing.configuration>
     </properties>
 </project>
