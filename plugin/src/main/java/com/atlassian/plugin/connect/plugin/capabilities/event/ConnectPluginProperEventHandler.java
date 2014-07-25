@@ -79,9 +79,9 @@ public class ConnectPluginProperEventHandler implements InitializingBean, Dispos
                 {
                     convertOldAddon(plugin);
                 }
-                catch (Exception e) // TODO: not sure if it is safe to catch anything more specific than Exception
+                catch (Exception e)
                 {
-                    log.error("Failed to convert addon to fileless for key {}", plugin.getKey());
+                    log.error("Failed to convert P2 addon to file-less for key {}", plugin.getKey());
                 }
             }
         }
