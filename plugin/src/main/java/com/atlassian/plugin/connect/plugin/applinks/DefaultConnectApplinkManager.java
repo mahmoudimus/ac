@@ -80,10 +80,10 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
 
                 final ApplicationId expectedApplicationId = ApplicationIdUtil.generate(baseUri);
 
-                ApplicationLink link;
                 final RemotePluginContainerApplicationType applicationType = typeAccessor.getApplicationType(RemotePluginContainerApplicationType.class);
 
-                if (!compatibleAppLinkExists(pluginKey, expectedApplicationId))
+                ApplicationLink link = getCompatibleAppLink(pluginKey, expectedApplicationId);
+                if (link == null)
                 {
                     final ApplicationLinkDetails details = ApplicationLinkDetails.builder()
                             .displayUrl(baseUri)
@@ -95,30 +95,29 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
                     log.info("Creating an application link for Connect add-on with key '{}'", pluginKey);
 
                     link = applicationLinkService.addApplicationLink(expectedApplicationId, applicationType, details);
+                }
 
-                    link.putProperty(PLUGIN_KEY_PROPERTY, pluginKey);
-                    link.putProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME, addonUserKey);
-                    link.putProperty("IS_ACTIVITY_ITEM_PROVIDER", Boolean.FALSE.toString());
-                    link.putProperty("system", Boolean.TRUE.toString());
+                link.putProperty(PLUGIN_KEY_PROPERTY, pluginKey);
+                link.putProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME, addonUserKey);
+                link.putProperty("IS_ACTIVITY_ITEM_PROVIDER", Boolean.FALSE.toString());
+                link.putProperty("system", Boolean.TRUE.toString());
 
-                    ServiceProvider serviceProvider = createServiceProvider();
-                    switch (authType)
-                    {
-                        case JWT:
-                            link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.JWT.toString());
-                            link.putProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME, publicKey);
-                            break;
-                        case OAUTH:
-                            oAuthLinkManager.associateProviderWithLink(link, applicationType.getId().get(), serviceProvider);
-                            registerOAuth(link, plugin, publicKey);
-                            break;
-                        case NONE:
-                            link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.NONE.toString());
-                            break;
-                        default:
-                            log.warn("Unknown authType encountered: " + authType.name());
-                    }
-
+                ServiceProvider serviceProvider = createServiceProvider();
+                switch (authType)
+                {
+                    case JWT:
+                        link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.JWT.toString());
+                        link.putProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME, publicKey);
+                        break;
+                    case OAUTH:
+                        oAuthLinkManager.associateProviderWithLink(link, applicationType.getId().get(), serviceProvider);
+                        registerOAuth(link, plugin, publicKey);
+                        break;
+                    case NONE:
+                        link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.NONE.toString());
+                        break;
+                    default:
+                        log.warn("Unknown authType encountered: " + authType.name());
                 }
                 return null;
             }
@@ -126,7 +125,8 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
     }
 
     @Override
-    public void createAppLink(final ConnectAddonBean addon, final String baseUrl, final AuthenticationType authType, final String publicKey, final String addonUserKey)
+    public void createAppLink(final ConnectAddonBean addon, final String baseUrl,
+                              final AuthenticationType authType, final String publicKey, final String addonUserKey)
     {
         transactionTemplate.execute(new TransactionCallback<Void>()
         {
@@ -138,46 +138,47 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
 
                 final ApplicationId expectedApplicationId = ApplicationIdUtil.generate(baseUri);
 
-                ApplicationLink link;
                 final RemotePluginContainerApplicationType applicationType = typeAccessor.getApplicationType(RemotePluginContainerApplicationType.class);
 
-                if (!compatibleAppLinkExists(pluginKey, expectedApplicationId))
+                ApplicationLink link = getCompatibleAppLink(pluginKey, expectedApplicationId);
+                if (link == null)
                 {
                     final ApplicationLinkDetails details = ApplicationLinkDetails.builder()
-                                                                                 .displayUrl(baseUri)
-                                                                                 .isPrimary(false)
-                                                                                 .name(addon.getName() != null ? addon.getName() : addon.getKey())
-                                                                                 .rpcUrl(baseUri)
-                                                                                 .build();
+                            .displayUrl(baseUri)
+                            .isPrimary(false)
+                            .name(addon.getName() != null ? addon.getName() : addon.getKey())
+                            .rpcUrl(baseUri)
+                            .build();
 
                     log.info("Creating an application link for Connect add-on with key '{}'", pluginKey);
 
                     link = applicationLinkService.addApplicationLink(expectedApplicationId, applicationType, details);
-
-                    link.putProperty(PLUGIN_KEY_PROPERTY, pluginKey);
-                    link.putProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME, addonUserKey);
-                    link.putProperty("IS_ACTIVITY_ITEM_PROVIDER", Boolean.FALSE.toString());
-                    link.putProperty("system", Boolean.TRUE.toString());
-
-                    ServiceProvider serviceProvider = createServiceProvider();
-                    switch (authType)
-                    {
-                        case JWT:
-                            link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.JWT.toString());
-                            link.putProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME, publicKey);
-                            break;
-                        case OAUTH:
-                            oAuthLinkManager.associateProviderWithLink(link, applicationType.getId().get(), serviceProvider);
-                            registerOAuth(link, addon, publicKey);
-                            break;
-                        case NONE:
-                            link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.NONE.toString());
-                            break;
-                        default:
-                            log.warn("Unknown authType encountered: " + authType.name());
-                    }
-
                 }
+
+                link.putProperty(PLUGIN_KEY_PROPERTY, pluginKey);
+                link.putProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME, addonUserKey);
+                link.putProperty("IS_ACTIVITY_ITEM_PROVIDER", Boolean.FALSE.toString());
+                link.putProperty("system", Boolean.TRUE.toString());
+
+                ServiceProvider serviceProvider = createServiceProvider();
+                switch (authType)
+                {
+                    case JWT:
+                        link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.JWT.toString());
+                        link.putProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME, publicKey);
+                        break;
+                    case OAUTH:
+                        // TODO: is this safe to do if already existing??
+                        oAuthLinkManager.associateProviderWithLink(link, applicationType.getId().get(), serviceProvider);
+                        registerOAuth(link, addon, publicKey);
+                        break;
+                    case NONE:
+                        link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.NONE.toString());
+                        break;
+                    default:
+                        log.warn("Unknown authType encountered: " + authType.name());
+                }
+
                 return null;
             }
         });
@@ -234,7 +235,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
         return applicationLinkService.createSelfLinkFor(applink.getId());
     }
 
-    private boolean compatibleAppLinkExists(String pluginKey, ApplicationId appId)
+    private ApplicationLink getCompatibleAppLink(String pluginKey, ApplicationId appId)
     {
         ApplicationLink link;
 
@@ -247,7 +248,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
             log.warn("Link found for '{}' but the type cannot be found, deleting...", pluginKey);
             manuallyDeleteApplicationId(appId);
 
-            return false;
+            return null;
         }
 
         if (null != link)
@@ -256,7 +257,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
             {
                 log.debug("Application link for remote plugin container '{}' already exists", pluginKey);
 
-                return true;
+                return link;
             }
             else
             {
@@ -277,7 +278,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
                 }
             }
 
-            return false;
+            return null;
         }
 
     }
