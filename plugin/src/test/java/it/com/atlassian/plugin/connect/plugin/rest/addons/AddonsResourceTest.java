@@ -303,13 +303,6 @@ public class AddonsResourceTest
         assertEquals("No JSON add-ons should be returned", 0, addons.size());
     }
 
-    @SuppressWarnings ("unchecked")
-    private String getApplinkId(final RequestUtil.Response response)
-    {
-        Map<String, String> applink = (Map<String, String>) response.getJsonBody().get("applink");
-        return applink.get("id");
-    }
-
     @Test
     @Ignore
     public void uninstallXmlAddon() throws IOException

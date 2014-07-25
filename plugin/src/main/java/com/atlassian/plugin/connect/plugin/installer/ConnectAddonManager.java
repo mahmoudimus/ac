@@ -171,6 +171,11 @@ public class ConnectAddonManager
         return addonRegistry.getAllAddonBeans();
     }
 
+    /**
+     * This method is public for test visibility. In preference, please use {@link ConnectAddOnInstaller#install(String)}
+     * @param jsonDescriptor the json descriptor of the add-on to install
+     * @return a {@link ConnectAddonBean} representation of the add-on
+     */
     public ConnectAddonBean installConnectAddon(String jsonDescriptor)
     {
         long startTime = System.currentTimeMillis();
