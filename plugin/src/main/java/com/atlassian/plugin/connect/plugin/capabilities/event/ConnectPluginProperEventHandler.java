@@ -75,28 +75,40 @@ public class ConnectPluginProperEventHandler implements InitializingBean, Dispos
         {
             if(addOnIdentifierService.isConnectAddOn(plugin))
             {
-                log.debug("Converting old P2 addon to new file-less addon: " + plugin.getKey());
-                String pluginKey = plugin.getKey();
-                String restartState = (PluginState.ENABLED.equals(plugin.getPluginState())) ? PluginState.ENABLED.name() : PluginState.DISABLED.name();
-                
-                AddonSettings settings = new AddonSettings()
-                        .setDescriptor(legacyRegistry.getDescriptor(pluginKey))
-                        .setRestartState(restartState)
-                        .setUserKey(legacyRegistry.getUserKey(pluginKey))
-                        .setAuth(legacyRegistry.getAuthType(pluginKey).name())
-                        .setBaseUrl(legacyRegistry.getBaseUrl(pluginKey))
-                        .setSecret(legacyRegistry.getSecret(pluginKey));
-                
-                addonRegistry.storeAddonSettings(pluginKey,settings);
-                
-                if(PluginState.ENABLED.equals(plugin.getPluginState()))
+                try
                 {
-                    addonManager.enableConnectAddon(pluginKey);
+                    convertOldAddon(plugin);
                 }
-                
-                pluginController.uninstall(plugin);
+                catch (Exception e) // TODO: not sure if it is safe to catch anything more specific than Exception
+                {
+                    log.error("Failed to convert addon to fileless for key {}", plugin.getKey());
+                }
             }
         }
+    }
+
+    private void convertOldAddon(Plugin plugin)
+    {
+        log.debug("Converting old P2 addon to new file-less addon: " + plugin.getKey());
+        String pluginKey = plugin.getKey();
+        String restartState = (PluginState.ENABLED.equals(plugin.getPluginState())) ? PluginState.ENABLED.name() : PluginState.DISABLED.name();
+
+        AddonSettings settings = new AddonSettings()
+                .setDescriptor(legacyRegistry.getDescriptor(pluginKey))
+                .setRestartState(restartState)
+                .setUserKey(legacyRegistry.getUserKey(pluginKey))
+                .setAuth(legacyRegistry.getAuthType(pluginKey).name())
+                .setBaseUrl(legacyRegistry.getBaseUrl(pluginKey))
+                .setSecret(legacyRegistry.getSecret(pluginKey));
+
+        addonRegistry.storeAddonSettings(pluginKey,settings);
+
+        if(PluginState.ENABLED.equals(plugin.getPluginState()))
+        {
+            addonManager.enableConnectAddon(pluginKey);
+        }
+
+        pluginController.uninstall(plugin);
     }
 
     @PluginEventListener
