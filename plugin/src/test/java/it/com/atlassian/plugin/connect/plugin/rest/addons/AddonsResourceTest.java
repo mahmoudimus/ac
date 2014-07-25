@@ -303,28 +303,6 @@ public class AddonsResourceTest
         assertEquals("No JSON add-ons should be returned", 0, addons.size());
     }
 
-    @Test
-    public void reinstallJsonAddon() throws IOException
-    {
-        RequestUtil.Response response = getAddonByKey(jsonAddon.getKey());
-
-        assertEquals("Addon should be found", 200, response.getStatusCode());
-        String applinkId = getApplinkId(response);
-
-        RequestUtil.Request request = requestUtil.requestBuilder()
-                .setMethod(HttpMethod.PUT)
-                .setUri(requestUtil.getApplicationRestUrl(REST_BASE + "/" + jsonAddon.getKey() + "/reinstall"))
-                .setUsername("admin")
-                .setPassword("admin")
-                .build();
-
-        RequestUtil.Response reinstallResponse = requestUtil.makeRequest(request);
-
-        assertEquals("Response should be 200OK", 200, reinstallResponse.getStatusCode());
-        assertEquals("Addon key is incorrect", jsonAddon.getKey(), reinstallResponse.getJsonBody().get("key"));
-        assertNotEquals("Applink of reinstalled add-on should different to original add-on", applinkId, getApplinkId(reinstallResponse));
-    }
-
     @SuppressWarnings ("unchecked")
     private String getApplinkId(final RequestUtil.Response response)
     {
