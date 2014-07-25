@@ -11,10 +11,10 @@ import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.rest.RestError;
+import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddonType;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddons;
 import com.atlassian.plugin.connect.plugin.rest.data.RestMinimalAddon;
-import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestNamedLink;
 import com.atlassian.plugin.connect.plugin.rest.data.RestRelatedLinks;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -201,6 +202,36 @@ public class AddonsResource
         catch (Exception e)
         {
             String message = "Unable to uninstall add-on " + addonKey + ": " + e.getMessage();
+            log.error(message, e);
+            return getErrorResponse(message, Response.Status.INTERNAL_SERVER_ERROR);
+        }
+
+        String message = "Add-on with key " + addonKey + " was not found";
+        return getErrorResponse(message, Response.Status.NOT_FOUND);
+    }
+
+    @PUT
+    @Produces ("application/json")
+    @Path ("/{addonKey}/reinstall")
+    public Response reinstallAddon(@PathParam ("addonKey") String addonKey)
+    {
+        try
+        {
+            ConnectAddonBean addonBean = connectAddonManager.getExistingAddon(addonKey);
+            if (addonBean != null)
+            {
+                String descriptor = addonRegistry.getDescriptor(addonKey);
+
+                connectAddonManager.uninstallConnectAddonQuietly(addonKey); // should send event?
+                connectAddonManager.installConnectAddon(descriptor);
+
+                RestAddon restAddon = getRestAddonByKey(addonKey);
+                return Response.ok().entity(restAddon).build();
+            }
+        }
+        catch (Exception e)
+        {
+            String message = "Unable to reinstall add-on " + addonKey + ": " + e.getMessage();
             log.error(message, e);
             return getErrorResponse(message, Response.Status.INTERNAL_SERVER_ERROR);
         }

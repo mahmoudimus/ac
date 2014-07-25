@@ -18,7 +18,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
-import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnaphot;
+import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
@@ -122,14 +122,14 @@ public class WorkflowPostFunctionTest
     @Test
     public void requestsAreSent() throws Exception
     {
-        ServletRequestSnaphot request = triggerWorkflowTransition();
+        ServletRequestSnapshot request = triggerWorkflowTransition();
         assertNotNull(request);
     }
 
     @Test
     public void requestsAreSigned() throws Exception
     {
-        ServletRequestSnaphot request = triggerWorkflowTransition();
+        ServletRequestSnapshot request = triggerWorkflowTransition();
         String authorizationHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION.toLowerCase());
         assertNotNull(authorizationHeader);
         assertTrue(authorizationHeader.startsWith("JWT "));
@@ -138,7 +138,7 @@ public class WorkflowPostFunctionTest
     @Test
     public void requestsContainTransition() throws Exception
     {
-        ServletRequestSnaphot request = triggerWorkflowTransition();
+        ServletRequestSnapshot request = triggerWorkflowTransition();
         JSONObject payload = new JSONObject(request.getEntity());
         assertNotNull(payload.get("transition"));
     }
@@ -146,7 +146,7 @@ public class WorkflowPostFunctionTest
     @Test
     public void requestsContainIssue() throws Exception
     {
-        ServletRequestSnaphot request = triggerWorkflowTransition();
+        ServletRequestSnapshot request = triggerWorkflowTransition();
         JSONObject payload = new JSONObject(request.getEntity());
         assertNotNull(payload.get("issue"));
     }
@@ -154,12 +154,12 @@ public class WorkflowPostFunctionTest
     @Test
     public void requestsContainAddonConfiguration() throws Exception
     {
-        ServletRequestSnaphot request = triggerWorkflowTransition();
+        ServletRequestSnapshot request = triggerWorkflowTransition();
         JSONObject payload = new JSONObject(request.getEntity());
         assertNotNull(payload.get("configuration"));
     }
 
-    private ServletRequestSnaphot triggerWorkflowTransition() throws CreateException
+    private ServletRequestSnapshot triggerWorkflowTransition() throws CreateException
     {
         MutableIssue issue = issueManager.getIssueObject(createIssue("triggerWorkflowTransition").getId());
         workflowManager.migrateIssueToWorkflow(issue, workflow, issue.getStatusObject());
@@ -182,7 +182,7 @@ public class WorkflowPostFunctionTest
         return issueManager.createIssueObject(authenticationContext.getUser().getDirectoryUser(), params);
     }
 
-    private ServletRequestSnaphot getTriggeredRequest()
+    private ServletRequestSnapshot getTriggeredRequest()
     {
         return testFilterResults.getRequest(plugin.getKey(), TRIGGERED_URL);
     }

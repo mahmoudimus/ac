@@ -5,21 +5,21 @@ import java.util.Map;
 
 public class DefaultAddonTestFilterResults implements AddonTestFilterResults
 {
-    private Map<String, ServletRequestSnaphot> requestMap;
+    private Map<String, ServletRequestSnapshot> requestMap;
 
     public DefaultAddonTestFilterResults()
     {
-        this.requestMap = new HashMap<String, ServletRequestSnaphot>();
+        this.requestMap = new HashMap<String, ServletRequestSnapshot>();
     }
 
     @Override
-    public void put(String key, ServletRequestSnaphot req)
+    public void put(String key, ServletRequestSnapshot req)
     {
         requestMap.put(key, req);
     }
 
     @Override
-    public ServletRequestSnaphot getRequest(String addonKey, String resource)
+    public ServletRequestSnapshot getRequest(String addonKey, String resource)
     {
         String res = (resource.startsWith("/")) ? resource : "/" + resource;
         return requestMap.get(addonKey + res);

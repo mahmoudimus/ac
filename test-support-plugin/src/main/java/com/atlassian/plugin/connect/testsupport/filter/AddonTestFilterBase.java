@@ -64,7 +64,7 @@ public abstract class AddonTestFilterBase implements Filter
                 String addonResource = matcher.group(3);
                 String parameter = matcher.group(4);
 
-                testFilterResults.put(addOnKey + "/" + addonResource, new ServletRequestSnaphot(req, userManager));
+                testFilterResults.put(addOnKey + "/" + addonResource, new ServletRequestSnapshot(req, userManager));
 
                 Option<PrecannedResponse> precannedResponse = addonPrecannedResponseHelper.poll();
 

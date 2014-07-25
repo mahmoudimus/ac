@@ -219,14 +219,7 @@ public class AddonsResourceTest
     @Test
     public void testAddonKey() throws IOException
     {
-        RequestUtil.Request request = requestUtil.requestBuilder()
-                .setMethod(HttpMethod.GET)
-                .setUri(requestUtil.getApplicationRestUrl(REST_BASE + "/" + jsonAddon.getKey()))
-                .setUsername("admin")
-                .setPassword("admin")
-                .build();
-
-        RequestUtil.Response response = requestUtil.makeRequest(request);
+        RequestUtil.Response response = getAddonByKey(jsonAddon.getKey());
 
         assertEquals("Addon should be found", 200, response.getStatusCode());
         assertEquals("Addon key is incorrect", jsonAddon.getKey(), response.getJsonBody().get("key"));
@@ -235,14 +228,7 @@ public class AddonsResourceTest
     @Test
     public void testAddonState() throws IOException
     {
-        RequestUtil.Request request = requestUtil.requestBuilder()
-                .setMethod(HttpMethod.GET)
-                .setUri(requestUtil.getApplicationRestUrl(REST_BASE + "/" + jsonAddon.getKey()))
-                .setUsername("admin")
-                .setPassword("admin")
-                .build();
-
-        RequestUtil.Response response = requestUtil.makeRequest(request);
+        RequestUtil.Response response = getAddonByKey(jsonAddon.getKey());
 
         assertEquals("Addon should be found", 200, response.getStatusCode());
         assertEquals("Addon state is incorrect", "ENABLED", response.getJsonBody().get("state"));
@@ -251,14 +237,7 @@ public class AddonsResourceTest
     @Test
     public void testAddonVersion() throws IOException
     {
-        RequestUtil.Request request = requestUtil.requestBuilder()
-                .setMethod(HttpMethod.GET)
-                .setUri(requestUtil.getApplicationRestUrl(REST_BASE + "/" + jsonAddon.getKey()))
-                .setUsername("admin")
-                .setPassword("admin")
-                .build();
-
-        RequestUtil.Response response = requestUtil.makeRequest(request);
+        RequestUtil.Response response = getAddonByKey(jsonAddon.getKey());
 
         assertEquals("Addon should be found", 200, response.getStatusCode());
         assertEquals("Addon version is incorrect", "1.0", response.getJsonBody().get("version"));
@@ -267,14 +246,7 @@ public class AddonsResourceTest
     @Test
     public void testAddonType() throws IOException
     {
-        RequestUtil.Request request = requestUtil.requestBuilder()
-                .setMethod(HttpMethod.GET)
-                .setUri(requestUtil.getApplicationRestUrl(REST_BASE + "/" + jsonAddon.getKey()))
-                .setUsername("admin")
-                .setPassword("admin")
-                .build();
-
-        RequestUtil.Response response = requestUtil.makeRequest(request);
+        RequestUtil.Response response = getAddonByKey(jsonAddon.getKey());
 
         assertEquals("Addon should be found", 200, response.getStatusCode());
         assertEquals("Addon type is incorrect", "JSON", response.getJsonBody().get("type"));
@@ -283,14 +255,7 @@ public class AddonsResourceTest
     @Test
     public void testAddonApplink() throws IOException
     {
-        RequestUtil.Request request = requestUtil.requestBuilder()
-                .setMethod(HttpMethod.GET)
-                .setUri(requestUtil.getApplicationRestUrl(REST_BASE + "/" + jsonAddon.getKey()))
-                .setUsername("admin")
-                .setPassword("admin")
-                .build();
-
-        RequestUtil.Response response = requestUtil.makeRequest(request);
+        RequestUtil.Response response = getAddonByKey(jsonAddon.getKey());
 
         assertEquals("Addon should be found", 200, response.getStatusCode());
         assertNotNull("Addon should have applink", response.getJsonBody().get("applink"));
@@ -299,14 +264,7 @@ public class AddonsResourceTest
     @Test
     public void testAddonLinks() throws IOException
     {
-        RequestUtil.Request request = requestUtil.requestBuilder()
-                .setMethod(HttpMethod.GET)
-                .setUri(requestUtil.getApplicationRestUrl(REST_BASE + "/" + jsonAddon.getKey()))
-                .setUsername("admin")
-                .setPassword("admin")
-                .build();
-
-        RequestUtil.Response response = requestUtil.makeRequest(request);
+        RequestUtil.Response response = getAddonByKey(jsonAddon.getKey());
 
         assertEquals("Addon should be found", 200, response.getStatusCode());
         assertNotNull("Addon should have links", response.getJsonBody().get("links"));
@@ -346,6 +304,35 @@ public class AddonsResourceTest
     }
 
     @Test
+    public void reinstallJsonAddon() throws IOException
+    {
+        RequestUtil.Response response = getAddonByKey(jsonAddon.getKey());
+
+        assertEquals("Addon should be found", 200, response.getStatusCode());
+        String applinkId = getApplinkId(response);
+
+        RequestUtil.Request request = requestUtil.requestBuilder()
+                .setMethod(HttpMethod.PUT)
+                .setUri(requestUtil.getApplicationRestUrl(REST_BASE + "/" + jsonAddon.getKey() + "/reinstall"))
+                .setUsername("admin")
+                .setPassword("admin")
+                .build();
+
+        RequestUtil.Response reinstallResponse = requestUtil.makeRequest(request);
+
+        assertEquals("Response should be 200OK", 200, reinstallResponse.getStatusCode());
+        assertEquals("Addon key is incorrect", jsonAddon.getKey(), reinstallResponse.getJsonBody().get("key"));
+        assertNotEquals("Applink of reinstalled add-on should different to original add-on", applinkId, getApplinkId(reinstallResponse));
+    }
+
+    @SuppressWarnings ("unchecked")
+    private String getApplinkId(final RequestUtil.Response response)
+    {
+        Map<String, String> applink = (Map<String, String>) response.getJsonBody().get("applink");
+        return applink.get("id");
+    }
+
+    @Test
     @Ignore
     public void uninstallXmlAddon() throws IOException
     {
@@ -376,6 +363,18 @@ public class AddonsResourceTest
         List<Map> addons = getAddonListWithoutLucidchart(response);
 
         assertEquals("No XML add-ons should be returned", 0, addons.size());
+    }
+
+    private RequestUtil.Response getAddonByKey(String addonKey) throws IOException
+    {
+        RequestUtil.Request request = requestUtil.requestBuilder()
+                .setMethod(HttpMethod.GET)
+                .setUri(requestUtil.getApplicationRestUrl(REST_BASE + "/" + addonKey))
+                .setUsername("admin")
+                .setPassword("admin")
+                .build();
+
+        return requestUtil.makeRequest(request);
     }
 
     private Plugin installJsonAddon() throws IOException
