@@ -256,11 +256,6 @@ public class ConnectAddonManager
 
                 eventPublisher.publish(new ConnectAddonEnabledEvent(pluginKey, createEventData(pluginKey, SyncHandler.ENABLED.name().toLowerCase())));
 
-                if (log.isDebugEnabled())
-                {
-                    log.debug("Enabled connect addon '" + pluginKey + "'");
-                }
-
                 long endTime = System.currentTimeMillis();
                 log.info("Connect addon '" + addon.getKey() + "' enabled in " + (endTime - startTime) + "ms");
             }
@@ -304,11 +299,6 @@ public class ConnectAddonManager
             if (persistState)
             {
                 addonRegistry.storeRestartState(pluginKey, PluginState.DISABLED);
-            }
-
-            if (log.isDebugEnabled())
-            {
-                log.debug("Disabled connect addon '" + pluginKey + "'");
             }
 
             long endTime = System.currentTimeMillis();
@@ -386,11 +376,6 @@ public class ConnectAddonManager
             {
                 addonRegistry.removeAll(pluginKey);
             }
-        }
-
-        if (log.isDebugEnabled())
-        {
-            log.debug("Uninstalled connect addon '" + pluginKey + "'");
         }
 
         long endTime = System.currentTimeMillis();

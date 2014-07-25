@@ -7,6 +7,7 @@ import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.PluginException;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnInstaller;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
@@ -60,13 +61,14 @@ public class AddonsResource
     private final LicenseRetriever licenseRetriever;
     private final ConnectApplinkManager connectApplinkManager;
     private final ConnectAddonManager connectAddonManager;
+    private final ConnectAddOnInstaller connectAddOnInstaller;
     private final ApplicationProperties applicationProperties;
 
     public AddonsResource(PluginAccessor pluginAccessor, PluginController pluginController,
             LegacyAddOnIdentifierService legacyAddOnIdentifierService,
             ConnectAddonRegistry addonRegistry, LicenseRetriever licenseRetriever,
             ConnectApplinkManager connectApplinkManager, ConnectAddonManager connectAddonManager,
-            ApplicationProperties applicationProperties)
+            ConnectAddOnInstaller connectAddOnInstaller, ApplicationProperties applicationProperties)
     {
         this.pluginAccessor = pluginAccessor;
         this.pluginController = pluginController;
@@ -75,6 +77,7 @@ public class AddonsResource
         this.licenseRetriever = licenseRetriever;
         this.connectApplinkManager = connectApplinkManager;
         this.connectAddonManager = connectAddonManager;
+        this.connectAddOnInstaller = connectAddOnInstaller;
         this.applicationProperties = applicationProperties;
     }
 
@@ -222,8 +225,8 @@ public class AddonsResource
             {
                 String descriptor = addonRegistry.getDescriptor(addonKey);
 
-                connectAddonManager.uninstallConnectAddonQuietly(addonKey); // should send event?
-                connectAddonManager.installConnectAddon(descriptor);
+                connectAddonManager.uninstallConnectAddonQuietly(addonKey);
+                connectAddOnInstaller.install(descriptor);
 
                 RestAddon restAddon = getRestAddonByKey(addonKey);
                 return Response.ok().entity(restAddon).build();
