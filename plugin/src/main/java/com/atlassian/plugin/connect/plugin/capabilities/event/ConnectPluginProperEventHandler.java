@@ -4,6 +4,8 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.PluginState;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.installer.AddonSettings;
@@ -92,12 +94,20 @@ public class ConnectPluginProperEventHandler implements InitializingBean, Dispos
             String pluginKey = plugin.getKey();
             String restartState = (PluginState.ENABLED.equals(plugin.getPluginState())) ? PluginState.ENABLED.name() : PluginState.DISABLED.name();
 
+            String descriptor = legacyRegistry.getDescriptor(pluginKey);
+            ConnectAddonBean connectAddonBean = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(descriptor, null);
+
             AddonSettings settings = new AddonSettings()
-                    .setDescriptor(legacyRegistry.getDescriptor(pluginKey))
+                    .setDescriptor(descriptor)
                     .setRestartState(restartState)
-                    .setUserKey(legacyRegistry.getUserKey(pluginKey))
-                    .setAuth(legacyRegistry.getAuthType(pluginKey).name())
-                    .setBaseUrl(legacyRegistry.getBaseUrl(pluginKey))
+                    .setUserKey(legacyRegistry.hasUserKey(pluginKey) ?
+                            legacyRegistry.getUserKey(pluginKey) : "addon_" + pluginKey)
+                    .setAuth(legacyRegistry.hasAuthType(pluginKey) ?
+                            legacyRegistry.getAuthType(pluginKey).name() :
+                            connectAddonBean.getAuthentication().getType().name())
+                    .setBaseUrl(legacyRegistry.hasBaseUrl(pluginKey) ?
+                            legacyRegistry.getBaseUrl(pluginKey) :
+                            connectAddonBean.getBaseUrl())
                     .setSecret(legacyRegistry.getSecret(pluginKey));
 
             addonRegistry.storeAddonSettings(pluginKey, settings);
