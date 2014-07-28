@@ -1,12 +1,18 @@
 package it.com.atlassian.plugin.connect.installer;
 
+import com.atlassian.applinks.api.ApplicationId;
+import com.atlassian.applinks.api.ApplicationLink;
+import com.atlassian.applinks.api.TypeNotInstalledException;
+import com.atlassian.applinks.spi.application.ApplicationIdUtil;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
+import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
@@ -22,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.URI;
 
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
 import static junit.framework.Assert.*;
@@ -39,29 +46,37 @@ public class OAuthToJwtUpdateTest
     private final TestAuthenticator testAuthenticator;
     private final ConnectAddonRegistry connectAddonRegistry;
     private final AddonTestFilterResults testFilterResults;
+    private final ConnectApplinkManager connectApplinkManager;
     private Plugin oAuthPlugin;
     private Plugin jwtPlugin;
     private ConnectAddonBean oAuthAddOnBean;
+    private ApplicationLink oauthApplink;
+    private ApplicationLink jwtApplink;
 
-    public OAuthToJwtUpdateTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, ConnectAddonRegistry connectAddonRegistry, AddonTestFilterResults testFilterResults)
+    public OAuthToJwtUpdateTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,
+                                ConnectAddonRegistry connectAddonRegistry, AddonTestFilterResults testFilterResults,
+                                ConnectApplinkManager connectApplinkManager)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
         this.connectAddonRegistry = connectAddonRegistry;
         this.testFilterResults = testFilterResults;
+        this.connectApplinkManager = connectApplinkManager;
     }
 
     @BeforeClass
-    public void beforeAllTests() throws IOException
-    {
+    public void beforeAllTests() throws IOException, TypeNotInstalledException {
         oAuthAddOnBean = createOAuthAddOnBean();
 
         //you MUST login as admin before you can use the testPluginInstaler
         testAuthenticator.authenticateUser("admin");
         
         oAuthPlugin = testPluginInstaller.installAddon(oAuthAddOnBean);
+        oauthApplink = connectApplinkManager.getAppLink(oAuthPlugin.getKey());
+
         jwtPlugin = testPluginInstaller.installAddon(createJwtAddOn(oAuthAddOnBean));
         oAuthPlugin = null; // we get to this line of code only if installing the update works
+        jwtApplink = connectApplinkManager.getAppLink(jwtPlugin.getKey());
     }
 
     @AfterClass
@@ -144,6 +159,13 @@ public class OAuthToJwtUpdateTest
     public void installedCallbackContainsSameSharedSecretAsRegistry()
     {
         assertEquals(connectAddonRegistry.getSecret(jwtPlugin.getKey()), getLastInstallPayload().get("sharedSecret").getAsString());
+    }
+
+    @Test
+    public void blahApplink()
+    {
+        assertEquals(oauthApplink.getProperty(AuthenticationMethod.PROPERTY_NAME), AuthenticationMethod.OAUTH1);
+        assertEquals(jwtApplink.getProperty(AuthenticationMethod.PROPERTY_NAME), AuthenticationMethod.JWT);
     }
 
     private JsonObject getLastInstallPayload()

@@ -24,6 +24,8 @@
         <package>com.atlassian.plugin.connect.testsupport.rest</package>
     </rest>
 
+    <component-import key="connectApplinkManager" interface="com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager" />
+
     <component-import key="userManager" interface="com.atlassian.sal.api.user.UserManager"/>
     
     <component-import key="salLicenseHandler" interface="com.atlassian.sal.api.license.LicenseHandler"/>

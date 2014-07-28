@@ -164,6 +164,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
                 switch (authType)
                 {
                     case JWT:
+                        // TODO: if we have upgraded from oauth do we need to delete any oauth stuff on the applink?
                         link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.JWT.toString());
                         link.putProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME, publicKey);
                         break;
