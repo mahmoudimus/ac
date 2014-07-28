@@ -1,7 +1,6 @@
 package it.com.atlassian.plugin.connect.installer;
 
 import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.applinks.api.TypeNotInstalledException;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
@@ -63,7 +62,7 @@ public class OAuthToJwtUpdateTest
     }
 
     @BeforeClass
-    public void beforeAllTests() throws IOException, TypeNotInstalledException {
+    public void beforeAllTests() throws IOException {
         oAuthAddOnBean = createOAuthAddOnBean();
 
         //you MUST login as admin before you can use the testPluginInstaler
@@ -184,12 +183,15 @@ public class OAuthToJwtUpdateTest
         // make sure the applink now reflects what we expect
         ApplicationLink jwtApplink = connectApplinkManager.getAppLink(jwtPlugin.getKey());
         assertEquals("JWT", jwtApplink.getProperty(AuthenticationMethod.PROPERTY_NAME));
-        assertFalse(ObjectUtils.equals(origSharedSecret, jwtApplink.getProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME)));
+        Object newSharedSecret = jwtApplink.getProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME);
+        assertFalse(ObjectUtils.equals(origSharedSecret, newSharedSecret));
 
         assertEquals(ConnectAddOnUserUtil.usernameForAddon(jwtPlugin.getKey()), jwtApplink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME));
         assertEquals(jwtPlugin.getKey(), jwtApplink.getProperty(JwtConstants.AppLinks.ADD_ON_ID_PROPERTY_NAME));
         assertEquals(Boolean.FALSE.toString(), jwtApplink.getProperty("IS_ACTIVITY_ITEM_PROVIDER"));
         assertEquals(Boolean.TRUE.toString(), jwtApplink.getProperty("system"));
+        assertEquals(newSharedSecret, getLastInstallPayload().get("sharedSecret").getAsString());
+
     }
 
     private JsonObject getLastInstallPayload()
