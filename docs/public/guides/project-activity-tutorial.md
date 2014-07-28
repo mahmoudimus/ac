@@ -29,7 +29,7 @@ to interface with JIRA. Finally, you'll create your table using [D3.js](http://d
 
 Here's an example what your add-on might look like:
 
-<img src="../assets/images/geiger-1-4.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
+<img src="../assets/images/jira-activity-4.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
 
 ## <a name="environment"></a> Configuring your development environment  
 
@@ -105,12 +105,12 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
      "generalPages": [
 
 	    {
-	        "key": "stats",
+	        "key": "activity",
 	        "location": "system.top.navigation.bar",
 	        "name": {
-	            "value": "Stats"
+	            "value": "Activity"
 	        },
-	        "url": "/stats",
+	        "url": "/activity",
 	        "conditions": [{
 	            "condition": "user_is_logged_in"
 	        }]
@@ -155,7 +155,7 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	                 "name": {
 	                     "value": "Activity"
 	                 },
-	                 "url": "/stats",
+	                 "url": "/activity",
 	                 "conditions": [{
 	                     "condition": "user_is_logged_in"
 	                 }]
@@ -178,7 +178,7 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 1. After the `/hello-world` stub code, add:  
 	````
 	app.get('/activity', addon.authenticate(), function(req, res) {
-	    res.render('stats', { title: "JIRA Activity" });
+	    res.render('activity', { title: "JIRA activity" });
 	});
 	````  
 	Your `routes/index.js` file should resemble this:  
@@ -217,12 +217,12 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	    );
 
 	    // Add any additional route handlers you need for views or REST resources here...
-	    app.get('/jira-activity', addon.authenticate(), function(req, res) {
-	        res.render('stats', { title: "JIRA Activity" });
+	    app.get('/activity', addon.authenticate(), function(req, res) {
+	        res.render('activity', { title: "JIRA activity" });
 	    });
 	};
 	````
-	This route titles your __Activity__ page "JIRA Activity", and ensures that your add-on 
+	This route titles your __Activity__ page "JIRA activity", and ensures that your add-on 
 	is authenticated.  
 1. Close and save your `atlassian-connect.json` and `routes/index.js` files.  
 
@@ -386,8 +386,8 @@ to use D3.js, and define how the page should look.
 	You can shut down the app with __CTRL+C__ and re-run the __`node app.js`__ 
 	command.
 1. Click __Activity__ in the header.  
-	You'll see an empty page with your "Project stats" title:  
-	<img src="../assets/images/geiger-1-2.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
+	You'll see an empty page with your "JIRA activity" title:  
+	<img src="../assets/images/jira-activity-2.png" width="80%" style="border:1px solid #999;margin-top:10px;" />  	
 	Your page is blank since your JIRA instance doesn't yet have any data, but you'll
 	fix that in the next step!  
 
@@ -399,9 +399,10 @@ issues, and validate that your chart reflects the changes.
 
 1. Click __Projects__ > __Create Project__ in the header.  
 	Run through the prompts and create a project.  
-1. Repeat as desired.  
+1. Repeat as desired. 
+	The more data you create, the more your add-on will display.  
 1. Check your add-on between adding data.  
 	You should see your __Activity__ table update accordingly, each time you click the 
 	link.  
-	Here's an example what you'll see (using two projects, "Test" and "Another test"):
-	<img src="../assets/images/geiger-1-3.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
+	Here's an example what you'll see, using example projects:  
+	<img src="../assets/images/jira-activity-3.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
