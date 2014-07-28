@@ -1,4 +1,4 @@
-##Tutorial: Display your projects in JIRA 
+##Tutorial: Display your projects in JIRA
 
 <div class="aui-message">
 	    <p class="title">
@@ -6,9 +6,9 @@
 	        <strong>Who this tutorial is for</strong>
 	    </p>
 	    <p>
-	    You can complete this tutorial even if you've never built an Atlassian add-on before. You'll 
-	    need at least version 4.2.20 of the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads), 
-	    and [Node.js](http://www.nodejs.org/). 
+	    You can complete this tutorial even if you've never built an Atlassian add-on before. You'll
+	    need at least version 4.2.20 of the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads),
+	    and [Node.js](http://www.nodejs.org/).
 	    </p>
 </div>
 
@@ -19,6 +19,7 @@ In this tutorial, you'll learn about:
 * [Creating the D3.js table to display your projects](#architect-stats-page)
 * [Adding data and verifying your add-on works](#check)
 
+<<<<<<< HEAD
 This tutorial shows you how to build a static Connect add-on that displays your JIRA projects 
 in a table, accessible via an _Activity_ link in the header. 
 
@@ -26,13 +27,23 @@ Your add-on will use the [JIRA REST API](https://jira.atlassian.com/plugins/serv
 to get information about projects in your JIRA instance. You'll use the [Node.js](http://nodejs.org/) 
 framework and [Atlassian Connect Express (ACE)](https://bitbucket.org/atlassian/atlassian-connect-express/) 
 to interface with JIRA. Finally, you'll create your table using [D3.js](http://d3js.org/). 
+=======
+To display your JIRA projects in a table, you'll build a static Connect add-on
+accessible via a _Stats_ link in the header.
 
-Here's an example what your add-on might look like: 
+Your static page will use the [JIRA REST API](https://jira.atlassian.com/plugins/servlet/restbrowser#/)
+to retrieve information about projects in your JIRA instance. You'll use the [Node.js](http://nodejs.org/)
+framework and [Atlassian Connect Express (ACE)](https://bitbucket.org/atlassian/atlassian-connect-express/)
+to interface with JIRA. Finally, you'll create your table using [D3.js](http://d3js.org/).
+>>>>>>> 26c002463c8817b565fec08a2d74b3c95e66824b
 
-<img src="../assets/images/geiger-1-4.png" width="80%" style="border:1px solid #999;margin-top:10px;" /> 
+Here's an example what your add-on might look like:
+
+<img src="../assets/images/geiger-1-4.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
 
 ## <a name="environment"></a> Configuring your development environment  
 
+<<<<<<< HEAD
 In this step, you'll confirm you have node.js installed, and install the 
 [Atlassian Connect Express](https://bitbucket.org/atlassian/atlassian-connect-express/) framework, known as 
 ACE. ACE is a toolkit for creating Connect add-ons using node.js. ACE handles registration in JIRA for you. 
@@ -40,6 +51,15 @@ It also detects changes made to your [`atlassian-connect.json` descriptor](../mo
 file, so you don't need to continually restart your add-on as you develop. 
 Importantly, ACE handles [JWT authentication](../concepts/understanding-jwt.html), 
 so that requests betwen your add-on and the JIRA application are signed and authenticated. 
+=======
+In this step, you'll confirm you have node.js installed, and install the
+[Atlassian Connect Express](https://bitbucket.org/atlassian/atlassian-connect-express/) framework, known as
+ACE. ACE is a toolkit for creating Connect add-ons using node.js. ACE handles registration in JIRA for you.
+It also detects changes made to your [`atlassian-connect.json` descriptor](../modules/)
+file, so you don't need to continually restart your add-on as you develop. Perhaps most
+importantly, ACE handles [JWT authentication](../concepts/understanding-jwt.html),
+so that requests betwen your add-on and the JIRA application are signed and authenticated.
+>>>>>>> 26c002463c8817b565fec08a2d74b3c95e66824b
 
 For these steps, you might need to enter sudo mode in your terminal. 
 
@@ -66,9 +86,11 @@ For these steps, you might need to enter sudo mode in your terminal.
         ATLAS Maven Home: /usr/share/atlassian-plugin-sdk-4.2.20/apache-maven  
     </tt>
 1. Start JIRA in cloud mode:
+   __TODO__: this is outdated, pull the rc version. Or maybe we need to make this
+	 part of some template
 	<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-07-010 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.2,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0  --jvmargs -Datlassian.upm.on.demand=true</code></pre>
-    
-    You'll see a lot of output. When finished, your terminal notifies you that the build 
+
+    You'll see a lot of output. When finished, your terminal notifies you that the build
     was successful:  
     <tt>[INFO] [talledLocalContainer] Tomcat 7.x started on port [2990]  
         [INFO] jira started successfully in 217s at http://localhost:2990/jira  
@@ -81,13 +103,14 @@ For these steps, you might need to enter sudo mode in your terminal.
 	Username: `admin`  
 	Password: `admin`
 
+
 ## <a name="stats-header"></a> Install your add-on and add an _Activity_ link
 
 Now you've got the basic architecture for your plugin. If you open your new `jira-activity` directory, 
 you'll see essentials like the [`atlassian-connect.json` descriptor](../modules/) in the 
 root. You'll also see an `app.js` file. 
 
-In this step, you'll prune some of the stub code, and install your add-on in JIRA using ACE. 
+In this step, you'll prune some of the stub code, and install your add-on in JIRA using ACE.
 
 1. Open the [`atlassian-connect.json` descriptor](../modules/) file in your favorite editor or IDE.
 1. Replace the `key`, `name`, `description`, and `vendor` name and URL with these fields: 
@@ -116,9 +139,10 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	    }
     ]
    ````
-   This adds an _Activity_ link in the `system.top.navigation.bar`, or in other words, the JIRA 
+   This adds an _Activity_ link in the `system.top.navigation.bar`, which is the JIRA 
    header. It also provides a condition that the link only appears to authenticated users, 
    and sets a URL for your add-on to use under `/activity`.
+
 1. Add a `read` scope inside the main object:
 	````
 	"scopes": [
@@ -168,7 +192,7 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	    ]
 	}
 	````
- 
+
 1. Open a new terminal window.  
 1. From your `jira-activity` root, run the `app.js` file:
 	<pre><code data-lang="text">$ node app.js</code></pre> 
@@ -204,6 +228,9 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	        });
 	    });
 
+			// TODO: We should remove this section... hello-world isn't useful, but
+			// 			 it is there by default.
+
 	    // This is an example route that's used by the default "generalPage" module.
 	    // Verify that the incoming request is authenticated with Atlassian Connect
 	    app.get('/hello-world', addon.authenticate(), function (req, res) {
@@ -225,23 +252,23 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	This route titles your __Activity__ page "Project activity", and ensures that your add-on 
 	is authenticated.  
 1. Close and save your `atlassian-connect.json` and `routes/index.js` files.  
- 
+
 
 ## <a name="architect-stats-page"></a> Build the static _Activity_ page  
 
-You've added a link in the JIRA header, but your page doesn't have anything 
-except a title right now. In this step, you'll add the capability for your add-on 
-to use D3.js, and define how the page should look. 
+You've added a link in the JIRA header, but your page doesn't have anything
+except a title right now. In this step, you'll add the capability for your add-on
+to use D3.js, and define how the page should look.
 
 1. Open `views/layout.hbs`.
-1. Add the following to the `views/layout.hbs` file following the `hostScriptUrl` 
-	line: 
+1. Add the following to the `views/layout.hbs` file following the `hostScriptUrl`
+	line:
 	````
 	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 	````
 	This lets you to use d3 for your chart.  
 1. Create a new file called `views/stats.hbs`.  
-1. Add the following content: 
+1. Add the following content:
 	````
 	{{!< layout}}
 	<header class="aui-page-header">
@@ -258,7 +285,7 @@ to use D3.js, and define how the page should look.
 	            <div class="aui-group">
 	                <div class="aui-item">
 	                    <div class="projects">
-	                    </div> 
+	                    </div>
 	                </div>
 	            </div>
 	        </section>
@@ -273,101 +300,128 @@ to use D3.js, and define how the page should look.
 1. Open `public/js/addon.js`.  
 1. Add the following content:  
 	````
-	(function() {
-	    function getQueryParams(qs) {
-	        qs = qs.split("+").join(" ");
+/* add-on script */
+// helper stuff
+(function() {
+    "use strict";
 
-	        var params = {}, tokens,
-	        re = /[?&]?([^=]+)=([^&]*)/g;
+    // get the parameters from the query string
+    // and sticks them in an object
+    window.getQueryParams = function(qs) {
+        qs = qs.split("+").join(" ");
 
-	        while (tokens = re.exec(qs)) {
-	            params[decodeURIComponent(tokens[1])] = 
-	                decodeURIComponent(tokens[2]);
-	        }
+        var params = {}, tokens,
+        re = /[?&]?([^=]+)=([^&]*)/g;
 
-	        return params;
-	    }
+        while (tokens = re.exec(qs)) {
+            params[decodeURIComponent(tokens[1])] =
+                decodeURIComponent(tokens[2]);
+        }
 
-	    /* add-on script */
-	    window.AG = {};
+        return params;
+    }
 
-	    window.AG.apiCall = function(uri, callback) {
-	        AP.require('request', function(request) {
-	            request({
-	                url: uri,
-	                success: function(response) {
-	                    callback(response);
-	                },
-	                error: function(response) {
-	                    console.log("Error loading API (" + uri + ")");
-	                    console.log(arguments);
-	                },
-	                contentType: "application/json"
-	            });
-	        });
-	    };
+    function buildTableAndReturnTbody(hostElement) {
+        var projTable = hostElement.append('table')
+            .classed({'project': true, 'aui': true});
 
-	    window.AG.initInstanceStats = function() {
-	        var params = getQueryParams(document.location.search);
-	        var baseUrl = params.xdm_e + params.cp + "/browse/";
+				// table > thead > tr, as needed below
+        var projHeadRow = projTable.append("thead").append("tr");
+				// empty header
+        projHeadRow.append("th");
+				// now the next column
+        projHeadRow.append("th").text("Key");
+        projHeadRow.append("th").text("Name");
 
-	        AG.apiCall('/rest/api/2/project', function(response) {
-	            // convert the string response to JSON
-	            response = JSON.parse(response);
+        return projTable.append("tbody");
+    }
 
-	            var d = d3.select(".projects")
+    // Works with d3js to create the project table
+    window.createProjectTable = function(projects, selector, baseUrl) {
+        var projectBaseUrl = baseUrl + "/browse/";
 
-	            var projTable = d.append('table')
-	                .classed({'project': true, 'aui': true});
+        var rootElement = d3.select(selector);
+        var projBody = buildTableAndReturnTbody(rootElement);
 
-	            var projHeadRow = projTable.append("thead").append("tr");
-	            projHeadRow.append("th");
-	            projHeadRow.append("th").text("Key");
-	            projHeadRow.append("th").text("Name");
+        // for each data item in projects
+        var row = projBody.selectAll("tr")
+            .data(projects)
+            .enter()
+            .append("tr");
 
-	            var projBody = projTable.append("tbody");
+        // ... add a td for the avatar, stick a span in it
+        row.append("td").append('span')
+            // set the css classes for this element
+            .classed({'aui-avatar': true, 'aui-avatar-xsmall': true})
+            .append('span')
+            .classed({'aui-avatar-inner': true})
+            .append('img')
+            // set the atribute for the img element inside this td > span > span
+            .attr('src', function(item) { return item.avatarUrls["16x16"] });
 
-	            var row = projBody.selectAll("tr")
-	                .data(response)
-	                .enter()
-	                .append("tr");
+        // ... add a td for the project key
+        row.append("td").append('span')
+            .classed({'project-key': true, 'aui-label': true})
+            // set the content of the element to be some text
+            .text(function(item) { return item.key; });
 
-	            row.append("td").append('span')
-	                .classed({'aui-avatar': true, 'aui-avatar-xsmall': true})
-	                .append('span')
-	                .classed({'aui-avatar-inner': true})
-	                .append('img')
-	                .attr('src', function(item) { return item.avatarUrls["16x16"] });
+        // ... add a td for the project name / link to project
+        row.append("td").append('span')
+            .classed({'project-name': true})
+            .append("a")
+            // make the name a link to the project
+            .attr('href', function(item) { return baseUrl + item.key; })
+            // since we're in the iframe, we need to set _top
+            .attr('target', "_top")
+            .text(function(item) { return item.name; });
+    };
+})();
 
-	            row.append("td").append('span')
-	                .classed({'project-key': true, 'aui-label': true})
-	                .text(function(item) { return item.key; });
+// MyAddon functionality
+(function() {
+    window.MyAddon = {};
+    window.MyAddon.initInstanceStats = function() {
+        var params = window.getQueryParams(document.location.search);
+        var baseUrl = params.xdm_e + params.cp;
 
-	            row.append("td").append('span')
-	                .classed({'project-name': true})
-	                .append("a")
-	                .attr('href', function(item) { return baseUrl + item.key; })
-	                .attr('target', "_top")
-	                .text(function(item) { return item.name; });
-	        });
-	    };
-	})();
+        // call the REST API via the iframe
+        // bridge functionality
+        AP.require('request', function(request) {
+            request({
+                url: '/rest/api/2/project',
+                success: function(response) {
+                    // convert the string response to JSON
+                    response = JSON.parse(response);
+
+                    // call our helper function to build the
+                    // table now that we have the data
+                    window.createProjectTable(response, ".projects", baseUrl);
+                },
+                error: function(response) {
+                    console.log("Error loading API (" + uri + ")");
+                    console.log(arguments);
+                },
+                contentType: "application/json"
+            });
+        });
+    };
+})();
 	````
-	This leverages d3.js to build a table to display all your JIRA projects. You use a 
+	This leverages d3.js to build a table to display all your JIRA projects. 
 1. Save and close all files. 
 1. Restart the node app. 
 	You can shut down the app with __CTRL+C__ and re-run the __`node app.js`__ 
 	command.
 1. Click __Activity__ in the header.  
 	You'll see an empty page with your "Project stats" title:  
-	<img src="../assets/images/geiger-1-2.png" width="80%" style="border:1px solid #999;margin-top:10px;" />   
-	Your page is blank since your JIRA instance doesn't yet have any data, but you'll 
+	<img src="../assets/images/geiger-1-2.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
+	Your page is blank since your JIRA instance doesn't yet have any data, but you'll
 	fix that in the next step!  
 
 ## <a name="check"></a> Add some data, and verify your add-on works
 
-Your add-on is essentially done, but you don't have any data to validate 
-how your chart works. In this step, you'll manually add a few projects and 
+Your add-on is essentially done, but you don't have any data to validate
+how your chart works. In this step, you'll manually add a few projects and
 issues, and validate that your chart reflects the changes.  
 
 1. Click __Projects__ > __Create Project__ in the header.  
@@ -376,9 +430,5 @@ issues, and validate that your chart reflects the changes.
 1. Check your add-on between adding data.  
 	You should see your __Activity__ table update accordingly, each time you click the 
 	link.  
-	Here's an example what you'll see (using two projects, "Test" and "Another test"): 
-	<img src="../assets/images/geiger-1-3.png" width="80%" style="border:1px solid #999;margin-top:10px;" /> 
-
-
-
-
+	Here's an example what you'll see (using two projects, "Test" and "Another test"):
+	<img src="../assets/images/geiger-1-3.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
