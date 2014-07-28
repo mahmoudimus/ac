@@ -19,7 +19,6 @@ In this tutorial, you'll learn about:
 * [Creating the D3.js table to display your projects](#architect-stats-page)
 * [Adding data and verifying your add-on works](#check)
 
-<<<<<<< HEAD
 This tutorial shows you how to build a static Connect add-on that displays your JIRA projects 
 in a table, accessible via an _Activity_ link in the header. 
 
@@ -27,15 +26,6 @@ Your add-on will use the [JIRA REST API](https://jira.atlassian.com/plugins/serv
 to get information about projects in your JIRA instance. You'll use the [Node.js](http://nodejs.org/) 
 framework and [Atlassian Connect Express (ACE)](https://bitbucket.org/atlassian/atlassian-connect-express/) 
 to interface with JIRA. Finally, you'll create your table using [D3.js](http://d3js.org/). 
-=======
-To display your JIRA projects in a table, you'll build a static Connect add-on
-accessible via a _Stats_ link in the header.
-
-Your static page will use the [JIRA REST API](https://jira.atlassian.com/plugins/servlet/restbrowser#/)
-to retrieve information about projects in your JIRA instance. You'll use the [Node.js](http://nodejs.org/)
-framework and [Atlassian Connect Express (ACE)](https://bitbucket.org/atlassian/atlassian-connect-express/)
-to interface with JIRA. Finally, you'll create your table using [D3.js](http://d3js.org/).
->>>>>>> 26c002463c8817b565fec08a2d74b3c95e66824b
 
 Here's an example what your add-on might look like:
 
@@ -43,7 +33,6 @@ Here's an example what your add-on might look like:
 
 ## <a name="environment"></a> Configuring your development environment  
 
-<<<<<<< HEAD
 In this step, you'll confirm you have node.js installed, and install the 
 [Atlassian Connect Express](https://bitbucket.org/atlassian/atlassian-connect-express/) framework, known as 
 ACE. ACE is a toolkit for creating Connect add-ons using node.js. ACE handles registration in JIRA for you. 
@@ -51,15 +40,6 @@ It also detects changes made to your [`atlassian-connect.json` descriptor](../mo
 file, so you don't need to continually restart your add-on as you develop. 
 Importantly, ACE handles [JWT authentication](../concepts/understanding-jwt.html), 
 so that requests betwen your add-on and the JIRA application are signed and authenticated. 
-=======
-In this step, you'll confirm you have node.js installed, and install the
-[Atlassian Connect Express](https://bitbucket.org/atlassian/atlassian-connect-express/) framework, known as
-ACE. ACE is a toolkit for creating Connect add-ons using node.js. ACE handles registration in JIRA for you.
-It also detects changes made to your [`atlassian-connect.json` descriptor](../modules/)
-file, so you don't need to continually restart your add-on as you develop. Perhaps most
-importantly, ACE handles [JWT authentication](../concepts/understanding-jwt.html),
-so that requests betwen your add-on and the JIRA application are signed and authenticated.
->>>>>>> 26c002463c8817b565fec08a2d74b3c95e66824b
 
 For these steps, you might need to enter sudo mode in your terminal. 
 
@@ -85,10 +65,8 @@ For these steps, you might need to enter sudo mode in your terminal.
         ATLAS Scripts:    /usr/share/atlassian-plugin-sdk-4.2.20/bin  
         ATLAS Maven Home: /usr/share/atlassian-plugin-sdk-4.2.20/apache-maven  
     </tt>
-1. Start JIRA in cloud mode:
-   __TODO__: this is outdated, pull the rc version. Or maybe we need to make this
-	 part of some template
-	<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-07-010 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.0.2,com.atlassian.jwt:jwt-plugin:1.0.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0-m0  --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+1. Start JIRA in cloud mode:  
+	<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-08-005-WN --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.0-rc.3,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.4,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.17.2,com.atlassian.webhooks:atlassian-webhooks-plugin:1.0.6 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
 
     You'll see a lot of output. When finished, your terminal notifies you that the build
     was successful:  
@@ -99,9 +77,9 @@ For these steps, you might need to enter sudo mode in your terminal.
     </tt>  
 1. In a browser window, navigate to your JIRA instance.  
 	This should be [http://localhost:2990/jira](http://localhost:2990/jira).  
-1. Log in with the following credentials:
-	Username: `admin`  
-	Password: `admin`
+1. Log in with the following credentials.  
+	__Username__: `admin`  
+	__Password__: `admin`
 
 
 ## <a name="stats-header"></a> Install your add-on and add an _Activity_ link
@@ -119,8 +97,8 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	    "name": "JIRA Project Actvity",
 	    "description": "A Connect add-on that displays JIRA projects in a table",
 	    "vendor": {
-	        "name": "Angry Nerds",
-	        "url": "https://www.atlassian.com/angrynerds"
+	        "name": "Atlassian Developer Relations",
+	        "url": "https://developer.atlassian.com/"
 	 ````
 1. Replace the [`generalPages` module](../modules/jira/general-page.html) with the following:  
 	````
@@ -143,22 +121,15 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
    header. It also provides a condition that the link only appears to authenticated users, 
    and sets a URL for your add-on to use under `/activity`.
 
-1. Add a `read` scope inside the main object:
-	````
-	"scopes": [
-	    "read"
-	]
-	````
-	This enables your Connect add-on to read your JIRA project data.  
-	At this point, your descriptor file should look like this:  
+   At this point, your descriptor file should look like this:  
 	````
 	{
-	    "key": "my-add-on",
-	    "name": "Ping Pong",
-	    "description": "My very first add-on",
-	    "vendor": {
-	        "name": "Angry Nerds",
-	        "url": "https://www.atlassian.com/angrynerds"
+	    "key": "jira-activity",
+	     "name": "JIRA Project Actvity",
+	     "description": "A Connect add-on that displays JIRA projects in a table",
+	     "vendor": {
+	         "name": "Atlassian Developer Relations",
+	         "url": "https://developer.atlassian.com/"
 	    },
 	    "baseUrl": "{{localBaseUrl}}",
 	    "links": {
@@ -169,43 +140,45 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	        "type": "jwt"
 	    },
 	    "lifecycle": {
+	        // atlassian-connect-express expects this route to be configured to manage the installation handshake
 	        "installed": "/installed"
 	    },
-	    "modules": {
-	        "generalPages": [
-
-	            {
-	                "key": "activity",
-	                "location": "system.top.navigation.bar",
-	                "name": {
-	                    "value": "Activity"
-	                },
-	                "url": "/stats",
-	                "conditions": [{
-	                    "condition": "user_is_logged_in"
-	                }]
-	            }
-	        ]
-	    },
 	    "scopes": [
-	        "read"
-	    ]
+	        "READ"
+	    ],
+	     "modules": {
+	         "generalPages": [
+
+	             {
+	                 "key": "activity",
+	                 "location": "system.top.navigation.bar",
+	                 "name": {
+	                     "value": "Activity"
+	                 },
+	                 "url": "/stats",
+	                 "conditions": [{
+	                     "condition": "user_is_logged_in"
+	                 }]
+	             }
+	         ]
+	     }
 	}
+
 	````
 
 1. Open a new terminal window.  
 1. From your `jira-activity` root, run the `app.js` file:
 	<pre><code data-lang="text">$ node app.js</code></pre> 
-	Your add-on is automatically registered in JIRA for you. 
+	Your add-on is automatically registered and installed in JIRA.
 1. Refresh JIRA in your browser.  
 	You'll see the _Activity_ label in the header: 
-	<img src="../assets/images/geiger-1-1.png" width="80%" style="border:1px solid #999;margin-top:10px;" />  
-1. Open `routes/index.js`.
+	<img src="../assets/images/jira-activity-1.png" width="80%" style="border:1px solid #999;margin-top:10px;" />  
+1. Back in your editor, open `routes/index.js`.  
 	From here, you'll add the `/activity` route to your app.
 1. After the `/hello-world` stub code, add:  
 	````
 	app.get('/activity', addon.authenticate(), function(req, res) {
-	    res.render('stats', { title: "The Stats" });
+	    res.render('stats', { title: "JIRA Activity" });
 	});
 	````  
 	Your `routes/index.js` file should resemble this:  
@@ -244,12 +217,12 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	    );
 
 	    // Add any additional route handlers you need for views or REST resources here...
-	    app.get('/stats', addon.authenticate(), function(req, res) {
-	        res.render('stats', { title: "Project activity" });
+	    app.get('/jira-activity', addon.authenticate(), function(req, res) {
+	        res.render('stats', { title: "JIRA Activity" });
 	    });
 	};
 	````
-	This route titles your __Activity__ page "Project activity", and ensures that your add-on 
+	This route titles your __Activity__ page "JIRA Activity", and ensures that your add-on 
 	is authenticated.  
 1. Close and save your `atlassian-connect.json` and `routes/index.js` files.  
 
@@ -261,13 +234,13 @@ except a title right now. In this step, you'll add the capability for your add-o
 to use D3.js, and define how the page should look.
 
 1. Open `views/layout.hbs`.
-1. Add the following to the `views/layout.hbs` file following the `hostScriptUrl`
-	line:
+1. Add the following to the `views/layout.hbs` before the closing `</head>` tag (following the `hostScriptUrl`
+	line):
 	````
 	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 	````
-	This lets you to use d3 for your chart.  
-1. Create a new file called `views/stats.hbs`.  
+	This lets you to use D3.js for your chart.  
+1. Create a new file called `views/jira-activity.hbs`.  
 1. Add the following content:
 	````
 	{{!< layout}}
@@ -300,10 +273,10 @@ to use D3.js, and define how the page should look.
 1. Open `public/js/addon.js`.  
 1. Add the following content:  
 	````
-/* add-on script */
-// helper stuff
-(function() {
-    "use strict";
+	/* add-on script */
+	// helper stuff
+	(function() {
+	    "use strict";
 
     // get the parameters from the query string
     // and sticks them in an object
@@ -374,38 +347,38 @@ to use D3.js, and define how the page should look.
             // since we're in the iframe, we need to set _top
             .attr('target', "_top")
             .text(function(item) { return item.name; });
-    };
-})();
+		    };
+		})();
 
-// MyAddon functionality
-(function() {
-    window.MyAddon = {};
-    window.MyAddon.initInstanceStats = function() {
-        var params = window.getQueryParams(document.location.search);
-        var baseUrl = params.xdm_e + params.cp;
+		// MyAddon functionality
+		(function() {
+		    window.MyAddon = {};
+		    window.MyAddon.initInstanceStats = function() {
+		        var params = window.getQueryParams(document.location.search);
+		        var baseUrl = params.xdm_e + params.cp;
 
-        // call the REST API via the iframe
-        // bridge functionality
-        AP.require('request', function(request) {
-            request({
-                url: '/rest/api/2/project',
-                success: function(response) {
-                    // convert the string response to JSON
-                    response = JSON.parse(response);
+		        // call the REST API via the iframe
+		        // bridge functionality
+		        AP.require('request', function(request) {
+		            request({
+		                url: '/rest/api/2/project',
+		                success: function(response) {
+		                    // convert the string response to JSON
+		                    response = JSON.parse(response);
 
-                    // call our helper function to build the
-                    // table now that we have the data
-                    window.createProjectTable(response, ".projects", baseUrl);
-                },
-                error: function(response) {
-                    console.log("Error loading API (" + uri + ")");
-                    console.log(arguments);
-                },
-                contentType: "application/json"
-            });
-        });
-    };
-})();
+		                    // call our helper function to build the
+		                    // table now that we have the data
+		                    window.createProjectTable(response, ".projects", baseUrl);
+		                },
+		                error: function(response) {
+		                    console.log("Error loading API (" + uri + ")");
+		                    console.log(arguments);
+		                },
+		                contentType: "application/json"
+		            });
+		        });
+		    };
+		})();
 	````
 	This leverages d3.js to build a table to display all your JIRA projects. 
 1. Save and close all files. 
