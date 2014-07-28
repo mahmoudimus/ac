@@ -14,6 +14,7 @@ import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.registry.LegacyConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserDisableException;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.events.BeforePluginDisabledEvent;
@@ -26,6 +27,8 @@ import org.springframework.beans.factory.InitializingBean;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.IOException;
+
+import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.usernameForAddon;
 
 @Named
 public class ConnectPluginProperEventHandler implements InitializingBean, DisposableBean
@@ -90,7 +93,7 @@ public class ConnectPluginProperEventHandler implements InitializingBean, Dispos
     {
         if (addOnIdentifierService.isConnectAddOn(plugin))
         {
-            log.debug("Converting old P2 addon to new file-less addon: " + plugin.getKey());
+            log.info("Converting old P2 addon to new file-less addon: " + plugin.getKey());
             String pluginKey = plugin.getKey();
             String restartState = (PluginState.ENABLED.equals(plugin.getPluginState())) ? PluginState.ENABLED.name() : PluginState.DISABLED.name();
 
@@ -101,13 +104,10 @@ public class ConnectPluginProperEventHandler implements InitializingBean, Dispos
                     .setDescriptor(descriptor)
                     .setRestartState(restartState)
                     .setUserKey(legacyRegistry.hasUserKey(pluginKey) ?
-                            legacyRegistry.getUserKey(pluginKey) : "addon_" + pluginKey)
-                    .setAuth(legacyRegistry.hasAuthType(pluginKey) ?
-                            legacyRegistry.getAuthType(pluginKey).name() :
-                            connectAddonBean.getAuthentication().getType().name())
-                    .setBaseUrl(legacyRegistry.hasBaseUrl(pluginKey) ?
-                            legacyRegistry.getBaseUrl(pluginKey) :
-                            connectAddonBean.getBaseUrl())
+                            legacyRegistry.getUserKey(pluginKey) :
+                            usernameForAddon(pluginKey))
+                    .setAuth(connectAddonBean.getAuthentication().getType().name())
+                    .setBaseUrl(connectAddonBean.getBaseUrl())
                     .setSecret(legacyRegistry.getSecret(pluginKey));
 
             addonRegistry.storeAddonSettings(pluginKey, settings);
