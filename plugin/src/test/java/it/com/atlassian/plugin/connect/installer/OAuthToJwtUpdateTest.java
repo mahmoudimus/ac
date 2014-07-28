@@ -194,6 +194,44 @@ public class OAuthToJwtUpdateTest
 
     }
 
+    @Test
+    public void installedApplinkIsCorrectWhenExistingJwtApplinkPresent() throws IOException {
+        // need to clean up first
+        uninstall(jwtPlugin);
+
+        /*
+         * ACDEV-1417: For this case we need an existing connect like applink but no corresponding addon
+         */
+
+        // fake an existing applink. Note hard to fake oauth as requires addon to exist for permission check
+        connectApplinkManager.createAppLink(oAuthAddOnBean, oAuthAddOnBean.getBaseUrl(), AuthenticationType.JWT,
+                "seeeeecret", "the old key");
+
+        ApplicationLink existingApplink = connectApplinkManager.getAppLink(jwtPlugin.getKey());
+
+        // check the created applink is as expected
+        assertEquals("JWT", existingApplink.getProperty(AuthenticationMethod.PROPERTY_NAME));
+        assertEquals("the old key", existingApplink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME));
+        Object origSharedSecret = existingApplink.getProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME);
+        assertEquals("seeeeecret", origSharedSecret);
+
+
+        jwtPlugin = testPluginInstaller.installAddon(createJwtAddOn(oAuthAddOnBean));
+
+        // make sure the applink now reflects what we expect
+        ApplicationLink jwtApplink = connectApplinkManager.getAppLink(jwtPlugin.getKey());
+        assertEquals("JWT", jwtApplink.getProperty(AuthenticationMethod.PROPERTY_NAME));
+        Object newSharedSecret = jwtApplink.getProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME);
+        assertFalse(ObjectUtils.equals(origSharedSecret, newSharedSecret));
+
+        assertEquals(ConnectAddOnUserUtil.usernameForAddon(jwtPlugin.getKey()), jwtApplink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME));
+        assertEquals(jwtPlugin.getKey(), jwtApplink.getProperty(JwtConstants.AppLinks.ADD_ON_ID_PROPERTY_NAME));
+        assertEquals(Boolean.FALSE.toString(), jwtApplink.getProperty("IS_ACTIVITY_ITEM_PROVIDER"));
+        assertEquals(Boolean.TRUE.toString(), jwtApplink.getProperty("system"));
+        assertEquals(newSharedSecret, getLastInstallPayload().get("sharedSecret").getAsString());
+
+    }
+
     private JsonObject getLastInstallPayload()
     {
         ServletRequestSnapshot installRequest = testFilterResults.getRequest(jwtPlugin.getKey(), oAuthAddOnBean.getLifecycle().getInstalled());
