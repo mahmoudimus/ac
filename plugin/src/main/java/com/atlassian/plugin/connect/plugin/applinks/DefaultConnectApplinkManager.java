@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.applinks;
 
 import com.atlassian.applinks.api.ApplicationId;
 import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.applinks.api.TypeNotInstalledException;
 import com.atlassian.applinks.spi.application.ApplicationIdUtil;
 import com.atlassian.applinks.spi.link.ApplicationLinkDetails;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
@@ -82,20 +81,18 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
 
                 final RemotePluginContainerApplicationType applicationType = typeAccessor.getApplicationType(RemotePluginContainerApplicationType.class);
 
-                ApplicationLink link = getCompatibleAppLink(pluginKey, expectedApplicationId);
-                if (link == null)
-                {
-                    final ApplicationLinkDetails details = ApplicationLinkDetails.builder()
-                            .displayUrl(baseUri)
-                            .isPrimary(false)
-                            .name(plugin.getName() != null ? plugin.getName() : plugin.getKey())
-                            .rpcUrl(baseUri)
-                            .build();
+                deleteOldAppLinks(pluginKey);
 
-                    log.info("Creating an application link for Connect add-on with key '{}'", pluginKey);
+                final ApplicationLinkDetails details = ApplicationLinkDetails.builder()
+                        .displayUrl(baseUri)
+                        .isPrimary(false)
+                        .name(plugin.getName() != null ? plugin.getName() : plugin.getKey())
+                        .rpcUrl(baseUri)
+                        .build();
 
-                    link = applicationLinkService.addApplicationLink(expectedApplicationId, applicationType, details);
-                }
+                log.info("Creating an application link for Connect add-on with key '{}'", pluginKey);
+
+                ApplicationLink link = applicationLinkService.addApplicationLink(expectedApplicationId, applicationType, details);
 
                 link.putProperty(PLUGIN_KEY_PROPERTY, pluginKey);
                 link.putProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME, addonUserKey);
@@ -140,20 +137,18 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
 
                 final RemotePluginContainerApplicationType applicationType = typeAccessor.getApplicationType(RemotePluginContainerApplicationType.class);
 
-                ApplicationLink link = getCompatibleAppLink(pluginKey, expectedApplicationId);
-                if (link == null)
-                {
-                    final ApplicationLinkDetails details = ApplicationLinkDetails.builder()
-                            .displayUrl(baseUri)
-                            .isPrimary(false)
-                            .name(addon.getName() != null ? addon.getName() : addon.getKey())
-                            .rpcUrl(baseUri)
-                            .build();
+                deleteOldAppLinks(pluginKey);
 
-                    log.info("Creating an application link for Connect add-on with key '{}'", pluginKey);
+                final ApplicationLinkDetails details = ApplicationLinkDetails.builder()
+                        .displayUrl(baseUri)
+                        .isPrimary(false)
+                        .name(addon.getName() != null ? addon.getName() : addon.getKey())
+                        .rpcUrl(baseUri)
+                        .build();
 
-                    link = applicationLinkService.addApplicationLink(expectedApplicationId, applicationType, details);
-                }
+                log.info("Creating an application link for Connect add-on with key '{}'", pluginKey);
+
+                ApplicationLink link = applicationLinkService.addApplicationLink(expectedApplicationId, applicationType, details);
 
                 link.putProperty(PLUGIN_KEY_PROPERTY, pluginKey);
                 link.putProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME, addonUserKey);
@@ -236,52 +231,18 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
         return applicationLinkService.createSelfLinkFor(applink.getId());
     }
 
-    private ApplicationLink getCompatibleAppLink(String pluginKey, ApplicationId appId)
+    private void deleteOldAppLinks(String pluginKey)
     {
-        ApplicationLink link;
-
-        try
+        // try to find link with old display url
+        for (final ApplicationLink otherLink : applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class))
         {
-            link = applicationLinkService.getApplicationLink(appId);
-        }
-        catch (TypeNotInstalledException ex)
-        {
-            log.warn("Link found for '{}' but the type cannot be found, deleting...", pluginKey);
-            manuallyDeleteApplicationId(appId);
-
-            return null;
-        }
-
-        if (null != link)
-        {
-            if (pluginKey.equals(link.getProperty(PLUGIN_KEY_PROPERTY)))
+            if (pluginKey.equals(otherLink.getProperty(PLUGIN_KEY_PROPERTY)))
             {
-                log.debug("Application link for remote plugin container '{}' already exists", pluginKey);
+                log.debug("Old application link for this plugin '{}' found with different display url '{}', removing", pluginKey, otherLink.getDisplayUrl());
 
-                return link;
-            }
-            else
-            {
-                throw new IllegalStateException("Application link already exists for id '" + appId + "' but it isn't the target " +
-                        " plugin '" + pluginKey + "': unexpected plugin key is: " + link.getProperty(PLUGIN_KEY_PROPERTY));
+                applicationLinkService.deleteApplicationLink(otherLink);
             }
         }
-        else
-        {
-            // try to find link with old display url
-            for (final ApplicationLink otherLink : applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class))
-            {
-                if (pluginKey.equals(otherLink.getProperty(PLUGIN_KEY_PROPERTY)))
-                {
-                    log.debug("Old application link for this plugin '{}' found with different display url '{}', removing", pluginKey, otherLink.getDisplayUrl());
-
-                    applicationLinkService.deleteApplicationLink(otherLink);
-                }
-            }
-
-            return null;
-        }
-
     }
 
     @SuppressWarnings ("unchecked")

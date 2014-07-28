@@ -1,9 +1,8 @@
 package it.com.atlassian.plugin.connect.installer;
 
-import com.atlassian.applinks.api.ApplicationId;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.TypeNotInstalledException;
-import com.atlassian.applinks.spi.application.ApplicationIdUtil;
+import com.atlassian.jwt.JwtConstants;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
@@ -12,6 +11,7 @@ import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
@@ -20,6 +20,7 @@ import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
+import org.apache.commons.lang3.ObjectUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -28,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URI;
 
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
 import static junit.framework.Assert.*;
@@ -50,8 +50,6 @@ public class OAuthToJwtUpdateTest
     private Plugin oAuthPlugin;
     private Plugin jwtPlugin;
     private ConnectAddonBean oAuthAddOnBean;
-    private ApplicationLink oauthApplink;
-    private ApplicationLink jwtApplink;
 
     public OAuthToJwtUpdateTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,
                                 ConnectAddonRegistry connectAddonRegistry, AddonTestFilterResults testFilterResults,
@@ -72,11 +70,9 @@ public class OAuthToJwtUpdateTest
         testAuthenticator.authenticateUser("admin");
         
         oAuthPlugin = testPluginInstaller.installAddon(oAuthAddOnBean);
-        oauthApplink = connectApplinkManager.getAppLink(oAuthPlugin.getKey());
 
         jwtPlugin = testPluginInstaller.installAddon(createJwtAddOn(oAuthAddOnBean));
         oAuthPlugin = null; // we get to this line of code only if installing the update works
-        jwtApplink = connectApplinkManager.getAppLink(jwtPlugin.getKey());
     }
 
     @AfterClass
@@ -162,10 +158,38 @@ public class OAuthToJwtUpdateTest
     }
 
     @Test
-    public void blahApplink()
-    {
-        assertEquals(oauthApplink.getProperty(AuthenticationMethod.PROPERTY_NAME), AuthenticationMethod.OAUTH1);
-        assertEquals(jwtApplink.getProperty(AuthenticationMethod.PROPERTY_NAME), AuthenticationMethod.JWT);
+    public void installedApplinkIsCorrectWhenExistingApplinkPresent() throws IOException {
+        // need to clean up first
+        uninstall(jwtPlugin);
+
+        /*
+         * ACDEV-1417: For this case we need an existing connect like applink but no corresponding addon
+         */
+
+        // fake an existing applink. Note hard to fake oauth as requires addon to exist for permission check
+        connectApplinkManager.createAppLink(oAuthAddOnBean, oAuthAddOnBean.getBaseUrl(), AuthenticationType.NONE,
+                oAuthAddOnBean.getAuthentication().getPublicKey(), "the old key");
+
+        ApplicationLink existingApplink = connectApplinkManager.getAppLink(jwtPlugin.getKey());
+
+        // check the created applink is as expected
+        assertEquals("NONE", existingApplink.getProperty(AuthenticationMethod.PROPERTY_NAME));
+        assertEquals("the old key", existingApplink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME));
+        Object origSharedSecret = existingApplink.getProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME);
+        assertEquals(null, origSharedSecret);
+
+
+        jwtPlugin = testPluginInstaller.installAddon(createJwtAddOn(oAuthAddOnBean));
+
+        // make sure the applink now reflects what we expect
+        ApplicationLink jwtApplink = connectApplinkManager.getAppLink(jwtPlugin.getKey());
+        assertEquals("JWT", jwtApplink.getProperty(AuthenticationMethod.PROPERTY_NAME));
+        assertFalse(ObjectUtils.equals(origSharedSecret, jwtApplink.getProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME)));
+
+        assertEquals(ConnectAddOnUserUtil.usernameForAddon(jwtPlugin.getKey()), jwtApplink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME));
+        assertEquals(jwtPlugin.getKey(), jwtApplink.getProperty(JwtConstants.AppLinks.ADD_ON_ID_PROPERTY_NAME));
+        assertEquals(Boolean.FALSE.toString(), jwtApplink.getProperty("IS_ACTIVITY_ITEM_PROVIDER"));
+        assertEquals(Boolean.TRUE.toString(), jwtApplink.getProperty("system"));
     }
 
     private JsonObject getLastInstallPayload()
