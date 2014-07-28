@@ -6,22 +6,26 @@ import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
-import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnaphot;
+import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
+import static com.google.common.collect.Sets.newHashSet;
 import static org.junit.Assert.*;
 
 public abstract class AbstractAddonLifecycleTest
@@ -89,6 +93,7 @@ public abstract class AbstractAddonLifecycleTest
                                 .build()
                 )
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(addonKey))
+                .withScopes(newHashSet(ScopeName.ADMIN))
                 .build();
 
         addonKey = ModuleKeyUtils.randomName(pluginKeyPrefix);
@@ -166,7 +171,7 @@ public abstract class AbstractAddonLifecycleTest
             
             addonKey = plugin.getKey();
             
-            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, INSTALLED);
+            ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
             assertEquals(POST, request.getMethod());
 
         }
@@ -175,7 +180,7 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, INSTALLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallAddon(plugin);
+                testPluginInstaller.uninstallJsonAddon(plugin);
             }
         }
     }
@@ -194,10 +199,10 @@ public abstract class AbstractAddonLifecycleTest
 
             addonKey = plugin.getKey();
             
-            testPluginInstaller.uninstallAddon(plugin);
+            testPluginInstaller.uninstallJsonAddon(plugin);
             plugin = null;
 
-            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
+            ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
             assertEquals(POST, request.getMethod());
 
         }
@@ -207,7 +212,7 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallAddon(plugin);
+                testPluginInstaller.uninstallJsonAddon(plugin);
             }
         }
     }
@@ -225,19 +230,15 @@ public abstract class AbstractAddonLifecycleTest
             plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
-            
-            assertTrue("addon user is not active", connectAddOnUserService.isAddOnUserActive(addonKey));
-            
-            UserKey userKey = userManager.getUserProfile(ADD_ON_USER_KEY_PREFIX + addonKey).getUserKey();
-            assertTrue("addon user is not in group " + CONNECT_ADDON_USER_GROUP, userManager.isUserInGroup(userKey,CONNECT_ADDON_USER_GROUP));
 
+            assertUserExistence(addon, true);
         }
         finally
         {
             testFilterResults.clearRequest(addonKey, INSTALLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallAddon(plugin);
+                testPluginInstaller.uninstallJsonAddon(plugin);
             }
         }
     }
@@ -256,13 +257,10 @@ public abstract class AbstractAddonLifecycleTest
 
             addonKey = plugin.getKey();
 
-            testPluginInstaller.uninstallAddon(plugin);
+            testPluginInstaller.uninstallJsonAddon(plugin);
             plugin = null;
 
-            assertFalse("addon user is active", connectAddOnUserService.isAddOnUserActive(addonKey));
-
-            UserKey userKey = userManager.getUserProfile(ADD_ON_USER_KEY_PREFIX + addonKey).getUserKey();
-            assertTrue("addon user is not in group " + CONNECT_ADDON_USER_GROUP, userManager.isUserInGroup(userKey,CONNECT_ADDON_USER_GROUP));
+            assertUserExistence(addon, false);
         }
         finally
         {
@@ -270,7 +268,7 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallAddon(plugin);
+                testPluginInstaller.uninstallJsonAddon(plugin);
             }
         }
     }
@@ -289,18 +287,20 @@ public abstract class AbstractAddonLifecycleTest
 
             addonKey = plugin.getKey();
 
-            assertTrue("addon user is not active", connectAddOnUserService.isAddOnUserActive(addonKey));
-            
-            applicationService.removeUser(getApplication(),ADD_ON_USER_KEY_PREFIX + addonKey);
+            final boolean addOnShouldHaveUser = !addon.getAuthentication().getType().equals(AuthenticationType.NONE);
+            assertEquals("addon with auth=none should not have a user, all others should", addOnShouldHaveUser, connectAddOnUserService.isAddOnUserActive(addonKey));
 
-            testPluginInstaller.uninstallAddon(plugin);
+            if (addOnShouldHaveUser)
+            {
+                applicationService.removeUser(getApplication(), ADD_ON_USER_KEY_PREFIX + addonKey);
+            }
+
+            testPluginInstaller.uninstallJsonAddon(plugin);
             plugin = null;
 
             plugin = testPluginInstaller.installAddon(addon);
 
-            assertTrue("addon user is not active", connectAddOnUserService.isAddOnUserActive(addonKey));
-            UserKey userKey = userManager.getUserProfile(ADD_ON_USER_KEY_PREFIX + addonKey).getUserKey();
-            assertTrue("addon user is not in group " + CONNECT_ADDON_USER_GROUP, userManager.isUserInGroup(userKey,CONNECT_ADDON_USER_GROUP));
+            assertUserExistence(addon, addOnShouldHaveUser);
         }
         finally
         {
@@ -308,7 +308,7 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallAddon(plugin);
+                testPluginInstaller.uninstallJsonAddon(plugin);
             }
         }
     }
@@ -327,12 +327,8 @@ public abstract class AbstractAddonLifecycleTest
 
             addonKey = plugin.getKey();
             final String finalKey = addonKey;
-            
-            assertTrue("addon user is not active", connectAddOnUserService.isAddOnUserActive(addonKey));
 
-            UserKey userKey = userManager.getUserProfile(ADD_ON_USER_KEY_PREFIX + addonKey).getUserKey();
-            assertTrue("addon user is not in group " + CONNECT_ADDON_USER_GROUP, userManager.isUserInGroup(userKey,CONNECT_ADDON_USER_GROUP));
-
+            assertUserExistence(addon, true);
             testPluginInstaller.disableAddon(addonKey);
 
             WaitUntil.invoke(new WaitUntil.WaitCondition()
@@ -348,12 +344,9 @@ public abstract class AbstractAddonLifecycleTest
                 {
                     return "waiting for disable webhook post...";
                 }
-            },5);
+            }, 5);
 
-            assertFalse("addon user is active", connectAddOnUserService.isAddOnUserActive(addonKey));
-
-            assertTrue("addon user is not in group " + CONNECT_ADDON_USER_GROUP, userManager.isUserInGroup(userKey,CONNECT_ADDON_USER_GROUP));
-
+            assertUserExistence(addon, false);
         }
         finally
         {
@@ -361,7 +354,7 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, DISABLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallAddon(plugin);
+                testPluginInstaller.uninstallJsonAddon(plugin);
             }
         }
     }
@@ -380,11 +373,8 @@ public abstract class AbstractAddonLifecycleTest
 
             addonKey = plugin.getKey();
             final String finalKey = addonKey;
-            
-            assertTrue("addon user is not active", connectAddOnUserService.isAddOnUserActive(addonKey));
 
-            UserKey userKey = userManager.getUserProfile(ADD_ON_USER_KEY_PREFIX + addonKey).getUserKey();
-            assertTrue("addon user is not in group " + CONNECT_ADDON_USER_GROUP, userManager.isUserInGroup(userKey,CONNECT_ADDON_USER_GROUP));
+            assertUserExistence(addon, true);
 
             testPluginInstaller.disableAddon(addonKey);
             WaitUntil.invoke(new WaitUntil.WaitCondition()
@@ -402,9 +392,7 @@ public abstract class AbstractAddonLifecycleTest
                 }
             },5);
 
-            assertFalse("addon user is active", connectAddOnUserService.isAddOnUserActive(addonKey));
-
-            assertTrue("addon user is not in group " + CONNECT_ADDON_USER_GROUP, userManager.isUserInGroup(userKey,CONNECT_ADDON_USER_GROUP));
+            assertUserExistence(addon, false);
 
             testPluginInstaller.enableAddon(addonKey);
             WaitUntil.invoke(new WaitUntil.WaitCondition()
@@ -422,10 +410,7 @@ public abstract class AbstractAddonLifecycleTest
                 }
             },5);
 
-            assertTrue("addon user is not active", connectAddOnUserService.isAddOnUserActive(addonKey));
-
-            assertTrue("addon user is not in group " + CONNECT_ADDON_USER_GROUP, userManager.isUserInGroup(userKey,CONNECT_ADDON_USER_GROUP));
-
+            assertUserExistence(addon, true);
         }
         finally
         {
@@ -435,8 +420,26 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallAddon(plugin);
+                testPluginInstaller.uninstallJsonAddon(plugin);
             }
+        }
+    }
+
+    private void assertUserExistence(ConnectAddonBean addon, boolean shouldBeActiveIfItExists)
+    {
+        final String username = ADD_ON_USER_KEY_PREFIX + addon.getKey();
+        final UserProfile userProfile = userManager.getUserProfile(username);
+
+        if (addon.getAuthentication().getType().equals(AuthenticationType.NONE))
+        {
+            assertTrue("addon with auth=none should not have a user", null == userProfile);
+        }
+        else
+        {
+            assertFalse("addon with auth!=none should have a user", null == userProfile);
+            UserKey userKey = userProfile.getUserKey();
+            assertEquals(String.format("addon user should%s be active", shouldBeActiveIfItExists ? "" : " not"), shouldBeActiveIfItExists, connectAddOnUserService.isAddOnUserActive(addon.getKey()));
+            assertTrue("addon user is not in group " + CONNECT_ADDON_USER_GROUP, userManager.isUserInGroup(userKey, CONNECT_ADDON_USER_GROUP));
         }
     }
 

@@ -18,7 +18,6 @@ pom.release.xml
 debuglog.txt
 dependency-reduced-pom.xml
 .cache
-data
 apps
 node_modules
 

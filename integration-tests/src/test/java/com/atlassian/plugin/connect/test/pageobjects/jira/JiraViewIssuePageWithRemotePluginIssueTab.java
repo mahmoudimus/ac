@@ -25,7 +25,7 @@ public class JiraViewIssuePageWithRemotePluginIssueTab extends ConnectAddOnEmbed
 
     public JiraViewIssuePageWithRemotePluginIssueTab(String pageKey, String issueKey, String pluginKey, String pagePrefix)
     {
-        super(pageKey, pluginKey, true);
+        super(pluginKey, pageKey, true);
         this.issueKey = issueKey;
         this.pluginKey = pluginKey;
         this.pagePrefix = pagePrefix;

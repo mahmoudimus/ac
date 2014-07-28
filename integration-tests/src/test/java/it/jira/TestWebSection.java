@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -86,8 +87,7 @@ public class TestWebSection extends JiraWebDriverTestBase
     @Test
     public void testWebItemFoundWithinWebSection()
     {
-        loginAsAdmin();
-        product.visit(JiraViewProjectPage.class, project.getKey());
+        loginAndVisit(TestUser.ADMIN, JiraViewProjectPage.class, project.getKey());
 
         AddonDropdownMenu dropdown = connectPageOperations.getPageBinder().bind(AddonDropdownMenu.class, By.id(addonAndModuleKey(PLUGIN_KEY, HEADER_WEB_ITEM_ID)), By.id(addonAndModuleKey(PLUGIN_KEY, DROPDOWN_CONTENT_ID)));
 

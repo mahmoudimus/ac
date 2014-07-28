@@ -21,13 +21,15 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.threeleggedauth.ThreeLeggedAuthService;
+import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
-import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnaphot;
+import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.google.common.collect.ImmutableSet;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
+import it.com.atlassian.plugin.connect.util.RequestUtil;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -37,9 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -63,6 +63,8 @@ public abstract class ThreeLeggedAuthFilterTestBase
     private final ApplicationService applicationService;
     private final ApplicationManager applicationManager;
     private final AtomicReference<Plugin> installedPlugin = new AtomicReference<Plugin>();
+    protected final RequestUtil requestUtil;
+
     protected ConnectAddonBean addOnBean;
     private boolean globalImpersonationWasEnabled;
 
@@ -92,6 +94,7 @@ public abstract class ThreeLeggedAuthFilterTestBase
         this.threeLeggedAuthService = threeLeggedAuthService;
         this.applicationService = applicationService;
         this.applicationManager = applicationManager;
+        this.requestUtil = new RequestUtil(applicationProperties);
     }
 
     protected abstract ScopeName getScope();
@@ -135,7 +138,7 @@ public abstract class ThreeLeggedAuthFilterTestBase
         {
             try
             {
-                testPluginInstaller.uninstallAddon(installed);
+                testPluginInstaller.uninstallJsonAddon(installed);
             }
             catch (Exception e)
             {
@@ -171,22 +174,21 @@ public abstract class ThreeLeggedAuthFilterTestBase
         }
     }
 
-    protected ServletRequestSnaphot getCapturedRequest()
+    protected ServletRequestSnapshot getCapturedRequest()
     {
-        ServletRequestSnaphot request = testFilterResults.getRequest(addOnBean.getKey(), REQUEST_PATH);
+        ServletRequestSnapshot request = testFilterResults.getRequest(addOnBean.getKey(), REQUEST_PATH);
         assertNotNull(request);
         return request;
     }
 
-    protected static int issueRequest(URI uri) throws IOException
+    protected RequestUtil.Response issueRequest(URI uri) throws IOException
     {
-        URL url = uri.toURL();
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        connection.connect();
-        final int responseCode =  connection.getResponseCode();
-        connection.disconnect();
-        return responseCode;
+        RequestUtil.Request request = requestUtil.requestBuilder()
+            .setMethod(HttpMethod.GET)
+            .setUri(uri)
+            .build();
+
+        return requestUtil.makeRequest(request);
     }
 
     protected URI createRequestUri(String subject) throws UnsupportedEncodingException, NoSuchAlgorithmException
@@ -220,17 +222,17 @@ public abstract class ThreeLeggedAuthFilterTestBase
         return URI.create(internalAddonBaseUrl + REQUEST_PATH);
     }
 
-    protected Object getSubjectFromRequestAttribute(ServletRequestSnaphot request)
+    protected Object getSubjectFromRequestAttribute(ServletRequestSnapshot request)
     {
         return getRequestAttribute(request, JwtConstants.HttpRequests.JWT_SUBJECT_ATTRIBUTE_NAME);
     }
 
-    protected Object getAddOnIdFromRequestAttribute(ServletRequestSnaphot request)
+    protected Object getAddOnIdFromRequestAttribute(ServletRequestSnapshot request)
     {
         return getRequestAttribute(request, JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME);
     }
 
-    private Object getRequestAttribute(ServletRequestSnaphot request, String attributeName)
+    private Object getRequestAttribute(ServletRequestSnapshot request, String attributeName)
     {
         final Map<String, Object> attributes = request.getAttributes();
         return null == attributes ? null : attributes.get(attributeName);

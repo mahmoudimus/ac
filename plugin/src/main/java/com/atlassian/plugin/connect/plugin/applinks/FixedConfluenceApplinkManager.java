@@ -37,15 +37,6 @@ public class FixedConfluenceApplinkManager extends DefaultConnectApplinkManager 
     }
 
     @Override
-    public void deleteAppLink(final Plugin plugin) throws NotConnectAddonException
-    {
-        final String key = plugin.getKey();
-        final ApplicationLink link = getAppLink(key);
-
-        deleteApplink(key, link);
-    }
-
-    @Override
     public void deleteAppLink(ConnectAddonBean addon) throws NotConnectAddonException
     {
         final String key = addon.getKey();

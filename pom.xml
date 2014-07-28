@@ -29,6 +29,7 @@
         <module>test-support-plugin</module>
         <module>plugin</module>
         <module>static-analysis</module>
+        <module>cloud-acceptance-tests</module>
     </modules>
 
     <profiles>
@@ -519,6 +520,12 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>com.atlassian</groupId>
+                <artifactId>atlassian-test-categories</artifactId>
+                <version>${atlassian.test.categories.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.atlassian.osgi</groupId>
                 <artifactId>atlassian-osgi</artifactId>
                 <version>0.2</version>
@@ -557,6 +564,12 @@
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
                 <version>1.3.9</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.4</version>
             </dependency>
 
             <!-- json / json-schema -->
@@ -617,6 +630,12 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-all</artifactId>
+                <version>${hamcrest.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
                 <version>1.9</version>
@@ -653,13 +672,13 @@
         <amps.version>4.2.20</amps.version>
         <atlassian.analytics.version>3.13</atlassian.analytics.version>
         <atlassian.applinks.version>4.0.2</atlassian.applinks.version>
-        <atlassian.confluence.version>5.5-OD-25-013</atlassian.confluence.version>
+        <atlassian.confluence.version>5.5-OD-28-010</atlassian.confluence.version>
         <atlassian.crowd.version>2.8.0-OD-4</atlassian.crowd.version>
         <atlassian.fugue.version>1.1</atlassian.fugue.version>
         <atlassian.healthcheck.version>2.0.4</atlassian.healthcheck.version>
         <atlassian.httpclient.version>0.17.3</atlassian.httpclient.version>
         <atlassian.httpclient.api.version>0.17</atlassian.httpclient.api.version>
-        <atlassian.jira.version>6.3-OD-08-001</atlassian.jira.version>
+        <atlassian.jira.version>6.3-OD-08-005-WN</atlassian.jira.version>
         <atlassian.jira.projects.version>1.0.32</atlassian.jira.projects.version>
         <atlassian.jira.rest.version>${atlassian.jira.version}</atlassian.jira.rest.version>
         <atlassian.jira.testkit.version>6.2.21</atlassian.jira.testkit.version>
@@ -674,20 +693,21 @@
         <atlassian.selenium.version>2.2-rc3</atlassian.selenium.version>
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>
 
-        <atlassian.upm.version>2.16.5</atlassian.upm.version>
-        
+        <atlassian.upm.version>2.17.4</atlassian.upm.version>
+
         <atlassian.uri.version>0.1</atlassian.uri.version>
         <atlassian-util-concurrent.version>2.4.0</atlassian-util-concurrent.version>
-        
-        <atlassian.webhooks.version>1.0.5</atlassian.webhooks.version>
-        <atlassian.webhooks.api.version>1.0.5</atlassian.webhooks.api.version>
+
+        <atlassian.webhooks.version>1.0.6</atlassian.webhooks.version>
+        <atlassian.webhooks.api.version>1.0.6</atlassian.webhooks.api.version>
         <atlassian.jira.webhooks.version>1.2.5</atlassian.jira.webhooks.version>
-        
+
         <atlassian.webresource.version>3.0.0-m24</atlassian.webresource.version>
         <atlassian.webfragments.version>3.0.0-m7</atlassian.webfragments.version>
         <atlassian.html.encoder.version>1.4</atlassian.html.encoder.version>
 
         <!-- TEST STUFF -->
+        <atlassian.test.categories.version>0.5</atlassian.test.categories.version>
         <aui.version>5.2</aui.version>
         <gson.version>2.2.2-atlassian-1</gson.version>
         <guava.version>11.0.2</guava.version>

@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.macro.DynamicContentMacroModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.module.MacroModuleContextExtractor;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
 import org.junit.runner.RunWith;
@@ -32,7 +33,7 @@ public class DynamicContentMacroModuleDescriptorTest extends AbstractContentMacr
                 macroModuleContextExtractor);
 
         DynamicContentMacroModuleBean bean = createBeanBuilder().build();
-        return macroModuleDescriptorFactory.createModuleDescriptor(addon, plugin, bean);
+        return macroModuleDescriptorFactory.createModuleDescriptor(new DefaultConnectModuleProviderContext(addon), plugin, bean);
     }
 
     @Override

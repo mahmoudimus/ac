@@ -31,7 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.security.PublicKey;
@@ -129,7 +128,6 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
     @Override
     public void createAppLink(final ConnectAddonBean addon, final String baseUrl, final AuthenticationType authType, final String publicKey, final String addonUserKey)
     {
-        checkNotNull(addonUserKey);
         transactionTemplate.execute(new TransactionCallback<Void>()
         {
             @Override
@@ -185,35 +183,6 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
         });
     }
 
-    /**
-     * @deprecated use {@code deleteAppLink(final ConnectAddonBean addon)} instead
-     */
-    @Deprecated
-    @Override
-    public void deleteAppLink(final Plugin plugin) throws NotConnectAddonException
-    {
-        final String key = plugin.getKey();
-        final ApplicationLink link = getAppLink(key);
-
-        if (link != null)
-        {
-            transactionTemplate.execute(new TransactionCallback<Void>()
-            {
-                @Override
-                public Void doInTransaction()
-                {
-                    log.info("Removing application link for {}", key);
-                    applicationLinkService.deleteApplicationLink(link);
-                    return null;
-                }
-            });
-        }
-        else
-        {
-            log.debug("Could not remove application link for {}", key);
-        }
-    }
-
     @Override
     public void deleteAppLink(final ConnectAddonBean addon) throws NotConnectAddonException
     {
@@ -257,6 +226,12 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
             }
         }
         return null;
+    }
+
+    @Override
+    public URI getApplinkLinkSelfLink(final ApplicationLink applink)
+    {
+        return applicationLinkService.createSelfLinkFor(applink.getId());
     }
 
     private boolean compatibleAppLinkExists(String pluginKey, ApplicationId appId)

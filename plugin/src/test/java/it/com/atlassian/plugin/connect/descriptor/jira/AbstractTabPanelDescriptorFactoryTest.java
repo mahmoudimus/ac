@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.ConnectTabPanelModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.test.util.AddonUtil;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
@@ -18,6 +19,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -29,6 +32,7 @@ import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractTabPanelDescriptorFactoryTest
 {
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractTabPanelDescriptorFactoryTest.class);
     public static final String PLUGIN_NAME = "Tab Panel Plugin";
 
     public static final String MODULE_KEY = "my-tab-panel";
@@ -42,7 +46,6 @@ public abstract class AbstractTabPanelDescriptorFactoryTest
     protected final TestAuthenticator testAuthenticator;
     private final PluginAccessor pluginAccessor;
 
-    private TabPanelDescriptorHints descriptorHints;
     private ConnectTabPanelModuleBean bean;
     private ModuleDescriptor descriptor;
     private Plugin installedPlugin;
@@ -61,10 +64,10 @@ public abstract class AbstractTabPanelDescriptorFactoryTest
     public void setup()
     {
         this.pluginKey = AddonUtil.randomPluginKey();
-        this.descriptorHints = getDescriptorHints();
         this.bean = createBean();
 
-        this.descriptor = descriptorFactory.createModuleDescriptor(createAddonBean(),getConnectPlugin(), bean, descriptorHints);
+        this.descriptor = descriptorFactory.createModuleDescriptor(new DefaultConnectModuleProviderContext(createAddonBean()),
+                getConnectPlugin(), bean, getDescriptorHints());
     }
     
     @After
@@ -74,12 +77,12 @@ public abstract class AbstractTabPanelDescriptorFactoryTest
         {
             try
             {
-                testPluginInstaller.uninstallAddon(installedPlugin);
+                testPluginInstaller.uninstallJsonAddon(installedPlugin);
                 installedPlugin = null;
             }
             catch (IOException e)
             {
-                installedPlugin = null;
+                LOG.error("Could not uninstall addon", e);
             }
 
         }

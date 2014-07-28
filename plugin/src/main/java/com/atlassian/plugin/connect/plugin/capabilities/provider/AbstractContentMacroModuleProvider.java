@@ -21,6 +21,7 @@ import com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonI18nM
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
 import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.slf4j.Logger;
@@ -55,43 +56,50 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         this.connectAddonI18nManager = connectAddonI18nManager;
     }
 
-    protected abstract ModuleDescriptor createMacroModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, T macroBean);
+    protected abstract ModuleDescriptor createMacroModuleDescriptor(ConnectModuleProviderContext moduleProviderContext,
+                                                                    Plugin theConnectPlugin, T macroBean);
 
-    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin theConnectPlugin, String jsonFieldName, List<T> beans)
+    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext,
+                                                 Plugin theConnectPlugin, String jsonFieldName, List<T> beans)
     {
         List<ModuleDescriptor> moduleDescriptors = newArrayList();
-        MacroI18nBuilder i18nBuilder = new MacroI18nBuilder(addon.getKey());
+
+        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
+        MacroI18nBuilder i18nBuilder = new MacroI18nBuilder(connectAddonBean.getKey());
 
         for (T bean : beans)
         {
-            moduleDescriptors.addAll(createModuleDescriptors(addon, theConnectPlugin, bean));
-            i18nBuilder.add(bean, addon);
+            moduleDescriptors.addAll(createModuleDescriptors(moduleProviderContext, theConnectPlugin, bean));
+            i18nBuilder.add(bean, connectAddonBean);
         }
 
         try
         {
-            connectAddonI18nManager.add(addon.getKey(), i18nBuilder.getI18nProperties());
+            connectAddonI18nManager.add(connectAddonBean.getKey(), i18nBuilder.getI18nProperties());
         }
         catch (IOException e)
         {
-            log.error("Unable to register I18n properties for addon: " + addon.getKey(), e);
+            log.error("Unable to register I18n properties for addon: " + connectAddonBean.getKey(), e);
         }
 
         return moduleDescriptors;
     }
 
-    protected List<ModuleDescriptor> createModuleDescriptors(ConnectAddonBean addon, Plugin theConnectPlugin, T macroBean)
+    protected List<ModuleDescriptor> createModuleDescriptors(ConnectModuleProviderContext moduleProviderContext,
+                                                             Plugin theConnectPlugin, T macroBean)
     {
         List<ModuleDescriptor> descriptors = newArrayList();
 
+        final ConnectAddonBean addon = moduleProviderContext.getConnectAddonBean();
+
         // The actual Macro module descriptor
-        descriptors.add(createMacroModuleDescriptor(addon, theConnectPlugin, macroBean));
+        descriptors.add(createMacroModuleDescriptor(moduleProviderContext, theConnectPlugin, macroBean));
 
         // Add a web item if the Macro is featured
         if (macroBean.isFeatured())
         {
             WebItemModuleBean featuredWebItem = createFeaturedWebItem(addon, macroBean);
-            descriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(addon, theConnectPlugin, featuredWebItem));
+            descriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, featuredWebItem));
 
             // Add a featured icon web resource
             if (macroBean.hasIcon())
@@ -168,6 +176,8 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     private void createEditorIFrame(ConnectAddonBean addon, T macroBean)
     {
         MacroEditorBean editor = macroBean.getEditor();
+        String width = StringUtils.isBlank(editor.getWidth()) ? "100%" : editor.getWidth();
+        String height = StringUtils.isBlank(editor.getHeight()) ? "100%" : editor.getHeight();
 
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                 .addOn(addon.getKey())
@@ -175,7 +185,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .dialogTemplate()
                 .urlTemplate(editor.getUrl())
                 .title(macroBean.getDisplayName())
-                .dimensions(editor.getWidth(), editor.getHeight())
+                .dimensions(width, height)
                 .simpleDialog(true)
                 .build();
 

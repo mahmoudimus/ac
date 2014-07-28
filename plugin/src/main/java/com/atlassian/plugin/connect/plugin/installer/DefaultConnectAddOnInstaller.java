@@ -42,13 +42,13 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
     @Autowired
     public DefaultConnectAddOnInstaller(RemotePluginArtifactFactory remotePluginArtifactFactory,
-                                        PluginController pluginController,
-                                        PluginAccessor pluginAccessor,
-                                        EventPublisher eventPublisher,
-                                        OAuthLinkManager oAuthLinkManager,
-                                        RemoteEventsHandler remoteEventsHandler,
-                                        ConnectAddonBeanFactory connectAddonBeanFactory,
-                                        ConnectAddonToPluginFactory addonToPluginFactory, ConnectAddonManager connectAddonManager)
+            PluginController pluginController,
+            PluginAccessor pluginAccessor,
+            EventPublisher eventPublisher,
+            OAuthLinkManager oAuthLinkManager,
+            RemoteEventsHandler remoteEventsHandler,
+            ConnectAddonBeanFactory connectAddonBeanFactory,
+            ConnectAddonToPluginFactory addonToPluginFactory, ConnectAddonManager connectAddonManager)
     {
         this.remotePluginArtifactFactory = remotePluginArtifactFactory;
         this.pluginController = pluginController;
@@ -90,29 +90,29 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     }
 
     @Override
-    public Plugin install(String username, String jsonDescriptor) throws PluginInstallException
+    public Plugin install(String jsonDescriptor) throws PluginInstallException
     {
         String pluginKey = null;
-        Plugin addonPluginWrapper = null;
-        ConnectAddonBean addOn = null;
-        
+        Plugin addonPluginWrapper;
+        ConnectAddonBean addOn;
+
         long startTime = System.currentTimeMillis();
 
         try
         {
             //until we ensure we no longer have xml or mirror plugins, we need to call removeOldPlugin, which is why we marshal here just to get the plugin key
             ConnectAddonBean nonValidatedAddon = connectAddonBeanFactory.fromJsonSkipValidation(jsonDescriptor);
-            
+
             pluginKey = nonValidatedAddon.getKey();
-            
-            if(nonValidatedAddon.getModules().isEmpty())
+
+            if (nonValidatedAddon.getModules().isEmpty())
             {
                 Option<String> errorI18nKey = Option.<String>some("connect.install.error.no.modules");
-                throw new PluginInstallException("Unable to install connect add on because it has no modules defined",errorI18nKey);
+                throw new PluginInstallException("Unable to install connect add on because it has no modules defined", errorI18nKey);
             }
-            
+
             removeOldPlugin(pluginKey);
-        
+
             addOn = connectAddonManager.installConnectAddon(jsonDescriptor);
 
             // todo @seb @jd - enableConnectAddon may fail (it publishes the EnableFailedEvent) - should we throw an exception here too?
@@ -123,7 +123,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
             addonPluginWrapper.enable();
         }
-        catch(PluginInstallException e)
+        catch (PluginInstallException e)
         {
             if (null != pluginKey)
             {
@@ -225,7 +225,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         catch (PermissionDeniedException ex)
         {
             log.warn("Unable to install remote plugin '{}' by user '{}' due to permission issues: {}",
-                    new Object[]{pluginKey, username, ex.getMessage()});
+                    new Object[] { pluginKey, username, ex.getMessage() });
             log.debug("Installation failed due to permission issue", ex);
             eventPublisher.publish(new RemotePluginInstallFailedEvent(pluginKey, "Installation failed due to permission issue " + ex.getMessage()));
             throw ex;
@@ -233,7 +233,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         catch (InstallationFailedException ex)
         {
             log.warn("Unable to install remote plugin '{}' by user '{}' due to installation issue: {}",
-                    new Object[]{pluginKey, username, ex.getMessage()});
+                    new Object[] { pluginKey, username, ex.getMessage() });
             log.debug("Installation failed due to installation issue", ex);
             eventPublisher.publish(new RemotePluginInstallFailedEvent(pluginKey, ex.getMessage()));
             throw ex;
@@ -280,7 +280,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         {
             pluginController.uninstall(plugin);
         }
-        else if(connectAddonManager.hasDescriptor(pluginKey))
+        else if (connectAddonManager.hasDescriptor(pluginKey))
         {
             connectAddonManager.uninstallConnectAddonQuietly(pluginKey);
         }

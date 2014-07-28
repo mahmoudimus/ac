@@ -27,20 +27,17 @@ import java.io.IOException;
 @Component
 public final class LucidChartBundler implements InitializingBean, DisposableBean
 {
-    private static final String LUCIDCHART_KEY = "lucidchart-app";
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final EventPublisher eventPublisher;
     private final PluginController pluginController;
-    private final PluginAccessor pluginAccessor;
     private final ApplicationProperties applicationProperties;
 
     @Autowired
-    public LucidChartBundler(EventPublisher eventPublisher, PluginController pluginController, PluginAccessor pluginAccessor, ApplicationProperties applicationProperties)
+    public LucidChartBundler(EventPublisher eventPublisher, PluginController pluginController, ApplicationProperties applicationProperties)
     {
         this.eventPublisher = eventPublisher;
         this.pluginController = pluginController;
-        this.pluginAccessor = pluginAccessor;
         this.applicationProperties = applicationProperties;
     }
 

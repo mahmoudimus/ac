@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectDocume
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.module.ImagePlaceholderMacro;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.module.confluence.FixedXhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.module.confluence.PageMacro;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -21,18 +22,17 @@ import com.atlassian.uri.Uri;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 
-import javax.annotation.Nullable;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.LinkBean.newLinkBean;
 
-public abstract class AbstractContentMacroModuleDescriptorFactory<B extends BaseContentMacroModuleBean> implements ConnectModuleDescriptorFactory<B, XhtmlMacroModuleDescriptor>
+public abstract class AbstractContentMacroModuleDescriptorFactory<B extends BaseContentMacroModuleBean>
+        implements ConnectModuleDescriptorFactory<B, XhtmlMacroModuleDescriptor>
 {
     private final AbsoluteAddOnUrlConverter urlConverter;
 
@@ -45,11 +45,12 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
     protected abstract ModuleFactory createModuleFactory(ConnectAddonBean addon, DOMElement element, B bean);
 
     @Override
-    public XhtmlMacroModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, B bean)
+    public XhtmlMacroModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, B bean)
     {
-        DOMElement element = createDOMElement(addon, bean);
-        ModuleFactory moduleFactory = createModuleFactory(addon, element, bean);
-        MacroMetadataParser macroMetadataParser = createMacroMetaDataParser(addon, bean);
+        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
+        DOMElement element = createDOMElement(connectAddonBean, bean);
+        ModuleFactory moduleFactory = createModuleFactory(connectAddonBean, element, bean);
+        MacroMetadataParser macroMetadataParser = createMacroMetaDataParser(connectAddonBean, bean);
 
         FixedXhtmlMacroModuleDescriptor descriptor = new FixedXhtmlMacroModuleDescriptor(moduleFactory, macroMetadataParser);
         descriptor.init(theConnectPlugin, element);
@@ -62,7 +63,8 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
 
     private void updateDefaultParameterLabels(List<MacroParameter> macroParameters, List<MacroParameterBean> macroParameterBeans)
     {
-        Map<String, MacroParameter> parameterMap = Maps.uniqueIndex(macroParameters, new Function<MacroParameter, String>() {
+        Map<String, MacroParameter> parameterMap = Maps.uniqueIndex(macroParameters, new Function<MacroParameter, String>()
+        {
             @Override
             public String apply(MacroParameter parameter)
             {
@@ -100,24 +102,27 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         element.setAttribute("class", PageMacro.class.getName());
         element.setAttribute("state", "enabled");
 
-        if(bean.hasRenderModes())
-        {
-            for(MacroRenderModeBean renderMode : bean.getRenderModes())
-            {
-                if(renderMode.getRenderModeType() == MacroRenderModeType.mobile)
-                {
-                    element.addElement("device-type").addText("mobile");
-                } else {
-                    // help vendors find errors in their descriptors
-                    throw new PluginInstallException("Unsupported render type '"
-                            + renderMode.getRenderModeType()
-                            + "' - "
-                            + addon.getName()
-                            + "' (" + addon.getKey() + ")");
-
-                }
-            }
-        }
+//        See ACDEV-1400 AC-1210
+//        if (bean.hasRenderModes())
+//        {
+//            for (MacroRenderModeBean renderMode : bean.getRenderModes())
+//            {
+//                if (renderMode.getRenderModeType() == MacroRenderModeType.mobile)
+//                {
+//                    element.addElement("device-type").addText("mobile");
+//                }
+//                else
+//                {
+//                    // help vendors find errors in their descriptors
+//                    throw new PluginInstallException("Unsupported render type '"
+//                            + renderMode.getRenderModeType()
+//                            + "' - "
+//                            + addon.getName()
+//                            + "' (" + addon.getKey() + ")");
+//
+//                }
+//            }
+//        }
 
         if (bean.hasDocumentation())
         {

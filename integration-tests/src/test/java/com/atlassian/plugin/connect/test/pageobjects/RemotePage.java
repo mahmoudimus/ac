@@ -20,7 +20,7 @@ import java.util.concurrent.Callable;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 
-@XmlDescriptor(comment="migrate to ConnectPage")
+@XmlDescriptor(comment="migrate to ConnectAddOnPage")
 public class RemotePage
 {
     @Inject

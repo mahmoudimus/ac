@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.iframe.webpanel;
 
+import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.pages.AbstractPage;
 import com.atlassian.confluence.pages.actions.AbstractPageAwareAction;
 import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
@@ -58,6 +59,12 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
         if (page != null)
         {
             moduleContext.addPage(page);
+        }
+
+        Object content = webFragmentContext.get("content");
+        if (content != null && content instanceof ContentEntityObject)
+        {
+            moduleContext.addContent((ContentEntityObject)content);
         }
 
         Object action = webFragmentContext.get("action");

@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBui
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebSectionModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.test.util.AddonUtil;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.web.Condition;
@@ -73,7 +74,8 @@ public class WebSectionDescriptorFactoryTest
         addonBean = createAddonBean();
         
 
-        this.descriptor = descriptorFactory.createModuleDescriptor(addonBean,getConnectPlugin(), bean);
+        this.descriptor = descriptorFactory.createModuleDescriptor(new DefaultConnectModuleProviderContext(addonBean),
+                getConnectPlugin(), bean);
     }
 
     @After
@@ -83,7 +85,7 @@ public class WebSectionDescriptorFactoryTest
         {
             try
             {
-                testPluginInstaller.uninstallAddon(installedPlugin);
+                testPluginInstaller.uninstallJsonAddon(installedPlugin);
                 installedPlugin = null;
             }
             catch (IOException e)

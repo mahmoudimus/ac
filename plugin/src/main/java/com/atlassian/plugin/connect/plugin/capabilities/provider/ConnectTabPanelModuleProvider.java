@@ -68,10 +68,12 @@ public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<Conn
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin theConnectPlugin, String jsonFieldName,
+    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, String jsonFieldName,
                                                  List<ConnectTabPanelModuleBean> beans)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
+
+        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
 
         for (ConnectTabPanelModuleBean bean : beans)
         {
@@ -79,17 +81,18 @@ public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<Conn
             {
                 // register a render strategy for tab panels
                 IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                        .addOn(addon.getKey())
-                        .module(bean.getKey(addon))
+                        .addOn(connectAddonBean.getKey())
+                        .module(bean.getKey(connectAddonBean))
                         .genericBodyTemplate()
                         .urlTemplate(bean.getUrl())
                         .conditions(bean.getConditions())
                         .title(bean.getDisplayName())
                         .build();
-                iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getRawKey(), renderStrategy);
+                iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), renderStrategy);
 
                 // construct a module descriptor that JIRA will use to retrieve tab modules from
-                builder.add(descriptorFactory.createModuleDescriptor(addon, theConnectPlugin, bean, FIELD_TO_HINTS.get(jsonFieldName)));
+                builder.add(descriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean,
+                        FIELD_TO_HINTS.get(jsonFieldName)));
             }
         }
 

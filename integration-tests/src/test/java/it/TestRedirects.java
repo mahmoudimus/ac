@@ -40,17 +40,22 @@ public class TestRedirects extends AbstractBrowserlessTest
                 .setAuthenticationToNone()
                 .start();
 
-        URL url = new URL(baseUrl + "/plugins/servlet/redirect/permanent?app_key=" + runner.getAddon().getKey() + "&app_url=/page&message=bar");
-        HttpURLConnection yc = (HttpURLConnection) url.openConnection();
-        assertEquals(HttpStatus.SC_MOVED_PERMANENTLY, yc.getResponseCode());
+        try
+        {
+            URL url = new URL(baseUrl + "/plugins/servlet/redirect/permanent?app_key=" + runner.getAddon().getKey() + "&app_url=/page&message=bar");
+            HttpURLConnection yc = (HttpURLConnection) url.openConnection();
+            assertEquals(HttpStatus.SC_MOVED_PERMANENTLY, yc.getResponseCode());
 
-        // follow redirect
-        String redirectUrl = yc.getHeaderField("Location");
-        HttpURLConnection conn = (HttpURLConnection) new URL(redirectUrl).openConnection();
-        String responseText = IOUtils.toString(conn.getInputStream());
-        assertEquals("bar", responseText);
-
-        runner.stopAndUninstall();
+            // follow redirect
+            String redirectUrl = yc.getHeaderField("Location");
+            HttpURLConnection conn = (HttpURLConnection) new URL(redirectUrl).openConnection();
+            String responseText = IOUtils.toString(conn.getInputStream());
+            assertEquals("bar", responseText);
+        }
+        finally
+        {
+            runner.stopAndUninstall();
+        }
     }
 
     private static final class MessageServlet extends HttpServlet

@@ -74,13 +74,6 @@ public class JiraOps
         return soap.updateIssue(token, issueKey, values.toArray(new RemoteFieldValue[values.size()]));
     }
 
-    public void addComment(String issueKey, String body) throws java.rmi.RemoteException
-    {
-        RemoteComment comment = new RemoteComment();
-        comment.setBody(body);
-        soap.addComment(token, issueKey, comment);
-    }
-
     public RemoteNamedObject[] availableActions(String issueKey) throws java.rmi.RemoteException
     {
         return soap.getAvailableActions(token, issueKey);
