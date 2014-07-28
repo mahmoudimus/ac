@@ -251,6 +251,11 @@
         <description>A permission that needs to be requested by a plugin in order to execute certain functionality</description>
     </described-module-type>
 
+    <described-module-type key="connect-request-filter" name="Connect Request Filter"
+                           class="com.atlassian.plugin.connect.plugin.web.ConnectRequestFilterModuleDescriptorImpl">
+        <description>Http request filter for particular stages of Connect add-on http request lifecycle.</description>
+    </described-module-type>
+
     <described-module-type key="remote-web-panel" class="com.atlassian.plugin.connect.plugin.module.webpanel.RemoteWebPanelModuleDescriptor">
         <description>
             A remote page decorated as a web panel on the project configuration page.

@@ -8,10 +8,13 @@ import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.module.oauth.OAuth2LOAuthenticator;
 import com.atlassian.plugin.connect.plugin.product.WebSudoService;
+import com.atlassian.plugin.connect.plugin.web.ConnectRequestFilterFactory;
+import com.atlassian.plugin.connect.plugin.web.ConnectRequestFilterPhase;
 import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.event.ScopedRequestAllowedEvent;
 import com.atlassian.plugin.connect.spi.event.ScopedRequestDeniedEvent;
 import com.atlassian.plugin.connect.spi.util.ServletUtils;
+import com.atlassian.plugin.servlet.filter.IteratingFilterChain;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import org.slf4j.Logger;
@@ -53,16 +56,19 @@ public class ApiScopingFilter implements Filter
     private final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
     private final String ourConsumerKey;
     private final EventPublisher eventPublisher;
+    private final ConnectRequestFilterFactory requestFilterFactory;
 
     public ApiScopingFilter(PermissionManager permissionManager, UserManager userManager,
             ConsumerService consumerService, WebSudoService webSudoService,
-            JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, EventPublisher eventPublisher)
+            JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, EventPublisher eventPublisher,
+            ConnectRequestFilterFactory requestFilterFactory)
     {
         this.permissionManager = permissionManager;
         this.userManager = userManager;
         this.webSudoService = webSudoService;
         this.jsonConnectAddOnIdentifierService = jsonConnectAddOnIdentifierService;
         this.eventPublisher = eventPublisher;
+        this.requestFilterFactory = requestFilterFactory;
         this.ourConsumerKey = consumerService.getConsumer().getKey();
     }
 
@@ -148,7 +154,8 @@ public class ApiScopingFilter implements Filter
                 new Object[]{clientKey, req.getMethod(), req.getRequestURI(), user});
 
         eventPublisher.publish(new ScopedRequestAllowedEvent(req.getMethod(), req.getRequestURI()));
-        chain.doFilter(inputConsumingRequest, res);
+
+        afterApiScopingFilter(inputConsumingRequest, res, chain);
     }
 
     @XmlDescriptor
@@ -161,8 +168,8 @@ public class ApiScopingFilter implements Filter
         if (!DEV_MODE_ENABLED && userKey != null && userManager.isSystemAdmin(userKey))
         {
             log.warn("XDM request from app '{}' attempted to authenticate as a system administrator '{}' when " +
-                    "accessing the resource '{}', and was denied.",
-                    new Object[]{clientKey, userKey, req.getRequestURI()});
+                            "accessing the resource '{}', and was denied.",
+                    new Object[] { clientKey, userKey, req.getRequestURI() });
             res.sendError(HttpServletResponse.SC_FORBIDDEN, "AP.request() can not be used to access WebSudo " +
                     "protected APIs.");
             return;
@@ -183,7 +190,7 @@ public class ApiScopingFilter implements Filter
                 session.setAttribute(webSudoSessionKey, null);
                 try
                 {
-                    chain.doFilter(req, res);
+                    afterApiScopingFilter(req, res, chain);
                 }
                 finally
                 {
@@ -205,7 +212,19 @@ public class ApiScopingFilter implements Filter
         }
 
         // no WebSudo session - carry on
-        chain.doFilter(req, res);
+        afterApiScopingFilter(req, res, chain);
+    }
+
+    /**
+     * This methods gives products/plugins which implement Connect SPI ability to filter HTTP requests executed by Connect add-ons
+     * after the Connect plugin executed API scoping check.
+     */
+    private void afterApiScopingFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
+            throws IOException, ServletException
+    {
+        final Iterable<Filter> filersForPhase = requestFilterFactory.getFiltersForPhase(ConnectRequestFilterPhase.AFTER_API_SCOPING_FILTER);
+        final IteratingFilterChain filterChain = new IteratingFilterChain(filersForPhase.iterator(), chain);
+        filterChain.doFilter(req, res);
     }
 
     /**

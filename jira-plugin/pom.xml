@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>atlassian-connect-parent</artifactId>
+        <groupId>com.atlassian.plugins</groupId>
+        <version>1.1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>jira-connect-plugin</artifactId>
+    <name>JIRA Connect - Plugin</name>
+    <packaging>atlassian-plugin</packaging>
+
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <dependencies>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>${servlet.api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>maven-amps-plugin</artifactId>
+                <configuration>
+                    <enableDevToolbox>true</enableDevToolbox>
+                    <enableFastdev>true</enableFastdev>
+                    <skipManifestValidation>true</skipManifestValidation>
+                    <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
+                    <versionOverridesPath>${basedir}/../bin/amps-overrides.properties</versionOverridesPath>
+                    <buildTestPlugin>${build.test.plugin}</buildTestPlugin>
+                    <instructions>
+                        <Spring-Context>*</Spring-Context>
+                        <Atlassian-Plugin-Key>${groupId}.${artifactId}</Atlassian-Plugin-Key>
+                        <Import-Package>
+                            javax.servlet.*;version="${servlet.api.version}",
+                            *;resolution:=optional
+                        </Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <compilerArgument>-proc:none</compilerArgument>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <properties>
+        <build.test.plugin>false</build.test.plugin>
+        <devmode>true</devmode>
+        <servlet.api.version>2.4</servlet.api.version>
+    </properties>
+</project>
