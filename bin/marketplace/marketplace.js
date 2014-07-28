@@ -19,7 +19,7 @@ var downloadQueue = async.queue(function (task, callback) {
 downloadQueue.drain = function () {
 }
 
-var includePrivateAddons(opts) {
+var includePrivateAddons = function(opts) {
     return _.contains(opts.status, 'private');
 }
 
