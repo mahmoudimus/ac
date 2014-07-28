@@ -19,11 +19,11 @@ In this tutorial, you'll learn about:
 * [Creating the D3.js table to display your projects](#architect-stats-page)
 * [Adding data and verifying your add-on works](#check)
 
-To display your JIRA projects in a table, you'll build a static Connect add-on 
-accessible via an _Activity_ link in the header. 
+This tutorial shows you how to build a static Connect add-on that displays your JIRA projects 
+in a table, accessible via an _Activity_ link in the header. 
 
-Your static page will use the [JIRA REST API](https://jira.atlassian.com/plugins/servlet/restbrowser#/) 
-to retrieve information about projects in your JIRA instance. You'll use the [Node.js](http://nodejs.org/) 
+Your add-on will use the [JIRA REST API](https://jira.atlassian.com/plugins/servlet/restbrowser#/) 
+to get information about projects in your JIRA instance. You'll use the [Node.js](http://nodejs.org/) 
 framework and [Atlassian Connect Express (ACE)](https://bitbucket.org/atlassian/atlassian-connect-express/) 
 to interface with JIRA. Finally, you'll create your table using [D3.js](http://d3js.org/). 
 
@@ -49,10 +49,10 @@ For these steps, you might need to enter sudo mode in your terminal.
 	Otherwise, you can [download and install node directly](http://nodejs.org/download/).  
 1. Install the [ACE framework](https://bitbucket.org/atlassian/atlassian-connect-express/).
 	<pre><code data-lang="text">$ npm install -g atlas-connect</code></pre>
-1. Create a new ACE project called `project-activity`.
-	<pre><code data-lang="text">$ atlas-connect new project-activity</code></pre>
-1. Change to your new `project-activity` directory.
-	<pre><code data-lang="text">$ cd project-activity/</code></pre>
+1. Create a new ACE project called `jira-activity`.
+	<pre><code data-lang="text">$ atlas-connect new jira-activity</code></pre>
+1. Change to your new `jira-activity` directory.
+	<pre><code data-lang="text">$ cd jira-activity/</code></pre>
 1. Install node.js dependencies for your project.  
 	<pre><code data-lang="text">$ npm install</code></pre>
 1. Ensure you have the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads).  
@@ -77,17 +77,28 @@ For these steps, you might need to enter sudo mode in your terminal.
     </tt>  
 1. In a browser window, navigate to your JIRA instance.  
 	This should be [http://localhost:2990/jira](http://localhost:2990/jira).  
-1. Log in with `admin/admin`. 
+1. Log in with the following credentials:
+	Username: `admin`  
+	Password: `admin`
 
 ## <a name="stats-header"></a> Install your add-on and add an _Activity_ link
 
-Now you've got the basic architecture for your plugin. If you open your new `project-activity` directory, 
+Now you've got the basic architecture for your plugin. If you open your new `jira-activity` directory, 
 you'll see essentials like the [`atlassian-connect.json` descriptor](../modules/) in the 
 root. You'll also see an `app.js` file. 
 
 In this step, you'll prune some of the stub code, and install your add-on in JIRA using ACE. 
 
 1. Open the [`atlassian-connect.json` descriptor](../modules/) file in your favorite editor or IDE.
+1. Replace the `key`, `name`, `description`, and `vendor` name and URL with these fields: 
+	````
+	    "key": "jira-activity",
+	    "name": "JIRA Project Actvity",
+	    "description": "A Connect add-on that displays JIRA projects in a table",
+	    "vendor": {
+	        "name": "Angry Nerds",
+	        "url": "https://www.atlassian.com/angrynerds"
+	 ````
 1. Replace the [`generalPages` module](../modules/jira/general-page.html) with the following:  
 	````
      "generalPages": [
@@ -159,7 +170,7 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	````
  
 1. Open a new terminal window.  
-1. From your `project-activity` root, run the `app.js` file:
+1. From your `jira-activity` root, run the `app.js` file:
 	<pre><code data-lang="text">$ node app.js</code></pre> 
 	Your add-on is automatically registered in JIRA for you. 
 1. Refresh JIRA in your browser.  
