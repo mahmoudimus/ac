@@ -1,8 +1,6 @@
 package it.modules.confluence;
 
-import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceGeneralPage;
@@ -12,11 +10,10 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.ParameterCapturingConditionServlet;
+import it.util.TestUser;
 import org.junit.*;
 import org.junit.rules.TestRule;
-import redstone.xmlrpc.XmlRpcFault;
 
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Map;
 
@@ -36,9 +33,7 @@ import static org.junit.Assert.assertThat;
  */
 public class TestGeneralPage extends ConfluenceWebDriverTestBase
 {
-    private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
     private static final String SPACE = "ds";
-    private static final String ADMIN = "admin";
     private static final String KEY_MY_AWESOME_PAGE = "my-awesome-page";
     private static final String KEY_MY_CONTEXT_PAGE = "my-context-page";
     private static final String CONTEXT_PAGE_NAME = "My Context Param Page";
@@ -46,18 +41,17 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
     private static final String PARAMETER_CAPTURE_CONDITION_URL = "/parameterCapture";
 
-    private static ConnectRunner remotePlugin;
+    private static ConnectRunner runner;
     private String addonKey;
     private String awesomePageModuleKey;
-    private String contextPageModuleKey;
 
     @Rule
-    public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
+    public TestRule resetToggleableCondition = runner.resetToggleableConditionRule();
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
+        runner = new ConnectRunner(product)
                 .setAuthenticationToNone()
                 .addModules(
                         "generalPages",
@@ -84,24 +78,23 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
     @AfterClass
     public static void stopConnectAddOn() throws Exception
     {
-        if (remotePlugin != null)
+        if (runner != null)
         {
-            remotePlugin.stopAndUninstall();
+            runner.stopAndUninstall();
         }
     }
 
     @Before
     public void beforeEachTest()
     {
-        this.addonKey = remotePlugin.getAddon().getKey();
-        this.awesomePageModuleKey = addonAndModuleKey(addonKey,KEY_MY_AWESOME_PAGE);
-        this.contextPageModuleKey = addonAndModuleKey(addonKey,KEY_MY_CONTEXT_PAGE);
+        this.addonKey = runner.getAddon().getKey();
+        this.awesomePageModuleKey = addonAndModuleKey(addonKey, KEY_MY_AWESOME_PAGE);
     }
 
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws Exception
     {
-        loginAsAdmin();
+        login(TestUser.ADMIN);
 
         ConfluenceViewPage createdPage = createAndVisitViewPage();
         ConfluenceGeneralPage generalPage = product.getPageBinder().bind(ConfluenceGeneralPage.class, KEY_MY_AWESOME_PAGE, "My Awesome Page", true, addonKey);
@@ -126,9 +119,9 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
     @Test
     public void pageIsNotAccessibleWithFalseCondition() throws Exception
     {
-        remotePlugin.setToggleableConditionShouldDisplay(false);
+        runner.setToggleableConditionShouldDisplay(false);
 
-        loginAsAdmin();
+        login(TestUser.ADMIN);
 
         // web item should not be displayed
         createAndVisitViewPage();
@@ -144,7 +137,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
     @Test
     public void remoteConditionWithParamsIsCorrect() throws Exception
     {
-        loginAsAdmin();
+        login(TestUser.ADMIN);
 
         ConfluenceViewPage page = createAndVisitViewPage();
         ConfluenceGeneralPage generalPage = product.getPageBinder().bind(ConfluenceGeneralPage.class, KEY_MY_CONTEXT_PAGE, CONTEXT_PAGE_NAME, true);
@@ -165,19 +158,8 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
     
     private ConfluenceViewPage createAndVisitViewPage() throws Exception
     {
-        return createAndVisitPage(ConfluenceViewPage.class);
-    }
-
-
-    private <P extends Page> P createAndVisitPage(Class<P> pageClass) throws Exception
-    {
-        ConfluenceOps.ConfluencePageData pageData = createPage();
-        return product.visit(pageClass, pageData.getId());
-    }
-
-    private ConfluenceOps.ConfluencePageData createPage() throws MalformedURLException, XmlRpcFault
-    {
-        return confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser(ADMIN, ADMIN)), SPACE, "A test page", "some page content");
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(TestUser.ADMIN), SPACE, "A test page", "some page content");
+        return product.visit(ConfluenceViewPage.class, pageData.getId());
     }
 
 }

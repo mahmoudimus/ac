@@ -14,5 +14,5 @@ public interface ConnectAddOnInstaller
     @XmlDescriptor
     Plugin install(String username, Document document) throws PluginInstallException;
 
-    Plugin install(String username, String jsonDescriptor) throws PluginInstallException;
+    Plugin install(String jsonDescriptor) throws PluginInstallException;
 }

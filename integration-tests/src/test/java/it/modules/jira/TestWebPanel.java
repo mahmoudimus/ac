@@ -1,94 +1,222 @@
+
 package it.modules.jira;
 
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrationPage;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProfilePage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import hudson.plugins.jira.soap.RemoteIssue;
 import it.jira.JiraWebDriverTestBase;
-import org.junit.*;
-import org.junit.rules.TestRule;
+import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.rmi.RemoteException;
 
 import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
-import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertThat;
+import static it.util.TestUser.ADMIN;
+import static it.util.TestUser.BARNEY;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
 
-
-public class TestWebPanel extends JiraWebDriverTestBase
+/**
+ * Test of remote web panels in JIRA.
+ */
+@XmlDescriptor
+public final class TestWebPanel extends JiraWebDriverTestBase
 {
-    private static final String WEB_PANEL_KEY = "hip-chat-discussions";
-    
-    private static ConnectRunner remotePlugin;
-    
-    private String webPanelModuleKey;
+    // web panel keys
+    private static final String ISSUE_PANEL_LEFT_KEY = "jira-issue-left-web-panel";
+    private static final String ISSUE_PANEL_LEFT2_KEY = "jira-issue-left-web-panel-2";
+    private static final String ISSUE_PANEL_RIGHT_KEY = "jira-issue-right-web-panel";
+    private static final String USER_PROFILE_KEY = "user-profile-web-panel";
+    private static final String PROJECT_CONFIG_HEADER_KEY = "jira-project-config-header-web-panel";
+    private static final String PROJECT_CONFIG_PANEL_KEY = "web-panel-project-config";
+    private static final String WEB_PANEL_WITH_CONDITION_KEY = "hip-chat-discussions";
 
-    @Rule
-    public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
+    private static ConnectRunner runner;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        getProduct().quickLoginAsAdmin();
+
+        runner = new ConnectRunner(product)
                 .setAuthenticationToNone()
-                .addModule("webPanels", newWebPanelBean()
-                        .withName(new I18nProperty("HipChat Discussions", "hipchat.discussions"))
-                        .withKey(WEB_PANEL_KEY)
-                        // panel doesn't load properly as it 404s - not a prob for this test (asserts existence not content)
-                        .withUrl("/myWebPanelPage?issueId{issue.id}")
-                        .withLocation("com.atlassian.jira.plugin.headernav.left.context")
-                        .withLayout(new WebPanelLayout("100%", "200px"))
-                        .withWeight(1234)
-                        .withConditions(toggleableConditionBean())
-                        .build()).start();
+                .addModules(
+                        "webPanels",
+                        newWebPanelBean()
+                                .withKey(PROJECT_CONFIG_PANEL_KEY)
+                                .withName(new I18nProperty("Project Config Panel", "pcp"))
+                                .withLocation("webpanels.admin.summary.right-panels")
+                                .withUrl("/pcp?issue_id=${issue.id}&project_id=${project.id}")
+                                .build(),
+                        newWebPanelBean()
+                                .withKey(ISSUE_PANEL_LEFT_KEY)
+                                .withName(new I18nProperty("Issue Left Web Panel", "ilwp"))
+                                .withLocation("atl.jira.view.issue.left.context")
+                                .withUrl("/ilwp?issue_id=${issue.id}&project_id=${project.id}")
+                                .build(),
+                        newWebPanelBean()
+                                .withKey(ISSUE_PANEL_LEFT2_KEY)
+                                .withName(new I18nProperty("Issue Left Web Panel 2", "ilwp2"))
+                                .withLocation("atl.jira.view.issue.left.context")
+                                .withUrl("/ilwp2?my-issue-id=${issue.id}&my-project-id=${project.id}")
+                                .build(),
+                        newWebPanelBean()
+                                .withKey(ISSUE_PANEL_RIGHT_KEY)
+                                .withName(new I18nProperty("Issue Right Web Panel", "irwp"))
+                                .withLocation("atl.jira.view.issue.right.context")
+                                .withUrl("/irwp?issue_id=${issue.id}&project_id=${project.id}")
+                                .build(),
+                        newWebPanelBean()
+                                .withKey(PROJECT_CONFIG_HEADER_KEY)
+                                .withName(new I18nProperty("Project Config Header Web Panel", "pch"))
+                                .withLocation("atl.jira.proj.config.header")
+                                .withUrl("/pch?issue_id=${issue.id}&project_id=${project.id}")
+                                .build(),
+                        newWebPanelBean()
+                                .withKey(USER_PROFILE_KEY)
+                                .withName(new I18nProperty("User Profile Web Panel", "up"))
+                                .withLocation("webpanels.user.profile.summary.custom")
+                                .withUrl("/up?profile_user_key=${profileUser.key}&profile_user_name=${profileUser.name}")
+                                .build(),
+                        newWebPanelBean()
+                                .withName(new I18nProperty("Panel with condition", "conditional.panel"))
+                                .withKey(WEB_PANEL_WITH_CONDITION_KEY)
+                                        // panel doesn't load properly as it 404s - not a prob for this test (asserts existence not content)
+                                .withUrl("/cwp?projectKey={project.key}")
+                                .withLocation("com.atlassian.jira.plugin.headernav.left.context")
+                                .withLayout(new WebPanelLayout("100%", "200px"))
+                                .withWeight(1234)
+                                .withConditions(toggleableConditionBean())
+                                .build()
+                )
+                .addRoute("/pcp", ConnectAppServlets.customMessageServlet("pcp-OK"))
+                .addRoute("/ilwp", ConnectAppServlets.customMessageServlet("ilwp-OK"))
+                .addRoute("/ilwp2", ConnectAppServlets.customMessageServlet("ilwp2-OK"))
+                .addRoute("/irwp", ConnectAppServlets.customMessageServlet("irwp-OK"))
+                .addRoute("/pch", ConnectAppServlets.customMessageServlet("pch-OK"))
+                .addRoute("/up", ConnectAppServlets.customMessageServlet("up-OK"))
+                .addRoute("/cwp", ConnectAppServlets.customMessageServlet("cwp-OK"))
+                .start();
     }
 
     @AfterClass
     public static void stopConnectAddOn() throws Exception
     {
-        if (remotePlugin != null)
+        if (runner != null)
         {
-            remotePlugin.stopAndUninstall();
+            runner.stopAndUninstall();
         }
     }
 
-    @Before
-    public void beforeEachTest()
+    @Test
+    public void testViewIssuePageWithArbitraryDataInUrl() throws Exception
     {
-        loginAsAdmin();
+        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
+        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey());
+        RemoteWebPanel panel = viewIssuePage.findWebPanel(getModuleKey(runner, ISSUE_PANEL_LEFT2_KEY)).waitUntilContentLoaded();
 
-        this.webPanelModuleKey = addonAndModuleKey(remotePlugin.getAddon().getKey(),WEB_PANEL_KEY);
+        assertEquals(issue.getId(), panel.getFromQueryString("my-issue-id"));
+        assertEquals(project.getId(), panel.getFromQueryString("my-project-id"));
+
+        assertEquals("ilwp2-OK", panel.getCustomMessage());
     }
 
     @Test
-    public void webPanelExists()
+    public void testViewProjectAdminPanel() throws Exception
     {
-        JiraViewProjectPage viewProjectPage = visitViewProjectPage();
-        assertThat(viewProjectPage.findWebPanel(webPanelModuleKey), is(not(nullValue())));
+        JiraProjectAdministrationPage projectAdministrationPage = product.visit(JiraProjectAdministrationPage.class, project.getKey());
+        RemoteWebPanel panel = projectAdministrationPage.findWebPanel(getModuleKey(runner, PROJECT_CONFIG_PANEL_KEY)).waitUntilContentLoaded();
+
+        assertEquals(project.getId(), panel.getProjectId());
+        assertEquals(TestUser.ADMIN.getUsername(), panel.getUserId());
+        assertNotNull(panel.getUserKey());
+
+        assertEquals("pcp-OK", panel.getCustomMessage());
+    }
+
+    @Test
+    public void testLeftWebPanelOnIssuePage() throws RemoteException
+    {
+        login(ADMIN);
+        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for left remotable-web-panel panel");
+        JiraViewIssuePage page = product.visit(JiraViewIssuePage.class, issue.getKey());
+        RemoteWebPanel panel = page.findWebPanel(getModuleKey(runner, ISSUE_PANEL_LEFT_KEY)).waitUntilContentLoaded();
+
+        assertEquals(project.getId(), panel.getProjectId());
+        assertEquals(issue.getId(), panel.getIssueId());
+        assertEquals(TestUser.ADMIN.getUsername(), panel.getUserId());
+        assertNotNull(panel.getUserKey());
+
+        assertEquals("ilwp-OK", panel.getCustomMessage());
+    }
+
+    @Test
+    public void testRightWebPanelOnIssuePage() throws RemoteException
+    {
+        login(ADMIN);
+        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Another test issue for right remotable-web-panel panel");
+        JiraViewIssuePage page = product.visit(JiraViewIssuePage.class, issue.getKey());
+        RemoteWebPanel panel = page.findWebPanel(getModuleKey(runner, ISSUE_PANEL_RIGHT_KEY)).waitUntilContentLoaded();
+
+        assertEquals(project.getId(), panel.getProjectId());
+        assertEquals(issue.getId(), panel.getIssueId());
+        assertEquals(TestUser.ADMIN.getUsername(), panel.getUserId());
+        assertNotNull(panel.getUserKey());
+
+        assertEquals("irwp-OK", panel.getCustomMessage());
+    }
+
+    @Test
+    public void testWebPanelInProjectHeader()
+    {
+        JiraProjectAdministrationPage projectAdministrationPage = product.visit(JiraProjectAdministrationPage.class, project.getKey());
+        RemoteWebPanel panel = projectAdministrationPage.findWebPanel(getModuleKey(runner, PROJECT_CONFIG_HEADER_KEY)).waitUntilContentLoaded();
+
+        assertEquals(project.getId(), panel.getProjectId());
+        assertEquals(TestUser.ADMIN.getUsername(), panel.getUserId());
+        assertNotNull(panel.getUserKey());
+
+        assertEquals("pch-OK", panel.getCustomMessage());
+    }
+
+    @Test
+    public void testWebPanelInUserProfile()
+    {
+        final String userProfileName = BARNEY.getUsername();
+
+        JiraViewProfilePage jiraViewProfilePage = product.visit(JiraViewProfilePage.class, userProfileName);
+        RemoteWebPanel panel = jiraViewProfilePage.findWebPanel(getModuleKey(runner, USER_PROFILE_KEY)).waitUntilContentLoaded();
+
+        assertEquals(userProfileName, panel.getFromQueryString("profile_user_key"));
+        assertEquals(userProfileName, panel.getFromQueryString("profile_user_name"));
+        assertEquals(TestUser.ADMIN.getUsername(), panel.getUserId());
+        assertNotNull(panel.getUserKey());
+
+        assertEquals("up-OK", panel.getCustomMessage());
     }
 
     @Test
     public void panelIsNotVisibleWithFalseCondition()
     {
-        visitViewProjectPage();
-        assertThat("AddOn web panel should be present", connectPageOperations.existsWebPanel(webPanelModuleKey), is(true));
-        remotePlugin.setToggleableConditionShouldDisplay(false);
-        visitViewProjectPage();
-        assertThat("AddOn web panel should NOT be present", connectPageOperations.existsWebPanel(webPanelModuleKey), is(false));
-    }
+        product.visit(JiraViewProjectPage.class, project.getKey());
 
-    @Test
-    public void urlIsCorrect()
-    {
-        JiraViewProjectPage viewProjectPage = visitViewProjectPage();
-        RemoteWebPanel webPanel = viewProjectPage.findWebPanel(webPanelModuleKey);
-        assertThat(webPanel.getIFrameSourceUrl(), startsWith(remotePlugin.getAddon().getBaseUrl() + "/myWebPanelPage"));
-    }
+        assertThat("AddOn web panel should be present", connectPageOperations.existsWebPanel(getModuleKey(runner, WEB_PANEL_WITH_CONDITION_KEY)), is(true));
+        runner.setToggleableConditionShouldDisplay(false);
 
-    private JiraViewProjectPage visitViewProjectPage()
-    {
-        return product.visit(JiraViewProjectPage.class, project.getKey());
+        product.visit(JiraViewProjectPage.class, project.getKey());
+
+        assertThat("AddOn web panel should NOT be present", connectPageOperations.existsWebPanel(getModuleKey(runner, WEB_PANEL_WITH_CONDITION_KEY)), is(false));
     }
 }
+

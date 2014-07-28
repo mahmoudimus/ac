@@ -1,11 +1,8 @@
 package com.atlassian.plugin.connect.test.client;
 
-import java.net.URI;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
-
+import cc.plural.jsonij.JSON;
 import com.google.common.base.Strings;
-
+import it.util.TestUser;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpDelete;
@@ -15,8 +12,8 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 
-import cc.plural.jsonij.JSON;
-import cc.plural.jsonij.Value;
+import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 public final class AtlassianConnectRestClient
 {
@@ -26,8 +23,6 @@ public final class AtlassianConnectRestClient
     private final UserRequestSender userRequestSender;
 
     public static final String UPM_URL_PATH = "/rest/plugins/1.0/";
-    private static final String UPM_TOKEN_HEADER = "upm-token";
-    private static final Random RAND = new Random();
 
     public AtlassianConnectRestClient(String baseUrl, String username, String password)
     {

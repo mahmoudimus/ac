@@ -9,7 +9,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilde
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
-import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnaphot;
+import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -148,7 +148,7 @@ public class OAuthToJwtUpdateTest
 
     private JsonObject getLastInstallPayload()
     {
-        ServletRequestSnaphot installRequest = testFilterResults.getRequest(jwtPlugin.getKey(), oAuthAddOnBean.getLifecycle().getInstalled());
+        ServletRequestSnapshot installRequest = testFilterResults.getRequest(jwtPlugin.getKey(), oAuthAddOnBean.getLifecycle().getInstalled());
         return new JsonParser().parse(installRequest.getEntity()).getAsJsonObject();
     }
 

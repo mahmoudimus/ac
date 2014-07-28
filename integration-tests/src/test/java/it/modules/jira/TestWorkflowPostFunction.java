@@ -7,11 +7,10 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraWorkflowTransition
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import javax.inject.Inject;
 
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -20,20 +19,17 @@ import static org.junit.Assert.assertThat;
 
 public class TestWorkflowPostFunction extends JiraWebDriverTestBase
 {
-    private static ConnectRunner remotePlugin;
+    private static ConnectRunner runner;
     private static final String WORKFLOW_POST_FUNCTION_PAGE = "ac-workflow-post-function";
     private static final String WORKFLOW_POST_FUNCTION_INVALID_PAGE = "ac-workflow-invalid-post-function";
     private static final String WORKFLOW_NAME = "classic default workflow";
     private static final Integer WORKFLOW_STEP = 1;
     private static final Integer WORKFLOW_TRANSITION = 5;
 
-    @Inject
-    private com.atlassian.webdriver.AtlassianWebDriver driver;
-
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
                 .setAuthenticationToNone()
                 .addRoute(ConnectRunner.INSTALLED_PATH, ConnectAppServlets.helloWorldServlet())
                 .addModules("jiraWorkflowPostFunctions",
@@ -68,17 +64,16 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
     @AfterClass
     public static void stopConnectAddOn() throws Exception
     {
-        if (remotePlugin != null)
+        if (runner != null)
         {
-            remotePlugin.stopAndUninstall();
+            runner.stopAndUninstall();
         }
     }
 
     @Test
     public void testCreateWorkflowPostFunction()
     {
-        loginAsAdmin();
-        JiraWorkflowTransitionPage workflowTransitionPage = product.visit(JiraWorkflowTransitionPage.class, "live", WORKFLOW_NAME, WORKFLOW_STEP, WORKFLOW_TRANSITION).createOrEditDraft();
+        JiraWorkflowTransitionPage workflowTransitionPage = loginAndVisit(TestUser.ADMIN, JiraWorkflowTransitionPage.class, "live", WORKFLOW_NAME, WORKFLOW_STEP, WORKFLOW_TRANSITION).createOrEditDraft();
         JiraAddWorkflowTransitionFunctionParamsPage addonPage = workflowTransitionPage.addPostFunction("my-plugin", WORKFLOW_POST_FUNCTION_PAGE);
         assertThat(addonPage.isLoaded(), equalTo(true));
         addonPage.submitWorkflowParams();
@@ -88,12 +83,10 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
         assertEquals("workflow configuration text", workflowConfiguration);
     }
 
-
     @Test
     public void testCreateInvalidWorkflowPostFunction()
     {
-        loginAsAdmin();
-        JiraWorkflowTransitionPage workflowTransitionPage = product.visit(JiraWorkflowTransitionPage.class, "live", WORKFLOW_NAME, WORKFLOW_STEP, WORKFLOW_TRANSITION).createOrEditDraft();
+        JiraWorkflowTransitionPage workflowTransitionPage = loginAndVisit(TestUser.ADMIN, JiraWorkflowTransitionPage.class, "live", WORKFLOW_NAME, WORKFLOW_STEP, WORKFLOW_TRANSITION).createOrEditDraft();
         JiraAddWorkflowTransitionFunctionParamsPage addonPage = workflowTransitionPage.addPostFunction("my-plugin", WORKFLOW_POST_FUNCTION_INVALID_PAGE);
         assertThat(addonPage.isLoaded(), equalTo(true));
 
