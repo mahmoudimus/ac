@@ -23,37 +23,37 @@ This tutorial shows you how to build a static Connect add-on that displays your 
 in a table, accessible via an _Activity_ link in the header. 
 
 Your add-on will use the [JIRA REST API](https://jira.atlassian.com/plugins/servlet/restbrowser#/) 
-to get information about projects in your JIRA instance. You'll use the [Node.js](http://nodejs.org/) 
+to get information about projects in your instance. You'll use the [Node.js](http://nodejs.org/) 
 framework and [Atlassian Connect Express (ACE)](https://bitbucket.org/atlassian/atlassian-connect-express/) 
-to interface with JIRA. Finally, you'll create your table using [D3.js](http://d3js.org/). 
+to interface with JIRA. Finally, you'll create a table of your projects using [D3.js](http://d3js.org/). 
 
-Here's an example what your add-on might look like:
+When you're finished, your add-on will look similar to this: 
 
 <img src="../assets/images/jira-activity-4.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
 
 ## <a name="environment"></a> Configuring your development environment  
 
-In this step, you'll confirm you have node.js installed, and install the 
-[Atlassian Connect Express](https://bitbucket.org/atlassian/atlassian-connect-express/) framework, known as 
-ACE. ACE is a toolkit for creating Connect add-ons using node.js. ACE handles registration in JIRA for you. 
+In this step, you'll confirm you have Node.js installed, and install the 
+[Atlassian Connect Express (ACE)](https://bitbucket.org/atlassian/atlassian-connect-express/) framework. 
+ACE is a toolkit for creating Connect add-ons using Node. ACE handles registration in JIRA for you. 
 It also detects changes made to your [`atlassian-connect.json` descriptor](../modules/) 
 file, so you don't need to continually restart your add-on as you develop. 
-Importantly, ACE handles [JWT authentication](../concepts/understanding-jwt.html), 
+Importantly, ACE also handles [JSON web token (JWT) authentication](../concepts/understanding-jwt.html), 
 so that requests betwen your add-on and the JIRA application are signed and authenticated. 
 
 For these steps, you might need to enter sudo mode in your terminal. 
 
-1. Install [node.js](http://www.nodejs.org/).  
+1. Install [Node.js](http://www.nodejs.org/).  
 	If you use [Homebrew](http://brew.sh/), you can use the following command:
 	<pre><code data-lang="text">$ brew install node</code></pre>
-	Otherwise, you can [download and install node directly](http://nodejs.org/download/).  
+	Otherwise, you can [download and install Node directly](http://nodejs.org/download/).  
 1. Install the [ACE framework](https://bitbucket.org/atlassian/atlassian-connect-express/).
 	<pre><code data-lang="text">$ npm install -g atlas-connect</code></pre>
 1. Create a new ACE project called `jira-activity`.
 	<pre><code data-lang="text">$ atlas-connect new jira-activity</code></pre>
 1. Change to your new `jira-activity` directory.
 	<pre><code data-lang="text">$ cd jira-activity/</code></pre>
-1. Install node.js dependencies for your project.  
+1. Install Node.js dependencies for your `jira-activity` project.  
 	<pre><code data-lang="text">$ npm install</code></pre>
 1. Ensure you have the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads).  
     You'll need SDK version 4.2.20 or higher.  
@@ -68,7 +68,7 @@ For these steps, you might need to enter sudo mode in your terminal.
 1. Start JIRA in cloud mode:  
 	<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-08-005-WN --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.0-rc.3,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.4,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.17.2,com.atlassian.webhooks:atlassian-webhooks-plugin:1.0.6 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
 
-    You'll see a lot of output. When finished, your terminal notifies you that the build
+    You'll see a lot of output. When finished, your terminal will notify you that the build
     was successful:  
     <tt>[INFO] [talledLocalContainer] Tomcat 7.x started on port [2990]  
         [INFO] jira started successfully in 217s at http://localhost:2990/jira  
@@ -84,7 +84,7 @@ For these steps, you might need to enter sudo mode in your terminal.
 
 ## <a name="stats-header"></a> Install your add-on and add an _Activity_ link
 
-Now you've got the basic architecture for your plugin. If you open your new `jira-activity` directory, 
+Now you've got the basic architecture for your add-on. If you open your new `jira-activity` directory, 
 you'll see essentials like the [`atlassian-connect.json` descriptor](../modules/) in the 
 root. You'll also see an `app.js` file. 
 
@@ -167,9 +167,9 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	````
 
 1. Open a new terminal window.  
-1. From your `jira-activity` root, run the `app.js` file:
+1. From your `jira-activity` root, start up a Node server:  
 	<pre><code data-lang="text">$ node app.js</code></pre> 
-	Your add-on is automatically registered and installed in JIRA.
+	This starts up your add-on on a Node server, and installs it into your JIRA instance.
 1. Refresh JIRA in your browser.  
 	You'll see the _Activity_ label in the header: 
 	<img src="../assets/images/jira-activity-1.png" width="80%" style="border:1px solid #999;margin-top:10px;" />  
@@ -264,6 +264,7 @@ to use D3.js, and define how the page should look.
 	        </section>
 	    </div>
 	</div>
+
 	<script type="text/javascript">
 	    $(function() {
 	        AG.initInstanceStats();
@@ -383,7 +384,7 @@ to use D3.js, and define how the page should look.
 	This leverages d3.js to build a table to display all your JIRA projects. 
 1. Save and close all files. 
 1. Restart the node app. 
-	You can shut down the app with __CTRL+C__ and re-run the __`node app.js`__ 
+	Shut down the app with __CTRL+C__ and re-run the __`node app.js`__ 
 	command.
 1. Click __Activity__ in the header.  
 	You'll see an empty page with your "JIRA activity" title:  
@@ -394,15 +395,15 @@ to use D3.js, and define how the page should look.
 ## <a name="check"></a> Add some data, and verify your add-on works
 
 Your add-on is essentially done, but you don't have any data to validate
-how your chart works. In this step, you'll manually add a few projects and
-issues, and validate that your chart reflects the changes.  
+that your table works. In this step, you'll manually add a few projects, and validate 
+that your table reflects the changes.  
 
 1. Click __Projects__ > __Create Project__ in the header.  
 	Run through the prompts and create a project.  
 1. Repeat as desired. 
-	The more data you create, the more your add-on will display.  
+	The more data you create, the more your add-on displays.  
 1. Check your add-on between adding data.  
-	You should see your __Activity__ table update accordingly, each time you click the 
+	You should see your __Activity__ table update each time you click the 
 	link.  
 	Here's an example what you'll see, using example projects:  
 	<img src="../assets/images/jira-activity-3.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
