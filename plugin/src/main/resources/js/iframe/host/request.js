@@ -36,6 +36,7 @@ _AP.define("request", ["_dollar", "_rpc"], function ($, rpc) {
                         url: url,
                         type: args.type || "GET",
                         data: args.data,
+                        cache: args.cache,
                         dataType: "text", // prevent jquery from parsing the response body
                         contentType: args.contentType,
                         headers: {
