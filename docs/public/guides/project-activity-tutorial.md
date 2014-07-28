@@ -15,12 +15,12 @@
 In this tutorial, you'll learn about:
 
 * [Configuring your development environment](#environment)  
-* [Adding a _Activity_ link in the navigation header](#stats-header)  
+* [Adding an _Activity_ link in the navigation header](#stats-header)  
 * [Creating the D3.js table to display your projects](#architect-stats-page)
 * [Adding data and verifying your add-on works](#check)
 
 To display your JIRA projects in a table, you'll build a static Connect add-on 
-accessible via a _Activity_ link in the header. 
+accessible via an _Activity_ link in the header. 
 
 Your static page will use the [JIRA REST API](https://jira.atlassian.com/plugins/servlet/restbrowser#/) 
 to retrieve information about projects in your JIRA instance. You'll use the [Node.js](http://nodejs.org/) 
@@ -37,11 +37,11 @@ In this step, you'll confirm you have node.js installed, and install the
 [Atlassian Connect Express](https://bitbucket.org/atlassian/atlassian-connect-express/) framework, known as 
 ACE. ACE is a toolkit for creating Connect add-ons using node.js. ACE handles registration in JIRA for you. 
 It also detects changes made to your [`atlassian-connect.json` descriptor](../modules/) 
-file, so you don't need to continually restart your add-on as you develop. Perhaps most 
-importantly, ACE handles [JWT authentication](../concepts/understanding-jwt.html), 
+file, so you don't need to continually restart your add-on as you develop. 
+Importantly, ACE handles [JWT authentication](../concepts/understanding-jwt.html), 
 so that requests betwen your add-on and the JIRA application are signed and authenticated. 
 
-For these steps, you might need to enter sudo mode in your terminal. Let's get started.
+For these steps, you might need to enter sudo mode in your terminal. 
 
 1. Install [node.js](http://www.nodejs.org/).  
 	If you use [Homebrew](http://brew.sh/), you can use the following command:
@@ -49,10 +49,10 @@ For these steps, you might need to enter sudo mode in your terminal. Let's get s
 	Otherwise, you can [download and install node directly](http://nodejs.org/download/).  
 1. Install the [ACE framework](https://bitbucket.org/atlassian/atlassian-connect-express/).
 	<pre><code data-lang="text">$ npm install -g atlas-connect</code></pre>
-1. Create a new ACE project called `project-table`.
-	<pre><code data-lang="text">$ atlas-connect new project-table</code></pre>
-1. Change to your new `project-table` directory.
-	<pre><code data-lang="text">$ cd project-table/</code></pre>
+1. Create a new ACE project called `project-activity`.
+	<pre><code data-lang="text">$ atlas-connect new project-activity</code></pre>
+1. Change to your new `project-activity` directory.
+	<pre><code data-lang="text">$ cd project-activity/</code></pre>
 1. Install node.js dependencies for your project.  
 	<pre><code data-lang="text">$ npm install</code></pre>
 1. Ensure you have the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads).  
@@ -79,11 +79,11 @@ For these steps, you might need to enter sudo mode in your terminal. Let's get s
 	This should be [http://localhost:2990/jira](http://localhost:2990/jira).  
 1. Log in with `admin/admin`. 
 
-## <a name="stats-header"></a> Install your add-on and add a _Activity_ link
+## <a name="stats-header"></a> Install your add-on and add an _Activity_ link
 
-You now have the basic architecture for your plugin. If you open your new `project-table` project, 
+Now you've got the basic architecture for your plugin. If you open your new `project-activity` directory, 
 you'll see essentials like the [`atlassian-connect.json` descriptor](../modules/) in the 
-project root. You'll also see an `app.js` file. 
+root. You'll also see an `app.js` file. 
 
 In this step, you'll prune some of the stub code, and install your add-on in JIRA using ACE. 
 
@@ -105,9 +105,9 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	    }
     ]
    ````
-   This adds a _Activity_ link in the `system.top.navigation.bar`, or in other words, the JIRA 
+   This adds an _Activity_ link in the `system.top.navigation.bar`, or in other words, the JIRA 
    header. It also provides a condition that the link only appears to authenticated users, 
-   and sets a URL for your add-on to use under `/stats`.
+   and sets a URL for your add-on to use under `/activity`.
 1. Add a `read` scope inside the main object:
 	````
 	"scopes": [
@@ -140,10 +140,10 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	        "generalPages": [
 
 	            {
-	                "key": "stats",
+	                "key": "activity",
 	                "location": "system.top.navigation.bar",
 	                "name": {
-	                    "value": "Stats"
+	                    "value": "Activity"
 	                },
 	                "url": "/stats",
 	                "conditions": [{
@@ -159,17 +159,17 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	````
  
 1. Open a new terminal window.  
-1. From your `project-table` project root, run the `app.js` file:
+1. From your `project-activity` root, run the `app.js` file:
 	<pre><code data-lang="text">$ node app.js</code></pre> 
 	Your add-on is automatically registered in JIRA for you. 
 1. Refresh JIRA in your browser.  
 	You'll see the _Activity_ label in the header: 
 	<img src="../assets/images/geiger-1-1.png" width="80%" style="border:1px solid #999;margin-top:10px;" />  
 1. Open `routes/index.js`.
-	From here, you'll add the `/stats` route to your app.
+	From here, you'll add the `/activity` route to your app.
 1. After the `/hello-world` stub code, add:  
 	````
-	app.get('/stats', addon.authenticate(), function(req, res) {
+	app.get('/activity', addon.authenticate(), function(req, res) {
 	    res.render('stats', { title: "The Stats" });
 	});
 	````  
@@ -207,11 +207,11 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 
 	    // Add any additional route handlers you need for views or REST resources here...
 	    app.get('/stats', addon.authenticate(), function(req, res) {
-	        res.render('stats', { title: "Project stats" });
+	        res.render('stats', { title: "Project activity" });
 	    });
 	};
 	````
-	This route titles your __Activity__ page "Project stats", and ensures that your add-on 
+	This route titles your __Activity__ page "Project activity", and ensures that your add-on 
 	is authenticated.  
 1. Close and save your `atlassian-connect.json` and `routes/index.js` files.  
  
@@ -342,8 +342,7 @@ to use D3.js, and define how the page should look.
 	    };
 	})();
 	````
-	This leverages d3.js to build data-driven tables. 
-	(!) Explain how D3.js builds the table.
+	This leverages d3.js to build a table to display all your JIRA projects. You use a 
 1. Save and close all files. 
 1. Restart the node app. 
 	You can shut down the app with __CTRL+C__ and re-run the __`node app.js`__ 
