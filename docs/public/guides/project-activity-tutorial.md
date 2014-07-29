@@ -202,6 +202,10 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	        });
 	    });
 
+	    // The following is stub code for a Hello World app provided by ACE.
+	    // You can remove this section since it's not used in this tutorial, 
+	    // or leave it here – it makes no difference to this add-on.
+
 	    // This is an example route that's used by the default "generalPage" module.
 	    // Verify that the incoming request is authenticated with Atlassian Connect
 	    app.get('/hello-world', addon.authenticate(), function (req, res) {
@@ -265,7 +269,7 @@ the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/l
 
 	<script type="text/javascript">
 	    $(function() {
-	        AG.initInstanceStats();
+	        MyAddon.initInstanceStats();
 	    });
 	</script>
 	````
@@ -273,12 +277,12 @@ the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/l
 1. Add the following content:  
 	````
 	/* add-on script */
-	// helper stuff
+	// Helper 
 	(function() {
 	    "use strict";
 
-    // get the parameters from the query string
-    // and sticks them in an object
+    // Get parameters from the query string
+    // and place in an object
     window.getQueryParams = function(qs) {
         qs = qs.split("+").join(" ");
 
@@ -297,53 +301,53 @@ the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/l
         var projTable = hostElement.append('table')
             .classed({'project': true, 'aui': true});
 
-				// table > thead > tr, as needed below
+				// <table><thead><tr> as needed below
         var projHeadRow = projTable.append("thead").append("tr");
-				// empty header
+				// Empty header
         projHeadRow.append("th");
-				// now the next column
+				// Now the next column
         projHeadRow.append("th").text("Key");
         projHeadRow.append("th").text("Name");
 
         return projTable.append("tbody");
     }
 
-    // Works with d3js to create the project table
+    // Works with D3.js to create the project table
     window.createProjectTable = function(projects, selector, baseUrl) {
         var projectBaseUrl = baseUrl + "/browse/";
 
         var rootElement = d3.select(selector);
         var projBody = buildTableAndReturnTbody(rootElement);
 
-        // for each data item in projects
+        // For each data item in projects
         var row = projBody.selectAll("tr")
             .data(projects)
             .enter()
             .append("tr");
 
-        // ... add a td for the avatar, stick a span in it
+        // Add a <td> for the avatar with a <span>
         row.append("td").append('span')
-            // set the css classes for this element
+            // set the CSS classes for this element
             .classed({'aui-avatar': true, 'aui-avatar-xsmall': true})
             .append('span')
             .classed({'aui-avatar-inner': true})
             .append('img')
-            // set the atribute for the img element inside this td > span > span
+            // Set the attribute for the <img> element inside this td > span > span
             .attr('src', function(item) { return item.avatarUrls["16x16"] });
 
-        // ... add a td for the project key
+        // Add a <td> for the project key
         row.append("td").append('span')
             .classed({'project-key': true, 'aui-label': true})
-            // set the content of the element to be some text
+            // Set content of the element to be text
             .text(function(item) { return item.key; });
 
-        // ... add a td for the project name / link to project
+        // Add a <td> for the linked project name
         row.append("td").append('span')
             .classed({'project-name': true})
             .append("a")
-            // make the name a link to the project
+            // Link the name to the project
             .attr('href', function(item) { return baseUrl + item.key; })
-            // since we're in the iframe, we need to set _top
+            // Since you're in the iframe, set "_top"
             .attr('target', "_top")
             .text(function(item) { return item.name; });
 		    };
@@ -356,17 +360,17 @@ the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/l
 		        var params = window.getQueryParams(document.location.search);
 		        var baseUrl = params.xdm_e + params.cp;
 
-		        // call the REST API via the iframe
+		        // Call the REST API via the iframe
 		        // bridge functionality
 		        AP.require('request', function(request) {
 		            request({
 		                url: '/rest/api/2/project',
 		                success: function(response) {
-		                    // convert the string response to JSON
+		                    // Convert the string response to JSON
 		                    response = JSON.parse(response);
 
-		                    // call our helper function to build the
-		                    // table now that we have the data
+		                    // Call your helper function to build the
+		                    // table, now that you have data
 		                    window.createProjectTable(response, ".projects", baseUrl);
 		                },
 		                error: function(response) {
@@ -379,9 +383,9 @@ the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/l
 		    };
 		})();
 	````
-	This leverages d3.js to build a table to display all your JIRA projects. 
+	This leverages D3.js to build a table to display all your JIRA projects. 
 1. Save and close all files. 
-1. Restart the node app. 
+1. Restart the Node app. 
 	Shut down the app with __CTRL+C__ and re-run the __`node app.js`__ 
 	command.
 1. Click __Activity__ in the header.  
