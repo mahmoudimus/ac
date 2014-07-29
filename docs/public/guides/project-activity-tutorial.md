@@ -41,12 +41,11 @@ file, so you don't need to continually restart your add-on as you develop.
 Importantly, ACE also handles [JSON web token (JWT) authentication](../concepts/understanding-jwt.html), 
 so that requests betwen your add-on and the JIRA application are signed and authenticated. 
 
-For these steps, you might need to enter sudo mode in your terminal. 
-
 1. Install [Node.js](http://www.nodejs.org/).  
 	If you use [Homebrew](http://brew.sh/), you can use the following command:
-	<pre><code data-lang="text">$ brew install node</code></pre>
-	Otherwise, you can [download and install Node directly](http://nodejs.org/download/).  
+	<pre><code data-lang="text">$ brew install node</code></pre>  
+	Otherwise, you can [download and install Node directly](http://nodejs.org/download/). 
+	If you don't use Homebrew, you might need to enter `sudo`.  
 1. Install the [ACE framework](https://bitbucket.org/atlassian/atlassian-connect-express/).
 	<pre><code data-lang="text">$ npm install -g atlas-connect</code></pre>
 1. Create a new ACE project called `jira-activity`.
@@ -93,13 +92,15 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 1. Open the [`atlassian-connect.json` descriptor](../modules/) file in your favorite editor or IDE.
 1. Replace the `key`, `name`, `description`, and `vendor` name and URL with these fields: 
 	````
-	    "key": "jira-activity",
-	    "name": "JIRA Project Actvity",
-	    "description": "A Connect add-on that displays JIRA projects in a table",
-	    "vendor": {
-	        "name": "Atlassian Developer Relations",
-	        "url": "https://developer.atlassian.com/"
-	 ````
+	{
+    "key": "jira-activity",
+    "name": "JIRA Project Activity",
+    "description": "A Connect add-on that displays JIRA projects in a table",
+    "vendor": {
+        "name": "Atlassian Developer Relations",
+        "url": "https://developer.atlassian.com/"
+    },
+ 	````
 1. Replace the [`generalPages` module](../modules/jira/general-page.html) with the following:  
 	````
      "generalPages": [
@@ -125,11 +126,11 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	````
 	{
 	    "key": "jira-activity",
-	     "name": "JIRA Project Actvity",
-	     "description": "A Connect add-on that displays JIRA projects in a table",
-	     "vendor": {
-	         "name": "Atlassian Developer Relations",
-	         "url": "https://developer.atlassian.com/"
+	    "name": "JIRA Project Activity",
+	    "description": "A Connect add-on that displays JIRA projects in a table",
+	    "vendor": {
+	        "name": "Atlassian Developer Relations",
+	        "url": "https://developer.atlassian.com/"
 	    },
 	    "baseUrl": "{{localBaseUrl}}",
 	    "links": {
@@ -226,9 +227,9 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 
 ## <a name="architect-stats-page"></a> Build the static _Activity_ page  
 
-You've added a link in the JIRA header, but your page doesn't have anything
-except a title right now. In this step, you'll add the capability for your add-on
-to use D3.js, and define how the page should look.
+You've added a link in the JIRA header, and now you'll define how your page should look. 
+In this step, you'll add the capability for your add-on to use D3.js, and style 
+the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/latest/index.html). 
 
 1. Open `views/layout.hbs`.
 1. Add the following to the `views/layout.hbs` before the closing `</head>` tag (following the `hostScriptUrl`
@@ -237,7 +238,7 @@ to use D3.js, and define how the page should look.
 	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 	````
 	This lets you to use D3.js for your chart.  
-1. Create a new file called `views/jira-activity.hbs`.  
+1. Create a new file called `views/activity.hbs`.  
 1. Add the following content:
 	````
 	{{!< layout}}
