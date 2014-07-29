@@ -150,6 +150,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                                 .withOptions(DialogOptions.newDialogOptions()
                                                                 .withWidth("300px")
                                                                 .withHeight("200px")
+                                                                .withChrome(true)
                                                                 .build()
                                                 )
                                                 .build()
