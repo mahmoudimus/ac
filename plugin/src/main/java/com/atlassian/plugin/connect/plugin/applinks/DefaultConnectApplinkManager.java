@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.applinks;
 
 import com.atlassian.applinks.api.ApplicationId;
 import com.atlassian.applinks.api.ApplicationLink;
+import com.atlassian.applinks.api.TypeNotInstalledException;
 import com.atlassian.applinks.spi.application.ApplicationIdUtil;
 import com.atlassian.applinks.spi.link.ApplicationLinkDetails;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
@@ -81,7 +82,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
 
                 final RemotePluginContainerApplicationType applicationType = typeAccessor.getApplicationType(RemotePluginContainerApplicationType.class);
 
-                deleteOldAppLinks(pluginKey);
+                deleteOldAppLinks(pluginKey, expectedApplicationId);
 
                 final ApplicationLinkDetails details = ApplicationLinkDetails.builder()
                         .displayUrl(baseUri)
@@ -137,7 +138,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
 
                 final RemotePluginContainerApplicationType applicationType = typeAccessor.getApplicationType(RemotePluginContainerApplicationType.class);
 
-                deleteOldAppLinks(pluginKey);
+                deleteOldAppLinks(pluginKey, expectedApplicationId);
 
                 final ApplicationLinkDetails details = ApplicationLinkDetails.builder()
                         .displayUrl(baseUri)
@@ -229,18 +230,54 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
         return applicationLinkService.createSelfLinkFor(applink.getId());
     }
 
-    private void deleteOldAppLinks(String pluginKey)
+    private void deleteOldAppLinks(String pluginKey, ApplicationId appId)
     {
-        // try to find link with old display url
-        for (final ApplicationLink otherLink : applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class))
-        {
-            if (pluginKey.equals(otherLink.getProperty(PLUGIN_KEY_PROPERTY)))
-            {
-                log.debug("Old application link for this plugin '{}' found with different display url '{}', removing", pluginKey, otherLink.getDisplayUrl());
+        ApplicationLink link;
 
-                applicationLinkService.deleteApplicationLink(otherLink);
+        try
+        {
+            link = applicationLinkService.getApplicationLink(appId);
+        }
+        catch (TypeNotInstalledException ex)
+        {
+            log.warn("Link found for '{}' but the type cannot be found, deleting...", pluginKey);
+            manuallyDeleteApplicationId(appId);
+
+            return;
+        }
+
+        if (null != link)
+        {
+            if (pluginKey.equals(link.getProperty(PLUGIN_KEY_PROPERTY)))
+            {
+                // This shouldn't happen in normal operation as we delete the applink when we uninstall an addon
+                // and we uninstall the old addon when we install a new version
+                log.warn("Application link for remote plugin container '{}' already exists. Deleting", pluginKey);
+
+                applicationLinkService.deleteApplicationLink(link);
+
+            }
+            else
+            {
+                throw new IllegalStateException("Application link already exists for id '" + appId + "' but it isn't the target " +
+                        " plugin '" + pluginKey + "': unexpected plugin key is: " + link.getProperty(PLUGIN_KEY_PROPERTY));
             }
         }
+        else
+        {
+            // try to find link with old display url
+            for (final ApplicationLink otherLink : applicationLinkService.getApplicationLinks(RemotePluginContainerApplicationType.class))
+            {
+                if (pluginKey.equals(otherLink.getProperty(PLUGIN_KEY_PROPERTY)))
+                {
+                    log.debug("Old application link for this plugin '{}' found with different display url '{}', removing", pluginKey, otherLink.getDisplayUrl());
+
+                    applicationLinkService.deleteApplicationLink(otherLink);
+                }
+            }
+
+        }
+
     }
 
     @SuppressWarnings ("unchecked")
