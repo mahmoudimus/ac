@@ -22,7 +22,7 @@ In this tutorial, you'll learn about:
 This tutorial shows you how to build a static Connect add-on that displays your JIRA projects 
 in a table, accessible via an _Activity_ link in the header. 
 
-Your add-on will use the [JIRA REST API](https://jira.atlassian.com/plugins/servlet/restbrowser#/) 
+Your add-on will use the [JIRA REST API](https://docs.atlassian.com/jira/REST/latest/) 
 to get information about projects in your instance. You'll use the [Node.js](http://nodejs.org/) 
 framework and [Atlassian Connect Express (ACE)](https://bitbucket.org/atlassian/atlassian-connect-express/) 
 to interface with JIRA. Finally, you'll create a table of your projects using [D3.js](http://d3js.org/). 
@@ -34,8 +34,8 @@ When you're finished, your add-on will look similar to this:
 ## <a name="environment"></a> Configuring your development environment  
 
 In this step, you'll confirm you have Node.js installed, and install the 
-[Atlassian Connect Express (ACE)](https://bitbucket.org/atlassian/atlassian-connect-express/) framework. 
-ACE is a toolkit for creating Connect add-ons using Node. ACE handles registration in JIRA for you. 
+[Atlassian Connect Express (ACE)](https://bitbucket.org/atlassian/atlassian-connect-express/) toolkit. 
+ACE helps you create Connect add-ons using Node, and handles add-on registration in JIRA for you. 
 It also detects changes made to your [`atlassian-connect.json` descriptor](../modules/) 
 file, so you don't need to continually restart your add-on as you develop. 
 Importantly, ACE also handles [JSON web token (JWT) authentication](../concepts/understanding-jwt.html), 
@@ -170,7 +170,7 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 1. From your `jira-activity` root, start up a Node server:  
 	<pre><code data-lang="text">$ node app.js</code></pre> 
 	This starts up your add-on on a Node server, and installs it into your JIRA instance.
-1. Refresh JIRA in your browser.  
+1. Refresh JIRA in your browser, usually at [http://localhost:2990/jira](http://localhost:2990/jira).     
 	You'll see the _Activity_ label in the header: 
 	<img src="../assets/images/jira-activity-1.png" width="80%" style="border:1px solid #999;margin-top:10px;" />  
 1. Back in your editor, open `routes/index.js`.  
@@ -200,9 +200,6 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	            }
 	        });
 	    });
-
-			// TODO: We should remove this section... hello-world isn't useful, but
-			// 			 it is there by default.
 
 	    // This is an example route that's used by the default "generalPage" module.
 	    // Verify that the incoming request is authenticated with Atlassian Connect
