@@ -35,8 +35,13 @@ _AP.require(["dialog/main", "host/content", "_uri", "dialog/dialog-factory"], fu
                     options.container = options.ns;
                 }
 
+                // webitem target options can sometimes be sent as strings.
+                if(typeof options.chrome === "string"){
+                    options.chrome = (options.chrome.toLowerCase() === "false") ? false : true;
+                }
+
                 //default chrome to be false for backwards compatability with webitems
-                if(options.chrome === undefined || options.chrome === ""){
+                if(options.chrome === undefined){
                   options.chrome = true;
                 }
 
