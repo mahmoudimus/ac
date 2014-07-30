@@ -121,6 +121,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
     } else {
       $(doCreate);
     }
+
   };
 
 });
