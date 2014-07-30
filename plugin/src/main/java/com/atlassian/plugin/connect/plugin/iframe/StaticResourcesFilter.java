@@ -101,6 +101,7 @@ public class StaticResourcesFilter implements Filter
                     "core/all-debug.js",
                     "iframe/plugin/jira.js",
                     "iframe/plugin/confluence.js",
+                    "iframe/plugin/user.js",
                     "iframe/plugin/_init.js"
             };
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
