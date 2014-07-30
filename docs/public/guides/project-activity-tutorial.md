@@ -102,7 +102,7 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
     },
  	````
  	This names your add-on in in your JIRA instance, and essentially makes it yours. Feel free 
- 	to enter your own information here.
+ 	to enter your own information here. You can use alphanumeric characters, dashes, periods, and underscores.
 1. Replace the [`generalPages` module](../modules/jira/general-page.html) with the following:  
 	````
      "generalPages": [
@@ -120,9 +120,9 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	    }
     ]
    ````
-   This adds an _Activity_ link in the `system.top.navigation.bar`, which is the JIRA 
-   header. It also provides a condition that the link only appears to authenticated users, 
-   and sets a URL for your add-on to use under `/activity`. 
+   This adds an _Activity_ link in the JIRA header (`system.top.navigation.bar`), and sets a URL for your add-on 
+   to use under `/activity`. It also provides a condition so that the REST API shows private projects visible to 
+   a logged in user, not just public projects. 
 
    At this point, your descriptor file should look like this:  
 	````
