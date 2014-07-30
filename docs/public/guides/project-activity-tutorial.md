@@ -239,7 +239,8 @@ the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/l
 1. Add the following to the `views/layout.hbs` before the closing `</head>` tag (following the `hostScriptUrl`
 	line):
 	````
-	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="https://developer.atlassian.com/js/jira-projects.1.js"></script>
 	````
 	This lets you to use D3.js for your chart.  
 1. Create a new file called `views/activity.hbs`.  
@@ -275,113 +276,38 @@ the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/l
 	````
 1. Open `public/js/addon.js`.  
 1. Add the following content:  
-	````
-	/* add-on script */
-	// Helper 
-	(function() {
-	    "use strict";
+    ````
+/* add-on script */
+// MyAddon functionality
+(function() {
+    window.MyAddon = {};
+    window.MyAddon.initInstanceStats = function() {
+        // function supplied before to get data from query params
+        var params = window.MyAddon.getQueryParams(document.location.search);
+        var baseUrl = params.xdm_e + params.cp;
 
-    // Get parameters from the query string
-    // and place in an object
-    window.getQueryParams = function(qs) {
-        qs = qs.split("+").join(" ");
+        // Call the REST API via the iframe
+        // bridge functionality
+        AP.require('request', function(request) {
+            request({
+                url: '/rest/api/2/project',
+                success: function(response) {
+                    // Convert the string response to JSON
+                    response = JSON.parse(response);
 
-        var params = {}, tokens,
-        re = /[?&]?([^=]+)=([^&]*)/g;
-
-        while (tokens = re.exec(qs)) {
-            params[decodeURIComponent(tokens[1])] =
-                decodeURIComponent(tokens[2]);
-        }
-
-        return params;
-    }
-
-    function buildTableAndReturnTbody(hostElement) {
-        var projTable = hostElement.append('table')
-            .classed({'project': true, 'aui': true});
-
-				// <table><thead><tr> as needed below
-        var projHeadRow = projTable.append("thead").append("tr");
-				// Empty header
-        projHeadRow.append("th");
-				// Now the next column
-        projHeadRow.append("th").text("Key");
-        projHeadRow.append("th").text("Name");
-
-        return projTable.append("tbody");
-    }
-
-    // Works with D3.js to create the project table
-    window.createProjectTable = function(projects, selector, baseUrl) {
-        var projectBaseUrl = baseUrl + "/browse/";
-
-        var rootElement = d3.select(selector);
-        var projBody = buildTableAndReturnTbody(rootElement);
-
-        // For each data item in projects
-        var row = projBody.selectAll("tr")
-            .data(projects)
-            .enter()
-            .append("tr");
-
-        // Add a <td> for the avatar with a <span>
-        row.append("td").append('span')
-            // set the CSS classes for this element
-            .classed({'aui-avatar': true, 'aui-avatar-xsmall': true})
-            .append('span')
-            .classed({'aui-avatar-inner': true})
-            .append('img')
-            // Set the attribute for the <img> element inside this td > span > span
-            .attr('src', function(item) { return item.avatarUrls["16x16"] });
-
-        // Add a <td> for the project key
-        row.append("td").append('span')
-            .classed({'project-key': true, 'aui-label': true})
-            // Set content of the element to be text
-            .text(function(item) { return item.key; });
-
-        // Add a <td> for the linked project name
-        row.append("td").append('span')
-            .classed({'project-name': true})
-            .append("a")
-            // Link the name to the project
-            .attr('href', function(item) { return baseUrl + item.key; })
-            // Since you're in the iframe, set "_top"
-            .attr('target', "_top")
-            .text(function(item) { return item.name; });
-		    };
-		})();
-
-		// MyAddon functionality
-		(function() {
-		    window.MyAddon = {};
-		    window.MyAddon.initInstanceStats = function() {
-		        var params = window.getQueryParams(document.location.search);
-		        var baseUrl = params.xdm_e + params.cp;
-
-		        // Call the REST API via the iframe
-		        // bridge functionality
-		        AP.require('request', function(request) {
-		            request({
-		                url: '/rest/api/2/project',
-		                success: function(response) {
-		                    // Convert the string response to JSON
-		                    response = JSON.parse(response);
-
-		                    // Call your helper function to build the
-		                    // table, now that you have data
-		                    window.createProjectTable(response, ".projects", baseUrl);
-		                },
-		                error: function(response) {
-		                    console.log("Error loading API (" + uri + ")");
-		                    console.log(arguments);
-		                },
-		                contentType: "application/json"
-		            });
-		        });
-		    };
-		})();
+                    // Call your helper function to build the
+                    // table, now that you have data
+                    window.MyAddon.createProjectTable(response, ".projects", baseUrl);
+                },
+                error: function(response) {
+                    console.log("Error loading API (" + uri + ")");
+                    console.log(arguments);
+                },
+                contentType: "application/json"
+            });
+        });
+    };
+})();
 	````
 	This leverages D3.js to build a table to display all your JIRA projects. 
 1. Save and close all files. 
