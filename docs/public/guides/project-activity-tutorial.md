@@ -15,8 +15,8 @@
 In this tutorial, you'll learn about:
 
 * [Configuring your development environment](#environment)  
-* [Adding an _Activity_ link in the navigation header](#stats-header)  
-* [Creating the D3.js table to display your projects](#architect-stats-page)
+* [Adding an _Activity_ link in the navigation header](#activity-header)  
+* [Creating the D3.js table to display your projects](#architect-page)
 * [Adding data and verifying your add-on works](#check)
 
 This tutorial shows you how to build a static Connect add-on that displays your JIRA projects 
@@ -64,8 +64,8 @@ so that requests betwen your add-on and the JIRA application are signed and auth
 	<pre><code data-lang="text">$ cd jira-activity/</code></pre>
 1. Install Node.js dependencies for your `jira-activity` project.  
 	<pre><code data-lang="text">$ npm install</code></pre>
-1. Start JIRA in cloud mode:  
-	<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-08-005-WN --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.0-rc.3,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.4,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.17.2,com.atlassian.webhooks:atlassian-webhooks-plugin:1.0.6 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+1. Start JIRA in cloud mode from your `jira-activity` root:  
+	<pre><code data-lang="text">$ atlas-run-standalone --product jira --version 6.3-OD-08-005-WN --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.0-rc.3,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.4,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.17.2,com.atlassian.webhooks:atlassian-webhooks-plugin:1.0.6 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
 
     You'll see a lot of output. When finished, your terminal will notify you that the build
     was successful:  
@@ -81,7 +81,7 @@ so that requests betwen your add-on and the JIRA application are signed and auth
 	__Password__: `admin`
 
 
-## <a name="stats-header"></a> Install your add-on and add an _Activity_ link
+## <a name="activity-header"></a> Install your add-on and add an _Activity_ link
 
 Now you've got the basic architecture for your add-on. If you open your new `jira-activity` directory, 
 you'll see essentials like the [`atlassian-connect.json` descriptor](../modules/) in the 
@@ -93,18 +93,18 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 1. Replace the `key`, `name`, `description`, and `vendor` name and URL with these fields: 
 	````
 	{
-    "key": "jira-activity",
-    "name": "JIRA Project Activity",
-    "description": "A Connect add-on that displays JIRA projects in a table",
-    "vendor": {
-        "name": "Atlassian Developer Relations",
-        "url": "https://developer.atlassian.com/"
-    },
+	    "key": "jira-activity",
+	    "name": "JIRA Project Activity",
+	    "description": "A Connect add-on that displays JIRA projects in a table",
+	    "vendor": {
+	        "name": "Atlassian Developer Relations",
+	        "url": "https://developer.atlassian.com/"
+    	},
  	````
  	This names your add-on in in your JIRA instance, and essentially makes it yours. Feel free 
  	to enter your own information here. For the `key` field, use alphanumeric characters, 
  	dashes, periods, and underscores.
-1. Replace the [`generalPages` module](../modules/jira/general-page.html) with the following:  
+1. Replace the `modules` with a [`generalPages` module](../modules/jira/general-page.html):  
 	````
      "generalPages": [
 
@@ -177,6 +177,7 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 1. Refresh JIRA in your browser, usually at [http://localhost:2990/jira](http://localhost:2990/jira).     
 	You'll see the _Activity_ label in the header: 
 	<img src="../assets/images/jira-activity-1.png" width="80%" style="border:1px solid #999;margin-top:10px;" />  
+	This link doesn't go anywhere – yet. You'll fix this in future steps.
 1. Back in your editor, open `routes/index.js`.  
 	From here, you'll add the `/activity` route to your app.
 1. After the `/hello-world` stub code, add:  
@@ -232,7 +233,7 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 1. Close and save your `atlassian-connect.json` and `routes/index.js` files.  
 
 
-## <a name="architect-stats-page"></a> Build the static _Activity_ page  
+## <a name="architect-page"></a> Build the static _Activity_ page  
 
 You've added a link in the JIRA header, and now you'll define how your page should look. 
 In this step, you'll add the capability for your add-on to use D3.js, and style 
@@ -245,7 +246,7 @@ the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/l
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script src="https://developer.atlassian.com/js/jira-projects.1.js"></script>
 	````
-	This lets you to use D3.js for your chart.  
+	This lets you to use D3.js for your chart, and a file hosted by developer.atlassian.com.  
 1. Create a new file called `views/activity.hbs`.  
 1. Add the following content:
 	````
