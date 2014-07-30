@@ -38,7 +38,7 @@ In this step, you'll confirm you have Node.js installed, and install the
 ACE helps you create Connect add-ons using Node.js, and handles add-on registration in JIRA for you. 
 It also detects changes made to your [`atlassian-connect.json` descriptor](../modules/) 
 file, so you don't need to continually restart your add-on as you develop. 
-Importantly, ACE also handles [JSON web token (JWT) claims](../concepts/understanding-jwt.html), 
+Importantly, ACE also handles [JSON web token (JWT)](../concepts/understanding-jwt.html), 
 so that requests betwen your add-on and the JIRA application are signed and authenticated. 
 
 1. Ensure you have the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads).  
@@ -54,8 +54,8 @@ so that requests betwen your add-on and the JIRA application are signed and auth
 1. Install [Node.js](http://www.nodejs.org/).  
 	If you use [Homebrew](http://brew.sh/), you can use the following command:
 	<pre><code data-lang="text">$ brew install node</code></pre>  
-	Otherwise, you can [download and install Node.js directly](http://nodejs.org/download/). 
-	If you don't use Homebrew, you might need to enter `sudo`.  
+	If you don't use Homebrew or use Windows, you can [download and install Node.js directly](http://nodejs.org/download/). 
+	You might need to enter `sudo`.  
 1. Install the [ACE framework](https://bitbucket.org/atlassian/atlassian-connect-express/).
 	<pre><code data-lang="text">$ npm install -g atlas-connect</code></pre>
 1. Create a new ACE project called `jira-activity`.
@@ -102,7 +102,8 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
     },
  	````
  	This names your add-on in in your JIRA instance, and essentially makes it yours. Feel free 
- 	to enter your own information here. You can use alphanumeric characters, dashes, periods, and underscores.
+ 	to enter your own information here. For the `key` field, use alphanumeric characters, 
+ 	dashes, periods, and underscores.
 1. Replace the [`generalPages` module](../modules/jira/general-page.html) with the following:  
 	````
      "generalPages": [
