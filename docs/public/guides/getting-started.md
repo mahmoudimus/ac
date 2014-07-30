@@ -39,7 +39,6 @@ Your `atlassian-connect.json` file will use a [`generalPages` module](../modules
         "authentication": {
             "type": "none"
         },
-        "apiVersion": "1",
         "modules": {
             "generalPages": [
                 {
