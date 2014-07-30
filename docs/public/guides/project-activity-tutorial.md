@@ -35,25 +35,12 @@ When you're finished, your add-on will look similar to this:
 
 In this step, you'll confirm you have Node.js installed, and install the 
 [Atlassian Connect Express (ACE)](https://bitbucket.org/atlassian/atlassian-connect-express/) toolkit. 
-ACE helps you create Connect add-ons using Node, and handles add-on registration in JIRA for you. 
+ACE helps you create Connect add-ons using Node.js, and handles add-on registration in JIRA for you. 
 It also detects changes made to your [`atlassian-connect.json` descriptor](../modules/) 
 file, so you don't need to continually restart your add-on as you develop. 
-Importantly, ACE also handles [JSON web token (JWT) authentication](../concepts/understanding-jwt.html), 
+Importantly, ACE also handles [JSON web token (JWT) claims](../concepts/understanding-jwt.html), 
 so that requests betwen your add-on and the JIRA application are signed and authenticated. 
 
-1. Install [Node.js](http://www.nodejs.org/).  
-	If you use [Homebrew](http://brew.sh/), you can use the following command:
-	<pre><code data-lang="text">$ brew install node</code></pre>  
-	Otherwise, you can [download and install Node directly](http://nodejs.org/download/). 
-	If you don't use Homebrew, you might need to enter `sudo`.  
-1. Install the [ACE framework](https://bitbucket.org/atlassian/atlassian-connect-express/).
-	<pre><code data-lang="text">$ npm install -g atlas-connect</code></pre>
-1. Create a new ACE project called `jira-activity`.
-	<pre><code data-lang="text">$ atlas-connect new jira-activity</code></pre>
-1. Change to your new `jira-activity` directory.
-	<pre><code data-lang="text">$ cd jira-activity/</code></pre>
-1. Install Node.js dependencies for your `jira-activity` project.  
-	<pre><code data-lang="text">$ npm install</code></pre>
 1. Ensure you have the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads).  
     You'll need SDK version 4.2.20 or higher.  
     <pre><code data-lang="text">$ atlas-version</code></pre>
@@ -64,6 +51,19 @@ so that requests betwen your add-on and the JIRA application are signed and auth
         ATLAS Scripts:    /usr/share/atlassian-plugin-sdk-4.2.20/bin  
         ATLAS Maven Home: /usr/share/atlassian-plugin-sdk-4.2.20/apache-maven  
     </tt>
+1. Install [Node.js](http://www.nodejs.org/).  
+	If you use [Homebrew](http://brew.sh/), you can use the following command:
+	<pre><code data-lang="text">$ brew install node</code></pre>  
+	Otherwise, you can [download and install Node.js directly](http://nodejs.org/download/). 
+	If you don't use Homebrew, you might need to enter `sudo`.  
+1. Install the [ACE framework](https://bitbucket.org/atlassian/atlassian-connect-express/).
+	<pre><code data-lang="text">$ npm install -g atlas-connect</code></pre>
+1. Create a new ACE project called `jira-activity`.
+	<pre><code data-lang="text">$ atlas-connect new jira-activity</code></pre>
+1. Change to your new `jira-activity` directory.
+	<pre><code data-lang="text">$ cd jira-activity/</code></pre>
+1. Install Node.js dependencies for your `jira-activity` project.  
+	<pre><code data-lang="text">$ npm install</code></pre>
 1. Start JIRA in cloud mode:  
 	<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-08-005-WN --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.0-rc.3,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.4,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.17.2,com.atlassian.webhooks:atlassian-webhooks-plugin:1.0.6 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
 
@@ -101,6 +101,8 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
         "url": "https://developer.atlassian.com/"
     },
  	````
+ 	This names your add-on in in your JIRA instance, and essentially makes it yours. Feel free 
+ 	to enter your own information here.
 1. Replace the [`generalPages` module](../modules/jira/general-page.html) with the following:  
 	````
      "generalPages": [
@@ -120,7 +122,7 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
    ````
    This adds an _Activity_ link in the `system.top.navigation.bar`, which is the JIRA 
    header. It also provides a condition that the link only appears to authenticated users, 
-   and sets a URL for your add-on to use under `/activity`.
+   and sets a URL for your add-on to use under `/activity`. 
 
    At this point, your descriptor file should look like this:  
 	````
@@ -168,9 +170,9 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	````
 
 1. Open a new terminal window.  
-1. From your `jira-activity` root, start up a Node server:  
+1. From your `jira-activity` root, start up a Node.js server:  
 	<pre><code data-lang="text">$ node app.js</code></pre> 
-	This starts up your add-on on a Node server, and installs it into your JIRA instance.
+	This starts up your add-on on a server, and installs it into your JIRA instance.
 1. Refresh JIRA in your browser, usually at [http://localhost:2990/jira](http://localhost:2990/jira).     
 	You'll see the _Activity_ label in the header: 
 	<img src="../assets/images/jira-activity-1.png" width="80%" style="border:1px solid #999;margin-top:10px;" />  
@@ -309,9 +311,11 @@ the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/l
     };
 })();
 	````
-	This leverages D3.js to build a table to display all your JIRA projects. 
+	`AP.require` calls the Connect API from your call, and `url` is the REST API you call (`/rest/api/2/project`). 
+	Your JIRA instance returns a string response, and `success` converts it to JSON.
+
 1. Save and close all files. 
-1. Restart the Node app. 
+1. Restart the Node.js app. 
 	Shut down the app with __CTRL+C__ and re-run the __`node app.js`__ 
 	command.
 1. Click __Activity__ in the header.  
