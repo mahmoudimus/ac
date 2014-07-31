@@ -30,7 +30,6 @@ public class ConnectIsLoadedTest
     private final static String CONNECT_PLUGIN_KEY = "com.atlassian.plugins.atlassian-connect-plugin";
     private final static String KEY_PROPERTY = "key";
 
-    @Category(OnDemandAcceptanceTest.class)
     @Test
     public void connectShouldBeLoadedInJira() throws IOException
     {
@@ -38,7 +37,6 @@ public class ConnectIsLoadedTest
         connectShouldBeLoaded(System.getProperty("baseurl.jira"));
     }
 
-    @Category(OnDemandAcceptanceTest.class)
     @Test
     public void connectShouldBeLoadedInConfluence() throws IOException
     {
