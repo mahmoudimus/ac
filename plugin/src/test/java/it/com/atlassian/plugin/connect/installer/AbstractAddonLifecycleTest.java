@@ -14,7 +14,7 @@ import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
-import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnaphot;
+import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
@@ -171,7 +171,7 @@ public abstract class AbstractAddonLifecycleTest
             
             addonKey = plugin.getKey();
             
-            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, INSTALLED);
+            ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
             assertEquals(POST, request.getMethod());
 
         }
@@ -202,7 +202,7 @@ public abstract class AbstractAddonLifecycleTest
             testPluginInstaller.uninstallJsonAddon(plugin);
             plugin = null;
 
-            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
+            ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
             assertEquals(POST, request.getMethod());
 
         }

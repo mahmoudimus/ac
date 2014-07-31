@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.workflow.WorkflowPostFunctionModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilder;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
@@ -69,12 +70,18 @@ public class DefaultWorkflowPostFunctionModuleProvider implements WorkflowPostFu
 
     private void registerIFrameRenderStrategy(ConnectAddonBean addon, WorkflowPostFunctionModuleBean bean, WorkflowPostFunctionResource resource, UrlBean urlBean)
     {
-        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
+        IFrameRenderStrategyBuilder.InitializedBuilder builder = iFrameRenderStrategyBuilderFactory.builder()
                 .addOn(addon.getKey())
                 .module(bean.getKey(addon))
                 .workflowPostFunctionTemplate(resource)
-                .urlTemplate(urlBean.getUrl())
-                .build();
+                .urlTemplate(urlBean.getUrl());
+
+        if (resource.equals(WorkflowPostFunctionResource.VIEW))
+        {
+            builder.ensureUniqueNamespace(true);
+        }
+
+        IFrameRenderStrategy renderStrategy = builder.build();
 
         iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getRawKey(), resource.getResource(), renderStrategy);
     }

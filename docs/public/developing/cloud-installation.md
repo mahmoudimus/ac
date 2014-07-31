@@ -32,17 +32,15 @@ Also, before starting, you will need to have your add-on descriptor file on hand
 listing, the Marketplace form asks you to upload the file from a directory location.
 
 Add-on vendors can create an environment for testing simply by [trialing](https://www.atlassian.com/try)
-a standard cloud application. Before your thirty-day trial expires, send an email to
-[developer-relations@atlassian.com](mailto:developer-relations@atlassian.com) and we can change your
-instance to use a free developer license.
+a standard cloud application. Before your thirty-day trial expires, [contact our Developer Relations team](https://developer.atlassian.com/help#contact-us) and we'll change your instance to use a free developer license.
 
 ## Create the listing
 With your Marketplace account set up and add-on descriptor on hand, create the Atlassian Connect
 listing as follows:
 
 1. Log in to the [Atlassian Marketplace](https://marketplace.atlassian.com/).
-2. Click the **Manage Add-ons** link.
-3. Click **Create new add-on**.
+2. Click the **Manage listings** link.
+3. Click **Create add-on**.
 4. Choose a vendor or, if you don't have a vendor profile yet, click **Create new vendor** to
 configure a new vendor profile for your add-on.
 5. Choose **Private** as the add-on visibility option. If you intend to use the add-on for
@@ -52,14 +50,14 @@ listing public later, you can.
 7. Follow the on-screen instructions to configure the remaining fields and options on the form.
 There are a few fields that require a little more explanation for an Atlassian Connect add-on
 listing:
-	- **Payment Model**: You can only choose paid via Atlassian or free, because Atlassian Connect
+	- **Payment model**: You can only choose paid via Atlassian or free, because Atlassian Connect
 add-ons cannot be paid via vendor.
 	- **Provide this add-on to**: This field specifies the Atlassian application type targeted by
 this add-on. Atlassian Connect add-ons are available to cloud-hosted instances only, so this field is
 pre-populated accordingly.
-	- **Add-on Details**: Many of the settings under the add-on details heading are optional and
+	- **Add-on details**: Many of the settings under the add-on details heading are optional and
 applicable only to public listings. In most cases, you can set these aside for later.
-	- **Version Visibility**: While the listing has a visibility setting, so do individual versions
+	- **Version visibility**: While the listing has a visibility setting, so do individual versions
 of the add-on published within the listing. This lets you beta test version updates privately,
 before publishing them publicly. While different versions of an add-on can have different visibility
 settings, note that if you make the listing itself private, all versions of the add-ons also become
@@ -71,7 +69,7 @@ are targeting and the minimum version, the **Compatible to** version is uneditab
 Because Atlassian Connect add-ons use stable, forward-compatible web APIs and cloud versions are frequently updated, 
 the notion of a latest-compatible version is absent for Atlassian Connect add-ons. It is applicable, however, 
 to downloadable Java add-ons.
-8. Click Submit when done.
+8. Click **Submit** when done.
 
 You can now generate test license tokens for your add-on and install it in cloud instances,
 either through MyAtlassian for live instances, or through the descriptor link of the
@@ -117,10 +115,10 @@ After you create a private listing for an add-on, you can generate an access tok
 the listing. To do so, follow these steps:
 
 1. Log in to the Atlassian Marketplace using the credentials associated with your vendor contact account.
-2. Click the **Manage Add-on** link.
+2. Click the **Manage add-on** link.
 3. Click on the name of the add-on.
 4. Click on the **Private Listings** tab.
-5. Scroll down to the listing information section of the page and click the **Create a token** button.
+5. Click **Create a token**.
 Keep in mind that this button appears only in the manage page for cloud-hosted add-ons. If you do not
 see the button on the manage page for your add-on, make sure you have a properly configured listing.
 
@@ -131,7 +129,7 @@ install the add-on and apply the token at one time (as described next).
 The link to the token in the Marketplace (shown in the following screenshot) includes the
 installation URL for the add-on along with the access token for it.
 
-<img src="../assets/images/accesstokenslisting.jpeg" alt="Manage Tokens" />
+<img src="../assets/images/accesstokenslisting.png" alt="Manage Tokens" />
 
 Alternatively, you can share this link with external customers or partners for testing.
 

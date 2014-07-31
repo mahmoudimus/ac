@@ -8,6 +8,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>atlassian-connect-modules</artifactId>
+    <name>Atlassian Connect - Modules</name>
 
     <!--
         NOTE: this library is consumed outside of OSGi and product code.

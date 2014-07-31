@@ -115,34 +115,12 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
       // in that case, defer creation until the next event loop tick to ensure
       // that updates to the desired container node's parents have completed
       defer(doCreate);
-    }
-    else {
+    } else {
       AJS.toInit(function hostInit(){
-        // Load after confluence editor has finished loading content.
-        if(AJS.Confluence && AJS.Confluence.EditorLoader && AJS.Confluence.EditorLoader.load) {
-          /*
-          NOTE: for some reason, the confluence EditorLoader will 404 sometimes on create page.
-          Because of this, we need to pass our create function as both the success and error callback so we always get called
-           */
-          try {
-            AJS.Confluence.EditorLoader.load(doCreate,doCreate);
-          } catch(e) {
-            try {
-              doCreate();
-            } catch(error) {
-              AJS.log(error);
-            }
-          }
-
-        } else {
-          try {
-              doCreate();
-          } catch(error) {
-            AJS.log(error);
-          }
-        }
+          doCreate();
       });
     }
+
   };
 
 });

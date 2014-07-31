@@ -24,7 +24,7 @@ import com.atlassian.plugin.connect.plugin.threeleggedauth.ThreeLeggedAuthServic
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
-import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnaphot;
+import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.google.common.collect.ImmutableSet;
@@ -39,9 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -176,9 +174,9 @@ public abstract class ThreeLeggedAuthFilterTestBase
         }
     }
 
-    protected ServletRequestSnaphot getCapturedRequest()
+    protected ServletRequestSnapshot getCapturedRequest()
     {
-        ServletRequestSnaphot request = testFilterResults.getRequest(addOnBean.getKey(), REQUEST_PATH);
+        ServletRequestSnapshot request = testFilterResults.getRequest(addOnBean.getKey(), REQUEST_PATH);
         assertNotNull(request);
         return request;
     }
@@ -224,17 +222,17 @@ public abstract class ThreeLeggedAuthFilterTestBase
         return URI.create(internalAddonBaseUrl + REQUEST_PATH);
     }
 
-    protected Object getSubjectFromRequestAttribute(ServletRequestSnaphot request)
+    protected Object getSubjectFromRequestAttribute(ServletRequestSnapshot request)
     {
         return getRequestAttribute(request, JwtConstants.HttpRequests.JWT_SUBJECT_ATTRIBUTE_NAME);
     }
 
-    protected Object getAddOnIdFromRequestAttribute(ServletRequestSnaphot request)
+    protected Object getAddOnIdFromRequestAttribute(ServletRequestSnapshot request)
     {
         return getRequestAttribute(request, JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME);
     }
 
-    private Object getRequestAttribute(ServletRequestSnaphot request, String attributeName)
+    private Object getRequestAttribute(ServletRequestSnapshot request, String attributeName)
     {
         final Map<String, Object> attributes = request.getAttributes();
         return null == attributes ? null : attributes.get(attributeName);

@@ -10,7 +10,7 @@ import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
-import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnaphot;
+import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.user.UserManager;
@@ -70,7 +70,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
 
             addonKey = plugin.getKey();
             
-            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, INSTALLED);
+            ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
             String payload = request.getEntity();
             
             boolean hasSharedSecret = new JsonParser().parse(payload).getAsJsonObject().has(SHARED_SECRET_FIELD_NAME);
@@ -100,7 +100,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
 
             addonKey = plugin.getKey();
 
-            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, INSTALLED);
+            ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
             String payload = request.getEntity();
             assertTrue("field " + USER_KEY_FIELD_NAME + " not found in request payload: " + payload,new JsonParser().parse(payload).getAsJsonObject().has(USER_KEY_FIELD_NAME));
 
@@ -128,7 +128,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
 
             addonKey = plugin.getKey();
 
-            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, INSTALLED);
+            ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
             String payload = request.getEntity();
 
             boolean hasOauthLink = new JsonParser().parse(payload).getAsJsonObject()
@@ -166,7 +166,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
             testPluginInstaller.uninstallJsonAddon(plugin);
             plugin = null;
 
-            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
+            ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
             String payload = request.getEntity();
 
             boolean hasSharedSecret = new JsonParser().parse(payload).getAsJsonObject().has(SHARED_SECRET_FIELD_NAME);
@@ -199,7 +199,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
             testPluginInstaller.uninstallJsonAddon(plugin);
             plugin = null;
 
-            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
+            ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
             String payload = request.getEntity();
             assertTrue("field " + USER_KEY_FIELD_NAME + " not found in request payload: " + payload,new JsonParser().parse(payload).getAsJsonObject().has(USER_KEY_FIELD_NAME));
 
@@ -230,7 +230,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
             testPluginInstaller.uninstallJsonAddon(plugin);
             plugin = null;
 
-            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
+            ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
             String payload = request.getEntity();
 
             boolean hasOauthLink = new JsonParser().parse(payload).getAsJsonObject()
