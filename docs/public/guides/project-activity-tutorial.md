@@ -99,11 +99,11 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	    "vendor": {
 	        "name": "Atlassian Developer Relations",
 	        "url": "https://developer.atlassian.com/"
-    	},
- 	````
- 	This names your add-on in in your JIRA instance, and essentially makes it yours. Feel free 
- 	to enter your own information here. For the `key` field, use alphanumeric characters, 
- 	dashes, periods, and underscores.
+	},
+	````
+	This names your add-on in in your JIRA instance, and essentially makes it yours. Feel free 
+	to enter your own information here. For the `key` field, use alphanumeric characters, 
+	dashes, periods, and underscores.
 1. Replace the `modules` with a [`generalPages` module](../modules/jira/general-page.html):  
 	````
      "generalPages": [
@@ -240,11 +240,11 @@ In this step, you'll add the capability for your add-on to use D3.js, and style
 the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/latest/index.html). 
 
 1. Open `views/layout.hbs`.
-1. Add the following to the `views/layout.hbs` before the closing `</head>` tag (following the `hostScriptUrl`
+1. Add the following to the `views/layout.hbs` near the closing `</body>` tag (following the `</section>`
 	line):
 	````
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-<script src="https://developer.atlassian.com/js/jira-projects.1.js"></script>
+<script src="{{furl '/js/jira-activity.js'}}"></script>
 	````
 	This lets you to use D3.js for your chart, and a file hosted by developer.atlassian.com.  
 1. Create a new file called `views/activity.hbs`.  
@@ -271,12 +271,91 @@ the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/l
 	        </section>
 	    </div>
 	</div>
+	````
+1. Create 'public/js/jira-activity.js'
+1. Add the following content:
+    ````
+// canned functionality for JIRA Activity
+$(function() {
+    "use strict";
 
-	<script type="text/javascript">
-	    $(function() {
-	        MyAddon.initInstanceStats();
-	    });
-	</script>
+    // get the parameters from the query string
+    // and sticks them in an object
+    function getQueryParams(qs) {
+        qs = qs.split("+").join(" ");
+
+        var params = {}, tokens,
+            re = /[?&]?([^=]+)=([^&]*)/g;
+
+        while (tokens = re.exec(qs)) {
+            params[decodeURIComponent(tokens[1])] =
+                decodeURIComponent(tokens[2]);
+        }
+
+        return params;
+    }
+
+    AP.define('JiraActivity', {
+        buildProjectTable: function(projects, selector) {
+
+            var params = getQueryParams(document.location.search);
+            var baseUrl = params.xdm_e + params.cp;
+
+            function buildTableAndReturnTbody(hostElement) {
+                var projTable = hostElement.append('table')
+                    .classed({'project': true, 'aui': true});
+
+                // table > thead > tr, as needed below
+                var projHeadRow = projTable.append("thead").append("tr");
+                // empty header
+                projHeadRow.append("th");
+                // now the next column
+                projHeadRow.append("th").text("Key");
+                projHeadRow.append("th").text("Name");
+
+                return projTable.append("tbody");
+            }
+
+
+            var projectBaseUrl = baseUrl + "/browse/";
+
+            var rootElement = d3.select(selector);
+            var projBody = buildTableAndReturnTbody(rootElement);
+
+            // for each data item in projects
+            var row = projBody.selectAll("tr")
+                .data(projects)
+                .enter()
+                .append("tr");
+
+            // ... add a td for the avatar, stick a span in it
+            row.append("td").append('span')
+                // set the css classes for this element
+                .classed({'aui-avatar': true, 'aui-avatar-xsmall': true})
+                .append('span')
+                .classed({'aui-avatar-inner': true})
+                .append('img')
+                // set the atribute for the img element inside this td > span > span
+                .attr('src', function(item) { return item.avatarUrls["16x16"] });
+
+            // ... add a td for the project key
+            row.append("td").append('span')
+                .classed({'project-key': true, 'aui-label': true})
+                // set the content of the element to be some text
+                .text(function(item) { return item.key; });
+
+            // ... add a td for the project name / link to project
+            row.append("td").append('span')
+                .classed({'project-name': true})
+                .append("a")
+                // make the name a link to the project
+                .attr('href', function(item) { return baseUrl + item.key; })
+                // since we're in the iframe, we need to set _top
+                .attr('target', "_top")
+                .text(function(item) { return item.name; });
+        }
+    });
+});
 	````
 1. Open `public/js/addon.js`.  
 1. Add the following content:  
@@ -305,7 +384,7 @@ $(function() {
             contentType: "application/json"
         });
     });
-})();
+});
 	````
 	`AP.require` calls the Connect API from your call, and `url` is the REST API you call (`/rest/api/2/project`). 
 	Your JIRA instance returns a string response, and `success` converts it to JSON.
