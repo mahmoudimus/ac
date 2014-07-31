@@ -246,8 +246,10 @@ the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/l
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script src="{{furl '/js/jira-activity.js'}}"></script>
 	````
-	This lets you to use D3.js for your chart.  
-1. Create a new file called `views/activity.hbs`.  
+	This lets you to use D3.js for your chart. This file is a shared container of styles (like [AUI](https://docs.atlassian.com/aui/latest/index.html))
+	and scripts you can use for all pages of your add-on.    
+1. Create a new file called `views/activity.hbs`.   
+	This file is a template you'll use to render the `/activity` URL.  
 1. Add the following content:
 	````
 	{{!< layout}}
@@ -272,7 +274,8 @@ the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/l
 	    </div>
 	</div>
 	````
-1. Create a file called `public/js/jira-activity.js`.
+1. Create a file called `public/js/jira-activity.js`.  
+	This file will take a list of your projects, and generate an HTML table using D3.js.  
 1. Add the following content:
     ````
     // canned functionality for JIRA Activity
@@ -356,7 +359,8 @@ the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/l
         });
     });
     ````
-1. Open `public/js/addon.js`.  
+1. Open `public/js/addon.js`. 
+	This file uses the JIRA REST API to request project information you use to generate the table.   
 1. Add the following content:  
     ````
 /* add-on script */
@@ -391,7 +395,8 @@ $(function() {
 1. Save and close all files. 
 1. Restart the Node.js app. 
 	Shut down the app with __CTRL+C__ and re-run the __`node app.js`__ 
-	command.
+	command.  
+	You might see a message that says `Failed to deregister with host jira`, which you can ignore.  
 1. Click __Activity__ in the header.  
 	You'll see an empty page with your "JIRA activity" title:  
 	<img src="../assets/images/jira-activity-2.png" width="80%" style="border:1px solid #999;margin-top:10px;" />  	
