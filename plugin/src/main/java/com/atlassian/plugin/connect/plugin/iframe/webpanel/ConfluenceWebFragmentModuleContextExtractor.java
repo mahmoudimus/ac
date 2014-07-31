@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.iframe.webpanel;
 
+import com.atlassian.confluence.core.ConfluenceActionSupport;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.pages.AbstractPage;
 import com.atlassian.confluence.pages.actions.AbstractPageAwareAction;
@@ -41,12 +42,17 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
         
         ConfluenceModuleContextParameters moduleContext = new ConfluenceModuleContextParametersImpl();
 
-        @SuppressWarnings("unchecked") // it is what it is
-        WebInterfaceContext webInterfaceContext = (WebInterfaceContext) webFragmentContext.get("webInterfaceContext");
-        if (webInterfaceContext != null)
+        final Object action = webFragmentContext.get("action");
+
+        if (action instanceof ConfluenceActionSupport)
         {
-            moduleContext.addPage(webInterfaceContext.getPage());
-            moduleContext.addSpace(webInterfaceContext.getSpace());
+            WebInterfaceContext webInterfaceContext = ((ConfluenceActionSupport)action).getWebInterfaceContext();
+
+            if (webInterfaceContext != null)
+            {
+                moduleContext.addPage(webInterfaceContext.getPage());
+                moduleContext.addSpace(webInterfaceContext.getSpace());
+            }
         }
 
         Space space = (Space) webFragmentContext.get("space");
@@ -67,7 +73,6 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
             moduleContext.addContent((ContentEntityObject)content);
         }
 
-        Object action = webFragmentContext.get("action");
         if (action instanceof AbstractPageAwareAction)
         {
             AbstractPageAwareAction pageAwareAction = (AbstractPageAwareAction) action;
