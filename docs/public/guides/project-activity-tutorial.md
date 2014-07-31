@@ -54,7 +54,7 @@ so that requests betwen your add-on and the JIRA application are signed and auth
 1. Install [Node.js](http://www.nodejs.org/).  
 	If you use [Homebrew](http://brew.sh/), you can use the following command:
 	<pre><code data-lang="text">$ brew install node</code></pre>  
-	If you don't use Homebrew or use Windows, you can [download and install Node.js directly](http://nodejs.org/download/). 
+	If you use Windows or don't use Homebrew, you can [download and install Node.js directly](http://nodejs.org/download/). 
 	You might need to enter `sudo`.  
 1. Install the [ACE framework](https://bitbucket.org/atlassian/atlassian-connect-express/).
 	<pre><code data-lang="text">$ npm install -g atlas-connect</code></pre>
@@ -99,12 +99,12 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	    "vendor": {
 	        "name": "Atlassian Developer Relations",
 	        "url": "https://developer.atlassian.com/"
-	},
+		},
 	````
 	This names your add-on in in your JIRA instance, and essentially makes it yours. Feel free 
 	to enter your own information here. For the `key` field, use alphanumeric characters, 
 	dashes, periods, and underscores.
-1. Replace the `modules` with a [`generalPages` module](../modules/jira/general-page.html):  
+1. Replace the content of `modules` with a [`generalPages` module](../modules/jira/general-page.html):  
 	````
      "generalPages": [
 
@@ -272,7 +272,7 @@ the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/l
 	    </div>
 	</div>
 	````
-1. Create 'public/js/jira-activity.js'
+1. Create a file called `public/js/jira-activity.js`.
 1. Add the following content:
     ````
     // canned functionality for JIRA Activity
