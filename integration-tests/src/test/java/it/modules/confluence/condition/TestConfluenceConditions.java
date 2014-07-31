@@ -14,9 +14,6 @@ import it.modules.confluence.AbstractConfluenceWebDriverTest;
 import it.servlet.condition.CheckUsernameConditionServlet;
 import it.servlet.condition.ParameterCapturingConditionServlet;
 import it.util.TestUser;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -28,6 +25,7 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWe
 import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static it.matcher.IsLong.isLong;
 import static it.matcher.ParamMatchers.isLocale;
 import static it.matcher.ParamMatchers.isTimeZone;
 import static org.hamcrest.CoreMatchers.*;
@@ -266,37 +264,6 @@ public class TestConfluenceConditions extends AbstractConfluenceWebDriverTest
         assertThat(conditionParams, hasEntry(equalTo("spaceKey"), equalTo("ds")));
         assertThat(conditionParams, hasEntry(equalTo("spaceId"), both(not(equalTo(""))).and(not(nullValue()))));
         assertThat(conditionParams, hasEntry(equalTo("spaceId"), isLong()));
-    }
-
-    private Matcher<? super String> isLong()
-    {
-        return new BaseMatcher<String>()
-        {
-            @Override
-            public boolean matches(Object item)
-            {
-                if (item instanceof String)
-                {
-                    try
-                    {
-                        Long.valueOf((String)item);
-                        return true;
-                    }
-                    catch (NumberFormatException e)
-                    {
-                        // ignore
-                    }
-                }
-
-                return false;
-            }
-
-            @Override
-            public void describeTo(Description description)
-            {
-                description.appendText("a string representing long");
-            }
-        };
     }
 
     private ConfluenceEditPage visitEditPage() throws Exception
