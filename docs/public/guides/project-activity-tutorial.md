@@ -246,7 +246,7 @@ the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/l
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script src="{{furl '/js/jira-activity.js'}}"></script>
 	````
-	This lets you to use D3.js for your chart, and a file hosted by developer.atlassian.com.  
+	This lets you to use D3.js for your chart.  
 1. Create a new file called `views/activity.hbs`.  
 1. Add the following content:
 	````
