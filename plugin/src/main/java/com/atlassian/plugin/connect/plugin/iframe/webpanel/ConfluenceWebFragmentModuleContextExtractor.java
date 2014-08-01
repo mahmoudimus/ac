@@ -42,6 +42,16 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
         
         ConfluenceModuleContextParameters moduleContext = new ConfluenceModuleContextParametersImpl();
 
+        {
+            @SuppressWarnings("unchecked") // it is what it is
+                    WebInterfaceContext webInterfaceContext = (WebInterfaceContext) webFragmentContext.get("webInterfaceContext");
+            if (webInterfaceContext != null)
+            {
+                moduleContext.addPage(webInterfaceContext.getPage());
+                moduleContext.addSpace(webInterfaceContext.getSpace());
+            }
+        }
+
         final Object action = webFragmentContext.get("action");
 
         if (action instanceof ConfluenceActionSupport)
