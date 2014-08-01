@@ -51,6 +51,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     private static final String ABSOLUTE_WEBITEM_INLINE_DIALOG = "wikipedia-link";
     private static final String ADDON_WEBITEM_INLINE_DIALOG = "ac-general-web-item-inline-dialog";
     private static final String ADDON_WEBITEM_DIALOG = "ac-general-web-item-dialog";
+    private static final String ADDON_WEBITEM_DIALOG_CHROMELESS = ADDON_WEBITEM_DIALOG + "-chromeless";
 
     private static ConnectRunner runner;
 
@@ -151,6 +152,24 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                                                 .withWidth("300px")
                                                                 .withHeight("200px")
                                                                 .withChrome(true)
+                                                                .build()
+                                                )
+                                                .build()
+                                )
+                                .build(),
+                        newWebItemBean()
+                                .withName(new I18nProperty("Webitem Dialog Target chromeless", "ac.widt"))
+                                .withKey(ADDON_WEBITEM_DIALOG_CHROMELESS)
+                                .withLocation("system.top.navigation.bar")
+                                .withWeight(1)
+                                .withContext(AddOnUrlContext.addon)
+                                .withUrl("/my-webitem-dialog")
+                                .withTarget(
+                                        newWebItemTargetBean().withType(WebItemTargetType.dialog)
+                                                .withOptions(DialogOptions.newDialogOptions()
+                                                                .withWidth("300px")
+                                                                .withHeight("200px")
+                                                                .withChrome(false)
                                                                 .build()
                                                 )
                                                 .build()
@@ -349,9 +368,22 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
 
         assertEquals(dialogPage.getIFrameSize().getHeight(), 200);
         assertEquals(dialogPage.getIFrameSize().getWidth(), 300);
-
+        assertEquals(true, dialogPage.hasChrome());
     }
-    
+
+    @Test
+    public void testAbsoluteWebItemDialogTargetOptionsChromeless() throws Exception
+    {
+        JiraViewProjectPage viewProjectPage = loginAndVisit(ADMIN, JiraViewProjectPage.class, project.getKey());
+        RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ADDON_WEBITEM_DIALOG_CHROMELESS), Optional.<String>absent());
+        webItem.click();
+        RemoteDialog dialogPage = product.getPageBinder().bind(RemoteDialog.class);
+
+        assertEquals(dialogPage.getIFrameSize().getHeight(), 200);
+        assertEquals(dialogPage.getIFrameSize().getWidth(), 300);
+        assertEquals(false, dialogPage.hasChrome());
+    }
+
     private String getModuleKey(String module)
     {
         return addonAndModuleKey(runner.getAddon().getKey(), module);
