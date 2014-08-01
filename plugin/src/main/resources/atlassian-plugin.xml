@@ -114,6 +114,7 @@
         <resource type="download" name="loading-indicator.js" location="/js/iframe/host/loading-indicator.js" />
         <resource type="download" name="request.js" location="/js/iframe/host/request.js" />
         <resource type="download" name="dialog-rpc.js" location="/js/dialog/dialog-rpc.js" />
+        <resource type="download" name="cookie.js" location="/js/iframe/host/cookie.js" />
         <resource type="download" name="history-rpc.js" location="/js/history/history-rpc.js" />
         <resource type="download" name="_events.js" location="/js/iframe/_events.js" />
         <resource type="download" name="_xdm.js" location="/js/iframe/_xdm.js" />
