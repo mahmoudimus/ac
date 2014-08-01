@@ -11,7 +11,6 @@ import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.webdriver.AtlassianWebDriver;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,14 +34,12 @@ public class RemoteCookieGeneralPage
     @Inject
     protected PageElementFinder elementFinder;
 
-    //private final String addonKey;
     private final String addonAndModuleKey;
 
     protected WebElement containerDiv;
 
     public RemoteCookieGeneralPage(String addonAndModuleKey)
     {
-        //this.addonKey = addonKey;
         this.addonAndModuleKey = addonAndModuleKey;
     }
 
@@ -115,7 +112,5 @@ public class RemoteCookieGeneralPage
             }
         });
     }
-
-//        return driver.getDriver().manage().getCookieNamed(addonKey + '$$cookiename');
 
 }
