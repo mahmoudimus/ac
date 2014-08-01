@@ -111,6 +111,11 @@ public class WebItemTargetBean extends BaseModuleBean
      *            <td>Number | String</td>
      *            <td>sets how high the inline-dialog is in pixels</td>
      *        </tr>
+     *        <tr>
+     *            <td><code>chrome</code></td>
+     *            <td>Boolean</td>
+     *            <td>Whether chrome should be included in the dialog. Default is true</td>
+     *        </tr>
      *    </tbody>
      * </table>
      * <a id="reveal-text-trigger2" data-replace-text="Collapse" data-replace-selector=".reveal-text-trigger-text" class="aui-expander-trigger aui-expander-reveal-text" aria-controls="modalDialog">
