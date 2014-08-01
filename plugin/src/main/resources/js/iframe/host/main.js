@@ -115,34 +115,12 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
       // in that case, defer creation until the next event loop tick to ensure
       // that updates to the desired container node's parents have completed
       defer(doCreate);
-    }
-    else {
+    } else {
       AJS.toInit(function hostInit(){
-        // Load after confluence editor has finished loading content.
-        if(AJS.Confluence && AJS.Confluence.EditorLoader && AJS.Confluence.EditorLoader.load) {
-          /*
-          NOTE: for some reason, the confluence EditorLoader will 404 sometimes on create page.
-          Because of this, we need to pass our create function as both the success and error callback so we always get called
-           */
-          try {
-            AJS.Confluence.EditorLoader.load(doCreate,doCreate);
-          } catch(e) {
-            try {
-              doCreate();
-            } catch(error) {
-              AJS.log(error);
-            }
-          }
-
-        } else {
-          try {
-              doCreate();
-          } catch(error) {
-            AJS.log(error);
-          }
-        }
+          doCreate();
       });
     }
+
   };
 
 });
@@ -156,8 +134,10 @@ if (!_AP.create) {
 }
 
 if(typeof ConfluenceMobile !== "undefined"){
+  // Disabled, See: AC-1210
+  AJS.log('Connect add-ons on confluence mobile are temporarily disabled., See: https://ecosystem.atlassian.net/browse/AC-1210');
   //confluence will not run scripts loaded in the body of mobile pages by default.
-  ConfluenceMobile.contentEventAggregator.on("render:pre:after-content", function(a, b, content) {
-    window['eval'].call(window, $(content.attributes.body).find(".ap-iframe-body-script").html());
-  });
+  // ConfluenceMobile.contentEventAggregator.on("render:pre:after-content", function(a, b, content) {
+  //   window['eval'].call(window, $(content.attributes.body).find(".ap-iframe-body-script").html());
+  //});
 }

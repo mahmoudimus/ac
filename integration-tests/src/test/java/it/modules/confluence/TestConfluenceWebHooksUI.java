@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
 import it.confluence.ConfluenceWebDriverTestBase;
+import it.util.TestUser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,9 +23,7 @@ public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase
     @Before
     public void setupSearchPage() throws Exception
     {
-        loginAsAdmin();
-
-        searchResultPage = product.visit(SearchResultPage.class);
+        searchResultPage = loginAndVisit(TestUser.ADMIN, SearchResultPage.class);
     }
 
     private void search(String terms) throws Exception

@@ -1,7 +1,6 @@
 package it.com.atlassian.plugin.connect.installer;
 
 import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.jwt.core.JwtUtil;
 import com.atlassian.modzdetector.IOUtils;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -15,10 +14,9 @@ import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipBuilder;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipHandler;
 import com.atlassian.plugin.connect.spi.Filenames;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
-import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnaphot;
+import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.google.gson.JsonObject;
@@ -26,9 +24,7 @@ import com.google.gson.JsonParser;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import it.com.atlassian.plugin.connect.TestConstants;
 import it.com.atlassian.plugin.connect.util.RequestUtil;
-import net.oauth.*;
-import net.oauth.signature.OAuthSignatureMethod;
-import net.oauth.signature.RSA_SHA1;
+import net.oauth.OAuthException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,10 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
@@ -209,7 +202,7 @@ public class XmlOAuthToJsonJwtUpdateTest
 
     private JsonObject getLastInstallPayload()
     {
-        ServletRequestSnaphot installRequest = testFilterResults.getRequest(jwtPlugin.getKey(), JWT_VERSION_SLASHED);
+        ServletRequestSnapshot installRequest = testFilterResults.getRequest(jwtPlugin.getKey(), JWT_VERSION_SLASHED);
         return new JsonParser().parse(installRequest.getEntity()).getAsJsonObject();
     }
 
@@ -291,53 +284,6 @@ public class XmlOAuthToJsonJwtUpdateTest
 
     private RequestUtil.Request constructOAuthRequestFromAddOn() throws IOException, OAuthException, URISyntaxException
     {
-        final HttpMethod httpMethod = HttpMethod.GET;
-        URI uri = URI.create(requestUtil.getApplicationRestUrl("/applinks/1.0/manifest"));
-        uri = signOAuthUri(httpMethod, uri);
-
-        return requestUtil.requestBuilder()
-                .setMethod(httpMethod)
-                .setUri(uri)
-                .build();
-    }
-
-    private URI signOAuthUri(HttpMethod httpMethod, URI uri) throws IOException, OAuthException, URISyntaxException
-    {
-        final Map<String, String> oAuthParams = new HashMap<String, String>();
-        {
-            oAuthParams.put(OAuth.OAUTH_SIGNATURE_METHOD, OAuth.RSA_SHA1);
-            oAuthParams.put(OAuth.OAUTH_VERSION, "1.0");
-            oAuthParams.put(OAuth.OAUTH_CONSUMER_KEY, oAuthPlugin.getKey());
-            oAuthParams.put(OAuth.OAUTH_NONCE, String.valueOf(System.nanoTime()));
-            oAuthParams.put(OAuth.OAUTH_TIMESTAMP, String.valueOf(System.currentTimeMillis() / 1000));
-        }
-        final OAuthMessage oAuthMessage = new OAuthMessage(httpMethod.toString(), uri.toString(), oAuthParams.entrySet());
-        final OAuthConsumer oAuthConsumer = new OAuthConsumer(null, oAuthPlugin.getKey(), TestConstants.XML_ADDON_PRIVATE_KEY, new OAuthServiceProvider(null, null, null));
-        oAuthConsumer.setProperty(RSA_SHA1.PRIVATE_KEY, TestConstants.XML_ADDON_PRIVATE_KEY);
-        final OAuthSignatureMethod oAuthSignatureMethod = OAuthSignatureMethod.newSigner(oAuthMessage, new OAuthAccessor(oAuthConsumer));
-        oAuthSignatureMethod.sign(oAuthMessage);
-        return addOAuthParamsToRequest(uri, oAuthMessage);
-    }
-
-    private static URI addOAuthParamsToRequest(URI uri, OAuthMessage oAuthMessage) throws IOException
-    {
-        StringBuilder sb = new StringBuilder("?");
-        {
-            boolean isFirst = true;
-
-            for (Map.Entry<String, String> entry : oAuthMessage.getParameters())
-            {
-                if (!isFirst)
-                {
-                    sb.append('&');
-                }
-
-                isFirst = false;
-                sb.append(entry.getKey()).append('=').append(JwtUtil.percentEncode(entry.getValue())); // for JWT use the same encoding as OAuth 1
-            }
-
-            uri = URI.create(uri + sb.toString());
-        }
-        return uri;
+        return requestUtil.constructOAuthRequestFromAddOn(oAuthPlugin.getKey());
     }
 }

@@ -10,7 +10,7 @@ _AP.define("dialog", ["_dollar", "_rpc", "dialog/dialog-factory", "dialog/main"]
                     if(buttons){
                         $.each(buttons, function(name, button) {
                             button.click(function (e, callback) {
-                                if(xdm.isActive()){
+                                if(xdm.isActive() && xdm.buttonListenerBound){
                                     xdm.dialogMessage(name, callback);
                                 } else {
                                     callback(true);
@@ -21,6 +21,9 @@ _AP.define("dialog", ["_dollar", "_rpc", "dialog/dialog-factory", "dialog/main"]
                 }
             },
             internals: {
+                dialogListenerBound: function(){
+                    this.buttonListenerBound = true;
+                },
                 setDialogButtonEnabled: function (name, enabled) {
                     dialogMain.getButton(name).setEnabled(enabled);
                 },

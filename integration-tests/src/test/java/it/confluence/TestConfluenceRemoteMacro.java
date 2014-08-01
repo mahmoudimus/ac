@@ -1,14 +1,14 @@
 package it.confluence;
 
-import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Suppliers;
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWithRemoteMacro;
-import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.connect.test.server.XMLAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.*;
 import it.servlet.ConnectAppServlets;
 import it.servlet.macro.SimpleMacroServlet;
+import it.util.TestUser;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -28,10 +28,8 @@ import java.net.URL;
 
 import static com.atlassian.fugue.Option.none;
 import static com.atlassian.fugue.Option.some;
-import static com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps.ConfluenceUser;
-import static com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner.newServlet;
+import static com.atlassian.plugin.connect.test.server.XMLAddOnRunner.newServlet;
 import static com.google.common.base.Strings.nullToEmpty;
-import static it.TestConstants.ADMIN_USERNAME;
 import static it.confluence.ContextParameters.*;
 import static java.lang.String.format;
 import static org.junit.Assert.*;
@@ -39,9 +37,6 @@ import static org.junit.Assert.*;
 @XmlDescriptor
 public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
 {
-    private static final Option<ConfluenceUser> ADMIN_CONFLUENCE_USER = some(new ConfluenceUser(ADMIN_USERNAME, ADMIN_USERNAME));
-    private static final Option<ConfluenceUser> ANONYMOUS_CONFLUENCE_USER = none(ConfluenceUser.class);
-
     private static final String SIMPLE_MACRO = "simple-macro";
     private static final String HEADER_MACRO = "header-macro";
     private static final String POST_MACRO = "post-macro";
@@ -59,7 +54,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
     private static final String REQUEST_QUERY = "req_query";
     private static final String SPACE_KEY = "ds";
 
-    private static AtlassianConnectAddOnRunner remotePlugin;
+    private static XMLAddOnRunner remotePlugin;
     private static CounterMacroServlet counterMacroServlet;
 
     @BeforeClass
@@ -67,7 +62,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
     {
         counterMacroServlet = new CounterMacroServlet();
 
-        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
+        remotePlugin = new XMLAddOnRunner(product.getProductInstance().getBaseUrl())
                 .addOAuth()
                 .add(newSimpleRemoteMacroModule(SIMPLE_MACRO, SIMPLE_MACRO_PATH))
                 .add(newSimpleRemoteMacroModule(HEADER_MACRO, HEADER_MACRO_PATH)
@@ -132,7 +127,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
     @Test
     public void testSimpleMacro() throws Exception
     {
-        final ConfluenceOps.ConfluencePageData pageData = createPage(ADMIN_CONFLUENCE_USER, pageWithMacro(SIMPLE_MACRO));
+        final ConfluenceOps.ConfluencePageData pageData = createPage(TestUser.ADMIN, pageWithMacro(SIMPLE_MACRO));
         final ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, pageData.getTitle(), SIMPLE_MACRO);
 
         assertEquals(SIMPLE_MACRO_PATH, page.getText(REQUEST_URI));
@@ -152,7 +147,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
     @Test
     public void testSimpleMacroUsingHeaderParams() throws Exception
     {
-        final ConfluenceOps.ConfluencePageData pageData = createPage(ADMIN_CONFLUENCE_USER, pageWithMacro(HEADER_MACRO));
+        final ConfluenceOps.ConfluencePageData pageData = createPage(TestUser.ADMIN, pageWithMacro(HEADER_MACRO));
         final ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, pageData.getTitle(), HEADER_MACRO);
 
         assertEquals(HEADER_MACRO_PATH, page.getText(REQUEST_URI));
@@ -173,7 +168,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
     @Test
     public void testSimpleMacroUsingPost() throws Exception
     {
-        final ConfluenceOps.ConfluencePageData pageData = createPage(ADMIN_CONFLUENCE_USER, pageWithMacro(POST_MACRO));
+        final ConfluenceOps.ConfluencePageData pageData = createPage(TestUser.ADMIN, pageWithMacro(POST_MACRO));
         final ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, pageData.getTitle(), POST_MACRO);
 
         assertEquals(POST_MACRO_PATH, page.getText(REQUEST_URI));
@@ -193,7 +188,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
     @Test
     public void testAnonymousMacro() throws XmlRpcFault, IOException
     {
-        final ConfluenceOps.ConfluencePageData pageData = createPage(ANONYMOUS_CONFLUENCE_USER, pageWithMacro(SIMPLE_MACRO));
+        final ConfluenceOps.ConfluencePageData pageData = createPage(null, pageWithMacro(SIMPLE_MACRO));
         final ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, pageData.getTitle(), SIMPLE_MACRO);
 
         assertEquals(SIMPLE_MACRO_PATH, page.getText(REQUEST_URI));
@@ -213,8 +208,8 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
     @Test
     public void testMacroInComment() throws XmlRpcFault, IOException
     {
-        final ConfluenceOps.ConfluencePageData pageData = createPage(ADMIN_CONFLUENCE_USER, "The macro is in the comment!");
-        final ConfluenceOps.ConfluenceCommentData commentData = confluenceOps.addComment(ADMIN_CONFLUENCE_USER, pageData.getId(), pageWithMacro(SIMPLE_MACRO));
+        final ConfluenceOps.ConfluencePageData pageData = createPage(TestUser.ADMIN, "The macro is in the comment!");
+        final ConfluenceOps.ConfluenceCommentData commentData = confluenceOps.addComment(some(TestUser.ADMIN), pageData.getId(), pageWithMacro(SIMPLE_MACRO));
         final ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, pageData.getTitle(), SIMPLE_MACRO);
 
         assertEquals(SIMPLE_MACRO_PATH, page.getText(REQUEST_URI));
@@ -235,7 +230,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
     @Ignore
     public void testMacroCacheFlushes() throws Exception
     {
-        final ConfluenceOps.ConfluencePageData pageData = createPage(ADMIN_CONFLUENCE_USER, pageWithMacro(COUNTER_MACRO));
+        final ConfluenceOps.ConfluencePageData pageData = createPage(TestUser.ADMIN, pageWithMacro(COUNTER_MACRO));
 
         counterMacroServlet.reset();
 
@@ -257,7 +252,7 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
     @Test // this one is not actually using the editor yet
     public void testMacroWithEditor() throws Exception
     {
-        final ConfluenceOps.ConfluencePageData pageData = createPage(ANONYMOUS_CONFLUENCE_USER,
+        final ConfluenceOps.ConfluencePageData pageData = createPage(null,
                 format("<div class=\"%1$s\"><ac:macro ac:name=\"%1$s\">\n" +
                         "    <ac:parameter ac:name=\"footy\">Soccer</ac:parameter>\n" +
                         "    <ac:rich-text-body><p>outside note</p>\n" +
@@ -287,15 +282,15 @@ public final class TestConfluenceRemoteMacro extends ConfluenceWebDriverTestBase
     @Test
     public void testSlowMacro() throws Exception
     {
-        final ConfluenceOps.ConfluencePageData confluencePageData = createPage(ADMIN_CONFLUENCE_USER, pageWithMacro(SLOW_MACRO));
+        final ConfluenceOps.ConfluencePageData confluencePageData = createPage(TestUser.ADMIN, pageWithMacro(SLOW_MACRO));
         final ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, confluencePageData.getTitle(), SLOW_MACRO);
         assertTrue("The macro should have timed out.", page.macroHasTimedOut());
     }
 
 
-    private static ConfluenceOps.ConfluencePageData createPage(Option<ConfluenceUser> user, String content) throws XmlRpcFault, IOException
+    private static ConfluenceOps.ConfluencePageData createPage(TestUser user, String content) throws XmlRpcFault, IOException
     {
-        return confluenceOps.setPage(user, SPACE_KEY, "test", content);
+        return confluenceOps.setPage(user == null ? none(TestUser.class) : some(user), SPACE_KEY, "test", content);
     }
 
     private static void clearCaches() throws Exception

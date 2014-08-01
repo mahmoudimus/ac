@@ -12,7 +12,7 @@ import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserServic
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.JwtTestVerifier;
-import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnaphot;
+import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.user.UserManager;
@@ -31,7 +31,6 @@ import static org.junit.Assert.*;
 @RunWith(AtlassianPluginsTestRunner.class)
 public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
 {
-
     public AddonLifecycleJwtTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, AddonTestFilterResults testFilterResults, ConnectApplinkManager connectApplinkManager, ConnectAddOnUserService connectAddOnUserService, UserManager userManager,ApplicationService applicationService,ApplicationManager applicationManager)
     {
         super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService, userManager, applicationService, applicationManager);
@@ -58,7 +57,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
 
             addonKey = plugin.getKey();
             
-            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, INSTALLED);
+            ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
             String payload = request.getEntity();
 
             boolean hasSharedSecret = new JsonParser().parse(payload).getAsJsonObject().has(SHARED_SECRET_FIELD_NAME);
@@ -89,7 +88,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
             addonKey = plugin.getKey();
             final String finalKey = addonKey;
             
-            ServletRequestSnaphot installRequest = testFilterResults.getRequest(addonKey, INSTALLED);
+            ServletRequestSnapshot installRequest = testFilterResults.getRequest(addonKey, INSTALLED);
             String installPayload = installRequest.getEntity();
 
             String sharedSecret = new JsonParser().parse(installPayload).getAsJsonObject().get(SHARED_SECRET_FIELD_NAME).getAsString();
@@ -110,7 +109,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
                 }
             },5);
 
-            ServletRequestSnaphot enableRequest = testFilterResults.getRequest(addonKey, ENABLED);
+            ServletRequestSnapshot enableRequest = testFilterResults.getRequest(addonKey, ENABLED);
 
             String jwtToken = enableRequest.getHeaders().get(JwtConstants.HttpRequests.AUTHORIZATION_HEADER.toLowerCase());
 
@@ -143,7 +142,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
 
             addonKey = plugin.getKey();
 
-            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, INSTALLED);
+            ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
             String payload = request.getEntity();
             boolean hasUserKey = new JsonParser().parse(payload).getAsJsonObject().has(USER_KEY_FIELD_NAME);
 
@@ -173,7 +172,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
 
             addonKey = plugin.getKey();
 
-            ServletRequestSnaphot installRequest = testFilterResults.getRequest(addonKey, INSTALLED);
+            ServletRequestSnapshot installRequest = testFilterResults.getRequest(addonKey, INSTALLED);
             String installPayload = installRequest.getEntity();
 
             String sharedSecret = new JsonParser().parse(installPayload).getAsJsonObject().get(SHARED_SECRET_FIELD_NAME).getAsString();
@@ -182,7 +181,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
             testPluginInstaller.uninstallJsonAddon(plugin);
             plugin = null;
 
-            ServletRequestSnaphot uninstallRequest = testFilterResults.getRequest(addonKey, UNINSTALLED);
+            ServletRequestSnapshot uninstallRequest = testFilterResults.getRequest(addonKey, UNINSTALLED);
 
             String jwtToken = uninstallRequest.getHeaders().get(JwtConstants.HttpRequests.AUTHORIZATION_HEADER.toLowerCase());
 
@@ -218,7 +217,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
             testPluginInstaller.uninstallJsonAddon(plugin);
             plugin = null;
 
-            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
+            ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
             String payload = request.getEntity();
             boolean hasUserKey = new JsonParser().parse(payload).getAsJsonObject().has(USER_KEY_FIELD_NAME);
 

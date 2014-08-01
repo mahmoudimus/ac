@@ -8,12 +8,13 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
-import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnaphot;
+import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
@@ -24,6 +25,7 @@ import org.junit.Test;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
+import static com.google.common.collect.Sets.newHashSet;
 import static org.junit.Assert.*;
 
 public abstract class AbstractAddonLifecycleTest
@@ -91,6 +93,7 @@ public abstract class AbstractAddonLifecycleTest
                                 .build()
                 )
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(addonKey))
+                .withScopes(newHashSet(ScopeName.ADMIN))
                 .build();
 
         addonKey = ModuleKeyUtils.randomName(pluginKeyPrefix);
@@ -168,7 +171,7 @@ public abstract class AbstractAddonLifecycleTest
             
             addonKey = plugin.getKey();
             
-            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, INSTALLED);
+            ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
             assertEquals(POST, request.getMethod());
 
         }
@@ -199,7 +202,7 @@ public abstract class AbstractAddonLifecycleTest
             testPluginInstaller.uninstallJsonAddon(plugin);
             plugin = null;
 
-            ServletRequestSnaphot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
+            ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
             assertEquals(POST, request.getMethod());
 
         }

@@ -1,4 +1,4 @@
-package it.confluence;
+package it.modules.confluence;
 
 import com.atlassian.confluence.pageobjects.component.menu.ConfluenceMenuItem;
 import com.atlassian.confluence.pageobjects.component.menu.ToolsMenu;
@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import it.confluence.ConfluenceWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,7 +20,7 @@ import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean.newWebSectionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static it.TestConstants.ADMIN_USERNAME;
+import static it.util.TestUser.ADMIN;
 import static org.junit.Assert.assertTrue;
 
 public class TestWebSection extends ConfluenceWebDriverTestBase
@@ -39,7 +40,6 @@ public class TestWebSection extends ConfluenceWebDriverTestBase
     private static final String CONTENT_LOCATION = TOOLS_LOCATION + "/" + addonAndModuleKey(PLUGIN_KEY,WEB_SECTION_ID);
 
     private static ConnectRunner addon;
-    private static ConfluenceOps.ConfluenceUser admin;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -64,7 +64,6 @@ public class TestWebSection extends ConfluenceWebDriverTestBase
                                 .build()
                 )
                 .start();
-        admin = new ConfluenceOps.ConfluenceUser(ADMIN_USERNAME, ADMIN_USERNAME);
     }
 
     @AfterClass
@@ -79,12 +78,10 @@ public class TestWebSection extends ConfluenceWebDriverTestBase
     @Test
     public void testWebItemFoundWithinWebSection() throws MalformedURLException, XmlRpcFault
     {
-        final ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(admin), "ds", "Page with web section", "some page content");
+        final ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(ADMIN), "ds", "Page with web section", "some page content");
         final String pageId = pageData.getId();
         
-        loginAsAdmin();
-
-        ViewPage viewPage = product.visit(ViewPage.class, pageId);
+        ViewPage viewPage = loginAndVisit(ADMIN, ViewPage.class, pageId);
 
         ToolsMenu toolsMenu = viewPage.openToolsMenu();
 

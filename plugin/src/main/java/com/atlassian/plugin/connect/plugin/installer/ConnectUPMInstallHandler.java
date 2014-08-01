@@ -125,7 +125,7 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
             else
             {
                 String json = Files.toString(descriptorFile, Charsets.UTF_8);
-                plugin = connectInstaller.install(username, json);
+                plugin = connectInstaller.install(json);
             }
 
             return new PluginInstallResult(plugin);

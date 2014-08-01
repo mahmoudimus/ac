@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
@@ -14,7 +15,7 @@ public class TestRemotePluginInstallation extends ConnectWebDriverTestBase
     @Test
     public void testChangedKey() throws Exception
     {
-        loginAsAdmin();
+        login(TestUser.ADMIN);
         ConnectRunner pluginFirst = createAddOn("pluginFirst");
         assertThatWeCanVisitThePage(pluginFirst);
 
