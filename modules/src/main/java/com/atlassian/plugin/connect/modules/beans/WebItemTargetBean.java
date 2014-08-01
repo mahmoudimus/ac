@@ -114,7 +114,7 @@ public class WebItemTargetBean extends BaseModuleBean
      *        <tr>
      *            <td><code>chrome</code></td>
      *            <td>Boolean</td>
-     *            <td>Whether chrome should be included in the dialog. Default is true</td>
+     *            <td>Whether the dialog should contain the AUI header and buttons. Default is true</td>
      *        </tr>
      *    </tbody>
      * </table>
