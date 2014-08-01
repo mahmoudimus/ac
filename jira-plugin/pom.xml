@@ -7,8 +7,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>jira-connect-plugin</artifactId>
-    <name>JIRA Connect - Plugin</name>
+    <artifactId>atlassian-connect-jira-plugin</artifactId>
+    <name>Atlassian Connect - JIRA Plugin</name>
     <packaging>atlassian-plugin</packaging>
 
     <licenses>

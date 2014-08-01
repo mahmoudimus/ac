@@ -13,7 +13,7 @@ import org.dom4j.Element;
 
 import javax.servlet.Filter;
 
-public final class ConnectRequestFilterModuleDescriptorImpl extends AbstractModuleDescriptor<Filter> implements ConnectRequestFilterModuleDescriptor
+public class ConnectRequestFilterModuleDescriptorImpl extends AbstractModuleDescriptor<Filter> implements ConnectRequestFilterModuleDescriptor
 {
     private final ResettableLazyReference<Filter> moduleLazyReference = new ResettableLazyReference<Filter>()
     {

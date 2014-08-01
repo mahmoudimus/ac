@@ -5,6 +5,12 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}" />
     </plugin-info>
 
+    <!-- Modules for products/plugins which extend Connect. -->
+    <described-module-type key="connect-request-filter" name="Connect Request Filter"
+                           class="com.atlassian.plugin.connect.plugin.web.ConnectRequestFilterModuleDescriptorImpl">
+        <description>Http request filter for particular stages of Connect add-on http request lifecycle.</description>
+    </described-module-type>
+
     <resource type="i18n" name="i18n" location="com.atlassian.connect.i18n"/>
     <resource type="i18n" name="jira-addon-i18n" location="com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonResourceBundle"/>
     <resource type="i18n" name="confluence-addon-i18n" location="connect-addons"/>
@@ -249,11 +255,6 @@
     <described-module-type key="plugin-permission" name="Plugin Permission"
                                    class="com.atlassian.plugin.connect.plugin.module.permission.DefaultPermissionModuleDescriptor">
         <description>A permission that needs to be requested by a plugin in order to execute certain functionality</description>
-    </described-module-type>
-
-    <described-module-type key="connect-request-filter" name="Connect Request Filter"
-                           class="com.atlassian.plugin.connect.plugin.web.ConnectRequestFilterModuleDescriptorImpl">
-        <description>Http request filter for particular stages of Connect add-on http request lifecycle.</description>
     </described-module-type>
 
     <described-module-type key="remote-web-panel" class="com.atlassian.plugin.connect.plugin.module.webpanel.RemoteWebPanelModuleDescriptor">

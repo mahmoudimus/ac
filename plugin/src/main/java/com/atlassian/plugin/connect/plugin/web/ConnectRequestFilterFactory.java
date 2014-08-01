@@ -4,6 +4,7 @@ import javax.servlet.Filter;
 
 /**
  * This factory for filters provided by the plugins/products implementing Connect SPI.
+ * @since 1.2.0
  */
 public interface ConnectRequestFilterFactory
 {

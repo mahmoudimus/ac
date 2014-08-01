@@ -12,5 +12,8 @@ import javax.servlet.Filter;
  */
 public interface ConnectRequestFilterModuleDescriptor extends ModuleDescriptor<Filter>
 {
+    /**
+     * @return the phase, to which the filter is registered.
+     */
     ConnectRequestFilterPhase getFilterPhase();
 }
