@@ -40,7 +40,7 @@ _AP.require(["dialog/main", "host/content", "_uri", "dialog/dialog-factory"], fu
                     options.chrome = (options.chrome.toLowerCase() === "false") ? false : true;
                 }
 
-                //default chrome to be false for backwards compatability with webitems
+                //default chrome to be true for backwards compatibility with webitems
                 if(options.chrome === undefined){
                   options.chrome = true;
                 }
