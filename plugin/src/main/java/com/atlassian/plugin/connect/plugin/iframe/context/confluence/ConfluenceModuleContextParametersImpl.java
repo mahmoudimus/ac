@@ -5,6 +5,7 @@ import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.pages.AbstractPage;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -28,8 +29,11 @@ public class ConfluenceModuleContextParametersImpl extends HashMapModuleContextP
     {
         if (space != null)
         {
-            put(ConfluenceModuleContextFilter.SPACE_KEY, space.getKey());
-            put(ConfluenceModuleContextFilter.SPACE_ID, Long.toString(space.getId()));
+            if (!StringUtils.isEmpty(space.getKey()))
+            {
+                put(ConfluenceModuleContextFilter.SPACE_KEY, space.getKey());
+                put(ConfluenceModuleContextFilter.SPACE_ID, Long.toString(space.getId()));
+            }
         }
     }
 
