@@ -24,7 +24,7 @@ public class DialogOptions extends BaseDialogOptions implements WebItemTargetOpt
     private String height;
 
     /**
-     * Whether chrome should be included in the dialog. Default is true
+     * Whether the dialog should contain the AUI header and buttons. Default is true
      */
     private Boolean chrome;
 
