@@ -60,6 +60,8 @@ public class TestCookie extends ConnectWebDriverTestBase
         GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, ADDON_GENERALPAGE, ADDON_GENERALPAGE_NAME, remotePlugin.getAddon().getKey());
         remotePage.clickAddOnLink();
         RemoteCookieGeneralPage remoteCookiePage = product.getPageBinder().bind(RemoteCookieGeneralPage.class, AddonTestUtils.escapedAddonAndModuleKey(remotePlugin.getAddon().getKey(), ADDON_GENERALPAGE));
+        remoteCookiePage.readCookie();
+        assertEquals(remoteCookiePage.getCookieContents(), "undefined");
         remoteCookiePage.saveCookie();
         remoteCookiePage.readCookie();
         assertEquals(remoteCookiePage.getCookieContents(), "cookie contents");
