@@ -8,6 +8,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel.WebP
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.spi.plugin.capabilities.provider.ConnectModuleProvider;
+import com.atlassian.plugin.connect.spi.plugin.capabilities.provider.ConnectModuleProviderContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

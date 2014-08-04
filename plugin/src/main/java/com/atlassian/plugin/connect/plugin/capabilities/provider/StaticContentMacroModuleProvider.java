@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteA
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonI18nManager;
+import com.atlassian.plugin.connect.spi.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import org.springframework.beans.factory.annotation.Autowired;

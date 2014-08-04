@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.RequiredKeyBean;
+import com.atlassian.plugin.connect.spi.plugin.capabilities.provider.ModuleLocationQualifier;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;

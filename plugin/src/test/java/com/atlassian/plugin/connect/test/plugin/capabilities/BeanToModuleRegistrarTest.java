@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.WebHookScopeService;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.plugin.module.AutowireWithConnectPluginDecorator;
+import com.atlassian.plugin.connect.plugin.module.provider.ModuleListProviderContainer;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.module.ContainerAccessor;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
@@ -47,7 +48,7 @@ public class BeanToModuleRegistrarTest
     @Mock private Bundle bundle;
     @Mock private AutowireWithConnectPluginDecorator theConnectPlugin;
     @Mock private ContainerAccessor containerAccessor;
-    
+    @Mock private ModuleListProviderContainer moduleListProviderContainer;
 
     private static final String EVENT_IN_SCOPES = "event in scopes";
 
@@ -71,7 +72,7 @@ public class BeanToModuleRegistrarTest
         
         
         beanToModuleRegistrar = new BeanToModuleRegistrar(dynamicDescriptorRegistration, pluginRetrievalService,
-                productAccessor, applicationProperties);
+                applicationProperties, moduleListProviderContainer);
     }
 
     @Test

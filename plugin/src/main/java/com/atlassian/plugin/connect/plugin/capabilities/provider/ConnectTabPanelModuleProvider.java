@@ -13,6 +13,8 @@ import com.atlassian.plugin.connect.plugin.iframe.tabpanel.profile.ConnectIFrame
 import com.atlassian.plugin.connect.plugin.iframe.tabpanel.project.ConnectIFrameComponentTabPanel;
 import com.atlassian.plugin.connect.plugin.iframe.tabpanel.project.ConnectIFrameProjectTabPanel;
 import com.atlassian.plugin.connect.plugin.iframe.tabpanel.project.ConnectIFrameVersionTabPanel;
+import com.atlassian.plugin.connect.spi.plugin.capabilities.provider.ConnectModuleProvider;
+import com.atlassian.plugin.connect.spi.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;

@@ -11,7 +11,6 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.*;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectEntityPropertyModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -64,11 +63,11 @@ public class ConnectEntityPropertyModuleDescriptorFactoryTest
     {
         this.addon = newConnectAddonBean().withKey("com.atlassian.plugin.key").build();
         when(plugin.getKey()).thenReturn("com.atlassian.plugin.key");
-        ConnectEntityPropertyModuleDescriptorFactory factory = new ConnectEntityPropertyModuleDescriptorFactory(autowireUtil);
+//        ConnectEntityPropertyModuleDescriptorFactory factory = new ConnectEntityPropertyModuleDescriptorFactory(autowireUtil);
         when(autowireUtil.createBean(eq(EntityPropertyIndexDocumentModuleDescriptorImpl.class)))
                 .thenReturn(new EntityPropertyIndexDocumentModuleDescriptorImpl(authContext, moduleFactory));
         EntityPropertyModuleBean bean = createBean();
-        this.moduleDescriptor = factory.createModuleDescriptor(new DefaultConnectModuleProviderContext(addon), plugin, bean);
+//        this.moduleDescriptor = factory.createModuleDescriptor(new DefaultConnectModuleProviderContext(addon), plugin, bean);
     }
 
     @Test

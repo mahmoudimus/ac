@@ -11,6 +11,8 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.module.confluence.SpaceToolsContextInterceptor;
 import com.atlassian.plugin.connect.plugin.module.confluence.SpaceToolsIFrameAction;
 import com.atlassian.plugin.connect.plugin.module.page.SpaceToolsTabContext;
+import com.atlassian.plugin.connect.spi.plugin.capabilities.provider.ConnectModuleProvider;
+import com.atlassian.plugin.connect.spi.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.google.common.annotations.VisibleForTesting;

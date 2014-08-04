@@ -4,15 +4,16 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectEntityPropertyModuleDescriptorFactory;
-import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
+import com.atlassian.plugin.connect.spi.plugin.capabilities.provider.ConnectModuleProvider;
+import com.atlassian.plugin.connect.spi.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@JiraComponent
+@Component
 public class EntityPropertyModuleProvider implements ConnectModuleProvider<EntityPropertyModuleBean>
 {
     private final ConnectEntityPropertyModuleDescriptorFactory descriptorFactory;

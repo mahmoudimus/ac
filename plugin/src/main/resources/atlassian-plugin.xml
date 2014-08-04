@@ -5,6 +5,12 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}" />
     </plugin-info>
 
+    <described-module-type key="connect-module-list-provider" name="Connect Module List Provider"
+                           class="com.atlassian.plugin.connect.plugin.module.provider.ConnectModuleListProviderModuleDescriptor">
+        <description>The class which provides Connect modules.</description>
+    </described-module-type>
+
+
     <resource type="i18n" name="i18n" location="com.atlassian.connect.i18n"/>
     <resource type="i18n" name="jira-addon-i18n" location="com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonResourceBundle"/>
     <resource type="i18n" name="confluence-addon-i18n" location="connect-addons"/>

@@ -1,6 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.spi.plugin.capabilities.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.plugin.capabilities.provider.ModuleLocationQualifier;
 
 public class DefaultConnectModuleProviderContext implements ConnectModuleProviderContext
 {

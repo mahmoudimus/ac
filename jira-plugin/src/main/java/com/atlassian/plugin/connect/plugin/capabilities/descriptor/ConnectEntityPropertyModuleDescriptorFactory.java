@@ -7,22 +7,23 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
-import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
-import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
+import com.atlassian.plugin.connect.plugin.util.AutowiteUtil;
+import com.atlassian.plugin.connect.spi.plugin.capabilities.provider.ConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.plugin.capabilities.provider.ConnectModuleProviderContext;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-@JiraComponent
+@Component
 public class ConnectEntityPropertyModuleDescriptorFactory implements ConnectModuleDescriptorFactory<EntityPropertyModuleBean, EntityPropertyIndexDocumentModuleDescriptor>
 {
     public static final String DESCRIPTOR_NAME = "index-document-configuration";
 
-    private final ConnectContainerUtil autowireUtil;
+    private final AutowiteUtil autowireUtil;
 
     @Autowired
-    public ConnectEntityPropertyModuleDescriptorFactory(ConnectContainerUtil autowireUtil)
+    public ConnectEntityPropertyModuleDescriptorFactory(AutowiteUtil autowireUtil)
     {
         this.autowireUtil = autowireUtil;
     }
