@@ -138,6 +138,14 @@ public class ConnectAppServlets
         return wrapContextAwareServlet(new MustacheServlet("iframe-open-message.mu"));
     }
 
+    /**
+     * @return a servlet that returns 3 buttons for create, delete, and read a cookie
+     */
+    public static HttpServlet cookieServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("iframe-cookie.mu"));
+    }
+
 
     public static HttpServlet macroSimple()
     {
