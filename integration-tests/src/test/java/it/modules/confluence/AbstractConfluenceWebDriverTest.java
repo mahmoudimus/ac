@@ -35,11 +35,6 @@ public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
         public static Space DEMO = new Space("ds", "Demonstration Space");
     }
 
-    public static class TestUser
-    {
-        public static User ADMIN = User.ADMIN;
-    }
-
     @Rule
     public TestName name = new TestName();
 

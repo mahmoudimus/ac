@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.ConnectWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.ParameterCapturingConditionServlet;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -78,8 +79,7 @@ public class TestProfileTabPanel extends ConnectWebDriverTestBase
     public void testProfileTabPanel() throws RemoteException
     {
         String moduleKey = addonAndModuleKey(remotePlugin.getAddon().getKey(),RAW_MODULE_KEY);
-        loginAsAdmin();
-        product.visit(ViewProfilePage.class);
+        loginAndVisit(TestUser.ADMIN, ViewProfilePage.class);
         LinkedRemoteContent tabPanel = connectPageOperations.findTabPanel("up_" + moduleKey + "_a",
                 Option.<String>none(),moduleKey);
         RemotePluginEmbeddedTestPage remotePage = tabPanel.click();
@@ -94,7 +94,7 @@ public class TestProfileTabPanel extends ConnectWebDriverTestBase
     @Test
     public void tabIsNotAccessibleWithFalseCondition() throws RemoteException
     {
-        loginAsAdmin();
+        login(TestUser.ADMIN);
 
         remotePlugin.setToggleableConditionShouldDisplay(false);
         JiraViewProfilePage profilePage = product.visit(JiraViewProfilePage.class);

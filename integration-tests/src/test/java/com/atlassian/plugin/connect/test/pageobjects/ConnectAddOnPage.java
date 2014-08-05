@@ -37,8 +37,6 @@ public class ConnectAddOnPage
 
     protected WebElement containerDiv;
 
-    private static final Logger log = LoggerFactory.getLogger(ConnectAddOnPage.class);
-
     public ConnectAddOnPage(String addOnKey, String pageElementKey, boolean includedEmbeddedPrefix)
     {
         this.pageElementKey = pageElementKey;
@@ -77,11 +75,6 @@ public class ConnectAddOnPage
     public <T> T runInFrame(Callable<T> callable)
     {
         return RemotePageUtil.runInFrame(driver, containerDiv, callable);
-    }
-
-    public WebElement getContainerDiv()
-    {
-        return containerDiv;
     }
 
     public boolean isFullSize()

@@ -1,13 +1,17 @@
 package it.modules;
 
+import com.atlassian.fugue.Option;
+import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.*;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.google.common.base.Optional;
 import it.ConnectWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
+import it.util.TestUser;
 import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -26,7 +30,6 @@ import java.util.TimeZone;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
-import static it.TestConstants.BETTY_USERNAME;
 import static java.lang.String.valueOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
@@ -112,7 +115,7 @@ public class TestGeneralPageCrossProduct extends ConnectWebDriverTestBase
     @Test
     public void testMyGeneralLoaded()
     {
-        loginAsBetty();
+        login(TestUser.BETTY);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneral", "Remotable Plugin app1 General", remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
@@ -120,8 +123,8 @@ public class TestGeneralPageCrossProduct extends ConnectWebDriverTestBase
         assertEquals("Success", remotePluginTest.getMessage());
         assertTrue(remotePluginTest.getIframeQueryParams().containsKey("cp"));
         assertNotNull(remotePluginTest.getFullName());
-        assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString(BETTY_USERNAME));
-        assertEquals(BETTY_USERNAME, remotePluginTest.getUserId());
+        assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString(TestUser.BETTY.getUsername()));
+        assertEquals(TestUser.BETTY.getUsername(), remotePluginTest.getUserId());
         assertTrue(remotePluginTest.getLocale().startsWith("en-"));
 
         // timezone should be the same as the default one
@@ -133,8 +136,8 @@ public class TestGeneralPageCrossProduct extends ConnectWebDriverTestBase
         assertTrue("OK".equals(statusText) || "success".equals(statusText));
         String contentType = remotePluginTest.getClientHttpContentType();
         assertTrue(contentType != null && contentType.startsWith("text/plain"));
-        assertEquals(BETTY_USERNAME, remotePluginTest.getClientHttpData());
-        assertEquals(BETTY_USERNAME, remotePluginTest.getClientHttpResponseText());
+        assertEquals(TestUser.BETTY.getUsername(), remotePluginTest.getClientHttpData());
+        assertEquals(TestUser.BETTY.getUsername(), remotePluginTest.getClientHttpResponseText());
 
         // media type tests of the RA.request API
         assertEquals("{\"name\": \"betty\"}", remotePluginTest.getClientHttpDataJson());
@@ -144,24 +147,15 @@ public class TestGeneralPageCrossProduct extends ConnectWebDriverTestBase
     @Test
     public void testNoAdminPageForNonAdmin()
     {
-        loginAsBarney();
+        login(TestUser.BARNEY);
         AccessDeniedIFramePage page = product.getPageBinder().bind(AccessDeniedIFramePage.class, "app1", "remotePluginAdmin");
         assertFalse(page.isIframeAvailable());
     }
 
     @Test
-    @Ignore("Need to wait for menu to open w/o waiting for page link name")
-    public void testRemoteConditionFails()
-    {
-        loginAsBarney();
-        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty", "Only Betty", remotePlugin.getAddon().getKey());
-        assertFalse(page.isRemotePluginLinkPresent());
-    }
-
-    @Test
     public void testRemoteConditionSucceeds()
     {
-        loginAsBetty();
+        login(TestUser.BETTY);
 
         GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty", "Only Betty", remotePlugin.getAddon().getKey());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
@@ -187,7 +181,7 @@ public class TestGeneralPageCrossProduct extends ConnectWebDriverTestBase
 
         try
         {
-            loginAsBetty();
+            login(TestUser.BETTY);
             final PluginManagerPage upm = product.visit(PluginManagerPage.class);
 
             upm.clickConfigurePluginButton(anotherPlugin.getAddon().getKey(), "page");
@@ -203,7 +197,7 @@ public class TestGeneralPageCrossProduct extends ConnectWebDriverTestBase
     public void testEncodedSpaceInPageModuleUrl()
     {
         // Regression test for AC-885 (ensure descriptor query strings are not decoded before parsing)
-        loginAsBetty();
+        loginAndVisit(TestUser.BETTY, HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "encodedSpaces", "Encoded Spaces", remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
@@ -214,8 +208,12 @@ public class TestGeneralPageCrossProduct extends ConnectWebDriverTestBase
     @Test
     public void testAmd()
     {
-        loginAsBetty();
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "amdTest", "AMD Test app1 General", remotePlugin.getAddon().getKey());
+        loginAndVisit(TestUser.BETTY, HomePage.class);
+
+        String LINK_TEXT = "AMD Test app1 General";
+//        RemoteWebItem webItem = connectPageOperations.findWebItem(RemoteWebItem.ItemMatchingMode.LINK_TEXT, LINK_TEXT, Optional.<String>absent());
+
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "amdTest", LINK_TEXT, remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
 
@@ -227,7 +225,7 @@ public class TestGeneralPageCrossProduct extends ConnectWebDriverTestBase
     @Test
     public void testSizeToParent()
     {
-        loginAsBetty();
+        loginAndVisit(TestUser.BETTY, HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParent", "Size to parent general page", remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();

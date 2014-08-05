@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import it.util.TestUser;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -72,7 +73,7 @@ public class TestCompatibility extends AbstractConfluenceWebDriverTest
     @Test
     public void macroIsRendered() throws Exception
     {
-        loginAsAdmin();
+        login(it.util.TestUser.ADMIN);
         createAndVisitPage(STORAGE_FORMAT);
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(MACRO_KEY);
         String macroParameter = renderedMacro.getIFrameElementText("data");
@@ -82,7 +83,7 @@ public class TestCompatibility extends AbstractConfluenceWebDriverTest
     @Test
     public void testAliasIsNotPersisted() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(AbstractConfluenceWebDriverTest.TestUser.ADMIN, AbstractConfluenceWebDriverTest.TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
         editorPage.setTitle(RandomStringUtils.randomAlphanumeric(8));
 
         selectMacro(editorPage, MACRO_NAME_2);
@@ -94,7 +95,7 @@ public class TestCompatibility extends AbstractConfluenceWebDriverTest
 
     private void createAndVisitPage(String pageContent) throws MalformedURLException, XmlRpcFault
     {
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(ConfluenceOps.ConfluenceUser.ADMIN),
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(TestUser.ADMIN),
                 TestSpace.DEMO.getKey(), "macro page", pageContent);
         product.visit(ConfluenceViewPage.class, pageData.getId());
     }

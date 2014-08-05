@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.0-rc.3</version>
+        <version>1.1.0-rc.4</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -358,7 +358,6 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
-            <version>${hamcrest.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -514,7 +513,7 @@
                             com.atlassian.plugin.connect.modules.beans.*
                         </Export-Package>
                         <Spring-Context>*</Spring-Context>
-                        <Atlassian-Plugin-Key>${groupId}.${artifactId}</Atlassian-Plugin-Key>
+                        <Atlassian-Plugin-Key>${project.groupId}.${project.artifactId}</Atlassian-Plugin-Key>
                         <!-- DO NOT put Atlassian-Plugin-Key here!! it will bypass all transforms and component-imports will break -->
                     </instructions>
                     <systemPropertyVariables>
@@ -983,20 +982,6 @@
                     </additionalSourceDirectories>
                 </configuration>
             </plugin>
-            <!-- Run annotation processors on src/test/java sources -->
-            <plugin>
-                <groupId>org.bsc.maven</groupId>
-                <artifactId>maven-processor-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>process-test</id>
-                        <goals>
-                            <goal>process-test</goal>
-                        </goals>
-                        <phase>generate-test-sources</phase>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -1007,7 +992,7 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
-            
+
         </plugins>
     </build>
 
@@ -1124,6 +1109,47 @@
                 <devmode>true</devmode>
                 <test.plugin.artifact> </test.plugin.artifact>
             </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.bsc.maven</groupId>
+                        <artifactId>maven-processor-plugin</artifactId>
+                        <version>2.2.4</version>
+                        <executions>
+                            <execution>
+                                <id>process</id>
+                                <goals>
+                                    <goal>process</goal>
+                                </goals>
+                                <phase>process-resources</phase>
+                            </execution>
+                            <execution>
+                                <id>process-test</id>
+                                <goals>
+                                    <goal>process-test</goal>
+                                </goals>
+                                <phase>generate-test-sources</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <additionalSourceDirectories>
+                                <additionalSourceDirectory>../modules/src/main/java/</additionalSourceDirectory>
+                                <additionalSourceDirectory>../api-parent/spi/src/main/java/</additionalSourceDirectory>
+                            </additionalSourceDirectories>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <compilerArgument>-proc:none</compilerArgument>
+                            <source>1.6</source>
+                            <target>1.6</target>
+                            <encoding>${project.build.sourceEncoding}</encoding>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
 
         <profile>
@@ -1216,5 +1242,9 @@
         <mvnCommand>/usr/bin/mvn</mvnCommand>
         <debugSchemaGen>false</debugSchemaGen>
         <ao.version>0.25.2</ao.version>
+        <od.testing.configuration>
+            use-maven,3
+            include-artifact,com.atlassian.plugins:atlassian-connect-cloud-acceptance-tests
+        </od.testing.configuration>
     </properties>
 </project>

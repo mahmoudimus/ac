@@ -16,7 +16,7 @@ import com.atlassian.plugin.connect.plugin.util.zip.ZipHandler;
 import com.atlassian.plugin.connect.spi.Filenames;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
-import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnaphot;
+import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.google.gson.JsonObject;
@@ -202,7 +202,7 @@ public class XmlOAuthToJsonJwtUpdateTest
 
     private JsonObject getLastInstallPayload()
     {
-        ServletRequestSnaphot installRequest = testFilterResults.getRequest(jwtPlugin.getKey(), JWT_VERSION_SLASHED);
+        ServletRequestSnapshot installRequest = testFilterResults.getRequest(jwtPlugin.getKey(), JWT_VERSION_SLASHED);
         return new JsonParser().parse(installRequest.getEntity()).getAsJsonObject();
     }
 

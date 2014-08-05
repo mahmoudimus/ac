@@ -1,5 +1,6 @@
 package it.modules;
 
+import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -8,6 +9,7 @@ import com.atlassian.plugin.connect.test.pageobjects.*;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.ConnectWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
 import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -17,7 +19,6 @@ import org.junit.Test;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
-import static it.TestConstants.BETTY_USERNAME;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
@@ -36,7 +37,7 @@ public class TestDialog extends ConnectWebDriverTestBase
     private static final String ADDON_WEBITEM_DIALOG = "my-webitem-dialog";
     private static final String ADDON_WEBITEM_DIALOG_NAME = "my webitem dialog";
 
-    private static ConnectRunner remotePlugin;
+    private static ConnectRunner runner;
 
 
     @BeforeClass
@@ -49,7 +50,7 @@ public class TestDialog extends ConnectWebDriverTestBase
                 ? "system.help/pages"
                 : null;
 
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .setAuthenticationToNone()
                 .addModules("generalPages",
                         newPageBean()
@@ -111,9 +112,9 @@ public class TestDialog extends ConnectWebDriverTestBase
     @AfterClass
     public static void stopConnectAddOn() throws Exception
     {
-        if (remotePlugin != null)
+        if (runner != null)
         {
-            remotePlugin.stopAndUninstall();
+            runner.stopAndUninstall();
         }
     }
 
@@ -147,16 +148,16 @@ public class TestDialog extends ConnectWebDriverTestBase
 
     private void testOpenAndCloseWithPrependedAddOnKey(String pageKey, String pageName, String dialogKey)
     {
-        testOpenAndClose(pageKey, pageName, AddonTestUtils.escapedAddonAndModuleKey(remotePlugin.getAddon().getKey(), dialogKey));
+        testOpenAndClose(pageKey, pageName, AddonTestUtils.escapedAddonAndModuleKey(runner.getAddon().getKey(), dialogKey));
     }
 
     private void testOpenAndClose(String pageKey, String pageName, String moduleKey)
     {
-        loginAsAdmin();
-        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, pageKey, pageName, remotePlugin.getAddon().getKey());
+        loginAndVisit(TestUser.ADMIN, HomePage.class);
+        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, pageKey, pageName, runner.getAddon().getKey());
         remotePage.clickAddOnLink();
 
-        RemoteDialogOpeningPage dialogOpeningPage = bindDialogOpeningPage(AddonTestUtils.escapedAddonAndModuleKey(remotePlugin.getAddon().getKey(), pageKey));
+        RemoteDialogOpeningPage dialogOpeningPage = bindDialogOpeningPage(AddonTestUtils.escapedAddonAndModuleKey(runner.getAddon().getKey(), pageKey));
         RemoteCloseDialogPage closeDialogPage = bindCloseDialogPage(dialogOpeningPage, moduleKey);
 
         assertThatTheDialogHasTheCorrectProperties(closeDialogPage);
@@ -170,7 +171,7 @@ public class TestDialog extends ConnectWebDriverTestBase
 
     private RemoteDialogOpeningPage bindDialogOpeningPage(String moduleKey)
     {
-        return product.getPageBinder().bind(RemoteDialogOpeningPage.class, null, moduleKey, remotePlugin.getAddon().getKey());
+        return product.getPageBinder().bind(RemoteDialogOpeningPage.class, null, moduleKey, runner.getAddon().getKey());
     }
 
     private String closeTheDialog(RemoteDialogOpeningPage dialogOpeningPage, RemoteCloseDialogPage closeDialogPage)
@@ -192,14 +193,14 @@ public class TestDialog extends ConnectWebDriverTestBase
     @Test
     public void testLoadGeneralDialog()
     {
-        loginAsBetty();
+        loginAndVisit(TestUser.BETTY, HomePage.class);
 
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginDialog", "Remotable Plugin app1 Dialog", remotePlugin.getAddon().getKey());
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginDialog", "Remotable Plugin app1 Dialog", runner.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
 
         assertNotNull(remotePluginTest.getFullName());
-        Assert.assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString(BETTY_USERNAME));
+        Assert.assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString(TestUser.BETTY.getUsername()));
 
         // Exercise the dialog's submit button.
         RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, remotePluginTest);
@@ -213,8 +214,8 @@ public class TestDialog extends ConnectWebDriverTestBase
     @Test
     public void testSizeToParentDoesNotWorkInDialog()
     {
-        loginAsBetty();
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParentDialog", "Size to parent dialog page", remotePlugin.getAddon().getKey());
+        loginAndVisit(TestUser.BETTY, HomePage.class);
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParentDialog", "Size to parent dialog page", runner.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
         assertTrue(remotePluginTest.isNotFullSize());

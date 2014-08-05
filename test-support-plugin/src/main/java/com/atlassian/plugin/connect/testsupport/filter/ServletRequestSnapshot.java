@@ -10,7 +10,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ServletRequestSnaphot
+public class ServletRequestSnapshot
 {
     private final String contextPath;
     private final String servletPath;
@@ -26,7 +26,7 @@ public class ServletRequestSnaphot
     private final String entity;
     private final String remoteUsername;
 
-    public ServletRequestSnaphot(HttpServletRequest request, UserManager userManager)
+    public ServletRequestSnapshot(HttpServletRequest request, UserManager userManager)
     {
         this.contextPath = request.getContextPath();
         this.servletPath = request.getServletPath();

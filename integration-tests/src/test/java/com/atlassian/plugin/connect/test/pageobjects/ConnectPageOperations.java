@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.test.pageobjects;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectMacroBrowserDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.utils.IframeUtils;
@@ -23,7 +24,7 @@ import static com.google.common.collect.Iterables.size;
 
 /**
  * The set of standard operations for testing connect addons. The intention is to have one place for all such ops that
- * is separate from the page objects. This allows us to avoid copy pasting these and more importantly hopefully avoids
+ * are separate from the page objects. This allows us to avoid copy pasting these and more importantly hopefully avoids
  * us needing connect specific page objects. i.e. use the standard product ones unless there is a good reason not to.
  */
 public class ConnectPageOperations
@@ -48,6 +49,7 @@ public class ConnectPageOperations
      * For XML descriptor tests. TODO remove when we ditch support for XML descriptors.
      */
     @Deprecated
+    @XmlDescriptor
     public RemoteWebPanel findWebPanelFromXMLAddOn(String id)
     {
         return pageBinder.bind(RemoteWebPanel.class, id, "remote-web-panel-");

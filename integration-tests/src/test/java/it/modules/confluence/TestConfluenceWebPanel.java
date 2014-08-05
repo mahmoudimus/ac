@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPa
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
 import org.junit.*;
 import org.junit.rules.TestRule;
 import redstone.xmlrpc.XmlRpcFault;
@@ -106,7 +107,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     @Before
     public void beforeEachTest()
     {
-        loginAsAdmin();
+        login(TestUser.ADMIN);
     }
 
     @Test
@@ -127,7 +128,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     public void iFrameParametersAreCorrectOnEditPage() throws Exception
     {
         ConfluenceEditPage editPage = createAndVisitPage(ConfluenceEditPage.class);
-        RemoteWebPanel webPanel = editPage.findWebPanel(editorWebPanel.getKey(remotePlugin.getAddon()));
+        RemoteWebPanel webPanel = connectPageOperations.findWebPanel(editorWebPanel.getKey(remotePlugin.getAddon()));
         assertThat(webPanel.getSpaceKey(), is(SPACE));
         assertThat(webPanel.getPageId(), is(editPage.getPageId()));
     }
@@ -233,20 +234,20 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
 
     private RemoteWebPanel findEditPageWebPanel() throws Exception
     {
-        ConfluenceEditPage editPage = createAndVisitPage(ConfluenceEditPage.class);
-        return editPage.findWebPanel(editorWebPanel.getKey(remotePlugin.getAddon()));
+        createAndVisitPage(ConfluenceEditPage.class);
+        return connectPageOperations.findWebPanel(editorWebPanel.getKey(remotePlugin.getAddon()));
     }
 
     private RemoteWebPanel findViewPageWebPanel() throws Exception
     {
-        ConfluenceViewPage viewPage = createAndVisitPage(ConfluenceViewPage.class);
-        return viewPage.findWebPanel(viewWebPanel.getKey(remotePlugin.getAddon()));
+        createAndVisitPage(ConfluenceViewPage.class);
+        return connectPageOperations.findWebPanel(viewWebPanel.getKey(remotePlugin.getAddon()));
     }
 
     private RemoteWebPanel findProfilePageWebPanel() throws Exception
     {
-        ConfluenceUserProfilePage profilePage = product.visit(ConfluenceUserProfilePage.class);
-        return profilePage.findWebPanel(profileWebPanel.getKey(remotePlugin.getAddon()));
+        product.visit(ConfluenceUserProfilePage.class);
+        return connectPageOperations.findWebPanel(profileWebPanel.getKey(remotePlugin.getAddon()));
     }
 
     private <P extends Page> P createAndVisitPage(Class<P> pageClass) throws Exception
@@ -257,7 +258,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
 
     private ConfluenceOps.ConfluencePageData createPage() throws MalformedURLException, XmlRpcFault
     {
-        return confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), SPACE, "Page with webpanel", "some page content");
+        return confluenceOps.setPage(some(TestUser.ADMIN), SPACE, "Page with webpanel", "some page content");
     }
 
     private static String px(int px)
