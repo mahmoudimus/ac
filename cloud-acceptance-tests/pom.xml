@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
@@ -87,10 +86,6 @@
             <id>ondemand-acceptance-tests</id>
             <properties>
                 <skipTests>false</skipTests>
-                <!-- variables provided by the test runner https://extranet.atlassian.com/display/JIRADEV/Tested+Product+configuration -->
-                <baseurl.jira>${ondemand.baseurl}${context.jira.path}</baseurl.jira>
-                <baseurl.confluence>${ondemand.baseurl}${context.confluence.path}</baseurl.confluence>
-                <baseurl.bamboo>${ondemand.baseurl}${context.bamboo.path}</baseurl.bamboo>
             </properties>
         </profile>
     </profiles>
