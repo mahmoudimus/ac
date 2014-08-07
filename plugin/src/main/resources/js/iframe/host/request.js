@@ -38,7 +38,7 @@ _AP.define("request", ["_dollar", "_rpc"], function ($, rpc) {
                         data: args.data,
                         dataType: "text", // prevent jquery from parsing the response body
                         contentType: args.contentType,
-                        cache: !!args.cache,
+                        cache: (typeof args.cache !== "undefined") ? !!args.cache : undefined,
                         headers: {
                             // */* will undo the effect on the accept header of having set dataType to "text"
                             "Accept": headers.accept || "*/*",
