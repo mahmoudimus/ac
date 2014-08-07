@@ -246,7 +246,7 @@ public class ModuleList extends BaseModuleBean
     private List<EntityPropertyModuleBean> jiraEntityProperties;
 
     /**
-     * The Report module allows you to add new reports in project page.
+     * Add new report modules to JIRA projects.
      * @schemaTitle Report
      */
     @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ReportModuleProvider", products = {ProductFilter.JIRA})

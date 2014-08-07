@@ -4,6 +4,8 @@ import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
 /**
+ * Builds report module bean.
+ *
  * @since 1.2
  */
 public class ReportModuleBeanBuilder extends RequiredKeyBeanBuilder<ReportModuleBeanBuilder, ReportModuleBean>
