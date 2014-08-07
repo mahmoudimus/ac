@@ -23,10 +23,16 @@ public class DialogOptions extends BaseDialogOptions implements WebItemTargetOpt
      */
     private String height;
 
-    public DialogOptions(String width, String height)
+    /**
+     * Whether the dialog should contain the AUI header and buttons. Default is true
+     */
+    private Boolean chrome;
+
+    public DialogOptions(String width, String height, Boolean chrome)
     {
         super(width);
         this.height = height;
+        this.chrome = chrome;
     }
 
     public DialogOptions()
@@ -42,6 +48,11 @@ public class DialogOptions extends BaseDialogOptions implements WebItemTargetOpt
     public String getHeight()
     {
         return height;
+    }
+
+    public Boolean getChrome()
+    {
+        return chrome;
     }
 
     public static DialogOptionsBuilder newDialogOptions()
@@ -72,6 +83,7 @@ public class DialogOptions extends BaseDialogOptions implements WebItemTargetOpt
         return new EqualsBuilder()
                 .appendSuper(super.equals(other))
                 .append(height, other.height)
+                .append(chrome, other.chrome)
                 .isEquals();
     }
 
@@ -81,6 +93,7 @@ public class DialogOptions extends BaseDialogOptions implements WebItemTargetOpt
         return new HashCodeBuilder(123, 99)
                 .appendSuper(super.hashCode())
                 .append(height)
+                .append(chrome)
                 .build();
     }
 }

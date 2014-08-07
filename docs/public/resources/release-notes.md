@@ -1,6 +1,9 @@
 
 # Release Notes
 
+## [1.1.0-rc.4](../release-notes/1-1-0.html#rc4)
+* Bug fixes and stability improvements
+
 ## [1.1.0-rc.3](../release-notes/1-1-0.html#rc3)
 * __Read about [breaking changes](../release-notes/1-1-0.html#breaking-changes)__
 * Fixed OAuth authenticated requests

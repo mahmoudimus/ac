@@ -2,10 +2,11 @@ package it.modules.jira;
 
 
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
+import com.atlassian.plugin.connect.modules.beans.builder.nested.dialog.DialogOptionsBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteDialog;
@@ -28,6 +29,7 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.n
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions.newDialogOptions;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static it.util.TestUser.ADMIN;
 import static it.util.TestUser.BARNEY;
@@ -50,6 +52,8 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     private static final String ABSOLUTE_WEBITEM = "google-link";
     private static final String ABSOLUTE_WEBITEM_INLINE_DIALOG = "wikipedia-link";
     private static final String ADDON_WEBITEM_INLINE_DIALOG = "ac-general-web-item-inline-dialog";
+    private static final String NULL_CHROME_VARIANT = "NullChrome";
+    private static final String CHROMELESS_VARIANT = "Chromeless";
     private static final String ADDON_WEBITEM_DIALOG = "ac-general-web-item-dialog";
 
     private static ConnectRunner runner;
@@ -138,28 +142,16 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                                 .build()
                                 )
                                 .build(),
-                        newWebItemBean()
-                                .withName(new I18nProperty("Webitem Dialog Target", "ac.widt"))
-                                .withKey(ADDON_WEBITEM_DIALOG)
-                                .withLocation("system.top.navigation.bar")
-                                .withWeight(1)
-                                .withContext(AddOnUrlContext.addon)
-                                .withUrl("/my-webitem-dialog")
-                                .withTarget(
-                                        newWebItemTargetBean().withType(WebItemTargetType.dialog)
-                                                .withOptions(DialogOptions.newDialogOptions()
-                                                                .withWidth("300px")
-                                                                .withHeight("200px")
-                                                                .build()
-                                                )
-                                                .build()
-                                )
-                                .build()
+                        webItemWithDialogOptions(true),
+                        webItemWithDialogOptions(false),
+                        webItemWithDialogOptions(null)
                 )
                 .addRoute("/onlyBarneyCondition", new CheckUsernameConditionServlet(BARNEY.getUsername()))
                 .addRoute("/onlyBettyCondition", new CheckUsernameConditionServlet(BETTY.getUsername()))
                 .addRoute("/irwi?issue_id={issue.id}&project_key={project.key}&pid={project.id}", ConnectAppServlets.helloWorldServlet())
                 .addRoute("/my-webitem-dialog", ConnectAppServlets.apRequestServlet())
+                .addRoute("/my-webitem-dialog" + CHROMELESS_VARIANT, ConnectAppServlets.apRequestServlet())
+                .addRoute("/my-webitem-dialog" + NULL_CHROME_VARIANT, ConnectAppServlets.apRequestServlet())
                 .addRoute("/my-webitem-inlinedialog", ConnectAppServlets.apRequestServlet())
                 .start();
     }
@@ -341,19 +333,91 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     @Test
     public void testAbsoluteWebItemDialogTargetOptions() throws Exception
     {
+        testAbsoluteWebItemDialogTargetOptions(true);
+    }
+
+    @Test
+    public void testAbsoluteWebItemDialogTargetOptionsChromeless() throws Exception
+    {
+        testAbsoluteWebItemDialogTargetOptions(false);
+    }
+
+
+    @Test
+    public void testAbsoluteWebItemDialogTargetOptionsNullChrome() throws Exception
+    {
+        testAbsoluteWebItemDialogTargetOptions(null);
+    }
+
+    private void testAbsoluteWebItemDialogTargetOptions(Boolean chrome) throws Exception
+    {
+        String dialogOptionKey = dialogOptionKey(chrome);
+
         JiraViewProjectPage viewProjectPage = loginAndVisit(ADMIN, JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ADDON_WEBITEM_DIALOG), Optional.<String>absent());
+        RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(dialogOptionKey), Optional.<String>absent());
         webItem.click();
         RemoteDialog dialogPage = product.getPageBinder().bind(RemoteDialog.class);
 
         assertEquals(dialogPage.getIFrameSize().getHeight(), 200);
         assertEquals(dialogPage.getIFrameSize().getWidth(), 300);
 
+        // js code defaults to true
+        boolean isChrome = chrome == null || chrome;
+        assertEquals(isChrome, dialogPage.hasChrome());
     }
-    
+
     private String getModuleKey(String module)
     {
         return addonAndModuleKey(runner.getAddon().getKey(), module);
+    }
+
+
+    private static WebItemModuleBean webItemWithDialogOptions(Boolean chrome)
+    {
+        String variant = dialogOptionVariant(chrome);
+
+        DialogOptionsBuilder dialogOptionsBuilder = newDialogOptions()
+                .withWidth("300px")
+                .withHeight("200px");
+
+        if (chrome != null)
+        {
+            dialogOptionsBuilder.withChrome(chrome);
+        }
+
+        return newWebItemBean()
+                .withName(new I18nProperty("Webitem Dialog Target " + variant, null))
+                .withKey(ADDON_WEBITEM_DIALOG + variant)
+                .withLocation("system.top.navigation.bar")
+                .withWeight(1)
+                .withContext(AddOnUrlContext.addon)
+                .withUrl("/my-webitem-dialog" + variant)
+                .withTarget(
+                        newWebItemTargetBean().withType(WebItemTargetType.dialog)
+                                .withOptions(dialogOptionsBuilder.build())
+                                .build()
+                )
+                .build();
+    }
+
+
+    private static String dialogOptionKey(Boolean chrome)
+    {
+        return ADDON_WEBITEM_DIALOG + dialogOptionVariant(chrome);
+    }
+
+    private static String dialogOptionVariant(Boolean chrome)
+    {
+        String variant = "";
+        if (chrome == null)
+        {
+            variant = NULL_CHROME_VARIANT;
+        }
+        else if (!chrome)
+        {
+            variant = CHROMELESS_VARIANT;
+        }
+        return variant;
     }
 
 }

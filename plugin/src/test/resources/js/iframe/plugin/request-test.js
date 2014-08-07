@@ -65,6 +65,11 @@ var xdmMockRequest;
                 ok(this.isFunction(xdmMockRequest.request.args[0][2]));
             });
 
+            test("host request is passed cache param", function () {
+                request('/foo/bar', {cache: true});
+                equal(xdmMockRequest.request.args[0][0].cache, true);
+            });
+
             test("custom success callback passed", function () {
                 var successSpy = sinon.spy();
 
