@@ -8,7 +8,7 @@
 	    <p>
 	    You can complete this tutorial even if you've never built an Atlassian add-on before. You'll
 	    need at least version 4.2.20 of the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads),
-	    and [Node.js](http://www.nodejs.org/).
+	    and <a href="http://www.nodejs.org/" target="_blank">Node.js</a>.
 	    </p>
 </div>
 
@@ -24,8 +24,9 @@ in a table, accessible via an _Activity_ link in the header.
 
 Your add-on will use the [JIRA REST API](https://docs.atlassian.com/jira/REST/latest/) 
 to get information about projects in your instance. You'll use the [Node.js](http://nodejs.org/) 
-framework and [Atlassian Connect Express (ACE)](https://bitbucket.org/atlassian/atlassian-connect-express/) 
-to interface with JIRA. Finally, you'll create a table of your projects using [D3.js](http://d3js.org/). 
+framework and <a href="https://bitbucket.org/atlassian/atlassian-connect-express/" target="_blank">
+Atlassian Connect Express (ACE)</a> to interface with JIRA. Finally, you'll create a table of your 
+projects using <a href="http://d3js.org/" target="_blank">D3.js</a>.
 
 When you're finished, your add-on will look similar to this: 
 
@@ -51,12 +52,14 @@ so that requests betwen your add-on and the JIRA application are signed and auth
         ATLAS Scripts:    /usr/share/atlassian-plugin-sdk-4.2.20/bin  
         ATLAS Maven Home: /usr/share/atlassian-plugin-sdk-4.2.20/apache-maven  
     </tt>
-1. Install [Node.js](http://www.nodejs.org/).  
+1. Install <a href="http://www.nodejs.org/" target="_blank">Node.js</a>.  
 	If you use [Homebrew](http://brew.sh/), you can use the following command:
 	<pre><code data-lang="text">$ brew install node</code></pre>  
-	If you use Windows or don't use Homebrew, you can [download and install Node.js directly](http://nodejs.org/download/). 
+	If you use Windows or don't use Homebrew, you can <a href="http://nodejs.org/download/" target="_blank">
+	download and install Node.js directly</a>.
 	You might need to enter `sudo`.  
-1. Install the [ACE framework](https://bitbucket.org/atlassian/atlassian-connect-express/).
+1. Install <a href="https://bitbucket.org/atlassian/atlassian-connect-express/" target="_blank">ACE</a> using the 
+	<a href="https://www.npmjs.org/package/npm-install" target="_blank"><tt>npm install</tt> command</a>.
 	<pre><code data-lang="text">$ npm install -g atlas-connect</code></pre>
 1. Create a new ACE project called `jira-activity`.
 	<pre><code data-lang="text">$ atlas-connect new jira-activity</code></pre>
@@ -75,10 +78,12 @@ so that requests betwen your add-on and the JIRA application are signed and auth
         [INFO] Type Ctrl-C to exit
     </tt>  
 1. In a browser window, navigate to your JIRA instance.  
-	This should be [http://localhost:2990/jira](http://localhost:2990/jira).  
+	JIRA should be at <a href="http://localhost:2990/jira" target="_blank">http://localhost:2990/jira</a>.  
 1. Log in with the following credentials.  
 	__Username__: `admin`  
-	__Password__: `admin`
+	__Password__: `admin`  
+	You might see a message that JIRA's base URL doesn't match your local host. You can click to update JIRA's base URL, 
+	or hide the message.
 
 
 ## <a name="activity-header"></a> Install your add-on and add an _Activity_ link
@@ -101,13 +106,11 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 	        "url": "https://developer.atlassian.com/"
 		},
 	````
-	This names your add-on in in your JIRA instance, and essentially makes it yours. Feel free 
-	to enter your own information here. For the `key` field, use alphanumeric characters, 
-	dashes, periods, and underscores.
+	This names your add-on in in your JIRA instance, and essentially makes it yours. 
 1. Replace the content of `modules` with a [`generalPages` module](../modules/jira/general-page.html):  
 	````
      "generalPages": [
-
+ 
 	    {
 	        "key": "activity",
 	        "location": "system.top.navigation.bar",
@@ -240,14 +243,42 @@ In this step, you'll add the capability for your add-on to use D3.js, and style
 the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/latest/index.html). 
 
 1. Open `views/layout.hbs`.
-1. Add the following to the `views/layout.hbs` near the closing `</body>` tag (following the `</section>`
-	line):
+1. Add the following to the `views/layout.hbs` before the closing `</head>` tag:
 	````
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script src="{{furl '/js/jira-activity.js'}}"></script>
 	````
-	This lets you to use D3.js for your chart. This file is a shared container of styles (like [AUI](https://docs.atlassian.com/aui/latest/index.html))
-	and scripts you can use for all pages of your add-on.    
+	This lets you to use D3.js for your chart. This file is a shared container of styles (like [AUI](https://docs.atlassian.com/aui/latest/index.html)), and scripts you can use for all pages of your add-on. 
+	Your `views/layout.hbs` file should look like this:  
+	````
+	<!doctype html>
+	<html>
+	<head>
+	  <meta charset="utf-8">
+	  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	  <meta name="ap-local-base-url" content="{{localBaseUrl}}">
+	  <title>{{title}}</title>
+	  <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/5.6.11/css/aui.css" media="all">
+	  <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/5.6.11/css/aui-experimental.css" media="all">
+	  <!--[if IE 9]><link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/5.6.11/css/aui-ie9.css" media="all"><![endif]-->
+	  <link rel="stylesheet" href="{{furl '/css/addon.css'}}" type="text/css" />
+	  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	  <script src="//aui-cdn.atlassian.com/aui-adg/5.6.11/js/aui-soy.js" type="text/javascript"></script>
+	  <script src="//aui-cdn.atlassian.com/aui-adg/5.6.11/js/aui.js" type="text/javascript"></script>
+	  <script src="//aui-cdn.atlassian.com/aui-adg/5.6.11/js/aui-datepicker.js"></script>
+	  <script src="//aui-cdn.atlassian.com/aui-adg/5.6.11/js/aui-experimental.js"></script>
+	  <script src="{{hostScriptUrl}}" type="text/javascript"></script>
+	  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	  <script src="{{furl '/js/jira-activity.js'}}"></script>
+	</head>
+	<body class="aui-page-hybrid">
+	  <section id="content" role="main">
+	    {{{body}}}
+	  </section>
+	  <script src="{{furl '/js/addon.js'}}"></script>
+	</body>
+	</html>
+	````   
 1. Create a new file called `views/activity.hbs`.   
 	This file is a template you'll use to render the `/activity` URL.  
 1. Add the following content:
@@ -396,7 +427,6 @@ $(function() {
 1. Restart the Node.js app. 
 	Shut down the app with __CTRL+C__ and re-run the __`node app.js`__ 
 	command.  
-	You might see a message that says `Failed to deregister with host jira`, which you can ignore.  
 1. Click __Activity__ in the header.  
 	You'll see an empty page with your "JIRA activity" title:  
 	<img src="../assets/images/jira-activity-2.png" width="80%" style="border:1px solid #999;margin-top:10px;" />  	
