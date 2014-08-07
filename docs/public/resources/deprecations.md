@@ -175,39 +175,40 @@ Atlassian Connect will no longer provide a REST endpoint allowing add-ons to sen
 
 ### JIRA REST API
 
-Both global and project permissions are changing from integer based to a key based representation. Resource affected: 
+Both global and project permissions are changing from integer based to a key based representation. Some REST resources are affected: 
 <ul>
     <li>
-        /rest/api/v2/mypermissions
-        The `type` attribute has been added to indicate if the permission is project or global. 
-        The `id` attribute is deprecated and will be removed.
+        /rest/api/v2/mypermissions<br/>
+        A `type` attribute has been added to each permission, indicating whether it is a `PROJECT` or `GLOBAL` one. <br/>
+        The `id` attribute is being deprecated and will be removed in the future. Meanwhile, system permissions will 
+        still return an id, but permissions defined by plugins will not return an id. 
     </li>
 </ul>
 
 <div class="ac-deprecations">
-<div class="aui-group">
-    <div class="aui-item ac-property-key">
-        <h5>Deprecated in</h5>
+    <div class="aui-group">
+        <div class="aui-item ac-property-key">
+            <h5>Deprecated in</h5>
+        </div>
+        <div class="aui-item">
+            <span class="aui-lozenge">1.1-rc4</span>
+        </div>
     </div>
-    <div class="aui-item">
-        <span class="aui-lozenge">1.1-rc4</span>
+    <div class="aui-group">
+        <div class="aui-item ac-property-key">
+            <h5>OnDemand removal</h5>
+        </div>
+        <div class="aui-item">
+            __January, 2015__
+        </div>
     </div>
-</div>
-<div class="aui-group">
-    <div class="aui-item ac-property-key">
-        <h5>OnDemand removal</h5>
+    <div class="aui-group">
+        <div class="aui-item ac-property-key">
+            <h5>Upgrade guide</h5>
+        </div>
+        <div class="aui-item">
+            We recommend identifying a permission by its `key` instead of its `id`. 
+            `GlobalPermissionKey` and `ProjectPermissionKey` are the key types for global and project permissions respectively.
+        </div>
     </div>
-    <div class="aui-item">
-        __November, 2014__
-    </div>
-</div>
-<div class="aui-group">
-    <div class="aui-item ac-property-key">
-        <h5>Upgrade guide</h5>
-    </div>
-    <div class="aui-item">
-        We recommend identifying a permission by its `key` instead of its `id`. 
-        `GlobalPermissionKey` and `ProjectPermissionKey` are the key types for global and project permissions respectively,
-    </div>
-</div>
 </div>
