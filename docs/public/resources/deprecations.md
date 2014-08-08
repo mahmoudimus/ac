@@ -191,7 +191,7 @@ Both global and project permissions are changing from integer based to a key bas
             <h5>Deprecated in</h5>
         </div>
         <div class="aui-item">
-            <span class="aui-lozenge">1.1-rc4</span>
+            <span class="aui-lozenge">Jira 7.0-OD4</span>
         </div>
     </div>
     <div class="aui-group">
