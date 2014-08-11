@@ -175,13 +175,12 @@ Atlassian Connect will no longer provide a REST endpoint allowing add-ons to sen
 
 ### JIRA REST API
 
-Both global and project permissions are changing from integer based to a key based representation. Some REST resources are affected: 
+Both global and project permissions are changing from integer based to a key based representation. The following REST resources are affected: 
 <ul>
     <li>
         /rest/api/v2/mypermissions<br/>
         A `type` attribute has been added to each permission, indicating whether it is a `PROJECT` or `GLOBAL` one. <br/>
-        The `id` attribute is being deprecated and will be removed in the future. Meanwhile, system permissions will 
-        still return an id, but permissions defined by plugins will not return an id. 
+        The `id` attribute is being deprecated and will be removed in the future.
     </li>
 </ul>
 
