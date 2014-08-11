@@ -46,6 +46,9 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_uti
                 displayInlineDialog,
                 options
             );
+        } else {
+            //refresh a cross domain iframe.
+            $inlineDialog.find("iframe")[0].src = $inlineDialog.find("iframe")[0].src;
         }
 
         return {
