@@ -37,19 +37,19 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_uti
         var dialogElementIdentifier = "ap-inline-dialog-content-" + itemId;
 
         $inlineDialog = $("#inline-dialog-" + util.escapeSelector(dialogElementIdentifier));
-        if($inlineDialog.length === 0){
-            //Create the AUI inline dialog with a unique ID.
-            $inlineDialog = AJS.InlineDialog(
-                options.bindTo,
-                //assign unique id to inline Dialog
-                dialogElementIdentifier,
-                displayInlineDialog,
-                options
-            );
-        } else {
-            //refresh a cross domain iframe.
-            $inlineDialog.find("iframe")[0].src = $inlineDialog.find("iframe")[0].src;
+
+        if($inlineDialog.length !== 0){
+            $inlineDialog.remove();
         }
+
+        //Create the AUI inline dialog with a unique ID.
+        $inlineDialog = AJS.InlineDialog(
+            options.bindTo,
+            //assign unique id to inline Dialog
+            dialogElementIdentifier,
+            displayInlineDialog,
+            options
+        );
 
         return {
             id: $inlineDialog.attr('id'),
