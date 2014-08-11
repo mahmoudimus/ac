@@ -1,19 +1,19 @@
 package com.atlassian.plugin.connect.plugin.module.webitem;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.descriptors.WebFragmentModuleDescriptor;
 import com.atlassian.plugin.web.model.AbstractWebItem;
 import com.atlassian.plugin.web.model.WebLink;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.addon;
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.page;
@@ -82,13 +82,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
 
             if (addOnUrlContext == addon)
             {
-                return iFrameUriBuilderFactory.builder()
-                                              .addOn(pluginKey)
-                                              .namespace(moduleKey)
-                                              .urlTemplate(url)
-                                              .context(moduleContext)
-                                              .dialog(isDialog)
-                                              .build();
+                return urlVariableSubstitutor.append(ConnectIFrameServlet.iFrameServletPath(pluginKey, moduleKey), moduleContext);
             }
             else if (addOnUrlContext == page)
             {

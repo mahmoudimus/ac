@@ -1,5 +1,13 @@
 package it.modules;
 
+import com.atlassian.jwt.JwtConstants;
+import com.atlassian.jwt.core.reader.JwtIssuerSharedSecretService;
+import com.atlassian.jwt.core.reader.JwtIssuerValidator;
+import com.atlassian.jwt.core.reader.NimbusJwtReaderFactory;
+import com.atlassian.jwt.exception.*;
+import com.atlassian.jwt.reader.JwtClaimVerifier;
+import com.atlassian.jwt.reader.JwtReader;
+import com.atlassian.jwt.reader.JwtReaderFactory;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
@@ -9,12 +17,19 @@ import com.atlassian.plugin.connect.test.pageobjects.*;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.ConnectWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
+import it.servlet.InstallHandlerServlet;
+import it.servlet.condition.ParameterCapturingConditionServlet;
 import it.util.TestUser;
 import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import javax.annotation.Nonnull;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -37,6 +52,14 @@ public class TestDialog extends ConnectWebDriverTestBase
     private static final String ADDON_WEBITEM_DIALOG = "my-webitem-dialog";
     private static final String ADDON_WEBITEM_DIALOG_NAME = "my webitem dialog";
 
+    private static final String JWT_EXPIRY_DIALOG = "checkDialogJwtExpiry";
+    private static final String JWT_EXPIRY_DIALOG_NAME = "check dialog JWT expiry";
+    private static final String JWT_EXPIRY_INLINE_DIALOG = "checkInlineDialogJwtExpiry";
+    private static final String JWT_EXPIRY_INLINE_DIALOG_NAME = "check inline dialog JWT expiry";
+
+    private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
+    private static final InstallHandlerServlet INSTALL_HANDLER_SERVLET = ConnectAppServlets.installHandlerServlet();
+
     private static ConnectRunner runner;
 
 
@@ -51,7 +74,9 @@ public class TestDialog extends ConnectWebDriverTestBase
                 : null;
 
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
-                .setAuthenticationToNone()
+                .addJWT()
+                .addInstallLifecycle()
+                .addRoute(ConnectRunner.INSTALLED_PATH, INSTALL_HANDLER_SERVLET)
                 .addModules("generalPages",
                         newPageBean()
                                 .withName(new I18nProperty(ADDON_GENERALPAGE_NAME, null))
@@ -97,6 +122,24 @@ public class TestDialog extends ConnectWebDriverTestBase
                                         .withType(WebItemTargetType.dialog)
                                         .build())
                                 .withLocation(globallyVisibleLocation)
+                                .build(),
+                        newWebItemBean()
+                                .withKey(JWT_EXPIRY_DIALOG)
+                                .withName(new I18nProperty(JWT_EXPIRY_DIALOG_NAME, null))
+                                .withUrl(ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL)
+                                .withTarget(newWebItemTargetBean()
+                                        .withType(WebItemTargetType.dialog)
+                                        .build())
+                                .withLocation(globallyVisibleLocation)
+                                .build(),
+                        newWebItemBean()
+                                .withKey(JWT_EXPIRY_INLINE_DIALOG)
+                                .withName(new I18nProperty(JWT_EXPIRY_INLINE_DIALOG_NAME, null))
+                                .withUrl(ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL)
+                                .withTarget(newWebItemTargetBean()
+                                        .withType(WebItemTargetType.inlineDialog)
+                                        .build())
+                                .withLocation(globallyVisibleLocation)
                                 .build()
                 )
 
@@ -106,6 +149,7 @@ public class TestDialog extends ConnectWebDriverTestBase
                 .addRoute("/my-webitem-dialog", ConnectAppServlets.closeDialogServlet())
                 .addRoute("/rpd", ConnectAppServlets.dialogServlet())
                 .addRoute("/fsd", ConnectAppServlets.sizeToParentServlet())
+                .addRoute(ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL, PARAMETER_CAPTURING_SERVLET)
                 .start();
     }
 
@@ -219,5 +263,110 @@ public class TestDialog extends ConnectWebDriverTestBase
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
         assertTrue(remotePluginTest.isNotFullSize());
+    }
+
+    // because we issue a new JWT when it is clicked
+    @Test
+    public void dialogClickGetsNewJwt() throws JwtVerificationException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtParseException
+    {
+        verifyJwtIssuedAtTimeForDialog(JWT_EXPIRY_DIALOG, JWT_EXPIRY_DIALOG_NAME);
+    }
+
+    // because we issue a new JWT when it is clicked
+    @Test
+    public void inlineDialogClickGetsNewJwt() throws JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtVerificationException, JwtParseException
+    {
+        verifyJwtIssuedAtTimeForDialog(JWT_EXPIRY_INLINE_DIALOG, JWT_EXPIRY_INLINE_DIALOG_NAME);
+    }
+
+    private void verifyJwtIssuedAtTimeForDialog(String moduleKey, String moduleName) throws JwtUnknownIssuerException, JwtParseException, JwtIssuerLacksSharedSecretException, JwtVerificationException
+    {
+        final JwtReaderFactory jwtReaderFactory = getJwtReaderFactory();
+
+        RemotePluginAwarePage page = goToPageWithLink(moduleKey, moduleName);
+
+        clickAndVerifyIssuedAtTime(jwtReaderFactory, page, moduleKey);
+        clickAndVerifyIssuedAtTime(jwtReaderFactory, page, moduleKey); // clicking multiple times should result in a new JWT on subsequent clicks
+    }
+
+    private void clickAndVerifyIssuedAtTime(JwtReaderFactory jwtReaderFactory, RemotePluginAwarePage page, String moduleKey) throws JwtUnknownIssuerException, JwtParseException, JwtIssuerLacksSharedSecretException, JwtVerificationException
+    {
+        final long timeBeforeClick = System.currentTimeMillis();
+        openAndCloseDialog(page, moduleKey);
+        verifyIssuedAtTime(jwtReaderFactory, timeBeforeClick);
+    }
+
+    private void verifyIssuedAtTime(JwtReaderFactory jwtReaderFactory, long timeBeforeClick) throws JwtUnknownIssuerException, JwtParseException, JwtIssuerLacksSharedSecretException, JwtVerificationException
+    {
+        final Map<String,String> params = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
+        assertTrue("A JWT parameter should have been included in the request for dialog content", params.containsKey(JwtConstants.JWT_PARAM_NAME));
+        final String jwt = params.get(JwtConstants.JWT_PARAM_NAME);
+        final JwtReader jwtReader = jwtReaderFactory.getReader(jwt);
+        Map<String, JwtClaimVerifier> verifiers = new HashMap<String, JwtClaimVerifier>(1);
+        verifiers.put("iat", newIssuedAtTimeClaimVerifier(timeBeforeClick));
+        jwtReader.read(jwt, verifiers); // will throw if the issued-at-time fails verification
+    }
+
+    private RemotePluginAwarePage goToPageWithLink(String dashedModuleKey, String moduleName)
+    {
+        loginAndVisit(TestUser.ADMIN, HomePage.class);
+        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, dashedModuleKey, moduleName, runner.getAddon().getKey());
+        assertTrue(remotePage.isRemotePluginLinkPresent());
+
+        return remotePage;
+    }
+
+    private JwtReaderFactory getJwtReaderFactory()
+    {
+        final JwtIssuerSharedSecretService sharedSecretService = new JwtIssuerSharedSecretService()
+        {
+            @Override
+            public String getSharedSecret(String issuer) throws JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException
+            {
+                return INSTALL_HANDLER_SERVLET.getInstallPayload().getSharedSecret();
+            }
+        };
+
+        final JwtIssuerValidator jwtIssuerValidator = new JwtIssuerValidator()
+        {
+            @Override
+            public boolean isValid(String issuer)
+            {
+                return true;
+            }
+        };
+
+        return new NimbusJwtReaderFactory(jwtIssuerValidator, sharedSecretService);
+    }
+
+    private JwtClaimVerifier newIssuedAtTimeClaimVerifier(final long minimumIssueTime)
+    {
+        return new JwtClaimVerifier()
+        {
+            @Override
+            public void verify(@Nonnull Object claim) throws JwtVerificationException, JwtParseException
+            {
+                if (claim instanceof Date)
+                {
+                    Date claimDate = (Date) claim;
+
+                    if (claimDate.getTime() < minimumIssueTime)
+                    {
+                        throw new JwtInvalidClaimException(String.format("Expecting the issued-at claim to have a value greater than or equal to [%d] but it was [%d]", minimumIssueTime, claimDate.getTime()));
+                    }
+                }
+                else
+                {
+                    throw new JwtInvalidClaimException(String.format("Expecting the issued-at claim to be a Date but it was a %s: [%s]", claim.getClass().getSimpleName(), claim));
+                }
+            }
+        };
+    }
+
+    private void openAndCloseDialog(RemotePluginAwarePage page, String moduleKey)
+    {
+        ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
+        RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, remotePluginTest);
+        dialog.cancel();
     }
 }

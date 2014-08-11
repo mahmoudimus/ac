@@ -1,9 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
@@ -15,9 +11,12 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet.RAW_CLASSIFIER;
@@ -60,7 +59,7 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
 
-        if (bean.isAbsolute() || bean.getContext().equals(AddOnUrlContext.product) || bean.getContext().equals(AddOnUrlContext.addon))
+        if (bean.isAbsolute() || bean.getContext().equals(AddOnUrlContext.product))
         {
             descriptors.add(webItemFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean));
         }
@@ -81,7 +80,7 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
                     .conditions(bean.getConditions())
                     .dimensions("100%", "100%") // the client (js) will size the parent of the iframe
                     .build();
-            iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), RAW_CLASSIFIER, rawRenderStrategy);
+            iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getKey(connectAddonBean), RAW_CLASSIFIER, rawRenderStrategy);
         }
 
         return descriptors;

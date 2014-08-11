@@ -1,4 +1,4 @@
-_AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_util"], function($, statusHelper, util) {
+_AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_util", 'host/content'], function($, statusHelper, util, hostContentUtilities) {
     return function (contentUrl, options) {
         var $inlineDialog;
 
@@ -25,10 +25,28 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_uti
             content.data('inlineDialog', $inlineDialog);
 
             if(!content.find('iframe').length){
+
                 content.attr('id', 'ap-' + options.ns);
-                content.append('<div id="embedded-' + options.ns + '" />');
+                var containerId = '"embedded-' + options.ns + '"';
+                content.append('<div id="' + containerId + '" />');
                 content.append(statusHelper.createStatusMessages());
-                _AP.create(options);
+                var container = $('#' + containerId);
+
+                // make an iframe inside its parent div
+                hostContentUtilities.getIframeHtmlForKey(options.key, options.context, options.moduleKey, options)
+                    .done(function(data) {
+                        var dialogHtml = $(data);
+                        dialogHtml.addClass('ap-dialog-container iframe-init');
+                        container.replaceWith(dialogHtml);
+                    })
+                    .fail(function(xhr, status, ex) {
+                        var title = $("<p class='title' />").text("Unable to load add-on content. Please try again later.");
+                        container.html("<div class='aui-message error ap-aui-message'></div>");
+                        container.find(".error").append(title);
+                        var msg = status + (ex ? ": " + ex.toString() : "");
+                        container.find(".error").text(msg);
+                        AJS.log(msg);
+                    });
             }
             showPopup();
             return false;

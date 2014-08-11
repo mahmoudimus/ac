@@ -64,7 +64,8 @@ _AP.define("dialog/main", ["_dollar", "_uri", "host/_status_helper", "dialog/but
     }
 
     function displayDialogContent($container, options){
-        $container.append('<div id="embedded-' + options.ns + '" class="ap-dialog-container ap-content" />');
+        // the iframe-init class lets integration-test code know that the contained iframe exists
+        $container.append('<div id="embedded-' + options.ns + '" class="ap-dialog-container ap-content iframe-init" />');
     }
 
 
