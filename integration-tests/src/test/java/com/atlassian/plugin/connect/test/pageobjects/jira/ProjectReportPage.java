@@ -51,11 +51,7 @@ public class ProjectReportPage implements Page
             @Override
             public ReportLink apply(final PageElement element)
             {
-                PageElement reportTitle = element.find(By.className("version-title"));
-                String title = reportTitle.getText();
-                PageElement reportLink = reportTitle.find(By.tagName("a"));
-                String description = element.find(By.className("version-description")).getText();
-                return pageBinder.bind(ReportLink.class, title, description, reportLink);
+                return pageBinder.bind(ReportLink.class, element);
             }
         });
     }

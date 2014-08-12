@@ -4,13 +4,14 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
 
 import static com.atlassian.plugin.connect.test.plugin.capabilities.TestFileReader.readAddonTestFile;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
 public class ReportModuleBeanTest
@@ -19,21 +20,29 @@ public class ReportModuleBeanTest
     @Test
     public void producesCorrectJSON() throws IOException
     {
-        ReportModuleBean expectedBean = createBean();
         List<ReportModuleBean> addonBeans = readTestFile().getModules().getJiraReports();
 
-        assertThat(addonBeans, Matchers.hasSize(1));
-        assertThat(addonBeans, Matchers.hasItem(expectedBean));
+        assertThat(addonBeans, hasSize(2));
+        assertThat(addonBeans, contains(createBeans()));
     }
 
-    private static ReportModuleBean createBean()
+    private static ReportModuleBean[] createBeans()
     {
-        return ReportModuleBean.newBuilder()
-                .withWeight(100)
+        return new ReportModuleBean[] {
+            ReportModuleBean.newBuilder()
+                .withKey("jira-report")
+                .withWeight(5)
                 .withUrl("/report?projectId=${project.id}")
                 .withDescription(new I18nProperty("description", "description i18n"))
                 .withName(new I18nProperty("report", "report i18n"))
-                .build();
+                .build(),
+            ReportModuleBean.newBuilder()
+                .withKey("jira-report-2")
+                .withUrl("/report?projectId=${project.id}")
+                .withDescription(new I18nProperty("description 2", "description i18n"))
+                .withName(new I18nProperty("report-2", "report i18n"))
+                .build()
+        };
     }
 
     private static ConnectAddonBean readTestFile() throws IOException

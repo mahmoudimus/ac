@@ -9,11 +9,11 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.ReportLink;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import hudson.plugins.jira.soap.RemoteProject;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
 import org.hamcrest.Description;
-import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -22,6 +22,7 @@ import org.junit.Test;
 import java.util.List;
 import java.util.Map;
 
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
@@ -30,9 +31,25 @@ import static org.junit.Assert.assertThat;
 public class TestReport extends JiraWebDriverTestBase
 {
     private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
-    private static final String MODULE_KEY = "some-test-report";
-    private static final String REPORT_TITLE = "report";
-    private static final String REPORT_DESCIRPTION = "description";
+
+    private static final TestReportInfo firstTestReport = new TestReportInfo("report", "description", "some-test-report", "projectKey")
+    {
+        @Override
+        public String getExpectedContextParamValue(final RemoteProject project)
+        {
+            return project.getKey();
+        }
+    };
+    private static final TestReportInfo secondTestReport = new TestReportInfo("another-test-report", "some description", "another-report-key", "projectId")
+    {
+        @Override
+        public String getExpectedContextParamValue(final RemoteProject project)
+        {
+            return String.valueOf(project.getId());
+        }
+    };
+
+    private static final TestReportInfo[] reportInfos = new TestReportInfo[] {firstTestReport, secondTestReport};
 
     private static ConnectRunner runner;
 
@@ -41,12 +58,20 @@ public class TestReport extends JiraWebDriverTestBase
     {
         runner = new ConnectRunner(product, PLUGIN_KEY)
                 .setAuthenticationToNone()
-                .addModule("jiraReports", ReportModuleBean.newBuilder()
+                .addModules("jiraReports",
+                    ReportModuleBean.newBuilder()
                         .withWeight(100)
-                        .withUrl("/report?projectKey={project.key}&projectId={project.id}")
-                        .withDescription(new I18nProperty(REPORT_DESCIRPTION, "description i18n"))
-                        .withName(new I18nProperty(REPORT_TITLE, "report i18n"))
-                        .withKey(MODULE_KEY)
+                        .withUrl("/report?projectKey={project.key}")
+                        .withDescription(new I18nProperty(firstTestReport.description, "description i18n"))
+                        .withName(new I18nProperty(firstTestReport.title, "report i18n"))
+                        .withKey(firstTestReport.key)
+                        .build(),
+                    ReportModuleBean.newBuilder()
+                        .withWeight(101)
+                        .withUrl("/report?projectId={project.id}")
+                        .withDescription(new I18nProperty(secondTestReport.description, "second description i18n"))
+                        .withName(new I18nProperty(secondTestReport.title, "report i18n"))
+                        .withKey(secondTestReport.key)
                         .build())
                 .addRoute("/report", ConnectAppServlets.apRequestServlet())
                 .start();
@@ -62,30 +87,35 @@ public class TestReport extends JiraWebDriverTestBase
     }
 
     @Test
-    public void connectReportDisplayedOnReportsList()
+    public void allConnectReportsDisplayedOnReportsList()
     {
         final ProjectReportPage projectReportPage = goToProjectsReportPage();
         List<ReportLink> reports = projectReportPage.getReports();
-        assertThat(reports, Matchers.hasItem(reportLinkTypeSafeMatcher(REPORT_DESCIRPTION, REPORT_TITLE)));
+
+        assertThat(reports, hasItems(reportLinkTypeSafeMatcher(firstTestReport),
+                reportLinkTypeSafeMatcher(secondTestReport)));
     }
 
     @Test
     public void connectReportDisplaysIframe()
     {
-        ConnectAddOnEmbeddedTestPage embeddedReportPage = goToEmbeddedReportPage();
-
-        assertThat(embeddedReportPage.getMessage(), is("Success"));
-
+        for (TestReportInfo reportInfo : reportInfos)
+        {
+            ConnectAddOnEmbeddedTestPage embeddedReportPage = goToEmbeddedReportPage(reportInfo);
+            assertThat(embeddedReportPage.getMessage(), is("Success"));
+        }
     }
 
     @Test
-    public void projectContextParametersPassedToReport()
+    public void contextParameterPassedToReport()
     {
-        final ConnectAddOnEmbeddedTestPage embeddedReportPage = goToEmbeddedReportPage();
+        for (TestReportInfo reportInfo : reportInfos)
+        {
+            final ConnectAddOnEmbeddedTestPage embeddedReportPage = goToEmbeddedReportPage(reportInfo);
+            final Map<String, String> queryParams = embeddedReportPage.getIframeQueryParams();
 
-        final Map<String, String> queryParams = embeddedReportPage.getIframeQueryParams();
-        assertThat(queryParams, hasEntry(equalTo("projectKey"), equalTo(project.getKey())));
-        assertThat(queryParams, hasEntry(equalTo("projectId"), equalTo(String.valueOf(project.getId()))));
+            assertThat(queryParams, hasEntry(equalTo(reportInfo.contextParam), equalTo(reportInfo.getExpectedContextParamValue(project))));
+        }
     }
 
     private ProjectReportPage goToProjectsReportPage()
@@ -93,7 +123,7 @@ public class TestReport extends JiraWebDriverTestBase
         return loginAndVisit(TestUser.ADMIN, ProjectReportPage.class, project.getKey());
     }
 
-    private ConnectAddOnEmbeddedTestPage goToEmbeddedReportPage()
+    private ConnectAddOnEmbeddedTestPage goToEmbeddedReportPage(final TestReportInfo reportInfo)
     {
         final ProjectReportPage projectReportPage = goToProjectsReportPage();
         ReportLink reportLink = Iterables.find(projectReportPage.getReports(), new Predicate<ReportLink>()
@@ -101,29 +131,46 @@ public class TestReport extends JiraWebDriverTestBase
             @Override
             public boolean apply(final ReportLink reportLink)
             {
-                return reportLinkTypeSafeMatcher(REPORT_DESCIRPTION, REPORT_TITLE).matches(reportLink);
+                return reportLinkTypeSafeMatcher(reportInfo).matches(reportLink);
             }
         });
 
-        return reportLink.open(PLUGIN_KEY, MODULE_KEY);
+        return reportLink.open(PLUGIN_KEY, reportInfo.key);
     }
 
-    private TypeSafeMatcher<ReportLink> reportLinkTypeSafeMatcher(final String description, final String title)
+    private TypeSafeMatcher<ReportLink> reportLinkTypeSafeMatcher(final TestReportInfo reportInfo)
     {
         return new TypeSafeMatcher<ReportLink>()
         {
             @Override
             protected boolean matchesSafely(final ReportLink link)
             {
-                return link.getDescription().equals(description) && link.getTitle().contains(title);
+                return link.getDescription().equals(reportInfo.description) && link.getTitle().contains(reportInfo.title);
             }
 
             @Override
             public void describeTo(final Description description)
             {
-                description.appendText("Report links should contains report " + REPORT_TITLE);
+                description.appendText("Report links should contains report " + reportInfo.title);
             }
         };
     }
 
+    static abstract class TestReportInfo
+    {
+        final String title;
+        final String description;
+        final String key;
+        final String contextParam;
+
+        private TestReportInfo(final String title, final String description, final String key, final String contextParam)
+        {
+            this.title = title;
+            this.description = description;
+            this.key = key;
+            this.contextParam = contextParam;
+        }
+
+        public abstract String getExpectedContextParamValue(final RemoteProject project);
+    }
 }

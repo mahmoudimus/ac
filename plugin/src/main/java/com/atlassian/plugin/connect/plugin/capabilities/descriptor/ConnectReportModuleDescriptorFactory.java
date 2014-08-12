@@ -70,7 +70,7 @@ public class ConnectReportModuleDescriptorFactory implements ConnectModuleDescri
         reportModule.addAttribute("i18n-name-key", bean.getName().getI18n());
         reportModule.addAttribute("class", ConnectReport.class.getName());
         reportModule.addAttribute("url", iFrameServletPath);
-        reportModule.addAttribute("name", bean.getName().getI18n());
+        reportModule.addAttribute("name", bean.getName().getValue());
 
         reportModule.addElement("description")
                 .addAttribute("key", bean.getDescription().getI18n())

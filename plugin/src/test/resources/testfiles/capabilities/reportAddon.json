@@ -12,7 +12,7 @@
     },
     "baseUrl": "http://www.example.com",
     "authentication" : {
-        "type" : "oauth",
+        "type" : "jwt",
         "publicKey": "S0m3Publ1cK3y"
     },
     "modules": {
@@ -27,7 +27,18 @@
                 "i18n" : "description i18n"
             },
             "url" : "/report?projectId=${project.id}",
-            "weight" : 100
+            "weight" : 5
+        }, {
+            "key" : "jira-report-2",
+            "name" : {
+                "value" : "report-2",
+                "i18n" : "report i18n"
+            },
+            "description" : {
+                "value" : "description 2",
+                "i18n" : "description i18n"
+            },
+            "url" : "/report?projectId=${project.id}"
         }]
     },
     "scopes" : []

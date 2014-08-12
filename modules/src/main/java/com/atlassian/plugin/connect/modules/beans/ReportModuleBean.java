@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans;
 
+import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
@@ -20,6 +21,7 @@ public class ReportModuleBean extends RequiredKeyBean
     @StringSchemaAttributes (format = "uri-template")
     private String url;
 
+    @CommonSchemaAttributes (defaultValue = "100")
     private Integer weight;
 
     @Required
@@ -81,7 +83,7 @@ public class ReportModuleBean extends RequiredKeyBean
                 .append(this.url, other.url)
                 .append(this.weight, other.weight)
                 .append(this.description, other.description)
-                .append(this.getName(), other.getName())
+                .appendSuper(super.equals(otherObj))
                 .isEquals();
     }
 
@@ -92,6 +94,7 @@ public class ReportModuleBean extends RequiredKeyBean
                 .append(url)
                 .append(weight)
                 .append(description)
+                .append(super.hashCode())
                 .build();
     }
 }

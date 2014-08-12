@@ -4,6 +4,7 @@ import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
+import org.openqa.selenium.By;
 
 import javax.inject.Inject;
 
@@ -21,11 +22,12 @@ public class ReportLink
     @Inject
     private PageBinder pageBinder;
 
-    public ReportLink(final String title, final String description, final PageElement reportLink)
+    public ReportLink(final PageElement element)
     {
-        this.title = title;
-        this.description = description;
-        this.reportLink = reportLink;
+        PageElement reportTitle = element.find(By.className("version-title"));
+        this.title = reportTitle.getText();
+        this.reportLink = reportTitle.find(By.tagName("a"));
+        this.description = element.find(By.className("version-description")).getText();
     }
 
     @Init
