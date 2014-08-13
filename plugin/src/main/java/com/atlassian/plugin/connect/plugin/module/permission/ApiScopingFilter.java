@@ -134,21 +134,26 @@ public class ApiScopingFilter implements Filter
     private void handleScopedRequest(String clientKey, HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException
     {
         // we consume the input to allow inspection of the body via getInputStream
+        final long startTime = System.currentTimeMillis();
         InputConsumingHttpServletRequest inputConsumingRequest = new InputConsumingHttpServletRequest(req);
         UserKey user = userManager.getRemoteUserKey(req);
+        HttpServletResponseWithAnalytics wrappedResponse = new HttpServletResponseWithAnalytics(res);
         if (!permissionManager.isRequestInApiScope(inputConsumingRequest, clientKey, user))
         {
             log.warn("Request not in an authorized API scope from add-on '{}' as user '{}' on URL '{} {}'",
                     new Object[]{clientKey, user, req.getMethod(), req.getRequestURI()});
             res.sendError(HttpServletResponse.SC_FORBIDDEN, "Request not in an authorized API scope");
-            eventPublisher.publish(new ScopedRequestDeniedEvent(req.getMethod(), req.getRequestURI()));
+            long duration = System.currentTimeMillis() - startTime;
+            eventPublisher.publish(new ScopedRequestDeniedEvent(req.getMethod(), req.getRequestURI(), HttpServletResponse.SC_FORBIDDEN, duration));
             return;
         }
         log.info("Authorized add-on '{}' to access API at URL '{} {}' for user '{}'",
                 new Object[]{clientKey, req.getMethod(), req.getRequestURI(), user});
 
-        eventPublisher.publish(new ScopedRequestAllowedEvent(req.getMethod(), req.getRequestURI()));
-        chain.doFilter(inputConsumingRequest, res);
+        chain.doFilter(inputConsumingRequest, wrappedResponse);
+        long duration = System.currentTimeMillis() - startTime;
+        eventPublisher.publish(new ScopedRequestAllowedEvent(req.getMethod(), req.getRequestURI(), wrappedResponse.getStatusCode(), duration));
+
     }
 
     @XmlDescriptor
