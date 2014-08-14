@@ -154,7 +154,7 @@ public class AddonsResourceTest
         RequestUtil.Response response = requestUtil.makeRequest(request);
         assertEquals("Addons resource should return 200", 200, response.getStatusCode());
 
-        List<Map> addons = getAddonListWithoutLucidchart(response);
+        List<Map> addons = getAddonList(response);
 
         assertEquals("Addons resource should return list with two add-on", 2, addons.size());
     }
@@ -172,7 +172,7 @@ public class AddonsResourceTest
         RequestUtil.Response response = requestUtil.makeRequest(request);
         assertEquals("Addons resource should return 200", 200, response.getStatusCode());
 
-        List<Map> addons = getAddonListWithoutLucidchart(response);
+        List<Map> addons = getAddonList(response);
 
         assertEquals("One xml add-on should be returned", 1, addons.size());
         assertEquals("Only add-on should be the created one", xmlAddon.getKey(), addons.get(0).get("key"));
@@ -192,7 +192,7 @@ public class AddonsResourceTest
         RequestUtil.Response response = requestUtil.makeRequest(request);
         assertEquals("Addons resource should return 200", 200, response.getStatusCode());
 
-        List<Map> addons = getAddonListWithoutLucidchart(response);
+        List<Map> addons = getAddonList(response);
 
         assertEquals("One json add-on should be returned", 1, addons.size());
         assertEquals("Only add-on should be the created one", jsonAddon.getKey(), addons.get(0).get("key"));
@@ -298,7 +298,7 @@ public class AddonsResourceTest
         response = requestUtil.makeRequest(request);
         assertEquals("Addons resource should return 200", 200, response.getStatusCode());
 
-        List<Map> addons = getAddonListWithoutLucidchart(response);
+        List<Map> addons = getAddonList(response);
 
         assertEquals("No JSON add-ons should be returned", 0, addons.size());
     }
@@ -331,7 +331,7 @@ public class AddonsResourceTest
         response = requestUtil.makeRequest(request);
         assertEquals("Addons resource should return 200", 200, response.getStatusCode());
 
-        List<Map> addons = getAddonListWithoutLucidchart(response);
+        List<Map> addons = getAddonList(response);
 
         assertEquals("No XML add-ons should be returned", 0, addons.size());
     }
@@ -420,18 +420,8 @@ public class AddonsResourceTest
     }
 
     @SuppressWarnings ("unchecked")
-    private List<Map> getAddonListWithoutLucidchart(RequestUtil.Response response)
+    private List<Map> getAddonList(RequestUtil.Response response)
     {
-        List<Map> allAddons = ((List<Map>) response.getJsonBody().get("addons"));
-        List<Map> addons = Lists.newArrayList();
-        // workaround lucidchart bundle for the moment
-        for (Map addon : allAddons)
-        {
-            if (!"lucidchart-app".equals(addon.get("key")))
-            {
-                addons.add(addon);
-            }
-        }
-        return addons;
+        return ((List<Map>) response.getJsonBody().get("addons"));
     }
 }
