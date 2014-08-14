@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.scopes;
 
+import java.io.IOException;
+
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jira.security.auth.trustedapps.KeyFactory;
 import com.atlassian.jwt.JwtConstants;
@@ -13,9 +15,13 @@ import com.atlassian.plugin.connect.plugin.product.WebSudoService;
 import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploderUnitTestHelper;
 import com.atlassian.plugin.connect.spi.event.ScopedRequestAllowedEvent;
 import com.atlassian.plugin.connect.spi.event.ScopedRequestDeniedEvent;
+import com.atlassian.plugin.connect.spi.event.ScopedRequestEvent;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
+
+import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -25,6 +31,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -159,6 +166,144 @@ public class ApiScopingFilterTest
         when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher, never()).publish(argThat(isScopeRequestDeniedEvent()));
+    }
+    
+    @Test
+    public void testURIsAreTrimmedInDeniedEvents() throws IOException, ServletException
+    {
+        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
+        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(false);
+        when(request.getRequestURI()).thenReturn("http://localhost/jira/rest/atlassian-connect/1/foo/private-stuff");
+        apiScopingFilter.doFilter(request, response, chain);
+        verify(eventPublisher).publish(argThat(hasRequestURI("1/foo")));
+    }
+
+    @Test 
+    public void testURIsAreTrimmedInAllowedEvents() throws IOException, ServletException
+    {
+        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
+        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
+        when(request.getRequestURI()).thenReturn("http://localhost/jira/rest/atlassian-connect/1/foo/private-stuff");
+        apiScopingFilter.doFilter(request, response, chain);
+        verify(eventPublisher).publish(argThat(hasRequestURI("1/foo")));
+    }
+
+    @Test 
+    public void testInvalidURIsAreNotTrimmedInAllowedEvents() throws IOException, ServletException
+    {
+        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
+        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
+        when(request.getRequestURI()).thenReturn("http://localhost/jira/rest/something/else");
+        apiScopingFilter.doFilter(request, response, chain);
+        verify(eventPublisher).publish(argThat(hasRequestURI("http://localhost/jira/rest/something/else")));
+    }
+
+    @Test 
+    public void testInvalidURIsAreNotTrimmedInDeniedEvents() throws IOException, ServletException
+    {
+        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
+        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(false);
+        when(request.getRequestURI()).thenReturn("http://localhost/jira/rest/something/else");
+        apiScopingFilter.doFilter(request, response, chain);
+        verify(eventPublisher).publish(argThat(hasRequestURI("http://localhost/jira/rest/something/else")));
+    }
+
+    @Test
+    public void testDeniedEventsHaveNonNegativeDuration() throws IOException, ServletException
+    {
+        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
+        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(false);
+        apiScopingFilter.doFilter(request, response, chain);
+        verify(eventPublisher).publish(argThat(hasNonNegativeDuration()));
+    }
+
+    @Test
+    public void testAllowedEventsHaveNonNegativeDuration() throws IOException, ServletException
+    {
+        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
+        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
+        apiScopingFilter.doFilter(request, response, chain);
+        verify(eventPublisher).publish(argThat(hasNonNegativeDuration()));
+    }
+    
+    @Test
+    public void testAllowedEventsHaveStatusCode() throws IOException, ServletException
+    {
+        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
+        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
+        apiScopingFilter.doFilter(request, response, chain);
+        //The default response code, there is nothing in the mock chain that would set this to something else
+        verify(eventPublisher).publish(argThat(hasResponseCode(0)));
+    }
+
+    @Test
+    public void testDeniedEventsHaveStatusCode() throws IOException, ServletException
+    {
+        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
+        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(false);
+        apiScopingFilter.doFilter(request, response, chain);
+        verify(eventPublisher).publish(argThat(hasResponseCode(HttpServletResponse.SC_FORBIDDEN)));
+    }
+
+
+    private static TypeSafeMatcher<ScopedRequestEvent> hasRequestURI(final String uri)
+    {
+        return new TypeSafeMatcher<ScopedRequestEvent>()
+            {
+
+                @Override
+                public void describeTo(Description description)
+                {
+                    description.appendText("got a ScopedRequestEvent with URI: ").appendValue(uri);
+                    
+                }
+
+                @Override
+                protected boolean matchesSafely(ScopedRequestEvent item)
+                {
+                    return item.getHttpRequestUri().equals(uri);
+                }
+            
+            };
+    }
+
+    private static TypeSafeMatcher<ScopedRequestEvent> hasResponseCode(final int responseCode)
+    {
+        return new TypeSafeMatcher<ScopedRequestEvent>()
+            {
+
+                @Override
+                public void describeTo(Description description)
+                {
+                    description.appendText("got a ScopedRequestEvent with statusCode: ").appendValue(responseCode);
+                    
+                }
+
+                @Override
+                protected boolean matchesSafely(ScopedRequestEvent item)
+                {
+                    return item.getResponseCode() == responseCode;
+                }
+            
+            };
+    }
+    
+    private static TypeSafeMatcher<ScopedRequestEvent> hasNonNegativeDuration()
+    {
+        return new TypeSafeMatcher<ScopedRequestEvent>(){
+
+            @Override
+            public void describeTo(Description description)
+            {
+                description.appendText("ScopedRequestEvent duration was negatve");
+                
+            }
+
+            @Override
+            protected boolean matchesSafely(ScopedRequestEvent item)
+            {
+                return item.getDuration() >= 0;
+            }};
     }
 
     private Matcher<Object> isScopeRequestAllowedEvent()
