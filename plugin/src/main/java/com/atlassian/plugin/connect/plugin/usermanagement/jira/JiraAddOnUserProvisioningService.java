@@ -3,14 +3,15 @@ package com.atlassian.plugin.connect.plugin.usermanagement.jira;
 import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.crowd.exception.*;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
-import com.atlassian.jira.permission.Permission;
 import com.atlassian.jira.permission.PermissionSchemeManager;
-import com.atlassian.jira.permission.SchemePermissions;
+import com.atlassian.jira.permission.ProjectPermission;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.scheme.SchemeEntity;
 import com.atlassian.jira.security.GlobalPermissionManager;
+import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
+import com.atlassian.jira.security.plugin.ProjectPermissionKey;
 import com.atlassian.jira.security.roles.DefaultRoleActors;
 import com.atlassian.jira.security.roles.ProjectRole;
 import com.atlassian.jira.security.roles.ProjectRoleActors;
@@ -72,17 +73,19 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     private final UserManager userManager;
     private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
     private final TransactionTemplate transactionTemplate;
-    private final SchemePermissions schemePermissions;
+    private final PermissionManager jiraProjectPermissionManager;
 
     @Inject
     public JiraAddOnUserProvisioningService(GlobalPermissionManager jiraPermissionManager,
-                                            ProjectManager projectManager,
-                                            UserManager userManager,
-                                            PermissionSchemeManager permissionSchemeManager,
-                                            ProjectRoleService projectRoleService,
-                                            ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService,
-                                            TransactionTemplate transactionTemplate)
+            ProjectManager projectManager,
+            UserManager userManager,
+            PermissionSchemeManager permissionSchemeManager,
+            ProjectRoleService projectRoleService,
+            ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService,
+            TransactionTemplate transactionTemplate,
+            PermissionManager jiraProjectPermissionManager)
     {
+        this.jiraProjectPermissionManager = jiraProjectPermissionManager;
         this.jiraPermissionManager = checkNotNull(jiraPermissionManager);
         this.projectManager = checkNotNull(projectManager);
         this.userManager = checkNotNull(userManager);
@@ -90,7 +93,6 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         this.projectRoleService = checkNotNull(projectRoleService);
         this.connectAddOnUserGroupProvisioningService = checkNotNull(connectAddOnUserGroupProvisioningService);
         this.transactionTemplate = transactionTemplate;
-        this.schemePermissions = new SchemePermissions();
     }
 
     @Override
@@ -379,12 +381,12 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
             List<GenericValue> schemes = getSchemes(errorCollection);
             for (GenericValue scheme : schemes)
             {
-                for (Permission permission : schemePermissions.getSchemePermissions().values())
+                for (ProjectPermission permission : jiraProjectPermissionManager.getAllProjectPermissions())
                 {
-                    Long permissionId = new Long(permission.getId());
-                    if (!permissionExists(scheme, permissionId, permissionType, parameter))
+                    ProjectPermissionKey permissionKey = new ProjectPermissionKey(permission.getKey());
+                    if (!permissionExists(scheme, permissionKey, permissionType, parameter))
                     {
-                        SchemeEntity schemeEntity = new SchemeEntity(permissionType, parameter, permissionId);
+                        SchemeEntity schemeEntity = new SchemeEntity(permissionType, parameter, permissionKey);
                         permissionSchemeManager.createSchemeEntity(scheme, schemeEntity);
                         log.debug("Associated project role '{}' with permission scheme '{}'.", projectRole.getName(), schemeEntity.getSchemeId());
                     }
@@ -406,9 +408,9 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         return projectManager.getProjectObjects();
     }
 
-    private boolean permissionExists(GenericValue scheme, Long permission, String type, String parameter) throws GenericEntityException
+    private boolean permissionExists(GenericValue scheme, ProjectPermissionKey permissionKey, String type, String parameter) throws GenericEntityException
     {
-        return !(permissionSchemeManager.getEntities(scheme, permission, type, parameter).isEmpty());
+        return !(permissionSchemeManager.getEntities(scheme, permissionKey, type, parameter).isEmpty());
     }
 
     public List<GenericValue> getSchemes(ErrorCollection errorCollection)
