@@ -384,7 +384,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
                 for (ProjectPermission permission : jiraProjectPermissionManager.getAllProjectPermissions())
                 {
                     ProjectPermissionKey permissionKey = new ProjectPermissionKey(permission.getKey());
-                    if (!permissionExists(scheme,permissionKey, permissionType, parameter))
+                    if (!permissionExists(scheme, permissionKey, permissionType, parameter))
                     {
                         SchemeEntity schemeEntity = new SchemeEntity(permissionType, parameter, permissionKey);
                         permissionSchemeManager.createSchemeEntity(scheme, schemeEntity);
