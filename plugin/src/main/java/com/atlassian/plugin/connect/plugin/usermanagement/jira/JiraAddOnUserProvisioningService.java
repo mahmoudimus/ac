@@ -3,10 +3,8 @@ package com.atlassian.plugin.connect.plugin.usermanagement.jira;
 import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.crowd.exception.*;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
-import com.atlassian.jira.permission.Permission;
 import com.atlassian.jira.permission.PermissionSchemeManager;
 import com.atlassian.jira.permission.ProjectPermission;
-import com.atlassian.jira.permission.SchemePermissions;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.scheme.SchemeEntity;
@@ -75,7 +73,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     private final UserManager userManager;
     private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
     private final TransactionTemplate transactionTemplate;
-    private final PermissionManager permissionManager;
+    private final PermissionManager jiraProjectPermissionManager;
 
     @Inject
     public JiraAddOnUserProvisioningService(GlobalPermissionManager jiraPermissionManager,
@@ -84,9 +82,10 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
             PermissionSchemeManager permissionSchemeManager,
             ProjectRoleService projectRoleService,
             ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService,
-            TransactionTemplate transactionTemplate, PermissionManager permissionManager)
+            TransactionTemplate transactionTemplate,
+            PermissionManager jiraProjectPermissionManager)
     {
-        this.permissionManager = permissionManager;
+        this.jiraProjectPermissionManager = jiraProjectPermissionManager;
         this.jiraPermissionManager = checkNotNull(jiraPermissionManager);
         this.projectManager = checkNotNull(projectManager);
         this.userManager = checkNotNull(userManager);
@@ -382,7 +381,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
             List<GenericValue> schemes = getSchemes(errorCollection);
             for (GenericValue scheme : schemes)
             {
-                for (ProjectPermission permission : permissionManager.getAllProjectPermissions())
+                for (ProjectPermission permission : jiraProjectPermissionManager.getAllProjectPermissions())
                 {
                     ProjectPermissionKey permissionKey = new ProjectPermissionKey(permission.getKey());
                     if (!permissionExists(scheme,permissionKey, permissionType, parameter))
