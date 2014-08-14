@@ -243,42 +243,14 @@ In this step, you'll add the capability for your add-on to use D3.js, and style
 the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/latest/index.html). 
 
 1. Open `views/layout.hbs`.
-1. Add the following to the `views/layout.hbs` before the closing `</head>` tag:
+1. Add the following to the `views/layout.hbs` file,near the closing `</body>` tag (following the `</section>`
+	line):
 	````
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script src="{{furl '/js/jira-activity.js'}}"></script>
 	````
-	This lets you to use D3.js for your chart. This file is a shared container of styles (like [AUI](https://docs.atlassian.com/aui/latest/index.html)), and scripts you can use for all pages of your add-on. 
-	Your `views/layout.hbs` file should look like this:  
-	````
-	<!doctype html>
-	<html>
-	<head>
-	  <meta charset="utf-8">
-	  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-	  <meta name="ap-local-base-url" content="{{localBaseUrl}}">
-	  <title>{{title}}</title>
-	  <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/5.6.11/css/aui.css" media="all">
-	  <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/5.6.11/css/aui-experimental.css" media="all">
-	  <!--[if IE 9]><link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/5.6.11/css/aui-ie9.css" media="all"><![endif]-->
-	  <link rel="stylesheet" href="{{furl '/css/addon.css'}}" type="text/css" />
-	  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-	  <script src="//aui-cdn.atlassian.com/aui-adg/5.6.11/js/aui-soy.js" type="text/javascript"></script>
-	  <script src="//aui-cdn.atlassian.com/aui-adg/5.6.11/js/aui.js" type="text/javascript"></script>
-	  <script src="//aui-cdn.atlassian.com/aui-adg/5.6.11/js/aui-datepicker.js"></script>
-	  <script src="//aui-cdn.atlassian.com/aui-adg/5.6.11/js/aui-experimental.js"></script>
-	  <script src="{{hostScriptUrl}}" type="text/javascript"></script>
-	  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-	  <script src="{{furl '/js/jira-activity.js'}}"></script>
-	</head>
-	<body class="aui-page-hybrid">
-	  <section id="content" role="main">
-	    {{{body}}}
-	  </section>
-	  <script src="{{furl '/js/addon.js'}}"></script>
-	</body>
-	</html>
-	````   
+	This lets you to use D3.js for your chart. This file is a shared container of styles (like [AUI](https://docs.atlassian.com/aui/latest/index.html))
+	and scripts you can use for all pages of your add-on.    
 1. Create a new file called `views/activity.hbs`.   
 	This file is a template you'll use to render the `/activity` URL.  
 1. Add the following content:
@@ -420,7 +392,7 @@ $(function() {
     });
 });
 	````
-	`AP.require` calls the Connect API from your call, and `url` is the REST API you call (`/rest/api/2/project`). 
+	`AP.require` calls the Connect API, and `url` is the REST API you call (`/rest/api/2/project`). 
 	Your JIRA instance returns a string response, and `success` converts it to JSON.
 
 1. Save and close all files. 
