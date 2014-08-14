@@ -7,7 +7,6 @@ import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.PluginException;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.plugin.applinks.NotConnectAddonException;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnInstaller;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
@@ -341,10 +340,13 @@ public class AddonsResource
         try
         {
             ApplicationLink appLink = connectApplinkManager.getAppLink(key);
-            if (appLink == null) {
+            if (appLink == null)
+            {
                 log.info("Add-on " + key + " has no applink");
                 return null;
-            } else if (appLink.getId() == null) {
+            }
+            else if (appLink.getId() == null)
+            {
                 log.info("Add-on " + key + " has no applink id");
                 return null;
             }
