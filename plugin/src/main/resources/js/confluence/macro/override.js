@@ -19,7 +19,7 @@ AJS.bind("init.rte", function () {
     _AP.require(["confluence/macro/editor"], function(macroEditor) {
         AJS.MacroBrowser.setMacroJsOverride(macroName, {
             opener: function(macroData) {
-                macroData = $.extend({name: macroName, macroName: macroName}, macroData);
+                macroData = $.extend({name: macroName}, macroData);
                 macroEditor.openCustomEditor(macroData, editorOpts);
             }
         });

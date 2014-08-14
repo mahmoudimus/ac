@@ -1,3 +1,6 @@
+/**
+* run commands in a new process that works on windows and linux systems.
+**/
 var spawn = require('child_process').spawn;
 var normalizePath = require('path').normalize;
 var isWin = require('os').platform() === 'win32';
@@ -23,7 +26,6 @@ exports.chain = function chain(commands) {
     }
 };
 
-exports.pathNormalize = normalizePath;
 exports.npmNormalize = function(str) {
     return normalizePath(str) + (isWin ? '.cmd' : '');
 };

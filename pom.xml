@@ -735,7 +735,8 @@
         <skipUnits>${skipTests}</skipUnits>
         <schema.generator.version>1.0.0-m4</schema.generator.version>
         <json.schema.validator.version>2.2.5</json.schema.validator.version>
-
+        <node.version>v0.10.26</node.version>
+        <npm.version>1.4.3</npm.version>
     </properties>
 
     <repositories>
