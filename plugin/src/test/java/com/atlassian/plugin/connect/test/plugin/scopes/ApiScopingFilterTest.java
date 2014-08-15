@@ -209,15 +209,6 @@ public class ApiScopingFilterTest
     }
 
     @Test
-    public void testDeniedEventsHaveNonNegativeDuration() throws IOException, ServletException
-    {
-        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
-        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(false);
-        apiScopingFilter.doFilter(request, response, chain);
-        verify(eventPublisher).publish(argThat(hasNonNegativeDuration()));
-    }
-
-    @Test
     public void testAllowedEventsHaveNonNegativeDuration() throws IOException, ServletException
     {
         when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
@@ -225,72 +216,62 @@ public class ApiScopingFilterTest
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher).publish(argThat(hasNonNegativeDuration()));
     }
-    
+
     @Test
     public void testAllowedEventsHaveStatusCode() throws IOException, ServletException
     {
         when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
         when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
         apiScopingFilter.doFilter(request, response, chain);
-        //The default response code, there is nothing in the mock chain that would set this to something else
+        // The default response code, there is nothing in the mock chain that would set this to something else
         verify(eventPublisher).publish(argThat(hasResponseCode(0)));
     }
-
-    @Test
-    public void testDeniedEventsHaveStatusCode() throws IOException, ServletException
-    {
-        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
-        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(false);
-        apiScopingFilter.doFilter(request, response, chain);
-        verify(eventPublisher).publish(argThat(hasResponseCode(HttpServletResponse.SC_FORBIDDEN)));
-    }
-
 
     private static TypeSafeMatcher<ScopedRequestEvent> hasRequestURI(final String uri)
     {
         return new TypeSafeMatcher<ScopedRequestEvent>()
+        {
+
+            @Override
+            public void describeTo(Description description)
             {
+                description.appendText("got a ScopedRequestEvent with URI: ").appendValue(uri);
 
-                @Override
-                public void describeTo(Description description)
-                {
-                    description.appendText("got a ScopedRequestEvent with URI: ").appendValue(uri);
-                    
-                }
+            }
 
-                @Override
-                protected boolean matchesSafely(ScopedRequestEvent item)
-                {
-                    return item.getHttpRequestUri().equals(uri);
-                }
-            
-            };
+            @Override
+            protected boolean matchesSafely(ScopedRequestEvent item)
+            {
+                return item.getHttpRequestUri().equals(uri);
+            }
+
+        };
     }
 
-    private static TypeSafeMatcher<ScopedRequestEvent> hasResponseCode(final int responseCode)
+    private static TypeSafeMatcher<ScopedRequestAllowedEvent> hasResponseCode(final int responseCode)
     {
-        return new TypeSafeMatcher<ScopedRequestEvent>()
+        return new TypeSafeMatcher<ScopedRequestAllowedEvent>()
+        {
+
+            @Override
+            public void describeTo(Description description)
             {
+                description.appendText("got a ScopedRequestEvent with statusCode: ").appendValue(responseCode);
 
-                @Override
-                public void describeTo(Description description)
-                {
-                    description.appendText("got a ScopedRequestEvent with statusCode: ").appendValue(responseCode);
-                    
-                }
+            }
 
-                @Override
-                protected boolean matchesSafely(ScopedRequestEvent item)
-                {
-                    return item.getResponseCode() == responseCode;
-                }
-            
-            };
+            @Override
+            protected boolean matchesSafely(ScopedRequestAllowedEvent item)
+            {
+                return item.getResponseCode() == responseCode;
+            }
+
+        };
     }
-    
-    private static TypeSafeMatcher<ScopedRequestEvent> hasNonNegativeDuration()
+
+    private static TypeSafeMatcher<ScopedRequestAllowedEvent> hasNonNegativeDuration()
     {
-        return new TypeSafeMatcher<ScopedRequestEvent>(){
+        return new TypeSafeMatcher<ScopedRequestAllowedEvent>(){
 
             @Override
             public void describeTo(Description description)
@@ -300,7 +281,7 @@ public class ApiScopingFilterTest
             }
 
             @Override
-            protected boolean matchesSafely(ScopedRequestEvent item)
+            protected boolean matchesSafely(ScopedRequestAllowedEvent item)
             {
                 return item.getDuration() >= 0;
             }};

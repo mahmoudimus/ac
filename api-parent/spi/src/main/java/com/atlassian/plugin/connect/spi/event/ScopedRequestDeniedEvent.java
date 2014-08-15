@@ -7,8 +7,8 @@ import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 @EventName ("connect.scoped.request.incoming.denied")
 public class ScopedRequestDeniedEvent extends ScopedRequestEvent
 {
-    public ScopedRequestDeniedEvent(String httpMethod, String httpRequestUri, int responseCode, long duration)
+    public ScopedRequestDeniedEvent(String httpMethod, String httpRequestUri)
     {
-        super(httpMethod, httpRequestUri, responseCode, duration);
+        super(httpMethod, httpRequestUri);
     }
 }
