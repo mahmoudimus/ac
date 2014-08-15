@@ -243,7 +243,7 @@ In this step, you'll add the capability for your add-on to use D3.js, and style
 the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/latest/index.html). 
 
 1. Open `views/layout.hbs`.
-1. Add the following to the `views/layout.hbs` file,near the closing `</body>` tag (following the `</section>`
+1. Add the following to the `views/layout.hbs` file, near the closing `</body>` tag (following the `</section>`
 	line):
 	````
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
@@ -281,12 +281,12 @@ the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/l
 	This file will take a list of your projects, and generate an HTML table using D3.js.  
 1. Add the following content:
     ````
-    // canned functionality for JIRA Activity
+    // Canned functionality for JIRA Activity
     $(function() {
         "use strict";
     
-        // get the parameters from the query string
-        // and sticks them in an object
+        // Get parameters from query string
+        // and stick them in an object
         function getQueryParams(qs) {
             qs = qs.split("+").join(" ");
     
@@ -313,9 +313,9 @@ the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/l
     
                     // table > thead > tr, as needed below
                     var projHeadRow = projTable.append("thead").append("tr");
-                    // empty header
+                    // Empty header
                     projHeadRow.append("th");
-                    // now the next column
+                    // Now for the next column
                     projHeadRow.append("th").text("Key");
                     projHeadRow.append("th").text("Name");
     
@@ -327,29 +327,29 @@ the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/l
                 var rootElement = d3.select(selector);
                 var projBody = buildTableAndReturnTbody(rootElement);
     
-                // for each data item in projects
+                // For each data item in projects
                 var row = projBody.selectAll("tr")
                     .data(projects)
                     .enter()
                     .append("tr");
     
-                // ... add a td for the avatar, stick a span in it
+                // Add a td for the avatar, stick a span in it
                 row.append("td").append('span')
-                    // set the css classes for this element
+                    // Set the css classes for this element
                     .classed({'aui-avatar': true, 'aui-avatar-xsmall': true})
                     .append('span')
                     .classed({'aui-avatar-inner': true})
                     .append('img')
-                    // set the atribute for the img element inside this td > span > span
+                    // Set the atribute for the img element inside this td > span > span
                     .attr('src', function(item) { return item.avatarUrls["16x16"] });
     
-                // ... add a td for the project key
+                // Add a td for the project key
                 row.append("td").append('span')
                     .classed({'project-key': true, 'aui-label': true})
                     // set the content of the element to be some text
                     .text(function(item) { return item.key; });
     
-                // ... add a td for the project name / link to project
+                // And finally, a td for the project name & link
                 row.append("td").append('span')
                     .classed({'project-name': true})
                     .append("a")
@@ -363,24 +363,24 @@ the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/l
     });
     ````
 1. Open `public/js/addon.js`. 
-	This file uses the JIRA REST API to request project information you use to generate the table.   
+	This file uses the [JIRA REST API](https://docs.atlassian.com/jira/REST/latest/) to request project information you use to generate the table.   
 1. Add the following content:  
     ````
 /* add-on script */
 // MyAddon functionality
 $(function() {
-    // call the REST API via the iframe
-    // bridge functionality
+    // Call REST API via the iframe
+    // Bridge functionality
     // JiraActivity is registered by an external script that was included
     AP.require(['request', 'JiraActivity'], function(request, JiraActivity) {
         request({
             url: '/rest/api/2/project',
             success: function(response) {
-                // convert the string response to JSON
+                // Convert the string response to JSON
                 response = JSON.parse(response);
 
-                // call our helper function to build the
-                // table now that we have the data
+                // Call your helper function to build the
+                // table, now that you have the data
                 JiraActivity.buildProjectTable(response, ".projects");
             },
             error: function(response) {
@@ -392,7 +392,7 @@ $(function() {
     });
 });
 	````
-	`AP.require` calls the Connect API, and `url` is the REST API you call (`/rest/api/2/project`). 
+	`AP.require` calls the [Connect API](../javascript/module-AP.html), and `url` is the REST API you call (`/rest/api/2/project`). 
 	Your JIRA instance returns a string response, and `success` converts it to JSON.
 
 1. Save and close all files. 
@@ -420,3 +420,16 @@ that your table reflects the changes.
 	link.  
 	Here's an example what you'll see, using example projects:  
 	<img src="../assets/images/jira-activity-3.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
+
+## Additional resources
+
+Thanks for trying the tutorial! If you'd like to check your work, feel free to check out the repository here: 
+
+__[https://bitbucket.org/atlassianlabs/connect-jira-activity/overview](https://bitbucket.org/atlassianlabs/connect-jira-activity/overview)__  
+
+Additionally, we're always interested in making our docs and developer experiences better. If you have 
+feedback about this tutorial or other Connect documentation, [let us know](https://developer.atlassian.com/help#contact-us).
+
+
+
+
