@@ -32,6 +32,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -222,12 +224,22 @@ public class ApiScopingFilterTest
     {
         when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
         when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
-        apiScopingFilter.doFilter(request, response, chain);
-        // The default response code, there is nothing in the mock chain that would set this to something else
-        verify(eventPublisher).publish(argThat(hasResponseCode(0)));
+        FilterChain wrappedChain = new FilterChainWrapper();
+        apiScopingFilter.doFilter(request, response, wrappedChain);
+        verify(eventPublisher).publish(argThat(hasResponseCode(200)));
     }
 
-    @Test
+    private class FilterChainWrapper implements FilterChain {
+
+        @Override
+        public void doFilter(ServletRequest rq, ServletResponse resp) throws IOException, ServletException
+        {
+            HttpServletResponse.class.cast(resp).setStatus(200);
+            chain.doFilter(rq, resp);
+        }
+    }
+
+    @Test(expected=ServletException.class)
     public void testUnhandledErrorsInFilterChainCreateEvents() throws IOException, ServletException
     {
         when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);

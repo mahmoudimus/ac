@@ -135,8 +135,8 @@ public class ApiScopingFilter implements Filter
 
     private void handleScopedRequest(String clientKey, HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException
     {
-        // we consume the input to allow inspection of the body via getInputStream
         final long startTime = System.currentTimeMillis();
+        // we consume the input to allow inspection of the body via getInputStream
         InputConsumingHttpServletRequest inputConsumingRequest = new InputConsumingHttpServletRequest(req);
         UserKey user = userManager.getRemoteUserKey(req);
         HttpServletResponseWithAnalytics wrappedResponse = new HttpServletResponseWithAnalytics(res); 
