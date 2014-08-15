@@ -151,10 +151,17 @@ public class ApiScopingFilter implements Filter
         log.info("Authorized add-on '{}' to access API at URL '{} {}' for user '{}'",
                 new Object[]{clientKey, req.getMethod(), req.getRequestURI(), user});
 
-        chain.doFilter(inputConsumingRequest, wrappedResponse);
+        try {
+            chain.doFilter(inputConsumingRequest, wrappedResponse);
+        }
+        catch(Exception e)
+        {
+            long duration = System.currentTimeMillis() - startTime;
+            eventPublisher.publish(new ScopedRequestAllowedEvent(req.getMethod(), req.getRequestURI(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR, duration));
+            throw ServletException.class.cast(new ServletException("Unhandled error in ApiScopingFilter").initCause(e));
+        }
         long duration = System.currentTimeMillis() - startTime;
         eventPublisher.publish(new ScopedRequestAllowedEvent(req.getMethod(), req.getRequestURI(), wrappedResponse.getStatusCode(), duration));
-
     }
 
     @XmlDescriptor

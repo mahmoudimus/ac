@@ -227,6 +227,23 @@ public class ApiScopingFilterTest
         verify(eventPublisher).publish(argThat(hasResponseCode(0)));
     }
 
+    @Test
+    public void testUnhandledErrorsInFilterChainCreateEvents() throws IOException, ServletException
+    {
+        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
+        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
+        doThrow(new IOException("Something went wrong")).when(chain).doFilter(any(HttpServletRequest.class),
+                                                                              any(HttpServletResponse.class));
+        try
+        {
+            apiScopingFilter.doFilter(request, response, chain);
+        }
+        finally
+        {
+            verify(eventPublisher).publish(argThat(hasResponseCode(500)));
+        }
+    }
+
     private static TypeSafeMatcher<ScopedRequestEvent> hasRequestURI(final String uri)
     {
         return new TypeSafeMatcher<ScopedRequestEvent>()
