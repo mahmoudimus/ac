@@ -10,8 +10,10 @@ abstract public class RemoteConditionEvent
     @PrivacyPolicySafe
     protected final String pluginKey;
     // TODO: check that nothing private is in these urls
+
     @PrivacyPolicySafe
     protected final URI url;
+
     @PrivacyPolicySafe
     protected final long elapsedMillisecs;
 
