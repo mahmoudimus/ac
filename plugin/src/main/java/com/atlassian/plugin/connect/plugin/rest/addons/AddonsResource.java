@@ -337,11 +337,29 @@ public class AddonsResource
 
     private RestAddon.AddonApplink getApplinkResourceForAddon(String key)
     {
-        ApplicationLink appLink = connectApplinkManager.getAppLink(key);
-        String appLinkId = appLink.getId().get();
-        URI selfUri = connectApplinkManager.getApplinkLinkSelfLink(appLink);
+        try
+        {
+            ApplicationLink appLink = connectApplinkManager.getAppLink(key);
+            if (appLink == null)
+            {
+                log.info("Add-on " + key + " has no applink");
+                return null;
+            }
+            else if (appLink.getId() == null)
+            {
+                log.info("Add-on " + key + " has no applink id");
+                return null;
+            }
+            String appLinkId = appLink.getId().get();
+            URI selfUri = connectApplinkManager.getApplinkLinkSelfLink(appLink);
 
-        return new RestAddon.AddonApplink(appLinkId, Link.self(selfUri));
+            return new RestAddon.AddonApplink(appLinkId, Link.self(selfUri));
+        }
+        catch (Exception e)
+        {
+            log.error("Could not retrieve applink for key " + key);
+            return null;
+        }
     }
 
     private RestMinimalAddon uninstallPlugin(Plugin plugin) throws PluginException
