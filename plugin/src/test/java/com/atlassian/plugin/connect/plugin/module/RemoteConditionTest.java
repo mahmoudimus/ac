@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.spi.event.RemoteConditionEvent;
 import com.atlassian.plugin.connect.spi.event.RemoteConditionFailedEvent;
 import com.atlassian.plugin.connect.spi.event.RemoteConditionInvokedEvent;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
@@ -17,7 +18,6 @@ import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.util.concurrent.Promises;
-import org.hamcrest.CustomMatcher;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,6 +37,43 @@ public class RemoteConditionTest
 
     private static final String PLUGIN_KEY = "myPluginKey";
     private static final String URL = "http://foo.com/bar";
+    private final CustomTypeSafeMatcher<RemoteConditionEvent> eventWithCorrectUrl =
+            new CustomTypeSafeMatcher<RemoteConditionEvent>("an event with non negative elapsed time")
+    {
+        @Override
+        public boolean matchesSafely(RemoteConditionEvent event)
+        {
+            return ObjectUtils.equals(event.getUrl().toString(), URL);
+        }
+    };
+
+    private final CustomTypeSafeMatcher<RemoteConditionEvent> eventWithCorrectPluginKey =
+            new CustomTypeSafeMatcher<RemoteConditionEvent>("an event with non negative elapsed time")
+            {
+                @Override
+                public boolean matchesSafely(RemoteConditionEvent event)
+                {
+                    return ObjectUtils.equals(event.getPluginKey(), PLUGIN_KEY);
+                }
+            };
+    private final CustomTypeSafeMatcher<RemoteConditionFailedEvent> failEventWithExpectedMessage =
+            new CustomTypeSafeMatcher<RemoteConditionFailedEvent>("a fail event with expected message")
+            {
+                @Override
+                public boolean matchesSafely(RemoteConditionFailedEvent event)
+                {
+                    return event.getMessage().startsWith("Unable to retrieve remote condition from plugin " + PLUGIN_KEY);
+                }
+            };
+    private final CustomTypeSafeMatcher<RemoteConditionEvent> eventWithNonNegativeElapsedTime =
+            new CustomTypeSafeMatcher<RemoteConditionEvent>("an event with non negative elapsed time")
+            {
+                @Override
+                public boolean matchesSafely(RemoteConditionEvent event)
+                {
+                    return event.getElapsedMillisecs() >= 0l;
+                }
+            };
 
     @Mock
     private ProductAccessor productAccessor;
@@ -76,102 +113,77 @@ public class RemoteConditionTest
     @Test
     public void publishesInvokeEventOnSuccessfulCallToRemoteCondition()
     {
-        when(remotablePluginAccessor.executeAsync(any(HttpMethod.class), any(URI.class),
-                any(Map.class), any(Map.class))).thenReturn(Promises.promise("foo"));
-
-        invokeCondition();
-
+        invokeWhenSuccessfulResponse();
         verify(eventPublisher).publish(any(RemoteConditionInvokedEvent.class));
     }
 
     @Test
-    public void publishesFailedEventOnUnsuccessfulCallToRemoteCondition()
+    public void publishesInvokeEventWithNonNegativeElapsedOnSuccessfulCallToRemoteCondition()
     {
-        invokeWhenErrorResult();
-        verify(eventPublisher).publish(any(RemoteConditionFailedEvent.class));
+        invokeWhenSuccessfulResponse();
+        verify(eventPublisher).publish(argThat(eventWithNonNegativeElapsedTime));
     }
 
     @Test
-    public void publishesFailedEventWithMessageOnUnsuccessfulCallToRemoteCondition()
+    public void publishesInvokeEventWithCorrectPluginKeyOnSuccessfulCallToRemoteCondition()
     {
-        invokeWhenErrorResult();
+        invokeWhenSuccessfulResponse();
+        verify(eventPublisher).publish(argThat(eventWithCorrectPluginKey));
+    }
 
-        verify(eventPublisher).publish(argThat(
-                new CustomTypeSafeMatcher<RemoteConditionFailedEvent>("a fail event with a message")
-                {
-                    @Override
-                    public boolean matchesSafely(RemoteConditionFailedEvent event)
-                    {
-                        return event.getMessage() != null;
-                    }
-                }));
+    @Test
+    public void publishesInvokeEventWithCorrectUrlOnSuccessfulCallToRemoteCondition()
+    {
+        invokeWhenSuccessfulResponse();
+        verify(eventPublisher).publish(argThat(eventWithCorrectUrl));
+    }
+
+
+    @Test
+    public void publishesFailedEventOnUnsuccessfulCallToRemoteCondition()
+    {
+        invokeWhenErrorResponse();
+        verify(eventPublisher).publish(any(RemoteConditionFailedEvent.class));
     }
 
     @Test
     public void publishesFailedEventWithCorrectMessageOnUnsuccessfulCallToRemoteCondition()
     {
-        invokeWhenErrorResult();
-
-        verify(eventPublisher).publish(argThat(
-                new CustomTypeSafeMatcher<RemoteConditionFailedEvent>("a fail event with expected message")
-                {
-                    @Override
-                    public boolean matchesSafely(RemoteConditionFailedEvent event)
-                    {
-                        return event.getMessage().startsWith("Unable to retrieve remote condition from plugin " + PLUGIN_KEY);
-                    }
-                }));
+        invokeWhenErrorResponse();
+        verify(eventPublisher).publish(argThat(failEventWithExpectedMessage));
     }
 
     @Test
     public void publishesFailedEventWithNonNegativeElapsedOnUnsuccessfulCallToRemoteCondition()
     {
-        invokeWhenErrorResult();
-
-        verify(eventPublisher).publish(argThat(
-                new CustomTypeSafeMatcher<RemoteConditionFailedEvent>("a fail event with non negative elapsed time")
-                {
-                    @Override
-                    public boolean matchesSafely(RemoteConditionFailedEvent event)
-                    {
-                        return event.getElapsedMillisecs() >= 0l;
-                    }
-                }));
+        invokeWhenErrorResponse();
+        verify(eventPublisher).publish(argThat(eventWithNonNegativeElapsedTime));
     }
 
     @Test
     public void publishesFailedEventWithCorrectPluginKeyOnUnsuccessfulCallToRemoteCondition()
     {
-        invokeWhenErrorResult();
-
-        verify(eventPublisher).publish(argThat(
-                new CustomTypeSafeMatcher<RemoteConditionFailedEvent>("a fail event with non negative elapsed time")
-                {
-                    @Override
-                    public boolean matchesSafely(RemoteConditionFailedEvent event)
-                    {
-                        return ObjectUtils.equals(event.getPluginKey(), PLUGIN_KEY);
-                    }
-                }));
+        invokeWhenErrorResponse();
+        verify(eventPublisher).publish(argThat(eventWithCorrectPluginKey));
     }
 
     @Test
     public void publishesFailedEventWithCorrectUrlOnUnsuccessfulCallToRemoteCondition()
     {
-        invokeWhenErrorResult();
-
-        verify(eventPublisher).publish(argThat(
-                new CustomTypeSafeMatcher<RemoteConditionFailedEvent>("a fail event with non negative elapsed time")
-                {
-                    @Override
-                    public boolean matchesSafely(RemoteConditionFailedEvent event)
-                    {
-                        return ObjectUtils.equals(event.getUrl().toString(), URL);
-                    }
-                }));
+        invokeWhenErrorResponse();
+        verify(eventPublisher).publish(argThat(eventWithCorrectUrl));
     }
 
-    private void invokeWhenErrorResult()
+
+    private void invokeWhenSuccessfulResponse()
+    {
+        when(remotablePluginAccessor.executeAsync(any(HttpMethod.class), any(URI.class),
+                any(Map.class), any(Map.class))).thenReturn(Promises.promise("foo"));
+
+        invokeCondition();
+    }
+
+    private void invokeWhenErrorResponse()
     {
         when(remotablePluginAccessor.executeAsync(any(HttpMethod.class), any(URI.class),
                 any(Map.class), any(Map.class))).thenReturn(
@@ -194,17 +206,3 @@ public class RemoteConditionTest
 
 }
 
-class RemoteConditionFailedEventMatcher extends CustomMatcher<RemoteConditionFailedEvent>
-{
-    public RemoteConditionFailedEventMatcher(String description)
-    {
-        super(description);
-    }
-
-    @Override
-    public boolean matches(Object item)
-    {
-        return false;
-    }
-
-}
