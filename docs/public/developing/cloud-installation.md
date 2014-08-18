@@ -129,7 +129,7 @@ install the add-on and apply the token at one time (as described next).
 The link to the token in the Marketplace (shown in the following screenshot) includes the
 installation URL for the add-on along with the access token for it.
 
-<img src="../assets/images/accesstokenslisting.png" alt="Manage Tokens" />
+<img src="../assets/images/accesstokenslisting.png" width="80%" alt="Manage Tokens" />
 
 Alternatively, you can share this link with external customers or partners for testing.
 

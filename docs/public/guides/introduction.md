@@ -93,5 +93,5 @@ and a [library of reusable front-end UI components](https://docs.atlassian.com/a
 ##Let's get started
 If you made it this far, you're ready to write your first Atlassian Connect add-on! Follow the link below to get started.
 <div class="index-button">
-<a href="../guides/getting-started.html"><button class="primary-cta aui-button aui-button-primary">Hello, world!</button></a>
+<a href="../guides/getting-started.html"><button class="primary-cta aui-button aui-button-primary">Try the Hello World tutorial</button></a>
 </div>
