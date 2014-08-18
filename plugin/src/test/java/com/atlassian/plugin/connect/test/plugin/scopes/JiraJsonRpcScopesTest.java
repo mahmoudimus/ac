@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.test.plugin.scopes;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
+import com.atlassian.plugin.connect.spi.APITestUtil;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -85,7 +86,7 @@ public class JiraJsonRpcScopesTest extends AbstractScopesTest
 
     public JiraJsonRpcScopesTest(ScopeName scope, HttpMethod method, String path, String rpcMethod, boolean expectedOutcome)
     {
-        super(scope, method, path, "{\"method\":\"" + rpcMethod + "\"}", expectedOutcome, "/jira", "Jira");
+        super(scope, method, path, APITestUtil.createJsonRpcPayload(rpcMethod), expectedOutcome, "/jira", "Jira");
     }
 
 }

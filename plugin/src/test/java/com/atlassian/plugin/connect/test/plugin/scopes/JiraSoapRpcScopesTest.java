@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.test.plugin.scopes;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
+import com.atlassian.plugin.connect.spi.APITestUtil;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -85,21 +86,6 @@ public class JiraSoapRpcScopesTest extends AbstractScopesTest
 
     public JiraSoapRpcScopesTest(ScopeName scope, HttpMethod method, String path, String rpcMethod, boolean expectedOutcome)
     {
-        super(scope, method, path, createSoapRpcPayload(rpcMethod), expectedOutcome, "/jira", "Jira");
-    }
-
-    private static String createSoapRpcPayload(String methodName)
-    {
-        return "<?xml version=\"1.0\"?>\n" +
-                "<soap:Envelope\n" +
-                "xmlns:soap=\"http://www.w3.org/2001/12/soap-envelope\"\n" +
-                "soap:encodingStyle=\"http://www.w3.org/2001/12/soap-encoding\">\n" +
-                "\n" +
-                "<soap:Body xmlns:m=\"http://soap.rpc.jira.atlassian.com\">" +
-                "    <m:" + methodName + ">" +
-                "    </m:" + methodName + ">" +
-                "</soap:Body>\n" +
-                "\n" +
-                "</soap:Envelope>";
+        super(scope, method, path, APITestUtil.createSoapRpcPayload(rpcMethod), expectedOutcome, "/jira", "Jira");
     }
 }
