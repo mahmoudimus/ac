@@ -17,7 +17,7 @@ abstract public class RemoteConditionEvent
     @PrivacyPolicySafe
     private final long elapsedMillisecs;
 
-    public RemoteConditionEvent(long elapsedMillisecs, URI url, String pluginKey)
+    public RemoteConditionEvent(String pluginKey, URI url, long elapsedMillisecs)
     {
         this.elapsedMillisecs = elapsedMillisecs;
         this.url = url;

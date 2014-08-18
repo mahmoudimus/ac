@@ -17,7 +17,7 @@ public class RemoteConditionFailedEvent extends RemoteConditionEvent
 
     public RemoteConditionFailedEvent(String pluginKey, URI url, long elapsedMillisecs, String message)
     {
-        super(elapsedMillisecs, url, pluginKey);
+        super(pluginKey, url, elapsedMillisecs);
         this.message = message;
     }
 

@@ -34,9 +34,10 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class RemoteConditionTest
 {
-
     private static final String PLUGIN_KEY = "myPluginKey";
+
     private static final String URL = "http://foo.com/bar";
+
     private final CustomTypeSafeMatcher<RemoteConditionEvent> eventWithCorrectUrl =
             new CustomTypeSafeMatcher<RemoteConditionEvent>("an event with non negative elapsed time")
     {
@@ -56,6 +57,7 @@ public class RemoteConditionTest
                     return ObjectUtils.equals(event.getPluginKey(), PLUGIN_KEY);
                 }
             };
+
     private final CustomTypeSafeMatcher<RemoteConditionFailedEvent> failEventWithExpectedMessage =
             new CustomTypeSafeMatcher<RemoteConditionFailedEvent>("a fail event with expected message")
             {
@@ -65,6 +67,17 @@ public class RemoteConditionTest
                     return event.getMessage().startsWith("Unable to retrieve remote condition from plugin " + PLUGIN_KEY);
                 }
             };
+
+    private final CustomTypeSafeMatcher<RemoteConditionFailedEvent> failEventWithExpectedBadJsonMessage =
+            new CustomTypeSafeMatcher<RemoteConditionFailedEvent>("a fail event with expected message")
+            {
+                @Override
+                public boolean matchesSafely(RemoteConditionFailedEvent event)
+                {
+                    return event.getMessage().startsWith("Invalid JSON returned from remote condition: not json");
+                }
+            };
+
     private final CustomTypeSafeMatcher<RemoteConditionEvent> eventWithNonNegativeElapsedTime =
             new CustomTypeSafeMatcher<RemoteConditionEvent>("an event with non negative elapsed time")
             {
@@ -115,6 +128,16 @@ public class RemoteConditionTest
     {
         invokeWhenSuccessfulResponse();
         verify(eventPublisher).publish(any(RemoteConditionInvokedEvent.class));
+        // not sure why passing any(RemoteConditionInvokedEvent.class) is not enough to check type
+        verify(eventPublisher).publish(argThat(new CustomTypeSafeMatcher<RemoteConditionEvent>(
+                "an event with correct type")
+        {
+            @Override
+            public boolean matchesSafely(RemoteConditionEvent event)
+            {
+                return event.getClass().equals(RemoteConditionInvokedEvent.class);
+            }
+        }));
     }
 
     @Test
@@ -144,6 +167,15 @@ public class RemoteConditionTest
     {
         invokeWhenErrorResponse();
         verify(eventPublisher).publish(any(RemoteConditionFailedEvent.class));
+        verify(eventPublisher).publish(argThat(new CustomTypeSafeMatcher<RemoteConditionEvent>(
+                "an event with correct type")
+        {
+            @Override
+            public boolean matchesSafely(RemoteConditionEvent event)
+            {
+                return event.getClass().equals(RemoteConditionFailedEvent.class);
+            }
+        }));
     }
 
     @Test
@@ -175,14 +207,71 @@ public class RemoteConditionTest
     }
 
 
+
+
+    @Test
+    public void publishesFailedEventOnMalformedJsonResponse()
+    {
+        invokeWhenMalformedJson();
+        verify(eventPublisher).publish(any(RemoteConditionFailedEvent.class));
+        verify(eventPublisher).publish(argThat(new CustomTypeSafeMatcher<RemoteConditionEvent>(
+                "an event with correct type")
+        {
+            @Override
+            public boolean matchesSafely(RemoteConditionEvent event)
+            {
+                return event.getClass().equals(RemoteConditionFailedEvent.class);
+            }
+        }));
+    }
+
+    @Test
+    public void publishesFailedEventWithCorrectMessageOnMalformedJsonResponse()
+    {
+        invokeWhenMalformedJson();
+        verify(eventPublisher).publish(argThat(failEventWithExpectedBadJsonMessage));
+    }
+
+    @Test
+    public void publishesFailedEventWithNonNegativeElapsedOnMalformedJsonResponse()
+    {
+        invokeWhenMalformedJson();
+        verify(eventPublisher).publish(argThat(eventWithNonNegativeElapsedTime));
+    }
+
+    @Test
+    public void publishesFailedEventWithCorrectPluginKeyOnMalformedJsonResponse()
+    {
+        invokeWhenMalformedJson();
+        verify(eventPublisher).publish(argThat(eventWithCorrectPluginKey));
+    }
+
+    @Test
+    public void publishesFailedEventWithCorrectUrlOnMalformedJsonResponse()
+    {
+        invokeWhenMalformedJson();
+        verify(eventPublisher).publish(argThat(eventWithCorrectUrl));
+    }
+
+    @SuppressWarnings("unchecked")
     private void invokeWhenSuccessfulResponse()
     {
         when(remotablePluginAccessor.executeAsync(any(HttpMethod.class), any(URI.class),
-                any(Map.class), any(Map.class))).thenReturn(Promises.promise("foo"));
+                any(Map.class), any(Map.class))).thenReturn(Promises.promise("{\"shouldDisplay\": true}"));
 
         invokeCondition();
     }
 
+    @SuppressWarnings("unchecked")
+    private void invokeWhenMalformedJson()
+    {
+        when(remotablePluginAccessor.executeAsync(any(HttpMethod.class), any(URI.class),
+                any(Map.class), any(Map.class))).thenReturn(Promises.promise("not json"));
+
+        invokeCondition();
+    }
+
+    @SuppressWarnings("unchecked")
     private void invokeWhenErrorResponse()
     {
         when(remotablePluginAccessor.executeAsync(any(HttpMethod.class), any(URI.class),
