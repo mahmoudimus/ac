@@ -24,6 +24,7 @@ public class ContentContextMapParameterExtractor implements ContextMapParameterE
     public static final String CONTENT_CONTEXT_PARAMETER = "content";
     public static final String PAGE_CONTEXT_PARAMETER = "page";
     public static final String ACTION_PARAMETER = "action";
+    public static final String WEB_INTERFACE_CONTEXT_PARAMETER = "webInterfaceContext";
 
     private final ContentSerializer contentSerializer;
 
@@ -48,9 +49,9 @@ public class ContentContextMapParameterExtractor implements ContextMapParameterE
                 LOG.debug("Encountered a 'content' context parameter that is a " + contentFromContext.getClass().getName() + " rather than a ContentEntityObject. Skipping.");
             }
         }
-        else if (context.containsKey("webInterfaceContext"))
+        else if (context.containsKey(WEB_INTERFACE_CONTEXT_PARAMETER))
         {
-            WebInterfaceContext webInterfaceContext = (WebInterfaceContext) context.get("webInterfaceContext");
+            WebInterfaceContext webInterfaceContext = (WebInterfaceContext) context.get(WEB_INTERFACE_CONTEXT_PARAMETER);
             if (null != webInterfaceContext && null != webInterfaceContext.getPage())
             {
                 return Optional.<ContentEntityObject>of(webInterfaceContext.getPage());

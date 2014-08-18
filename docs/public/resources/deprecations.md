@@ -212,9 +212,10 @@ Both global and project permissions are changing from integer based to a key bas
     </div>
 </div>
 
-### `page.*` context variables
+### Confluence `page.*` context variables
 
-The `page.id`, `page.version`, `page.type` context variables available in Confluence have been deprecated in favour of `content.id`, `content.version` and `content.type` variables respectively.
+The `page.id`, `page.version`, `page.type` context variables available in Confluence have been deprecated in favour of
+`content.id`, `content.version` and `content.type` variables respectively.
 
 <div class="ac-deprecations">
 <div class="aui-group">
