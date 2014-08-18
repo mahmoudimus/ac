@@ -298,6 +298,18 @@ public class AddonValidationTest
     }
 
     @Test
+    @DevMode
+    public void a503ResponseFromInstalledCallbackResultsInCorrespondingErrorCode() throws Exception
+    {
+        ConnectAddonBeanBuilder builder = testBeanBuilderWithJwt();
+        ConnectAddonBean bean = builder
+            .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(builder.getKey()))
+            .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/status/503").build())
+            .build();
+        installExpectingUpmErrorCode(bean, "connect.install.error.remote.host.bad.response.503");
+    }
+
+    @Test
     public void aNonExistentDomainNameInInstalledCallbackResultsInCorrespondingErrorCode() throws Exception
     {
         installExpectingUpmErrorCode(testBeanBuilderWithJwtAndInstalledCallback().withBaseurl("https://does.not.exist").build(),
