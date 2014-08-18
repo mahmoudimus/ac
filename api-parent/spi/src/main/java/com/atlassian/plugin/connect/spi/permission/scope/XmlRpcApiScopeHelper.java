@@ -42,14 +42,19 @@ public class XmlRpcApiScopeHelper
             }
         });
     }
+    
+    public static String extractMethod(HttpServletRequest rq)
+    {
+        Document doc = readDocument(rq);
+        return doc.getRootElement().element("methodName").getTextTrim();
+    }
 
     public boolean allow(HttpServletRequest request, UserKey user)
     {
         final String pathInfo = ServletUtils.extractPathInfo(request);
         if (path.equals(pathInfo))
         {
-            Document doc = readDocument(request);
-            String method = doc.getRootElement().element("methodName").getTextTrim();
+            String method = extractMethod(request);
             if (method == null)
             {
                 return false;

@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.spi.event;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.atlassian.analytics.api.annotations.EventName;
 import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 
@@ -18,9 +20,9 @@ public class ScopedRequestAllowedEvent extends ScopedRequestEvent
     @PrivacyPolicySafe
     private final long duration;
 
-    public ScopedRequestAllowedEvent(String httpMethod, String httpRequestUri, int responseCode, long duration)
+    public ScopedRequestAllowedEvent(HttpServletRequest rq, int responseCode, long duration)
     {
-        super(httpMethod, httpRequestUri);
+        super(rq);
         this.responseCode = responseCode;
         this.duration = duration > THRESHOLD ? -1 : duration / TRIMPRECISION;
     }

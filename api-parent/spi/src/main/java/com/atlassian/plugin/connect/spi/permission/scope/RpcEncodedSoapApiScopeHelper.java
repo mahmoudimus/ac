@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.spi.permission.scope;
 
+import com.atlassian.fugue.Pair;
 import com.atlassian.plugin.connect.spi.util.ServletUtils;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Function;
@@ -63,6 +64,16 @@ public final class RpcEncodedSoapApiScopeHelper
             }
         })), httpMethod);
     }
+    
+    public static Pair<String,String> getMethod(HttpServletRequest rq)
+    {
+        Document doc = readDocument(rq);
+        Element body = doc.getRootElement().element("Body");
+        Element methodElement = (Element) body.elements().get(0);
+        String name = methodElement.getName();
+        String namespace = methodElement.getNamespaceURI();
+        return Pair.pair(namespace, name);
+    }
 
     public boolean allow(HttpServletRequest request, UserKey user)
     {
@@ -74,14 +85,10 @@ public final class RpcEncodedSoapApiScopeHelper
         final String pathInfo = ServletUtils.extractPathInfo(request);
         if (path.equals(pathInfo))
         {
-            Document doc = readDocument(request);
-            Element body = doc.getRootElement().element("Body");
-            Element methodElement = (Element) body.elements().get(0);
-            String name = methodElement.getName();
-            String namespace = methodElement.getNamespaceURI();
+            Pair<String,String> namespaceAndName = getMethod(request);
             for (SoapScope scope : soapActions)
             {
-                if (scope.match(namespace, name))
+                if (scope.match(namespaceAndName.left(), namespaceAndName.right()))
                 {
                     return true;
                 }

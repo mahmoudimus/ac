@@ -55,7 +55,7 @@ public class ConfluenceXMLRPCScopesTest extends AbstractScopesTest
         super(scope, HttpMethod.POST, "/confluence/rpc/xmlrpc", createXMLRPCPayload(methodName), expectedOutcome, "/confluence", "Confluence");
     }
 
-    private static String createXMLRPCPayload(String methodName)
+    public static String createXMLRPCPayload(String methodName)
     {
         return "<?xml version=\"1.0\"?>\n" +
                 "<methodCall>\n" +

@@ -177,7 +177,7 @@ public class ApiScopingFilterTest
         when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(false);
         when(request.getRequestURI()).thenReturn("http://localhost/jira/rest/atlassian-connect/1/foo/private-stuff");
         apiScopingFilter.doFilter(request, response, chain);
-        verify(eventPublisher).publish(argThat(hasRequestURI("1/foo")));
+        verify(eventPublisher).publish(argThat(hasRequestURI("atlassian-connect/1/foo")));
     }
 
     @Test 
@@ -187,29 +187,9 @@ public class ApiScopingFilterTest
         when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
         when(request.getRequestURI()).thenReturn("http://localhost/jira/rest/atlassian-connect/1/foo/private-stuff");
         apiScopingFilter.doFilter(request, response, chain);
-        verify(eventPublisher).publish(argThat(hasRequestURI("1/foo")));
+        verify(eventPublisher).publish(argThat(hasRequestURI("atlassian-connect/1/foo")));
     }
-
-    @Test 
-    public void testInvalidURIsAreNotTrimmedInAllowedEvents() throws IOException, ServletException
-    {
-        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
-        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
-        when(request.getRequestURI()).thenReturn("http://localhost/jira/rest/something/else");
-        apiScopingFilter.doFilter(request, response, chain);
-        verify(eventPublisher).publish(argThat(hasRequestURI("http://localhost/jira/rest/something/else")));
-    }
-
-    @Test 
-    public void testInvalidURIsAreNotTrimmedInDeniedEvents() throws IOException, ServletException
-    {
-        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
-        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(false);
-        when(request.getRequestURI()).thenReturn("http://localhost/jira/rest/something/else");
-        apiScopingFilter.doFilter(request, response, chain);
-        verify(eventPublisher).publish(argThat(hasRequestURI("http://localhost/jira/rest/something/else")));
-    }
-
+    
     @Test
     public void testAllowedEventsHaveNonNegativeDuration() throws IOException, ServletException
     {

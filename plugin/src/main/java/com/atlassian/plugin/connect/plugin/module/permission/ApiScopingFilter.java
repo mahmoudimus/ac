@@ -145,7 +145,7 @@ public class ApiScopingFilter implements Filter
             log.warn("Request not in an authorized API scope from add-on '{}' as user '{}' on URL '{} {}'",
                     new Object[]{clientKey, user, req.getMethod(), req.getRequestURI()});
             res.sendError(HttpServletResponse.SC_FORBIDDEN, "Request not in an authorized API scope");
-            eventPublisher.publish(new ScopedRequestDeniedEvent(req.getMethod(), req.getRequestURI()));
+            eventPublisher.publish(new ScopedRequestDeniedEvent(req));
             return;
         }
         log.info("Authorized add-on '{}' to access API at URL '{} {}' for user '{}'",
@@ -157,11 +157,11 @@ public class ApiScopingFilter implements Filter
         catch(Exception e)
         {
             long duration = System.currentTimeMillis() - startTime;
-            eventPublisher.publish(new ScopedRequestAllowedEvent(req.getMethod(), req.getRequestURI(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR, duration));
+            eventPublisher.publish(new ScopedRequestAllowedEvent(req, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, duration));
             throw ServletException.class.cast(new ServletException("Unhandled error in ApiScopingFilter").initCause(e));
         }
         long duration = System.currentTimeMillis() - startTime;
-        eventPublisher.publish(new ScopedRequestAllowedEvent(req.getMethod(), req.getRequestURI(), wrappedResponse.getStatusCode(), duration));
+        eventPublisher.publish(new ScopedRequestAllowedEvent(req, wrappedResponse.getStatusCode(), duration));
     }
 
     @XmlDescriptor
