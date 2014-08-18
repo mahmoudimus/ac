@@ -21,4 +21,8 @@ public class RemoteConditionFailedEvent extends RemoteConditionEvent
         this.message = message;
     }
 
+    public String getMessage()
+    {
+        return message;
+    }
 }

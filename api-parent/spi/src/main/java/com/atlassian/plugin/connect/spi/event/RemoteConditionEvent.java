@@ -8,14 +8,14 @@ import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 abstract public class RemoteConditionEvent
 {
     @PrivacyPolicySafe
-    protected final String pluginKey;
+    private final String pluginKey;
     // TODO: check that nothing private is in these urls
 
     @PrivacyPolicySafe
-    protected final URI url;
+    private final URI url;
 
     @PrivacyPolicySafe
-    protected final long elapsedMillisecs;
+    private final long elapsedMillisecs;
 
     public RemoteConditionEvent(long elapsedMillisecs, URI url, String pluginKey)
     {
