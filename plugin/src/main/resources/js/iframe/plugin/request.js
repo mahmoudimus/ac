@@ -46,6 +46,7 @@ AP.define("request", ["_dollar", "_rpc"], function ($, rpc) {
   * @class
   * @property {String}    url         the url to request from the host application, relative to the host's context path
   * @property {String}    type        the HTTP method name; defaults to 'GET'
+  * @property {Boolean}   cache       if the request should be cached. Default is true.
   * @property {String}    data        the string entity body of the request; required if type is 'POST' or 'PUT'
   * @property {String}    contentType the content-type string value of the entity body, above; required when data is supplied
   * @property {Object}    headers     an object containing headers to set; supported headers are: Accept

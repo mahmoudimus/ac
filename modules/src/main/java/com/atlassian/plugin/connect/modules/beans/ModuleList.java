@@ -245,6 +245,13 @@ public class ModuleList extends BaseModuleBean
     @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.EntityPropertyModuleProvider", products = {ProductFilter.JIRA})
     private List<EntityPropertyModuleBean> jiraEntityProperties;
 
+    /**
+     * Add new report modules to JIRA projects.
+     * @schemaTitle Report
+     */
+    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ReportModuleProvider", products = {ProductFilter.JIRA})
+    private List<ReportModuleBean> jiraReports;
+
     /////////////////////////////////////////////////////
     ///////    CONFLUENCE MODULES
     /////////////////////////////////////////////////////
@@ -294,6 +301,7 @@ public class ModuleList extends BaseModuleBean
         this.jiraVersionTabPanels = newArrayList();
         this.jiraWorkflowPostFunctions = newArrayList();
         this.jiraEntityProperties = newArrayList();
+        this.jiraReports = newArrayList();
         this.profilePages = newArrayList();
         this.spaceToolsTabs = newArrayList();
         this.staticContentMacros = newArrayList();
@@ -383,6 +391,10 @@ public class ModuleList extends BaseModuleBean
         {
             this.staticContentMacros = newArrayList();
         }
+        if (null == jiraReports)
+        {
+            this.jiraReports = newArrayList();
+        }
     }
 
     public List<WebItemModuleBean> getWebItems()
@@ -438,6 +450,11 @@ public class ModuleList extends BaseModuleBean
     public List<EntityPropertyModuleBean> getJiraEntityProperties()
     {
         return jiraEntityProperties;
+    }
+
+    public List<ReportModuleBean> getJiraReports()
+    {
+        return jiraReports;
     }
 
     public List<ConnectPageModuleBean> getGeneralPages()
@@ -521,6 +538,7 @@ public class ModuleList extends BaseModuleBean
                 .append(webItems, other.webItems)
                 .append(webPanels, webPanels)
                 .append(webSections, webSections)
+                .append(jiraReports, other.jiraReports)
                 .build();
     }
 
@@ -549,6 +567,7 @@ public class ModuleList extends BaseModuleBean
                 .append(webItems)
                 .append(webPanels)
                 .append(webSections)
+                .append(jiraReports)
                 .build();
     }
     
