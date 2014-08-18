@@ -37,6 +37,8 @@ specifies whether to show or hide the module feature.
 The add-on can pass parameters to the remote condition as URL query parameters. Remote condition has request
 authentication information passed through as a header, rather than as a query string parameter.
 
+Remote conditions are URLs and must start with either 'http' or '/'.
+
 
 ## Static conditions
 
