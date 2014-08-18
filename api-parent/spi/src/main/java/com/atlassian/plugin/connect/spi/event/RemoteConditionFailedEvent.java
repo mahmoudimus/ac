@@ -12,7 +12,7 @@ import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 @PrivacyPolicySafe
 public class RemoteConditionFailedEvent extends RemoteConditionEvent
 {
-    @PrivacyPolicySafe // TODO: make sure what we put here is safe
+    @PrivacyPolicySafe
     private final String message;
 
     public RemoteConditionFailedEvent(String pluginKey, URI url, long elapsedMillisecs, String message)
