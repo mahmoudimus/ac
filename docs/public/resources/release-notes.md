@@ -2,6 +2,7 @@
 # Release Notes
 
 ## [1.1.0-rc.4](../release-notes/1-1-0.html#rc4)
+* Support for [JIRA reports](../modules/jira/report.html)
 * Bug fixes and stability improvements
 
 ## [1.1.0-rc.3](../release-notes/1-1-0.html#rc3)
