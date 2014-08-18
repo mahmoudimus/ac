@@ -8,7 +8,7 @@ _AP.require(["dialog/main", "host/content", "_uri", "dialog/dialog-factory"], fu
 
         var action = "click",
             selector = ".ap-dialog",
-            callback = function(href, options){
+            initWithUrl = function(href, options){
 
                 var webItemOptions = hostContentUtilities.getOptionsForWebItem(options.bindTo);
                 // this is a dialog-page (xml descriptor) or a web item with target=(dialog|inlineDialog)
@@ -48,7 +48,24 @@ _AP.require(["dialog/main", "host/content", "_uri", "dialog/dialog-factory"], fu
                 dialog.create(options);
             };
 
-        hostContentUtilities.eventHandler(action, selector, callback);
+        var handleJwtFetchFailure = function (href, options) {
+            // TODO: log? show a message to the user?
+        };
+
+        /**
+         * Will fetch a fresh JWT so that we don't get expired tokens.
+         * @param successHandler will be invoked with (href, options) arguments if fetching a fresh JWT succeeds
+         * @param errorHandler will be invoked with (href, options) arguments if fetching a fresh JWT fails
+         */
+        function refreshJwt(successHandler, errorHandler) {
+
+        }
+
+        var clickHandler = function(href, options) {
+            refreshJwt(initWithUrl, handleJwtFetchFailure);
+        };
+
+        hostContentUtilities.eventHandler(action, selector, clickHandler);
 
     });
 
