@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 
 import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
+import com.atlassian.fugue.Option;
+import com.atlassian.fugue.Pair;
 import com.atlassian.plugin.connect.spi.permission.scope.JsonRpcApiScopeHelper;
 import com.atlassian.plugin.connect.spi.permission.scope.RpcEncodedSoapApiScopeHelper;
 import com.atlassian.plugin.connect.spi.permission.scope.XmlRpcApiScopeHelper;
@@ -90,8 +92,13 @@ public abstract class ScopedRequestEvent
         }
         else if (isSoapUri(path))
         {
+            Option<Pair<String,String>> maybeMethod = RpcEncodedSoapApiScopeHelper.getMethod(rq);
+            if(maybeMethod.isEmpty())
+            {
+                return path;
+            }
             // We're ignoring the namespace
-            String method = RpcEncodedSoapApiScopeHelper.getMethod(rq).right();
+            String method = maybeMethod.get().right();
             return path + "/" + method;
         }
         else

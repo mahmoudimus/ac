@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.spi.permission.scope;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Pair;
 import com.atlassian.plugin.connect.spi.util.ServletUtils;
 import com.atlassian.sal.api.user.UserKey;
@@ -65,14 +66,31 @@ public final class RpcEncodedSoapApiScopeHelper
         })), httpMethod);
     }
     
-    public static Pair<String,String> getMethod(HttpServletRequest rq)
+    public static Option<Pair<String,String>> getMethod(HttpServletRequest rq)
     {
         Document doc = readDocument(rq);
-        Element body = doc.getRootElement().element("Body");
+        if(null == doc)
+        {
+            return Option.none();
+        }
+        Element root = doc.getRootElement();
+        if(null == root)
+        {
+            return Option.none();
+        }
+        Element body = root.element("Body");
+        if(null == body)
+        {
+            return Option.none();
+        }
         Element methodElement = (Element) body.elements().get(0);
+        if(null == methodElement)
+        {
+            return Option.none();
+        }
         String name = methodElement.getName();
         String namespace = methodElement.getNamespaceURI();
-        return Pair.pair(namespace, name);
+        return Option.some(Pair.pair(namespace, name));
     }
 
     public boolean allow(HttpServletRequest request, UserKey user)
@@ -85,7 +103,12 @@ public final class RpcEncodedSoapApiScopeHelper
         final String pathInfo = ServletUtils.extractPathInfo(request);
         if (path.equals(pathInfo))
         {
-            Pair<String,String> namespaceAndName = getMethod(request);
+            Option<Pair<String,String>> maybeNamespaceAndName = getMethod(request);
+            if(maybeNamespaceAndName.isEmpty())
+            {
+                return false;
+            }
+            Pair<String,String> namespaceAndName = maybeNamespaceAndName.get();
             for (SoapScope scope : soapActions)
             {
                 if (scope.match(namespaceAndName.left(), namespaceAndName.right()))

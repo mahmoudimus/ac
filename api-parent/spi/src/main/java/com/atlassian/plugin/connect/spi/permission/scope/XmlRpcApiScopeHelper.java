@@ -9,7 +9,9 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.dom4j.Document;
+import org.dom4j.Element;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 
@@ -43,10 +45,25 @@ public class XmlRpcApiScopeHelper
         });
     }
     
+    @Nullable
     public static String extractMethod(HttpServletRequest rq)
     {
         Document doc = readDocument(rq);
-        return doc.getRootElement().element("methodName").getTextTrim();
+        if(doc == null)
+        {
+            return null;
+        }
+        Element root = doc.getRootElement();
+        if(root == null)
+        {
+            return null;
+        }
+        Element methodName = root.element("methodName");
+        if(null == methodName)
+        {
+            return null;
+        }
+        return methodName.getTextTrim();
     }
 
     public boolean allow(HttpServletRequest request, UserKey user)
