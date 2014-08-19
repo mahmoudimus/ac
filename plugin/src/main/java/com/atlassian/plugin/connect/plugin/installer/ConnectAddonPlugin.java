@@ -41,9 +41,9 @@ public class ConnectAddonPlugin extends AbstractPlugin
     @Override
     public boolean isEnabledByDefault()
     {
-        return true;
+        return false;
     }
-    
+
     @Override
     public boolean isDynamicallyLoaded()
     {
