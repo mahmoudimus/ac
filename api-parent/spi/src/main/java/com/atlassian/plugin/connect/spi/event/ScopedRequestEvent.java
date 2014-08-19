@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.spi.event;
 
-import java.net.URI;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -14,6 +13,7 @@ import com.atlassian.fugue.Pair;
 import com.atlassian.plugin.connect.spi.permission.scope.JsonRpcApiScopeHelper;
 import com.atlassian.plugin.connect.spi.permission.scope.RpcEncodedSoapApiScopeHelper;
 import com.atlassian.plugin.connect.spi.permission.scope.XmlRpcApiScopeHelper;
+import com.atlassian.plugin.connect.spi.util.ServletUtils;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -27,7 +27,8 @@ public abstract class ScopedRequestEvent
 
     private static final List<String> JSON_RPC_PATHS = ImmutableList.of("/rpc/json-rpc/confluenceservice-v1",
                                                                         "/rpc/json-rpc/confluenceservice-v2",
-                                                                        "rpc/json-rpc/jirasoapservice-v2");
+                                                                        "/rpc/json-rpc/jirasoapservice-v2");
+
     private static final List<String> SOAP_PATHS = ImmutableList.of("/rpc/soap/jirasoapservice-v2",
                                                                     "/soap/axis/confluenceservice-v2",
                                                                     "/soap/axis/confluenceservice-v1");
@@ -45,13 +46,28 @@ public abstract class ScopedRequestEvent
 
     private static Predicate<String> endsWith(final String it)
     {
-        return new Predicate<String>(){
+        return new Predicate<String>()
+        {
 
             @Override
             public boolean apply(@Nullable String suffix)
             {
                 return it.endsWith(suffix);
-            }};
+            }
+        };
+    }
+ 
+    private static Predicate<String> startsWith(final String it)
+    {
+        return new Predicate<String>()
+            {
+
+                @Override
+                public boolean apply(@Nullable String prefix)
+                {
+                    return it.startsWith(prefix);
+                }
+            };
     }
 
     private static boolean isXmlRpcUri(String uri)
@@ -69,6 +85,12 @@ public abstract class ScopedRequestEvent
         return Iterables.any(SOAP_PATHS, endsWith(uri));
     }
 
+    private static boolean isJsonRpcLightUri(HttpServletRequest rq)
+    {
+        String pathInfo = ServletUtils.extractPathInfo(rq);
+        return Iterables.any(JSON_RPC_PATHS, startsWith(pathInfo));
+    }
+
     /**
      * Trim potentially sensitive values from REST calls, append method name for SOAP/RPC.
      * 
@@ -78,7 +100,8 @@ public abstract class ScopedRequestEvent
 
     private static String toAnalyticsSafePath(HttpServletRequest rq)
     {
-        String path = URI.create(rq.getRequestURI()).getPath();
+
+        String path = StringUtils.removeEnd(ServletUtils.extractPathInfo(rq), "/");
 
         if (isXmlRpcUri(path))
         {
@@ -92,14 +115,18 @@ public abstract class ScopedRequestEvent
         }
         else if (isSoapUri(path))
         {
-            Option<Pair<String,String>> maybeMethod = RpcEncodedSoapApiScopeHelper.getMethod(rq);
-            if(maybeMethod.isEmpty())
+            Option<Pair<String, String>> maybeMethod = RpcEncodedSoapApiScopeHelper.getMethod(rq);
+            if (maybeMethod.isEmpty())
             {
                 return path;
             }
             // We're ignoring the namespace
             String method = maybeMethod.get().right();
             return path + "/" + method;
+        }
+        else if(isJsonRpcLightUri(rq))
+        {
+            return path;
         }
         else
         {
@@ -120,29 +147,44 @@ public abstract class ScopedRequestEvent
     private static String trimRestPath(String uri)
     {
         String[] pathElems = StringUtils.substringAfter(uri, REST_URI_PATH_PREFIX).split("/");
-        StringBuffer uriBuffer = new StringBuffer();
+        StringBuilder uriBuilder = new StringBuilder();
         int count = 0;
         for (String elem : pathElems)
         {
-            try
-            {
-                Integer.valueOf(elem);
-                uriBuffer.append(elem);
-                uriBuffer.append("/");
-            }
-            catch (NumberFormatException e)
+            if (!isVersionNumber(elem))
             {
                 ++count;
-                uriBuffer.append(elem.split("\\?")[0]);
-                uriBuffer.append("/");
             }
+            uriBuilder.append(elem.split("\\?")[0]);
+            uriBuilder.append("/");
+
             if (count > 1)
             {
                 break;
             }
         }
 
-        return StringUtils.removeEnd(uriBuffer.toString(), "/");
+        return StringUtils.removeEnd(uriBuilder.toString(), "/");
+    }
+
+    private static boolean isVersionNumber(String pathElem)
+    {
+        if (pathElem.equals("latest"))
+        {
+            return true;
+        }
+        else
+        {
+            try
+            {
+                Double.valueOf(pathElem);
+                return true;
+            }
+            catch (NumberFormatException nfe)
+            {
+                return false;
+            }
+        }
     }
 
     public String getHttpMethod()
