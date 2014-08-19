@@ -81,6 +81,7 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
                     .urlTemplate(bean.getUrl())
                     .conditions(bean.getConditions())
                     .dimensions("100%", "100%") // the client (js) will size the parent of the iframe
+                    .dialog(true)
                     .build();
             iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getKey(connectAddonBean), RAW_CLASSIFIER, rawRenderStrategy);
         }

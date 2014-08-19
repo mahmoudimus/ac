@@ -31,13 +31,9 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWe
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions.newDialogOptions;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static it.util.TestUser.ADMIN;
-import static it.util.TestUser.BARNEY;
-import static it.util.TestUser.BETTY;
 import static it.modules.ConnectAsserts.verifyStandardAddOnRelativeQueryParameters;
+import static it.util.TestUser.*;
 import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.Assert.*;
 
 /**
@@ -290,20 +286,15 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         assertNotNull("Web item should be found", webItem);
         assertTrue("web item should be a dialog", webItem.isDialog());
 
-        // make sure the dialog=1 flag is included and not appended after the jwt.
-        // note: if we really want to prove that we've correctly handled the adding of the dialog flag we really need to calculate the canonical url
         URL url = new URL(webItem.getPath());
         String query = url.getQuery();
         int dialogIndex = query.indexOf("dialog=1");
         int jwtIndex = query.indexOf("jwt=");
-        assertThat(dialogIndex, is(greaterThanOrEqualTo(0)));
-        assertThat(jwtIndex, is(greaterThanOrEqualTo(0)));
-        assertThat(jwtIndex, is(greaterThan(dialogIndex))); // must be before the jwt
+        assertThat(dialogIndex, is(-1)); // added by the iframe servlet
+        assertThat(jwtIndex, is(-1)); // added by the iframe servlet
 
         webItem.click();
         assertTrue("web item dialog should be open", webItem.isActiveDialog());
-
-        verifyStandardAddOnRelativeQueryParameters(webItem, "/jira");
     }
 
     @Test
