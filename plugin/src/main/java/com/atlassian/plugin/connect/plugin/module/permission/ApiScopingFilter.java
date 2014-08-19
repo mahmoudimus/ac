@@ -2,6 +2,8 @@ package com.atlassian.plugin.connect.plugin.module.permission;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jwt.JwtConstants;
+import com.atlassian.jwt.core.Clock;
+import com.atlassian.jwt.core.SystemClock;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
@@ -55,10 +57,24 @@ public class ApiScopingFilter implements Filter
     private final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
     private final String ourConsumerKey;
     private final EventPublisher eventPublisher;
+    private final Clock clock;
+
+    public ApiScopingFilter(PermissionManager permissionManager, UserManager userManager,
+        ConsumerService consumerService, WebSudoService webSudoService,
+        JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, EventPublisher eventPublisher)
+    {
+        this(permissionManager,
+             userManager,
+             consumerService,
+             webSudoService,
+             jsonConnectAddOnIdentifierService,
+             eventPublisher,
+             new SystemClock());
+    }
 
     public ApiScopingFilter(PermissionManager permissionManager, UserManager userManager,
             ConsumerService consumerService, WebSudoService webSudoService,
-            JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, EventPublisher eventPublisher)
+            JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, EventPublisher eventPublisher, Clock clock)
     {
         this.permissionManager = permissionManager;
         this.userManager = userManager;
@@ -66,6 +82,7 @@ public class ApiScopingFilter implements Filter
         this.jsonConnectAddOnIdentifierService = jsonConnectAddOnIdentifierService;
         this.eventPublisher = eventPublisher;
         this.ourConsumerKey = consumerService.getConsumer().getKey();
+        this.clock = clock;
     }
 
     @Override
@@ -135,7 +152,7 @@ public class ApiScopingFilter implements Filter
 
     private void handleScopedRequest(String clientKey, HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException
     {
-        final long startTime = System.currentTimeMillis();
+        final long startTime = clock.now().getTime();
         // we consume the input to allow inspection of the body via getInputStream
         InputConsumingHttpServletRequest inputConsumingRequest = new InputConsumingHttpServletRequest(req);
         UserKey user = userManager.getRemoteUserKey(req);
@@ -156,11 +173,11 @@ public class ApiScopingFilter implements Filter
         }
         catch(Exception e)
         {
-            long duration = System.currentTimeMillis() - startTime;
+            long duration = clock.now().getTime() - startTime;
             eventPublisher.publish(new ScopedRequestAllowedEvent(req, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, duration));
             throw ServletException.class.cast(new ServletException("Unhandled error in ApiScopingFilter").initCause(e));
         }
-        long duration = System.currentTimeMillis() - startTime;
+        long duration = clock.now().getTime() - startTime;
         eventPublisher.publish(new ScopedRequestAllowedEvent(req, wrappedResponse.getStatusCode(), duration));
     }
 

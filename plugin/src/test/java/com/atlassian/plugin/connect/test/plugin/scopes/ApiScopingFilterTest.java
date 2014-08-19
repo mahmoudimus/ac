@@ -1,10 +1,12 @@
 package com.atlassian.plugin.connect.test.plugin.scopes;
 
 import java.io.IOException;
+import java.util.Date;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jira.security.auth.trustedapps.KeyFactory;
 import com.atlassian.jwt.JwtConstants;
+import com.atlassian.jwt.core.Clock;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
@@ -68,6 +70,8 @@ public class ApiScopingFilterTest
     private FilterChain chain;
     @Mock
     private EventPublisher eventPublisher;
+    @Mock
+    private Clock clock;
 
     private ApiScopingFilter apiScopingFilter;
     private UserKey userKey = new UserKey("12345");
@@ -86,7 +90,11 @@ public class ApiScopingFilterTest
 
         when(userManager.getRemoteUserKey(any(HttpServletRequest.class))).thenReturn(userKey);
         when(consumerService.getConsumer()).thenReturn(Consumer.key(THIS_ADD_ON_KEY).name("whatever").signatureMethod(Consumer.SignatureMethod.HMAC_SHA1).publicKey(new KeyFactory.InvalidPublicKey(new Exception())).build());
-        apiScopingFilter = new ApiScopingFilter(permissionManager, userManager, consumerService, webSudoService, jsonConnectAddOnIdentifierService, eventPublisher);
+
+        when(clock.now()).thenReturn(new Date(0));
+        apiScopingFilter = new ApiScopingFilter(permissionManager, userManager, consumerService, webSudoService, jsonConnectAddOnIdentifierService, eventPublisher, clock);
+
+
     }
 
     @Test
@@ -191,12 +199,15 @@ public class ApiScopingFilterTest
     }
     
     @Test
-    public void testAllowedEventsHaveNonNegativeDuration() throws IOException, ServletException
+    public void testAllowedEventsADuration() throws IOException, ServletException
     {
         when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
         when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
+        Date start = new Date(0);
+        Date end = new Date(101);
+        when(clock.now()).thenReturn(start, end);
         apiScopingFilter.doFilter(request, response, chain);
-        verify(eventPublisher).publish(argThat(hasNonNegativeDuration()));
+        verify(eventPublisher).publish(argThat(hasDuration(1)));
     }
 
     @Test
@@ -278,21 +289,21 @@ public class ApiScopingFilterTest
         };
     }
 
-    private static TypeSafeMatcher<ScopedRequestAllowedEvent> hasNonNegativeDuration()
+    private static TypeSafeMatcher<ScopedRequestAllowedEvent> hasDuration( final long duration)
     {
         return new TypeSafeMatcher<ScopedRequestAllowedEvent>(){
 
             @Override
             public void describeTo(Description description)
             {
-                description.appendText("ScopedRequestEvent duration was negatve");
+                description.appendText("ScopedRequestEvent duration was: " + duration);
                 
             }
 
             @Override
             protected boolean matchesSafely(ScopedRequestAllowedEvent item)
             {
-                return item.getDuration() >= 0;
+                return item.getDuration() == duration;
             }};
     }
 
