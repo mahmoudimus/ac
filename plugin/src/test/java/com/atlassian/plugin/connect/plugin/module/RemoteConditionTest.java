@@ -52,7 +52,7 @@ public class RemoteConditionTest
     };
 
     private final CustomTypeSafeMatcher<RemoteConditionEvent> eventWithCorrectAddonKey =
-            new CustomTypeSafeMatcher<RemoteConditionEvent>("an event with non negative elapsed time")
+            new CustomTypeSafeMatcher<RemoteConditionEvent>("an event with correct addon key")
             {
                 @Override
                 public boolean matchesSafely(RemoteConditionEvent event)
