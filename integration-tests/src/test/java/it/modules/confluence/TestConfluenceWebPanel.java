@@ -32,7 +32,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     private static final String IFRAME_URL_VIEW = "/tcwp-view";
     private static final String IFRAME_URL_PROFILE = "/tcwp-profile";
 
-    private static final String IFRAME_URL_PARAMETERS = "?page_id={page.id}&space_key={space.key}";
+    private static final String IFRAME_URL_PARAMETERS = "?page_id={page.id}&space_key={space.key}&content_id={content.id}";
 
     private static final String IFRAME_CONTENT_EDIT = "edit contents";
     private static final String IFRAME_CONTENT_VIEW = "view contents";
@@ -131,6 +131,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
         RemoteWebPanel webPanel = connectPageOperations.findWebPanel(editorWebPanel.getKey(remotePlugin.getAddon()));
         assertThat(webPanel.getSpaceKey(), is(SPACE));
         assertThat(webPanel.getPageId(), is(editPage.getPageId()));
+        assertThat(webPanel.getContentId(), is(editPage.getPageId()));
     }
 
     @Test
@@ -174,6 +175,16 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     {
         RemoteWebPanel webPanel = findViewPageWebPanel();
         assertThat(webPanel.getIFrameSourceUrl(), containsString(IFRAME_URL_VIEW));
+    }
+
+    @Test
+    public void iFrameParametersAreCorrectOnViewPage() throws Exception
+    {
+        ConfluenceViewPage viewPage = createAndVisitPage(ConfluenceViewPage.class);
+        RemoteWebPanel webPanel = connectPageOperations.findWebPanel(viewWebPanel.getKey(remotePlugin.getAddon()));
+        assertThat(webPanel.getSpaceKey(), is(SPACE));
+        assertThat(webPanel.getPageId(), is(viewPage.getPageId()));
+        assertThat(webPanel.getContentId(), is(viewPage.getPageId()));
     }
 
     @Test
