@@ -1,0 +1,17 @@
+{
+    "connect.addon.installed": [ "pluginKey" ],
+    "connect.addon.installFailed": [ "pluginKey", "statusCode", "message" ],
+    "connect.addon.uninstalled": [ "pluginKey" ],
+    "connect.addon.uninstallFailed": [ "pluginKey", "statusCode", "message" ],
+    "connect.addon.enabled": [ "pluginKey" ],
+    "connect.addon.enableFailed": [ "pluginKey", "statusCode", "message" ],
+    "connect.addon.disabled": [ "pluginKey" ],
+    "connect.addon.remotecondition.invoked": [ "addonKey", "urlPath", "elapsedMillisecs" ],
+    "connect.addon.remotecondition.failed": [ "addonKey", "urlPath", "elapsedMillisecs", "message" ],
+    "connect.scoped.request.incoming.allowed": ["httpMethod", "httpRequestUri"],
+    "connect.scoped.request.incoming.denied": ["httpMethod", "httpRequestUri"],
+    "connect.addon.bridge.invokemethod": ["name", "addonKey", "moduleKey"],
+    "connect.addon.iframe.performance.load": ["addonKey", "moduleKey", "value"],
+    "connect.addon.iframe.performance.timeout": ["addonKey", "moduleKey"],
+    "connect.addon.iframe.performance.cancel": ["addonKey", "moduleKey"]
+}
