@@ -11,15 +11,15 @@ abstract public class RemoteConditionEvent
     private final String pluginKey;
 
     @PrivacyPolicySafe
-    private final URI url;
+    private final String urlPath;
 
     @PrivacyPolicySafe
     private final long elapsedMillisecs;
 
-    public RemoteConditionEvent(String pluginKey, URI url, long elapsedMillisecs)
+    public RemoteConditionEvent(String pluginKey, String urlPath, long elapsedMillisecs)
     {
         this.elapsedMillisecs = elapsedMillisecs;
-        this.url = url;
+        this.urlPath = urlPath;
         this.pluginKey = pluginKey;
     }
 
@@ -28,9 +28,9 @@ abstract public class RemoteConditionEvent
         return pluginKey;
     }
 
-    public URI getUrl()
+    public String getUrlPath()
     {
-        return url;
+        return urlPath;
     }
 
     public long getElapsedMillisecs()

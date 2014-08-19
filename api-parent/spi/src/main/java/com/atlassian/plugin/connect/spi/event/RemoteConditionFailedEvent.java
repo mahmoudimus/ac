@@ -15,9 +15,9 @@ public class RemoteConditionFailedEvent extends RemoteConditionEvent
     @PrivacyPolicySafe
     private final String message;
 
-    public RemoteConditionFailedEvent(String pluginKey, URI url, long elapsedMillisecs, String message)
+    public RemoteConditionFailedEvent(String pluginKey, String urlPath, long elapsedMillisecs, String message)
     {
-        super(pluginKey, url, elapsedMillisecs);
+        super(pluginKey, urlPath, elapsedMillisecs);
         this.message = message;
     }
 

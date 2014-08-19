@@ -13,9 +13,9 @@ import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 public class RemoteConditionInvokedEvent extends RemoteConditionEvent
 {
 
-    public RemoteConditionInvokedEvent(String pluginKey, URI url, long elapsedMillisecs)
+    public RemoteConditionInvokedEvent(String pluginKey, String urlPath, long elapsedMillisecs)
     {
-        super(pluginKey, url, elapsedMillisecs);
+        super(pluginKey, urlPath, elapsedMillisecs);
     }
 
 }

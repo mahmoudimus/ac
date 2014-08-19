@@ -36,7 +36,8 @@ public class RemoteConditionTest
 {
     private static final String PLUGIN_KEY = "myPluginKey";
 
-    private static final String URL = "http://foo.com/bar";
+    private static final String URL = "http://foo.com/bar?blah=1";
+    private static final String URL_PATH = "/bar";
 
     private final CustomTypeSafeMatcher<RemoteConditionEvent> eventWithCorrectUrl =
             new CustomTypeSafeMatcher<RemoteConditionEvent>("an event with non negative elapsed time")
@@ -44,7 +45,7 @@ public class RemoteConditionTest
         @Override
         public boolean matchesSafely(RemoteConditionEvent event)
         {
-            return ObjectUtils.equals(event.getUrl().toString(), URL);
+            return ObjectUtils.equals(event.getUrlPath(), URL_PATH);
         }
     };
 

@@ -101,7 +101,7 @@ public final class RemoteCondition implements Condition
                                 log.warn("Unable to retrieve remote condition from plugin {}: {}", pluginKey, t);
                                 t.printStackTrace();
                                 //return "<script>AJS.log('Unable to retrieve remote condition from plugin \'" + pluginKey + "\'');</script>";
-                                eventPublisher.publish(new RemoteConditionFailedEvent(pluginKey, url, elapsedMillisecs, message));
+                                eventPublisher.publish(new RemoteConditionFailedEvent(pluginKey, url.getPath(), elapsedMillisecs, message));
                                 return false;
                             }
                         },
@@ -118,14 +118,14 @@ public final class RemoteCondition implements Condition
 //                                                                                            {
 //                                                                                                return "<script>AJS.$(\"" + toHideSelector + "\").removeClass('hidden').parent().removeClass('hidden');</script>";
 //                                                                                            }
-                                    eventPublisher.publish(new RemoteConditionInvokedEvent(pluginKey, url, elapsedMillisecs));
+                                    eventPublisher.publish(new RemoteConditionInvokedEvent(pluginKey, url.getPath(), elapsedMillisecs));
                                     return (Boolean) obj.get("shouldDisplay");
                                 }
                                 catch (ParseException e)
                                 {
                                     final String message = "Invalid JSON returned from remote condition: " + value;
                                     log.warn(message);
-                                    eventPublisher.publish(new RemoteConditionFailedEvent(pluginKey, url, elapsedMillisecs, message));
+                                    eventPublisher.publish(new RemoteConditionFailedEvent(pluginKey, url.getPath(), elapsedMillisecs, message));
                                     return false;
                                 }
 
