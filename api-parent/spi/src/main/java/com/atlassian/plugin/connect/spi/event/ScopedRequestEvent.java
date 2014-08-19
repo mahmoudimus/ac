@@ -1,7 +1,9 @@
 package com.atlassian.plugin.connect.spi.event;
 
 import java.net.URI;
+import java.util.List;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
@@ -10,14 +12,23 @@ import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 import com.atlassian.plugin.connect.spi.permission.scope.JsonRpcApiScopeHelper;
 import com.atlassian.plugin.connect.spi.permission.scope.RpcEncodedSoapApiScopeHelper;
 import com.atlassian.plugin.connect.spi.permission.scope.XmlRpcApiScopeHelper;
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 @PrivacyPolicySafe
 public abstract class ScopedRequestEvent
 {
-
-    private static final String XMLRPC_PATH = "/rpc/xmlrpc";
-
     private static String REST_URI_PATH_PREFIX = "rest/";
+
+    private static final List<String> XMLRPC_PATHS = ImmutableList.of("/rpc/xmlrpc");
+
+    private static final List<String> JSON_RPC_PATHS = ImmutableList.of("/rpc/json-rpc/confluenceservice-v1",
+                                                                        "/rpc/json-rpc/confluenceservice-v2",
+                                                                        "rpc/json-rpc/jirasoapservice-v2");
+    private static final List<String> SOAP_PATHS = ImmutableList.of("/rpc/soap/jirasoapservice-v2",
+                                                                    "/soap/axis/confluenceservice-v2",
+                                                                    "/soap/axis/confluenceservice-v1");
 
     @PrivacyPolicySafe private final String httpMethod;
 
@@ -30,19 +41,30 @@ public abstract class ScopedRequestEvent
         this.httpRequestUri = toAnalyticsSafePath(rq);
     }
 
+    private static Predicate<String> endsWith(final String it)
+    {
+        return new Predicate<String>(){
+
+            @Override
+            public boolean apply(@Nullable String suffix)
+            {
+                return it.endsWith(suffix);
+            }};
+    }
+
     private static boolean isXmlRpcUri(String uri)
     {
-        return uri.endsWith(XMLRPC_PATH);
+        return Iterables.any(XMLRPC_PATHS, endsWith(uri));
     }
 
     private static boolean isJsonRpcUri(String uri)
     {
-        return uri.endsWith("/rpc/json-rpc/confluenceservice-v2") || uri.endsWith("rpc/json-rpc/jirasoapservice-v2");
+        return Iterables.any(JSON_RPC_PATHS, endsWith(uri));
     }
 
     private static boolean isSoapUri(String uri)
     {
-        return uri.endsWith("/rpc/soap/jirasoapservice-v2") || uri.endsWith("/soap/axis/confluenceservice-v2");
+        return Iterables.any(SOAP_PATHS, endsWith(uri));
     }
 
     /**

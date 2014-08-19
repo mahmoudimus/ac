@@ -34,7 +34,7 @@ public class ScopedRequestEventTest
     public void testJIRARestUrlsShouldBeTrimmed()
     {
         String url = "http://example.atlassian.net/rest/api/2/user/avatar/1938378";
-        String expected = "api/2/user/";
+        String expected = "api/2/user";
         when(rq.getMethod()).thenReturn("GET");
         when(rq.getRequestURI()).thenReturn(url);
         ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq);
@@ -45,7 +45,7 @@ public class ScopedRequestEventTest
     public void testConfluenceRestUrlsShouldBeTrimmed()
     {
         String url = "http://example.atlassian.net/confluence/rest/api/content/1384754";
-        String expected = "api/content/";
+        String expected = "api/content";
         when(rq.getMethod()).thenReturn("GET");
         when(rq.getRequestURI()).thenReturn(url);
         ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq);
@@ -56,7 +56,7 @@ public class ScopedRequestEventTest
     public void testACRestUrlsShouldBeTrimmed()
     {
         String url = "http://example.atlassian.net/confluence/atlassian-connect/rest/api/foobar/secret";
-        String expected = "api/foobar/";
+        String expected = "api/foobar";
         when(rq.getMethod()).thenReturn("GET");
         when(rq.getRequestURI()).thenReturn(url);
         ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq);
@@ -67,7 +67,7 @@ public class ScopedRequestEventTest
     public void testACRestUrlsWithQueryParametersShouldBeTrimmed()
     {
         String url = "http://example.atlassian.net/confluence/atlassian-connect/rest/api/foobar?baz=blah&secret=pyramid";
-        String expected = "api/foobar/";
+        String expected = "api/foobar";
         when(rq.getMethod()).thenReturn("GET");
         when(rq.getRequestURI()).thenReturn(url);
         ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq);
