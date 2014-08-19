@@ -4,9 +4,11 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.gzipfilter.org.apache.commons.lang.ObjectUtils;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
+import com.atlassian.plugin.connect.plugin.module.RemoteCondition;
 import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
@@ -34,7 +36,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class RemoteConditionTest
 {
-    private static final String PLUGIN_KEY = "myPluginKey";
+    private static final String ADDON_KEY = "myAddonKey";
 
     private static final String URL = "http://foo.com/bar?blah=1";
     private static final String URL_PATH = "/bar";
@@ -49,13 +51,13 @@ public class RemoteConditionTest
         }
     };
 
-    private final CustomTypeSafeMatcher<RemoteConditionEvent> eventWithCorrectPluginKey =
+    private final CustomTypeSafeMatcher<RemoteConditionEvent> eventWithCorrectAddonKey =
             new CustomTypeSafeMatcher<RemoteConditionEvent>("an event with non negative elapsed time")
             {
                 @Override
                 public boolean matchesSafely(RemoteConditionEvent event)
                 {
-                    return ObjectUtils.equals(event.getPluginKey(), PLUGIN_KEY);
+                    return ObjectUtils.equals(event.getAddonKey(), ADDON_KEY);
                 }
             };
 
@@ -65,7 +67,7 @@ public class RemoteConditionTest
                 @Override
                 public boolean matchesSafely(RemoteConditionFailedEvent event)
                 {
-                    return event.getMessage().startsWith("Unable to retrieve remote condition from plugin " + PLUGIN_KEY);
+                    return event.getMessage().startsWith("Unable to retrieve remote condition from addon " + ADDON_KEY);
                 }
             };
 
@@ -149,10 +151,10 @@ public class RemoteConditionTest
     }
 
     @Test
-    public void publishesInvokeEventWithCorrectPluginKeyOnSuccessfulCallToRemoteCondition()
+    public void publishesInvokeEventWithCorrectAddonKeyOnSuccessfulCallToRemoteCondition()
     {
         invokeWhenSuccessfulResponse();
-        verify(eventPublisher).publish(argThat(eventWithCorrectPluginKey));
+        verify(eventPublisher).publish(argThat(eventWithCorrectAddonKey));
     }
 
     @Test
@@ -194,10 +196,10 @@ public class RemoteConditionTest
     }
 
     @Test
-    public void publishesFailedEventWithCorrectPluginKeyOnUnsuccessfulCallToRemoteCondition()
+    public void publishesFailedEventWithCorrectAddonKeyOnUnsuccessfulCallToRemoteCondition()
     {
         invokeWhenErrorResponse();
-        verify(eventPublisher).publish(argThat(eventWithCorrectPluginKey));
+        verify(eventPublisher).publish(argThat(eventWithCorrectAddonKey));
     }
 
     @Test
@@ -241,10 +243,10 @@ public class RemoteConditionTest
     }
 
     @Test
-    public void publishesFailedEventWithCorrectPluginKeyOnMalformedJsonResponse()
+    public void publishesFailedEventWithCorrectAddonKeyOnMalformedJsonResponse()
     {
         invokeWhenMalformedJson();
-        verify(eventPublisher).publish(argThat(eventWithCorrectPluginKey));
+        verify(eventPublisher).publish(argThat(eventWithCorrectAddonKey));
     }
 
     @Test
@@ -286,7 +288,7 @@ public class RemoteConditionTest
     {
         final Map<String, String> params = new HashMap<String, String>();
         params.put("url", URL);
-        params.put("pluginKey", PLUGIN_KEY);
+        params.put("pluginKey", ADDON_KEY);
         params.put("toHideSelector", "blah");
 
         remoteCondition.init(params);

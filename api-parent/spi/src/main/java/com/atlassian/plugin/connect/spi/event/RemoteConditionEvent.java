@@ -1,14 +1,12 @@
 package com.atlassian.plugin.connect.spi.event;
 
-import java.net.URI;
-
 import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 
 @PrivacyPolicySafe
 abstract public class RemoteConditionEvent
 {
     @PrivacyPolicySafe
-    private final String pluginKey;
+    private final String addonKey;
 
     @PrivacyPolicySafe
     private final String urlPath;
@@ -16,16 +14,16 @@ abstract public class RemoteConditionEvent
     @PrivacyPolicySafe
     private final long elapsedMillisecs;
 
-    public RemoteConditionEvent(String pluginKey, String urlPath, long elapsedMillisecs)
+    public RemoteConditionEvent(String addonKey, String urlPath, long elapsedMillisecs)
     {
         this.elapsedMillisecs = elapsedMillisecs;
         this.urlPath = urlPath;
-        this.pluginKey = pluginKey;
+        this.addonKey = addonKey;
     }
 
-    public String getPluginKey()
+    public String getAddonKey()
     {
-        return pluginKey;
+        return addonKey;
     }
 
     public String getUrlPath()

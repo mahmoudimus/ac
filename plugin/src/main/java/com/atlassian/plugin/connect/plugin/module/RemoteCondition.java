@@ -97,7 +97,7 @@ public final class RemoteCondition implements Condition
                             public Boolean apply(Throwable t)
                             {
                                 final long elapsedMillisecs = stopWatch.getTime();
-                                final String message = String.format("Unable to retrieve remote condition from plugin %1$s: %2$s", pluginKey, t.getMessage());
+                                final String message = String.format("Unable to retrieve remote condition from addon %1$s: %2$s", pluginKey, t.getMessage());
                                 log.warn("Unable to retrieve remote condition from plugin {}: {}", pluginKey, t);
                                 t.printStackTrace();
                                 //return "<script>AJS.log('Unable to retrieve remote condition from plugin \'" + pluginKey + "\'');</script>";
