@@ -368,14 +368,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.atlassian.plugins</groupId>
-            <artifactId>atlassian-connect-spi</artifactId>
-            <scope>test</scope>
-            <type>test-jar</type>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.skyscreamer</groupId>
             <artifactId>jsonassert</artifactId>
             <version>1.2.0</version>
