@@ -36,7 +36,7 @@ _AP.define("dialog/dialog-factory", ["_dollar", "dialog/main", 'host/content'], 
                 var dialogHtml = $(data);
                 dialogHtml.addClass('ap-dialog-container');
                 // the iframe-init class lets integration-test code know that the contained iframe exists
-                dialogHtml.find('.ap-content').addClass('iframe-init');
+                dialogHtml.find('.ap-content');
                 container.replaceWith(dialogHtml);
             })
             .fail(function(xhr, status, ex) {

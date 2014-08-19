@@ -88,21 +88,9 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
                     .conditions(bean.getConditions())
+                    .dimensions("100%", "100%") // the client (js) will size the parent of the iframe
                     .dialog(true);
 
-            if (target.getOptions() instanceof DialogOptions)
-            {
-                DialogOptions options = (DialogOptions) target.getOptions();
-                String width = dialogDimension(options.getWidth());
-                String height = dialogDimension(options.getHeight());
-                iframeStrategyBuilder.dimensions(width, height);
-            }
-            else if (target.getOptions() instanceof InlineDialogOptions)
-            {
-                InlineDialogOptions options = (InlineDialogOptions) target.getOptions();
-                String width = dialogDimension(options.getWidth());
-                iframeStrategyBuilder.dimensions(width, DEFAULT_DIALOG_DIMENSION); // inline dialogs don't specify a height
-            }
 
             iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getKey(connectAddonBean), RAW_CLASSIFIER, iframeStrategyBuilder.build());
         }

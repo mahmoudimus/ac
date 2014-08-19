@@ -136,6 +136,7 @@ _AP.define("dialog/main", ["_dollar", "_uri", "host/_status_helper", "dialog/but
                 mergedOptions.h = "100%";
             } else {
                 AJS.layer(dialogElement).changeSize(mergedOptions.w, mergedOptions.h);
+                dialogElement.removeClass('aui-dialog2-medium'); // this class has a min-height so must be removed.
             }
 
             dialog = AJS.dialog2(dialogElement);
