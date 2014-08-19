@@ -8,7 +8,7 @@ _AP.require(["dialog/main", "host/content", "_uri", "dialog/dialog-factory"], fu
 
         var action = "click",
             selector = ".ap-dialog",
-            initWithUrl = function(href, options){
+            callback = function(href, options){
 
                 var webItemOptions = hostContentUtilities.getOptionsForWebItem(options.bindTo);
                 // this is a dialog-page (xml descriptor) or a web item with target=(dialog|inlineDialog)
@@ -48,7 +48,7 @@ _AP.require(["dialog/main", "host/content", "_uri", "dialog/dialog-factory"], fu
                 dialog.create(options);
             };
 
-        hostContentUtilities.eventHandler(action, selector, initWithUrl);
+        hostContentUtilities.eventHandler(action, selector, callback);
 
     });
 
