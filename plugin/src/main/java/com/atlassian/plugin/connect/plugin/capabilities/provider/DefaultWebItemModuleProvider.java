@@ -59,7 +59,9 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
 
-        if (bean.isAbsolute() || bean.getContext().equals(AddOnUrlContext.product))
+        if (bean.isAbsolute() ||
+            bean.getContext().equals(AddOnUrlContext.product) ||
+            bean.getContext().equals(AddOnUrlContext.addon) && !bean.getTarget().isDialogTarget())
         {
             descriptors.add(webItemFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean));
         }
