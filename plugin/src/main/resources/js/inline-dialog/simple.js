@@ -25,21 +25,29 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_uti
             content.data('inlineDialog', $inlineDialog);
 
             if(!content.find('iframe').length){
-
                 content.attr('id', 'ap-' + options.ns);
-                var containerId = '"embedded-' + options.ns + '"';
-                content.append('<div id="' + containerId + '" />');
+                content.append('<div id="embedded-' + options.ns + '" />');
                 content.append(statusHelper.createStatusMessages());
-                var container = $('#' + containerId);
+                _AP.create(options);
 
-                // make an iframe inside its parent div
-                hostContentUtilities.getIframeHtmlForKey(options.key, options.context, options.moduleKey, options)
-                    .done(function(data) {
+                /**
+                 * AC-1078: rough draft for reducing JWT expiry for inline dialogs. Replaces code inside "if(!content.find('iframe').length){...}".
+                 *
+                 *
+                 content.attr('id', 'ap-' + options.ns);
+                 var containerId = '"embedded-' + options.ns + '"';
+                 content.append('<div id="' + containerId + '" />');
+                 content.append(statusHelper.createStatusMessages());
+                 var container = $('#' + containerId);
+
+                 // make an iframe inside its parent div
+                 hostContentUtilities.getIframeHtmlForKey(options.key, options.context, options.moduleKey, options)
+                 .done(function(data) {
                         var dialogHtml = $(data);
                         dialogHtml.addClass('ap-dialog-container iframe-init');
                         container.replaceWith(dialogHtml);
                     })
-                    .fail(function(xhr, status, ex) {
+                 .fail(function(xhr, status, ex) {
                         var title = $("<p class='title' />").text("Unable to load add-on content. Please try again later.");
                         container.html("<div class='aui-message error ap-aui-message'></div>");
                         container.find(".error").append(title);
@@ -47,6 +55,8 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_uti
                         container.find(".error").text(msg);
                         AJS.log(msg);
                     });
+
+                 */
             }
             showPopup();
             return false;
