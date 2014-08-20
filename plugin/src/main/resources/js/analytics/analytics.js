@@ -72,6 +72,7 @@ _AP.define("analytics/analytics", ["_dollar"], function($){
     };
 
     proto.track = function (name, data) {
+        console.log("TRACK ME", name, data);
         var prefixedName = "connect.addon." + name;
         if(AJS.Analytics){
             AJS.Analytics.triggerPrivacyPolicySafeEvent(prefixedName, data);
