@@ -20,7 +20,7 @@ public class MustacheServlet extends ContextServlet
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
+    public void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
     {
         HttpUtils.renderHtml(resp, templatePath, ImmutableMap.copyOf(context));
     }

@@ -19,6 +19,7 @@ import it.ConnectWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
 import it.servlet.condition.ParameterCapturingConditionServlet;
+import it.servlet.condition.ParameterCapturingServlet;
 import it.util.TestUser;
 import org.hamcrest.Matchers;
 import org.junit.*;
@@ -54,7 +55,7 @@ public class TestDialog extends ConnectWebDriverTestBase
     private static final String JWT_EXPIRY_INLINE_DIALOG = "checkInlineDialogJwtExpiry";
     private static final String JWT_EXPIRY_INLINE_DIALOG_NAME = "check inline dialog JWT expiry";
 
-    private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
+    private static final ParameterCapturingServlet PARAMETER_CAPTURING_SERVLET = ConnectAppServlets.parameterCapturingDialogServlet();
     private static final InstallHandlerServlet INSTALL_HANDLER_SERVLET = ConnectAppServlets.installHandlerServlet();
 
     private static ConnectRunner runner;
@@ -146,7 +147,7 @@ public class TestDialog extends ConnectWebDriverTestBase
                 .addRoute("/my-webitem-dialog", ConnectAppServlets.closeDialogServlet())
                 .addRoute("/rpd", ConnectAppServlets.dialogServlet())
                 .addRoute("/fsd", ConnectAppServlets.sizeToParentServlet())
-                .addRoute(ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL, PARAMETER_CAPTURING_SERVLET)
+                .addRoute(ParameterCapturingServlet.PARAMETER_CAPTURE_URL, ConnectAppServlets.parameterCapturingDialogServlet(PARAMETER_CAPTURING_SERVLET))
                 .start();
     }
 
@@ -283,14 +284,38 @@ public class TestDialog extends ConnectWebDriverTestBase
 
         RemotePluginAwarePage page = goToPageWithLink(moduleKey, moduleName);
 
-        clickAndVerifyIssuedAtTime(jwtReaderFactory, page, moduleKey);
-        clickAndVerifyIssuedAtTime(jwtReaderFactory, page, moduleKey); // clicking multiple times should result in a new JWT on subsequent clicks
+        clickAndVerifyIssuedAtTime(jwtReaderFactory, page);
+        clickAndVerifyIssuedAtTime(jwtReaderFactory, page); // clicking multiple times should result in a new JWT on subsequent clicks
     }
 
-    private void clickAndVerifyIssuedAtTime(JwtReaderFactory jwtReaderFactory, RemotePluginAwarePage page, String moduleKey) throws JwtUnknownIssuerException, JwtParseException, JwtIssuerLacksSharedSecretException, JwtVerificationException
+    private void sleepForAtLeast1Second()
+    {
+        sleepUntil(System.currentTimeMillis() + 1000);
+    }
+
+    private void sleepUntil(final long wakeTimeMillis)
+    {
+        try
+        {
+            if (wakeTimeMillis > System.currentTimeMillis())
+            {
+                Thread.sleep(wakeTimeMillis - System.currentTimeMillis());
+            }
+        }
+        catch (InterruptedException e)
+        {
+            if (System.currentTimeMillis() < wakeTimeMillis)
+            {
+                sleepUntil(wakeTimeMillis);
+            }
+        }
+    }
+
+    private void clickAndVerifyIssuedAtTime(JwtReaderFactory jwtReaderFactory, RemotePluginAwarePage page) throws JwtUnknownIssuerException, JwtParseException, JwtIssuerLacksSharedSecretException, JwtVerificationException
     {
         final long timeBeforeClick = System.currentTimeMillis();
-        openAndCloseDialog(page, moduleKey);
+        sleepForAtLeast1Second(); // because the JWT "iat" claim is specified in seconds there is no way to differentiate between "now" and "now + a few milliseconds"
+        openAndCloseDialog(page);
         verifyIssuedAtTime(jwtReaderFactory, timeBeforeClick);
     }
 
@@ -308,10 +333,10 @@ public class TestDialog extends ConnectWebDriverTestBase
     private RemotePluginAwarePage goToPageWithLink(String dashedModuleKey, String moduleName)
     {
         loginAndVisit(TestUser.ADMIN, HomePage.class);
-        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, dashedModuleKey, moduleName, runner.getAddon().getKey());
-        assertTrue(remotePage.isRemotePluginLinkPresent());
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, dashedModuleKey, moduleName, runner.getAddon().getKey());
+        assertTrue(page.isRemotePluginLinkPresent());
 
-        return remotePage;
+        return page;
     }
 
     private JwtReaderFactory getJwtReaderFactory()
@@ -361,7 +386,7 @@ public class TestDialog extends ConnectWebDriverTestBase
         };
     }
 
-    private void openAndCloseDialog(RemotePluginAwarePage page, String moduleKey)
+    private void openAndCloseDialog(RemotePluginAwarePage page)
     {
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
         RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, remotePluginTest);

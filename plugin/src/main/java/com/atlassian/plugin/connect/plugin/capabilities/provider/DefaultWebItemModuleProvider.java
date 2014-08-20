@@ -6,15 +6,12 @@ import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
-import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
-import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilder;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -82,24 +79,20 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
         // Allow a web item which opens in a dialog to be opened programmatically, too
         if (target.isDialogTarget() || target.isInlineDialogTarget())
         {
-            final IFrameRenderStrategyBuilder.InitializedBuilder iframeStrategyBuilder = iFrameRenderStrategyBuilderFactory.builder()
+            final IFrameRenderStrategy iFrameRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(connectAddonBean.getKey())
                     .module(bean.getKey(connectAddonBean))
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
                     .conditions(bean.getConditions())
-                    .dimensions("100%", "100%") // the client (js) will size the parent of the iframe
-                    .dialog(true);
+                    .dimensions(DEFAULT_DIALOG_DIMENSION, DEFAULT_DIALOG_DIMENSION) // the client (js) will size the parent of the iframe
+                    .dialog(true)
+                    .build();
 
-
-            iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getKey(connectAddonBean), RAW_CLASSIFIER, iframeStrategyBuilder.build());
+            iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getKey(connectAddonBean), RAW_CLASSIFIER, iFrameRenderStrategy);
+            iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), RAW_CLASSIFIER, iFrameRenderStrategy);
         }
 
         return descriptors;
-    }
-
-    private static String dialogDimension(String widthFromOptions)
-    {
-        return StringUtils.isEmpty(widthFromOptions) ? DEFAULT_DIALOG_DIMENSION : widthFromOptions;
     }
 }
