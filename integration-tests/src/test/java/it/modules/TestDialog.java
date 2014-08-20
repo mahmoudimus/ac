@@ -22,7 +22,10 @@ import it.servlet.condition.ParameterCapturingConditionServlet;
 import it.servlet.condition.ParameterCapturingServlet;
 import it.util.TestUser;
 import org.hamcrest.Matchers;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import javax.annotation.Nonnull;
 import java.util.Date;
@@ -272,7 +275,6 @@ public class TestDialog extends ConnectWebDriverTestBase
 
     // because we issue a new JWT when it is clicked
     @Test
-    @Ignore(value="see AC-1078 follow-up task for inline dialogs")
     public void inlineDialogClickGetsNewJwt() throws JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtVerificationException, JwtParseException
     {
         verifyJwtIssuedAtTimeForDialog(JWT_EXPIRY_INLINE_DIALOG, JWT_EXPIRY_INLINE_DIALOG_NAME);

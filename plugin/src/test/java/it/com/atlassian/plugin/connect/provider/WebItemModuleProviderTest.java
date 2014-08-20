@@ -452,7 +452,10 @@ public class WebItemModuleProviderTest
 
     private void assertAddOnLinkHrefIsCorrect(WebItemModuleDescriptor descriptor, WebItemModuleBean webItemModuleBean, ConnectAddonBean addOnBean)
     {
-        final String prefix = webItemModuleBean.getTarget().isDialogTarget() ? ConnectIFrameServlet.iFrameServletPath(pluginKey, webItemModuleBean.getKey(addOnBean)) : BASE_URL + "/my/addon";
+        final WebItemTargetBean target = webItemModuleBean.getTarget();
+        final String prefix = target.isDialogTarget() || target.isInlineDialogTarget()
+                ? ConnectIFrameServlet.iFrameServletPath(pluginKey, webItemModuleBean.getKey(addOnBean))
+                : BASE_URL + "/my/addon";
         final String href = descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>());
         final String message = String.format("Expecting the href to start with '%s' but it was '%s'", prefix, href);
         assertTrue(message, href.startsWith(prefix));

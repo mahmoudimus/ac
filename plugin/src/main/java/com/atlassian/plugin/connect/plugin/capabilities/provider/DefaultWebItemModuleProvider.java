@@ -66,7 +66,7 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
 
         if (bean.isAbsolute() ||
             bean.getContext().equals(AddOnUrlContext.product) ||
-            bean.getContext().equals(AddOnUrlContext.addon) && !target.isDialogTarget())
+            bean.getContext().equals(AddOnUrlContext.addon) && !target.isDialogTarget() && !target.isInlineDialogTarget())
         {
             descriptors.add(webItemFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean));
         }

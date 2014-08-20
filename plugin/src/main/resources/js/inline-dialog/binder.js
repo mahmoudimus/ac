@@ -8,6 +8,8 @@ var inlineDialogTrigger = '.ap-inline-dialog';
                 if(options.onHover !== "true" && eventType !== 'click'){
                     return;
                 }
+                var servletUrl = href.match(/\/servlet\/ac\/([\w-]+)\/([\w-]+)/);
+                options.moduleKey = servletUrl[2];
                 simpleInlineDialog(href, options).show();
             };
         hostContentUtilities.eventHandler(action, inlineDialogTrigger, callback);

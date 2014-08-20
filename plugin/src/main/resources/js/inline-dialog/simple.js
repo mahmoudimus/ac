@@ -25,27 +25,21 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_uti
             content.data('inlineDialog', $inlineDialog);
 
             if(!content.find('iframe').length){
-                content.attr('id', 'ap-' + options.ns);
-                content.append('<div id="embedded-' + options.ns + '" />');
-                content.append(statusHelper.createStatusMessages());
-                _AP.create(options);
 
-                /**
-                 * AC-1078: rough draft for reducing JWT expiry for inline dialogs. Replaces code inside "if(!content.find('iframe').length){...}".
-                 *
-                 *
-                 content.attr('id', 'ap-' + options.ns);
-                 var containerId = '"embedded-' + options.ns + '"';
-                 content.append('<div id="' + containerId + '" />');
-                 content.append(statusHelper.createStatusMessages());
-                 var container = $('#' + containerId);
+                content.attr('id', 'ap-' + options.ns);
+                var containerId = 'embedded-' + options.ns;
+                content.append('<div id="' + containerId + '" />');
+                content.append(statusHelper.createStatusMessages());
+                var container = $('#' + containerId);
+                var uiParams = $.extend({dlg: 1}, options.uiParams);
 
                  // make an iframe inside its parent div
-                 hostContentUtilities.getIframeHtmlForKey(options.key, options.context, options.moduleKey, options)
+                hostContentUtilities.getIframeHtmlForKey(options.key, options.context, {'key':options.moduleKey}, uiParams)
                  .done(function(data) {
                         var dialogHtml = $(data);
-                        dialogHtml.addClass('ap-dialog-container iframe-init');
+                        dialogHtml.addClass('ap-dialog-container');
                         container.replaceWith(dialogHtml);
+                        dialogHtml.find('.ap-content').addClass('iframe-init');
                     })
                  .fail(function(xhr, status, ex) {
                         var title = $("<p class='title' />").text("Unable to load add-on content. Please try again later.");
@@ -55,8 +49,6 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_uti
                         container.find(".error").text(msg);
                         AJS.log(msg);
                     });
-
-                 */
             }
             showPopup();
             return false;

@@ -92,8 +92,8 @@ _AP.define("dialog/main", ["_dollar", "_uri", "host/_status_helper", "dialog/but
     return {
         id: dialogId,
         getButton: function(name){
-            var buttons = $nexus.data('ra.dialog.buttons');
-            return (name) ? buttons[name] : buttons;
+            var buttons = $nexus ? $nexus.data('ra.dialog.buttons') : null;
+            return (name) && (buttons) ? buttons[name] : buttons;
         },
 
         /**
