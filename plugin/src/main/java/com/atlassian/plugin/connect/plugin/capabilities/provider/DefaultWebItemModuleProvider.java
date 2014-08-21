@@ -12,6 +12,8 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
+import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.UrlMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,15 +33,18 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
     private final WebItemModuleDescriptorFactory webItemFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    private final String productBaseUrl;
 
     @Autowired
     public DefaultWebItemModuleProvider(WebItemModuleDescriptorFactory webItemFactory,
                                         IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-                                        IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
+                                        IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                        ApplicationProperties applicationProperties)
     {
         this.webItemFactory = webItemFactory;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
+        this.productBaseUrl = applicationProperties.getBaseUrl(UrlMode.RELATIVE_CANONICAL);
     }
 
     @Override
@@ -72,7 +77,7 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
         }
         else
         {
-            String localUrl = ConnectIFrameServlet.iFrameServletPath(connectAddonBean.getKey(),bean.getUrl());
+            String localUrl = ConnectIFrameServlet.iFrameServletPath(productBaseUrl, connectAddonBean.getKey(),bean.getUrl());
             WebItemModuleBean newBean = newWebItemBean(bean).withUrl(localUrl).build();
             descriptors.add(webItemFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, newBean));
         }
@@ -89,7 +94,7 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
                     .dialog(true)
                     .build();
 
-            iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getKey(connectAddonBean), RAW_CLASSIFIER, iFrameRenderStrategy);
+            iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getKey(connectAddonBean), iFrameRenderStrategy);
             iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), RAW_CLASSIFIER, iFrameRenderStrategy);
         }
 

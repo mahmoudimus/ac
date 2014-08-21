@@ -25,11 +25,20 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_uti
             content.data('inlineDialog', $inlineDialog);
             var iFrame = content.find('iframe');
 
-            if(iFrame && iFrame.length && content.innerHTML) {
+            // cache for a very short period of time because inline dialogs can be triggered by mouse-over events, which happen repeatedly
+            var previouslyLoaded = null != content.attr('last-load-time');
+            var canClearContent = previouslyLoaded && content.innerHTML;
+            var contentIsTooOld = previouslyLoaded && content.attr('last-load-time') > new Date().getTime() + 500;
+            var shouldClearContent = canClearContent && contentIsTooOld;
+
+            if(shouldClearContent) {
                 content.innerHTML('');
+                iFrame = null;
             }
 
+            if (!previouslyLoaded || shouldClearContent)
             {
+                content.attr('last-load-time', new Date().getTime());
                 content.attr('id', 'ap-' + options.ns);
                 var containerId = 'embedded-' + options.ns;
                 content.append('<div id="' + containerId + '" />');

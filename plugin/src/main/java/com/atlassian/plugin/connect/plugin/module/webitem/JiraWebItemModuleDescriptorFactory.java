@@ -13,6 +13,8 @@ import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugin.web.model.WebLink;
+import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.UrlMode;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -30,6 +32,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
     private final JiraAuthenticationContext jiraAuthenticationContext;
     private final WebFragmentModuleContextExtractor webFragmentModuleContextExtractor;
     private final ModuleContextFilter moduleContextFilter;
+    private final ApplicationProperties applicationProperties;
 
     @Autowired
     public JiraWebItemModuleDescriptorFactory(
@@ -39,7 +42,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
             JiraAuthenticationContext jiraAuthenticationContext,
             WebFragmentModuleContextExtractor webFragmentModuleContextExtractor,
             ModuleContextFilter moduleContextFilter,
-            UrlVariableSubstitutor urlVariableSubstitutor)
+            UrlVariableSubstitutor urlVariableSubstitutor, ApplicationProperties applicationProperties)
     {
         this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.webFragmentModuleContextExtractor = checkNotNull(webFragmentModuleContextExtractor);
@@ -48,13 +51,15 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
         this.iFrameUriBuilderFactory = checkNotNull(iFrameUriBuilderFactory);
         this.webInterfaceManager = checkNotNull(webInterfaceManager);
         this.webFragmentHelper = checkNotNull(webFragmentHelper);
+        this.applicationProperties = checkNotNull(applicationProperties);
     }
 
     @Override
     public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog)
     {
         return new RemoteJiraWebItemModuleDescriptor(jiraAuthenticationContext, webInterfaceManager, webFragmentHelper,
-                iFrameUriBuilderFactory, urlVariableSubstitutor, webFragmentModuleContextExtractor, moduleContextFilter, url, pluginKey, moduleKey, absolute, addOnUrlContext, isDialog);
+                iFrameUriBuilderFactory, urlVariableSubstitutor, webFragmentModuleContextExtractor, moduleContextFilter,
+                url, pluginKey, moduleKey, absolute, addOnUrlContext, isDialog, applicationProperties.getBaseUrl(UrlMode.RELATIVE_CANONICAL));
     }
 
     private static final class RemoteJiraWebItemModuleDescriptor extends JiraWebItemModuleDescriptor
@@ -70,6 +75,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
         private boolean absolute;
         private final AddOnUrlContext addOnUrlContext;
         private final boolean isDialog;
+        private final String productContextPath;
 
         public RemoteJiraWebItemModuleDescriptor(
                 JiraAuthenticationContext jiraAuthenticationContext,
@@ -82,7 +88,8 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
                 String url,
                 String pluginKey,
                 String moduleKey,
-                boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog)
+                boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog,
+                String productContextPath)
         {
             super(jiraAuthenticationContext, webInterfaceManager);
             this.webFragmentHelper = webFragmentHelper;
@@ -96,6 +103,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
             this.absolute = absolute;
             this.addOnUrlContext = addOnUrlContext;
             this.isDialog = isDialog;
+            this.productContextPath = productContextPath;
         }
 
         @Override
@@ -103,7 +111,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
         {
             return new JiraWebLink(new RemoteWebLink(this, webFragmentHelper, iFrameUriBuilderFactory,
                     urlVariableSubstitutor, webFragmentModuleContextExtractor, moduleContextFilter, url, pluginKey,
-                    moduleKey, absolute, addOnUrlContext, isDialog), authenticationContext);
+                    moduleKey, absolute, addOnUrlContext, isDialog, productContextPath), authenticationContext);
         }
 
         @Override

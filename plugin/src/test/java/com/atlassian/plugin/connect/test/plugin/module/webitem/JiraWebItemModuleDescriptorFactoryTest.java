@@ -13,6 +13,7 @@ import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
+import com.atlassian.sal.api.ApplicationProperties;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.junit.Before;
@@ -60,6 +61,9 @@ public class JiraWebItemModuleDescriptorFactoryTest
     @Mock
     private ModuleContextFilter moduleContextFilter;
 
+    @Mock
+    private ApplicationProperties applicationProperties;
+
     private WebItemModuleDescriptor descriptor;
 
     @Before
@@ -69,7 +73,7 @@ public class JiraWebItemModuleDescriptorFactoryTest
 
         JiraWebItemModuleDescriptorFactory webItemFactory = new JiraWebItemModuleDescriptorFactory(
                 webFragmentHelper, webInterfaceManager, iFrameUriBuilderFactory, jiraAuthenticationContext,
-                webFragmentModuleContextExtractor, moduleContextFilter, urlVariableSubstitutor);
+                webFragmentModuleContextExtractor, moduleContextFilter, urlVariableSubstitutor, applicationProperties);
 
         when(servletRequest.getContextPath()).thenReturn("ElContexto");
 

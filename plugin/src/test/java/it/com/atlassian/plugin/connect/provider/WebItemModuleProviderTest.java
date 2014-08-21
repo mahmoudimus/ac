@@ -15,6 +15,8 @@ import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.UrlMode;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -57,16 +59,19 @@ public class WebItemModuleProviderTest
     private HttpServletRequest servletRequest;
     private ConnectModuleProviderContext moduleProviderContext;
     private ConnectAddonBean addon;
+    private String productContextPath;
 
     private String pluginKey;
 
     public WebItemModuleProviderTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller,
-                                     TestAuthenticator testAuthenticator, PluginAccessor pluginAccessor)
+                                     TestAuthenticator testAuthenticator, PluginAccessor pluginAccessor,
+                                     ApplicationProperties applicationProperties)
     {
         this.webItemModuleProvider = webItemModuleProvider;
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
         this.pluginAccessor = pluginAccessor;
+        this.productContextPath = applicationProperties.getBaseUrl(UrlMode.RELATIVE_CANONICAL);
     }
 
     @BeforeClass
@@ -454,7 +459,7 @@ public class WebItemModuleProviderTest
     {
         final WebItemTargetBean target = webItemModuleBean.getTarget();
         final String prefix = target.isDialogTarget() || target.isInlineDialogTarget()
-                ? ConnectIFrameServlet.iFrameServletPath(pluginKey, webItemModuleBean.getKey(addOnBean))
+                ? ConnectIFrameServlet.iFrameServletPath(productContextPath, pluginKey, webItemModuleBean.getKey(addOnBean))
                 : BASE_URL + "/my/addon";
         final String href = descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>());
         final String message = String.format("Expecting the href to start with '%s' but it was '%s'", prefix, href);

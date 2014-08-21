@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.StaticContentMa
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.module.confluence.MacroContentManager;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
+import com.atlassian.sal.api.ApplicationProperties;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -26,6 +27,7 @@ public class StaticContentMacroModuleProviderTest extends AbstractContentMacroMo
     @Mock private MacroModuleContextExtractor macroModuleContextExtractor;
     @Mock private IFrameUriBuilderFactory iFrameUriBuilderFactory;
     @Mock private RemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    @Mock private ApplicationProperties applicationProperties;
 
     @Override
     protected StaticContentMacroModuleProvider createModuleProvider()
@@ -35,7 +37,8 @@ public class StaticContentMacroModuleProviderTest extends AbstractContentMacroMo
                 remotablePluginAccessorFactory);
 
         return new StaticContentMacroModuleProvider(macroModuleDescriptorFactory, webItemModuleDescriptorFactory,
-                hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory, connectAddonI18nManager);
+                hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory,
+                connectAddonI18nManager, applicationProperties);
     }
 
     @Override

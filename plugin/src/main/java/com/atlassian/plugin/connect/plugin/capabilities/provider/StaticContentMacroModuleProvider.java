@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+import com.atlassian.sal.api.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ConfluenceComponent
@@ -25,9 +26,10 @@ public class StaticContentMacroModuleProvider extends AbstractContentMacroModule
                                             AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
                                             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
                                             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-                                            ConnectAddonI18nManager connectAddonI18nManager)
+                                            ConnectAddonI18nManager connectAddonI18nManager,
+                                            ApplicationProperties applicationProperties)
     {
-        super(webItemModuleDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory, connectAddonI18nManager);
+        super(webItemModuleDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory, connectAddonI18nManager, applicationProperties);
         this.macroModuleDescriptorFactory = macroModuleDescriptorFactory;
     }
 

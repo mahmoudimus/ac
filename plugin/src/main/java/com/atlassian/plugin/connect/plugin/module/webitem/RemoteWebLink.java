@@ -33,11 +33,13 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
     private final boolean absolute;
     private final AddOnUrlContext addOnUrlContext;
     private final boolean isDialog;
+    private final String productContextPath; // e.g. "/wiki" or (in integration tests) "/jira"
 
     public RemoteWebLink(WebFragmentModuleDescriptor webFragmentModuleDescriptor, WebFragmentHelper webFragmentHelper,
                          IFrameUriBuilderFactory iFrameUriBuilderFactory, UrlVariableSubstitutor urlVariableSubstitutor,
                          WebFragmentModuleContextExtractor webFragmentModuleContextExtractor, ModuleContextFilter moduleContextFilter,
-                         String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog)
+                         String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog,
+                         String productContextPath)
     {
         super(webFragmentHelper, null, webFragmentModuleDescriptor);
         this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
@@ -50,6 +52,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
         this.absolute = absolute;
         this.addOnUrlContext = addOnUrlContext;
         this.isDialog = isDialog;
+        this.productContextPath = productContextPath;
     }
 
     @Override
@@ -83,7 +86,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
             if (addOnUrlContext == addon)
             {
                 return isDialog
-                        ? urlVariableSubstitutor.append(ConnectIFrameServlet.iFrameServletPath(pluginKey, moduleKey), moduleContext)
+                        ? urlVariableSubstitutor.append(ConnectIFrameServlet.iFrameServletPath(productContextPath, pluginKey, moduleKey), moduleContext)
                         : iFrameUriBuilderFactory.builder()
                             .addOn(pluginKey)
                             .namespace(moduleKey)

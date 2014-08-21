@@ -5,7 +5,7 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-
+import com.atlassian.sal.api.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ConfluenceComponent
@@ -17,9 +17,10 @@ public class ProfilePageModuleProvider extends AbstractConnectPageModuleProvider
     public ProfilePageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
                                      IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
                                      WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                                     ProductAccessor productAccessor)
+                                     ProductAccessor productAccessor,
+                                     ApplicationProperties applicationProperties)
     {
-        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory);
+        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory, applicationProperties);
         this.productAccessor = productAccessor;
     }
 
