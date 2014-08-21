@@ -1,8 +1,12 @@
 package com.atlassian.plugin.connect.test.plugin.scopes;
 
+import java.io.IOException;
+import java.util.Date;
+
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jira.security.auth.trustedapps.KeyFactory;
 import com.atlassian.jwt.JwtConstants;
+import com.atlassian.jwt.core.Clock;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
@@ -13,9 +17,13 @@ import com.atlassian.plugin.connect.plugin.product.WebSudoService;
 import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploderUnitTestHelper;
 import com.atlassian.plugin.connect.spi.event.ScopedRequestAllowedEvent;
 import com.atlassian.plugin.connect.spi.event.ScopedRequestDeniedEvent;
+import com.atlassian.plugin.connect.spi.event.ScopedRequestEvent;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
+
+import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -25,6 +33,9 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -59,6 +70,8 @@ public class ApiScopingFilterTest
     private FilterChain chain;
     @Mock
     private EventPublisher eventPublisher;
+    @Mock
+    private Clock clock;
 
     private ApiScopingFilter apiScopingFilter;
     private UserKey userKey = new UserKey("12345");
@@ -77,7 +90,11 @@ public class ApiScopingFilterTest
 
         when(userManager.getRemoteUserKey(any(HttpServletRequest.class))).thenReturn(userKey);
         when(consumerService.getConsumer()).thenReturn(Consumer.key(THIS_ADD_ON_KEY).name("whatever").signatureMethod(Consumer.SignatureMethod.HMAC_SHA1).publicKey(new KeyFactory.InvalidPublicKey(new Exception())).build());
-        apiScopingFilter = new ApiScopingFilter(permissionManager, userManager, consumerService, webSudoService, jsonConnectAddOnIdentifierService, eventPublisher);
+
+        when(clock.now()).thenReturn(new Date(0));
+        apiScopingFilter = new ApiScopingFilter(permissionManager, userManager, consumerService, webSudoService, jsonConnectAddOnIdentifierService, eventPublisher, clock);
+
+
     }
 
     @Test
@@ -159,6 +176,135 @@ public class ApiScopingFilterTest
         when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher, never()).publish(argThat(isScopeRequestDeniedEvent()));
+    }
+    
+    @Test
+    public void testURIsAreTrimmedInDeniedEvents() throws IOException, ServletException
+    {
+        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
+        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(false);
+        when(request.getRequestURI()).thenReturn("http://localhost/jira/rest/atlassian-connect/1/foo/private-stuff");
+        apiScopingFilter.doFilter(request, response, chain);
+        verify(eventPublisher).publish(argThat(hasRequestURI("atlassian-connect/1/foo")));
+    }
+
+    @Test 
+    public void testURIsAreTrimmedInAllowedEvents() throws IOException, ServletException
+    {
+        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
+        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
+        when(request.getRequestURI()).thenReturn("http://localhost/jira/rest/atlassian-connect/1/foo/private-stuff");
+        apiScopingFilter.doFilter(request, response, chain);
+        verify(eventPublisher).publish(argThat(hasRequestURI("atlassian-connect/1/foo")));
+    }
+    
+    @Test
+    public void testAllowedEventsADuration() throws IOException, ServletException
+    {
+        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
+        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
+        Date start = new Date(0);
+        Date end = new Date(101);
+        when(clock.now()).thenReturn(start, end);
+        apiScopingFilter.doFilter(request, response, chain);
+        verify(eventPublisher).publish(argThat(hasDuration(1)));
+    }
+
+    @Test
+    public void testAllowedEventsHaveStatusCode() throws IOException, ServletException
+    {
+        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
+        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
+        FilterChain wrappedChain = new FilterChainWrapper();
+        apiScopingFilter.doFilter(request, response, wrappedChain);
+        verify(eventPublisher).publish(argThat(hasResponseCode(200)));
+    }
+
+    private class FilterChainWrapper implements FilterChain {
+
+        @Override
+        public void doFilter(ServletRequest rq, ServletResponse resp) throws IOException, ServletException
+        {
+            HttpServletResponse.class.cast(resp).setStatus(200);
+            chain.doFilter(rq, resp);
+        }
+    }
+
+    @Test(expected=ServletException.class)
+    public void testUnhandledErrorsInFilterChainCreateEvents() throws IOException, ServletException
+    {
+        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
+        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
+        doThrow(new IOException("Something went wrong")).when(chain).doFilter(any(HttpServletRequest.class),
+                                                                              any(HttpServletResponse.class));
+        try
+        {
+            apiScopingFilter.doFilter(request, response, chain);
+        }
+        finally
+        {
+            verify(eventPublisher).publish(argThat(hasResponseCode(500)));
+        }
+    }
+
+    private static TypeSafeMatcher<ScopedRequestEvent> hasRequestURI(final String uri)
+    {
+        return new TypeSafeMatcher<ScopedRequestEvent>()
+        {
+
+            @Override
+            public void describeTo(Description description)
+            {
+                description.appendText("got a ScopedRequestEvent with URI: ").appendValue(uri);
+
+            }
+
+            @Override
+            protected boolean matchesSafely(ScopedRequestEvent item)
+            {
+                return item.getHttpRequestUri().equals(uri);
+            }
+
+        };
+    }
+
+    private static TypeSafeMatcher<ScopedRequestAllowedEvent> hasResponseCode(final int responseCode)
+    {
+        return new TypeSafeMatcher<ScopedRequestAllowedEvent>()
+        {
+
+            @Override
+            public void describeTo(Description description)
+            {
+                description.appendText("got a ScopedRequestEvent with statusCode: ").appendValue(responseCode);
+
+            }
+
+            @Override
+            protected boolean matchesSafely(ScopedRequestAllowedEvent item)
+            {
+                return item.getResponseCode() == responseCode;
+            }
+
+        };
+    }
+
+    private static TypeSafeMatcher<ScopedRequestAllowedEvent> hasDuration( final long duration)
+    {
+        return new TypeSafeMatcher<ScopedRequestAllowedEvent>(){
+
+            @Override
+            public void describeTo(Description description)
+            {
+                description.appendText("ScopedRequestEvent duration was: " + duration);
+                
+            }
+
+            @Override
+            protected boolean matchesSafely(ScopedRequestAllowedEvent item)
+            {
+                return item.getDuration() == duration;
+            }};
     }
 
     private Matcher<Object> isScopeRequestAllowedEvent()

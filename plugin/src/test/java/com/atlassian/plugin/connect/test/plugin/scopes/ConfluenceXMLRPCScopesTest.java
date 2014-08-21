@@ -52,15 +52,6 @@ public class ConfluenceXMLRPCScopesTest extends AbstractScopesTest
 
     public ConfluenceXMLRPCScopesTest(ScopeName scope, String methodName, boolean expectedOutcome)
     {
-        super(scope, HttpMethod.POST, "/confluence/rpc/xmlrpc", createXMLRPCPayload(methodName), expectedOutcome, "/confluence", "Confluence");
+        super(scope, HttpMethod.POST, "/confluence/rpc/xmlrpc", APITestUtil.createXmlRpcPayload(methodName), expectedOutcome, "/confluence", "Confluence");
     }
-
-    private static String createXMLRPCPayload(String methodName)
-    {
-        return "<?xml version=\"1.0\"?>\n" +
-                "<methodCall>\n" +
-                "   <methodName>"+ methodName +"</methodName>\n" +
-                "</methodCall>";
-    }
-
 }

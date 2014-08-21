@@ -24,6 +24,7 @@ import com.atlassian.plugin.connect.plugin.module.jira.searchrequestview.Connect
 import com.atlassian.plugin.connect.plugin.product.jira.JiraProductAccessor;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.web.Condition;
+import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import org.dom4j.Element;
@@ -61,7 +62,7 @@ public class SearchRequestViewModuleDescriptorFactoryTest
     @Mock
     private DelegatingComponentAccessor componentAccessor;
     @Mock
-    private HostContainer hostContainer;
+    private WebFragmentHelper webFragmentHelper;
     @Mock
     private IFrameUriBuilderFactory iFrameUriBuilderFactory;
     @Mock
@@ -83,10 +84,10 @@ public class SearchRequestViewModuleDescriptorFactoryTest
         when(plugin.<UserLoggedInCondition>loadClass(eq("com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"), any(Class.class)))
                 .thenReturn(UserLoggedInCondition.class);
 
-        ConditionDescriptorFactory conditionDescriptorFactory = new ConditionDescriptorFactoryImpl(hostContainer);
+        ConditionDescriptorFactory conditionDescriptorFactory = new ConditionDescriptorFactoryImpl(webFragmentHelper);
         ConditionModuleFragmentFactory conditionModuleFragmentFactory = new ConditionModuleFragmentFactory(
                 new JiraProductAccessor(new JiraConditions()), new ParamsModuleFragmentFactory());
-        when(hostContainer.create(UserLoggedInCondition.class)).thenReturn(new UserLoggedInCondition());
+        when(webFragmentHelper.loadCondition(eq(UserLoggedInCondition.class.getCanonicalName()), eq(plugin))).thenReturn(new UserLoggedInCondition());
 
         when(componentAccessor.getComponent(SearchRequestURLHandler.class)).thenReturn(urlHandler);
         when(componentAccessor.getComponent(ConditionDescriptorFactory.class)).thenReturn(conditionDescriptorFactory);

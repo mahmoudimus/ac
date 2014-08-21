@@ -24,19 +24,22 @@ JIRA supports these context variables:
 
 Confluence supports these context variables:
 
- * `page.id`, `page.version`, `page.type`
- * `space.id`, `space.key`
  * `content.id`, `content.version`, `content.type`, `content.plugin`
+ * `space.id`, `space.key`
+ * `page.id`, `page.version`, `page.type` <span class="aui-lozenge">DEPRECATED</span>
 
 A particular variable is available only where it makes sense given the application context. For example, a JIRA issue
 page only exposes issue and project data. Similarly, version and component information is available only in project
 administration pages.
 
-In Confluence, the `content.*` variables are currently only available in certain contexts where custom content entities
-reside, the primary example being Confluence Questions. We intend that the `content` variables will be populated
-and identical to their `page.*` counterparts in an upcoming Connect release. `content.plugin` is a special case that is
-populated only if the content in context is a custom Confluence content item, such as a Confluence Question. In this
-case `content.type` will be set to "custom".
+Confluence provides the `content.*` variables wherever a page, blogpost, or custom content is present. Some examples are
+viewing or editing a page/blogpost, or viewing a Confluence Question. The `page.*` variables are available, but have
+been deprecated in favour of their `content.*` counterparts.
+
+The `content.plugin` variable is a special case variable that is only present if the content in question is a Custom
+Content entity provided by a plugin. For example, a question in Confluence Questions will have a `content.plugin` value
+of "com.atlassian.confluence.plugins.confluence-questions:question". As a general rule, the `content.plugin` variable
+will only be present if `content.type` is equal to "custom".
 
 URL variables are available to any of the page modules, including web panels, web items, general pages and dialog pages,
 except for Confluence macros. To add a variable to a URL, enclose the variable name in curly brackets, as follows: `{variable.name}`

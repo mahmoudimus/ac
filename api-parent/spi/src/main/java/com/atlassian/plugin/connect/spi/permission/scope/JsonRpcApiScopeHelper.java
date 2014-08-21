@@ -85,7 +85,7 @@ public final class JsonRpcApiScopeHelper
         return apiResourceInfo;
     }
 
-    private String extractMethod(HttpServletRequest request)
+    public static String extractMethod(HttpServletRequest request)
     {
         InputStream in = null;
         try

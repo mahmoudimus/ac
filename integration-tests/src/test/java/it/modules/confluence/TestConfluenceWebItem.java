@@ -59,7 +59,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                                 .withKey(ADDON_WEBITEM)
                                 .withLocation("system.content.action")
                                 .withWeight(1)
-                                .withUrl("/irwi?page_id={page.id}")
+                                .withUrl("/irwi?page_id={page.id}&content_id={content.id}")
                                 .build(),
                         newWebItemBean()
                                 .withContext(AddOnUrlContext.addon)
@@ -67,7 +67,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                                 .withKey(ADDON_DIRECT_WEBITEM)
                                 .withLocation("system.content.action")
                                 .withWeight(1)
-                                .withUrl("/irwi?page_id={page.id}")
+                                .withUrl("/irwi?page_id={page.id}&content_id={content.id}")
                                 .build(),
                         newWebItemBean()
                                 .withContext(AddOnUrlContext.product)
@@ -75,14 +75,14 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                                 .withKey(PRODUCT_WEBITEM)
                                 .withLocation("system.content.action")
                                 .withWeight(1)
-                                .withUrl("/pages/viewpage.action?pageId={page.id}")
+                                .withUrl("/pages/viewpage.action?pageId={page.id}&contentId={content.id}")
                                 .build(),
                         newWebItemBean()
                                 .withName(new I18nProperty("google link", "ac.gl"))
                                 .withKey(ABSOLUTE_WEBITEM)
                                 .withLocation("system.content.action")
                                 .withWeight(1)
-                                .withUrl("http://www.google.com?myPageId={page.id}&mySpaceKey={space.key}")
+                                .withUrl("http://www.google.com?myPageId={page.id}&mySpaceKey={space.key}&myContentId={content.id}")
                                 .withConditions(
                                         newSingleConditionBean().withCondition("user_is_logged_in").build(),
                                         newSingleConditionBean().withCondition("/onlyBettyCondition").build()
@@ -101,7 +101,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
 
                 .addRoute("/onlyBarneyCondition", new CheckUsernameConditionServlet(TestUser.BARNEY))
                 .addRoute("/onlyBettyCondition", new CheckUsernameConditionServlet(TestUser.BETTY))
-                .addRoute("/irwi?page_id={page.id}", ConnectAppServlets.helloWorldServlet())
+                .addRoute("/irwi?page_id={page.id}&content_id={content.id}", ConnectAppServlets.helloWorldServlet())
                 .start();
     }
 
@@ -124,6 +124,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
 
         assertThat(webItem.getPath(), startsWith("http://www.google.com/?"));
         assertThat(webItem.getFromQueryString("myPageId"), isInteger());
+        assertThat(webItem.getFromQueryString("myContentId"), equalTo(webItem.getFromQueryString("myPageId")));
         assertThat(webItem.getFromQueryString("mySpaceKey"), equalTo("ds"));
     }
 
@@ -137,6 +138,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
         assertNotNull("Web item should be found", webItem);
 
         assertEquals(pageAndWebItem.left().getPageId(), webItem.getFromQueryString("page_id"));
+        assertEquals(pageAndWebItem.left().getPageId(), webItem.getFromQueryString("content_id"));
         // web-item url mode is relative to the addon by default
         assertThat(webItem.getPath(), startsWith(remotePlugin.getAddon().getBaseUrl()));
 
@@ -153,6 +155,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
         assertNotNull("Web item should be found", webItem);
 
         assertEquals(pageAndWebItem.left().getPageId(), webItem.getFromQueryString("page_id"));
+        assertEquals(pageAndWebItem.left().getPageId(), webItem.getFromQueryString("content_id"));
         assertThat(webItem.getPath(), startsWith(remotePlugin.getAddon().getBaseUrl()));
 
         verifyStandardAddOnRelativeQueryParameters(webItem, "/confluence");
@@ -173,6 +176,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
         URL url = new URL(webItem.getPath());
         assertThat(url.getPath(), is("/confluence/pages/viewpage.action"));
         assertEquals(viewPage.getPageId(), webItem.getFromQueryString("pageId"));
+        assertEquals(viewPage.getPageId(), webItem.getFromQueryString("contentId"));
     }
 
     @Test
