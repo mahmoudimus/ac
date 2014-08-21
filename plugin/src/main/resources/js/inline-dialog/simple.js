@@ -1,4 +1,4 @@
-_AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_util", 'host/content'], function($, statusHelper, util, hostContentUtilities) {
+_AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_util", "host/content"], function($, statusHelper, util, hostContentUtilities) {
     return function (contentUrl, options) {
         var $inlineDialog;
 
@@ -13,67 +13,30 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_uti
             return;
         }
 
-        var displayInlineDialog = function(content, trigger, showPopup) {
+        var displayInlineDialog = function(content, trigger, showInlineDialog) {
+            trigger = $(trigger); // sometimes it's not jQuery. Lets make it jQuery.
 
-            options.w = options.w || options.width;
-            options.h = options.h || options.height;
-            if (!options.ns) {
-                options.ns = itemId;
-            }
-            options.container = options.ns;
-            options.src = options.url = options.url || contentUrl;
-            content.data('inlineDialog', $inlineDialog);
-            var iFrame = content.find('iframe');
+            var webItemOptions = hostContentUtilities.getOptionsForWebItem(trigger),
+                pluginKey = hostContentUtilities.getWebItemPluginKey(trigger),
+                moduleKey = hostContentUtilities.getWebItemModuleKey(trigger);
+                moduleKey = moduleKey.split("__").slice(-1)[0]; // REMOVE ME ONCE PETER HAS FIXED THE SERVLET
 
-            // cache for a very short period of time because inline dialogs can be triggered by mouse-over events, which happen repeatedly
-            var previouslyLoaded = null != content.attr('last-load-time');
-            var canClearContent = previouslyLoaded && content.innerHTML;
-            var contentIsTooOld = previouslyLoaded && content.attr('last-load-time') > new Date().getTime() + 500;
-            var shouldClearContent = canClearContent && contentIsTooOld;
+            hostContentUtilities.getIframeHtmlForKey(pluginKey, undefined, {key: moduleKey})
+            .done(function(data) {
+                content.empty().append(data);
+            })
+            .fail(function(xhr, status, ex) {
+                var title = $("<p class='title' />").text("Unable to load add-on content. Please try again later.");
+                content.html("<div class='aui-message error ap-aui-message'></div>");
+                content.find(".error").append(title);
+                var msg = status + (ex ? ": " + ex.toString() : "");
+                content.find(".error").text(msg);
+                AJS.log(msg);
+            })
+            .always(function(){
+                showInlineDialog();
+            });
 
-            if(shouldClearContent) {
-                content.innerHTML('');
-                iFrame = null;
-            }
-
-            if (!previouslyLoaded || shouldClearContent)
-            {
-                content.attr('last-load-time', new Date().getTime());
-                content.attr('id', 'ap-' + options.ns);
-                var containerId = 'embedded-' + options.ns;
-                content.append('<div id="' + containerId + '" />');
-                content.append(statusHelper.createStatusMessages());
-                var scalarTrigger = trigger && trigger[0] ? trigger[0] : trigger;
-                var href = scalarTrigger ? scalarTrigger.href : null;
-
-                // do not bounce through the Connect iframe servlet for absolute links
-                if (href && href.indexOf('http') == 0) {
-                    _AP.create(options);
-                }
-                else {
-                    var container = $('#' + containerId);
-                    var uiParams = $.extend({dlg: 1}, options.uiParams);
-
-                    // make an iframe inside its parent div
-                    hostContentUtilities.getIframeHtmlForKey(options.key, options.context, {'key': options.ns.replace(options.key, '')}, uiParams)
-                        .done(function (data) {
-                            var dialogHtml = $(data);
-                            dialogHtml.addClass('ap-dialog-container');
-                            container.replaceWith(dialogHtml);
-                            dialogHtml.find('.ap-content').addClass('iframe-init');
-                        })
-                        .fail(function (xhr, status, ex) {
-                            var title = $("<p class='title' />").text("Unable to load add-on content. Please try again later.");
-                            container.html("<div class='aui-message error ap-aui-message'></div>");
-                            container.find(".error").append(title);
-                            var msg = status + (ex ? ": " + ex.toString() : "");
-                            container.find(".error").text(msg);
-                            AJS.log(msg);
-                        });
-                }
-            }
-            showPopup();
-            return false;
         };
 
         var dialogElementIdentifier = "ap-inline-dialog-content-" + itemId;
