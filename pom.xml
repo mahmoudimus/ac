@@ -571,6 +571,12 @@
                 <artifactId>commons-io</artifactId>
                 <version>2.4</version>
             </dependency>
+            <!--Non-ancient version of Xerces for unit tests -->
+            <dependency>
+                <groupId>xerces</groupId>
+                <artifactId>xercesImpl</artifactId>
+                <version>2.11.0</version>
+            </dependency>
 
             <!-- json / json-schema -->
             <dependency>
