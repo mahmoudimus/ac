@@ -392,6 +392,10 @@ public class TestDialog extends ConnectWebDriverTestBase
     {
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
         RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, remotePluginTest);
-        dialog.cancel();
+
+        if (dialog.hasChrome())
+        {
+            dialog.cancel();
+        }
     }
 }

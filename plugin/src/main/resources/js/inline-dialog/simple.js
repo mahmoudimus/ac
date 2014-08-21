@@ -24,8 +24,11 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_uti
             options.src = options.url = options.url || contentUrl;
             content.data('inlineDialog', $inlineDialog);
 
-            if(!content.find('iframe').length){
+            if(content.find('iframe').length) {
+                content.innerHTML('');
+            }
 
+            {
                 content.attr('id', 'ap-' + options.ns);
                 var containerId = 'embedded-' + options.ns;
                 content.append('<div id="' + containerId + '" />');
