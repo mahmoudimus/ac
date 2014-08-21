@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.spi.event;
 
-import java.net.URI;
-
 import com.atlassian.analytics.api.annotations.EventName;
 import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 
@@ -10,12 +8,12 @@ import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
  */
 @EventName ("connect.addon.remotecondition.failed")
 @PrivacyPolicySafe
-public class RemoteConditionFailedEvent extends RemoteConditionEvent
+public class AddOnConditionFailedEvent extends AddOnConditionEvent
 {
     @PrivacyPolicySafe
     private final String message;
 
-    public RemoteConditionFailedEvent(String pluginKey, String urlPath, long elapsedMillisecs, String message)
+    public AddOnConditionFailedEvent(String pluginKey, String urlPath, long elapsedMillisecs, String message)
     {
         super(pluginKey, urlPath, elapsedMillisecs);
         this.message = message;

@@ -8,13 +8,12 @@ import java.util.Map;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.gzipfilter.org.apache.commons.lang.ObjectUtils;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
-import com.atlassian.plugin.connect.plugin.module.RemoteCondition;
 import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.spi.event.RemoteConditionEvent;
-import com.atlassian.plugin.connect.spi.event.RemoteConditionFailedEvent;
-import com.atlassian.plugin.connect.spi.event.RemoteConditionInvokedEvent;
+import com.atlassian.plugin.connect.spi.event.AddOnConditionEvent;
+import com.atlassian.plugin.connect.spi.event.AddOnConditionFailedEvent;
+import com.atlassian.plugin.connect.spi.event.AddOnConditionInvokedEvent;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.sal.api.user.UserManager;
@@ -41,51 +40,51 @@ public class RemoteConditionTest
     private static final String URL = "http://foo.com/bar?blah=1";
     private static final String URL_PATH = "/bar";
 
-    private final CustomTypeSafeMatcher<RemoteConditionEvent> eventWithCorrectUrl =
-            new CustomTypeSafeMatcher<RemoteConditionEvent>("an event with non negative elapsed time")
+    private final CustomTypeSafeMatcher<AddOnConditionEvent> eventWithCorrectUrl =
+            new CustomTypeSafeMatcher<AddOnConditionEvent>("an event with non negative elapsed time")
     {
         @Override
-        public boolean matchesSafely(RemoteConditionEvent event)
+        public boolean matchesSafely(AddOnConditionEvent event)
         {
             return ObjectUtils.equals(event.getUrlPath(), URL_PATH);
         }
     };
 
-    private final CustomTypeSafeMatcher<RemoteConditionEvent> eventWithCorrectAddonKey =
-            new CustomTypeSafeMatcher<RemoteConditionEvent>("an event with correct addon key")
+    private final CustomTypeSafeMatcher<AddOnConditionEvent> eventWithCorrectAddonKey =
+            new CustomTypeSafeMatcher<AddOnConditionEvent>("an event with correct addon key")
             {
                 @Override
-                public boolean matchesSafely(RemoteConditionEvent event)
+                public boolean matchesSafely(AddOnConditionEvent event)
                 {
                     return ObjectUtils.equals(event.getAddonKey(), ADDON_KEY);
                 }
             };
 
-    private final CustomTypeSafeMatcher<RemoteConditionFailedEvent> failEventWithExpectedMessage =
-            new CustomTypeSafeMatcher<RemoteConditionFailedEvent>("a fail event with expected message")
+    private final CustomTypeSafeMatcher<AddOnConditionFailedEvent> failEventWithExpectedMessage =
+            new CustomTypeSafeMatcher<AddOnConditionFailedEvent>("a fail event with expected message")
             {
                 @Override
-                public boolean matchesSafely(RemoteConditionFailedEvent event)
+                public boolean matchesSafely(AddOnConditionFailedEvent event)
                 {
                     return event.getMessage().startsWith("Unable to retrieve remote condition from addon " + ADDON_KEY);
                 }
             };
 
-    private final CustomTypeSafeMatcher<RemoteConditionFailedEvent> failEventWithExpectedBadJsonMessage =
-            new CustomTypeSafeMatcher<RemoteConditionFailedEvent>("a fail event with expected message")
+    private final CustomTypeSafeMatcher<AddOnConditionFailedEvent> failEventWithExpectedBadJsonMessage =
+            new CustomTypeSafeMatcher<AddOnConditionFailedEvent>("a fail event with expected message")
             {
                 @Override
-                public boolean matchesSafely(RemoteConditionFailedEvent event)
+                public boolean matchesSafely(AddOnConditionFailedEvent event)
                 {
                     return event.getMessage().startsWith("Invalid JSON returned from remote condition: not json");
                 }
             };
 
-    private final CustomTypeSafeMatcher<RemoteConditionEvent> eventWithNonNegativeElapsedTime =
-            new CustomTypeSafeMatcher<RemoteConditionEvent>("an event with non negative elapsed time")
+    private final CustomTypeSafeMatcher<AddOnConditionEvent> eventWithNonNegativeElapsedTime =
+            new CustomTypeSafeMatcher<AddOnConditionEvent>("an event with non negative elapsed time")
             {
                 @Override
-                public boolean matchesSafely(RemoteConditionEvent event)
+                public boolean matchesSafely(AddOnConditionEvent event)
                 {
                     return event.getElapsedMillisecs() >= 0l;
                 }
@@ -130,15 +129,15 @@ public class RemoteConditionTest
     public void publishesInvokeEventOnSuccessfulCallToRemoteCondition()
     {
         invokeWhenSuccessfulResponse();
-        verify(eventPublisher).publish(any(RemoteConditionInvokedEvent.class));
-        // not sure why passing any(RemoteConditionInvokedEvent.class) is not enough to check type
-        verify(eventPublisher).publish(argThat(new CustomTypeSafeMatcher<RemoteConditionEvent>(
+        verify(eventPublisher).publish(any(AddOnConditionInvokedEvent.class));
+        // not sure why passing any(AddOnConditionInvokedEvent.class) is not enough to check type
+        verify(eventPublisher).publish(argThat(new CustomTypeSafeMatcher<AddOnConditionEvent>(
                 "an event with correct type")
         {
             @Override
-            public boolean matchesSafely(RemoteConditionEvent event)
+            public boolean matchesSafely(AddOnConditionEvent event)
             {
-                return event.getClass().equals(RemoteConditionInvokedEvent.class);
+                return event.getClass().equals(AddOnConditionInvokedEvent.class);
             }
         }));
     }
@@ -169,14 +168,14 @@ public class RemoteConditionTest
     public void publishesFailedEventOnUnsuccessfulCallToRemoteCondition()
     {
         invokeWhenErrorResponse();
-        verify(eventPublisher).publish(any(RemoteConditionFailedEvent.class));
-        verify(eventPublisher).publish(argThat(new CustomTypeSafeMatcher<RemoteConditionEvent>(
+        verify(eventPublisher).publish(any(AddOnConditionFailedEvent.class));
+        verify(eventPublisher).publish(argThat(new CustomTypeSafeMatcher<AddOnConditionEvent>(
                 "an event with correct type")
         {
             @Override
-            public boolean matchesSafely(RemoteConditionEvent event)
+            public boolean matchesSafely(AddOnConditionEvent event)
             {
-                return event.getClass().equals(RemoteConditionFailedEvent.class);
+                return event.getClass().equals(AddOnConditionFailedEvent.class);
             }
         }));
     }
@@ -216,14 +215,14 @@ public class RemoteConditionTest
     public void publishesFailedEventOnMalformedJsonResponse()
     {
         invokeWhenMalformedJson();
-        verify(eventPublisher).publish(any(RemoteConditionFailedEvent.class));
-        verify(eventPublisher).publish(argThat(new CustomTypeSafeMatcher<RemoteConditionEvent>(
+        verify(eventPublisher).publish(any(AddOnConditionFailedEvent.class));
+        verify(eventPublisher).publish(argThat(new CustomTypeSafeMatcher<AddOnConditionEvent>(
                 "an event with correct type")
         {
             @Override
-            public boolean matchesSafely(RemoteConditionEvent event)
+            public boolean matchesSafely(AddOnConditionEvent event)
             {
-                return event.getClass().equals(RemoteConditionFailedEvent.class);
+                return event.getClass().equals(AddOnConditionFailedEvent.class);
             }
         }));
     }

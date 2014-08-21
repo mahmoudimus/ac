@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.spi.event;
 import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 
 @PrivacyPolicySafe
-abstract public class RemoteConditionEvent
+abstract public class AddOnConditionEvent
 {
     @PrivacyPolicySafe
     private final String addonKey;
@@ -14,7 +14,7 @@ abstract public class RemoteConditionEvent
     @PrivacyPolicySafe
     private final long elapsedMillisecs;
 
-    public RemoteConditionEvent(String addonKey, String urlPath, long elapsedMillisecs)
+    public AddOnConditionEvent(String addonKey, String urlPath, long elapsedMillisecs)
     {
         this.elapsedMillisecs = elapsedMillisecs;
         this.urlPath = urlPath;

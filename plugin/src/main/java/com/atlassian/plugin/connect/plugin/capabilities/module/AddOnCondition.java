@@ -11,8 +11,8 @@ import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameter
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.spi.event.RemoteConditionFailedEvent;
-import com.atlassian.plugin.connect.spi.event.RemoteConditionInvokedEvent;
+import com.atlassian.plugin.connect.spi.event.AddOnConditionFailedEvent;
+import com.atlassian.plugin.connect.spi.event.AddOnConditionInvokedEvent;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.util.concurrent.Promise;
@@ -106,7 +106,7 @@ public class AddOnCondition implements Condition
             final long elapsedMillisecs = stopWatch.getTime();
             final String message = String.format(String.format("Request to addon condition URL failed: %s", cfg));
             log.warn(message, e);
-            eventPublisher.publish(new RemoteConditionFailedEvent(cfg.getAddOnKey(), uriPath, elapsedMillisecs, message));
+            eventPublisher.publish(new AddOnConditionFailedEvent(cfg.getAddOnKey(), uriPath, elapsedMillisecs, message));
             return false;
         }
 
@@ -119,7 +119,7 @@ public class AddOnCondition implements Condition
             Boolean shouldDisplay = getShouldDisplay(shouldDisplayObj);
             if (shouldDisplay != null)
             {
-                eventPublisher.publish(new RemoteConditionInvokedEvent(cfg.getAddOnKey(), uriPath, elapsedMillisecs));
+                eventPublisher.publish(new AddOnConditionInvokedEvent(cfg.getAddOnKey(), uriPath, elapsedMillisecs));
                 return shouldDisplay;
             }
             else
@@ -127,7 +127,7 @@ public class AddOnCondition implements Condition
                 final String message = String.format("Malformed response from addon condition URL: %s\nExpected a boolean value "
                         + "but was " + shouldDisplayObj, cfg);
                 log.warn(message);
-                eventPublisher.publish(new RemoteConditionFailedEvent(cfg.getAddOnKey(), uriPath, elapsedMillisecs, message));
+                eventPublisher.publish(new AddOnConditionFailedEvent(cfg.getAddOnKey(), uriPath, elapsedMillisecs, message));
                 return false;
             }
         }
@@ -136,7 +136,7 @@ public class AddOnCondition implements Condition
             final long elapsedMillisecs = stopWatch.getTime();
             final String message = String.format("Malformed response from addon condition URL: %s", cfg);
             log.warn(message, e);
-            eventPublisher.publish(new RemoteConditionFailedEvent(cfg.getAddOnKey(), uriPath, elapsedMillisecs, message));
+            eventPublisher.publish(new AddOnConditionFailedEvent(cfg.getAddOnKey(), uriPath, elapsedMillisecs, message));
             return false;
         }
     }
