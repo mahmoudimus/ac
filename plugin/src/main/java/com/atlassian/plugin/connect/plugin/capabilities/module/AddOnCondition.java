@@ -1,22 +1,26 @@
 package com.atlassian.plugin.connect.plugin.capabilities.module;
 
+import java.net.URI;
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+
+import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.spi.event.RemoteConditionFailedEvent;
+import com.atlassian.plugin.connect.spi.event.RemoteConditionInvokedEvent;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.util.concurrent.Promise;
+import org.apache.commons.lang3.time.StopWatch;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.URI;
-import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -41,14 +45,17 @@ public class AddOnCondition implements Condition
     private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
     private final WebFragmentModuleContextExtractor webFragmentModuleContextExtractor;
+    private final EventPublisher eventPublisher;
 
     public AddOnCondition(final RemotablePluginAccessorFactory remotablePluginAccessorFactory,
             final IFrameUriBuilderFactory iFrameUriBuilderFactory,
-            final WebFragmentModuleContextExtractor webFragmentModuleContextExtractor)
+            final WebFragmentModuleContextExtractor webFragmentModuleContextExtractor,
+            EventPublisher eventPublisher)
     {
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
         this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
         this.webFragmentModuleContextExtractor = webFragmentModuleContextExtractor;
+        this.eventPublisher = eventPublisher;
     }
 
     /**
@@ -67,11 +74,14 @@ public class AddOnCondition implements Condition
     @Override
     public boolean shouldDisplay(final Map<String, Object> context)
     {
+        final StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+
         Configuration cfg = checkNotNull(configuration.get(), "configuration has not been set - init() not called?");
 
         ModuleContextParameters moduleContext = webFragmentModuleContextExtractor.extractParameters(context);
 
-        String uri = iFrameUriBuilderFactory
+        String uriString = iFrameUriBuilderFactory
                 .builder()
                 .addOn(cfg.getAddOnKey())
                 .namespace("condition") // namespace is not really important as we're not rendering an iframe
@@ -80,8 +90,10 @@ public class AddOnCondition implements Condition
                 .sign(false)
                 .build();
 
+        final URI uri = URI.create(uriString);
+        final String uriPath = uri.getPath();
         Promise<String> responsePromise = remotablePluginAccessorFactory.getOrThrow(cfg.getAddOnKey())
-                .executeAsync(HttpMethod.GET, URI.create(uri),
+                .executeAsync(HttpMethod.GET, uri,
                         Collections.<String, String[]>emptyMap(), Collections.<String, String>emptyMap());
 
         String response;
@@ -91,34 +103,56 @@ public class AddOnCondition implements Condition
         }
         catch (Exception e)
         {
-            log.warn(String.format("Request to addon condition URL failed: %s", cfg), e);
+            final long elapsedMillisecs = stopWatch.getTime();
+            final String message = String.format(String.format("Request to addon condition URL failed: %s", cfg));
+            log.warn(message, e);
+            eventPublisher.publish(new RemoteConditionFailedEvent(cfg.getAddOnKey(), uriPath, elapsedMillisecs, message));
             return false;
         }
 
         try
         {
+            final long elapsedMillisecs = stopWatch.getTime();
             JSONObject obj = (JSONObject) JSONValue.parseWithException(response);
-            Object shouldDisplay = obj.get("shouldDisplay");
-            if (shouldDisplay instanceof Boolean)
+            Object shouldDisplayObj = obj.get("shouldDisplay");
+
+            Boolean shouldDisplay = getShouldDisplay(shouldDisplayObj);
+            if (shouldDisplay != null)
             {
-                return (Boolean) shouldDisplay;
-            }
-            else if (shouldDisplay instanceof String)
-            {
-                return Boolean.parseBoolean((String) shouldDisplay);
+                eventPublisher.publish(new RemoteConditionInvokedEvent(cfg.getAddOnKey(), uriPath, elapsedMillisecs));
+                return shouldDisplay;
             }
             else
             {
-                log.warn(String.format("Malformed response from addon condition URL: %s\nExpected a boolean value "
-                        + "but was " + shouldDisplay, cfg));
+                final String message = String.format("Malformed response from addon condition URL: %s\nExpected a boolean value "
+                        + "but was " + shouldDisplayObj, cfg);
+                log.warn(message);
+                eventPublisher.publish(new RemoteConditionFailedEvent(cfg.getAddOnKey(), uriPath, elapsedMillisecs, message));
                 return false;
             }
         }
         catch (Exception e)
         {
-            log.warn(String.format("Malformed response from addon condition URL: %s", cfg), e);
+            final long elapsedMillisecs = stopWatch.getTime();
+            final String message = String.format("Malformed response from addon condition URL: %s", cfg);
+            log.warn(message, e);
+            eventPublisher.publish(new RemoteConditionFailedEvent(cfg.getAddOnKey(), uriPath, elapsedMillisecs, message));
             return false;
         }
+    }
+
+    private Boolean getShouldDisplay(Object shouldDisplayObj)
+    {
+        Boolean shouldDisplay = null;
+        if (shouldDisplayObj instanceof Boolean)
+        {
+            shouldDisplay = (Boolean) shouldDisplayObj;
+        }
+        else if (shouldDisplayObj instanceof String)
+        {
+            shouldDisplay = Boolean.parseBoolean((String) shouldDisplayObj);
+        }
+        return shouldDisplay;
     }
 
     private static final class ConfigurationImpl implements Configuration
