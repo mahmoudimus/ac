@@ -23,8 +23,9 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_uti
             options.container = options.ns;
             options.src = options.url = options.url || contentUrl;
             content.data('inlineDialog', $inlineDialog);
+            var iFrame = content.find('iframe');
 
-            if(content.find('iframe').length) {
+            if(iFrame && iFrame.length && content.innerHTML) {
                 content.innerHTML('');
             }
 
@@ -33,25 +34,34 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_uti
                 var containerId = 'embedded-' + options.ns;
                 content.append('<div id="' + containerId + '" />');
                 content.append(statusHelper.createStatusMessages());
-                var container = $('#' + containerId);
-                var uiParams = $.extend({dlg: 1}, options.uiParams);
+                var scalarTrigger = trigger && trigger[0] ? trigger[0] : trigger;
+                var href = scalarTrigger ? scalarTrigger.href : null;
 
-                 // make an iframe inside its parent div
-                hostContentUtilities.getIframeHtmlForKey(options.key, options.context, {'key':options.moduleKey}, uiParams)
-                 .done(function(data) {
-                        var dialogHtml = $(data);
-                        dialogHtml.addClass('ap-dialog-container');
-                        container.replaceWith(dialogHtml);
-                        dialogHtml.find('.ap-content').addClass('iframe-init');
-                    })
-                 .fail(function(xhr, status, ex) {
-                        var title = $("<p class='title' />").text("Unable to load add-on content. Please try again later.");
-                        container.html("<div class='aui-message error ap-aui-message'></div>");
-                        container.find(".error").append(title);
-                        var msg = status + (ex ? ": " + ex.toString() : "");
-                        container.find(".error").text(msg);
-                        AJS.log(msg);
-                    });
+                // do not bounce through the Connect iframe servlet for absolute links
+                if (href && href.indexOf('http') == 0) {
+                    _AP.create(options);
+                }
+                else {
+                    var container = $('#' + containerId);
+                    var uiParams = $.extend({dlg: 1}, options.uiParams);
+
+                    // make an iframe inside its parent div
+                    hostContentUtilities.getIframeHtmlForKey(options.key, options.context, {'key': options.ns.replace(options.key, '')}, uiParams)
+                        .done(function (data) {
+                            var dialogHtml = $(data);
+                            dialogHtml.addClass('ap-dialog-container');
+                            container.replaceWith(dialogHtml);
+                            dialogHtml.find('.ap-content').addClass('iframe-init');
+                        })
+                        .fail(function (xhr, status, ex) {
+                            var title = $("<p class='title' />").text("Unable to load add-on content. Please try again later.");
+                            container.html("<div class='aui-message error ap-aui-message'></div>");
+                            container.find(".error").append(title);
+                            var msg = status + (ex ? ": " + ex.toString() : "");
+                            container.find(".error").text(msg);
+                            AJS.log(msg);
+                        });
+                }
             }
             showPopup();
             return false;

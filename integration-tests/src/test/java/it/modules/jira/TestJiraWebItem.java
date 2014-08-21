@@ -51,6 +51,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     private static final String NULL_CHROME_VARIANT = "NullChrome";
     private static final String CHROMELESS_VARIANT = "Chromeless";
     private static final String ADDON_WEBITEM_DIALOG = "ac-general-web-item-dialog";
+    private static final String ABSOLUTE_WEBITEM_DIALOG = "ac-general-web-item-dialog-absolute";
 
     private static ConnectRunner runner;
 
@@ -140,7 +141,10 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 .build(),
                         webItemWithDialogOptions(true),
                         webItemWithDialogOptions(false),
-                        webItemWithDialogOptions(null)
+                        webItemWithDialogOptions(null),
+                        absoluteWebItemWithDialogOptions(true),
+                        absoluteWebItemWithDialogOptions(false),
+                        absoluteWebItemWithDialogOptions(null)
                 )
                 .addRoute("/onlyBarneyCondition", new CheckUsernameConditionServlet(BARNEY.getUsername()))
                 .addRoute("/onlyBettyCondition", new CheckUsernameConditionServlet(BETTY.getUsername()))
@@ -255,15 +259,25 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     @Test
     public void testAbsoluteWebItemInlineDialogXdm() throws Exception
     {
+        testWebItemInlineDialogXdm(ABSOLUTE_WEBITEM_INLINE_DIALOG);
+    }
+
+    @Test
+    public void testAddOnWebItemInlineDialogXdm() throws Exception
+    {
+        RemoteInlineDialog inlineDialogPage = testWebItemInlineDialogXdm(ADDON_WEBITEM_INLINE_DIALOG);
+        assertEquals("Success", inlineDialogPage.getIFrameElementText("message"));
+        assertEquals("200", inlineDialogPage.getIFrameElementText("client-http-status"));
+    }
+
+    private RemoteInlineDialog testWebItemInlineDialogXdm(String moduleKey) throws Exception
+    {
         JiraViewProjectPage viewProjectPage = loginAndVisit(ADMIN, JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ADDON_WEBITEM_INLINE_DIALOG), Optional.<String>absent());
+        RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(moduleKey), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
         assertTrue("web item should be an inline dialog", webItem.isInlineDialog());
         webItem.click();
-        RemoteInlineDialog inlineDialogPage = product.getPageBinder().bind(RemoteInlineDialog.class).waitUntilContentElementNotEmpty("client-http-status");
-        assertEquals("Success", inlineDialogPage.getIFrameElementText("message"));
-        assertEquals("200", inlineDialogPage.getIFrameElementText("client-http-status"));
-
+        return product.getPageBinder().bind(RemoteInlineDialog.class).waitUntilContentElementNotEmpty("client-http-status");
     }
 
     @Test
@@ -282,6 +296,26 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     public void testAbsoluteWebItemDialog() throws Exception
     {
         JiraViewProjectPage viewProjectPage = loginAndVisit(ADMIN, JiraViewProjectPage.class, project.getKey());
+        RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ABSOLUTE_WEBITEM_DIALOG), Optional.<String>absent());
+        assertNotNull("Web item should be found", webItem);
+        assertTrue("web item should be a dialog", webItem.isDialog());
+        assertThat("absolute web item link should start with 'http'", webItem.getPath(), startsWith("http"));
+
+        URL url = new URL(webItem.getPath());
+        String query = url.getQuery();
+        int dialogIndex = query.indexOf("dialog=1");
+        int jwtIndex = query.indexOf("jwt=");
+        assertThat(dialogIndex, is(-1)); // not applicable for absolute links
+        assertThat(jwtIndex, is(-1)); // not applicable for absolute links
+
+        webItem.click();
+        assertTrue("web item dialog should be open", webItem.isActiveDialog());
+    }
+
+    @Test
+    public void testAddOnWebItemDialog() throws Exception
+    {
+        JiraViewProjectPage viewProjectPage = loginAndVisit(ADMIN, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ADDON_WEBITEM_DIALOG), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
         assertTrue("web item should be a dialog", webItem.isDialog());
@@ -298,10 +332,21 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @Test
+    public void testAddOnWebItemDialogDimensions() throws Exception
+    {
+        testWebItemDialogDimensions(ADDON_WEBITEM_DIALOG);
+    }
+
+    @Test
     public void testAbsoluteWebItemDialogDimensions() throws Exception
     {
+        testWebItemDialogDimensions(ABSOLUTE_WEBITEM_DIALOG);
+    }
+
+    private void testWebItemDialogDimensions(String moduleKey) throws Exception
+    {
         JiraViewProjectPage viewProjectPage = loginAndVisit(ADMIN, JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ADDON_WEBITEM_DIALOG), Optional.<String>absent());
+        RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(moduleKey), Optional.<String>absent());
         webItem.click();
         RemoteDialog dialogPage = product.getPageBinder().bind(RemoteDialog.class);
         assertNotEquals("webitem dialog has a height that is not 0", dialogPage.getIFrameSize().getHeight(), 0);
@@ -310,10 +355,21 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @Test
+    public void testAddOnWebItemDialogXdm() throws Exception
+    {
+        testWebItemDialogXdm(ADDON_WEBITEM_DIALOG);
+    }
+
+    @Test
     public void testAbsoluteWebItemDialogXdm() throws Exception
     {
+        testWebItemDialogXdm(ABSOLUTE_WEBITEM_DIALOG);
+    }
+
+    private void testWebItemDialogXdm(String moduleKey) throws Exception
+    {
         JiraViewProjectPage viewProjectPage = loginAndVisit(ADMIN, JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ADDON_WEBITEM_DIALOG), Optional.<String>absent());
+        RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(moduleKey), Optional.<String>absent());
         webItem.click();
         RemoteDialog dialogPage = product.getPageBinder().bind(RemoteDialog.class).waitUntilContentElementNotEmpty("client-http-status");
         assertEquals("Success", dialogPage.getIFrameElementText("message"));
@@ -322,27 +378,44 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @Test
+    public void testAddOnWebItemDialogTargetOptions() throws Exception
+    {
+        testWebItemDialogTargetOptions(true, ADDON_WEBITEM_DIALOG);
+    }
+
+    @Test
+    public void testAddOnWebItemDialogTargetOptionsChromeless() throws Exception
+    {
+        testWebItemDialogTargetOptions(false, ADDON_WEBITEM_DIALOG);
+    }
+
+    @Test
+    public void testAddOnWebItemDialogTargetOptionsNullChrome() throws Exception
+    {
+        testWebItemDialogTargetOptions(null, ADDON_WEBITEM_DIALOG);
+    }
+
+    @Test
     public void testAbsoluteWebItemDialogTargetOptions() throws Exception
     {
-        testAbsoluteWebItemDialogTargetOptions(true);
+        testWebItemDialogTargetOptions(true, ABSOLUTE_WEBITEM_DIALOG);
     }
 
     @Test
     public void testAbsoluteWebItemDialogTargetOptionsChromeless() throws Exception
     {
-        testAbsoluteWebItemDialogTargetOptions(false);
+        testWebItemDialogTargetOptions(false, ABSOLUTE_WEBITEM_DIALOG);
     }
-
 
     @Test
     public void testAbsoluteWebItemDialogTargetOptionsNullChrome() throws Exception
     {
-        testAbsoluteWebItemDialogTargetOptions(null);
+        testWebItemDialogTargetOptions(null, ABSOLUTE_WEBITEM_DIALOG);
     }
 
-    private void testAbsoluteWebItemDialogTargetOptions(Boolean chrome) throws Exception
+    private void testWebItemDialogTargetOptions(Boolean chrome, String moduleKey) throws Exception
     {
-        String dialogOptionKey = dialogOptionKey(chrome);
+        String dialogOptionKey = dialogOptionKey(chrome, moduleKey);
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(ADMIN, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(dialogOptionKey), Optional.<String>absent());
@@ -362,8 +435,17 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         return addonAndModuleKey(runner.getAddon().getKey(), module);
     }
 
-
     private static WebItemModuleBean webItemWithDialogOptions(Boolean chrome)
+    {
+        return webItemWithDialogOptions(chrome, ADDON_WEBITEM_DIALOG);
+    }
+
+    private static WebItemModuleBean absoluteWebItemWithDialogOptions(Boolean chrome)
+    {
+        return webItemWithDialogOptions(chrome, ABSOLUTE_WEBITEM_DIALOG);
+    }
+
+    private static WebItemModuleBean webItemWithDialogOptions(Boolean chrome, String moduleKeyPrefix)
     {
         String variant = dialogOptionVariant(chrome);
 
@@ -378,7 +460,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
 
         return newWebItemBean()
                 .withName(new I18nProperty("Webitem Dialog Target " + variant, null))
-                .withKey(ADDON_WEBITEM_DIALOG + variant)
+                .withKey(moduleKeyPrefix + variant)
                 .withLocation("system.top.navigation.bar")
                 .withWeight(1)
                 .withContext(AddOnUrlContext.addon)
@@ -392,9 +474,9 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
 
-    private static String dialogOptionKey(Boolean chrome)
+    private static String dialogOptionKey(Boolean chrome, String moduleKey)
     {
-        return ADDON_WEBITEM_DIALOG + dialogOptionVariant(chrome);
+        return moduleKey + dialogOptionVariant(chrome);
     }
 
     private static String dialogOptionVariant(Boolean chrome)
