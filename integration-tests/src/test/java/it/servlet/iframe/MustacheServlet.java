@@ -24,4 +24,10 @@ public class MustacheServlet extends ContextServlet
     {
         HttpUtils.renderHtml(resp, templatePath, ImmutableMap.copyOf(context));
     }
+
+    @Override
+    public void doPost(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
+    {
+        // do nothing
+    }
 }
