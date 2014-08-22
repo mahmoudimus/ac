@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.spi.event;
 
-import java.net.URI;
-
 import com.atlassian.analytics.api.annotations.EventName;
 import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 
@@ -10,10 +8,10 @@ import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
  */
 @EventName ("connect.addon.remotecondition.invoked")
 @PrivacyPolicySafe
-public class RemoteConditionInvokedEvent extends RemoteConditionEvent
+public class AddOnConditionInvokedEvent extends AddOnConditionEvent
 {
 
-    public RemoteConditionInvokedEvent(String pluginKey, String urlPath, long elapsedMillisecs)
+    public AddOnConditionInvokedEvent(String pluginKey, String urlPath, long elapsedMillisecs)
     {
         super(pluginKey, urlPath, elapsedMillisecs);
     }
