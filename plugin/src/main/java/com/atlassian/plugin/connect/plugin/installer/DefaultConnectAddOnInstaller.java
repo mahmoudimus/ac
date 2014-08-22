@@ -285,6 +285,14 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         if (plugin != null)
         {
             pluginController.uninstall(plugin);
+
+            final ApplicationLink appLink = connectApplinkManager.getAppLink(pluginKey);
+            if (appLink != null)
+            {
+                // Blow away the applink
+                oAuthLinkManager.unassociateProviderWithLink(appLink);
+                connectApplinkManager.deleteAppLink(pluginKey);
+            }
         }
         else if (connectAddonManager.hasDescriptor(pluginKey))
         {
