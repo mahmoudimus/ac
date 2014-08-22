@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.spi.event;
 
-import java.net.URI;
-
 import org.apache.commons.lang3.StringUtils;
 
 import com.atlassian.analytics.api.annotations.EventName;
