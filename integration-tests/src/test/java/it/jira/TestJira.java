@@ -2,7 +2,7 @@ package it.jira;
 
 import com.atlassian.jira.pageobjects.dialogs.ShifterDialog;
 import com.atlassian.jira.pageobjects.navigator.AdvancedSearch;
-import com.atlassian.jira.pageobjects.pages.JiraAdminHomePage;
+import com.atlassian.jira.pageobjects.pages.admin.configuration.ViewGeneralConfigurationPage;
 import com.atlassian.jira.plugin.issuenav.pageobjects.IssueDetailPage;
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
@@ -165,7 +165,7 @@ public class TestJira extends JiraWebDriverTestBase
     public void testAdminPageInJiraSpecificLocation() throws Exception
     {
         String addonKey = runner.getAddon().getKey();
-        loginAndVisit(TestUser.ADMIN, JiraAdminHomePage.class);
+        loginAndVisit(TestUser.ADMIN, ViewGeneralConfigurationPage.class);
 
         RemoteWebItem adminPageLink = getAdminPageLink(addonKey, ADVANCED_ADMIN_KEY);
 
@@ -179,7 +179,7 @@ public class TestJira extends JiraWebDriverTestBase
     public void testGeneralAdminPage() throws Exception
     {
         String addonKey = runner.getAddon().getKey();
-        loginAndVisit(TestUser.ADMIN, JiraAdminHomePage.class);
+        loginAndVisit(TestUser.ADMIN, ViewGeneralConfigurationPage.class);
 
         RemoteWebItem adminPageLink = getAdminPageLink(addonKey, ADMIN_KEY);
         adminPageLink.click();

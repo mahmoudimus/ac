@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.spi.event;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.atlassian.analytics.api.annotations.EventName;
 import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 
@@ -8,6 +10,7 @@ import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 @Deprecated
 public class RemotePluginInstallFailedEvent
 {
+    private static final int MAX_MESSAGE_LENGTH = 100;
     /**
      * The HTTP status code of the failed HTTP lifecycle request
      */
@@ -34,7 +37,7 @@ public class RemotePluginInstallFailedEvent
     {
         this.pluginKey = pluginKey;
         this.statusCode = statusCode;
-        this.statusText = statusText;
+        this.statusText = StringUtils.substring(statusText, 0, MAX_MESSAGE_LENGTH );
     }
 
     public String getPluginKey()
