@@ -11,8 +11,6 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.web.Condition;
-import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.UrlMode;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Collections;
@@ -33,17 +31,14 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
-    private final String productBaseUrl;
 
     public AbstractConnectPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            ApplicationProperties applicationProperties)
+            WebItemModuleDescriptorFactory webItemModuleDescriptorFactory)
     {
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.webItemModuleDescriptorFactory = checkNotNull(webItemModuleDescriptorFactory);
-        this.productBaseUrl = applicationProperties.getBaseUrl(UrlMode.RELATIVE_CANONICAL);
     }
 
     @Override

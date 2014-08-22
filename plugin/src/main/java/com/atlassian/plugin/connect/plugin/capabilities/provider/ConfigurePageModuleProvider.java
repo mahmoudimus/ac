@@ -8,7 +8,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModule
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
-import com.atlassian.sal.api.ApplicationProperties;
 import com.google.common.collect.ImmutableList;
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +23,10 @@ public class ConfigurePageModuleProvider extends AbstractAdminPageModuleProvider
     public ConfigurePageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            ProductAccessor productAccessor,
-            ApplicationProperties applicationProperties)
+            ProductAccessor productAccessor)
     {
         super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory,
-                productAccessor, applicationProperties);
+                productAccessor);
     }
 
     @Override

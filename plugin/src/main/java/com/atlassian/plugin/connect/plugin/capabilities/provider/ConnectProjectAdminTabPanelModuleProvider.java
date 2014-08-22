@@ -12,8 +12,6 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.module.jira.conditions.IsProjectAdminCondition;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.UrlMode;
 import com.google.common.collect.ImmutableList;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -37,18 +35,15 @@ public class ConnectProjectAdminTabPanelModuleProvider
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
-    private final String productBaseUrl;
 
     @Autowired
     public ConnectProjectAdminTabPanelModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            ApplicationProperties applicationProperties)
+            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
     {
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
-        this.productBaseUrl = applicationProperties.getBaseUrl(UrlMode.RELATIVE_CANONICAL);
     }
 
     @Override

@@ -12,8 +12,6 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.UrlMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,18 +31,15 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
     private final WebItemModuleDescriptorFactory webItemFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
-    private final String productBaseUrl;
 
     @Autowired
     public DefaultWebItemModuleProvider(WebItemModuleDescriptorFactory webItemFactory,
                                         IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-                                        IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-                                        ApplicationProperties applicationProperties)
+                                        IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
     {
         this.webItemFactory = webItemFactory;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
-        this.productBaseUrl = applicationProperties.getBaseUrl(UrlMode.RELATIVE_CANONICAL);
     }
 
     @Override

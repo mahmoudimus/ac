@@ -20,8 +20,6 @@ import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
-import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.UrlMode;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
@@ -46,15 +44,13 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     private final ConnectAddonI18nManager connectAddonI18nManager;
     protected final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     protected final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
-    private final String productBaseUrl;
 
     public AbstractContentMacroModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
                                               HostContainer hostContainer,
                                               AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
                                               IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
                                               IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-                                              ConnectAddonI18nManager connectAddonI18nManager,
-                                              ApplicationProperties applicationProperties)
+                                              ConnectAddonI18nManager connectAddonI18nManager)
     {
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
         this.hostContainer = hostContainer;
@@ -62,7 +58,6 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.connectAddonI18nManager = connectAddonI18nManager;
-        this.productBaseUrl = applicationProperties.getBaseUrl(UrlMode.RELATIVE_CANONICAL);
     }
 
     protected abstract ModuleDescriptor createMacroModuleDescriptor(ConnectModuleProviderContext moduleProviderContext,

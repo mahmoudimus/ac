@@ -6,7 +6,6 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.spi.condition.UserIsAdminCondition;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
-import com.atlassian.sal.api.ApplicationProperties;
 
 import java.util.Collections;
 
@@ -17,10 +16,9 @@ public abstract class AbstractAdminPageModuleProvider extends AbstractConnectPag
     public AbstractAdminPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            ProductAccessor productAccessor,
-            ApplicationProperties applicationProperties)
+            ProductAccessor productAccessor)
     {
-        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory, applicationProperties);
+        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory);
         this.productAccessor = productAccessor;
     }
 

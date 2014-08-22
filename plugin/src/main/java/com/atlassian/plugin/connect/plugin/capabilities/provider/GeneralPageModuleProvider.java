@@ -4,7 +4,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModule
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
-import com.atlassian.sal.api.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,10 +17,9 @@ public class GeneralPageModuleProvider extends AbstractConnectPageModuleProvider
     public GeneralPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            ProductAccessor productAccessor,
-            ApplicationProperties applicationProperties)
+            ProductAccessor productAccessor)
     {
-        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory, applicationProperties);
+        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory);
         this.productAccessor = productAccessor;
     }
 

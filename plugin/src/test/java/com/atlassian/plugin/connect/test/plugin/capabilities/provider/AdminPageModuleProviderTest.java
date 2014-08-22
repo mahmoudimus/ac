@@ -15,7 +15,7 @@ public class AdminPageModuleProviderTest extends AbstractPageModuleProviderTest<
     protected AdminPageModuleProvider createPageModuleProvider()
     {
         return new AdminPageModuleProvider(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
-                webItemModuleDescriptorFactory, productAccessor, applicationProperties);
+                webItemModuleDescriptorFactory, productAccessor);
     }
 
     @Test

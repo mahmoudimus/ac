@@ -13,8 +13,6 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.UrlMode;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,18 +26,15 @@ public class ConnectReportModuleDescriptorFactory implements ConnectModuleDescri
     private final ConnectContainerUtil containerUtil;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
-    private final String productBaseUrl;
 
     @Autowired
     public ConnectReportModuleDescriptorFactory(final ConnectContainerUtil containerUtil,
             final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            ApplicationProperties applicationProperties)
+            final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory)
     {
         this.containerUtil = containerUtil;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
-        this.productBaseUrl = applicationProperties.getBaseUrl(UrlMode.RELATIVE_CANONICAL);
     }
 
     @Override

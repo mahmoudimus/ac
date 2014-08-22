@@ -7,8 +7,6 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
-import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.UrlMode;
 import com.google.common.base.Strings;
 
 import javax.inject.Inject;
@@ -22,14 +20,11 @@ public class ConnectAddonToPluginFactory
     public static final String CONFIGURE_URL = "configure.url";
     
     private final BeanToModuleRegistrar beanToModuleRegistrar;
-    private final String productBaseUrl;
 
     @Inject
-    public ConnectAddonToPluginFactory(BeanToModuleRegistrar beanToModuleRegistrar,
-                                       ApplicationProperties applicationProperties)
+    public ConnectAddonToPluginFactory(BeanToModuleRegistrar beanToModuleRegistrar)
     {
         this.beanToModuleRegistrar = beanToModuleRegistrar;
-        this.productBaseUrl = applicationProperties.getBaseUrl(UrlMode.RELATIVE_CANONICAL);
     }
 
     public Plugin create(ConnectAddonBean addon)
