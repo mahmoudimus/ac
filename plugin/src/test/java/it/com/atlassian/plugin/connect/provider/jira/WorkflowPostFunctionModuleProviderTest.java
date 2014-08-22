@@ -2,7 +2,6 @@ package it.com.atlassian.plugin.connect.provider.jira;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
@@ -109,7 +108,7 @@ public class WorkflowPostFunctionModuleProviderTest
     {
         ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters();
         IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, RESOURCE_NAME_INPUT_PARAMETERS);
-        final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Option.<String>none(), AddOnUrlContext.product);
+        final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Option.<String>none());
         final URI iframeUrl = new URI(iframeUrlStr);
         assertThat(iframeUrl.getQuery(), not(containsString("ui-params")));
     }
@@ -119,7 +118,7 @@ public class WorkflowPostFunctionModuleProviderTest
     {
         ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters();
         IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, RESOURCE_NAME_INPUT_PARAMETERS);
-        final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Option.<String>some("blah"), AddOnUrlContext.product);
+        final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Option.<String>some("blah"));
         final URI iframeUrl = new URI(iframeUrlStr);
         assertThat(iframeUrl.getQuery(), containsString("ui-params=blah"));
     }
@@ -129,7 +128,7 @@ public class WorkflowPostFunctionModuleProviderTest
         ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters();
         IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, classifier);
 
-        final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Option.<String>none(), AddOnUrlContext.product);
+        final String iframeUrlStr = renderStrategy.buildUrl(moduleContextParameters, Option.<String>none());
         final URI iframeUrl = new URI(iframeUrlStr);
         final String baseUrl = iframeUrl.getScheme() + "://" + iframeUrl.getAuthority();
 

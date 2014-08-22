@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 
 import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.capabilities.condition.ConnectConditionFactory;
@@ -355,7 +354,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         }
 
         @VisibleForTesting
-        public String buildUrl(ModuleContextParameters moduleContextParameters, Option<String> uiParameters, AddOnUrlContext addOnUrlContext)
+        public String buildUrl(ModuleContextParameters moduleContextParameters, Option<String> uiParameters)
         {
             return buildUrl(moduleContextParameters, uiParameters, generateNamespace());
         }
