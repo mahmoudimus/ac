@@ -9,10 +9,11 @@ _AP.require(["inline-dialog/simple", "_dollar", "host/content"], function(simple
                 if(options.onHover !== "true" && eventType !== 'click'){
                     return;
                 }
-                // don't re-open if already visible.
-                if(!options.bindTo.hasClass('active')){
-                    simpleInlineDialog(href, options).show();
+                // don't repeatedly open if already visible as dozens of mouse-over events are fired in quick succession
+                if (options.onHover === true && options.bindTo.hasClass('active')) {
+                    return;
                 }
+                simpleInlineDialog(href, options).show();
             };
         hostContentUtilities.eventHandler(action, inlineDialogTrigger, callback);
     });

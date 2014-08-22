@@ -270,29 +270,29 @@ public class TestDialog extends ConnectWebDriverTestBase
     @Test
     public void dialogClickGetsNewJwt() throws JwtVerificationException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtParseException
     {
-        verifyJwtIssuedAtTimeForDialog(JWT_EXPIRY_DIALOG, JWT_EXPIRY_DIALOG_NAME);
+        verifyJwtIssuedAtTimeForDialog(JWT_EXPIRY_DIALOG, JWT_EXPIRY_DIALOG_NAME, false);
     }
 
     // because we issue a new JWT when it is clicked
     @Test
     public void inlineDialogClickGetsNewJwt() throws JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtVerificationException, JwtParseException
     {
-        verifyJwtIssuedAtTimeForDialog(JWT_EXPIRY_INLINE_DIALOG, JWT_EXPIRY_INLINE_DIALOG_NAME);
+        verifyJwtIssuedAtTimeForDialog(JWT_EXPIRY_INLINE_DIALOG, JWT_EXPIRY_INLINE_DIALOG_NAME, true);
     }
 
-    private void verifyJwtIssuedAtTimeForDialog(String moduleKey, String moduleName) throws JwtUnknownIssuerException, JwtParseException, JwtIssuerLacksSharedSecretException, JwtVerificationException
+    private void verifyJwtIssuedAtTimeForDialog(String moduleKey, String moduleName, final boolean isInlineDialog) throws JwtUnknownIssuerException, JwtParseException, JwtIssuerLacksSharedSecretException, JwtVerificationException
     {
         final JwtReaderFactory jwtReaderFactory = getJwtReaderFactory();
 
         RemotePluginAwarePage page = goToPageWithLink(moduleKey, moduleName);
 
-        clickAndVerifyIssuedAtTime(jwtReaderFactory, page);
-        clickAndVerifyIssuedAtTime(jwtReaderFactory, page); // clicking multiple times should result in a new JWT on subsequent clicks
+        clickAndVerifyIssuedAtTime(jwtReaderFactory, page, isInlineDialog);
+        clickAndVerifyIssuedAtTime(jwtReaderFactory, page, isInlineDialog); // clicking multiple times should result in a new JWT on subsequent clicks
     }
 
     private void sleepForAtLeast1Second()
     {
-        sleepUntil(System.currentTimeMillis() + 1000);
+        sleepUntil(System.currentTimeMillis() + 1100);
     }
 
     private void sleepUntil(final long wakeTimeMillis)
@@ -313,11 +313,11 @@ public class TestDialog extends ConnectWebDriverTestBase
         }
     }
 
-    private void clickAndVerifyIssuedAtTime(JwtReaderFactory jwtReaderFactory, RemotePluginAwarePage page) throws JwtUnknownIssuerException, JwtParseException, JwtIssuerLacksSharedSecretException, JwtVerificationException
+    private void clickAndVerifyIssuedAtTime(JwtReaderFactory jwtReaderFactory, RemotePluginAwarePage page, final boolean isInlineDialog) throws JwtUnknownIssuerException, JwtParseException, JwtIssuerLacksSharedSecretException, JwtVerificationException
     {
         final long timeBeforeClick = System.currentTimeMillis();
         sleepForAtLeast1Second(); // because the JWT "iat" claim is specified in seconds there is no way to differentiate between "now" and "now + a few milliseconds"
-        openAndCloseDialog(page);
+        openAndCloseDialog(page, isInlineDialog);
         verifyIssuedAtTime(jwtReaderFactory, timeBeforeClick);
     }
 
@@ -388,10 +388,10 @@ public class TestDialog extends ConnectWebDriverTestBase
         };
     }
 
-    private void openAndCloseDialog(RemotePluginAwarePage page)
+    private void openAndCloseDialog(RemotePluginAwarePage page, final boolean isInlineDialog)
     {
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
-        RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, remotePluginTest);
+        RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, remotePluginTest, isInlineDialog);
 
         if (dialog.hasChrome())
         {
