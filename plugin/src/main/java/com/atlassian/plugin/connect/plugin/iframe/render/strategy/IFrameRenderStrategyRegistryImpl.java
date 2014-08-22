@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.base.Strings;
@@ -68,7 +69,8 @@ public class IFrameRenderStrategyRegistryImpl implements IFrameRenderStrategyReg
     public IFrameRenderStrategy get(final String addonKey, final String moduleKey, final String classifier)
     {
         Map<String, IFrameRenderStrategy> addonEndpoints = store.get(addonKey);
-        return addonEndpoints == null ? null : addonEndpoints.get(composeKey(moduleKey, classifier));
+        final String smallModuleKey = moduleKey.startsWith(addonKey) ? moduleKey.replace(addonKey + ModuleKeyUtils.ADDON_MODULE_SEPARATOR, "") : moduleKey;
+        return addonEndpoints == null ? null : addonEndpoints.get(composeKey(smallModuleKey, classifier));
     }
 
     @Override

@@ -231,7 +231,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .addAttribute("value", macroKey).getParent()
                 .addElement("var")
                 .addAttribute("name", "URL")
-                .addAttribute("value", ConnectIFrameServlet.iFrameServletPath(productBaseUrl, addon.getKey(), macroBean.getRawKey())).getParent()
+                .addAttribute("value", ConnectIFrameServlet.iFrameServletPath(addon.getKey(), macroBean.getRawKey())).getParent()
                 .addElement("var")
                 .addAttribute("name", "WIDTH")
                 .addAttribute("value", macroBean.getEditor().getWidth()).getParent()

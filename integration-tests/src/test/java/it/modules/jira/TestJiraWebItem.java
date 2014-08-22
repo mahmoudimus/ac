@@ -110,7 +110,6 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 .withKey(ABSOLUTE_WEBITEM_INLINE_DIALOG)
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
-                                .withContext(AddOnUrlContext.addon)
                                 .withUrl("http://www.wikipedia.org")
                                 .withTarget(
                                         newWebItemTargetBean().withType(WebItemTargetType.inlineDialog)

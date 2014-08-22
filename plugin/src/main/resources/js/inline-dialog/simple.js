@@ -16,10 +16,8 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_uti
         var displayInlineDialog = function(content, trigger, showInlineDialog) {
             trigger = $(trigger); // sometimes it's not jQuery. Lets make it jQuery.
 
-            var webItemOptions = hostContentUtilities.getOptionsForWebItem(trigger),
-                pluginKey = hostContentUtilities.getWebItemPluginKey(trigger),
+            var pluginKey = hostContentUtilities.getWebItemPluginKey(trigger),
                 moduleKey = hostContentUtilities.getWebItemModuleKey(trigger);
-                moduleKey = moduleKey.split("__").slice(-1)[0]; // REMOVE ME ONCE PETER HAS FIXED THE SERVLET
 
             hostContentUtilities.getIframeHtmlForKey(pluginKey, undefined, {key: moduleKey})
             .done(function(data) {

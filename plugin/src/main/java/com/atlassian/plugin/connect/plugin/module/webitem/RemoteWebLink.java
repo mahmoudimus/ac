@@ -86,7 +86,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
             if (addOnUrlContext == addon)
             {
                 return isDialog
-                        ? urlVariableSubstitutor.append(ConnectIFrameServlet.iFrameServletPath(productContextPath, pluginKey, moduleKey), moduleContext)
+                        ? urlVariableSubstitutor.append(ConnectIFrameServlet.iFrameServletPath(pluginKey, moduleKey), moduleContext)
                         : iFrameUriBuilderFactory.builder()
                             .addOn(pluginKey)
                             .namespace(moduleKey)

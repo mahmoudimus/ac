@@ -63,7 +63,7 @@ public class ConnectProjectAdminTabPanelModuleProvider
             WebItemModuleBean webItemModuleBean = newWebItemBean()
                     .withName(bean.getName())
                     .withKey(bean.getRawKey())
-                    .withUrl(iFrameServletPath(productBaseUrl, connectAddonBean.getKey(), bean.getRawKey()))
+                    .withUrl(iFrameServletPath(connectAddonBean.getKey(), bean.getRawKey()))
                     .withContext(AddOnUrlContext.page)
                     .withLocation(bean.getAbsoluteLocation())
                     .withWeight(bean.getWeight())

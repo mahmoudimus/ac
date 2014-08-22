@@ -91,7 +91,7 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
                         .withName(bean.getName())
                         .withKey(bean.getRawKey())
                         .withContext(page)
-                        .withUrl(ConnectIFrameServlet.iFrameServletPath(productBaseUrl, connectAddonBean.getKey(), bean.getRawKey()))
+                        .withUrl(ConnectIFrameServlet.iFrameServletPath(connectAddonBean.getKey(), bean.getRawKey()))
                         .withLocation(location)
                         .withWeight(weight)
                         .withIcon(bean.getIcon())

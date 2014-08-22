@@ -68,7 +68,7 @@ public class ConnectReportModuleDescriptorFactory implements ConnectModuleDescri
 
     private Element createReportDescriptor(final ReportModuleBean bean, final ConnectAddonBean connectAddonBean)
     {
-        final String iFrameServletPath = ConnectIFrameServlet.iFrameServletPath(productBaseUrl, connectAddonBean.getKey(), bean.getRawKey());
+        final String iFrameServletPath = ConnectIFrameServlet.iFrameServletPath(connectAddonBean.getKey(), bean.getRawKey());
 
         final Element reportModule = new DOMElement("report");
         reportModule.addAttribute("key", bean.getKey(connectAddonBean));

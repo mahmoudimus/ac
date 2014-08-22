@@ -9,7 +9,6 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -123,9 +122,9 @@ public class ConnectIFrameServlet extends HttpServlet
         return renderStrategy;
     }
 
-    public static String iFrameServletPath(String productContextPath, String addOnKey, String moduleKey)
+    public static String iFrameServletPath(String addOnKey, String moduleKey)
     {
-        return StringUtils.defaultIfEmpty(productContextPath, "") + "/plugins/servlet/ac/" + checkNotNull(addOnKey) + "/" + checkNotNull(moduleKey);
+        return "/plugins/servlet/ac/" + checkNotNull(addOnKey) + "/" + checkNotNull(moduleKey);
     }
 
 }
