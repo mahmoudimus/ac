@@ -112,8 +112,6 @@ public class XmlOAuthToJsonJwtUpdateWithExplicitUninstallTest
 
         // ***** this is the bit that differs (intentionally) to XmlOAuthToJsonJwtUpdateTest
         testPluginInstaller.uninstallXmlAddon(oAuthPlugin);
-        ApplicationLink appLink = connectApplinkManager.getAppLink(oAuthPlugin.getKey());
-        assertEquals(null, appLink);
 
         jwtPlugin = testPluginInstaller.installAddon(createJwtAddOn(oAuthPlugin));
         assertNotNull(jwtPlugin);
