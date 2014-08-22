@@ -22,7 +22,8 @@ import static com.google.common.collect.Collections2.transform;
  * @since 1.0
  */
 @SuppressWarnings({"unchecked", "UnusedDeclaration"})
-public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extends ConnectAddonBean> extends BaseModuleBeanBuilder<T, B>
+public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder,
+        M extends ModuleList, B extends ConnectAddonBean<M>> extends BaseModuleBeanBuilder<T, B>
 {
     private String key;
     private String name;

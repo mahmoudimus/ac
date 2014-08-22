@@ -55,7 +55,7 @@ import static com.google.common.collect.Maps.newHashMap;
  * @schemaTitle Addon Descriptor
  * @since 1.0
  */
-public class ConnectAddonBean extends BaseModuleBean
+public class ConnectAddonBean<M extends ModuleList> extends BaseModuleBean
 {
     public static final String KEY_ATTR = "key";
     public static final String BASE_URL_ATTR = "baseUrl";
@@ -153,7 +153,7 @@ public class ConnectAddonBean extends BaseModuleBean
      * The list of modules this add on provides
      */
     @SchemaIgnore("shallow")
-    private ModuleList modules;
+    private M modules;
 
     /**
      * Set of [scopes](../scopes/scopes.html) requested by this add on
@@ -171,7 +171,7 @@ public class ConnectAddonBean extends BaseModuleBean
         this.vendor = VendorBean.newVendorBean().build();
         this.links = newHashMap();
         this.lifecycle = LifecycleBean.newLifecycleBean().build();
-        this.modules = new ModuleList();
+//        this.modules = new ModuleList();
         this.scopes = new HashSet<ScopeName>();
         this.baseUrl = "";
         this.authentication = newAuthenticationBean().build();
@@ -202,10 +202,10 @@ public class ConnectAddonBean extends BaseModuleBean
             this.description = "";
         }
 
-        if (null == modules)
-        {
-            this.modules = new ModuleList();
-        }
+//        if (null == modules)
+//        {
+//            this.modules = new ModuleList();
+//        }
 
         if (null == vendor)
         {
@@ -266,7 +266,7 @@ public class ConnectAddonBean extends BaseModuleBean
         return vendor;
     }
 
-    public ModuleList getModules()
+    public M getModules()
     {
         return modules;
     }
