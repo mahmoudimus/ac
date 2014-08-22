@@ -96,11 +96,10 @@ public class WorkflowPostFunctionModuleProviderTest
         checkWorkflowUrlIsAbsolute(RESOURCE_NAME_EDIT_PARAMETERS, "/edit");
     }
 
-    @Test(expected = IllegalArgumentException.class)
     public void absoluteWorkflowLinksAreRejected() throws Exception
     {
-        // Url's must be relative
-        checkWorkflowUrlIsAbsolute(RESOURCE_NAME_VIEW, "/view");
+        URI iframeUrl = checkWorkflowUrlIsAbsolute(RESOURCE_NAME_VIEW, "/view");
+        assertThat("an absolute url in the descriptor should not be signed", iframeUrl.getQuery(), not(containsString("jwt=")));
     }
 
     @Test
@@ -123,7 +122,7 @@ public class WorkflowPostFunctionModuleProviderTest
         assertThat(iframeUrl.getQuery(), containsString("ui-params=blah"));
     }
 
-    private void checkWorkflowUrlIsAbsolute(String classifier, String workflowUrl) throws IOException, URISyntaxException
+    private URI checkWorkflowUrlIsAbsolute(String classifier, String workflowUrl) throws IOException, URISyntaxException
     {
         ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters();
         IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, classifier);
@@ -134,5 +133,6 @@ public class WorkflowPostFunctionModuleProviderTest
 
         assertThat(baseUrl, is(BASE_URL));
         assertThat(iframeUrl.getPath(), is(workflowUrl));
+        return iframeUrl;
     }
 }
