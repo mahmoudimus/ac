@@ -101,6 +101,6 @@ public class RemoteWebLinkTest
                 URL,
                 PLUGIN_KEY,
                 MODULE_KEY,
-                absolute, urlContext, false, "").getDisplayableUrl(servletRequest, CONTEXT);
+                absolute, urlContext, false).getDisplayableUrl(servletRequest, CONTEXT);
     }
 }

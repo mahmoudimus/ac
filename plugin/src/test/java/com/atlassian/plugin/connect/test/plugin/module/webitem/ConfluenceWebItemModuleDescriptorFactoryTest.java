@@ -12,7 +12,6 @@ import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
-import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.spring.container.ContainerContext;
 import com.atlassian.spring.container.ContainerManager;
 import com.google.common.collect.ImmutableMap;
@@ -63,9 +62,6 @@ public class ConfluenceWebItemModuleDescriptorFactoryTest
     @Mock
     private ModuleContextFilter moduleContextFilter;
 
-    @Mock
-    private ApplicationProperties applicationProperties;
-
     private WebItemModuleDescriptor descriptor;
 
     @Before
@@ -75,7 +71,7 @@ public class ConfluenceWebItemModuleDescriptorFactoryTest
 
         ConfluenceWebItemModuleDescriptorFactory webItemFactory =
                 new ConfluenceWebItemModuleDescriptorFactory(webFragmentHelper, iFrameUriBuilderFactory,
-                        webFragmentModuleContextExtractor, moduleContextFilter, urlVariableSubstitutor, applicationProperties);
+                        webFragmentModuleContextExtractor, moduleContextFilter, urlVariableSubstitutor);
 
         when(servletRequest.getContextPath()).thenReturn("ElContexto");
 
