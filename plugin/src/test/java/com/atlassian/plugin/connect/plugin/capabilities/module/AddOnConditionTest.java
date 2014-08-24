@@ -1,13 +1,21 @@
-package com.atlassian.plugin.connect.plugin.module;
+package com.atlassian.plugin.connect.plugin.capabilities.module;
 
+import javax.annotation.Nullable;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.TimeZone;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.gzipfilter.org.apache.commons.lang.ObjectUtils;
+import com.atlassian.plugin.connect.plugin.UserPreferencesRetriever;
+import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactoryImpl;
+import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
+import com.atlassian.plugin.connect.plugin.license.LicenseStatus;
+import com.atlassian.plugin.connect.plugin.module.HostApplicationInfo;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.plugin.service.IsDevModeServiceImpl;
 import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
@@ -33,7 +41,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RemoteConditionTest
+public class AddOnConditionTest
 {
     private static final String ADDON_KEY = "myAddonKey";
 
@@ -42,13 +50,13 @@ public class RemoteConditionTest
 
     private final CustomTypeSafeMatcher<AddOnConditionEvent> eventWithCorrectUrl =
             new CustomTypeSafeMatcher<AddOnConditionEvent>("an event with non negative elapsed time")
-    {
-        @Override
-        public boolean matchesSafely(AddOnConditionEvent event)
-        {
-            return ObjectUtils.equals(event.getUrlPath(), URL_PATH);
-        }
-    };
+            {
+                @Override
+                public boolean matchesSafely(AddOnConditionEvent event)
+                {
+                    return ObjectUtils.equals(event.getUrlPath(), URL_PATH);
+                }
+            };
 
     private final CustomTypeSafeMatcher<AddOnConditionEvent> eventWithCorrectAddonKey =
             new CustomTypeSafeMatcher<AddOnConditionEvent>("an event with correct addon key")
@@ -66,7 +74,7 @@ public class RemoteConditionTest
                 @Override
                 public boolean matchesSafely(AddOnConditionFailedEvent event)
                 {
-                    return event.getMessage().startsWith("Unable to retrieve remote condition from addon " + ADDON_KEY);
+                    return event.getMessage().startsWith("Request to addon condition URL failed: ");
                 }
             };
 
@@ -76,7 +84,7 @@ public class RemoteConditionTest
                 @Override
                 public boolean matchesSafely(AddOnConditionFailedEvent event)
                 {
-                    return event.getMessage().startsWith("Invalid JSON returned from remote condition: not json");
+                    return event.getMessage().startsWith("Malformed response from addon condition URL:");
                 }
             };
 
@@ -96,6 +104,10 @@ public class RemoteConditionTest
     @Mock
     private RemotablePluginAccessorFactory remotablePluginAccessorFactory;
 
+
+    @Mock
+    private WebFragmentModuleContextExtractor webFragmentModuleContextExtractor;
+
     @Mock
     private RemotablePluginAccessor remotablePluginAccessor;
 
@@ -114,15 +126,27 @@ public class RemoteConditionTest
     @Mock
     private EventPublisher eventPublisher;
 
-    private RemoteCondition remoteCondition;
+    private AddOnCondition addonCondition;
 
     @Before
     public void init()
     {
-        remoteCondition = new RemoteCondition(productAccessor, remotablePluginAccessorFactory, userManager, templateRenderer,
-                licenseRetriever, localeHelper, eventPublisher);
+        final IFrameUriBuilderFactoryImpl iFrameUriBuilderFactory = new IFrameUriBuilderFactoryImpl(new UrlVariableSubstitutor(new IsDevModeServiceImpl()), remotablePluginAccessorFactory,
+                userManager, new TestHostApplicationInfo(URL, "/"),
+                licenseRetriever, localeHelper, new UserPreferencesRetriever()
+        {
+            @Override
+            public TimeZone getTimeZoneFor(@Nullable String userName)
+            {
+                return TimeZone.getDefault();
+            }
+        });
+        addonCondition = new AddOnCondition(remotablePluginAccessorFactory, iFrameUriBuilderFactory,
+                webFragmentModuleContextExtractor, eventPublisher);
 
-        when(remotablePluginAccessorFactory.get(anyString())).thenReturn(remotablePluginAccessor);
+        when(remotablePluginAccessorFactory.getOrThrow(anyString())).thenReturn(remotablePluginAccessor);
+        when(licenseRetriever.getLicenseStatus(anyString())).thenReturn(LicenseStatus.ACTIVE);
+        when(localeHelper.getLocaleTag()).thenReturn("foo");
     }
 
     @Test
@@ -287,13 +311,37 @@ public class RemoteConditionTest
     {
         final Map<String, String> params = new HashMap<String, String>();
         params.put("url", URL);
-        params.put("pluginKey", ADDON_KEY);
+        params.put(AddOnCondition.ADDON_KEY, ADDON_KEY);
         params.put("toHideSelector", "blah");
 
-        remoteCondition.init(params);
+        addonCondition.init(params);
 
-        remoteCondition.shouldDisplay(new HashMap<String, Object>());
+        addonCondition.shouldDisplay(new HashMap<String, Object>());
     }
 
 }
 
+
+class TestHostApplicationInfo implements HostApplicationInfo
+{
+    private final URI url;
+    private final String contextPath;
+
+    public TestHostApplicationInfo(String url, String contextPath)
+    {
+
+        this.url = URI.create(url);
+        this.contextPath = contextPath;
+    }
+    @Override
+    public URI getUrl()
+    {
+        return url;
+    }
+
+    @Override
+    public String getContextPath()
+    {
+        return contextPath;
+    }
+}
