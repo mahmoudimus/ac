@@ -1,10 +1,12 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
+import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.*;
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
+import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
 import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
@@ -37,6 +39,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     private final ConnectAddonBeanFactory connectAddonBeanFactory;
     private final ConnectAddonToPluginFactory addonToPluginFactory;
     private final ConnectAddonManager connectAddonManager;
+    private final ConnectApplinkManager connectApplinkManager;
 
     private static final Logger log = LoggerFactory.getLogger(DefaultConnectAddOnInstaller.class);
 
@@ -48,7 +51,9 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             OAuthLinkManager oAuthLinkManager,
             RemoteEventsHandler remoteEventsHandler,
             ConnectAddonBeanFactory connectAddonBeanFactory,
-            ConnectAddonToPluginFactory addonToPluginFactory, ConnectAddonManager connectAddonManager)
+            ConnectAddonToPluginFactory addonToPluginFactory,
+            ConnectAddonManager connectAddonManager,
+            ConnectApplinkManager connectApplinkManager)
     {
         this.remotePluginArtifactFactory = remotePluginArtifactFactory;
         this.pluginController = pluginController;
@@ -59,6 +64,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         this.connectAddonBeanFactory = connectAddonBeanFactory;
         this.addonToPluginFactory = addonToPluginFactory;
         this.connectAddonManager = connectAddonManager;
+        this.connectApplinkManager = connectApplinkManager;
     }
 
     @Override
@@ -279,6 +285,14 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         if (plugin != null)
         {
             pluginController.uninstall(plugin);
+
+            final ApplicationLink appLink = connectApplinkManager.getAppLink(pluginKey);
+            if (appLink != null)
+            {
+                // Blow away the applink
+                oAuthLinkManager.unassociateProviderWithLink(appLink);
+                connectApplinkManager.deleteAppLink(pluginKey);
+            }
         }
         else if (connectAddonManager.hasDescriptor(pluginKey))
         {
@@ -291,10 +305,22 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
              to ensure it doesn't already exist as a OAuth client key.  This
              prevents a malicious app that uses a key from an existing oauth
              link from getting that link removed when the app is uninstalled.
+             If it was created by connect then it is ok
             */
             if (oAuthLinkManager.isAppAssociated(pluginKey))
             {
-                throw new PermissionDeniedException(pluginKey, "App key '" + pluginKey + "' is already associated with an OAuth link");
+                final ApplicationLink appLink = connectApplinkManager.getAppLink(pluginKey);
+                if (appLink != null)
+                {
+                    // Is an applink created by connect.
+                    // Blow away the applink
+                    oAuthLinkManager.unassociateProviderWithLink(appLink);
+                    connectApplinkManager.deleteAppLink(pluginKey);
+                }
+                else
+                {
+                    throw new PermissionDeniedException(pluginKey, "App key '" + pluginKey + "' is already associated with an OAuth link");
+                }
             }
         }
     }

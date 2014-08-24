@@ -41,6 +41,8 @@ public interface ConnectApplinkManager
      */
     void deleteAppLink(ConnectAddonBean addon) throws NotConnectAddonException;
 
+    void deleteAppLink(String key) throws NotConnectAddonException;
+
     /**
      * Retrieves an {@link ApplicationLink} found for the Atlassian Connect add-on with given key
      * @param key plugin key for the connect add-on
