@@ -11,6 +11,10 @@
     {
       "filename": "project-activity-tutorial.html",
       "title": "Tutorial: JIRA activity"
+    },
+    {
+      "filename": "connect-cookbook.html",
+      "title": "Connect cookbook"
     }
   ],
   "developing": [
