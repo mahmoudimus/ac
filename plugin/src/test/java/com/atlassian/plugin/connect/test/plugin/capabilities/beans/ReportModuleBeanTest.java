@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.JiraConfluenceModuleList;
 import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
@@ -45,7 +46,7 @@ public class ReportModuleBeanTest
         };
     }
 
-    private static ConnectAddonBean readTestFile() throws IOException
+    private static ConnectAddonBean<JiraConfluenceModuleList> readTestFile() throws IOException
     {
         return ConnectModulesGsonFactory.getGson().fromJson(readAddonTestFile("reportAddon.json"), ConnectAddonBean.class);
     }

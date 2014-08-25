@@ -5,18 +5,19 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.JiraConfluenceModuleList;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleList;
-import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
+import org.apache.commons.lang3.reflect.FieldUtils;
 
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.isParameterizedList;
 
 
 public abstract class ModuleListBuilder<T extends ModuleListBuilder,
-        B extends ModuleList> extends BaseModuleBeanBuilder<T, B>
+        M extends ModuleList> extends BaseModuleBeanBuilder<T, M>
 {
+    private M modules;
+
     public T withModules(String fieldName, ModuleBean... beans)
     {
         for (ModuleBean bean : beans)
@@ -28,16 +29,19 @@ public abstract class ModuleListBuilder<T extends ModuleListBuilder,
 
     public T withModule(String fieldName, ModuleBean bean)
     {
-//        if (null == modules)
-//        {
-//            this.modules = new ModuleList();
-//        }
+        if (null == modules)
+        {
+            this.modules = createEmpty();
+        }
 
         addBeanReflectivelyByType(fieldName, bean);
 
         return (T) this;
     }
 
+    protected abstract M createEmpty();
+
+    public abstract M build();
     // subclasses must override
 //    public B build()
 //    {
@@ -45,18 +49,20 @@ public abstract class ModuleListBuilder<T extends ModuleListBuilder,
 //    }
 
 
+
     private void addBeanReflectivelyByType(String fieldName, ModuleBean bean)
     {
         Class beanClass = bean.getClass();
         try
         {
-            Field field = getClass().getDeclaredField(fieldName);
+//            FieldUtils.writeField(modules, fieldName, bean, true);
+            final Field field = FieldUtils.getField(modules.getClass(), fieldName, true);
             Type fieldType = field.getGenericType();
 
             if (fieldType.equals(beanClass))
             {
                 field.setAccessible(true);
-                field.set(this, bean);
+                field.set(modules, bean);
             }
             else if (isParameterizedList(fieldType))
             {
@@ -64,7 +70,7 @@ public abstract class ModuleListBuilder<T extends ModuleListBuilder,
                 if (listType.equals(beanClass))
                 {
                     field.setAccessible(true);
-                    List beanList = (List) field.get(this);
+                    List beanList = (List) field.get(modules);
                     beanList.add(bean);
                 }
             }
@@ -73,10 +79,10 @@ public abstract class ModuleListBuilder<T extends ModuleListBuilder,
         {
             throw new RuntimeException("Unable to access module field for bean of type: " + bean.getClass(), e);
         }
-        catch (NoSuchFieldException e)
-        {
-            throw new RuntimeException("Unable to find module field '" + fieldName + "' for bean of type: " + bean.getClass());
-        }
+//        catch (NoSuchFieldException e)
+//        {
+//            throw new RuntimeException("Unable to find module field '" + fieldName + "' for bean of type: " + bean.getClass());
+//        }
     }
 
 }

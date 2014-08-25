@@ -1,5 +1,9 @@
 package com.atlassian.plugin.connect.modules.beans;
 
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.SchemaIgnore;
@@ -9,10 +13,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.google.common.collect.Maps.newHashMap;
@@ -301,14 +301,18 @@ public class ConnectAddonBean<M extends ModuleList> extends BaseModuleBean
         return (null != enableLicensing) ? enableLicensing : Boolean.FALSE;
     }
 
-    public static ConnectAddonBeanBuilder newConnectAddonBean()
+    public static <T extends ConnectAddonBeanBuilder,
+            M extends ModuleList, B extends ConnectAddonBean<M>>
+        ConnectAddonBeanBuilder<T, M, B> newConnectAddonBean()
     {
-        return new ConnectAddonBeanBuilder();
+        return new ConnectAddonBeanBuilder<T, M, B>();
     }
 
-    public static ConnectAddonBeanBuilder newConnectAddonBean(ConnectAddonBean defaultBean)
+    public static <T extends ConnectAddonBeanBuilder,
+            M extends ModuleList, B extends ConnectAddonBean<M>>
+        ConnectAddonBeanBuilder<T, M, B> newConnectAddonBean(B defaultBean)
     {
-        return new ConnectAddonBeanBuilder(defaultBean);
+        return new ConnectAddonBeanBuilder<T, M, B>(defaultBean);
     }
 
     // don't call super because BaseCapabilityBean has no data

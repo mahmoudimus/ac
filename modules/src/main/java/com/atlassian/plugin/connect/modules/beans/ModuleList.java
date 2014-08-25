@@ -1,16 +1,15 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+import java.util.List;
+
 import com.atlassian.plugin.connect.modules.annotation.ConnectModule;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Type;
-import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.isParameterizedListWithType;
 import static com.google.common.collect.Lists.newArrayList;
@@ -102,22 +101,15 @@ import static com.google.common.collect.Lists.newArrayList;
  * You can request certain pieces of contextual data, such as a project or space key, to be included in the URLs
  * requested from your add-on. See passing [Context Parameters](../../concepts/context-parameters.html).
  */
-@SuppressWarnings("UnusedDeclaration")
-@ObjectSchemaAttributes(additionalProperties = false)
 public class ModuleList extends BaseModuleBean
 {
-    /////////////////////////////////////////////////////
-    ///////    COMMON MODULES
-    /////////////////////////////////////////////////////
-
     /**
      * The Web Item module allows you to define new links in application menus.
      *
      * @schemaTitle Web Item
      */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultWebItemModuleProvider")
-    private List<WebItemModuleBean> webItems;
-
+    protected List<WebItemModuleBean> webItems;
     /**
      * The Web Panel module allows you to define panels, or sections, on an HTML page.
      * A panel is an iFrame that will be inserted into a page.
@@ -126,7 +118,6 @@ public class ModuleList extends BaseModuleBean
      */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.WebPanelModuleProvider")
     private List<WebPanelModuleBean> webPanels;
-
     /**
      * The Web Section plugin module allows you to define new sections in application menus.
      *
@@ -134,7 +125,6 @@ public class ModuleList extends BaseModuleBean
      */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.WebSectionModuleProvider")
     private List<WebSectionModuleBean> webSections;
-
     /**
      * The Web Hook module allows you be notified of key events that occur in the host product
      *
@@ -142,7 +132,6 @@ public class ModuleList extends BaseModuleBean
      */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.WebHookModuleProvider")
     private List<WebHookModuleBean> webhooks;
-
     /**
      * A general page module is used to provide a generic chrome for add-on content in the product.
      *
@@ -150,7 +139,6 @@ public class ModuleList extends BaseModuleBean
      */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.GeneralPageModuleProvider")
     private List<ConnectPageModuleBean> generalPages;
-
     /**
      * An admin page module is used to provide an administration chrome for add-on content.
      *
@@ -158,7 +146,6 @@ public class ModuleList extends BaseModuleBean
      */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.AdminPageModuleProvider")
     private List<ConnectPageModuleBean> adminPages;
-
     /**
      * A configure page module is a page module used to configure the addon itself.
      * It's link will appear in the add-ons entry in 'Manage Add-ons'.
@@ -167,144 +154,18 @@ public class ModuleList extends BaseModuleBean
      */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.ConfigurePageModuleProvider")
     private ConnectPageModuleBean configurePage;
-
-
-    /////////////////////////////////////////////////////
-    ///////    JIRA MODULES
-    /////////////////////////////////////////////////////
-
-    /**
-     * The Component Tab Panel module allows you to add new tabs to the 'Browse Component' page.
-     *
-     * @schemaTitle Component Tab Panel
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider", products = {ProductFilter.JIRA})
-    private List<ConnectTabPanelModuleBean> jiraComponentTabPanels;
-
-    /**
-     * The Issue Tab Panel module allows you to add new tabs to the 'Browse Component' page.
-     *
-     * @schemaTitle Issue Tab Panel
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider", products = {ProductFilter.JIRA})
-    private List<ConnectTabPanelModuleBean> jiraIssueTabPanels;
-
-    /**
-     * The Project Admin Tab Panel module allows you to add new panels to the 'Project Admin' page.
-     *
-     * @schemaTitle Issue Tab Panel
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider", products = {ProductFilter.JIRA})
-    private List<ConnectProjectAdminTabPanelModuleBean> jiraProjectAdminTabPanels;
-
-    /**
-     * The Project Tab Panel module allows you to add new panels to the 'Project' page.
-     *
-     * @schemaTitle Project Tab Panel
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider", products = {ProductFilter.JIRA})
-    private List<ConnectTabPanelModuleBean> jiraProjectTabPanels;
-
-    /**
-     * The Version Tab Panel module allows you to add new panels to the 'Browse Version' page.
-     *
-     * @schemaTitle Version Tab Panel
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider", products = {ProductFilter.JIRA})
-    private List<ConnectTabPanelModuleBean> jiraVersionTabPanels;
-
-    /**
-     * The User Profile Tab Panel module allows you to add new tabs to the 'Browse Component' page.
-     *
-     * @schemaTitle User Profile Tab Panel
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider", products = {ProductFilter.JIRA})
-    private List<ConnectTabPanelModuleBean> jiraProfileTabPanels;
-
-    /**
-     * The Search Request View is used to display different representations of search results in the issue navigator.
-     * They will be displayed as a link in the `Export` toolbar menu.
-     *
-     * @schemaTitle Search Request View
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.SearchRequestViewModuleProvider", products = {ProductFilter.JIRA})
-    private List<SearchRequestViewModuleBean> jiraSearchRequestViews;
-
-    /**
-     * Workflow post functions execute after the workflow transition is executed
-     *
-     * @schemaTitle Workflow Post Function
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultWorkflowPostFunctionModuleProvider", products = {ProductFilter.JIRA})
-    private List<WorkflowPostFunctionModuleBean> jiraWorkflowPostFunctions;
-
-    /**
-     * The Entity Property are add-on key/value stories in certain JIRA objects, such as issues and projects.
-     * @schemaTitle Entity Property
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.EntityPropertyModuleProvider", products = {ProductFilter.JIRA})
-    private List<EntityPropertyModuleBean> jiraEntityProperties;
-
-    /**
-     * Add new report modules to JIRA projects.
-     * @schemaTitle Report
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ReportModuleProvider", products = {ProductFilter.JIRA})
-    private List<ReportModuleBean> jiraReports;
-
-    /////////////////////////////////////////////////////
-    ///////    CONFLUENCE MODULES
-    /////////////////////////////////////////////////////
-
-    /**
-     * Dynamic content macros allow you to add a macro into a Confluence page which is rendered as an iframe.
-     *
-     * @schemaTitle Dynamic Content Macro
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.DynamicContentMacroModuleProvider", products = {ProductFilter.CONFLUENCE})
-    private List<DynamicContentMacroModuleBean> dynamicContentMacros;
-
     /**
      * @schemaTitle User Profile Page
      */
     @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ProfilePageModuleProvider", products = {ProductFilter.CONFLUENCE}) // Note: Jira uses jiraProfileTabPanels instead
     private List<ConnectPageModuleBean> profilePages;
 
-    /**
-     * The Space Tools Tab module allows you to add new tabs to the Space Tools area of Confluence.
-     * @schemaTitle Space Tools Tab
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.SpaceToolsTabModuleProvider", products = {ProductFilter.CONFLUENCE})
-    private List<SpaceToolsTabModuleBean> spaceToolsTabs;
-
-    /**
-     * Static content macros allow you to add a macro into a Confluence page which is stored with the Confluence page
-     * itself. The add-on is responsible for generating the rendered XHTML in
-     * [Confluence Storage Format](https://confluence.atlassian.com/display/DOC/Confluence+Storage+Format)
-     *
-     * @schemaTitle Static Content Macro
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.StaticContentMacroModuleProvider", products = {ProductFilter.CONFLUENCE})
-    private List<StaticContentMacroModuleBean> staticContentMacros;
 
     public ModuleList()
     {
         this.adminPages = newArrayList();
-        this.dynamicContentMacros = newArrayList();
         this.generalPages = newArrayList();
-        this.jiraComponentTabPanels = newArrayList();
-        this.jiraIssueTabPanels = newArrayList();
-        this.jiraProfileTabPanels = newArrayList();
-        this.jiraProjectAdminTabPanels = newArrayList();
-        this.jiraProjectTabPanels = newArrayList();
-        this.jiraSearchRequestViews = newArrayList();
-        this.jiraVersionTabPanels = newArrayList();
-        this.jiraWorkflowPostFunctions = newArrayList();
-        this.jiraEntityProperties = newArrayList();
-        this.jiraReports = newArrayList();
         this.profilePages = newArrayList();
-        this.spaceToolsTabs = newArrayList();
-        this.staticContentMacros = newArrayList();
         this.webhooks = newArrayList();
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
@@ -315,34 +176,6 @@ public class ModuleList extends BaseModuleBean
     {
         super(builder);
 
-        if (null == jiraComponentTabPanels)
-        {
-            this.jiraComponentTabPanels = newArrayList();
-        }
-        if (null == jiraIssueTabPanels)
-        {
-            this.jiraIssueTabPanels = newArrayList();
-        }
-        if (null == jiraProjectAdminTabPanels)
-        {
-            this.jiraProjectAdminTabPanels = newArrayList();
-        }
-        if (null == jiraProjectTabPanels)
-        {
-            this.jiraProjectTabPanels = newArrayList();
-        }
-        if (null == jiraVersionTabPanels)
-        {
-            this.jiraVersionTabPanels = newArrayList();
-        }
-        if (null == jiraProfileTabPanels)
-        {
-            this.jiraProfileTabPanels = newArrayList();
-        }
-        if (null == jiraEntityProperties)
-        {
-            this.jiraEntityProperties = newArrayList();
-        }
         if (null == webItems)
         {
             this.webItems = newArrayList();
@@ -367,69 +200,15 @@ public class ModuleList extends BaseModuleBean
         {
             this.profilePages = newArrayList();
         }
-        if (null == jiraWorkflowPostFunctions)
-        {
-            this.jiraWorkflowPostFunctions = newArrayList();
-        }
         if (null == webhooks)
         {
             this.webhooks = newArrayList();
-        }
-        if (null == jiraSearchRequestViews)
-        {
-            this.jiraSearchRequestViews = newArrayList();
-        }
-        if (null == dynamicContentMacros)
-        {
-            this.dynamicContentMacros = newArrayList();
-        }
-        if (null == spaceToolsTabs)
-        {
-            this.spaceToolsTabs = newArrayList();
-        }
-        if (null == staticContentMacros)
-        {
-            this.staticContentMacros = newArrayList();
-        }
-        if (null == jiraReports)
-        {
-            this.jiraReports = newArrayList();
         }
     }
 
     public List<WebItemModuleBean> getWebItems()
     {
         return webItems;
-    }
-
-    public List<ConnectTabPanelModuleBean> getJiraComponentTabPanels()
-    {
-        return jiraComponentTabPanels;
-    }
-
-    public List<ConnectTabPanelModuleBean> getJiraIssueTabPanels()
-    {
-        return jiraIssueTabPanels;
-    }
-
-    public List<ConnectProjectAdminTabPanelModuleBean> getJiraProjectAdminTabPanels()
-    {
-        return jiraProjectAdminTabPanels;
-    }
-
-    public List<ConnectTabPanelModuleBean> getJiraProjectTabPanels()
-    {
-        return jiraProjectTabPanels;
-    }
-
-    public List<ConnectTabPanelModuleBean> getJiraVersionTabPanels()
-    {
-        return jiraVersionTabPanels;
-    }
-
-    public List<ConnectTabPanelModuleBean> getJiraProfileTabPanels()
-    {
-        return jiraProfileTabPanels;
     }
 
     public List<WebPanelModuleBean> getWebPanels()
@@ -440,21 +219,6 @@ public class ModuleList extends BaseModuleBean
     public List<WebSectionModuleBean> getWebSections()
     {
         return webSections;
-    }
-
-    public List<WorkflowPostFunctionModuleBean> getJiraWorkflowPostFunctions()
-    {
-        return jiraWorkflowPostFunctions;
-    }
-
-    public List<EntityPropertyModuleBean> getJiraEntityProperties()
-    {
-        return jiraEntityProperties;
-    }
-
-    public List<ReportModuleBean> getJiraReports()
-    {
-        return jiraReports;
     }
 
     public List<ConnectPageModuleBean> getGeneralPages()
@@ -482,26 +246,6 @@ public class ModuleList extends BaseModuleBean
         return webhooks;
     }
 
-    public List<SearchRequestViewModuleBean> getJiraSearchRequestViews()
-    {
-        return jiraSearchRequestViews;
-    }
-
-    public List<DynamicContentMacroModuleBean> getDynamicContentMacros()
-    {
-        return dynamicContentMacros;
-    }
-
-    public List<SpaceToolsTabModuleBean> getSpaceToolsTabs() {
-        return spaceToolsTabs;
-    }
-
-    public List<StaticContentMacroModuleBean> getStaticContentMacros()
-    {
-        return staticContentMacros;
-    }
-
-    // don't call super because BaseCapabilityBean has no data
     @Override
     public boolean equals(Object otherObj)
     {
@@ -519,26 +263,13 @@ public class ModuleList extends BaseModuleBean
 
         return new EqualsBuilder()
                 .append(adminPages, other.adminPages)
-                .append(dynamicContentMacros, other.dynamicContentMacros)
                 .append(configurePage, other.configurePage)
                 .append(generalPages, other.generalPages)
-                .append(jiraComponentTabPanels, other.jiraComponentTabPanels)
-                .append(jiraIssueTabPanels, other.jiraIssueTabPanels)
-                .append(jiraProfileTabPanels, other.jiraProfileTabPanels)
-                .append(jiraProjectAdminTabPanels, other.jiraProjectAdminTabPanels)
-                .append(jiraProjectTabPanels, other.jiraProjectTabPanels)
-                .append(jiraSearchRequestViews, other.jiraSearchRequestViews)
-                .append(jiraVersionTabPanels, other.jiraVersionTabPanels)
-                .append(jiraWorkflowPostFunctions, other.jiraWorkflowPostFunctions)
-                .append(jiraEntityProperties, other.jiraEntityProperties)
                 .append(profilePages, other.profilePages)
-                .append(spaceToolsTabs, other.spaceToolsTabs)
-                .append(staticContentMacros, other.staticContentMacros)
                 .append(webhooks, other.webhooks)
                 .append(webItems, other.webItems)
                 .append(webPanels, webPanels)
                 .append(webSections, webSections)
-                .append(jiraReports, other.jiraReports)
                 .build();
     }
 
@@ -548,29 +279,16 @@ public class ModuleList extends BaseModuleBean
     {
         return new HashCodeBuilder(29, 37)
                 .append(adminPages)
-                .append(dynamicContentMacros)
                 .append(configurePage)
                 .append(generalPages)
-                .append(jiraComponentTabPanels)
-                .append(jiraIssueTabPanels)
-                .append(jiraProfileTabPanels)
-                .append(jiraProjectAdminTabPanels)
-                .append(jiraProjectTabPanels)
-                .append(jiraSearchRequestViews)
-                .append(jiraVersionTabPanels)
-                .append(jiraWorkflowPostFunctions)
-                .append(jiraEntityProperties)
                 .append(profilePages)
-                .append(spaceToolsTabs)
-                .append(staticContentMacros)
                 .append(webhooks)
                 .append(webItems)
                 .append(webPanels)
                 .append(webSections)
-                .append(jiraReports)
                 .build();
     }
-    
+
     public boolean isEmpty()
     {
         for (Field field : getClass().getDeclaredFields())
@@ -595,12 +313,12 @@ public class ModuleList extends BaseModuleBean
                         ModuleBean moduleBean = (ModuleBean) field.get(this);
                         beanList = moduleBean == null ? ImmutableList.<ModuleBean>of() : newArrayList(moduleBean);
                     }
-                    
+
                     if(!beanList.isEmpty())
                     {
                         return false;
                     }
-                    
+
                 }
                 catch (IllegalAccessException e)
                 {
@@ -608,7 +326,7 @@ public class ModuleList extends BaseModuleBean
                 }
             }
         }
-        
+
         return true;
     }
 }

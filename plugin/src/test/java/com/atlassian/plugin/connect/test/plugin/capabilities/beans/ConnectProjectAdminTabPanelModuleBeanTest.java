@@ -3,7 +3,9 @@ package com.atlassian.plugin.connect.test.plugin.capabilities.beans;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean;
+import com.atlassian.plugin.connect.modules.beans.JiraConfluenceModuleList;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
 import com.opensymphony.util.FileUtils;
@@ -58,13 +60,14 @@ public class ConnectProjectAdminTabPanelModuleBeanTest
         assertThat(moduleBean.getAbsoluteLocation(), is("atl.jira.proj.config/a-location"));
     }
 
-    private ConnectAddonBean createBean()
+    private ConnectAddonBean<JiraConfluenceModuleList> createBean()
     {
         Map<String, String> links = new HashMap<String, String>();
         links.put("self", "http://www.example.com/capabilities");
         links.put("homepage", "http://www.example.com");
 
-        return newConnectAddonBean()
+//        return new ConnectAddonBeanBuilder<ConnectAddonBeanBuilder, JiraConfluenceModuleList, ConnectAddonBean<JiraConfluenceModuleList>>()
+        return ConnectAddonBean.<ConnectAddonBeanBuilder, JiraConfluenceModuleList, ConnectAddonBean<JiraConfluenceModuleList>>newConnectAddonBean()
                 .withName("My Plugin")
                 .withKey("my-plugin")
                 .withVersion("1.0")

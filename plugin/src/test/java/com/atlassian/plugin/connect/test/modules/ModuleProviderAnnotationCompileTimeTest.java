@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.test.modules;
 
 import com.atlassian.plugin.connect.modules.annotation.ConnectModule;
-import com.atlassian.plugin.connect.modules.beans.ModuleList;
+import com.atlassian.plugin.connect.modules.beans.JiraConfluenceModuleList;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
@@ -19,7 +19,7 @@ public class ModuleProviderAnnotationCompileTimeTest
     @Test
     public void verifyClassesLoad() throws Exception
     {
-        for(Field field : ModuleList.class.getDeclaredFields())
+        for(Field field : JiraConfluenceModuleList.class.getDeclaredFields())
         {
             if(field.isAnnotationPresent(ConnectModule.class))
             {

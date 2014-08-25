@@ -1,21 +1,20 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
-import com.atlassian.plugin.connect.modules.beans.*;
+import javax.annotation.Nullable;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleList;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 
-import javax.annotation.Nullable;
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.isParameterizedList;
 import static com.google.common.collect.Collections2.transform;
 
 /**
@@ -32,7 +31,8 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder,
     private String description;
     private VendorBean vendor;
     private Map<String, String> links;
-    private ModuleList modules;
+    private M modules;
+    private ModuleListBuilder<?, ?> moduleListBuilder;
     private Set<ScopeName> scopes;
     private LifecycleBean lifecycle;
     private String baseUrl;
@@ -43,7 +43,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder,
     {
     }
 
-    public ConnectAddonBeanBuilder(ConnectAddonBean defaultBean)
+    public ConnectAddonBeanBuilder(ConnectAddonBean<M> defaultBean)
     {
         this.key = defaultBean.getKey();
         this.name = defaultBean.getName();
@@ -96,24 +96,35 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder,
         return (T) this;
     }
 
-    public T withModules(String fieldName, ModuleBean... beans)
+    public T withModuleList(M modules)
     {
-        for (ModuleBean bean : beans)
-        {
-            withModule(fieldName, bean);
-        }
+        this.modules = modules;
         return (T) this;
     }
 
-    public T withModule(String fieldName, ModuleBean bean)
+    @Deprecated // use ModuleListBuilder
+    public T withModules(String fieldName, ModuleBean... beans)
     {
-        if (null == modules)
+        if (null == moduleListBuilder)
         {
-            this.modules = new ModuleList();
+            // TODO: hardwiring in the first phase of the ModuleList refactor
+            this.moduleListBuilder = new JiraConfluenceModuleListBuilder();
         }
 
-        addBeanReflectivelyByType(fieldName, modules, bean);
+        moduleListBuilder.withModules(fieldName, beans);
+        return (T) this;
+    }
 
+    @Deprecated // use ModuleListBuilder
+    public T withModule(String fieldName, ModuleBean bean)
+    {
+        if (null == moduleListBuilder)
+        {
+            // TODO: hardwiring in the first phase of the ModuleList refactor
+            this.moduleListBuilder = new JiraConfluenceModuleListBuilder();
+        }
+
+        moduleListBuilder.withModule(fieldName, bean);
         return (T) this;
     }
 
@@ -164,40 +175,6 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder,
                 return null == scopeName ? null : scopeName.name();
             }
         }));
-    }
-
-    private void addBeanReflectivelyByType(String fieldName, ModuleList capabilities, ModuleBean bean)
-    {
-        Class beanClass = bean.getClass();
-        try
-        {
-            Field field = capabilities.getClass().getDeclaredField(fieldName);
-            Type fieldType = field.getGenericType();
-
-            if (fieldType.equals(beanClass))
-            {
-                field.setAccessible(true);
-                field.set(capabilities, bean);
-            }
-            else if (isParameterizedList(fieldType))
-            {
-                Type listType = ((ParameterizedType) fieldType).getActualTypeArguments()[0];
-                if (listType.equals(beanClass))
-                {
-                    field.setAccessible(true);
-                    List beanList = (List) field.get(capabilities);
-                    beanList.add(bean);
-                }
-            }
-        }
-        catch (IllegalAccessException e)
-        {
-            throw new RuntimeException("Unable to access module field for bean of type: " + bean.getClass(), e);
-        }
-        catch (NoSuchFieldException e)
-        {
-            throw new RuntimeException("Unable to find module field '" + fieldName + "' for bean of type: " + bean.getClass());
-        }
     }
 
     public String getKey() { return key; }

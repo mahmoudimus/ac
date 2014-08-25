@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.gson;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.JiraConfluenceModuleList;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
@@ -137,7 +138,7 @@ public class ConnectAddonBeanMarshallingTest
     public void noScopes() throws IOException
     {
         String json = readAddonTestFile("addonMultipleCapabilities.json");
-        ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
+        ConnectAddonBean<JiraConfluenceModuleList> addOn = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
         assertThat(addOn.getScopes(), is(Collections.<ScopeName>emptySet()));
     }
 
@@ -145,7 +146,7 @@ public class ConnectAddonBeanMarshallingTest
     public void singleScope() throws IOException
     {
         String json = readAddonTestFile("singleScope.json");
-        ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
+        ConnectAddonBean<JiraConfluenceModuleList> addOn = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
         assertThat(addOn.getScopes(), is((Set<ScopeName>) newHashSet(ScopeName.READ)));
     }
 
@@ -153,7 +154,7 @@ public class ConnectAddonBeanMarshallingTest
     public void multipleScopes() throws IOException
     {
         String json = readAddonTestFile("multipleScopes.json");
-        ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
+        ConnectAddonBean<JiraConfluenceModuleList> addOn = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
         assertThat(addOn.getScopes(), is((Set<ScopeName>) newHashSet(ScopeName.READ, ScopeName.WRITE)));
     }
 
@@ -162,7 +163,7 @@ public class ConnectAddonBeanMarshallingTest
     {
         Set<ScopeName> emptySet = newHashSet();
         String json = readAddonTestFile("badScopeName.json");
-        ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
+        ConnectAddonBean<JiraConfluenceModuleList> addOn = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
         assertThat(addOn.getScopes(), is(emptySet));
     }
 }

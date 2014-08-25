@@ -93,7 +93,7 @@ public class PageConditionsValidator implements AddOnBeanValidator
     {
         List<ConnectPageModuleBean> pages = new ArrayList<ConnectPageModuleBean>();
 
-        Field[] fields = ModuleList.class.getDeclaredFields();
+        Field[] fields = JiraConfluenceModuleList.class.getDeclaredFields();
         
         for(Field field : fields)
         {
