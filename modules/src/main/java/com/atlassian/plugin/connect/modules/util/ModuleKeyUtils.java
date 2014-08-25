@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.modules.util;
 
-import com.google.common.base.Joiner;
 import org.apache.commons.lang3.StringUtils;
 
 import java.security.SecureRandom;
@@ -33,6 +32,11 @@ public class ModuleKeyUtils
     public static String moduleKeyOnly(String moduleKey)
     {
         return StringUtils.substringAfterLast(moduleKey, ADDON_MODULE_SEPARATOR);
+    }
+
+    public static String moduleKeyOnly(String addOnKey, String moduleKey)
+    {
+        return moduleKey.startsWith(addOnKey) ? moduleKey.replace(addOnKey + ModuleKeyUtils.ADDON_MODULE_SEPARATOR, "") : moduleKey;
     }
 
     public static String addonKeyOnly(String moduleKey)

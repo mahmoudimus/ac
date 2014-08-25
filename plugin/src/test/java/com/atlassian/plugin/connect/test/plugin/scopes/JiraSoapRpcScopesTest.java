@@ -85,21 +85,6 @@ public class JiraSoapRpcScopesTest extends AbstractScopesTest
 
     public JiraSoapRpcScopesTest(ScopeName scope, HttpMethod method, String path, String rpcMethod, boolean expectedOutcome)
     {
-        super(scope, method, path, createSoapRpcPayload(rpcMethod), expectedOutcome, "/jira", "Jira");
-    }
-
-    private static String createSoapRpcPayload(String methodName)
-    {
-        return "<?xml version=\"1.0\"?>\n" +
-                "<soap:Envelope\n" +
-                "xmlns:soap=\"http://www.w3.org/2001/12/soap-envelope\"\n" +
-                "soap:encodingStyle=\"http://www.w3.org/2001/12/soap-encoding\">\n" +
-                "\n" +
-                "<soap:Body xmlns:m=\"http://soap.rpc.jira.atlassian.com\">" +
-                "    <m:" + methodName + ">" +
-                "    </m:" + methodName + ">" +
-                "</soap:Body>\n" +
-                "\n" +
-                "</soap:Envelope>";
+        super(scope, method, path, APITestUtil.createSoapRpcPayload(rpcMethod), expectedOutcome, "/jira", "Jira");
     }
 }

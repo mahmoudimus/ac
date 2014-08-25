@@ -1,6 +1,8 @@
 package it.servlet;
 
 import com.atlassian.plugin.connect.test.utils.NameValuePairs;
+import com.google.common.collect.ImmutableMap;
+import it.servlet.iframe.MustacheServlet;
 import org.apache.http.NameValuePair;
 
 import javax.servlet.ServletException;
@@ -15,10 +17,6 @@ import java.util.Map;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
-
-import com.google.common.collect.ImmutableMap;
-
-import it.servlet.iframe.MustacheServlet;
 
 public class EchoQueryParametersServlet extends MustacheServlet
 {
@@ -35,7 +33,7 @@ public class EchoQueryParametersServlet extends MustacheServlet
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
+    public void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
     {
         NameValuePairs parameters = new NameValuePairs(req.getParameterMap());
         queryParameters.push(parameters);
@@ -60,7 +58,7 @@ public class EchoQueryParametersServlet extends MustacheServlet
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
+    public void doPost(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
     {
         doGet(req, resp, context);
     }

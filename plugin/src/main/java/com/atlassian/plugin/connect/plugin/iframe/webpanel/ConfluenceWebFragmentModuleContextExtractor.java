@@ -48,6 +48,7 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
             if (webInterfaceContext != null)
             {
                 moduleContext.addPage(webInterfaceContext.getPage());
+                moduleContext.addContent(webInterfaceContext.getPage());
                 moduleContext.addSpace(webInterfaceContext.getSpace());
             }
         }
@@ -61,6 +62,7 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
             if (webInterfaceContext != null)
             {
                 moduleContext.addPage(webInterfaceContext.getPage());
+                moduleContext.addContent(webInterfaceContext.getPage());
                 moduleContext.addSpace(webInterfaceContext.getSpace());
             }
         }
@@ -74,13 +76,8 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
         AbstractPage page = (AbstractPage) webFragmentContext.get("page");
         if (page != null)
         {
+            moduleContext.addContent(page);
             moduleContext.addPage(page);
-        }
-
-        Object content = webFragmentContext.get("content");
-        if (content != null && content instanceof ContentEntityObject)
-        {
-            moduleContext.addContent((ContentEntityObject)content);
         }
 
         if (action instanceof AbstractPageAwareAction)
@@ -88,8 +85,15 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
             AbstractPageAwareAction pageAwareAction = (AbstractPageAwareAction) action;
             if (!moduleContext.containsKey(ConfluenceModuleContextFilter.PAGE_ID))
             {
+                moduleContext.addContent(pageAwareAction.getPage());
                 moduleContext.addPage(pageAwareAction.getPage());
             }
+        }
+
+        Object content = webFragmentContext.get("content");
+        if (content != null && content instanceof ContentEntityObject)
+        {
+            moduleContext.addContent((ContentEntityObject)content);
         }
 
         ConfluenceUser profileUser = (ConfluenceUser) webFragmentContext.get("targetUser");

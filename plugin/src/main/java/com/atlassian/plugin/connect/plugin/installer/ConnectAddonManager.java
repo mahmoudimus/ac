@@ -176,7 +176,7 @@ public class ConnectAddonManager
      * @param jsonDescriptor the json descriptor of the add-on to install
      * @return a {@link ConnectAddonBean} representation of the add-on
      */
-    public ConnectAddonBean installConnectAddon(String jsonDescriptor)
+    public ConnectAddonBean installConnectAddon(String jsonDescriptor, PluginState targetState)
     {
         long startTime = System.currentTimeMillis();
 
@@ -211,7 +211,7 @@ public class ConnectAddonManager
                 .setAuth(authType.name())
                 .setBaseUrl(addOn.getBaseUrl())
                 .setDescriptor(jsonDescriptor)
-                .setRestartState(PluginState.ENABLED.name())
+                .setRestartState(PluginState.DISABLED.name())
                 .setUserKey(userKey);
 
         if (!Strings.isNullOrEmpty(sharedSecret))
@@ -233,8 +233,13 @@ public class ConnectAddonManager
         eventPublisher.publish(new ConnectAddonInstalledEvent(pluginKey));
 
         long endTime = System.currentTimeMillis();
-
         log.info("Connect addon '" + addOn.getKey() + "' installed in " + (endTime - startTime) + "ms");
+
+        if (PluginState.ENABLED == targetState)
+        {
+            enableConnectAddon(pluginKey);
+        }
+
         return addOn;
     }
 
@@ -252,13 +257,13 @@ public class ConnectAddonManager
             if (null != addon)
             {
                 beanToModuleRegistrar.registerDescriptorsForBeans(addon);
-                addonRegistry.storeRestartState(pluginKey, PluginState.ENABLED);
 
                 if (addOnNeedsAUser(addon))
                 {
                     enableAddOnUser(addon);
                 }
 
+                addonRegistry.storeRestartState(pluginKey, PluginState.ENABLED);
                 eventPublisher.publish(new ConnectAddonEnabledEvent(pluginKey, createEventData(pluginKey, SyncHandler.ENABLED.name().toLowerCase())));
 
                 long endTime = System.currentTimeMillis();
@@ -496,7 +501,7 @@ public class ConnectAddonManager
 
             if (e.getCause() instanceof UnknownHostException)
             {
-                String i18nMessage = i18nResolver.getText("connect.install.error.remote.host.bad.domain", e.getCause().getLocalizedMessage());
+                String i18nMessage = i18nResolver.getText("connect.install.error.remote.host.bad.domain", e.getCause().getLocalizedMessage().replace(": Name or service not known", ""));
                 throw new LifecycleCallbackException(message, Option.some(i18nMessage));
             }
             else if (e.getCause() instanceof SocketTimeoutException)

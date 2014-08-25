@@ -73,6 +73,11 @@ public class RemoteWebPanel extends AbstractConnectIFrameComponent<RemoteWebPane
         return getFromQueryString("page_id");
     }
 
+    public String getContentId()
+    {
+        return getFromQueryString("content_id");
+    }
+
     public String getCustomMessage()
     {
         return getIFrameElementText("custom-message");

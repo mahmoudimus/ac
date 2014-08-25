@@ -54,7 +54,8 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
     public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog)
     {
         return new RemoteJiraWebItemModuleDescriptor(jiraAuthenticationContext, webInterfaceManager, webFragmentHelper,
-                iFrameUriBuilderFactory, urlVariableSubstitutor, webFragmentModuleContextExtractor, moduleContextFilter, url, pluginKey, moduleKey, absolute, addOnUrlContext, isDialog);
+                iFrameUriBuilderFactory, urlVariableSubstitutor, webFragmentModuleContextExtractor, moduleContextFilter,
+                url, pluginKey, moduleKey, absolute, addOnUrlContext, isDialog);
     }
 
     private static final class RemoteJiraWebItemModuleDescriptor extends JiraWebItemModuleDescriptor

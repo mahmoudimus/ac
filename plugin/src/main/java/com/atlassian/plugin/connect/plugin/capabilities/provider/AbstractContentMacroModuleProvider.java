@@ -46,7 +46,11 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     protected final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
 
     public AbstractContentMacroModuleProvider(WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                                              HostContainer hostContainer, AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory, ConnectAddonI18nManager connectAddonI18nManager)
+                                              HostContainer hostContainer,
+                                              AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
+                                              IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                              IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+                                              ConnectAddonI18nManager connectAddonI18nManager)
     {
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
         this.hostContainer = hostContainer;
