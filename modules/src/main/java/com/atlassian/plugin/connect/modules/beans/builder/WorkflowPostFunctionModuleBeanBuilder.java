@@ -36,26 +36,42 @@ public class WorkflowPostFunctionModuleBeanBuilder extends RequiredKeyBeanBuilde
 
     public WorkflowPostFunctionModuleBeanBuilder withView(UrlBean view)
     {
-        this.view = view;
+        this.view = checkNotAbsolute(view);
         return this;
     }
 
     public WorkflowPostFunctionModuleBeanBuilder withEdit(UrlBean edit)
     {
-        this.edit = edit;
+        this.edit = checkNotAbsolute(edit);
         return this;
     }
 
     public WorkflowPostFunctionModuleBeanBuilder withCreate(UrlBean create)
     {
-        this.create = create;
+        this.create = checkNotAbsolute(create);
         return this;
     }
 
     public WorkflowPostFunctionModuleBeanBuilder withTriggered(UrlBean triggered)
     {
-        this.triggered = triggered;
+        this.triggered = checkNotAbsolute(triggered);
         return this;
+    }
+
+    // don't send workflow details to arbitrary external urls
+    private UrlBean checkNotAbsolute(UrlBean urlBean)
+    {
+        if (null != urlBean)
+        {
+            final String url = urlBean.getUrl();
+
+            if (null != url && url.toLowerCase().startsWith("http"))
+            {
+               throw new IllegalArgumentException(String.format("Workflow post-function URLs must not be absolute: [%s]", url));
+            }
+        }
+
+        return urlBean;
     }
 
     @Override

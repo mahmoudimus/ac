@@ -9,11 +9,13 @@ _AP.define("host/content", ["_dollar", "_uri", "_ui-params"], function ($, uri, 
     }
 
     function getWebItemPluginKey(target){
-        var m = target.attr('class').match(/ap-plugin-key-([^\s]*)/);
+        var cssClass = target.attr('class');
+        var m = cssClass ? cssClass.match(/ap-plugin-key-([^\s]*)/) : null;
         return $.isArray(m) ? m[1] : false;
     }
     function getWebItemModuleKey(target){
-        var m = target.attr('class').match(/ap-module-key-([^\s]*)/);
+        var cssClass = target.attr('class');
+        var m = cssClass ? cssClass.match(/ap-module-key-([^\s]*)/) : null;
         return $.isArray(m) ? m[1] : false;
     }
 
@@ -88,7 +90,9 @@ _AP.define("host/content", ["_dollar", "_uri", "_ui-params"], function ($, uri, 
         getIframeHtmlForUrl: getIframeHtmlForUrl,
         getIframeHtmlForKey: getIframeHtmlForKey,
         eventHandler: eventHandler,
-        getOptionsForWebItem: getOptionsForWebItem
+        getOptionsForWebItem: getOptionsForWebItem,
+        getWebItemPluginKey: getWebItemPluginKey,
+        getWebItemModuleKey: getWebItemModuleKey
     };
 
 
