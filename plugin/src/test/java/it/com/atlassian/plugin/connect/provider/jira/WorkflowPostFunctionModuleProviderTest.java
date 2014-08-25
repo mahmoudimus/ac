@@ -23,7 +23,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.*;
+import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_EDIT_PARAMETERS;
+import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_INPUT_PARAMETERS;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
 import static com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderImpl.IFrameRenderStrategyImpl;
@@ -65,7 +66,6 @@ public class WorkflowPostFunctionModuleProviderTest
                 .withTriggered(new UrlBean("/triggered"))
                 .withCreate(new UrlBean("/create"))
                 .withEdit(new UrlBean("/edit"))
-                .withView(new UrlBean(BASE_URL + "/view"))
                 .build();
 
         ConnectAddonBean addon = newConnectAddonBean()
@@ -96,12 +96,6 @@ public class WorkflowPostFunctionModuleProviderTest
         checkWorkflowUrlIsAbsolute(RESOURCE_NAME_EDIT_PARAMETERS, "/edit");
     }
 
-    public void absoluteWorkflowLinksAreRejected() throws Exception
-    {
-        URI iframeUrl = checkWorkflowUrlIsAbsolute(RESOURCE_NAME_VIEW, "/view");
-        assertThat("an absolute url in the descriptor should not be signed", iframeUrl.getQuery(), not(containsString("jwt=")));
-    }
-
     @Test
     public void uiParamsNotInUrlWhenNotProvided() throws URISyntaxException
     {
@@ -122,7 +116,7 @@ public class WorkflowPostFunctionModuleProviderTest
         assertThat(iframeUrl.getQuery(), containsString("ui-params=blah"));
     }
 
-    private URI checkWorkflowUrlIsAbsolute(String classifier, String workflowUrl) throws IOException, URISyntaxException
+    private void checkWorkflowUrlIsAbsolute(String classifier, String workflowUrl) throws IOException, URISyntaxException
     {
         ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters();
         IFrameRenderStrategyImpl renderStrategy = (IFrameRenderStrategyImpl)iFrameRenderStrategyRegistry.get(PLUGIN_KEY, MODULE_KEY, classifier);
@@ -133,6 +127,5 @@ public class WorkflowPostFunctionModuleProviderTest
 
         assertThat(baseUrl, is(BASE_URL));
         assertThat(iframeUrl.getPath(), is(workflowUrl));
-        return iframeUrl;
     }
 }
