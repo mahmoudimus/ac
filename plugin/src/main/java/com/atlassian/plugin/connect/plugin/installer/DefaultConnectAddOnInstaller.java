@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
@@ -39,6 +40,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     private final ConnectAddonBeanFactory connectAddonBeanFactory;
     private final ConnectAddonToPluginFactory addonToPluginFactory;
     private final ConnectAddonManager connectAddonManager;
+    private final ConnectAddonRegistry addonRegistry;
     private final ConnectApplinkManager connectApplinkManager;
 
     private static final Logger log = LoggerFactory.getLogger(DefaultConnectAddOnInstaller.class);
@@ -53,6 +55,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             ConnectAddonBeanFactory connectAddonBeanFactory,
             ConnectAddonToPluginFactory addonToPluginFactory,
             ConnectAddonManager connectAddonManager,
+            ConnectAddonRegistry addonRegistry,
             ConnectApplinkManager connectApplinkManager)
     {
         this.remotePluginArtifactFactory = remotePluginArtifactFactory;
@@ -64,6 +67,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         this.connectAddonBeanFactory = connectAddonBeanFactory;
         this.addonToPluginFactory = addonToPluginFactory;
         this.connectAddonManager = connectAddonManager;
+        this.addonRegistry = addonRegistry;
         this.connectApplinkManager = connectApplinkManager;
     }
 
@@ -117,17 +121,14 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 throw new PluginInstallException("Unable to install connect add on because it has no modules defined", errorI18nKey);
             }
 
+            PluginState targetState = addonRegistry.getRestartState(pluginKey);
+
             removeOldPlugin(pluginKey);
 
-            addOn = connectAddonManager.installConnectAddon(jsonDescriptor);
+            addOn = connectAddonManager.installConnectAddon(jsonDescriptor, targetState);
 
-            // todo @seb @jd - enableConnectAddon may fail (it publishes the EnableFailedEvent) - should we throw an exception here too?
-            // todo should this be done "quietly" - ie not publish addonEnabledEvent ?
-            connectAddonManager.enableConnectAddon(addOn.getKey());
-
-            addonPluginWrapper = addonToPluginFactory.create(addOn);
-
-            addonPluginWrapper.enable();
+            PluginState actualState = addonRegistry.getRestartState(pluginKey);
+            addonPluginWrapper = addonToPluginFactory.create(addOn, actualState);
         }
         catch (PluginInstallException e)
         {
