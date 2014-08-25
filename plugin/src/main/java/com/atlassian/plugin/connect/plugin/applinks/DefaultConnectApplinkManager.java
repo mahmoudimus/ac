@@ -183,6 +183,12 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
     public void deleteAppLink(final ConnectAddonBean addon) throws NotConnectAddonException
     {
         final String key = addon.getKey();
+        deleteAppLink(key);
+    }
+
+    @Override
+    public void deleteAppLink(final String key) throws NotConnectAddonException
+    {
         final ApplicationLink link = getAppLink(key);
 
         if (link != null)
