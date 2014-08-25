@@ -1,14 +1,13 @@
 
-# Connect cookbook: Common patterns
+# Connect cookbook: Common front-end patterns
 
 This section features code snippets you can use for common Connect add-on purposes, like accessing 
 a JIRA project list or getting a list of pages from a Confluence space. You can use this section like a 
-cookbook. 
+cookbook. These patterns use the Connect [JavaScript APIs](../concepts/javascript-api.html), and we use `console.log()` in 
+place of actual business logic, so you can replace calls with whatever you need in your own add-on.  
 
 ## What's here
-Skip ahead to any section
-
-[Front-end patterns](#frontend): 
+Skip ahead to any section:
 
 * [Loading `all.js` from host applications](#all.js)  
 * [Accessing a list of JIRA projects](#jira-projects)   
@@ -22,14 +21,6 @@ Skip ahead to any section
 * [Getting information about specific spaces](#get-specific-space)  
 * [Getting Confluence space pages](#getting-space-pages)  
 * [Using the `cookie` API](#cookie-api)  
-
-
-
-## <a name="frontend"></a> Front-end patterns
-
-These patterns use the Connect [JavaScript APIs](../concepts/javascript-api.html) to perform basic functions in
-Atlassian products. We use `console.log()` in place of actual business logic, so you can replace calls with whatever 
-you need in your own add-on.  
 
 
 ### <a name="all.js"></a> Loading `all.js` from the host application
@@ -275,7 +266,7 @@ AP.require('request', function(request) {
 ### <a name="cookie-api"></a> Using the `cookie` API
 
 This example creates a cookie through the [Connect API](../concepts/javascript-api.html) with a value of `nom nom nom`, 
-and then retrieves that value. You can reference more on the [`cookie` API here](../javascript/module-cookie.html)
+and then retrieves that value. You can reference more on the [`cookie` API here](../javascript/module-cookie.html). 
 
 ````
 AP.require('cookie', function(cookie) {
