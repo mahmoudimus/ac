@@ -74,7 +74,9 @@ public class DefaultWorkflowPostFunctionModuleProvider implements WorkflowPostFu
                 .addOn(addon.getKey())
                 .module(bean.getKey(addon))
                 .workflowPostFunctionTemplate(resource)
-                .urlTemplate(urlBean.getUrl());
+                .urlTemplate(urlBean.getUrl())
+                .sign(!urlBean.getUrl().toLowerCase().startsWith("http")) // don't sign requests to arbitrary URLs (e.g. wikipedia)
+                ;
 
         if (resource.equals(WorkflowPostFunctionResource.VIEW))
         {

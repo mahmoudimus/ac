@@ -64,6 +64,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     private boolean isDialog;
     private boolean isSimpleDialog;
     private boolean resizeToParent;
+    private boolean sign = true; // should this url be signed?
 
     private final List<ConditionalBean> conditionalBeans = Lists.newArrayList();
     private final List<Class<? extends Condition>> conditionClasses = Lists.newArrayList();
@@ -257,13 +258,20 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     }
 
     @Override
+    public InitializedBuilder sign(final boolean sign)
+    {
+        this.sign = sign;
+        return this;
+    }
+
+    @Override
     public IFrameRenderStrategy build()
     {
         Condition condition = connectConditionFactory.createCondition(addOnKey, conditionalBeans, conditionClasses);
 
         return new IFrameRenderStrategyImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory,
                 templateRenderer, addOnKey, moduleKey, template, accessDeniedTemplate, urlTemplate, title,
-                decorator, condition, additionalRenderContext, width, height, uniqueNamespace, isDialog, isSimpleDialog, resizeToParent, !urlTemplate.toLowerCase().startsWith("http"));
+                decorator, condition, additionalRenderContext, width, height, uniqueNamespace, isDialog, isSimpleDialog, resizeToParent, sign);
     }
 
     @VisibleForTesting

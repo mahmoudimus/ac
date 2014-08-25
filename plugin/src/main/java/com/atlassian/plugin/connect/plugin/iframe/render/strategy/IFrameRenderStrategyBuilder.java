@@ -46,6 +46,8 @@ public interface IFrameRenderStrategyBuilder
         InitializedBuilder dialog(boolean isDialog);
         InitializedBuilder simpleDialog(boolean isSimpleDialog);
         InitializedBuilder resizeToParent(boolean resizeToParent);
+        InitializedBuilder sign(boolean sign);
+
         IFrameRenderStrategy build();
     }
 }
