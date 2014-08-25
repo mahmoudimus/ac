@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.base.Strings;
@@ -13,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
 
 /**
  * Maintains a map of plugin + module key -> iframe rendering strategy.
@@ -69,8 +70,7 @@ public class IFrameRenderStrategyRegistryImpl implements IFrameRenderStrategyReg
     public IFrameRenderStrategy get(final String addonKey, final String moduleKey, final String classifier)
     {
         Map<String, IFrameRenderStrategy> addonEndpoints = store.get(addonKey);
-        final String smallModuleKey = moduleKey.startsWith(addonKey) ? moduleKey.replace(addonKey + ModuleKeyUtils.ADDON_MODULE_SEPARATOR, "") : moduleKey;
-        return addonEndpoints == null ? null : addonEndpoints.get(composeKey(smallModuleKey, classifier));
+        return addonEndpoints == null ? null : addonEndpoints.get(composeKey(moduleKeyOnly(addonKey, moduleKey), classifier));
     }
 
     @Override
