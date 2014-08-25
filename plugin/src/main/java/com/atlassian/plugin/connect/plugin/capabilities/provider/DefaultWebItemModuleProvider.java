@@ -1,23 +1,23 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet.RAW_CLASSIFIER;
@@ -26,6 +26,8 @@ import static com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameSe
 @ExportAsDevService
 public class DefaultWebItemModuleProvider implements WebItemModuleProvider
 {
+    private static final String DEFAULT_DIALOG_DIMENSION = "100%"; // NB: the client (js) may size the parent of the iframe if the opening is done from JS
+
     private final WebItemModuleDescriptorFactory webItemFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
@@ -60,7 +62,11 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
 
-        if (bean.isAbsolute() || bean.getContext().equals(AddOnUrlContext.product) || bean.getContext().equals(AddOnUrlContext.addon))
+        final WebItemTargetBean target = bean.getTarget();
+
+        if (bean.isAbsolute() ||
+            bean.getContext().equals(AddOnUrlContext.product) ||
+            bean.getContext().equals(AddOnUrlContext.addon) && !target.isDialogTarget() && !target.isInlineDialogTarget())
         {
             descriptors.add(webItemFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean));
         }
@@ -71,17 +77,21 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
             descriptors.add(webItemFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, newBean));
         }
         // Allow a web item which opens in a dialog to be opened programmatically, too
-        if (bean.getTarget().isDialogTarget() || bean.getTarget().isInlineDialogTarget())
+        if (target.isDialogTarget() || target.isInlineDialogTarget())
         {
-            IFrameRenderStrategy rawRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
+            final IFrameRenderStrategy iFrameRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(connectAddonBean.getKey())
                     .module(bean.getKey(connectAddonBean))
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
                     .conditions(bean.getConditions())
-                    .dimensions("100%", "100%") // the client (js) will size the parent of the iframe
+                    .dimensions(DEFAULT_DIALOG_DIMENSION, DEFAULT_DIALOG_DIMENSION) // the client (js) will size the parent of the iframe
+                    .dialog(true)
+                    .sign(!bean.getUrl().toLowerCase().startsWith("http")) // don't sign requests to arbitrary URLs (e.g. wikipedia)
                     .build();
-            iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), RAW_CLASSIFIER, rawRenderStrategy);
+
+            iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getKey(connectAddonBean), iFrameRenderStrategy);
+            iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), RAW_CLASSIFIER, iFrameRenderStrategy);
         }
 
         return descriptors;

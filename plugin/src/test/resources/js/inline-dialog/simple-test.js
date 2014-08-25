@@ -14,7 +14,7 @@
                         this.apCreateMock = true;
                     }
 
-                    var inlineDialogMock = $("<div></div>");
+                    var inlineDialogMock = $('<div id="ap-acmodule-foo"></div>');
                     AJS.contextPath = function() { return ""; };
                     $content = $('<div class="' + INLINE_DIALOG_SELECTOR + '"><div class="ap-content"></div></div>');
                     $('<div id="qunit-fixture">').append($content).appendTo('body');
@@ -22,7 +22,7 @@
                     this.showPopupMock = sinon.spy();
                     AJS.InlineDialog = sinon.stub().yields(
                         inlineDialogMock,
-                        null,
+                        $('<a class="ap-plugin-key-addon ap-module-key-addon__module">link</a>'),
                         this.showPopupMock)
                     .returns(inlineDialogMock);
                 },
@@ -48,11 +48,9 @@
             });
 
             test("Inline dialog returns the inline dialog id", function() {
-                $("<div id='ac-module-awesome' class='ap-inline-dialog'></div>")
-
                 var href = "someurl";
                 var options = {
-                    bindTo: $("<div id='acmodule-foo' class='ap-inline-dialog'></div>")
+                    bindTo: $("<div id='irrelevent_id' class='ap-inline-dialog'></div>")
                 };
 
                 var inlineDialog = simpleInlineDialog(href, options);

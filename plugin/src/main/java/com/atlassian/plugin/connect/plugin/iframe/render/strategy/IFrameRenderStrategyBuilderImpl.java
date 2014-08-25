@@ -64,6 +64,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     private boolean isDialog;
     private boolean isSimpleDialog;
     private boolean resizeToParent;
+    private boolean sign = true; // should this url be signed?
 
     private final List<ConditionalBean> conditionalBeans = Lists.newArrayList();
     private final List<Class<? extends Condition>> conditionClasses = Lists.newArrayList();
@@ -257,13 +258,20 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     }
 
     @Override
+    public InitializedBuilder sign(final boolean sign)
+    {
+        this.sign = sign;
+        return this;
+    }
+
+    @Override
     public IFrameRenderStrategy build()
     {
         Condition condition = connectConditionFactory.createCondition(addOnKey, conditionalBeans, conditionClasses);
 
         return new IFrameRenderStrategyImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory,
                 templateRenderer, addOnKey, moduleKey, template, accessDeniedTemplate, urlTemplate, title,
-                decorator, condition, additionalRenderContext, width, height, uniqueNamespace, isDialog, isSimpleDialog, resizeToParent);
+                decorator, condition, additionalRenderContext, width, height, uniqueNamespace, isDialog, isSimpleDialog, resizeToParent, sign);
     }
 
     @VisibleForTesting
@@ -289,6 +297,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         private final String decorator;
         private final Condition condition;
         private final boolean resizeToParent;
+        private final boolean sign;
 
         private IFrameRenderStrategyImpl(final IFrameUriBuilderFactory iFrameUriBuilderFactory,
                 final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory,
@@ -296,7 +305,8 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                 final String template, final String accessDeniedTemplate, final String urlTemplate,
                 final String title, final String decorator, final Condition condition,
                 final Map<String, Object> additionalRenderContext, String width, String height,
-                final boolean uniqueNamespace, final boolean isDialog, final boolean isSimpleDialog, final boolean resizeToParent)
+                final boolean uniqueNamespace, final boolean isDialog, final boolean isSimpleDialog, final boolean resizeToParent,
+                final boolean sign)
         {
             this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
             this.iFrameRenderContextBuilderFactory = iFrameRenderContextBuilderFactory;
@@ -316,6 +326,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
             this.isDialog = isDialog;
             this.isSimpleDialog = isDialog;
             this.resizeToParent = resizeToParent;
+            this.sign = sign;
         }
 
         @Override
@@ -365,6 +376,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                             .context(moduleContextParameters)
                             .uiParams(uiParameters)
                             .dialog(isDialog)
+                            .sign(sign)
                             .build();
         }
 

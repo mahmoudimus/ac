@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginInformation;
 import com.atlassian.plugin.PluginState;
@@ -10,8 +7,10 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
-
 import com.google.common.base.Strings;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 @Named
 public class ConnectAddonToPluginFactory

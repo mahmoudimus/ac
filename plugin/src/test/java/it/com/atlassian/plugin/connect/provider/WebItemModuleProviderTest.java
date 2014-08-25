@@ -1,35 +1,30 @@
 package it.com.atlassian.plugin.connect.provider;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
-import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
+import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
+import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -287,7 +282,7 @@ public class WebItemModuleProviderTest
             WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
             descriptor.enabled();
 
-            assertTrue(descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()).startsWith(BASE_URL + "/my/addon"));
+            assertAddOnLinkHrefIsCorrect(descriptor, bean, addon);
         }
         finally
         {
@@ -340,7 +335,7 @@ public class WebItemModuleProviderTest
             WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
             descriptor.enabled();
 
-            assertTrue(descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()).startsWith(BASE_URL + "/my/addon"));
+            assertAddOnLinkHrefIsCorrect(descriptor, bean, addon);
             assertTrue("expected param [-acopt-width]", descriptor.getParams().containsKey("-acopt-width"));
             assertTrue("expected param [-acopt-height]", descriptor.getParams().containsKey("-acopt-height"));
         }
@@ -396,7 +391,7 @@ public class WebItemModuleProviderTest
             descriptor2.enabled();
 
             assertEquals("http://www.google.com", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
-            assertTrue(descriptor2.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()).startsWith(BASE_URL + "/my/addon"));
+            assertAddOnLinkHrefIsCorrect(descriptor2, bean2, addon);
         }
         finally
         {
@@ -437,10 +432,10 @@ public class WebItemModuleProviderTest
             Map<String,Object> vars = new HashMap<String, Object>();
             vars.put("var","ooops");
             vars.put("awesome","awesome-ooops");
-            
+
             String label = descriptor.getWebLabel().getDisplayableLabel(servletRequest,vars);
             String tooltip = descriptor.getTooltip().getDisplayableLabel(servletRequest,vars);
-            
+
             //by the time we get the displayable label, it's already gone through velocity and so we get the literal variables non-escaped.
             assertEquals(VELOCITY_LABEL, label);
             assertEquals(VELOCITY_TOOLTIP, descriptor.getTooltip().getDisplayableLabel(servletRequest,vars));
@@ -454,7 +449,18 @@ public class WebItemModuleProviderTest
             }
         }
     }
-    
+
+    private void assertAddOnLinkHrefIsCorrect(WebItemModuleDescriptor descriptor, WebItemModuleBean webItemModuleBean, ConnectAddonBean addOnBean)
+    {
+        final WebItemTargetBean target = webItemModuleBean.getTarget();
+        final String prefix = target.isDialogTarget() || target.isInlineDialogTarget()
+                ? ConnectIFrameServlet.iFrameServletPath(pluginKey, webItemModuleBean.getKey(addOnBean))
+                : BASE_URL + "/my/addon";
+        final String href = descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>());
+        final String message = String.format("Expecting the href to start with '%s' but it was '%s'", prefix, href);
+        assertTrue(message, href.startsWith(prefix));
+    }
+
     private Plugin getConnectPlugin()
     {
         return pluginAccessor.getPlugin(ConnectPluginInfo.getPluginKey());
