@@ -23,8 +23,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_EDIT_PARAMETERS;
-import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_INPUT_PARAMETERS;
+import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.*;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
 import static com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderImpl.IFrameRenderStrategyImpl;
@@ -66,6 +65,7 @@ public class WorkflowPostFunctionModuleProviderTest
                 .withTriggered(new UrlBean("/triggered"))
                 .withCreate(new UrlBean("/create"))
                 .withEdit(new UrlBean("/edit"))
+                .withView(new UrlBean(BASE_URL + "/view"))
                 .build();
 
         ConnectAddonBean addon = newConnectAddonBean()
@@ -94,6 +94,13 @@ public class WorkflowPostFunctionModuleProviderTest
     {
         checkWorkflowUrlIsAbsolute(RESOURCE_NAME_INPUT_PARAMETERS, "/create");
         checkWorkflowUrlIsAbsolute(RESOURCE_NAME_EDIT_PARAMETERS, "/edit");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void absoluteWorkflowLinksAreRejected() throws Exception
+    {
+        // Url's must be relative
+        checkWorkflowUrlIsAbsolute(RESOURCE_NAME_VIEW, "/view");
     }
 
     @Test
