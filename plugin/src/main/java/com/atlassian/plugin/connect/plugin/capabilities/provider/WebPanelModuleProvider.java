@@ -48,7 +48,6 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
                     .urlTemplate(bean.getUrl())
                     .title(bean.getDisplayName())
                     .dimensions(bean.getLayout().getWidth(), bean.getLayout().getHeight())
-                    .sign(!bean.getUrl().toLowerCase().startsWith("http")) // don't sign requests to arbitrary URLs (e.g. wikipedia)
                     .build();
             iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), renderStrategy);
 
