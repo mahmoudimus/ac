@@ -1,8 +1,5 @@
 package it.com.atlassian.plugin.connect.installer;
 
-import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.jwt.JwtConstants;
-import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
@@ -16,6 +13,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 
 import java.io.IOException;
 
@@ -73,13 +71,13 @@ public class AddOnUpgradeTest
     {
         String key = "ac-test-" + System.currentTimeMillis();
         addonBean = ConnectAddonBean.newConnectAddonBean()
-            .withKey(key)
-            .withDescription(AddOnUpgradeTest.class.getCanonicalName())
-            .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(key))
-            .withAuthentication(AuthenticationBean.newAuthenticationBean().withType(AuthenticationType.JWT).build())
-            .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())
-            .withModule("webItems",randomWebItemBean())
-            .build();
+                .withKey(key)
+                .withDescription(AddOnUpgradeTest.class.getCanonicalName())
+                .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(key))
+                .withAuthentication(AuthenticationBean.newAuthenticationBean().withType(AuthenticationType.JWT).build())
+                .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())
+                .withModule("webItems", randomWebItemBean())
+                .build();
 
         return testPluginInstaller.installAddon(addonBean);
     }
