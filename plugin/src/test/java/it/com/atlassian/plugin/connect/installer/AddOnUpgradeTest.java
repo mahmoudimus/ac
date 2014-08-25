@@ -14,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-
 import java.io.IOException;
 
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
