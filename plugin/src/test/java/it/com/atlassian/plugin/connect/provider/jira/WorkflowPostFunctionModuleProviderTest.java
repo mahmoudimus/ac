@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
+import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
@@ -65,7 +66,7 @@ public class WorkflowPostFunctionModuleProviderTest
                 .withTriggered(new UrlBean("/triggered"))
                 .withCreate(new UrlBean("/create"))
                 .withEdit(new UrlBean("/edit"))
-                .withView(new UrlBean(BASE_URL + "/view"))
+                .withView(new UrlBean("/view"))
                 .build();
 
         ConnectAddonBean addon = newConnectAddonBean()
@@ -75,6 +76,9 @@ public class WorkflowPostFunctionModuleProviderTest
                 .withAuthentication(AuthenticationBean.none())
                 .withModules("jiraWorkflowPostFunctions", bean)
                 .build();
+
+        // simulate a descriptor that includes an absolute url
+        addon = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(ConnectModulesGsonFactory.addonBeanToJson(addon).replace("/view", BASE_URL + "/view"), null);
 
         plugin = testPluginInstaller.installAddon(addon);
     }
