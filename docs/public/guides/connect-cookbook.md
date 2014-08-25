@@ -281,4 +281,8 @@ AP.require('cookie', function(cookie) {
   });
 });
 ````
+### Feedback wanted 
+
+We're always interested in making our docs and developer experiences better. If you have feedback on existing recipes or 
+have a pattern you'd like to contribute, [let us know](https://developer.atlassian.com/help#contact-us).
 
