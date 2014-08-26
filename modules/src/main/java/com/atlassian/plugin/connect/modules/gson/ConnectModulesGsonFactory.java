@@ -2,7 +2,9 @@ package com.atlassian.plugin.connect.modules.gson;
 
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.JiraConfluenceModuleList;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleList;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.XmlDescriptorCodeInvokedEventBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -19,7 +21,7 @@ import java.util.Map;
  */
 public class ConnectModulesGsonFactory
 {
-    public static GsonBuilder getGsonBuilder()
+    public static <M extends ModuleList> GsonBuilder getGsonBuilder(Class<M> moduleListType)
     {
         Type conditionalType = new TypeToken<List<ConditionalBean>>() {}.getType();
         Type mapStringType = new TypeToken<Map<String, String>>() {}.getType();
@@ -34,8 +36,19 @@ public class ConnectModulesGsonFactory
                 .registerTypeAdapterFactory(new NullIgnoringSetTypeAdapterFactory())
                 .registerTypeAdapter(XmlDescriptorCodeInvokedEventBean.class, new XmlDescriptorCodeInvokedEventBeanSerializer())
                 .registerTypeAdapter(WebItemTargetBean.class, new WebItemTargetBeanSerializer())
+                .registerTypeAdapter(ModuleList.class, new ModuleListDeserializer<M>(moduleListType))
                 .disableHtmlEscaping()
                 ;
+    }
+
+    public static <M extends ModuleList> Gson getGson(Class<M> moduleListType)
+    {
+        return getGsonBuilder(moduleListType).create();
+    }
+
+    public static GsonBuilder getGsonBuilder()
+    {
+        return getGsonBuilder(JiraConfluenceModuleList.class);
     }
 
     public static Gson getGson()

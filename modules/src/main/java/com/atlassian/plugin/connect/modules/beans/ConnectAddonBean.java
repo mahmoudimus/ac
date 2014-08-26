@@ -171,7 +171,7 @@ public class ConnectAddonBean<M extends ModuleList> extends BaseModuleBean
         this.vendor = VendorBean.newVendorBean().build();
         this.links = newHashMap();
         this.lifecycle = LifecycleBean.newLifecycleBean().build();
-//        this.modules = new ModuleList();
+        this.modules = (M)new JiraConfluenceModuleList();
         this.scopes = new HashSet<ScopeName>();
         this.baseUrl = "";
         this.authentication = newAuthenticationBean().build();
@@ -202,10 +202,10 @@ public class ConnectAddonBean<M extends ModuleList> extends BaseModuleBean
             this.description = "";
         }
 
-//        if (null == modules)
-//        {
-//            this.modules = new ModuleList();
-//        }
+        if (null == modules)
+        {
+            this.modules = (M)new JiraConfluenceModuleList();
+        }
 
         if (null == vendor)
         {

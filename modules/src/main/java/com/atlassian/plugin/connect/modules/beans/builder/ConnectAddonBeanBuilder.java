@@ -32,7 +32,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder,
     private VendorBean vendor;
     private Map<String, String> links;
     private M modules;
-    private ModuleListBuilder<?, ?> moduleListBuilder;
+    private ModuleListBuilder<?, M> moduleListBuilder;
     private Set<ScopeName> scopes;
     private LifecycleBean lifecycle;
     private String baseUrl;
@@ -108,7 +108,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder,
         if (null == moduleListBuilder)
         {
             // TODO: hardwiring in the first phase of the ModuleList refactor
-            this.moduleListBuilder = new JiraConfluenceModuleListBuilder();
+            this.moduleListBuilder = (ModuleListBuilder<?, M>) new JiraConfluenceModuleListBuilder();
         }
 
         moduleListBuilder.withModules(fieldName, beans);
@@ -121,7 +121,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder,
         if (null == moduleListBuilder)
         {
             // TODO: hardwiring in the first phase of the ModuleList refactor
-            this.moduleListBuilder = new JiraConfluenceModuleListBuilder();
+            this.moduleListBuilder = (ModuleListBuilder<?, M>) new JiraConfluenceModuleListBuilder();
         }
 
         moduleListBuilder.withModule(fieldName, bean);
@@ -191,6 +191,10 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder,
 
     public B build()
     {
+        if (moduleListBuilder != null)
+        {
+            modules = moduleListBuilder.build();
+        }
         return (B) new ConnectAddonBean(this);
     }
 }

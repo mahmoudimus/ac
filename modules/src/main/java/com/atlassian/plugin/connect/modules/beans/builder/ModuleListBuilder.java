@@ -16,7 +16,7 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
 public abstract class ModuleListBuilder<T extends ModuleListBuilder,
         M extends ModuleList> extends BaseModuleBeanBuilder<T, M>
 {
-    private M modules;
+    protected M modules;
 
     public T withModules(String fieldName, ModuleBean... beans)
     {
