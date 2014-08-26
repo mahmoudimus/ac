@@ -11,6 +11,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 
 import javax.inject.Inject;
@@ -33,10 +34,25 @@ public abstract class AbstractConnectIFrameComponent<C>
     @Init
     public void init()
     {
-        iframe = elementFinder.find(By.id(getFrameId()));
-        iframeSrc = iframe.getAttribute("src");
+        try
+        {
+            setIFrameAndSrcUnsafe();
+        }
+        catch (StaleElementReferenceException e)
+        {
+            // JavaScript code can recreate the iframe while the test is clicking and hovering,
+            // and webdriver complains if we are unlucky enough to find the iframe dom element before
+            // the re-creation but ask for its attributes after the re-creation
+            setIFrameAndSrcUnsafe();
+        }
 
         waitUntilTrue(iframe.timed().isPresent());
+    }
+
+    private void setIFrameAndSrcUnsafe()
+    {
+        iframe = elementFinder.find(By.id(getFrameId()));
+        iframeSrc = iframe.getAttribute("src");
     }
 
     /**

@@ -113,6 +113,13 @@ public class ConfluenceGeneralPage implements GeneralPage
 
             linkElement = elementFinder.find(By.linkText(linkText), TimeoutType.DEFAULT);
         }
+        else if (!linkElement.isVisible())
+        {
+            // this opens the drop-down that contains the web item links
+            // (if the drop-down isn't open then the links aren't visible, and if they're not visible then they're not clickable)
+            browseMenuLink.click();
+        }
+
         return linkElement;
     }
 
