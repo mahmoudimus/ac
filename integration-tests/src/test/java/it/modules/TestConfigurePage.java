@@ -2,7 +2,6 @@ package it.modules;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.upm.pageobjects.PluginManager;
 import it.util.TestUser;
@@ -50,7 +49,7 @@ public class TestConfigurePage extends AbstractPageTestBase
 
         // directly retrieving page should result in access denied
         InsufficientPermissionsPage insufficientPermissionsPage = product.visit(InsufficientPermissionsPage.class,
-                AddonTestUtils.escapedAddonKey(pluginKey), MY_AWESOME_PAGE_KEY);
+                pluginKey, MY_AWESOME_PAGE_KEY);
         assertThat(insufficientPermissionsPage.getErrorMessage(), containsString("You do not have the correct permissions"));
         assertThat(insufficientPermissionsPage.getErrorMessage(), containsString(MY_AWESOME_PAGE));
     }

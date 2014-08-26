@@ -12,6 +12,7 @@ import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.*;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -193,7 +194,7 @@ public class TestDialog extends ConnectWebDriverTestBase
 
     private void testOpenAndCloseWithPrependedAddOnKey(String pageKey, String pageName, String dialogKey)
     {
-        testOpenAndClose(pageKey, pageName, AddonTestUtils.escapedAddonAndModuleKey(runner.getAddon().getKey(), dialogKey));
+        testOpenAndClose(pageKey, pageName, ModuleKeyUtils.addonAndModuleKey(runner.getAddon().getKey(), dialogKey));
     }
 
     private void testOpenAndClose(String pageKey, String pageName, String moduleKey)
@@ -202,7 +203,7 @@ public class TestDialog extends ConnectWebDriverTestBase
         GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, pageKey, pageName, runner.getAddon().getKey());
         remotePage.clickAddOnLink();
 
-        RemoteDialogOpeningPage dialogOpeningPage = bindDialogOpeningPage(AddonTestUtils.escapedAddonAndModuleKey(runner.getAddon().getKey(), pageKey));
+        RemoteDialogOpeningPage dialogOpeningPage = bindDialogOpeningPage(ModuleKeyUtils.addonAndModuleKey(runner.getAddon().getKey(), pageKey));
         RemoteCloseDialogPage closeDialogPage = bindCloseDialogPage(dialogOpeningPage, moduleKey);
 
         assertThatTheDialogHasTheCorrectProperties(closeDialogPage);
