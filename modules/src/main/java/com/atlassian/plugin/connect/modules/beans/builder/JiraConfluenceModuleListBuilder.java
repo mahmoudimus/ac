@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
 import com.atlassian.plugin.connect.modules.beans.JiraConfluenceModuleList;
+import com.atlassian.plugin.connect.modules.beans.builder.jira.JiraModuleListBuilder;
 
 public class JiraConfluenceModuleListBuilder extends JiraModuleListBuilder
 {

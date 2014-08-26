@@ -1,6 +1,7 @@
-package com.atlassian.plugin.connect.modules.beans.builder;
+package com.atlassian.plugin.connect.modules.beans.builder.jira;
 
-import com.atlassian.plugin.connect.modules.beans.JiraModuleList;
+import com.atlassian.plugin.connect.modules.beans.builder.ModuleListBuilder;
+import com.atlassian.plugin.connect.modules.beans.jira.JiraModuleList;
 
 public abstract class JiraModuleListBuilder extends ModuleListBuilder<JiraModuleListBuilder, JiraModuleList>
 {

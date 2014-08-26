@@ -1,8 +1,15 @@
-package com.atlassian.plugin.connect.modules.beans;
+package com.atlassian.plugin.connect.modules.beans.jira;
 
 import java.util.List;
 
 import com.atlassian.plugin.connect.modules.annotation.ConnectModule;
+import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
+import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleList;
+import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
+import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
