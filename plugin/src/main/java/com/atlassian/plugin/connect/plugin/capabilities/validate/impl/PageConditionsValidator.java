@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidator;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.sal.api.message.I18nResolver;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,7 +95,11 @@ public class PageConditionsValidator implements AddOnBeanValidator
     {
         List<ConnectPageModuleBean> pages = new ArrayList<ConnectPageModuleBean>();
 
-        Field[] fields = JiraConfluenceModuleList.class.getFields();
+        // TODO: rework. Temp cludge for now
+        Field[] fields1 = JiraConfluenceModuleList.class.getDeclaredFields();
+        Field[] fields2 = ModuleList.class.getDeclaredFields();
+        final ArrayList<Field> fields = Lists.newArrayList(fields1);
+        fields.addAll(Lists.newArrayList(fields2));
 //        final Field field = FieldUtils.getField(modules.getClass(), fieldName, true);
 
         for(Field field : fields)
