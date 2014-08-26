@@ -109,7 +109,7 @@ public class ModuleList extends BaseModuleBean
      * @schemaTitle Web Item
      */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultWebItemModuleProvider")
-    protected List<WebItemModuleBean> webItems;
+    private List<WebItemModuleBean> webItems;
 
     /**
      * The Web Panel module allows you to define panels, or sections, on an HTML page.
