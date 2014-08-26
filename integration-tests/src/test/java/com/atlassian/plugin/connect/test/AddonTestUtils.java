@@ -52,7 +52,7 @@ public class AddonTestUtils
 
     public static String escapedAddonAndModuleKey(String addonKey, String moduleKey)
     {
-        return escapeJQuerySelector(ModuleKeyUtils.addonAndModuleKey(addonKey, moduleKey));
+        return ModuleKeyUtils.addonAndModuleKey(addonKey, moduleKey);
     }
 
     private static Pattern regex = Pattern.compile("[(!\"#$%&'\\(\\)*+,./:;<=>?@\\[\\\\\\]^`{|}~)]");
