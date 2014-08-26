@@ -33,7 +33,7 @@ public class WebItemModuleBeanTest
         ConnectAddonBean addon = createAddonBeanBuilder(webItemBean).build();
 
         String json = readTestFile("defaultWebItemTest.json");
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
+        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
 
         assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
     }
@@ -49,7 +49,7 @@ public class WebItemModuleBeanTest
         ConnectAddonBean addon = createAddonBeanBuilder(webItemBean).build();
 
         String json = readTestFile("productContextWebItemTest.json");
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
+        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
 
         assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
     }
@@ -69,7 +69,7 @@ public class WebItemModuleBeanTest
                 .build();
 
         String json = readTestFile("dialogWebItemTest.json");
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
+        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
 
         assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
     }
@@ -88,7 +88,7 @@ public class WebItemModuleBeanTest
         ConnectAddonBean addon = createAddonBeanBuilder(webItemBean).build();
 
         String json = readTestFile("inlineDialogWebItemTest.json");
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
+        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
 
         assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
     }

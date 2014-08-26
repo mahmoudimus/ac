@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.JiraConfluenceModuleList;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.*;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
@@ -40,7 +41,7 @@ public class StaticContentMacroModuleBeanTest
     {
         String json = readTestFile();
         Gson gson = ConnectModulesGsonFactory.getGson();
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
+        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
         ConnectAddonBean bean = createBean();
 
         assertThat(deserializedBean, sameDeepPropertyValuesAs(bean));
@@ -52,7 +53,7 @@ public class StaticContentMacroModuleBeanTest
         ConnectAddonBean originalBean = createBean();
         Gson gson = ConnectModulesGsonFactory.getGson();
         String json = gson.toJson(originalBean, ConnectAddonBean.class);
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
+        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
 
         assertThat(deserializedBean, sameDeepPropertyValuesAs(originalBean));
     }

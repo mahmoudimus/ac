@@ -48,6 +48,7 @@ public class ReportModuleBeanTest
 
     private static ConnectAddonBean<JiraConfluenceModuleList> readTestFile() throws IOException
     {
-        return ConnectModulesGsonFactory.getGson().fromJson(readAddonTestFile("reportAddon.json"), ConnectAddonBean.class);
+        return ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(
+                readAddonTestFile("reportAddon.json"), null);
     }
 }

@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.test.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.JiraConfluenceModuleList;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
@@ -39,7 +40,7 @@ public class SearchRequestViewModuleBeanTest
     {
         String json = readTestFile();
         Gson gson = ConnectModulesGsonFactory.getGson();
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
+        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
         ConnectAddonBean bean = createBean();
 
         assertThat(deserializedBean, SameDeepPropertyValuesAs.sameDeepPropertyValuesAs(bean));
@@ -51,7 +52,7 @@ public class SearchRequestViewModuleBeanTest
         ConnectAddonBean originalBean = createBean();
         Gson gson = ConnectModulesGsonFactory.getGson();
         String json = gson.toJson(originalBean, ConnectAddonBean.class);
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
+        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
 
         assertThat(deserializedBean, SameDeepPropertyValuesAs.sameDeepPropertyValuesAs(originalBean));
     }

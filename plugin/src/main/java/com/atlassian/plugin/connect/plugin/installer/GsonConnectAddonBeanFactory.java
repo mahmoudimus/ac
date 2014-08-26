@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleList;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.modules.schema.DescriptorValidationResult;
 import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
@@ -48,13 +49,13 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
     }
 
     @Override
-    public ConnectAddonBean fromJson(final String jsonDescriptor) throws InvalidDescriptorException
+    public <M extends ModuleList> ConnectAddonBean<M> fromJson(final String jsonDescriptor) throws InvalidDescriptorException
     {
         return fromJson(jsonDescriptor,null);
     }
 
     @Override
-    public ConnectAddonBean fromJson(String jsonDescriptor, Map<String, String> i18nCollector) throws InvalidDescriptorException
+    public <M extends ModuleList> ConnectAddonBean<M> fromJson(String jsonDescriptor, Map<String, String> i18nCollector) throws InvalidDescriptorException
     {
         final String schema;
         try
@@ -86,13 +87,13 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
     }
 
     @Override
-    public ConnectAddonBean fromJsonSkipValidation(final String jsonDescriptor)
+    public <M extends ModuleList> ConnectAddonBean<M> fromJsonSkipValidation(final String jsonDescriptor)
     {
         return fromJsonSkipValidation(jsonDescriptor,null);
     }
 
     @Override
-    public ConnectAddonBean fromJsonSkipValidation(String jsonDescriptor, Map<String, String> i18nCollector)
+    public <M extends ModuleList> ConnectAddonBean<M> fromJsonSkipValidation(String jsonDescriptor, Map<String, String> i18nCollector)
     {
         try
         {

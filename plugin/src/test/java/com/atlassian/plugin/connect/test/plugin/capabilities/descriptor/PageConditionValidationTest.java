@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.JiraConfluenceModuleList;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.impl.PageConditionsValidator;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
@@ -79,9 +80,7 @@ public class PageConditionValidationTest
 
     public void validateFully(final String jsonDescriptor) throws Exception
     {
-
-        ConnectAddonBean addon = ConnectModulesGsonFactory.getGson().fromJson(jsonDescriptor, ConnectAddonBean.class);
-
+        ConnectAddonBean<JiraConfluenceModuleList> addon = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(jsonDescriptor, null);
         conditionsValidator.validate(addon);
     }
 

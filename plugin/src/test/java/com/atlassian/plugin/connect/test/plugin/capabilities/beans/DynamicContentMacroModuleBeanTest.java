@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.JiraConfluenceModuleList;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
@@ -10,9 +11,11 @@ import com.atlassian.plugin.connect.test.plugin.capabilities.TestFileReader;
 import com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
@@ -43,8 +46,7 @@ public class DynamicContentMacroModuleBeanTest
     public void producesCorrectBean() throws Exception
     {
         String json = readTestFile();
-        Gson gson = ConnectModulesGsonFactory.getGson();
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
+        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
         ConnectAddonBean bean = createBean();
 
         assertThat(deserializedBean, SameDeepPropertyValuesAs.sameDeepPropertyValuesAs(bean));
@@ -56,7 +58,7 @@ public class DynamicContentMacroModuleBeanTest
         ConnectAddonBean originalBean = createBean();
         Gson gson = ConnectModulesGsonFactory.getGson();
         String json = gson.toJson(originalBean, ConnectAddonBean.class);
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
+        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
 
         assertThat(deserializedBean, SameDeepPropertyValuesAs.sameDeepPropertyValuesAs(originalBean));
     }

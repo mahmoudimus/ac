@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleList;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 
 import java.util.Map;
@@ -12,11 +13,11 @@ import java.util.Map;
  */
 public interface ConnectAddonBeanFactory
 {
-    ConnectAddonBean fromJson(String jsonDescriptor) throws InvalidDescriptorException;
+    <M extends ModuleList> ConnectAddonBean<M> fromJson(String jsonDescriptor) throws InvalidDescriptorException;
 
-    ConnectAddonBean fromJson(String jsonDescriptor,Map<String,String> i18nCollector) throws InvalidDescriptorException;
+    <M extends ModuleList> ConnectAddonBean<M> fromJson(String jsonDescriptor,Map<String,String> i18nCollector) throws InvalidDescriptorException;
 
-    ConnectAddonBean fromJsonSkipValidation(String jsonDescriptor);
-    
-    ConnectAddonBean fromJsonSkipValidation(String jsonDescriptor,Map<String,String> i18nCollector);
+    <M extends ModuleList> ConnectAddonBean<M> fromJsonSkipValidation(String jsonDescriptor);
+
+    <M extends ModuleList> ConnectAddonBean<M> fromJsonSkipValidation(String jsonDescriptor,Map<String,String> i18nCollector);
 }

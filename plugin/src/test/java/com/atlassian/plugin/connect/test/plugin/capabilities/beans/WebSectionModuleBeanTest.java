@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.test.plugin.capabilities.beans;
 import com.atlassian.jira.util.collect.MapBuilder;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.JiraConfluenceModuleList;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.WebSectionModuleBeanBuilder;
@@ -33,7 +34,7 @@ public class WebSectionModuleBeanTest
         ConnectAddonBean addon = createAddonBeanBuilder(webSectionBean).build();
 
         String json = readTestFile("defaultWebSectionTest.json");
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
+        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
 
         assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
     }
@@ -62,7 +63,7 @@ public class WebSectionModuleBeanTest
         ConnectAddonBean addon = createAddonBeanBuilder(webSectionBean, hiddenSpoonSection, falafelSection).build();
 
         String json = readTestFile("funkyWebSectionTest.json");
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
+        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
 
         assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
     }
