@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.XmlDescriptorCodeInvokedEventB
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.InstanceCreator;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -21,10 +22,12 @@ import java.util.Map;
  */
 public class ConnectModulesGsonFactory
 {
-    public static <M extends ModuleList> GsonBuilder getGsonBuilder(Class<M> moduleListType)
+    public static <M extends ModuleList> GsonBuilder getGsonBuilder(//Class<M> moduleListType,
+                                                                    InstanceCreator<ModuleList> moduleListInstanceCreator)
     {
         Type conditionalType = new TypeToken<List<ConditionalBean>>() {}.getType();
         Type mapStringType = new TypeToken<Map<String, String>>() {}.getType();
+        final Type moduleListType2 = new TypeToken<M>() {}.getType();
 
         return new GsonBuilder()
                 .registerTypeAdapter(conditionalType, new ConditionalBeanSerializer())
@@ -36,19 +39,36 @@ public class ConnectModulesGsonFactory
                 .registerTypeAdapterFactory(new NullIgnoringSetTypeAdapterFactory())
                 .registerTypeAdapter(XmlDescriptorCodeInvokedEventBean.class, new XmlDescriptorCodeInvokedEventBeanSerializer())
                 .registerTypeAdapter(WebItemTargetBean.class, new WebItemTargetBeanSerializer())
-                .registerTypeAdapter(ModuleList.class, new ModuleListDeserializer<M>(moduleListType))
+                .registerTypeAdapter(ModuleList.class, moduleListInstanceCreator)
+//                .registerTypeAdapter(ModuleList.class, new ModuleListDeserializer<M>(moduleListType))
+//                .registerTypeAdapter(moduleListType, new ModuleListDeserializer<M>(moduleListType))
+//                .registerTypeAdapter(moduleListType2, new ModuleListDeserializer<M>(moduleListType))
+//                .registerTypeHierarchyAdapter(ModuleList.class, new ModuleListDeserializer<M>(moduleListType))
+//                .registerTypeHierarchyAdapter(moduleListType, new ModuleListDeserializer<M>(moduleListType))
+//                .registerTypeAdapter(ConnectAddonBean.class, new ConnectAddonBeanDeserializer<M>(moduleListType))
                 .disableHtmlEscaping()
                 ;
     }
 
-    public static <M extends ModuleList> Gson getGson(Class<M> moduleListType)
+    public static <M extends ModuleList> Gson getGson(
+            InstanceCreator<ModuleList> moduleListInstanceCreator
+//            Class<M> moduleListType
+    )
     {
-        return getGsonBuilder(moduleListType).create();
+        return getGsonBuilder(moduleListInstanceCreator).create();
     }
 
     public static GsonBuilder getGsonBuilder()
     {
-        return getGsonBuilder(JiraConfluenceModuleList.class);
+        return getGsonBuilder(//JiraConfluenceModuleList.class,
+                new InstanceCreator<ModuleList>()
+        {
+            @Override
+            public ModuleList createInstance(Type type)
+            {
+                return new JiraConfluenceModuleList();
+            }
+        });
     }
 
     public static Gson getGson()

@@ -153,7 +153,7 @@ public class ConnectAddonBean<M extends ModuleList> extends BaseModuleBean
      * The list of modules this add on provides
      */
     @SchemaIgnore("shallow")
-    private M modules;
+    private ModuleList modules;
 
     /**
      * Set of [scopes](../scopes/scopes.html) requested by this add on
@@ -268,7 +268,7 @@ public class ConnectAddonBean<M extends ModuleList> extends BaseModuleBean
 
     public M getModules()
     {
-        return modules;
+        return (M)modules;
     }
 
     public Map<String, String> getLinks()
