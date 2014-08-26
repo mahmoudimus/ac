@@ -12,7 +12,7 @@ _AP.require(["dialog/main", "host/content", "_uri", "dialog/dialog-factory"], fu
 
                 var webItemOptions = hostContentUtilities.getOptionsForWebItem(options.bindTo);
                 //this is a dialog-page (xml descriptor)
-                var dialogPageMatch = href.match(/\/servlet\/atlassian\-connect\/([\w-]+)\/([\w-]+)/);
+                var dialogPageMatch = href.match(/\/servlet\/atlassian\-connect\/([\w\._-]+)\/([\w-]+)/);
                 if(dialogPageMatch){
                     var dialogPageOptions = {
                         key: dialogPageMatch[1],
