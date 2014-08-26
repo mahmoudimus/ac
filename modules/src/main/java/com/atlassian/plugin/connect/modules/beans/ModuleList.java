@@ -110,6 +110,7 @@ public class ModuleList extends BaseModuleBean
      */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultWebItemModuleProvider")
     protected List<WebItemModuleBean> webItems;
+
     /**
      * The Web Panel module allows you to define panels, or sections, on an HTML page.
      * A panel is an iFrame that will be inserted into a page.
@@ -118,6 +119,7 @@ public class ModuleList extends BaseModuleBean
      */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.WebPanelModuleProvider")
     private List<WebPanelModuleBean> webPanels;
+
     /**
      * The Web Section plugin module allows you to define new sections in application menus.
      *
@@ -125,6 +127,7 @@ public class ModuleList extends BaseModuleBean
      */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.WebSectionModuleProvider")
     private List<WebSectionModuleBean> webSections;
+
     /**
      * The Web Hook module allows you be notified of key events that occur in the host product
      *
@@ -132,6 +135,7 @@ public class ModuleList extends BaseModuleBean
      */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.WebHookModuleProvider")
     private List<WebHookModuleBean> webhooks;
+
     /**
      * A general page module is used to provide a generic chrome for add-on content in the product.
      *
@@ -139,6 +143,7 @@ public class ModuleList extends BaseModuleBean
      */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.GeneralPageModuleProvider")
     private List<ConnectPageModuleBean> generalPages;
+
     /**
      * An admin page module is used to provide an administration chrome for add-on content.
      *
@@ -146,6 +151,7 @@ public class ModuleList extends BaseModuleBean
      */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.AdminPageModuleProvider")
     private List<ConnectPageModuleBean> adminPages;
+
     /**
      * A configure page module is a page module used to configure the addon itself.
      * It's link will appear in the add-ons entry in 'Manage Add-ons'.
@@ -154,6 +160,7 @@ public class ModuleList extends BaseModuleBean
      */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.ConfigurePageModuleProvider")
     private ConnectPageModuleBean configurePage;
+
     /**
      * @schemaTitle User Profile Page
      */

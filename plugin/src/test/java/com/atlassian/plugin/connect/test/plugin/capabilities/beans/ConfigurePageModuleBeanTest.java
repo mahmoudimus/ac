@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.test.plugin.capabilities.beans;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.JiraConfluenceModuleList;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.gson.JiraConfluenceConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs;
 import com.google.gson.Gson;
 import org.junit.Test;
@@ -27,7 +27,7 @@ public class ConfigurePageModuleBeanTest
     public void producesCorrectJSON() throws Exception
     {
         ConnectAddonBean bean = createBean();
-        Gson gson = ConnectModulesGsonFactory.getGson();
+        Gson gson = JiraConfluenceConnectModulesGsonFactory.getGson();
         String json = gson.toJson(bean, ConnectAddonBean.class);
         String expectedJson = readTestFile();
 
@@ -38,8 +38,8 @@ public class ConfigurePageModuleBeanTest
     public void producesCorrectBean() throws Exception
     {
         String json = readTestFile();
-        Gson gson = ConnectModulesGsonFactory.getGson();
-        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
+        Gson gson = JiraConfluenceConnectModulesGsonFactory.getGson();
+        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
         ConnectAddonBean bean = createBean();
 
         assertThat(deserializedBean, SameDeepPropertyValuesAs.sameDeepPropertyValuesAs(bean));
@@ -49,9 +49,9 @@ public class ConfigurePageModuleBeanTest
     public void roundTrippingIsPreserving()
     {
         ConnectAddonBean originalBean = createBean();
-        Gson gson = ConnectModulesGsonFactory.getGson();
+        Gson gson = JiraConfluenceConnectModulesGsonFactory.getGson();
         String json = gson.toJson(originalBean, ConnectAddonBean.class);
-        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
+        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
 
         assertThat(deserializedBean, SameDeepPropertyValuesAs.sameDeepPropertyValuesAs(originalBean));
     }

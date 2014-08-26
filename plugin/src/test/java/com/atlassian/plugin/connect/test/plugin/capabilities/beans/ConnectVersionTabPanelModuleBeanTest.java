@@ -4,7 +4,7 @@ import com.atlassian.plugin.connect.api.xmldescriptor.OAuth;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.gson.JiraConfluenceConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.google.gson.Gson;
 import org.junit.Test;
@@ -48,7 +48,7 @@ public class ConnectVersionTabPanelModuleBeanTest
                 .withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withPublicKey("S0m3Publ1cK3y").build())
                 .build();
 
-        Gson gson = ConnectModulesGsonFactory.getGson();
+        Gson gson = JiraConfluenceConnectModulesGsonFactory.getGson();
 
         String json = gson.toJson(addon, ConnectAddonBean.class);
         String expectedJson = readTestFile();

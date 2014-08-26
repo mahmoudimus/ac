@@ -5,7 +5,7 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.gson.JiraConfluenceConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.installer.AddonSettings;
@@ -98,7 +98,7 @@ public class ConnectPluginProperEventHandler implements InitializingBean, Dispos
             String restartState = (PluginState.ENABLED.equals(plugin.getPluginState())) ? PluginState.ENABLED.name() : PluginState.DISABLED.name();
 
             String descriptor = legacyRegistry.getDescriptor(pluginKey);
-            ConnectAddonBean connectAddonBean = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(descriptor, null);
+            ConnectAddonBean connectAddonBean = JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(descriptor, null);
 
             AddonSettings settings = new AddonSettings()
                     .setDescriptor(descriptor)

@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.test.plugin.capabilities.beans;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
-import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.gson.JiraConfluenceConnectModulesGsonFactory;
 import com.google.gson.Gson;
 import org.junit.Test;
 
@@ -75,7 +75,7 @@ public class WorkflowPostFunctionModuleBeanTest
     {
         String json = readTestFile();
         System.out.println(json);
-        Gson gson = ConnectModulesGsonFactory.getGson();
+        Gson gson = JiraConfluenceConnectModulesGsonFactory.getGson();
         WorkflowPostFunctionModuleBean addOn = gson.fromJson(json, WorkflowPostFunctionModuleBean.class);
 
         assertEquals("my-function", addOn.getRawKey());

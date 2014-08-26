@@ -5,7 +5,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import com.atlassian.plugin.connect.modules.beans.JiraConfluenceModuleList;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleList;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -41,12 +40,8 @@ public abstract class ModuleListBuilder<T extends ModuleListBuilder,
 
     protected abstract M createEmpty();
 
-    public abstract M build();
     // subclasses must override
-//    public B build()
-//    {
-//        return (B) new ModuleList(this);
-//    }
+    public abstract M build();
 
 
 
@@ -55,7 +50,6 @@ public abstract class ModuleListBuilder<T extends ModuleListBuilder,
         Class beanClass = bean.getClass();
         try
         {
-//            FieldUtils.writeField(modules, fieldName, bean, true);
             final Field field = FieldUtils.getField(modules.getClass(), fieldName, true);
             Type fieldType = field.getGenericType();
 
@@ -79,10 +73,6 @@ public abstract class ModuleListBuilder<T extends ModuleListBuilder,
         {
             throw new RuntimeException("Unable to access module field for bean of type: " + bean.getClass(), e);
         }
-//        catch (NoSuchFieldException e)
-//        {
-//            throw new RuntimeException("Unable to find module field '" + fieldName + "' for bean of type: " + bean.getClass());
-//        }
     }
 
 }

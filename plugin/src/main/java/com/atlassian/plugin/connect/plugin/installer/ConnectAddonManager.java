@@ -17,7 +17,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.gson.JiraConfluenceConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonI18nManager;
@@ -549,7 +549,7 @@ public class ConnectAddonManager
      */
     private ConnectAddonBean unmarshallDescriptor(final String pluginKey)
     {
-        return ConnectModulesGsonFactory.getGson().fromJson(addonRegistry.getDescriptor(pluginKey), ConnectAddonBean.class);
+        return JiraConfluenceConnectModulesGsonFactory.getGson().fromJson(addonRegistry.getDescriptor(pluginKey), ConnectAddonBean.class);
     }
 
     @VisibleForTesting
@@ -603,7 +603,7 @@ public class ConnectAddonManager
 
         ConnectAddonEventData data = dataBuilder.build();
 
-        return ConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create().toJson(data);
+        return JiraConfluenceConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create().toJson(data);
     }
 
     private String getConnectPluginVersion()

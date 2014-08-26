@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilde
 import com.atlassian.plugin.connect.modules.beans.builder.WebItemModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
-import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.gson.JiraConfluenceConnectModulesGsonFactory;
 import com.google.gson.Gson;
 import org.junit.Test;
 
@@ -27,13 +27,13 @@ public class WebItemModuleBeanTest
     @Test
     public void producesCorrectBean() throws Exception
     {
-        Gson gson = ConnectModulesGsonFactory.getGson();
+        Gson gson = JiraConfluenceConnectModulesGsonFactory.getGson();
 
         WebItemModuleBean webItemBean = createWebItemBeanBuilder().build();
         ConnectAddonBean addon = createAddonBeanBuilder(webItemBean).build();
 
         String json = readTestFile("defaultWebItemTest.json");
-        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
+        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
 
         assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
     }
@@ -41,7 +41,7 @@ public class WebItemModuleBeanTest
     @Test
     public void producesBeanWithAbsoluteContext() throws Exception
     {
-        Gson gson = ConnectModulesGsonFactory.getGson();
+        Gson gson = JiraConfluenceConnectModulesGsonFactory.getGson();
 
         WebItemModuleBean webItemBean = createWebItemBeanBuilder()
                 .withContext(AddOnUrlContext.product)
@@ -49,7 +49,7 @@ public class WebItemModuleBeanTest
         ConnectAddonBean addon = createAddonBeanBuilder(webItemBean).build();
 
         String json = readTestFile("productContextWebItemTest.json");
-        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
+        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
 
         assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
     }
@@ -57,7 +57,7 @@ public class WebItemModuleBeanTest
     @Test
     public void producesBeanWithDialogTarget() throws Exception
     {
-        Gson gson = ConnectModulesGsonFactory.getGson();
+        Gson gson = JiraConfluenceConnectModulesGsonFactory.getGson();
 
         WebItemTargetBean target = newWebItemTargetBean()
                 .withType(WebItemTargetType.dialog)
@@ -69,7 +69,7 @@ public class WebItemModuleBeanTest
                 .build();
 
         String json = readTestFile("dialogWebItemTest.json");
-        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
+        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
 
         assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
     }
@@ -77,7 +77,7 @@ public class WebItemModuleBeanTest
     @Test
     public void producesBeanWithInlineDialogTarget() throws Exception
     {
-        Gson gson = ConnectModulesGsonFactory.getGson();
+        Gson gson = JiraConfluenceConnectModulesGsonFactory.getGson();
 
         WebItemTargetBean target = newWebItemTargetBean()
                         .withType(WebItemTargetType.inlineDialog)
@@ -88,7 +88,7 @@ public class WebItemModuleBeanTest
         ConnectAddonBean addon = createAddonBeanBuilder(webItemBean).build();
 
         String json = readTestFile("inlineDialogWebItemTest.json");
-        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
+        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
 
         assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
     }

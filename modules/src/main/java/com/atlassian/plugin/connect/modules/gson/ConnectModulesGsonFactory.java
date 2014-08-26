@@ -13,7 +13,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.InstanceCreator;
 import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
@@ -23,13 +22,21 @@ import java.util.Map;
  */
 public class ConnectModulesGsonFactory
 {
-    public static <M extends ModuleList> GsonBuilder getGsonBuilder(Class<M> moduleListType,
-                                                                    InstanceCreator<ModuleList> moduleListInstanceCreator)
+
+    private static final InstanceCreator<ModuleList> MODULE_LIST_INSTANCE_CREATOR = new InstanceCreator<ModuleList>()
+    {
+        @Override
+        public ModuleList createInstance(Type type)
+        {
+            return new JiraConfluenceModuleList();
+        }
+    };
+
+    public static <M extends ModuleList> GsonBuilder getGsonBuilder(InstanceCreator<ModuleList> moduleListInstanceCreator)
     {
         Type conditionalType = new TypeToken<List<ConditionalBean>>() {}.getType();
         Type mapStringType = new TypeToken<Map<String, String>>() {}.getType();
-        final Type moduleListType2 = new TypeToken<M>() {}.getType();
-        final Type cabType = new TypeToken<ConnectAddonBean<M>>() {}.getType();
+        final Type moduleListType = new TypeToken<M>() {}.getType();
 
         return new GsonBuilder()
                 .registerTypeAdapter(conditionalType, new ConditionalBeanSerializer())
@@ -41,71 +48,33 @@ public class ConnectModulesGsonFactory
                 .registerTypeAdapterFactory(new NullIgnoringSetTypeAdapterFactory())
                 .registerTypeAdapter(XmlDescriptorCodeInvokedEventBean.class, new XmlDescriptorCodeInvokedEventBeanSerializer())
                 .registerTypeAdapter(WebItemTargetBean.class, new WebItemTargetBeanSerializer())
-//                .registerTypeAdapter(ModuleList.class, moduleListInstanceCreator)
-//                .registerTypeAdapter(moduleListType, moduleListInstanceCreator)
-                .registerTypeAdapter(moduleListType2, moduleListInstanceCreator)
-////                .registerTypeAdapter(cabType, new InstanceCreator<ConnectAddonBean<M>>()
-////                {
-////                    @Override
-////                    public ConnectAddonBean<M> createInstance(Type type)
-////                    {
-////                        final Type[] actualTypeArguments = ((ParameterizedType) type).getActualTypeArguments();
-////                        return new ConnectAddonBean<M>();
-////                    }
-//                })
-//                .registerTypeAdapter(ModuleList.class, new ModuleListDeserializer<M>(moduleListType))
-//                .registerTypeAdapter(moduleListType, new ModuleListDeserializer<M>(moduleListType))
-//                .registerTypeAdapter(moduleListType2, new ModuleListDeserializer<M>(moduleListType))
-//                .registerTypeHierarchyAdapter(ModuleList.class, new ModuleListDeserializer<M>(moduleListType))
-//                .registerTypeHierarchyAdapter(moduleListType, new ModuleListDeserializer<M>(moduleListType))
-//                .registerTypeAdapter(ConnectAddonBean.class, new ConnectAddonBeanDeserializer<M>(moduleListType))
+                .registerTypeAdapter(moduleListType, moduleListInstanceCreator)
                 .disableHtmlEscaping()
                 ;
     }
 
-    public static <M extends ModuleList> Gson getGson(
-            Class<M> moduleListType,
-            InstanceCreator<ModuleList> moduleListInstanceCreator
-    )
+    public static <M extends ModuleList> Gson getGson(InstanceCreator<ModuleList> moduleListInstanceCreator)
     {
-        return getGsonBuilder(moduleListType, moduleListInstanceCreator).create();
+        return getGsonBuilder(moduleListInstanceCreator).create();
     }
 
+    @Deprecated
     public static GsonBuilder getGsonBuilder()
     {
-        return getGsonBuilder(JiraConfluenceModuleList.class,
-                new InstanceCreator<ModuleList>()
-        {
-            @Override
-            public ModuleList createInstance(Type type)
-            {
-                return new JiraConfluenceModuleList();
-            }
-        });
+        return getGsonBuilder(MODULE_LIST_INSTANCE_CREATOR);
     }
 
+    @Deprecated
     public static Gson getGson()
     {
         return getGsonBuilder().create();
     }
 
+    @Deprecated
     public static <M extends ModuleList> ConnectAddonBean<M>
         addonFromJsonWithI18nCollector(String json, Map<String,String> i18nCollector)
     {
-        Gson gson;
-
-        if(null != i18nCollector)
-        {
-            gson = getGsonBuilder().registerTypeAdapter(I18nProperty.class,new I18nCollectingDeserializer(i18nCollector)).create();
-        }
-        else
-        {
-            gson = getGson();
-        }
-
-        final Type type = new TypeToken<ConnectAddonBean<JiraConfluenceModuleList>>() {}.getType();
-
-        return gson.fromJson(json, type);
+        return  addonFromJsonWithI18nCollector(MODULE_LIST_INSTANCE_CREATOR, json, i18nCollector);
     }
     
     public static String addonBeanToJson(ConnectAddonBean bean)
@@ -113,9 +82,23 @@ public class ConnectModulesGsonFactory
         return getGson().toJson(bean);
     }
 
-//    public <M extends ModuleList> ConnectAddonBean<M> c(String json)
-//    {
-//        Gson gson = ConnectModulesGsonFactory.getGson();
-//        return gson.fromJson(json, cabType);
-//    }
+    public static <M extends ModuleList> ConnectAddonBean<M>
+        addonFromJsonWithI18nCollector(InstanceCreator<ModuleList> moduleListInstanceCreator,
+                                       String json, Map<String,String> i18nCollector)
+    {
+        Gson gson;
+
+        if(null != i18nCollector)
+        {
+            gson = getGsonBuilder(moduleListInstanceCreator).registerTypeAdapter(I18nProperty.class,new I18nCollectingDeserializer(i18nCollector)).create();
+        }
+        else
+        {
+            gson = getGson(moduleListInstanceCreator);
+        }
+
+        final Type type = new TypeToken<ConnectAddonBean<M>>() {}.getType();
+
+        return gson.fromJson(json, type);
+    }
 }

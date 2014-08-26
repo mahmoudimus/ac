@@ -21,7 +21,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
-import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.gson.JiraConfluenceConnectModulesGsonFactory;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -49,7 +49,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVe
 @SuppressWarnings ("UnusedDeclaration")
 public class ConnectJsonExamples
 {
-    private static final Gson gson = ConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create();
+    private static final Gson gson = JiraConfluenceConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create();
 
     public static final String ADDON_COMPLETE_EXAMPLE = createAddonCompleteExample();
     public static final String ADDON_EXAMPLE = createAddonExample();

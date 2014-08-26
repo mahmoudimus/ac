@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.webhooks;
 
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.modules.beans.XmlDescriptorCodeInvokedEventBean;
-import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.gson.JiraConfluenceConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.event.ConnectAddonEventSerializer;
 import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.event.*;
@@ -136,7 +136,7 @@ public final class PluginsWebHookProvider implements WebHookProvider
         @Override
         public String getWebHookBody() throws EventSerializationException
         {
-            return ConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create().toJson(new XmlDescriptorCodeInvokedEventBean(event.getAddOnKey(), event.getStackTrace()));
+            return JiraConfluenceConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create().toJson(new XmlDescriptorCodeInvokedEventBean(event.getAddOnKey(), event.getStackTrace()));
         }
     }
 }

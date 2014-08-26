@@ -5,7 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.WebItemTargetOptions;
-import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.gson.JiraConfluenceConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.web.Condition;
@@ -130,7 +130,7 @@ public class WebItemModuleDescriptorFactory
         final WebItemTargetOptions options = bean.getTarget().getOptions();
 
         // use gson to turn it into a map
-        final Gson gson = ConnectModulesGsonFactory.getGson();
+        final Gson gson = JiraConfluenceConnectModulesGsonFactory.getGson();
         final Map<String, Object> dialogOptions = gson.fromJson(gson.toJsonTree(options), Map.class);
         Map<String, String> beanParams = bean.getParams();
 

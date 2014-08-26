@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
-import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.gson.JiraConfluenceConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
@@ -78,7 +78,7 @@ public class WorkflowPostFunctionModuleProviderTest
                 .build();
 
         // simulate a descriptor that includes an absolute url
-        addon = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(ConnectModulesGsonFactory.addonBeanToJson(addon).replace("/view", BASE_URL + "/view"), null);
+        addon = JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(JiraConfluenceConnectModulesGsonFactory.addonBeanToJson(addon).replace("/view", BASE_URL + "/view"), null);
 
         plugin = testPluginInstaller.installAddon(addon);
     }

@@ -4,7 +4,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.JiraConfluenceModuleList;
 import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.gson.JiraConfluenceConnectModulesGsonFactory;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -48,7 +48,7 @@ public class ReportModuleBeanTest
 
     private static ConnectAddonBean<JiraConfluenceModuleList> readTestFile() throws IOException
     {
-        return ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(
+        return JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(
                 readAddonTestFile("reportAddon.json"), null);
     }
 }

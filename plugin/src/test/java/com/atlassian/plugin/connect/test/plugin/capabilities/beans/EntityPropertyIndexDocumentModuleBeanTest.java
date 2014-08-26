@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.test.plugin.capabilities.beans;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.*;
-import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.gson.JiraConfluenceConnectModulesGsonFactory;
 import com.google.common.collect.Lists;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,7 +27,7 @@ public class EntityPropertyIndexDocumentModuleBeanTest
     public static void setUp() throws IOException
     {
         expectedBean = createModuleBean();
-        actualBean = ConnectModulesGsonFactory.getGson().fromJson(readTestFile("entityProperty.json"), EntityPropertyModuleBean.class);
+        actualBean = JiraConfluenceConnectModulesGsonFactory.getGson().fromJson(readTestFile("entityProperty.json"), EntityPropertyModuleBean.class);
     }
 
     @Test
@@ -64,7 +64,7 @@ public class EntityPropertyIndexDocumentModuleBeanTest
     public void addOnWithEntityPropertyParsed() throws IOException
     {
         ConnectAddonBean bean = createAddOnBean();
-        String expectedJson = ConnectModulesGsonFactory.getGson().toJson(bean, ConnectAddonBean.class);
+        String expectedJson = JiraConfluenceConnectModulesGsonFactory.getGson().toJson(bean, ConnectAddonBean.class);
 
         assertThat(readTestFile("entityPropertyAddon.json"), is(sameJSONAs(expectedJson)));
     }

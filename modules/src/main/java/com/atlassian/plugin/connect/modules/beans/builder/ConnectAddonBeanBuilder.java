@@ -32,6 +32,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder,
     private VendorBean vendor;
     private Map<String, String> links;
     private M modules;
+    // TODO: temp workaround till we remove use of ConnectAddonBeanBuilder.withModules
     private ModuleListBuilder<?, M> moduleListBuilder;
     private Set<ScopeName> scopes;
     private LifecycleBean lifecycle;

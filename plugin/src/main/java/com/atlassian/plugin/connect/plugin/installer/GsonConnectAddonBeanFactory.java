@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleList;
-import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.gson.JiraConfluenceConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.modules.schema.DescriptorValidationResult;
 import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
 import com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectSchemaLocator;
@@ -97,7 +97,7 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
     {
         try
         {
-            return ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(jsonDescriptor, i18nCollector);
+            return JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(jsonDescriptor, i18nCollector);
         }
         catch (Exception e)
         {
