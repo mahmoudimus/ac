@@ -1,8 +1,11 @@
 package com.atlassian.plugin.connect.modules.gson;
 
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.JiraConfluenceModuleList;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleList;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
@@ -13,25 +16,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.InstanceCreator;
 import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-
 /**
  * @since 1.0
  */
 public class ConnectModulesGsonFactory
 {
-
-    private static final InstanceCreator<ModuleList> MODULE_LIST_INSTANCE_CREATOR = new InstanceCreator<ModuleList>()
-    {
-        @Override
-        public ModuleList createInstance(Type type)
-        {
-            return new JiraConfluenceModuleList();
-        }
-    };
-
     public static <M extends ModuleList> GsonBuilder getGsonBuilder(InstanceCreator<ModuleList> moduleListInstanceCreator)
     {
         Type conditionalType = new TypeToken<List<ConditionalBean>>() {}.getType();
@@ -56,30 +45,6 @@ public class ConnectModulesGsonFactory
     public static <M extends ModuleList> Gson getGson(InstanceCreator<ModuleList> moduleListInstanceCreator)
     {
         return getGsonBuilder(moduleListInstanceCreator).create();
-    }
-
-    @Deprecated
-    public static GsonBuilder getGsonBuilder()
-    {
-        return getGsonBuilder(MODULE_LIST_INSTANCE_CREATOR);
-    }
-
-    @Deprecated
-    public static Gson getGson()
-    {
-        return getGsonBuilder().create();
-    }
-
-    @Deprecated
-    public static <M extends ModuleList> ConnectAddonBean<M>
-        addonFromJsonWithI18nCollector(String json, Map<String,String> i18nCollector)
-    {
-        return  addonFromJsonWithI18nCollector(MODULE_LIST_INSTANCE_CREATOR, json, i18nCollector);
-    }
-    
-    public static String addonBeanToJson(ConnectAddonBean bean)
-    {
-        return getGson().toJson(bean);
     }
 
     public static <M extends ModuleList> ConnectAddonBean<M>

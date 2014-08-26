@@ -22,7 +22,7 @@ public class I18nCollectingDeserializer implements JsonDeserializer<I18nProperty
     @Override
     public I18nProperty deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
     {
-        I18nProperty prop = ConnectModulesGsonFactory.getGson().fromJson(json,I18nProperty.class);
+        I18nProperty prop = context.deserialize(json, I18nProperty.class);
         
         if(!Strings.isNullOrEmpty(prop.getI18n()))
         {

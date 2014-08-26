@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import com.atlassian.plugin.*;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.gson.JiraConfluenceConnectModulesGsonFactory;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.upm.api.util.Option;
@@ -44,7 +45,8 @@ public class LifecyclePluginInstaller implements DisposableBean
     private PluginArtifactFactory pluginArtifactFactory = new DefaultPluginArtifactFactory();
     private static final SecureRandom random = new SecureRandom();
 
-    public LifecyclePluginInstaller(PluginController pluginController, PluginAccessor pluginAccessor, ApplicationProperties applicationProperties, BundleContext bundleContext)
+    public LifecyclePluginInstaller(PluginController pluginController, PluginAccessor pluginAccessor,
+                                    ApplicationProperties applicationProperties, BundleContext bundleContext)
     {
         this.pluginController = pluginController;
         this.pluginAccessor = pluginAccessor;
@@ -54,7 +56,8 @@ public class LifecyclePluginInstaller implements DisposableBean
 
     public Plugin installAddon(ConnectAddonBean bean) throws IOException
     {
-        String json = ConnectModulesGsonFactory.addonBeanToJson(bean);
+        // TODO: can't hardwire this. Need to factor out somehow so we can pass in. Pity this is all static methods
+        String json = JiraConfluenceConnectModulesGsonFactory.addonBeanToJson(bean);
         return installAddon(json);
     }
 

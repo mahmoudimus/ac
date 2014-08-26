@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.testsupport;
 import com.atlassian.plugin.*;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.gson.JiraConfluenceConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilter;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -48,7 +49,7 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
     @Override
     public Plugin installAddon(ConnectAddonBean bean) throws IOException
     {
-        String json = ConnectModulesGsonFactory.addonBeanToJson(bean);
+        String json = JiraConfluenceConnectModulesGsonFactory.addonBeanToJson(bean);
         return installAddon(json);
     }
 
