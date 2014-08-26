@@ -7,7 +7,6 @@ import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.WebItemTargetOptions;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
-import com.atlassian.plugin.connect.plugin.installer.GsonConnectAddonBeanFactory;
 import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
@@ -144,7 +143,7 @@ public class WebItemModuleDescriptorFactory
             }
         }
 
-        final boolean isDialog = bean.getTarget().isDialogTarget();
+        final boolean isDialog = bean.getTarget().isDialogTarget() || bean.getTarget().isInlineDialogTarget();
 
         paramsModuleFragmentFactory.addParamsToElement(webItemElement, bean.getParams());
 

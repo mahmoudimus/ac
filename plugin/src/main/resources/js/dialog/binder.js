@@ -11,25 +11,11 @@ _AP.require(["dialog/main", "host/content", "_uri", "dialog/dialog-factory"], fu
             callback = function(href, options){
 
                 var webItemOptions = hostContentUtilities.getOptionsForWebItem(options.bindTo);
-                //this is a dialog-page (xml descriptor)
-                var dialogPageMatch = href.match(/\/servlet\/atlassian\-connect\/([\w-]+)\/([\w-]+)/);
-                if(dialogPageMatch){
-                    var dialogPageOptions = {
-                        key: dialogPageMatch[1],
-                        moduleKey: dialogPageMatch[2],
-                        chrome: true
-                    };
-
-                    dialogFactory(dialogPageOptions, options);
-                    return;
-                }
 
                 $.extend(options, webItemOptions);
-                options.src = href;
 
-                var contentUrlObj = new uri.init(href);
                 if (!options.ns) {
-                    options.ns = contentUrlObj.getQueryParamValue('xdm_c').replace('channel-', '');
+                    options.ns = hostContentUtilities.getWebItemModuleKey(options.bindTo);
                 }
                 if(!options.container){
                     options.container = options.ns;
@@ -45,7 +31,14 @@ _AP.require(["dialog/main", "host/content", "_uri", "dialog/dialog-factory"], fu
                   options.chrome = true;
                 }
 
-                dialog.create(options);
+                var servletUrl = href.match(/\/servlet\/ac\/([\w-]+)\/([\w-]+)/);
+
+                dialogFactory({
+                    key: servletUrl[1],
+                    moduleKey: servletUrl[2]
+                }, options);
+
+                    // dialog.create(options);
             };
 
         hostContentUtilities.eventHandler(action, selector, callback);

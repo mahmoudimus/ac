@@ -39,7 +39,7 @@ Your `atlassian-connect.json` file will use a [`generalPages` module](../modules
         "authentication": {
             "type": "none"
         },
-        "apiVersion": "1",
+        "apiVersion": 1,
         "modules": {
             "generalPages": [
                 {
@@ -202,6 +202,14 @@ When you install your add-on, JIRA retrieves and registers your `atlassian-conne
 So far, you've learned the basic architecture of a Connect add-on. The next step is to add some functionality and handle [authentication](../concepts/authentication.html).
 
 You can add functionality using the [Atlassian REST APIs](https://developer.atlassian.com/x/K4BpAQ). [Authentication](../concepts/authentication.html) manages the handshake between your app and the Atlassian host application. You can also read about our [security concepts](../concepts/security.html) for more information.
+
+You can also [try the next tutorial](../project-activity-tutorial.html), where you can add a table of your projects to JIRA via the REST API and D3.js. 
+
+<div class="index-button">
+<a href="../project-activity-tutorial.html"><button class="primary-cta aui-button aui-button-primary">Try the next tutorial</button></a>
+</div>
+
+## More resources
 
 ### Example add-ons
 

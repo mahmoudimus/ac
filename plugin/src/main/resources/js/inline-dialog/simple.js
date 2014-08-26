@@ -1,4 +1,4 @@
-_AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_util"], function($, statusHelper, util) {
+_AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_util", "host/content"], function($, statusHelper, util, hostContentUtilities) {
     return function (contentUrl, options) {
         var $inlineDialog;
 
@@ -13,40 +13,46 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_uti
             return;
         }
 
-        var displayInlineDialog = function(content, trigger, showPopup) {
+        var displayInlineDialog = function(content, trigger, showInlineDialog) {
+            trigger = $(trigger); // sometimes it's not jQuery. Lets make it jQuery.
 
-            options.w = options.w || options.width;
-            options.h = options.h || options.height;
-            if (!options.ns) {
-                options.ns = itemId;
-            }
-            options.container = options.ns;
-            options.src = options.url = options.url || contentUrl;
-            content.data('inlineDialog', $inlineDialog);
+            var pluginKey = hostContentUtilities.getWebItemPluginKey(trigger),
+                moduleKey = hostContentUtilities.getWebItemModuleKey(trigger);
 
-            if(!content.find('iframe').length){
-                content.attr('id', 'ap-' + options.ns);
-                content.append('<div id="embedded-' + options.ns + '" />');
-                content.append(statusHelper.createStatusMessages());
-                _AP.create(options);
-            }
-            showPopup();
-            return false;
+            hostContentUtilities.getIframeHtmlForKey(pluginKey, undefined, {key: moduleKey})
+            .done(function(data) {
+                content.empty().append(data);
+            })
+            .fail(function(xhr, status, ex) {
+                var title = $("<p class='title' />").text("Unable to load add-on content. Please try again later.");
+                content.html("<div class='aui-message error ap-aui-message'></div>");
+                content.find(".error").append(title);
+                var msg = status + (ex ? ": " + ex.toString() : "");
+                content.find(".error").text(msg);
+                AJS.log(msg);
+            })
+            .always(function(){
+                showInlineDialog();
+            });
+
         };
 
         var dialogElementIdentifier = "ap-inline-dialog-content-" + itemId;
 
         $inlineDialog = $("#inline-dialog-" + util.escapeSelector(dialogElementIdentifier));
-        if($inlineDialog.length === 0){
-            //Create the AUI inline dialog with a unique ID.
-            $inlineDialog = AJS.InlineDialog(
-                options.bindTo,
-                //assign unique id to inline Dialog
-                dialogElementIdentifier,
-                displayInlineDialog,
-                options
-            );
+
+        if($inlineDialog.length !== 0){
+            $inlineDialog.remove();
         }
+
+        //Create the AUI inline dialog with a unique ID.
+        $inlineDialog = AJS.InlineDialog(
+            options.bindTo,
+            //assign unique id to inline Dialog
+            dialogElementIdentifier,
+            displayInlineDialog,
+            options
+        );
 
         return {
             id: $inlineDialog.attr('id'),

@@ -10,7 +10,6 @@ import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstit
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -32,9 +31,10 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
             WebFragmentHelper webFragmentHelper,
             IFrameUriBuilderFactory iFrameUriBuilderFactory,
             WebFragmentModuleContextExtractor webFragmentModuleContextExtractor,
-            ModuleContextFilter moduleContextFilter, UrlVariableSubstitutor urlVariableSubstitutor)
+            ModuleContextFilter moduleContextFilter,
+            UrlVariableSubstitutor urlVariableSubstitutor)
     {
-        this.urlVariableSubstitutor = urlVariableSubstitutor;
+        this.urlVariableSubstitutor = checkNotNull(urlVariableSubstitutor);
         this.iFrameUriBuilderFactory = checkNotNull(iFrameUriBuilderFactory);
         this.webFragmentModuleContextExtractor = checkNotNull(webFragmentModuleContextExtractor);
         this.moduleContextFilter = checkNotNull(moduleContextFilter);
@@ -55,8 +55,7 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
                 , moduleKey
                 , absolute
                 , addOnUrlContext
-                , isDialog
-        );
+                , isDialog);
     }
 
 
@@ -97,7 +96,8 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
         @Override
         public ConfluenceWebLink getLink()
         {
-            return new ConfluenceWebLink(new RemoteWebLink(this, webFragmentHelper, iFrameUriBuilderFactory, urlVariableSubstitutor, webFragmentModuleContextExtractor, moduleContextFilter, url, pluginKey, moduleKey, absolute, addOnUrlContext, isDialog));
+            return new ConfluenceWebLink(new RemoteWebLink(this, webFragmentHelper, iFrameUriBuilderFactory, urlVariableSubstitutor,
+                    webFragmentModuleContextExtractor, moduleContextFilter, url, pluginKey, moduleKey, absolute, addOnUrlContext, isDialog));
         }
 
         @Override

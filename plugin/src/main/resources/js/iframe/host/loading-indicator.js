@@ -6,15 +6,16 @@ _AP.define("loading-indicator", ["_dollar", "_rpc", "host/_status_helper"], func
             init: function (state, xdm) {
                 var $home = $(xdm.iframe).closest(".ap-container");
                 statusHelper.showLoadingStatus($home, 0);
+
+                $home.find(".ap-load-timeout a.ap-btn-cancel").click(function () {
+                    statusHelper.showLoadErrorStatus($home);
+                    xdm.analytics.iframePerformance.cancel();
+                });
+
                 xdm.timeout = setTimeout(function(){
                     xdm.timeout = null;
                     statusHelper.showloadTimeoutStatus($home);
-                    var $timeout = $home.find(".ap-load-timeout");
-                    $timeout.find("a.ap-btn-cancel").click(function () {
-                        statusHelper.showLoadErrorStatus($home);
-                        this.analytics.iframePerformance.timeout();
-                        //state.iframe.trigger(isDialog ? "ra.dialog.close" : "ra.iframe.destroy");
-                    });
+                    xdm.analytics.iframePerformance.timeout();
                 }, 20000);
             },
             internals: {

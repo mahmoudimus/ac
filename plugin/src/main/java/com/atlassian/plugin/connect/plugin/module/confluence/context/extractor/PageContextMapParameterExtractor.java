@@ -16,6 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Extracts page parameters that can be included in webpanel's iframe url.
+ *
+ * The context parameters produced by this extractor are considered deprecated.
+ * @see com.atlassian.plugin.connect.plugin.module.confluence.context.extractor.ContentContextMapParameterExtractor
  */
 @ConfluenceComponent
 public class PageContextMapParameterExtractor implements ContextMapParameterExtractor<AbstractPage>

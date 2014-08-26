@@ -9,11 +9,14 @@ import org.junit.Test;
 
 import java.io.IOException;
 
+import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
 import static com.atlassian.plugin.connect.test.plugin.capabilities.TestFileReader.readAddonTestFile;
 import static org.junit.Assert.*;
 
 public class WorkflowPostFunctionModuleBeanTest
 {
+    private static final UrlBean ABSOLUTE_BEAN = new UrlBean("https://twitter.com");
+
     @Test
     public void verifyName() throws Exception
     {
@@ -64,8 +67,7 @@ public class WorkflowPostFunctionModuleBeanTest
         WorkflowPostFunctionModuleBean bean = createModuleBean();
 
         assertTrue(bean.hasTriggered());
-        assertEquals("http://example.com/endpoint", bean.getTriggered().getUrl());
-        assertTrue(bean.getTriggered().createUri().isAbsolute());
+        assertEquals("/endpoint", bean.getTriggered().getUrl());
     }
 
     @Test
@@ -93,15 +95,39 @@ public class WorkflowPostFunctionModuleBeanTest
         assertTrue(addOn.hasTriggered());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void absoluteUrlsAreNotAllowedOnView()
+    {
+        newWorkflowPostFunctionBean().withView(ABSOLUTE_BEAN);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void absoluteUrlsAreNotAllowedOnEdit()
+    {
+        newWorkflowPostFunctionBean().withEdit(ABSOLUTE_BEAN);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void absoluteUrlsAreNotAllowedOnCreate()
+    {
+        newWorkflowPostFunctionBean().withCreate(ABSOLUTE_BEAN);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void absoluteUrlsAreNotAllowedOnTriggered()
+    {
+        newWorkflowPostFunctionBean().withTriggered(ABSOLUTE_BEAN);
+    }
+
     private WorkflowPostFunctionModuleBean createModuleBean()
     {
-        return WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean()
+        return newWorkflowPostFunctionBean()
                 .withName(new I18nProperty("My Post Function", "my.pf.name"))
                 .withDescription(new I18nProperty("Some description", "my.pf.desc"))
                 .withCreate(new UrlBean("/create"))
                 .withEdit(new UrlBean("/edit"))
                 .withView(new UrlBean("/view"))
-                .withTriggered(new UrlBean("http://example.com/endpoint"))
+                .withTriggered(new UrlBean("/endpoint"))
                 .build();
     }
 
