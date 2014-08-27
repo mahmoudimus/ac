@@ -36,8 +36,8 @@ _AP.require(["dialog/main", "host/content", "_uri", "dialog/dialog-factory"], fu
                 dialogFactory({
                     key: addonKey,
                     moduleKey: moduleKey,
-                    triggerUri: new uri.init(href)
-                }, options);
+                }, options,
+                options.productContext);
 
                 // dialog.create(options);
             };
