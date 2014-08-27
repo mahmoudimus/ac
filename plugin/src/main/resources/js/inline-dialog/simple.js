@@ -19,7 +19,7 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_uti
             var pluginKey = hostContentUtilities.getWebItemPluginKey(trigger),
                 moduleKey = hostContentUtilities.getWebItemModuleKey(trigger);
 
-            hostContentUtilities.getIframeHtmlForKey(pluginKey, undefined, {key: moduleKey})
+            hostContentUtilities.getIframeHtmlForKey(pluginKey, options.productContext, {key: moduleKey})
             .done(function(data) {
                 content.empty().append(data);
             })
