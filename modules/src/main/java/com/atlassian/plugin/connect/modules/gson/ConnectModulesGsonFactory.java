@@ -21,7 +21,7 @@ import com.google.gson.reflect.TypeToken;
  */
 public class ConnectModulesGsonFactory
 {
-    public static <M extends ModuleList> GsonBuilder getGsonBuilder(InstanceCreator<ModuleList> moduleListInstanceCreator)
+    public static <M extends ModuleList> GsonBuilder getGsonBuilder(InstanceCreator<M> moduleListInstanceCreator)
     {
         Type conditionalType = new TypeToken<List<ConditionalBean>>() {}.getType();
         Type mapStringType = new TypeToken<Map<String, String>>() {}.getType();
@@ -42,7 +42,7 @@ public class ConnectModulesGsonFactory
                 ;
     }
 
-    public static <M extends ModuleList> Gson getGson(InstanceCreator<ModuleList> moduleListInstanceCreator)
+    public static <M extends ModuleList> Gson getGson(InstanceCreator<M> moduleListInstanceCreator)
     {
         return getGsonBuilder(moduleListInstanceCreator).create();
     }

@@ -1,17 +1,15 @@
-package com.atlassian.plugin.connect.modules.gson;
+package com.atlassian.plugin.connect.modules.gson.confluence;
 
 import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Map;
 
-import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.JiraConfluenceModuleList;
-import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleList;
-import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
-import com.atlassian.plugin.connect.modules.beans.XmlDescriptorCodeInvokedEventBean;
+import com.atlassian.plugin.connect.modules.beans.confluence.ConfluenceModuleList;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.gson.I18nCollectingDeserializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.InstanceCreator;
@@ -20,8 +18,7 @@ import com.google.gson.reflect.TypeToken;
 /**
  * @since 1.0
  */
-@Deprecated
-public class JiraConfluenceConnectModulesGsonFactory
+public class ConfluenceConnectModulesGsonFactory
 {
 
     private static final InstanceCreator<ModuleList> MODULE_LIST_INSTANCE_CREATOR = new InstanceCreator<ModuleList>()
@@ -29,11 +26,11 @@ public class JiraConfluenceConnectModulesGsonFactory
         @Override
         public ModuleList createInstance(Type type)
         {
-            return new JiraConfluenceModuleList();
+            return new ConfluenceModuleList();
         }
     };
 
-    private static final Type TYPE = new TypeToken<ConnectAddonBean<JiraConfluenceModuleList>>() {}.getType();
+    private static final Type TYPE = new TypeToken<ConnectAddonBean<ConfluenceModuleList>>() {}.getType();
 
     public static GsonBuilder getGsonBuilder()
     {
