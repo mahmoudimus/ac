@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Set;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.JiraConfluenceModuleList;
+import com.atlassian.plugin.connect.modules.beans.ModuleList;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.modules.gson.JiraConfluenceConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.gson.ProductlessConnectModulesGsonFactory;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.test.plugin.capabilities.TestFileReader.readAddonTestFile;
@@ -37,7 +37,7 @@ public class ConnectAddonBeanMarshallingTest
     {
         String json = readAddonTestFile("addonNoCapabilities.json");
 
-        ConnectAddonBean<JiraConfluenceModuleList> addOn = JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
+        ConnectAddonBean<ModuleList> addOn = ProductlessConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
         assertEquals("My Plugin", addOn.getName());
         assertEquals("a cool addon", addOn.getDescription());
         assertEquals("my-plugin", addOn.getKey());
@@ -58,7 +58,7 @@ public class ConnectAddonBeanMarshallingTest
     {
         String json = readAddonTestFile("addonExtraValue.json");
 
-        ConnectAddonBean<JiraConfluenceModuleList> addOn = JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
+        ConnectAddonBean<ModuleList> addOn = ProductlessConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
 
         assertEquals("My Plugin", addOn.getName());
         assertEquals("a cool addon", addOn.getDescription());
@@ -80,7 +80,7 @@ public class ConnectAddonBeanMarshallingTest
     {
         String json = readAddonTestFile("addonNoCapabilities.json");
 
-        ConnectAddonBean<JiraConfluenceModuleList> addOn = JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
+        ConnectAddonBean<ModuleList> addOn = ProductlessConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
 
         assertNotNull(addOn.getModules());
     }
@@ -95,7 +95,7 @@ public class ConnectAddonBeanMarshallingTest
     {
         String json = readAddonTestFile("addonSingleCapability.json");
 
-        ConnectAddonBean<JiraConfluenceModuleList> addOn = JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
+        ConnectAddonBean<ModuleList> addOn = ProductlessConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
 
         List<WebItemModuleBean> moduleList = addOn.getModules().getWebItems();
 
@@ -116,7 +116,7 @@ public class ConnectAddonBeanMarshallingTest
     {
         String json = readAddonTestFile("addonMultipleCapabilities.json");
 
-        ConnectAddonBean<JiraConfluenceModuleList> addOn = JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
+        ConnectAddonBean<ModuleList> addOn = ProductlessConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
 
         List<WebItemModuleBean> moduleList = addOn.getModules().getWebItems();
 
@@ -131,7 +131,7 @@ public class ConnectAddonBeanMarshallingTest
     public void noScopes() throws IOException
     {
         String json = readAddonTestFile("addonMultipleCapabilities.json");
-        ConnectAddonBean<JiraConfluenceModuleList> addOn = JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
+        ConnectAddonBean<ModuleList> addOn = ProductlessConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
         assertThat(addOn.getScopes(), is(Collections.<ScopeName>emptySet()));
     }
 
@@ -139,7 +139,7 @@ public class ConnectAddonBeanMarshallingTest
     public void singleScope() throws IOException
     {
         String json = readAddonTestFile("singleScope.json");
-        ConnectAddonBean<JiraConfluenceModuleList> addOn = JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
+        ConnectAddonBean<ModuleList> addOn = ProductlessConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
         assertThat(addOn.getScopes(), is((Set<ScopeName>) newHashSet(ScopeName.READ)));
     }
 
@@ -147,7 +147,7 @@ public class ConnectAddonBeanMarshallingTest
     public void multipleScopes() throws IOException
     {
         String json = readAddonTestFile("multipleScopes.json");
-        ConnectAddonBean<JiraConfluenceModuleList> addOn = JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
+        ConnectAddonBean<ModuleList> addOn = ProductlessConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
         assertThat(addOn.getScopes(), is((Set<ScopeName>) newHashSet(ScopeName.READ, ScopeName.WRITE)));
     }
 
@@ -156,7 +156,7 @@ public class ConnectAddonBeanMarshallingTest
     {
         Set<ScopeName> emptySet = newHashSet();
         String json = readAddonTestFile("badScopeName.json");
-        ConnectAddonBean<JiraConfluenceModuleList> addOn = JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
+        ConnectAddonBean<ModuleList> addOn = ProductlessConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
         assertThat(addOn.getScopes(), is(emptySet));
     }
 }

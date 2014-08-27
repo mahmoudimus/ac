@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.modules.gson.JiraConfluenceConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.gson.ProductlessConnectModulesGsonFactory;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.junit.Test;
@@ -30,7 +31,7 @@ public class ConnectConditionMarshallingTest
     {
         String json = readAddonTestFile("conditionMarshalling.json");
 
-        Gson gson = JiraConfluenceConnectModulesGsonFactory.getGson();
+        Gson gson = ProductlessConnectModulesGsonFactory.getGson();
         Type listType = new TypeToken<List<ConditionalBean>>() {}.getType();
 
         List<ConditionalBean> conditionList = gson.fromJson(json, listType);
@@ -69,7 +70,7 @@ public class ConnectConditionMarshallingTest
                         .build()
         );
 
-        Gson gson = JiraConfluenceConnectModulesGsonFactory.getGson();
+        Gson gson = ProductlessConnectModulesGsonFactory.getGson();
         String json = gson.toJson(conditionList, conditionalType);
 
         assertEquals(expected, json);

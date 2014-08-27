@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.gson.JiraConfluenceConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.gson.ProductlessConnectModulesGsonFactory;
 import com.google.gson.Gson;
 import org.junit.Test;
 
@@ -35,7 +36,7 @@ public class JunkTest
                 .withIcon(newIconBean().withUrl("/some/icon.png").withWidth(16).withHeight(16).build())
                 .build();
 
-        Gson gson = JiraConfluenceConnectModulesGsonFactory.getGson();
+        Gson gson = ProductlessConnectModulesGsonFactory.getGson();
 
         String json = gson.toJson(bean, WebItemModuleBean.class);
 
@@ -68,7 +69,7 @@ public class JunkTest
                 )
                 .build();
 
-        Gson gson = JiraConfluenceConnectModulesGsonFactory.getGson();
+        Gson gson = ProductlessConnectModulesGsonFactory.getGson();
 
         String json = gson.toJson(addon, ConnectAddonBean.class);
 

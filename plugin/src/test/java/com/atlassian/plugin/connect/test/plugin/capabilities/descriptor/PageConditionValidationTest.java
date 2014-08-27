@@ -84,8 +84,4 @@ public class PageConditionValidationTest
         conditionsValidator.validate(addon);
     }
 
-    private String getSchema() throws IOException
-    {
-        return FileUtils.readFile(new DefaultResourceLoader().getResource("classpath:/schema/jira-schema.json").getFile());
-    }
 }
