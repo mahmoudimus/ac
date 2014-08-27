@@ -16,7 +16,8 @@ Skip ahead to any section:
 * [Searching JIRA with JQL](#jql-search)  
 * [Using a `messages` module](#messages-module)  
 * [Flashing a warning in JIRA](#warning)  
-* [Making messages disappear](#disappearing-meassages)  
+* [Making messages disappear](#disappearing-meassages) 
+* [Creating modules for `AP.require`](#ap-modules)
 * [Getting a list of Confluence spaces](#get-confluence-spaces)  
 * [Getting information about specific spaces](#get-specific-space)  
 * [Getting Confluence space pages](#getting-space-pages)  
@@ -52,7 +53,7 @@ iframe.
 ### <a name="jira-projects"></a> Accessing list of JIRA projects
 
 This snippet retrieves a list of JIRA projects. You might have to page through the list (as with most of these resources) 
-by passing a `start` in the request query string. Looking at the results will help you identify the location of the result 
+by passing a `startAt` in the request query string. Looking at the results will help you identify the location of the result 
 set so you know if you need to paginate further results.
 
 
@@ -78,8 +79,8 @@ AP.require('request', function(request) {
 ### <a name="jql-search"></a> Search for an issue using JQL in JIRA
 
 In this example you'll create a simple [JQL (JIRA query language)](https://confluence.atlassian.com/x/ghGyCg) 
-query that looks for unresolved issues (`resolution = null`). This query is stored in the `searchJql` parameter.
-You might need to paginate your results to get through all of them.
+query that looks for unresolved issues (`resolution = null`). The JQL query is in the `searchJql` parameter of the
+request. You might need to paginate your results to get through all of them.
 
 
 ````
@@ -181,9 +182,24 @@ AP.require('messages', function(messages) {
 });
 ````
 
-### Creating modules for `AP.require`
+### <a name="ap-modules"></a>Creating modules for `AP.require`
 
-Placeholder - for Travis
+You can create your own modules to be included when `required`. A simple example creating an object `myObject` with
+a single function `bonusFunction` which returns a string of `+1`. We can take `myObject` as a dependency then print
+the results of `bonusFunction` to the console. 
+
+````
+AP.define('myObject', function() { 
+  return { 
+    bonusFunction: function() { 
+      return "+1"; 
+    }
+  } 
+});
+AP.require('myObject', function(myObject) { 
+  console.log(myObject.bonusFunction()); 
+});
+````
 
 ### <a name="get-spaces"></a> Getting Confluence spaces
 
@@ -281,7 +297,7 @@ AP.require('cookie', function(cookie) {
   });
 });
 ````
-### Feedback wanted 
+## Feedback wanted 
 
 We're always interested in making our docs and developer experiences better. If you have feedback on existing recipes or 
 have a pattern you'd like to contribute, [let us know](https://developer.atlassian.com/help#contact-us).
