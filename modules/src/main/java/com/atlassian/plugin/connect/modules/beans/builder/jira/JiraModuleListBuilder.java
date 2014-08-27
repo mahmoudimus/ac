@@ -92,7 +92,7 @@ public abstract class JiraModuleListBuilder<T extends JiraModuleListBuilder,
     public T withJiraProjectTabTabPanels(ConnectTabPanelModuleBean... beans)
     {
         // TODO: temp impl until withModules removed
-        return withModules("jiraProjectTabTabPanels", beans);
+        return withModules("jiraProjectTabPanels", beans);
     }
 
     public T withJiraVersionTabPanels(ConnectTabPanelModuleBean... beans)
