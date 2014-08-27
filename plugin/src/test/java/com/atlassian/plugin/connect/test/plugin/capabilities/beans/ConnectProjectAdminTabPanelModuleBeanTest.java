@@ -6,6 +6,8 @@ import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelMod
 import com.atlassian.plugin.connect.modules.beans.JiraConfluenceModuleList;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.builder.jira.JiraModuleListBuilder;
+import com.atlassian.plugin.connect.modules.beans.jira.JiraModuleList;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
 import com.opensymphony.util.FileUtils;
@@ -60,25 +62,26 @@ public class ConnectProjectAdminTabPanelModuleBeanTest
         assertThat(moduleBean.getAbsoluteLocation(), is("atl.jira.proj.config/a-location"));
     }
 
-    private ConnectAddonBean<JiraConfluenceModuleList> createBean()
+    private ConnectAddonBean<JiraModuleList> createBean()
     {
         Map<String, String> links = new HashMap<String, String>();
         links.put("self", "http://www.example.com/capabilities");
         links.put("homepage", "http://www.example.com");
 
-//        return new ConnectAddonBeanBuilder<ConnectAddonBeanBuilder, JiraConfluenceModuleList, ConnectAddonBean<JiraConfluenceModuleList>>()
-        return ConnectAddonBean.<ConnectAddonBeanBuilder, JiraConfluenceModuleList, ConnectAddonBean<JiraConfluenceModuleList>>newConnectAddonBean()
+        return newConnectAddonBean()
                 .withName("My Plugin")
                 .withKey("my-plugin")
                 .withVersion("1.0")
                 .withLinks(links)
                 .withBaseurl("http://www.example.com")
                 .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
-                .withModule(ConnectProjectAdminTabPanelModuleProvider.PROJECT_ADMIN_TAB_PANELS, newProjectAdminTabPanelBean()
-                        .withName(new I18nProperty("My ProjectAdmin Tab Page", "my.projectAdminTabPage"))
-                        .withUrl("/my-general-page")
-                        .withWeight(100)
-                        .withLocation("a-location")
+                .withModuleList(JiraModuleList.newModuleList()
+                        .withJiraProjectAdminTabPanels(newProjectAdminTabPanelBean()
+                                .withName(new I18nProperty("My ProjectAdmin Tab Page", "my.projectAdminTabPage"))
+                                .withUrl("/my-general-page")
+                                .withWeight(100)
+                                .withLocation("a-location")
+                                .build())
                         .build())
                 .withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withPublicKey("S0m3Publ1cK3y").build())
                 .build();

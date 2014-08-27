@@ -48,6 +48,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+            <!-- TODO: review before merging -->
             <scope>compile</scope>
         </dependency>
 
@@ -442,6 +443,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
+            <!-- TODO: review before merging -->
             <scope>compile</scope>
         </dependency>
 

@@ -1,16 +1,11 @@
 package com.atlassian.plugin.connect.modules.gson;
 
 import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Map;
 
-import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.JiraConfluenceModuleList;
-import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleList;
-import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
-import com.atlassian.plugin.connect.modules.beans.XmlDescriptorCodeInvokedEventBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

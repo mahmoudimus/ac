@@ -9,9 +9,7 @@ import com.atlassian.plugin.connect.modules.beans.ModuleList;
 import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseModuleBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.builder.JiraConfluenceModuleListBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.confluence.ConfluenceModuleListBuilder;
-import com.atlassian.plugin.connect.modules.beans.jira.JiraModuleList;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -22,10 +20,6 @@ import static com.google.common.collect.Lists.newArrayList;
 @ObjectSchemaAttributes(additionalProperties = false)
 public class ConfluenceModuleList extends ModuleList
 {
-    /////////////////////////////////////////////////////
-    ///////    CONFLUENCE MODULES
-    /////////////////////////////////////////////////////
-
     /**
      * Dynamic content macros allow you to add a macro into a Confluence page which is rendered as an iframe.
      *

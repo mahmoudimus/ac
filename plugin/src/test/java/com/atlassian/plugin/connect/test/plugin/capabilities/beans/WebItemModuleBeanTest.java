@@ -27,8 +27,6 @@ public class WebItemModuleBeanTest
     @Test
     public void producesCorrectBean() throws Exception
     {
-        Gson gson = JiraConfluenceConnectModulesGsonFactory.getGson();
-
         WebItemModuleBean webItemBean = createWebItemBeanBuilder().build();
         ConnectAddonBean addon = createAddonBeanBuilder(webItemBean).build();
 
@@ -41,8 +39,6 @@ public class WebItemModuleBeanTest
     @Test
     public void producesBeanWithAbsoluteContext() throws Exception
     {
-        Gson gson = JiraConfluenceConnectModulesGsonFactory.getGson();
-
         WebItemModuleBean webItemBean = createWebItemBeanBuilder()
                 .withContext(AddOnUrlContext.product)
                 .build();
@@ -57,8 +53,6 @@ public class WebItemModuleBeanTest
     @Test
     public void producesBeanWithDialogTarget() throws Exception
     {
-        Gson gson = JiraConfluenceConnectModulesGsonFactory.getGson();
-
         WebItemTargetBean target = newWebItemTargetBean()
                 .withType(WebItemTargetType.dialog)
                 .build();
@@ -77,8 +71,6 @@ public class WebItemModuleBeanTest
     @Test
     public void producesBeanWithInlineDialogTarget() throws Exception
     {
-        Gson gson = JiraConfluenceConnectModulesGsonFactory.getGson();
-
         WebItemTargetBean target = newWebItemTargetBean()
                         .withType(WebItemTargetType.inlineDialog)
                         .build();

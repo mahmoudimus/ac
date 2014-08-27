@@ -1,26 +1,27 @@
 package it.com.atlassian.plugin.connect.testlifecycle;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.security.SecureRandom;
 
-import javax.annotation.Nullable;
-
-import com.atlassian.plugin.*;
+import com.atlassian.plugin.DefaultPluginArtifactFactory;
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.PluginArtifact;
+import com.atlassian.plugin.PluginArtifactFactory;
+import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.modules.gson.JiraConfluenceConnectModulesGsonFactory;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginControlHandler;
 import com.atlassian.upm.spi.PluginInstallHandler;
-
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.io.Files;
-
 import org.apache.commons.lang.StringUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;

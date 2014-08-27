@@ -4,7 +4,6 @@ import java.lang.reflect.Type;
 import java.util.Map;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.JiraConfluenceModuleList;
 import com.atlassian.plugin.connect.modules.beans.ModuleList;
 import com.atlassian.plugin.connect.modules.beans.confluence.ConfluenceModuleList;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;

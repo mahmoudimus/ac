@@ -12,6 +12,8 @@ import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.builder.JiraConfluenceModuleListBuilder;
+import com.atlassian.plugin.connect.modules.beans.builder.jira.JiraModuleListBuilder;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -258,5 +260,15 @@ public class JiraModuleList extends ModuleList
                 .append(jiraReports)
                 .build();
     }
+
+    public static JiraModuleListBuilder newModuleList()
+    {
+        return new JiraModuleListBuilder();
+    }
+
+//    public static JiraModuleListBuilder newModuleList(JiraModuleList defaultList)
+//    {
+//        return new JiraModuleListBuilder(defaultList);
+//    }
 
 }

@@ -14,7 +14,7 @@ import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean
 import com.atlassian.plugin.connect.modules.beans.builder.ModuleListBuilder;
 import com.atlassian.plugin.connect.modules.beans.jira.JiraModuleList;
 
-public abstract class JiraModuleListBuilder<T extends JiraModuleListBuilder,
+public class JiraModuleListBuilder<T extends JiraModuleListBuilder,
         M extends JiraModuleList> extends ModuleListBuilder<T, M>
 {
 

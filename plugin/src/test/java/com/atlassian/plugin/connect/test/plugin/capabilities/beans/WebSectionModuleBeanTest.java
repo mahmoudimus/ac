@@ -28,8 +28,6 @@ public class WebSectionModuleBeanTest
     @Test
     public void producesCorrectBean() throws Exception
     {
-        Gson gson = JiraConfluenceConnectModulesGsonFactory.getGson();
-
         WebSectionModuleBean webSectionBean = createWebSectionBeanBuilder().build();
         ConnectAddonBean addon = createAddonBeanBuilder(webSectionBean).build();
 
@@ -42,8 +40,6 @@ public class WebSectionModuleBeanTest
     @Test
     public void producesCorrectBeanWithFunkyWebSections() throws Exception
     {
-        Gson gson = JiraConfluenceConnectModulesGsonFactory.getGson();
-
         WebSectionModuleBean webSectionBean = createWebSectionBeanBuilder().build();
 
         WebSectionModuleBean hiddenSpoonSection = newWebSectionBean()

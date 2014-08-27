@@ -38,7 +38,6 @@ public class ConfigurePageModuleBeanTest
     public void producesCorrectBean() throws Exception
     {
         String json = readTestFile();
-        Gson gson = JiraConfluenceConnectModulesGsonFactory.getGson();
         ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
         ConnectAddonBean bean = createBean();
 
