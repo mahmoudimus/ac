@@ -51,6 +51,21 @@ public class RemoteDialog extends AbstractConnectIFrameComponent<RemoteDialog>
 
     protected String getFrameId()
     {
+        try
+        {
+            return getFrameIdUnsafe();
+        }
+        catch (StaleElementReferenceException e)
+        {
+            // JavaScript code can recreate the iframe while the test is clicking and hovering,
+            // and webdriver complains if we are unlucky enough to find the iframe dom element before
+            // the re-creation but ask for its id after the re-creation
+            return getFrameIdUnsafe();
+        }
+    }
+
+    private String getFrameIdUnsafe()
+    {
         final String cssClass = isInlineDialog ? INLINE_DIALOG_CONTAINER : DIALOG_CONTAINER;
         return elementFinder.find(By.cssSelector("." + cssClass + " iframe")).getAttribute("id");
     }
