@@ -46,12 +46,17 @@ _AP.define("host/content", ["_dollar", "_uri", "_ui-params"], function ($, uri, 
         });
     }
 
-    function getIframeHtmlForKey(pluginKey, productContext, capability, params) {
+    function getIframeHtmlForKey(pluginKey, productContext, capability, uiParams, targetUri) {
         var contentUrl = getContentUrl(pluginKey, capability);
+
+        if (targetUri) {
+            contentUrl += targetUri.query(); // add "?page.id=1234" etc from the clicked link (will be permission checked by the iframe servlet)
+        }
+
         return $.ajax(contentUrl, {
             dataType: "html",
             data: {
-                "ui-params": UiParams.encode(params),
+                "ui-params": UiParams.encode(uiParams),
                 "plugin-key": pluginKey,
                 "product-context": JSON.stringify(productContext),
                 "key": capability.key,

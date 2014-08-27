@@ -28,7 +28,7 @@ _AP.define("dialog/dialog-factory", ["_dollar", "dialog/main", 'host/content'], 
         if(options.url){
             promise = hostContentUtilities.getIframeHtmlForUrl(options.key, options.url, productContext, uiParams);
         } else {
-            promise = hostContentUtilities.getIframeHtmlForKey(options.key, productContext, module, uiParams);
+            promise = hostContentUtilities.getIframeHtmlForKey(options.key, productContext, module, uiParams, options.triggerUri);
         }
 
         promise

@@ -1,4 +1,4 @@
-_AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_util", "host/content"], function($, statusHelper, util, hostContentUtilities) {
+_AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_util", "host/content", "_uri"], function($, statusHelper, util, hostContentUtilities, Uri) {
     return function (contentUrl, options) {
         var $inlineDialog;
 
@@ -19,7 +19,7 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_uti
             var pluginKey = hostContentUtilities.getWebItemPluginKey(trigger),
                 moduleKey = hostContentUtilities.getWebItemModuleKey(trigger);
 
-            hostContentUtilities.getIframeHtmlForKey(pluginKey, undefined, {key: moduleKey})
+            hostContentUtilities.getIframeHtmlForKey(pluginKey, undefined, {key: moduleKey}, undefined, new Uri.init(trigger.attr('href')))
             .done(function(data) {
                 content.empty().append(data);
             })
