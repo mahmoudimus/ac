@@ -1,22 +1,14 @@
 package com.atlassian.plugin.connect.modules.beans.builder.confluence;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
-import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean;
-import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
-import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
-import com.atlassian.plugin.connect.modules.beans.JiraConfluenceModuleList;
-import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
-import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
 import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
-import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ModuleListBuilder;
-import com.atlassian.plugin.connect.modules.beans.builder.jira.JiraModuleListBuilder;
 import com.atlassian.plugin.connect.modules.beans.confluence.ConfluenceModuleList;
 
 public class ConfluenceModuleListBuilder<T extends ConfluenceModuleListBuilder,
