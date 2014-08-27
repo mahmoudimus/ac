@@ -2,6 +2,7 @@ package it.modules;
 
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteCookieGeneralPage;
@@ -59,7 +60,7 @@ public class TestCookie extends ConnectWebDriverTestBase
         loginAndVisit(TestUser.ADMIN, HomePage.class);
         GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, ADDON_GENERALPAGE, ADDON_GENERALPAGE_NAME, remotePlugin.getAddon().getKey());
         remotePage.clickAddOnLink();
-        RemoteCookieGeneralPage remoteCookiePage = product.getPageBinder().bind(RemoteCookieGeneralPage.class, AddonTestUtils.escapedAddonAndModuleKey(remotePlugin.getAddon().getKey(), ADDON_GENERALPAGE));
+        RemoteCookieGeneralPage remoteCookiePage = product.getPageBinder().bind(RemoteCookieGeneralPage.class, ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), ADDON_GENERALPAGE));
         remoteCookiePage.readCookie();
         assertEquals(remoteCookiePage.getCookieContents(), "undefined");
         remoteCookiePage.saveCookie();
@@ -77,7 +78,7 @@ public class TestCookie extends ConnectWebDriverTestBase
         loginAndVisit(TestUser.ADMIN, HomePage.class);
         GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, ADDON_GENERALPAGE, ADDON_GENERALPAGE_NAME, remotePlugin.getAddon().getKey());
         remotePage.clickAddOnLink();
-        RemoteCookieGeneralPage remoteCookiePage = product.getPageBinder().bind(RemoteCookieGeneralPage.class, AddonTestUtils.escapedAddonAndModuleKey(remotePlugin.getAddon().getKey(), ADDON_GENERALPAGE));
+        RemoteCookieGeneralPage remoteCookiePage = product.getPageBinder().bind(RemoteCookieGeneralPage.class, ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), ADDON_GENERALPAGE));
         remoteCookiePage.saveCookie();
         remoteCookiePage.eraseCookie();
         remoteCookiePage.readCookie();

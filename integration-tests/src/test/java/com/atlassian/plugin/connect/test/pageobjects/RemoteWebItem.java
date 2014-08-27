@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.test.pageobjects;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.webdriver.utils.by.ByJquery;
 import com.google.common.base.Optional;
 import org.openqa.selenium.By;
@@ -74,7 +75,8 @@ public class RemoteWebItem
                 by = By.linkText(matchValue);
                 break;
             case JQUERY:
-                by = ByJquery.$(matchValue);
+                String escapedMatchValue = AddonTestUtils.escapeJQuerySelector(matchValue);
+                by = ByJquery.$(escapedMatchValue);
                 break;
         }
         return elementFinder.find(by);

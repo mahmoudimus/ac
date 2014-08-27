@@ -5,6 +5,7 @@ import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.pageobjects.elements.query.Queries;
 import com.atlassian.pageobjects.elements.timeout.DefaultTimeouts;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.atlassian.webdriver.utils.by.ByJquery;
 import com.google.common.base.Function;
@@ -90,7 +91,8 @@ public abstract class AbstractConnectIFrameComponent<C>
                 return withinIFrame(new Function<WebDriver, Boolean>() {
                     @Override
                     public Boolean apply(WebDriver iframe) {
-                        return iframe.findElements(ByJquery.$("#" + elementId + ":empty")).isEmpty();
+                        String escapedId = AddonTestUtils.escapeJQuerySelector(elementId);
+                        return iframe.findElements(ByJquery.$("#" + escapedId + ":empty")).isEmpty();
                     }
                 });
             }

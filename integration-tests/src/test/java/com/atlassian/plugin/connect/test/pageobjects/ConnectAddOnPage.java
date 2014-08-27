@@ -4,15 +4,13 @@ import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.pageobjects.elements.WebDriverElement;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.google.common.base.Function;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.Arrays;
@@ -49,8 +47,8 @@ public class ConnectAddOnPage
     {
         final String prefix = includedEmbeddedPrefix ? "embedded-" : "";
         final String suffix = StringUtils.isEmpty(addOnKey)
-                ? AddonTestUtils.escapedAddonKey(pageElementKey)
-                : AddonTestUtils.escapedAddonAndModuleKey(addOnKey, pageElementKey);
+                ? pageElementKey
+                : ModuleKeyUtils.addonAndModuleKey(addOnKey, pageElementKey);
         final String id = prefix + suffix;
         PageElement containerDivElement = elementFinder.find(By.id(id));
         waitUntilTrue(containerDivElement.timed().hasClass("iframe-init"));
