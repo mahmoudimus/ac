@@ -97,9 +97,9 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder,
         return (T) this;
     }
 
-    public T withModuleList(M modules)
+    public T withModuleList(ModuleList modules)
     {
-        this.modules = modules;
+        this.modules = (M) modules; // arrgghh damn generics. If withModuleList takes M then end up in generics hell
         return (T) this;
     }
 

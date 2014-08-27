@@ -15,6 +15,6 @@ public class JiraConfluenceModuleListBuilder extends JiraModuleListBuilder
     @Override
     public JiraConfluenceModuleList build()
     {
-        return modules;
+        return (JiraConfluenceModuleList) modules;
     }
 }
