@@ -48,7 +48,6 @@ _AP.define("host/content", ["_dollar", "_uri", "_ui-params"], function ($, uri, 
 
     function getIframeHtmlForKey(pluginKey, productContext, capability, uiParams) {
         var contentUrl = getContentUrl(pluginKey, capability);
-        console.log("tostring please!", productContext);
         return $.ajax(contentUrl, {
             dataType: "html",
             data: {
@@ -69,7 +68,6 @@ _AP.define("host/content", ["_dollar", "_uri", "_ui-params"], function ($, uri, 
         $.each(pairs, function (key, value) {
             obj[value[0]] = value[1];
         });
-        console.log(obj, JSON.stringify(obj));
         return obj;
     }
 
