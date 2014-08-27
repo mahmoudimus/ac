@@ -1,25 +1,30 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.beans;
 
+import java.io.IOException;
+import java.util.Map;
+
 import com.atlassian.jira.util.collect.MapBuilder;
-import com.atlassian.plugin.connect.modules.beans.*;
+import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleList;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.WebItemModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
-import com.atlassian.plugin.connect.modules.gson.JiraConfluenceConnectModulesGsonFactory;
-import com.google.gson.Gson;
+import com.atlassian.plugin.connect.modules.gson.ProductlessConnectModulesGsonFactory;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
-import static com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 import static com.atlassian.plugin.connect.test.plugin.capabilities.TestFileReader.readAddonTestFile;
+import static com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs.sameDeepPropertyValuesAs;
 import static org.junit.Assert.assertThat;
 
 public class WebItemModuleBeanTest
@@ -31,7 +36,7 @@ public class WebItemModuleBeanTest
         ConnectAddonBean addon = createAddonBeanBuilder(webItemBean).build();
 
         String json = readTestFile("defaultWebItemTest.json");
-        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
+        ConnectAddonBean<ModuleList> deserializedBean = ProductlessConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
 
         assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
     }
@@ -45,7 +50,7 @@ public class WebItemModuleBeanTest
         ConnectAddonBean addon = createAddonBeanBuilder(webItemBean).build();
 
         String json = readTestFile("productContextWebItemTest.json");
-        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
+        ConnectAddonBean<ModuleList> deserializedBean = ProductlessConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
 
         assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
     }
@@ -63,7 +68,7 @@ public class WebItemModuleBeanTest
                 .build();
 
         String json = readTestFile("dialogWebItemTest.json");
-        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
+        ConnectAddonBean<ModuleList> deserializedBean = ProductlessConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
 
         assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
     }
@@ -80,7 +85,7 @@ public class WebItemModuleBeanTest
         ConnectAddonBean addon = createAddonBeanBuilder(webItemBean).build();
 
         String json = readTestFile("inlineDialogWebItemTest.json");
-        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
+        ConnectAddonBean<ModuleList> deserializedBean = ProductlessConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
 
         assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
     }
@@ -99,7 +104,9 @@ public class WebItemModuleBeanTest
                 .withLinks(links)
                 .withBaseurl("http://www.example.com")
                 .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
-                .withModule("webItems", webItemBean)
+                .withModuleList(ModuleList.newModuleList()
+                        .withWebItems(webItemBean)
+                        .build())
                 .withAuthentication(
                         newAuthenticationBean()
                                 .withType(AuthenticationType.OAUTH)

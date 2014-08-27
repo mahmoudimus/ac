@@ -4,11 +4,13 @@ import com.atlassian.jira.util.collect.MapBuilder;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.JiraConfluenceModuleList;
+import com.atlassian.plugin.connect.modules.beans.ModuleList;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.WebSectionModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.gson.JiraConfluenceConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.gson.ProductlessConnectModulesGsonFactory;
 import com.google.gson.Gson;
 import org.junit.Test;
 
@@ -32,7 +34,7 @@ public class WebSectionModuleBeanTest
         ConnectAddonBean addon = createAddonBeanBuilder(webSectionBean).build();
 
         String json = readTestFile("defaultWebSectionTest.json");
-        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
+        ConnectAddonBean<ModuleList> deserializedBean = ProductlessConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
 
         assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
     }
@@ -59,7 +61,7 @@ public class WebSectionModuleBeanTest
         ConnectAddonBean addon = createAddonBeanBuilder(webSectionBean, hiddenSpoonSection, falafelSection).build();
 
         String json = readTestFile("funkyWebSectionTest.json");
-        ConnectAddonBean<JiraConfluenceModuleList> deserializedBean = JiraConfluenceConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
+        ConnectAddonBean<ModuleList> deserializedBean = ProductlessConnectModulesGsonFactory.addonFromJsonWithI18nCollector(json, null);
 
         assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
     }
@@ -78,7 +80,9 @@ public class WebSectionModuleBeanTest
                 .withLinks(links)
                 .withBaseurl("http://www.example.com")
                 .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
-                .withModules("webSections", webSectionBeans)
+                .withModuleList(ModuleList.newModuleList()
+                        .withWebSections(webSectionBeans)
+                        .build())
                 .withAuthentication(
                         newAuthenticationBean()
                                 .withType(AuthenticationType.OAUTH)

@@ -7,6 +7,7 @@ import java.util.List;
 import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
 import com.atlassian.plugin.connect.modules.annotation.ConnectModule;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.builder.ModuleListBuilder;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -255,6 +256,17 @@ public class ModuleList extends BaseModuleBean
     {
         return webhooks;
     }
+
+
+    public static ModuleListBuilder newModuleList()
+    {
+        return new ModuleListBuilder();
+    }
+
+//    public static ModuleListBuilder newModuleList(ModuleList defaultList)
+//    {
+//        return new ModuleListBuilder(defaultList);
+//    }
 
     @Override
     public boolean equals(Object otherObj)

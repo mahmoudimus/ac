@@ -17,7 +17,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.isParameterizedList;
 
 
-public abstract class ModuleListBuilder<T extends ModuleListBuilder,
+public class ModuleListBuilder<T extends ModuleListBuilder,
         M extends ModuleList> extends BaseModuleBeanBuilder<T, M>
 {
     protected M modules;
@@ -95,10 +95,17 @@ public abstract class ModuleListBuilder<T extends ModuleListBuilder,
         return (T) this;
     }
 
-    protected abstract M createEmpty();
+    // subclasses must override
+    protected M createEmpty()
+    {
+        return (M) new ModuleList();
+    }
 
     // subclasses must override
-    public abstract M build();
+    public M build()
+    {
+        return modules;
+    }
 
 
 

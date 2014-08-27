@@ -1,17 +1,19 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.beans;
 
+import java.io.IOException;
+
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
-import com.atlassian.plugin.connect.modules.gson.JiraConfluenceConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.gson.jira.JiraConnectModulesGsonFactory;
 import com.google.gson.Gson;
 import org.junit.Test;
 
-import java.io.IOException;
-
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
 import static com.atlassian.plugin.connect.test.plugin.capabilities.TestFileReader.readAddonTestFile;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class WorkflowPostFunctionModuleBeanTest
 {
@@ -75,7 +77,7 @@ public class WorkflowPostFunctionModuleBeanTest
     {
         String json = readTestFile();
         System.out.println(json);
-        Gson gson = JiraConfluenceConnectModulesGsonFactory.getGson();
+        Gson gson = JiraConnectModulesGsonFactory.getGson();
         WorkflowPostFunctionModuleBean addOn = gson.fromJson(json, WorkflowPostFunctionModuleBean.class);
 
         assertEquals("my-function", addOn.getRawKey());
