@@ -46,12 +46,12 @@ _AP.define("host/content", ["_dollar", "_uri", "_ui-params"], function ($, uri, 
         });
     }
 
-    function getIframeHtmlForKey(pluginKey, productContext, capability, params) {
+    function getIframeHtmlForKey(pluginKey, productContext, capability, uiParams) {
         var contentUrl = getContentUrl(pluginKey, capability);
         return $.ajax(contentUrl, {
             dataType: "html",
             data: {
-                "ui-params": UiParams.encode(params),
+                "ui-params": UiParams.encode(uiParams),
                 "plugin-key": pluginKey,
                 "product-context": JSON.stringify(productContext),
                 "key": capability.key,
@@ -62,6 +62,14 @@ _AP.define("host/content", ["_dollar", "_uri", "_ui-params"], function ($, uri, 
         });
     }
 
+    function contextFromUrl (url) {
+        var pairs = new uri.init(url).queryPairs;
+        var obj = {};
+        $.each(pairs, function (key, value) {
+            obj[value[0]] = value[1];
+        });
+        return obj;
+    }
 
     function eventHandler(action, selector, callback) {
 
@@ -76,7 +84,8 @@ _AP.define("host/content", ["_dollar", "_uri", "_ui-params"], function ($, uri, 
                 width:  url.getQueryParamValue('width'),
                 height: url.getQueryParamValue('height'),
                 cp:     url.getQueryParamValue('cp'),
-                key: getWebItemPluginKey($el)
+                key: getWebItemPluginKey($el),
+                productContext: contextFromUrl(href)
             };
             callback(href, options, event.type);
         }
