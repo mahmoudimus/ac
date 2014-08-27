@@ -140,9 +140,9 @@ public class ConnectJsonExamples
                                 .withJiraProfileTabPanels(ConnectTabPanelModuleBean.newTabPanelBean().withName(i18nProperty("Profile Tab")).withUrl("my-profile-tab-panel").build())
                                 .withJiraWorkflowPostFunctions(WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean().withName(i18nProperty("Workflow Function")).withCreate(new UrlBean("/create")).build())
                                 .withJiraSearchRequestViews(SearchRequestViewModuleBean.newSearchRequestViewModuleBean().withName(i18nProperty("Search View")).withUrl("/searchRequest").build())
-//                .withModules("dynamicContentMacros", DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean().withName(i18nProperty("Dynamic Macro")).withUrl("/dynamic-macro").build())
-//                .withModules("staticContentMacros", StaticContentMacroModuleBean.newStaticContentMacroModuleBean().withName(i18nProperty("Static Macro")).withUrl("/static-macro").build())
-//                .withModules("spaceToolsTabs", SpaceToolsTabModuleBean.newSpaceToolsTabBean().withName(i18nProperty("Space Tools Tab")).withUrl("/space-tools").build())
+                                .withDynamicContentMacros(DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean().withName(i18nProperty("Dynamic Macro")).withUrl("/dynamic-macro").build())
+                                .withStaticContentMacros(StaticContentMacroModuleBean.newStaticContentMacroModuleBean().withName(i18nProperty("Static Macro")).withUrl("/static-macro").build())
+                                .withSpaceToolsTabs(SpaceToolsTabModuleBean.newSpaceToolsTabBean().withName(i18nProperty("Space Tools Tab")).withUrl("/space-tools").build())
                                 .build()
                 )
                 .build();

@@ -57,8 +57,7 @@ public abstract class JiraModuleListBuilder<T extends JiraModuleListBuilder,
 
     public T withAdminPages(ConnectPageModuleBean... beans)
     {
-        // TODO: temp impl until withModules removed
-        return withModules("adminPages", beans);
+        return super.withAdminPages(beans);
     }
 
     public T withProfilePages(ConnectPageModuleBean... beans)
