@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
 import com.atlassian.plugin.connect.modules.annotation.ConnectModule;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
@@ -101,6 +102,8 @@ import static com.google.common.collect.Lists.newArrayList;
  * You can request certain pieces of contextual data, such as a project or space key, to be included in the URLs
  * requested from your add-on. See passing [Context Parameters](../../concepts/context-parameters.html).
  */
+@SuppressWarnings("UnusedDeclaration")
+@ObjectSchemaAttributes(additionalProperties = false)
 public class ModuleList extends BaseModuleBean
 {
     /**

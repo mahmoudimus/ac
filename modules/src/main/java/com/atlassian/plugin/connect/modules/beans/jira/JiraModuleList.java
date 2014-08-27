@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.modules.beans.jira;
 
 import java.util.List;
 
+import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
 import com.atlassian.plugin.connect.modules.annotation.ConnectModule;
 import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
@@ -17,6 +18,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import static com.google.common.collect.Lists.newArrayList;
 
+@SuppressWarnings("UnusedDeclaration")
+@ObjectSchemaAttributes(additionalProperties = false)
 public class JiraModuleList extends ModuleList
 {
     /**

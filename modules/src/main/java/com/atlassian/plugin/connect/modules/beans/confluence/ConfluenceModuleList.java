@@ -1,11 +1,16 @@
-package com.atlassian.plugin.connect.modules.beans;
+package com.atlassian.plugin.connect.modules.beans.confluence;
 
 import java.util.List;
 
 import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
 import com.atlassian.plugin.connect.modules.annotation.ConnectModule;
+import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleList;
+import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean;
+import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.JiraConfluenceModuleListBuilder;
+import com.atlassian.plugin.connect.modules.beans.builder.confluence.ConfluenceModuleListBuilder;
 import com.atlassian.plugin.connect.modules.beans.jira.JiraModuleList;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -15,8 +20,7 @@ import static com.google.common.collect.Lists.newArrayList;
 
 @SuppressWarnings("UnusedDeclaration")
 @ObjectSchemaAttributes(additionalProperties = false)
-@Deprecated // remove once we extract product specific code from this project
-public class JiraConfluenceModuleList extends JiraModuleList
+public class ConfluenceModuleList extends ModuleList
 {
     /////////////////////////////////////////////////////
     ///////    CONFLUENCE MODULES
@@ -47,14 +51,14 @@ public class JiraConfluenceModuleList extends JiraModuleList
     @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.StaticContentMacroModuleProvider", products = {ProductFilter.CONFLUENCE})
     private List<StaticContentMacroModuleBean> staticContentMacros;
 
-    public JiraConfluenceModuleList()
+    public ConfluenceModuleList()
     {
         this.dynamicContentMacros = newArrayList();
         this.spaceToolsTabs = newArrayList();
         this.staticContentMacros = newArrayList();
     }
 
-    public JiraConfluenceModuleList(BaseModuleBeanBuilder builder)
+    public ConfluenceModuleList(BaseModuleBeanBuilder builder)
     {
         super(builder);
 
@@ -94,12 +98,12 @@ public class JiraConfluenceModuleList extends JiraModuleList
             return true;
         }
 
-        if (!(otherObj instanceof JiraConfluenceModuleList))
+        if (!(otherObj instanceof ConfluenceModuleList))
         {
             return false;
         }
 
-        JiraConfluenceModuleList other = (JiraConfluenceModuleList) otherObj;
+        ConfluenceModuleList other = (ConfluenceModuleList) otherObj;
 
         return new EqualsBuilder()
                 .appendSuper(super.equals(otherObj))
@@ -120,14 +124,14 @@ public class JiraConfluenceModuleList extends JiraModuleList
                 .build();
     }
 
-    public static JiraConfluenceModuleListBuilder newModuleList()
+    public static ConfluenceModuleListBuilder newModuleList()
     {
-        return new JiraConfluenceModuleListBuilder();
+        return new ConfluenceModuleListBuilder();
     }
 
-//    public static JiraConfluenceModuleListBuilder newModuleList(JiraConfluenceModuleList defaultList)
+//    public static ConfluenceModuleListBuilder newModuleList(ConfluenceModuleList defaultList)
 //    {
-//        return new JiraConfluenceModuleListBuilder(defaultList);
+//        return new ConfluenceModuleListBuilder(defaultList);
 //    }
 
 }

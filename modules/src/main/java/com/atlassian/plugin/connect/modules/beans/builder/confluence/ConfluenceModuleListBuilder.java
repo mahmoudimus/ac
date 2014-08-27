@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.modules.beans.builder;
+package com.atlassian.plugin.connect.modules.beans.builder.confluence;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean;
@@ -15,17 +15,18 @@ import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.ModuleListBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.jira.JiraModuleListBuilder;
+import com.atlassian.plugin.connect.modules.beans.confluence.ConfluenceModuleList;
 
-@Deprecated // remove once we extract product specific code from this project
-public class JiraConfluenceModuleListBuilder<T extends JiraConfluenceModuleListBuilder,
-        M extends JiraConfluenceModuleList> extends JiraModuleListBuilder<T, M>
+public class ConfluenceModuleListBuilder<T extends ConfluenceModuleListBuilder,
+        M extends ConfluenceModuleList> extends ModuleListBuilder<T, M>
 {
 
     @Override
     protected M createEmpty()
     {
-        return (M) new JiraConfluenceModuleList(); // TODO: fix once we removed JiraConfluenceModuleListBuilder
+        return (M) new ConfluenceModuleList(); // TODO: fix once we removed JiraConfluenceModuleListBuilder
     }
 
     @Override
@@ -73,57 +74,6 @@ public class JiraConfluenceModuleListBuilder<T extends JiraConfluenceModuleListB
     public T withConfigurePage(ConnectPageModuleBean bean)
     {
         return super.withConfigurePage(bean);
-    }
-
-
-    public T withJiraComponentTabPanels(ConnectTabPanelModuleBean... beans)
-    {
-        return super.withJiraComponentTabPanels(beans);
-    }
-
-    public T withJiraIssueTabPanels(ConnectTabPanelModuleBean... beans)
-    {
-        return super.withJiraIssueTabPanels(beans);
-    }
-
-    public T withJiraProjectAdminTabPanels(ConnectProjectAdminTabPanelModuleBean... beans)
-    {
-        return super.withJiraProjectAdminTabPanels(beans);
-    }
-
-    public T withJiraProjectTabTabPanels(ConnectTabPanelModuleBean... beans)
-    {
-        return super.withJiraProjectTabTabPanels(beans);
-    }
-
-    public T withJiraVersionTabPanels(ConnectTabPanelModuleBean... beans)
-    {
-        return super.withJiraVersionTabPanels(beans);
-    }
-
-    public T withJiraProfileTabPanels(ConnectTabPanelModuleBean... beans)
-    {
-        return super.withJiraProfileTabPanels(beans);
-    }
-
-    public T withJiraSearchRequestViews(SearchRequestViewModuleBean... beans)
-    {
-        return super.withJiraSearchRequestViews(beans);
-    }
-
-    public T withJiraWorkflowPostFunctions(WorkflowPostFunctionModuleBean... beans)
-    {
-        return super.withJiraWorkflowPostFunctions(beans);
-    }
-
-    public T withJiraEntityProperties(EntityPropertyModuleBean... beans)
-    {
-        return super.withJiraEntityProperties(beans);
-    }
-
-    public T withJiraReports(ReportModuleBean... beans)
-    {
-        return super.withJiraReports(beans);
     }
 
     public T withDynamicContentMacros(DynamicContentMacroModuleBean... beans)
