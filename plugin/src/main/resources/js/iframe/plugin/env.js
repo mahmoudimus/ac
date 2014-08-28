@@ -109,9 +109,9 @@ AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
         w = width;
       } else {
         w = Math.max(
-          container.scrollWidth, document.documentElement.scrollWidth,
-          container.offsetWidth, document.documentElement.offsetWidth,
-          container.clientWidth, document.documentElement.clientWidth
+          container.scrollWidth,
+          container.offsetWidth,
+          container.clientWidth
         );
       }
 
