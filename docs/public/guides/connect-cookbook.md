@@ -27,7 +27,7 @@ Skip ahead to any section:
 ### <a name="all.js"></a> Loading `all.js` from the host application
 
 Loading `all.js` is necessary to use the [`AP` object](../javascript/module-AP.html) and access [Connect APIs](../concepts/javascript-api.html). 
-In this sample we use a script tag to serve jQuery, but normally you'd serve this from your app.
+This sample uses [jQuery](http://jquery.com/) from CDN, but normally you'd include this directly from your app.
 
 
 ````
