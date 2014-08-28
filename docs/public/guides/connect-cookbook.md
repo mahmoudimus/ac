@@ -67,8 +67,7 @@ AP.require('request', function(request) {
     },
     error: function() {
       console.log(arguments);
-    },
-    contentType: "application/json"    
+    }  
   });
 });
 ````
@@ -94,8 +93,7 @@ AP.require('request', function(request) {
     },
     error: function() {
       console.log(arguments);
-    },
-    contentType: "application/json"    
+    }    
   });
 });
 ````
@@ -136,6 +134,7 @@ AP.require('request', function(request) {
     error: function() {
       console.log(arguments);
     },
+    // inform the server what type of data is in the body of the HTTP POST
     contentType: "application/json"    
   });
 });
@@ -217,8 +216,7 @@ AP.require('request', function(request) {
     },
     error: function() {
       console.log(arguments);
-    },
-    contentType: "application/json"    
+    }  
   });
 });
 ````
@@ -243,8 +241,7 @@ AP.require('request', function(request) {
     },
     error: function() {
       console.log(arguments);
-    },
-    contentType: "application/json"    
+    }   
   });
 });
 ````
@@ -271,8 +268,7 @@ AP.require('request', function(request) {
     },
     error: function() {
       console.log(arguments);
-    },
-    contentType: "application/json"    
+    }    
   });
 });
 ````
