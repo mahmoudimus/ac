@@ -26,10 +26,8 @@ Skip ahead to any section:
 
 ### <a name="all.js"></a> Loading `all.js` from the host application
 
-Loading `all.js` is necessary for you to use the [`AP` object](../javascript/module-AP.html) and access [Connect APIs](../concepts/javascript-api.html). 
-This method requires jQuery (reference the script tag) to load `all.js` from the host application (like Confluence or 
-JIRA) server. This sets up a cross-domain messaging bridge (XDM) so that you can access the content from the main product 
-iframe. 
+Loading `all.js` is necessary to use the [`AP` object](../javascript/module-AP.html) and access [Connect APIs](../concepts/javascript-api.html). 
+In this sample we use a script tag to serve jQuery, but normally you'd serve this from your app.
 
 
 ````
@@ -52,9 +50,8 @@ iframe.
 
 ### <a name="jira-projects"></a> Accessing list of JIRA projects
 
-This snippet retrieves a list of JIRA projects. You might have to page through the list (as with most of these resources) 
-by passing a `startAt` in the request query string. Looking at the results will help you identify the location of the result 
-set so you know if you need to paginate further results.
+Use this to retrieve a list of your JIRA projects. Depending on your projects, you might need to paginate to see 
+complete results. You can do this by passing  `startAt` in the request query string.
 
 
 ````
@@ -105,8 +102,8 @@ AP.require('request', function(request) {
 
 ### <a name="jira-create-issue"></a> Creating JIRA issues
 
-This recipe creates a new issue in JIRA. Project keys need to match, of course, and keep in mind your 
-project might require additional fields depending on setup. You might also see our [JIRA REST examples](https://developer.atlassian.com/display/JIRADEV/JIRA+REST+API+Example+-+Create+Issue) 
+This recipe creates a new issue for an existing JIRA project. Depending on how your project is configured,
+you might need to include additional fields. You might also see our [JIRA REST examples](https://developer.atlassian.com/display/JIRADEV/JIRA+REST+API+Example+-+Create+Issue) 
 for reference.
 
 
@@ -170,9 +167,10 @@ AP.require('messages', function(messages) {
 
 ### <a name="disappearing-messages"></a> Disappearing messages without fadeout effects
 
-Rather than fading away, you can make your message simply disappear. This creates an error popup that doesn't 
-disappear until other code requests for it to vanish. This code is currently called on a 5-second timer. 
-Note that calling `messages.clear` with an already-cleared `messageID` doesn't have any effect.
+Create a message that disappears instead of fading away. Omitting the `fadeout` property creates a message that doesn't 
+disappear until you call `messages.clear`. However, calling `messages.clear` with an already cleared `messageID` has no effect. 
+
+This example calls `messages.clear` after 5 seconds.
 
 
 ````
