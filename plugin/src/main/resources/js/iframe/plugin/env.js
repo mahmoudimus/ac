@@ -101,10 +101,20 @@ AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
     },
 
     size: function (width, height, container) {
-      var w = width == null ? "100%" : width, h, docHeight;
+      var w, h, docHeight;
       if(!container){
         container = this.container();
       }
+      if (width) {
+        w = width;
+      } else {
+        w = Math.max(
+          container.scrollWidth,
+          container.offsetWidth,
+          container.clientWidth
+        );
+      }
+
       if (height) {
         h = height;
       } else {
@@ -114,6 +124,7 @@ AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
           container.offsetHeight, document.documentElement.offsetHeight,
           container.clientHeight, document.documentElement.clientHeight
         );
+
         if(container === document.body){
           h = docHeight;
         } else {
