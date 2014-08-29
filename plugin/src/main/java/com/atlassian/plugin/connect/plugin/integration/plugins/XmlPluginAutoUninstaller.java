@@ -4,12 +4,14 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.Collection;
 
+import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.PluginController;
 import com.atlassian.plugin.PluginException;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
+import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
+import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserDisableException;
 import com.atlassian.plugin.predicate.PluginPredicate;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
@@ -22,22 +24,30 @@ public class XmlPluginAutoUninstaller implements LifecycleAware
 {
     private final PluginAccessor pluginAccessor;
     private final LegacyAddOnIdentifierService legacyAddOnIdentifierService;
-    private final ConnectAddonManager connectAddonManager;
     private static final Logger log = LoggerFactory.getLogger(XmlPluginAutoUninstaller.class);
+    private final PluginController pluginController;
+    private final OAuthLinkManager oAuthLinkManager;
+    private final ConnectApplinkManager connectApplinkManager;
 
     @Inject
     public XmlPluginAutoUninstaller(PluginAccessor pluginAccessor,
                                     LegacyAddOnIdentifierService legacyAddOnIdentifierService,
-                                    ConnectAddonManager connectAddonManager)
+                                    PluginController pluginController,
+                                    OAuthLinkManager oAuthLinkManager,
+                                    ConnectApplinkManager connectApplinkManager)
     {
+        this.pluginController = pluginController;
+        this.oAuthLinkManager = oAuthLinkManager;
+        this.connectApplinkManager = connectApplinkManager;
+        log.info("======================ctr=============================");
         this.pluginAccessor = pluginAccessor;
         this.legacyAddOnIdentifierService = legacyAddOnIdentifierService;
-        this.connectAddonManager = connectAddonManager;
     }
 
     @Override
     public void onStart()
     {
+        log.info("=======================onStart============================");
         final Collection<Plugin> legacyAddons = pluginAccessor.getPlugins(new PluginPredicate()
         {
             @Override
@@ -54,17 +64,27 @@ public class XmlPluginAutoUninstaller implements LifecycleAware
 
     }
 
-    private void uninstall(Plugin plugin) throws PluginException
+    private void uninstall(Plugin plugin)
     {
+        final String pluginKey = plugin.getKey();
         try
         {
-            log.info("Automatically uninstalling legacy xml addon - " + plugin.getKey());
+            log.info("===================================================");
+            log.info("Automatically uninstalling legacy xml addon - " + pluginKey);
 
-            connectAddonManager.uninstallConnectAddon(plugin.getKey());
+            pluginController.uninstall(plugin);
+
+            final ApplicationLink appLink = connectApplinkManager.getAppLink(pluginKey);
+            if (appLink != null)
+            {
+                // Blow away the applink
+                oAuthLinkManager.unassociateProviderWithLink(appLink);
+                connectApplinkManager.deleteAppLink(pluginKey);
+            }
         }
-        catch (ConnectAddOnUserDisableException e)
+        catch (PluginException e)
         {
-            log.error("Unable to uninstall connect addon fully - " + plugin.getKey(), e);
+            log.error("Unable to uninstall connect addon fully - " + pluginKey, e);
         }
     }
 
