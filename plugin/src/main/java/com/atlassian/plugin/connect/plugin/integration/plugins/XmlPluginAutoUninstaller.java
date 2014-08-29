@@ -39,7 +39,6 @@ public class XmlPluginAutoUninstaller implements LifecycleAware
         this.pluginController = pluginController;
         this.oAuthLinkManager = oAuthLinkManager;
         this.connectApplinkManager = connectApplinkManager;
-        log.info("======================ctr=============================");
         this.pluginAccessor = pluginAccessor;
         this.legacyAddOnIdentifierService = legacyAddOnIdentifierService;
     }
@@ -47,7 +46,6 @@ public class XmlPluginAutoUninstaller implements LifecycleAware
     @Override
     public void onStart()
     {
-        log.info("=======================onStart============================");
         final Collection<Plugin> legacyAddons = pluginAccessor.getPlugins(new PluginPredicate()
         {
             @Override
@@ -69,7 +67,6 @@ public class XmlPluginAutoUninstaller implements LifecycleAware
         final String pluginKey = plugin.getKey();
         try
         {
-            log.info("===================================================");
             log.info("Automatically uninstalling legacy xml addon - " + pluginKey);
 
             pluginController.uninstall(plugin);
