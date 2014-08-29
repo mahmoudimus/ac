@@ -15,11 +15,12 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_uti
 
         var displayInlineDialog = function(content, trigger, showInlineDialog) {
             trigger = $(trigger); // sometimes it's not jQuery. Lets make it jQuery.
+            content.data('inlineDialog', $inlineDialog);
 
             var pluginKey = hostContentUtilities.getWebItemPluginKey(trigger),
                 moduleKey = hostContentUtilities.getWebItemModuleKey(trigger);
 
-            hostContentUtilities.getIframeHtmlForKey(pluginKey, options.productContext, {key: moduleKey})
+            hostContentUtilities.getIframeHtmlForKey(pluginKey, options.productContext, {key: moduleKey}, {isInlineDialog: true})
             .done(function(data) {
                 content.empty().append(data);
             })
@@ -53,6 +54,7 @@ _AP.define("inline-dialog/simple", ["_dollar", "host/_status_helper", "host/_uti
             displayInlineDialog,
             options
         );
+
 
         return {
             id: $inlineDialog.attr('id'),

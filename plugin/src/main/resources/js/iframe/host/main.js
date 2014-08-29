@@ -60,6 +60,10 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
       options.uiParams.isDialog = true;
     }
 
+    if(options.isInlineDialog){
+      options.uiParams.isInlineDialog = true;
+    }
+
     var xdmOptions = {
       remote: options.src,
       remoteKey: options.key,
