@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.auth.types.OAuthAuthenticationProvider;
 import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
+import com.atlassian.fugue.Option;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.Request;
 import com.atlassian.oauth.ServiceProvider;
@@ -45,6 +46,7 @@ import static org.apache.commons.lang.Validate.notNull;
 public class OAuthLinkManager
 {
 
+    private static final String OAUTH_INCOMING_CONSUMERKEY = "oauth.incoming.consumerkey";
     public static final String CONSUMER_KEY_OUTBOUND = "consumerKey.outbound";
     public static final String SERVICE_PROVIDER_REQUEST_TOKEN_URL = "serviceProvider.requestTokenUrl";
     public static final String SERVICE_PROVIDER_ACCESS_TOKEN_URL = "serviceProvider.accessTokenUrl";
@@ -75,7 +77,21 @@ public class OAuthLinkManager
 
         // this logic was copied from ual
         serviceProviderConsumerStore.put(consumer);
-        link.putProperty("oauth.incoming.consumerkey", consumer.getKey());
+        link.putProperty(OAUTH_INCOMING_CONSUMERKEY, consumer.getKey());
+    }
+    
+    public Option<Consumer> getConsumer(ApplicationLink link)
+    {
+        Object key = link.getProperty(OAUTH_INCOMING_CONSUMERKEY);
+        if(key == null)
+        {
+            return Option.none();
+        }
+        if(String.class.isAssignableFrom(key.getClass()))
+        {
+            return Option.option(serviceProviderConsumerStore.get((String) key));
+        }
+        return Option.none();
     }
 
     public void unassociateConsumer(Consumer consumer)

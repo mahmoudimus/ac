@@ -2,8 +2,10 @@ package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.*;
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
@@ -17,13 +19,13 @@ import com.atlassian.plugin.connect.spi.event.RemotePluginInstallFailedEvent;
 import com.atlassian.plugin.descriptors.UnloadableModuleDescriptor;
 import com.atlassian.plugin.descriptors.UnrecognisedModuleDescriptor;
 import com.atlassian.plugin.util.WaitUntil;
-import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import org.dom4j.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 
 import java.util.Set;
 
@@ -103,8 +105,11 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     public Plugin install(String jsonDescriptor) throws PluginInstallException
     {
         String pluginKey = null;
-        Plugin addonPluginWrapper;
+        Plugin addonPluginWrapper = null;
         ConnectAddonBean addOn;
+        Option<ConnectAddonBean> previousAddOn = Option.none();
+        AddonSettings previousSettings = new AddonSettings();
+        PluginState targetState = null;
 
         long startTime = System.currentTimeMillis();
 
@@ -114,14 +119,18 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             ConnectAddonBean nonValidatedAddon = connectAddonBeanFactory.fromJsonSkipValidation(jsonDescriptor);
 
             pluginKey = nonValidatedAddon.getKey();
+            previousSettings = addonRegistry.getAddonSettings(pluginKey);
+            if (!StringUtils.isBlank(previousSettings.getDescriptor()))
+            {
+                previousAddOn = Option.option(connectAddonBeanFactory.fromJson(previousSettings.getDescriptor()));
+            }
 
             if (nonValidatedAddon.getModules().isEmpty())
             {
-                Option<String> errorI18nKey = Option.<String>some("connect.install.error.no.modules");
-                throw new PluginInstallException("Unable to install connect add on because it has no modules defined", errorI18nKey);
+                throw new PluginInstallException("Unable to install connect add on because it has no modules defined");
             }
 
-            PluginState targetState = addonRegistry.getRestartState(pluginKey);
+            targetState = addonRegistry.getRestartState(pluginKey);
 
             removeOldPlugin(pluginKey);
 
@@ -130,32 +139,52 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             PluginState actualState = addonRegistry.getRestartState(pluginKey);
             addonPluginWrapper = addonToPluginFactory.create(addOn, actualState);
         }
-        catch (PluginInstallException e)
-        {
-            if (null != pluginKey)
-            {
-                log.error("An exception occurred while installing the plugin '[" + pluginKey + "]. Uninstalling...", e);
-                connectAddonManager.uninstallConnectAddonQuietly(pluginKey);
-                eventPublisher.publish(new ConnectAddonInstallFailedEvent(pluginKey, e.getMessage()));
-            }
-            throw e;
-        }
         catch (Exception e)
         {
             if (null != pluginKey)
             {
-                log.error("An exception occurred while installing the plugin '[" + pluginKey + "]. Uninstalling...", e);
-                connectAddonManager.uninstallConnectAddonQuietly(pluginKey);
                 eventPublisher.publish(new ConnectAddonInstallFailedEvent(pluginKey, e.getMessage()));
+                if (previousAddOn.isDefined() && !previousSettings.isEmpty())
+                {
+                    log.debug("Prevous addon found, attempting to restore");
+                    restoreAddon(previousAddOn.get(), previousSettings, targetState);
+                    addonPluginWrapper = addonToPluginFactory.create(previousAddOn.get());
+                }
+                else
+                {
+                    log.error("An exception occurred while installing the plugin '[" + pluginKey + "]. Uninstalling...",
+                              e);
+                    connectAddonManager.uninstallConnectAddonQuietly(pluginKey);
+                    throw new PluginInstallException(e.getMessage(), e);
+                }
             }
-            throw new PluginInstallException(e.getMessage(), e);
         }
+
 
         long endTime = System.currentTimeMillis();
 
         log.info("Connect add-on installed in " + (endTime - startTime) + "ms");
 
         return addonPluginWrapper;
+    }
+
+    private void restoreAddon(ConnectAddonBean addon,
+                              AddonSettings previousSettings,
+                              PluginState targetState)
+    {
+        String pluginKey = addon.getKey();
+
+        addonRegistry.storeAddonSettings(pluginKey, previousSettings);
+        connectApplinkManager.deleteAppLink(pluginKey);
+        connectApplinkManager.createAppLink(addon,
+                                            addon.getBaseUrl(),
+                                            AuthenticationType.valueOf(previousSettings.getAuth()),
+                                            previousSettings.getSecret(),
+                                            previousSettings.getUserKey());
+        if (null != targetState && targetState == PluginState.ENABLED)
+        {
+                connectAddonManager.enableConnectAddon(pluginKey);
+        }
     }
 
     @XmlDescriptor
@@ -188,7 +217,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                         for (ModuleDescriptor desc : plugin.getModuleDescriptors())
                         {
                             if (!pluginAccessor.isPluginModuleEnabled(
-                                    desc.getCompleteKey()) && desc instanceof UnrecognisedModuleDescriptor)
+                                desc.getCompleteKey()) && desc instanceof UnrecognisedModuleDescriptor)
                             {
                                 return false;
                             }
@@ -232,15 +261,15 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         catch (PermissionDeniedException ex)
         {
             log.warn("Unable to install remote plugin '{}' by user '{}' due to permission issues: {}",
-                    new Object[] { pluginKey, username, ex.getMessage() });
+                     new Object[] { pluginKey, username, ex.getMessage() });
             log.debug("Installation failed due to permission issue", ex);
             eventPublisher.publish(new RemotePluginInstallFailedEvent(pluginKey, "Installation failed due to permission issue " + ex.getMessage()));
             throw ex;
         }
         catch (InstallationFailedException ex)
         {
-            log.warn("Unable to install remote plugin '{}' by user '{}' due to installation issue: {}",
-                    new Object[] { pluginKey, username, ex.getMessage() });
+            log.warn("Unable to install remote plugin '{}' by user '{}' due to installation issue: {}", new Object[] {
+                pluginKey, username, ex.getMessage() });
             log.debug("Installation failed due to installation issue", ex);
             eventPublisher.publish(new RemotePluginInstallFailedEvent(pluginKey, ex.getMessage()));
             throw ex;
@@ -303,7 +332,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         {
             /*!
              However, if there is no previous app, then the app key is checked
-             to ensure it doesn't already exist as a OAuth client key.  This
+             to ensure it doesn't already exist as a OAuth client key. This
              prevents a malicious app that uses a key from an existing oauth
              link from getting that link removed when the app is uninstalled.
              If it was created by connect then it is ok

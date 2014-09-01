@@ -23,9 +23,9 @@ import it.ConnectWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
 import it.util.TestUser;
-import org.junit.AfterClass;
+
+import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.servlet.ServletException;
@@ -42,6 +42,7 @@ import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMa
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests that we clean up properly on plugin install failure, to avoid recurrence of AC-1187
@@ -61,9 +62,11 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
     private String pluginKey;
     private String awesomePageModuleKey;
 
-    @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    @Before
+    public void startConnectAddOn() throws Exception
     {
+        installUninstallHandler.setShouldSend404(true);
+
         ConnectPageModuleBeanBuilder pageBeanBuilder = newPageBean();
         pageBeanBuilder.withName(new I18nProperty(MY_AWESOME_PAGE, null))
                 .withKey(MY_AWESOME_PAGE_KEY)
@@ -96,8 +99,8 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
         sharedSecret = installUninstallHandler.getInstallPayload().getSharedSecret();
     }
 
-    @AfterClass
-    public static void stopConnectAddOn() throws Exception
+    @After
+    public void stopConnectAddOn() throws Exception
     {
         if (remotePlugin != null)
         {
@@ -163,6 +166,23 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
         // success
         readerFactory.getReader(jwt).read(jwt, ImmutableMap.<String, JwtClaimVerifier>of());
     }
+    
+    @Test
+    public void pageLinkWorksAfterFailedUpgrade() throws MalformedURLException, URISyntaxException, JwtVerificationException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtParseException
+    {
+        installUninstallHandler.setShouldSend404(true);
+        try
+        {
+            remotePlugin.register();
+        }
+        catch (Exception e)
+        {
+            //Ignore
+        }
+        installUninstallHandler.setShouldSend404(false);
+        
+        pageLinkWorksAfterFirstAddonInstallFailed();    
+    }
 
     private <T extends Page> void revealLinkIfNecessary(T page)
     {
@@ -173,7 +193,6 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
     private static class CustomInstallationHandlerServlet extends HttpServlet
     {
         private boolean shouldSend404 = true;
-
 
         InstallHandlerServlet installHandlerServlet = new InstallHandlerServlet();
 

@@ -179,11 +179,15 @@ public class ConnectAddonManager
     public ConnectAddonBean installConnectAddon(String jsonDescriptor, PluginState targetState)
     {
         long startTime = System.currentTimeMillis();
+        
 
         Map<String, String> i18nCollector = newHashMap();
         ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor,i18nCollector);
 
         String pluginKey = addOn.getKey();
+        
+        AddonSettings previousSettings = addonRegistry.getAddonSettings(pluginKey);
+        ApplicationLink previousApplink = connectApplinkManager.getAppLink(pluginKey);
 
         if(!i18nCollector.isEmpty())
         {

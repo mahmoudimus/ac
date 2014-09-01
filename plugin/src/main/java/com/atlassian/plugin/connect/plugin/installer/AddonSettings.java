@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
+import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
+
 import com.atlassian.plugin.PluginState;
 
 public class AddonSettings
@@ -10,6 +12,11 @@ public class AddonSettings
     private String userKey;
     private String auth;
     private String restartState;
+    
+    public boolean isEmpty()
+    {
+        return StringUtils.isBlank(descriptor);
+    }
 
     public AddonSettings()
     {
