@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.spi.event;
 
 import com.atlassian.analytics.api.annotations.EventName;
-import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 
 /**
  * Fired when a Connect add-on RemoteCondition is successfully invoked
