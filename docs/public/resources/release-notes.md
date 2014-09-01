@@ -1,8 +1,11 @@
 
 # Release Notes
 
-## [1.1.0](../release-notes/1-1-0.html)
+## [1.1.2](../release-notes/1-1-0.html#1.1.2)
+* Confluence now supports `content.*` variables everywhere that `page.*` variables were supported.
 * Support for [JIRA reports](../modules/jira/report.html)
+* Dialogs and inline dialogs will no longer suffer from expired JWTs.
+* Add-ons will no longer change from disabled to enabled as a result of automatic updates.
 
 ## [1.1.0-rc.4](../release-notes/1-1-0.html#rc4)
 * Bug fixes and stability improvements
