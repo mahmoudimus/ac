@@ -529,6 +529,7 @@ function compileHarpSources() {
 function compileJsDocs() {
     fs.copySync('./node_modules/atlassian-connect-js/dist/host-debug.js', 'target/gensrc/public/assets/js/connect-host.js');
     fs.copySync('./node_modules/atlassian-connect-js/dist/all-debug.js', 'target/gensrc/public/assets/js/connect-client.js');
+    fs.copySync('./node_modules/atlassian-connect-js/dist/host-css.css', 'target/gensrc/public/assets/css/connect-host.css');
 
     fork('./node_modules/.bin/jsdoc', ["-c", "jsdoc-conf.json", "-t", "jsdoc-template"]);
 }
