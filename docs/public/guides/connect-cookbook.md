@@ -4,24 +4,25 @@
 This section features code snippets you can use for common Connect add-on purposes, like accessing 
 a JIRA project list or getting a list of pages from a Confluence space. You can use this section like a 
 cookbook. These patterns use the Connect [JavaScript APIs](../concepts/javascript-api.html), and we use `console.log()` in 
-place of actual business logic, so you can replace calls with whatever you need in your own add-on.  
+place of real application logic, so you can replace calls with whatever you need in your own add-on.  
 
 ## What's here
 Skip ahead to any section:
 
-* [Loading `all.js` from host applications](#all.js)  
-* [Accessing a list of JIRA projects](#jira-projects)   
-* [Searching JIRA with JQL](#jql-search)   
-* [Creating a JIRA issue](#jira-create-issue)  
-* [Searching JIRA with JQL](#jql-search)  
-* [Using a `messages` module](#messages-module)  
-* [Flashing a warning in JIRA](#warning)  
+* [Loading `all.js` from host applications](#all.js)
+* [Using the `cookie` API](#cookie-api)  
+* [Using the `messages` module](#messages-module)  
+* [Flashing a warning](#warning)  
 * [Making messages disappear](#disappearing-meassages) 
 * [Creating modules for `AP.require`](#ap-modules)
+
+* [Accessing a list of JIRA projects](#jira-projects)   
+* [Creating a JIRA issue](#jira-create-issue)  
+* [Searching JIRA with JQL](#jql-search)  
+
 * [Getting a list of Confluence spaces](#get-confluence-spaces)  
 * [Getting information about specific spaces](#get-specific-space)  
 * [Getting Confluence space pages](#getting-space-pages)  
-* [Using the `cookie` API](#cookie-api)  
 
 
 ### <a name="all.js"></a> Loading `all.js` from the host application
@@ -46,6 +47,83 @@ This sample uses [jQuery](http://jquery.com/) from CDN, but normally you'd inclu
   });
 })();
 </script>
+````
+
+### <a name="cookie-api"></a> Using the `cookie` API
+
+This example creates a cookie through the [Connect API](../concepts/javascript-api.html) with a value of `nom nom nom`, 
+and then retrieves that value. You can reference more on the [`cookie` API here](../javascript/module-cookie.html). 
+
+````
+AP.require('cookie', function(cookie) {
+  // set a cookie
+  cookie.save('my-cookie', 'nom nom nom', 100);
+  // read the cookie value back
+  cookie.read('my-cookie', function(data) {
+    // what's in my cookie?
+    console.log(data);
+    // remove the cookie now that we've read it
+    cookie.erase('my-cookie');
+  });
+});
+````
+
+### <a name="messages-module"></a> Using the `messages` module
+
+This recipe creates a simple message box on the page that users can dismiss. The two parameters of 
+`message.info` can be adjusted for title and content. 
+
+
+````
+AP.require('messages', function(messages) {
+  messages.info('Message box', 'This message box has some content. Hi!'); 
+});
+````
+
+### <a name="warning"></a> Flashing a warning for 5 seconds with a 1-second fadeout
+
+Use this snippet to create a hint-style message box that's visible for 5 seconds, and fades out for 
+1 second.
+
+
+````
+AP.require('messages', function(messages) {
+  messages.hint('Lookie here', 'I am fading away', { fadeout: true, delay: 5000, duration: 1000 });
+});
+````
+
+### <a name="disappearing-messages"></a> Disappearing messages without fadeout effects
+
+Create a message that disappears instead of fading away. Omitting the `fadeout` property creates a message that doesn't 
+disappear until you call `messages.clear`. However, calling `messages.clear` with an already cleared `messageID` has no effect. 
+
+This example calls `messages.clear` after 5 seconds.
+
+
+````
+AP.require('messages', function(messages) {
+  var msgId = messages.error('Lookie here', 'I am only here for a few seconds');
+  setTimeout(function() { messages.clear(msgId); }, 5000);
+});
+````
+
+### <a name="ap-modules"></a>Creating modules for `AP.require`
+
+You can create your own modules to be included when `required`. A simple example creating an object `myObject` with
+a single function `bonusFunction` which returns a string of `+1`. We can take `myObject` as a dependency then print
+the results of `bonusFunction` to the console. 
+
+````
+AP.define('myObject', function() { 
+  return { 
+    bonusFunction: function() { 
+      return "+1"; 
+    }
+  } 
+});
+AP.require('myObject', function(myObject) { 
+  console.log(myObject.bonusFunction()); 
+});
 ````
 
 ### <a name="jira-projects"></a> Accessing list of JIRA projects
@@ -140,64 +218,6 @@ AP.require('request', function(request) {
 });
 ````
 
-### <a name="messages-module"></a> Using a `messages` module
-
-This recipe creates a simple message box on the page that users can dismiss. The two parameters of 
-`message.info` can be adjusted for title and content. 
-
-
-````
-AP.require('messages', function(messages) {
-  messages.info('Message box', 'This message box has some content. Hi!'); 
-});
-````
-
-### <a name="warning"></a> Flashing a warning for 5 seconds with a 1-second fadeout
-
-Use this snippet to create a hint-style message box that's visible for 5 seconds, and fades out for 
-1 second.
-
-
-````
-AP.require('messages', function(messages) {
-  messages.hint('Lookie here', 'I am fading away', { fadeout: true, delay: 5000, duration: 1000 });
-});
-````
-
-### <a name="disappearing-messages"></a> Disappearing messages without fadeout effects
-
-Create a message that disappears instead of fading away. Omitting the `fadeout` property creates a message that doesn't 
-disappear until you call `messages.clear`. However, calling `messages.clear` with an already cleared `messageID` has no effect. 
-
-This example calls `messages.clear` after 5 seconds.
-
-
-````
-AP.require('messages', function(messages) {
-  var msgId = messages.error('Lookie here', 'I am only here for a few seconds');
-  setTimeout(function() { messages.clear(msgId); }, 5000);
-});
-````
-
-### <a name="ap-modules"></a>Creating modules for `AP.require`
-
-You can create your own modules to be included when `required`. A simple example creating an object `myObject` with
-a single function `bonusFunction` which returns a string of `+1`. We can take `myObject` as a dependency then print
-the results of `bonusFunction` to the console. 
-
-````
-AP.define('myObject', function() { 
-  return { 
-    bonusFunction: function() { 
-      return "+1"; 
-    }
-  } 
-});
-AP.require('myObject', function(myObject) { 
-  console.log(myObject.bonusFunction()); 
-});
-````
-
 ### <a name="get-spaces"></a> Getting Confluence spaces
 
 This retrieves a list of spaces from Confluence, and may require paging through the results to see all 
@@ -273,24 +293,6 @@ AP.require('request', function(request) {
 });
 ````
 
-### <a name="cookie-api"></a> Using the `cookie` API
-
-This example creates a cookie through the [Connect API](../concepts/javascript-api.html) with a value of `nom nom nom`, 
-and then retrieves that value. You can reference more on the [`cookie` API here](../javascript/module-cookie.html). 
-
-````
-AP.require('cookie', function(cookie) {
-  // set a cookie
-  cookie.save('my-cookie', 'nom nom nom', 100);
-  // read the cookie value back
-  cookie.read('my-cookie', function(data) {
-    // what's in my cookie?
-    console.log(data);
-    // remove the cookie now that we've read it
-    cookie.erase('my-cookie');
-  });
-});
-````
 ## Feedback wanted 
 
 We're always interested in making our docs and developer experiences better. If you have feedback on existing recipes or 
