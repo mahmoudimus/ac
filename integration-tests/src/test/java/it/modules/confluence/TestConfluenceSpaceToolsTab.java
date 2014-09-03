@@ -3,6 +3,7 @@ package it.modules.confluence;
 import com.atlassian.confluence.pageobjects.page.admin.templates.SpaceTemplatesPage;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.SpaceToolsTabModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
@@ -63,7 +64,7 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
         // Demo space uses doctheme. Templates page is in Space Admin (not to be confused with Space Operations).
         SpaceTemplatesPage page = loginAndVisit(TestUser.ADMIN, SpaceTemplatesPage.class, "ds");
 
-        String pageKey = AddonTestUtils.escapedAddonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY);
+        String pageKey = ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY);
         String webItemId = pageKey + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX;
         LinkedRemoteContent addonPage = connectPageOperations.findTabPanel(webItemId, Option.<String>none(), pageKey);
 
