@@ -42,6 +42,7 @@ public class StaticAddOnScopes
     public static Collection<AddOnScope> buildForJira() throws IOException
     {
         // TODO ACDEV-1214: don't load integration_test scopes in prod
+        // TODO: Tempo is only a temporary addition to facilitate the migration to Connect
         return buildFor("jira", "common", "tempo", "integration_test");
     }
 
