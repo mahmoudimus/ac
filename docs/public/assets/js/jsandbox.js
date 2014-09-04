@@ -81,6 +81,17 @@ _AP.define("host/main", ["_dollar", "_rpc", "_ui-params", "host/_util"], functio
 
 });
 
+function makeid()
+{
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < 5; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
+
 function insertIframeContent(iframe, clientCode){
     var script = iframe[0].contentWindow.document.createElement("script");
     script.type = "text/javascript";
@@ -90,8 +101,8 @@ function insertIframeContent(iframe, clientCode){
 
 function createConnectIframe(appendTo, clientCode){
     var addonDomain = window.location.origin,
-    addonKey = 'addon-key',
-    moduleKey = 'module-key',
+    addonKey = 'addon-key' + makeid(),
+    moduleKey = 'module-key' + makeid(),
     container = $('<div />').attr('id', 'embedded-' + addonKey + '__' + moduleKey);
     appendTo.append(container);
 
@@ -104,7 +115,7 @@ function createConnectIframe(appendTo, clientCode){
             ukey: 'someuserkey',
             w: '300px',
             h: '400px',
-            src: addonDomain + '/assets/js/blank.html?xdm_e=' + encodeURIComponent(addonDomain) + '&xdm_c=channel-addon-key__module-key&cp=&lic=none',
+            src: addonDomain + '/assets/js/blank.html?xdm_e=' + encodeURIComponent(addonDomain) + '&xdm_c=channel-' + addonKey + '__' + moduleKey + '&cp=&lic=none',
             productCtx: '{}',
             data: {}
         });
