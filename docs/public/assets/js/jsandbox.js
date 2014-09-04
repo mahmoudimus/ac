@@ -103,7 +103,7 @@ function createConnectIframe(appendTo, clientCode){
     var addonDomain = window.location.origin,
     addonKey = 'addon-key' + makeid(),
     moduleKey = 'module-key' + makeid(),
-    container = $('<div />').attr('id', 'embedded-' + addonKey + '__' + moduleKey);
+    container = $('<div />').attr('id', 'embedded-' + addonKey + '__' + moduleKey).addClass('iframecontainer');
     appendTo.append(container);
 
     _AP.require(['host/main'], function(main){
@@ -113,8 +113,8 @@ function createConnectIframe(appendTo, clientCode){
             cp: '',
             uid: 'someUserId',
             ukey: 'someuserkey',
-            w: '300px',
-            h: '400px',
+            w: '',
+            h: '',
             src: addonDomain + '/assets/js/blank.html?xdm_e=' + encodeURIComponent(addonDomain) + '&xdm_c=channel-' + addonKey + '__' + moduleKey + '&cp=&lic=none',
             productCtx: '{}',
             data: {}
@@ -126,8 +126,15 @@ function createConnectIframe(appendTo, clientCode){
     });
 }
 
+function removeConnectIframes(){
+    //remove old iframes before creating new ones.
+    $(".runable iframe").trigger("ra.iframe.destroy");
+    $(".iframecontainer").remove();
+}
+
 function makeButton(container){
     return $("<button />").text("example").click(function(){
+        removeConnectIframes();
         var code = $(container).find("textarea.demo").val();
         createConnectIframe($(container), code);
     });
@@ -138,3 +145,33 @@ $(function(){
         $(this).append(makeButton(this));
     });
 });
+
+// a content resolver that does nothing except return blank
+window._AP.contentResolver = {
+  resolveByParameters: function(options){
+
+    var promise = jQuery.Deferred(function(defer){
+        var addonDomain = window.location.origin,
+        url = addonDomain + '/assets/js/blank.html?xdm_e=' + encodeURIComponent(addonDomain) + '&xdm_c=channel-' + options.addonKey + '__' + options.moduleKey + '&cp=&lic=none',
+        html = '<div id="embedded-' + options.addonKey + '__' + options.moduleKey + '" class="iframecontainer dialog-iframe-container">' + 
+        "<script>" + 
+        "_AP.require(['host/main'], function(main){" +
+        "main({" + 
+            "ns: '" + options.addonKey + '__' + options.moduleKey + "'," + 
+            'key: "' + options.addonKey + '",' + 
+            'cp: "",' + 
+            "uid: 'someUserId'," + 
+            "ukey: 'someuserkey'," + 
+            "w: '100%'," + 
+            "h: '100%'," + 
+            "src: '" + url + "'," + 
+            "productCtx: '{}'," + 
+            "data: {}" + 
+        '});' + 
+      '});' +
+    "</script></div>";
+    defer.resolve(html);
+    }).promise();
+    return promise;
+  }
+};
