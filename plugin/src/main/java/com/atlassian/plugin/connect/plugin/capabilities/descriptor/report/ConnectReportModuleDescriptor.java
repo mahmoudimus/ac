@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor.report;
 
 
+import com.atlassian.fugue.Option;
 import com.atlassian.jira.plugin.report.Report;
 import com.atlassian.jira.plugin.report.ReportModuleDescriptor;
 import com.atlassian.jira.plugin.report.ReportModuleDescriptorImpl;
@@ -20,6 +21,8 @@ import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.util.concurrent.NotNull;
 import org.dom4j.Element;
 
+import java.util.Map;
+
 /**
  * Connect version of JIRA report module.
  *
@@ -27,6 +30,7 @@ import org.dom4j.Element;
  */
 public class ConnectReportModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
+    public final static String THUMBNAIL_CSS_CLASS_PREFIX = "connect-report-thumbnail-";
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final JiraAuthenticationContext authContext;
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
@@ -35,6 +39,7 @@ public class ConnectReportModuleDescriptor extends AbstractModuleDescriptor<Void
 
     private DynamicDescriptorRegistration.Registration registration;
     private Element descriptor;
+    private String thumbnailUrl;
 
     public ConnectReportModuleDescriptor(JiraAuthenticationContext authenticationContext,
             ModuleFactory moduleFactory,
@@ -77,24 +82,7 @@ public class ConnectReportModuleDescriptor extends AbstractModuleDescriptor<Void
 
     private DescriptorToRegister getReportDescriptor()
     {
-        ReportModuleDescriptor moduleDescriptor = new ReportModuleDescriptorImpl(authContext, moduleFactory)
-        {
-            @Override
-            public Report getModule()
-            {
-                return new ConnectReport(iFrameRenderStrategyRegistry, getPluginKey(), getKey());
-            }
-
-            @Override
-            public String getUrl(final Project project)
-            {
-                final String url = descriptor.attribute("url").getValue();
-                final JiraModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl();
-                unfilteredContext.addProject(project);
-
-                return urlVariableSubstitutor.append(url, moduleContextFilter.filter(unfilteredContext));
-            }
-        };
+        ReportModuleDescriptor moduleDescriptor = new ModuleDescriptorImpl(iFrameRenderStrategyRegistry, descriptor, urlVariableSubstitutor, moduleContextFilter, ConnectReportModuleDescriptor.this, thumbnailUrl);
         moduleDescriptor.init(plugin, descriptor);
         return new DescriptorToRegister(moduleDescriptor);
     }
@@ -103,5 +91,75 @@ public class ConnectReportModuleDescriptor extends AbstractModuleDescriptor<Void
     public Void getModule()
     {
         return null;
+    }
+
+    public void setThumbnailUrl(final String thumbnailUrl)
+    {
+        this.thumbnailUrl = thumbnailUrl;
+    }
+
+    public static String getThumbnailCssClass(String key)
+    {
+        return THUMBNAIL_CSS_CLASS_PREFIX + makeSafeCssClass(key);
+    }
+
+    private static String makeSafeCssClass(String string)
+    {
+        return string.replaceAll("[!\"#$%&'()*+,./:;<=>?@[\\\\]^`{|}~]", "");
+    }
+
+    public static class ModuleDescriptorImpl extends ReportModuleDescriptorImpl
+    {
+        private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+        private final Element descriptor;
+        private final UrlVariableSubstitutor urlVariableSubstitutor;
+        private final ModuleContextFilter moduleContextFilter;
+        private final String thumbnailUrl;
+
+
+        public ModuleDescriptorImpl(final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, final Element descriptor, final UrlVariableSubstitutor urlVariableSubstitutor, final ModuleContextFilter moduleContextFilter, final ConnectReportModuleDescriptor connectReportModuleDescriptor, final String thumbnailUrl)
+        {
+            super(connectReportModuleDescriptor.authContext, connectReportModuleDescriptor.moduleFactory);
+            this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
+            this.descriptor = descriptor;
+            this.urlVariableSubstitutor = urlVariableSubstitutor;
+            this.moduleContextFilter = moduleContextFilter;
+            this.thumbnailUrl = thumbnailUrl;
+        }
+
+        @Override
+        public Report getModule()
+        {
+            return new ConnectReport(iFrameRenderStrategyRegistry, getPluginKey(), getKey());
+        }
+
+        @Override
+        public String getUrl(final Project project)
+        {
+            final String url = descriptor.attribute("url").getValue();
+            final JiraModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl();
+            unfilteredContext.addProject(project);
+
+            return urlVariableSubstitutor.append(url, moduleContextFilter.filter(unfilteredContext));
+        }
+
+        @Override
+        public Option<String> getUrl(final Map<String, Object> context)
+        {
+            final Object projectFromCtx = context.get("project");
+            if (projectFromCtx != null)
+            {
+                return Option.some(getUrl((Project) projectFromCtx));
+            }
+            else
+            {
+                return Option.none();
+            }
+        }
+
+        public String getThumbnailUrl()
+        {
+            return thumbnailUrl;
+        }
     }
 }

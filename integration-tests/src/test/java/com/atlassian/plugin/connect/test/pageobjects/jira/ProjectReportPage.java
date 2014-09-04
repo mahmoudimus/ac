@@ -14,44 +14,45 @@ import java.util.List;
 import javax.inject.Inject;
 
 /**
- * Page with JIRA project reports.
+ * Abstract page with JIRA project reports.
  */
-public class ProjectReportPage implements Page
+public abstract class ProjectReportPage implements Page
 {
-    private final String projectKey;
-
     @Inject
     private PageElementFinder elementFinder;
 
     @Inject
     private PageBinder pageBinder;
 
-    public ProjectReportPage(final String projectKey)
+    protected final String projectKey;
+    private final By findReportBy;
+    private final By waitFor;
+    private final Class<? extends ReportLink> reportLinkClass;
+
+    public ProjectReportPage(final String projectKey, final By findReportBy, final By waitFor, final Class<? extends ReportLink> reportLinkClass)
     {
         this.projectKey = projectKey;
+        this.findReportBy = findReportBy;
+        this.waitFor = waitFor;
+        this.reportLinkClass = reportLinkClass;
     }
 
     @WaitUntil
     public TimedCondition isOpen()
     {
-        return elementFinder.find(By.id("project-tab")).timed().isPresent();
+        return elementFinder.find(waitFor).timed().isPresent();
     }
 
-    @Override
-    public String getUrl()
-    {
-        return String.format("/browse/%s/?selectedTab=com.atlassian.jira.jira-projects-plugin:reports-panel", projectKey);
-    }
 
     public List<ReportLink> getReports()
     {
-        List<PageElement> reportLinkElements = elementFinder.findAll(By.className("version-block-container"));
+        List<PageElement> reportLinkElements = elementFinder.findAll(findReportBy);
         return Lists.transform(reportLinkElements, new Function<PageElement, ReportLink>()
         {
             @Override
             public ReportLink apply(final PageElement element)
             {
-                return pageBinder.bind(ReportLink.class, element);
+                return pageBinder.bind(reportLinkClass, element);
             }
         });
     }
