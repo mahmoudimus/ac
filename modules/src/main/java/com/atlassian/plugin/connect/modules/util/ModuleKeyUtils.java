@@ -1,13 +1,12 @@
 package com.atlassian.plugin.connect.modules.util;
 
-import com.google.common.base.Joiner;
 import org.apache.commons.lang3.StringUtils;
 
 import java.security.SecureRandom;
 
 /**
  * Utility class to help with module key generation and conversion.
- * None of our module beans should expose a key and instead we should be using this utlity everywhere we need a module key.
+ * None of our module beans should expose a key and instead we should be using this utility everywhere we need a module key.
  */
 public class ModuleKeyUtils
 {
@@ -17,44 +16,32 @@ public class ModuleKeyUtils
     /**
      * Generates a key using the given prefix and a random number.
      *
-     * @param prefix
+     * @param prefix value to prepend to the key
      * @return a key in the format: prefix-random, e.g. somemodule-890234325
      */
     public static String generateKey(String prefix)
     {
-        return randomName(camelCaseOrSpaceToDashed(cleanKey(prefix)) + "-");
-    }
-
-    /**
-     * Collapses CamelCase into dashes, replaces any special characters in a key with dashes and lowercases the entire
-     * key.
-     */
-    public static String cleanKey(String originalKey)
-    {
-        return camelCaseOrSpaceToDashed(originalKey).replaceAll("[^a-zA-Z0-9\\-]", "-");
-    }
-
-    public static String camelCaseOrSpaceToDashed(String s)
-    {
-        String dashed = Joiner.on("-").join(s.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])"));
-        String trimmed = StringUtils.replace(StringUtils.replace(StringUtils.replace(dashed, " -", "-"), "- ", "-"), " ", "-");
-
-        return trimmed.toLowerCase();
+        return randomName(prefix + "-");
     }
 
     public static String addonAndModuleKey(String addonKey, String moduleKey)
     {
-        return addonKey + ADDON_MODULE_SEPARATOR + cleanKey(moduleKey);
+        return addonKey + ADDON_MODULE_SEPARATOR + moduleKey;
     }
 
     public static String moduleKeyOnly(String moduleKey)
     {
-        return StringUtils.substringAfterLast(moduleKey,ADDON_MODULE_SEPARATOR);
+        return StringUtils.substringAfterLast(moduleKey, ADDON_MODULE_SEPARATOR);
+    }
+
+    public static String moduleKeyOnly(String addOnKey, String moduleKey)
+    {
+        return moduleKey.startsWith(addOnKey) ? moduleKey.replace(addOnKey + ModuleKeyUtils.ADDON_MODULE_SEPARATOR, "") : moduleKey;
     }
 
     public static String addonKeyOnly(String moduleKey)
     {
-        return StringUtils.substringBeforeLast(moduleKey,ADDON_MODULE_SEPARATOR);
+        return StringUtils.substringBeforeLast(moduleKey, ADDON_MODULE_SEPARATOR);
     }
     
     public static String toCompleteKey(String moduleKey)

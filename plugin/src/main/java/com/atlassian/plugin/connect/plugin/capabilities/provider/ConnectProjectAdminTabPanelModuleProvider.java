@@ -47,17 +47,18 @@ public class ConnectProjectAdminTabPanelModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin theConnectPlugin, String jsonFieldName, List<ConnectProjectAdminTabPanelModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, String jsonFieldName, List<ConnectProjectAdminTabPanelModuleBean> beans)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 
+        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         for (ConnectProjectAdminTabPanelModuleBean bean : beans)
         {
             // render a web item for our tab
             WebItemModuleBean webItemModuleBean = newWebItemBean()
                     .withName(bean.getName())
                     .withKey(bean.getRawKey())
-                    .withUrl(iFrameServletPath(addon.getKey(), bean.getRawKey()))
+                    .withUrl(iFrameServletPath(connectAddonBean.getKey(), bean.getRawKey()))
                     .withContext(AddOnUrlContext.page)
                     .withLocation(bean.getAbsoluteLocation())
                     .withWeight(bean.getWeight())
@@ -65,22 +66,22 @@ public class ConnectProjectAdminTabPanelModuleProvider
                     .setNeedsEscaping(false)
                     .build();
 
-            builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(addon, theConnectPlugin,
+            builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin,
                     webItemModuleBean, IsProjectAdminCondition.class));
 
             // register a render strategy for the servlet backing our iframe tab
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                    .addOn(addon.getKey())
-                    .module(bean.getKey(addon))
+                    .addOn(connectAddonBean.getKey())
+                    .module(bean.getKey(connectAddonBean))
                     .projectAdminTabTemplate()
                     .urlTemplate(bean.getUrl())
-                    .additionalRenderContext(ADMIN_ACTIVE_TAB, bean.getKey(addon))
+                    .additionalRenderContext(ADMIN_ACTIVE_TAB, bean.getKey(connectAddonBean))
                     .conditions(bean.getConditions())
                     .conditionClass(IsProjectAdminCondition.class)
                     .title(bean.getDisplayName())
                     .build();
 
-            iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getRawKey(), renderStrategy);
+            iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), renderStrategy);
         }
 
         return builder.build();

@@ -1,9 +1,5 @@
 package it.com.atlassian.plugin.connect.provider.jira;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
@@ -11,6 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
+import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
@@ -23,16 +20,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_EDIT_PARAMETERS;
-import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_INPUT_PARAMETERS;
-import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.RESOURCE_NAME_VIEW;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import static com.atlassian.jira.plugin.workflow.JiraWorkflowPluginConstants.*;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
 import static com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderImpl.IFrameRenderStrategyImpl;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 
 @Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)
@@ -69,7 +66,7 @@ public class WorkflowPostFunctionModuleProviderTest
                 .withTriggered(new UrlBean("/triggered"))
                 .withCreate(new UrlBean("/create"))
                 .withEdit(new UrlBean("/edit"))
-                .withView(new UrlBean(BASE_URL + "/view"))
+                .withView(new UrlBean("/view"))
                 .build();
 
         ConnectAddonBean addon = newConnectAddonBean()
@@ -80,6 +77,9 @@ public class WorkflowPostFunctionModuleProviderTest
                 .withModules("jiraWorkflowPostFunctions", bean)
                 .build();
 
+        // simulate a descriptor that includes an absolute url
+        addon = ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(ConnectModulesGsonFactory.addonBeanToJson(addon).replace("/view", BASE_URL + "/view"), null);
+
         plugin = testPluginInstaller.installAddon(addon);
     }
 
@@ -88,7 +88,7 @@ public class WorkflowPostFunctionModuleProviderTest
     {
         if (null != plugin)
         {
-            testPluginInstaller.uninstallAddon(plugin);
+            testPluginInstaller.uninstallJsonAddon(plugin);
         }
 
     }

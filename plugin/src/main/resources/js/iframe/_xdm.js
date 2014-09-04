@@ -1,4 +1,4 @@
-(this.AP || this._AP).define("_xdm", ["_events", "_base64", "_uri",  "_ui-params", "host/analytics", "host/_util"], function (events, base64, uri, uiParams, analytics, util) {
+(this.AP || this._AP).define("_xdm", ["_events", "_base64", "_uri",  "_ui-params", "host/_util"], function (events, base64, uri, uiParams, util) {
 
   "use strict";
 
@@ -94,7 +94,7 @@
       localKey = param(config.remote, "oauth_consumer_key") || param(config.remote, "jwt");
       remoteKey = config.remoteKey;
       addonKey = remoteKey;
-      remoteOrigin = getBaseUrl(config.remote);
+      remoteOrigin = getBaseUrl(config.remote).toLowerCase();
       channel = config.channel;
       // Define the host-side mixin
       mixin = {
@@ -133,7 +133,7 @@
       }
 
       addonKey = localKey;
-      remoteOrigin = param(loc, "xdm_e");
+      remoteOrigin = param(loc, "xdm_e").toLowerCase();
       channel = param(loc, "xdm_c");
       // Define the add-on-side mixin
       mixin = {
@@ -195,8 +195,17 @@
         // Extract message payload from the event
         var payload = JSON.parse(e.data),
             pid = payload.i, pchannel = payload.c, ptype = payload.t, pmessage = payload.m;
+
+        // if the iframe has potentially been reloaded. re-attach the source contentWindow object
+        if (e.source !== target && e.origin.toLowerCase() === remoteOrigin && pchannel === channel) {
+          target = e.source;
+        }
+
         // If the payload doesn't match our expected event signature, assume its not part of the xdm-rpc protocol
-        if (e.source !== target || e.origin !== remoteOrigin || pchannel !== channel) return;
+        if (e.source !== target || e.origin.toLowerCase() !== remoteOrigin || pchannel !== channel){
+          return;
+        }
+
         if (ptype === "request") {
           // If the payload type is request, this is an incoming method invocation
           var name = pmessage.n, args = pmessage.a,

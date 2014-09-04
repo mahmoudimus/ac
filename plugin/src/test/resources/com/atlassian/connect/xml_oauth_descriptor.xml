@@ -9,15 +9,19 @@
         </bundle-instructions>
         <permissions>
             <permission>create_oauth_link</permission>
+            <permission>read_app_links</permission>
         </permissions>
     </plugin-info>
     <remote-plugin-container key="container" display-url="{{localBaseUrl}}">
         <oauth>
             <public-key>-----BEGIN PUBLIC KEY-----
-                MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCuNwJVGkY9XWtuNe7p8PMOEr8O
-                WetSAqMxWldFfmNYTbRsI/8ZX/S/5gm4UKZyFUDOICtVddYv1tWW/P31OA5khyQT
-                XLp8sYpyNDBuwg00kfmBGleBgcKvePxMAr2y4La1OBz4aE+xK1HJojl2ToAubVY+
-                qikVwxXolycVkz8AzQIDAQAB
+                MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtWghUS3KRC01kJkeU83P
+                S2CSH6Vma2twv7p7JVHUIWl69tNPvn46mYt3gbFQgmBv74pAJJkb1FvBNxhy0B19
+                9fXgZUVS+6R7597t0hVG610Zbl4Ar7xvs/h3ACwUhSib3ad496nghLvOnarrJIgw
+                sNQeCaBz+FczCYQAt7Mk8vGjE1XSha6FEBNKIYijgoZhqLGcTxxyBIDmMwyNU2Oz
+                lknyFZ1ZhYIPKuw069njJjbuL0Nv9PXKO+pNZMQvwo7WrepJ0B0VG5KYjDzetFzx
+                FOtr7x6M5Z7XZsPhNIjDjE+oBHu+Hzc1/bGyWpZrzc04nqCNTsmOvID1H50Jt778
+                mQIDAQAB
                 -----END PUBLIC KEY-----</public-key>
         </oauth>
     </remote-plugin-container>

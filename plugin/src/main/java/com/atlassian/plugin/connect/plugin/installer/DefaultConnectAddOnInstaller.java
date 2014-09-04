@@ -1,11 +1,14 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
+import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.*;
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
+import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
@@ -37,18 +40,23 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     private final ConnectAddonBeanFactory connectAddonBeanFactory;
     private final ConnectAddonToPluginFactory addonToPluginFactory;
     private final ConnectAddonManager connectAddonManager;
+    private final ConnectAddonRegistry addonRegistry;
+    private final ConnectApplinkManager connectApplinkManager;
 
     private static final Logger log = LoggerFactory.getLogger(DefaultConnectAddOnInstaller.class);
 
     @Autowired
     public DefaultConnectAddOnInstaller(RemotePluginArtifactFactory remotePluginArtifactFactory,
-                                        PluginController pluginController,
-                                        PluginAccessor pluginAccessor,
-                                        EventPublisher eventPublisher,
-                                        OAuthLinkManager oAuthLinkManager,
-                                        RemoteEventsHandler remoteEventsHandler,
-                                        ConnectAddonBeanFactory connectAddonBeanFactory,
-                                        ConnectAddonToPluginFactory addonToPluginFactory, ConnectAddonManager connectAddonManager)
+            PluginController pluginController,
+            PluginAccessor pluginAccessor,
+            EventPublisher eventPublisher,
+            OAuthLinkManager oAuthLinkManager,
+            RemoteEventsHandler remoteEventsHandler,
+            ConnectAddonBeanFactory connectAddonBeanFactory,
+            ConnectAddonToPluginFactory addonToPluginFactory,
+            ConnectAddonManager connectAddonManager,
+            ConnectAddonRegistry addonRegistry,
+            ConnectApplinkManager connectApplinkManager)
     {
         this.remotePluginArtifactFactory = remotePluginArtifactFactory;
         this.pluginController = pluginController;
@@ -59,6 +67,8 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         this.connectAddonBeanFactory = connectAddonBeanFactory;
         this.addonToPluginFactory = addonToPluginFactory;
         this.connectAddonManager = connectAddonManager;
+        this.addonRegistry = addonRegistry;
+        this.connectApplinkManager = connectApplinkManager;
     }
 
     @Override
@@ -90,40 +100,37 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     }
 
     @Override
-    public Plugin install(String username, String jsonDescriptor) throws PluginInstallException
+    public Plugin install(String jsonDescriptor) throws PluginInstallException
     {
         String pluginKey = null;
-        Plugin addonPluginWrapper = null;
-        ConnectAddonBean addOn = null;
-        
+        Plugin addonPluginWrapper;
+        ConnectAddonBean addOn;
+
         long startTime = System.currentTimeMillis();
 
         try
         {
             //until we ensure we no longer have xml or mirror plugins, we need to call removeOldPlugin, which is why we marshal here just to get the plugin key
             ConnectAddonBean nonValidatedAddon = connectAddonBeanFactory.fromJsonSkipValidation(jsonDescriptor);
-            
+
             pluginKey = nonValidatedAddon.getKey();
-            
-            if(nonValidatedAddon.getModules().isEmpty())
+
+            if (nonValidatedAddon.getModules().isEmpty())
             {
                 Option<String> errorI18nKey = Option.<String>some("connect.install.error.no.modules");
-                throw new PluginInstallException("Unable to install connect add on because it has no modules defined",errorI18nKey);
+                throw new PluginInstallException("Unable to install connect add on because it has no modules defined", errorI18nKey);
             }
-            
+
+            PluginState targetState = addonRegistry.getRestartState(pluginKey);
+
             removeOldPlugin(pluginKey);
-        
-            addOn = connectAddonManager.installConnectAddon(jsonDescriptor);
 
-            // todo @seb @jd - enableConnectAddon may fail (it publishes the EnableFailedEvent) - should we throw an exception here too?
-            // todo should this be done "quietly" - ie not publish addonEnabledEvent ?
-            connectAddonManager.enableConnectAddon(addOn.getKey());
+            addOn = connectAddonManager.installConnectAddon(jsonDescriptor, targetState);
 
-            addonPluginWrapper = addonToPluginFactory.create(addOn);
-
-            addonPluginWrapper.enable();
+            PluginState actualState = addonRegistry.getRestartState(pluginKey);
+            addonPluginWrapper = addonToPluginFactory.create(addOn, actualState);
         }
-        catch(PluginInstallException e)
+        catch (PluginInstallException e)
         {
             if (null != pluginKey)
             {
@@ -225,7 +232,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         catch (PermissionDeniedException ex)
         {
             log.warn("Unable to install remote plugin '{}' by user '{}' due to permission issues: {}",
-                    new Object[]{pluginKey, username, ex.getMessage()});
+                    new Object[] { pluginKey, username, ex.getMessage() });
             log.debug("Installation failed due to permission issue", ex);
             eventPublisher.publish(new RemotePluginInstallFailedEvent(pluginKey, "Installation failed due to permission issue " + ex.getMessage()));
             throw ex;
@@ -233,7 +240,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         catch (InstallationFailedException ex)
         {
             log.warn("Unable to install remote plugin '{}' by user '{}' due to installation issue: {}",
-                    new Object[]{pluginKey, username, ex.getMessage()});
+                    new Object[] { pluginKey, username, ex.getMessage() });
             log.debug("Installation failed due to installation issue", ex);
             eventPublisher.publish(new RemotePluginInstallFailedEvent(pluginKey, ex.getMessage()));
             throw ex;
@@ -279,8 +286,16 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         if (plugin != null)
         {
             pluginController.uninstall(plugin);
+
+            final ApplicationLink appLink = connectApplinkManager.getAppLink(pluginKey);
+            if (appLink != null)
+            {
+                // Blow away the applink
+                oAuthLinkManager.unassociateProviderWithLink(appLink);
+                connectApplinkManager.deleteAppLink(pluginKey);
+            }
         }
-        else if(connectAddonManager.hasDescriptor(pluginKey))
+        else if (connectAddonManager.hasDescriptor(pluginKey))
         {
             connectAddonManager.uninstallConnectAddonQuietly(pluginKey);
         }
@@ -291,10 +306,22 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
              to ensure it doesn't already exist as a OAuth client key.  This
              prevents a malicious app that uses a key from an existing oauth
              link from getting that link removed when the app is uninstalled.
+             If it was created by connect then it is ok
             */
             if (oAuthLinkManager.isAppAssociated(pluginKey))
             {
-                throw new PermissionDeniedException(pluginKey, "App key '" + pluginKey + "' is already associated with an OAuth link");
+                final ApplicationLink appLink = connectApplinkManager.getAppLink(pluginKey);
+                if (appLink != null)
+                {
+                    // Is an applink created by connect.
+                    // Blow away the applink
+                    oAuthLinkManager.unassociateProviderWithLink(appLink);
+                    connectApplinkManager.deleteAppLink(pluginKey);
+                }
+                else
+                {
+                    throw new PermissionDeniedException(pluginKey, "App key '" + pluginKey + "' is already associated with an OAuth link");
+                }
             }
         }
     }

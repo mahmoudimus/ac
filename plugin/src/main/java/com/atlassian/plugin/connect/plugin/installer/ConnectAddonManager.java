@@ -111,7 +111,6 @@ public class ConnectAddonManager
     private final I18nResolver i18nResolver;
     private final ConnectAddonBeanFactory connectAddonBeanFactory;
     private final SharedSecretService sharedSecretService;
-    private final HttpClientFactory httpClientFactory;
     private final ConnectAddonI18nManager i18nManager;
 
     private final AtomicBoolean isTestHttpClient;
@@ -141,7 +140,6 @@ public class ConnectAddonManager
         this.i18nResolver = i18nResolver;
         this.connectAddonBeanFactory = connectAddonBeanFactory;
         this.sharedSecretService = sharedSecretService;
-        this.httpClientFactory = httpClientFactory;
         this.i18nManager = i18nManager;
 
         this.isTestHttpClient = new AtomicBoolean(false);
@@ -173,7 +171,12 @@ public class ConnectAddonManager
         return addonRegistry.getAllAddonBeans();
     }
 
-    public ConnectAddonBean installConnectAddon(String jsonDescriptor)
+    /**
+     * This method is public for test visibility. In preference, please use {@link ConnectAddOnInstaller#install(String)}
+     * @param jsonDescriptor the json descriptor of the add-on to install
+     * @return a {@link ConnectAddonBean} representation of the add-on
+     */
+    public ConnectAddonBean installConnectAddon(String jsonDescriptor, PluginState targetState)
     {
         long startTime = System.currentTimeMillis();
 
@@ -202,13 +205,13 @@ public class ConnectAddonManager
         String sharedSecret = useSharedSecret ? sharedSecretService.next() : null;
         String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
 
-        String userKey = provisionAddOnUserAndScopes(addOn, previousDescriptor);
+        String userKey = addOnNeedsAUser(addOn) ? provisionAddOnUserAndScopes(addOn, previousDescriptor) : null;
 
         AddonSettings settings = new AddonSettings()
                 .setAuth(authType.name())
                 .setBaseUrl(addOn.getBaseUrl())
                 .setDescriptor(jsonDescriptor)
-                .setRestartState(PluginState.ENABLED.name())
+                .setRestartState(PluginState.DISABLED.name())
                 .setUserKey(userKey);
 
         if (!Strings.isNullOrEmpty(sharedSecret))
@@ -230,8 +233,13 @@ public class ConnectAddonManager
         eventPublisher.publish(new ConnectAddonInstalledEvent(pluginKey));
 
         long endTime = System.currentTimeMillis();
-
         log.info("Connect addon '" + addOn.getKey() + "' installed in " + (endTime - startTime) + "ms");
+
+        if (PluginState.ENABLED == targetState)
+        {
+            enableConnectAddon(pluginKey);
+        }
+
         return addOn;
     }
 
@@ -249,15 +257,14 @@ public class ConnectAddonManager
             if (null != addon)
             {
                 beanToModuleRegistrar.registerDescriptorsForBeans(addon);
-                addonRegistry.storeRestartState(pluginKey, PluginState.ENABLED);
-                enableAddOnUser(addon);
 
-                eventPublisher.publish(new ConnectAddonEnabledEvent(pluginKey, createEventData(pluginKey, SyncHandler.ENABLED.name().toLowerCase())));
-
-                if (log.isDebugEnabled())
+                if (addOnNeedsAUser(addon))
                 {
-                    log.debug("Enabled connect addon '" + pluginKey + "'");
+                    enableAddOnUser(addon);
                 }
+
+                addonRegistry.storeRestartState(pluginKey, PluginState.ENABLED);
+                eventPublisher.publish(new ConnectAddonEnabledEvent(pluginKey, createEventData(pluginKey, SyncHandler.ENABLED.name().toLowerCase())));
 
                 long endTime = System.currentTimeMillis();
                 log.info("Connect addon '" + addon.getKey() + "' enabled in " + (endTime - startTime) + "ms");
@@ -302,11 +309,6 @@ public class ConnectAddonManager
             if (persistState)
             {
                 addonRegistry.storeRestartState(pluginKey, PluginState.DISABLED);
-            }
-
-            if (log.isDebugEnabled())
-            {
-                log.debug("Disabled connect addon '" + pluginKey + "'");
             }
 
             long endTime = System.currentTimeMillis();
@@ -384,11 +386,6 @@ public class ConnectAddonManager
             {
                 addonRegistry.removeAll(pluginKey);
             }
-        }
-
-        if (log.isDebugEnabled())
-        {
-            log.debug("Uninstalled connect addon '" + pluginKey + "'");
         }
 
         long endTime = System.currentTimeMillis();
@@ -504,7 +501,7 @@ public class ConnectAddonManager
 
             if (e.getCause() instanceof UnknownHostException)
             {
-                String i18nMessage = i18nResolver.getText("connect.install.error.remote.host.bad.domain", e.getCause().getLocalizedMessage());
+                String i18nMessage = i18nResolver.getText("connect.install.error.remote.host.bad.domain", e.getCause().getLocalizedMessage().replace(": Name or service not known", ""));
                 throw new LifecycleCallbackException(message, Option.some(i18nMessage));
             }
             else if (e.getCause() instanceof SocketTimeoutException)
@@ -640,5 +637,10 @@ public class ConnectAddonManager
         {
             throw new PluginInstallException(e.getMessage(), Option.some("connect.install.error.user.provisioning"), e, true);
         }
+    }
+
+    private static boolean addOnNeedsAUser(ConnectAddonBean addOn)
+    {
+        return null != addOn.getAuthentication() && !AuthenticationType.NONE.equals(addOn.getAuthentication().getType());
     }
 }

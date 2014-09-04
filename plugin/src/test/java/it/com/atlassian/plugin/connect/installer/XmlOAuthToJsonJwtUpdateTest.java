@@ -4,22 +4,27 @@ import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.modzdetector.IOUtils;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.module.page.GeneralPageModuleDescriptor;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipBuilder;
 import com.atlassian.plugin.connect.plugin.util.zip.ZipHandler;
 import com.atlassian.plugin.connect.spi.Filenames;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
-import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnaphot;
+import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+import com.atlassian.sal.api.ApplicationProperties;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
+import it.com.atlassian.plugin.connect.TestConstants;
+import it.com.atlassian.plugin.connect.util.RequestUtil;
+import net.oauth.OAuthException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,18 +43,13 @@ import static org.junit.Assert.*;
 /**
  * Ensure that Connect supports add-ons updating from XML + OAuth to JSON + JWT.
  */
+@XmlDescriptor
 @RunWith(AtlassianPluginsTestRunner.class)
 public class XmlOAuthToJsonJwtUpdateTest
 {
     private static final Logger LOG = LoggerFactory.getLogger(XmlOAuthToJsonJwtUpdateTest.class);
     private static final String OLD_PLUGIN_KEY = "myaddon_helloworld";
     private static final String INSTALLED_URL_SUFFIX = "/installed";
-    private static final String OLD_PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----\n" +
-            "                MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCuNwJVGkY9XWtuNe7p8PMOEr8O\n" +
-            "                WetSAqMxWldFfmNYTbRsI/8ZX/S/5gm4UKZyFUDOICtVddYv1tWW/P31OA5khyQT\n" +
-            "                XLp8sYpyNDBuwg00kfmBGleBgcKvePxMAr2y4La1OBz4aE+xK1HJojl2ToAubVY+\n" +
-            "                qikVwxXolycVkz8AzQIDAQAB\n" +
-            "                -----END PUBLIC KEY-----";
 
     private static final String JWT_VERSION = "jwt-version";
     private static final String JWT_VERSION_SLASHED = "/" + JWT_VERSION;
@@ -61,6 +61,7 @@ public class XmlOAuthToJsonJwtUpdateTest
     private final ConnectAddonRegistry connectAddonRegistry;
     private final AddonTestFilterResults testFilterResults;
     private final ConnectApplinkManager connectApplinkManager;
+    private final RequestUtil requestUtil;
 
     private Plugin oAuthPlugin;
     private Plugin jwtPlugin;
@@ -69,17 +70,19 @@ public class XmlOAuthToJsonJwtUpdateTest
                                        TestAuthenticator testAuthenticator,
                                        ConnectAddonRegistry connectAddonRegistry,
                                        AddonTestFilterResults testFilterResults,
-                                       ConnectApplinkManager connectApplinkManager)
+                                       ConnectApplinkManager connectApplinkManager,
+                                       ApplicationProperties applicationProperties)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
         this.connectAddonRegistry = connectAddonRegistry;
         this.testFilterResults = testFilterResults;
         this.connectApplinkManager = connectApplinkManager;
+        this.requestUtil = new RequestUtil(applicationProperties);
     }
 
     @BeforeClass
-    public void beforeAllTests() throws IOException, URISyntaxException
+    public void setUp() throws IOException, URISyntaxException, OAuthException
     {
         testAuthenticator.authenticateUser("admin");
         oAuthPlugin = testPluginInstaller.installPlugin(createXmlDescriptorFile());
@@ -94,6 +97,9 @@ public class XmlOAuthToJsonJwtUpdateTest
             assertTrue(moduleDescriptor instanceof GeneralPageModuleDescriptor);
             ApplicationLink appLink = connectApplinkManager.getAppLink(oAuthPlugin.getKey());
             assertEquals(getOldBaseUrl(), appLink.getDisplayUrl().toString());
+
+            // old xml add-on can send requests
+            assertEquals("old xml add-on should be able to make requests", 200, requestUtil.makeRequest(constructOAuthRequestFromAddOn()).getStatusCode());
         }
 
         jwtPlugin = testPluginInstaller.installAddon(createJwtAddOn(oAuthPlugin));
@@ -102,10 +108,30 @@ public class XmlOAuthToJsonJwtUpdateTest
     }
 
     @AfterClass
-    public void afterAllTests()
+    public void tearDown()
     {
-        uninstall(oAuthPlugin);
-        uninstall(jwtPlugin);
+        if (oAuthPlugin != null)
+        {
+            try
+            {
+                testPluginInstaller.uninstallXmlAddon(oAuthPlugin);
+            }
+            catch (IOException e)
+            {
+                LOG.error("Failed to uninstall test plugin " + oAuthPlugin.getKey() + " during teardown.", e);
+            }
+        }
+        if (jwtPlugin != null)
+        {
+            try
+            {
+                testPluginInstaller.uninstallJsonAddon(jwtPlugin);
+            }
+            catch (IOException e)
+            {
+                LOG.error("Failed to uninstall test plugin " + jwtPlugin.getKey() + " during teardown.", e);
+            }
+        }
     }
 
     @Test
@@ -147,7 +173,7 @@ public class XmlOAuthToJsonJwtUpdateTest
     @Test
     public void sharedSecretIsNotOldPublicKey()
     {
-        assertFalse(OLD_PUBLIC_KEY.equals(connectAddonRegistry.getSecret(jwtPlugin.getKey())));
+        assertFalse(TestConstants.XML_ADDON_PUBLIC_KEY.equals(connectAddonRegistry.getSecret(jwtPlugin.getKey())));
     }
 
     @Test
@@ -176,7 +202,7 @@ public class XmlOAuthToJsonJwtUpdateTest
 
     private JsonObject getLastInstallPayload()
     {
-        ServletRequestSnaphot installRequest = testFilterResults.getRequest(jwtPlugin.getKey(), JWT_VERSION_SLASHED);
+        ServletRequestSnapshot installRequest = testFilterResults.getRequest(jwtPlugin.getKey(), JWT_VERSION_SLASHED);
         return new JsonParser().parse(installRequest.getEntity()).getAsJsonObject();
     }
 
@@ -212,7 +238,7 @@ public class XmlOAuthToJsonJwtUpdateTest
     private String getOldXmlDescriptorContent() throws IOException
     {
         String oldBaseUrl = getOldBaseUrl();
-        String xml = IOUtils.toString(XmlOAuthToJsonJwtUpdateTest.class.getResourceAsStream("/com/atlassian/connect/xml_oauth_descriptor.xml"))
+        String xml = IOUtils.toString(XmlOAuthToJsonJwtUpdateTest.class.getResourceAsStream(TestConstants.XML_ADDON_RESOURCE_PATH))
                 .replace("{{localBaseUrl}}", oldBaseUrl)
                 .replace("{{user}}", "admin")
                 .replace("{{currentTimeMillis}}", String.valueOf(System.currentTimeMillis()));
@@ -222,7 +248,7 @@ public class XmlOAuthToJsonJwtUpdateTest
             String displayUrlText = String.format("display-url=\"%s\"", oldBaseUrl);
             assertTrue(String.format("%s should contain %s", xml, displayUrlText), xml.indexOf(displayUrlText) > 0);
 
-            String publicKeyText = String.format("<public-key>%s</public-key>", OLD_PUBLIC_KEY);
+            String publicKeyText = String.format("<public-key>%s</public-key>", TestConstants.XML_ADDON_PUBLIC_KEY);
             assertTrue(String.format("%s should contain %s", xml, publicKeyText), xml.indexOf(publicKeyText) > 0);
 
             String pluginKeyText = String.format("key=\"%s\"", OLD_PLUGIN_KEY);
@@ -235,21 +261,6 @@ public class XmlOAuthToJsonJwtUpdateTest
     private String getOldBaseUrl()
     {
         return testPluginInstaller.getInternalAddonBaseUrl(OLD_PLUGIN_KEY) + OAUTH_VERSION_SLASHED;
-    }
-
-    private void uninstall(Plugin plugin)
-    {
-        if (null != plugin)
-        {
-            try
-            {
-                testPluginInstaller.uninstallPlugin(plugin);
-            }
-            catch (IOException e)
-            {
-                LOG.error("Failed to uninstall test plugin " + plugin.getKey() + " during teardown.", e);
-            }
-        }
     }
 
     private ConnectAddonBean createJwtAddOn(Plugin oldPlugin)
@@ -269,5 +280,10 @@ public class XmlOAuthToJsonJwtUpdateTest
                     .withName(new I18nProperty("Greeting", "greeting"))
                     .build())
                 .build();
+    }
+
+    private RequestUtil.Request constructOAuthRequestFromAddOn() throws IOException, OAuthException, URISyntaxException
+    {
+        return requestUtil.constructOAuthRequestFromAddOn(oAuthPlugin.getKey());
     }
 }

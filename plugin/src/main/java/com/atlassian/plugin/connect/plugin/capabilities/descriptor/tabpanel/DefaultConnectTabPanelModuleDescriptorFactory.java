@@ -5,6 +5,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
@@ -39,12 +40,13 @@ public class DefaultConnectTabPanelModuleDescriptorFactory implements ConnectTab
     }
 
     @Override
-    public ModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, ConnectTabPanelModuleBean bean, TabPanelDescriptorHints hints)
+    public ModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, ConnectTabPanelModuleBean bean, TabPanelDescriptorHints hints)
     {
+        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         DOMElement element = new DOMElement(hints.getDomElementName());
 
         element
-                .addAttribute(KEY, bean.getKey(addon))
+                .addAttribute(KEY, bean.getKey(connectAddonBean))
                 .addAttribute(NAME, StringEscapeUtils.escapeHtml(bean.getName().getValue()))
                 .addAttribute(URL, bean.getUrl());
 
@@ -61,7 +63,7 @@ public class DefaultConnectTabPanelModuleDescriptorFactory implements ConnectTab
 
         if (!bean.getConditions().isEmpty())
         {
-            element.add(conditionModuleFragmentFactory.createFragment(addon.getKey(), bean.getConditions()));
+            element.add(conditionModuleFragmentFactory.createFragment(connectAddonBean.getKey(), bean.getConditions()));
         }
 
         ModuleDescriptor descriptor = connectContainerUtil.createBean(hints.getDescriptorClass());

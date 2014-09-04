@@ -6,6 +6,7 @@ import com.atlassian.confluence.util.i18n.I18NBeanFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.util.Dom4jUtils;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
@@ -44,10 +45,13 @@ public class BlueprintContentTemplateModuleDescriptorFactory
         this.requestFactory = requestFactory;
     }
 
-    @Override
-    public ContentTemplateModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin plugin, BlueprintModuleBean bean) {
-        Element contentTemplateElement = new DOMElement("content-template");
 
+    @Override
+    public ContentTemplateModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin plugin, BlueprintModuleBean bean)
+    {
+        ConnectAddonBean addon = moduleProviderContext.getConnectAddonBean();
+
+        Element contentTemplateElement = new DOMElement("content-template");
         String contentTemplateKey = bean.getKey(addon) + "-content-template";
 
         String i18nKeyOrName = Strings.isNullOrEmpty(bean.getName().getI18n()) ? bean.getDisplayName() : bean.getName().getI18n();

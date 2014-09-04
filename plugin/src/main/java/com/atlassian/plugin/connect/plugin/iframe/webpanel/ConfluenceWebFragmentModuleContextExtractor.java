@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.iframe.webpanel;
 
+import com.atlassian.confluence.core.ConfluenceActionSupport;
+import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.pages.AbstractPage;
 import com.atlassian.confluence.pages.actions.AbstractPageAwareAction;
 import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
@@ -40,12 +42,29 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
         
         ConfluenceModuleContextParameters moduleContext = new ConfluenceModuleContextParametersImpl();
 
-        @SuppressWarnings("unchecked") // it is what it is
-        WebInterfaceContext webInterfaceContext = (WebInterfaceContext) webFragmentContext.get("webInterfaceContext");
-        if (webInterfaceContext != null)
         {
-            moduleContext.addPage(webInterfaceContext.getPage());
-            moduleContext.addSpace(webInterfaceContext.getSpace());
+            @SuppressWarnings("unchecked") // it is what it is
+                    WebInterfaceContext webInterfaceContext = (WebInterfaceContext) webFragmentContext.get("webInterfaceContext");
+            if (webInterfaceContext != null)
+            {
+                moduleContext.addPage(webInterfaceContext.getPage());
+                moduleContext.addContent(webInterfaceContext.getPage());
+                moduleContext.addSpace(webInterfaceContext.getSpace());
+            }
+        }
+
+        final Object action = webFragmentContext.get("action");
+
+        if (action instanceof ConfluenceActionSupport)
+        {
+            WebInterfaceContext webInterfaceContext = ((ConfluenceActionSupport)action).getWebInterfaceContext();
+
+            if (webInterfaceContext != null)
+            {
+                moduleContext.addPage(webInterfaceContext.getPage());
+                moduleContext.addContent(webInterfaceContext.getPage());
+                moduleContext.addSpace(webInterfaceContext.getSpace());
+            }
         }
 
         Space space = (Space) webFragmentContext.get("space");
@@ -57,17 +76,24 @@ public class ConfluenceWebFragmentModuleContextExtractor implements WebFragmentM
         AbstractPage page = (AbstractPage) webFragmentContext.get("page");
         if (page != null)
         {
+            moduleContext.addContent(page);
             moduleContext.addPage(page);
         }
 
-        Object action = webFragmentContext.get("action");
         if (action instanceof AbstractPageAwareAction)
         {
             AbstractPageAwareAction pageAwareAction = (AbstractPageAwareAction) action;
             if (!moduleContext.containsKey(ConfluenceModuleContextFilter.PAGE_ID))
             {
+                moduleContext.addContent(pageAwareAction.getPage());
                 moduleContext.addPage(pageAwareAction.getPage());
             }
+        }
+
+        Object content = webFragmentContext.get("content");
+        if (content != null && content instanceof ContentEntityObject)
+        {
+            moduleContext.addContent((ContentEntityObject)content);
         }
 
         ConfluenceUser profileUser = (ConfluenceUser) webFragmentContext.get("targetUser");

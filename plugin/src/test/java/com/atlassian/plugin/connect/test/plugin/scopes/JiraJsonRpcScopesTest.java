@@ -85,7 +85,7 @@ public class JiraJsonRpcScopesTest extends AbstractScopesTest
 
     public JiraJsonRpcScopesTest(ScopeName scope, HttpMethod method, String path, String rpcMethod, boolean expectedOutcome)
     {
-        super(scope, method, path, "{\"method\":\"" + rpcMethod + "\"}", expectedOutcome, "/jira", "Jira");
+        super(scope, method, path, APITestUtil.createJsonRpcPayload(rpcMethod), expectedOutcome, "/jira", "Jira");
     }
 
 }

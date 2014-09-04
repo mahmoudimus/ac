@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.plugin.module.webpanel.IFrameRemoteWebPanel;
 import com.atlassian.plugin.web.descriptors.WebPanelModuleDescriptor;
@@ -33,9 +34,10 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
     }
 
     @Override
-    public WebPanelModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, WebPanelModuleBean bean)
+    public WebPanelModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, WebPanelModuleBean bean)
     {
-        Element domElement = createDomElement(bean, bean.getKey(addon), addon);
+        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
+        Element domElement = createDomElement(bean, bean.getKey(connectAddonBean), connectAddonBean);
         final WebPanelModuleDescriptor descriptor = connectContainerUtil.createBean(WebPanelConnectModuleDescriptor.class);
 
         descriptor.init(theConnectPlugin, domElement);

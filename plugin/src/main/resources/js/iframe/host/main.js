@@ -34,12 +34,11 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
   * @param {Options} options These values come from the velocity template and can be overridden using uiParams
   */
   function create(options) {
-
     $.extend(options, uiParams.fromUrl(options.src));
 
     var ns = options.ns,
         $content = contentDiv(ns),
-        contentId = $content.attr("id"),
+        contentId = "embedded-" + ns,
         channelId = "channel-" + ns,
         initWidth = options.w || "100%",
         initHeight = options.h || "0",
@@ -59,6 +58,10 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
 
     if(options.dlg){
       options.uiParams.isDialog = true;
+    }
+
+    if(options.isInlineDialog){
+      options.uiParams.isInlineDialog = true;
     }
 
     var xdmOptions = {
@@ -87,13 +90,6 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
   }
 
   return function (options) {
-    // AC-765 if we are about to replace an old instance of the connect iframe. Destroy it.
-    $content = contentDiv(options.ns);
-    $contentIframe = $content.find("iframe");
-    if($contentIframe.length){
-      $contentIframe.trigger('ra.iframe.destroy');
-      $content.remove();
-    }
 
     var attemptCounter = 0;
     function doCreate() {
@@ -111,39 +107,17 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
     }
     if(typeof ConfluenceMobile !== "undefined"){
       doCreate();
-    } else if ($.isReady) {
+    } else if (AJS.$.isReady) {
       // if the dom is ready then this is being run during an ajax update;
       // in that case, defer creation until the next event loop tick to ensure
       // that updates to the desired container node's parents have completed
       defer(doCreate);
-    }
-    else {
+    } else {
       AJS.toInit(function hostInit(){
-        // Load after confluence editor has finished loading content.
-        if(AJS.Confluence && AJS.Confluence.EditorLoader && AJS.Confluence.EditorLoader.load) {
-          /*
-          NOTE: for some reason, the confluence EditorLoader will 404 sometimes on create page.
-          Because of this, we need to pass our create function as both the success and error callback so we always get called
-           */
-          try {
-            AJS.Confluence.EditorLoader.load(doCreate,doCreate);
-          } catch(e) {
-            try {
-              doCreate();
-            } catch(error) {
-              AJS.log(error);
-            }
-          }
-
-        } else {
-          try {
-              doCreate();
-          } catch(error) {
-            AJS.log(error);
-          }
-        }
+          doCreate();
       });
     }
+
   };
 
 });
@@ -157,8 +131,10 @@ if (!_AP.create) {
 }
 
 if(typeof ConfluenceMobile !== "undefined"){
+  // Disabled, See: AC-1210
+  AJS.log('Connect add-ons on confluence mobile are temporarily disabled., See: https://ecosystem.atlassian.net/browse/AC-1210');
   //confluence will not run scripts loaded in the body of mobile pages by default.
-  ConfluenceMobile.contentEventAggregator.on("render:pre:after-content", function(a, b, content) {
-    window['eval'].call(window, $(content.attributes.body).find(".ap-iframe-body-script").html());
-  });
+  // ConfluenceMobile.contentEventAggregator.on("render:pre:after-content", function(a, b, content) {
+  //   window['eval'].call(window, $(content.attributes.body).find(".ap-iframe-body-script").html());
+  //});
 }

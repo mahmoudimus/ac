@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.util.Dom4jUtils;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
@@ -38,8 +39,9 @@ public class BlueprintWebItemModuleDescriptorFactory
     }
 
     @Override
-    public WebItemModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin plugin, BlueprintModuleBean bean)
+    public WebItemModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin plugin, BlueprintModuleBean bean)
     {
+        ConnectAddonBean addon = moduleProviderContext.getConnectAddonBean();
         Element webItemElement = new DOMElement("web-item");
 
         String webItemKey = BlueprintUtils.getWebItemKey(addon, bean);

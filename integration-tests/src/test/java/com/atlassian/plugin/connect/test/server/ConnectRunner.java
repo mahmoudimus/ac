@@ -1,11 +1,13 @@
 package com.atlassian.plugin.connect.test.server;
 
+import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.api.xmldescriptor.OAuth;
 import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.Environment;
 import com.atlassian.plugin.connect.test.HttpUtils;
 import com.atlassian.plugin.connect.test.Utils;
@@ -53,7 +55,7 @@ public class ConnectRunner
     public static final String UNINSTALLED_PATH = "/uninstalled-lifecycle";
     private static final String REGISTRATION_ROUTE = "/register";
 
-    private final String baseUrl;
+    private final String productBaseUrl;
     private final AtlassianConnectRestClient installer;
     private final ConnectAddonBeanBuilder addonBuilder;
     private final String pluginKey;
@@ -66,23 +68,48 @@ public class ConnectRunner
     private int port;
     private Server server;
     private final Map<String, HttpServlet> routes = newHashMap();
+    private boolean checkInstallationStatus = true;
 
-    public ConnectRunner(String baseUrl, String pluginKey)
+    /**
+     * Create a ConnectRunner for an add-on with randomly generated key
+     * @param testedProduct the product to install the add-on into
+     */
+    public ConnectRunner(TestedProduct testedProduct)
     {
-        this.baseUrl = checkNotNull(baseUrl);
-        this.pluginKey = checkNotNull(pluginKey);
-
-        this.addonBuilder = newConnectAddonBean()
-                .withKey(pluginKey)
-                .withName(pluginKey)
-                .withVersion("1.0");
-
-        this.installer = new AtlassianConnectRestClient(baseUrl, "admin", "admin");
+        this(testedProduct, AddonTestUtils.randomAddOnKey());
     }
 
-    private void register() throws Exception
+    /**
+     * Create a ConnectRunner for an add-on with a specified key
+     * @param testedProduct the product to install the add-on into
+     * @param key the key for the add-on
+     */
+    public ConnectRunner(TestedProduct testedProduct, String key)
     {
-        installer.install("http://localhost:" + port + REGISTRATION_ROUTE);
+        this(testedProduct.getProductInstance().getBaseUrl(), key);
+    }
+
+    /**
+     * Create a ConnectRunner for an add-on with a specified key
+     * @param productBaseUrl the url of the product to install the add-on into
+     * @param key the key for the add-on
+     */
+    public ConnectRunner(String productBaseUrl, String key)
+    {
+        this.productBaseUrl = checkNotNull(productBaseUrl);
+        this.pluginKey = checkNotNull(key);
+
+        this.addonBuilder = newConnectAddonBean()
+                .withKey(key)
+                .withName(key)
+                .withVersion("1.0");
+
+        this.installer = new AtlassianConnectRestClient(productBaseUrl, "admin", "admin");
+    }
+
+    public void register() throws Exception
+    {
+        installer.install("http://localhost:" + port + REGISTRATION_ROUTE, checkInstallationStatus);
     }
 
     public void uninstall() throws Exception
@@ -176,6 +203,12 @@ public class ConnectRunner
     public ConnectRunner setAuthenticationToNone()
     {
         addonBuilder.withAuthentication(AuthenticationBean.none());
+        return this;
+    }
+
+    public ConnectRunner disableInstallationStatusCheck()
+    {
+        checkInstallationStatus = false;
         return this;
     }
 
@@ -318,7 +351,7 @@ public class ConnectRunner
 
     private ImmutableMap<String, Object> getBaseContext()
     {
-        return ImmutableMap.<String, Object>of("port", port, "baseurl", baseUrl);
+        return ImmutableMap.<String, Object>of("port", port, "baseurl", productBaseUrl);
     }
 
     private static final class MustacheServlet extends ContextServlet
@@ -331,7 +364,7 @@ public class ConnectRunner
         }
 
         @Override
-        protected void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
+        public void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
         {
             HttpUtils.renderHtml(resp, path, context);
         }

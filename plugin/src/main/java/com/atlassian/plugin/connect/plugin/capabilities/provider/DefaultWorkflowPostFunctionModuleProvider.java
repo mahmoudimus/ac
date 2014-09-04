@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.workflow.WorkflowPostFunctionModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilder;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
@@ -35,45 +36,53 @@ public class DefaultWorkflowPostFunctionModuleProvider implements WorkflowPostFu
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectAddonBean addon, Plugin theConnectPlugin, String jsonFieldName, List<WorkflowPostFunctionModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, String jsonFieldName, List<WorkflowPostFunctionModuleBean> beans)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
+        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         for (WorkflowPostFunctionModuleBean bean : beans)
         {
             // register render strategies for iframe workflow views
             if (bean.hasCreate())
             {
-                registerIFrameRenderStrategy(addon, bean, WorkflowPostFunctionResource.CREATE, bean.getCreate());
+                registerIFrameRenderStrategy(connectAddonBean, bean, WorkflowPostFunctionResource.CREATE, bean.getCreate());
             }
             if (bean.hasEdit())
             {
-                registerIFrameRenderStrategy(addon, bean, WorkflowPostFunctionResource.EDIT, bean.getEdit());
+                registerIFrameRenderStrategy(connectAddonBean, bean, WorkflowPostFunctionResource.EDIT, bean.getEdit());
             }
             if (bean.hasView())
             {
-                registerIFrameRenderStrategy(addon, bean, WorkflowPostFunctionResource.VIEW, bean.getView());
+                registerIFrameRenderStrategy(connectAddonBean, bean, WorkflowPostFunctionResource.VIEW, bean.getView());
             }
 
-            descriptors.add(beanToDescriptor(addon, theConnectPlugin, bean));
+            descriptors.add(beanToDescriptor(moduleProviderContext, theConnectPlugin, bean));
         }
 
         return descriptors;
     }
 
-    private ModuleDescriptor beanToDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, WorkflowPostFunctionModuleBean bean)
+    private ModuleDescriptor beanToDescriptor(ConnectModuleProviderContext addon, Plugin theConnectPlugin, WorkflowPostFunctionModuleBean bean)
     {
         return workflowPostFunctionFactory.createModuleDescriptor(addon, theConnectPlugin, bean);
     }
 
     private void registerIFrameRenderStrategy(ConnectAddonBean addon, WorkflowPostFunctionModuleBean bean, WorkflowPostFunctionResource resource, UrlBean urlBean)
     {
-        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
+        IFrameRenderStrategyBuilder.InitializedBuilder builder = iFrameRenderStrategyBuilderFactory.builder()
                 .addOn(addon.getKey())
                 .module(bean.getKey(addon))
                 .workflowPostFunctionTemplate(resource)
                 .urlTemplate(urlBean.getUrl())
-                .build();
+                ;
+
+        if (resource.equals(WorkflowPostFunctionResource.VIEW))
+        {
+            builder.ensureUniqueNamespace(true);
+        }
+
+        IFrameRenderStrategy renderStrategy = builder.build();
 
         iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getRawKey(), resource.getResource(), renderStrategy);
     }

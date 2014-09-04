@@ -24,6 +24,7 @@ public class XmlDescriptorAnnotationProcessor extends CollectingAnnotationProces
     @Override
     protected String getExtraDetails(Element element)
     {
-        return element.getAnnotation(XmlDescriptor.class).comment();
+        final XmlDescriptor annotation = element.getAnnotation(XmlDescriptor.class);
+        return null == annotation ? null : annotation.comment();
     }
 }

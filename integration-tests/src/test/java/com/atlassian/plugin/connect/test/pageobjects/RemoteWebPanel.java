@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import com.google.common.base.Function;
 import org.openqa.selenium.By;
@@ -16,9 +17,11 @@ public class RemoteWebPanel extends AbstractConnectIFrameComponent<RemoteWebPane
      * TODO remove when we drop support for XML descriptors.
      */
     @Deprecated
+    @XmlDescriptor
     private final String extraPrefix;
 
     @Deprecated
+    @XmlDescriptor
     public RemoteWebPanel(final String id, String extraPrefix)
     {
         this.id = id;
@@ -68,6 +71,11 @@ public class RemoteWebPanel extends AbstractConnectIFrameComponent<RemoteWebPane
     public String getPageId()
     {
         return getFromQueryString("page_id");
+    }
+
+    public String getContentId()
+    {
+        return getFromQueryString("content_id");
     }
 
     public String getCustomMessage()

@@ -1,12 +1,12 @@
-# Local Add-on Development
+# Local add-on development
 
 Most add-on developers will go through three phases during development: developing with a local version of the
-Atlassian product, testing with an OnDemand instance, and finally making the add-on available to your customers
+Atlassian product, testing with a cloud instance, and finally making the add-on available to your customers
  (whether the customer is just you or you intend to distribute it to the public).
 
 This document explains how you would go about developing your add-on with a local copy of the Atlassian product.
-[Installing in OnDemand](./installing-in-ondemand.html) explains how to use private Marketplace Listings to test in
-OnDemand, and [Selling on  Marketplace](./selling-on-marketplace.html) explains how to release your add-on to the
+[Installing in the cloud](./cloud-installation.html) explains how to use private Marketplace listings to test in
+cloud instances, and [Selling on  Marketplace](./selling-on-marketplace.html) explains how to release your add-on to the
 public.
 
 ## Step 1. Start the local Atlassian application
@@ -19,18 +19,18 @@ don't need the plugin building capabilities of the SDK, you can use its features
 installing and starting Atlassian applications.
 
 We recommend you start the host application using the SDK command shown here. Atlassian Connect is only present in
-Atlassian OnDemand and not yet included with Download distributions of our software. Therefore certain components, including
-the Atlassian Connect Framework itself, are included here in the startup command. Without these components present,
-Connect add-ons cannot be installed. If you are not using the commands below, you must ensure all of the components
-listed in the `--bundled-plugins` argument are present in your Atlassian application.
+Atlassian cloud products and not yet included with locally-hosted server distributions of our software. Therefore certain 
+components, including the Atlassian Connect Framework itself, are included here in the startup command. Without 
+these components present, Connect add-ons cannot be installed. If you are not using the commands below, ensure 
+all of the components listed in the `--bundled-plugins` argument are present in your Atlassian application.
 
-You can start JIRA or Confluence with Atlassian Connect as follows:
+You can start JIRA or Confluence Cloud with Atlassian Connect as follows:
 
 #### JIRA
-<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-07-013 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.0-beta.4,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.4,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.16.5,com.atlassian.webhooks:atlassian-webhooks-plugin:1.0.5 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-08-005-WN --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.0-rc.4,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.4,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.17.2,com.atlassian.webhooks:atlassian-webhooks-plugin:1.0.6 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
 
 #### Confluence
-<pre><code data-lang="text">atlas-run-standalone --product confluence --version 5.5-OD-27-012 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.0-beta.4,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.4,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.16.5,com.atlassian.webhooks:atlassian-webhooks-plugin:1.0.5 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+<pre><code data-lang="text">atlas-run-standalone --product confluence --version 5.5-OD-28-010 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.0-rc.4,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.4,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.17.2,com.atlassian.webhooks:atlassian-webhooks-plugin:1.0.6 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
 
 Starting the applications requires you to specify a number of hard-coded component version numbers as shown. This
 includes the version of Atlassian Connect framework. Those component versions will change as Atlassian Connect
@@ -64,7 +64,7 @@ The Administration page will display.
 6. Scroll to the top of the page and click the __Upload Add-on__ link.
 7. Enter the URL to the hosted location of your plugin descriptor. In this example, the URL is
 similar to the following:  `http://localhost:8000/atlassian-connect.json`. (If you are installing
-to an OnDemand instance, the URL must be served from the Marketplace, and will look like `https://marketplace.atlassian.com/download/plugins/com.example.add-on/version/39/descriptor?access-token=9ad5037b`)
+to a cloud instance, the URL must be served from the Marketplace, and will look like `https://marketplace.atlassian.com/download/plugins/com.example.add-on/version/39/descriptor?access-token=9ad5037b`)
 8. Press __Upload__. The system takes a moment to upload and register your plugin. It displays the
 __Installed and ready to go__ dialog when installation is complete. <img width="100%" src="../assets/images/installsuccess.jpeg" />
 9. Click __Close__.

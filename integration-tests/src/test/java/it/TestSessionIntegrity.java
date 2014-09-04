@@ -3,13 +3,14 @@ package it;
 import com.atlassian.jwt.core.writer.NimbusJwtWriterFactory;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
 import it.util.JwtAuthorizationGenerator;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -39,7 +40,7 @@ public class TestSessionIntegrity extends ConnectWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         installHandler = ConnectAppServlets.installHandlerServlet();
-        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), RemotePluginUtils.randomPluginKey())
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .addModule("generalPages", newPageBean()
                         .withKey("page")
                         .withName(new I18nProperty("Page", null))
@@ -65,7 +66,7 @@ public class TestSessionIntegrity extends ConnectWebDriverTestBase
     @Test
     public void addOnUserDoesNotInheritTheSession() throws Exception
     {
-        loginAsAdmin();
+        login(TestUser.ADMIN);
 
         InstallHandlerServlet.InstallPayload installPayload = installHandler.getInstallPayload();
 
@@ -98,7 +99,7 @@ public class TestSessionIntegrity extends ConnectWebDriverTestBase
         driver.get(baseUrl + "/rest/remoteplugintest/1/user");
 
         // We destroy the session, so 'anonymous' is expected, not the add-on user
-        assertTrue(driver.getPageSource().contains("<user><name>" + TestConstants.ANONYMOUS + "</name></user>"));
+        assertTrue(driver.getPageSource().contains("<user><name>anonymous</name></user>"));
     }
 
 }

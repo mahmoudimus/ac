@@ -8,7 +8,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- * A webhook is a standard mechanism for implementing HTTP callbacks. Atlassian OnDemand applications can execute
+ * A webhook is a standard mechanism for implementing HTTP callbacks. Atlassian-hosted cloud applications can execute
  * webhooks that your add-ons can use to be notified of certain events that happen in JIRA or Confluence.
  *
  * Just to give you an idea of how you can use them in add-ons, here are a few sample webhook events:

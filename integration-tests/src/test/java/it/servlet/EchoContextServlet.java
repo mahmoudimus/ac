@@ -18,14 +18,14 @@ public class EchoContextServlet extends ContextServlet
     private volatile BlockingDeque<Map<String, Object>> contexts = new LinkedBlockingDeque<Map<String, Object>>();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
+    public void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
     {
         contexts.push(Maps.newHashMap(context));
         HttpUtils.renderHtml(resp, "http-context.mu", context);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
+    public void doPost(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context) throws ServletException, IOException
     {
         doGet(req, resp, context);
     }

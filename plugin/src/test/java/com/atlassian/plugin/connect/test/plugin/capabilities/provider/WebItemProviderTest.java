@@ -11,6 +11,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModu
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IconModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ParamsModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultWebItemModuleProvider;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
@@ -57,6 +59,7 @@ public class WebItemProviderTest
     private HttpServletRequest servletRequest;
     private IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    private ConnectModuleProviderContext moduleProviderContext;
     private ConnectAddonBean addon;
 
     @Before
@@ -64,6 +67,7 @@ public class WebItemProviderTest
     {
         plugin = new PluginForTests("my-key", "My Plugin");
         this.addon = newConnectAddonBean().withKey("my-key").build();
+        this.moduleProviderContext = new DefaultConnectModuleProviderContext(addon);
         RemotablePluginAccessorFactoryForTests remotablePluginAccessorFactoryForTests = new RemotablePluginAccessorFactoryForTests();
         webInterfaceManager = mock(WebInterfaceManager.class);
         webFragmentHelper = mock(WebFragmentHelper.class);
@@ -107,7 +111,7 @@ public class WebItemProviderTest
 
         DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(addon, plugin, JSON_FIELD_NAME, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(moduleProviderContext, plugin, JSON_FIELD_NAME, newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -129,7 +133,7 @@ public class WebItemProviderTest
 
         DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(addon, plugin, JSON_FIELD_NAME, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(moduleProviderContext, plugin, JSON_FIELD_NAME, newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -151,7 +155,7 @@ public class WebItemProviderTest
 
         DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(addon, plugin, JSON_FIELD_NAME, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(moduleProviderContext, plugin, JSON_FIELD_NAME, newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -172,7 +176,7 @@ public class WebItemProviderTest
 
         DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(addon, plugin, JSON_FIELD_NAME, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(moduleProviderContext, plugin, JSON_FIELD_NAME, newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -194,7 +198,7 @@ public class WebItemProviderTest
 
         DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(addon, plugin, JSON_FIELD_NAME, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(moduleProviderContext, plugin, JSON_FIELD_NAME, newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -216,7 +220,7 @@ public class WebItemProviderTest
 
         DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(addon, plugin, JSON_FIELD_NAME, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(moduleProviderContext, plugin, JSON_FIELD_NAME, newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -243,7 +247,7 @@ public class WebItemProviderTest
 
         DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(addon, plugin, JSON_FIELD_NAME, newArrayList(bean, bean2));
+        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(moduleProviderContext, plugin, JSON_FIELD_NAME, newArrayList(bean, bean2));
 
         assertEquals(2, descriptors.size());
 

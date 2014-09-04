@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 
 /**
@@ -12,20 +13,13 @@ import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 public class JiraProjectAdministrationPage implements Page
 {
     private final String projectKey;
-    private final String extraPrefix;
 
     @Inject
     private PageBinder pageBinder;
 
     public JiraProjectAdministrationPage(String projectKey)
     {
-        this(projectKey,"");
-    }
-
-    public JiraProjectAdministrationPage(String projectKey, String extraPrefix)
-    {
         this.projectKey = projectKey;
-        this.extraPrefix = extraPrefix;
     }
 
     @Override
@@ -36,7 +30,7 @@ public class JiraProjectAdministrationPage implements Page
 
     public RemoteWebPanel findWebPanel(String panelId)
     {
-        return pageBinder.bind(RemoteWebPanel.class, panelId, extraPrefix);
+        return pageBinder.bind(RemoteWebPanel.class, panelId);
     }
 }
 

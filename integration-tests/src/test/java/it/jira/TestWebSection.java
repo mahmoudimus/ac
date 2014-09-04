@@ -3,10 +3,11 @@ package it.jira;
 import com.atlassian.jira.pageobjects.components.menu.JiraAuiDropdownMenu;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.RemotePluginUtils;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -20,7 +21,7 @@ import static org.junit.Assert.*;
 
 public class TestWebSection extends JiraWebDriverTestBase
 {
-    private static final String PLUGIN_KEY = RemotePluginUtils.randomPluginKey();
+    private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
 
     private static final String JIRA_HEADER_LOCATION = "system.top.navigation.bar";
 
@@ -86,8 +87,7 @@ public class TestWebSection extends JiraWebDriverTestBase
     @Test
     public void testWebItemFoundWithinWebSection()
     {
-        loginAsAdmin();
-        product.visit(JiraViewProjectPage.class, project.getKey());
+        loginAndVisit(TestUser.ADMIN, JiraViewProjectPage.class, project.getKey());
 
         AddonDropdownMenu dropdown = connectPageOperations.getPageBinder().bind(AddonDropdownMenu.class, By.id(addonAndModuleKey(PLUGIN_KEY, HEADER_WEB_ITEM_ID)), By.id(addonAndModuleKey(PLUGIN_KEY, DROPDOWN_CONTENT_ID)));
 

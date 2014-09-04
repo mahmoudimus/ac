@@ -16,7 +16,8 @@ import java.util.List;
 
 @Component
 @ExportAsDevService
-public class DefaultBlueprintModuleProvider implements BlueprintModuleProvider {
+public class DefaultBlueprintModuleProvider implements BlueprintModuleProvider
+{
 
     private final BlueprintWebItemModuleDescriptorFactory blueprintModuleWebItemDescriptorFactory;
     private final BlueprintModuleDescriptorFactory blueprintModuleDescriptorFactory;
@@ -25,32 +26,33 @@ public class DefaultBlueprintModuleProvider implements BlueprintModuleProvider {
     @Autowired
     public DefaultBlueprintModuleProvider(BlueprintWebItemModuleDescriptorFactory blueprintModuleWebItemDescriptorFactory,
                                           BlueprintModuleDescriptorFactory blueprintModuleDescriptorFactory,
-                                          BlueprintContentTemplateModuleDescriptorFactory blueprintContentTemplateModuleDescriptorFactory) {
+                                          BlueprintContentTemplateModuleDescriptorFactory blueprintContentTemplateModuleDescriptorFactory)
+    {
         this.blueprintModuleWebItemDescriptorFactory = blueprintModuleWebItemDescriptorFactory;
         this.blueprintModuleDescriptorFactory = blueprintModuleDescriptorFactory;
         this.blueprintContentTemplateModuleDescriptorFactory = blueprintContentTemplateModuleDescriptorFactory;
     }
 
-
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectAddonBean connectAddonBean, Plugin theConnectPlugin,
-                                                 String jsonFieldName, List<BlueprintModuleBean> beans) {
+    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin plugin, String jsonFieldName, List<BlueprintModuleBean> beans)
+    {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 
-        for (BlueprintModuleBean bean : beans) {
+        for (BlueprintModuleBean bean : beans)
+        {
 
             builder.add(
-                    blueprintModuleWebItemDescriptorFactory.createModuleDescriptor(connectAddonBean,
-                    theConnectPlugin,
-                    bean));
+                    blueprintModuleWebItemDescriptorFactory.createModuleDescriptor(moduleProviderContext,
+                            plugin,
+                            bean));
             builder.add(
-                    blueprintContentTemplateModuleDescriptorFactory.createModuleDescriptor(connectAddonBean,
-                    theConnectPlugin,
-                    bean));
+                    blueprintContentTemplateModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext,
+                            plugin,
+                            bean));
             builder.add(
-                    blueprintModuleDescriptorFactory.createModuleDescriptor(connectAddonBean,
-                    theConnectPlugin,
-                    bean));
+                    blueprintModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext,
+                            plugin,
+                            bean));
 
         }
 

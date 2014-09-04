@@ -1,34 +1,30 @@
 package it.com.atlassian.plugin.connect.provider;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
-import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
+import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
+import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
+import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -59,8 +55,9 @@ public class WebItemModuleProviderTest
     private final TestAuthenticator testAuthenticator;
     private final PluginAccessor pluginAccessor;
     private HttpServletRequest servletRequest;
+    private ConnectModuleProviderContext moduleProviderContext;
     private ConnectAddonBean addon;
-    
+
     private String pluginKey;
 
     public WebItemModuleProviderTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller,
@@ -83,6 +80,7 @@ public class WebItemModuleProviderTest
     {
         this.pluginKey = randomPluginKey();
         this.addon = newConnectAddonBean().withKey(pluginKey).build();
+        this.moduleProviderContext = new DefaultConnectModuleProviderContext(addon);
         this.servletRequest = mock(HttpServletRequest.class);
         when(servletRequest.getContextPath()).thenReturn(CONTEXT_PATH);
     }
@@ -98,7 +96,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = getConnectPlugin();
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean));
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(moduleProviderContext, plugin, "webItems", newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -120,7 +118,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = getConnectPlugin();
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean));
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(moduleProviderContext, plugin, "webItems", newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -142,7 +140,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = getConnectPlugin();
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean));
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(moduleProviderContext, plugin, "webItems", newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -164,14 +162,15 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = getConnectPlugin();
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean));
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(moduleProviderContext, plugin, "webItems", newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
         WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
         descriptor.enabled();
 
-        assertEquals(CONTEXT_PATH + "/plugins/servlet/ac/" + addon.getKey() + "/some-page-key", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
+        assertEquals(CONTEXT_PATH + "/plugins/servlet/ac/" + addon.getKey() + "/some-page-key",
+                descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
     }
 
     @Test
@@ -224,7 +223,7 @@ public class WebItemModuleProviderTest
         {
             if (null != plugin)
             {
-                testPluginInstaller.uninstallAddon(plugin);
+                testPluginInstaller.uninstallJsonAddon(plugin);
             }
         }
     }
@@ -241,7 +240,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = getConnectPlugin();
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, plugin, "webItems", newArrayList(bean));
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(moduleProviderContext, plugin, "webItems", newArrayList(bean));
 
         assertEquals(1, descriptors.size());
 
@@ -275,20 +274,21 @@ public class WebItemModuleProviderTest
         {
             plugin = testPluginInstaller.installAddon(addon);
 
-            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, getConnectPlugin(), "webItems", newArrayList(bean));
+            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(moduleProviderContext,
+                    getConnectPlugin(), "webItems", newArrayList(bean));
 
             assertEquals(1, descriptors.size());
 
             WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
             descriptor.enabled();
 
-            assertTrue(descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()).startsWith(BASE_URL + "/my/addon"));
+            assertAddOnLinkHrefIsCorrect(descriptor, bean, addon);
         }
         finally
         {
             if (null != plugin)
             {
-                testPluginInstaller.uninstallAddon(plugin);
+                testPluginInstaller.uninstallJsonAddon(plugin);
             }
         }
     }
@@ -304,9 +304,11 @@ public class WebItemModuleProviderTest
                 .withTarget(
                         newWebItemTargetBean()
                                 .withType(WebItemTargetType.dialog)
-                                .withOption("width", "100")
-                                .withOption("height", "300px")
-                                .withOption("onHover", true)
+                                .withOptions(DialogOptions.newDialogOptions()
+                                                .withWidth("100")
+                                                .withHeight("300px")
+                                                .build()
+                                )
                                 .build()
                 )
                 .build();
@@ -325,14 +327,15 @@ public class WebItemModuleProviderTest
         {
             plugin = testPluginInstaller.installAddon(addon);
 
-            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, getConnectPlugin(), "webItems", newArrayList(bean));
+            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(
+                    moduleProviderContext, getConnectPlugin(), "webItems", newArrayList(bean));
 
             assertEquals(1, descriptors.size());
 
             WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
             descriptor.enabled();
 
-            assertTrue(descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()).startsWith(BASE_URL + "/my/addon"));
+            assertAddOnLinkHrefIsCorrect(descriptor, bean, addon);
             assertTrue("expected param [-acopt-width]", descriptor.getParams().containsKey("-acopt-width"));
             assertTrue("expected param [-acopt-height]", descriptor.getParams().containsKey("-acopt-height"));
         }
@@ -340,7 +343,7 @@ public class WebItemModuleProviderTest
         {
             if (null != plugin)
             {
-                testPluginInstaller.uninstallAddon(plugin);
+                testPluginInstaller.uninstallJsonAddon(plugin);
             }
         }
     }
@@ -376,7 +379,8 @@ public class WebItemModuleProviderTest
         {
             plugin = testPluginInstaller.installAddon(addon);
 
-            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(addon, getConnectPlugin(), "webItems", newArrayList(bean, bean2));
+            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(moduleProviderContext,
+                    getConnectPlugin(), "webItems", newArrayList(bean, bean2));
 
             assertEquals(2, descriptors.size());
 
@@ -387,13 +391,13 @@ public class WebItemModuleProviderTest
             descriptor2.enabled();
 
             assertEquals("http://www.google.com", descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
-            assertTrue(descriptor2.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()).startsWith(BASE_URL + "/my/addon"));
+            assertAddOnLinkHrefIsCorrect(descriptor2, bean2, addon);
         }
         finally
         {
             if (null != plugin)
             {
-                testPluginInstaller.uninstallAddon(plugin);
+                testPluginInstaller.uninstallJsonAddon(plugin);
             }
         }
     }
@@ -428,10 +432,10 @@ public class WebItemModuleProviderTest
             Map<String,Object> vars = new HashMap<String, Object>();
             vars.put("var","ooops");
             vars.put("awesome","awesome-ooops");
-            
+
             String label = descriptor.getWebLabel().getDisplayableLabel(servletRequest,vars);
             String tooltip = descriptor.getTooltip().getDisplayableLabel(servletRequest,vars);
-            
+
             //by the time we get the displayable label, it's already gone through velocity and so we get the literal variables non-escaped.
             assertEquals(VELOCITY_LABEL, label);
             assertEquals(VELOCITY_TOOLTIP, descriptor.getTooltip().getDisplayableLabel(servletRequest,vars));
@@ -441,11 +445,22 @@ public class WebItemModuleProviderTest
         {
             if (null != plugin)
             {
-                testPluginInstaller.uninstallAddon(plugin);
+                testPluginInstaller.uninstallJsonAddon(plugin);
             }
         }
     }
-    
+
+    private void assertAddOnLinkHrefIsCorrect(WebItemModuleDescriptor descriptor, WebItemModuleBean webItemModuleBean, ConnectAddonBean addOnBean)
+    {
+        final WebItemTargetBean target = webItemModuleBean.getTarget();
+        final String prefix = target.isDialogTarget() || target.isInlineDialogTarget()
+                ? ConnectIFrameServlet.iFrameServletPath(pluginKey, webItemModuleBean.getKey(addOnBean))
+                : BASE_URL + "/my/addon";
+        final String href = descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>());
+        final String message = String.format("Expecting the href to start with '%s' but it was '%s'", prefix, href);
+        assertTrue(message, href.startsWith(prefix));
+    }
+
     private Plugin getConnectPlugin()
     {
         return pluginAccessor.getPlugin(ConnectPluginInfo.getPluginKey());

@@ -42,7 +42,8 @@ import java.util.regex.Pattern;
  * make better use of {@link IFrameUriBuilder} and friends.
  */
 @ConfluenceComponent
-@XmlDescriptor
+@XmlDescriptor(comment = "once we drop XML, refactor this to take into account that we no longer support specifying a " +
+        "method type and to make better use of IFrameUriBuilder and friends")
 public class MacroContentManager implements DisposableBean
 {
     private final EventPublisher eventPublisher;

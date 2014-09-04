@@ -1,11 +1,8 @@
 package com.atlassian.plugin.connect.test.client;
 
-import java.net.URI;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
-
+import cc.plural.jsonij.JSON;
 import com.google.common.base.Strings;
-
+import it.util.TestUser;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpDelete;
@@ -15,8 +12,8 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 
-import cc.plural.jsonij.JSON;
-import cc.plural.jsonij.Value;
+import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 public final class AtlassianConnectRestClient
 {
@@ -26,8 +23,6 @@ public final class AtlassianConnectRestClient
     private final UserRequestSender userRequestSender;
 
     public static final String UPM_URL_PATH = "/rest/plugins/1.0/";
-    private static final String UPM_TOKEN_HEADER = "upm-token";
-    private static final Random RAND = new Random();
 
     public AtlassianConnectRestClient(String baseUrl, String username, String password)
     {
@@ -38,6 +33,13 @@ public final class AtlassianConnectRestClient
     }
 
     public void install(String registerUrl) throws Exception
+    {
+        install(registerUrl, true);
+    }
+
+    // this variant is useful when testing install failure scenarios. i.e. where we expect the install to fail
+    // It will timeout much quicker and swallow the exception that would terminate the test otherwise
+    public void install(String registerUrl, boolean checkStatus) throws Exception
     {
         //get a upm token
         String token = getUpmToken();
@@ -63,9 +65,25 @@ public final class AtlassianConnectRestClient
             {
                 URI uri = new URI(baseUrl);
                 final String statusUrl = uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + json.get("links").get("self").getString();
-    
-                InstallStatusChecker statusChecker = new InstallStatusChecker(userRequestSender, statusUrl, 1, TimeUnit.MINUTES, 500, TimeUnit.MILLISECONDS);
-                statusChecker.run(defaultUsername, defaultPassword);
+
+                if (checkStatus)
+                {
+                    InstallStatusChecker statusChecker = new InstallStatusChecker(userRequestSender, statusUrl, 1, TimeUnit.MINUTES, 500, TimeUnit.MILLISECONDS);
+                    statusChecker.run(defaultUsername, defaultPassword);
+                }
+                else
+                {
+                    InstallStatusChecker statusChecker = new InstallStatusChecker(userRequestSender, statusUrl, 5, TimeUnit.SECONDS,
+                            500, TimeUnit.MILLISECONDS);
+                    try
+                    {
+                        statusChecker.run(defaultUsername, defaultPassword);
+                    }
+                    catch (Exception e)
+                    {
+                    }
+
+                }
             }
         }
     }

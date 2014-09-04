@@ -19,6 +19,10 @@ var downloadQueue = async.queue(function (task, callback) {
 downloadQueue.drain = function () {
 }
 
+var includePrivateAddons = function(opts) {
+    return _.contains(opts.status, 'private');
+}
+
 var getAddonPage = function(opts, uri, callback) {
     if (opts.debug) {
         console.log("downloading: ".grey + opts.baseUrl + uri);
@@ -59,6 +63,10 @@ var getAddonPage = function(opts, uri, callback) {
                     url = opts.baseUrl + _.find(addon.links, {
                         'rel': opts.auth ? 'tiny-url' : 'alternate' // no tiny-url for unauthenticated requests?
                     }).href;
+
+                if (opts.status && !_.contains(opts.status, status)) {
+                    return;
+                }
 
                 if (opts.type && opts.type !== type) {
                     return;
@@ -114,12 +122,18 @@ var getCliOpts = function(callback) {
         })
         .option('includePrivate', {
             flag: true,
-            help: 'Include private add-ons'
+            help: 'Include private add-ons. Deprecated, use --status'
         })
         .option('quiet', {
             abbr: 'q',
             flag: true,
             help: 'Don\'t debug spam'
+        })
+        .option('status', {
+            abbr: 's',
+            list: true,
+            choices: ['private', 'public', 'rejected'],
+            help: 'Filter add-ons by status. Valid options: [private, public, rejected]'
         })
         .option('type', {
             abbr: 't',
@@ -148,7 +162,12 @@ exports.run = function(runOpts) {
     var uri = opts.uri;
     delete opts["uri"];
 
-    if (opts.includePrivate) {
+    // opts.includePrivate is deprecated now
+    if (opts.includePrivate && !includePrivateAddons(opts)) {
+        opts.status.push('private');
+    }
+
+    if (includePrivateAddons(opts)) {
         uri = uri + "&includePrivate=true";
     }
 
@@ -159,7 +178,7 @@ exports.run = function(runOpts) {
         }
     }
 
-    if (opts.includePrivate && !opts.auth) {
+    if (includePrivateAddons(opts) && !opts.auth) {
         nomnom.help();
         console.log("ERROR: To retrieve private add-ons, credentials are required.");
         return;

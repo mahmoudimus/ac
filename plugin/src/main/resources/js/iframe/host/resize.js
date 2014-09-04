@@ -12,6 +12,8 @@ _AP.define("resize", ["_dollar", "_rpc"], function ($, rpc) {
             init: function (config, xdm) {
                 xdm.resize = _.debounce(function resize ($, width, height) {
                     $(this.iframe).css({width: width, height: height});
+                    var nexus = $(this.iframe).closest('.ap-container');
+                    nexus.trigger('resized', {width: width, height: height});
                 });
             },
             internals: {
@@ -26,7 +28,7 @@ _AP.define("resize", ["_dollar", "_rpc"], function ($, rpc) {
                         // This adds border between the iframe and the page footer as the connect addon has scrolling content and can't do this
                         $(this.iframe).addClass("full-size-general-page");
                         $(window).on('resize', function(){
-                            resizeHander(this.iframe);
+                            resizeHandler(this.iframe);
                         });
                         resizeHandler(this.iframe);
                     }

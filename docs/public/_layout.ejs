@@ -1,4 +1,4 @@
-<% var auiVersion = "5.4.1" %>
+<% var auiVersion = "5.6.15" %>
 
 <%
    // calculate the relative path to the document root from the page depth
@@ -20,24 +20,24 @@
     <link rel="icon" type="image/png" href="../docs/img/favicon.png" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/codemirror.min.css" media="all">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/theme/neat.min.css" media="all">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/aui/css/aui.css" media="all">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/aui/css/aui-experimental.css" media="all">
-    <!--[if lt IE 9]><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/aui/css/aui-ie.css" media="all"><![endif]-->
-    <!--[if IE 9]><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/aui/css/aui-ie9.css" media="all"><![endif]-->
+    <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/<%= auiVersion %>/css/aui.css" media="all">
+    <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/<%= auiVersion %>/css/aui-experimental.css" media="all">
+    <!--[if IE 9]><link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/<%= auiVersion %>/css/aui-ie9.css" media="all"><![endif]-->
     <link rel="stylesheet" href="<%= relDocRoot %>assets/css/styles.css" media="all">
     <script src="//code.jquery.com/jquery-1.8.3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.3.0/lodash.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/aui/js/aui-all.js"></script>
+    <script src="//aui-cdn.atlassian.com/aui-adg/<%= auiVersion %>/js/aui.min.js"></script>
+    <script src="//aui-cdn.atlassian.com/aui-adg/<%= auiVersion %>/js/aui-soy.min.js"></script>
+    <script src="//aui-cdn.atlassian.com/aui-adg/<%= auiVersion %>/js/aui-experimental.min.js"></script>
+
     <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/codemirror.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/mode/javascript/javascript.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/mode/clike/clike.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.4/sequence-diagram-min.js"></script>
-
-    <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/aui/<%= auiVersion %>/js/aui-ie.js"></script><![endif]-->
 </head>
 
-<body id="ac" class="aui-layout aui-theme-default aui-page-fixed">
+<body id="ac" class="aui-layout aui-theme-default aui-page-hybrid">
     <div id="page">
         <header id="header" role="banner">
             <nav class="aui-header aui-dropdown2-trigger-group" role="navigation">
@@ -56,6 +56,12 @@
                                     <span class="aui-icon aui-icon-small aui-iconfont-help">Help</span>
                                     Feedback
                                 </a>
+                            </li>
+                            <li>
+                                <form action="<%= relDocRoot %>resources/search.html" method="get" class="aui-quicksearch">
+                                    <label for="search" class="assistive">Search</label>
+                                    <input id="search" class="search" type="text" placeholder="Search..." name="q" />
+                                </form>
                             </li>
                         </ul>
                     </div>
@@ -181,20 +187,37 @@
     </script>
     <!-- Google Analytics -->
     <script type="text/javascript">
+        if(location.hostname === "developer.atlassian.com") {
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-6032469-43']);
+            _gaq.push(['_trackPageview']);
 
-    if(location.hostname === "developer.atlassian.com") {
-
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-6032469-43']);
-        _gaq.push(['_trackPageview']);
-
-        (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-        })();
-    };
-
+            (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+        }
+    </script>
+    <script type="text/javascript">
+        adroll_adv_id = "32VY3BYAQRHLDDVMBEAGU2";
+        adroll_pix_id = "7Q44S6SDXNA4NE4TSAUFGF";
+        (function () {
+            var oldonload = window.onload;
+            window.onload = function() {
+               __adroll_loaded=true;
+               var scr = document.createElement("script");
+               var host = (("https:" == document.location.protocol) ? "https://s.adroll.com" : "http://a.adroll.com");
+               scr.setAttribute('async', 'true');
+               scr.type = "text/javascript";
+               scr.src = host + "/j/roundtrip.js";
+               ((document.getElementsByTagName('head') || [null])[0] ||
+                document.getElementsByTagName('script')[0].parentNode).appendChild(scr);
+               if(oldonload){
+                   oldonload()
+               }
+            };
+        }());
     </script>
 </body>
 

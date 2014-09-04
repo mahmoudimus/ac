@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.imports;
 
 import com.atlassian.bandana.BandanaManager;
 import com.atlassian.confluence.content.render.xhtml.StorageFormatCleaner;
+import com.atlassian.confluence.core.ContentEntityManager;
 import com.atlassian.confluence.pages.PageManager;
 import com.atlassian.confluence.plugin.descriptor.web.ConfluenceWebFragmentHelper;
 import com.atlassian.confluence.security.PermissionManager;
@@ -17,6 +18,7 @@ import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.core.task.MultiQueueTaskManager;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ConfluenceImport;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.inject.Inject;
 
@@ -30,9 +32,12 @@ public class ConfluenceImports
 {
     @Inject
     public ConfluenceImports(
-            // this one's a component from an external jar, not an OSGi service
+            // these two are components from an external jar, not an OSGi service
             @ConfluenceComponent ConfluenceWebFragmentHelper confluenceWebFragmentHelper,
+            @ConfluenceComponent ("permissionsAdministratorBuilder") PermissionsAdministratorBuilder permissionsAdministratorBuilder,
+
             @ConfluenceImport BandanaManager bandanaManager,
+            @ConfluenceImport @Qualifier("contentEntityManager") ContentEntityManager contentEntityManager,
             @ConfluenceImport I18NBeanFactory i18NBeanFactory,
             @ConfluenceImport MultiQueueTaskManager multiQueueTaskManager,
             @ConfluenceImport PageManager pageManager,
@@ -42,10 +47,9 @@ public class ConfluenceImports
             @ConfluenceImport SpacePermissionManager spacePermissionManager,
             @ConfluenceImport StorageFormatCleaner storageFormatCleaner,
             @ConfluenceImport SystemInformationService systemInformationService,
-            @ConfluenceImport WebSudoManager webSudoManager,
             @ConfluenceImport UserAccessor userAccessor,
-            @ConfluenceImport XhtmlContent xhtmlContent,
-            @ConfluenceComponent ("permissionsAdministratorBuilder") PermissionsAdministratorBuilder permissionsAdministratorBuilder // not an OSGi service
+            @ConfluenceImport WebSudoManager webSudoManager,
+            @ConfluenceImport XhtmlContent xhtmlContent
     )
     {
     }

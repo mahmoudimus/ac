@@ -4,9 +4,10 @@ import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroTestSuitePage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
-import com.atlassian.plugin.connect.test.server.AtlassianConnectAddOnRunner;
+import com.atlassian.plugin.connect.test.server.XMLAddOnRunner;
 import com.atlassian.plugin.connect.test.server.module.*;
 import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
 import org.junit.After;
 import org.junit.Test;
 
@@ -22,14 +23,13 @@ import java.util.Map;
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.test.Utils.loadResourceAsString;
 import static com.google.common.collect.Maps.newHashMap;
-import static it.TestConstants.BETTY_USERNAME;
 import static it.servlet.ConnectAppServlets.macroExtended;
 import static org.junit.Assert.*;
 
 @XmlDescriptor
 public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
 {
-    private AtlassianConnectAddOnRunner remotePlugin;
+    private XMLAddOnRunner remotePlugin;
 
     @After
     public void cleanup() throws Exception
@@ -44,7 +44,7 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
     @Test
     public void testContextParam() throws Exception
     {
-        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl())
+        remotePlugin = new XMLAddOnRunner(product.getProductInstance().getBaseUrl())
                 .addOAuth()
                 .addPermission("read_content")
                 .addPermission("read_users_and_groups")
@@ -74,16 +74,15 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
                 .start();
 
         logout();
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "paramTest", loadResourceAsString("confluence/test-page.xhtml"));
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(TestUser.ADMIN), "ds", "paramTest", loadResourceAsString("confluence/test-page.xhtml"));
 
 
-        loginAsBetty();
-        Map<String, String> params = product.visit(ConfluenceMacroTestSuitePage.class, pageData.getTitle())
+        Map<String, String> params = loginAndVisit(TestUser.BETTY, ConfluenceMacroTestSuitePage.class, pageData.getTitle())
                                             .visitGeneralLink("macroParamGeneralPage")
                                             .getIframeQueryParams();
 
         assertEquals(pageData.getId(), params.get("page_id"));
-        assertEquals(BETTY_USERNAME, params.get("user_id"));
+        assertEquals(TestUser.BETTY.getUsername(), params.get("user_id"));
         assertTrue(params.containsKey("user_key"));
     }
 
@@ -91,14 +90,14 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
     public void testMacroWithHeaderParams() throws Exception
     {
         logout();
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(new ConfluenceOps.ConfluenceUser("admin", "admin")), "ds", "headerParamTest",
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(TestUser.ADMIN), "ds", "headerParamTest",
                 "<div class=\"header-macro\">\n" +
                         "   <ac:macro ac:name=\"header\" />\n" +
                         "</div>"
         );
 
         MyParamsMacroServlet macroServlet = new MyParamsMacroServlet();
-        remotePlugin = new AtlassianConnectAddOnRunner(product.getProductInstance().getBaseUrl(), "header")
+        remotePlugin = new XMLAddOnRunner(product.getProductInstance().getBaseUrl(), "header")
                 .add(RemoteMacroModule.key("header")
                                       .path("/header")
                                       .contextParameters(
@@ -106,11 +105,11 @@ public final class TestConfluenceMacroParams extends ConfluenceWebDriverTestBase
                                               ContextParameter.name("user_id").header())
                                       .resource(macroServlet))
                 .start();
-        loginAsBetty();
-        product.visit(ConfluenceMacroPage.class, pageData.getTitle());
+
+        loginAndVisit(TestUser.BETTY, ConfluenceMacroPage.class, pageData.getTitle());
         assertEquals(pageData.getId(), macroServlet.getQueryParams().get("page_id"));
         assertFalse(macroServlet.getQueryParams().containsKey("user_id"));
-        assertEquals(BETTY_USERNAME, macroServlet.getHeaderParams().get("user_id"));
+        assertEquals(TestUser.BETTY.getUsername(), macroServlet.getHeaderParams().get("user_id"));
         assertFalse(macroServlet.getHeaderParams().containsKey("page_id"));
     }
 

@@ -11,6 +11,8 @@ import com.atlassian.plugin.connect.modules.beans.builder.BlueprintTemplateBeanB
 import com.atlassian.plugin.connect.modules.beans.builder.IconBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.BlueprintModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.elements.ResourceDescriptor;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
@@ -78,12 +80,14 @@ public class ConfluenceBlueprintModuleProviderTest {
                 .withModules("blueprints", bean)
                 .build();
 
+        ConnectModuleProviderContext moduleProviderContext = new DefaultConnectModuleProviderContext(addon);
+
         Plugin plugin = null;
 
         try {
             plugin = testPluginInstaller.installAddon(addon);
 
-            List<ModuleDescriptor> descriptors = blueprintModuleProvider.provideModules(addon, plugin, "blueprints", newArrayList(bean));
+            List<ModuleDescriptor> descriptors = blueprintModuleProvider.provideModules(moduleProviderContext, plugin, "blueprints", newArrayList(bean));
 
             // should get a WebItem Descriptor and a Blueprint Descriptor
             assertEquals(3, descriptors.size());
@@ -124,7 +128,7 @@ public class ConfluenceBlueprintModuleProviderTest {
 
         } finally {
             if (null != plugin) {
-                testPluginInstaller.uninstallAddon(plugin);
+                testPluginInstaller.uninstallJsonAddon(plugin);
             }
         }
     }

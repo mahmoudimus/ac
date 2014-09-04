@@ -69,7 +69,7 @@ public class AddonValidationTest
         {
             try
             {
-                testPluginInstaller.uninstallAddon(installed);
+                testPluginInstaller.uninstallJsonAddon(installed);
             }
             catch (Exception e)
             {
@@ -78,15 +78,16 @@ public class AddonValidationTest
         }
     }
 
-    private static ConnectAddonBeanBuilder testBeanBuilderWithNoAuthSpecified()
+    private ConnectAddonBeanBuilder testBeanBuilderWithNoAuthSpecified()
     {
         return new ConnectAddonBeanBuilder()
                 .withKey("ac-test-" + System.currentTimeMillis())
+                .withDescription(getClass().getCanonicalName())
                 .withModule("webItems", randomWebItemBean())
                 .withBaseurl("https://example.com/");
     }
 
-    private static ConnectAddonBeanBuilder testBeanBuilderWithAuth(AuthenticationType authenticationType)
+    private ConnectAddonBeanBuilder testBeanBuilderWithAuth(AuthenticationType authenticationType)
     {
         return testBeanBuilderWithNoAuthSpecified().withAuthentication(AuthenticationBean.newAuthenticationBean()
                 .withType(authenticationType).build());
@@ -297,6 +298,18 @@ public class AddonValidationTest
     }
 
     @Test
+    @DevMode
+    public void a503ResponseFromInstalledCallbackResultsInCorrespondingErrorCode() throws Exception
+    {
+        ConnectAddonBeanBuilder builder = testBeanBuilderWithJwt();
+        ConnectAddonBean bean = builder
+            .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(builder.getKey()))
+            .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/status/503").build())
+            .build();
+        installExpectingUpmErrorCode(bean, "connect.install.error.remote.host.bad.response.503");
+    }
+
+    @Test
     public void aNonExistentDomainNameInInstalledCallbackResultsInCorrespondingErrorCode() throws Exception
     {
         installExpectingUpmErrorCode(testBeanBuilderWithJwtAndInstalledCallback().withBaseurl("https://does.not.exist").build(),
@@ -327,7 +340,7 @@ public class AddonValidationTest
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build());
     }
 
-    private static ConnectAddonBeanBuilder testBeanBuilderWithJwt()
+    private ConnectAddonBeanBuilder testBeanBuilderWithJwt()
     {
         return testBeanBuilderWithAuth(AuthenticationType.JWT);
     }

@@ -1,14 +1,14 @@
 package it.servlet.condition;
 
-import java.io.IOException;
+import it.util.TestUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
 
 import static java.lang.String.valueOf;
 
@@ -17,6 +17,11 @@ public class CheckUsernameConditionServlet extends HttpServlet
     private final String username;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    public CheckUsernameConditionServlet(TestUser user)
+    {
+        this.username = user.getUsername();
+    }
 
     public CheckUsernameConditionServlet(String username)
     {
@@ -27,11 +32,8 @@ public class CheckUsernameConditionServlet extends HttpServlet
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
         final String loggedInUser = req.getParameter("user_id");
-        final boolean isBetty = isUser(loggedInUser);
 
-        logger.debug("The logged in user is {}betty, their user key is '{}'", isBetty ? "" : "NOT ", loggedInUser);
-
-        final String json = getJson(isBetty);
+        final String json = getJson(isUser(loggedInUser));
         logger.debug("Responding with the following json: {}", json);
         sendJson(resp, json);
     }

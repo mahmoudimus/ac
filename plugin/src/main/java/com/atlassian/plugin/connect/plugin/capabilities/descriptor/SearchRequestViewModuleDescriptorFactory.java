@@ -11,6 +11,7 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.module.jira.searchrequestview.ConnectConditionDescriptorFactory;
@@ -63,11 +64,13 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
     }
 
     @Override
-    public SearchRequestViewModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, SearchRequestViewModuleBean bean)
+    public SearchRequestViewModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, SearchRequestViewModuleBean bean)
     {
+        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
+
         SearchRequestViewModuleDescriptorImpl descriptor = new SearchRequestViewModuleDescriptorImpl(authenticationContext,
-                urlHandler, createModuleFactory(bean, addon), conditionDescriptorFactory);
-        Element element = createElement(bean, addon);
+                urlHandler, createModuleFactory(bean, connectAddonBean), conditionDescriptorFactory);
+        Element element = createElement(bean, connectAddonBean);
         descriptor.init(theConnectPlugin, element);
         return descriptor;
     }

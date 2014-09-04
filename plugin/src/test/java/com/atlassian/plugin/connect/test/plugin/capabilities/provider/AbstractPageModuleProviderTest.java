@@ -7,11 +7,14 @@ import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.AbstractConnectPageModuleProvider;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
+import com.atlassian.sal.api.ApplicationProperties;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -42,11 +45,13 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
     @Mock protected IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     @Mock protected BundleContext bundleContext;
     @Mock protected ProductAccessor productAccessor;
+    @Mock protected ApplicationProperties applicationProperties;
 
     private T moduleProvider;
 
     protected Plugin plugin = new PluginForTests(PLUGIN_KEY, "pluginName");
     protected ConnectAddonBean addon = newConnectAddonBean().withKey(PLUGIN_KEY).build();
+    private ConnectModuleProviderContext moduleProviderContext = new DefaultConnectModuleProviderContext(addon);
 
     private List<ConnectPageModuleBean> beans = ImmutableList.of(
             ConnectPageModuleBean.newPageBean().build()
@@ -56,7 +61,7 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
     public void init()
     {
         moduleProvider = createPageModuleProvider();
-        when(webItemModuleDescriptorFactory.createModuleDescriptor(addon,
+        when(webItemModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext,
                 any(Plugin.class), any(WebItemModuleBean.class))).thenReturn(mock(WebItemModuleDescriptor.class));
     }
 
@@ -65,14 +70,14 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
     @Test
     public void callsWebItemModuleDescriptorFactoryWithProvidedPlugin()
     {
-        verify(webItemModuleDescriptorFactory()).createModuleDescriptor(addon,
+        verify(webItemModuleDescriptorFactory()).createModuleDescriptor(moduleProviderContext,
                 eq(plugin), any(WebItemModuleBean.class));
     }
 
     @Test
     public void callsWebItemModuleDescriptorFactoryWithProvidedBundleContext()
     {
-        verify(webItemModuleDescriptorFactory()).createModuleDescriptor(addon,
+        verify(webItemModuleDescriptorFactory()).createModuleDescriptor(moduleProviderContext,
                 any(Plugin.class), any(WebItemModuleBean.class));
     }
 
@@ -80,7 +85,7 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
     @Test
     public void callsWebItemModuleDescriptorFactoryWithWebItemUrlThatContainsPluginKey()
     {
-        verify(webItemModuleDescriptorFactory()).createModuleDescriptor(addon,
+        verify(webItemModuleDescriptorFactory()).createModuleDescriptor(moduleProviderContext,
                 any(Plugin.class), argThat(hasUrlValue("/plugins/servlet/ac/pluginKey/")));
     }
 
@@ -92,6 +97,6 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
 
     private void provideModules()
     {
-        moduleProvider.provideModules(addon, plugin, "thePageField", beans);
+        moduleProvider.provideModules(moduleProviderContext, plugin, "thePageField", beans);
     }
 }

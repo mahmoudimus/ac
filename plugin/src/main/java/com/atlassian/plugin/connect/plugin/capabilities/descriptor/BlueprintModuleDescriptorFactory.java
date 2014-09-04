@@ -6,6 +6,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.builder.LinkBeanBuilder;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.util.Dom4jUtils;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
@@ -42,7 +43,9 @@ public class BlueprintModuleDescriptorFactory
     }
 
     @Override
-    public BlueprintModuleDescriptor createModuleDescriptor(ConnectAddonBean addon, Plugin plugin, BlueprintModuleBean bean) {
+    public BlueprintModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin plugin, BlueprintModuleBean bean)
+    {
+        ConnectAddonBean addon = moduleProviderContext.getConnectAddonBean();
         DocumentationBeanFactory documentationBeanFactory = new ConnectDocumentationBeanFactory(new LinkBeanBuilder().build());
 
         Element blueprintElement = new DOMElement("blueprint");

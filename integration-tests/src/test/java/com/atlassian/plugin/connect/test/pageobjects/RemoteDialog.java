@@ -1,16 +1,16 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
-import javax.inject.Inject;
-
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.webdriver.AtlassianWebDriver;
-
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
 
 /**
  * Describes a <dialog-page> Remote Module - must be bound after the dialog has been opened.
@@ -35,10 +35,39 @@ public class RemoteDialog extends AbstractConnectIFrameComponent<RemoteDialog>
     protected WebElement titleElement;
 
     private static final String DIALOG_CONTAINER = "ap-dialog-container";
+    private static final String INLINE_DIALOG_CONTAINER = "ap-container";
+
+    private final boolean isInlineDialog;
+
+    public RemoteDialog()
+    {
+        this(false); // default to "not inline"
+    }
+
+    public RemoteDialog(boolean isInlineDialog)
+    {
+        this.isInlineDialog = isInlineDialog;
+    }
 
     protected String getFrameId()
     {
-        return elementFinder.find(By.cssSelector("." + DIALOG_CONTAINER + " iframe")).getAttribute("id");
+        try
+        {
+            return getFrameIdUnsafe();
+        }
+        catch (StaleElementReferenceException e)
+        {
+            // JavaScript code can recreate the iframe while the test is clicking and hovering,
+            // and webdriver complains if we are unlucky enough to find the iframe dom element before
+            // the re-creation but ask for its id after the re-creation
+            return getFrameIdUnsafe();
+        }
+    }
+
+    private String getFrameIdUnsafe()
+    {
+        final String cssClass = isInlineDialog ? INLINE_DIALOG_CONTAINER : DIALOG_CONTAINER;
+        return elementFinder.find(By.cssSelector("." + cssClass + " iframe")).getAttribute("id");
     }
 
     /**
@@ -60,6 +89,18 @@ public class RemoteDialog extends AbstractConnectIFrameComponent<RemoteDialog>
     {
         cancelButton.click();
         return isDialogClosed();
+    }
+
+    public boolean hasChrome()
+    {
+    	try 
+    	{
+    		return submitButton != null && submitButton.isDisplayed();
+    	}
+    	catch (NoSuchElementException e)
+    	{
+    		return false;
+    	}
     }
 
     public String getTitle() {

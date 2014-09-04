@@ -52,16 +52,6 @@ AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
         },
 
         /**
-        * fire an analytics event
-        *
-        * @param id  the event id.  Will be prepended with the prefix "p3.iframe."
-        * @param props the event properties
-        * @deprecated
-        */
-        fireEvent: function (id, props) {
-          console.log("AP.fireEvent deprecated; will be removed in future version");
-        },
-        /**
         * resize this iframe
         * @method
         * @param {String} width   the desired width
@@ -111,10 +101,20 @@ AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
     },
 
     size: function (width, height, container) {
-      var w = width == null ? "100%" : width, h, docHeight;
+      var w, h, docHeight;
       if(!container){
         container = this.container();
       }
+      if (width) {
+        w = width;
+      } else {
+        w = Math.max(
+          container.scrollWidth,
+          container.offsetWidth,
+          container.clientWidth
+        );
+      }
+
       if (height) {
         h = height;
       } else {
@@ -124,6 +124,7 @@ AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
           container.offsetHeight, document.documentElement.offsetHeight,
           container.clientHeight, document.documentElement.clientHeight
         );
+
         if(container === document.body){
           h = docHeight;
         } else {

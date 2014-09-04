@@ -6,7 +6,6 @@ import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.pageobjects.elements.WebDriverElement;
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.webdriver.AtlassianWebDriver;
-import com.atlassian.webdriver.utils.by.ByJquery;
 import com.google.common.base.Function;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -20,7 +19,7 @@ import java.util.concurrent.Callable;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 
-@XmlDescriptor(comment="migrate to ConnectPage")
+@XmlDescriptor(comment="migrate to ConnectAddOnPage")
 public class RemotePage
 {
     @Inject
@@ -48,17 +47,18 @@ public class RemotePage
     @WaitUntil
     public void waitForInit()
     {
-        PageElement containerDivElement = elementFinder.find(ByJquery.$("#embedded-" + extraPrefix + key + ".iframe-init"));
+        PageElement containerDivElement = elementFinder.find(By.id("embedded-" + extraPrefix + key));
         waitUntilTrue(containerDivElement.timed().isPresent());
+        waitUntilTrue(containerDivElement.timed().hasClass("iframe-init"));
 
         this.containerDiv = ((WebDriverElement)containerDivElement).asWebElement();
     }
 
     public boolean isLoaded()
     {
-        return driver.elementExists(By.cssSelector("#ap-" + extraPrefix + key + " .ap-loading.ap-status.hidden")) &&
-                driver.elementExists(By.cssSelector("#ap-" + extraPrefix + key + " .ap-load-timeout.ap-status.hidden")) &&
-                driver.elementExists(By.cssSelector("#ap-" + extraPrefix+ key + " .ap-load-error.ap-status.hidden"));
+        PageElement containerDivElement = elementFinder.find(By.id("ap-" + extraPrefix + key));
+        List<PageElement> hiddenStatusElements = containerDivElement.findAll(By.cssSelector(".ap-status.hidden"));
+        return 3 == hiddenStatusElements.size();
     }
 
     public Map<String, String> getIframeQueryParams()
@@ -115,7 +115,6 @@ public class RemotePage
 
     private WebElement iframe()
     {
-        driver.waitUntilElementIsLocated(By.cssSelector("#embedded-" + extraPrefix + key + " iframe"));
         return containerDiv.findElement(By.tagName("iframe"));
     }
 }

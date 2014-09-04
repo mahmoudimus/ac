@@ -12,7 +12,7 @@ Fundamentally, Atlassian Connect add-ons have three major capabilities:
 
 1. Insert content in [certain defined places](../modules/jira/index.html) in the Atlassian application's UI.
 2. Make calls to the Atlassian application's [REST API](../rest-apis/product-api-browser.html).
-3. Listen and respond to [WebHooks](../modules/jira/webhooks.html) fired by the Atlassian application.
+3. Listen and respond to [WebHooks](../modules/jira/webhook.html) fired by the Atlassian application.
 
 
 ## What does an Atlassian Connect add-on do?
@@ -40,7 +40,7 @@ respect necessary permissions and make other decisions based on the user's ident
 data or push information to the Atlassian host application 
 (for example, to build reports and create issues). 
 - **Respond to the Atlassian application's webhooks.** Your add-on can receive notifications
-when certain events occur with [webhooks](../modules/jira/webhooks.html), 
+when certain events occur with [webhooks](../modules/jira/webhook.html),
 like when a JIRA issue changes status. 
 The webhook payload contains information about the
 event, allowing your add-on to respond appropriately.
@@ -66,7 +66,7 @@ Atlassian Connect add-ons so powerful.
 ### Architecture
 Most Atlassian Connect add-ons are implemented as multi-tenanted services. This means that a
 single Atlassian Connect add-on will support multiple subscribing Atlassian applications. For more information,
-see [Understanding OnDemand](../concepts/understanding-ondemand.html).
+see [Understanding Atlassian in the cloud](../concepts/cloud-development.html).
 
 ###Security
 Security is critical in a distributed component model such as Atlassian Connect. Atlassian Connect relies on
@@ -78,7 +78,7 @@ These permissions are granted by Atlassian application administrators
 when they install your add-on. Examples of permissions include
 reading content, creating pages, creating issues, and more. 
 These permissions help ensure the
-security and stability of the OnDemand instance.
+security and stability of cloud instances.
 
 Read our [security overview](../concepts/security.html) for more details.
 
@@ -93,5 +93,5 @@ and a [library of reusable front-end UI components](https://docs.atlassian.com/a
 ##Let's get started
 If you made it this far, you're ready to write your first Atlassian Connect add-on! Follow the link below to get started.
 <div class="index-button">
-<a href="../guides/getting-started.html"><button class="primary-cta aui-button aui-button-primary">Hello, world!</button></a>
+<a href="../guides/getting-started.html"><button class="primary-cta aui-button aui-button-primary">Try the Hello World tutorial</button></a>
 </div>

@@ -16,12 +16,15 @@ import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ParamsModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.SearchRequestViewModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.module.jira.searchrequestview.ConnectConditionDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.product.jira.JiraProductAccessor;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.web.Condition;
+import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import org.dom4j.Element;
@@ -59,7 +62,7 @@ public class SearchRequestViewModuleDescriptorFactoryTest
     @Mock
     private DelegatingComponentAccessor componentAccessor;
     @Mock
-    private HostContainer hostContainer;
+    private WebFragmentHelper webFragmentHelper;
     @Mock
     private IFrameUriBuilderFactory iFrameUriBuilderFactory;
     @Mock
@@ -70,19 +73,21 @@ public class SearchRequestViewModuleDescriptorFactoryTest
     private SearchRequestViewModuleDescriptorImpl descriptor;
 
     private ConnectAddonBean addon;
+    private ConnectModuleProviderContext moduleProviderContext;
 
     @Before
     public void beforeEachTest() throws Exception
     {
         this.addon = newConnectAddonBean().withKey("my-plugin").build();
+        this.moduleProviderContext = new DefaultConnectModuleProviderContext(addon);
         when(plugin.getKey()).thenReturn("my-plugin");
         when(plugin.<UserLoggedInCondition>loadClass(eq("com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"), any(Class.class)))
                 .thenReturn(UserLoggedInCondition.class);
 
-        ConditionDescriptorFactory conditionDescriptorFactory = new ConditionDescriptorFactoryImpl(hostContainer);
+        ConditionDescriptorFactory conditionDescriptorFactory = new ConditionDescriptorFactoryImpl(webFragmentHelper);
         ConditionModuleFragmentFactory conditionModuleFragmentFactory = new ConditionModuleFragmentFactory(
                 new JiraProductAccessor(new JiraConditions()), new ParamsModuleFragmentFactory());
-        when(hostContainer.create(UserLoggedInCondition.class)).thenReturn(new UserLoggedInCondition());
+        when(webFragmentHelper.loadCondition(eq(UserLoggedInCondition.class.getCanonicalName()), eq(plugin))).thenReturn(new UserLoggedInCondition());
 
         when(componentAccessor.getComponent(SearchRequestURLHandler.class)).thenReturn(urlHandler);
         when(componentAccessor.getComponent(ConditionDescriptorFactory.class)).thenReturn(conditionDescriptorFactory);
@@ -109,7 +114,7 @@ public class SearchRequestViewModuleDescriptorFactoryTest
                         newSingleConditionBean().withCondition("user_is_logged_in").build())
                 .build();
 
-        this.descriptor = (SearchRequestViewModuleDescriptorImpl) factory.createModuleDescriptor(addon, plugin, bean);
+        this.descriptor = (SearchRequestViewModuleDescriptorImpl) factory.createModuleDescriptor(moduleProviderContext, plugin, bean);
         this.descriptor.enabled();
     }
 
