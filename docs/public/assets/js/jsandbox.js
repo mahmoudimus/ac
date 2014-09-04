@@ -133,7 +133,7 @@ function removeConnectIframes(){
 }
 
 function makeButton(container){
-    return $("<button />").text("example").click(function(){
+    return $("<button />").text("run example").click(function(){
         removeConnectIframes();
         var code = $(container).find("textarea.demo").val();
         createConnectIframe($(container), code);
@@ -142,7 +142,7 @@ function makeButton(container){
 
 $(function(){
     $(".runable").each(function(){
-        $(this).append(makeButton(this));
+        $(this).prepend(makeButton(this));
     });
 });
 
