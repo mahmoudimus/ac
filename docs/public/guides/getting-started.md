@@ -206,7 +206,7 @@ You can add functionality using the [Atlassian REST APIs](https://developer.atla
 You can also [try the next tutorial](../project-activity-tutorial.html), where you can add a table of your projects to JIRA via the REST API and D3.js. 
 
 <div class="index-button">
-<a href="../project-activity-tutorial.html"><button class="primary-cta aui-button aui-button-primary">Try the next tutorial</button></a>
+<a href="../guides/project-activity-tutorial.html"><button class="primary-cta aui-button aui-button-primary">Try the next tutorial</button></a>
 </div>
 
 ## More resources
