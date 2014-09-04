@@ -14,7 +14,8 @@
     },
     {
       "filename": "connect-cookbook.html",
-      "title": "Connect cookbook"
+      "title": "Connect cookbook",
+      "new": true
     }
   ],
   "developing": [

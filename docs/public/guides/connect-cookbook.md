@@ -9,7 +9,7 @@ place of real application logic, so you can replace calls with whatever you need
 ## What's here
 Skip ahead to any section:
 
-* [Loading `all.js` from host applications](#all.js)
+* [Loading `all.js` from host applications for static add-ons](#all.js)
 * [Using the `cookie` API](#cookie-api)  
 * [Using the `messages` module](#messages-module)  
 * [Flashing a warning](#warning)  
@@ -25,11 +25,13 @@ Skip ahead to any section:
 * [Getting Confluence space pages](#getting-space-pages)  
 
 
-### <a name="all.js"></a> Loading `all.js` from the host application
+### <a name="all.js"></a> Loading `all.js` from the host application for static add-ons
 
 Loading `all.js` is necessary to use the [`AP` object](../javascript/module-AP.html) and access [Connect APIs](../concepts/javascript-api.html). 
-This sample uses [jQuery](http://jquery.com/) from CDN, but normally you'd include this directly from your app.
-
+This sample uses [jQuery](http://jquery.com/) from CDN, but normally you'd include this directly from your app. 
+This sample only applies to static add-ons. Add-ons with server components should validate JWT signatures on the server,
+and then generate the URL for `all.js`. Accepting `<script>` tag locations from untrusted query string sources 
+could open your application up to XSS attacks.
 
 ````
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
