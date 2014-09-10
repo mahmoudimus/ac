@@ -106,7 +106,7 @@ public class ConnectReportModuleDescriptor extends AbstractModuleDescriptor<Void
 
     private static String makeSafeCssClass(String string)
     {
-        return CharMatcher.JAVA_LETTER_OR_DIGIT.and(CharMatcher.anyOf("_-")).retainFrom(string);
+        return CharMatcher.JAVA_LETTER_OR_DIGIT.or(CharMatcher.anyOf("_-")).retainFrom(string);
     }
 
     public static class ModuleDescriptorImpl extends ReportModuleDescriptorImpl
