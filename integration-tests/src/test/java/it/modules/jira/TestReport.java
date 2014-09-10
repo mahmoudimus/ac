@@ -8,11 +8,8 @@ import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.LegacyProjectReportPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.LegacyReportLink;
-import com.atlassian.plugin.connect.test.pageobjects.jira.ProjectCentricNavigationProjectReportPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.ProjectReportPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.ReportLink;
+import com.atlassian.plugin.connect.test.pageobjects.jira.*;
+import com.atlassian.plugin.connect.test.pageobjects.jira.AbstractProjectReportPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -140,15 +137,15 @@ public class TestReport extends JiraWebDriverTestBase
         backdoor.darkFeatures().disableForSite("com.atlassian.jira.projects.ProjectCentricNavigation");
     }
 
-    private <T extends ProjectReportPage> void testAllConnectReportsDisplayedOnReportPage(final Class<T> page)
+    private <T extends AbstractProjectReportPage> void testAllConnectReportsDisplayedOnReportPage(final Class<T> page)
     {
-        final ProjectReportPage reportPage = goToProjectsReportPage(page);
+        final AbstractProjectReportPage reportPage = goToProjectsReportPage(page);
         List<ReportLink> reports = reportPage.getReports();
 
         assertThat(reports, hasItems(equalToReport(firstTestReport), equalToReport(secondTestReport)));
     }
 
-    public <T extends ProjectReportPage> void connectReportDisplaysIframe(final Class<T> page)
+    public <T extends AbstractProjectReportPage> void connectReportDisplaysIframe(final Class<T> page)
     {
         for (TestReportInfo reportInfo : reportInfos)
         {
@@ -157,7 +154,7 @@ public class TestReport extends JiraWebDriverTestBase
         }
     }
 
-    public <T extends ProjectReportPage> void contextParameterPassedToReport(final Class<T> page)
+    public <T extends AbstractProjectReportPage> void contextParameterPassedToReport(final Class<T> page)
     {
         for (TestReportInfo reportInfo : reportInfos)
         {
@@ -168,15 +165,15 @@ public class TestReport extends JiraWebDriverTestBase
         }
     }
 
-    private <T extends ProjectReportPage> T goToProjectsReportPage(final Class<T> page)
+    private <T extends AbstractProjectReportPage> T goToProjectsReportPage(final Class<T> page)
     {
         return loginAndVisit(TestUser.ADMIN, page, project.getKey());
     }
 
-    private <T extends ProjectReportPage> ConnectAddOnEmbeddedTestPage goToEmbeddedReportPage(final Class<T> page, final TestReportInfo reportInfo)
+    private <T extends AbstractProjectReportPage> ConnectAddOnEmbeddedTestPage goToEmbeddedReportPage(final Class<T> page, final TestReportInfo reportInfo)
     {
-        final ProjectReportPage projectReportPage = goToProjectsReportPage(page);
-        ReportLink reportLink = Iterables.find(projectReportPage.getReports(), new Predicate<ReportLink>()
+        final AbstractProjectReportPage abstractProjectReportPage = goToProjectsReportPage(page);
+        ReportLink reportLink = Iterables.find(abstractProjectReportPage.getReports(), new Predicate<ReportLink>()
         {
             @Override
             public boolean apply(final ReportLink reportLink)

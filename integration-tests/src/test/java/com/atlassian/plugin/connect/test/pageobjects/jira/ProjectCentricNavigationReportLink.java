@@ -42,7 +42,7 @@ public class ProjectCentricNavigationReportLink implements ReportLink
     private ReportCategory findReportCategory(final PageElement element)
     {
         final String reportCategoryStr = element.find(By.xpath("..")).getAttribute("data-category-key");
-        return ReportCategory.byKey(reportCategoryStr);
+        return ReportCategory.byKey(reportCategoryStr).get();
     }
 
     private String findThumbnailCssClass()

@@ -28,7 +28,7 @@ public class ReportModuleCssTransformer implements WebResourceTransformerFactory
     @Override
     public TransformerUrlBuilder makeUrlBuilder(final TransformerParameters transformerParameters)
     {
-        return new ReportModuleDescriptorHashAdder(pluginAccessor);
+        return new ReportModulesUriBuilder(pluginAccessor);
     }
 
     @Override
@@ -44,11 +44,11 @@ public class ReportModuleCssTransformer implements WebResourceTransformerFactory
         };
     }
 
-    static class ReportModuleDescriptorHashAdder implements TransformerUrlBuilder
+    static class ReportModulesUriBuilder implements TransformerUrlBuilder
     {
         private final PluginAccessor pluginAccessor;
 
-        ReportModuleDescriptorHashAdder(final PluginAccessor pluginAccessor) {this.pluginAccessor = pluginAccessor;}
+        ReportModulesUriBuilder(final PluginAccessor pluginAccessor) {this.pluginAccessor = pluginAccessor;}
 
         @Override
         public void addToUrl(final UrlBuilder urlBuilder)

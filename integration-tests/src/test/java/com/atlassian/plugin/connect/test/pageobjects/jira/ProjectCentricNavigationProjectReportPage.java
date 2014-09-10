@@ -5,7 +5,7 @@ import org.openqa.selenium.By;
 /**
  * Project centric navigation page with JIRA project reports. It requires jira-projects-plugin v1.4.
  */
-public class ProjectCentricNavigationProjectReportPage extends ProjectReportPage
+public class ProjectCentricNavigationProjectReportPage extends AbstractProjectReportPage
 {
 
     public ProjectCentricNavigationProjectReportPage(final String projectKey)

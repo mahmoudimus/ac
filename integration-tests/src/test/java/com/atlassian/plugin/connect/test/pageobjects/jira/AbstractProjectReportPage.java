@@ -16,7 +16,7 @@ import javax.inject.Inject;
 /**
  * Abstract page with JIRA project reports.
  */
-public abstract class ProjectReportPage implements Page
+public abstract class AbstractProjectReportPage implements Page
 {
     @Inject
     private PageElementFinder elementFinder;
@@ -29,7 +29,7 @@ public abstract class ProjectReportPage implements Page
     private final By waitFor;
     private final Class<? extends ReportLink> reportLinkClass;
 
-    public ProjectReportPage(final String projectKey, final By findReportBy, final By waitFor, final Class<? extends ReportLink> reportLinkClass)
+    public AbstractProjectReportPage(final String projectKey, final By findReportBy, final By waitFor, final Class<? extends ReportLink> reportLinkClass)
     {
         this.projectKey = projectKey;
         this.findReportBy = findReportBy;

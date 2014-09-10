@@ -19,6 +19,7 @@ import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstit
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.util.concurrent.NotNull;
+import com.google.common.base.CharMatcher;
 import org.dom4j.Element;
 
 import java.util.Map;
@@ -105,7 +106,7 @@ public class ConnectReportModuleDescriptor extends AbstractModuleDescriptor<Void
 
     private static String makeSafeCssClass(String string)
     {
-        return string.replaceAll("[!\"#$%&'()*+,./:;<=>?@[\\\\]^`{|}~]", "");
+        return CharMatcher.JAVA_LETTER_OR_DIGIT.and(CharMatcher.anyOf("_-")).retainFrom(string);
     }
 
     public static class ModuleDescriptorImpl extends ReportModuleDescriptorImpl

@@ -63,14 +63,14 @@ public class ReportModuleCssTransformerTest
     {
         final TransformerUrlBuilder transformerUrlBuilder = reportModuleCssTransformer.makeUrlBuilder(null);
 
-        assertThat(transformerUrlBuilder, Matchers.instanceOf(ReportModuleCssTransformer.ReportModuleDescriptorHashAdder.class));
+        assertThat(transformerUrlBuilder, Matchers.instanceOf(ReportModuleCssTransformer.ReportModulesUriBuilder.class));
     }
 
     @Test
     public void testUrlBuilder() throws Exception
     {
         final UrlBuilder urlBuilder = mock(UrlBuilder.class);
-        final TransformerUrlBuilder transformerUrlBuilder = new ReportModuleCssTransformer.ReportModuleDescriptorHashAdder(pluginAccessor);
+        final TransformerUrlBuilder transformerUrlBuilder = new ReportModuleCssTransformer.ReportModulesUriBuilder(pluginAccessor);
         transformerUrlBuilder.addToUrl(urlBuilder);
 
         final Object expectedHash = new HashCodeBuilder()
