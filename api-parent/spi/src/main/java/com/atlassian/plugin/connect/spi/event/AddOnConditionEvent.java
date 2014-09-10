@@ -1,17 +1,11 @@
 package com.atlassian.plugin.connect.spi.event;
 
-import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
-
-@PrivacyPolicySafe
 abstract public class AddOnConditionEvent
 {
-    @PrivacyPolicySafe
     private final String addonKey;
 
-    @PrivacyPolicySafe
     private final String urlPath;
 
-    @PrivacyPolicySafe
     private final long elapsedMillisecs;
 
     public AddOnConditionEvent(String addonKey, String urlPath, long elapsedMillisecs)

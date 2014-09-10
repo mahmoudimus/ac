@@ -1,13 +1,5 @@
 package com.atlassian.plugin.connect.spi.event;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Pair;
 import com.atlassian.plugin.connect.spi.permission.scope.JsonRpcApiScopeHelper;
@@ -17,8 +9,12 @@ import com.atlassian.plugin.connect.spi.util.ServletUtils;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import org.apache.commons.lang3.StringUtils;
 
-@PrivacyPolicySafe
+import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
 public abstract class ScopedRequestEvent
 {
     private static String REST_URI_PATH_PREFIX = "rest/";
@@ -33,9 +29,9 @@ public abstract class ScopedRequestEvent
                                                                     "/soap/axis/confluenceservice-v2",
                                                                     "/soap/axis/confluenceservice-v1");
 
-    @PrivacyPolicySafe private final String httpMethod;
+    private final String httpMethod;
 
-    @PrivacyPolicySafe private final String httpRequestUri;
+    private final String httpRequestUri;
 
     public ScopedRequestEvent(HttpServletRequest rq)
     {
