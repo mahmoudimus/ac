@@ -20,12 +20,13 @@ import com.atlassian.plugin.descriptors.UnloadableModuleDescriptor;
 import com.atlassian.plugin.descriptors.UnrecognisedModuleDescriptor;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.upm.spi.PluginInstallException;
+
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 
 import java.util.Set;
 
@@ -217,7 +218,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                         for (ModuleDescriptor desc : plugin.getModuleDescriptors())
                         {
                             if (!pluginAccessor.isPluginModuleEnabled(
-                                desc.getCompleteKey()) && desc instanceof UnrecognisedModuleDescriptor)
+                                    desc.getCompleteKey()) && desc instanceof UnrecognisedModuleDescriptor)
                             {
                                 return false;
                             }
@@ -269,7 +270,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         catch (InstallationFailedException ex)
         {
             log.warn("Unable to install remote plugin '{}' by user '{}' due to installation issue: {}",
-                     new Object[] {pluginKey, username, ex.getMessage() });
+                    new Object[] { pluginKey, username, ex.getMessage() });
             log.debug("Installation failed due to installation issue", ex);
             eventPublisher.publish(new RemotePluginInstallFailedEvent(pluginKey, ex.getMessage()));
             throw ex;

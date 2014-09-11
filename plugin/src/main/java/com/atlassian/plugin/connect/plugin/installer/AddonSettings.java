@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.atlassian.plugin.PluginState;
 
