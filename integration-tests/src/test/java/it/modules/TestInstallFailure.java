@@ -176,7 +176,7 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
         // success
         readerFactory.getReader(jwt).read(jwt, ImmutableMap.<String, JwtClaimVerifier>of());
     }
-    
+
     private <T extends Page> void revealLinkIfNecessary(T page)
     {
         // hmmm not pretty

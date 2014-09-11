@@ -1,8 +1,6 @@
 package com.atlassian.plugin.connect.plugin.applinks;
 
 import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.fugue.Option;
-import com.atlassian.oauth.Consumer;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;

@@ -179,7 +179,7 @@ public class ConnectAddonManager
     public ConnectAddonBean installConnectAddon(String jsonDescriptor, PluginState targetState)
     {
         long startTime = System.currentTimeMillis();
-        
+
 
         Map<String, String> i18nCollector = newHashMap();
         ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor,i18nCollector);

@@ -261,15 +261,15 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         catch (PermissionDeniedException ex)
         {
             log.warn("Unable to install remote plugin '{}' by user '{}' due to permission issues: {}",
-                     new Object[] { pluginKey, username, ex.getMessage() });
+                    new Object[] { pluginKey, username, ex.getMessage() });
             log.debug("Installation failed due to permission issue", ex);
             eventPublisher.publish(new RemotePluginInstallFailedEvent(pluginKey, "Installation failed due to permission issue " + ex.getMessage()));
             throw ex;
         }
         catch (InstallationFailedException ex)
         {
-            log.warn("Unable to install remote plugin '{}' by user '{}' due to installation issue: {}", new Object[] {
-                pluginKey, username, ex.getMessage() });
+            log.warn("Unable to install remote plugin '{}' by user '{}' due to installation issue: {}",
+                     new Object[] {pluginKey, username, ex.getMessage() });
             log.debug("Installation failed due to installation issue", ex);
             eventPublisher.publish(new RemotePluginInstallFailedEvent(pluginKey, ex.getMessage()));
             throw ex;
@@ -332,7 +332,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         {
             /*!
              However, if there is no previous app, then the app key is checked
-             to ensure it doesn't already exist as a OAuth client key. This
+             to ensure it doesn't already exist as a OAuth client key.  This
              prevents a malicious app that uses a key from an existing oauth
              link from getting that link removed when the app is uninstalled.
              If it was created by connect then it is ok

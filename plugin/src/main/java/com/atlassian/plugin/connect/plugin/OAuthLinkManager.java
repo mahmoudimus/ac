@@ -79,7 +79,7 @@ public class OAuthLinkManager
         serviceProviderConsumerStore.put(consumer);
         link.putProperty(OAUTH_INCOMING_CONSUMERKEY, consumer.getKey());
     }
-    
+
     public Option<Consumer> getConsumer(ApplicationLink link)
     {
         Object key = link.getProperty(OAUTH_INCOMING_CONSUMERKEY);

@@ -12,7 +12,7 @@ public class AddonSettings
     private String userKey;
     private String auth;
     private String restartState;
-    
+
     public boolean isEmpty()
     {
         return StringUtils.isBlank(descriptor);
