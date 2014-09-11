@@ -180,7 +180,6 @@ public class ConnectAddonManager
     {
         long startTime = System.currentTimeMillis();
 
-
         Map<String, String> i18nCollector = newHashMap();
         ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor,i18nCollector);
 
