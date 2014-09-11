@@ -185,9 +185,6 @@ public class ConnectAddonManager
         ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor,i18nCollector);
 
         String pluginKey = addOn.getKey();
-        
-        AddonSettings previousSettings = addonRegistry.getAddonSettings(pluginKey);
-        ApplicationLink previousApplink = connectApplinkManager.getAppLink(pluginKey);
 
         if(!i18nCollector.isEmpty())
         {

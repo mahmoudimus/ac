@@ -63,40 +63,42 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
     private String awesomePageModuleKey;
 
     @Before
-    public void startConnectAddOn() throws Exception
+    public void setup()
     {
-        installUninstallHandler.setShouldSend404(true);
+        int query = URL.indexOf("?");
+        String route = query > -1 ? URL.substring(0, query) : URL;
 
         ConnectPageModuleBeanBuilder pageBeanBuilder = newPageBean();
         pageBeanBuilder.withName(new I18nProperty(MY_AWESOME_PAGE, null))
                 .withKey(MY_AWESOME_PAGE_KEY)
                 .withUrl(URL)
                 .withWeight(1234);
-
-        int query = URL.indexOf("?");
-        String route = query > -1 ? URL.substring(0, query) : URL;
-
-        // initial install and uninstall will intentionally send 404's
+        
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
-                .addInstallLifecycle()
-                .addUninstallLifecycle()
-                .addModule("configurePage", pageBeanBuilder.build())
-                .addJWT()
-                .addRoute(route, ConnectAppServlets.helloWorldServlet())
-                .addRoute(ConnectRunner.INSTALLED_PATH, installUninstallHandler)
-                .addRoute(ConnectRunner.UNINSTALLED_PATH, installUninstallHandler)
-                .addScope(ScopeName.ADMIN)
-                .disableInstallationStatusCheck()
-                .start();
+        .addInstallLifecycle()
+        .addUninstallLifecycle()
+        .addModule("configurePage", pageBeanBuilder.build())
+        .addJWT()
+        .addRoute(route, ConnectAppServlets.helloWorldServlet())
+        .addRoute(ConnectRunner.INSTALLED_PATH, installUninstallHandler)
+        .addRoute(ConnectRunner.UNINSTALLED_PATH, installUninstallHandler)
+        .addScope(ScopeName.ADMIN)
+        .disableInstallationStatusCheck();
+    }
 
-        // stop sending 404's so addon now behaves well
+    public void installAddonSuccess() throws Exception
+    {
         installUninstallHandler.setShouldSend404(false);
-
-        // install the addon again. Note this must happen with the same port as before as the port is used in the
-        // baseurl which is a lookup key for an existing applink
-        remotePlugin.register();
-
+        remotePlugin.start();
+        this.pluginKey = remotePlugin.getAddon().getKey();
+        this.awesomePageModuleKey = addonAndModuleKey(pluginKey, MY_AWESOME_PAGE_KEY);
         sharedSecret = installUninstallHandler.getInstallPayload().getSharedSecret();
+    }
+
+    public void installAddonFailure() throws Exception
+    {
+        installUninstallHandler.setShouldSend404(true);
+        remotePlugin.start();
     }
 
     @After
@@ -108,15 +110,23 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
         }
     }
 
-    @Before
-    public void beforeEachTestBase()
+    @Test
+    public void testFailedFirstInstallDoesNotBreakRetries() throws Exception
     {
-        this.pluginKey = remotePlugin.getAddon().getKey();
-        this.awesomePageModuleKey = addonAndModuleKey(pluginKey, MY_AWESOME_PAGE_KEY);
+        installAddonFailure();
+        installAddonSuccess();
+        assertPageLinkWorks();
     }
 
     @Test
-    public void pageLinkWorksAfterFirstAddonInstallFailed() throws MalformedURLException, URISyntaxException, JwtVerificationException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtParseException
+    public void testFailedUpgradeDoesNotUninstall() throws Exception
+    {
+        installAddonSuccess();
+        installAddonFailure();
+        assertPageLinkWorks();
+    }
+
+    public void assertPageLinkWorks() throws MalformedURLException, URISyntaxException, JwtVerificationException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtParseException
     {
         login(TestUser.ADMIN);
 
@@ -167,23 +177,6 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
         readerFactory.getReader(jwt).read(jwt, ImmutableMap.<String, JwtClaimVerifier>of());
     }
     
-    @Test
-    public void pageLinkWorksAfterFailedUpgrade() throws MalformedURLException, URISyntaxException, JwtVerificationException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtParseException
-    {
-        installUninstallHandler.setShouldSend404(true);
-        try
-        {
-            remotePlugin.register();
-        }
-        catch (Exception e)
-        {
-            //Ignore
-        }
-        installUninstallHandler.setShouldSend404(false);
-        
-        pageLinkWorksAfterFirstAddonInstallFailed();    
-    }
-
     private <T extends Page> void revealLinkIfNecessary(T page)
     {
         // hmmm not pretty
