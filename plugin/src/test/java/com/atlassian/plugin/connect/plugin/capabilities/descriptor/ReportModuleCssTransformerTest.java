@@ -120,6 +120,7 @@ public class ReportModuleCssTransformerTest
 
         assertThat(generatedCss, not(containsString(MD3_KEY)));
     }
+
     private String generateCss() {
         final ReportModuleCssTransformer.ThumbnailCssClassesGenerator thumbnailCssClassesGenerator = new ReportModuleCssTransformer.ThumbnailCssClassesGenerator(null, pluginAccessor);
         return thumbnailCssClassesGenerator.transform("").toString();
