@@ -9,7 +9,6 @@ import com.atlassian.plugin.webresource.transformer.UrlReadingWebResourceTransfo
 import com.atlassian.plugin.webresource.url.UrlBuilder;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +19,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -63,7 +63,7 @@ public class ReportModuleCssTransformerTest
     {
         final TransformerUrlBuilder transformerUrlBuilder = reportModuleCssTransformer.makeUrlBuilder(null);
 
-        assertThat(transformerUrlBuilder, Matchers.instanceOf(ReportModuleCssTransformer.ReportModulesUriBuilder.class));
+        assertThat(transformerUrlBuilder, instanceOf(ReportModuleCssTransformer.ReportModulesUriBuilder.class));
     }
 
     @Test
@@ -92,21 +92,39 @@ public class ReportModuleCssTransformerTest
         final UrlReadingWebResourceTransformer urlReadingWebResourceTransformer = reportModuleCssTransformer.makeResourceTransformer(null);
         final DownloadableResource transformer = urlReadingWebResourceTransformer.transform(transformableResource, null);
 
-        assertThat(transformer, Matchers.instanceOf(ReportModuleCssTransformer.ThumbnailCssClassesGenerator.class));
+        assertThat(transformer, instanceOf(ReportModuleCssTransformer.ThumbnailCssClassesGenerator.class));
     }
 
     @Test
-    public void testResourceTransformer() throws Exception
+    public void testResourceTransformerThatGenerateCssClassForFirstPlugin() throws Exception
     {
-        final ReportModuleCssTransformer.ThumbnailCssClassesGenerator thumbnailCssClassesGenerator = new ReportModuleCssTransformer.ThumbnailCssClassesGenerator(null, pluginAccessor);
-        final String generatedCss = thumbnailCssClassesGenerator.transform("").toString();
+        final String generatedCss = generateCss();
 
         assertThat(generatedCss, containsString(MD1_KEY));
         assertThat(generatedCss, containsString(MD1_THUMBNAIL));
+    }
+
+    @Test
+    public void testResourceTransformerThatGenerateCssClassForSecondPlugin() throws Exception
+    {
+        final String generatedCss = generateCss();
+
         assertThat(generatedCss, containsString(MD2_KEY));
         assertThat(generatedCss, containsString(MD2_THUMBNAIL));
+    }
+
+    @Test
+    public void testResourceTransformerThatNotGenerateCssClassForPluginWithEmptyThumbnailUrl() throws Exception
+    {
+        final String generatedCss = generateCss();
+
         assertThat(generatedCss, not(containsString(MD3_KEY)));
     }
+    private String generateCss() {
+        final ReportModuleCssTransformer.ThumbnailCssClassesGenerator thumbnailCssClassesGenerator = new ReportModuleCssTransformer.ThumbnailCssClassesGenerator(null, pluginAccessor);
+        return thumbnailCssClassesGenerator.transform("").toString();
+    }
+
 
     private ConnectReportModuleDescriptor.ModuleDescriptorImpl createModuleDescriptor(final String descriptorKey, final String thumbnailUrl)
     {

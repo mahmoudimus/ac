@@ -116,25 +116,44 @@ public class TestReport extends JiraWebDriverTestBase
     @Test
     public void allConnectReportsDisplayedOnProjectCentricNavigationReportPage()
     {
-        backdoor.darkFeatures().enableForSite("com.atlassian.jira.projects.ProjectCentricNavigation");
-        testAllConnectReportsDisplayedOnReportPage(ProjectCentricNavigationProjectReportPage.class);
-        backdoor.darkFeatures().disableForSite("com.atlassian.jira.projects.ProjectCentricNavigation");
+        testWithEnabledProjectCentricNavigation(new Runnable(){
+            @Override
+            public void run() {
+                testAllConnectReportsDisplayedOnReportPage(ProjectCentricNavigationProjectReportPage.class);
+            }
+        });
     }
 
     @Test
     public void connectProjectOrientedNavigationReportDisplaysIframe()
     {
-        backdoor.darkFeatures().enableForSite("com.atlassian.jira.projects.ProjectCentricNavigation");
-        connectReportDisplaysIframe(ProjectCentricNavigationProjectReportPage.class);
-        backdoor.darkFeatures().disableForSite("com.atlassian.jira.projects.ProjectCentricNavigation");
+        testWithEnabledProjectCentricNavigation(new Runnable(){
+            @Override
+            public void run() {
+                connectReportDisplaysIframe(ProjectCentricNavigationProjectReportPage.class);
+            }
+        });
     }
 
     @Test
     public void contextParameterPassedToProjectOrientedNavigationReport()
     {
-        backdoor.darkFeatures().enableForSite("com.atlassian.jira.projects.ProjectCentricNavigation");
-        contextParameterPassedToReport(ProjectCentricNavigationProjectReportPage.class);
-        backdoor.darkFeatures().disableForSite("com.atlassian.jira.projects.ProjectCentricNavigation");
+        testWithEnabledProjectCentricNavigation(new Runnable(){
+            @Override
+            public void run() {
+                contextParameterPassedToReport(ProjectCentricNavigationProjectReportPage.class);
+            }
+        });
+    }
+
+    private void testWithEnabledProjectCentricNavigation(final Runnable testFunction)
+    {
+        try{
+            backdoor.darkFeatures().enableForSite("com.atlassian.jira.projects.ProjectCentricNavigation");
+            testFunction.run();
+        }finally {
+            backdoor.darkFeatures().disableForSite("com.atlassian.jira.projects.ProjectCentricNavigation");
+        }
     }
 
     private <T extends AbstractProjectReportPage> void testAllConnectReportsDisplayedOnReportPage(final Class<T> page)

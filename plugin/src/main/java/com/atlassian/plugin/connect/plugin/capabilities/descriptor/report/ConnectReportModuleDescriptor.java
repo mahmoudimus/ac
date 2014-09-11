@@ -24,6 +24,8 @@ import org.dom4j.Element;
 
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Connect version of JIRA report module.
  *
@@ -121,11 +123,11 @@ public class ConnectReportModuleDescriptor extends AbstractModuleDescriptor<Void
         public ModuleDescriptorImpl(final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, final Element descriptor, final UrlVariableSubstitutor urlVariableSubstitutor, final ModuleContextFilter moduleContextFilter, final ConnectReportModuleDescriptor connectReportModuleDescriptor, final String thumbnailUrl)
         {
             super(connectReportModuleDescriptor.authContext, connectReportModuleDescriptor.moduleFactory);
-            this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
-            this.descriptor = descriptor;
-            this.urlVariableSubstitutor = urlVariableSubstitutor;
-            this.moduleContextFilter = moduleContextFilter;
-            this.thumbnailUrl = thumbnailUrl;
+            this.iFrameRenderStrategyRegistry = checkNotNull(iFrameRenderStrategyRegistry);
+            this.descriptor = checkNotNull(descriptor);
+            this.urlVariableSubstitutor = checkNotNull(urlVariableSubstitutor);
+            this.moduleContextFilter = checkNotNull(moduleContextFilter);
+            this.thumbnailUrl = checkNotNull(thumbnailUrl);
         }
 
         @Override
