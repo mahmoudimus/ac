@@ -37,6 +37,7 @@ public class ConnectAddonToPluginFactory
         ConnectAddonPlugin plugin = new ConnectAddonPlugin(beanToModuleRegistrar.getRegisteredDescriptorsForAddon(addon.getKey()));
         plugin.setKey(addon.getKey());
         plugin.setName(addon.getName());
+        plugin.setEnabledByDefault(true);
         plugin.setPluginsVersion(3);
         plugin.setPluginState(state);
         plugin.setPluginInformation(createPluginInfo(addon));
