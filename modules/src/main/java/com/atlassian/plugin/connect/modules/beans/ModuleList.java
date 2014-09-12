@@ -551,11 +551,11 @@ public class ModuleList extends BaseModuleBean
                 .append(profilePages, other.profilePages)
                 .append(spaceToolsTabs, other.spaceToolsTabs)
                 .append(staticContentMacros, other.staticContentMacros)
-                .append(blueprints, blueprints)
+                .append(blueprints, other.blueprints)
                 .append(webhooks, other.webhooks)
                 .append(webItems, other.webItems)
-                .append(webPanels, webPanels)
-                .append(webSections, webSections)
+                .append(webPanels, other.webPanels)
+                .append(webSections, other.webSections)
                 .append(jiraReports, other.jiraReports)
                 .build();
     }

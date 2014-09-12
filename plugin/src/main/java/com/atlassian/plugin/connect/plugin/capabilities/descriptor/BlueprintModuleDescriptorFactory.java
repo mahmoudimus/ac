@@ -61,8 +61,9 @@ public class BlueprintModuleDescriptorFactory
         blueprintElement.addAttribute("content-template-key",contentTemplateKey);
         blueprintElement.addAttribute("system", "true");
 
-        if(log.isDebugEnabled())
+        if(log.isDebugEnabled()) {
             log.debug(Dom4jUtils.printNode(blueprintElement));
+        }
 
         final BlueprintModuleDescriptor descriptor = new BlueprintModuleDescriptor(moduleFactory, documentationBeanFactory);
         descriptor.init(plugin, blueprintElement);

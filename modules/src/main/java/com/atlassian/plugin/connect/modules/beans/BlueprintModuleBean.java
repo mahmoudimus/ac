@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans;
 
+import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.plugin.connect.modules.beans.builder.BlueprintModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
@@ -10,6 +11,8 @@ import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 public class BlueprintModuleBean extends RequiredKeyBean {
 
     private IconBean icon;
+
+    @Required
     private BlueprintTemplateBean template;
 
     public BlueprintModuleBean() {

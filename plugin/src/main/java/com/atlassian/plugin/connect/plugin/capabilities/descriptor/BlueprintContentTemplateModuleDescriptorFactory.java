@@ -52,9 +52,9 @@ public class BlueprintContentTemplateModuleDescriptorFactory
         ConnectAddonBean addon = moduleProviderContext.getConnectAddonBean();
 
         Element contentTemplateElement = new DOMElement("content-template");
-        String contentTemplateKey = bean.getKey(addon) + "-content-template";
+        String contentTemplateKey = BlueprintUtils.getContentTemplateKey(addon, bean);
 
-        String i18nKeyOrName = Strings.isNullOrEmpty(bean.getName().getI18n()) ? bean.getDisplayName() : bean.getName().getI18n();
+        String i18nKeyOrName = bean.getName().hasI18n()  ? bean.getDisplayName() : bean.getName().getI18n();
         contentTemplateElement.addAttribute("key", contentTemplateKey);
         contentTemplateElement.addAttribute("i18n-name-key", i18nKeyOrName);
 
@@ -63,8 +63,9 @@ public class BlueprintContentTemplateModuleDescriptorFactory
                 .addAttribute("type", "download")
                 .addAttribute("location", addon.getBaseUrl() + bean.getBlueprintTemplate().getUrl());
 
-        if (log.isDebugEnabled())
+        if (log.isDebugEnabled()) {
             log.debug(Dom4jUtils.printNode(contentTemplateElement));
+        }
 
         final ContentTemplateModuleDescriptor descriptor = new ContentTemplateModuleDescriptor(moduleFactory,
                 i18nBeanFactory,

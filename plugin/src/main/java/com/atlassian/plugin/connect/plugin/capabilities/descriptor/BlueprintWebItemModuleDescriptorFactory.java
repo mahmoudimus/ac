@@ -67,7 +67,9 @@ public class BlueprintWebItemModuleDescriptorFactory
         webItemElement.addAttribute("system", "true");
 
         if (log.isDebugEnabled())
+        {
             log.debug(Dom4jUtils.printNode(webItemElement));
+        }
 
         final WebItemModuleDescriptor descriptor = productWebItemDescriptorFactory
                 .createWebItemModuleDescriptor(null, addon.getKey(), webItemKey, true, null, true);

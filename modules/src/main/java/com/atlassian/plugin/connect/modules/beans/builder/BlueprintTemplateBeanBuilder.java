@@ -5,28 +5,28 @@ import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
 /**
  * Created by mjensen on 7/05/14.
  */
-public class BlueprintTemplateBeanBulder<T extends BlueprintTemplateBeanBulder, B extends BlueprintTemplateBean> {
+public class BlueprintTemplateBeanBuilder<T extends BlueprintTemplateBeanBuilder, B extends BlueprintTemplateBean> {
 
     private String url;
     private String content;
 
-    public BlueprintTemplateBeanBulder()
+    public BlueprintTemplateBeanBuilder()
     {
     }
 
-    public BlueprintTemplateBeanBulder(BlueprintTemplateBean defaultBean)
+    public BlueprintTemplateBeanBuilder(BlueprintTemplateBean defaultBean)
     {
         this.url = defaultBean.getUrl();
         this.content = defaultBean.getContent();
     }
 
-    public BlueprintTemplateBeanBulder withUrl(String url)
+    public BlueprintTemplateBeanBuilder withUrl(String url)
     {
         this.url = url;
         return this;
     }
 
-    public BlueprintTemplateBeanBulder withContent(String content)
+    public BlueprintTemplateBeanBuilder withContent(String content)
     {
         this.content = content;
         return this;
