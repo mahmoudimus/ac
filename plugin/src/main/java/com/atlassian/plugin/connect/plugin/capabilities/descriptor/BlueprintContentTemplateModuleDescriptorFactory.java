@@ -54,7 +54,7 @@ public class BlueprintContentTemplateModuleDescriptorFactory
         Element contentTemplateElement = new DOMElement("content-template");
         String contentTemplateKey = BlueprintUtils.getContentTemplateKey(addon, bean);
 
-        String i18nKeyOrName = bean.getName().hasI18n()  ? bean.getDisplayName() : bean.getName().getI18n();
+        String i18nKeyOrName = !bean.getName().hasI18n() ? bean.getDisplayName() : bean.getName().getI18n();
         contentTemplateElement.addAttribute("key", contentTemplateKey);
         contentTemplateElement.addAttribute("i18n-name-key", i18nKeyOrName);
 

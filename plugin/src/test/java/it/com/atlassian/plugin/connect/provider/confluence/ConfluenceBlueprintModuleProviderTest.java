@@ -102,13 +102,15 @@ public class ConfluenceBlueprintModuleProviderTest
             assertEquals(baseAddonKey + "-web-item", webItemDescriptor.getKey());
             assertEquals(MODULE_NAME, webItemDescriptor.getI18nNameKey());
             assertEquals("system.create.dialog/content", webItemDescriptor.getSection());
-            ResourceDescriptor iconResourceDescriptor = webItemDescriptor.getResourceDescriptor("download", "icon");
-            assertNotNull(iconResourceDescriptor);
-            assertEquals("web-item-icon-resource-location", iconResourceDescriptor.getLocation()); //TODO
+
+//            See: https://ecosystem.atlassian.net/browse/CE-19
+//            ResourceDescriptor iconResourceDescriptor = webItemDescriptor.getResourceDescriptor("download", "icon");
+//            assertNotNull(iconResourceDescriptor);
+//            assertEquals("web-item-icon-resource-location", iconResourceDescriptor.getLocation());
 
             String blueprintKey = webItemDescriptor.getParams().get("blueprintKey");
             assertNotNull(blueprintKey);
-            assertEquals(baseAddonKey + "-web-item", blueprintKey);
+            assertEquals(baseAddonKey + "-blueprint", blueprintKey);
 
             webItemDescriptor.enabled();
 

@@ -52,7 +52,7 @@ public class BlueprintWebItemModuleDescriptorFactory
         webItemElement.addAttribute("section", "system.create.dialog/content");
         webItemElement.addAttribute("i18n-name-key", i18nKeyOrName);
 
-//      See: https://ecosystem.atlassian.net/browse/AC-1130
+//      See: https://ecosystem.atlassian.net/browse/CE-19
 //      Doesn't quite work yet, in the mean time don't create an icon entry so you at least get the default icon
 //      instead of a broken image
 //        webItemElement.addElement("resource")
