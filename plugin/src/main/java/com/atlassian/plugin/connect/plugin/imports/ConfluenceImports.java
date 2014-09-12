@@ -50,8 +50,7 @@ public class ConfluenceImports
             @ConfluenceImport SystemInformationService systemInformationService,
             @ConfluenceImport UserAccessor userAccessor,
             @ConfluenceImport WebSudoManager webSudoManager,
-            @ConfluenceImport XhtmlContent xhtmlContent,
-            @ConfluenceImport BlueprintModuleProvider blueprintModuleProvider
+            @ConfluenceImport XhtmlContent xhtmlContent
 
     )
     {

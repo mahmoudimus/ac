@@ -444,14 +444,11 @@
             <artifactId>gson</artifactId>
         </dependency>
 
-        <!-- blueprints plugin -->
         <dependency>
             <groupId>com.atlassian.confluence.plugins</groupId>
             <artifactId>confluence-create-content-plugin</artifactId>
-            <version>${bp.version}</version>
             <scope>provided</scope>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -654,7 +651,7 @@
                                 <pluginArtifact>
                                     <groupId>com.atlassian.confluence.plugins</groupId>
                                     <artifactId>confluence-create-content-plugin</artifactId>
-                                    <version>${bp.version}</version>
+                                    <version>${blueprints.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
 
@@ -682,12 +679,6 @@
                                     <artifactId>analytics-client</artifactId>
                                     <version>${atlassian.analytics.version}</version>
                                 </bundledArtifact>
-
-                                <dependency>
-                                    <groupId>com.atlassian.confluence.plugins</groupId>
-                                    <artifactId>confluence-create-content-plugin</artifactId>
-                                    <version>${bp.version}</version>
-                                </dependency>
                             </bundledArtifacts>
                         </product>
                     </products>
@@ -1262,7 +1253,6 @@
         <mvnCommand>/usr/bin/mvn</mvnCommand>
         <debugSchemaGen>false</debugSchemaGen>
         <ao.version>0.25.2</ao.version>
-        <bp.version>4.0.22</bp.version>
         <od.testing.configuration>
             use-maven,3
             include-artifact,com.atlassian.plugins:atlassian-connect-cloud-acceptance-tests
