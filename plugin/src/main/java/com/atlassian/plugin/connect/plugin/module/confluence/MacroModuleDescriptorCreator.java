@@ -306,7 +306,7 @@ public class MacroModuleDescriptorCreator
                     .addAttribute("location", "js/confluence/macro/override.js");
 
             webResource.addElement("dependency")
-                    .setText(ConnectPluginInfo.getPluginKey() + ":ap-amd");
+                    .setText(ConnectPluginInfo.getPluginKey() + ":ap-core");
 
             webResource.addElement("context")
                     .setText("editor");

@@ -64,7 +64,8 @@ AP.define("confluence", ["_dollar", "_rpc"],
                 closeMacroEditor: function () {
                     remote.closeMacroEditor();
                 }
-            }
+            },
+            stubs: ["saveMacro", "getMacroData", "getMacroBody", "closeMacroEditor"]
         };
     });
 

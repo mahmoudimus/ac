@@ -98,72 +98,32 @@
         <resource type="download" name="docs/" location="docs" />
     </web-resource>
 
-    <web-resource key="ap-amd">
-        <resource type="download" name="_ap.js" location="/js/iframe/host/_ap.js" />
-        <resource type="download" name="_amd.js" location="/js/iframe/_amd.js" />
-        <resource type="download" name="_dollar.js" location="/js/iframe/host/_dollar.js" />
+    <web-resource key="ap-core">
+        <resource type="download" name="core-host.js" location="/js/core/host-debug.js" />
+    </web-resource>
+
+    <web-resource key="ap-user">
+        <resource type="download" name="user.js" location="/js/iframe/host/user.js" />
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-core</dependency>
     </web-resource>
 
     <web-resource key="iframe-host-js">
-        <dependency>com.atlassian.auiplugin:ajs</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
-        <resource type="download" name="_util.js" location="/js/iframe/host/_util.js" />
-        <resource type="download" name="_rpc.js" location="/js/iframe/host/_rpc.js" />
-        <resource type="download" name="env.js" location="/js/iframe/host/env.js" />
-        <resource type="download" name="resize.js" location="/js/iframe/host/resize.js" />
-        <resource type="download" name="loading-indicator.js" location="/js/iframe/host/loading-indicator.js" />
-        <resource type="download" name="request.js" location="/js/iframe/host/request.js" />
-        <resource type="download" name="dialog-rpc.js" location="/js/dialog/dialog-rpc.js" />
-        <resource type="download" name="cookie.js" location="/js/iframe/host/cookie.js" />
-        <resource type="download" name="history-rpc.js" location="/js/history/history-rpc.js" />
-        <resource type="download" name="_events.js" location="/js/iframe/_events.js" />
-        <resource type="download" name="_xdm.js" location="/js/iframe/_xdm.js" />
-        <resource type="download" name="_uri.js" location="/js/iframe/_uri.js" />
-        <resource type="download" name="_addons.js" location="/js/iframe/host/_addons.js" />
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-core</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-user</dependency>
         <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
-        <resource type="download" name="_base64.js" location="js/iframe/_base64.js" />
-        <resource type="download" name="_ui-params.js" location="/js/iframe/_ui-params.js" />
-        <resource type="download" name="content.js" location="/js/iframe/host/content.js" />
-        <resource type="download" name="_status_helper.js" location="/js/iframe/host/_status_helper.js" />
-        <resource type="download" name="history.js" location="/js/history/history.js" />
-        <resource type="download" name="analytics.js" location="/js/analytics/analytics.js" />
-    </web-resource>
-
-
-    <web-resource key="dialog">
-        <resource type="download" name="dialog.css" location="css/dialog/dialog.css" />
-        <resource type="download" name="dialog-button.js" location="js/dialog/button.js" />
-        <resource type="download" name="dialog-main.js" location="js/dialog/main.js" />
-        <resource type="download" name="dialog-factory.js" location="js/dialog/dialog-factory.js" />
-        <resource type="download" name="binder.js" location="js/dialog/binder.js" />
-        <dependency>com.atlassian.auiplugin:ajs</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
+        <resource type="download" name="content-resolver.js" location="/js/iframe/host/content-resolver.js" />
         <dependency>com.atlassian.auiplugin:dialog2</dependency>
-    </web-resource>
-
-    <web-resource key="inline-dialog">
-        <resource type="download" name="inline-dialog-main.js" location="js/inline-dialog/main.js" />
-        <resource type="download" name="inline-dialog-binder.js" location="js/inline-dialog/binder.js" />
-        <resource type="download" name="inline-dialog-simple.js" location="js/inline-dialog/simple.js" />
-        <dependency>com.atlassian.auiplugin:ajs</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
-    </web-resource>
-
-    <web-resource key="messages">
-        <resource type="download" name="messages-main.css" location="css/messages/main.css" />
-        <resource type="download" name="messages-main.js" location="js/messages/main.js" />
-        <resource type="download" name="messages-rpc.js" location="js/messages/messages-rpc.js" />
-        <dependency>com.atlassian.auiplugin:ajs</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
     </web-resource>
 
     <web-resource key="iframe-host-css">
         <resource type="download" name="host.css" location="/css/iframe/host.css" />
+        <resource type="download" name="messages-main.css" location="css/messages/main.css" />
+        <resource type="download" name="dialog.css" location="css/dialog/dialog.css" />
     </web-resource>
 
     <web-resource key="remote-condition">
         <resource type="download" name="remote.js" location="js/condition/remote.js" />
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-core</dependency>
     </web-resource>
 
     <web-resource key="images">
@@ -172,7 +132,6 @@
 
     <web-resource key="dialog-page-resource">
         <dependency>com.atlassian.auiplugin:ajs</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:dialog</dependency>
     </web-resource>
 
     <web-resource key="schema-xsl">
@@ -188,9 +147,6 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:remote-condition</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-css</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-js</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:inline-dialog</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:messages</dependency>
     </web-resource>
 
     <applinks-application-type name="Remote Plugin Container" key="remote-plugin-container-type"

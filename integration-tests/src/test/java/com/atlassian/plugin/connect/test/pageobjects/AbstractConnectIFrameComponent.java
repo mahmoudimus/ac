@@ -117,6 +117,7 @@ public abstract class AbstractConnectIFrameComponent<C>
 
     public String getIFrameElementText(String elementId)
     {
+        waitUntilContentElementNotEmpty(elementId);
         return withinIFrame(textOfElement(By.id(elementId)));
     }
 

@@ -14,11 +14,10 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'src/test/resources/test-iframe-main.js',
       {pattern: 'node_modules/karma-sinon/node_modules/sinon/lib/sinon/util/timers_ie.js', included: true},
-      'src/test/resources/js/iframe/plugin/fixture.js',
+      {pattern: 'src/main/resources/js/core/all-debug.js', included: true},
+      'src/test/resources/test-iframe-main.js',
       //events run on both sides of the bridge.
-      {pattern: 'src/test/resources/js/iframe/_events-test.js', included: false},
       {pattern: 'src/test/resources/js/iframe/plugin/*-test.js', included: false},
       {pattern: 'src/test/resources/js/iframe/plugin/_*Mock*.js', included: false},
       {pattern: 'src/main/resources/js/iframe/plugin/*.js', included: false},
@@ -70,7 +69,7 @@ module.exports = function(config) {
     // - Safari (only Mac)
     // - PhantomJS
     // - IE (only Windows)
-    browsers: ['Chrome'],
+    browsers: ['PhantomJS'],
 
 
     // If browser does not capture in given timeout [ms], kill it
@@ -79,6 +78,6 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
-    singleRun: false
+    singleRun: true
   });
 };
