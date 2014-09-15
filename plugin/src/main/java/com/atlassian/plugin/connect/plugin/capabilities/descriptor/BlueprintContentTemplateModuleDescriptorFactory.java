@@ -11,7 +11,6 @@ import com.atlassian.plugin.connect.spi.util.Dom4jUtils;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.net.RequestFactory;
-import com.google.common.base.Strings;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.slf4j.Logger;
@@ -28,7 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @ConfluenceComponent
 public class BlueprintContentTemplateModuleDescriptorFactory
-        implements ConnectModuleDescriptorFactory<BlueprintModuleBean, ContentTemplateModuleDescriptor> {
+        implements ConnectModuleDescriptorFactory<BlueprintModuleBean, ContentTemplateModuleDescriptor>
+{
 
     private static final Logger log = LoggerFactory.getLogger(BlueprintContentTemplateModuleDescriptorFactory.class);
 
@@ -39,7 +39,8 @@ public class BlueprintContentTemplateModuleDescriptorFactory
     @Autowired
     public BlueprintContentTemplateModuleDescriptorFactory(ModuleFactory moduleFactory,
                                                            I18NBeanFactory i18nBeanFactory,
-                                                           RequestFactory<?> requestFactory) {
+                                                           RequestFactory<?> requestFactory)
+    {
         this.moduleFactory = moduleFactory;
         this.i18nBeanFactory = i18nBeanFactory;
         this.requestFactory = requestFactory;
@@ -61,9 +62,10 @@ public class BlueprintContentTemplateModuleDescriptorFactory
         contentTemplateElement.addElement("resource")
                 .addAttribute("name", "template")
                 .addAttribute("type", "download")
-                .addAttribute("location", addon.getBaseUrl() + bean.getBlueprintTemplate().getUrl());
+                .addAttribute("location", createTemplateURL(addon.getBaseUrl(), bean.getBlueprintTemplate().getUrl()));
 
-        if (log.isDebugEnabled()) {
+        if (log.isDebugEnabled())
+        {
             log.debug(Dom4jUtils.printNode(contentTemplateElement));
         }
 
@@ -73,6 +75,30 @@ public class BlueprintContentTemplateModuleDescriptorFactory
                 requestFactory);
         descriptor.init(plugin, contentTemplateElement);
         return descriptor;
+    }
+
+    public static void main(String[] args)
+    {
+        System.out.println(createTemplateURL("base", "resource"));
+    }
+
+    private static String createTemplateURL(String baseUrl, String blueprintResource)
+    {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(baseUrl);
+        if (!baseUrl.endsWith("/") && !blueprintResource.startsWith("/"))
+        {
+            buffer.append("/").append(blueprintResource);
+        }
+        else if (baseUrl.endsWith("/") && blueprintResource.startsWith("/"))
+        {
+            buffer.append(blueprintResource.substring(1));
+        }
+        else
+        {
+            buffer.append(blueprintResource);
+        }
+        return buffer.toString();
     }
 
 }
