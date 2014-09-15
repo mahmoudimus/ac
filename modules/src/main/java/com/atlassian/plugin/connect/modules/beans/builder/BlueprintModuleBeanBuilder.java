@@ -7,15 +7,9 @@ import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 public class BlueprintModuleBeanBuilder extends RequiredKeyBeanBuilder<BlueprintModuleBeanBuilder,BlueprintModuleBean> {
 
     private IconBean icon;
-    private String url;
     private BlueprintTemplateBean template;
 
     public BlueprintModuleBeanBuilder() { }
-
-    public BlueprintModuleBeanBuilder withUrl(String url) {
-        this.url = url;
-        return this;
-    }
 
     public BlueprintModuleBeanBuilder withTemplate(BlueprintTemplateBean template) {
         this.template = template;
