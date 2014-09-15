@@ -149,15 +149,6 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-js</dependency>
     </web-resource>
 
-    <web-resource key="atlassian-connect-mobile-resources" name="Connect resources for inclusion on every mobile page.">
-        <context>atl.mobile.confluence.view.content</context>
-        <context>preview</context>
-        <dependency>com.atlassian.auiplugin:jquery-lib</dependency>
-        <dependency>com.atlassian.auiplugin:aui-experimental-spinner</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-css</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-js</dependency>
-    </web-resource>
-
     <applinks-application-type name="Remote Plugin Container" key="remote-plugin-container-type"
                                    class="com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerApplicationTypeImpl"
                                    interface="com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType">

@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.spi.event;
 
-import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -13,7 +11,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public abstract class ConnectAddonLifecycleEvent
 {
-    @PrivacyPolicySafe
     private final String pluginKey;
 
     protected ConnectAddonLifecycleEvent(String pluginKey)
