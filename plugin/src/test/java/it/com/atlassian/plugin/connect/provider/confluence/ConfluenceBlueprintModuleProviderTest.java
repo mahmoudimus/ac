@@ -64,7 +64,6 @@ public class ConfluenceBlueprintModuleProviderTest
     @Test
     public void createBlueprintModules() throws Exception
     {
-        //System.out.println("session user: " + userManager.getRemoteUser().getUsername());
         BlueprintModuleBean bean = BlueprintModuleBean.newBlueprintModuleBean()
                 .withName(new I18nProperty(MODULE_NAME, ""))
                 .withKey(MODULE_KEY)
