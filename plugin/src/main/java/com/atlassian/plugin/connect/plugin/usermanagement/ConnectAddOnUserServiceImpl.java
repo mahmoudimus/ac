@@ -13,6 +13,7 @@ import com.google.common.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -238,6 +239,13 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         catch (OperationFailedException e)
         {
             // during Connect 1.0 blitz testing we observed this exception emanating from the bowels of Crowd, claiming that the user already exists
+            // --> handle the race condition of something else creating this user at around the same time (as unlikely as that should be)
+            user = findUserWithFastFailure(username, e);
+        }
+        catch (DataIntegrityViolationException e)
+        {
+            // our analytics revealed 57 of these in 1 week and prod instance logs suggest that this is another user creation race condition
+            // see https://ecosystem.atlassian.net/browse/ACDEV-1499
             // --> handle the race condition of something else creating this user at around the same time (as unlikely as that should be)
             user = findUserWithFastFailure(username, e);
         }
