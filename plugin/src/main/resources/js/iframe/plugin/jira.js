@@ -1,10 +1,7 @@
 AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
-
     "use strict";
-
     var workflowListener,
         validationListener;
-
     /**
     * @class WorkflowConfiguration
     */
@@ -48,9 +45,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
             };
         }
     };
-
     var apis = rpc.extend(function (remote) {
-
         return {
 
             /**

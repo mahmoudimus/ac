@@ -1,5 +1,4 @@
-_AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
-    "use strict";
+_AP.define("user", ["_dollar", "_rpc"], function($, rpc) {
 
     var connectModuleData; // data sent from the velocity template
 
@@ -9,9 +8,6 @@ _AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
                 connectModuleData = state;
             },
             internals: {
-                getLocation: function () {
-                    return window.location.href;
-                },
                 getUser: function () {
                     // JIRA 5.0, Confluence 4.3(?)
                     var meta = AJS.Meta,
@@ -31,6 +27,8 @@ _AP.define("env", ["_dollar", "_rpc"], function ($, rpc) {
                 }
             }
         };
+
     });
 
 });
+

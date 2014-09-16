@@ -26,7 +26,7 @@ import static com.google.common.collect.Lists.newArrayList;
  *
  */
 @Component
-public class IFrameRenderContextBuilderFactoryImpl implements IFrameRenderContextBuilderFactory, InitializingBean
+public class IFrameRenderContextBuilderFactoryImpl implements IFrameRenderContextBuilderFactory
 {
     private static final Logger log = LoggerFactory.getLogger(IFrameRenderContextBuilderFactoryImpl.class);
 
@@ -37,7 +37,6 @@ public class IFrameRenderContextBuilderFactoryImpl implements IFrameRenderContex
     private final PluginRetrievalService pluginRetrievalService;
     private final WebResourceUrlProvider webResourceUrlProvider;
 
-    private List<String> dialogScriptUrls;
 
     @Autowired
     public IFrameRenderContextBuilderFactoryImpl(final RemotablePluginAccessorFactory pluginAccessorFactory,
@@ -53,31 +52,12 @@ public class IFrameRenderContextBuilderFactoryImpl implements IFrameRenderContex
         this.webResourceUrlProvider = webResourceUrlProvider;
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception
-    {
-        // eagerly determine the dialogScriptUrl
-        dialogScriptUrls = newArrayList();
-        ModuleDescriptor<?> dialogModuleDescriptor = pluginRetrievalService.getPlugin().getModuleDescriptor("dialog");
-        for (ResourceDescriptor descriptor : dialogModuleDescriptor.getResourceDescriptors())
-        {
-            String src = webResourceUrlProvider.getStaticPluginResourceUrl(dialogModuleDescriptor, descriptor.getName(), UrlMode.AUTO);
-            if (src.endsWith("js"))
-            {
-                dialogScriptUrls.add(src);
-            }
-        }
-        if (dialogScriptUrls.isEmpty())
-        {
-            throw new IllegalStateException("Expected at least one JS resource URL for <web-resource key='dialog'>.");
-        }
-    }
 
     @Override
     public IFrameRenderContextBuilder builder()
     {
         return new IFrameRenderContextBuilderImpl(pluginAccessorFactory, userManager, hostApplicationInfo,
-                userPreferencesRetriever, Preconditions.checkNotNull(dialogScriptUrls, "dialogScriptUrls"));
+                userPreferencesRetriever);
     }
 
 }
