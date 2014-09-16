@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.BlueprintContentTemplateModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.BlueprintModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.BlueprintWebItemModuleDescriptorFactory;
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.collect.ImmutableList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
+@ConfluenceComponent
 @ExportAsDevService
 public class DefaultBlueprintModuleProvider implements BlueprintModuleProvider
 {
