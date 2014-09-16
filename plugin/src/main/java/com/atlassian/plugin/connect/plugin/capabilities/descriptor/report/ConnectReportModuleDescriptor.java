@@ -139,7 +139,7 @@ public class ConnectReportModuleDescriptor extends AbstractModuleDescriptor<Void
         @Override
         public String getUrl(final Project project)
         {
-            final String url = descriptor.attribute("url").getValue();
+            final String url = descriptor.attribute("url") != null ? descriptor.attribute("url").getValue() : "";
             final JiraModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl();
             unfilteredContext.addProject(project);
 

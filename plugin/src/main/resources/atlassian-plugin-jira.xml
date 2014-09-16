@@ -156,7 +156,7 @@
         </description>
     </plugin-permission>
 
-    <url-reading-web-resource-transformer key="connectReportTransformer" name="Connect report transformer"
+    <url-reading-web-resource-transformer key="connect-report-transformer" name="Connect report transformer"
                                           class="com.atlassian.plugin.connect.plugin.capabilities.descriptor.ReportModuleCssTransformer"/>
 
     <web-resource key="connect-report-thumbnails">
@@ -164,7 +164,7 @@
         <resource type="download" location="/css/connect-report-thumbnails.css" name="connect-report-thumbnails.css"/>
 
         <transformation extension="css">
-            <transformer key="jira-connectReportTransformer"/>
+            <transformer key="jira-connect-report-transformer"/>
         </transformation>
     </web-resource>
 
