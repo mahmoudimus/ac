@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -385,7 +386,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         {
                
             Map<String, Object> renderContext = ImmutableMap.<String, Object>builder()
-                    .put("title", title)
+                    .put("title", StringUtils.defaultIfEmpty(title, ""))
                     .put("decorator", ATL_GENERAL)
                     .build();
 
