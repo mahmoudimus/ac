@@ -148,10 +148,13 @@ public class TestReport extends JiraWebDriverTestBase
 
     private void testWithEnabledProjectCentricNavigation(final Runnable testFunction)
     {
-        try{
+        try
+        {
             backdoor.darkFeatures().enableForSite("com.atlassian.jira.projects.ProjectCentricNavigation");
             testFunction.run();
-        }finally {
+        }
+        finally
+        {
             backdoor.darkFeatures().disableForSite("com.atlassian.jira.projects.ProjectCentricNavigation");
         }
     }
