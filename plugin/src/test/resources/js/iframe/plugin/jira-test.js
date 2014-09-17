@@ -1,89 +1,84 @@
-var xdmMockJira;
 (function(){
     var context = require.config({
         context: Math.floor(Math.random() * 1000000),
-        baseUrl: 'base/src/main/resources/js/iframe/plugin',
-        map: {
-            '*': {
-                '_xdm': '_xdmMockJiraTest'
-            }
-        },
-        paths: {
-            '_xdmMockJiraTest': '/base/src/test/resources/js/iframe/plugin/_xdmMockJiraTest'
-        }
+        baseUrl: 'base/src/main/resources/js/iframe/plugin'
     });
 
-    xdmMockJira = {
+    window.xdmMock = {
         init: function() {},
         getWorkflowConfiguration: sinon.spy(),
         triggerJiraEvent: sinon.spy()
     };
 
-    context(["_rpc", "jira"], function(_rpc, jira) {
-        _rpc.init();
 
-        module("Jira plugin", {
-            setup: function(){
-                xdmMockJira.getWorkflowConfiguration.reset();
-                xdmMockJira.triggerJiraEvent.reset();
-            }
+    context(["jira"], function() {
+        AP.require(['jira'],function(jira){
+
+            xdmMock.getWorkflowConfiguration = sinon.spy();
+            xdmMock.triggerJiraEvent = sinon.spy();
+
+            module("Jira plugin", {
+                setup: function(){
+                    xdmMock.getWorkflowConfiguration.reset();
+                    xdmMock.triggerJiraEvent.reset();
+                }
+            });
+
+            test('getWorkflowConfiguration calls remote getWorkflowConfiguration', function(){
+                jira.getWorkflowConfiguration();
+                ok(xdmMock.getWorkflowConfiguration.calledOnce);
+            });
+
+            test('getWorkflowConfiguration passes callback to remote getWorkflowConfiguration', function(){
+                var callback = sinon.spy();
+
+                jira.getWorkflowConfiguration(callback);
+
+                deepEqual(xdmMock.getWorkflowConfiguration.args[0][0], callback);
+            });
+
+            test('onSave callback is triggered when event is triggered', function(){
+                var callback = sinon.spy();
+
+                jira.WorkflowConfiguration.onSaveValidation(sinon.stub().returns(true));
+                jira.WorkflowConfiguration.onSave(callback);
+                jira.WorkflowConfiguration.trigger();
+
+                ok(callback.calledOnce);
+            });
+
+            test('when triggered onSave value is returned as value', function(){
+                var value = 'abc123';
+
+                jira.WorkflowConfiguration.onSaveValidation(sinon.stub().returns(true));
+                jira.WorkflowConfiguration.onSave(sinon.stub().returns(value));
+
+                equal(jira.WorkflowConfiguration.trigger().value, value);
+            });
+
+            test('valid is true when workflow validation function returns true', function(){
+                jira.WorkflowConfiguration.onSaveValidation(sinon.stub().returns(true));
+
+                ok(jira.WorkflowConfiguration.trigger().valid);
+            });
+
+            test('valid is false when workflow validation function returns false', function(){
+                jira.WorkflowConfiguration.onSaveValidation(sinon.stub().returns(false));
+
+                ok(!jira.WorkflowConfiguration.trigger().valid);
+            });
+
+            test('refreshIssuePage calls remote triggerJiraEvent', function(){
+                jira.refreshIssuePage();
+                ok(xdmMock.triggerJiraEvent.calledOnce);
+            });
+
+            test('refreshIssuePage calls triggerJiraEvent with correct event name', function(){
+                jira.refreshIssuePage();
+                equal(xdmMock.triggerJiraEvent.args[0][0], 'refreshIssuePage');
+            });
+
         });
-
-        test('getWorkflowConfiguration calls remote getWorkflowConfiguration', function(){
-            jira.getWorkflowConfiguration();
-            ok(xdmMockJira.getWorkflowConfiguration.calledOnce);
-        });
-
-        test('getWorkflowConfiguration passes callback to remote getWorkflowConfiguration', function(){
-            var callback = sinon.spy();
-
-            jira.getWorkflowConfiguration(callback);
-
-            deepEqual(xdmMockJira.getWorkflowConfiguration.args[0][0], callback);
-        });
-
-        test('onSave callback is triggered when event is triggered', function(){
-            var callback = sinon.spy();
-
-            jira.WorkflowConfiguration.onSaveValidation(sinon.stub().returns(true));
-            jira.WorkflowConfiguration.onSave(callback);
-            jira.WorkflowConfiguration.trigger();
-
-            ok(callback.calledOnce);
-        });
-
-        test('when triggered onSave value is returned as value', function(){
-            var value = 'abc123';
-
-            jira.WorkflowConfiguration.onSaveValidation(sinon.stub().returns(true));
-            jira.WorkflowConfiguration.onSave(sinon.stub().returns(value));
-
-            equal(jira.WorkflowConfiguration.trigger().value, value);
-        });
-
-        test('valid is true when workflow validation function returns true', function(){
-            jira.WorkflowConfiguration.onSaveValidation(sinon.stub().returns(true));
-
-            ok(jira.WorkflowConfiguration.trigger().valid);
-        });
-
-        test('valid is false when workflow validation function returns false', function(){
-            jira.WorkflowConfiguration.onSaveValidation(sinon.stub().returns(false));
-
-            ok(!jira.WorkflowConfiguration.trigger().valid);
-        });
-
-        test('refreshIssuePage calls remote triggerJiraEvent', function(){
-            jira.refreshIssuePage();
-            ok(xdmMockJira.triggerJiraEvent.calledOnce);
-        });
-
-        test('refreshIssuePage calls triggerJiraEvent with correct event name', function(){
-            jira.refreshIssuePage();
-            equal(xdmMockJira.triggerJiraEvent.args[0][0], 'refreshIssuePage');
-        });
-
-
     });
 
 })();

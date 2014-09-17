@@ -678,7 +678,7 @@
         <amps.version>4.2.20</amps.version>
         <atlassian.analytics.version>3.38</atlassian.analytics.version>
         <atlassian.applinks.version>4.2.4</atlassian.applinks.version>
-        <atlassian.confluence.version>5.5-OD-30-009</atlassian.confluence.version>
+        <atlassian.confluence.version>5.5-OD-31-010</atlassian.confluence.version>
         <atlassian.crowd.version>2.8.0-OD-4</atlassian.crowd.version>
         <atlassian.fugue.version>1.1</atlassian.fugue.version>
         <atlassian.healthcheck.version>2.0.4</atlassian.healthcheck.version>
@@ -731,7 +731,7 @@
 
         <!-- BUILD STUFF -->
         <apache-commons-version>3.1</apache-commons-version>
-        <jgitflow.version>1.0-m4</jgitflow.version>
+        <jgitflow.version>1.0-m4.3</jgitflow.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
         <atlassian.upm.on.demand>false</atlassian.upm.on.demand>
@@ -742,7 +742,8 @@
         <skipUnits>${skipTests}</skipUnits>
         <schema.generator.version>1.0.0-m4</schema.generator.version>
         <json.schema.validator.version>2.2.5</json.schema.validator.version>
-
+        <node.version>v0.10.26</node.version>
+        <npm.version>1.4.3</npm.version>
     </properties>
 
     <repositories>

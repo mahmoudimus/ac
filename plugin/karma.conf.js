@@ -15,6 +15,11 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       {pattern: 'node_modules/karma-sinon/node_modules/sinon/lib/sinon/util/timers_ie.js', included: true},
+      {pattern: 'node_modules/atlassian-connect-js/bower_components/jquery/jquery.js', included: true},
+      {pattern: 'node_modules/atlassian-connect-js/bower_components/aui-dist/aui/js/aui.js', included: true},
+      'http://aui-cdn.atlassian.com/aui-adg/5.4.3/js/aui-soy.js',
+      {pattern: 'node_modules/atlassian-connect-js/bower_components/aui/src/js/atlassian.js', included: true},
+      'src/main/resources/js/core/host-debug.js',
       'src/test/resources/test-main.js',
       {pattern: 'src/test/resources/**/*-test.js', included: false},
       {pattern: 'src/test/resources/fixtures/**', included: false},
@@ -68,7 +73,7 @@ module.exports = function(config) {
     // - PhantomJS
     // - IE (only Windows)
     //browsers: ['Chrome', 'Safari', 'Firefox', 'Opera', 'IE11 - Win7', 'IE10 - Win7', 'IE9 - Win7'],
-    browsers: ['Chrome'],
+    browsers: ['PhantomJS'],
 
 
     // If browser does not capture in given timeout [ms], kill it
@@ -77,6 +82,6 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
-    singleRun: false
+    singleRun: true
   });
 };

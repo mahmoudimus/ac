@@ -7,22 +7,32 @@ for (var file in window.__karma__.files) {
   }
 }
 
+window.xdmMock; //setup a global to be filled with xdmMocks.
+AP.define("_rpc", function(){
+    return {
+        extend: function(func){
+            var x = func(window.xdmMock);
+            return x.apis;
+        }
+    };
+});
+
+
 requirejs.config({
     // Karma serves files from '/base'
     baseUrl: 'base/src/main/resources/js/iframe/plugin',
 
     paths: {
-        'iframe/host/analytics': '../host/analytics',
-        'iframe/_events': '../_events',
-        'iframe/_uri': '../_uri',
-        '_events': '../_events',
-        'iframe/_ui-params': '../_ui-params',
     },
     // ask Require.js to load these files (all our tests)
     deps: tests,
 
     // start test run, once Require.js is done
-    callback: window.__karma__.start
+    callback: function(x){ 
+        setTimeout(function(){
+             window.__karma__.start(x);
+        }, 1000);
+    }
 });
 
 //tests will timeout after 5 seconds
