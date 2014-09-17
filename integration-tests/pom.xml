@@ -378,6 +378,11 @@
                                     <artifactId>json-schema-validator-atlassian-bundle</artifactId>
                                     <version>${atlassian.json.schema.validator.version}</version>
                                 </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.jira</groupId>
+                                    <artifactId>jira-projects-plugin</artifactId>
+                                    <version>${atlassian.jira.projects.plugin.version}</version>
+                                </pluginArtifact>
                             </pluginArtifacts>
 
                             <bundledArtifacts>

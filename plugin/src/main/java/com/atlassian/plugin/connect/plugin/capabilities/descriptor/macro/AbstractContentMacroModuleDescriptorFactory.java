@@ -130,7 +130,7 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         }
         if (bean.hasIcon())
         {
-            element.setAttribute("icon", getAbsoluteUrl(addon, bean.getIcon().getUrl()));
+            element.setAttribute("icon", urlConverter.getAbsoluteUrl(addon, bean.getIcon().getUrl()));
         }
         if (bean.isHidden())
         {
@@ -200,7 +200,7 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
 
     protected ImagePlaceholderMacro decorateWithImagePlaceHolder(ConnectAddonBean addon, Macro macro, ImagePlaceholderBean bean)
     {
-        String absoluteUrl = getAbsoluteUrl(addon, bean.getUrl());
+        String absoluteUrl = urlConverter.getAbsoluteUrl(addon, bean.getUrl());
         Dimensions dimensions = null;
         if (null != bean.getHeight() && null != bean.getWidth())
         {
@@ -213,25 +213,9 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
     {
         if (null != documentation)
         {
-            String absoluteUrl = getAbsoluteUrl(addon, documentation.getUrl());
+            String absoluteUrl = urlConverter.getAbsoluteUrl(addon, documentation.getUrl());
             return newLinkBean(documentation).withUrl(absoluteUrl).build();
         }
         return null;
-    }
-
-    private String getAbsoluteUrl(ConnectAddonBean addon, String url)
-    {
-        try
-        {
-            return urlConverter.getAbsoluteUrl(addon.getKey(), url);
-        }
-        catch (URISyntaxException e)
-        {
-            // help vendors find errors in their descriptors
-            throw new PluginInstallException("Malformed url declared by '"
-                    + addon.getName()
-                    + "' (" + addon.getKey() + "): "
-                    + url, e);
-        }
     }
 }

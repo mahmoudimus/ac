@@ -27,6 +27,12 @@ public class ReportModuleBean extends RequiredKeyBean
     @Required
     private I18nProperty description;
 
+    @CommonSchemaAttributes (defaultValue = "other")
+    private ReportCategory reportCategory;
+
+    @StringSchemaAttributes (format = "uri-template")
+    private String thumbnailUrl;
+
     public ReportModuleBean(final ReportModuleBeanBuilder reportModuleBeanBuilder)
     {
         super(reportModuleBeanBuilder);
@@ -59,6 +65,21 @@ public class ReportModuleBean extends RequiredKeyBean
         return description;
     }
 
+    /**
+     * The category of the report. The default category is other.
+     */
+    public ReportCategory getReportCategory() {
+        return (reportCategory != null) ? reportCategory : ReportCategory.OTHER;
+    }
+
+    /**
+     * Specifies the URL of the report thumbnail. The URL is relative to the add-on's base URL.
+     */
+    public String getThumbnailUrl()
+    {
+        return thumbnailUrl;
+    }
+
     public static ReportModuleBeanBuilder newBuilder()
     {
         return new ReportModuleBeanBuilder();
@@ -83,6 +104,8 @@ public class ReportModuleBean extends RequiredKeyBean
                 .append(this.url, other.url)
                 .append(this.weight, other.weight)
                 .append(this.description, other.description)
+                .append(this.reportCategory, other.reportCategory)
+                .append(this.thumbnailUrl, other.thumbnailUrl)
                 .appendSuper(super.equals(otherObj))
                 .isEquals();
     }
@@ -94,6 +117,8 @@ public class ReportModuleBean extends RequiredKeyBean
                 .append(url)
                 .append(weight)
                 .append(description)
+                .append(reportCategory)
+                .append(thumbnailUrl)
                 .append(super.hashCode())
                 .build();
     }

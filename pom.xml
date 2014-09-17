@@ -698,6 +698,7 @@
         <atlassian.sal.version>2.10.0</atlassian.sal.version>
         <atlassian.selenium.version>2.2-rc3</atlassian.selenium.version>
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>
+        <atlassian.jira.projects.plugin.version>1.4.0-D20140829T122309</atlassian.jira.projects.plugin.version>
 
         <atlassian.upm.version>2.17.4</atlassian.upm.version>
 
@@ -708,7 +709,7 @@
         <atlassian.webhooks.api.version>1.0.6</atlassian.webhooks.api.version>
         <atlassian.jira.webhooks.version>1.2.5</atlassian.jira.webhooks.version>
 
-        <atlassian.webresource.version>3.0.0-m24</atlassian.webresource.version>
+        <atlassian.webresource.version>3.1.0</atlassian.webresource.version>
         <atlassian.webfragments.version>3.0.0-m7</atlassian.webfragments.version>
         <atlassian.html.encoder.version>1.4</atlassian.html.encoder.version>
 
