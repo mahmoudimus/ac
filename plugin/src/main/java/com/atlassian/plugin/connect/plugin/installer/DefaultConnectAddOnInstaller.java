@@ -147,7 +147,9 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 eventPublisher.publish(new ConnectAddonInstallFailedEvent(pluginKey, e.getMessage()));
                 if (previousAddOn.isDefined() && !previousSettings.isEmpty())
                 {
-                    log.debug("Prevous addon found, attempting to restore");
+                    log.error("An exception occurred while installing the plugin '["
+                              + pluginKey
+                              + "]. Restoring previous version...", e);
                     restoreAddon(previousAddOn.get(), previousSettings, targetState);
                     addonPluginWrapper = addonToPluginFactory.create(previousAddOn.get());
                 }
@@ -156,11 +158,17 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                     log.error("An exception occurred while installing the plugin '[" + pluginKey + "]. Uninstalling...",
                               e);
                     connectAddonManager.uninstallConnectAddonQuietly(pluginKey);
-                    throw new PluginInstallException(e.getMessage(), e);
                 }
             }
+            if(e instanceof PluginInstallException)
+            {
+                throw (PluginInstallException) e;
+            }
+            else
+            {
+                throw new PluginInstallException(e.getMessage(), e);
+            }
         }
-
 
         long endTime = System.currentTimeMillis();
 

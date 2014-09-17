@@ -126,6 +126,20 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
         assertPageLinkWorks();
     }
 
+    @Test
+    public void testFailedInstallDoesNotInstall() throws Exception
+    {
+        installAddonFailure();
+        assertAddonIsNotInstalled();
+    }
+
+    public void assertAddonIsNotInstalled()
+    {
+        login(TestUser.ADMIN);
+        PluginManager page = product.visit(PluginManager.class);
+        assertTrue("Plugin '" + pluginKey + "' should not be installed", !page.contains(pluginKey));
+    }
+
     public void assertPageLinkWorks() throws MalformedURLException, URISyntaxException, JwtVerificationException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtParseException
     {
         login(TestUser.ADMIN);
