@@ -15,6 +15,10 @@ The Atlassian Connect team uses [git flow](https://www.atlassian.com/git/workflo
 The `master` branch points to the latest `atlassian-connect` release. If you are looking for bleeding edge,
 you probably want to be on the `develop` branch.
 
+## Javascript
+
+Most of the connect javascript is now part of it's [own project](https://stash.atlassian.com/projects/AC/repos/atlassian-connect-js/) - check there for additional instructions. The project is consumed using the package.json file in the plugin directory.
+
 ### Contributions
 
 Contributions are encouraged! To start working on Atlassian Connect, follow this guide:
