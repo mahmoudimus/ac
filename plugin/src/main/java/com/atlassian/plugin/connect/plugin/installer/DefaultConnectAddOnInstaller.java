@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkUtil;
 import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserDisableException;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
@@ -180,7 +181,14 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                                                         maybePreviousAuthType.get(),
                                                         previousPublicKeyOrSharedSecret,
                                                         addonUserKey);
-                    setAddonState(targetState, pluginKey);
+                    try
+                    {
+                        setAddonState(targetState, pluginKey);
+                    }
+                    catch (ConnectAddOnUserDisableException caude)
+                    {
+                        throw new PluginInstallException("Could not disable add", caude);
+                    }
                     addonPluginWrapper = addonToPluginFactory.create(previousAddon);
                 }
                 else
@@ -224,11 +232,19 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         });
     }
 
-    private void setAddonState(PluginState targetState, String pluginKey)
+    private void setAddonState(PluginState targetState, String pluginKey) throws ConnectAddOnUserDisableException
     {
-        if (null != targetState && targetState == PluginState.ENABLED)
+        if (null == targetState)
         {
-                connectAddonManager.enableConnectAddon(pluginKey);
+            return;
+        }
+        else if (targetState == PluginState.ENABLED)
+        {
+            connectAddonManager.enableConnectAddon(pluginKey);
+        }
+        else if (targetState == PluginState.DISABLED)
+        {
+            connectAddonManager.disableConnectAddon(pluginKey);
         }
     }
 
