@@ -146,7 +146,8 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
             if (nonValidatedAddon.getModules().isEmpty())
             {
-                throw new PluginInstallException("Unable to install connect add on because it has no modules defined");
+                com.atlassian.upm.api.util.Option<String> errorI18nKey = com.atlassian.upm.api.util.Option.<String>some("connect.install.error.no.modules");
+                throw new PluginInstallException("Unable to install connect add on because it has no modules defined", errorI18nKey);
             }
 
             targetState = addonRegistry.getRestartState(pluginKey);
