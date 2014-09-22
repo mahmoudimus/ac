@@ -248,6 +248,13 @@
        "basePaths": ["/auditing($|/.*)"],
        "versions": ["2", "latest"],
        "public": true
+    },
+    {
+        "key": "jql",
+        "name": "api",
+        "basePaths": ["jql/autocompletedata"],
+        "versions": ["2", "latest"],
+        "public": true
     }
   ],
   "soapRpcPaths": [
