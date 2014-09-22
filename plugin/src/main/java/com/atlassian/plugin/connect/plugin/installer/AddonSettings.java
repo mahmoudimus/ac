@@ -1,8 +1,6 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.atlassian.plugin.PluginState;
 
 public class AddonSettings

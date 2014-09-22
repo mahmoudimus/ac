@@ -15,7 +15,6 @@ import com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
-import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.InstallationFailedException;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonInstallFailedEvent;
@@ -26,7 +25,6 @@ import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.google.common.base.Predicate;
 
-import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,7 +121,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         PluginState targetState = null;
         Option<ApplicationLink> maybePreviousApplink = Option.none();
         Option<AuthenticationType> maybePreviousAuthType = Option.none();
-        String previousPublicKey = "";
+        String previousPublicKeyOrSharedSecret = "";
         String baseUrl = "";
 
         long startTime = System.currentTimeMillis();
@@ -135,27 +133,16 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
             pluginKey = nonValidatedAddon.getKey();
             maybePreviousApplink = Option.option(connectApplinkManager.getAppLink(pluginKey));
-            if(maybePreviousApplink.isDefined())
+            if (maybePreviousApplink.isDefined())
             {
                 ApplicationLink applink = maybePreviousApplink.get();
                 baseUrl = applink.getRpcUrl().toString();
                 maybePreviousAuthType = ConnectApplinkUtil.getAuthenticationType(applink);
-                previousPublicKey = ConnectApplinkUtil.getSharedSecretOrPublicKey(applink).getOrElse("");
+                previousPublicKeyOrSharedSecret = connectApplinkManager.getSharedSecretOrPublicKey(applink).getOrElse("");
             }
             previousSettings = addonRegistry.getAddonSettings(pluginKey);
-            Iterable<ConnectAddonBean> allAddons = addonRegistry.getAllAddonBeans();
-            final String key = pluginKey;
-            maybePreviousAddon = Iterables.findFirst(allAddons, new Predicate<ConnectAddonBean>(){
-                @Override
-                public boolean apply(@Nullable ConnectAddonBean input)
-                {
-                    if(input == null)
-                    {
-                        return false;
-                    }
-                    return key.equals(input.getKey());
-                }
-            });
+
+            maybePreviousAddon = findAddon(pluginKey);
 
             if (nonValidatedAddon.getModules().isEmpty())
             {
@@ -190,7 +177,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                     connectApplinkManager.createAppLink(previousAddon,
                                                         baseUrl,
                                                         maybePreviousAuthType.get(),
-                                                        previousPublicKey,
+                                                        previousPublicKeyOrSharedSecret,
                                                         addonUserKey);
                     setAddonState(targetState, pluginKey);
                     addonPluginWrapper = addonToPluginFactory.create(previousAddon);
@@ -217,6 +204,23 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         log.info("Connect add-on installed in " + (endTime - startTime) + "ms");
 
         return addonPluginWrapper;
+    }
+
+    private Option<ConnectAddonBean> findAddon(final String pluginKey)
+    {
+        Iterable<ConnectAddonBean> allAddons = addonRegistry.getAllAddonBeans();
+        return Iterables.findFirst(allAddons, new Predicate<ConnectAddonBean>()
+        {
+            @Override
+            public boolean apply(@Nullable ConnectAddonBean input)
+            {
+                if (input == null)
+                {
+                    return false;
+                }
+                return pluginKey.equals(input.getKey());
+            }
+        });
     }
 
     private void setAddonState(PluginState targetState, String pluginKey)

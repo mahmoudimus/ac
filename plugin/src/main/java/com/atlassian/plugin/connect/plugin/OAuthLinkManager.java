@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.auth.types.OAuthAuthenticationProvider;
 import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
+import com.atlassian.fugue.Option;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.Request;
 import com.atlassian.oauth.ServiceProvider;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +47,7 @@ import static org.apache.commons.lang.Validate.notNull;
 public class OAuthLinkManager
 {
 
+    public static final String OAUTH_INCOMING_CONSUMERKEY = "oauth.incoming.consumerkey";
     public static final String CONSUMER_KEY_OUTBOUND = "consumerKey.outbound";
     public static final String SERVICE_PROVIDER_REQUEST_TOKEN_URL = "serviceProvider.requestTokenUrl";
     public static final String SERVICE_PROVIDER_ACCESS_TOKEN_URL = "serviceProvider.accessTokenUrl";
@@ -67,6 +70,20 @@ public class OAuthLinkManager
         this.oauthValidator = new SimpleOAuthValidator();
     }
 
+    public Option<PublicKey> getPublicKeyFromLink(ApplicationLink link)
+    {
+        Object prop = link.getProperty(OAUTH_INCOMING_CONSUMERKEY);
+        if(prop != null && prop instanceof String)
+        {
+            Consumer consumer = this.serviceProviderConsumerStore.get((String) prop);
+            if(consumer != null)
+            {
+                return Option.option(consumer.getPublicKey());
+            }
+        }
+        return Option.none();
+    }
+
     public void associateConsumerWithLink(ApplicationLink link, Consumer consumer)
     {
         XmlDescriptorExploder.notifyAndExplode(appLinkToAddOnKey(link));
@@ -75,7 +92,7 @@ public class OAuthLinkManager
 
         // this logic was copied from ual
         serviceProviderConsumerStore.put(consumer);
-        link.putProperty("oauth.incoming.consumerkey", consumer.getKey());
+        link.putProperty(OAUTH_INCOMING_CONSUMERKEY, consumer.getKey());
     }
 
     public void unassociateConsumer(Consumer consumer)

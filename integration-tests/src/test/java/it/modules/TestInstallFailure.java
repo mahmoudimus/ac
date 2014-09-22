@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.security.NoSuchAlgorithmException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
@@ -50,20 +51,19 @@ import static org.junit.Assert.assertTrue;
 public class TestInstallFailure extends ConnectWebDriverTestBase
 {
 
-    private static final String MY_AWESOME_PAGE = "My Awesome Page";
-    private static final String MY_AWESOME_PAGE_KEY = "my-awesome-page";
-    private static final String URL = "/" + MY_AWESOME_PAGE_KEY;
-    private static final CustomInstallationHandlerServlet installUninstallHandler = new CustomInstallationHandlerServlet();
-
-    private static ConnectRunner remotePlugin;
+    protected static final String MY_AWESOME_PAGE = "My Awesome Page";
+    protected static final String MY_AWESOME_PAGE_KEY = "my-awesome-page";
+    protected static final String URL = "/" + MY_AWESOME_PAGE_KEY;
+    protected static final CustomInstallationHandlerServlet installUninstallHandler = new CustomInstallationHandlerServlet();;
+    protected static ConnectRunner remotePlugin;
 
     private static String sharedSecret;
 
     private String pluginKey;
-    private String awesomePageModuleKey;
+    protected String awesomePageModuleKey;
 
     @Before
-    public void setup()
+    public void setup() throws NoSuchAlgorithmException, IOException
     {
         int query = URL.indexOf("?");
         String route = query > -1 ? URL.substring(0, query) : URL;
@@ -191,7 +191,7 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
         readerFactory.getReader(jwt).read(jwt, ImmutableMap.<String, JwtClaimVerifier>of());
     }
 
-    private <T extends Page> void revealLinkIfNecessary(T page)
+    protected <T extends Page> void revealLinkIfNecessary(T page)
     {
         // hmmm not pretty
         ((PluginManager) page).expandPluginRow(pluginKey);
