@@ -1,5 +1,6 @@
 package it.modules.confluence;
 
+import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
@@ -7,6 +8,7 @@ import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWithRemoteMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
 import it.servlet.EchoContextServlet;
@@ -16,7 +18,17 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
@@ -27,6 +39,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
 {
     private static final String STORAGE_FORMAT_MACRO_NAME = "Storage Format Macro";
     private static final String STORAGE_FORMAT_MACRO_KEY = "storage-format-macro";
+    private static final String COUNTER = "rp-counter";
 
     private static final String GET_MACRO_NAME = "Get Macro";
     private static final String GET_MACRO_KEY = "get-macro";
@@ -101,16 +114,13 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroIsRendered() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-        editorPage.setTitle(randomName("Simple Macro on Page"));
+        testMacroIsRendered(TestUser.ADMIN.confUser());
+    }
 
-        selectMacro(editorPage, STORAGE_FORMAT_MACRO_NAME);
-
-        savedPage = editorPage.save();
-
-        String content = savedPage.getRenderedContent().getText();
-
-        assertThat(content, is("Storage Format Content"));
+    @Test
+    public void testMacroIsRenderedForAnonymous() throws Exception
+    {
+        testMacroIsRendered(null);
     }
 
     @Test
@@ -180,10 +190,88 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         assertThat(value, is("param value"));
     }
 
+    @Test
+    @Ignore
+    public void testMacroCacheFlushes() throws Exception
+    {
+        /*
+        final ConfluenceOps.ConfluencePageData pageData = createPage(TestUser.ADMIN, pageWithMacro(COUNTER_MACRO));
+
+        counterMacroServlet.reset();
+
+        ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, pageData.getTitle(), COUNTER_MACRO);
+
+        //TODO: this is flaky, where sometimes the counter value in the page is inexplicably 0
+        assertEquals(1, getCounter(page));
+
+        // stays the same on a new visit
+        page = product.visit(ConfluencePageWithRemoteMacro.class, pageData.getTitle(), COUNTER_MACRO);
+        assertEquals(1, getCounter(page));
+
+        clearCaches();
+
+        page = product.visit(ConfluencePageWithRemoteMacro.class, pageData.getTitle(), COUNTER_MACRO);
+        assertEquals(2, getCounter(page));
+        */
+    }
+
+    private static void clearCaches() throws Exception
+    {
+        final URL url = new URL(product.getProductInstance().getBaseUrl() + "/rest/atlassian-connect/latest/macro/app/" + remotePlugin.getAddon().getKey());
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("DELETE");
+        remotePlugin.getSignedRequestHandler().sign(url.toURI(), "DELETE", null, conn);
+        int code = conn.getResponseCode();
+        System.out.println("Reset from " + product.getProductInstance().getBaseUrl() + " returned: " + code);
+        conn.disconnect();
+    }
+
     @Override
     protected String getAddonBaseUrl()
     {
         return remotePlugin.getAddon().getBaseUrl();
     }
 
+    private void testMacroIsRendered(User user) throws Exception
+    {
+        CreatePage editorPage = getProduct().loginAndCreatePage(user, TestSpace.DEMO);
+        editorPage.setTitle(randomName("Simple Macro on Page"));
+
+        selectMacro(editorPage, STORAGE_FORMAT_MACRO_NAME);
+
+        savedPage = editorPage.save();
+
+        String content = savedPage.getRenderedContent().getText();
+
+        assertThat(content, is("Storage Format Content"));
+    }
+
+    private int getCounter(ConfluencePageWithRemoteMacro page)
+    {
+        return Integer.valueOf(page.getText(COUNTER));
+    }
+
+    private static final class CounterMacroServlet extends HttpServlet
+    {
+        private static final long ONE_YEAR_SECONDS = 60L * 60L * 24L * 365L;
+        private static final long ONE_YEAR_MILLISECONDS = 1000 * ONE_YEAR_SECONDS;
+        private static final int INITIAL_VALUE = 0;
+        private int counter = INITIAL_VALUE;
+
+        @Override
+        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+        {
+            resp.setContentType("text/html");
+            resp.setDateHeader("Expires", System.currentTimeMillis() + ONE_YEAR_MILLISECONDS);
+            resp.setHeader("Cache-Control", "s-maxage=" + ONE_YEAR_SECONDS);
+            PrintWriter writer = resp.getWriter();
+            writer.print("<div>Counter: <span class=\"" + COUNTER + "\">" + counter++ + "</span></div>");
+            writer.close();
+        }
+
+        private void reset()
+        {
+            this.counter = INITIAL_VALUE;
+        }
+    }
 }

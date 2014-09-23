@@ -1,22 +1,18 @@
 package com.atlassian.plugin.connect.test.pageobjects.jira;
 
-import com.atlassian.jira.pageobjects.project.ProjectConfigActions;
-import com.atlassian.jira.pageobjects.project.ProjectConfigHeader;
-import com.atlassian.jira.pageobjects.project.ProjectConfigPageTab;
-import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
-import com.atlassian.jira.pageobjects.project.ProjectInfoLocator;
+import com.atlassian.jira.pageobjects.project.*;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.ElementBy;
 import com.atlassian.pageobjects.elements.PageElement;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 
 import javax.inject.Inject;
 
 /**
  * Describes a project administration tab.
  */
-public class JiraProjectAdministrationTab extends RemotePluginEmbeddedTestPage implements ProjectConfigPageTab
+public class JiraProjectAdministrationTab extends ConnectAddOnEmbeddedTestPage implements ProjectConfigPageTab
 {
     @Inject
     private PageBinder pageBinder;
@@ -34,7 +30,7 @@ public class JiraProjectAdministrationTab extends RemotePluginEmbeddedTestPage i
 
     public JiraProjectAdministrationTab(String projectKey, String moduleKey, String extraPrefix)
     {
-        super(moduleKey, extraPrefix);
+        super(moduleKey, extraPrefix, true);
         this.projectKey = projectKey;
     }
 

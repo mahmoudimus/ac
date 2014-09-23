@@ -4,11 +4,9 @@ import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import org.apache.commons.lang.NotImplementedException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
@@ -70,16 +68,6 @@ public final class JiraGeneralPage implements GeneralPage
     }
 
     @Override
-    @Deprecated
-    /**
-     * @deprecated Please migrate to {@link #clickAddOnLink()}.
-     */
-    public RemotePluginTestPage clickRemotePluginLink()
-    {
-        throw new NotImplementedException("Please migrate away from this method to clickAddOnLink()");
-    }
-
-    @Override
     public ConnectAddOnEmbeddedTestPage clickAddOnLink()
     {
         return link.get().fold(
@@ -129,7 +117,6 @@ public final class JiraGeneralPage implements GeneralPage
         );
     }
 
-    @Override
     public String getRemotePluginLinkHref()
     {
         return link.get().fold(

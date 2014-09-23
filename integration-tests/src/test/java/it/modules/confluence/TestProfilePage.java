@@ -1,8 +1,8 @@
 package it.modules.confluence;
 
 import com.atlassian.fugue.Option;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceUserProfilePage;
 import it.modules.AbstractPageTestBase;
 import it.util.TestUser;
@@ -32,7 +32,7 @@ public class TestProfilePage extends AbstractPageTestBase
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
-        RemotePluginEmbeddedTestPage page = runCanClickOnPageLinkAndSeeAddonContents(ConfluenceUserProfilePage.class, Option.<String>none());
+        ConnectAddOnEmbeddedTestPage page = runCanClickOnPageLinkAndSeeAddonContents(ConfluenceUserProfilePage.class, Option.<String>none());
         Map<String,String> queryParams = page.getIframeQueryParams();
         assertThat(queryParams.get("profile_user"), is("admin"));
         assertThat(queryParams.get("profile_key"), isNotBlank());

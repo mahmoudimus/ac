@@ -55,10 +55,10 @@ public class LinkedRemoteContent
         return webItem;
     }
 
-    public RemotePluginEmbeddedTestPage click()
+    public ConnectAddOnEmbeddedTestPage click()
     {
         webItem.click();
 
-        return pageBinder.bind(RemotePluginEmbeddedTestPage.class, pageKey, extraPrefix);
+        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, pageKey, extraPrefix);
     }
 }

@@ -14,9 +14,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroBrowserDialog;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.*;
 import it.util.TestUser;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.junit.After;
@@ -25,10 +23,15 @@ import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import redstone.xmlrpc.XmlRpcFault;
 
+import java.net.MalformedURLException;
+
+import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
+import static java.lang.String.format;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -506,6 +509,27 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
         MacroItem macro = macroBrowser.searchForFirst(HIDDEN_MACRO_NAME);
         assertThat(macro, is(nullValue()));
+    }
+
+    @Test
+    public void testMacroInComment() throws MalformedURLException, XmlRpcFault
+    {
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage.setTitle(randomName("The macro is in the comment!"));
+        savedPage = editorPage.save();
+
+        confluenceOps.addComment(some(TestUser.ADMIN), String.valueOf(savedPage.getPageId()), pageWithMacro(SIMPLE_MACRO_KEY));
+        product.visit(ConfluencePageWithRemoteMacro.class, savedPage.getTitle(), SIMPLE_MACRO_KEY);
+
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
+        String content = renderedMacro.getIFrameElementText("hello-world-message");
+
+        assertThat(content, is("Hello world"));
+    }
+
+    private String pageWithMacro(String macroName)
+    {
+        return format("<div class=\"%1$s\"><ac:macro ac:name=\"%1$s\" /></div>", macroName);
     }
 
     protected abstract String getAddonBaseUrl();

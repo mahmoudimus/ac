@@ -4,8 +4,8 @@ import com.atlassian.jira.pageobjects.pages.JiraAdminHomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdminPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdministrationHomePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -82,7 +82,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
         URI url = new URI(adminPage.getRemotePluginLinkHref());
         assertThat(url.getPath(), is("/jira/plugins/servlet/ac/" + PLUGIN_KEY + "/" + PAGE_KEY));
 
-        RemotePluginTestPage addonContentsPage = adminPage.clickRemotePluginLink();
+        ConnectAddOnEmbeddedTestPage addonContentsPage = adminPage.clickAddOnLink();
         assertEquals("Hello world", addonContentsPage.getValueBySelector("#hello-world-message"));
     }
 
@@ -95,7 +95,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
 
         assertThat(adminPage.isRemotePluginLinkPresent(), is(true));
 
-        RemotePluginTestPage addonContentsPage = adminPage.clickRemotePluginLink();
+        ConnectAddOnEmbeddedTestPage addonContentsPage = adminPage.clickAddOnLink();
         assertTrue("Addon is full size", addonContentsPage.isFullSize());
     }
 

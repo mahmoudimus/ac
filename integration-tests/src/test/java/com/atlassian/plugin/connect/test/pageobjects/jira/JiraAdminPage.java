@@ -4,7 +4,6 @@ import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.plugin.connect.test.pageobjects.AdminPage;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -51,27 +50,11 @@ public final class JiraAdminPage implements AdminPage
     }
 
     @Override
-    public RemotePluginTestPage clickRemotePluginLink()
-    {
-        return withLinkElement(new Function<WebElement, RemotePluginTestPage>()
-        {
-            @Override
-            public RemotePluginTestPage apply(WebElement linkElement)
-            {
-                linkElement.click();
-                logger.debug("Link '{}' was found and clicked.", linkElement);
-                return pageBinder.bind(RemotePluginTestPage.class, pageKey);
-            }
-        });
-    }
-
-    @Override
     public ConnectAddOnEmbeddedTestPage clickAddOnLink()
     {
         throw new NotImplementedException("TODO as part of porting tests from xml descriptors to json descriptors");
     }
 
-    @Override
     public String getRemotePluginLinkHref()
     {
         return withLinkElement(new Function<WebElement, String>()
