@@ -23,3 +23,4 @@ node_modules
 
 build-number.txt
 docs/target
+bin/marketplace/descriptors.zip
