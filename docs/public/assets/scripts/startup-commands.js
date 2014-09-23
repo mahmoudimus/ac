@@ -15,7 +15,6 @@ function getCommands() {
 	}).done(function(commands) {
 		renderCommands(commands);
 	}).error(function(data) {
-		console.log('error loading commands: ' + data);
 		commands = {
 			'jira': {
 				'dev':'There was an error retrieving the command.',
