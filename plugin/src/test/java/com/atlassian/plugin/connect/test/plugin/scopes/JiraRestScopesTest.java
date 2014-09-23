@@ -80,7 +80,7 @@ public class JiraRestScopesTest extends AbstractScopesTest
                         {ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/groups/picker", true},
 
                         // JQL autocomplete require READ
-                        { HttpMethod.GET,  "/rest/api/2/jql/autocompletedata", true }
+                        { ScopeName.READ, HttpMethod.GET,  "/rest/api/2/jql/autocompletedata", true }
                 }));
 
         // never allow an add-on to change a user's details or password
