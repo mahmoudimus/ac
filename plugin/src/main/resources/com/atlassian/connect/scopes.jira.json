@@ -252,7 +252,7 @@
     {
         "key": "jql",
         "name": "api",
-        "basePaths": ["jql/autocompletedata"],
+        "basePaths": ["/jql/autocompletedata"],
         "versions": ["2", "latest"],
         "public": true
     }
