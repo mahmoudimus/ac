@@ -26,11 +26,25 @@ all of the components listed in the `--bundled-plugins` argument are present in 
 
 You can start JIRA or Confluence Cloud with Atlassian Connect as follows:
 
-#### JIRA
-<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.4-OD-04-006 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.4,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.4,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.17.10-D20140805T005138,com.atlassian.webhooks:atlassian-webhooks-plugin:1.0.6 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+### JIRA
+#### Version currently in production
+<script src = "../assets/scripts/startup-commands.js"></script>
+To start a local JIRA server with Connect matching what is currently in production in Atlassian Cloud, run:
+<span id="commands-jira-prd">Loading...</span>
 
-#### Confluence
-<pre><code data-lang="text">atlas-run-standalone --product confluence --version 5.5-OD-31-010 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.4,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.4,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.17.10-D20140805T005138,com.atlassian.webhooks:atlassian-webhooks-plugin:1.0.6 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+#### Bleeding edge
+To start a local JIRA server with the latest development version of Connect (bleeding edge), run:
+
+<span id="commands-jira-dev">Loading...</span>
+
+### Confluence
+#### Version currently in production
+To start a local Confluence server with Connect matching what is currently in production in Atlassian Cloud, run:
+<span id="commands-confluence-prd">Loading...</span>
+
+#### Bleeding edge
+To start a local Confluence server with the latest development version of Connect, run:
+<span id="commands-confluence-dev">Loading...</span> 
 
 Starting the applications requires you to specify a number of hard-coded component version numbers as shown. This
 includes the version of Atlassian Connect framework. Those component versions will change as Atlassian Connect
