@@ -17,7 +17,7 @@
 * Both the prod and dev commands use the production version of JIRA and Confluence, as well as other
 * plugin dependencies.
 *
-* Firebase app: https://connect-utils.firebaseio.com
+* Firebase app: https://connectutils.firebaseio.com
 */
 
 var Client = require('node-rest-client').Client;
