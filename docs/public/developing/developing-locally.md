@@ -26,31 +26,44 @@ all of the components listed in the `--bundled-plugins` argument are present in 
 
 You can start JIRA or Confluence Cloud with Atlassian Connect as follows:
 
-### JIRA
-#### Version currently in production
-<script src = "../assets/scripts/startup-commands.js"></script>
-To start a local JIRA server with Connect matching what is currently in production in Atlassian Cloud, run:
-<span id="commands-jira-prd">Loading...</span>
-
-#### Bleeding edge
-To start a local JIRA server with the latest development version of Connect (bleeding edge), run:
-
-<span id="commands-jira-dev">Loading...</span>
-
-### Confluence
-#### Version currently in production
-To start a local Confluence server with Connect matching what is currently in production in Atlassian Cloud, run:
-<span id="commands-confluence-prd">Loading...</span>
-
-#### Bleeding edge
-To start a local Confluence server with the latest development version of Connect, run:
-<span id="commands-confluence-dev">Loading...</span> 
+### Stable versions
 
 Starting the applications requires you to specify a number of hard-coded component version numbers as shown. This
 includes the version of Atlassian Connect framework. Those component versions will change as Atlassian Connect
 development continues. To find out about new version updates, subscribe to the Atlassian Connect
 [mailing list](https://groups.google.com/forum/?fromgroups=#!forum/atlassian-connect-dev), and keep your eye on
 Atlassian Connect [release notes](https://developer.atlassian.com/static/connect/docs/resources/release-notes.html).
+
+To start a local JIRA/Confluence server with Connect matching what is currently in production in Atlassian Cloud, run:
+
+#### JIRA
+<script src = "../assets/scripts/startup-commands.js"></script>
+
+<span id="commands-jira-prd">Loading...</span>
+
+#### Confluence
+
+<span id="commands-confluence-prd">Loading...</span>
+
+### Bleeding edge
+<div class="aui-message warning">
+	    <p class="title">
+	        <span class="aui-icon icon-success"></span>
+	        <strong>Experts only!</strong>
+	    </p>
+		<p>This is using the latest development version of Connect, so you can test the latest and greatest,
+		and as such may be unstable.</p>
+</div>
+
+To start a local JIRA/Confluence server with the latest development version of Connect (bleeding edge), run:
+
+#### JIRA
+
+<span id="commands-jira-dev">Loading...</span>
+
+#### Confluence
+
+<span id="commands-confluence-dev">Loading...</span> 
 
 
 ## Step 2. Start your add-on
