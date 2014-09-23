@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.5-SNAPSHOT</version>
+        <version>1.1.6-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -832,7 +832,7 @@
                             <outputDirectory>${project.build.outputDirectory}/js</outputDirectory>
                             <excludes>
                                 <exclude>${project.build.outputDirectory}/js/iframe</exclude>
-                                <exclude>${project.build.outputDirectory}>/js/**/*-min.js</exclude>
+                                <exclude>${project.build.outputDirectory}&gt;/js/**/*-min.js</exclude>
                             </excludes>
                         </configuration>
                     </execution>
