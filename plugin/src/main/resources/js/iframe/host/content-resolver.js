@@ -21,9 +21,9 @@ _AP.define('host/content-resolver', ['_dollar', '_ui-params'], function($, UiPar
                     "plugin-key": params.addonKey,
                     "product-context": JSON.stringify(params.productContext),
                     "key": params.moduleKey,
-                    "width": "100%",
-                    "height": "100%",
-                    "raw": "true"
+                    "width": params.width || "100%",
+                    "height": params.height || "100%",
+                    "raw": params.raw || "true"
                 }
             });
         } 
