@@ -169,7 +169,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .addAttribute("value", macroKey).getParent()
                 .addElement("var")
                 .addAttribute("name", "ICON_URL")
-                .addAttribute("value", getAbsoluteUrl(addon, bean.getIcon().getUrl()));
+                .addAttribute("value", absoluteAddOnUrlConverter.getAbsoluteUrl(addon, bean.getIcon().getUrl()));
 
         ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(hostContainer);
         jsDescriptor.init(theConnectPlugin, webResource);
@@ -210,7 +210,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .addAttribute("location", "js/confluence/macro/override.js");
 
         webResource.addElement("dependency")
-                .setText(ConnectPluginInfo.getPluginKey() + ":ap-amd");
+                .setText(ConnectPluginInfo.getPluginKey() + ":ap-core");
 
         webResource.addElement("context")
                 .setText("editor");
@@ -274,21 +274,6 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         {
             editTitleElement.addAttribute("value", macroBean.getDisplayName());
             editTitleElement.addAttribute("i18n-key", "macro.browser.edit.macro.title");
-        }
-    }
-
-    private String getAbsoluteUrl(ConnectAddonBean addon, String url)
-    {
-        try
-        {
-            return absoluteAddOnUrlConverter.getAbsoluteUrl(addon.getKey(), url);
-        }
-        catch (URISyntaxException e)
-        {
-            throw new PluginParseException("Malformed icon url declared by '"
-                    + addon.getName()
-                    + "' (" + addon.getKey() + "): "
-                    + url, e);
         }
     }
 }

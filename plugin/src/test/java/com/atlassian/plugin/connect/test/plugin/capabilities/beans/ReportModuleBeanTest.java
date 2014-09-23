@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ReportCategory;
 import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
@@ -35,6 +36,8 @@ public class ReportModuleBeanTest
                 .withUrl("/report?projectId=${project.id}")
                 .withDescription(new I18nProperty("description", "description i18n"))
                 .withName(new I18nProperty("report", "report i18n"))
+                .withReportCategory(ReportCategory.AGILE)
+                .withThumbnailUrl("/report-thumbnail.jpg")
                 .build(),
             ReportModuleBean.newBuilder()
                 .withKey("jira-report-2")

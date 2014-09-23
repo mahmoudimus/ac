@@ -62,5 +62,17 @@
   "connect.addon.iframe.performance.cancel": [
     "addonKey",
     "moduleKey"
+  ],
+  "connect.legacy.addon.disabled": [
+    "pluginKey"
+  ],
+  "connect.legacy.addon.enabled": [
+    "pluginKey"
+  ],
+  "connect.legacy.addon.installed": [
+    "pluginKey"
+  ],
+  "connect.legacy.addon.installFailed": [
+    "pluginKey"
   ]
 }

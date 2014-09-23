@@ -27,7 +27,9 @@
                 "i18n" : "description i18n"
             },
             "url" : "/report?projectId=${project.id}",
-            "weight" : 5
+            "weight" : 5,
+            "reportCategory" : "agile",
+            "thumbnailUrl" : "/report-thumbnail.jpg"
         }, {
             "key" : "jira-report-2",
             "name" : {
