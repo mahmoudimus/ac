@@ -52,12 +52,6 @@ var connectVersionPrd;
 var connectVersionDev;
 var bundledPluginsCmd = '';
 
-
-function run() {
-    getPluginVersions();
-}
-run();
-
 /**
  * Retrieve plugin versions from Manifesto
  */
@@ -71,7 +65,7 @@ function getPluginVersions() {
             if (product.artifact == 'jira') {
                 jiraVersion = product.version;
             }
-            if (product.artifact == 'confluence') {
+            else if (product.artifact == 'confluence') {
                 confluenceVersion = product.version;
             }
         });
@@ -169,3 +163,5 @@ function publishCommands(commands) {
         }
     });
 }
+
+getPluginVersions();
