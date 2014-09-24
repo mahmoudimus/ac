@@ -108,7 +108,7 @@ var commands = [];
 
 function createAndPublishCommands() {
     var commands = createCommands();
-    commands="evalCommands(" + commands + ")";
+
     publishCommands(commands);
 }
 
@@ -156,7 +156,7 @@ function publishCommands(commands) {
             console.log('target directory ' + outputDir + ' could not be created: ' + err);
         }
         else {
-            fs.writeFile(outputDir + '/' + outputFile, JSON.stringify(commands), function(err) {
+            fs.writeFile(outputDir + '/' + outputFile, 'evalCommands('+JSON.stringify(commands)+')', function(err) {
                 if(err)
                     console.log('Error creating file ' + outputFile + ': ' + err);
                 else
