@@ -171,7 +171,7 @@ function publishCommands(commands) {
             });
             fs.writeFile(commandsJsonpFile, commandsJsonp, function(err) {
                 if(err)
-                    console.log('Error creating file ' + commandsJsonFilep + ': ' + err);
+                    console.log('Error creating file ' + commandsJsonpFile + ': ' + err);
                 else
                     console.log('done');
             });
