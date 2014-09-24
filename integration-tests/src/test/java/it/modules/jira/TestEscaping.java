@@ -216,7 +216,7 @@ public class TestEscaping extends TestBase
     public void testAdminPage() throws Exception
     {
         jira().quickLoginAsAdmin(JiraAdministrationHomePage.class);
-        JiraAdminPage adminPage = jira().getPageBinder().bind(JiraAdminPage.class, getModuleKey(ADMIN_PAGE_KEY));
+        JiraAdminPage adminPage = jira().getPageBinder().bind(JiraAdminPage.class, runner.getAddon().getKey(), ADMIN_PAGE_KEY);
         assertIsEscaped(adminPage.getRemotePluginLinkText());
     }
 

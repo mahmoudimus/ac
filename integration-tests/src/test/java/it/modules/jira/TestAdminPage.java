@@ -2,7 +2,6 @@ package it.modules.jira;
 
 import com.atlassian.jira.pageobjects.pages.JiraAdminHomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
@@ -75,7 +74,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     {
         loginAndVisit(TestUser.ADMIN, JiraAdministrationHomePage.class);
 
-        JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, ModuleKeyUtils.addonAndModuleKey(PLUGIN_KEY,PAGE_KEY));
+        JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, PLUGIN_KEY, PAGE_KEY);
 
         assertThat(adminPage.isRemotePluginLinkPresent(), is(true));
 
@@ -91,7 +90,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     {
         loginAndVisit(TestUser.ADMIN, JiraAdministrationHomePage.class);
 
-        JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, ModuleKeyUtils.addonAndModuleKey(PLUGIN_KEY, PAGE_KEY));
+        JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, PLUGIN_KEY, PAGE_KEY);
 
         assertThat(adminPage.isRemotePluginLinkPresent(), is(true));
 
