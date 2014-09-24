@@ -21,13 +21,16 @@
 
 var Client = require('node-rest-client').Client;
 var fs = require('fs');
+var mkdirp = require('mkdirp');
 var argv = require('yargs')
-    .usage('Usage: $0 --output [string]')
-    .demand(['output'])
-    .describe('output', 'File to save the command to')
+    .usage('Usage: $0 --outputDir [path] --outputFile [file name]')
+    .demand(['outputDir', 'outputFile'])
+    .describe('outputDir', 'Target directory')
+    .describe('outputFile', 'Target file')
     .argv;
 
-var output = argv.output;
+var outputDir = argv.outputDir;
+var outputFile = argv.outputFile;
 
 var secret = argv.secret;
 
@@ -143,9 +146,22 @@ function createCommand(product, productVersion, connectVersion) {
 
 function publishCommands(commands) {
 
-    console.log('writing output file: ' + output);
-    fs.writeFileSync('target/connect-commands.json', JSON.stringify(commands));
-    console.log('done');
+    console.log('writing output file: ' + outputDir + '/' + outputFile);
+    mkdirp(outputDir, function(err) {
+
+        if(err) {
+            console.log('target directory ' + outputDir + ' could not be created: ' + err);
+        }
+        else {
+            fs.writeFile(outputDir + '/' + outputFile, JSON.stringify(commands), function(err) {
+                if(err)
+                    console.log('Error creating file ' + outputFile + ': ' + err);
+                else
+                    console.log('done');
+            })
+        }
+
+    });
 }
 
 
