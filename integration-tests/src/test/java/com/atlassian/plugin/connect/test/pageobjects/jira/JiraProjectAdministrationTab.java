@@ -23,14 +23,9 @@ public class JiraProjectAdministrationTab extends ConnectAddOnEmbeddedTestPage i
     private ProjectInfoLocator projectInfoLocator;
     private final String projectKey;
 
-    public JiraProjectAdministrationTab(String projectKey, String moduleKey)
+    public JiraProjectAdministrationTab(String projectKey, String addOnKey, String moduleKey)
     {
-        this(projectKey, moduleKey, "");
-    }
-
-    public JiraProjectAdministrationTab(String projectKey, String moduleKey, String extraPrefix)
-    {
-        super(moduleKey, extraPrefix, true);
+        super(addOnKey, moduleKey, true);
         this.projectKey = projectKey;
     }
 
