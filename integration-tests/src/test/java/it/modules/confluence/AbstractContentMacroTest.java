@@ -1,10 +1,12 @@
 package it.modules.confluence;
 
+import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.component.editor.EditorContent;
 import com.atlassian.confluence.pageobjects.component.editor.InsertMenu;
+import com.atlassian.confluence.pageobjects.page.ConfluenceLoginPage;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
@@ -530,6 +532,29 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     private String pageWithMacro(String macroName)
     {
         return format("<div class=\"%1$s\"><ac:macro ac:name=\"%1$s\" /></div>", macroName);
+    }
+
+    protected ViewPage getMacroContent(User user, String macroName, String macroKey, String title) throws Exception
+    {
+        // create the page with the macro
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage.setTitle(randomName(title));
+        selectMacro(editorPage, macroName);
+        savedPage = editorPage.save();
+
+        // change to the specified user
+        if (!TestUser.ADMIN.confUser().equals(user))
+        {
+            getProduct().logOutFast();
+
+            if (null != user)
+            {
+                getProduct().login(user, ConfluenceLoginPage.class);
+            }
+        }
+
+        // view the page as the specified user
+        return getProduct().viewPage(String.valueOf(savedPage.getPageId()));
     }
 
     protected abstract String getAddonBaseUrl();

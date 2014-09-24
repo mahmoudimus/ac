@@ -5,7 +5,6 @@ import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
-import com.atlassian.confluence.pageobjects.page.ConfluenceLoginPage;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.EditContentPage;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
@@ -384,25 +383,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
     private void testMacroIsRendered(User user) throws Exception
     {
-        // create the page with the macro
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-        editorPage.setTitle(randomName("Simple Macro on Page"));
-        selectMacro(editorPage, SIMPLE_MACRO_NAME);
-        savedPage = editorPage.save();
-
-        // change to the specified user
-        if (!TestUser.ADMIN.confUser().equals(user))
-        {
-            getProduct().logOutFast();
-
-            if (null != user)
-            {
-                getProduct().login(user, ConfluenceLoginPage.class);
-            }
-        }
-
-        // view the page as the specified user
-        getProduct().viewPage(String.valueOf(savedPage.getPageId()));
+        getMacroContent(user, SIMPLE_MACRO_NAME, SIMPLE_MACRO_KEY, "Simple macro");
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
         String content = renderedMacro.getIFrameElementText("hello-world-message");
 

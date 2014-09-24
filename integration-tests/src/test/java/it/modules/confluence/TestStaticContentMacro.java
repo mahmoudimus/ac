@@ -5,6 +5,7 @@ import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
+import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
@@ -234,15 +235,8 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
 
     private void testMacroIsRendered(User user) throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(user, TestSpace.DEMO);
-        editorPage.setTitle(randomName("Simple Macro on Page"));
-
-        selectMacro(editorPage, STORAGE_FORMAT_MACRO_NAME);
-
-        savedPage = editorPage.save();
-
-        String content = savedPage.getRenderedContent().getText();
-
+        ViewPage page = getMacroContent(user, STORAGE_FORMAT_MACRO_NAME, STORAGE_FORMAT_MACRO_KEY, "Storage format macro");
+        String content = page.getRenderedContent().getText();
         assertThat(content, is("Storage Format Content"));
     }
 
