@@ -157,7 +157,7 @@ function publishCommands(commands) {
         var commandsJson = JSON.stringify(commands);
         var commandsJsonFile = outputDir + '/' + outputFile + '.json';
         var commandsJsonp = 'evalCommands('+commandsJson+')';
-        var commandsJsonpFile = outputDir + '/' + outputFile + '.json';
+        var commandsJsonpFile = outputDir + '/' + outputFile + '.jsonp';
 
         if(err) {
             console.log('target directory ' + outputDir + ' could not be created: ' + err);
