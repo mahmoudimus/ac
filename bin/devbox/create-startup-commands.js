@@ -169,7 +169,7 @@ function publishCommands(commands) {
                 else
                     console.log('done');
             });
-            fs.writeFile(commandsJsonFile, commandsJson, function(err) {
+            fs.writeFile(commandsJsonpFile, commandsJsonp, function(err) {
                 if(err)
                     console.log('Error creating file ' + commandsJsonFilep + ': ' + err);
                 else
