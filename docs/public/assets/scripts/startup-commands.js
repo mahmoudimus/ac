@@ -11,7 +11,7 @@
 function getCommands() {
 	$.ajax({
 		type: "GET",
-	    url: "https://connect-utils.firebaseio.com/commands.json"
+	    url: "//developer.atlassian.com/static/commands/atlassian-connect.json"
 	}).done(function(commands) {
 		renderCommands(commands);
 	}).error(function(data) {
