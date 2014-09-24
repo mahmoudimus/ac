@@ -1,5 +1,5 @@
 /**
- * This script retrieves the atlas-run-standalone commands posted to Firebase by the script:
+ * This script retrieves the atlas-run-standalone commands posted to DAC by the script:
  * /bin/publish-startup-commands.js
  * and adds them to specific spans that must be on the page:
  *  - commands-jira-prd
@@ -9,52 +9,62 @@
  */
 
 function getCommands() {
-	$.ajax({
-		type: "GET",
-	    url: '//developer.atlassian.com/static/atlassian-connect-versions.json'
-	}).done(function(commands) {
-		renderCommands(commands.commands);
-	}).error(function(data) {
-		commands = {
-			'jira': {
-				'dev':'There was an error retrieving the command.',
-				'prd':'There was an error retrieving the command.'
-			},
-			'confluence': {
-				'dev':'There was an error retrieving the command.',
-				'prd':'There was an error retrieving the command.'
-			}
-		};
-		renderCommands(commands);
-	});
-
+    var errorMsgCommand = 'There was an error retrieving the command.'
+    var errorMsgVersion = 'Error retrieving the version information'
+    $.ajax({
+        type: "GET",
+        url: '//developer.atlassian.com/static/connect-versions.jsonp',
+        dataType: 'jsonp',
+        jsonpCallback: "evalCommands"
+    }).error(function (data) {
+        commands = {
+            'environment': {
+                'dev': {
+                    'connectVersion' : errorMsgVersion,
+                    'jiraCommand' : errorMsgCommand,
+                    'confluenceCommand' : errorMsgCommand
+                },
+                'prd': {
+                    'connectVersion' : errorMsgVersion,
+                    'jiraCommand' : errorMsgCommand,
+                    'confluenceCommand' : errorMsgCommand
+                }
+            }
+        };
+        renderCommands(commands);
+    });
 }
 
 function renderCommands(commands) {
-    console.log(commands.commands);
-    if($("#commands-jira-prd")) {
-        $("#commands-jira-prd").replaceWith(wrapText(commands.jira.prd));
+    if ($("#commands-jira-prd").length) {
+        $("#commands-jira-prd").replaceWith(wrapText(commands.environment.prd.jiraCommand));
     }
-    if($("#commands-confluence-prd")) {
-        $("#commands-confluence-prd").replaceWith(wrapText(commands.confluence.prd));
+    if ($("#commands-confluence-prd").length) {
+        $("#commands-confluence-prd").replaceWith(wrapText(commands.environment.prd.confluenceCommand));
     }
-    if($("#commands-jira-dev")) {
-        $("#commands-jira-dev").replaceWith(wrapText(commands.jira.dev));
+    if ($("#commands-jira-dev").length) {
+        $("#commands-jira-dev").replaceWith(wrapText(commands.environment.dev.jiraCommand));
     }
-    if($("#commands-confluence-dev")) {
-        $("#commands-confluence-dev").replaceWith(wrapText(commands.confluence.dev));
+    if ($("#commands-confluence-dev").length) {
+        $("#commands-confluence-dev").replaceWith(wrapText(commands.environment.dev.confluenceCommand));
     }
 }
 
-function wrapText(text){
-    var	wrapper = $('<div />').addClass('CodeMirror-wrap').append('<pre />'),
+function wrapText(text) {
+    var wrapper = $('<div />').addClass('CodeMirror-wrap').append('<pre />'),
         container = $('<div />').addClass('CodeMirror').css('padding', '4px').text(text);
     wrapper.append(container);
     return wrapper;
 }
 
+$(getCommands);
+
+
+/**
+ * JSONP callback
+ */
 function evalCommands(commands) {
-    alert(commands);
+    console.log(commands);
+    renderCommands(commands.commands);
 }
 
-getCommands();

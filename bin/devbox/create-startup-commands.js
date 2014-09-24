@@ -23,14 +23,13 @@ var Client = require('node-rest-client').Client;
 var fs = require('fs');
 var mkdirp = require('mkdirp');
 var argv = require('yargs')
-    .usage('Usage: $0 --outputDir [path] --outputFile [file name]')
-    .demand(['outputDir', 'outputFile'])
+    .usage('Usage: $0 --outputDir [path]')
+    .demand(['outputDir'])
     .describe('outputDir', 'Target directory')
-    .describe('outputFile', 'Target file')
     .argv;
 
 var outputDir = argv.outputDir;
-var outputFile = argv.outputFile;
+var outputFile = 'connect-versions';
 
 var secret = argv.secret;
 
@@ -120,17 +119,20 @@ function createAndPublishCommands() {
 function createCommands() {
     var commands =
     {
-        'commands': {
-            'jira': {
-                'dev': createCommand('jira', jiraVersion, connectVersionDev),
-                'prd': createCommand('jira', jiraVersion, connectVersionPrd)
+        'environment': {
+            'dev': {
+                'connectVersion' : connectVersionDev,
+                'jiraCommand' : createCommand('jira', jiraVersion, connectVersionDev),
+                'confluenceCommand': createCommand('confluence', confluenceVersion, connectVersionDev)
+                }
             },
-            'confluence': {
-                'dev': createCommand('confluence', confluenceVersion, connectVersionDev),
-                'prd': createCommand('confluence', confluenceVersion, connectVersionPrd)
+            'prd': {
+                'connectVersion' : connectVersionPrd,
+                'jiraCommand' : createCommand('jira', jiraVersion, connectVersionPrd),
+                'confluenceCommand' : createCommand('confluence', confluenceVersion, connectVersionPrd)
             }
-        }
     }
+
     return commands;
 }
 
@@ -152,16 +154,27 @@ function publishCommands(commands) {
     console.log('writing output file: ' + outputDir + '/' + outputFile);
     mkdirp(outputDir, function(err) {
 
+        var commandsJson = JSON.stringify(commands);
+        var commandsJsonFile = outputDir + '/' + outputFile + '.json';
+        var commandsJsonp = 'evalCommands('+commandsJson+')';
+        var commandsJsonpFile = commandsJsonFile + '.jsonp';
+
         if(err) {
             console.log('target directory ' + outputDir + ' could not be created: ' + err);
         }
         else {
-            fs.writeFile(outputDir + '/' + outputFile, 'evalCommands('+JSON.stringify(commands)+')', function(err) {
+            fs.writeFile(commandsJsonFile, commandsJson, function(err) {
                 if(err)
-                    console.log('Error creating file ' + outputFile + ': ' + err);
+                    console.log('Error creating file ' + commandsJsonFile + ': ' + err);
                 else
                     console.log('done');
-            })
+            });
+            fs.writeFile(commandsJsonFile, commandsJson, function(err) {
+                if(err)
+                    console.log('Error creating file ' + commandsJsonFilep + ': ' + err);
+                else
+                    console.log('done');
+            });
         }
 
     });
