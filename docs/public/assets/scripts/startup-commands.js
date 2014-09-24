@@ -21,11 +21,15 @@ function getCommands() {
             'environment': {
                 'dev': {
                     'connectVersion' : errorMsgVersion,
+                    'jiraVersion' : errorMsgVersion,
+                    'confluenceVersion' : errorMsgVersion,
                     'jiraCommand' : errorMsgCommand,
                     'confluenceCommand' : errorMsgCommand
                 },
                 'prd': {
                     'connectVersion' : errorMsgVersion,
+                    'jiraVersion' : errorMsgVersion,
+                    'confluenceVersion' : errorMsgVersion,
                     'jiraCommand' : errorMsgCommand,
                     'confluenceCommand' : errorMsgCommand
                 }

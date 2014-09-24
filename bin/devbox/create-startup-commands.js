@@ -122,11 +122,15 @@ function createCommands() {
         'environment': {
             'dev': {
                 'connectVersion': connectVersionDev,
+                'jiraVersion' : jiraVersion,
+                'confluenceVersion' : confluenceVersion,
                 'jiraCommand': createCommand('jira', jiraVersion, connectVersionDev),
                 'confluenceCommand': createCommand('confluence', confluenceVersion, connectVersionDev)
             },
             'prd': {
                 'connectVersion': connectVersionPrd,
+                'jiraVersion' : jiraVersion,
+                'confluenceVersion' : confluenceVersion,
                 'jiraCommand': createCommand('jira', jiraVersion, connectVersionPrd),
                 'confluenceCommand': createCommand('confluence', confluenceVersion, connectVersionPrd)
             }
