@@ -372,7 +372,8 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         savedPage = editorPage.save();
         final ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, savedPage.getTitle(), SLOW_MACRO_KEY);
-        assertTrue("The macro should have timed out.", page.macroHasTimedOut());
+        final ConfluencePageWithRemoteMacro.MacroTimeoutResult macroTimeoutResult = page.macroHasTimedOut();
+        assertTrue(String.format("The macro should have timed out. Macro text = '%s'.", macroTimeoutResult.getMacroText()), macroTimeoutResult.isTimedOut());
     }
 
     @Override
@@ -408,14 +409,20 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         @Override
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
         {
-            try
+            final long wakeTime = System.currentTimeMillis() + seconds * 1000 + 1;
+
+            while (System.currentTimeMillis() < wakeTime)
             {
-                Thread.sleep(seconds * 1000);
+                try
+                {
+                    Thread.sleep(wakeTime - System.currentTimeMillis());
+                }
+                catch (InterruptedException e)
+                {
+                    // do nothing
+                }
             }
-            catch (InterruptedException e)
-            {
-                // do nothing
-            }
+
             resp.setContentType("text/html");
             resp.getWriter().write("finished");
             resp.getWriter().close();
