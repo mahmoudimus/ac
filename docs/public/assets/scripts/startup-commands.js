@@ -11,9 +11,9 @@
 function getCommands() {
 	$.ajax({
 		type: "GET",
-	    url: "//developer.atlassian.com/static/commands/atlassian-connect.json"
+	    url: '//developer.atlassian.com/static/atlassian-connect-versions.json'
 	}).done(function(commands) {
-		renderCommands(commands);
+		renderCommands(commands.commands);
 	}).error(function(data) {
 		commands = {
 			'jira': {
@@ -31,6 +31,7 @@ function getCommands() {
 }
 
 function renderCommands(commands) {
+    console.log(commands.commands);
     if($("#commands-jira-prd")) {
         $("#commands-jira-prd").replaceWith(wrapText(commands.jira.prd));
     }
@@ -52,4 +53,4 @@ function wrapText(text){
     return wrapper;
 }
 
-getCommands();
+getCommands()

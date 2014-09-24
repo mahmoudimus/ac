@@ -150,7 +150,6 @@ Connect support is currently only for Atlassian-hosted products like JIRA Cloud,
     </tt>
 
 2. From a new terminal window, start a local JIRA instance matching the Atlassian Cloud environment:
-<script src = "../assets/scripts/startup-commands.js"></script>
 <span id="commands-jira-prd">Loading...</span>
 
     __Note:__ If you're not using the command above, ensure all components in the `--bundled-plugins` argument are present in your JIRA instances. These component versions will change as Connect development continues.  

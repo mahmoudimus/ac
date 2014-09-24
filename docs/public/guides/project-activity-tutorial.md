@@ -68,7 +68,7 @@ so that requests betwen your add-on and the JIRA application are signed and auth
 1. Install Node.js dependencies for your `jira-activity` project.  
 	<pre><code data-lang="text">$ npm install</code></pre>
 1. Start JIRA in cloud mode from your `jira-activity` root:  
-<script src = "../assets/scripts/startup-commands.js"></script>
+<script>getCommands('../');</script>
 <span id="commands-jira-prd">Loading...</span>
 
     You'll see a lot of output. When finished, your terminal will notify you that the build

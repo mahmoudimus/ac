@@ -37,7 +37,6 @@ Atlassian Connect [release notes](https://developer.atlassian.com/static/connect
 To start a local JIRA/Confluence server with Connect matching what is currently in production in Atlassian Cloud, run:
 
 #### JIRA
-<script src = "../assets/scripts/startup-commands.js"></script>
 
 <span id="commands-jira-prd">Loading...</span>
 
