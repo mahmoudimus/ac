@@ -10,7 +10,7 @@
 
 function getCommands() {
     var errorMsgCommand = 'There was an error retrieving the command.'
-    var errorMsgVersion = 'Error retrieving the version information'
+    var errorMsgVersion = 'There was an error retrieving the version information'
     $.ajax({
         type: "GET",
         url: '//developer.atlassian.com/static/connect-versions.jsonp',
@@ -37,16 +37,22 @@ function getCommands() {
 
 function renderCommands(commands) {
     if ($("#commands-jira-prd").length) {
-        $("#commands-jira-prd").replaceWith(wrapText(commands.environment.prd.jiraCommand));
+        $("#commands-jira-prd").replaceWith(wrapText(commands.prd.jiraCommand));
     }
     if ($("#commands-confluence-prd").length) {
-        $("#commands-confluence-prd").replaceWith(wrapText(commands.environment.prd.confluenceCommand));
+        $("#commands-confluence-prd").replaceWith(wrapText(commands.prd.confluenceCommand));
     }
     if ($("#commands-jira-dev").length) {
-        $("#commands-jira-dev").replaceWith(wrapText(commands.environment.dev.jiraCommand));
+        $("#commands-jira-dev").replaceWith(wrapText(commands.dev.jiraCommand));
     }
     if ($("#commands-confluence-dev").length) {
-        $("#commands-confluence-dev").replaceWith(wrapText(commands.environment.dev.confluenceCommand));
+        $("#commands-confluence-dev").replaceWith(wrapText(commands.dev.confluenceCommand));
+    }
+    if($("#connect-version-prd").length) {
+        $("#connect-version-prd").replaceWith(commands.prd.connectVersion);
+    }
+    if($("#connect-version-dev").length) {
+        $("#connect-version-dev").replaceWith(commands.dev.connectVersion);
     }
 }
 
@@ -64,7 +70,6 @@ $(getCommands);
  * JSONP callback
  */
 function evalCommands(commands) {
-    console.log(commands);
-    renderCommands(commands.commands);
+    renderCommands(commands.environment);
 }
 
