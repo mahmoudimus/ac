@@ -59,6 +59,6 @@ public class LinkedRemoteContent
     {
         webItem.click();
 
-        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, pageKey, extraPrefix, true);
+        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, extraPrefix, pageKey, true);
     }
 }
