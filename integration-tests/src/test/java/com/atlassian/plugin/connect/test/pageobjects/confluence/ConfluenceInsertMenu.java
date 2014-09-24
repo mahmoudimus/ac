@@ -10,7 +10,7 @@ public class ConfluenceInsertMenu extends InsertMenu
     {
         try
         {
-            dropdownMenu.find(By.className("macro-" + macroKey));
+            dropdownMenu.findElement(By.className("macro-" + macroKey));
             return true;
         }
         catch (NoSuchElementException e)
