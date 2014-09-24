@@ -1,6 +1,10 @@
 
 # Release Notes
 
+## [1.1.5](../release-notes/1-1-0.html#1.1.5)
+* More [JIRA reports](../modules/jira/report.html) features.
+* Add-ons are no longer automatically uninstalled when the installation lifecycle hook returns an error response.
+
 ## [1.1.4](../release-notes/1-1-0.html#1.1.4)
 * Confluence now supports `content.*` variables everywhere that `page.*` variables were supported.
 * Support for [JIRA reports](../modules/jira/report.html)
