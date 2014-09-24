@@ -1,6 +1,6 @@
 /**
 * Retrieve plugin versions from Manifesto and generate startup commands for JIRA/Confluence
-* Then publish the commands on Firebase (Manifesto does not yet expose a public REST API, hence this workaround).
+* Then publish the commands in a file on DAC (Manifesto does not yet expose a public REST API, hence this workaround).
 * Format:
 * {
 *   'commands' :
@@ -17,20 +17,18 @@
 * Both the prod and dev commands use the production version of JIRA and Confluence, as well as other
 * plugin dependencies.
 *
-* Firebase app: https://connectutils.firebaseio.com
 */
 
 var Client = require('node-rest-client').Client;
-var Firebase = require("firebase");
-var FirebaseTokenGenerator = require("firebase-token-generator");
+var fs = require('fs');
 var argv = require('yargs')
-    .usage('Usage: $0 -url [url] -secret [string]')
-    .demand(['url','secret'])
-    .describe('url', 'URL of the firebase app (ending with firebaseio.com)')
-    .describe('secret', 'Firebase secret, generated from the app')
+    .usage('Usage: $0 --output [string]')
+    .demand(['output'])
+    .describe('output', 'File to save the command to')
     .argv;
 
-var firebaseUrl = argv.url;
+var output = argv.output;
+
 var secret = argv.secret;
 
 var manifestoBaseUrl = 'https://manifesto.uc-inf.net/api/env/jirastudio-';
@@ -144,24 +142,11 @@ function createCommand(product, productVersion, connectVersion) {
  */
 
 function publishCommands(commands) {
-    var firebaseRef = new Firebase(firebaseUrl);
-    var tokenGenerator = new FirebaseTokenGenerator(secret);
-    var token = tokenGenerator.createToken({uid: "1", loggedIn: true});
-    firebaseRef.auth(token, function(error) {
-        if(error) {
-            console.log("Login Failed!", error);
-        } else {
-            console.log("Login Succeeded!");
-        }
-    });
-    firebaseRef.set(commands, function (error) {
-        if (error) {
-            console.log("Data could not be saved." + error);
-        } else {
-            console.log("Data saved successfully.");
-            process.exit(1);
-        }
-    });
+
+    console.log('writing output file: ' + output);
+    fs.writeFileSync('target/connect-commands.json', JSON.stringify(commands));
+    console.log('done');
 }
+
 
 getPluginVersions();
