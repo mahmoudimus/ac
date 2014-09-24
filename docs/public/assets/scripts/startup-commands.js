@@ -53,4 +53,8 @@ function wrapText(text){
     return wrapper;
 }
 
-getCommands()
+function evalCommands(commands) {
+    alert(commands);
+}
+
+getCommands();

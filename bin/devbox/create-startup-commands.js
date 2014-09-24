@@ -108,8 +108,11 @@ var commands = [];
 
 function createAndPublishCommands() {
     var commands = createCommands();
+    commands="evalCommands(" + commands + ")";
     publishCommands(commands);
 }
+
+
 
 /**
  * Create the atlas-run-standalone commands
