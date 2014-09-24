@@ -10,7 +10,6 @@ import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.SpaceToolsTabModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
@@ -157,7 +156,7 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     public void testAdminPage() throws Exception
     {
         loginAndVisit(TestUser.ADMIN, ConfluenceAdminHomePage.class);
-        ConfluenceAdminPage adminPage = product.getPageBinder().bind(ConfluenceAdminPage.class, getModuleKey(ADMIN_PAGE_KEY));
+        ConfluenceAdminPage adminPage = product.getPageBinder().bind(ConfluenceAdminPage.class, runner.getAddon().getKey(), ADMIN_PAGE_KEY);
         assertIsEscaped(adminPage.getRemotePluginLinkText());
     }
 
