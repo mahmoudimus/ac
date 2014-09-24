@@ -217,7 +217,7 @@ public class TestDialog extends ConnectWebDriverTestBase
 
     private RemoteDialogOpeningPage bindDialogOpeningPage(String moduleKey)
     {
-        return product.getPageBinder().bind(RemoteDialogOpeningPage.class, null, moduleKey, runner.getAddon().getKey());
+        return product.getPageBinder().bind(RemoteDialogOpeningPage.class, moduleKey);
     }
 
     private String closeTheDialog(RemoteDialogOpeningPage dialogOpeningPage, RemoteCloseDialogPage closeDialogPage)
