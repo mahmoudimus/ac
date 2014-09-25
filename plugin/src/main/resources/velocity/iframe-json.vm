@@ -11,9 +11,5 @@
     "h":"$!height",
     "src":"$iframeSrcHtml",
     "productCtx":"$productContextHtml",
-    "data":{
-        #foreach($e in $data.entrySet())
-        "${e.key}":"${e.value}"#if(!${foreach.isLast()}),#end
-        #end
-    }
+    "timeZone":"$timeZone"
 }
