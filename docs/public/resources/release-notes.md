@@ -1,6 +1,23 @@
 
 # Release Notes
 
+<div class="aui-message info">
+	    <p class="title">
+	        <span class="aui-icon icon-success"></span>
+	        <strong>Latest Atlassian Connect versions</strong>
+	    </p>
+	    <table>
+	        <tr>
+	            <td>In production:</td>
+	            <td><span id="connect-version-prd"/></td>
+	        </tr>
+	        <tr>
+                <td>In development:</td>
+                <td><span id="connect-version-dev"/></td>
+            </tr>
+		</table>
+</div>
+
 ## [1.1.5](../release-notes/1-1-0.html#1.1.5)
 * More [JIRA reports](../modules/jira/report.html) features.
 * Add-ons are no longer automatically uninstalled when the installation lifecycle hook returns an error response.
