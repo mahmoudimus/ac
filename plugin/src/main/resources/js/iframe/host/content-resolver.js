@@ -23,7 +23,7 @@ _AP.define('host/content-resolver', ['_dollar', '_ui-params'], function($, UiPar
                     "key": params.moduleKey,
                     "width": params.width || "100%",
                     "height": params.height || "100%",
-                    "raw": params.raw || "true"
+                    "classifier": params.classifier || "raw"
                 }
             });
         } 
