@@ -18,7 +18,7 @@
 		</table>
 </div>
 
-## [1.1.5](../release-notes/1-1-0.html#1.1.5)
+## [1.1.6](../release-notes/1-1-0.html#1.1.6)
 * More [JIRA reports](../modules/jira/report.html) features.
 * Add-ons are no longer automatically uninstalled when the installation lifecycle hook returns an error response.
 
