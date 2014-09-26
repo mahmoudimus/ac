@@ -4,7 +4,7 @@ import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.component.editor.EditorContent;
-import com.atlassian.confluence.pageobjects.component.editor.InsertMenu;
+import com.atlassian.confluence.pageobjects.component.editor.toolbars.InsertDropdownMenu;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
@@ -280,7 +280,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     {
         product.getPageBinder().override(MacroBrowserDialog.class, ConfluenceMacroBrowserDialog.class);
         product.getPageBinder().override(EditorContent.class, ConfluenceEditorContent.class);
-        product.getPageBinder().override(InsertMenu.class, ConfluenceInsertMenu.class);
+        product.getPageBinder().override(InsertDropdownMenu.class, ConfluenceInsertMenu.class);
     }
 
     @After
