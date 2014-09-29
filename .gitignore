@@ -25,3 +25,4 @@ build-number.txt
 docs/target
 plugin/node/
 plugin/src/main/resources/js/core/
+.vagrant
