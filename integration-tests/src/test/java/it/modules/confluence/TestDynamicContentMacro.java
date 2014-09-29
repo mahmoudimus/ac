@@ -371,7 +371,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
     private void testMacroIsRendered(User user) throws Exception
     {
-        getMacroContent(user, SIMPLE_MACRO_NAME, SIMPLE_MACRO_KEY, "Simple macro");
+        getMacroContent(user, SIMPLE_MACRO_NAME, "Simple macro");
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
         String content = renderedMacro.getIFrameElementText("hello-world-message");
 

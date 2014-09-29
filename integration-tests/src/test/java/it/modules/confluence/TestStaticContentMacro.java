@@ -229,7 +229,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
 
     private void testMacroIsRendered(User user) throws Exception
     {
-        ViewPage page = getMacroContent(user, STORAGE_FORMAT_MACRO_NAME, STORAGE_FORMAT_MACRO_KEY, "Storage format macro");
+        ViewPage page = getMacroContent(user, STORAGE_FORMAT_MACRO_NAME, "Storage format macro");
         String content = page.getRenderedContent().getText();
         assertThat(content, is("Storage Format Content"));
     }

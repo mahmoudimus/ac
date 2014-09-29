@@ -588,7 +588,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         return format("<div class=\"%1$s\"><ac:macro ac:name=\"%1$s\" /></div>", macroName);
     }
 
-    protected ViewPage getMacroContent(User user, String macroName, String macroKey, String title) throws Exception
+    protected ViewPage getMacroContent(User user, String macroName, String title) throws Exception
     {
         // create the page with the macro
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
