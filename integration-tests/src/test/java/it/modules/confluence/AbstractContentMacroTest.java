@@ -2,10 +2,10 @@ package it.modules.confluence;
 
 import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
-import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.component.editor.EditorContent;
 import com.atlassian.confluence.pageobjects.component.editor.toolbars.InsertDropdownMenu;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
+import com.atlassian.confluence.pageobjects.page.content.Editor;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
@@ -304,27 +304,48 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     public void testMacroIsListed() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
-        MacroItem macro = macroBrowser.searchForFirst(SIMPLE_MACRO_NAME);
-        assertThat(macro, is(not(nullValue())));
+
+        try
+        {
+            final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, SIMPLE_MACRO_NAME);
+
+            try
+            {
+                assertThat(macroBrowserAndEditor.macroForm, is(not(nullValue())));
+            }
+            finally
+            {
+                macroBrowserAndEditor.browserDialog.clickCancel();
+            }
+        }
+        finally
+        {
+            editorPage.cancel();
+        }
     }
 
     @Test
     public void testParameterTypes() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, ALL_PARAMETER_TYPES_MACRO_NAME);
+        MacroForm macroForm = macroBrowserAndEditor.macroForm;
 
-        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
-        MacroItem macro = macroBrowser.searchForFirst(ALL_PARAMETER_TYPES_MACRO_NAME);
-        MacroForm macroForm = macro.select();
-
-        assertThat(macroForm.hasField("attachment").byDefaultTimeout(), is(true));
-        assertThat(macroForm.hasField("boolean").byDefaultTimeout(), is(true));
-        assertThat(macroForm.hasField("content").byDefaultTimeout(), is(true));
-        assertThat(macroForm.hasField("enum").byDefaultTimeout(), is(true));
-        assertThat(macroForm.hasField("spacekey").byDefaultTimeout(), is(true));
-        assertThat(macroForm.hasField("string").byDefaultTimeout(), is(true));
-        assertThat(macroForm.hasField("username").byDefaultTimeout(), is(true));
+        try
+        {
+            assertThat(macroForm.hasField("attachment").byDefaultTimeout(), is(true));
+            assertThat(macroForm.hasField("boolean").byDefaultTimeout(), is(true));
+            assertThat(macroForm.hasField("content").byDefaultTimeout(), is(true));
+            assertThat(macroForm.hasField("enum").byDefaultTimeout(), is(true));
+            assertThat(macroForm.hasField("spacekey").byDefaultTimeout(), is(true));
+            assertThat(macroForm.hasField("string").byDefaultTimeout(), is(true));
+            assertThat(macroForm.hasField("username").byDefaultTimeout(), is(true));
+        }
+        finally
+        {
+            macroBrowserAndEditor.browserDialog.clickCancel();
+            editorPage.cancel();
+        }
     }
 
     @Test
@@ -332,21 +353,19 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Parameter Page"));
+        final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, PARAMETER_MACRO_NAME);
 
-        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
         try
         {
-            MacroItem macro = macroBrowser.searchForFirst(PARAMETER_MACRO_NAME);
-            MacroForm macroForm = macro.select();
-
-            assertTrue(macroForm.getField(SINGLE_PARAM_ID).isVisible());
+            assertTrue(macroBrowserAndEditor.macroForm.getField(SINGLE_PARAM_ID).isVisible());
 
             WebElement label = connectPageOperations.findLabel("macro-param-" + SINGLE_PARAM_ID);
             assertThat(label.getText(), is(SINGLE_PARAM_NAME));
         }
         finally
         {
-            macroBrowser.clickCancel();
+            macroBrowserAndEditor.browserDialog.clickCancel();
+            editorPage.cancel();
         }
     }
 
@@ -354,8 +373,18 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     public void testFeaturedMacro() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-        ConfluenceInsertMenu insertMenu = (ConfluenceInsertMenu) editorPage.openInsertMenu();
-        assertThat(insertMenu.hasEntryWithKey(FEATURED_MACRO_KEY), is(true));
+        final Editor editor = editorPage.getEditor();
+        editor.getContent().type("\n"); // otherwise the caret is in the heading (Confluence disables the macro insertion UI while the caret is in the heading)
+        ConfluenceInsertMenu insertMenu = (ConfluenceInsertMenu) editor.openInsertMenu();
+
+        try
+        {
+            assertThat(insertMenu.hasEntryWithKey(FEATURED_MACRO_KEY), is(true));
+        }
+        finally
+        {
+            editor.clickCancel();
+        }
     }
 
     @Test
@@ -364,7 +393,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Image Placeholder Macro"));
 
-        selectMacro(editorPage, IMAGE_PLACEHOLDER_MACRO_NAME);
+        selectMacroAndSave(editorPage, IMAGE_PLACEHOLDER_MACRO_NAME);
 
         try
         {
@@ -384,25 +413,33 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
 
-        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
-        MacroItem macro = macroBrowser.searchForFirst(EDITOR_MACRO_NAME);
-        macro.select();
-
-        RemotePluginDialog dialog = null;
-
         try
         {
-            dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
-            String content = dialog.getValueById("description");
+            selectMacro(editorPage, EDITOR_MACRO_NAME, new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    RemotePluginDialog dialog = null;
 
-            assertThat(content, is("Select from:"));
+                    try
+                    {
+                        dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
+                        String content = dialog.getValueById("description");
+                        assertThat(content, is("Select from:"));
+                    }
+                    finally
+                    {
+                        if (dialog != null)
+                        {
+                            dialog.cancel();
+                        }
+                    }
+                }
+            });
         }
         finally
         {
-            if (dialog != null)
-            {
-                dialog.cancel();
-            }
             editorPage.cancel();
         }
     }
@@ -412,14 +449,9 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
 
-        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
-        MacroItem macro = macroBrowser.searchForFirst(EDITOR_MACRO_NAME);
-        macro.select();
-
         try
         {
-            RemotePluginDialog dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
-            assertThat(dialog.cancel(), is(true));
+            selectMacro(editorPage, EDITOR_MACRO_NAME, macroDialogCanceller(EDITOR_MACRO_KEY));
         }
         finally
         {
@@ -432,23 +464,32 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
 
-        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
-        MacroItem macro = macroBrowser.searchForFirst(CUSTOM_TITLE_EDITOR_MACRO_NAME);
-        macro.select();
-
-        RemotePluginDialog dialog = null;
-
         try
         {
-            dialog = connectPageOperations.findDialog(CUSTOM_TITLE_EDITOR_MACRO_KEY);
-            assertThat(dialog.getTitle(), is(CUSTOM_TITLE));
+            selectMacro(editorPage, CUSTOM_TITLE_EDITOR_MACRO_NAME, new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    RemotePluginDialog dialog = null;
+
+                    try
+                    {
+                        dialog = connectPageOperations.findDialog(CUSTOM_TITLE_EDITOR_MACRO_KEY);
+                        assertThat(dialog.getTitle(), is(CUSTOM_TITLE));
+                    }
+                    finally
+                    {
+                        if (dialog != null)
+                        {
+                            dialog.cancel();
+                        }
+                    }
+                }
+            });
         }
         finally
         {
-            if (dialog != null)
-            {
-                dialog.cancel();
-            }
             editorPage.cancel();
         }
     }
@@ -458,23 +499,32 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
 
-        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
-        MacroItem macro = macroBrowser.searchForFirst(EDITOR_MACRO_NAME);
-        macro.select();
-
-        RemotePluginDialog dialog = null;
-
         try
         {
-            dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
-            assertThat(dialog.getTitle(), containsString(EDITOR_MACRO_NAME));
+            selectMacro(editorPage, EDITOR_MACRO_NAME, new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    RemotePluginDialog dialog = null;
+
+                    try
+                    {
+                        dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
+                        assertThat(dialog.getTitle(), containsString(EDITOR_MACRO_NAME));
+                    }
+                    finally
+                    {
+                        if (dialog != null)
+                        {
+                            dialog.cancel();
+                        }
+                    }
+                }
+            });
         }
         finally
         {
-            if (dialog != null)
-            {
-                dialog.cancel();
-            }
             editorPage.cancel();
         }
     }
@@ -484,14 +534,9 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
 
-        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
-        MacroItem macro = macroBrowser.searchForFirst(EDITOR_MACRO_NAME);
-        macro.select();
-
         try
         {
-            RemotePluginDialog dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
-            assertThat(dialog.submit(), is(true));
+            selectMacro(editorPage, EDITOR_MACRO_NAME, macroDialogSubmitter(EDITOR_MACRO_KEY));
         }
         finally
         {
@@ -503,9 +548,17 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     public void testHiddenMacro() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
-        MacroItem macro = macroBrowser.searchForFirst(HIDDEN_MACRO_NAME);
-        assertThat(macro, is(nullValue()));
+        final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, HIDDEN_MACRO_NAME);
+
+        try
+        {
+            assertThat(macroBrowserAndEditor.macroForm, is(nullValue()));
+        }
+        finally
+        {
+            macroBrowserAndEditor.browserDialog.clickCancel();
+            editorPage.cancel();
+        }
     }
 
     protected abstract String getAddonBaseUrl();

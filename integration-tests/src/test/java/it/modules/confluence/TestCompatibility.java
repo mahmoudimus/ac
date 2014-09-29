@@ -86,11 +86,11 @@ public class TestCompatibility extends AbstractConfluenceWebDriverTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
         editorPage.setTitle(RandomStringUtils.randomAlphanumeric(8));
 
-        selectMacro(editorPage, MACRO_NAME_2);
+        selectMacroAndSave(editorPage, MACRO_NAME_2);
 
         ViewPage page = editorPage.save();
         String content = rpc.getPageContent(page.getPageId());
-        assertEquals("<p><ac:structured-macro ac:name=\"something-else\" /></p>", content);
+        assertEquals("<p>&nbsp;</p><p><ac:structured-macro ac:name=\"something-else\" /></p>", content);
     }
 
     private void createAndVisitPage(String pageContent) throws MalformedURLException, XmlRpcFault

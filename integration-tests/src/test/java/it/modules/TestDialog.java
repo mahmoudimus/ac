@@ -293,7 +293,7 @@ public class TestDialog extends ConnectWebDriverTestBase
 
     private void sleepForAtLeast1Second()
     {
-        sleepUntil(System.currentTimeMillis() + 1100);
+        sleepUntil(System.currentTimeMillis() + 2000);
     }
 
     private void sleepUntil(final long wakeTimeMillis)

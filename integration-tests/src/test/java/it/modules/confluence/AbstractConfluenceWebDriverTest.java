@@ -8,10 +8,11 @@ import com.atlassian.confluence.it.plugin.*;
 import com.atlassian.confluence.it.rpc.ConfluenceRpc;
 import com.atlassian.confluence.it.rpc.StartOfTestLogger;
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
-import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
+import com.atlassian.confluence.pageobjects.component.editor.toolbars.InsertDropdownMenu;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
+import com.atlassian.confluence.pageobjects.page.content.Editor;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectMacroBrowserDialog;
@@ -23,6 +24,11 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 
+import javax.annotation.Nullable;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 /**
  * This is an adapted version of com.atlassian.confluence.webdriver.AbstractWebDriverTest. It works with the AC test DB
  * and default host/port. Installing the 'scripts finished' plugin makes all of Confluence's page objects available to
@@ -33,6 +39,20 @@ public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
     public static class TestSpace
     {
         public static Space DEMO = new Space("ds", "Demonstration Space");
+    }
+
+    public static class MacroBrowserAndEditor
+    {
+        public final ConnectMacroBrowserDialog browserDialog;
+        public final MacroItem macro;
+        public final MacroForm macroForm;
+
+        public MacroBrowserAndEditor(ConnectMacroBrowserDialog browserDialog, MacroItem macro, MacroForm macroForm)
+        {
+            this.browserDialog = browserDialog;
+            this.macroForm = macroForm;
+            this.macro = macro;
+        }
     }
 
     @Rule
@@ -132,14 +152,74 @@ public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
                 MavenDependencyHelper.resolve("com.atlassian.confluence.plugins", "confluence-scriptsfinished-plugin"));
     }
 
-    protected void selectMacro(CreatePage editorPage, String macroName)
+    protected void selectMacroAndSave(CreatePage editorPage, String macroName)
     {
-        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
-        ConnectMacroBrowserDialog connectMacroBrowserDialog = connectPageOperations.findConnectMacroBrowserDialog();
-        MacroItem macro = macroBrowser.searchForFirst(macroName);
-        MacroForm macroForm = macro.select();
-        macroForm.waitUntilVisible();
-        connectMacroBrowserDialog.clickSave();
+        selectMacro(editorPage, macroName).browserDialog.clickSave();
     }
 
+    protected MacroBrowserAndEditor selectMacro(CreatePage editorPage, String macroName)
+    {
+        return selectMacro(editorPage, macroName, null);
+    }
+
+    protected MacroBrowserAndEditor selectMacro(CreatePage editorPage, String macroName, @Nullable Runnable macroDialogSubmitter)
+    {
+        MacroBrowserAndEditor browserAndEditor = findMacroInBrowser(editorPage, macroName);
+
+        if (null == browserAndEditor.macro)
+        {
+            return browserAndEditor;
+        }
+        else
+        {
+            MacroForm macroForm = browserAndEditor.macro.select();
+
+            if (null != macroDialogSubmitter)
+            {
+                macroDialogSubmitter.run();
+            }
+            else
+            {
+                macroForm.waitUntilVisible();
+            }
+
+            return new MacroBrowserAndEditor(browserAndEditor.browserDialog, browserAndEditor.macro, macroForm);
+        }
+    }
+
+    protected MacroBrowserAndEditor findMacroInBrowser(CreatePage editorPage, String macroName)
+    {
+        final Editor editor = editorPage.getEditor();
+        editor.getContent().type("\n"); // otherwise the caret is in the heading (Confluence disables the macro insertion UI while the caret is in the heading)
+        final InsertDropdownMenu insertDropdownMenu = editor.openInsertMenu();
+        insertDropdownMenu.click(InsertDropdownMenu.InsertItem.MACRO);
+        ConnectMacroBrowserDialog browserDialog = connectPageOperations.findConnectMacroBrowserDialog();
+        MacroItem macro = browserDialog.searchForFirst(macroName);
+
+        return new MacroBrowserAndEditor(browserDialog, macro, null);
+    }
+
+    protected Runnable macroDialogSubmitter(final String moduleKey)
+    {
+        return new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                assertThat(connectPageOperations.findDialog(moduleKey).submit(), is(true));
+            }
+        };
+    }
+
+    protected Runnable macroDialogCanceller(final String moduleKey)
+    {
+        return new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                assertThat(connectPageOperations.findDialog(moduleKey).cancel(), is(true));
+            }
+        };
+    }
 }
