@@ -1,12 +1,12 @@
 package it.modules.confluence;
 
-import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
-import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
-import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
+import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
+import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWithRemoteMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
 import it.servlet.EchoContextServlet;
@@ -16,7 +16,17 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
@@ -27,6 +37,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
 {
     private static final String STORAGE_FORMAT_MACRO_NAME = "Storage Format Macro";
     private static final String STORAGE_FORMAT_MACRO_KEY = "storage-format-macro";
+    private static final String COUNTER = "rp-counter";
 
     private static final String GET_MACRO_NAME = "Get Macro";
     private static final String GET_MACRO_KEY = "get-macro";
@@ -218,16 +229,9 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
 
     private void testMacroIsRendered(User user) throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(user, TestSpace.DEMO);
-        editorPage.setTitle(randomName("Simple Macro on Page"));
-
-        selectMacroAndSave(editorPage, STORAGE_FORMAT_MACRO_NAME);
-
-        savedPage = editorPage.save();
-
-        String content = savedPage.getRenderedContent().getText();
-
-        assertThat(content, endsWith("Storage Format Content"));
+        ViewPage page = getMacroContent(user, STORAGE_FORMAT_MACRO_NAME, STORAGE_FORMAT_MACRO_KEY, "Storage format macro");
+        String content = page.getRenderedContent().getText();
+        assertThat(content, is("Storage Format Content"));
     }
 
     private int getCounter(ConfluencePageWithRemoteMacro page)

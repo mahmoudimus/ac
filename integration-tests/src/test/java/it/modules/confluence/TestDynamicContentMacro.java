@@ -2,9 +2,6 @@ package it.modules.confluence;
 
 import com.atlassian.confluence.it.Page;
 import com.atlassian.confluence.it.User;
-import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
-import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
-import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.EditContentPage;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
@@ -153,6 +150,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                 .addRoute("/images/placeholder.png", ConnectAppServlets.resourceServlet("atlassian-icon-16.png", "image/png"))
                 .addRoute("/images/macro-icon.png", ConnectAppServlets.resourceServlet("atlassian-icon-16.png", "image/png"))
                 .addRoute("/render-macro-in-table-macro", ConnectAppServlets.apRequestServlet())
+                .addRoute("/slow-macro", new SlowMacroServlet(22))
                 .start();
     }
 
@@ -373,12 +371,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
     private void testMacroIsRendered(User user) throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(user, TestSpace.DEMO);
-        editorPage.setTitle(randomName("Simple Macro on Page"));
-
-        selectMacroAndSave(editorPage, SIMPLE_MACRO_NAME);
-
-        savedPage = editorPage.save();
+        getMacroContent(user, SIMPLE_MACRO_NAME, SIMPLE_MACRO_KEY, "Simple macro");
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
         String content = renderedMacro.getIFrameElementText("hello-world-message");
 

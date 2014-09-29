@@ -1,11 +1,13 @@
 package it.modules.confluence;
 
+import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
-import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.component.editor.EditorContent;
-import com.atlassian.confluence.pageobjects.component.editor.InsertMenu;
+import com.atlassian.confluence.pageobjects.component.editor.toolbars.InsertDropdownMenu;
+import com.atlassian.confluence.pageobjects.page.ConfluenceLoginPage;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
+import com.atlassian.confluence.pageobjects.page.content.Editor;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
@@ -14,9 +16,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroBrowserDialog;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.*;
 import it.util.TestUser;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.junit.After;
@@ -25,10 +25,15 @@ import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import redstone.xmlrpc.XmlRpcFault;
 
+import java.net.MalformedURLException;
+
+import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
+import static java.lang.String.format;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -588,7 +593,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         // create the page with the macro
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName(title));
-        selectMacro(editorPage, macroName);
+        selectMacroAndSave(editorPage, macroName);
         savedPage = editorPage.save();
 
         // change to the specified user
