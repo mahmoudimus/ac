@@ -21,6 +21,8 @@ import java.net.MalformedURLException;
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static it.servlet.ConnectAppServlets.echoQueryParametersServlet;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.endsWith;
 import static org.junit.Assert.assertEquals;
 
 public class TestCompatibility extends AbstractConfluenceWebDriverTest
@@ -90,7 +92,7 @@ public class TestCompatibility extends AbstractConfluenceWebDriverTest
 
         ViewPage page = editorPage.save();
         String content = rpc.getPageContent(page.getPageId());
-        assertEquals("<p>&nbsp;</p><p><ac:structured-macro ac:name=\"something-else\" /></p>", content);
+        assertThat(content, endsWith("<p><ac:structured-macro ac:name=\"something-else\" /></p>"));
     }
 
     private void createAndVisitPage(String pageContent) throws MalformedURLException, XmlRpcFault

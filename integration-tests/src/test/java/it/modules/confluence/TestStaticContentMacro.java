@@ -17,6 +17,7 @@ import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
+import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -107,7 +108,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
 
         String content = savedPage.getRenderedContent().getText();
 
-        assertThat(content, is(" Storage Format Content"));
+        assertThat(content, endsWith("Storage Format Content"));
     }
 
     @Test
