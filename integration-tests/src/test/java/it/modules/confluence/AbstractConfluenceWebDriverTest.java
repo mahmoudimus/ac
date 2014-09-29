@@ -190,13 +190,18 @@ public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
     protected MacroBrowserAndEditor findMacroInBrowser(CreatePage editorPage, String macroName)
     {
         final Editor editor = editorPage.getEditor();
-        editor.getContent().type("\n"); // otherwise the caret is in the heading (Confluence disables the macro insertion UI while the caret is in the heading)
+        enableMacrosDropdown(editor);
         final InsertDropdownMenu insertDropdownMenu = editor.openInsertMenu();
         insertDropdownMenu.click(InsertDropdownMenu.InsertItem.MACRO);
         ConnectMacroBrowserDialog browserDialog = connectPageOperations.findConnectMacroBrowserDialog();
         MacroItem macro = browserDialog.searchForFirst(macroName);
 
         return new MacroBrowserAndEditor(browserDialog, macro, null);
+    }
+
+    protected void enableMacrosDropdown(Editor editor)
+    {
+        editor.getContent().type("\n"); // otherwise the caret is in the heading (Confluence disables the macro insertion UI while the caret is in the heading)
     }
 
     protected Runnable macroDialogSubmitter(final String moduleKey)

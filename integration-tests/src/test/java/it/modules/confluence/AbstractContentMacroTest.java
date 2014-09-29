@@ -374,7 +374,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         final Editor editor = editorPage.getEditor();
-        editor.getContent().type("\n"); // otherwise the caret is in the heading (Confluence disables the macro insertion UI while the caret is in the heading)
+        enableMacrosDropdown(editor);
         ConfluenceInsertMenu insertMenu = (ConfluenceInsertMenu) editor.openInsertMenu();
 
         try
