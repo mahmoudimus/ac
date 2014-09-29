@@ -19,7 +19,7 @@ public class RemoteWebPanel extends AbstractConnectIFrameComponent<RemoteWebPane
 
     protected String getFrameId()
     {
-        return IframeUtils.iframeId(extraPrefix + id);
+        return IframeUtils.iframeId(id);
     }
 
     public String getUserId()
