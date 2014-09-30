@@ -1,9 +1,6 @@
 package it.modules.confluence;
 
 import com.atlassian.confluence.it.Page;
-import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
-import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
-import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.EditContentPage;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
@@ -153,7 +150,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Simple Macro on Page"));
 
-        selectMacro(editorPage, SIMPLE_MACRO_NAME);
+        selectMacroAndSave(editorPage, SIMPLE_MACRO_NAME);
 
         savedPage = editorPage.save();
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
@@ -168,7 +165,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Short Body Macro"));
 
-        selectMacro(editorPage, SHORT_BODY_MACRO_NAME);
+        selectMacroAndSave(editorPage, SHORT_BODY_MACRO_NAME);
 
         ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
         editorContent.setRichTextMacroBody("a short body");
@@ -186,7 +183,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Long Body Macro"));
 
-        selectMacro(editorPage, LONG_BODY_MACRO_NAME);
+        selectMacroAndSave(editorPage, LONG_BODY_MACRO_NAME);
 
         String body = StringUtils.repeat("x ", 200);
         ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
@@ -205,13 +202,9 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Parameter Page"));
-
-        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
-        MacroItem macro = macroBrowser.searchForFirst(PARAMETER_MACRO_NAME);
-        MacroForm macroForm = macro.select();
-
-        macroForm.getAutocompleteField("param1").setValue("param value");
-        macroBrowser.clickSave();
+        final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, PARAMETER_MACRO_NAME);
+        macroBrowserAndEditor.macroForm.getAutocompleteField("param1").setValue("param value");
+        macroBrowserAndEditor.browserDialog.clickSave();
 
         savedPage = editorPage.save();
 
@@ -227,8 +220,8 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Multiple Macros"));
 
-        selectMacro(editorPage, SIMPLE_MACRO_NAME);
-        selectMacro(editorPage, SIMPLE_MACRO_NAME);
+        selectMacroAndSave(editorPage, SIMPLE_MACRO_NAME);
+        selectMacroAndSave(editorPage, SIMPLE_MACRO_NAME);
 
         savedPage = editorPage.save();
 
@@ -250,7 +243,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Small Inline Macro"));
 
-        selectMacro(editorPage, SMALL_INLINE_MACRO_NAME);
+        selectMacroAndSave(editorPage, SMALL_INLINE_MACRO_NAME);
 
         savedPage = editorPage.save();
 
@@ -264,13 +257,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Macro Editor"));
-
-        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
-        MacroItem macro = macroBrowser.searchForFirst(EDITOR_MACRO_NAME);
-        macro.select();
-
-        RemotePluginDialog dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
-        dialog.submit();
+        selectMacro(editorPage, EDITOR_MACRO_NAME, macroDialogSubmitter(EDITOR_MACRO_KEY));
 
         savedPage = editorPage.save();
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(EDITOR_MACRO_KEY);

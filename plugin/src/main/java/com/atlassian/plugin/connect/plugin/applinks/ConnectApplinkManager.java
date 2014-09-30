@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.applinks;
 
 import com.atlassian.applinks.api.ApplicationLink;
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -56,4 +57,14 @@ public interface ConnectApplinkManager
      * @return the self link for this application link
      */
     public URI getApplinkLinkSelfLink(ApplicationLink applink);
+
+    /**
+     * Reads the JWT shared secret or the OAuth consumer public key from an
+     * applink
+     *
+     * @param applink
+     * @return
+     */
+    Option<String> getSharedSecretOrPublicKey(ApplicationLink applink);
+
 }
