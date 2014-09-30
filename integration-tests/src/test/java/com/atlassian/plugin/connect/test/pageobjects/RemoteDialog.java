@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.test.pageobjects;
 
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.webdriver.AtlassianWebDriver;
+import com.atlassian.webdriver.utils.Check;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -112,11 +113,11 @@ public class RemoteDialog extends AbstractConnectIFrameComponent<RemoteDialog>
         final By dialogContentLocator = By.className(DIALOG_CONTAINER);
         try
         {
-            return !driver.elementIsVisible(dialogContentLocator);
+            return !Check.elementIsVisible(dialogContentLocator, driver);
         }
         catch (StaleElementReferenceException e)
         {
-            if (!driver.elementExists(dialogContentLocator))
+            if (!Check.elementExists(dialogContentLocator, driver))
             {
                 return true;
             }
