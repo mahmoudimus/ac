@@ -1,11 +1,11 @@
 package it.modules.confluence;
 
+import com.atlassian.confluence.it.Page;
 import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
 import com.atlassian.confluence.pageobjects.component.editor.EditorContent;
 import com.atlassian.confluence.pageobjects.component.editor.toolbars.InsertDropdownMenu;
-import com.atlassian.confluence.pageobjects.page.ConfluenceLoginPage;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
@@ -595,20 +595,26 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         editorPage.setTitle(randomName(title));
         selectMacroAndSave(editorPage, macroName);
         savedPage = editorPage.save();
+        final long pageId = savedPage.getPageId(); // need to get it here because it parses the page, so if we log out it throws!
 
-        // change to the specified user
-        if (!TestUser.ADMIN.confUser().equals(user))
+        // view the page as the specified user
+        if (TestUser.ADMIN.confUser().equals(user))
+        {
+            return savedPage;
+        }
+        else
         {
             getProduct().logOutFast();
 
-            if (null != user)
+            if (null == user)
             {
-                getProduct().login(user, ConfluenceLoginPage.class);
+                return getProduct().viewPage(String.valueOf(pageId));
+            }
+            else
+            {
+                return getProduct().loginAndView(user, new Page(pageId));
             }
         }
-
-        // view the page as the specified user
-        return getProduct().viewPage(String.valueOf(savedPage.getPageId()));
     }
 
     protected abstract String getAddonBaseUrl();

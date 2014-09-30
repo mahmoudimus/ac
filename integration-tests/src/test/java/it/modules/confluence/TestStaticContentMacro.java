@@ -30,6 +30,7 @@ import java.net.URL;
 
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
+import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -230,8 +231,8 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     private void testMacroIsRendered(User user) throws Exception
     {
         ViewPage page = getMacroContent(user, STORAGE_FORMAT_MACRO_NAME, "Storage format macro");
-        String content = page.getRenderedContent().getText();
-        assertThat(content, is("Storage Format Content"));
+        String content = page.getRenderedContent().getTextTimed().byDefaultTimeout();
+        assertThat(content, endsWith("Storage Format Content"));
     }
 
     private int getCounter(ConfluencePageWithRemoteMacro page)
