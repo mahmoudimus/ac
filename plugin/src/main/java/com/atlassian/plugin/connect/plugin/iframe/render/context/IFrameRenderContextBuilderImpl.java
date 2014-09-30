@@ -27,20 +27,17 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
     private final UserManager userManager;
     private final HostApplicationInfo hostApplicationInfo;
     private final UserPreferencesRetriever userPreferencesRetriever;
-    private final List<String> dialogScriptUrls;
 
     private String addonKey;
     private String namespace;
 
     public IFrameRenderContextBuilderImpl(final RemotablePluginAccessorFactory pluginAccessorFactory,
                                           final UserManager userManager, final HostApplicationInfo hostApplicationInfo,
-                                          final UserPreferencesRetriever userPreferencesRetriever,
-                                          final List<String> dialogScriptUrls) {
+                                          final UserPreferencesRetriever userPreferencesRetriever) {
         this.pluginAccessorFactory = pluginAccessorFactory;
         this.userManager = userManager;
         this.hostApplicationInfo = hostApplicationInfo;
         this.userPreferencesRetriever = userPreferencesRetriever;
-        this.dialogScriptUrls = dialogScriptUrls;
     }
 
     @Override
@@ -181,7 +178,6 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
             defaultContext.put("userId", username);
             defaultContext.put("userKey", userKey);
             defaultContext.put("data", ImmutableMap.of("timeZone", timeZone));
-            defaultContext.put("dialogScriptUrls", dialogScriptUrls);
 
             return defaultContext;
         }

@@ -15,8 +15,10 @@
 
     <!-- Confluence specific javascript modules -->
     <web-resource key="macro">
-        <resource type="download" name="editor-rpc.js" location="js/confluence/macro/editor-rpc.js" />
         <resource type="download" name="editor.js" location="js/confluence/macro/editor.js" />
+        <resource type="download" name="editor-rpc.js" location="js/confluence/macro/editor-rpc.js" />
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-core</dependency>
     </web-resource>
 
     <web-resource key="atlassian-connect-resources" name="Connect resources for inclusion on every page.">

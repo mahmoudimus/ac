@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.report.ConnectReport;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.report.ConnectReportModuleDescriptor;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.GeneralPageModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
@@ -13,6 +14,7 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +28,18 @@ public class ConnectReportModuleDescriptorFactory implements ConnectModuleDescri
     private final ConnectContainerUtil containerUtil;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
+    private final AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter;
 
     @Autowired
     public ConnectReportModuleDescriptorFactory(final ConnectContainerUtil containerUtil,
             final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory)
+            final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+            final AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter)
     {
         this.containerUtil = containerUtil;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
+        this.absoluteAddOnUrlConverter = absoluteAddOnUrlConverter;
     }
 
     @Override
@@ -57,6 +62,7 @@ public class ConnectReportModuleDescriptorFactory implements ConnectModuleDescri
         iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), renderStrategy);
 
         ConnectReportModuleDescriptor moduleDescriptor = containerUtil.createBean(ConnectReportModuleDescriptor.class);
+        moduleDescriptor.setThumbnailUrl(getThumbnailUrl(moduleProviderContext.getConnectAddonBean(), bean.getThumbnailUrl()));
         moduleDescriptor.init(plugin, reportModule);
         return moduleDescriptor;
     }
@@ -80,6 +86,17 @@ public class ConnectReportModuleDescriptorFactory implements ConnectModuleDescri
                 .addAttribute("key", bean.getName().getI18n())
                 .setText(bean.getName().getValue());
 
+        reportModule.addElement("category")
+                .addAttribute("key", bean.getReportCategory().getKey());
+
+        reportModule.addElement("thumbnail")
+                .addAttribute("cssClass", ConnectReportModuleDescriptor.getThumbnailCssClass(bean.getKey(connectAddonBean)));
+
         return reportModule;
+    }
+
+    private String getThumbnailUrl(ConnectAddonBean connectAddonBean, String thumbnailUrl)
+    {
+        return StringUtils.isEmpty(thumbnailUrl) ? "" : absoluteAddOnUrlConverter.getAbsoluteUrl(connectAddonBean, thumbnailUrl);
     }
 }

@@ -26,17 +26,43 @@ all of the components listed in the `--bundled-plugins` argument are present in 
 
 You can start JIRA or Confluence Cloud with Atlassian Connect as follows:
 
-#### JIRA
-<pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-08-005-WN --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.0-rc.4,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.4,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.17.2,com.atlassian.webhooks:atlassian-webhooks-plugin:1.0.6 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
-
-#### Confluence
-<pre><code data-lang="text">atlas-run-standalone --product confluence --version 5.5-OD-28-010 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.0-rc.4,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.4,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.17.2,com.atlassian.webhooks:atlassian-webhooks-plugin:1.0.6 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+### Stable versions
 
 Starting the applications requires you to specify a number of hard-coded component version numbers as shown. This
 includes the version of Atlassian Connect framework. Those component versions will change as Atlassian Connect
 development continues. To find out about new version updates, subscribe to the Atlassian Connect
 [mailing list](https://groups.google.com/forum/?fromgroups=#!forum/atlassian-connect-dev), and keep your eye on
 Atlassian Connect [release notes](https://developer.atlassian.com/static/connect/docs/resources/release-notes.html).
+
+To start a local JIRA/Confluence server with Connect matching what is currently in production in Atlassian Cloud, run:
+
+#### JIRA
+
+<span id="commands-jira-prd">Loading...</span>
+
+#### Confluence
+
+<span id="commands-confluence-prd">Loading...</span>
+
+### Bleeding edge
+<div class="aui-message warning">
+	    <p class="title">
+	        <span class="aui-icon icon-success"></span>
+	        <strong>Experts only!</strong>
+	    </p>
+		<p>This is using the latest development version of Connect, so you can test the latest and greatest,
+		and as such may be unstable.</p>
+</div>
+
+To start a local JIRA/Confluence server with the latest development version of Connect (bleeding edge), run:
+
+#### JIRA
+
+<span id="commands-jira-dev">Loading...</span>
+
+#### Confluence
+
+<span id="commands-confluence-dev">Loading...</span> 
 
 
 ## Step 2. Start your add-on

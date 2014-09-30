@@ -68,4 +68,6 @@ public interface ConnectAddonRegistry
     PluginState getRestartState(String pluginKey);
     
     Iterable<String> getAddonKeysToEnableOnRestart();
+
+    AddonSettings getAddonSettings(String pluginKey);
 }

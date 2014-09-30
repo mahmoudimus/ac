@@ -205,7 +205,7 @@ public class ConnectAddonManager
         String sharedSecret = useSharedSecret ? sharedSecretService.next() : null;
         String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
 
-        String userKey = addOnNeedsAUser(addOn) ? provisionAddOnUserAndScopes(addOn, previousDescriptor) : null;
+        String userKey = provisionUserIfNecessary(addOn, previousDescriptor);
 
         AddonSettings settings = new AddonSettings()
                 .setAuth(authType.name())
@@ -241,6 +241,11 @@ public class ConnectAddonManager
         }
 
         return addOn;
+    }
+
+    public String provisionUserIfNecessary(ConnectAddonBean addOn, String previousDescriptor)
+    {
+        return addOnNeedsAUser(addOn) ? provisionAddOnUserAndScopes(addOn, previousDescriptor) : null;
     }
 
     public void enableConnectAddon(final String pluginKey) throws ConnectAddOnUserInitException

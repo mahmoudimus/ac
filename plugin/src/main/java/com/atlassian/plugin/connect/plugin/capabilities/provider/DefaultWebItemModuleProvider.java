@@ -84,9 +84,10 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
                     .module(bean.getKey(connectAddonBean))
                     .genericBodyTemplate()
                     .urlTemplate(bean.getUrl())
+                    .title(bean.getDisplayName())
                     .conditions(bean.getConditions())
                     .dimensions(DEFAULT_DIALOG_DIMENSION, DEFAULT_DIALOG_DIMENSION) // the client (js) will size the parent of the iframe
-                    .dialog(true)
+                    .dialog(target.isDialogTarget())
                     .sign(!bean.getUrl().toLowerCase().startsWith("http")) // don't sign requests to arbitrary URLs (e.g. wikipedia)
                     .build();
 

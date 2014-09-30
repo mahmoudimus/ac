@@ -14,7 +14,6 @@ import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
-import com.google.common.collect.Lists;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import it.com.atlassian.plugin.connect.TestConstants;
 import it.com.atlassian.plugin.connect.installer.XmlOAuthToJsonJwtUpdateTest;
@@ -127,7 +126,7 @@ public class AddonsResourceTest
     }
 
     @Test
-    public void nonAdminRequestReturns401() throws IOException
+    public void nonAdminRequestReturns403Unauthorised() throws IOException
     {
         RequestUtil.Request request = requestUtil.requestBuilder()
                 .setMethod(HttpMethod.GET)
@@ -137,8 +136,20 @@ public class AddonsResourceTest
                 .build();
 
         RequestUtil.Response response = requestUtil.makeRequest(request);
-        assertEquals("User request to addons resource should return 401", 401, response.getStatusCode());
-        assertEquals("User request to addons resource should return 401 in body", 401, getStatusCode(response));
+
+        // TODO: remove this hack when the code in jira 6.4-SNAPSHOT as at 2014-09-22 is released to a named version
+        // (the SysadminOnlyResourceFilter has been fixed to perform a 403 rejection instead of 401 when the user
+        //  is not a sysadmin, which seems correct but is backwards-incompatible and breaks this test case)
+        try
+        {
+            assertEquals("User request to addons resource should return 403", 403, response.getStatusCode());
+            assertEquals("User request to addons resource should return 403 in body", 403, getStatusCode(response));
+        }
+        catch (AssertionError e)
+        {
+            assertEquals("User request to addons resource should return 401", 401, response.getStatusCode());
+            assertEquals("User request to addons resource should return 401 in body", 401, getStatusCode(response));
+        }
     }
 
     @Test
