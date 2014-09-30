@@ -19,10 +19,12 @@ import java.util.Collection;
 
 @ExportAsDevService
 @Component
-public class XmlPluginAutoUninstallHelperImpl implements XmlPluginAutoUninstallHelper {
+public class XmlPluginAutoUninstallHelperImpl implements XmlPluginAutoUninstallHelper
+{
+    private static final Logger log = LoggerFactory.getLogger(XmlPluginAutoUninstallHelperImpl.class);
+
     private final PluginAccessor pluginAccessor;
     private final LegacyAddOnIdentifierService legacyAddOnIdentifierService;
-    private static final Logger log = LoggerFactory.getLogger(XmlPluginAutoUninstallHelperImpl.class);
     private final PluginController pluginController;
     private final OAuthLinkManager oAuthLinkManager;
     private final ConnectApplinkManager connectApplinkManager;
@@ -76,8 +78,7 @@ public class XmlPluginAutoUninstallHelperImpl implements XmlPluginAutoUninstallH
                 oAuthLinkManager.unassociateProviderWithLink(appLink);
                 connectApplinkManager.deleteAppLink(pluginKey);
             }
-        }
-        catch (PluginException e)
+        } catch (PluginException e)
         {
             log.error("Unable to uninstall connect addon fully - " + pluginKey, e);
         }

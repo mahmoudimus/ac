@@ -109,8 +109,7 @@ public class XmlPluginAutoUninstallerTest
             try
             {
                 testPluginInstaller.uninstallXmlAddon(oAuthPlugin);
-            }
-            catch (IOException e)
+            } catch (IOException e)
             {
                 LOG.error("Failed to uninstall test plugin " + oAuthPlugin.getKey() + " during teardown.", e);
             }

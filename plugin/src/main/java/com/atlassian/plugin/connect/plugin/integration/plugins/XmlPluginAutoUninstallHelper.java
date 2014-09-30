@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.integration.plugins;
 
 
-public interface XmlPluginAutoUninstallHelper {
+public interface XmlPluginAutoUninstallHelper
+{
     void uninstallXmlPlugins();
 }
