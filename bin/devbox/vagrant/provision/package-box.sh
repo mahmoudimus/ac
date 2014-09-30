@@ -13,4 +13,5 @@ echo "Packaging box..."
 vagrant package --output target/atlassian-connect.box
 echo "Done."
 echo "Shipping box to S3..."
+# For more details about the aws command, see https://extranet.atlassian.com/display/ARA/Vagrant+box
 aws s3 cp target/atlassian-connect.box s3://atlassian-connect-devbox/atlassian-connect.box
