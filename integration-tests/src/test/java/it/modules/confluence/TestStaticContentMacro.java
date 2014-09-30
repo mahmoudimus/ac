@@ -18,6 +18,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.openqa.selenium.WebElement;
+import redstone.xmlrpc.XmlRpcFault;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -26,12 +28,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
-import static org.hamcrest.CoreMatchers.endsWith;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.both;
 import static org.junit.Assert.assertThat;
 
 public class TestStaticContentMacro extends AbstractContentMacroTest
@@ -184,6 +187,14 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
 
         String value = parameterServlet.waitForQueryParameters().any("param1").getValue();
         assertThat(value, is("param value"));
+    }
+
+    @Test
+    public void testMacroInComment() throws MalformedURLException, XmlRpcFault
+    {
+        addSimpleMacroToComment();
+        final WebElement commentBody = connectPageOperations.findElementByClass("comment-content");
+        assertThat(commentBody.getText(), both(startsWith("Hello world!!")).and(endsWith("xdm_c: channel-" + SIMPLE_MACRO_KEY)));
     }
 
     @Test

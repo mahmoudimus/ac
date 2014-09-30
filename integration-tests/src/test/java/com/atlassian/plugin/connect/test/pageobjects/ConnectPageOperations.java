@@ -163,4 +163,14 @@ public class ConnectPageOperations
     {
         driver.findElement(By.className("tablesorter-header-inner")).click();
     }
+
+    public WebElement findElement(By by)
+    {
+        return driver.findElement(by);
+    }
+
+    public WebElement findElementByClass(String className)
+    {
+        return findElement(By.className(className));
+    }
 }

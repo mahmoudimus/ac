@@ -16,7 +16,10 @@ import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.*;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroBrowserDialog;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWithRemoteMacro;
 import it.util.TestUser;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.junit.After;
@@ -566,9 +569,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         }
     }
 
-
-    @Test
-    public void testMacroInComment() throws MalformedURLException, XmlRpcFault
+    protected void addSimpleMacroToComment() throws MalformedURLException, XmlRpcFault
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("The macro is in the comment!"));
@@ -576,11 +577,6 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
 
         confluenceOps.addComment(some(TestUser.ADMIN), String.valueOf(savedPage.getPageId()), pageWithMacro(SIMPLE_MACRO_KEY));
         product.visit(ConfluencePageWithRemoteMacro.class, savedPage.getTitle(), SIMPLE_MACRO_KEY);
-
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
-        String content = renderedMacro.getIFrameElementText("hello-world-message");
-
-        assertThat(content, is("Hello world"));
     }
 
     private String pageWithMacro(String macroName)

@@ -20,12 +20,14 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import redstone.xmlrpc.XmlRpcFault;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.MalformedURLException;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
@@ -361,6 +363,17 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         final ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, savedPage.getTitle(), SLOW_MACRO_KEY);
         final ConfluencePageWithRemoteMacro.MacroTimeoutResult macroTimeoutResult = page.macroHasTimedOut();
         assertTrue(String.format("The macro should have timed out. Macro text = '%s'.", macroTimeoutResult.getMacroText()), macroTimeoutResult.isTimedOut());
+    }
+
+    @Test
+    public void testMacroInComment() throws MalformedURLException, XmlRpcFault
+    {
+        addSimpleMacroToComment();
+
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
+        String content = renderedMacro.getIFrameElementText("hello-world-message");
+
+        assertThat(content, is("Hello world"));
     }
 
     @Override
