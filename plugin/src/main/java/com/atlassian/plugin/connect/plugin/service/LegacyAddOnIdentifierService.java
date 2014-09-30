@@ -6,7 +6,6 @@ import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
-import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -22,9 +21,8 @@ import java.util.jar.Manifest;
  * @since 1.0
  */
 @Named("legacyAddOnIdentifierService")
-@ExportAsDevService
 @XmlDescriptor
-public class LegacyAddOnIdentifierService implements ILegacyAddOnIdentifierService, ConnectAddOnIdentifierService
+public class LegacyAddOnIdentifierService implements ConnectAddOnIdentifierService
 {
     private final PluginAccessor pluginAccessor;
 
