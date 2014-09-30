@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.test.pageobjects.confluence;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 import javax.inject.Inject;
@@ -14,28 +15,6 @@ public final class ConfluencePageWithRemoteMacro implements Page
 {
     private final String pageTitle;
     private final String macroName;
-
-    public static class MacroTimeoutResult
-    {
-        final boolean timedOut;
-        final String macroText;
-
-        public MacroTimeoutResult(boolean timedOut, String macroText)
-        {
-            this.timedOut = timedOut;
-            this.macroText = macroText;
-        }
-
-        public boolean isTimedOut()
-        {
-            return timedOut;
-        }
-
-        public String getMacroText()
-        {
-            return macroText;
-        }
-    }
 
     @Inject
     private AtlassianWebDriver driver;
@@ -65,31 +44,23 @@ public final class ConfluencePageWithRemoteMacro implements Page
         }
     }
 
-    public MacroTimeoutResult macroHasTimedOut()
+    public boolean macroHasTimedOut()
     {
-        if (!hasMacro())
+        try
         {
-            throw new IllegalStateException("Calling macroHasTimedOut() on a page with no macro makes no sense!");
+            final WebElement container = driver.findElement(By.className("ap-container"));
+
+            if (container.getAttribute("id").startsWith("ap-" + macroName))
+            {
+                container.findElement(By.className("ap-load-timeout"));
+                return true;
+            }
+        }
+        catch (NoSuchElementException e)
+        {
+            // do nothing
         }
 
-        driver.waitUntilElementIsNotLocated(By.cssSelector(format(".%s span.bp-loading", macroName)));
-
-        final String text = getMacro().getText();
-        return new MacroTimeoutResult(text.contains("java.net.SocketTimeoutException"), text);
-    }
-
-    private boolean hasMacro()
-    {
-        return driver.elementExists(getMacroLocator());
-    }
-
-    private WebElement getMacro()
-    {
-        return driver.findElement(getMacroLocator());
-    }
-
-    private By getMacroLocator()
-    {
-        return By.className(macroName);
+        return false;
     }
 }

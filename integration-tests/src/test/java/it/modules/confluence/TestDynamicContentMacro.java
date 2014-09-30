@@ -37,7 +37,6 @@ import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 public class TestDynamicContentMacro extends AbstractContentMacroTest
 {
@@ -357,12 +356,24 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Slow Macro on Page"));
 
-        selectMacro(editorPage, SLOW_MACRO_NAME);
+        selectMacroAndSave(editorPage, SLOW_MACRO_NAME);
 
         savedPage = editorPage.save();
         final ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, savedPage.getTitle(), SLOW_MACRO_KEY);
-        final ConfluencePageWithRemoteMacro.MacroTimeoutResult macroTimeoutResult = page.macroHasTimedOut();
-        assertTrue(String.format("The macro should have timed out. Macro text = '%s'.", macroTimeoutResult.getMacroText()), macroTimeoutResult.isTimedOut());
+        assertThat(page.macroHasTimedOut(), is(true));
+    }
+
+    @Test
+    public void fastMacroShouldNotTimeOut() throws Exception
+    {
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage.setTitle(randomName("Slow Macro on Page"));
+
+        selectMacroAndSave(editorPage, SIMPLE_MACRO_NAME);
+
+        savedPage = editorPage.save();
+        final ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, savedPage.getTitle(), SLOW_MACRO_KEY);
+        assertThat(page.macroHasTimedOut(), is(false));
     }
 
     @Test
