@@ -271,6 +271,14 @@ public class ConnectAddonBean extends BaseModuleBean
         return modules;
     }
 
+    public <M extends BaseModuleList> M getModuleListFor(Class<M> moduleListClass)
+    {
+//        if (moduleListClass == CoreConnectModuleList.class)
+//        {
+//            return (M) modules;
+//        }
+    }
+
     public Map<String, String> getLinks()
     {
         return links;

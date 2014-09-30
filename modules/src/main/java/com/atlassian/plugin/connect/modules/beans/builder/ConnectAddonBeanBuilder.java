@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
+import com.google.gson.reflect.TypeToken;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
@@ -32,6 +33,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     private VendorBean vendor;
     private Map<String, String> links;
     private ModuleList modules;
+    private Map<Class<? extends BaseModuleList>, BaseModuleList> moduleLists;
     private Set<ScopeName> scopes;
     private LifecycleBean lifecycle;
     private String baseUrl;
@@ -101,6 +103,12 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         {
             withModule(fieldName, bean);
         }
+        return (T) this;
+    }
+
+    public T withModuleList(BaseModuleList moduleList)
+    {
+        moduleLists.put(moduleList.getClass(), moduleList);
         return (T) this;
     }
 
