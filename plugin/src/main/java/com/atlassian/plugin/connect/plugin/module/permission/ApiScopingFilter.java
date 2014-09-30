@@ -2,6 +2,8 @@ package com.atlassian.plugin.connect.plugin.module.permission;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jwt.JwtConstants;
+import com.atlassian.jwt.core.Clock;
+import com.atlassian.jwt.core.SystemClock;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.PermissionManager;
@@ -14,6 +16,8 @@ import com.atlassian.plugin.connect.spi.event.ScopedRequestDeniedEvent;
 import com.atlassian.plugin.connect.spi.util.ServletUtils;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,10 +57,24 @@ public class ApiScopingFilter implements Filter
     private final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
     private final String ourConsumerKey;
     private final EventPublisher eventPublisher;
+    private final Clock clock;
+
+    public ApiScopingFilter(PermissionManager permissionManager, UserManager userManager,
+        ConsumerService consumerService, WebSudoService webSudoService,
+        JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, EventPublisher eventPublisher)
+    {
+        this(permissionManager,
+             userManager,
+             consumerService,
+             webSudoService,
+             jsonConnectAddOnIdentifierService,
+             eventPublisher,
+             new SystemClock());
+    }
 
     public ApiScopingFilter(PermissionManager permissionManager, UserManager userManager,
             ConsumerService consumerService, WebSudoService webSudoService,
-            JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, EventPublisher eventPublisher)
+            JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, EventPublisher eventPublisher, Clock clock)
     {
         this.permissionManager = permissionManager;
         this.userManager = userManager;
@@ -64,6 +82,7 @@ public class ApiScopingFilter implements Filter
         this.jsonConnectAddOnIdentifierService = jsonConnectAddOnIdentifierService;
         this.eventPublisher = eventPublisher;
         this.ourConsumerKey = consumerService.getConsumer().getKey();
+        this.clock = clock;
     }
 
     @Override
@@ -133,22 +152,33 @@ public class ApiScopingFilter implements Filter
 
     private void handleScopedRequest(String clientKey, HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException
     {
+        final long startTime = clock.now().getTime();
         // we consume the input to allow inspection of the body via getInputStream
         InputConsumingHttpServletRequest inputConsumingRequest = new InputConsumingHttpServletRequest(req);
         UserKey user = userManager.getRemoteUserKey(req);
+        HttpServletResponseWithAnalytics wrappedResponse = new HttpServletResponseWithAnalytics(res); 
         if (!permissionManager.isRequestInApiScope(inputConsumingRequest, clientKey, user))
         {
             log.warn("Request not in an authorized API scope from add-on '{}' as user '{}' on URL '{} {}'",
                     new Object[]{clientKey, user, req.getMethod(), req.getRequestURI()});
             res.sendError(HttpServletResponse.SC_FORBIDDEN, "Request not in an authorized API scope");
-            eventPublisher.publish(new ScopedRequestDeniedEvent(req.getMethod(), req.getRequestURI()));
+            eventPublisher.publish(new ScopedRequestDeniedEvent(req));
             return;
         }
         log.info("Authorized add-on '{}' to access API at URL '{} {}' for user '{}'",
                 new Object[]{clientKey, req.getMethod(), req.getRequestURI(), user});
 
-        eventPublisher.publish(new ScopedRequestAllowedEvent(req.getMethod(), req.getRequestURI()));
-        chain.doFilter(inputConsumingRequest, res);
+        try {
+            chain.doFilter(inputConsumingRequest, wrappedResponse);
+        }
+        catch(Exception e)
+        {
+            long duration = clock.now().getTime() - startTime;
+            eventPublisher.publish(new ScopedRequestAllowedEvent(req, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, duration));
+            throw ServletException.class.cast(new ServletException("Unhandled error in ApiScopingFilter").initCause(e));
+        }
+        long duration = clock.now().getTime() - startTime;
+        eventPublisher.publish(new ScopedRequestAllowedEvent(req, wrappedResponse.getStatusCode(), duration));
     }
 
     @XmlDescriptor

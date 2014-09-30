@@ -2,6 +2,7 @@ package it;
 
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
+import com.atlassian.jira.tests.TestBase;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;

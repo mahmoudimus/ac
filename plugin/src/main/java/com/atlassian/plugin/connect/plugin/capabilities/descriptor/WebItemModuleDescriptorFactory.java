@@ -144,7 +144,7 @@ public class WebItemModuleDescriptorFactory
             }
         }
 
-        final boolean isDialog = bean.getTarget().isDialogTarget();
+        final boolean isDialog = bean.getTarget().isDialogTarget() || bean.getTarget().isInlineDialogTarget();
 
         paramsModuleFragmentFactory.addParamsToElement(webItemElement, bean.getParams());
 

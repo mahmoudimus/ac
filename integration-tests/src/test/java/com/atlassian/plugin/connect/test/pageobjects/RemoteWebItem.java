@@ -3,11 +3,12 @@ package com.atlassian.plugin.connect.test.pageobjects;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
-import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
-import com.atlassian.plugin.connect.test.utils.IframeUtils;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.webdriver.utils.by.ByJquery;
 import com.google.common.base.Optional;
 import org.openqa.selenium.By;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
@@ -21,6 +22,7 @@ public class RemoteWebItem
     public static enum ItemMatchingMode { ID, LINK_TEXT, JQUERY }
 
     private static final String INLINE_DIALOG_ACTIVE_CLASS = "active";
+    private final static Logger log = LoggerFactory.getLogger(RemoteWebItem.class);
 
     @Inject
     private PageElementFinder elementFinder;
@@ -73,7 +75,8 @@ public class RemoteWebItem
                 by = By.linkText(matchValue);
                 break;
             case JQUERY:
-                by = ByJquery.$(matchValue);
+                String escapedMatchValue = AddonTestUtils.escapeJQuerySelector(matchValue);
+                by = ByJquery.$(escapedMatchValue);
                 break;
         }
         return elementFinder.find(by);
@@ -143,7 +146,17 @@ public class RemoteWebItem
         {
             return false;
         }
-        return webItem.hasClass(INLINE_DIALOG_ACTIVE_CLASS) || webItem.find(By.className(INLINE_DIALOG_ACTIVE_CLASS)).isPresent();
+
+        try
+        {
+            waitUntilTrue(webItem.timed().hasClass(INLINE_DIALOG_ACTIVE_CLASS));
+            return true;
+        }
+        catch (AssertionError e)
+        {
+            log.error(String.format("Timed out waiting for web item with id '%s' to get css class '%s'.", webItem.getAttribute("id"), INLINE_DIALOG_ACTIVE_CLASS), e);
+            return false;
+        }
     }
 
     public boolean isDialog()

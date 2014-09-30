@@ -7,6 +7,7 @@ import com.atlassian.applinks.spi.application.ApplicationIdUtil;
 import com.atlassian.applinks.spi.link.ApplicationLinkDetails;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.applinks.spi.util.TypeAccessor;
+import com.atlassian.fugue.Option;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.ServiceProvider;
@@ -27,9 +28,11 @@ import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
+import com.google.common.base.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.net.URI;
 import java.security.GeneralSecurityException;
@@ -183,6 +186,12 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
     public void deleteAppLink(final ConnectAddonBean addon) throws NotConnectAddonException
     {
         final String key = addon.getKey();
+        deleteAppLink(key);
+    }
+
+    @Override
+    public void deleteAppLink(final String key) throws NotConnectAddonException
+    {
         final ApplicationLink link = getAppLink(key);
 
         if (link != null)
@@ -228,6 +237,40 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
     public URI getApplinkLinkSelfLink(final ApplicationLink applink)
     {
         return applicationLinkService.createSelfLinkFor(applink.getId());
+    }
+
+    @Override
+    public Option<String> getSharedSecretOrPublicKey(ApplicationLink applink)
+    {
+        Option<AuthenticationType> maybeAuthType = ConnectApplinkUtil.getAuthenticationType(applink);
+        if (maybeAuthType.isDefined())
+        {
+            if (maybeAuthType.get().equals(AuthenticationType.JWT))
+            {
+                Object prop = applink.getProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME);
+                if (prop instanceof String)
+                {
+                    return Option.some((String) prop);
+                }
+            }
+            else if (maybeAuthType.get().equals(AuthenticationType.OAUTH))
+            {
+                Option<PublicKey> maybePublicKey = this.oAuthLinkManager.getPublicKeyFromLink(applink);
+                return maybePublicKey.flatMap(new Function<PublicKey, Option<String>>()
+                {
+                    @Override
+                    public Option<String> apply(@Nullable PublicKey input)
+                    {
+                        if (input == null)
+                        {
+                            Option.none();
+                        }
+                        return Option.option(RSAKeys.toPemEncoding(input));
+                    }
+                });
+            }
+        }
+        return Option.none();
     }
 
     private void deleteOldAppLinks(String pluginKey, ApplicationId appId)

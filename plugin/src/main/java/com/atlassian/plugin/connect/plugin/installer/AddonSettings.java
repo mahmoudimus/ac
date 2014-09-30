@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
+
 import com.atlassian.plugin.PluginState;
 
 public class AddonSettings
@@ -19,7 +20,6 @@ public class AddonSettings
         this.userKey = "";
         this.auth = "";
         this.restartState = PluginState.ENABLED.name();
-        
     }
 
     public String getDescriptor()

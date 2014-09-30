@@ -1,20 +1,19 @@
 package com.atlassian.plugin.connect.spi.event;
 
-import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
+import org.apache.commons.lang3.StringUtils;
 
-@PrivacyPolicySafe
 public abstract class ConnectAddonLifecycleFailedEvent extends ConnectAddonLifecycleEvent
 {
+    private static final int MAX_MESSAGE_LENGTH = 100;
+
     /**
      * The HTTP status code of the failed HTTP lifecycle request
      */
-    @PrivacyPolicySafe
     private final Integer statusCode;
 
     /**
      * The reason why the lifecycle event failed
      */
-    @PrivacyPolicySafe
     private final String message;
 
     public ConnectAddonLifecycleFailedEvent(String pluginKey)
@@ -31,7 +30,7 @@ public abstract class ConnectAddonLifecycleFailedEvent extends ConnectAddonLifec
     {
         super(pluginKey);
         this.statusCode = statusCode;
-        this.message = message;
+        this.message = StringUtils.substring(message, 0, MAX_MESSAGE_LENGTH);
     }
 
     public Integer getStatusCode()

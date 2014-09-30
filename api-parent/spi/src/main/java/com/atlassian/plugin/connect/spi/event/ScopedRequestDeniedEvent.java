@@ -1,14 +1,14 @@
 package com.atlassian.plugin.connect.spi.event;
 
 import com.atlassian.analytics.api.annotations.EventName;
-import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
 
-@PrivacyPolicySafe
+import javax.servlet.http.HttpServletRequest;
+
 @EventName ("connect.scoped.request.incoming.denied")
 public class ScopedRequestDeniedEvent extends ScopedRequestEvent
 {
-    public ScopedRequestDeniedEvent(String httpMethod, String httpRequestUri)
+    public ScopedRequestDeniedEvent(HttpServletRequest rq)
     {
-        super(httpMethod, httpRequestUri);
+        super(rq);
     }
 }

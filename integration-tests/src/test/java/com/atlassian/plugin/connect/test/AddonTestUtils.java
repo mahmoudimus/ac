@@ -10,7 +10,6 @@ import com.atlassian.jwt.writer.JwtWriter;
 import com.atlassian.jwt.writer.JwtWriterFactory;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import org.apache.commons.lang.RandomStringUtils;
 
 import javax.annotation.Nonnull;
@@ -27,7 +26,7 @@ public class AddonTestUtils
     public static String randomAddOnKey()
     {
         // include underscores in add-on key: used in the separator at ModuleKeyUtils
-        return "test_addon__" + RandomStringUtils.randomAlphanumeric(8).replaceAll("3", "4").toLowerCase();
+        return "some.test_addon__" + RandomStringUtils.randomAlphanumeric(8).replaceAll("3", "4").toLowerCase();
     }
 
     public static String randomModuleKey()
@@ -43,16 +42,6 @@ public class AddonTestUtils
                 .withLocation("system.nowhere")
                 .withUrl("/nowhere")
                 .build();
-    }
-
-    public static String escapedAddonKey(String addonKey)
-    {
-        return escapeJQuerySelector(addonKey);
-    }
-
-    public static String escapedAddonAndModuleKey(String addonKey, String moduleKey)
-    {
-        return escapeJQuerySelector(ModuleKeyUtils.addonAndModuleKey(addonKey, moduleKey));
     }
 
     private static Pattern regex = Pattern.compile("[(!\"#$%&'\\(\\)*+,./:;<=>?@\\[\\\\\\]^`{|}~)]");

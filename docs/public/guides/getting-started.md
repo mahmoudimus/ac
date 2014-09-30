@@ -39,7 +39,7 @@ Your `atlassian-connect.json` file will use a [`generalPages` module](../modules
         "authentication": {
             "type": "none"
         },
-        "apiVersion": "1",
+        "apiVersion": 1,
         "modules": {
             "generalPages": [
                 {
@@ -149,8 +149,8 @@ Connect support is currently only for Atlassian-hosted products like JIRA Cloud,
         ATLAS Maven Home: /usr/share/atlassian-plugin-sdk-4.2.20/apache-maven  
     </tt>
 
-2. From a new terminal window, start JIRA with cloud environment flags:
-    <pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-08-005-WN --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.0-rc.3,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.4,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.17.2,com.atlassian.webhooks:atlassian-webhooks-plugin:1.0.6 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+2. From a new terminal window, start a local JIRA instance matching the Atlassian Cloud environment:
+<span id="commands-jira-prd">Loading...</span>
 
     __Note:__ If you're not using the command above, ensure all components in the `--bundled-plugins` argument are present in your JIRA instances. These component versions will change as Connect development continues.  
 
@@ -202,6 +202,14 @@ When you install your add-on, JIRA retrieves and registers your `atlassian-conne
 So far, you've learned the basic architecture of a Connect add-on. The next step is to add some functionality and handle [authentication](../concepts/authentication.html).
 
 You can add functionality using the [Atlassian REST APIs](https://developer.atlassian.com/x/K4BpAQ). [Authentication](../concepts/authentication.html) manages the handshake between your app and the Atlassian host application. You can also read about our [security concepts](../concepts/security.html) for more information.
+
+You can also [try the next tutorial](../project-activity-tutorial.html), where you can add a table of your projects to JIRA via the REST API and D3.js. 
+
+<div class="index-button">
+<a href="../guides/project-activity-tutorial.html"><button class="primary-cta aui-button aui-button-primary">Try the next tutorial</button></a>
+</div>
+
+## More resources
 
 ### Example add-ons
 

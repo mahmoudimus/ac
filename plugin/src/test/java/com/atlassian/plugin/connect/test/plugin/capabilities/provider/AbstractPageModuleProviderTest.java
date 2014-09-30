@@ -14,6 +14,7 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
+import com.atlassian.sal.api.ApplicationProperties;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -44,6 +45,7 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
     @Mock protected IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     @Mock protected BundleContext bundleContext;
     @Mock protected ProductAccessor productAccessor;
+    @Mock protected ApplicationProperties applicationProperties;
 
     private T moduleProvider;
 

@@ -1,8 +1,5 @@
 package it.modules.confluence;
 
-import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
-import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
-import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.page.admin.ConfluenceAdminHomePage;
 import com.atlassian.confluence.pageobjects.page.admin.templates.SpaceTemplatesPage;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
@@ -10,7 +7,6 @@ import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.SpaceToolsTabModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
@@ -165,16 +161,24 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     public void testMacroTitle() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
+
         try
         {
-            MacroItem macro = macroBrowser.searchForFirst("F1ND M3");
-            assertNotNull(macro);
-            assertIsEscaped(macro.getTitle().byDefaultTimeout());
+            final MacroBrowserAndEditor macroBrowserAndEditor = findMacroInBrowser(editorPage, "F1ND M3");
+
+            try
+            {
+                assertNotNull(macroBrowserAndEditor.macro);
+                assertIsEscaped(macroBrowserAndEditor.macro.getTitle().byDefaultTimeout());
+            }
+            finally
+            {
+                macroBrowserAndEditor.browserDialog.clickCancel();
+            }
         }
         finally
         {
-            macroBrowser.clickCancel();
+            editorPage.cancel();
         }
     }
 
@@ -182,17 +186,24 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     public void testMacroEditorTitle() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
+
         try
         {
-            MacroItem macro = macroBrowser.searchForFirst("F1ND M3");
-            assertNotNull(macro);
-            MacroForm macroForm = macro.select();
-            assertEquals(MACRO_EDITOR_TITLE, macroForm.getTitle().byDefaultTimeout());
+            final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, "F1ND M3");
+
+            try
+            {
+                assertNotNull(macroBrowserAndEditor.macroForm);
+                assertEquals(MACRO_EDITOR_TITLE, macroBrowserAndEditor.macroForm.getTitle().byDefaultTimeout());
+            }
+            finally
+            {
+                macroBrowserAndEditor.browserDialog.clickCancel();
+            }
         }
         finally
         {
-            macroBrowser.clickCancel();
+            editorPage.cancel();
         }
     }
 
@@ -200,20 +211,26 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     public void testMacroParameter() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-        MacroBrowserDialog macroBrowser = editorPage.openMacroBrowser();
+
         try
         {
-            MacroItem macro = macroBrowser.searchForFirst("F1ND M3");
-            assertNotNull(macro);
-            MacroForm macroForm = macro.select();
-            assertTrue(macroForm.getField("test").isVisible());
+            final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, "F1ND M3");
 
-            WebElement label = connectPageOperations.findLabel("macro-param-test");
-            assertIsEscaped(label.getText());
+            try
+            {
+                assertNotNull(macroBrowserAndEditor.macroForm);
+                assertTrue(macroBrowserAndEditor.macroForm.getField("test").isVisible());
+                WebElement label = connectPageOperations.findLabel("macro-param-test");
+                assertIsEscaped(label.getText());
+            }
+            finally
+            {
+                macroBrowserAndEditor.browserDialog.clickCancel();
+            }
         }
         finally
         {
-            macroBrowser.clickCancel();
+            editorPage.cancel();
         }
     }
 

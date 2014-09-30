@@ -171,3 +171,75 @@ Atlassian Connect will no longer provide a REST endpoint allowing add-ons to sen
     </div>
 </div>
 </div>
+
+
+### JIRA REST API
+
+Both global and project permissions are changing from integer based to a key based representation. The following REST resources are affected: 
+<ul>
+    <li>
+        /rest/api/v2/mypermissions<br/>
+        A `type` attribute has been added to each permission, indicating whether it is a `PROJECT` or `GLOBAL` one. <br/>
+        The `id` attribute is being deprecated and will be removed in the future.
+    </li>
+</ul>
+
+<div class="ac-deprecations">
+    <div class="aui-group">
+        <div class="aui-item ac-property-key">
+            <h5>Deprecated in</h5>
+        </div>
+        <div class="aui-item">
+            <span class="aui-lozenge">Jira 7.0-OD4</span>
+        </div>
+    </div>
+    <div class="aui-group">
+        <div class="aui-item ac-property-key">
+            <h5>OnDemand removal</h5>
+        </div>
+        <div class="aui-item">
+            __January, 2015__
+        </div>
+    </div>
+    <div class="aui-group">
+        <div class="aui-item ac-property-key">
+            <h5>Upgrade guide</h5>
+        </div>
+        <div class="aui-item">
+            We recommend identifying a permission by its `key` instead of its `id`. 
+            `GlobalPermissionKey` and `ProjectPermissionKey` are the key types for global and project permissions respectively.
+        </div>
+    </div>
+</div>
+
+### Confluence `page.*` context variables
+
+The `page.id`, `page.version`, `page.type` context variables available in Confluence have been deprecated in favour of
+`content.id`, `content.version` and `content.type` variables respectively.
+
+<div class="ac-deprecations">
+<div class="aui-group">
+    <div class="aui-item ac-property-key">
+        <h5>Deprecated in</h5>
+    </div>
+    <div class="aui-item">
+        <span class="aui-lozenge">1.1.0-final</span>
+    </div>
+</div>
+<div class="aui-group">
+    <div class="aui-item ac-property-key">
+        <h5>OnDemand removal</h5>
+    </div>
+    <div class="aui-item">
+        __2015__
+    </div>
+</div>
+<div class="aui-group">
+    <div class="aui-item ac-property-key">
+        <h5>Upgrade guide</h5>
+    </div>
+    <div class="aui-item">
+        <p>Use the newly available `content.*` variables, documented in <a href="../concepts/context-parameters.html">Context Parameters</a>.</p>
+    </div>
+</div>
+</div>

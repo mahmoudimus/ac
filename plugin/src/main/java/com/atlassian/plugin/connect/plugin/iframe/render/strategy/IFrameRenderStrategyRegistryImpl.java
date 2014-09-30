@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
+
 /**
  * Maintains a map of plugin + module key -> iframe rendering strategy.
  */
@@ -68,7 +70,7 @@ public class IFrameRenderStrategyRegistryImpl implements IFrameRenderStrategyReg
     public IFrameRenderStrategy get(final String addonKey, final String moduleKey, final String classifier)
     {
         Map<String, IFrameRenderStrategy> addonEndpoints = store.get(addonKey);
-        return addonEndpoints == null ? null : addonEndpoints.get(composeKey(moduleKey, classifier));
+        return addonEndpoints == null ? null : addonEndpoints.get(composeKey(moduleKeyOnly(addonKey, moduleKey), classifier));
     }
 
     @Override

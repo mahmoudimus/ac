@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.test.pageobjects;
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectMacroBrowserDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.utils.IframeUtils;
@@ -153,7 +154,8 @@ public class ConnectPageOperations
 
     public WebElement findLabel(String key)
     {
-        return driver.findElement(ByJquery.$("label[for='" + key + "']"));
+        String escapedKey = AddonTestUtils.escapeJQuerySelector(key);
+        return driver.findElement(ByJquery.$("label[for='" + escapedKey + "']"));
     }
 
     public PageBinder getPageBinder()

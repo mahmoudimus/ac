@@ -1,6 +1,7 @@
 package it.servlet;
 
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
+import it.servlet.condition.ParameterCapturingServlet;
 import it.servlet.iframe.CustomMessageServlet;
 import it.servlet.iframe.MustacheServlet;
 import it.servlet.macro.ExtendedMacroServlet;
@@ -104,7 +105,23 @@ public class ConnectAppServlets
      */
     public static HttpServlet dialogServlet()
     {
-        return wrapContextAwareServlet(new MustacheServlet("dialog.mu"));
+        return wrapContextAwareServlet(simpleDialogServlet());
+    }
+
+    /**
+     * @return a servlet that tests AP.onDialogMessage() and captures parameters sent to it.
+     */
+    public static HttpServlet parameterCapturingDialogServlet(ParameterCapturingServlet captureServlet)
+    {
+        return new HttpContextServlet(captureServlet);
+    }
+
+    /**
+     * @return a servlet that tests AP.onDialogMessage() and captures parameters sent to it.
+     */
+    public static ParameterCapturingServlet parameterCapturingDialogServlet()
+    {
+        return new ParameterCapturingServlet(simpleDialogServlet());
     }
 
     /**
@@ -136,6 +153,14 @@ public class ConnectAppServlets
     public static HttpServlet openMessageServlet()
     {
         return wrapContextAwareServlet(new MustacheServlet("iframe-open-message.mu"));
+    }
+
+    /**
+     * @return a servlet that returns 3 buttons for create, delete, and read a cookie
+     */
+    public static HttpServlet cookieServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("iframe-cookie.mu"));
     }
 
 
@@ -179,5 +204,10 @@ public class ConnectAppServlets
     public static InstallHandlerServlet installHandlerServlet()
     {
         return new InstallHandlerServlet();
+    }
+
+    private static ContextServlet simpleDialogServlet()
+    {
+        return new MustacheServlet("dialog.mu");
     }
 }

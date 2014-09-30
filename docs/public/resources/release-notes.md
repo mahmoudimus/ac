@@ -1,6 +1,36 @@
 
 # Release Notes
 
+<div class="aui-message info">
+	    <p class="title">
+	        <span class="aui-icon icon-success"></span>
+	        <strong>Latest Atlassian Connect versions</strong>
+	    </p>
+	    <table>
+	        <tr>
+	            <td>In production:</td>
+	            <td><span id="connect-version-prd"/></td>
+	        </tr>
+	        <tr>
+                <td>In development:</td>
+                <td><span id="connect-version-dev"/></td>
+            </tr>
+		</table>
+</div>
+
+## [1.1.6](../release-notes/1-1-0.html#1.1.6)
+* More [JIRA reports](../modules/jira/report.html) features.
+* Add-ons are no longer automatically uninstalled when the installation lifecycle hook returns an error response.
+
+## [1.1.4](../release-notes/1-1-0.html#1.1.4)
+* Confluence now supports `content.*` variables everywhere that `page.*` variables were supported.
+* Support for [JIRA reports](../modules/jira/report.html)
+* Dialogs and inline dialogs will no longer suffer from expired JWTs.
+* Add-ons will no longer change from disabled to enabled as a result of automatic updates.
+
+## [1.1.0-rc.4](../release-notes/1-1-0.html#rc4)
+* Bug fixes and stability improvements
+
 ## [1.1.0-rc.3](../release-notes/1-1-0.html#rc3)
 * __Read about [breaking changes](../release-notes/1-1-0.html#breaking-changes)__
 * Fixed OAuth authenticated requests

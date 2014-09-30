@@ -9,16 +9,15 @@
     <!-- JIRA specific javascript modules -->
     <web-resource key="workflow-post-function">
         <resource type="download" name="workflow-post-function.js" location="js/jira/workflow-post-function/workflow-post-function.js" />
-
         <resource type="download" name="workflow-post-function-rpc.js" location="js/jira/workflow-post-function/workflow-post-function-rpc.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-core</dependency>
     </web-resource>
 
     <web-resource key="events">
         <resource type="download" name="jira-events.js" location="/js/jira/events.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-amd</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-core</dependency>
     </web-resource>
 
     <web-resource key="atlassian-connect-resources" name="Connect resources for inclusion on every page.">
@@ -155,10 +154,20 @@
             Permission to download JIRA issue attachments.
         </description>
     </plugin-permission>
+
+    <url-reading-web-resource-transformer key="connect-report-transformer" name="Connect report transformer"
+                                          class="com.atlassian.plugin.connect.plugin.capabilities.descriptor.ReportModuleCssTransformer"/>
+
+    <web-resource key="connect-report-thumbnails">
+        <context>jira.browse.project</context>
+        <resource type="download" location="/css/connect-report-thumbnails.css" name="connect-report-thumbnails.css"/>
+
+        <transformation extension="css">
+            <transformer key="jira-connect-report-transformer"/>
+        </transformation>
+    </web-resource>
+
 </application>
-
-
-
 
 
 

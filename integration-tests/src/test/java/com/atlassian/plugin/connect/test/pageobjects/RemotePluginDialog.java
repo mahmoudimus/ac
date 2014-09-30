@@ -23,6 +23,12 @@ public class RemotePluginDialog extends RemoteDialog
 
     public RemotePluginDialog(ConnectAddOnEmbeddedTestPage embeddedConnectPage)
     {
+        this(embeddedConnectPage, false); // default to "not inline dialog"
+    }
+
+    public RemotePluginDialog(ConnectAddOnEmbeddedTestPage embeddedConnectPage, final boolean isInlineDialog)
+    {
+        super(isInlineDialog);
         this.embeddedPage = null;
         this.embeddedConnectPage = embeddedConnectPage;
     }

@@ -1,9 +1,12 @@
 /**
  * Entry point for xdm messages on the host product side.
  */
-_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params", "analytics/analytics", "host/_util"], function ($, XdmRpc, addons, rpc, uiParams, analytics, util) {
+_AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params", "analytics/analytics", "host/_util", "host/content-resolver"], function ($, XdmRpc, addons, rpc, uiParams, analytics, util, contentResolver) {
+  "use strict";
 
   var defer = window.requestAnimationFrame || function (f) {setTimeout(f,10); };
+
+  window._AP.contentResolver = contentResolver;
 
   function contentDiv(ns) {
     if(!ns){
@@ -60,6 +63,10 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
       options.uiParams.isDialog = true;
     }
 
+    if(options.isInlineDialog){
+      options.uiParams.isInlineDialog = true;
+    }
+
     var xdmOptions = {
       remote: options.src,
       remoteKey: options.key,
@@ -86,13 +93,6 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
   }
 
   return function (options) {
-    // AC-765 if we are about to replace an old instance of the connect iframe. Destroy it.
-    $content = contentDiv(options.ns);
-    $contentIframe = $content.find("iframe");
-    if($contentIframe.length){
-      $contentIframe.trigger('ra.iframe.destroy');
-      $content.remove();
-    }
 
     var attemptCounter = 0;
     function doCreate() {
@@ -116,9 +116,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
       // that updates to the desired container node's parents have completed
       defer(doCreate);
     } else {
-      AJS.toInit(function hostInit(){
-          doCreate();
-      });
+      $(doCreate);
     }
 
   };

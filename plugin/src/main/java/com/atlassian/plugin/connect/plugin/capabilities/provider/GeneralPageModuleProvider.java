@@ -1,18 +1,16 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import java.util.Map;
-
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class GeneralPageModuleProvider extends AbstractConnectPageModuleProvider
 {
+    public static final String ATL_GENERAL_DECORATOR = "atl.general";
     private final ProductAccessor productAccessor;
 
     @Autowired
@@ -40,7 +38,7 @@ public class GeneralPageModuleProvider extends AbstractConnectPageModuleProvider
     @Override
     protected String getDecorator()
     {
-        return "atl.general";
+        return ATL_GENERAL_DECORATOR;
     }
 
 }

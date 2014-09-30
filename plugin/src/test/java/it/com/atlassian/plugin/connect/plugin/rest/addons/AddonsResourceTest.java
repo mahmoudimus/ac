@@ -14,7 +14,6 @@ import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
-import com.google.common.collect.Lists;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import it.com.atlassian.plugin.connect.TestConstants;
 import it.com.atlassian.plugin.connect.installer.XmlOAuthToJsonJwtUpdateTest;
@@ -127,7 +126,7 @@ public class AddonsResourceTest
     }
 
     @Test
-    public void nonAdminRequestReturns401() throws IOException
+    public void nonAdminRequestReturns403Unauthorised() throws IOException
     {
         RequestUtil.Request request = requestUtil.requestBuilder()
                 .setMethod(HttpMethod.GET)
@@ -137,8 +136,20 @@ public class AddonsResourceTest
                 .build();
 
         RequestUtil.Response response = requestUtil.makeRequest(request);
-        assertEquals("User request to addons resource should return 401", 401, response.getStatusCode());
-        assertEquals("User request to addons resource should return 401 in body", 401, getStatusCode(response));
+
+        // TODO: remove this hack when the code in jira 6.4-SNAPSHOT as at 2014-09-22 is released to a named version
+        // (the SysadminOnlyResourceFilter has been fixed to perform a 403 rejection instead of 401 when the user
+        //  is not a sysadmin, which seems correct but is backwards-incompatible and breaks this test case)
+        try
+        {
+            assertEquals("User request to addons resource should return 403", 403, response.getStatusCode());
+            assertEquals("User request to addons resource should return 403 in body", 403, getStatusCode(response));
+        }
+        catch (AssertionError e)
+        {
+            assertEquals("User request to addons resource should return 401", 401, response.getStatusCode());
+            assertEquals("User request to addons resource should return 401 in body", 401, getStatusCode(response));
+        }
     }
 
     @Test
@@ -154,7 +165,7 @@ public class AddonsResourceTest
         RequestUtil.Response response = requestUtil.makeRequest(request);
         assertEquals("Addons resource should return 200", 200, response.getStatusCode());
 
-        List<Map> addons = getAddonListWithoutLucidchart(response);
+        List<Map> addons = getAddonList(response);
 
         assertEquals("Addons resource should return list with two add-on", 2, addons.size());
     }
@@ -172,7 +183,7 @@ public class AddonsResourceTest
         RequestUtil.Response response = requestUtil.makeRequest(request);
         assertEquals("Addons resource should return 200", 200, response.getStatusCode());
 
-        List<Map> addons = getAddonListWithoutLucidchart(response);
+        List<Map> addons = getAddonList(response);
 
         assertEquals("One xml add-on should be returned", 1, addons.size());
         assertEquals("Only add-on should be the created one", xmlAddon.getKey(), addons.get(0).get("key"));
@@ -192,7 +203,7 @@ public class AddonsResourceTest
         RequestUtil.Response response = requestUtil.makeRequest(request);
         assertEquals("Addons resource should return 200", 200, response.getStatusCode());
 
-        List<Map> addons = getAddonListWithoutLucidchart(response);
+        List<Map> addons = getAddonList(response);
 
         assertEquals("One json add-on should be returned", 1, addons.size());
         assertEquals("Only add-on should be the created one", jsonAddon.getKey(), addons.get(0).get("key"));
@@ -298,7 +309,7 @@ public class AddonsResourceTest
         response = requestUtil.makeRequest(request);
         assertEquals("Addons resource should return 200", 200, response.getStatusCode());
 
-        List<Map> addons = getAddonListWithoutLucidchart(response);
+        List<Map> addons = getAddonList(response);
 
         assertEquals("No JSON add-ons should be returned", 0, addons.size());
     }
@@ -331,7 +342,7 @@ public class AddonsResourceTest
         response = requestUtil.makeRequest(request);
         assertEquals("Addons resource should return 200", 200, response.getStatusCode());
 
-        List<Map> addons = getAddonListWithoutLucidchart(response);
+        List<Map> addons = getAddonList(response);
 
         assertEquals("No XML add-ons should be returned", 0, addons.size());
     }
@@ -420,18 +431,8 @@ public class AddonsResourceTest
     }
 
     @SuppressWarnings ("unchecked")
-    private List<Map> getAddonListWithoutLucidchart(RequestUtil.Response response)
+    private List<Map> getAddonList(RequestUtil.Response response)
     {
-        List<Map> allAddons = ((List<Map>) response.getJsonBody().get("addons"));
-        List<Map> addons = Lists.newArrayList();
-        // workaround lucidchart bundle for the moment
-        for (Map addon : allAddons)
-        {
-            if (!"lucidchart-app".equals(addon.get("key")))
-            {
-                addons.add(addon);
-            }
-        }
-        return addons;
+        return ((List<Map>) response.getJsonBody().get("addons"));
     }
 }
