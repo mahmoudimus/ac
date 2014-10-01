@@ -84,8 +84,6 @@ public class ConnectAddonManager
     private int testConnectionTimeout = 5 * 1000;
     private int testSocketTimeout = 5 * 1000;
     private int testRequestTimeout = 5 * 3000;
-    private long testLeaseTimeout = TimeUnit.SECONDS.toMillis(3);
-
 
     public static final String USE_TEST_HTTP_CLIENT = "use.test.http.client";
 
@@ -152,7 +150,6 @@ public class ConnectAddonManager
             options.setConnectionTimeout(testConnectionTimeout, TimeUnit.MILLISECONDS);
             options.setRequestTimeout(testRequestTimeout, TimeUnit.MILLISECONDS);
             options.setSocketTimeout(testSocketTimeout, TimeUnit.MILLISECONDS);
-            options.setLeaseTimeout(testLeaseTimeout);
 
             this.httpClient = httpClientFactory.create(options);
             this.isTestHttpClient.set(true);
