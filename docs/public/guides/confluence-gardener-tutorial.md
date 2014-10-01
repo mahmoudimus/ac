@@ -76,7 +76,7 @@ Next change directories into the newly created `confluence-gardener` directory.
 
 ### __Start Confluence in cloud mode from your `confluence-gardener` directory__
 
-<pre><code data-lang="text">$ atlas-run-standalone --product confluence --version 5.5-OD-31-010 --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.6,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.4,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.17.2,com.atlassian.webhooks:atlassian-webhooks-plugin:1.0.6 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+<span id="commands-confluence-prd">Loading...</span>
 
 You'll see a lot of output. When finished, your terminal will notify you that Confluence was successfully started:
 
