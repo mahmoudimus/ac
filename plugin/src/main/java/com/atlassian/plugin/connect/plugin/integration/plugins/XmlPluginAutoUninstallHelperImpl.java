@@ -78,7 +78,8 @@ public class XmlPluginAutoUninstallHelperImpl implements XmlPluginAutoUninstallH
                 oAuthLinkManager.unassociateProviderWithLink(appLink);
                 connectApplinkManager.deleteAppLink(pluginKey);
             }
-        } catch (PluginException e)
+        }
+        catch (Exception e)
         {
             log.error("Unable to uninstall connect addon fully - " + pluginKey, e);
         }

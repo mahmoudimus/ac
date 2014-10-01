@@ -96,9 +96,6 @@ public class XmlPluginAutoUninstallerTest
         }
 
         assertNotNull(pluginAccessor.getPlugin(oAuthPlugin.getKey()));
-
-        // kicks off auto uninstaller
-        xmlPluginAutoUninstallHelper.uninstallXmlPlugins();
     }
 
     @AfterClass
@@ -119,6 +116,9 @@ public class XmlPluginAutoUninstallerTest
     @Test
     public void pluginWasRemoved()
     {
+        // kicks off auto uninstaller
+        xmlPluginAutoUninstallHelper.uninstallXmlPlugins();
+
         assertEquals(null, pluginAccessor.getPlugin(oAuthPlugin.getKey()));
     }
 
