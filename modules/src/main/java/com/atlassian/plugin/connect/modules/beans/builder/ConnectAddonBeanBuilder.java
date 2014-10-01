@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.copyFieldsByNameAndType;
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.isParameterizedList;
 import static com.google.common.collect.Collections2.transform;
 
@@ -108,20 +109,32 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
 
     public T withModuleList(BaseModuleList moduleList)
     {
+        // could go through and add all these to ModuleList as well for now.
+        // Then schema stuff still works (cause we don't change the ModuleList class)
+        // Everything else still works and we can start to migrate code to code
+        // against the new classes / api
+
+//        copyFieldsByNameAndType(moduleList, getOrCreateModules());
+
         moduleLists.put(moduleList.getClass(), moduleList);
         return (T) this;
     }
 
     public T withModule(String fieldName, ModuleBean bean)
     {
+        addBeanReflectivelyByType(fieldName, getOrCreateModules(), bean);
+
+        return (T) this;
+    }
+
+    private ModuleList getOrCreateModules()
+    {
         if (null == modules)
         {
             this.modules = new ModuleList();
         }
 
-        addBeanReflectivelyByType(fieldName, modules, bean);
-
-        return (T) this;
+        return modules;
     }
 
     public T withLinks(Map<String, String> links)

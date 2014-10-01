@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
+import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.copyFieldsByNameAndType;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
@@ -155,6 +156,9 @@ public class ConnectAddonBean extends BaseModuleBean
     @SchemaIgnore("shallow")
     private ModuleList modules;
 
+    @SchemaIgnore("shallow")
+    private Map<Class<? extends BaseModuleList>, BaseModuleList> moduleLists;
+
     /**
      * Set of [scopes](../scopes/scopes.html) requested by this add on
      *
@@ -234,6 +238,14 @@ public class ConnectAddonBean extends BaseModuleBean
         {
             this.authentication = newAuthenticationBean().build();
         }
+
+        // copy everything to the old list for now
+        for (BaseModuleList moduleList : moduleLists.values())
+        {
+            copyFieldsByNameAndType(moduleList, modules);
+        }
+
+
     }
 
     public String getKey()
@@ -273,10 +285,7 @@ public class ConnectAddonBean extends BaseModuleBean
 
     public <M extends BaseModuleList> M getModuleListFor(Class<M> moduleListClass)
     {
-//        if (moduleListClass == CoreConnectModuleList.class)
-//        {
-//            return (M) modules;
-//        }
+        return (M) moduleLists.get(moduleListClass);
     }
 
     public Map<String, String> getLinks()
