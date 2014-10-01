@@ -7,6 +7,7 @@ import com.atlassian.jira.testkit.client.restclient.*;
 import com.atlassian.jira.testkit.client.util.TestKitLocalEnvironmentData;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
+import com.atlassian.plugin.connect.jira.module.JiraConnectModuleList;
 import com.atlassian.plugin.connect.modules.beans.nested.*;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -48,14 +49,15 @@ public class TestEntityProperty
 
         remotePlugin = new ConnectRunner(localEnvironmentData.getBaseUrl().toString(), PLUGIN_KEY)
                 .setAuthenticationToNone()
-                .addModule(
-                        "jiraEntityProperties",
-                        newEntityPropertyModuleBean()
-                                .withName(new I18nProperty("JIRA Attachment indexing", "jira.attachment.indexing"))
-                                .withKey("jira-attachment-indexing")
-                                .withKeyConfiguration(keyConfigurationBean)
-                                .withEntityType(EntityPropertyType.issue)
-                                .build()
+                .addModuleList(JiraConnectModuleList.newJiraModuleListBean()
+                        .withJiraEntityProperties(
+                            newEntityPropertyModuleBean()
+                                    .withName(new I18nProperty("JIRA Attachment indexing", "jira.attachment.indexing"))
+                                    .withKey("jira-attachment-indexing")
+                                    .withKeyConfiguration(keyConfigurationBean)
+                                    .withEntityType(EntityPropertyType.issue)
+                                    .build()
+                        ).build()
                 )
                 .start();
         issueClient = new IssuesControl(localEnvironmentData);

@@ -224,6 +224,12 @@ public class ConnectRunner
         return this;
     }
 
+    public ConnectRunner addModuleList(BaseModuleList moduleList)
+    {
+        addonBuilder.withModuleList(moduleList);
+        return this;
+    }
+
     public ConnectRunner addRoute(String path, HttpServlet servlet)
     {
         routes.put(path, servlet);
