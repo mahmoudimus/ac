@@ -122,13 +122,14 @@ From the same project directory:
 That's it as far as coding goes. The next step is to make your files available on a web
 server. There are many ways to do this, but in this example you'll serve the file locally.
 
-You'll use a simple web server that ships with [Python](http://python.org) to serve the
-current directory containing your `atlassian-connect.json` and `helloworld.html` files.
+You'll use a simple web server to serve the current directory containing your 
+`atlassian-connect.json` and `helloworld.html` files.
 
 1. From the same directory, start your server on port 8000:
-     <pre><code data-lang="text">python -m SimpleHTTPServer 8000</code></pre>
+     <pre><code data-lang="text">npm install http-server
+http-server -p 8000</code></pre>
     The server indicates that it's serving HTTP at the current address and port. You'll see something like this:
-    <tt>Serving HTTP on 0.0.0.0 port 8000 ...</tt>
+    <tt>Starting up http-server, serving ./ on: http://0.0.0.0:8000</tt>
 2. Confirm the files you created in steps 1 and 2 are served. Visit:
     * <code data-lang="text"><a href="http://localhost:8000/atlassian-connect.json">http://localhost:8000/atlassian-connect.json</a></code>
     * <code data-lang="text"><a href="http://localhost:8000/helloworld.html">http://localhost:8000/helloworld.html</a></code>
