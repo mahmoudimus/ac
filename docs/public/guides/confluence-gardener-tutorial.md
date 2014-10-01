@@ -41,6 +41,14 @@ Git is a wildly popular version control system which you'll need to complete thi
 If you don't yet have git installed, you can find the
 <a href="http://git-scm.com/book/en/Getting-Started-Installing-Git" target="_blank">installation instructions for your system here</a>.
 
+### __Install Node.js__
+
+If you have Node.js installed you can skip this step.
+
+We'll be using a Node.js powered static webserver in this tutorial.
+If you don't yet have Node.js installed, you can find the
+<a href="https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager" target="_blank">installation instructions for your system here</a>.
+
 ### __Install the Atlassian SDK__
 
 If you have the version 4.2.20 or higher of the Atlassian SDK installed you can skip this step.
@@ -100,13 +108,15 @@ __Password__: `admin`
 
 Confluence Gardener is a static Atlassian Connect add-on and can be hosted with a simple static web server.
 
-We'll use a simple web server that ships with [Python](http://python.org) to host your add-on locally. Python
-ships with Mac OS, but can easily be installed on <a href="https://www.python.org/downloads/windows/" target="_blank">Windows</a> and Linux.
+We'll use a simple Node.js powered web server to host your add-on locally.
 
-1. From the Confluence Gardener directory, start your server on port 8000:
-    <pre><code data-lang="text">$ python -m SimpleHTTPServer 8000</code></pre>
+1. From the `confluence-gardener` directory, start your server on port 8000:
+    <pre><code data-lang="text">
+    npm install -g http-server
+   http-server -p 8000
+    </code></pre>
     The server indicates that it's serving HTTP at the current address and port. You'll see something like:
-    <tt>Serving HTTP on 0.0.0.0 port 8000 ...</tt>
+    <tt>Starting up http-server, serving ./ on: http://0.0.0.0:8000</tt>
 
 1. Confirm your server is running by loading http://localhost:8000/atlassian-connect.json in your browser.
 
