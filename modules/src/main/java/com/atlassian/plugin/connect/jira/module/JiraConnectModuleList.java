@@ -5,11 +5,9 @@ import com.atlassian.plugin.connect.modules.beans.BaseModuleList;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
 
-import java.util.ArrayList;
 import java.util.List;
 
-//import static com.google.common.collect.Lists.newArrayList;
-//import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Lists.newArrayList;
 
 
 public class JiraConnectModuleList extends BaseModuleList
@@ -24,7 +22,7 @@ public class JiraConnectModuleList extends BaseModuleList
 
     public JiraConnectModuleList()
     {
-        this.jiraEntityProperties = new ArrayList<EntityPropertyModuleBean>();
+        this.jiraEntityProperties = newArrayList();
 
     }
 
@@ -34,7 +32,7 @@ public class JiraConnectModuleList extends BaseModuleList
 
         if (null == jiraEntityProperties)
         {
-            this.jiraEntityProperties = new ArrayList<EntityPropertyModuleBean>();
+            this.jiraEntityProperties = newArrayList();
         }
 
     }
