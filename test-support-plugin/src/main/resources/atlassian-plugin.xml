@@ -9,6 +9,8 @@
                 com.atlassian.plugin.connect.modules.*;resolution:=optional,
                 com.atlassian.plugin.connect.modules.beans*;resolution:=optional,
                 com.atlassian.plugin.connect.modules.beans.*;resolution:=optional,
+                com.atlassian.plugin.connect.jira.module*;resolution:=optional,
+                com.atlassian.plugin.connect.jira.module.*;resolution:=optional,
                 com.atlassian.upm.api*,
                 com.atlassian.upm.spi*,
                 *;resolution:=optional
