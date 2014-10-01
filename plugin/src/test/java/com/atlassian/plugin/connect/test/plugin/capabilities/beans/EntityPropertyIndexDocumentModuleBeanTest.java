@@ -70,6 +70,14 @@ public class EntityPropertyIndexDocumentModuleBeanTest
         assertThat(readTestFile("entityPropertyAddon.json"), is(sameJSONAs(expectedJson)));
     }
 
+    @Test
+    public void entityBeanAvailableInMapToo() throws IOException
+    {
+        ConnectAddonBean bean = createAddOnBean();
+        assertThat(bean.getModuleListFor(JiraConnectModuleList.class).getJiraEntityProperties(),
+                is(bean.getModules().getJiraEntityProperties()));
+    }
+
     private static EntityPropertyModuleBean createModuleBean()
     {
         List<EntityPropertyIndexExtractionConfigurationBean> extractions = Lists.newArrayList(
