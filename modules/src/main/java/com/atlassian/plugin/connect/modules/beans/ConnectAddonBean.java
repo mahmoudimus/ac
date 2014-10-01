@@ -157,7 +157,7 @@ public class ConnectAddonBean extends BaseModuleBean
     private ModuleList modules;
 
     @SchemaIgnore("shallow")
-    private Map<Class<? extends BaseModuleList>, BaseModuleList> moduleLists;
+    private transient Map<Class<? extends BaseModuleList>, BaseModuleList> moduleLists;
 
     /**
      * Set of [scopes](../scopes/scopes.html) requested by this add on

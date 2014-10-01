@@ -36,4 +36,22 @@ public class JiraConnectModuleList extends BaseModuleList
         }
 
     }
+
+
+    public static JiraConnectModuleListBuilder newJiraModuleListBean()
+    {
+        return new JiraConnectModuleListBuilder();
+    }
+
+    public static JiraConnectModuleListBuilder newJiraModuleListBean(JiraConnectModuleList defaultBean)
+    {
+        return new JiraConnectModuleListBuilder(defaultBean);
+    }
+
+
+    public List<EntityPropertyModuleBean> getJiraEntityProperties()
+    {
+        return jiraEntityProperties;
+    }
+
 }

@@ -10,6 +10,15 @@ public class JiraConnectModuleListBuilder extends BaseModuleListBuilder<JiraConn
 {
     private List<EntityPropertyModuleBean> jiraEntityProperties;
 
+    public JiraConnectModuleListBuilder()
+    {
+    }
+
+    public JiraConnectModuleListBuilder(JiraConnectModuleList defaultBean)
+    {
+        jiraEntityProperties = defaultBean.getJiraEntityProperties();
+    }
+
     public JiraConnectModuleListBuilder withJiraEntityProperties(EntityPropertyModuleBean... beans)
     {
         this.jiraEntityProperties = ImmutableList.copyOf(beans);

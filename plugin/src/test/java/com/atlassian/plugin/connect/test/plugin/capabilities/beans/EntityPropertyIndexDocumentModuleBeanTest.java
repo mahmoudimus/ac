@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.beans;
 
+import com.atlassian.plugin.connect.jira.module.JiraConnectModuleList;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.*;
@@ -91,7 +92,7 @@ public class EntityPropertyIndexDocumentModuleBeanTest
                 .withVersion("2.0")
                 .withBaseurl("http://www.example.com")
                 .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
-                .withModule("jiraEntityProperties", createModuleBean())
+                .withModuleList(JiraConnectModuleList.newJiraModuleListBean().withJiraEntityProperties(createModuleBean()).build())
                 .build();
     }
 

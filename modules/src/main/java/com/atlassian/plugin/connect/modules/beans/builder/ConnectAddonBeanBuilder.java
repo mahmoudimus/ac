@@ -5,7 +5,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.reflect.TypeToken;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
@@ -16,9 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.copyFieldsByNameAndType;
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.isParameterizedList;
 import static com.google.common.collect.Collections2.transform;
+import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * @since 1.0
@@ -109,12 +108,11 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
 
     public T withModuleList(BaseModuleList moduleList)
     {
-        // could go through and add all these to ModuleList as well for now.
-        // Then schema stuff still works (cause we don't change the ModuleList class)
-        // Everything else still works and we can start to migrate code to code
-        // against the new classes / api
 
-//        copyFieldsByNameAndType(moduleList, getOrCreateModules());
+        if (null == moduleLists)
+        {
+            this.moduleLists = newHashMap();
+        }
 
         moduleLists.put(moduleList.getClass(), moduleList);
         return (T) this;
