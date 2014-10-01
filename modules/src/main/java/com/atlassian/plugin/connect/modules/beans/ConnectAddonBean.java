@@ -176,6 +176,7 @@ public class ConnectAddonBean extends BaseModuleBean
         this.links = newHashMap();
         this.lifecycle = LifecycleBean.newLifecycleBean().build();
         this.modules = new ModuleList();
+        this.moduleLists = newHashMap();
         this.scopes = new HashSet<ScopeName>();
         this.baseUrl = "";
         this.authentication = newAuthenticationBean().build();
@@ -209,6 +210,11 @@ public class ConnectAddonBean extends BaseModuleBean
         if (null == modules)
         {
             this.modules = new ModuleList();
+        }
+
+        if (null == moduleLists)
+        {
+            this.moduleLists = newHashMap();
         }
 
         if (null == vendor)
