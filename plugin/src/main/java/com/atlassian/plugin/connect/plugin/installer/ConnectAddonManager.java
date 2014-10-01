@@ -640,7 +640,7 @@ public class ConnectAddonManager
         }
         catch (ConnectAddOnUserInitException e)
         {
-            throw new PluginInstallException(e.getMessage(), Option.some("connect.install.error.user.provisioning"), e, true);
+            throw new PluginInstallException(e.getMessage(), Option.option(e.getI18nKey()), e, true);
         }
     }
 
