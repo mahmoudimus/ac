@@ -155,6 +155,7 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
         options.setConnectionTimeout(3, TimeUnit.SECONDS);
         options.setSocketTimeout(15, TimeUnit.SECONDS);
         options.setRequestTimeout(20, TimeUnit.SECONDS);
+        options.setLeaseTimeout(TimeUnit.SECONDS.toMillis(3));
         return options;
     }
 
