@@ -176,7 +176,7 @@ public class ConnectAddonManager
      * @param jsonDescriptor the json descriptor of the add-on to install
      * @return a {@link ConnectAddonBean} representation of the add-on
      */
-    public ConnectAddonBean installConnectAddon(String jsonDescriptor, PluginState targetState)
+    public ConnectAddonBean installConnectAddon(String jsonDescriptor, PluginState targetState, com.atlassian.fugue.Option<String> maybeSharedSecret)
     {
         long startTime = System.currentTimeMillis();
 
@@ -202,7 +202,7 @@ public class ConnectAddonManager
 
         AuthenticationType authType = addOn.getAuthentication().getType();
         final boolean useSharedSecret = addOnUsesSymmetricSharedSecret(authType); // TODO ACDEV-378: also check the algorithm
-        String sharedSecret = useSharedSecret ? sharedSecretService.next() : null;
+        String sharedSecret = useSharedSecret ? maybeSharedSecret.getOrElse(sharedSecretService.next()) : null;
         String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
 
         String userKey = provisionUserIfNecessary(addOn, previousDescriptor);
