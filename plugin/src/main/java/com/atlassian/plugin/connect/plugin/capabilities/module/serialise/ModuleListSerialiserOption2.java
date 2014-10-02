@@ -3,10 +3,14 @@ package com.atlassian.plugin.connect.plugin.capabilities.module.serialise;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleList;
 import com.atlassian.plugin.connect.spi.module.provider.Module;
+import com.google.common.collect.Lists;
 import com.google.gson.*;
 
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 public class ModuleListSerialiserOption2 implements ModuleListSerialiser
 {
@@ -18,12 +22,17 @@ public class ModuleListSerialiserOption2 implements ModuleListSerialiser
             throw new JsonParseException("modules must be an object");
         }
 
-        ModuleList moduleList = context.deserialize(json, ModuleList.class);
+//        ModuleList moduleList = context.deserialize(json, ModuleList.class);
+        ModuleList moduleList = new ModuleList();
 
         for (Map.Entry<String, JsonElement> entry : json.getAsJsonObject().entrySet())
         {
-            ModuleImpl module = new ModuleImpl(entry.getValue().getAsJsonObject(), context);
-            moduleList.getModules().put(entry.getKey(), module);
+            List<Module> modules = newArrayList();
+            for (JsonElement jsonElement : entry.getValue().getAsJsonArray())
+            {
+                modules.add(new ModuleImpl(jsonElement.getAsJsonObject(), context));
+            }
+            moduleList.getModules().put(entry.getKey(), modules);
         }
 
         return moduleList;

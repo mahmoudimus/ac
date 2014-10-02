@@ -10,7 +10,7 @@ public class ConnectModuleProviderTest
 }
 
 
-class MyModuleDeserialiserProviderImpl extends DefaultModuleDeserialiserProvider<MyModule>
+class MyModuleDeserialiserProviderImpl extends DefaultModuleDeserialiserProvider
 {
     public MyModuleDeserialiserProviderImpl()
     {
@@ -33,7 +33,7 @@ class MyModuleProvider implements ConnectModuleProvider<MyModule>
     }
 
     @Override
-    public ModuleDeserialiserProvider<MyModule> getDeserialiserProvider()
+    public ModuleDeserialiserProvider getDeserialiserProvider()
     {
         return new MyModuleDeserialiserProviderImpl();
     }

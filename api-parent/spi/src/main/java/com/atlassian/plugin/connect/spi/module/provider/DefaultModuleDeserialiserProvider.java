@@ -1,16 +1,16 @@
 package com.atlassian.plugin.connect.spi.module.provider;
 
-class DefaultModuleDeserialiserProvider<T> implements ModuleDeserialiserProvider<T>
+class DefaultModuleDeserialiserProvider implements ModuleDeserialiserProvider
 {
-    private final Class<? extends T> moduleClass;
+    private final Class<?> moduleClass;
 
-    public DefaultModuleDeserialiserProvider(Class<? extends T> moduleClass)
+    public DefaultModuleDeserialiserProvider(Class<? > moduleClass)
     {
         this.moduleClass = moduleClass;
     }
 
     @Override
-    public T deserialise(ModuleDeserialiser<T> m)
+    public Object deserialise(ModuleDeserialiser m)
     {
         return m.deserialise(moduleClass);
     }

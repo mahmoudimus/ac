@@ -22,7 +22,7 @@ public interface ConnectModuleProvider<T>
 {
     JsonSchema getSchema();
 
-    ModuleDeserialiserProvider<T> getDeserialiserProvider();
+    ModuleDeserialiserProvider getDeserialiserProvider();
 
     ConnectModuleDescriptorProvider<T> getModuleDescriptorProvider();
 }

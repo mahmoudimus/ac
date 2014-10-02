@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.modules.annotation.ConnectModule;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -16,6 +17,7 @@ import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.isParameterizedListWithType;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * This class represents the list of modules in the json descriptor.
@@ -114,7 +116,7 @@ public class ModuleList extends BaseModuleBean
     }
 
     @SchemaIgnore("shallow")
-    private transient Map<String, Object> modules;
+    private transient Map<String, Object> modules = newHashMap();
 
 
 
