@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.spi.module.provider;
 
-class DefaultModuleDeserialiserProvider implements ModuleDeserialiserProvider
+public class DefaultModuleDeserialiserProvider implements ModuleDeserialiserProvider
 {
     private final Class<?> moduleClass;
 

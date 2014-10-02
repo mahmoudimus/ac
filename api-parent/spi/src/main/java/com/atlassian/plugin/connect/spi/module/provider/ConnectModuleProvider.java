@@ -9,15 +9,6 @@ import com.google.gson.JsonElement;
 import java.util.List;
 
 
-
-
-interface ConnectModuleDescriptorProvider<T>
-{
-    List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, List<T> modules);
-}
-
-
-
 public interface ConnectModuleProvider<T>
 {
     JsonSchema getSchema();

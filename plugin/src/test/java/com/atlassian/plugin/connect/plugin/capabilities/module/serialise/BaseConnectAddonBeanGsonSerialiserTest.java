@@ -3,10 +3,8 @@ package com.atlassian.plugin.connect.plugin.capabilities.module.serialise;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyType;
-import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.spi.module.provider.Module;
 import com.google.common.collect.Lists;
-import org.apache.commons.io.FileUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -41,6 +39,8 @@ public abstract class BaseConnectAddonBeanGsonSerialiserTest
         jsonStr = readTestFile();
     }
 
+    protected abstract EntityPropertyModuleBean convert(Object bean);
+
     @Test
     public void deserialise()
     {
@@ -48,11 +48,13 @@ public abstract class BaseConnectAddonBeanGsonSerialiserTest
         ConnectAddonBean addonBean = serialiser.deserialise(jsonStr);
         Map<String, Object> moduleMap = addonBean.getModules().getModules();
         System.out.println(moduleMap);
-        List<Module> modules = (List<Module>) moduleMap.get("jiraEntityProperties");
+
+        List<Object> modules = (List<Object>) moduleMap.get("jiraEntityProperties");
+
         List<EntityPropertyModuleBean> entityProperties = Lists.newArrayList();
-        for (Module entityProperty : modules)
+        for (Object entityProperty : modules)
         {
-            entityProperties.add((EntityPropertyModuleBean) entityProperty.toBean(EntityPropertyModuleBean.class));
+            entityProperties.add(convert(entityProperty));
         }
 
         System.out.println(entityProperties);
