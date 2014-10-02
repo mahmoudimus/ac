@@ -33,46 +33,11 @@ When you're finished, your add-on will look similar to this:
 
 In this step you'll ensure you have git and the Atlassian SDK installed and clone the Confluence Gardener git repository.
 
-### __Install git__
+<span data-include="/assets/includes/install-git.html"></span>
 
-If you have git installed you can skip this step.
+<span data-include="/assets/includes/install-nodejs.html"></span>
 
-Git is a wildly popular version control system which you'll need to complete this tutorial.
-If you don't yet have git installed, you can find the
-<a href="http://git-scm.com/book/en/Getting-Started-Installing-Git" target="_blank">installation instructions for your system here</a>.
-
-### __Install Node.js__
-
-If you have Node.js installed you can skip this step.
-
-We'll be using a Node.js powered static webserver in this tutorial.
-If you don't yet have Node.js installed, you can find the
-<a href="https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager" target="_blank">installation instructions for your system here</a>.
-
-### __Install the Atlassian SDK__
-
-If you have the version 4.2.20 or higher of the Atlassian SDK installed you can skip this step.
-
-The Atlassian Plugin SDK provides you with a toolkit of commands which are vital for developing Atlassian plugins.
-To run Confluence Gardener, we'll be using a single command, [`atlas-run-standalone`](https://developer.atlassian.com/display/DOCS/atlas-run-standalone), which runs a copy of an Atlassian product on your computer.
-
-Use the following links to install the SDK
-
-* [Instructions for Windows users](https://developer.atlassian.com/display/DOCS/Install+the+Atlassian+SDK+on+a+Windows+System)
-* [Instructions for Mac/Linux users](https://developer.atlassian.com/display/DOCS/Install+the+Atlassian+SDK+on+a+Linux+or+Mac+System)
-
-Confirm the SDK is installed by running `atlas-version`.
-
-<pre><code data-lang="text">$ atlas-version</code></pre>
-
-You should see 4.2.20 or higher:
-
-<pre>
-ATLAS Version:    4.2.20
-ATLAS Home:       /usr/share/atlassian-plugin-sdk-4.2.20
-ATLAS Scripts:    /usr/share/atlassian-plugin-sdk-4.2.20/bin
-ATLAS Maven Home: /usr/share/atlassian-plugin-sdk-4.2.20/apache-maven
-</pre>
+<span data-include="/assets/includes/install-atlassian-sdk.html"></span>
 
 ### __Clone the Confluence Gardener repository__
 
