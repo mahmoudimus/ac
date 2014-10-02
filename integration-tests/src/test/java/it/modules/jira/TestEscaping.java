@@ -239,7 +239,7 @@ public class TestEscaping extends TestBase
     {
         IssueCreateResponse issue = jira().backdoor().issues().createIssue(PROJECT_KEY, "test issue tab panel");
         JiraViewIssuePageWithRemotePluginIssueTab page = jira().quickLoginAsAdmin(JiraViewIssuePageWithRemotePluginIssueTab.class,
-                ISSUE_TAB_PANEL_KEY, issue.key(), runner.getAddon().getKey(), ConnectPluginInfo.getPluginKey() + ":");
+                ISSUE_TAB_PANEL_KEY, issue.key(), runner.getAddon().getKey());
         assertIsEscaped(page.getTabName());
     }
 

@@ -4,12 +4,10 @@ import com.atlassian.jira.pageobjects.dialogs.ShifterDialog;
 import com.atlassian.jira.pageobjects.navigator.AdvancedSearch;
 import com.atlassian.jira.pageobjects.pages.admin.configuration.ViewGeneralConfigurationPage;
 import com.atlassian.jira.plugin.issuenav.pageobjects.IssueDetailPage;
-import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
@@ -37,6 +35,7 @@ public class TestJira extends JiraWebDriverTestBase
 {
     private static final String ADMIN_KEY = "addon-admin";
     private static final String ADVANCED_ADMIN_KEY = "advanced-addon-admin";
+    private static final String ISSUE_TAB_PANEL_KEY = "issue-tab-panel";
 
     private static ConnectRunner runner;
 
@@ -61,7 +60,7 @@ public class TestJira extends JiraWebDriverTestBase
                 .addRoute("/advanced-admin", ConnectAppServlets.apRequestServlet())
                 .addModule("jiraIssueTabPanels",
                         newTabPanelBean()
-                                .withKey("jira-remotePluginIssueTabPage")
+                                .withKey(ISSUE_TAB_PANEL_KEY)
                                 .withName(new I18nProperty("AC Play Issue Tab Page", "issue.tab"))
                                 .withUrl("/issue-tab-panel")
                                 .build())
@@ -89,8 +88,6 @@ public class TestJira extends JiraWebDriverTestBase
     }
 
     @Test
-    @Ignore("partly ported from xml to json: see comments")
-    @XmlDescriptor(comment="partly ported from xml to json: see comments")
     public void testLoadDialogFromIssueNavigatorActionCog() throws RemoteException
     {
         login(TestUser.ADMIN);
@@ -116,8 +113,6 @@ public class TestJira extends JiraWebDriverTestBase
     }
 
     @Test
-    @Ignore("partly ported from xml to json: see comments")
-    @XmlDescriptor(comment="partly ported from xml to json: see comments")
     public void testViewIssueTab() throws Exception
     {
         testLoggedInAndAnonymous(new Callable()
@@ -127,13 +122,8 @@ public class TestJira extends JiraWebDriverTestBase
             {
                 RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for tab");
                 String addOnKey = runner.getAddon().getKey();
-                // TODO: click the link with id="<add-on key>__jira-remote-plugin-issue-tab-page",
-                // which loads the iframe contained in the div with id="embedded-<add-on key>__jira-remote-plugin-issue-tab-page",
-                // and then look for iframe content with JiraViewIssuePageWithRemotePluginIssueTab.getMessage()
-                //JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(
-                //        JiraViewIssuePageWithRemotePluginIssueTab.class, issue.getKey(), addOnKey, addOnKey + ":");
                 JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(
-                        JiraViewIssuePageWithRemotePluginIssueTab.class, "issue-tab-panel", issue.getKey(), addOnKey, ConnectPluginInfo.getPluginKey() + ":");
+                        JiraViewIssuePageWithRemotePluginIssueTab.class, ISSUE_TAB_PANEL_KEY, issue.getKey(), addOnKey);
                 Assert.assertEquals("Success", page.getMessage());
                 return null;
             }
