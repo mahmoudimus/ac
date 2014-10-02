@@ -139,7 +139,10 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 ApplicationLink applink = maybePreviousApplink.get();
                 baseUrl = applink.getRpcUrl().toString();
                 maybePreviousAuthType = ConnectApplinkUtil.getAuthenticationType(applink);
-                maybePreviousPublicKeyOrSharedSecret = connectApplinkManager.getSharedSecretOrPublicKey(applink);
+                if(maybePreviousAddon.isDefined())
+                {
+                    maybePreviousPublicKeyOrSharedSecret = connectApplinkManager.getSharedSecretOrPublicKey(applink);
+                }
             }
             previousSettings = addonRegistry.getAddonSettings(pluginKey);
 
