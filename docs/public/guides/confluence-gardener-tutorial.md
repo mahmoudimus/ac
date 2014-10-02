@@ -111,6 +111,8 @@ following command from the Confluence Gardener directory to install the add-on.
 
 Alternatively you can install the add-on using the Universal Plugin Manager (UPM).
 
+<a data-replace-text="Hide UPM installation instructions [-]" class="aui-expander-trigger" aria-controls="upm-instructions">Expand UPM installation instructions [+]</a>
+
 <div id="upm-instructions" class="aui-expander-content">
     <h3>Set the Confluence Base URL</h3>
 
@@ -129,8 +131,6 @@ Alternatively you can install the add-on using the Universal Plugin Manager (UPM
         <li>Click `Upload`</li>
     </ul>
 </div>
-
-<a data-replace-text="Hide UPM installation instructions [-]" class="aui-expander-trigger" aria-controls="upm-instructions">Expand UPM installation instructions [+]</a>
 
 Due to some missing functions we're going to implement below, Confluence Gardener won't work yet, but feel free to try
 to load it anyway.
