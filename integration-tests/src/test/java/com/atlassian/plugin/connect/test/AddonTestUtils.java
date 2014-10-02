@@ -10,6 +10,7 @@ import com.atlassian.jwt.writer.JwtWriter;
 import com.atlassian.jwt.writer.JwtWriterFactory;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import org.apache.commons.lang.RandomStringUtils;
 
 import javax.annotation.Nonnull;
@@ -60,18 +61,22 @@ public class AddonTestUtils
                                   @Nonnull final String contextPath,
                                   @Nullable final String subject) throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
+        return URI.create(uri.toString() + "?jwt=" + generateJwtSignature(HttpMethod.GET, uri, addOnKey, secret, contextPath, subject));
+    }
+
+    public static String generateJwtSignature(HttpMethod httpMethod, URI uri, String addOnKey, String secret, String contextPath, String subject) throws UnsupportedEncodingException, NoSuchAlgorithmException
+    {
         JwtWriterFactory jwtWriterFactory = new NimbusJwtWriterFactory();
         JwtWriter jwtWriter = jwtWriterFactory.macSigningWriter(SigningAlgorithm.HS256, secret);
         final JwtJsonBuilder jsonBuilder = new JsonSmartJwtJsonBuilder()
                 .issuer(addOnKey)
-                .queryHash(HttpRequestCanonicalizer.computeCanonicalRequestHash(new CanonicalHttpUriRequest("GET", uri.getPath(), URI.create(contextPath).getPath())));
+                .queryHash(HttpRequestCanonicalizer.computeCanonicalRequestHash(new CanonicalHttpUriRequest(httpMethod.name(), uri.getPath(), URI.create(contextPath).getPath())));
 
         if (null != subject)
         {
             jsonBuilder.subject(subject);
         }
 
-        String jwtToken = jwtWriter.jsonToJwt(jsonBuilder.build());
-        return URI.create(uri.toString() + "?jwt=" + jwtToken);
+        return jwtWriter.jsonToJwt(jsonBuilder.build());
     }
 }

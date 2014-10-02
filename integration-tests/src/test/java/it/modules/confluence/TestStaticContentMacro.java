@@ -5,6 +5,8 @@ import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.test.BaseUrlLocator;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWithRemoteMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -16,7 +18,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import redstone.xmlrpc.XmlRpcFault;
@@ -41,10 +42,13 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
 {
     private static final String STORAGE_FORMAT_MACRO_NAME = "Storage Format Macro";
     private static final String STORAGE_FORMAT_MACRO_KEY = "storage-format-macro";
-    private static final String COUNTER = "rp-counter";
+    private static final String COUNTER_CSS_CLASS = "rp-counter";
 
     private static final String GET_MACRO_NAME = "Get Macro";
     private static final String GET_MACRO_KEY = "get-macro";
+
+    private static final String COUNTER_MACRO_NAME = "Counter Macro";
+    private static final String COUNTER_MACRO_KEY = "counter-macro";
 
     private static ConnectRunner remotePlugin;
     private static EchoQueryParametersServlet parameterServlet;
@@ -76,11 +80,17 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
                 .withName(new I18nProperty(GET_MACRO_NAME, ""))
                 .build();
 
+        StaticContentMacroModuleBean counterMacro = newStaticContentMacroModuleBean()
+                .withKey(COUNTER_MACRO_KEY)
+                .withUrl("/counter")
+                .withName(new I18nProperty(COUNTER_MACRO_NAME, null))
+                .build();
+
         parameterServlet = new EchoQueryParametersServlet();
         contextServlet = new EchoContextServlet();
 
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
-                .setAuthenticationToNone()
+                .addJWT()
                 .addModules("staticContentMacros",
                         simpleMacro,
                         allParameterTypesMacro,
@@ -93,7 +103,8 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
                         getMacro,
                         editorMacro,
                         customTitleEditorMacro,
-                        hiddenMacro
+                        hiddenMacro,
+                        counterMacro
                 )
                 .addRoute(DEFAULT_MACRO_URL, ConnectAppServlets.wrapContextAwareServlet(parameterServlet))
                 .addRoute("/render-editor", ConnectAppServlets.macroEditor())
@@ -101,6 +112,8 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
                 .addRoute("/render-context", ConnectAppServlets.wrapContextAwareServlet(contextServlet))
                 .addRoute("/images/placeholder.png", ConnectAppServlets.resourceServlet("atlassian-icon-16.png", "image/png"))
                 .addRoute("/render-storage-format", ConnectAppServlets.resourceServlet("confluence/test-static-content-macro.xhtml", "application/xhtml+xml"))
+                .addRoute("/counter", new CounterMacroServlet())
+                .addScope(ScopeName.WRITE)
                 .start();
     }
 
@@ -198,39 +211,41 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     }
 
     @Test
-    @Ignore
     public void testMacroCacheFlushes() throws Exception
     {
-        /*
-        final ConfluenceOps.ConfluencePageData pageData = createPage(TestUser.ADMIN, pageWithMacro(COUNTER_MACRO));
+        final String title = randomName("Counter Page");
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage.setTitle(title);
+        selectMacroAndSave(editorPage, COUNTER_MACRO_NAME);
+        editorPage.save();
 
-        counterMacroServlet.reset();
-
-        ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, pageData.getTitle(), COUNTER_MACRO);
-
-        //TODO: this is flaky, where sometimes the counter value in the page is inexplicably 0
-        assertEquals(1, getCounter(page));
+        ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, title, COUNTER_MACRO_NAME);
+        assertThat(getCounter(page), is(0));
 
         // stays the same on a new visit
-        page = product.visit(ConfluencePageWithRemoteMacro.class, pageData.getTitle(), COUNTER_MACRO);
-        assertEquals(1, getCounter(page));
+        page = product.visit(ConfluencePageWithRemoteMacro.class, title, COUNTER_MACRO_NAME);
+        assertThat(getCounter(page), is(0));
 
         clearCaches();
 
-        page = product.visit(ConfluencePageWithRemoteMacro.class, pageData.getTitle(), COUNTER_MACRO);
-        assertEquals(2, getCounter(page));
-        */
+        page = product.visit(ConfluencePageWithRemoteMacro.class, title, COUNTER_MACRO_NAME);
+        assertThat(getCounter(page), is(1));
     }
 
     private static void clearCaches() throws Exception
     {
-        final URL url = new URL(product.getProductInstance().getBaseUrl() + "/rest/atlassian-connect/latest/macro/app/" + remotePlugin.getAddon().getKey());
+        final URL url = new URL(BaseUrlLocator.getBaseUrl() + "/rest/atlassian-connect/latest/macro/app/" + remotePlugin.getAddon().getKey());
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("DELETE");
         remotePlugin.getSignedRequestHandler().sign(url.toURI(), "DELETE", null, conn);
+        conn.connect();
         int code = conn.getResponseCode();
-        System.out.println("Reset from " + product.getProductInstance().getBaseUrl() + " returned: " + code);
         conn.disconnect();
+
+        if (code < 200 || code >= 300)
+        {
+            throw new RuntimeException(String.format("Macro cache flush request 'DELETE %s' returned %d", url, code));
+        }
     }
 
     @Override
@@ -248,15 +263,14 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
 
     private int getCounter(ConfluencePageWithRemoteMacro page)
     {
-        return Integer.valueOf(page.getText(COUNTER));
+        return Integer.valueOf(page.getText(COUNTER_CSS_CLASS));
     }
 
     private static final class CounterMacroServlet extends HttpServlet
     {
         private static final long ONE_YEAR_SECONDS = 60L * 60L * 24L * 365L;
         private static final long ONE_YEAR_MILLISECONDS = 1000 * ONE_YEAR_SECONDS;
-        private static final int INITIAL_VALUE = 0;
-        private int counter = INITIAL_VALUE;
+        private int counter = 0;
 
         @Override
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
@@ -265,13 +279,9 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
             resp.setDateHeader("Expires", System.currentTimeMillis() + ONE_YEAR_MILLISECONDS);
             resp.setHeader("Cache-Control", "s-maxage=" + ONE_YEAR_SECONDS);
             PrintWriter writer = resp.getWriter();
-            writer.print("<div>Counter: <span class=\"" + COUNTER + "\">" + counter++ + "</span></div>");
+            writer.print("<div>Counter: <span class=\"" + COUNTER_CSS_CLASS + "\">" + counter + "</span></div>");
             writer.close();
-        }
-
-        private void reset()
-        {
-            this.counter = INITIAL_VALUE;
+            ++counter;
         }
     }
 }

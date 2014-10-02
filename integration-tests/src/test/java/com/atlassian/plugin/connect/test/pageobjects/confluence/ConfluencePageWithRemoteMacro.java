@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.test.pageobjects.confluence;
 
 import com.atlassian.pageobjects.Page;
 import com.atlassian.webdriver.AtlassianWebDriver;
+import com.atlassian.webdriver.utils.Check;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -9,7 +10,6 @@ import org.openqa.selenium.WebElement;
 import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.lang.String.format;
 
 public final class ConfluencePageWithRemoteMacro implements Page
 {
@@ -33,8 +33,9 @@ public final class ConfluencePageWithRemoteMacro implements Page
 
     public String getText(String className)
     {
-        final By locator = By.cssSelector(format(".%s .%s", macroName, className));
-        if (driver.elementExists(locator))
+        final By locator = By.className(className);
+
+        if (Check.elementExists(locator, driver))
         {
             return driver.findElement(locator).getText();
         }
