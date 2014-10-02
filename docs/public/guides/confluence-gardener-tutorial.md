@@ -52,9 +52,9 @@ Once you have all the prerequisites, you'll clone an existing repository to kick
     <span data-include="/assets/includes/install-nodejs.html"></span>
 </div>
 
-<a data-replace-text="Hide SDK instructions [-]" class="aui-expander-trigger" aria-controls="install-node">Show SDK instructions [+]</a>
+<a data-replace-text="Hide SDK instructions [-]" class="aui-expander-trigger" aria-controls="install-sdk">Show SDK instructions [+]</a>
 
-<div id="install-node" class="aui-expander-content">
+<div id="install-sdk" class="aui-expander-content">
     <span data-include="/assets/includes/install-atlassian-sdk.html"></span>
 </div>
 
