@@ -241,12 +241,22 @@ public class ConnectRunner
 
     public ConnectRunner addJWT()
     {
+        InstallHandlerServlet installHandlerServlet = ConnectAppServlets.installHandlerServlet();
+        return addJWT(installHandlerServlet, createJwtSignedRequestHandler(installHandlerServlet));
+    }
+
+    public ConnectRunner addJWT(HttpServlet installHandlerServlet)
+    {
+        return addJWT(installHandlerServlet, null);
+    }
+
+    private ConnectRunner addJWT(HttpServlet installHandlerServlet, SignedRequestHandler signedRequestHandler)
+    {
         addonBuilder.withAuthentication(AuthenticationBean.newAuthenticationBean()
                 .withType(AuthenticationType.JWT)
                 .build());
         addInstallLifecycle();
-        InstallHandlerServlet installHandlerServlet = ConnectAppServlets.installHandlerServlet();
-        signedRequestHandler = createJwtSignedRequestHandler(installHandlerServlet);
+        this.signedRequestHandler = signedRequestHandler;
         addRoute(INSTALLED_PATH, installHandlerServlet);
         return this;
     }
