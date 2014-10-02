@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
+import com.atlassian.json.schema.annotation.SchemaIgnore;
 import com.atlassian.plugin.connect.modules.annotation.ConnectModule;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.isParameterizedListWithType;
 import static com.google.common.collect.Lists.newArrayList;
@@ -106,6 +108,18 @@ import static com.google.common.collect.Lists.newArrayList;
 @ObjectSchemaAttributes(additionalProperties = false)
 public class ModuleList extends BaseModuleBean
 {
+    public Map<String, Object> getModules()
+    {
+        return modules;
+    }
+
+    @SchemaIgnore("shallow")
+    private transient Map<String, Object> modules;
+
+
+
+
+
     /////////////////////////////////////////////////////
     ///////    COMMON MODULES
     /////////////////////////////////////////////////////
