@@ -98,12 +98,8 @@ Confluence Gardener is a static Atlassian Connect add-on and can be hosted with 
 We'll use a simple Node.js powered web server to host your add-on locally.
 
 1. From the `confluence-gardener` directory, start your server on port 8000:
-    <pre><code data-lang="text">
-    npm install -g http-server
-   http-server -p 8000
-    </code></pre>
-    The server indicates that it's serving HTTP at the current address and port. You'll see something like:
-    <tt>Starting up http-server, serving ./ on: http://0.0.0.0:8000</tt>
+
+    <span data-include="/assets/includes/start-http-server.html"></span>
 
 1. Confirm your server is running by loading http://localhost:8000/atlassian-connect.json in your browser.
 

@@ -123,59 +123,64 @@
         </footer>
     </div>
     <script>
-        $(".diagram").sequenceDiagram({theme: 'simple'});
+        function renderCode($context) {
+            $context.find(".diagram").sequenceDiagram({theme: 'simple'});
 
-        var codeDefaults = {
-            mode: "clike",
-            theme: "neat",
-            lineNumbers:true,
-            gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
-            indentWithTabs:false,
-            electricChars:true,
-            matchBrackets:true,
-            autoCloseBrackets:true,
-            highlightSelectionMatches:true,
-            indentUnit:2,
-            lineWrapping: true,
-            readOnly:true
-        };
+            var codeDefaults = {
+                mode: "clike",
+                theme: "neat",
+                lineNumbers:true,
+                gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+                indentWithTabs:false,
+                electricChars:true,
+                matchBrackets:true,
+                autoCloseBrackets:true,
+                highlightSelectionMatches:true,
+                indentUnit:2,
+                lineWrapping: true,
+                readOnly:true
+            };
 
-        $('.code').each(function(){
-            CodeMirror.fromTextArea(this, codeDefaults);
-        });
+            $context.find('.code').each(function(){
+                CodeMirror.fromTextArea(this, codeDefaults);
+            });
 
-        function cmIfyPreCodeBlocks(block) {
-            var $sample = $(block),
-                lang = $sample.data('lang'),
-                text = $sample.text().trim(),
-                newOpts = $.extend({}, codeDefaults);
+            function cmIfyPreCodeBlocks(block) {
+                var $sample = $(block),
+                        lang = $sample.data('lang'),
+                        text = $sample.text().trim(),
+                        newOpts = $.extend({}, codeDefaults);
 
-            if (text.split("\n").length <= 1) {
-                newOpts.lineNumbers = false;
-                newOpts.gutters = [];
+                if (text.split("\n").length <= 1 || lang === "text") {
+                    newOpts.lineNumbers = false;
+                    newOpts.gutters = [];
+                }
+                newOpts.value = text;
+
+                if (lang) {
+                    newOpts.mode = (lang == 'java' ? 'text/x-java' : lang);
+                }
+
+                var cm = CodeMirror(
+                        function(node){
+                            block.parentNode.replaceChild(node, block)
+                        }, newOpts
+                );
             }
-            newOpts.value = text;
 
-            if (lang) {
-                newOpts.mode = (lang == 'java' ? 'text/x-java' : lang);
-            }
+            $context.find('pre code').each(function(){
+                cmIfyPreCodeBlocks(this)
+            });
 
-            var cm = CodeMirror(
-                function(node){
-                    block.parentNode.replaceChild(node, block)
-                }, newOpts
+            $context.find(".expandNextPre").each(
+                    function(index)
+                    {
+                        $(this).nextAll("pre").first().addClass("aui-expander-content");
+                    }
             );
         }
-        $('pre code').each(function(){
-            cmIfyPreCodeBlocks(this)
-        });
-        
-        $(".expandNextPre").each(
-            function(index)
-            {
-                $(this).nextAll("pre").first().addClass("aui-expander-content");
-            }
-        );
+
+        renderCode($(document.body));
     </script>
     <!-- issue collector -->
     <script type="text/javascript" src="https://ecosystem.atlassian.net/s/d41d8cd98f00b204e9800998ecf8427e/en_US-mqmy26-1988229788/6206/199/1.4.1/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=d5b17e2f"></script>

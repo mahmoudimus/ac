@@ -12,11 +12,12 @@ $(function() {
     function insertMarkup($includeElement, markdown) {
         var $parentParagraph = $($includeElement.parent("p"));
         var markup = marked(markdown);
-        if ($parentParagraph.children().length === 1) {
-            $parentParagraph.replaceWith(markup);
-        } else {
-            $includeElement.replaceWith(markup);
-        }
+        var $replacedElement = ($parentParagraph.children().length === 1) ? $parentParagraph : $includeElement;
+        var $newElement = $($("<span>").append(markup));
+
+        $replacedElement.replaceWith($newElement);
+
+        renderCode($newElement);
     }
 
     /**
