@@ -95,20 +95,16 @@ public class ConnectIFrameServlet extends HttpServlet
 
     private IFrameRenderStrategy getiFrameRenderStrategyForJsonModule(final HttpServletRequest req, final String addOnKey, final String moduleKey)
     {
-        IFrameRenderStrategy renderStrategy;
         String classifier = req.getParameter(CLASSIFIER);
-        if (RAW_CLASSIFIER.equals(classifier))
+        String lookupClassifier = JSON_CLASSIFIER.equals(classifier) ? null : classifier;
+
+        IFrameRenderStrategy renderStrategy = IFrameRenderStrategyRegistry.get(addOnKey, moduleKey, lookupClassifier);
+
+        if (null != renderStrategy && JSON_CLASSIFIER.equals(classifier))
         {
-            renderStrategy = IFrameRenderStrategyRegistry.get(addOnKey, moduleKey, RAW_CLASSIFIER);
+            return renderStrategy.toJsonRenderStrategy();
         }
-        else
-        {
-            renderStrategy = IFrameRenderStrategyRegistry.get(addOnKey, moduleKey);
-            if (JSON_CLASSIFIER.equals(classifier))
-            {
-                renderStrategy = renderStrategy.toJsonRenderStrategy();
-            }
-        }
+
         return renderStrategy;
     }
 
