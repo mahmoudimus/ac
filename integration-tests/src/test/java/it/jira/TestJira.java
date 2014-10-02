@@ -36,6 +36,7 @@ public class TestJira extends JiraWebDriverTestBase
     private static final String ADMIN_KEY = "addon-admin";
     private static final String ADVANCED_ADMIN_KEY = "advanced-addon-admin";
     private static final String ISSUE_TAB_PANEL_KEY = "issue-tab-panel";
+    private static final String JIRA_ISSUE_ACTION_KEY = "jira-issue-action";
 
     private static ConnectRunner runner;
 
@@ -67,7 +68,7 @@ public class TestJira extends JiraWebDriverTestBase
                 .addRoute("/issue-tab-panel", ConnectAppServlets.apRequestServlet())
                 .addModule("webItems",
                         newWebItemBean()
-                                .withKey("jira-issueAction")
+                                .withKey(JIRA_ISSUE_ACTION_KEY)
                                 .withName(new I18nProperty("Test Issue Action", "issue.action"))
                                 .withUrl("/jia")
                                 .withLocation("operations-subtasks")
@@ -98,13 +99,8 @@ public class TestJira extends JiraWebDriverTestBase
                 .navigateToAndBind(IssueDetailPage.class, issue.getKey())
                 .details()
                 .openFocusShifter();
-        // TODO: select the "Test Issue Action" text (a link with id="<add-on key>__jira-issue-action"),
-        // which causes the iframe to be loaded inside a container div with id="embedded-<add-on key>__jira-issue-action",
-        // and then look for iframe content by binding to the iframe and calling RemotePluginDialog.wasSubmitted() etc
-        ConnectAddOnEmbeddedTestPage page1 = shifterDialog.queryAndSelect("Test Issue Action", ConnectAddOnEmbeddedTestPage.class, runner.getAddon().getKey(), "jira-issue-action", false);
-        ConnectAddOnEmbeddedTestPage page2 = product.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, runner.getAddon().getKey(), "jira-issue-action", true);
-
-        RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, page2);
+        ConnectAddOnEmbeddedTestPage page = shifterDialog.queryAndSelect("Test Issue Action", ConnectAddOnEmbeddedTestPage.class, runner.getAddon().getKey(), JIRA_ISSUE_ACTION_KEY, true);
+        RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, page);
 
         assertFalse(dialog.wasSubmitted());
         assertEquals(false, dialog.submit());
