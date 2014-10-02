@@ -72,12 +72,10 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
                 .withWeight(1234);
         
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
-        .addInstallLifecycle()
         .addUninstallLifecycle()
         .addModule("configurePage", pageBeanBuilder.build())
-        .addJWT()
+        .addJWT(installUninstallHandler)
         .addRoute(route, ConnectAppServlets.helloWorldServlet())
-        .addRoute(ConnectRunner.INSTALLED_PATH, installUninstallHandler)
         .addRoute(ConnectRunner.UNINSTALLED_PATH, installUninstallHandler)
         .addScope(ScopeName.ADMIN)
         .disableInstallationStatusCheck();

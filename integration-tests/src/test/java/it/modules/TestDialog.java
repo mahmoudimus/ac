@@ -76,9 +76,7 @@ public class TestDialog extends ConnectWebDriverTestBase
                 : null;
 
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
-                .addJWT()
-                .addInstallLifecycle()
-                .addRoute(ConnectRunner.INSTALLED_PATH, INSTALL_HANDLER_SERVLET)
+                .addJWT(INSTALL_HANDLER_SERVLET)
                 .addModules("generalPages",
                         newPageBean()
                                 .withName(new I18nProperty(ADDON_GENERALPAGE_NAME, null))

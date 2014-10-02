@@ -241,7 +241,11 @@ public class ConnectRunner
 
     public ConnectRunner addJWT()
     {
-        InstallHandlerServlet installHandlerServlet = ConnectAppServlets.installHandlerServlet();
+        return addJWT(ConnectAppServlets.installHandlerServlet());
+    }
+
+    public ConnectRunner addJWT(InstallHandlerServlet installHandlerServlet)
+    {
         return addJWT(installHandlerServlet, createJwtSignedRequestHandler(installHandlerServlet));
     }
 

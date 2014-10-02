@@ -23,8 +23,6 @@ import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class TestSessionIntegrity extends ConnectWebDriverTestBase
@@ -46,11 +44,9 @@ public class TestSessionIntegrity extends ConnectWebDriverTestBase
                         .withName(new I18nProperty("Page", null))
                         .withUrl("/page")
                         .build())
-                .addJWT()
+                .addJWT(installHandler)
                 .addScope(ScopeName.READ)
-                .addInstallLifecycle()
                 .addRoute("/page", ConnectAppServlets.helloWorldServlet())
-                .addRoute(ConnectRunner.INSTALLED_PATH, installHandler)
                 .start();
     }
 
