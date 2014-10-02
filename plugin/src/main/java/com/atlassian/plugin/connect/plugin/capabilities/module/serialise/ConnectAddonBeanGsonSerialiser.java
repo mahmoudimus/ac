@@ -13,6 +13,7 @@ public class ConnectAddonBeanGsonSerialiser implements ConnectAddonBeanSerialise
     public ConnectAddonBeanGsonSerialiser(ModuleListSerialiser moduleListSerialiser)
     {
         GsonBuilder gsonBuilder = ConnectModulesGsonFactory.getGsonBuilder();
+//        gsonBuilder. gsonBuilder
         gsonBuilder.registerTypeAdapter(ModuleList.class, moduleListSerialiser);
         gson = gsonBuilder.create();
     }

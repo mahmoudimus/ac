@@ -63,6 +63,17 @@ public abstract class BaseConnectAddonBeanGsonSerialiserTest
 
         EntityPropertyModuleBean bean = entityProperties.get(0);
         assertThat(bean.getEntityType(), is(EntityPropertyType.issue));
+
+        // make sure we still populate the legacy stuff too for now
+
+        List<EntityPropertyModuleBean> entityProperties2 = addonBean.getModules().getJiraEntityProperties();
+
+        assertThat(entityProperties2, hasSize(1));
+
+        EntityPropertyModuleBean bean2 = entityProperties2.get(0);
+        assertThat(bean2.getEntityType(), is(EntityPropertyType.issue));
+
+
     }
 
     private static String readTestFile() throws IOException

@@ -4,7 +4,6 @@ import com.atlassian.plugin.connect.modules.beans.ModuleList;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.blah.ConnectModuleProviderRegistry;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.DefaultModuleDeserialiser;
-import com.atlassian.plugin.connect.spi.module.provider.Module;
 import com.google.gson.*;
 
 import java.lang.reflect.Type;
@@ -30,9 +29,8 @@ public class ModuleListSerialiserOption1 implements ModuleListSerialiser
             throw new JsonParseException("modules must be an object");
         }
 
-        // damn can't do this with gson
-//        ModuleList moduleList = context.deserialize(json, ModuleList.class);
-        ModuleList moduleList = new ModuleList();
+        // some hackery so that we can deserialise the legacy fields automagically w gson
+        ModuleList moduleList = context.deserialize(json, DummyModuleList.class);
 
         for (Map.Entry<String, JsonElement> entry : json.getAsJsonObject().entrySet())
         {

@@ -22,8 +22,8 @@ public class ModuleListSerialiserOption2 implements ModuleListSerialiser
             throw new JsonParseException("modules must be an object");
         }
 
-//        ModuleList moduleList = context.deserialize(json, ModuleList.class);
-        ModuleList moduleList = new ModuleList();
+        // some hackery so that we can deserialise the legacy fields automagically w gson
+        ModuleList moduleList = context.deserialize(json, DummyModuleList.class);
 
         for (Map.Entry<String, JsonElement> entry : json.getAsJsonObject().entrySet())
         {
