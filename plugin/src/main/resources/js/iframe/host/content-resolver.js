@@ -17,7 +17,7 @@ _AP.define('host/content-resolver', ['_dollar', '_ui-params'], function($, UiPar
             return $.ajax(getContentUrl(params.addonKey, params.moduleKey), {
                 dataType: "html",
                 data: {
-                    "ui-params": UiParams.encode(params),
+                    "ui-params": UiParams.encode(params.uiParams),
                     "plugin-key": params.addonKey,
                     "product-context": JSON.stringify(params.productContext),
                     "key": params.moduleKey,
