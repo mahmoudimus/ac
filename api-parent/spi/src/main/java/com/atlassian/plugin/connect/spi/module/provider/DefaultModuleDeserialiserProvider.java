@@ -12,6 +12,13 @@ public class DefaultModuleDeserialiserProvider implements ModuleDeserialiserProv
     @Override
     public Object deserialise(ModuleDeserialiser m)
     {
-        return m.deserialise(moduleClass);
+        Object bean = m.deserialise(moduleClass);
+        validate(bean);
+        return bean;
+    }
+
+    protected void validate(Object bean)
+    {
+        // any additional validation can go here
     }
 }
