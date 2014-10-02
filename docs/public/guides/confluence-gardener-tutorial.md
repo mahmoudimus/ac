@@ -23,13 +23,11 @@ add-on is handy to query, update, and delete Confluence pages. You'll also creat
 displaying content from your add-on.  
 
 Your add-on will use the <a href="https://docs.atlassian.com/confluence/REST/latest/" target="_blank">
-Confluence REST API </a>. 
-
-At completion, your add-on will look a lot like this: 
+Confluence REST API </a>. At completion, your add-on will look a lot like this: 
 
 <img src="../assets/images/confluence-gardener-screen.png" width="100%" style="border:1px solid #999;margin-top:10px;" />
 
-## <a name="environment"></a> Configuring your development environment
+## <a name="environment"></a> Set up your development environment
 
 This step confirms your development environment is configured correctly. You'll need <a href="http://git-scm.com/" 
 target="_blank">Git</a>, <a href="http://nodejs.org/" target="_blank">Node.js</a>, and the 
@@ -60,36 +58,26 @@ Once you have all the prerequisites, you'll clone an existing repository to kick
     <span data-include="/assets/includes/install-atlassian-sdk.html"></span>
 </div>
 
+1. Clone the Confluence Gardener repository. 
+    <pre><code data-lang="text">$ git clone https://bitbucket.org/atlassianlabs/confluence-gardener.git</code></pre>
+1. Change into your new `confluence-gardener` directory.  
+    <pre><code data-lang="text">$ cd confluence-gardener</code></pre>
+1. Start Confluence in cloud mode from your `confluence-gardener` directory. 
+    <span id="commands-confluence-prd">Loading...</span>
+    You'll see a lot of output. When finished, your terminal will notify you that Confluence started successfully:
+    <pre>
+    [INFO] [talledLocalContainer] Tomcat 6.x started on port [1990]
+    [INFO] Confluence started successfully in 116s at http://localhost:1990/confluence
+    [INFO] Type Ctrl-D to shutdown gracefully
+    [INFO] Type Ctrl-C to exit
+    </pre>
+1. Navigate in your browser to your fresh Confluence instance, usually at <a href="http://localhost:1990/confluence" target="_blank">http://localhost:1990/confluence</a>. 
+1. Log in as an administrator:   
+    __Username__: `admin`  
+    __Password__: `admin`  
 
-### __Clone the Confluence Gardener repository__
+Now, you're ready to start developing the Confluence Gardener add-on.  
 
-At the command line, enter the following git command to clone the Confluence Gardener repository.
-<pre><code data-lang="text">$ git clone https://bitbucket.org/atlassianlabs/confluence-gardener.git</code></pre>
-
-Next change directories into the newly created `confluence-gardener` directory.
-<pre><code data-lang="text">$ cd confluence-gardener</code></pre>
-
-### __Start Confluence in cloud mode from your `confluence-gardener` directory__
-
-<span id="commands-confluence-prd">Loading...</span>
-
-You'll see a lot of output. When finished, your terminal will notify you that Confluence was successfully started:
-
-<pre>
-[INFO] [talledLocalContainer] Tomcat 6.x started on port [1990]
-[INFO] Confluence started successfully in 116s at http://localhost:1990/confluence
-[INFO] Type Ctrl-D to shutdown gracefully
-[INFO] Type Ctrl-C to exit
-</pre>
-
-### __Log in__
-
-In your browser load the URL displayed at the end of the previous step. In this case, http://localhost:1990/confluence
-and login with the following credentials:
-
-__Username__: `admin`
-
-__Password__: `admin`
 
 ## <a name="hosting-locally"></a> Hosting your add-on locally
 
