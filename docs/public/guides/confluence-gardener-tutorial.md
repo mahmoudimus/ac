@@ -1,14 +1,14 @@
 ##Tutorial: Manage your Confluence instance
 
 <div class="aui-message">
-	    <p class="title">
-	        <span class="aui-icon icon-info"></span>
-	        <strong>Who this tutorial is for</strong>
-	    </p>
-	    <p>
-	    You can complete this tutorial even if you've never built an Atlassian add-on before. You'll
-	    need at least version 4.2.20 of the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads).
-	    </p>
+        <p class="title">
+            <span class="aui-icon icon-info"></span>
+            <strong>Who this tutorial is for</strong>
+        </p>
+        <p>
+        You can complete this tutorial even if you've never built an Atlassian add-on before. You'll
+        need at least version 4.2.20 of the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads).
+        </p>
 </div>
 
 In this tutorial, you'll learn about:
@@ -18,26 +18,48 @@ In this tutorial, you'll learn about:
 * [Implement a Confluence REST API client](#rest-api)
 * [Display a full-screen dialog](#dialog)
 
-This tutorial will show you how to build a static Atlassian Connect add-on which displays a hierarchy of pages in a
-Confluence Space.
+This tutorial shows you how to build a static Connect add-on that displays page hierarchy in a Confluence space. This 
+add-on is handy to query, update, and delete Confluence pages. You'll also create a full-screen confirmation dialog
+displaying content from your add-on.  
 
-Your add-on will use the [Confluence REST API](https://docs.atlassian.com/confluence/REST/latest/) to query, update and
-delete Confluence pages. It will also show you how to create a full-screen confirmation dialog displaying content
-from your add-on.
+Your add-on will use the <a href="https://docs.atlassian.com/confluence/REST/latest/" target="_blank">
+Confluence REST API </a>. 
 
-When you're finished, your add-on will look similar to this:
+At completion, your add-on will look a lot like this: 
 
 <img src="../assets/images/confluence-gardener-screen.png" width="100%" style="border:1px solid #999;margin-top:10px;" />
 
 ## <a name="environment"></a> Configuring your development environment
 
-In this step you'll ensure you have git and the Atlassian SDK installed and clone the Confluence Gardener git repository.
+This step confirms your development environment is configured correctly. You'll need <a href="http://git-scm.com/" 
+target="_blank">Git</a>, <a href="http://nodejs.org/" target="_blank">Node.js</a>, and the 
+[Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads). 
 
-<span data-include="/assets/includes/install-git.html"></span>
+The Atlassian Plugin SDK provides a command toolkit vital for developing Atlassian add-ons.
+To run Confluence Gardener, you'll use a one of these commands, 
+[`atlas-run-standalone`](https://developer.atlassian.com/display/DOCS/atlas-run-standalone), which runs a copy of 
+an Atlassian product on your machine.
 
-<span data-include="/assets/includes/install-nodejs.html"></span>
+Once you have all the prerequisites, you'll clone an existing repository to kick things off.  
 
-<span data-include="/assets/includes/install-atlassian-sdk.html"></span>
+<a data-replace-text="Hide Git installation instructions [-]" class="aui-expander-trigger" aria-controls="install-git">Show Git installation instructions [+]</a>
+
+<div id="install-git" class="aui-expander-content">
+    <span data-include="/assets/includes/install-git.html"></span>
+</div>
+
+<a data-replace-text="Hide Node.js instructions [-]" class="aui-expander-trigger" aria-controls="install-node">Show Node.js instructions [+]</a>
+
+<div id="install-node" class="aui-expander-content">
+    <span data-include="/assets/includes/install-nodejs.html"></span>
+</div>
+
+<a data-replace-text="Hide SDK instructions [-]" class="aui-expander-trigger" aria-controls="install-node">Show SDK instructions [+]</a>
+
+<div id="install-node" class="aui-expander-content">
+    <span data-include="/assets/includes/install-atlassian-sdk.html"></span>
+</div>
+
 
 ### __Clone the Confluence Gardener repository__
 
