@@ -413,7 +413,7 @@ full-screen dialog.
     </code></pre>
 1. Now, try subscribing to `confirmPageRemoval` event bindings.  
 
-    <a data-replace-text="Hide removePageDialog.js [-]" class="aui-expander-trigger" aria-controls="complete-remove-dialog">Show removePageDialog.js with subscription to `confirmPageRemoval`[+]</a>
+    <a data-replace-text="Hide removePageDialog.js [-]" class="aui-expander-trigger" aria-controls="complete-remove-dialog">Show removePageDialog.js with subscription to `confirmPageRemoval` [+]</a>
 
     <div id="complete-remove-dialog" class="aui-expander-content">
     <pre><code data-lang="javascript">
