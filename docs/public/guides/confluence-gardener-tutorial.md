@@ -27,7 +27,7 @@ Confluence REST API</a>. At completion, your add-on will look a lot like this:
 
 <img src="../assets/images/confluence-gardener-screen.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
 
-## <a name="environment"></a> Set up your development environment
+## <a name="environment"></a> Configuring your development environment
 
 This step confirms your development environment is configured correctly. You'll need <a href="http://git-scm.com/" 
 target="_blank">Git</a>, <a href="http://nodejs.org/" target="_blank">Node.js</a>, and the 
