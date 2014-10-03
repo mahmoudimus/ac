@@ -74,9 +74,7 @@ Once you have all the prerequisites, you'll clone an existing repository to kick
 1. Navigate in your browser to your fresh Confluence instance, usually at <a href="http://localhost:1990/confluence" target="_blank">http://localhost:1990/confluence</a>. 
 1. Log in as an administrator:   
     __Username__: `admin`  
-    __Password__: `admin`  
-
-Now, you're ready to start developing the Confluence Gardener add-on.  
+    __Password__: `admin`    
 
 
 ## <a name="hosting-locally"></a> Host & install your add-on
@@ -159,97 +157,125 @@ included in the repo you cloned to install the add-on.
     You should see a page like this: 
     <img src="../assets/images/confluence-gardener-0.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
 
-Let's implement those missing functions now.
+Now you're ready to start developing functionality for your Gardener add-on. 
 
 ## <a name="rest-api"></a> Implement a Confluence REST API client
 
-All of the functions which request data from Confluence are contained in the file `js/data.js`. Open this file in
-the editor of your choice. Oh no! The functions are incomplete. Let's go ahead and implement them.
+All the functions that request data from Confluence are in your `js/data.js` file. The functions are incomplete, 
+so in this step you'll flesh these out. 
 
-<pre><code data-lang="javascript">
-define(function() {
-    return {
-        getPageContentHierarchy: function(pageId, callback) {
-        },
+You'll use the [Confluence REST API browser](https://bunjil.jira-dev.com/wiki/plugins/servlet/restbrowser) and
+the [AP.request documentation](/static/connect/docs/javascript/module-request.html) to implement functions to get 
+page and space hiearchy in Confluence, and add Gardener functionality to move and remove pages. 
 
-        getSpaceHierarchy: function(spaceKey, callback) {
-        },
+1. Open the `js/data.js` file from your `confluence-gardener` source code.
+    You should see the stub code below:  
+    <pre><code data-lang="javascript">
+    define(function() {
+        return {
+            getPageContentHierarchy: function(pageId, callback) {
+            },
 
-        removePage: function(pageId, callback) {
-        },
+            getSpaceHierarchy: function(spaceKey, callback) {
+            },
 
-        movePage: function(pageId, newParentId, callback) {
-        },
+            removePage: function(pageId, callback) {
+            },
 
-        movePageToTopLevel: function(pageId, spaceKey, callback) {
+            movePage: function(pageId, newParentId, callback) {
+            },
+
+            movePageToTopLevel: function(pageId, spaceKey, callback) {
+            }
         }
-    }
-});
-</code></pre>
+    });
+    </code></pre> 
+1. Implement `getPageContentHierarchy` to get the page hierachy in your Confluence instance:
+    <pre><code data-lang="javascript">
+            getPageContentHierarchy: function(pageId, callback) {
+                AP.request({
+                    url: "/rest/prototype/1/content/" + pageId + ".json?expand=children",
+                    success: callback
+                });
+            },
+    </code></pre>
+1.  Next, implement `getSpaceHierarchy` to see the space hierarchy: 
+    <pre><code data-lang="javascript">
+            getSpaceHierarchy: function(spaceKey, callback) {
+                AP.request({
+                    url: "/rest/prototype/1/space/" + spaceKey + ".json?expand=rootpages",
+                    success: callback
+                });
+            },
+    </code></pre>  
+1. Implement `removePage` so your add-on can effectively delete Confluence pages: 
+    <pre><code data-lang="javascript">
+            removePage: function(pageId, callback) {
+                AP.request({
+                    url: "/rpc/json-rpc/confluenceservice-v2/removePage",
+                    contentType: "application/json",
+                    type: "POST",
+                    data: JSON.stringify([pageId]),
+                    success: callback
+                });
+            },
+    </code></pre>
+1. Finally, try to implement `movePage` and `movePageToTopLevel` on your own. 
+    If you get stuck, expand the example below.  
+    
+    <a data-replace-text="Hide working implementation [-]" class="aui-expander-trigger" aria-controls="working-data-implementation">Show working implementation [+]</a>
 
-Using the [Confluence REST API browser](https://bunjil.jira-dev.com/wiki/plugins/servlet/restbrowser) and
-the [AP.request documentation](/static/connect/docs/javascript/module-request.html), try to implement these functions.
+    <div id="working-data-implementation" class="aui-expander-content">
+    <pre><code data-lang="javascript">
+    define(function() {
+        return {
+            getPageContentHierarchy: function(pageId, callback) {
+                AP.request({
+                    url: "/rest/prototype/1/content/" + pageId + ".json?expand=children",
+                    success: callback
+                });
+            },
 
-At minimum, implement `getPageContentHierarchy` and `getSpaceHierarchy` and refresh Confluence Gardener to display the
-hierarchy of pages in the Demonstration Space.
+            getSpaceHierarchy: function(spaceKey, callback) {
+                AP.request({
+                    url: "/rest/prototype/1/space/" + spaceKey + ".json?expand=rootpages",
+                    success: callback
+                });
+            },
 
-If you're having trouble getting the it to work feel free to check out a working implementation below.
+            removePage: function(pageId, callback) {
+                AP.request({
+                    url: "/rpc/json-rpc/confluenceservice-v2/removePage",
+                    contentType: "application/json",
+                    type: "POST",
+                    data: JSON.stringify([pageId]),
+                    success: callback
+                });
+            },
 
-### `data.js` working implementation
+            movePage: function (pageId, newParentId, callback) {
+                AP.request({
+                    url: "/rpc/json-rpc/confluenceservice-v2/movePage",
+                    contentType: "application/json",
+                    type: "POST",
+                    data: JSON.stringify([pageId, newParentId, "append"]),
+                    success: callback
+                });
+            },
 
-<a data-replace-text="Hide working implementation [-]" class="aui-expander-trigger" aria-controls="working-data-implementation">Show working implementation [+]</a>
-
-<div id="working-data-implementation" class="aui-expander-content">
-<pre><code data-lang="javascript">
-define(function() {
-    return {
-        getPageContentHierarchy: function(pageId, callback) {
-            AP.request({
-                url: "/rest/prototype/1/content/" + pageId + ".json?expand=children",
-                success: callback
-            });
-        },
-
-        getSpaceHierarchy: function(spaceKey, callback) {
-            AP.request({
-                url: "/rest/prototype/1/space/" + spaceKey + ".json?expand=rootpages",
-                success: callback
-            });
-        },
-
-        removePage: function(pageId, callback) {
-            AP.request({
-                url: "/rpc/json-rpc/confluenceservice-v2/removePage",
-                contentType: "application/json",
-                type: "POST",
-                data: JSON.stringify([pageId]),
-                success: callback
-            });
-        },
-
-        movePage: function (pageId, newParentId, callback) {
-            AP.request({
-                url: "/rpc/json-rpc/confluenceservice-v2/movePage",
-                contentType: "application/json",
-                type: "POST",
-                data: JSON.stringify([pageId, newParentId, "append"]),
-                success: callback
-            });
-        },
-
-        movePageToTopLevel: function(pageId, spaceKey, callback) {
-            AP.request({
-                url: "/rpc/json-rpc/confluenceservice-v2/movePageToTopLevel",
-                contentType: "application/json",
-                type: "POST",
-                data: JSON.stringify([pageId, spaceKey]),
-                success: callback
-            });
+            movePageToTopLevel: function(pageId, spaceKey, callback) {
+                AP.request({
+                    url: "/rpc/json-rpc/confluenceservice-v2/movePageToTopLevel",
+                    contentType: "application/json",
+                    type: "POST",
+                    data: JSON.stringify([pageId, spaceKey]),
+                    success: callback
+                });
+            }
         }
-    }
-});
-</code></pre>
-</div>
+    });
+    </code></pre>
+    </div>
 
 ## <a name="dialog"></a> Display a full-screen dialog
 
