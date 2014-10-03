@@ -23,9 +23,9 @@ add-on is handy to query, update, and delete Confluence pages. You'll also creat
 displaying content from your add-on.  
 
 Your add-on will use the <a href="https://docs.atlassian.com/confluence/REST/latest/" target="_blank">
-Confluence REST API </a>. At completion, your add-on will look a lot like this: 
+Confluence REST API</a>. At completion, your add-on will look a lot like this: 
 
-<img src="../assets/images/confluence-gardener-screen.png" width="100%" style="border:1px solid #999;margin-top:10px;" />
+<img src="../assets/images/confluence-gardener-screen.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
 
 ## <a name="environment"></a> Set up your development environment
 
@@ -283,7 +283,8 @@ page and space hiearchy in Confluence, and add Gardener functionality to move an
 1. Click a light blue name, like the __Welcome to the Confluence Demonstration Space__ page name.  
     You should see the menu snap open to display the page children:  
     <img src="../assets/images/confluence-gardener-1.png" width="80%" style="border:1px solid #999;margin-top:10px;" />  
-    Blue pages have children, whereas grey pages have no child pages underneath.  
+    Blue pages have children, whereas grey pages have no child pages underneath. You can also use your mouse to zoom in and out – 
+    just scroll your trackball up and down.   
 
 As you explore your Gardener add-on, you might notice that you're not able to actually remove pages. Let's fix that in the next 
 step. 
@@ -390,37 +391,9 @@ full-screen dialog.
         }
     });
     </code></pre>
-
-<img src="../assets/images/confluence-gardener-screen-2.png" width="100%" style="border:1px solid #999;margin-top:10px;" />
-
-### Display the dialog
-
-Open the `removePageDialog.js` file in your editor. You will see another empty function:
-
-<pre><code data-lang="javascript">
-define(function() {
-    return function (deleteCallback) {
-    }
-});
-</code></pre>
-
-The returned anonymous function performs needs to perform three small tasks:
-
 1. Load the [`dialog`](https://developer.atlassian.com/static/connect/docs/javascript/module-Dialog.html)
-and [`events`](https://developer.atlassian.com/static/connect/docs/javascript/module-Events.html) modules using `AP.require`.
-
-1. Unsubscribe from any previous `confirmPageRemoval` event bindings
-1. Subscribe to the `confirmPageRemoval` using the provided `deleteCallback` function as the listener.
-
-Go ahead and try to implement the function. If you get stuck you can expand a working implementation below.
-
-### Working implementation of `removePageDialog.js`
-
-<a data-replace-text="Hide removePageDialog.js [-]" class="aui-expander-trigger" aria-controls="complete-remove-dialog">Show removePageDialog.js [+]</a>
-
-<div id="complete-remove-dialog" class="aui-expander-content">
-<pre><code data-lang="javascript">
-define(function() {
+    and [`events`](https://developer.atlassian.com/static/connect/docs/javascript/module-Events.html) modules using `AP.require`: 
+    <pre><code data-lang="javascript">
     return function(deleteCallback) {
         AP.require(["dialog", "events"], function (dialog, events) {
             dialog.create({
@@ -431,13 +404,42 @@ define(function() {
                 submitText: "Remove",
                 cancelText: "cancel",
                 chrome: true
+            }); 
+    </code></pre>
+1. Unsubscribe from any previous `confirmPageRemoval` event bindings: 
+    <pre><code data-lang="javascript">
+           events.offAll("confirmPageRemoval");
+    </code></pre>
+1. Now, try subscribing to `confirmPageRemoval` event bindings.  
+
+    <a data-replace-text="Hide removePageDialog.js [-]" class="aui-expander-trigger" aria-controls="complete-remove-dialog">Show removePageDialog.js with subscription to `confirmPageRemoval`[+]</a>
+
+    <div id="complete-remove-dialog" class="aui-expander-content">
+    <pre><code data-lang="javascript">
+    define(function() {
+        return function(deleteCallback) {
+            AP.require(["dialog", "events"], function (dialog, events) {
+                dialog.create({
+                    key: 'gardener-remove-dialog',
+                    width: "400px",
+                    height: "80px",
+                    header: "Remove page?",
+                    submitText: "Remove",
+                    cancelText: "cancel",
+                    chrome: true
+                });
+
+                events.offAll("confirmPageRemoval");
+                events.on("confirmPageRemoval", deleteCallback);
             });
+        }
+    });
+    </code></pre></div>
+1. In Confluence Gardener, click __Remove__ on a page. 
+    You should see a dialog appear: 
+    <img src="../assets/images/confluence-gardener-dialog.png" width="80%" style="border:1px solid #999;margin-top:10px;" />  
+    If you don't see a dialog, try a hard refresh, or turning off the cache in your browser developer console. 
 
-            events.offAll("confirmPageRemoval");
-            events.on("confirmPageRemoval", deleteCallback);
-        });
-    }
-});
-</code></pre></div>
+## What's next? 
 
-That's it! Feel free to play around with the other portions of Confluence Gardener.
+You've built an add-on that can help you prune pages from Confluence spaces. Now you're ready to explore our [Connect Cookbook](./connect-cookbook.html).
