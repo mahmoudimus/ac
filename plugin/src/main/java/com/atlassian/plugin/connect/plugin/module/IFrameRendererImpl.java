@@ -131,7 +131,8 @@ public final class IFrameRendererImpl implements IFrameRenderer
         ctx.put("userId", remoteUsername == null ? "" : remoteUsername);
         ctx.put("userKey", user == null ? "" : user.getUserKey().getStringValue());
 
-        ctx.put("data", ImmutableMap.of("timeZone", timeZone));
+        ctx.put("timeZone", timeZone);
+
         if (dialog != null && dialog.length == 1) { ctx.put("dialog", dialog[0]); }
 
         String[] simpleDialog = queryParams.get("simpleDialog");

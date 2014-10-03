@@ -1,0 +1,15 @@
+{
+    "ns":"$namespace",
+    "key":"$plugin.key",
+    "cp":"$contextPath",
+    "uid":"$userId",
+    "ukey":"$userKey",
+    "dlg":"$!dialog",
+    "simpleDlg":"$!simpleDialog",
+    "general":"$!general",
+    "w":"$!width",
+    "h":"$!height",
+    "src":"$iframeSrcHtml",
+    "productCtx":"$productContextHtml",
+    "timeZone":"$timeZone"
+}
