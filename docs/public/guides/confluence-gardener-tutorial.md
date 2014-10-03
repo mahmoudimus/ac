@@ -279,109 +279,121 @@ page and space hiearchy in Confluence, and add Gardener functionality to move an
 1. Now, refresh Gardener in your browser.  
     You should see a page like this:  
     <img src="../assets/images/confluence-gardener-.5.png" width="80%" style="border:1px solid #999;margin-top:10px;" />  
-    Dark blue names indicate the space names, and blue signifies pages with children. Click a 
+    Dark blue names indicate the space names, and light blue signifies pages with children.  
+1. Click a light blue name, like the __Welcome to the Confluence Demonstration Space__ page name.  
+    You should see the menu snap open to display the page children:  
+    <img src="../assets/images/confluence-gardener-1.png" width="80%" style="border:1px solid #999;margin-top:10px;" />  
+    Blue pages have children, whereas grey pages have no child pages underneath.  
+
+As you explore your Gardener add-on, you might notice that you're not able to actually remove pages. Let's fix that in the next 
+step. 
 
 ## <a name="dialog"></a> Display a full-screen dialog
 
-Now, you've implemented REST client functions, so you can start to explore how Gardener works.  
-Having implemented all of the REST Client functions, you can now feel free to click around and explore Confluence
- Gardener. However you may have noticed that the remove button doesn't work. Let's make it display [a full-screen
- dialog](https://developer.atlassian.com/static/connect/docs/javascript/module-Dialog.html) now.
+When you attempt to remove a page, nothing happens. In this step, you'll add a [a full-screen 
+dialog](https://developer.atlassian.com/static/connect/docs/javascript/module-Dialog.html) to confirm the action, 
+and make sure it actually works. 
+
+First, you'll declare the dialog in your `atlassian-connect.json` descriptor file. These dialogs are full-fledged AUI dialogs 
+that exist in the parent frame (not in the same iframe Gardener uses). We'll provide the HTML source for the dialog, you'll 
+register a new [`webItem`](https://developer.atlassian.com/static/connect/docs/modules/jira/web-item.html) that loads inside the 
+full-screen dialog.
+
+1. Open `atlassian-connect.json` in your editor.  
+1. Add the following snippet after the `generalPages` entry in the `modules` object:
+    <pre><code data-language="javascript">
+    "webItems": [
+        {
+            "key": "gardener-remove-dialog",
+            "url": "/remove-page-dialog.html",
+            "location": "system.top.navigation.bar",
+            "weight": 200,
+            "context": "addon",
+            "target": {
+                "type": "dialog",
+                "options": {
+                    "width": "234px",
+                    "height": "324px"
+                }
+            },
+            "name": {
+                "value": "dialog"
+            }
+        }
+    ]
+    </code></pre>
+
+    <a data-replace-text="Hide atlassian-connect.json [-]" class="aui-expander-trigger" aria-controls="complete-descriptor">Show atlassian-connect.json [+]</a> with the dialog `webItems` entry
+
+    <div id="complete-descriptor" class="aui-expander-content">
+    <pre><code data-language="javascript">
+    {
+        "key": "confluence-gardener",
+        "name": "Confluence Gardener",
+        "description": "Prune back your Confluence page graph.",
+        "baseUrl": "http://localhost:8000",
+        "vendor": {
+            "name": "Atlassian Labs",
+            "url": "https://www.atlassian.com"
+        },
+        "authentication": {
+            "type": "none"
+        },
+        "version": "0.1",
+        "modules": {
+        "generalPages": [
+             {
+                 "key": "gardener",
+                 "url": "/index.html?spaceKey={space.key}",
+                 "location": "system.content.action",
+                 "name": {
+                     "value": "Confluence Gardener"
+                 }
+             }
+         ],
+         "webItems": [
+             {
+                 "key": "gardener-remove-dialog",
+                 "url": "/remove-page-dialog.html",
+                 "location": "system.top.navigation.bar",
+                 "weight": 200,
+                 "context": "addon",
+                 "target": {
+                     "type": "dialog",
+                     "options": {
+                         "width": "234px",
+                         "height": "324px"
+                     }
+                 },
+                 "name": {
+                     "value": "dialog"
+                 }
+             }
+         ]
+        },
+        "scopes": [
+            "read",
+            "write",
+            "delete"
+        ]
+    }
+    </code></pre></div>
+1. Reinstall your add-on with the same Bash script as before:  
+    <pre><code data-lang="text">$ ./install-confluence-gardener.sh</code></pre>  
+    Alternatively, you can [reinstall your add-on in the UPM](#installing.  
+    Your add-on won't show any changes – yet. In the next step, you'll implement a function to display the dialog.
+1. In your editor, open `removePageDialog.js`. 
+    You should see another empty function: 
+    <pre><code data-lang="javascript">
+    define(function() {
+        return function (deleteCallback) {
+        }
+    });
+    </code></pre>
 
 <img src="../assets/images/confluence-gardener-screen-2.png" width="100%" style="border:1px solid #999;margin-top:10px;" />
 
-### Declare the Dialog in the atlassian-connect.json descriptor file.
-
-Full-screen dialogs are fully-fledged AUI Dialogs which exist in the parent frame (that is, not in the iframe
-Confluence Gardener displays in). This AUI Dialog itself contains an iframe which refers back to a web page your add-on
-hosts. We've created the HTML of that page for you, but we need to reference it in the atlassian-connect.json
-descriptor.
-
-In your editor, open `atlassian-connect.json` and add the following snippet after the `generalPages` entry
-in the `modules` object and re-install the add-on using [the method you used above](#installing).
-
-This registers a new [`webItem`](https://developer.atlassian.com/static/connect/docs/modules/jira/web-item.html) which
-  will load inside the full-screen Dialog.
-
-<pre><code data-language="javascript">
-"webItems": [
-    {
-        "key": "gardener-remove-dialog",
-        "url": "/remove-page-dialog.html",
-        "location": "system.top.navigation.bar",
-        "weight": 200,
-        "context": "addon",
-        "target": {
-            "type": "dialog",
-            "options": {
-                "width": "234px",
-                "height": "324px"
-            }
-        },
-        "name": {
-            "value": "dialog"
-        }
-    }
-]
-</code></pre>
-
-<a data-replace-text="Hide atlassian-connect.json [-]" class="aui-expander-trigger" aria-controls="complete-descriptor">Show atlassian-connect.json [+]</a> with the dialog `webItems` entry.
-
-<div id="complete-descriptor" class="aui-expander-content">
-<pre><code data-language="javascript">
-{
-    "key": "confluence-gardener",
-    "name": "Confluence Gardener",
-    "description": "Prune back your Confluence page graph.",
-    "baseUrl": "http://localhost:8000",
-    "vendor": {
-        "name": "Atlassian Labs",
-        "url": "https://www.atlassian.com"
-    },
-    "authentication": {
-        "type": "none"
-    },
-    "version": "0.1",
-    "modules": {
-    "generalPages": [
-         {
-             "key": "gardener",
-             "url": "/index.html?spaceKey={space.key}",
-             "location": "system.content.action",
-             "name": {
-                 "value": "Confluence Gardener"
-             }
-         }
-     ],
-     "webItems": [
-         {
-             "key": "gardener-remove-dialog",
-             "url": "/remove-page-dialog.html",
-             "location": "system.top.navigation.bar",
-             "weight": 200,
-             "context": "addon",
-             "target": {
-                 "type": "dialog",
-                 "options": {
-                     "width": "234px",
-                     "height": "324px"
-                 }
-             },
-             "name": {
-                 "value": "dialog"
-             }
-         }
-     ]
-    },
-    "scopes": [
-        "read",
-        "write",
-        "delete"
-    ]
-}
-</code></pre></div>
-
-### Implement a function to display the Remove page dialog
+### Display the dialog
 
 Open the `removePageDialog.js` file in your editor. You will see another empty function:
 
