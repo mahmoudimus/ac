@@ -79,64 +79,85 @@ Once you have all the prerequisites, you'll clone an existing repository to kick
 Now, you're ready to start developing the Confluence Gardener add-on.  
 
 
-## <a name="hosting-locally"></a> Hosting your add-on locally
+## <a name="hosting-locally"></a> Host & install your add-on
 
-Confluence Gardener is a static Atlassian Connect add-on and can be hosted with a simple static web server.
+Confluence Gardener is a static Connect add-on that you can host with a simple web server. You'll use a simple 
+Node.js-powered server to host your add-on locally. 
 
-We'll use a simple Node.js powered web server to host your add-on locally.
+After you've spun up your server, you'll install your copy of Gardener to Confluence. You'll use a Bash script 
+included in the repo you cloned to install the add-on.   
 
 1. From the `confluence-gardener` directory, start your server on port 8000:
-
     <span data-include="/assets/includes/start-http-server.html"></span>
 
-1. Confirm your server is running by loading http://localhost:8000/atlassian-connect.json in your browser.
+1. In your browser, navigate to your descriptor file at <a href="http://localhost:8000/atlassian-connect.json" 
+    target="_blank">http://localhost:8000/atlassian-connect.json</a>  
 
-    The result should begin with:
+    <a data-replace-text="Hide atlassian-connect.json [-]" class="aui-expander-trigger" aria-controls="complete-descriptor">Show atlassian-connect.json [+]</a>
 
-    <pre><code data-lang="javascript">
+    <div id="complete-descriptor" class="aui-expander-content">
+    <pre><code data-language="javascript">
     {
-        key: "confluence-gardener",
-        name: "Confluence Gardener",
-        description: "Prune back your Confluence page graph.",
-        baseUrl: "http://localhost:8000",
-        ...
-    </code></pre>
+        "key": "confluence-gardener",
+        "name": "Confluence Gardener",
+        "description": "Prune back your Confluence page graph.",
+        "baseUrl": "http://localhost:8000",
+        "vendor": {
+            "name": "Atlassian Labs",
+            "url": "https://www.atlassian.com"
+        },
+        "authentication": {
+            "type": "none"
+        },
+        "version": "0.1",
+        "modules": {
+            "generalPages": [
+                 {
+                     "key": "gardener",
+                     "url": "/index.html?spaceKey={space.key}",
+                     "location": "system.content.action",
+                     "name": {
+                         "value": "Confluence Gardener"
+                     }
+                 }
+             ]
+        },
+        "scopes": [
+            "read",
+            "write",
+            "delete"
+        ]
+    }
+    </code></pre></div>
+1. In a new terminal window, run the `install-confluence-gardener.sh` script. 
+    <pre><code data-lang="text">$ ./install-confluence-gardener.sh</code></pre>  
+    Alternatively, you can install Gardener using the <a href="https://confluence.atlassian.com/x/8AJTE" target="_blank">Universal Plugin Manger (UPM)</a>.  
+    <a data-replace-text="Hide UPM installation instructions [-]" class="aui-expander-trigger" aria-controls="upm-instructions">Expand UPM installation instructions [+]</a>
 
-## <a name="installing"></a> Installing the add-on
+    <div id="upm-instructions" class="aui-expander-content">
+        <h3>Set the Confluence Base URL</h3>
 
-We've provided you with a file called  `install-confluence-gardener.sh`. If you're able to run Bash scripts, run it by entering the
-following command from the Confluence Gardener directory to install the add-on.
+        <ul>
+            <li>Navigate to <a href="http://localhost:1990/confluence/admin/editgeneralconfig.action" target="_blank">http://localhost:1990/confluence/admin/editgeneralconfig.action</a>.</li>
+            <li>Set your `Server Base URL` field to `http://localhost:1990/confluence`.</li>
+            <li>Click <b>Save</b>.</li>
+        </ul>
 
-<pre><code data-lang="text">$ ./install-confluence-gardener.sh</code></pre>
+        <h3>Install Gardener</h3>
 
-Alternatively you can install the add-on using the Universal Plugin Manager (UPM).
-
-<a data-replace-text="Hide UPM installation instructions [-]" class="aui-expander-trigger" aria-controls="upm-instructions">Expand UPM installation instructions [+]</a>
-
-<div id="upm-instructions" class="aui-expander-content">
-    <h3>Set the Confluence Base URL</h3>
-
-    <ul>
-        <li>Navigate to http://localhost:1990/confluence/admin/editgeneralconfig.action</li>
-        <li>Set the field `Server Base URL` to `http://localhost:1990/confluence` if it is not already.</li>
-        <li>Click save.</li>
-    </ul>
-
-    <h3>Install the plugin</h3>
-
-    <ul>
-        <li>Navigate to http://localhost:1990/confluence/plugins/servlet/upm</li>
-        <li>Click Upload add-on.</li>
-        <li>Enter http://localhost:8000/atlassian-connect.json</li>
-        <li>Click `Upload`</li>
-    </ul>
-</div>
-
-Due to some missing functions we're going to implement below, Confluence Gardener won't work yet, but feel free to try
-to load it anyway.
-
-1. Load the Demonstration Space by browsing to `http://localhost:1990/confluence/display/ds`
-1. Click the Tools menu at the top right and click 'Confluence Gardener'
+        <ul>
+            <li>Navigate to http://localhost:1990/confluence/plugins/servlet/upm</li>
+            <li>Click <b>Upload add-on</b>.</li>
+            <li>Enter <tt>http://localhost:8000/atlassian-connect.json</tt></li>
+            <li>Click <b>Upload</b>.</li>
+        </ul>
+    </div>
+    Gardener doesn't have functionality yet (you'll implement that in future steps), but feel free to try to load it anyway. 
+1.  Browse to the Demonstration space at <a href="http://localhost:1990/confluence/display/ds" 
+    target="_blank"> http://localhost:1990/confluence/display/ds</a>.
+1. Click <b>Tools</b> at the top right, and choose <b>Confluence Gardener</b>.  
+    You should see a page like this: 
+    <img src="../assets/images/confluence-gardener-0.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
 
 Let's implement those missing functions now.
 
