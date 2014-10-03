@@ -150,6 +150,7 @@ included in the repo you cloned to install the add-on.
             <li>Click <b>Upload</b>.</li>
         </ul>
     </div>
+
     Gardener doesn't have functionality yet (you'll implement that in future steps), but feel free to try to load it anyway. 
 1.  Browse to the Demonstration space at <a href="http://localhost:1990/confluence/display/ds" 
     target="_blank"> http://localhost:1990/confluence/display/ds</a>.
