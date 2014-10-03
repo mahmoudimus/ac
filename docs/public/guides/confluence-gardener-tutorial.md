@@ -79,8 +79,8 @@ Once you have all the prerequisites, you'll clone an existing repository to kick
 
 ## <a name="hosting-locally"></a> Host & install your add-on
 
-Confluence Gardener is a static Connect add-on that you can host with a simple web server. You'll use a simple 
-Node.js-powered server to host your add-on locally. 
+Confluence Gardener is a static Connect add-on that can be served by a simple web server. Static add-ons can be
+ cached with a CDN. We'll use a simple Node.js-powered static web server to host your add-on locally.
 
 After you've spun up your server, you'll install your copy of Gardener to Confluence. You'll use a Bash script 
 included in the repo you cloned to install the add-on.   
