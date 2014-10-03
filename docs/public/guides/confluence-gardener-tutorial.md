@@ -193,33 +193,33 @@ page and space hiearchy in Confluence, and add Gardener functionality to move an
     </code></pre> 
 1. Implement `getPageContentHierarchy` to get the page hierachy in your Confluence instance:
     <pre><code data-lang="javascript">
-            getPageContentHierarchy: function(pageId, callback) {
-                AP.request({
-                    url: "/rest/prototype/1/content/" + pageId + ".json?expand=children",
-                    success: callback
-                });
-            },
+    getPageContentHierarchy: function(pageId, callback) {
+        AP.request({
+            url: "/rest/prototype/1/content/" + pageId + ".json?expand=children",
+            success: callback
+        });
+    },
     </code></pre>
 1.  Next, implement `getSpaceHierarchy` to see the space hierarchy: 
     <pre><code data-lang="javascript">
-            getSpaceHierarchy: function(spaceKey, callback) {
-                AP.request({
-                    url: "/rest/prototype/1/space/" + spaceKey + ".json?expand=rootpages",
-                    success: callback
-                });
-            },
+    getSpaceHierarchy: function(spaceKey, callback) {
+        AP.request({
+            url: "/rest/prototype/1/space/" + spaceKey + ".json?expand=rootpages",
+            success: callback
+        });
+    },
     </code></pre>  
 1. Implement `removePage` so your add-on can effectively delete Confluence pages: 
     <pre><code data-lang="javascript">
-            removePage: function(pageId, callback) {
-                AP.request({
-                    url: "/rpc/json-rpc/confluenceservice-v2/removePage",
-                    contentType: "application/json",
-                    type: "POST",
-                    data: JSON.stringify([pageId]),
-                    success: callback
-                });
-            },
+    removePage: function(pageId, callback) {
+        AP.request({
+            url: "/rpc/json-rpc/confluenceservice-v2/removePage",
+            contentType: "application/json",
+            type: "POST",
+            data: JSON.stringify([pageId]),
+            success: callback
+        });
+    },
     </code></pre>
 1. Finally, try to implement `movePage` and `movePageToTopLevel` on your own. 
     If you get stuck, expand the example below.  
