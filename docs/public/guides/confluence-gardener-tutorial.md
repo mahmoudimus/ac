@@ -222,7 +222,7 @@ page and space hiearchy in Confluence, and add Gardener functionality to move an
     </code></pre>
 1. Finally, try to implement `movePage` and `movePageToTopLevel` on your own. 
     If you get stuck, expand the example below.  
-    
+
     <a data-replace-text="Hide working implementation [-]" class="aui-expander-trigger" aria-controls="working-data-implementation">Show working implementation [+]</a>
 
     <div id="working-data-implementation" class="aui-expander-content">
@@ -276,9 +276,14 @@ page and space hiearchy in Confluence, and add Gardener functionality to move an
     });
     </code></pre>
     </div>
+1. Now, refresh Gardener in your browser.  
+    You should see a page like this:  
+    <img src="../assets/images/confluence-gardener-.5.png" width="80%" style="border:1px solid #999;margin-top:10px;" />  
+    Dark blue names indicate the space names, and blue signifies pages with children. Click a 
 
 ## <a name="dialog"></a> Display a full-screen dialog
 
+Now, you've implemented REST client functions, so you can start to explore how Gardener works.  
 Having implemented all of the REST Client functions, you can now feel free to click around and explore Confluence
  Gardener. However you may have noticed that the remove button doesn't work. Let's make it display [a full-screen
  dialog](https://developer.atlassian.com/static/connect/docs/javascript/module-Dialog.html) now.
