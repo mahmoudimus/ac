@@ -325,9 +325,9 @@ full-screen dialog.
     ]
     </code></pre>
 
-    <a data-replace-text="Hide atlassian-connect.json [-]" class="aui-expander-trigger" aria-controls="complete-descriptor">Show atlassian-connect.json [+]</a> with the dialog `webItems` entry
+    <a data-replace-text="Hide atlassian-connect.json [-]" class="aui-expander-trigger" aria-controls="complete-descriptor-with-webitem">Show atlassian-connect.json [+]</a> with the dialog `webItems` entry
 
-    <div id="complete-descriptor" class="aui-expander-content">
+    <div id="complete-descriptor-with-webitem" class="aui-expander-content">
     <pre><code data-language="javascript">
     {
         "key": "confluence-gardener",
