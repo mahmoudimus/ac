@@ -382,7 +382,7 @@ full-screen dialog.
     </code></pre></div>
 1. Reinstall your add-on with the same Bash script as before:  
     <pre><code data-lang="text">$ ./install-confluence-gardener.sh</code></pre>  
-    Alternatively, you can [reinstall your add-on in the UPM](#installing.  
+    Alternatively, you can [reinstall your add-on in the UPM](#hosting-locally).
     Your add-on won't show any changes – yet. In the next step, you'll implement a function to display the dialog.
 1. In your editor, open `removePageDialog.js`. 
     You should see another empty function: 
