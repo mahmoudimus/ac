@@ -221,7 +221,7 @@ public class ConnectJsonExamples
     {
         WebPanelModuleBean webPanelModuleBean = WebPanelModuleBean.newWebPanelBean()
                 .withName(new I18nProperty("My Web Panel", ""))
-                .withUrl("http://www.example.com/web-panel")
+                .withUrl("/web-panel")
                 .withKey("my-web-panel")
                 .withLocation("com.atlassian.jira.plugin.headernav.left.context")
                 .withLayout(new WebPanelLayout("10px", "100%"))
