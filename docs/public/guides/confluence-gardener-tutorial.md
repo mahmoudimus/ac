@@ -30,8 +30,8 @@ Confluence REST API</a>. At completion, your add-on will look a lot like this:
 ## <a name="environment"></a> Configuring your development environment
 
 This step confirms your development environment is configured correctly. You'll need <a href="http://git-scm.com/" 
-target="_blank">Git</a>, <a href="http://nodejs.org/" target="_blank">Node.js</a>, and the 
-[Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads). 
+target="_blank">Git</a>, <a href="http://nodejs.org/" target="_blank">Node.js</a>, and your
+[Atlassian add-on development environment configured](#environment).
 
 The Atlassian Plugin SDK provides a command toolkit vital for developing Atlassian add-ons.
 To run Confluence Gardener, you'll use a one of these commands, 
