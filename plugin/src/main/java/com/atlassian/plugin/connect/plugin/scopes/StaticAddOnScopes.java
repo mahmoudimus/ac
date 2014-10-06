@@ -43,7 +43,7 @@ public class StaticAddOnScopes
     {
         // TODO ACDEV-1214: don't load integration_test scopes in prod
         // TODO: Tempo is only a temporary addition to facilitate the migration to Connect
-        return buildFor("jira", "common", "tempo", "integration_test");
+        return buildFor("jira", "jiraagile", "common", "tempo", "integration_test");
     }
 
     /**
