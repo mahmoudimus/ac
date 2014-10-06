@@ -34,9 +34,9 @@ target="_blank">Git</a>, <a href="http://nodejs.org/" target="_blank">Node.js</a
 [Atlassian add-on development environment configured](#environment).
 
 The Atlassian Plugin SDK provides a command toolkit vital for developing Atlassian add-ons.
-To run Confluence Gardener, you'll use a one of these commands, 
-[`atlas-run-standalone`](https://developer.atlassian.com/display/DOCS/atlas-run-standalone), which runs a copy of 
-an Atlassian product on your machine.
+To run Confluence Gardener, you'll use the
+[`atlas-run-standalone`](https://developer.atlassian.com/display/DOCS/atlas-run-standalone) command, which starts a
+version of an Atlassian product tuned for development.
 
 Once you have all the prerequisites, you'll clone an existing repository to kick things off.  
 
