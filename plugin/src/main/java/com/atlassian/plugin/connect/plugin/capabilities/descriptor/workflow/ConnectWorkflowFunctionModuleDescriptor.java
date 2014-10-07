@@ -15,15 +15,12 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowPostFunctionEvent;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry;
-import com.atlassian.webhooks.spi.provider.PluginModuleListenerParameters;
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableMap;
+import com.atlassian.webhooks.api.register.listener.ModuleDescriptorWebHookListenerRegistry;
+import com.atlassian.webhooks.api.register.listener.WebHookListener;
 import org.dom4j.Element;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 
@@ -38,10 +35,10 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
 {
     public static final String TRIGGERED_URL = "triggeredUrl";
 
-    private final ModuleDescriptorWebHookListenerRegistry webHookConsumerRegistry;
+    private final ModuleDescriptorWebHookListenerRegistry webHookListenerRegistry;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
-    private URI triggeredUri;
+    private String triggeredUri;
     private String addonKey;
 
     public ConnectWorkflowFunctionModuleDescriptor(
@@ -54,13 +51,13 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
         super(authenticationContext, componentAccessor.getComponent(OSWorkflowConfigurator.class),
                 componentAccessor.getComponent(ComponentClassManager.class), moduleFactory);
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
-        this.webHookConsumerRegistry = checkNotNull(webHookConsumerRegistry);
+        this.webHookListenerRegistry = checkNotNull(webHookConsumerRegistry);
     }
 
     public void init(Plugin plugin, Element element) throws PluginParseException
     {
         super.init(plugin, element);
-        this.triggeredUri = URI.create(element.attributeValue(TRIGGERED_URL));
+        this.triggeredUri = element.attributeValue(TRIGGERED_URL);
         this.addonKey = addonKeyOnly(getKey());
     }
 
@@ -68,24 +65,18 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     public void enabled()
     {
         super.enabled();
-        webHookConsumerRegistry.register(
+        webHookListenerRegistry.register(
                 RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID,
-                addonKey,
-                triggeredUri,
-                new PluginModuleListenerParameters(plugin.getKey(), Optional.of(getKey()), ImmutableMap.<String, Object>of(),
-                        RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
+                WebHookListener.fromModuleDescriptor(addonKey, getKey()).to(triggeredUri).build()
         );
     }
 
     @Override
     public void disabled()
     {
-        webHookConsumerRegistry.unregister(
+        webHookListenerRegistry.unregister(
                 RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID,
-                addonKey,
-                triggeredUri,
-                new PluginModuleListenerParameters(plugin.getKey(), Optional.of(getKey()), ImmutableMap.<String, Object>of(),
-                        RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID)
+                WebHookListener.fromModuleDescriptor(addonKey, getKey()).to(triggeredUri).build()
         );
 
         super.disabled();

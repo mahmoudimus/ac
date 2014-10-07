@@ -1,36 +1,41 @@
 package com.atlassian.plugin.connect.plugin.product.confluence.webhook;
 
-import java.util.List;
-
 import com.atlassian.confluence.event.events.ConfluenceEvent;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.plugin.connect.plugin.product.EventMapper;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.webhooks.spi.provider.EventSerializer;
-import com.atlassian.webhooks.spi.provider.EventSerializerFactory;
-import com.atlassian.webhooks.spi.provider.EventSerializers;
-
+import com.atlassian.webhooks.api.util.EventSerializers;
+import com.atlassian.webhooks.spi.EventSerializer;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 /**
- * Maps {@link com.atlassian.confluence.event.events.ConfluenceEvent} instances to {@link com.atlassian.webhooks.spi.provider.EventSerializer} instances so that the event information
- * can be transmitted via the WebHookPublisher.
+ * Maps {@link com.atlassian.confluence.event.events.ConfluenceEvent} instances to {@link
+ * com.atlassian.webhooks.spi.EventSerializer} instances so that the event information can be transmitted via the
+ * WebHookPublisher.
  */
 @ConfluenceComponent
-public final class ConfluenceEventSerializerFactory implements EventSerializerFactory<ConfluenceEvent>
+public final class ConfluenceEventSerializer implements EventSerializer<ConfluenceEvent>
 {
-    private static final Logger log = LoggerFactory.getLogger(ConfluenceEventSerializerFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(ConfluenceEventSerializer.class);
+    public static final EventSerializer<ConfluenceEvent> EMPTY_SERIALIZER = new EventSerializer<ConfluenceEvent>()
+    {
+        @Override
+        public String serialize(final ConfluenceEvent event)
+        {
+            return "";
+        }
+    };
 
     private final List<EventMapper<ConfluenceEvent>> mappers;
 
     @Autowired
-    public ConfluenceEventSerializerFactory(UserManager userManager, SettingsManager confluenceSettingsManager)
+    public ConfluenceEventSerializer(UserManager userManager, SettingsManager confluenceSettingsManager)
     {
         // This list is deliberately ordered. More-specific mappers such as PageMoveEventMapper must appear in the
         // list _before_ less-specific mappers such as PageEventMapper, or else they will never get invoked.
@@ -53,18 +58,18 @@ public final class ConfluenceEventSerializerFactory implements EventSerializerFa
     }
 
     @Override
-    public EventSerializer create(ConfluenceEvent event)
+    public String serialize(final ConfluenceEvent event)
     {
-        for (EventMapper<ConfluenceEvent> mapper : mappers)
+        for (final EventMapper<ConfluenceEvent> mapper : mappers)
         {
             if (mapper.handles(event))
             {
-                return EventSerializers.forMap(event, mapper.toMap(event));
+                return EventSerializers.objectToJson(mapper.toMap(event));
             }
         }
 
         // This should never really happen; the mappers list has a default mapper within it that handles every type of ConfluenceEvent.
         log.warn(String.format("Event %s was not recognised by any Event to WebHook mapper.", event.getClass().getName()));
-        return EventSerializers.forMap(event, ImmutableMap.<String, Object>builder().build());
+        return "{}";
     }
 }

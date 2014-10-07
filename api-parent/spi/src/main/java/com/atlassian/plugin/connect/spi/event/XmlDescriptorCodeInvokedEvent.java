@@ -8,7 +8,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Fired when code used in processing the deprecated Connect XML descriptor format is invoked.
  */
 @EventName("connect.xmldescriptor.code.invoked")
-public class XmlDescriptorCodeInvokedEvent
+public class XmlDescriptorCodeInvokedEvent implements PluginRelatedEvent
 {
     private final String addOnKey;
     private final StackTraceElement[] stackTrace;
@@ -27,5 +27,11 @@ public class XmlDescriptorCodeInvokedEvent
     public StackTraceElement[] getStackTrace()
     {
         return stackTrace;
+    }
+
+    @Override
+    public String getPluginKey()
+    {
+        return getAddOnKey();
     }
 }

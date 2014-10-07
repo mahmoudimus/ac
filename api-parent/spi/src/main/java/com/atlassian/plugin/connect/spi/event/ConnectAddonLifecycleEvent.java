@@ -9,7 +9,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * The actual subscribing to these events from the remote application's
  * perspective is done via a lifecycle entry in the json descriptor.
  */
-public abstract class ConnectAddonLifecycleEvent
+public abstract class ConnectAddonLifecycleEvent implements PluginRelatedEvent
 {
     private final String pluginKey;
 
@@ -18,6 +18,7 @@ public abstract class ConnectAddonLifecycleEvent
         this.pluginKey = checkNotNull(pluginKey);
     }
 
+    @Override
     public final String getPluginKey()
     {
         return pluginKey;

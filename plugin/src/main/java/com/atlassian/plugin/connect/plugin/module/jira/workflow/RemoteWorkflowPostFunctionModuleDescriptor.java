@@ -7,17 +7,15 @@ import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.workflow.ConnectWorkflowFunctionModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WorkflowPostFunctionResource;
 import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.*;
 import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry;
+import com.atlassian.webhooks.api.register.listener.ModuleDescriptorWebHookListenerRegistry;
 import org.dom4j.Element;
 
 /**
  * A remote post-function module descriptor.
- *
+ * <p/>
  * TODO delete this when we drop support for XML
  */
 @XmlDescriptor

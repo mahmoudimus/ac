@@ -1,7 +1,8 @@
 package com.atlassian.plugin.connect.plugin.product.confluence.webhook;
 
 import com.atlassian.confluence.event.events.security.ContentPermissionEvent;
-import com.atlassian.webhooks.spi.provider.EventMatcher;
+import com.atlassian.webhooks.api.register.listener.WebHookListener;
+import com.atlassian.webhooks.spi.EventMatcher;
 
 /**
  * Currently, the ContentPermissionEvent is fired a little too aggressively. It gets twice during regular permission
@@ -12,8 +13,8 @@ import com.atlassian.webhooks.spi.provider.EventMatcher;
 public class NonEmptyContentPermissionEventMatcher implements EventMatcher<ContentPermissionEvent>
 {
     @Override
-    public boolean matches(ContentPermissionEvent contentPermissionEvent, Object o)
+    public boolean matches(final ContentPermissionEvent event, final WebHookListener listener)
     {
-        return contentPermissionEvent.getContentPermission() != null;
+        return event.getContentPermission() != null;
     }
 }

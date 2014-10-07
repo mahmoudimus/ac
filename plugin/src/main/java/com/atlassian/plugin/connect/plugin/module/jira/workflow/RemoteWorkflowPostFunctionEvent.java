@@ -1,10 +1,11 @@
 package com.atlassian.plugin.connect.plugin.module.jira.workflow;
 
-import com.atlassian.webhooks.spi.provider.EventMatcher;
-import com.atlassian.webhooks.spi.provider.EventSerializationException;
-import com.atlassian.webhooks.spi.provider.EventSerializer;
-import com.atlassian.webhooks.spi.provider.EventSerializerFactory;
-import com.atlassian.webhooks.spi.provider.PluginModuleListenerParameters;
+import com.atlassian.webhooks.api.register.listener.WebHookListener;
+import com.atlassian.webhooks.api.register.listener.WebHookListenerRegistrationDetails;
+import com.atlassian.webhooks.spi.EventMatcher;
+import com.atlassian.webhooks.spi.EventSerializer;
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import org.json.JSONObject;
 
 public class RemoteWorkflowPostFunctionEvent
@@ -25,41 +26,36 @@ public class RemoteWorkflowPostFunctionEvent
         return jsonObject.toString();
     }
 
-    public boolean matches(final PluginModuleListenerParameters consumerParams)
-    {
-        String fullModuleKey = consumerParams.getPluginKey() + consumerParams.getModuleKey().get();
-        return this.fullModuleKey.equals(fullModuleKey);
-    }
-
     public static final class FunctionEventMatcher implements EventMatcher<RemoteWorkflowPostFunctionEvent>
     {
         @Override
-        public boolean matches(final RemoteWorkflowPostFunctionEvent event, final Object consumerParams)
+        public boolean matches(final RemoteWorkflowPostFunctionEvent event, final WebHookListener listener)
         {
-            return consumerParams instanceof PluginModuleListenerParameters
-                    && event.matches((PluginModuleListenerParameters) consumerParams);
+            return listener.getRegistrationDetails().getModuleDescriptorDetails().fold(new Supplier<Boolean>()
+            {
+                @Override
+                public Boolean get()
+                {
+                    return Boolean.FALSE;
+                }
+            }, new Function<WebHookListenerRegistrationDetails.ModuleDescriptorRegistrationDetails, Boolean>()
+            {
+                @Override
+                public Boolean apply(final WebHookListenerRegistrationDetails.ModuleDescriptorRegistrationDetails registrationDetails)
+                {
+                    String fullModuleKey = registrationDetails.getPluginKey() + registrationDetails.getModuleKey().or("");
+                    return event.fullModuleKey.equals(fullModuleKey);
+                }
+            });
         }
     }
 
-    public static final class FunctionEventSerializerFactory implements EventSerializerFactory<RemoteWorkflowPostFunctionEvent>
+    public static final class FunctionEventSerializerFactory implements EventSerializer<RemoteWorkflowPostFunctionEvent>
     {
         @Override
-        public EventSerializer create(final RemoteWorkflowPostFunctionEvent event)
+        public String serialize(final RemoteWorkflowPostFunctionEvent event)
         {
-            return new EventSerializer()
-            {
-                @Override
-                public Object getEvent()
-                {
-                    return event;
-                }
-
-                @Override
-                public String getWebHookBody() throws EventSerializationException
-                {
-                    return event.getJson();
-                }
-            };
+            return event.getJson();
         }
     }
 }
