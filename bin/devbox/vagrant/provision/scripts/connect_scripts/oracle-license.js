@@ -1,7 +1,8 @@
 var sys = require("sys");
 var fs = require('fs');
+var licenseCheckFile='/home/vagrant/scripts/license.log';
 
-fs.readFile('/home/vagrant/scripts/license.log', function read(err, data) {
+fs.readFile(licenseCheckFile, function read(err, data) {
         if (err) {
 			var exec = require('child_process').exec;
 			console.log('│  Oracle Binary Code License Agreement for the Java SE Platform Products   │');
@@ -17,31 +18,43 @@ fs.readFile('/home/vagrant/scripts/license.log', function read(err, data) {
 			console.log('│                                                                           │');
 			console.log('│                                                                           │');
 			console.log('│ Do you accept the Oracle Binary Code license terms?                       │');
-			console.log('│ (yes/no)                                                                  │');
+			console.log('│ Type yes/no and press ENTER                                               │');
 			var stdin = process.openStdin();
 			stdin.addListener("data", function(d) {
 			    var input = d.toString().trim();
 	
 				if(input == 'yes') {
 					fs.writeFileSync(
-						'/home/vagrant/scripts/license.log', 
+						licenseCheckFile,
 						'Oracle license accepted on ' + new Date().toString());
-					console.log("Welcome to your Atlassian Connect development box!")
+					welcome();
 					process.exit(0);
 				} else if(input == 'no') {
 					process.exit(1);
 				} else {
-					console.log('Invalid input: yes/no');
+					logError();
 				}
 		
 			});
 			process.on('SIGINT', function() {
 				//prevent escaping
-				console.log('Invalid input: yes/no');
+				logError();
 			});
-        } 
+        } else {
+            welcome();
+        }
+
         
     });
 
+function welcome() {
+    console.log("Welcome to your Atlassian Connect development box!");
+    console.log("This is a development environment to build Atlassian Connect add-ons.");
+    console.log("It is not supported in production.")
+}
+function logError() {
+    console.log('Invalid input: do you accept the Oracle Binary Code license terms?');
+    console.log('Type yes/no and press ENTER');
+}
 
   
