@@ -32,6 +32,9 @@ public class JiraAgileRestScopesTest extends AbstractScopesTest
                         {ScopeName.READ, HttpMethod.PUT, "/jira/rest/greenhopper/1.0/rapidview", false},
                         {ScopeName.READ, HttpMethod.DELETE, "/jira/rest/greenhopper/1.0/rapidview", false},
 
+                        {null, HttpMethod.GET, "/jira/rest/greenhopper/1.0/rapidview", false},
+                        {null, HttpMethod.GET, "/jira/rest/greenhopper/1.0/rapidview/123", false},
+
                         // Plan Backlog READ
                         {ScopeName.READ, HttpMethod.GET, "/jira/rest/greenhopper/1.0/xboard/plan/backlog/data", true},
                         {ScopeName.READ, HttpMethod.GET, "/jira/rest/greenhopper/1.0/xboard/plan/backlog/data/any", false},
@@ -40,6 +43,8 @@ public class JiraAgileRestScopesTest extends AbstractScopesTest
                         {ScopeName.READ, HttpMethod.GET, "/jira/rest/greenhopper/1.0/xboard/plan/backlog/versions", false},
                         {ScopeName.READ, HttpMethod.GET, "/jira/rest/greenhopper/1.0/xboard/plan/backlog", false},
 
+                        {null, HttpMethod.GET, "/jira/rest/greenhopper/1.0/xboard/plan/backlog/data", false},
+
                         // RapidViewConfig EditModel Read
                         {ScopeName.READ, HttpMethod.GET, "/jira/rest/greenhopper/1.0/rapidviewconfig/editmodel", true},
                         {ScopeName.READ, HttpMethod.GET, "/jira/rest/greenhopper/1.0/rapidviewconfig/editmodel/any", false},
@@ -47,13 +52,22 @@ public class JiraAgileRestScopesTest extends AbstractScopesTest
                         {ScopeName.READ, HttpMethod.PUT, "/jira/rest/greenhopper/1.0/rapidviewconfig/editmodel", false},
                         {ScopeName.READ, HttpMethod.DELETE, "/jira/rest/greenhopper/1.0/rapidviewconfig/editmodel", false},
 
+                        {null, HttpMethod.GET, "/jira/rest/greenhopper/1.0/rapidviewconfig/editmodel", false},
+
                         // Global Ranking Write
                         {ScopeName.WRITE, HttpMethod.PUT, "/jira/rest/greenhopper/1.0/api/rank/before", true},
                         {ScopeName.WRITE, HttpMethod.PUT, "/jira/rest/greenhopper/1.0/api/rank/after", true},
                         {ScopeName.WRITE, HttpMethod.PUT, "/jira/rest/greenhopper/1.0/api/rank", false},
 
+                        {ScopeName.READ, HttpMethod.PUT, "/jira/rest/greenhopper/1.0/api/rank/before", false},
+                        {ScopeName.READ, HttpMethod.PUT, "/jira/rest/greenhopper/1.0/api/rank/after", false},
+                        {null, HttpMethod.PUT, "/jira/rest/greenhopper/1.0/api/rank/before", false},
+                        {null, HttpMethod.PUT, "/jira/rest/greenhopper/1.0/api/rank/after", false},
+
                         // Sprint Ranking Write
                         {ScopeName.WRITE, HttpMethod.PUT, "/jira/rest/greenhopper/1.0/sprint/rank", true},
+                        {ScopeName.READ, HttpMethod.PUT, "/jira/rest/greenhopper/1.0/sprint/rank", false},
+                        {null, HttpMethod.PUT, "/jira/rest/greenhopper/1.0/sprint/rank", false},
                 }));
 
         return params;
