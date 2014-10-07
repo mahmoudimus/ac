@@ -16,13 +16,14 @@ import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleList;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebHookModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.exception.ModuleProviderNotFoundException;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
-import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
+import com.atlassian.plugin.connect.plugin.webhooks.ConnectWebHookPluginRegistrationFactory;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.module.ContainerAccessor;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
@@ -135,17 +136,17 @@ public class BeanToModuleRegistrar
         if (!Strings.isNullOrEmpty(lifecycle.getEnabled()))
         {
             //add webhook
-            builder.withModule(WEBHOOKS_FIELD, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_ENABLED).withUrl(lifecycle.getEnabled()).build());
+            builder.withModule(WEBHOOKS_FIELD, newWebHookBean().withEvent(ConnectWebHookPluginRegistrationFactory.CONNECT_ADDON_ENABLED).withUrl(lifecycle.getEnabled()).build());
         }
         if (!Strings.isNullOrEmpty(lifecycle.getDisabled()))
         {
             //add webhook
-            builder.withModule(WEBHOOKS_FIELD, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_DISABLED).withUrl(lifecycle.getDisabled()).build());
+            builder.withModule(WEBHOOKS_FIELD, newWebHookBean().withEvent(ConnectWebHookPluginRegistrationFactory.CONNECT_ADDON_DISABLED).withUrl(lifecycle.getDisabled()).build());
         }
         if (!Strings.isNullOrEmpty(lifecycle.getUninstalled()))
         {
             //add webhook
-            builder.withModule(WEBHOOKS_FIELD, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_UNINSTALLED).withUrl(lifecycle.getUninstalled()).build());
+            builder.withModule(WEBHOOKS_FIELD, newWebHookBean().withEvent(ConnectWebHookPluginRegistrationFactory.CONNECT_ADDON_UNINSTALLED).withUrl(lifecycle.getUninstalled()).build());
         }
 
         return builder.build().getModules();

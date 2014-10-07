@@ -7,7 +7,7 @@ import java.util.Map;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Deprecated
-public abstract class RemotePluginEvent
+public abstract class RemotePluginEvent implements PluginRelatedEvent
 {
     private final String pluginKey;
 
@@ -22,10 +22,11 @@ public abstract class RemotePluginEvent
     public final Map<String, Object> toMap()
     {
         return ImmutableMap.<String, Object>builder()
-                           .put("key", pluginKey)
-                           .putAll(data).build();
+                .put("key", pluginKey)
+                .putAll(data).build();
     }
 
+    @Override
     public final String getPluginKey()
     {
         return pluginKey;

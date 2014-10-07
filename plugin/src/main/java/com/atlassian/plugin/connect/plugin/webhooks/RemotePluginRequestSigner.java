@@ -10,12 +10,12 @@ import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
-import com.atlassian.webhooks.spi.plugin.RequestSigner;
+import com.atlassian.webhooks.spi.RequestSigner;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.net.URI;
 import java.util.Collections;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -23,7 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Signs outgoing webhooks with oauth credentials
  */
-@ExportAsService(RequestSigner.class)
+@ExportAsService (RequestSigner.class)
 @Named
 public class RemotePluginRequestSigner implements RequestSigner
 {
@@ -34,7 +34,7 @@ public class RemotePluginRequestSigner implements RequestSigner
 
     @Inject
     public RemotePluginRequestSigner(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory, JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, LegacyAddOnIdentifierService legacyAddOnIdentifierService,
-                                     ConnectAddonRegistry connectAddonRegistry)
+            ConnectAddonRegistry connectAddonRegistry)
     {
         this.remotablePluginAccessorFactory = checkNotNull(remotablePluginAccessorFactory);
         this.jsonConnectAddOnIdentifierService = checkNotNull(jsonConnectAddOnIdentifierService);

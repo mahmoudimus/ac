@@ -155,6 +155,10 @@
             <manifest-producer class="com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerManifestProducer"/>
     </applinks-application-type>
 
+    <webhook-plugin-registration-factory key="connect-webhooks-plugin-registration-factory" class="com.atlassian.plugin.connect.plugin.webhooks.ConnectWebHookPluginRegistrationFactory" />
+    <webhook-plugin-registration-factory key="confluence-connect-webhooks-plugin-registration-factory" class="com.atlassian.plugin.connect.plugin.product.confluence.webhook.ConfluenceWebHookPluginRegistrationFactory" />
+    <webhook-plugin-registration-factory key="jira-connect-webhooks-plugin-registration-factory" class="com.atlassian.plugin.connect.plugin.product.jira.JiraWebHookPluginRegistrationFactory" />
+
     <!-- remote extension points -->
 
     <described-module-type key="remote-plugin-container" name="Remote Plugin Container"

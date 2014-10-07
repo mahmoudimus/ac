@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModulePr
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonToPluginFactory;
 import com.atlassian.plugin.connect.plugin.module.webhook.RemotablePluginsPluginUriResolver;
-import com.atlassian.webhooks.spi.plugin.WebHookModuleDescriptor;
+import com.atlassian.webhooks.plugin.module.WebHookModuleDescriptor;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.slf4j.Logger;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 public class ConnectWebHookModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebHookModuleBean, WebHookModuleDescriptor>
 {
     private static final Logger log = LoggerFactory.getLogger(ConnectWebHookModuleDescriptorFactory.class);
-    
+
     private final ParamsModuleFragmentFactory paramsModuleFragmentFactory;
     private final ConnectContainerUtil autowireUtil;
     private final RemotablePluginsPluginUriResolver uriResolver;
@@ -44,10 +44,9 @@ public class ConnectWebHookModuleDescriptorFactory implements ConnectModuleDescr
         webhookElement.addAttribute("url", bean.getUrl());
         paramsModuleFragmentFactory.addParamsToElement(webhookElement, bean.getParams());
 
-
         WebHookModuleDescriptor descriptor = autowireUtil.createBean(WebHookModuleDescriptor.class);
         descriptor.setWebhookPluginKey(moduleProviderContext.getConnectAddonBean().getKey());
-        
+
         descriptor.init(theConnectPlugin, webhookElement);
 
         return descriptor;

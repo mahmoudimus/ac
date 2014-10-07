@@ -1,9 +1,7 @@
 package com.atlassian.plugin.connect.plugin.event;
 
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.httpclient.api.HttpClient;
-import com.atlassian.httpclient.api.Request;
-import com.atlassian.httpclient.api.Response;
+import com.atlassian.httpclient.api.*;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
@@ -14,9 +12,7 @@ import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.spi.event.RemotePluginEnabledEvent;
-import com.atlassian.plugin.connect.spi.event.RemotePluginInstallFailedEvent;
-import com.atlassian.plugin.connect.spi.event.RemotePluginInstalledEvent;
+import com.atlassian.plugin.connect.spi.event.*;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
@@ -28,7 +24,7 @@ import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.UriBuilder;
-import com.atlassian.webhooks.spi.plugin.RequestSigner;
+import com.atlassian.webhooks.spi.RequestSigner;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -42,16 +38,17 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.core.MediaType;
 import java.net.URI;
 import java.util.Map;
+import javax.ws.rs.core.MediaType;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
- * For handling legacy xml-descriptor add-ons. See {@link com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager} for JSON-descriptor add-ons.
+ * For handling legacy xml-descriptor add-ons. See {@link com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager}
+ * for JSON-descriptor add-ons.
  */
 @Component
 @XmlDescriptor
@@ -73,12 +70,12 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
 
     @Autowired
     public RemoteEventsHandler(EventPublisher eventPublisher,
-                               ConsumerService consumerService,
-                               ApplicationProperties applicationProperties,
-                               ProductAccessor productAccessor,
-                               BundleContext bundleContext,
-                               PluginEventManager pluginEventManager,
-                               LegacyAddOnIdentifierService connectIdentifier, PluginAccessor pluginAccessor, RemotablePluginAccessorFactory pluginAccessorFactory, RequestSigner requestSigner, HttpClient httpClient, UserManager userManager)
+            ConsumerService consumerService,
+            ApplicationProperties applicationProperties,
+            ProductAccessor productAccessor,
+            BundleContext bundleContext,
+            PluginEventManager pluginEventManager,
+            LegacyAddOnIdentifierService connectIdentifier, PluginAccessor pluginAccessor, RemotablePluginAccessorFactory pluginAccessorFactory, RequestSigner requestSigner, HttpClient httpClient, UserManager userManager)
     {
         this.pluginAccessor = pluginAccessor;
         this.pluginAccessorFactory = pluginAccessorFactory;
@@ -176,7 +173,7 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
         if (null != user)
         {
             builder.addQueryParameter("user_id", user.getUsername())
-                   .addQueryParameter("user_key", user.getUserKey().getStringValue());
+                    .addQueryParameter("user_key", user.getUserKey().getStringValue());
         }
 
         return builder.toUri().toJavaUri();
@@ -202,21 +199,21 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
         final Consumer consumer = consumerService.getConsumer();
 
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.<String, Object>builder()
-                                                   .put("links", ImmutableMap.of(
-                                                           "oauth", applicationProperties.getBaseUrl(UrlMode.CANONICAL) + "/rest/atlassian-connect/latest/oauth"))
-                                                   .put("clientKey", nullToEmpty(consumer.getKey()))
-                                                   .put("publicKey", nullToEmpty(RSAKeys.toPemEncoding(consumer.getPublicKey())))
-                                                   .put("serverVersion", nullToEmpty(applicationProperties.getBuildNumber()))
-                                                   .put("pluginsVersion", nullToEmpty(getRemotablePluginsPluginVersion()))
-                                                   .put("baseUrl", nullToEmpty(applicationProperties.getBaseUrl(UrlMode.CANONICAL)))
-                                                   .put("productType", nullToEmpty(productAccessor.getKey()))
-                                                   .put("description", nullToEmpty(consumer.getDescription()));
+                .put("links", ImmutableMap.of(
+                        "oauth", applicationProperties.getBaseUrl(UrlMode.CANONICAL) + "/rest/atlassian-connect/latest/oauth"))
+                .put("clientKey", nullToEmpty(consumer.getKey()))
+                .put("publicKey", nullToEmpty(RSAKeys.toPemEncoding(consumer.getPublicKey())))
+                .put("serverVersion", nullToEmpty(applicationProperties.getBuildNumber()))
+                .put("pluginsVersion", nullToEmpty(getRemotablePluginsPluginVersion()))
+                .put("baseUrl", nullToEmpty(applicationProperties.getBaseUrl(UrlMode.CANONICAL)))
+                .put("productType", nullToEmpty(productAccessor.getKey()))
+                .put("description", nullToEmpty(consumer.getDescription()));
 
         UserProfile user = userManager.getRemoteUser();
         if (null != user)
         {
             builder.put("user_id", user.getUsername())
-                   .put("user_key", user.getUserKey().getStringValue());
+                    .put("user_key", user.getUserKey().getStringValue());
         }
 
         return builder.build();
