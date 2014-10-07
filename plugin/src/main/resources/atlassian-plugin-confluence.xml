@@ -29,6 +29,8 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-macro</dependency>
     </web-resource>
 
+    <webhook-plugin-registration-factory key="confluence-connect-webhooks-plugin-registration-factory" class="com.atlassian.plugin.connect.plugin.product.confluence.webhook.ConfluenceWebHookPluginRegistrationFactory" />
+
     <!-- dynamic modules -->
     <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.plugin.connect.plugin.module.page.ProfilePageModuleDescriptor">
         <description>

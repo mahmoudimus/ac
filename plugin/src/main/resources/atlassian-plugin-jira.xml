@@ -29,6 +29,8 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-events</dependency>
     </web-resource>
 
+    <webhook-plugin-registration-factory key="jira-connect-webhooks-plugin-registration-factory" class="com.atlassian.plugin.connect.plugin.product.jira.JiraWebHookPluginRegistrationFactory" />
+
     <!-- plugin points -->
     <described-module-type key="profile-page" name="User Profile Page" class="com.atlassian.plugin.connect.plugin.module.jira.JiraProfileTabModuleDescriptor">
         <description>
