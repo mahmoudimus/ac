@@ -1,13 +1,11 @@
 package it.modules;
 
-import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.*;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import com.google.common.base.Optional;
 import it.ConnectWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
@@ -15,7 +13,6 @@ import it.util.TestUser;
 import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +47,6 @@ public class TestGeneralPageCrossProduct extends ConnectWebDriverTestBase
 
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .addJWT()
-                .addInstallLifecycle()
-                .addRoute(ConnectRunner.INSTALLED_PATH, new InstallHandlerServlet())
                 .addModules("generalPages",
                         newPageBean()
                                 .withKey("remotePluginGeneral")

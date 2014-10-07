@@ -37,7 +37,12 @@ public class ConfluenceRestScopesTest extends AbstractScopesTest
                 {ScopeName.READ, HttpMethod.GET, "/confluence/rest/atlassian-connect/1/license", true},
                 {null, HttpMethod.GET, "/confluence/rest/atlassian-connect/1/license", false},
 
-                {ScopeName.DELETE, HttpMethod.DELETE, "/confluence/rest/atlassian-connect/1/macro/app/bar/foo", false},
+                // macro cache flush
+                {ScopeName.WRITE, HttpMethod.PUT, "/confluence/rest/atlassian-connect/1/macro/app/bar/foo", false},
+                {ScopeName.WRITE, HttpMethod.POST, "/confluence/rest/atlassian-connect/1/macro/app/bar/foo", false},
+                {ScopeName.WRITE, HttpMethod.GET, "/confluence/rest/atlassian-connect/1/macro/app/bar/foo", false},
+                {ScopeName.READ, HttpMethod.DELETE, "/confluence/rest/atlassian-connect/1/macro/app/bar/foo", false},
+                {ScopeName.WRITE, HttpMethod.DELETE, "/confluence/rest/atlassian-connect/1/macro/app/bar/foo", true},
 
                 {ScopeName.READ, HttpMethod.GET, "/confluence/rest/mywork/1/status/notification/count", true},
                 {ScopeName.READ, HttpMethod.POST, "/confluence/rest/mywork/1/notification/metadata", false},

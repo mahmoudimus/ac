@@ -1,7 +1,6 @@
 
 package it.modules.jira;
 
-import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
@@ -30,7 +29,6 @@ import static org.junit.Assert.*;
 /**
  * Test of remote web panels in JIRA.
  */
-@XmlDescriptor
 public final class TestWebPanel extends JiraWebDriverTestBase
 {
     // web panel keys

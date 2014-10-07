@@ -12,7 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
-import static com.atlassian.plugin.connect.test.server.XMLAddOnRunner.newServlet;
+import static com.atlassian.plugin.connect.test.server.ConnectRunner.newServlet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
