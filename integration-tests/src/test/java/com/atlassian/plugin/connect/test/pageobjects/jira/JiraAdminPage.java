@@ -54,26 +54,10 @@ public final class JiraAdminPage implements AdminPage
     @Override
     public ConnectAddOnEmbeddedTestPage clickAddOnLink()
     {
-        return link.get().fold(
-                new Supplier<ConnectAddOnEmbeddedTestPage>()
-                {
-                    @Override
-                    public ConnectAddOnEmbeddedTestPage get()
-                    {
-                        throw new IllegalStateException(format("Could not find link '%s'", link()));
-                    }
-                },
-                new Function<WebElement, ConnectAddOnEmbeddedTestPage>()
-                {
-                    @Override
-                    public ConnectAddOnEmbeddedTestPage apply(WebElement l)
-                    {
-                        l.click();
-                        logger.debug("Link '{}' was found and clicked.", l);
-                        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addOnKey, moduleKey, true);
-                    }
-                }
-        );
+        final WebElement webElement = link.get().get();
+        webElement.click();
+        logger.debug("Link '{}' was found and clicked.", webElement);
+        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addOnKey, moduleKey, true);
     }
 
     public String getRemotePluginLinkHref()
