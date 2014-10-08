@@ -1,4 +1,4 @@
-package it.com.atlassian.plugin.connect.installer;
+package it.com.atlassian.plugin.connect.installer.jira;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
