@@ -1,4 +1,5 @@
 var Client = require('node-rest-client').Client;
+var fs = require('fs');
 var sys = require('sys')
 var exec = require('child_process').exec;
 var argv = require('yargs')
@@ -8,6 +9,7 @@ var argv = require('yargs')
     .describe ('beta', 'use the version of Connect in development (bleeding edge, may be unstable)')
     .argv;
 
+var commandsCacheFile = '/home/vagrant/scripts/cache/commands.json';
 var startupCommandsUrl = 'https://developer.atlassian.com/static/connect-versions.json';
 var product = argv.product;
 var beta = argv.beta;
@@ -16,8 +18,23 @@ var foo;
 client = new Client();
 var child;
 
-client.get(startupCommandsUrl, function (data, response) {
+
+client.registerMethod("jsonMethod", startupCommandsUrl, "GET");
+
+var req=client.methods.jsonMethod(function (data, response) {
     console.log('Downloaded versions file from ' + startupCommandsUrl);
+    cacheCommands(data);
+    runCommand(data);
+
+});
+
+
+req.on('error',function(err){
+    console.log('Could not download versions file from: ' + startupCommandsUrl);
+    useCachedCommands();
+});
+
+function runCommand(data) {
     var command;
     var productVersion;
     var connectVersion;
@@ -41,7 +58,7 @@ client.get(startupCommandsUrl, function (data, response) {
         productVersion = data.environment.dev.confluenceVersion;
         connectVersion = data.environment.dev.connectVersion;
     } else {
-        console.log("Command not found. Exiting. ( woops, sorry :-/ )")
+        console.log("Command not found for product " + product + ". Exiting.")
         process.exit(0);
     }
 
@@ -53,8 +70,29 @@ client.get(startupCommandsUrl, function (data, response) {
         var args = command.substr(commandName.length);
         run_cmd( commandName, args.split(' '));
     }
+}
 
-});
+function cacheCommands(data) {
+    fs.writeFile(commandsCacheFile, JSON.stringify(data), function(err) {
+        if(err) {
+            console.log("WARN: couldn't save commands in file: " + commandsCacheFile);
+        } else {
+            console.log("Cached commands in file: " + commandsCacheFile);
+        }
+    });
+}
+
+function useCachedCommands() {
+    fs.readFile(commandsCacheFile, function(err, data) {
+        if(err) {
+            console.log("ERROR: Couldn't find local commands file: " + commandsCacheFile);
+            console.log("Is it the first time you try to run this command? Make sure you are connected to the internet!")
+        } else {
+            console.log("WARN: using the latest cached command - this may not be the version currently in production!");
+            runCommand(JSON.parse(data));
+        }
+    });
+}
 
 function run_cmd(cmd, args ) {
     var spawn = require('child_process').spawn;

@@ -50,10 +50,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             sudo -s
             source /root/.profile
             nvm install 0.10.32
-            n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
-            su vagrant
-            echo 'Installed Node.js'
-            whoami"
+            n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local"
 
   #install node.js modules
   config.vm.provision "shell",
