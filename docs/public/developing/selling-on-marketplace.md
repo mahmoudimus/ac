@@ -1,30 +1,19 @@
 # Selling on the Atlassian Marketplace
 
-[Installing in the cloud](./cloud-installation.html) outlines how to install and test your add-on
-into your cloud instance  using a private listing on the Marketplace.
+[Installing in the cloud](./cloud-installation.html) outlines how to install and test your add-on 
+into your cloud-hosted product using a Marketplace listing. To **sell** your add-on, your listing 
+will need to meet our [approval guidelines](https://developer.atlassian.com/x/WQaf#Add-onapprovalguidelines-AdditionalcriteriaforAtlassianConnectadd-ons) 
+and be listed publicly. Public add-ons are available to any cloud customers, whether your add-on is free 
+or paid via Atlassian. 
 
-To sell your Atlassian Connect add-on on the [Atlassian Marketplace](https://marketplace.atlassian.com/)
-you must make that listing public. A publicly listed add-on is available to any cloud customer,
-whether the add-on is free or paid via Atlassian.
+## How customers purchase Connect add-ons
 
-With the listing already in place, to make the add-on public you usually only need to switch the
-visibility setting for the listing and submit the add-on for approval.
+Customers can subscribe to Connect add-ons from their cloud-hosted Atlassian products, like JIRA 
+Cloud or Confluence Cloud. After a 30-day free trial, customers begin paying the subscription fee 
+that you set. 
 
-## Background information
-There are some general requirements and recommendations for selling on the Marketplace that apply to
-both Atlassian Connect add-ons and traditional downloadable add-ons. A few places to get started are:
-
-- [Atlassian Marketplace developer's site](https://developer.atlassian.com/display/MARKET/Marketplace+overview)
-contains general information about selling add-ons (both Atlassian Connect and java add-ons)
-on the Marketplace.
-- [Add-on approval guidelines](https://developer.atlassian.com/display/MARKET/Add-on+approval+guidelines#Add-onapprovalguidelines-CriteriaforAtlassianConnectadd-ons).
-- [Marketplace FAQ](https://www.atlassian.com/licensing/marketplace) contains customer-facing
-information on the Marketplace.
-
-## How customers purchase Atlassian Connect add-ons
-The cloud product try and buy flow for Atlassian Connect add-ons is similar to that of traditional
-server add-ons, but with a few differences. These include:
-
+Free trials automatically roll into paid subscriptions (if your add-on is paid, of course), until 
+the customer cancels their subscription. 
 - Cloud customers can subscribe to your Connect add-on. After a 30-day trial period, the customer
 will begin paying the subscription fee that you set.
 - Atlassian Connect add-on trials automatically roll into a subscription, and then roll from one
@@ -43,18 +32,17 @@ For more about how administrators install and manage add-ons, see the
 [Universal Plugin Manager documentation](https://confluence.atlassian.com/display/UPM/About+the+Universal+Plugin+Manager).
 
 ## Making your listing public
-When you are ready to make your privately listed add-on public, initiate the process as follows:
 
-1. Log in to the Atlassian Marketplace using a user account for the vendor associated with the add-on.
-2. Click the **Manage Add-ons** link. 
-3. Change the **Add-on Visibility** option to **Public**. 
-4. Double check all your listing settings. Many settings become important in the context of a public
-listing which are not for a private listing, such as the pricing model and marketing labels.
-Marketing labels classify your add-on, and help customers find it on the Marketplace.
-5. When ready, click the **Submit for approval** button at the bottom of the form.
+Before anything else, make sure your add-on meets our [approval guidelines](https://developer.atlassian.com/x/WQaf#Add-onapprovalguidelines-AdditionalcriteriaforAtlassianConnectadd-ons). You might also find 
+[Marketplace documentation](https://developer.atlassian.com/x/KYBpAQ) helpful, especially the 
+[FAQs](https://developer.atlassian.com/x/PIFpAQ). 
 
-This creates a JIRA issue that notifies the Marketplace team that your add-on is ready for review.
-The Atlassian Marketplace team checks your add-on and the listing itself against the requirements
-specified in the approval process. Note that the
-[approval process](https://developer.atlassian.com/display/MARKET/Add-on+approval+guidelines#Add-onapprovalguidelines-CriteriaforAtlassianConnectadd-ons)
-may take several days, and typically involves several rounds of feedback and updates to your listing.
+When you're ready to list your add-on for the world to see, follow the process below and choose 
+**Public** for your add-on visibility. 
+
+<span data-include="/assets/includes/mpac-listing-instructions.html"></span>
+
+After you've gone through the steps above, we automatically create a JIRA issue for our Marketplace 
+team. We'll check your add-on and listing information agains our [approval guidelines](https://developer.atlassian.com/x/WQaf#Add-onapprovalguidelines-AdditionalcriteriaforAtlassianConnectadd-ons). 
+This process might take a few business days. Avoid unnecessary rounds of feedbacy by checking the 
+approval guidelines before submission. 
