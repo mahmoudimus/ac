@@ -23,7 +23,6 @@ import static com.atlassian.webhooks.api.register.RegisteredWebHookEvent.withId;
 import static com.atlassian.webhooks.api.register.WebHookEventSection.section;
 import static com.atlassian.webhooks.api.util.EventMatchers.ALWAYS_TRUE;
 
-@ConfluenceComponent
 public final class ConfluenceWebHookPluginRegistrationFactory implements WebHookPluginRegistrationFactory
 {
     private final ConfluenceEventSerializer serializer;

@@ -1,22 +1,11 @@
 package com.atlassian.plugin.connect.plugin.capabilities;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Type;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.annotation.Nullable;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.annotation.ConnectModule;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
-import com.atlassian.plugin.connect.modules.beans.ModuleBean;
-import com.atlassian.plugin.connect.modules.beans.ModuleList;
+import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebHookModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
@@ -29,14 +18,18 @@ import com.atlassian.plugin.module.ContainerAccessor;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.ApplicationProperties;
-
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import javax.annotation.Nullable;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebHookModuleBean.newWebHookBean;

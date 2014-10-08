@@ -7,7 +7,6 @@ import com.atlassian.webhooks.spi.WebHookPluginRegistrationFactory;
 
 import static com.atlassian.webhooks.api.register.RegisteredWebHookEvent.withId;
 
-@JiraComponent
 public final class JiraWebHookPluginRegistrationFactory implements WebHookPluginRegistrationFactory
 {
     @Override
