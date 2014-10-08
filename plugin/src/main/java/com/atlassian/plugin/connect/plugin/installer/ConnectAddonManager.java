@@ -636,12 +636,21 @@ public class ConnectAddonManager
 
         try
         {
-            return connectAddOnUserService.provisionAddonUserForScopes(addOn.getKey(), addOn.getName(), previousScopes, newScopes);
+            return connectAddOnUserService.provisionAddonUserForScopes(addOn.getKey(),
+                                                                       addOn.getName(),
+                                                                       previousScopes,
+                                                                       newScopes);
         }
         catch (ConnectAddOnUserInitException e)
         {
-            throw new PluginInstallException(e.getMessage(), Option.option(e.getI18nKey()), e, true);
+
+            String i18nMessage = i18nResolver.getText(e.getI18nKey(), addOn.getName());
+            // This is a hack; throwing with 18nkey and parameters does not work,
+            // when we throw an exception with a key that is not in the i18nproperties file
+            // UPM displays the 'key' (which is really our error message)
+            throw new PluginInstallException(e.getMessage(), Option.option(i18nMessage), e, true);
         }
+
     }
 
     private static boolean addOnNeedsAUser(ConnectAddonBean addOn)

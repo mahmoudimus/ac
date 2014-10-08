@@ -9,7 +9,9 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.io.Serializable;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +25,8 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+import com.atlassian.sal.api.message.I18nResolver;
+import com.atlassian.upm.api.util.Pair;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.google.common.collect.Sets;
 
@@ -35,8 +39,10 @@ public class JiraAddonLifecycleTest
     protected final TestPluginInstaller testPluginInstaller;
     protected final AddonTestFilterResults testFilterResults;
     private final GlobalPermissionManager jiraPermissionManager;
+    private final I18nResolver i18nResolver;
 
     protected ConnectAddonBean testBean;
+    private Plugin plugin = null;
 
     @Before
     public void setup()
@@ -54,38 +60,43 @@ public class JiraAddonLifecycleTest
     }
 
     public JiraAddonLifecycleTest(GlobalPermissionManager jiraPermissionManager,
-        TestPluginInstaller testPluginInstaller, AddonTestFilterResults testFilterResults)
+        TestPluginInstaller testPluginInstaller, AddonTestFilterResults testFilterResults, I18nResolver i18nResolver)
     {
         this.jiraPermissionManager = jiraPermissionManager;
         this.testPluginInstaller = testPluginInstaller;
         this.testFilterResults = testFilterResults;
+        this.i18nResolver = i18nResolver;
     }
 
     @Test
     public void testMissingAdminPermissionFailsWithCorrectError() throws IOException
     {
-        Plugin plugin = null;
         try
         {
             plugin = testPluginInstaller.installAddon(testBean);
             jiraPermissionManager.removePermission(Permissions.ADMINISTER, "atlassian-addons-admin");
             plugin = testPluginInstaller.installAddon(testBean);
-            
+
             fail("Addon installation should have failed");
         }
         catch (Exception e)
         {
             assertTrue((e instanceof PluginInstallException));
-            assertEquals("connect.install.error.addon.admin.permission", ((PluginInstallException) e).getCode().get());
+            PluginInstallException pie = (PluginInstallException) e;
+            Pair<String,Serializable[]> messageProps = pie.getI18nMessageProperties().get();
+            String expectedMessage = i18nResolver.getText("connect.install.error.addon.admin.permission", testBean.getName());
+            assertEquals(expectedMessage, messageProps.first());
         }
-        finally
+    }
+
+    @After
+    public void cleanup() throws IOException
+    {
+        if(plugin != null)
         {
-            if (null != plugin)
-            {
-                testPluginInstaller.uninstallJsonAddon(plugin);
-                testFilterResults.clearRequest(addonKey, INSTALLED);
-                jiraPermissionManager.addPermission(Permissions.ADMINISTER, "atlassian-addons-admin");
-            }
+            testPluginInstaller.uninstallJsonAddon(plugin);
         }
+        testFilterResults.clearRequest(addonKey, INSTALLED);
+        jiraPermissionManager.addPermission(Permissions.ADMINISTER, "atlassian-addons-admin");
     }
 }

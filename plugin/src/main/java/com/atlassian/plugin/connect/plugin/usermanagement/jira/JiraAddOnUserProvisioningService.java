@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.usermanagement.jira;
 
 import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.crowd.exception.*;
+import com.atlassian.fugue.Option;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
 import com.atlassian.jira.permission.PermissionSchemeManager;
 import com.atlassian.jira.permission.ProjectPermission;
