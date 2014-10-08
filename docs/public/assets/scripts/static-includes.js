@@ -1,5 +1,7 @@
 $(function() {
 
+    var baseUrl = $("body").data("baseurl");
+
     /**
      * Renders the markdown and inserts it into article.
      *
@@ -29,7 +31,7 @@ $(function() {
      */
     function fetchParseAndRenderInclude(i, include) {
         var $element = $(include);
-        $.get($element.data("include"))
+        $.get(baseUrl + $element.data("include"))
             .done(function(source) {
                 insertMarkup($element, source);
             })
