@@ -50,6 +50,12 @@
             <artifactId>guava</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.bundles</groupId>
+            <artifactId>json-schema-validator-atlassian-bundle</artifactId>
+            <version>${atlassian.json.schema.validator.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>com.atlassian.plugin</groupId>
@@ -68,7 +74,7 @@
             <artifactId>atlassian-spring-scanner-runtime</artifactId>
             <scope>runtime</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>com.atlassian.labs</groupId>
             <artifactId>fastdev-plugin</artifactId>
@@ -277,7 +283,7 @@
             <version>${atlassian.confluence.version}</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>com.atlassian.uri</groupId>
             <artifactId>atlassian-uri</artifactId>
@@ -472,6 +478,16 @@
                             <artifactId>gson</artifactId>
                         </testBundleExclude>
                     </testBundleExcludes>
+                    <pluginDependencies>
+                        <pluginDependency>
+                            <groupId>com.atlassian.jwt</groupId>
+                            <artifactId>jwt-plugin</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>com.atlassian.bundles</groupId>
+                            <artifactId>json-schema-validator-atlassian-bundle</artifactId>
+                        </pluginDependency>
+                    </pluginDependencies>
                     <instructions>
                         <Import-Package>
                             com.github.fge.jsonschema.validator;version="${atlassian.json.schema.validator.version}",
