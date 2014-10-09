@@ -14,8 +14,9 @@ Create a directory that will host your add-on code (directory_name), then open a
 curl -o Vagrantfile -L http://goo.gl/76meqp
 vagrant up</div></pre></div>
 
-This will download the packaged Vagrant box (file size ~950M) and start a VM on your machine.
-Note: Vagrant will then save the box so you can start other VM instances from it without having to download it again.
+This will download and save the packaged Vagrant box (file size ~950M) and start a VM on your machine.
+At some point, Vagrant will ask you for a password to set up file synchronisation between the VM and your maching.
+Enter the password for the user currently logged in your machine (must be an administrator).
 
 Then connect to the VM, review and accept the Oracle license terms (for Java)
 <div class="CodeMirror-wrap"><pre><div class="CodeMirror">vagrant ssh</div></pre></div>
