@@ -1,78 +1,66 @@
 # Local add-on development
 
-Most add-on developers will go through three phases during development: developing with a local version of the
-Atlassian product, testing with a cloud instance, and finally making the add-on available to your customers
- (whether the customer is just you or you intend to distribute it to the public).
+You will go through three phases during add-on development: developing and testing with a local version of the
+Atlassian product, testing on a Cloud instance, and finally making the add-on available via the Atlassian Marketplace 
+(as a public of private listing).
 
 This document explains how you would go about developing your add-on with a local copy of the Atlassian product.
 [Installing in the cloud](./cloud-installation.html) explains how to use private Marketplace listings to test in
 cloud instances, and [Selling on  Marketplace](./selling-on-marketplace.html) explains how to release your add-on to the
 public.
 
-## Step 1. Start the local Atlassian application
+## Step 1. Configure your local development environment
 
-The easiest way to get a local instance of the Atlassian application is by using the
-[Atlassian Plugins SDK](https://developer.atlassian.com/display/DOCS/Downloads).
+To implement Connect add-ons and test them locally, we provide you with tools to start a local instance of the Atlassian
+application, in the Atlassian Plugins SDK.
+There are two ways to configure your local development environment: you can install everything on your machine, 
+or to save you the hassle you can spin up an instance of our pre-configured Vagrant box.
 
-The SDK is the development kit used to create Java-based plugins for the Atlassian download products. While you
-don't need the plugin building capabilities of the SDK, you can use its features for downloading,
-installing and starting Atlassian applications.
-
-We recommend you start the host application using the SDK command shown here. Atlassian Connect is only present in
-Atlassian cloud products and not yet included with locally-hosted server distributions of our software. Therefore certain 
-components, including the Atlassian Connect Framework itself, are included here in the startup command. Without 
-these components present, Connect add-ons cannot be installed. If you are not using the commands below, ensure 
-all of the components listed in the `--bundled-plugins` argument are present in your Atlassian application.
-
-You can start JIRA or Confluence Cloud with Atlassian Connect as follows:
-
-### Stable versions
-
-Starting the applications requires you to specify a number of hard-coded component version numbers as shown. This
-includes the version of Atlassian Connect framework. Those component versions will change as Atlassian Connect
-development continues. To find out about new version updates, subscribe to the Atlassian Connect
-[mailing list](https://groups.google.com/forum/?fromgroups=#!forum/atlassian-connect-dev), and keep your eye on
-Atlassian Connect [release notes](https://developer.atlassian.com/static/connect/docs/resources/release-notes.html).
-
-To start a local JIRA/Confluence server with Connect matching what is currently in production in Atlassian Cloud, run:
-
-#### JIRA
-
-<span id="commands-jira-prd">Loading...</span>
-
-#### Confluence
-
-<span id="commands-confluence-prd">Loading...</span>
-
-### Bleeding edge
-<div class="aui-message warning">
-	    <p class="title">
-	        <span class="aui-icon icon-success"></span>
-	        <strong>Experts only!</strong>
-	    </p>
-		<p>This is using the latest development version of Connect, so you can test the latest and greatest,
-		and as such may be unstable.</p>
+<a data-replace-text="Local installation instructions [-]" class="aui-expander-trigger" aria-controls="install-local">Local installation instructions [+]</a>
+<div id="install-local" class="aui-expander-content">
+    <span data-include="/assets/includes/install-local.html"></span>
 </div>
 
-To start a local JIRA/Confluence server with the latest development version of Connect (bleeding edge), run:
+<a data-replace-text="Using our pre-configured Vagrant box [-]" class="aui-expander-trigger" aria-controls="install-vagrant">Using our pre-configured Vagrant box [+]</a>
+<div id="install-vagrant" class="aui-expander-content">
+    <span data-include="/assets/includes/install-vagrant.html"></span>
+</div>
 
-#### JIRA
-
-<span id="commands-jira-dev">Loading...</span>
-
-#### Confluence
-
-<span id="commands-confluence-dev">Loading...</span> 
+<a data-replace-text="More detailed information about using the Vagrant box [-]" class="aui-expander-trigger" aria-controls="instructions-vagrant">More detailed information about using the Vagrant box [+]</a>
+<div id="instructions-vagrant" class="aui-expander-content">
+    <span data-include="/assets/includes/instructions-vagrant.html"></span>
+</div>
 
 
-## Step 2. Start your add-on
+## Step 2. Start the local Atlassian application 
+
+You can start a local instance of JIRA or Confluence Cloud with Atlassian Connect as follows:
+
+<a data-replace-text="If you are using a local installation [-]" class="aui-expander-trigger" aria-controls="runproduct-local">If you are using a local installation [+]</a>
+<div id="runproduct-local" class="aui-expander-content">
+    <span data-include="/assets/includes/runproduct-local.html"></span>
+</div>
+
+<a data-replace-text="If you are using the Vagrant box [-]" class="aui-expander-trigger" aria-controls="runproduct-vagrant">If you are using the Vagrant box [+]</a>
+<div id="runproduct-vagrant" class="aui-expander-content">
+    <span data-include="/assets/includes/runproduct-vagrant.html"></span>
+</div>
+
+## Step 3. Start your add-on
 
 Start your add-on application. The options for hosting your add-on are many, but when working on a locally hosted
 environment, you can use any web framework / server you wish to build your add-on.
 
-For an example of using the simple HTTP server, see the [getting started](../guides/getting-started.html) guide.
+For an example of using a HTTP server, see the [getting started](../guides/getting-started.html) guide.
 
-## Step 3. Register your add-on
+<a data-replace-text="Example using atlassian-connect-express in the Vagrant box [-]" class="aui-expander-trigger" aria-controls="demo-vagrant-ace">Example using atlassian-connect-express in the Vagrant box [+]</a>
+<div id="demo-vagrant-ace" class="aui-expander-content">
+    <span data-include="/assets/includes/demo-vagrant-ace.html"></span>
+</div>
+
+
+
+## Step 4. Register your add-on
 
 Registering your add-on installs it in the Atlassian application. After installation, the add-on appears in the list of
 user-installed add-ons in the [Manage Add-ons](https://confluence.atlassian.com/display/UPM/Universal+Plugin+Manager+Documentation)
@@ -99,7 +87,7 @@ used Hello World for your plugin name, that will appears in the list.
 
 
 
-## Step 4. Test your add-on
+## Step 5. Test your add-on
 
 The exact steps for testing will vary based on what your add-on does, of course. However, there are some common minimal
 steps applicable to any add-on for ensuring that it got installed correctly.
@@ -108,7 +96,7 @@ After registering your add-on in the Atlassian application, it should appear in 
 UI features you have declared with modules should now be visible as well.
 
 
-## Step 5. Change your code and reload
+## Step 6. Change your code and reload
 
 You can now change and reload your add-on as normal for your app or framework. Changes should show up immediately.
 (Watch out for browser caching!)
