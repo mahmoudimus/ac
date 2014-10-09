@@ -39,7 +39,6 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
     private String triggeredUri;
-    private String addonKey;
 
     public ConnectWorkflowFunctionModuleDescriptor(
             final JiraAuthenticationContext authenticationContext,
@@ -58,7 +57,6 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     {
         super.init(plugin, element);
         this.triggeredUri = element.attributeValue(TRIGGERED_URL);
-        this.addonKey = addonKeyOnly(getKey());
     }
 
     @Override
@@ -67,7 +65,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
         super.enabled();
         webHookListenerRegistry.register(
                 RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID,
-                WebHookListener.fromModuleDescriptor(addonKey, getKey()).to(triggeredUri).build()
+                WebHookListener.fromModuleDescriptor(getPluginKey(), getKey()).to(triggeredUri).build()
         );
     }
 
@@ -76,7 +74,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
     {
         webHookListenerRegistry.unregister(
                 RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID,
-                WebHookListener.fromModuleDescriptor(addonKey, getKey()).to(triggeredUri).build()
+                WebHookListener.fromModuleDescriptor(getPluginKey(), getKey()).to(triggeredUri).build()
         );
 
         super.disabled();

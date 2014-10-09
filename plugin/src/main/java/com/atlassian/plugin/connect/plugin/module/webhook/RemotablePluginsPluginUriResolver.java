@@ -38,7 +38,7 @@ public final class RemotablePluginsPluginUriResolver implements UriResolver
         }, new Function<WebHookListenerRegistrationDetails.ModuleDescriptorRegistrationDetails, Optional<URI>>()
         {
             @Override
-            public Optional<URI> apply(@Nullable final WebHookListenerRegistrationDetails.ModuleDescriptorRegistrationDetails registrationDetails)
+            public Optional<URI> apply(final WebHookListenerRegistrationDetails.ModuleDescriptorRegistrationDetails registrationDetails)
             {
                 return Optional.of(remotablePluginAccessorFactory.get(registrationDetails.getPluginKey()).getTargetUrl(path));
             }
