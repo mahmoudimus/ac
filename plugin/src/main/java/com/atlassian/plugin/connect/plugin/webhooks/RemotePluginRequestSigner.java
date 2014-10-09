@@ -13,6 +13,8 @@ import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.webhooks.api.register.listener.WebHookListenerRegistrationDetails;
 import com.atlassian.webhooks.spi.RequestSigner;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import java.net.URI;
 import java.util.Collections;
@@ -21,6 +23,7 @@ import javax.inject.Named;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonKeyOnly;
+import static com.atlassian.webhooks.api.register.listener.WebHookListenerRegistrationDetails.ModuleDescriptorRegistrationDetails;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -31,38 +34,30 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class RemotePluginRequestSigner implements RequestSigner
 {
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
-    private final ConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
-    private final ConnectAddOnIdentifierService legacyAddOnIdentifierService;
+    private final ConnectPluginOriginResolver connectPluginOriginResolver;
     private final ConnectAddonRegistry connectAddonRegistry;
 
     @Inject
-    public RemotePluginRequestSigner(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory, JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, LegacyAddOnIdentifierService legacyAddOnIdentifierService,
-            ConnectAddonRegistry connectAddonRegistry)
+    public RemotePluginRequestSigner(final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory, final ConnectPluginOriginResolver connectPluginOriginResolver, final ConnectAddonRegistry connectAddonRegistry)
     {
-        this.remotablePluginAccessorFactory = checkNotNull(remotablePluginAccessorFactory);
-        this.jsonConnectAddOnIdentifierService = checkNotNull(jsonConnectAddOnIdentifierService);
-        this.legacyAddOnIdentifierService = checkNotNull(legacyAddOnIdentifierService);
-        this.connectAddonRegistry = checkNotNull(connectAddonRegistry);
+        this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
+        this.connectPluginOriginResolver = connectPluginOriginResolver;
+        this.connectAddonRegistry = connectAddonRegistry;
     }
 
     @Override
     public void sign(final URI uri, WebHookListenerRegistrationDetails registrationDetails, final Request.Builder request)
     {
-        registrationDetails.getModuleDescriptorDetails().foreach(new Effect<WebHookListenerRegistrationDetails.ModuleDescriptorRegistrationDetails>()
+        connectPluginOriginResolver.connectAddOnKey(registrationDetails).foreach(new Effect<String>()
         {
             @Override
-            public void apply(final WebHookListenerRegistrationDetails.ModuleDescriptorRegistrationDetails registrationDetails)
+            public void apply(final String addOnKey)
             {
-                String addOnKey = addonKeyOnly(registrationDetails.getModuleKey());
-                if (canSign(addOnKey))
+                final Option<String> authValue = getAuthHeader(uri, addOnKey);
+                if (authValue.isDefined())
                 {
-                    final Option<String> authValue = getAuthHeader(uri, addOnKey);
-                    if (authValue.isDefined())
-                    {
-                        request.setHeader(AUTHORIZATION_HEADER, authValue.get());
-                    }
+                    request.setHeader(AUTHORIZATION_HEADER, authValue.get());
                 }
-
             }
         });
     }
@@ -77,9 +72,4 @@ public class RemotePluginRequestSigner implements RequestSigner
         return remotablePluginAccessorFactory.get(pluginKey).getAuthorizationGenerator();
     }
 
-    // return true if this is a Connect add-on
-    private boolean canSign(final String pluginKey)
-    {
-        return jsonConnectAddOnIdentifierService.isConnectAddOn(pluginKey) || legacyAddOnIdentifierService.isConnectAddOn(pluginKey);
-    }
 }
