@@ -77,11 +77,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   #install Connect scripts
   config.vm.provision "shell",
-    path: "scripts/install-connect-scripts.sh"
+    inline: "su -c \"source /vagrant/scripts/install-connect-scripts.sh\" vagrant"
 
   #start atlas-run-connect to download all artifacts
   config.vm.provision "shell",
-      inline: "su -c \"source /vagrant/scripts/download-amps.sh\" vagrant"
+    inline: "su -c \"source /vagrant/scripts/download-amps.sh\" vagrant"
 
   #free space
   config.vm.provision "shell",
