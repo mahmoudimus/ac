@@ -11,6 +11,9 @@ echo 'Linking atlas-run-connect'
 sudo ln -s /home/vagrant/scripts/atlas-run-connect.sh /usr/bin/atlas-run-connect
 echo 'Changing .profile'
 sudo echo '/home/vagrant/scripts/oracle-license.sh' >> /home/vagrant/.profile
+echo 'Changing hostmane to localhost'
+sudo sed -i "s/precise32/localhost/g" /etc/hosts
+sudo sed -i "s/precise32/localhost/g" /etc/hostname
 echo 'Running npm install'
 cd /home/vagrant/scripts
 npm install
