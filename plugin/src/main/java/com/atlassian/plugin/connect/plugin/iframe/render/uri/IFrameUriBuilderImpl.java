@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameter
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.module.HostApplicationInfo;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.plugin.util.BundleUtil;
 import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.sal.api.user.UserManager;
@@ -17,6 +18,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 
 import java.net.URI;
+
+import org.osgi.framework.BundleContext;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -33,6 +36,7 @@ public class IFrameUriBuilderImpl
     private final LicenseRetriever licenseRetriever;
     private final LocaleHelper localeHelper;
     private final UserPreferencesRetriever userPreferencesRetriever;
+    private final BundleContext bundleContext;
 
     private String addonKey;
     private String namespace;
@@ -42,7 +46,7 @@ public class IFrameUriBuilderImpl
             final RemotablePluginAccessorFactory pluginAccessorFactory,
             final UserManager userManager, final HostApplicationInfo hostApplicationInfo,
             final LicenseRetriever licenseRetriever, final LocaleHelper localeHelper,
-            final UserPreferencesRetriever userPreferencesRetriever)
+            final UserPreferencesRetriever userPreferencesRetriever, final BundleContext bundleContext)
     {
         this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.pluginAccessorFactory = pluginAccessorFactory;
@@ -51,6 +55,7 @@ public class IFrameUriBuilderImpl
         this.licenseRetriever = licenseRetriever;
         this.localeHelper = localeHelper;
         this.userPreferencesRetriever = userPreferencesRetriever;
+        this.bundleContext = bundleContext;
     }
 
     @Override
@@ -192,6 +197,9 @@ public class IFrameUriBuilderImpl
 
             // licensing parameters
             uriBuilder.addQueryParameter("lic", licenseRetriever.getLicenseStatus(addonKey).value());
+
+            // Connect framework version
+            uriBuilder.addQueryParameter("connect_version", BundleUtil.getBundleVersion(bundleContext));
         }
     }
 

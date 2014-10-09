@@ -18,4 +18,9 @@ public class ParamMatchers
     {
         return matchesPattern("[A-Za-z0-9]{2,}-[A-Za-z0-9]{2,}");
     }
+
+    public static Matcher<String> isVersionNumber()
+    {
+        return matchesPattern("(\\d)*\\.(\\d)*\\.(\\d)*(-\\w*)?");
+    }
 }

@@ -33,6 +33,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -126,6 +128,12 @@ public class AddOnConditionTest
     @Mock
     private EventPublisher eventPublisher;
 
+    @Mock
+    private BundleContext bundleContext;
+
+    @Mock
+    private Bundle bundle;
+
     private AddOnCondition addonCondition;
 
     @Before
@@ -140,13 +148,14 @@ public class AddOnConditionTest
             {
                 return TimeZone.getDefault();
             }
-        });
+        }, bundleContext);
         addonCondition = new AddOnCondition(remotablePluginAccessorFactory, iFrameUriBuilderFactory,
                 webFragmentModuleContextExtractor, eventPublisher);
 
         when(remotablePluginAccessorFactory.getOrThrow(anyString())).thenReturn(remotablePluginAccessor);
         when(licenseRetriever.getLicenseStatus(anyString())).thenReturn(LicenseStatus.ACTIVE);
         when(localeHelper.getLocaleTag()).thenReturn("foo");
+        when(bundleContext.getBundle()).thenReturn(bundle);
     }
 
     @Test

@@ -11,6 +11,7 @@ import java.util.Map;
 
 import static it.matcher.ParamMatchers.isLocale;
 import static it.matcher.ParamMatchers.isTimeZone;
+import static it.matcher.ParamMatchers.isVersionNumber;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
@@ -78,6 +79,7 @@ public class ConnectAsserts
         assertThat(parameters, IsMapContaining.hasEntry(is("loc"), isLocale()));
         assertThat(parameters, IsMapContaining.hasEntry(is("cp"), is(contextPath)));
         assertThat(parameters, IsMapContaining.hasEntry(is("lic"), is("none")));
+        assertThat(parameters, IsMapContaining.hasEntry(is("connect_version"), isVersionNumber()));
     }
 
 }
