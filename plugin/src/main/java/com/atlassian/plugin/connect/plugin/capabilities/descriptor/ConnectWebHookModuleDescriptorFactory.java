@@ -39,7 +39,7 @@ public class ConnectWebHookModuleDescriptorFactory implements ConnectModuleDescr
     {
         Element webhookElement = new DOMElement("webhook");
 
-        webhookElement.addAttribute("key", ModuleKeyUtils.generateKey("webhook"));
+        webhookElement.addAttribute("key", moduleProviderContext.getConnectAddonBean().getKey());
         webhookElement.addAttribute("event", bean.getEvent());
         webhookElement.addAttribute("url", bean.getUrl());
         paramsModuleFragmentFactory.addParamsToElement(webhookElement, bean.getParams());
