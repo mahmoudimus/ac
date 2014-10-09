@@ -1,7 +1,7 @@
 # Selling on the Atlassian Marketplace
 
 [Installing in the cloud](./cloud-installation.html) helps you install and test your add-on 
-in your cloud-hosted product. To **sell** your add-on, ensure your add-on meets our  
+in your cloud-hosted product. To **sell** your add-on, ensure your add-on meets our 
 [approval guidelines](https://developer.atlassian.com/x/WQaf#Add-onapprovalguidelines-AdditionalcriteriaforAtlassianConnectadd-ons) 
 Then, you can publicly list your add-on via the [Atlassian Marketplace site](https://marketplace.atlassian.com/). 
 Public add-ons are available to any cloud customers, whether your add-on is free or paid via Atlassian. 
