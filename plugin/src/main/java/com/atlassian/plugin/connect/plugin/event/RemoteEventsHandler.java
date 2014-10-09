@@ -24,6 +24,7 @@ import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.UriBuilder;
+import com.atlassian.webhooks.api.register.listener.WebHookListenerRegistrationDetails;
 import com.atlassian.webhooks.spi.RequestSigner;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
@@ -135,7 +136,7 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
                             request.setContentType(MediaType.APPLICATION_JSON);
                             request.setEntity(json);
 
-                            requestSigner.sign(installHandler, pluginKey, request);
+                            requestSigner.sign(installHandler, WebHookListenerRegistrationDetails.moduleDescriptor(pluginKey, pluginKey), request);
 
                             Response response = request.execute(Request.Method.POST).claim();
                             if (response.getStatusCode() != 200)

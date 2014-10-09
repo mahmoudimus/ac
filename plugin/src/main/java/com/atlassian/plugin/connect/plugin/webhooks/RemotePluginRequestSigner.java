@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.webhooks;
 
+import com.atlassian.fugue.Effect;
 import com.atlassian.fugue.Option;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
@@ -10,6 +11,7 @@ import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
+import com.atlassian.webhooks.api.register.listener.WebHookListenerRegistrationDetails;
 import com.atlassian.webhooks.spi.RequestSigner;
 
 import java.net.URI;
@@ -18,6 +20,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonKeyOnly;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -43,16 +46,25 @@ public class RemotePluginRequestSigner implements RequestSigner
     }
 
     @Override
-    public void sign(URI uri, String pluginKey, Request.Builder request)
+    public void sign(final URI uri, WebHookListenerRegistrationDetails registrationDetails, final Request.Builder request)
     {
-        if (canSign(pluginKey))
+        registrationDetails.getModuleDescriptorDetails().foreach(new Effect<WebHookListenerRegistrationDetails.ModuleDescriptorRegistrationDetails>()
         {
-            final Option<String> authValue = getAuthHeader(uri, pluginKey);
-            if (authValue.isDefined())
+            @Override
+            public void apply(final WebHookListenerRegistrationDetails.ModuleDescriptorRegistrationDetails registrationDetails)
             {
-                request.setHeader(AUTHORIZATION_HEADER, authValue.get());
+                String addOnKey = addonKeyOnly(registrationDetails.getModuleKey().orNull());
+                if (canSign(addOnKey))
+                {
+                    final Option<String> authValue = getAuthHeader(uri, addOnKey);
+                    if (authValue.isDefined())
+                    {
+                        request.setHeader(AUTHORIZATION_HEADER, authValue.get());
+                    }
+                }
+
             }
-        }
+        });
     }
 
     private Option<String> getAuthHeader(URI uri, String pluginKey)

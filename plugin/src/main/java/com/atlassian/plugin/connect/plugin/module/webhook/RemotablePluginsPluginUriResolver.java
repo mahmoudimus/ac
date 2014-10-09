@@ -11,6 +11,7 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonKeyOnly;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Named
@@ -40,7 +41,8 @@ public final class RemotablePluginsPluginUriResolver implements UriResolver
             @Override
             public Optional<URI> apply(final WebHookListenerRegistrationDetails.ModuleDescriptorRegistrationDetails registrationDetails)
             {
-                return Optional.of(remotablePluginAccessorFactory.get(registrationDetails.getPluginKey()).getTargetUrl(path));
+                String addonKey = addonKeyOnly(registrationDetails.getModuleKey().orNull());
+                return Optional.of(remotablePluginAccessorFactory.get(addonKey).getTargetUrl(path));
             }
         });
     }
