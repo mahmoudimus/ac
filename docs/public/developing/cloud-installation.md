@@ -8,7 +8,15 @@ machine.
 To do this, you'll need to list your add-on in the [Atlassian Marketplace](https://marketplace.atlassian.com/). This is necessary whether you want to make your add-on available privately or publicly, since cloud 
 applications only accept add-ons installed through the Marketplace. 
 
-## Before starting
+What's here: 
+
+* [Prerequisites](#prereqs)  
+* [Creating your Marketplace listing](#listing)  
+* [Creating access tokens for your add-on](#tokens)  
+* [Installing your add-on with access tokens](#installing-tokens)  
+
+
+## <a name="prereqs"></a>Before starting
 
 There are a few prerequisites before you create your Markeptlace listing:
 
@@ -31,7 +39,7 @@ There are a few prerequisites before you create your Markeptlace listing:
     associated with it. To get an account associated with the Marketplace, [sign up here](https://id.atlassian.com/profile/signUp.action?application=mpac&continue=https://marketplace.atlassian.com/). 
 
 
-## Create the listing
+## <a name="listing"></a>Create the listing
 With your Marketplace account set up and add-on descriptor on hand, create the Atlassian Connect
 listing as follows:
 
@@ -71,7 +79,7 @@ While access tokens are _like_ licenses, a few restrictions apply.
     can't be used with another.  
 
 
-### Creating tokens
+### <a name="tokens"></a>Creating tokens
 
 You can create a token from your add-on's private listing on the Marketplace. If you've already
 installed the add-on, you can create tokens directly from the _Manage add-ons_ page. If you're 
@@ -98,7 +106,7 @@ this link with external customers or partners for testing.
 
 <img src="../assets/images/accesstokenslisting.png" width="80%" alt="Manage Tokens" style="border:1px solid #999;margin-top:10px;" />
 
-### Installing add-ons with access tokens
+### <a name="installing-tokens"></a>Installing add-ons with access tokens
 After generating the token, you can use the token URL to install the add-on and apply the token 
 in the same process: 
 
