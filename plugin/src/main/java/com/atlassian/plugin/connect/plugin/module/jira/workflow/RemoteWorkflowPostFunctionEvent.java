@@ -43,7 +43,7 @@ public class RemoteWorkflowPostFunctionEvent
                 @Override
                 public Boolean apply(final WebHookListenerRegistrationDetails.ModuleDescriptorRegistrationDetails registrationDetails)
                 {
-                    String fullModuleKey = registrationDetails.getPluginKey() + registrationDetails.getModuleKey().or("");
+                    String fullModuleKey = registrationDetails.getPluginKey() + registrationDetails.getModuleKey();
                     return event.fullModuleKey.equals(fullModuleKey);
                 }
             });

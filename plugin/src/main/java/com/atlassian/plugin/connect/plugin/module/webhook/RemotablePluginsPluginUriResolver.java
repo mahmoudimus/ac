@@ -41,7 +41,7 @@ public final class RemotablePluginsPluginUriResolver implements UriResolver
             @Override
             public Optional<URI> apply(final WebHookListenerRegistrationDetails.ModuleDescriptorRegistrationDetails registrationDetails)
             {
-                String addonKey = addonKeyOnly(registrationDetails.getModuleKey().orNull());
+                String addonKey = addonKeyOnly(registrationDetails.getModuleKey());
                 return Optional.of(remotablePluginAccessorFactory.get(addonKey).getTargetUrl(path));
             }
         });

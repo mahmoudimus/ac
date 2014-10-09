@@ -53,7 +53,7 @@ public class RemotePluginRequestSigner implements RequestSigner
             @Override
             public void apply(final WebHookListenerRegistrationDetails.ModuleDescriptorRegistrationDetails registrationDetails)
             {
-                String addOnKey = addonKeyOnly(registrationDetails.getModuleKey().orNull());
+                String addOnKey = addonKeyOnly(registrationDetails.getModuleKey());
                 if (canSign(addOnKey))
                 {
                     final Option<String> authValue = getAuthHeader(uri, addOnKey);
