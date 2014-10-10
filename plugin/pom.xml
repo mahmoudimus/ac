@@ -51,6 +51,12 @@
             <artifactId>guava</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.bundles</groupId>
+            <artifactId>json-schema-validator-atlassian-bundle</artifactId>
+            <version>${atlassian.json.schema.validator.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>com.atlassian.plugin</groupId>
@@ -301,6 +307,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.webhooks</groupId>
+            <artifactId>atlassian-webhooks-plugin</artifactId>
+            <version>${atlassian.webhooks.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-core</artifactId>
             <scope>provided</scope>
@@ -475,6 +487,20 @@
                             <artifactId>gson</artifactId>
                         </testBundleExclude>
                     </testBundleExcludes>
+                    <pluginDependencies>
+                        <pluginDependency>
+                            <groupId>com.atlassian.jwt</groupId>
+                            <artifactId>jwt-plugin</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>com.atlassian.bundles</groupId>
+                            <artifactId>json-schema-validator-atlassian-bundle</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>com.atlassian.webhooks</groupId>
+                            <artifactId>atlassian-webhooks-plugin</artifactId>
+                        </pluginDependency>
+                    </pluginDependencies>
                     <instructions>
                         <Import-Package>
                             com.github.fge.jsonschema.validator;version="${atlassian.json.schema.validator.version}",

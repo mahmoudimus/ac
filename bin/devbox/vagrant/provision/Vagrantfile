@@ -50,10 +50,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             sudo -s
             source /root/.profile
             nvm install 0.10.32
-            n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
-            su vagrant
-            echo 'Installed Node.js'
-            whoami"
+            n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local"
 
   #install node.js modules
   config.vm.provision "shell",
@@ -80,11 +77,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   #install Connect scripts
   config.vm.provision "shell",
-    path: "scripts/install-connect-scripts.sh"
+    inline: "su -c \"source /vagrant/scripts/install-connect-scripts.sh\" vagrant"
 
   #start atlas-run-connect to download all artifacts
   config.vm.provision "shell",
-      inline: "su -c \"source /vagrant/scripts/download-amps.sh\" vagrant"
+    inline: "su -c \"source /vagrant/scripts/download-amps.sh\" vagrant"
 
   #free space
   config.vm.provision "shell",
