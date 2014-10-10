@@ -7,7 +7,7 @@ vagrant destroy -f >> target/logs/vagrant-destroy.logs
 echo "Done."
 echo "Running provisioning scripts..."
 vagrant up >> target/logs/vagrant-provision.logs
-if [ "$(tail -1 output/logs/vagrant-provision.logs)" != "==> default: OK" ]; then echo "Failed. See logs."; exit 1;fi;
+if [ "$(tail -1 target/logs/vagrant-provision.logs)" != "==> default: OK" ]; then echo "Failed. See logs."; exit 1;fi;
 echo "Done."
 echo "Packaging box..."
 vagrant package --output target/atlassian-connect.box
