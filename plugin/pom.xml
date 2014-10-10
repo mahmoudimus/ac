@@ -304,6 +304,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.webhooks</groupId>
+            <artifactId>atlassian-webhooks-plugin</artifactId>
+            <version>${atlassian.webhooks.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-core</artifactId>
             <scope>provided</scope>
@@ -486,6 +492,10 @@
                         <pluginDependency>
                             <groupId>com.atlassian.bundles</groupId>
                             <artifactId>json-schema-validator-atlassian-bundle</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>com.atlassian.webhooks</groupId>
+                            <artifactId>atlassian-webhooks-plugin</artifactId>
                         </pluginDependency>
                     </pluginDependencies>
                     <instructions>
