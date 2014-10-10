@@ -7,7 +7,7 @@
     "karma-qunit": "0.1.1",
     "karma-junit-reporter": "0.1.0",
     "karma-coffee-preprocessor": "0.1",
-    "atlassian-connect-js": "git+ssh://git@stash.atlassian.com:7997/ac/atlassian-connect-js.git#1.1.6",
+    "atlassian-connect-js": "git+ssh://git@stash.atlassian.com:7997/ac/atlassian-connect-js.git#1.1.7",
     "npm-watch": "0.0.0"
   },
   "watch": {
