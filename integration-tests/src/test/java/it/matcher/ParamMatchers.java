@@ -21,6 +21,8 @@ public class ParamMatchers
 
     public static Matcher<String> isVersionNumber()
     {
-        return matchesPattern("(\\d)*\\.(\\d)*\\.(\\d)*(-\\w*)?");
+        //Osgi converts versions with dashes to dots, for example
+        // '1.1.8-SNAPSHOT' becomes 1.1.8.SNAPSHOT
+        return matchesPattern("(\\d)*\\.(\\d)*\\.(\\d)*(\\.\\w*)?");
     }
 }
