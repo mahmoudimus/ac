@@ -207,7 +207,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     {
         addSimpleMacroToComment();
         final WebElement commentBody = connectPageOperations.findElementByClass("comment-content");
-        assertThat(commentBody.getText(), both(startsWith("Hello world!!")).and(endsWith("xdm_c: channel-" + SIMPLE_MACRO_KEY)));
+        assertThat(commentBody.getText(), both(startsWith("Hello world!!")).and(containsString("xdm_c: channel-" + SIMPLE_MACRO_KEY)));
     }
 
     @Test

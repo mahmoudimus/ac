@@ -64,7 +64,7 @@ public class ConnectAsserts
     public static void verifyStandardAddOnRelativeQueryParameters(final RemoteWebItem webItem, String contextPath)
     {
         Map<String, String> parameters = Maps.newHashMap();
-        for (String key : new String[] {"tz", "loc", "cp", "lic"})
+        for (String key : new String[] {"tz", "loc", "cp", "lic", "connect_version"})
         {
             parameters.put(key, webItem.getFromQueryString(key));
         }
