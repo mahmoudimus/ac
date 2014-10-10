@@ -136,7 +136,7 @@ public class RemoteEventsHandler implements InitializingBean, DisposableBean
                             request.setContentType(MediaType.APPLICATION_JSON);
                             request.setEntity(json);
 
-                            requestSigner.sign(installHandler, WebHookListenerRegistrationDetails.moduleDescriptor(pluginKey, pluginKey), request);
+                            requestSigner.sign(installHandler, WebHookListenerRegistrationDetails.moduleDescriptor(pluginKey), request);
 
                             Response response = request.execute(Request.Method.POST).claim();
                             if (response.getStatusCode() != 200)

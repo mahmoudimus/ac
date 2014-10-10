@@ -1,11 +1,8 @@
 package com.atlassian.plugin.connect.plugin.module.jira.workflow;
 
 import com.atlassian.webhooks.api.register.listener.WebHookListener;
-import com.atlassian.webhooks.api.register.listener.WebHookListenerRegistrationDetails;
 import com.atlassian.webhooks.spi.EventMatcher;
 import com.atlassian.webhooks.spi.EventSerializer;
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
 import org.json.JSONObject;
 
 public class RemoteWorkflowPostFunctionEvent
@@ -31,22 +28,7 @@ public class RemoteWorkflowPostFunctionEvent
         @Override
         public boolean matches(final RemoteWorkflowPostFunctionEvent event, final WebHookListener listener)
         {
-            return listener.getRegistrationDetails().getModuleDescriptorDetails().fold(new Supplier<Boolean>()
-            {
-                @Override
-                public Boolean get()
-                {
-                    return Boolean.FALSE;
-                }
-            }, new Function<WebHookListenerRegistrationDetails.ModuleDescriptorRegistrationDetails, Boolean>()
-            {
-                @Override
-                public Boolean apply(final WebHookListenerRegistrationDetails.ModuleDescriptorRegistrationDetails registrationDetails)
-                {
-                    String fullModuleKey = registrationDetails.getPluginKey() + registrationDetails.getModuleKey();
-                    return event.fullModuleKey.equals(fullModuleKey);
-                }
-            });
+            return event.fullModuleKey.equals(listener.getParameters().getFilter());
         }
     }
 

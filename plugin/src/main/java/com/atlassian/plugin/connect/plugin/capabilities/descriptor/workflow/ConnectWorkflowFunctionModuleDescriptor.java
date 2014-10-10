@@ -65,20 +65,28 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
         super.enabled();
         webHookListenerRegistry.register(
                 RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID,
-                WebHookListener.fromModuleDescriptor(getPluginKey(), getKey()).to(triggeredUri).build()
+                definedWebHookListener()
         );
     }
+
 
     @Override
     public void disabled()
     {
         webHookListenerRegistry.unregister(
                 RemoteWorkflowPostFunctionEvent.REMOTE_WORKFLOW_POST_FUNCTION_EVENT_ID,
-                WebHookListener.fromModuleDescriptor(getPluginKey(), getKey()).to(triggeredUri).build()
+                definedWebHookListener()
         );
 
         super.disabled();
     }
+
+    private WebHookListener definedWebHookListener() {
+        String pluginKey = addonKeyOnly(getKey());
+        String fullKey = getPluginKey() + getKey();
+        return WebHookListener.fromModuleDescriptor(pluginKey).withFilter(fullKey).to(triggeredUri).build();
+    }
+
 
     @Override
     public void writeHtml(String resourceName, Map<String, ?> startingParams, Writer writer) throws IOException
