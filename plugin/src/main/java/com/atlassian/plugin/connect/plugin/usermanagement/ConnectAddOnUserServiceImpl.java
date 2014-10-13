@@ -10,12 +10,15 @@ import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.Set;
 
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.Constants;
@@ -209,7 +212,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return user;
     }
 
-    private User createUser(String username, String addOnDisplayName) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, ApplicationNotFoundException, ConnectAddOnUserInitException
+    private User createUser(String username, String addOnDisplayName) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, ApplicationNotFoundException, ConnectAddOnUserInitException, UserNotFoundException
     {
         User user;
         try
@@ -229,6 +232,9 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             {
                 log.info("Created user '{}'", user.getName());
             }
+
+            // Set connect attributes on user
+            applicationService.storeUserAttributes(getApplication(), user.getName(), ImmutableMap.of("synch." + getApplication().getName() + ".atlassian-connect-user", Collections.singleton("true")));
         }
         catch (InvalidUserException iue)
         {

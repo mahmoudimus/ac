@@ -22,8 +22,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
@@ -37,6 +40,7 @@ public class ConnectAddOnUserServiceImplTest
     private static final String GROUP_KEY = "atlassian-addons";
     private static final String ADD_ON_EMAIL_ADDRESS = "noreply@mailer.atlassian.com";
     private static final String ADD_ON_DISPLAY_NAME = "A Cool Test Add-on";
+    private static final String APPLICATION_NAME = "crowd-embedded";
 
     private @Mock ApplicationService applicationService;
     private @Mock ApplicationManager applicationManager;
@@ -47,6 +51,7 @@ public class ConnectAddOnUserServiceImplTest
 
     @SuppressWarnings ("UnusedDeclaration")
     @Captor private ArgumentCaptor<String> captor;
+    @Captor private ArgumentCaptor<Map<String, Set<String>>> attributecaptor;
 
     private static final String ADD_ON_KEY = "my-cool-thingamajig";
     private static final String USER_KEY = "addon_my-cool-thingamajig";
@@ -139,6 +144,15 @@ public class ConnectAddOnUserServiceImplTest
     }
 
     @Test
+    public void userIsCreatedWithAtlassianConnectUserAttribute() throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, UserNotFoundException
+    {
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+        verify(applicationService).addUser(eq(application), argThat(hasExpectedEmailAddress()), any(PasswordCredential.class));
+        verify(applicationService).storeUserAttributes(eq(application), eq(USER_KEY), attributecaptor.capture());
+        assertThat(attributecaptor.getValue().get("synch." + APPLICATION_NAME + ".atlassian-connect-user"), contains("true"));
+    }
+
+    @Test
     public void userIsAddedToDefaultProductGroupsIfItExistedAndWasNotAMember() throws UserNotFoundException, InvalidUserException, InvalidCredentialException, ApplicationPermissionException, OperationFailedException, ConnectAddOnUserInitException, GroupNotFoundException, MembershipAlreadyExistsException
     {
         theUserExists();
@@ -201,7 +215,8 @@ public class ConnectAddOnUserServiceImplTest
     @Before
     public void beforeEachTest() throws ApplicationNotFoundException, InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException
     {
-        when(applicationManager.findByName("crowd-embedded")).thenReturn(application);
+        when(applicationManager.findByName(APPLICATION_NAME)).thenReturn(application);
+        when(application.getName()).thenReturn(APPLICATION_NAME);
         when(applicationService.addUser(eq(application), eq(new UserTemplate(USER_KEY)), eq(PasswordCredential.NONE))).thenReturn(user);
         when(user.getName()).thenReturn(USER_KEY);
         when(connectAddOnUserProvisioningService.getDefaultProductGroups()).thenReturn(Collections.<String>emptySet());
