@@ -19,7 +19,10 @@ import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+
 import it.com.atlassian.plugin.connect.TestAuthenticator;
+
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
@@ -168,11 +171,39 @@ public abstract class AbstractAddonLifecycleTest
         try
         {
             plugin = testPluginInstaller.installAddon(addon);
+
+            addonKey = plugin.getKey();
+
+            ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
+            assertEquals(POST, request.getMethod());
+
+        }
+        finally
+        {
+            testFilterResults.clearRequest(addonKey, INSTALLED);
+            if (null != plugin)
+            {
+                testPluginInstaller.uninstallJsonAddon(plugin);
+            }
+        }
+    }
+
+    @Test
+    public void installRequestHasVersion() throws Exception
+    {
+        ConnectAddonBean addon = installOnlyBean;
+
+        Plugin plugin = null;
+        String addonKey = null;
+        try
+        {
+            plugin = testPluginInstaller.installAddon(addon);
             
             addonKey = plugin.getKey();
             
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
-            assertEquals(POST, request.getMethod());
+            String version = request.getHeaders().get("Atlassian-Connect-Version");
+            assertNotNull(StringUtils.trimToNull(version));
 
         }
         finally
@@ -205,6 +236,38 @@ public abstract class AbstractAddonLifecycleTest
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
             assertEquals(POST, request.getMethod());
 
+        }
+        finally
+        {
+            testFilterResults.clearRequest(addonKey, INSTALLED);
+            testFilterResults.clearRequest(addonKey, UNINSTALLED);
+            if (null != plugin)
+            {
+                testPluginInstaller.uninstallJsonAddon(plugin);
+            }
+        }
+    }
+
+    @Test
+    public void uninstallRequestHasVersion() throws Exception
+    {
+        ConnectAddonBean addon = installAndUninstallBean;
+
+        Plugin plugin = null;
+        String addonKey = null;
+
+        try
+        {
+            plugin = testPluginInstaller.installAddon(addon);
+
+            addonKey = plugin.getKey();
+
+            testPluginInstaller.uninstallJsonAddon(plugin);
+            plugin = null;
+
+            ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
+            String version = request.getHeaders().get("Atlassian-Connect-Version");
+            assertNotNull(StringUtils.trimToNull(version));
         }
         finally
         {

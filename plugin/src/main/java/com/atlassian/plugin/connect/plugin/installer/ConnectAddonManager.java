@@ -500,6 +500,8 @@ public class ConnectAddonManager
                 request.setHeader(AUTHORIZATION_HEADER, authHeader.get());
             }
 
+            request.setHeader("Atlassian-Connect-Version", getConnectPluginVersion());
+
             return request.execute(Request.Method.POST).claim();
         }
         catch (Exception e)
