@@ -1,8 +1,10 @@
 package com.atlassian.plugin.connect.modules.util;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 /**
  * Tests the conversion of passed in strings to valid module keys that the plugin system needs.
@@ -34,6 +36,14 @@ public class ModuleKeyUtilsTest
         String moduleKey = "module_thing1";
 
         Assert.assertEquals("Module key is extracted from key correctly", "com.test.my_plugin__module_thing1", ModuleKeyUtils.addonAndModuleKey(addonKey, moduleKey));
+    }
+
+    @Test
+    public void pluginAndModuleKey()
+    {
+        String pluginKey = "com.test.plugin";
+        String moduleKey = "com.text.moduleKey__addon_key";
+        assertThat(ModuleKeyUtils.pluginAndModuleKey(pluginKey, moduleKey), equalTo(pluginKey + moduleKey));
     }
 
     @Test

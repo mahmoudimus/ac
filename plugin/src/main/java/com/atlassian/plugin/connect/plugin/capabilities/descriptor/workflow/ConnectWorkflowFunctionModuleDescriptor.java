@@ -5,8 +5,10 @@ import com.atlassian.jira.plugin.ComponentClassManager;
 import com.atlassian.jira.plugin.workflow.WorkflowFunctionModuleDescriptor;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.workflow.OSWorkflowConfigurator;
+import com.atlassian.plugin.ModuleCompleteKey;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponentAccessor;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.jira.JiraModuleContextFilter;
@@ -26,6 +28,7 @@ import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonKeyOnly;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.pluginAndModuleKey;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -83,7 +86,7 @@ public class ConnectWorkflowFunctionModuleDescriptor extends WorkflowFunctionMod
 
     private WebHookListener definedWebHookListener() {
         String pluginKey = addonKeyOnly(getKey());
-        String fullKey = getPluginKey() + getKey();
+        String fullKey = pluginAndModuleKey(getPluginKey(), getKey());
         return WebHookListener.fromModuleDescriptor(pluginKey).withFilter(fullKey).to(triggeredUri).build();
     }
 

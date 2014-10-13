@@ -473,6 +473,13 @@
                 <groupId>com.atlassian.webhooks</groupId>
                 <artifactId>atlassian-webhooks-api</artifactId>
                 <version>${atlassian.webhooks.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.webhooks</groupId>
+                <artifactId>atlassian-webhooks-plugin</artifactId>
+                <version>${atlassian.webhooks.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.atlassian.jira</groupId>
@@ -674,6 +681,8 @@
         <atlassian.analytics.version>3.38</atlassian.analytics.version>
         <atlassian.applinks.version>4.2.4</atlassian.applinks.version>
         <atlassian.confluence.version>5.6-OD-34-007</atlassian.confluence.version>
+        <atlassian.confluence.plugins.cache.management.version>1.1.21</atlassian.confluence.plugins.cache.management.version>
+        <atlassian.confluence.plugins.cache.share.page>3.2.4-ACJIRA-167</atlassian.confluence.plugins.cache.share.page>
         <atlassian.crowd.version>2.8.0-OD-4</atlassian.crowd.version>
         <atlassian.fugue.version>1.1</atlassian.fugue.version>
         <atlassian.healthcheck.version>2.0.4</atlassian.healthcheck.version>

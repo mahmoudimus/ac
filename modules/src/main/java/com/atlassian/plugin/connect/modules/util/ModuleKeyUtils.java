@@ -29,6 +29,18 @@ public class ModuleKeyUtils
         return addonKey + ADDON_MODULE_SEPARATOR + moduleKey;
     }
 
+    /**
+     * Concatenates plugin and connect module key without any separators.
+     *
+     * @param pluginKey key of the plug-in
+     * @param moduleKey key of the Connect add-on
+     * @return pluginKey + moduleKey
+     */
+    public static String pluginAndModuleKey(String pluginKey, String moduleKey)
+    {
+        return pluginKey + moduleKey;
+    }
+
     public static String moduleKeyOnly(String moduleKey)
     {
         return StringUtils.substringAfterLast(moduleKey, ADDON_MODULE_SEPARATOR);

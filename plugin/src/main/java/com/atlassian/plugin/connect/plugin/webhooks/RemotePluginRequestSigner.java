@@ -27,21 +27,21 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class RemotePluginRequestSigner implements RequestSigner
 {
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
-    private final ConnectPluginIdentification connectPluginIdentification;
+    private final ConnectPluginIdentifierService connectPluginIdentifierService;
     private final ConnectAddonRegistry connectAddonRegistry;
 
     @Inject
-    public RemotePluginRequestSigner(final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory, final ConnectPluginIdentification connectPluginIdentification, final ConnectAddonRegistry connectAddonRegistry)
+    public RemotePluginRequestSigner(final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory, final ConnectPluginIdentifierService connectPluginIdentifierService, final ConnectAddonRegistry connectAddonRegistry)
     {
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
-        this.connectPluginIdentification = connectPluginIdentification;
+        this.connectPluginIdentifierService = connectPluginIdentifierService;
         this.connectAddonRegistry = connectAddonRegistry;
     }
 
     @Override
     public void sign(final URI uri, WebHookListenerRegistrationDetails registrationDetails, final Request.Builder request)
     {
-        connectPluginIdentification.connectAddOnKey(registrationDetails).foreach(new Effect<String>()
+        connectPluginIdentifierService.connectAddOnKey(registrationDetails).foreach(new Effect<String>()
         {
             @Override
             public void apply(final String addOnKey)

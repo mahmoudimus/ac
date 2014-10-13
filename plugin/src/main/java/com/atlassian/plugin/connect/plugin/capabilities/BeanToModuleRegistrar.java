@@ -136,11 +136,6 @@ public class BeanToModuleRegistrar
             //add webhook
             builder.withModule(WEBHOOKS_FIELD, newWebHookBean().withEvent(ConnectWebHookPluginRegistrationFactory.CONNECT_ADDON_DISABLED).withUrl(lifecycle.getDisabled()).build());
         }
-        if (!Strings.isNullOrEmpty(lifecycle.getUninstalled()))
-        {
-            //add webhook
-            builder.withModule(WEBHOOKS_FIELD, newWebHookBean().withEvent(ConnectWebHookPluginRegistrationFactory.CONNECT_ADDON_UNINSTALLED).withUrl(lifecycle.getUninstalled()).build());
-        }
 
         return builder.build().getModules();
     }

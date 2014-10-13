@@ -331,7 +331,6 @@
                                 <pluginArtifact>
                                     <groupId>com.atlassian.webhooks</groupId>
                                     <artifactId>atlassian-webhooks-plugin</artifactId>
-                                    <version>${atlassian.webhooks.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.jira.plugins.webhooks</groupId>
@@ -409,7 +408,6 @@
                                 <pluginArtifact>
                                     <groupId>com.atlassian.webhooks</groupId>
                                     <artifactId>atlassian-webhooks-plugin</artifactId>
-                                    <version>${atlassian.webhooks.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.httpclient</groupId>

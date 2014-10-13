@@ -10,13 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public final class ConnectPluginIdentification
+public final class ConnectPluginIdentifierService
 {
     private final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
     private final LegacyAddOnIdentifierService legacyAddOnIdentifierService;
 
     @Autowired
-    public ConnectPluginIdentification(final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, final LegacyAddOnIdentifierService legacyAddOnIdentifierService)
+    public ConnectPluginIdentifierService(final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, final LegacyAddOnIdentifierService legacyAddOnIdentifierService)
     {
         this.jsonConnectAddOnIdentifierService = jsonConnectAddOnIdentifierService;
         this.legacyAddOnIdentifierService = legacyAddOnIdentifierService;

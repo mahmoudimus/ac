@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.webhooks;
 
 import com.atlassian.oauth.consumer.ConsumerService;
+import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.modules.beans.XmlDescriptorCodeInvokedEventBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.spi.event.*;
@@ -26,14 +27,10 @@ public final class ConnectWebHookPluginRegistrationFactory implements WebHookPlu
 {
     private static final Gson GSON = ConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create();
 
-    public static final String REMOTE_PLUGIN_INSTALLED = "remote_plugin_installed";
-    public static final String REMOTE_PLUGIN_ENABLED = "remote_plugin_enabled";
-    public static final String REMOTE_PLUGIN_DISABLED = "remote_plugin_disabled";
-
     public static final String CONNECT_ADDON_ENABLED = "connect_addon_enabled";
     public static final String CONNECT_ADDON_DISABLED = "connect_addon_disabled";
-    public static final String CONNECT_ADDON_UNINSTALLED = "connect_addon_uninstalled";
 
+    @XmlDescriptor
     public static final String XML_DESCRIPTOR_CODE_INVOKED = "connect.xmldescriptor.code.invoked";
 
     public static final String SERVER_UPGRADED = "server_upgraded";
@@ -75,7 +72,6 @@ public final class ConnectWebHookPluginRegistrationFactory implements WebHookPlu
     public WebHookPluginRegistration createPluginRegistration()
     {
         return WebHookPluginRegistration.builder()
-                .addWebHookSection(section("legacy-xml-events").addGroup(legacyXmlEvents()).build())
                 .addWebHookSection(section("connect-events")
                         .addGroup(addOnEvents())
                         .addGroup(upgradeEvents())
@@ -121,22 +117,11 @@ public final class ConnectWebHookPluginRegistrationFactory implements WebHookPlu
                 .build();
     }
 
-    private WebHookEventGroup legacyXmlEvents()
-    {
-        return WebHookEventGroup.builder()
-                .addEvent(withId(REMOTE_PLUGIN_INSTALLED).firedWhen(RemotePluginInstalledEvent.class).isMatchedBy(PLUGIN_MATCHER))
-                .addEvent(withId(REMOTE_PLUGIN_ENABLED).firedWhen(RemotePluginEnabledEvent.class).isMatchedBy(PLUGIN_MATCHER))
-                .addEvent(withId(REMOTE_PLUGIN_DISABLED).firedWhen(RemotePluginDisabledEvent.class).isMatchedBy(PLUGIN_MATCHER))
-                .build();
-    }
-
     private WebHookEventGroup addOnEvents()
     {
         return WebHookEventGroup.builder()
                 .addEvent(withId(CONNECT_ADDON_ENABLED).firedWhen(ConnectAddonEnabledEvent.class).isMatchedBy(PLUGIN_MATCHER))
                 .addEvent(withId(CONNECT_ADDON_DISABLED).firedWhen(ConnectAddonDisabledEvent.class).isMatchedBy(PLUGIN_MATCHER))
-                .addEvent(withId(CONNECT_ADDON_UNINSTALLED).firedWhen(ConnectAddonUninstalledEvent.class).isMatchedBy(PLUGIN_MATCHER))
-                .addEvent(withId(XML_DESCRIPTOR_CODE_INVOKED).firedWhen(XmlDescriptorCodeInvokedEvent.class).isMatchedBy(PLUGIN_MATCHER))
                 .build();
     }
 
