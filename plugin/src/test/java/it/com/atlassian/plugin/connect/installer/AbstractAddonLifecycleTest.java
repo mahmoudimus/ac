@@ -4,6 +4,7 @@ import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
@@ -22,12 +23,12 @@ import com.atlassian.sal.api.user.UserProfile;
 
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
+import static it.com.atlassian.plugin.connect.HeaderUtil.getVersionHeader;
 import static com.google.common.collect.Sets.newHashSet;
 import static org.junit.Assert.*;
 
@@ -198,12 +199,11 @@ public abstract class AbstractAddonLifecycleTest
         try
         {
             plugin = testPluginInstaller.installAddon(addon);
-            
             addonKey = plugin.getKey();
-            
-            ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
-            String version = request.getHeaders().get("Atlassian-Connect-Version");
-            assertNotNull(StringUtils.trimToNull(version));
+            final ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
+
+            Option<String> maybeHeader = getVersionHeader(request);
+            assertTrue(maybeHeader.isDefined());
 
         }
         finally
@@ -266,8 +266,8 @@ public abstract class AbstractAddonLifecycleTest
             plugin = null;
 
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
-            String version = request.getHeaders().get("Atlassian-Connect-Version");
-            assertNotNull(StringUtils.trimToNull(version));
+            Option<String> maybeHeader = getVersionHeader(request);
+            assertTrue(maybeHeader.isDefined());
         }
         finally
         {

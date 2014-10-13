@@ -1,5 +1,6 @@
 package it.com.atlassian.plugin.connect.workflow.jira;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.jira.exception.CreateException;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueFactory;
@@ -22,6 +23,7 @@ import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 
+import it.com.atlassian.plugin.connect.HeaderUtil;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 
 import org.apache.commons.lang3.StringUtils;
@@ -158,8 +160,8 @@ public class WorkflowPostFunctionTest
     public void requestContainsVersionNumber() throws Exception
     {
         ServletRequestSnapshot request = triggerWorkflowTransition();
-        String version = request.getHeaders().get("Atlassian-Connect-Version");
-        assertNotNull(StringUtils.trimToNull(version));
+        Option<String> maybeVersion = HeaderUtil.getVersionHeader(request);
+        assertTrue(maybeVersion.isDefined());
     }
 
     @Test
