@@ -27,7 +27,6 @@ public abstract class AbstractPermission implements Permission
         this.permissionInfo = checkNotNull(permissionInfo);
     }
 
-    @Override
     public final String getKey()
     {
         return key;
@@ -43,12 +42,6 @@ public abstract class AbstractPermission implements Permission
     public final String getDescription()
     {
         return permissionInfo.getDescription();
-    }
-
-    @Override
-    public final PermissionInfo getPermissionInfo()
-    {
-        return permissionInfo;
     }
 
     @Override

@@ -15,12 +15,8 @@ import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeApiPathBuilder;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
 import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploderUnitTestHelper;
-import com.atlassian.plugin.connect.spi.PermissionDeniedException;
-import com.atlassian.plugin.connect.spi.Permissions;
 import com.atlassian.plugin.connect.spi.permission.Permission;
-import com.atlassian.plugin.connect.spi.permission.PermissionInfo;
 import com.atlassian.plugin.connect.spi.permission.PermissionModuleDescriptor;
-import com.atlassian.plugin.connect.spi.permission.PermissionsReader;
 import com.atlassian.plugin.connect.spi.permission.scope.ApiResourceInfo;
 import com.atlassian.plugin.connect.spi.permission.scope.ApiScope;
 import com.atlassian.plugin.tracker.PluginModuleTracker;
@@ -32,13 +28,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
@@ -48,24 +44,30 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
-@RunWith(MockitoJUnitRunner.class)
+@RunWith (MockitoJUnitRunner.class)
 public class PermissionManagerImplTest
 {
-    private static final String PERMISSION_KEY = "a permission";
     private static final String PLUGIN_KEY = "a plugin key";
 
     private PermissionManager permissionManager;
 
-    @Mock private PluginAccessor pluginAccessor;
-    @Mock private PermissionsReader permissionsReader;
-    @Mock private JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
-    @Mock private PluginModuleTracker<Permission, PermissionModuleDescriptor> pluginModuleTracker;
-    @Mock private ScopeService scopeService;
-    @Mock private ConnectAddonRegistry connectAddonRegistry;
-    @Mock private ConnectAddonBeanFactory connectAddonBeanFactory;
+    @Mock
+    private PluginAccessor pluginAccessor;
+    @Mock
+    private JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
+    @Mock
+    private PluginModuleTracker<Permission, PermissionModuleDescriptor> pluginModuleTracker;
+    @Mock
+    private ScopeService scopeService;
+    @Mock
+    private ConnectAddonRegistry connectAddonRegistry;
+    @Mock
+    private ConnectAddonBeanFactory connectAddonBeanFactory;
 
-    @Mock private HttpServletRequest request;
-    @Mock private Plugin plugin;
+    @Mock
+    private HttpServletRequest request;
+    @Mock
+    private Plugin plugin;
 
     private UserKey userKey = new UserKey("a_user_key");
 
@@ -86,34 +88,20 @@ public class PermissionManagerImplTest
         Permission permission = createPermission();
         when(pluginModuleTracker.getModules()).thenReturn(asList(permission));
         when(scopeService.build()).thenReturn(buildTestScopes());
-        permissionManager = new PermissionManagerImpl(pluginAccessor, permissionsReader, jsonConnectAddOnIdentifierService, pluginModuleTracker, scopeService, connectAddonRegistry, connectAddonBeanFactory);
-    }
-
-    @Test
-    public void validXmlDescriptorPermissionIsInScopeInProdMode()
-    {
-        setup().withJson(false).withPermission(PERMISSION_KEY);
-        assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
-    }
-
-    @Test
-    public void invalidXmlDescriptorPermissionIsOutOfScopeInProdMode()
-    {
-        setup().withJson(false).withPermission("wrong");
-        assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
+        permissionManager = new PermissionManagerImpl(pluginModuleTracker, scopeService, connectAddonRegistry, connectAddonBeanFactory);
     }
 
     @Test
     public void validJsonDescriptorScopeIsInScopeInProdMode()
     {
-        setup().withJson(true).withScope(ScopeName.READ);
+        setup().withScope(ScopeName.READ);
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
     }
 
     @Test
     public void invalidJsonDescriptorScopeIsOutOfScope()
     {
-        setup().withJson(true);
+        setup();
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
     }
 
@@ -122,7 +110,7 @@ public class PermissionManagerImplTest
     {
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/write/something");
         when(request.getMethod()).thenReturn("POST");
-        setup().withJson(true).withScope(ScopeName.WRITE);
+        setup().withScope(ScopeName.WRITE);
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
     }
 
@@ -131,7 +119,7 @@ public class PermissionManagerImplTest
     {
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/write/something");
         when(request.getMethod()).thenReturn("POST");
-        setup().withJson(true).withScope(ScopeName.READ);
+        setup().withScope(ScopeName.READ);
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
     }
 
@@ -140,7 +128,7 @@ public class PermissionManagerImplTest
     {
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/something/delete");
         when(request.getMethod()).thenReturn("DELETE");
-        setup().withJson(true).withScope(ScopeName.DELETE);
+        setup().withScope(ScopeName.DELETE);
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
     }
 
@@ -149,7 +137,7 @@ public class PermissionManagerImplTest
     {
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/something/delete");
         when(request.getMethod()).thenReturn("DELETE");
-        setup().withJson(true).withScope(ScopeName.WRITE);
+        setup().withScope(ScopeName.WRITE);
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
     }
 
@@ -161,7 +149,7 @@ public class PermissionManagerImplTest
     {
         when(request.getRequestURI()).thenReturn("/jira/secure/Dashboard.jspa");
         when(request.getMethod()).thenReturn("GET");
-        setup().withJson(true).withScope(ScopeName.READ);
+        setup().withScope(ScopeName.READ);
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
     }
 
@@ -170,29 +158,8 @@ public class PermissionManagerImplTest
     {
         when(request.getRequestURI()).thenReturn("/jira/secure/Dashboard.jspa;../../../rest/api/2/user");
         when(request.getMethod()).thenReturn("GET");
-        setup().withJson(true).withScope(ScopeName.READ);
+        setup().withScope(ScopeName.READ);
         assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
-    }
-
-    @Test
-    public void jsonAddonDoesNotRequirePermissionToCreateOAuthLink()
-    {
-        setup().withJson(true).withScope(ScopeName.READ);
-        permissionManager.requirePermission(PLUGIN_KEY, Permissions.CREATE_OAUTH_LINK);
-    }
-
-    @Test
-    public void xmlAddonCanCreateOAuthLinkWithPermission()
-    {
-        setup().withJson(false).withPermission(Permissions.CREATE_OAUTH_LINK);
-        permissionManager.requirePermission(PLUGIN_KEY, Permissions.CREATE_OAUTH_LINK);
-    }
-
-    @Test(expected = PermissionDeniedException.class)
-    public void xmlAddonCantCreateOAuthLinkWithoutPermission()
-    {
-        setup().withJson(false);
-        permissionManager.requirePermission(PLUGIN_KEY, Permissions.CREATE_OAUTH_LINK);
     }
 
     private Setup setup()
@@ -202,40 +169,17 @@ public class PermissionManagerImplTest
 
     private class Setup
     {
-        private boolean isJson = false;
-
-        Setup withJson(boolean isJson)
+        private Setup()
         {
-            when(jsonConnectAddOnIdentifierService.isConnectAddOn(PLUGIN_KEY)).thenReturn(isJson);
+            when(jsonConnectAddOnIdentifierService.isConnectAddOn(PLUGIN_KEY)).thenReturn(true);
 
-            if (isJson)
-            {
-                final String mockDescriptor = buildMockDescriptor();
-                when(connectAddonRegistry.getDescriptor(PLUGIN_KEY)).thenReturn(mockDescriptor);
-                when(connectAddonBeanFactory.fromJsonSkipValidation(mockDescriptor)).thenReturn(buildAddOnBean(Collections.<ScopeName>emptySet()));
-            }
-            else
-            {
-                when(connectAddonRegistry.getDescriptor(PLUGIN_KEY)).thenReturn(null);
-            }
-
-            this.isJson = isJson;
-            return this;
-        }
-
-        Setup withPermission(String permission)
-        {
-            when(permissionsReader.getPermissionsForPlugin(plugin)).thenReturn(new HashSet<String>(asList(permission)));
-            return this;
+            final String mockDescriptor = buildMockDescriptor();
+            when(connectAddonRegistry.getDescriptor(PLUGIN_KEY)).thenReturn(mockDescriptor);
+            when(connectAddonBeanFactory.fromJsonSkipValidation(mockDescriptor)).thenReturn(buildAddOnBean(Collections.<ScopeName>emptySet()));
         }
 
         Setup withScope(ScopeName scopeName)
         {
-            if (!this.isJson)
-            {
-                throw new IllegalStateException("Cannot give a scope to a non-JSON mock add-on!");
-            }
-
             when(connectAddonBeanFactory.fromJsonSkipValidation(buildMockDescriptor())).thenReturn(buildAddOnBean(new HashSet<ScopeName>(asList(scopeName))));
             return this;
         }
@@ -270,24 +214,6 @@ public class PermissionManagerImplTest
             public Iterable<ApiResourceInfo> getApiResourceInfos()
             {
                 return null;
-            }
-
-            @Override
-            public String getKey()
-            {
-                return PERMISSION_KEY;
-            }
-
-            @Override
-            public PermissionInfo getPermissionInfo()
-            {
-                return null;
-            }
-
-            @Override
-            public String getName()
-            {
-                return PERMISSION_KEY;
             }
 
             @Override

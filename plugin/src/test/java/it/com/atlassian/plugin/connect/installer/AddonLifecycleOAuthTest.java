@@ -82,7 +82,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, INSTALLED);
             if(null != plugin)
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -110,7 +110,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, INSTALLED);
             if(null != plugin)
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -143,7 +143,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, INSTALLED);
             if(null != plugin)
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
         
@@ -163,7 +163,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
 
             addonKey = plugin.getKey();
 
-            testPluginInstaller.uninstallJsonAddon(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
             plugin = null;
 
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
@@ -178,7 +178,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if(null != plugin)
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -196,7 +196,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
 
             addonKey = plugin.getKey();
 
-            testPluginInstaller.uninstallJsonAddon(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
             plugin = null;
 
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
@@ -209,7 +209,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if(null != plugin)
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -227,7 +227,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
 
             addonKey = plugin.getKey();
 
-            testPluginInstaller.uninstallJsonAddon(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
             plugin = null;
 
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
@@ -245,7 +245,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if(null != plugin)
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }

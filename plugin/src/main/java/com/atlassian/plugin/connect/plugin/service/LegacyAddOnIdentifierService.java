@@ -5,15 +5,10 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
-import com.atlassian.plugin.osgi.util.OsgiHeaderUtil;
-import org.dom4j.Document;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
 import org.osgi.framework.Bundle;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.File;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -68,66 +63,6 @@ public class LegacyAddOnIdentifierService implements ConnectAddOnIdentifierServi
     public boolean isConnectAddOn(final String pluginKey)
     {
         return isConnectAddOn(pluginAccessor.getPlugin(pluginKey));
-    }
-
-    @Override
-    public boolean isConnectAddOn(final Document pluginDescriptor)
-    {
-        XmlDescriptorExploder.notifyAndExplode(null == pluginDescriptor ? null : pluginDescriptor.getRootElement().attributeValue("key"));
-
-        try
-        {
-            Element root = pluginDescriptor.getRootElement();
-            return (null != root.element("remote-plugin-container"));
-        }
-        catch (Exception e)
-        {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean isConnectAddOn(final File descriptorFile)
-    {
-        try
-        {
-            SAXReader reader = new SAXReader();
-            Document doc = reader.read(descriptorFile);
-            
-            return isConnectAddOn(doc);
-        }
-        catch (Exception e)
-        {
-            return false;
-        }
-    }
-
-    @Override
-    public String getInstallerUser(Bundle bundle)
-    {
-        Object key = getPluginKeyFromBundle(bundle);
-        XmlDescriptorExploder.notifyAndExplode(null == key ? null : key.toString());
-
-        String header = (String) bundle.getHeaders().get(REMOTE_PLUGIN);
-        if (header != null)
-        {
-            return OsgiHeaderUtil.parseHeader(header).get("installer").get("user");
-        }
-        return null;
-    }
-
-    @Override
-    public String getRegistrationUrl(Bundle bundle)
-    {
-        Object key = getPluginKeyFromBundle(bundle);
-        XmlDescriptorExploder.notifyAndExplode(null == key ? null : key.toString());
-
-        String header = (String) bundle.getHeaders().get(REMOTE_PLUGIN);
-        if (header != null)
-        {
-            return OsgiHeaderUtil.parseHeader(header).get("installer").get("registration-url");
-        }
-        return null;
     }
 
     private static Object getPluginKeyFromBundle(Bundle bundle)

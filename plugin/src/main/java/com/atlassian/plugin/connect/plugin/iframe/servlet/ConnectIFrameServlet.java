@@ -1,25 +1,20 @@
 package com.atlassian.plugin.connect.plugin.iframe.servlet;
 
 import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParser;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleUiParamParser;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
-import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import static com.atlassian.plugin.connect.plugin.module.page.dialog.DialogPageModuleDescriptor.DIALOG_CLASSIFIER;
-import static com.atlassian.plugin.connect.plugin.module.page.dialog.DialogPageModuleDescriptor.SIMPLE_DIALOG_CLASSIFIER;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
@@ -37,17 +32,14 @@ public class ConnectIFrameServlet extends HttpServlet
     private final IFrameRenderStrategyRegistry IFrameRenderStrategyRegistry;
     private final ModuleContextParser moduleContextParser;
     private final ModuleUiParamParser moduleUiParamParser;
-    private final LegacyAddOnIdentifierService legacyAddOnIdentifierService;
 
     public ConnectIFrameServlet(IFrameRenderStrategyRegistry IFrameRenderStrategyRegistry,
             ModuleContextParser moduleContextParser,
-                                ModuleUiParamParser moduleUiParamParser,
-            LegacyAddOnIdentifierService legacyAddOnIdentifierService)
+            ModuleUiParamParser moduleUiParamParser)
     {
         this.IFrameRenderStrategyRegistry = IFrameRenderStrategyRegistry;
         this.moduleContextParser = moduleContextParser;
         this.moduleUiParamParser = moduleUiParamParser;
-        this.legacyAddOnIdentifierService = legacyAddOnIdentifierService;
     }
 
     @Override
@@ -60,16 +52,7 @@ public class ConnectIFrameServlet extends HttpServlet
             String addOnKey = matcher.group(1);
             String moduleKey = matcher.group(2);
 
-            IFrameRenderStrategy renderStrategy;
-            if (legacyAddOnIdentifierService.isConnectAddOn(addOnKey))
-            {
-                // TODO remove when we fuck off XML
-                renderStrategy = getiFrameRenderStrategyForXMLModule(req, addOnKey, moduleKey);
-            }
-            else
-            {
-                renderStrategy = getiFrameRenderStrategyForJsonModule(req, addOnKey, moduleKey);
-            }
+            IFrameRenderStrategy renderStrategy = getiFrameRenderStrategyForJsonModule(req, addOnKey, moduleKey);
 
             if (renderStrategy != null)
             {
@@ -108,26 +91,8 @@ public class ConnectIFrameServlet extends HttpServlet
         return renderStrategy;
     }
 
-    @XmlDescriptor
-    private IFrameRenderStrategy getiFrameRenderStrategyForXMLModule(final HttpServletRequest req, final String addOnKey, final String moduleKey)
-    {
-        XmlDescriptorExploder.notifyAndExplode(addOnKey);
-
-        final IFrameRenderStrategy renderStrategy;
-        if (req.getParameter("simpleDialog") != null)
-        {
-            renderStrategy = IFrameRenderStrategyRegistry.get(addOnKey, moduleKey, SIMPLE_DIALOG_CLASSIFIER);
-        }
-        else
-        {
-            renderStrategy = IFrameRenderStrategyRegistry.get(addOnKey, moduleKey, DIALOG_CLASSIFIER);
-        }
-        return renderStrategy;
-    }
-
     public static String iFrameServletPath(String addOnKey, String moduleKey)
     {
         return "/plugins/servlet/ac/" + checkNotNull(addOnKey) + "/" + checkNotNull(moduleKey);
     }
-
 }

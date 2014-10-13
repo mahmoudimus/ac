@@ -10,9 +10,5 @@ import org.dom4j.Document;
  */
 public interface ConnectAddOnInstaller
 {
-    @Deprecated
-    @XmlDescriptor
-    Plugin install(String username, Document document) throws PluginInstallException;
-
     Plugin install(String jsonDescriptor) throws PluginInstallException;
 }

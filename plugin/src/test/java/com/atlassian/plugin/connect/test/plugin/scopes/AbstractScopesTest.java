@@ -12,7 +12,6 @@ import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
 import com.atlassian.plugin.connect.plugin.service.ScopeServiceImpl;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
-import com.atlassian.plugin.connect.spi.permission.PermissionsReader;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -24,11 +23,11 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Set;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -108,8 +107,8 @@ public abstract class AbstractScopesTest
         final ConnectAddonBeanFactory addonBeanFactory = mock(ConnectAddonBeanFactory.class);
         when(addonBeanFactory.fromJsonSkipValidation(mockDescriptor)).thenReturn(addon);
 
-        permissionManager = new PermissionManagerImpl(pluginAccessor, pluginEventManager,
-                mock(PermissionsReader.class), jsonConnectAddOnIdentifierService, scopeService,
+        permissionManager = new PermissionManagerImpl(
+                jsonConnectAddOnIdentifierService, scopeService,
                 connectAddonRegistry, addonBeanFactory);
     }
 

@@ -53,32 +53,27 @@ public class ApiScopingFilter implements Filter
 
     private final PermissionManager permissionManager;
     private final UserManager userManager;
-    private final WebSudoService webSudoService;
     private final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
     private final String ourConsumerKey;
     private final EventPublisher eventPublisher;
     private final Clock clock;
 
     public ApiScopingFilter(PermissionManager permissionManager, UserManager userManager,
-        ConsumerService consumerService, WebSudoService webSudoService,
-        JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, EventPublisher eventPublisher)
+        ConsumerService consumerService, JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, EventPublisher eventPublisher)
     {
         this(permissionManager,
              userManager,
              consumerService,
-             webSudoService,
              jsonConnectAddOnIdentifierService,
              eventPublisher,
              new SystemClock());
     }
 
     public ApiScopingFilter(PermissionManager permissionManager, UserManager userManager,
-            ConsumerService consumerService, WebSudoService webSudoService,
-            JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, EventPublisher eventPublisher, Clock clock)
+            ConsumerService consumerService, JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, EventPublisher eventPublisher, Clock clock)
     {
         this.permissionManager = permissionManager;
         this.userManager = userManager;
-        this.webSudoService = webSudoService;
         this.jsonConnectAddOnIdentifierService = jsonConnectAddOnIdentifierService;
         this.eventPublisher = eventPublisher;
         this.ourConsumerKey = consumerService.getConsumer().getKey();
@@ -114,15 +109,6 @@ public class ApiScopingFilter implements Filter
             if (addOnKey != null)
             {
                 handleScopedRequest(addOnKey, req, res, chain);
-                return;
-            }
-
-            // apply XDM restrictions if this is an XHR from a XML-descriptor based Connect app made via the XDM bridge
-            // see AP.request() in the host AP js for more details.
-            addOnKey = extractXdmRequestKey(req);
-            if (addOnKey != null)
-            {
-                handleXdmRequest(addOnKey, req, res, chain);
                 return;
             }
         }
@@ -179,63 +165,6 @@ public class ApiScopingFilter implements Filter
         }
         long duration = clock.now().getTime() - startTime;
         eventPublisher.publish(new ScopedRequestAllowedEvent(req, wrappedResponse.getStatusCode(), duration));
-    }
-
-    @XmlDescriptor
-    private void handleXdmRequest(String clientKey, HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException
-    {
-        XmlDescriptorExploder.notifyAndExplode(clientKey);
-
-        // prevent all XDM requests made on behalf of system administrators
-        UserKey userKey = userManager.getRemoteUserKey(req);
-        if (!DEV_MODE_ENABLED && userKey != null && userManager.isSystemAdmin(userKey))
-        {
-            log.warn("XDM request from app '{}' attempted to authenticate as a system administrator '{}' when " +
-                    "accessing the resource '{}', and was denied.",
-                    new Object[]{clientKey, userKey, req.getRequestURI()});
-            res.sendError(HttpServletResponse.SC_FORBIDDEN, "AP.request() can not be used to access WebSudo " +
-                    "protected APIs.");
-            return;
-        }
-
-        // suspend the current WebSudo session if present to prevent access to all WebSudo protected APIs
-        HttpSession session = req.getSession(false);
-        if (session != null)
-        {
-            // there's no API for suspending a WebSudo session, so unfortunately we have to manually clear
-            // and then re-instate the session parameter (a timestamp in JIRA and Confluence) used to
-            // mark a session as WebSudo'd. This is bit of an unfortunate hack, but can be removed once
-            // we've sorted out Connect app the permissions vs. scopes debacle. (ACDEV-369)
-            String webSudoSessionKey = webSudoService.getWebSudoSessionKey();
-            Object webSudoTimestamp = session.getAttribute(webSudoSessionKey);
-            if (webSudoTimestamp != null)
-            {
-                session.setAttribute(webSudoSessionKey, null);
-                try
-                {
-                    chain.doFilter(req, res);
-                }
-                finally
-                {
-                    // restore the current WebSudo session (if a new one hasn't been established)
-                    Object attribute = session.getAttribute(webSudoSessionKey);
-                    if (attribute == null)
-                    {
-                        session.setAttribute(webSudoSessionKey, webSudoTimestamp);
-                    }
-                    else
-                    {
-                        // This is not expected behaviour, but should be harmless as a subsequent request will still
-                        // have it's WebSudo session suspended.
-                        log.warn("XDM request unexpectedly initiated a new WebSudo session expiring at " + attribute);
-                    }
-                }
-                return;
-            }
-        }
-
-        // no WebSudo session - carry on
-        chain.doFilter(req, res);
     }
 
     /**

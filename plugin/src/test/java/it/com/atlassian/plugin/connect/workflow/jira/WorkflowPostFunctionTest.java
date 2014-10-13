@@ -115,7 +115,7 @@ public class WorkflowPostFunctionTest
     {
         if (null != plugin)
         {
-            testPluginInstaller.uninstallJsonAddon(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
         }
     }
 

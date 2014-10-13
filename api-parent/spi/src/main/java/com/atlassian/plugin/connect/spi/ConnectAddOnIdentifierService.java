@@ -21,14 +21,4 @@ public interface ConnectAddOnIdentifierService
     boolean isConnectAddOn(Plugin plugin);
 
     boolean isConnectAddOn(String pluginKey);
-
-    @XmlDescriptor
-    boolean isConnectAddOn(Document pluginDescriptor);
-
-    boolean isConnectAddOn(File descriptorFile);
-
-    String getInstallerUser(Bundle bundle);
-
-    String getRegistrationUrl(Bundle bundle);
-    
 }
