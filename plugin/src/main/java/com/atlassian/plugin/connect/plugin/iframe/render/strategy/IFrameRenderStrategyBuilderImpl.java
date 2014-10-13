@@ -16,6 +16,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.entity.ContentType;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -35,6 +37,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     private static final String TEMPLATE_GENERIC_BODY = TEMPLATE_PATH + "iframe-body.vm";
     private static final String TEMPLATE_GENERIC_INLINE = TEMPLATE_PATH + "iframe-body-inline.vm";
     private static final String TEMPLATE_PAGE = TEMPLATE_PATH + "iframe-page.vm";
+    private static final String TEMPLATE_JSON = TEMPLATE_PATH + "iframe-json.vm";
     private static final String TEMPLATE_PROJECT_ADMIN_TAB = TEMPLATE_PATH + "iframe-page-project-admin.vm";
     private static final String TEMPLATE_POSTFUNCTION_CREATE = TEMPLATE_PATH + "jira/postfunction/create.vm";
     private static final String TEMPLATE_POSTFUNCTION_EDIT = TEMPLATE_PATH + "jira/postfunction/edit.vm";
@@ -42,6 +45,8 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
 
     private static final String TEMPLATE_ACCESS_DENIED_PAGE = TEMPLATE_PATH + "iframe-page-accessdenied.vm";
     private static final String TEMPLATE_ACCESS_DENIED_GENERIC_BODY = TEMPLATE_PATH + "iframe-body-accessdenied.vm";
+    private static final String TEMPLATE_ACCESS_DENIED_JSON = TEMPLATE_PATH + "iframe-json-accessdenied.vm";
+
     public static final String ATL_GENERAL = "atl.general";
 
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
@@ -60,6 +65,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     private String decorator;
     private String width;
     private String height;
+    private String contentType;
     private boolean uniqueNamespace;
     private boolean isDialog;
     private boolean isSimpleDialog;
@@ -78,6 +84,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         this.iFrameRenderContextBuilderFactory = iFrameRenderContextBuilderFactory;
         this.templateRenderer = templateRenderer;
         this.connectConditionFactory = connectConditionFactory;
+        this.contentType = ContentType.TEXT_HTML.getMimeType();
     }
 
     @Override
@@ -271,7 +278,8 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
 
         return new IFrameRenderStrategyImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory,
                 templateRenderer, addOnKey, moduleKey, template, accessDeniedTemplate, urlTemplate, title,
-                decorator, condition, additionalRenderContext, width, height, uniqueNamespace, isDialog, isSimpleDialog, resizeToParent, sign);
+                decorator, condition, additionalRenderContext, width, height, uniqueNamespace, isDialog, isSimpleDialog,
+                resizeToParent, sign, contentType);
     }
 
     @VisibleForTesting
@@ -291,6 +299,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         private final String title;
         private final String width;
         private final String height;
+        private final String contentType;
         private final boolean uniqueNamespace;
         private final boolean isDialog;
         private final boolean isSimpleDialog;
@@ -306,7 +315,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
                 final String title, final String decorator, final Condition condition,
                 final Map<String, Object> additionalRenderContext, String width, String height,
                 final boolean uniqueNamespace, final boolean isDialog, final boolean isSimpleDialog, final boolean resizeToParent,
-                final boolean sign)
+                final boolean sign, final String contentType)
         {
             this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
             this.iFrameRenderContextBuilderFactory = iFrameRenderContextBuilderFactory;
@@ -327,6 +336,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
             this.isSimpleDialog = isDialog;
             this.resizeToParent = resizeToParent;
             this.sign = sign;
+            this.contentType = contentType;
         }
 
         @Override
@@ -383,9 +393,8 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         @Override
         public void renderAccessDenied(final Writer writer) throws IOException
         {
-               
             Map<String, Object> renderContext = ImmutableMap.<String, Object>builder()
-                    .put("title", title)
+                    .put("title", StringUtils.defaultIfEmpty(title, ""))
                     .put("decorator", ATL_GENERAL)
                     .build();
 
@@ -396,7 +405,6 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         public boolean shouldShow(Map<String, ? extends Object> conditionContext)
         {
             boolean show = condition == null || condition.shouldDisplay((Map<String,Object>)conditionContext);
-            
             return show;
         }
 
@@ -407,6 +415,21 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
             {
                 throw new PermissionDeniedException(addOnKey, "Cannot render iframe for this page.");
             }
+        }
+
+        @Override
+        public String getContentType()
+        {
+            return contentType;
+        }
+
+        @Override
+        public IFrameRenderStrategy toJsonRenderStrategy()
+        {
+            return new IFrameRenderStrategyImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory,
+                    templateRenderer, addOnKey, moduleKey, TEMPLATE_JSON, TEMPLATE_ACCESS_DENIED_JSON, urlTemplate, title,
+                    decorator, condition, additionalRenderContext, width, height, uniqueNamespace, isDialog, isSimpleDialog,
+                    resizeToParent, sign, ContentType.APPLICATION_JSON.getMimeType());
         }
     }
 

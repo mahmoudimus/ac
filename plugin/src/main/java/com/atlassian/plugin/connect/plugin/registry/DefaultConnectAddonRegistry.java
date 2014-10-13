@@ -284,7 +284,8 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
         
     }
 
-    private AddonSettings getAddonSettings(String pluginKey)
+    @Override
+    public AddonSettings getAddonSettings(String pluginKey)
     {
         AddonSettings addonsettings = new AddonSettings();
 

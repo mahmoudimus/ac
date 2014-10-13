@@ -1,6 +1,34 @@
 
 # Release Notes
 
+<div class="aui-message info">
+	    <p class="title">
+	        <span class="aui-icon icon-success"></span>
+	        <strong>Latest Atlassian Connect versions</strong>
+	    </p>
+	    <table>
+	        <tr>
+	            <td>In production:</td>
+	            <td><span id="connect-version-prd"/></td>
+	        </tr>
+	        <tr>
+                <td>In development:</td>
+                <td><span id="connect-version-dev"/></td>
+            </tr>
+		</table>
+</div>
+
+The version numbers for the Atlassian Connect framework and Atlassian products which support it are now published in 
+[this JSON file](https://developer.atlassian.com/static/connect-versions.json), which you can poll periodically to 
+find out about new production and development (bleeding edge) releases, and the commands to use them.
+
+## [1.1.7](../release-notes/1-1-0.html#1.1.7)
+* Bug fixes and minor improvements
+
+## [1.1.6](../release-notes/1-1-0.html#1.1.6)
+* More [JIRA reports](../modules/jira/report.html) features.
+* Add-ons are no longer automatically uninstalled when the installation lifecycle hook returns an error response.
+
 ## [1.1.4](../release-notes/1-1-0.html#1.1.4)
 * Confluence now supports `content.*` variables everywhere that `page.*` variables were supported.
 * Support for [JIRA reports](../modules/jira/report.html)

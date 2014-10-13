@@ -76,9 +76,7 @@ public class TestDialog extends ConnectWebDriverTestBase
                 : null;
 
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
-                .addJWT()
-                .addInstallLifecycle()
-                .addRoute(ConnectRunner.INSTALLED_PATH, INSTALL_HANDLER_SERVLET)
+                .addJWT(INSTALL_HANDLER_SERVLET)
                 .addModules("generalPages",
                         newPageBean()
                                 .withName(new I18nProperty(ADDON_GENERALPAGE_NAME, null))
@@ -217,7 +215,7 @@ public class TestDialog extends ConnectWebDriverTestBase
 
     private RemoteDialogOpeningPage bindDialogOpeningPage(String moduleKey)
     {
-        return product.getPageBinder().bind(RemoteDialogOpeningPage.class, null, moduleKey, runner.getAddon().getKey());
+        return product.getPageBinder().bind(RemoteDialogOpeningPage.class, moduleKey);
     }
 
     private String closeTheDialog(RemoteDialogOpeningPage dialogOpeningPage, RemoteCloseDialogPage closeDialogPage)
@@ -293,7 +291,7 @@ public class TestDialog extends ConnectWebDriverTestBase
 
     private void sleepForAtLeast1Second()
     {
-        sleepUntil(System.currentTimeMillis() + 1100);
+        sleepUntil(System.currentTimeMillis() + 3000);
     }
 
     private void sleepUntil(final long wakeTimeMillis)

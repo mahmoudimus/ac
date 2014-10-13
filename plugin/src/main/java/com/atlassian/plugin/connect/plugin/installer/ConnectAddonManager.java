@@ -84,6 +84,8 @@ public class ConnectAddonManager
     private int testConnectionTimeout = 5 * 1000;
     private int testSocketTimeout = 5 * 1000;
     private int testRequestTimeout = 5 * 3000;
+    private long testLeaseTimeout = TimeUnit.SECONDS.toMillis(3);
+
 
     public static final String USE_TEST_HTTP_CLIENT = "use.test.http.client";
 
@@ -150,6 +152,7 @@ public class ConnectAddonManager
             options.setConnectionTimeout(testConnectionTimeout, TimeUnit.MILLISECONDS);
             options.setRequestTimeout(testRequestTimeout, TimeUnit.MILLISECONDS);
             options.setSocketTimeout(testSocketTimeout, TimeUnit.MILLISECONDS);
+            options.setLeaseTimeout(testLeaseTimeout);
 
             this.httpClient = httpClientFactory.create(options);
             this.isTestHttpClient.set(true);
@@ -205,7 +208,7 @@ public class ConnectAddonManager
         String sharedSecret = useSharedSecret ? sharedSecretService.next() : null;
         String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
 
-        String userKey = addOnNeedsAUser(addOn) ? provisionAddOnUserAndScopes(addOn, previousDescriptor) : null;
+        String userKey = provisionUserIfNecessary(addOn, previousDescriptor);
 
         AddonSettings settings = new AddonSettings()
                 .setAuth(authType.name())
@@ -241,6 +244,11 @@ public class ConnectAddonManager
         }
 
         return addOn;
+    }
+
+    public String provisionUserIfNecessary(ConnectAddonBean addOn, String previousDescriptor)
+    {
+        return addOnNeedsAUser(addOn) ? provisionAddOnUserAndScopes(addOn, previousDescriptor) : null;
     }
 
     public void enableConnectAddon(final String pluginKey) throws ConnectAddOnUserInitException
@@ -631,12 +639,21 @@ public class ConnectAddonManager
 
         try
         {
-            return connectAddOnUserService.provisionAddonUserForScopes(addOn.getKey(), addOn.getName(), previousScopes, newScopes);
+            return connectAddOnUserService.provisionAddonUserForScopes(addOn.getKey(),
+                                                                       addOn.getName(),
+                                                                       previousScopes,
+                                                                       newScopes);
         }
         catch (ConnectAddOnUserInitException e)
         {
-            throw new PluginInstallException(e.getMessage(), Option.some("connect.install.error.user.provisioning"), e, true);
+
+            String i18nMessage = i18nResolver.getText(e.getI18nKey(), addOn.getName());
+            // This is a hack; throwing with 18nkey and parameters does not work,
+            // when we throw an exception with a key that is not in the i18nproperties file
+            // UPM displays the 'key' (which is really our error message)
+            throw new PluginInstallException(e.getMessage(), Option.option(i18nMessage), e, true);
         }
+
     }
 
     private static boolean addOnNeedsAUser(ConnectAddonBean addOn)

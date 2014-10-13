@@ -3,6 +3,8 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor.url;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.uri.UriBuilder;
@@ -42,5 +44,20 @@ public class AbsoluteAddOnUrlConverter
                     .toString();
         }
         return url;
+    }
+
+    public String getAbsoluteUrl(ConnectAddonBean addon, String url)
+    {
+        try
+        {
+            return getAbsoluteUrl(addon.getKey(), url);
+        }
+        catch (URISyntaxException e)
+        {
+            throw new PluginParseException("Malformed url declared by '"
+                    + addon.getName()
+                    + "' (" + addon.getKey() + "): "
+                    + url, e);
+        }
     }
 }

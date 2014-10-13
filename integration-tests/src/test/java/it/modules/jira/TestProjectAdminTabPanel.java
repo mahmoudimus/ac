@@ -14,7 +14,10 @@ import it.util.TestUser;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsCollectionContaining;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import java.rmi.RemoteException;
@@ -43,8 +46,6 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
 
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
 
-    private String configModuleKey;
-
     @Rule
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
     
@@ -70,12 +71,6 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
                 .start();
     }
 
-    @Before
-    public void beforeEachTest()
-    {
-        this.configModuleKey = addonAndModuleKey(remotePlugin.getAddon().getKey(),PROJECT_CONFIG_MODULE_KEY);    
-    }
-    
     @AfterClass
     public static void stopConnectAddOn() throws Exception
     {
@@ -92,8 +87,9 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
 
         assertThat(page.getTabs().getTabs(), IsCollectionContaining.<ProjectConfigTabs.Tab>hasItem(projectConfigTabMatcher(PROJECT_CONFIG_TAB_NAME)));
 
+        final String linkId = addonAndModuleKey(remotePlugin.getAddon().getKey(), PROJECT_CONFIG_MODULE_KEY);
         final JiraProjectAdministrationTab remoteProjectAdministrationTab =
-                page.getTabs().gotoTab(configModuleKey, JiraProjectAdministrationTab.class, project.getKey(), configModuleKey);
+                page.getTabs().gotoTab(linkId, JiraProjectAdministrationTab.class, project.getKey(), remotePlugin.getAddon().getKey(), PROJECT_CONFIG_MODULE_KEY);
 
         // Test of workaround for JRA-26407.
         assertNotNull(remoteProjectAdministrationTab.getProjectHeader());

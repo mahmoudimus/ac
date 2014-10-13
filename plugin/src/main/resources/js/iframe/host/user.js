@@ -23,7 +23,7 @@ _AP.define("user", ["_dollar", "_rpc"], function($, rpc) {
                     return {fullName: fullName, id: connectModuleData.uid, key: connectModuleData.ukey};
                 },
                 getTimeZone: function () {
-                    return connectModuleData.data.timeZone;
+                    return connectModuleData.timeZone;
                 }
             }
         };

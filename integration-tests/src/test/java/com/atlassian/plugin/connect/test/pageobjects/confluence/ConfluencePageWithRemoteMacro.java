@@ -1,15 +1,15 @@
 package com.atlassian.plugin.connect.test.pageobjects.confluence;
 
-import javax.inject.Inject;
-
 import com.atlassian.pageobjects.Page;
 import com.atlassian.webdriver.AtlassianWebDriver;
-
+import com.atlassian.webdriver.utils.Check;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
+import javax.inject.Inject;
+
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.lang.String.format;
 
 public final class ConfluencePageWithRemoteMacro implements Page
 {
@@ -33,8 +33,9 @@ public final class ConfluencePageWithRemoteMacro implements Page
 
     public String getText(String className)
     {
-        final By locator = By.cssSelector(format(".%s .%s", macroName, className));
-        if (driver.elementExists(locator))
+        final By locator = By.className(className);
+
+        if (Check.elementExists(locator, driver))
         {
             return driver.findElement(locator).getText();
         }
@@ -46,28 +47,21 @@ public final class ConfluencePageWithRemoteMacro implements Page
 
     public boolean macroHasTimedOut()
     {
-        if (!hasMacro())
+        try
         {
-            return false;
+            final WebElement container = driver.findElement(By.className("ap-container"));
+
+            if (container.getAttribute("id").startsWith("ap-" + macroName))
+            {
+                container.findElement(By.className("ap-load-timeout"));
+                return true;
+            }
+        }
+        catch (NoSuchElementException e)
+        {
+            // do nothing
         }
 
-        driver.waitUntilElementIsNotLocated(By.cssSelector(format(".%s span.bp-loading", macroName)));
-
-        return getMacro().getText().contains("java.net.SocketTimeoutException");
-    }
-
-    private boolean hasMacro()
-    {
-        return driver.elementExists(getMacroLocator());
-    }
-
-    private WebElement getMacro()
-    {
-        return driver.findElement(getMacroLocator());
-    }
-
-    private By getMacroLocator()
-    {
-        return By.className(macroName);
+        return false;
     }
 }

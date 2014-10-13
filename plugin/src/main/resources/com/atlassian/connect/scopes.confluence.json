@@ -49,6 +49,13 @@
       "xmlRpcPathKeys": ["confluenceservice-xml-rpc-write"],
       "methods": ["POST"]
     },
+      {
+          "key": "WRITE",
+          "restPathKeys": [
+              "clear-macro-cache"
+          ],
+          "methods": ["DELETE"]
+      },
     {
       "key": "DELETE",
       "restPathKeys": [
@@ -198,6 +205,13 @@
       "basePaths": ["/search($|/.*)"],
       "versions": ["1", "1.0", "latest"],
       "public": false
+    },
+    {
+      "key": "clear-macro-cache",
+      "name": "atlassian-connect",
+      "basePaths": ["/macro/app/.+"],
+      "versions": ["1", "latest"],
+      "public": true
     }
   ],
   "jsonRpcPaths": [
