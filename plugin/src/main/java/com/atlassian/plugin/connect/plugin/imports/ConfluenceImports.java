@@ -16,7 +16,6 @@ import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.confluence.util.i18n.I18NBeanFactory;
 import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.core.task.MultiQueueTaskManager;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.BlueprintModuleProvider;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ConfluenceImport;
 import org.springframework.beans.factory.annotation.Qualifier;
