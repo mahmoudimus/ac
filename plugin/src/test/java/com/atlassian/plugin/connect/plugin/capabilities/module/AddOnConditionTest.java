@@ -146,7 +146,8 @@ public class AddOnConditionTest
         addonCondition = new AddOnCondition(remotablePluginAccessorFactory,
                                             iFrameUriBuilderFactory,
                                             webFragmentModuleContextExtractor,
-                                            eventPublisher);
+                                            eventPublisher,
+                                            bundleContext);
 
         when(remotablePluginAccessorFactory.getOrThrow(anyString())).thenReturn(remotablePluginAccessor);
         when(licenseRetriever.getLicenseStatus(anyString())).thenReturn(LicenseStatus.ACTIVE);

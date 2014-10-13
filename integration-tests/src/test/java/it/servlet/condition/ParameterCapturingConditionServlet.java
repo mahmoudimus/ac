@@ -1,6 +1,5 @@
 package it.servlet.condition;
 
-import com.atlassian.fugue.Iterables;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 
@@ -12,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ParameterCapturingConditionServlet extends HttpServlet
@@ -45,8 +45,9 @@ public class ParameterCapturingConditionServlet extends HttpServlet
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
         paramsFromLastRequest = req.getParameterMap();
-        Map<String,String> headers = Collections.emptyMap();
-        for (String name: Collections.list(req.getAttributeNames()))
+        Map<String,String> headers = new HashMap<String,String>();
+
+        for (String name: Collections.list(req.getHeaderNames()))
         {
             headers.put(name, req.getHeader(name));
         }
