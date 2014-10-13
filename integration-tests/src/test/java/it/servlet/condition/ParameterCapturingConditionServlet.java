@@ -1,5 +1,6 @@
 package it.servlet.condition;
 
+import com.atlassian.fugue.Iterables;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 
@@ -8,7 +9,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
 
 public class ParameterCapturingConditionServlet extends HttpServlet
@@ -28,6 +31,8 @@ public class ParameterCapturingConditionServlet extends HttpServlet
     };
 
     private volatile Map<String, String[]> paramsFromLastRequest;
+
+    private volatile Map<String,String> headersFromLastRequest;
     
     private volatile String conditionReturnValue;
 
@@ -40,10 +45,21 @@ public class ParameterCapturingConditionServlet extends HttpServlet
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
         paramsFromLastRequest = req.getParameterMap();
+        Map<String,String> headers = Collections.emptyMap();
+        for (String name: Collections.list(req.getAttributeNames()))
+        {
+            headers.put(name, req.getHeader(name));
+        }
+        headersFromLastRequest = headers;
 
         resp.setContentType("application/json");
         resp.getWriter().write("{\"shouldDisplay\" : " + conditionReturnValue + "}");
         resp.getWriter().close();
+    }
+
+    public Map<String, String> getHeadersFromLastRequest()
+    {
+        return headersFromLastRequest;
     }
 
     public Map<String, String[]> getAllParamsFromLastRequest()

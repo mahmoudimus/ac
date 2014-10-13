@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.module;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
+import com.atlassian.plugin.connect.plugin.util.BundleUtil;
 import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.event.AddOnConditionFailedEvent;
@@ -14,10 +15,12 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.base.Function;
+
 import org.apache.commons.lang3.time.StopWatch;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +49,7 @@ public final class RemoteCondition implements Condition
     private final LicenseRetriever licenseRetriever;
     private final LocaleHelper localeHelper;
     private final EventPublisher eventPublisher;
+    private final BundleContext bundleContext;
 
     private static final Logger log = LoggerFactory.getLogger(RemoteCondition.class);
 
@@ -55,7 +59,8 @@ public final class RemoteCondition implements Condition
                            TemplateRenderer templateRenderer,
                            LicenseRetriever licenseRetriever,
                            LocaleHelper localeHelper,
-                           EventPublisher eventPublisher)
+                           EventPublisher eventPublisher,
+                           BundleContext bundleContext)
     {
         this.productAccessor = productAccessor;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
@@ -64,6 +69,7 @@ public final class RemoteCondition implements Condition
         this.licenseRetriever = licenseRetriever;
         this.localeHelper = localeHelper;
         this.eventPublisher = eventPublisher;
+        this.bundleContext = bundleContext;
     }
 
     @Override
@@ -87,8 +93,10 @@ public final class RemoteCondition implements Condition
     {
         final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
+        final String version = BundleUtil.getBundleVersion(bundleContext);
+        final Map<String,String> httpHeaders = Collections.singletonMap("Atlassian-Connect-Version", version);
         return remotablePluginAccessorFactory.get(pluginKey)
-                .executeAsync(HttpMethod.GET, url, getParameters(context), Collections.<String, String>emptyMap())
+                .executeAsync(HttpMethod.GET, url, getParameters(context), httpHeaders)
                 .fold(
                         new Function<Throwable, Boolean>()
                         {

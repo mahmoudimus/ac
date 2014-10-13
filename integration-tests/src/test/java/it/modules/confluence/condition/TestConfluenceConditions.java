@@ -28,6 +28,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionB
 import static it.matcher.IsLong.isLong;
 import static it.matcher.ParamMatchers.isLocale;
 import static it.matcher.ParamMatchers.isTimeZone;
+import static it.matcher.ParamMatchers.isVersionNumber;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -265,6 +266,18 @@ public class TestConfluenceConditions extends AbstractConfluenceWebDriverTest
         assertThat(conditionParams, hasEntry(equalTo("spaceId"), both(not(equalTo(""))).and(not(nullValue()))));
         assertThat(conditionParams, hasEntry(equalTo("spaceId"), isLong()));
     }
+
+    @Test 
+    public void versionIsIncluded() throws Exception
+    {
+        navigateToEditPageAndVerifyParameterCapturingWebItem();
+
+        Map<String, String> conditionHeaders = PARAMETER_CAPTURING_SERVLET.getHeadersFromLastRequest();
+        String version = conditionHeaders.get("Atlassian-Connect-Version");
+
+        assertThat(version, isVersionNumber());
+    }
+
 
     private ConfluenceEditPage visitEditPage() throws Exception
     {

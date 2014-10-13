@@ -27,6 +27,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionB
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static it.matcher.ParamMatchers.isLocale;
 import static it.matcher.ParamMatchers.isTimeZone;
+import static it.matcher.ParamMatchers.isVersionNumber;
 import static it.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -226,7 +227,19 @@ public class TestJiraConditions extends JiraWebDriverTestBase
         assertThat(conditionParams, hasEntry(equalTo("issueId"), equalTo(issue.getId())));
         assertThat(conditionParams, hasEntry(equalTo("projectKey"), equalTo(project.getKey())));
     }
-    
+
+    @Test
+    public void versionNumberIsIncluded() throws Exception
+    {
+        navigateToJiraIssuePageAndVerifyParameterCapturingWebItem();
+
+        Map<String, String> conditionHeaders = PARAMETER_CAPTURING_SERVLET.getHeadersFromLastRequest();
+
+        String version = conditionHeaders.get("Atlassian-Connect-Version");
+
+        assertThat(version, isVersionNumber());
+    }
+
     private String getModuleKey(String module)
     {
         return addonAndModuleKey(runner.getAddon().getKey(), module);
