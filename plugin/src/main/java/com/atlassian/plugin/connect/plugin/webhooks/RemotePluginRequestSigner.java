@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.webhooks;
 import com.atlassian.fugue.Option;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
@@ -37,8 +38,6 @@ public class RemotePluginRequestSigner implements RequestSigner
     private final ConnectAddonRegistry connectAddonRegistry;
     private final BundleContext bundleContext;
 
-    public static String VERSION_HEADER = "Atlassian-Connect-Version";
-
     @Inject
     public RemotePluginRequestSigner(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory, JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, LegacyAddOnIdentifierService legacyAddOnIdentifierService,
                                      ConnectAddonRegistry connectAddonRegistry, BundleContext bundleContext)
@@ -63,7 +62,7 @@ public class RemotePluginRequestSigner implements RequestSigner
             //Webhooks SPI does not provide any other extension points for adding headers
             //to requests, so we'll just do it here
             String version = BundleUtil.getBundleVersion(bundleContext);
-            request.setHeader(VERSION_HEADER, version);
+            request.setHeader(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION, version);
         }
     }
 

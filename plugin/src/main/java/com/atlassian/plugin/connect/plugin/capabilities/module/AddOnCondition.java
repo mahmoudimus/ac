@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor;
@@ -98,7 +99,8 @@ public class AddOnCondition implements Condition
         final URI uri = URI.create(uriString);
         final String uriPath = uri.getPath();
         final String version = BundleUtil.getBundleVersion(bundleContext);
-        final Map<String,String> httpHeaders = Collections.singletonMap("Atlassian-Connect-Version", version);
+        final Map<String, String> httpHeaders = Collections.singletonMap(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION,
+                                                                         version);
         Promise<String> responsePromise = remotablePluginAccessorFactory.getOrThrow(cfg.getAddOnKey())
                 .executeAsync(HttpMethod.GET, uri,
                         Collections.<String, String[]>emptyMap(), httpHeaders);

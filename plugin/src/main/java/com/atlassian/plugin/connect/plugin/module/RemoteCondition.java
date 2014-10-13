@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.module;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.util.BundleUtil;
 import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
@@ -94,7 +95,7 @@ public final class RemoteCondition implements Condition
         final StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         final String version = BundleUtil.getBundleVersion(bundleContext);
-        final Map<String,String> httpHeaders = Collections.singletonMap("Atlassian-Connect-Version", version);
+        final Map<String,String> httpHeaders = Collections.singletonMap(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION, version);
         return remotablePluginAccessorFactory.get(pluginKey)
                 .executeAsync(HttpMethod.GET, url, getParameters(context), httpHeaders)
                 .fold(
