@@ -21,7 +21,10 @@ import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+
 import it.com.atlassian.plugin.connect.TestAuthenticator;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import org.json.JSONObject;
 import org.junit.AfterClass;
@@ -149,6 +152,14 @@ public class WorkflowPostFunctionTest
         ServletRequestSnapshot request = triggerWorkflowTransition();
         JSONObject payload = new JSONObject(request.getEntity());
         assertNotNull(payload.get("issue"));
+    }
+
+    @Test
+    public void requestContainsVersionNumber() throws Exception
+    {
+        ServletRequestSnapshot request = triggerWorkflowTransition();
+        String version = request.getHeaders().get("Atlassian-Connect-Version");
+        assertNotNull(StringUtils.trimToNull(version));
     }
 
     @Test
