@@ -1,9 +1,10 @@
-package com.atlassian.plugin.connect.plugin.module.confluence;
+package com.atlassian.plugin.connect.plugin.capabilities.module.macro;
 
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.macro.MacroExecutionException;
+import com.atlassian.plugin.connect.plugin.module.confluence.MacroInstance;
+import com.atlassian.plugin.connect.plugin.module.confluence.RemoteMacroInfo;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
@@ -91,9 +92,4 @@ public final class PageMacro extends AbstractRemoteMacro
         });
     }
 
-    @Override
-    public RemotablePluginAccessor getRemotablePluginAccessor(String pluginKey)
-    {
-        return remotablePluginAccessorFactory.get(pluginKey);
-    }
 }

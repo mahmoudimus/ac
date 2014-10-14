@@ -12,12 +12,10 @@ import com.atlassian.plugin.connect.modules.beans.nested.*;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectDocumentationBeanFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
-import com.atlassian.plugin.connect.plugin.capabilities.module.ImagePlaceholderMacro;
+import com.atlassian.plugin.connect.plugin.capabilities.module.macro.ImagePlaceholderMacro;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
-import com.atlassian.plugin.connect.plugin.module.confluence.FixedXhtmlMacroModuleDescriptor;
-import com.atlassian.plugin.connect.plugin.module.confluence.PageMacro;
+import com.atlassian.plugin.connect.plugin.capabilities.module.macro.PageMacro;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.Uri;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -25,7 +23,6 @@ import com.google.common.collect.Maps;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 

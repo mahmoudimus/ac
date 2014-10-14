@@ -1,5 +1,7 @@
-package com.atlassian.plugin.connect.plugin.module.confluence;
+package com.atlassian.plugin.connect.plugin.capabilities.module.macro;
 
+import com.atlassian.confluence.macro.Macro;
+import com.atlassian.plugin.connect.plugin.module.confluence.RemoteMacroInfo;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 
 import java.net.URI;
@@ -7,7 +9,7 @@ import java.net.URI;
 /**
  * Base for remote macros
  */
-public abstract class AbstractRemoteMacro implements RemoteMacro
+public abstract class AbstractRemoteMacro implements Macro
 {
     protected final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
     protected final RemoteMacroInfo remoteMacroInfo;
@@ -17,12 +19,6 @@ public abstract class AbstractRemoteMacro implements RemoteMacro
     {
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
         this.remoteMacroInfo = remoteMacroInfo;
-    }
-
-    @Override
-    public RemoteMacroInfo getRemoteMacroInfo()
-    {
-        return remoteMacroInfo;
     }
 
     @Override
@@ -37,7 +33,6 @@ public abstract class AbstractRemoteMacro implements RemoteMacro
         return remoteMacroInfo.getOutputType();
     }
 
-    @Override
     public URI getBaseUrl()
     {
         return remotablePluginAccessorFactory.get(remoteMacroInfo.getPluginKey()).getBaseUrl();

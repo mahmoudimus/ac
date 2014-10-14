@@ -32,13 +32,11 @@ public abstract class AbstractPermission implements Permission
         return key;
     }
 
-    @Override
     public final String getName()
     {
         return permissionInfo.getName();
     }
 
-    @Override
     public final String getDescription()
     {
         return permissionInfo.getDescription();

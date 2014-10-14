@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.capabilities.module;
+package com.atlassian.plugin.connect.plugin.capabilities.module.macro;
 
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.core.ContentEntityObject;

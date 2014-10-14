@@ -58,15 +58,6 @@
         <url-pattern>/redirect/permanent</url-pattern>
     </servlet>
 
-    <servlet key="remotablePluginsIframe"
-             name="Remotable Plugins Iframe Generator"
-             class="com.atlassian.plugin.connect.plugin.module.page.ContextFreeIFramePageServlet">
-        <description>
-            Generates a template for serving a signed remote iframe
-        </description>
-        <url-pattern>/render-signed-iframe</url-pattern>
-    </servlet>
-
     <servlet-filter key="acPermanentRedirectingFilter"
              name="Ac Permanent Redirecting Servlet"
              class="com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectOnNotFoundFilter">
