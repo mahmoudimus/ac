@@ -33,7 +33,7 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
     {
         String key = AddonTestUtils.randomAddOnKey();
         String moduleKey = "my-blueprint";
-        completeKey = "com.atlassian.plugins.atlassian-connect-plugin:" + ModuleKeyUtils.addonAndModuleKey(key,moduleKey);
+        completeKey = "com.atlassian.plugins.atlassian-connect-plugin:" + ModuleKeyUtils.addonAndModuleKey(key, moduleKey) + "-web-item";
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(),
                 key)
                 .addInstallLifecycle()
