@@ -44,6 +44,7 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
 {
     public static final String MACRO_NAME_KEY = "the-macro-name";
     public static final String MACRO_NAME = "The Macro Name";
+    public static final String MACRO_DESCRIPTION = "The Macro Description";
     @Mock
     protected ContainerContext containerContext;
 
@@ -109,7 +110,8 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
     @Test
     public void verifyMacroDescriptionIsSet() throws Exception
     {
-        assertThat(descriptor.getMacroMetadata().getDescription().getKey(), is("my-plugin." + MACRO_NAME_KEY + ".desc"));
+        // TODO the key is actually the raw value, as we've removed i18n support until we fix Confluence to support reloading i18n dynamically
+        assertThat(descriptor.getMacroMetadata().getDescription().getKey(), is(MACRO_DESCRIPTION));
     }
 
     @Test
@@ -212,7 +214,7 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
                 .withBodyType(MacroBodyType.PLAIN_TEXT)
                 .withOutputType(MacroOutputType.BLOCK)
                 .withCategories("media", "confluence_content")
-                .withDescription(new I18nProperty("The Macro Description", "macro.desc.key"))
+                .withDescription(new I18nProperty(MACRO_DESCRIPTION, "macro.desc.key"))
                 .withHidden(true)
                 .withDocumentation(LinkBean.newLinkBean()
                         .withUrl("http://docs.example.com/macro")
