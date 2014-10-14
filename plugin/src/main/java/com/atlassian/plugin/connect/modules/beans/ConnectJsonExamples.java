@@ -1,24 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
-import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
-import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
-import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
-import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexType;
-import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyType;
-import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
-import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
-import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
-import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
-import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
-import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
-import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
+import com.atlassian.plugin.connect.modules.beans.nested.*;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;

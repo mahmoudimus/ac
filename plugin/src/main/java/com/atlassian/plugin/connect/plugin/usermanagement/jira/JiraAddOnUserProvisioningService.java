@@ -249,7 +249,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
                     "Cannot make it an administrators group because that would elevate the privileges of existing users in this group. " +
                     "Consequently, add-on users that need to be admins cannot be made admins by adding them to this group and making it an administrators group. " +
                     "Aborting user setup.",
-                    groupKey));
+                    groupKey), ConnectAddOnUserProvisioningService.ADDON_ADMINS_MISSING_PERMISSION);
         }
     }
 

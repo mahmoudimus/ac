@@ -45,8 +45,7 @@
   "concepts": [
     {
       "filename": "security.html",
-      "title": "Security",
-      "new": true
+      "title": "Security"
     },
     {
       "filename": "authentication.html",

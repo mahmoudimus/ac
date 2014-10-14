@@ -4,7 +4,6 @@ import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
-import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -36,37 +35,19 @@ public class RemoteDialogOpeningPage
     @Inject
     protected PageElementFinder elementFinder;
 
-    // "servlet" || "remote-web-item"
-    @XmlDescriptor
-    @Deprecated
-    private final String type;
-
     private final String pageElementKey;
-    private final String pluginKey;
-
-    @XmlDescriptor
-    private final boolean isXmlDescriptor;
 
     protected WebElement containerDiv;
 
-    @XmlDescriptor
-    public RemoteDialogOpeningPage(String type, String pageElementKey, String pluginKey)
+    public RemoteDialogOpeningPage(String pageElementKey)
     {
-        this(type, pageElementKey, pluginKey, true);
-    }
-
-    public RemoteDialogOpeningPage(String type, String pageElementKey, String pluginKey, boolean isXmlDescriptor)
-    {
-        this.type = type;
         this.pageElementKey = pageElementKey;
-        this.pluginKey = pluginKey;
-        this.isXmlDescriptor = isXmlDescriptor;
     }
 
     @Init
     public void init()
     {
-        this.containerDiv = driver.findElement(By.id("embedded-" + ( (type == null) ? "" : (type + "-") ) + pageElementKey));
+        this.containerDiv = driver.findElement(By.id("embedded-" + pageElementKey));
     }
 
     public RemoteCloseDialogPage openKey(String expectedNamespace)

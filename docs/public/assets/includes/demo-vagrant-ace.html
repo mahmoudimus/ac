@@ -1,0 +1,15 @@
+[atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express) is a toolkit for creating
+Atlassian Connect add-ons with [Node.js](http://nodejs.org). To create an add-on using the framework using the VM,
+connect to the VM and run:
+<div class="CodeMirror-wrap"><pre><div class="CodeMirror">cd /vagrant
+atlas-connect new my-test-addon
+cd my-test-addon
+npm install</div></pre></div>
+This creates a new project with sample add-on, and you should see all the files available in your local machine in the
+folder in which you have started the VM. Then, open two command windows.
+In the first one, start a local instance of JIRA:
+<div class="CodeMirror-wrap"><pre><div class="CodeMirror">atlas-run-connect --product jira</div></pre></div>
+In the second one, start the add-on:
+<div class="CodeMirror-wrap"><pre><div class="CodeMirror">node app.js</div></pre></div>
+Then open a browser in your local machine and point it to: http://localhost:2990/jira. You should see a menu item
+"Hello World" in the JIRA top menu bar, which was added by the add-on.

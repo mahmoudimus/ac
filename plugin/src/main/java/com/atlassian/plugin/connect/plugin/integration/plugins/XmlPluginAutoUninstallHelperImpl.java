@@ -4,7 +4,6 @@ import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginController;
-import com.atlassian.plugin.PluginException;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;

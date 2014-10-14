@@ -7,16 +7,17 @@ import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.Environment;
-import com.atlassian.plugin.connect.test.HttpUtils;
-import com.atlassian.plugin.connect.test.Utils;
+import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.test.*;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
 import com.google.common.collect.ImmutableMap;
+import it.servlet.ConnectAppServlets;
 import it.servlet.ContextServlet;
 import it.servlet.HttpContextServlet;
+import it.servlet.InstallHandlerServlet;
 import it.servlet.condition.ToggleableConditionServlet;
 import net.oauth.signature.RSA_SHA1;
+import org.apache.commons.lang.NotImplementedException;
 import org.bouncycastle.openssl.PEMWriter;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -31,6 +32,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URI;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -226,16 +230,88 @@ public class ConnectRunner
 
     public ConnectRunner addRoute(String path, HttpServlet servlet)
     {
+        if (routes.containsKey(path))
+        {
+            throw new IllegalArgumentException(String.format("The path '%s' already exists!", path));
+        }
+
         routes.put(path, servlet);
         return this;
     }
 
     public ConnectRunner addJWT()
     {
+        return addJWT(ConnectAppServlets.installHandlerServlet());
+    }
+
+    public ConnectRunner addJWT(InstallHandlerServlet installHandlerServlet)
+    {
+        return addJWT(installHandlerServlet, createJwtSignedRequestHandler(installHandlerServlet));
+    }
+
+    public ConnectRunner addJWT(HttpServlet installHandlerServlet)
+    {
+        return addJWT(installHandlerServlet, null);
+    }
+
+    private ConnectRunner addJWT(HttpServlet installHandlerServlet, SignedRequestHandler signedRequestHandler)
+    {
         addonBuilder.withAuthentication(AuthenticationBean.newAuthenticationBean()
                 .withType(AuthenticationType.JWT)
                 .build());
+        addInstallLifecycle();
+        this.signedRequestHandler = signedRequestHandler;
+        addRoute(INSTALLED_PATH, installHandlerServlet);
         return this;
+    }
+
+    private SignedRequestHandler createJwtSignedRequestHandler(final InstallHandlerServlet installHandlerServlet)
+    {
+        return new SignedRequestHandler()
+        {
+            @Override
+            public String getHostBaseUrl(String key)
+            {
+                throw new NotImplementedException();
+            }
+
+            @Override
+            public String getLocalBaseUrl()
+            {
+                throw new NotImplementedException();
+            }
+
+            @Override
+            public String validateRequest(HttpServletRequest req) throws ServletException
+            {
+                throw new NotImplementedException();
+            }
+
+            @Override
+            public void sign(URI uri, String method, String username, HttpURLConnection connection)
+            {
+                try
+                {
+                    final String sharedSecret = checkNotNull(installHandlerServlet.getInstallPayload().getSharedSecret());
+                    final String jwt = AddonTestUtils.generateJwtSignature(HttpMethod.valueOf(method), uri, addonBuilder.getKey(), sharedSecret, BaseUrlLocator.getBaseUrl(), null);
+                    connection.setRequestProperty("Authorization", "JWT " + jwt);
+                }
+                catch (UnsupportedEncodingException e)
+                {
+                    throw new RuntimeException(e);
+                }
+                catch (NoSuchAlgorithmException e)
+                {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            @Override
+            public String getAuthorizationHeaderValue(URI uri, String method, String username) throws IllegalArgumentException
+            {
+                throw new NotImplementedException();
+            }
+        };
     }
 
     @OAuth

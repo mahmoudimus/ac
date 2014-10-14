@@ -1,19 +1,5 @@
 package it.modules;
 
-import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
-import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-import it.servlet.ConnectAppServlets;
-import it.util.TestUser;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.security.NoSuchAlgorithmException;
-
-import org.junit.Before;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.jwt.exception.JwtIssuerLacksSharedSecretException;
 import com.atlassian.jwt.exception.JwtParseException;
@@ -23,10 +9,21 @@ import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanB
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.upm.pageobjects.PluginManager;
+import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
+import org.junit.Before;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.security.NoSuchAlgorithmException;
+
+import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
+import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
 
 public class TestOAuthInstallFailure extends TestInstallFailure
 {
@@ -68,9 +65,7 @@ public class TestOAuthInstallFailure extends TestInstallFailure
                 "Configure",
                 Option.<String>none(), awesomePageModuleKey);
 
-        RemotePluginEmbeddedTestPage addonContentPage = addonPage.click();
-
-        assertThat(addonContentPage.isLoaded(), equalTo(true));
+        ConnectAddOnEmbeddedTestPage addonContentPage = addonPage.click();
 
         ConnectAsserts.verifyContainsStandardAddOnQueryParamters(addonContentPage.getIframeQueryParams(),
                 product.getProductInstance().getContextPath());

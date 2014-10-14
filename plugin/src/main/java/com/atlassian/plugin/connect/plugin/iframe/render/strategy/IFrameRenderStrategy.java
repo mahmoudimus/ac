@@ -19,4 +19,8 @@ public interface IFrameRenderStrategy
     void render(ModuleContextParameters moduleContextParameters, Writer writer, Option<String> uiParameters) throws IOException;
 
     void renderAccessDenied(Writer writer) throws IOException;
+
+    String getContentType();
+
+    IFrameRenderStrategy toJsonRenderStrategy();
 }
