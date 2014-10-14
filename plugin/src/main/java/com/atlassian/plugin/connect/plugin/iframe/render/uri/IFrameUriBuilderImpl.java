@@ -199,7 +199,7 @@ public class IFrameUriBuilderImpl
             uriBuilder.addQueryParameter("lic", licenseRetriever.getLicenseStatus(addonKey).value());
 
             // Connect framework version
-            uriBuilder.addQueryParameter("connect_version", BundleUtil.getBundleVersion(bundleContext));
+            uriBuilder.addQueryParameter("cv", BundleUtil.getBundleVersion(bundleContext));
         }
     }
 

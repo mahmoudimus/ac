@@ -2,6 +2,7 @@ package it.com.atlassian.plugin.connect;
 
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
+import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -15,7 +16,7 @@ public final class HeaderUtil
             @Override
             public boolean apply(String input)
             {
-                return input.equalsIgnoreCase("Atlassian-Connect-Version");
+                return input.equalsIgnoreCase(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION);
             }
         });
         return maybeHeader.flatMap(new Function<String, Option<String>>()

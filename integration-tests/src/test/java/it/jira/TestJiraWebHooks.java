@@ -64,7 +64,7 @@ public class TestJiraWebHooks extends AbstractBrowserlessTest
                 jiraOps.createIssue(project.getKey(), "As Filip I really like creating issues.");
                 WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
-                assertThat(body.getVersion(),isVersionNumber());
+                assertThat(body.getConnectVersion(),isVersionNumber());
             }
         });
     }

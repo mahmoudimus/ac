@@ -86,7 +86,7 @@ public class TestConfluenceWebHooks extends AbstractBrowserlessTest
                 confluenceOps.setPage(some(TestUser.ADMIN), "ds", "testxmlWebhooks", content);
                 final WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
-                assertThat(body.getVersion(),isVersionNumber());
+                assertThat(body.getConnectVersion(),isVersionNumber());
             }
         });
     }

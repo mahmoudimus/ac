@@ -6,6 +6,7 @@ import cc.plural.jsonij.Value;
 import cc.plural.jsonij.parser.ParserException;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
 import org.apache.commons.io.IOUtils;
@@ -33,7 +34,7 @@ public final class WebHookTestServlet extends HttpServlet
     {
         if (req.getRequestURI().endsWith("/webhook") || req.getRequestURI().endsWith("-lifecycle"))
         {
-            String version = req.getHeader("Atlassian-Connect-Version");
+            String version = req.getHeader(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION);
             try
             {
                 webHooksQueue.push(new JsonWebHookBody(getFullURL(req), JSON.parse(IOUtils.toString(req.getReader())), version));
@@ -270,7 +271,7 @@ public final class WebHookTestServlet extends HttpServlet
         }
 
         @Override
-        public String getVersion()
+        public String getConnectVersion()
         {
             return this.version;
         }

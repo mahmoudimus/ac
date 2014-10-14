@@ -1,6 +1,9 @@
 package it.servlet.condition;
 
+import com.atlassian.fugue.Iterables;
+import com.atlassian.fugue.Option;
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 
 import javax.annotation.Nullable;
@@ -58,9 +61,26 @@ public class ParameterCapturingConditionServlet extends HttpServlet
         resp.getWriter().close();
     }
 
-    public Map<String, String> getHeadersFromLastRequest()
+    public Option<String> getHttpHeaderFromLastRequest(String name)
     {
-        return headersFromLastRequest;
+        Predicate<String> equalsIgnoreCase = new Predicate<String>()
+        {
+            @Override
+            public boolean apply(String headerName)
+            {
+                return headerName.equalsIgnoreCase("name");
+            }
+        };
+
+        Option<String> maybeHeaderName = Iterables.findFirst(this.headersFromLastRequest.keySet(), equalsIgnoreCase);
+        return maybeHeaderName.flatMap(new Function<String, Option<String>>()
+        {
+            @Override
+            public Option<String> apply(String headerName)
+            {
+                return Option.option(headersFromLastRequest.get(headerName));
+            }
+        });
     }
 
     public Map<String, String[]> getAllParamsFromLastRequest()
