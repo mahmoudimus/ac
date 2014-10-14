@@ -1,5 +1,7 @@
 package it.com.atlassian.plugin.connect.installer;
 
+import java.io.IOException;
+
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
@@ -29,6 +31,7 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newCon
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
 import static it.com.atlassian.plugin.connect.HeaderUtil.getVersionHeader;
+import static it.com.atlassian.plugin.connect.util.ParamMatchers.isVersionNumber;
 import static com.google.common.collect.Sets.newHashSet;
 import static org.junit.Assert.*;
 
@@ -203,8 +206,7 @@ public abstract class AbstractAddonLifecycleTest
             final ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
 
             Option<String> maybeHeader = getVersionHeader(request);
-            assertTrue(maybeHeader.isDefined());
-
+            assertThat(maybeHeader.get(),isVersionNumber());
         }
         finally
         {
@@ -267,12 +269,76 @@ public abstract class AbstractAddonLifecycleTest
 
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
             Option<String> maybeHeader = getVersionHeader(request);
-            assertTrue(maybeHeader.isDefined());
+            assertThat(maybeHeader.get(),isVersionNumber());
         }
         finally
         {
             testFilterResults.clearRequest(addonKey, INSTALLED);
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
+            if (null != plugin)
+            {
+                testPluginInstaller.uninstallJsonAddon(plugin);
+            }
+        }
+    }
+
+    @Test
+    public void enableRequestHasVersion() throws IOException
+    {
+        ConnectAddonBean addon = installAndEnabledBean;
+
+        Plugin plugin = null;
+        String addonKey = null;
+
+        try
+        {
+            plugin = testPluginInstaller.installAddon(addon);
+
+            addonKey = plugin.getKey();
+
+            testPluginInstaller.enableAddon(addonKey);
+            plugin = null;
+
+            ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, ENABLED);
+            Option<String> maybeHeader = getVersionHeader(request);
+            assertThat(maybeHeader.get(),isVersionNumber());
+        }
+        finally
+        {
+            testFilterResults.clearRequest(addonKey, INSTALLED);
+            testFilterResults.clearRequest(addonKey, ENABLED);
+            if (null != plugin)
+            {
+                testPluginInstaller.uninstallJsonAddon(plugin);
+            }
+        }
+    }
+
+    @Test
+    public void disableRequestHasVersion() throws IOException
+    {
+        ConnectAddonBean addon = installAndEnabledBean;
+
+        Plugin plugin = null;
+        String addonKey = null;
+
+        try
+        {
+            plugin = testPluginInstaller.installAddon(addon);
+
+            addonKey = plugin.getKey();
+
+            testPluginInstaller.disableAddon(addonKey);
+            plugin = null;
+
+            ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, DISABLED);
+            Option<String> maybeHeader = getVersionHeader(request);
+            assertThat(maybeHeader.get(),isVersionNumber());
+        }
+        finally
+        {
+            testFilterResults.clearRequest(addonKey, INSTALLED);
+            testFilterResults.clearRequest(addonKey, DISABLED);
             if (null != plugin)
             {
                 testPluginInstaller.uninstallJsonAddon(plugin);
