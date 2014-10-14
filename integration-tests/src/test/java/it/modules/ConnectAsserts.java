@@ -1,8 +1,10 @@
 package it.modules;
 
+import com.atlassian.plugin.connect.test.pageobjects.AbstractConnectIFrameComponent;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+
 import org.hamcrest.collection.IsMapContaining;
 
 import java.net.URI;
@@ -59,6 +61,12 @@ public class ConnectAsserts
             }
         }
         return map;
+    }
+
+    public static void verifyIframeURLHasVersionNumber(AbstractConnectIFrameComponent<?> connectIframeComponent)
+    {
+        String version = connectIframeComponent.getFromQueryString("cv");
+        assertThat(version, isVersionNumber());
     }
 
     public static void verifyStandardAddOnRelativeQueryParameters(final RemoteWebItem webItem, String contextPath)
