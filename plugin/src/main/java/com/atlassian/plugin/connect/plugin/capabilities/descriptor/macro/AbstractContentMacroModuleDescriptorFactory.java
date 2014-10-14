@@ -109,7 +109,7 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         element.setAttribute("state", "enabled");
         if (bean.getDescription() != null)
         {
-            element.addElement("description").addCDATA(StringEscapeUtils.escapeXml(bean.getDescription().getValue()));
+            element.addElement("description").addCDATA(StringEscapeUtils.escapeHtml(bean.getDescription().getValue()));
         }
 
 //        See ACDEV-1400 AC-1210
