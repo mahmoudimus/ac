@@ -620,6 +620,14 @@
                 <scope>compile</scope>
             </dependency>
 
+            <!-- confluence bundled plugins -->
+            <dependency>
+                <groupId>com.atlassian.confluence.plugins</groupId>
+                <artifactId>confluence-create-content-plugin</artifactId>
+                <version>${blueprints.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
             <!-- Only exists for qunit -->
             <dependency>
                 <groupId>com.atlassian.aui</groupId>
@@ -744,6 +752,7 @@
         <json.schema.validator.version>2.2.5</json.schema.validator.version>
         <node.version>v0.10.26</node.version>
         <npm.version>1.4.3</npm.version>
+        <blueprints.version>4.0.22</blueprints.version>
     </properties>
 
     <repositories>
