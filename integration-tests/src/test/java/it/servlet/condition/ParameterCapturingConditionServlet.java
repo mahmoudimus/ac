@@ -61,14 +61,14 @@ public class ParameterCapturingConditionServlet extends HttpServlet
         resp.getWriter().close();
     }
 
-    public Option<String> getHttpHeaderFromLastRequest(String name)
+    public Option<String> getHttpHeaderFromLastRequest(final String name)
     {
         Predicate<String> equalsIgnoreCase = new Predicate<String>()
         {
             @Override
             public boolean apply(String headerName)
             {
-                return headerName.equalsIgnoreCase("name");
+                return headerName.equalsIgnoreCase(name);
             }
         };
 
