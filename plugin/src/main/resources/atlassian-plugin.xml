@@ -241,4 +241,10 @@
 
 
     <analytics-whitelist key="analyticsWhitelist" resource="whitelist/connect_whitelist.json"/>
+
+    <component key="connectAddOnUserAttributeUpgradeTask" name="Connect AddOn UserAttribute UpgradeTask" class="com.atlassian.plugin.connect.plugin.usermanagement.upgrade.ConnectAddOnUserAttributeUpgradeTask">
+        <interface>com.atlassian.sal.api.upgrade.PluginUpgradeTask</interface>
+    </component>
+
+
 </atlassian-plugin>
