@@ -37,6 +37,8 @@ import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 import static org.junit.Assert.assertThat;
+import static it.matcher.ParamMatchers.isVersionNumber;
+
 
 public class TestDynamicContentMacro extends AbstractContentMacroTest
 {
@@ -329,9 +331,27 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         savedPage = editorPage.save();
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(CLIENT_SIDE_BODY_MACRO_KEY);
+
         String content = renderedMacro.getIFrameElementText("body");
 
         assertThat(content, is("body: " + EDITED_MACRO_BODY));
+    }
+
+    @Test
+    public void testIframeURLContainsVersion() throws Exception
+    {
+        RichTextBodyMacro macro = new RichTextBodyMacro(CLIENT_SIDE_BODY_MACRO_KEY, "");
+        EditContentPage editorPage = createAndEditPage(CLIENT_SIDE_BODY_MACRO_NAME, "<p>" + macro.getStorageFormat() + "</p>");
+
+        RemotePluginDialog dialog = connectPageOperations.editMacro(macro.getMacroKey());
+        dialog.submit();
+
+        savedPage = editorPage.save();
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(CLIENT_SIDE_BODY_MACRO_KEY);
+
+        String version = renderedMacro.getFromQueryString("cv");
+
+        assertThat(version, isVersionNumber());
     }
 
     @Test
