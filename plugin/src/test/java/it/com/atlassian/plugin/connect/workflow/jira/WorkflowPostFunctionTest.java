@@ -26,7 +26,6 @@ import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import it.com.atlassian.plugin.connect.HeaderUtil;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import org.json.JSONObject;
 import org.junit.AfterClass;
@@ -40,6 +39,8 @@ import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
+import static it.com.atlassian.plugin.connect.util.ParamMatchers.isVersionNumber;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -161,7 +162,7 @@ public class WorkflowPostFunctionTest
     {
         ServletRequestSnapshot request = triggerWorkflowTransition();
         Option<String> maybeVersion = HeaderUtil.getVersionHeader(request);
-        assertTrue(maybeVersion.isDefined());
+        assertThat(maybeVersion.get(), isVersionNumber());
     }
 
     @Test
