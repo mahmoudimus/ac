@@ -3,6 +3,8 @@ package it.modules.confluence;
 import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
+import com.atlassian.fugue.Iterables;
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
@@ -10,33 +12,43 @@ import com.atlassian.plugin.connect.test.BaseUrlLocator;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWithRemoteMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Lists;
+
 import it.servlet.ConnectAppServlets;
 import it.servlet.EchoContextServlet;
 import it.servlet.EchoQueryParametersServlet;
 import it.util.TestUser;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
+
 import redstone.xmlrpc.XmlRpcFault;
+import scala.actors.threadpool.Arrays;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.both;
 import static org.junit.Assert.assertThat;
+import static it.matcher.ParamMatchers.isVersionNumber;
 
 public class TestStaticContentMacro extends AbstractContentMacroTest
 {
@@ -207,6 +219,18 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     {
         addSimpleMacroToComment();
         final WebElement commentBody = connectPageOperations.findElementByClass("comment-content");
+        String commentText = commentBody.getText();
+        String[] lines = StringUtils.split(commentText, "\n");
+
+        Option<String> maybeVersion = Iterables.findFirst(Lists.newArrayList(lines), new Predicate<String>(){
+            @Override
+            public boolean apply(String line)
+            {
+                return line.startsWith("cv:");
+            }});
+
+        String version = maybeVersion.get().replaceFirst("cv:", "").trim();
+        assertThat(version, isVersionNumber());
         assertThat(commentBody.getText(), both(startsWith("Hello world!!")).and(containsString("xdm_c: channel-" + SIMPLE_MACRO_KEY)));
     }
 
