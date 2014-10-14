@@ -31,9 +31,9 @@ public class FixedConfluenceApplinkManager extends DefaultConnectApplinkManager 
     @Inject
     public FixedConfluenceApplinkManager(MutatingApplicationLinkService applicationLinkService, TypeAccessor typeAccessor,
                                          PluginSettingsFactory pluginSettingsFactory, OAuthLinkManager oAuthLinkManager,
-                                         PermissionManager permissionManager, TransactionTemplate transactionTemplate)
+                                         TransactionTemplate transactionTemplate)
     {
-        super(applicationLinkService, typeAccessor, pluginSettingsFactory, oAuthLinkManager, permissionManager, transactionTemplate);
+        super(applicationLinkService, typeAccessor, pluginSettingsFactory, oAuthLinkManager, transactionTemplate);
     }
 
     @Override
