@@ -28,7 +28,12 @@ import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserDisabl
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.spi.event.*;
+import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
+import com.atlassian.plugin.connect.spi.event.ConnectAddonEnableFailedEvent;
+import com.atlassian.plugin.connect.spi.event.ConnectAddonEnabledEvent;
+import com.atlassian.plugin.connect.spi.event.ConnectAddonInstalledEvent;
+import com.atlassian.plugin.connect.spi.event.ConnectAddonUninstallFailedEvent;
+import com.atlassian.plugin.connect.spi.event.ConnectAddonUninstalledEvent;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -481,7 +486,7 @@ public class ConnectAddonManager
         }
     }
 
-    private Response getSyncHandlerResponse(ConnectAddonBean addon, String callbackUrl, String jsonEventData) throws LifecycleCallbackException
+    private Response getSyncHandlerResponse(ConnectAddonBean addon, String callbackUrl, String jsonEventData, String secret) throws LifecycleCallbackException
     {
         try
         {
@@ -494,7 +499,10 @@ public class ConnectAddonManager
             request.setEntity(jsonEventData);
 
             // It's important to use the plugin in the call to remotablePluginAccessorFactory.get(plugin) as we might be calling this due to an uninstall event
-            com.atlassian.fugue.Option<String> authHeader = remotablePluginAccessorFactory.get(addon).getAuthorizationGenerator().generate(HttpMethod.POST, installHandler, Collections.<String, String[]>emptyMap());
+            com.atlassian.fugue.Option<String> authHeader = StringUtils.isEmpty(secret)
+                ? remotablePluginAccessorFactory.get(addon).getAuthorizationGenerator().generate(HttpMethod.POST, installHandler, Collections.<String, String[]>emptyMap())
+                : remotablePluginAccessorFactory.get(addon).getAuthorizationGenerator().generate(HttpMethod.POST, installHandler, Collections.<String, String[]>emptyMap(), secret);
+
             if (authHeader.isDefined())
             {
                 request.setHeader(AUTHORIZATION_HEADER, authHeader.get());
