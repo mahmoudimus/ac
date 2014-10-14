@@ -5,6 +5,7 @@ import com.atlassian.confluence.macro.browser.beans.MacroParameter;
 import com.atlassian.confluence.pages.thumbnail.Dimensions;
 import com.atlassian.confluence.plugin.descriptor.MacroMetadataParser;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
+import com.atlassian.gzipfilter.org.apache.commons.lang.StringEscapeUtils;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -108,7 +109,7 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         element.setAttribute("state", "enabled");
         if (bean.getDescription() != null)
         {
-            element.addElement("description").addCDATA(bean.getDescription().getValue());
+            element.addElement("description").addCDATA(StringEscapeUtils.escapeHtml(bean.getDescription().getValue()));
         }
 
 //        See ACDEV-1400 AC-1210
