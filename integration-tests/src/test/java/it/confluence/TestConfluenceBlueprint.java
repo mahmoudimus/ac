@@ -3,6 +3,7 @@ package it.confluence;
 import com.atlassian.confluence.pageobjects.page.DashboardPage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
@@ -32,7 +33,7 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
     {
         String key = AddonTestUtils.randomAddOnKey();
         String moduleKey = "my-blueprint";
-        completeKey = "com.atlassian.plugins.atlassian-connect-plugin:" + key + "__" + moduleKey + "-web-item";
+        completeKey = "com.atlassian.plugins.atlassian-connect-plugin:" + ModuleKeyUtils.addonAndModuleKey(key,moduleKey);
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(),
                 key)
                 .addInstallLifecycle()
