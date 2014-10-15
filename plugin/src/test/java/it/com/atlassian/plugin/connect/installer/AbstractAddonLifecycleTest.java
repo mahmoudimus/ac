@@ -300,6 +300,9 @@ public abstract class AbstractAddonLifecycleTest
             plugin = null;
 
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, ENABLED);
+
+            waitForWebhook(addonKey,ENABLED);
+
             Option<String> maybeHeader = getVersionHeader(request);
             assertVersion(maybeHeader);
         }
@@ -332,20 +335,7 @@ public abstract class AbstractAddonLifecycleTest
             testPluginInstaller.disableAddon(addonKey);
             plugin = null;
 
-            WaitUntil.invoke(new WaitUntil.WaitCondition()
-            {
-                @Override
-                public boolean isFinished()
-                {
-                    return null != testFilterResults.getRequest(finalKey, DISABLED);
-                }
-
-                @Override
-                public String getWaitMessage()
-                {
-                    return "waiting for disable webhook post...";
-                }
-            }, 5);
+            waitForWebhook(addonKey,DISABLED);
 
             ServletRequestSnapshot request = testFilterResults.getRequest(finalKey, DISABLED);
             Option<String> maybeHeader = getVersionHeader(request);
@@ -475,21 +465,7 @@ public abstract class AbstractAddonLifecycleTest
 
             assertUserExistence(addon, true);
             testPluginInstaller.disableAddon(addonKey);
-
-            WaitUntil.invoke(new WaitUntil.WaitCondition()
-            {
-                @Override
-                public boolean isFinished()
-                {
-                    return null != testFilterResults.getRequest(finalKey, DISABLED);
-                }
-
-                @Override
-                public String getWaitMessage()
-                {
-                    return "waiting for disable webhook post...";
-                }
-            }, 5);
+            waitForWebhook(addonKey, DISABLED);
             assertUserExistence(addon, false);
         }
         finally
@@ -521,38 +497,14 @@ public abstract class AbstractAddonLifecycleTest
             assertUserExistence(addon, true);
 
             testPluginInstaller.disableAddon(addonKey);
-            WaitUntil.invoke(new WaitUntil.WaitCondition()
-            {
-                @Override
-                public boolean isFinished()
-                {
-                    return null != testFilterResults.getRequest(finalKey, DISABLED);
-                }
 
-                @Override
-                public String getWaitMessage()
-                {
-                    return "waiting for disable webhook post...";
-                }
-            },5);
+            waitForWebhook(addonKey,DISABLED);
 
             assertUserExistence(addon, false);
 
             testPluginInstaller.enableAddon(addonKey);
-            WaitUntil.invoke(new WaitUntil.WaitCondition()
-            {
-                @Override
-                public boolean isFinished()
-                {
-                    return null != testFilterResults.getRequest(finalKey, ENABLED);
-                }
 
-                @Override
-                public String getWaitMessage()
-                {
-                    return "waiting for enable webhook post...";
-                }
-            },5);
+            waitForWebhook(addonKey,ENABLED);
 
             assertUserExistence(addon, true);
         }
@@ -567,6 +519,24 @@ public abstract class AbstractAddonLifecycleTest
                 testPluginInstaller.uninstallJsonAddon(plugin);
             }
         }
+    }
+
+    private void waitForWebhook(final String addonKey, final String path)
+    {
+        WaitUntil.invoke(new WaitUntil.WaitCondition()
+        {
+            @Override
+            public boolean isFinished()
+            {
+                return null != testFilterResults.getRequest(addonKey, path);
+            }
+
+            @Override
+            public String getWaitMessage()
+            {
+                return "waiting for enable webhook post...";
+            }
+        },5);
     }
 
     private void assertVersion(Option<String> maybeHeader)
