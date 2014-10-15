@@ -206,7 +206,7 @@ public abstract class AbstractAddonLifecycleTest
             final ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
 
             Option<String> maybeHeader = getVersionHeader(request);
-            assertThat(maybeHeader.get(),isVersionNumber());
+            assertVersion(maybeHeader);
         }
         finally
         {
@@ -269,7 +269,7 @@ public abstract class AbstractAddonLifecycleTest
 
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
             Option<String> maybeHeader = getVersionHeader(request);
-            assertThat(maybeHeader.get(),isVersionNumber());
+            assertVersion(maybeHeader);
         }
         finally
         {
@@ -301,7 +301,7 @@ public abstract class AbstractAddonLifecycleTest
 
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, ENABLED);
             Option<String> maybeHeader = getVersionHeader(request);
-            assertThat(maybeHeader.get(),isVersionNumber());
+            assertVersion(maybeHeader);
         }
         finally
         {
@@ -317,7 +317,7 @@ public abstract class AbstractAddonLifecycleTest
     @Test
     public void disableRequestHasVersion() throws IOException
     {
-        ConnectAddonBean addon = installAndEnabledBean;
+        ConnectAddonBean addon = installAndDisabledBean;
 
         Plugin plugin = null;
         String addonKey = null;
@@ -327,13 +327,29 @@ public abstract class AbstractAddonLifecycleTest
             plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
+            final String finalKey = addonKey;
 
             testPluginInstaller.disableAddon(addonKey);
             plugin = null;
 
-            ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, DISABLED);
+            WaitUntil.invoke(new WaitUntil.WaitCondition()
+            {
+                @Override
+                public boolean isFinished()
+                {
+                    return null != testFilterResults.getRequest(finalKey, DISABLED);
+                }
+
+                @Override
+                public String getWaitMessage()
+                {
+                    return "waiting for disable webhook post...";
+                }
+            }, 5);
+
+            ServletRequestSnapshot request = testFilterResults.getRequest(finalKey, DISABLED);
             Option<String> maybeHeader = getVersionHeader(request);
-            assertThat(maybeHeader.get(),isVersionNumber());
+            assertVersion(maybeHeader);
         }
         finally
         {
@@ -474,7 +490,7 @@ public abstract class AbstractAddonLifecycleTest
                     return "waiting for disable webhook post...";
                 }
             }, 5);
-
+            assertNotNull(testFilterResults.getRequest(finalKey, DISABLED));
             assertUserExistence(addon, false);
         }
         finally
@@ -552,6 +568,12 @@ public abstract class AbstractAddonLifecycleTest
                 testPluginInstaller.uninstallJsonAddon(plugin);
             }
         }
+    }
+
+    private void assertVersion(Option<String> maybeHeader)
+    {
+        //For some reason, assertThat fails with a java.lang.LinkageError
+        assertTrue("Invalid version number: " + maybeHeader.get(), isVersionNumber().matches(maybeHeader.get()));
     }
 
     private void assertUserExistence(ConnectAddonBean addon, boolean shouldBeActiveIfItExists)
