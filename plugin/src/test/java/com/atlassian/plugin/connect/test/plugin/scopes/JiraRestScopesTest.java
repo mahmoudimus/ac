@@ -30,7 +30,6 @@ public class JiraRestScopesTest extends AbstractScopesTest
                         {null, HttpMethod.GET, "/jira/rest/api/2/myself", false},
 
                         // "myself": read scope with various http methods
-                        {ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/myself", true},
                         {ScopeName.READ, HttpMethod.POST, "/jira/rest/api/2/myself", false},
                         {ScopeName.READ, HttpMethod.PUT, "/jira/rest/api/2/myself", false},
                         {ScopeName.READ, HttpMethod.DELETE, "/jira/api/2/myself", false},
@@ -46,12 +45,10 @@ public class JiraRestScopesTest extends AbstractScopesTest
 
                         // issueLinkType reads require READ
                         {null, HttpMethod.GET, "/jira/rest/api/2/issueLinkType", false},
-                        {ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/issueLinkType", true},
                         {ScopeName.WRITE, HttpMethod.GET, "/jira/rest/api/2/issueLinkType", true},
                         {ScopeName.DELETE, HttpMethod.GET, "/jira/rest/api/2/issueLinkType", true},
                         {ScopeName.ADMIN, HttpMethod.GET, "/jira/rest/api/2/issueLinkType", true},
                         {null, HttpMethod.GET, "/jira/rest/api/2/issueLinkType/abc", false},
-                        {ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/issueLinkType/abc", true},
                         {ScopeName.WRITE, HttpMethod.GET, "/jira/rest/api/2/issueLinkType/abc", true},
                         {ScopeName.DELETE, HttpMethod.GET, "/jira/rest/api/2/issueLinkType/abc", true},
                         {ScopeName.ADMIN, HttpMethod.GET, "/jira/rest/api/2/issueLinkType/abc", true},
@@ -77,11 +74,10 @@ public class JiraRestScopesTest extends AbstractScopesTest
 
                         // groups picker requires READ
                         {null, HttpMethod.GET, "/jira/rest/api/2/groups/picker", false},
-                        {ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/groups/picker", true},
 
                         // JQL autocomplete require READ
                         { null, HttpMethod.GET,  "/jira/rest/api/2/jql/autocompletedata", false },
-                        { ScopeName.READ, HttpMethod.GET,  "/jira/rest/api/2/jql/autocompletedata", true }
+                        { ScopeName.READ, HttpMethod.GET,  "/jira/rest/api/2/jql/autocompletedata", true },
                 }));
 
         // never allow an add-on to change a user's details or password
