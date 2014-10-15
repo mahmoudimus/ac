@@ -121,7 +121,7 @@ public class JwtAuthorizationGeneratorTest
     @Test(expected = NullPointerException.class)
     public void nullBaseUrlResultsInException()
     {
-        new JwtAuthorizationGenerator(jwtService, applicationLink, consumerService, null);
+        new JwtAuthorizationGenerator(jwtService, "secret", consumerService, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -183,7 +183,7 @@ public class JwtAuthorizationGeneratorTest
     {
         when(jwtService.issueJwt(any(String.class), eq(applicationLink))).thenReturn(A_MOCK_JWT);
         when(consumerService.getConsumer()).thenReturn(Consumer.key("whatever").name("whatever").signatureMethod(Consumer.SignatureMethod.HMAC_SHA1).publicKey(new KeyFactory.InvalidPublicKey(new Exception())).build());
-        generator = new JwtAuthorizationGenerator(jwtService, applicationLink, consumerService, A_URI_BASE);
+        generator = new JwtAuthorizationGenerator(jwtService, "secret", consumerService, A_URI_BASE);
         generate();
     }
 
@@ -205,7 +205,7 @@ public class JwtAuthorizationGeneratorTest
 
     private String generateGet(String url, String baseUrl, Map<String, String[]> params)
     {
-        return new JwtAuthorizationGenerator(jwtService, applicationLink, consumerService, URI.create(baseUrl)).generate(HttpMethod.GET, URI.create(url), params).get();
+        return new JwtAuthorizationGenerator(jwtService, "secret", consumerService, URI.create(baseUrl)).generate(HttpMethod.GET, URI.create(url), params).get();
     }
 
     private static ArgumentMatcher<String> hasClaim(final String claimName)

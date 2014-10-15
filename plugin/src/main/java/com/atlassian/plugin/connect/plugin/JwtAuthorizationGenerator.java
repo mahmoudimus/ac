@@ -1,9 +1,7 @@
 package com.atlassian.plugin.connect.plugin;
 
-import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.fugue.Option;
 import com.atlassian.jwt.applinks.JwtService;
-import com.atlassian.jwt.applinks.exception.NotAJwtPeerException;
 import com.atlassian.jwt.core.HttpRequestCanonicalizer;
 import com.atlassian.jwt.core.TimeUtil;
 import com.atlassian.jwt.core.writer.JsonSmartJwtJsonBuilder;
@@ -12,8 +10,8 @@ import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.jwt.writer.JwtJsonBuilder;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.plugin.util.ConfigurationUtils;
-import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.spi.http.ReKeyableAuthorizationGenerator;
 import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
@@ -32,7 +30,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.atlassian.jwt.JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME;
 import static com.atlassian.jwt.JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -41,7 +38,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Set the system property {@link JwtAuthorizationGenerator#JWT_EXPIRY_SECONDS_PROPERTY} with an integer value to control the size of the expiry window
  * (default is {@link JwtAuthorizationGenerator#JWT_EXPIRY_WINDOW_SECONDS_DEFAULT}).
  */
-public class JwtAuthorizationGenerator implements AuthorizationGenerator
+public class JwtAuthorizationGenerator implements ReKeyableAuthorizationGenerator
 {
     private static final char[] QUERY_DELIMITERS = new char[]{'&'};
 
@@ -59,10 +56,10 @@ public class JwtAuthorizationGenerator implements AuthorizationGenerator
     private final ConsumerService consumerService;
     private final URI addOnBaseUrl;
 
-    public JwtAuthorizationGenerator(JwtService jwtService, ApplicationLink applicationLink, ConsumerService consumerService, URI addOnBaseUrl)
+    public JwtAuthorizationGenerator(JwtService jwtService, String secret, ConsumerService consumerService, URI addOnBaseUrl)
     {
         this.jwtService = checkNotNull(jwtService);
-        this.secret = requireSharedSecret(checkNotNull(applicationLink));
+        this.secret = checkNotNull(secret);
         this.consumerService = checkNotNull(consumerService);
         this.addOnBaseUrl = checkNotNull(addOnBaseUrl);
     }
@@ -74,15 +71,10 @@ public class JwtAuthorizationGenerator implements AuthorizationGenerator
     }
 
     @Override
-    public Option<String> generate(HttpMethod httpMethod, URI url, Map<String, String[]> parameters, String secretOverride)
+    public Option<String> generate(HttpMethod httpMethod, URI url, Map<String, String[]> parameters, String secret)
     {
         checkArgument(null != parameters, "Parameters Map argument cannot be null");
-        return Option.some(JWT_AUTH_HEADER_PREFIX + encodeJwt(httpMethod, url, addOnBaseUrl, parameters, null, consumerService.getConsumer().getKey(), jwtService, secretOverride));
-    }
-
-    static String encodeJwt(HttpMethod httpMethod, URI targetPath, URI addOnBaseUrl, Map<String, String[]> params, String userKeyValue, String issuerId, JwtService jwtService, ApplicationLink appLink)
-    {
-        return encodeJwt(httpMethod, targetPath, addOnBaseUrl, params, userKeyValue, issuerId, jwtService, requireSharedSecret(appLink));
+        return Option.some(JWT_AUTH_HEADER_PREFIX + encodeJwt(httpMethod, url, addOnBaseUrl, parameters, null, consumerService.getConsumer().getKey(), jwtService, secret));
     }
 
     static String encodeJwt(HttpMethod httpMethod, URI targetPath, URI addOnBaseUrl, Map<String, String[]> params, String userKeyValue, String issuerId, JwtService jwtService, String secret)
@@ -127,18 +119,6 @@ public class JwtAuthorizationGenerator implements AuthorizationGenerator
         }
 
         return jwtService.issueJwt(jsonBuilder.build(), secret);
-    }
-
-    private static String requireSharedSecret(ApplicationLink applicationLink)
-    {
-        String sharedSecret = (String) applicationLink.getProperty(SHARED_SECRET_PROPERTY_NAME);
-
-        if (sharedSecret == null)
-        {
-            throw new NotAJwtPeerException(applicationLink);
-        }
-
-        return sharedSecret;
     }
 
     private static String extractRelativePath(URI targetUri, URI addOnBaseUri)

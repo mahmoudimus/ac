@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import com.atlassian.upm.api.util.Option;
+import com.atlassian.fugue.Option;
 
 public class LifecycleCallbackException extends Exception
 {

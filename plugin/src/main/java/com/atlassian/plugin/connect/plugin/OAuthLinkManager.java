@@ -18,7 +18,15 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import net.oauth.*;
+import net.oauth.OAuth;
+import net.oauth.OAuthAccessor;
+import net.oauth.OAuthConsumer;
+import net.oauth.OAuthException;
+import net.oauth.OAuthMessage;
+import net.oauth.OAuthProblemException;
+import net.oauth.OAuthServiceProvider;
+import net.oauth.OAuthValidator;
+import net.oauth.SimpleOAuthValidator;
 import net.oauth.signature.RSA_SHA1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -187,8 +195,6 @@ public class OAuthLinkManager
                                               URI url,
                                               Map<String, List<String>> originalParams)
     {
-        XmlDescriptorExploder.notifyAndExplode(null == url ? null : url.getHost() + url.getPath()); // not the add-on key but we should be able to identify it, and it's not worth adding a dependency to up the add-on
-
         final OAuthMessage message = sign(serviceProvider, method, checkNotNull(url), originalParams);
 
         try
@@ -242,8 +248,6 @@ public class OAuthLinkManager
                               Map<String, List<String>> originalParams
     )
     {
-        XmlDescriptorExploder.notifyAndExplode(null == url ? null : url.getHost() + url.getPath()); // not the add-on key but we should be able to identify it, and it's not worth adding a dependency to up the add-on
-
         notNull(serviceProvider);
         notNull(url);
         checkNormalized(url);
