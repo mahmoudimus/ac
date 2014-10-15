@@ -20,17 +20,9 @@ import java.util.List;
  * WebHookPublisher.
  */
 @ConfluenceComponent
-public final class ConfluenceEventSerializer implements EventSerializer<ConfluenceEvent>
+public class ConfluenceEventSerializer implements EventSerializer<ConfluenceEvent>
 {
     private static final Logger log = LoggerFactory.getLogger(ConfluenceEventSerializer.class);
-    public static final EventSerializer<ConfluenceEvent> EMPTY_SERIALIZER = new EventSerializer<ConfluenceEvent>()
-    {
-        @Override
-        public String serialize(final ConfluenceEvent event)
-        {
-            return "";
-        }
-    };
 
     private final List<EventMapper<ConfluenceEvent>> mappers;
 
