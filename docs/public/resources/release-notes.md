@@ -22,6 +22,9 @@ The version numbers for the Atlassian Connect framework and Atlassian products w
 [this JSON file](https://developer.atlassian.com/static/connect-versions.json), which you can poll periodically to 
 find out about new production and development (bleeding edge) releases, and the commands to use them.
 
+## [1.1.8](../release-notes/1-1-0.html#1.1.8)
+* First phase for [Blueprints](../modules/confluence/blueprint.html)
+
 ## [1.1.7](../release-notes/1-1-0.html#1.1.7)
 * Bug fixes and minor improvements
 

@@ -102,13 +102,19 @@ function run_cmd(cmd, args ) {
     child.stdout.on('data', function (buffer) {
         var text = buffer.toString();
         process.stdout.write(text);
+        if(text.indexOf("==> default: [INFO] BUILD FAILURE") > -1) {
+            killProcess(1);
+        }
         if(download) {
             if (text.indexOf("starting...") > -1) {
-                console.log("Finished downloading artifacts, terminating the process.")
-                child.kill();
-                process.exit(0);
+                console.log("Finished downloading artifacts, terminating the process.");
+                killProcess(0);
             }
-
         }
     });
+}
+
+function killProcess(code) {
+    child.kill();
+    process.exit(code);
 }

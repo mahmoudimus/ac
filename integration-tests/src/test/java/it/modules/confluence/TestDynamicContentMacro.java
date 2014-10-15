@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openqa.selenium.By;
 
 import redstone.xmlrpc.XmlRpcFault;
 
@@ -48,9 +49,11 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 {
     private static final String SMALL_INLINE_MACRO_NAME = "Small Inline Macro";
     private static final String SMALL_INLINE_MACRO_KEY = "small-inline-macro";
+    private static final String SMALL_INLINE_MACRO_DESCRIPTION = "small-inline-macro-description";
 
     private static final String CLIENT_SIDE_BODY_MACRO_NAME = "Client Side Body Editing";
     private static final String CLIENT_SIDE_BODY_MACRO_KEY = "client-side-body-editing";
+    private static final String CLIENT_SIDE_BODY_MACRO_DESCRIPTION = "<script>alert(1);</script>";
     private static final String EDITED_MACRO_BODY = "cat pictures and more";
 
     private static final String CLIENT_SIDE_BODY_MACRO_SCRIPT_NAME = "Client Side Body Editing Script Injection Attempt";
@@ -81,6 +84,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         DynamicContentMacroModuleBean smallInlineMacro = newDynamicContentMacroModuleBean()
                 .withUrl("/render-no-resize-macro")
+                .withDescription(new I18nProperty(SMALL_INLINE_MACRO_DESCRIPTION,""))
                 .withKey(SMALL_INLINE_MACRO_KEY)
                 .withName(new I18nProperty(SMALL_INLINE_MACRO_NAME, ""))
                 .withOutputType(MacroOutputType.INLINE)
@@ -90,6 +94,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         DynamicContentMacroModuleBean clientSideBodyEditingMacro = newDynamicContentMacroModuleBean()
                 .withUrl("/echo/params?body={macro.body}")
+                .withDescription(new I18nProperty(CLIENT_SIDE_BODY_MACRO_DESCRIPTION,""))
                 .withKey(CLIENT_SIDE_BODY_MACRO_KEY)
                 .withName(new I18nProperty(CLIENT_SIDE_BODY_MACRO_NAME, ""))
                 .withOutputType(MacroOutputType.BLOCK)
@@ -235,6 +240,26 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         String value = renderedMacro.getFromQueryString("param1");
 
         assertThat(value, is("param value"));
+    }
+
+    @Test
+    public void testDescriptionShowsInMacroBrowser() throws Exception
+    {
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage.setTitle(randomName("Parameter Page"));
+        MacroBrowserAndEditor macroInBrowser = findMacroInBrowser(editorPage, SMALL_INLINE_MACRO_KEY);
+        String description = macroInBrowser.macro.getItem().find(By.className("macro-desc")).timed().getText().byDefaultTimeout();
+        assertThat("description shows in macro browser", description, is(SMALL_INLINE_MACRO_DESCRIPTION));
+    }
+
+    @Test
+    public void testDescriptionDoesNotExposeXss() throws Exception
+    {
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage.setTitle(randomName("Parameter Page"));
+        MacroBrowserAndEditor macroInBrowser = findMacroInBrowser(editorPage, CLIENT_SIDE_BODY_MACRO_KEY);
+        String description = macroInBrowser.macro.getItem().find(By.className("macro-desc")).timed().getText().byDefaultTimeout();
+        assertThat("description shows in macro browser", description, is(CLIENT_SIDE_BODY_MACRO_DESCRIPTION));
     }
 
     @Test

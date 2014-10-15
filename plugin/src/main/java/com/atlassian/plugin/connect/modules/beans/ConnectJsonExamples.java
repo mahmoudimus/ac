@@ -1,6 +1,25 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import com.atlassian.plugin.connect.modules.beans.nested.*;
+import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
+import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
+import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexType;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyType;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
+import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
+import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
+import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
+import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
@@ -68,6 +87,9 @@ public class ConnectJsonExamples
     public static final String WEBITEM_TARGET_DIALOG_EXAMPLE = createWebitemTargetDialogOptionsExample();
     public static final String WEBPANEL_EXAMPLE = createWebPanelExample();
     public static final String WEBSECTION_EXAMPLE = createWebSectionExample();
+    public static final String BLUEPRINT_EXAMPLE = createBlueprintExample();
+    public static final String BLUEPRINT_TEMPLATE_EXAMPLE = createBlueprintTemplateExample();
+
 
     private static String createAddonExample()
     {
@@ -223,6 +245,30 @@ public class ConnectJsonExamples
                 .build();
 
         return gson.toJson(createModuleArray("webSections", webSectionModuleBean));
+    }
+
+    private static String createBlueprintExample()
+    {
+        BlueprintModuleBean blueprintModuleBean = BlueprintModuleBean.newBlueprintModuleBean()
+                .withName(new I18nProperty("Simple Remote Blueprint", ""))
+                .withKey("remote-blueprint")
+                .withTemplate(createBlueprintTemplateBean())
+                .build();
+
+        return gson.toJson(createModuleArray("blueprints", blueprintModuleBean));
+    }
+
+    private static String createBlueprintTemplateExample()
+    {
+        BlueprintTemplateBean blueprintTemplateBean = createBlueprintTemplateBean();
+        return gson.toJson(createJsonObject("template", blueprintTemplateBean));
+    }
+
+    private static BlueprintTemplateBean createBlueprintTemplateBean()
+    {
+        return BlueprintTemplateBean.newBlueprintTemplateBeanBuilder()
+                    .withUrl("/blueprints/blueprint.xml")
+                    .build();
     }
 
     public static String createComponentTabPanelExample()
