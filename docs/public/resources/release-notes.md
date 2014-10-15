@@ -22,8 +22,13 @@ The version numbers for the Atlassian Connect framework and Atlassian products w
 [this JSON file](https://developer.atlassian.com/static/connect-versions.json), which you can poll periodically to 
 find out about new production and development (bleeding edge) releases, and the commands to use them.
 
-## [1.1.8](../release-notes/1-1-0.html#1.1.8)
+## [1.1.9](../release-notes/1-1-0.html#1.1.9)
 * First phase for [Blueprints](../modules/confluence/blueprint.html)
+
+## [1.1.8](../release-notes/1-1-0.html#1.1.8)
+* Fixed: duplicate web panels in JIRA search-for-issues results
+* Fixed: iFrame resizing in Chrome
+* Better error message when group permissions prevent add-on installation
 
 ## [1.1.7](../release-notes/1-1-0.html#1.1.7)
 * Bug fixes and minor improvements
