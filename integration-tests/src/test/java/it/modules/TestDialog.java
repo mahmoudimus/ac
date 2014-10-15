@@ -284,6 +284,15 @@ public class TestDialog extends ConnectWebDriverTestBase
         verifyJwtIssuedAtTimeForDialog(JWT_EXPIRY_INLINE_DIALOG, JWT_EXPIRY_INLINE_DIALOG_NAME, true);
     }
 
+    @Test
+    public void verifyInlineDialogHasVersionNumber()
+    {
+        RemotePluginAwarePage page = goToPageWithLink(JWT_EXPIRY_INLINE_DIALOG, JWT_EXPIRY_INLINE_DIALOG_NAME);
+        ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
+        RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, remotePluginTest, true);
+        verifyIframeURLHasVersionNumber(dialog);
+    }
+
     private void verifyJwtIssuedAtTimeForDialog(String moduleKey, String moduleName, final boolean isInlineDialog) throws JwtUnknownIssuerException, JwtParseException, JwtIssuerLacksSharedSecretException, JwtVerificationException
     {
         final JwtReaderFactory jwtReaderFactory = getJwtReaderFactory();
