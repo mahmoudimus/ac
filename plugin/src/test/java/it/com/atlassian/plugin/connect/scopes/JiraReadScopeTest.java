@@ -6,14 +6,12 @@ import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.Application;
-import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import it.com.atlassian.plugin.connect.ParameterizedWiredTest;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
-import org.junit.runner.RunWith;
 
 @Application ("jira")
-@RunWith (AtlassianPluginsTestRunner.class)
+@ParameterizedWiredTest
 public class JiraReadScopeTest extends ScopeTestBase
 {
     public JiraReadScopeTest(TestPluginInstaller testPluginInstaller,
