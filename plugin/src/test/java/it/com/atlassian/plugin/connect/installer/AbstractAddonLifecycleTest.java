@@ -490,7 +490,6 @@ public abstract class AbstractAddonLifecycleTest
                     return "waiting for disable webhook post...";
                 }
             }, 5);
-            assertNotNull(testFilterResults.getRequest(finalKey, DISABLED));
             assertUserExistence(addon, false);
         }
         finally
