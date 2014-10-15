@@ -134,19 +134,16 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
             pluginKey = nonValidatedAddon.getKey();
             maybePreviousApplink = Option.option(connectApplinkManager.getAppLink(pluginKey));
-            if (maybePreviousApplink.isDefined())
+            maybePreviousAddon = findAddon(pluginKey);
+            if (maybePreviousApplink.isDefined() && maybePreviousAddon.isDefined())
             {
                 ApplicationLink applink = maybePreviousApplink.get();
                 baseUrl = applink.getRpcUrl().toString();
                 maybePreviousAuthType = ConnectApplinkUtil.getAuthenticationType(applink);
-                if(maybePreviousAddon.isDefined())
-                {
-                    maybePreviousPublicKeyOrSharedSecret = connectApplinkManager.getSharedSecretOrPublicKey(applink);
-                }
+                maybePreviousPublicKeyOrSharedSecret = connectApplinkManager.getSharedSecretOrPublicKey(applink);
             }
             previousSettings = addonRegistry.getAddonSettings(pluginKey);
 
-            maybePreviousAddon = findAddon(pluginKey);
 
             if (nonValidatedAddon.getModules().isEmpty())
             {
