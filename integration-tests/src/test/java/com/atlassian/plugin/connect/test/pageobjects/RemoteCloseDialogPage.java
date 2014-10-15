@@ -4,7 +4,9 @@ import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
+import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
@@ -21,7 +23,7 @@ import static com.atlassian.plugin.connect.test.pageobjects.RemotePageUtil.runIn
 /**
  * Page with a single button to open a dialog
  */
-public class RemoteCloseDialogPage
+public class RemoteCloseDialogPage extends AbstractConnectIFrameComponent<RemoteCloseDialogPage>
 {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -83,6 +85,12 @@ public class RemoteCloseDialogPage
     public Dimension getIFrameSize()
     {
         return iframe.getSize();
+    }
+
+    @Override
+    protected String getFrameId()
+    {
+        return IframeUtils.iframeId(key);
     }
 
 }

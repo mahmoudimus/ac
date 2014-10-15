@@ -23,6 +23,8 @@ import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newW
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static it.util.TestUser.ADMIN;
 import static it.util.TestUser.BARNEY;
+import static it.modules.ConnectAsserts.verifyIframeURLHasVersionNumber;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
@@ -128,6 +130,8 @@ public final class TestWebPanel extends JiraWebDriverTestBase
         assertEquals(project.getId(), panel.getFromQueryString("my-project-id"));
 
         assertEquals("ilwp2-OK", panel.getCustomMessage());
+
+        verifyIframeURLHasVersionNumber(panel);
     }
 
     @Test
@@ -141,6 +145,8 @@ public final class TestWebPanel extends JiraWebDriverTestBase
         assertNotNull(panel.getUserKey());
 
         assertEquals("pcp-OK", panel.getCustomMessage());
+
+        verifyIframeURLHasVersionNumber(panel);
     }
 
     @Test
@@ -157,6 +163,8 @@ public final class TestWebPanel extends JiraWebDriverTestBase
         assertNotNull(panel.getUserKey());
 
         assertEquals("ilwp-OK", panel.getCustomMessage());
+
+        verifyIframeURLHasVersionNumber(panel);
     }
 
     @Test
@@ -173,6 +181,8 @@ public final class TestWebPanel extends JiraWebDriverTestBase
         assertNotNull(panel.getUserKey());
 
         assertEquals("irwp-OK", panel.getCustomMessage());
+
+        verifyIframeURLHasVersionNumber(panel);
     }
 
     @Test
@@ -186,6 +196,8 @@ public final class TestWebPanel extends JiraWebDriverTestBase
         assertNotNull(panel.getUserKey());
 
         assertEquals("pch-OK", panel.getCustomMessage());
+
+        verifyIframeURLHasVersionNumber(panel);
     }
 
     @Test
@@ -202,6 +214,8 @@ public final class TestWebPanel extends JiraWebDriverTestBase
         assertNotNull(panel.getUserKey());
 
         assertEquals("up-OK", panel.getCustomMessage());
+
+        verifyIframeURLHasVersionNumber(panel);
     }
 
     @Test
