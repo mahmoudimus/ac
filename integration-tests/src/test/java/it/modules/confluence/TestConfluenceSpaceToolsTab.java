@@ -6,8 +6,8 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.SpaceToolsTabModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.confluence.ConfluenceWebDriverTestBase;
@@ -19,9 +19,7 @@ import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean.newSpaceToolsTabBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 /**
  * Tests for Space Tools Tab module. Note that when we refer to "Space Tools" we're referring to the post-5.0
@@ -68,9 +66,8 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
         String webItemId = pageKey + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX;
         LinkedRemoteContent addonPage = connectPageOperations.findTabPanel(webItemId, Option.<String>none(), pageKey);
 
-        RemotePluginEmbeddedTestPage addonContentsPage = addonPage.click();
+        ConnectAddOnEmbeddedTestPage addonContentsPage = addonPage.click();
 
-        assertThat(addonContentsPage.isLoaded(), equalTo(true));
         assertEquals("Hello world", addonContentsPage.getValueBySelector("#hello-world-message"));
     }
 
@@ -81,9 +78,8 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
 
         LinkedRemoteContent addonPage = connectPageOperations.findRemoteLinkedContent(RemoteWebItem.ItemMatchingMode.LINK_TEXT, "AC Space Tab", Option.<String>none(), addonAndModuleKey(remotePlugin.getAddon().getKey(),TAB_MODULE_KEY));
 
-        RemotePluginEmbeddedTestPage addonContentsPage = addonPage.click();
+        ConnectAddOnEmbeddedTestPage addonContentsPage = addonPage.click();
 
-        assertThat(addonContentsPage.isLoaded(), equalTo(true));
         assertEquals("Hello world", addonContentsPage.getValueBySelector("#hello-world-message"));
 
     }

@@ -11,6 +11,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.Arrays;
@@ -22,6 +24,9 @@ import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 
 public class ConnectAddOnPage
 {
+    private static final Logger log = LoggerFactory.getLogger(ConnectAddOnPage.class);
+    private static final String IFRAME_INIT = "iframe-init";
+
     @Inject
     protected AtlassianWebDriver driver;
 
@@ -51,7 +56,21 @@ public class ConnectAddOnPage
                 : ModuleKeyUtils.addonAndModuleKey(addOnKey, pageElementKey);
         final String id = prefix + suffix;
         PageElement containerDivElement = elementFinder.find(By.id(id));
-        waitUntilTrue(containerDivElement.timed().hasClass("iframe-init"));
+
+        try
+        {
+            waitUntilTrue(containerDivElement.timed().hasClass(IFRAME_INIT));
+        }
+        catch (AssertionError e)
+        {
+            // failed to find the iframe, or iframe initialization never finished...
+            // the developer debugging this will appreciate a little help in the bamboo logs
+            // so that they don't have to run the product and attach a debugger just to find out the parameters
+            log.error("Waiting for the container div '{}' to get the class '{}' timed out. addOnKey='{}', pageElementKey='{}', includeEmbeddedPrefix={}",
+                    new Object[]{ id, IFRAME_INIT, addOnKey, pageElementKey, includedEmbeddedPrefix });
+            throw e;
+        }
+
         this.containerDiv = ((WebDriverElement)containerDivElement).asWebElement();
     }
 

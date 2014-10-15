@@ -18,6 +18,16 @@
 		</table>
 </div>
 
+The version numbers for the Atlassian Connect framework and Atlassian products which support it are now published in 
+[this JSON file](https://developer.atlassian.com/static/connect-versions.json), which you can poll periodically to 
+find out about new production and development (bleeding edge) releases, and the commands to use them.
+
+## [1.1.8](../release-notes/1-1-0.html#1.1.8)
+* First phase for [Blueprints](../modules/confluence/blueprint.html)
+
+## [1.1.7](../release-notes/1-1-0.html#1.1.7)
+* Bug fixes and minor improvements
+
 ## [1.1.6](../release-notes/1-1-0.html#1.1.6)
 * More [JIRA reports](../modules/jira/report.html) features.
 * Add-ons are no longer automatically uninstalled when the installation lifecycle hook returns an error response.

@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.7-SNAPSHOT</version>
+        <version>1.1.9-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -50,6 +50,12 @@
             <artifactId>guava</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.bundles</groupId>
+            <artifactId>json-schema-validator-atlassian-bundle</artifactId>
+            <version>${atlassian.json.schema.validator.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>com.atlassian.plugin</groupId>
@@ -68,7 +74,7 @@
             <artifactId>atlassian-spring-scanner-runtime</artifactId>
             <scope>runtime</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>com.atlassian.labs</groupId>
             <artifactId>fastdev-plugin</artifactId>
@@ -277,7 +283,7 @@
             <version>${atlassian.confluence.version}</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>com.atlassian.uri</groupId>
             <artifactId>atlassian-uri</artifactId>
@@ -295,6 +301,12 @@
         <dependency>
             <groupId>com.atlassian.webhooks</groupId>
             <artifactId>atlassian-webhooks-spi</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.webhooks</groupId>
+            <artifactId>atlassian-webhooks-plugin</artifactId>
+            <version>${atlassian.webhooks.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -444,6 +456,11 @@
             <artifactId>gson</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.atlassian.confluence.plugins</groupId>
+            <artifactId>confluence-create-content-plugin</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -472,6 +489,20 @@
                             <artifactId>gson</artifactId>
                         </testBundleExclude>
                     </testBundleExcludes>
+                    <pluginDependencies>
+                        <pluginDependency>
+                            <groupId>com.atlassian.jwt</groupId>
+                            <artifactId>jwt-plugin</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>com.atlassian.bundles</groupId>
+                            <artifactId>json-schema-validator-atlassian-bundle</artifactId>
+                        </pluginDependency>
+                        <pluginDependency>
+                            <groupId>com.atlassian.webhooks</groupId>
+                            <artifactId>atlassian-webhooks-plugin</artifactId>
+                        </pluginDependency>
+                    </pluginDependencies>
                     <instructions>
                         <Import-Package>
                             com.github.fge.jsonschema.validator;version="${atlassian.json.schema.validator.version}",
@@ -607,6 +638,7 @@
                             <version>${atlassian.confluence.version}</version>
                             <log4jProperties>${basedir}/../integration-tests/src/test/resources/log4j-confluence.properties</log4jProperties>
                             <productDataPath>${basedir}/../integration-tests/src/test/resources/confluence-generated-test-resources.zip</productDataPath>
+                            <jvmArgs>-Xmx512m -XX:MaxPermSize=512m</jvmArgs>
                             <systemPropertyVariables>
                                 <product>confluence</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
@@ -646,6 +678,11 @@
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>atlassian-connect-test-support-plugin</artifactId>
                                     <version>${project.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.confluence.plugins</groupId>
+                                    <artifactId>confluence-create-content-plugin</artifactId>
+                                    <version>${blueprints.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
 

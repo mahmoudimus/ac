@@ -53,9 +53,7 @@ public final class WebHookTestServlet extends HttpServlet
                         .build())
                 .addRoute(webHookPath, servlet)
                 .addScope(ScopeName.READ)
-                .addJWT()
-                .addInstallLifecycle()
-                .addRoute(ConnectRunner.INSTALLED_PATH, new WebHookTestServlet()) // different servlet for installed callback so that tests can inspect only the webhooks
+                .addJWT(new WebHookTestServlet()) // different servlet for installed callback so that tests can inspect only the webhooks
                 .start();
 
         try

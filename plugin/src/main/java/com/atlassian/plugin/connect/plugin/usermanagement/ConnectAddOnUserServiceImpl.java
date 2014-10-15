@@ -223,7 +223,10 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
 
             if (null == user)
             {
-                throw new ConnectAddOnUserInitException(String.format("Tried to create user '%s' but the %s returned a null user!", username, applicationService.getClass().getSimpleName()));
+                throw new ConnectAddOnUserInitException(String.format("Tried to create user '%s' but the %s returned a null user!",
+                                                                      username,
+                                                                      applicationService.getClass().getSimpleName()),
+                                                        ConnectAddOnUserProvisioningService.USER_PROVISIONING_ERROR);
             }
             else
             {

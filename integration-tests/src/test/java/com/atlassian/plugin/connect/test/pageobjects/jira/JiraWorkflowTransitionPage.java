@@ -5,7 +5,6 @@ import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.ProductInstance;
 import com.atlassian.pageobjects.elements.query.TimedCondition;
 import com.atlassian.webdriver.utils.Check;
-import com.atlassian.webdriver.utils.element.ElementConditions;
 import com.atlassian.webdriver.utils.element.WebDriverPoller;
 import org.openqa.selenium.By;
 
@@ -14,7 +13,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static com.atlassian.webdriver.utils.element.ElementConditions.*;
+import static com.atlassian.webdriver.utils.element.ElementConditions.isPresent;
 
 public class JiraWorkflowTransitionPage extends AbstractJiraPage {
     private String workflowMode;
@@ -95,7 +94,7 @@ public class JiraWorkflowTransitionPage extends AbstractJiraPage {
 
     public JiraAddWorkflowTransitionFunctionParamsPage updatePostFunction(String addonKey, String moduleKey)
     {
-        poller.waitUntil(isPresent(By.id("view_post_functions")), 10);
+        poller.waitUntil(isPresent(By.id("view_post_functions")), 20);
         driver.findElement(By.id("view_post_functions")).click();
         poller.waitUntil(isPresent(By.className("criteria-post-function-edit")), 5);
         driver.findElement(By.className("criteria-post-function-edit")).click();

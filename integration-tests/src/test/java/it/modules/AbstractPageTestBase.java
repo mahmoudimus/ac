@@ -5,8 +5,8 @@ import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.ConnectWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
@@ -85,7 +85,7 @@ public class AbstractPageTestBase extends ConnectWebDriverTestBase
         this.awesomePageModuleKey = addonAndModuleKey(pluginKey, MY_AWESOME_PAGE_KEY);
     }
 
-    protected <T extends Page> RemotePluginEmbeddedTestPage runCanClickOnPageLinkAndSeeAddonContents(Class<T> pageClass, Option<String> linkText)
+    protected <T extends Page> ConnectAddOnEmbeddedTestPage runCanClickOnPageLinkAndSeeAddonContents(Class<T> pageClass, Option<String> linkText)
             throws MalformedURLException, URISyntaxException
     {
         login(TestUser.ADMIN);
@@ -96,9 +96,8 @@ public class AbstractPageTestBase extends ConnectWebDriverTestBase
         LinkedRemoteContent addonPage = connectPageOperations.findConnectPage(LINK_TEXT, linkText.getOrElse(MY_AWESOME_PAGE),
                 Option.<String>none(), awesomePageModuleKey);
 
-        RemotePluginEmbeddedTestPage addonContentPage = addonPage.click();
+        ConnectAddOnEmbeddedTestPage addonContentPage = addonPage.click();
 
-        assertThat(addonContentPage.isLoaded(), equalTo(true));
         assertThat(addonContentPage.getMessage(), equalTo("Success"));
 
         ConnectAsserts.verifyContainsStandardAddOnQueryParamters(addonContentPage.getIframeQueryParams(),

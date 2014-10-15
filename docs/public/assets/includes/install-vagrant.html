@@ -1,0 +1,22 @@
+### Background
+
+We packaged a Vagrant box which you can use to quickly spin up a virtual machine (VM) with
+the Atlassian Plugin SDK, Node.js, atlassian-connect-express, and other utilities.
+It is configured to be able to access files from your machine so you can use your local IDE to write code for your
+add-ons, and forward ports to your machine so you can use the browser on your machine to connect to JIRA/Confluence
+on the VM.
+
+### Installation instructions
+Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads) and [Vagrant](https://www.vagrantup.com/downloads.html).
+
+Create a directory that will host your add-on code (directory_name), then open a terminal window and run:
+<div class="CodeMirror-wrap"><pre><div class="CodeMirror">cd directory_name
+curl -o Vagrantfile -L http://goo.gl/76meqp
+vagrant up</div></pre></div>
+
+This will download and save the packaged Vagrant box (file size ~950M) and start a VM on your machine.
+At some point, Vagrant will ask you for a password to set up file synchronisation between the VM and your maching.
+Enter the password for the user currently logged in your machine (must be an administrator).
+
+Then connect to the VM, review and accept the Oracle license terms (for Java)
+<div class="CodeMirror-wrap"><pre><div class="CodeMirror">vagrant ssh</div></pre></div>

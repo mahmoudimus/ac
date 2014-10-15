@@ -6,6 +6,9 @@ import java.util.Set;
 
 public interface ConnectAddOnUserProvisioningService
 {
+    public static String USER_PROVISIONING_ERROR = "connect.install.error.user.provisioning";
+    public static String ADDON_ADMINS_MISSING_PERMISSION = "connect.install.error.addon.admin.permission";
+
     void provisionAddonUserForScopes(String username, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddOnUserInitException;
 
     /**

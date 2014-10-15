@@ -216,7 +216,7 @@ public class TestEscaping extends TestBase
     public void testAdminPage() throws Exception
     {
         jira().quickLoginAsAdmin(JiraAdministrationHomePage.class);
-        JiraAdminPage adminPage = jira().getPageBinder().bind(JiraAdminPage.class, getModuleKey(ADMIN_PAGE_KEY));
+        JiraAdminPage adminPage = jira().getPageBinder().bind(JiraAdminPage.class, runner.getAddon().getKey(), ADMIN_PAGE_KEY);
         assertIsEscaped(adminPage.getRemotePluginLinkText());
     }
 
@@ -239,7 +239,7 @@ public class TestEscaping extends TestBase
     {
         IssueCreateResponse issue = jira().backdoor().issues().createIssue(PROJECT_KEY, "test issue tab panel");
         JiraViewIssuePageWithRemotePluginIssueTab page = jira().quickLoginAsAdmin(JiraViewIssuePageWithRemotePluginIssueTab.class,
-                ISSUE_TAB_PANEL_KEY, issue.key(), runner.getAddon().getKey(), ConnectPluginInfo.getPluginKey() + ":");
+                ISSUE_TAB_PANEL_KEY, issue.key(), runner.getAddon().getKey());
         assertIsEscaped(page.getTabName());
     }
 

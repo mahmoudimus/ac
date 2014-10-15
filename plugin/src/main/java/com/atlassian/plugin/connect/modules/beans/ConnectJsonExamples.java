@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans;
 
+import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
@@ -86,6 +87,9 @@ public class ConnectJsonExamples
     public static final String WEBITEM_TARGET_DIALOG_EXAMPLE = createWebitemTargetDialogOptionsExample();
     public static final String WEBPANEL_EXAMPLE = createWebPanelExample();
     public static final String WEBSECTION_EXAMPLE = createWebSectionExample();
+    public static final String BLUEPRINT_EXAMPLE = createBlueprintExample();
+    public static final String BLUEPRINT_TEMPLATE_EXAMPLE = createBlueprintTemplateExample();
+
 
     private static String createAddonExample()
     {
@@ -221,7 +225,7 @@ public class ConnectJsonExamples
     {
         WebPanelModuleBean webPanelModuleBean = WebPanelModuleBean.newWebPanelBean()
                 .withName(new I18nProperty("My Web Panel", ""))
-                .withUrl("http://www.example.com/web-panel")
+                .withUrl("/web-panel")
                 .withKey("my-web-panel")
                 .withLocation("com.atlassian.jira.plugin.headernav.left.context")
                 .withLayout(new WebPanelLayout("10px", "100%"))
@@ -241,6 +245,30 @@ public class ConnectJsonExamples
                 .build();
 
         return gson.toJson(createModuleArray("webSections", webSectionModuleBean));
+    }
+
+    private static String createBlueprintExample()
+    {
+        BlueprintModuleBean blueprintModuleBean = BlueprintModuleBean.newBlueprintModuleBean()
+                .withName(new I18nProperty("Simple Remote Blueprint", ""))
+                .withKey("remote-blueprint")
+                .withTemplate(createBlueprintTemplateBean())
+                .build();
+
+        return gson.toJson(createModuleArray("blueprints", blueprintModuleBean));
+    }
+
+    private static String createBlueprintTemplateExample()
+    {
+        BlueprintTemplateBean blueprintTemplateBean = createBlueprintTemplateBean();
+        return gson.toJson(createJsonObject("template", blueprintTemplateBean));
+    }
+
+    private static BlueprintTemplateBean createBlueprintTemplateBean()
+    {
+        return BlueprintTemplateBean.newBlueprintTemplateBeanBuilder()
+                    .withUrl("/blueprints/blueprint.xml")
+                    .build();
     }
 
     public static String createComponentTabPanelExample()
