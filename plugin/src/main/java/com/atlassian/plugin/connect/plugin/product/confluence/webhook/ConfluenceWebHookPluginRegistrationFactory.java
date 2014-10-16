@@ -45,7 +45,6 @@ public final class ConfluenceWebHookPluginRegistrationFactory implements WebHook
     {
         return WebHookEventGroup.builder()
                 .addEvent(withId("group_removed").firedWhen(GroupRemoveEvent.class).isMatchedBy(ALWAYS_TRUE))
-                .addEvent(withId("group_removed").firedWhen(GroupRemoveEvent.class).isMatchedBy(ALWAYS_TRUE))
                 .addEvent(withId("group_created").firedWhen(GroupCreateEvent.class).isMatchedBy(ALWAYS_TRUE))
                 .addEvent(withId("user_removed").firedWhen(UserRemoveEvent.class).isMatchedBy(ALWAYS_TRUE))
                 .addEvent(withId("user_reactivated").firedWhen(UserReactivateEvent.class).isMatchedBy(ALWAYS_TRUE))
