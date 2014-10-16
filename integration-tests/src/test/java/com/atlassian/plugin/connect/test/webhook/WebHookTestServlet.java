@@ -4,14 +4,18 @@ import cc.plural.jsonij.JPath;
 import cc.plural.jsonij.JSON;
 import cc.plural.jsonij.Value;
 import cc.plural.jsonij.parser.ParserException;
+
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+
 import org.apache.commons.io.IOUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.BlockingDeque;
@@ -30,9 +34,10 @@ public final class WebHookTestServlet extends HttpServlet
     {
         if (req.getRequestURI().endsWith("/webhook") || req.getRequestURI().endsWith("-lifecycle"))
         {
+            String version = req.getHeader(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION);
             try
             {
-                webHooksQueue.push(new JsonWebHookBody(getFullURL(req), JSON.parse(IOUtils.toString(req.getReader()))));
+                webHooksQueue.push(new JsonWebHookBody(getFullURL(req), JSON.parse(IOUtils.toString(req.getReader())), version));
                 resp.getWriter().write("OKEY DOKEY");
             } catch (ParserException e)
             {
@@ -53,9 +58,7 @@ public final class WebHookTestServlet extends HttpServlet
                         .build())
                 .addRoute(webHookPath, servlet)
                 .addScope(ScopeName.READ)
-                .addJWT()
-                .addInstallLifecycle()
-                .addRoute(ConnectRunner.INSTALLED_PATH, new WebHookTestServlet()) // different servlet for installed callback so that tests can inspect only the webhooks
+                .addJWT(new WebHookTestServlet()) // different servlet for installed callback so that tests can inspect only the webhooks
                 .start();
 
         try
@@ -237,11 +240,13 @@ public final class WebHookTestServlet extends HttpServlet
     {
         private volatile JSON body;
         private volatile String requestURI;
+        private volatile String version;
 
-        private JsonWebHookBody(String requestURI, JSON body)
+        private JsonWebHookBody(String requestURI, JSON body, String version)
         {
             this.requestURI = requestURI;
             this.body = body;
+            this.version = version;
         }
 
         @Override
@@ -263,6 +268,12 @@ public final class WebHookTestServlet extends HttpServlet
         public URI getRequestURI() throws Exception
         {
             return new URI(requestURI);
+        }
+
+        @Override
+        public String getConnectVersion()
+        {
+            return this.version;
         }
     }
 }

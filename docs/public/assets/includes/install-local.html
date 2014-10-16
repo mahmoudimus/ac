@@ -1,0 +1,25 @@
+Set-up the prerequisites:
+* [Windows](https://developer.atlassian.com/display/DOCS/Set+up+the+SDK+Prerequisites+on+a+Windows+System)
+* [Linux/Mac](https://developer.atlassian.com/display/DOCS/Set+up+the+SDK+Prerequisites+for+Linux+or+Mac)
+
+Download and install the Atlassian Plugin SDK:
+* [Windows](https://developer.atlassian.com/display/DOCS/Install+the+Atlassian+SDK+on+a+Windows+System)
+* [Linux/Mac](https://developer.atlassian.com/display/DOCS/Install+the+Atlassian+SDK+on+a+Linux+or+Mac+System)
+
+Then verify that the installation was done properly by opening a terminal window and running:
+<pre><code data-lang="text">atlas-version</code></pre>
+
+The system responds with information similar to the following:
+<pre><code data-lang="text">ATLAS Version:    5.0.4
+ATLAS Home:       /usr/share/atlassian-plugin-sdk-5.0.4
+ATLAS Scripts:    /usr/share/atlassian-plugin-sdk-5.0.4/bin
+ATLAS Maven Home: /usr/share/atlassian-plugin-sdk-5.0.4/apache-maven-3.2.1
+--------
+Executing: /usr/share/atlassian-plugin-sdk-5.0.4/apache-maven-3.2.1/bin/mvn --version -gs /usr/share/atlassian-plugin-sdk-5.0.4/apache-maven-3.2.1/conf/settings.xml
+Apache Maven 3.2.1 (ea8b2b07643dbb1b84b6d16e1f08391b666bc1e9; 2014-02-14T17:37:52+00:00)
+Maven home: /usr/share/atlassian-plugin-sdk-5.0.4/apache-maven-3.2.1
+Java version: 1.7.0_67, vendor: Oracle Corporation
+Java home: /usr/lib/jvm/java-7-oracle/jre
+Default locale: en_US, platform encoding: ISO-8859-1
+OS name: "linux", version: "3.2.0-23-generic-pae", arch: "i386", family: "unix"
+</code></pre>

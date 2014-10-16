@@ -35,11 +35,13 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/mode/javascript/javascript.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/mode/clike/clike.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.4/sequence-diagram-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
     <script src="<%= relDocRoot %>assets/scripts/startup-commands.js"></script>
+    <script src="<%= relDocRoot %>assets/scripts/static-includes.js"></script>
 
 </head>
 
-<body id="ac" class="aui-layout aui-theme-default aui-page-hybrid">
+<body id="ac" class="aui-layout aui-theme-default aui-page-hybrid" data-baseurl="<%= relDocRoot %>">
     <div id="page">
         <header id="header" role="banner">
             <nav class="aui-header aui-dropdown2-trigger-group" role="navigation">
@@ -148,7 +150,7 @@
                 text = $sample.text().trim(),
                 newOpts = $.extend({}, codeDefaults);
 
-            if (text.split("\n").length <= 1) {
+            if (text.split("\n").length <= 1 || lang === "text") {
                 newOpts.lineNumbers = false;
                 newOpts.gutters = [];
             }

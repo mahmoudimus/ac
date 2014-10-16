@@ -2,13 +2,12 @@ package com.atlassian.plugin.connect.test.pageobjects.jira;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.pageobjects.AdminPage;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginTestPage;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import org.apache.commons.lang.NotImplementedException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
@@ -28,7 +27,8 @@ public final class JiraAdminPage implements AdminPage
 
     @Inject
     private PageBinder pageBinder;
-    private final String pageKey;
+    private final String addOnKey;
+    private final String moduleKey;
 
     private final Supplier<Option<WebElement>> link = new Supplier<Option<WebElement>>()
     {
@@ -39,9 +39,10 @@ public final class JiraAdminPage implements AdminPage
         }
     };
 
-    public JiraAdminPage(String pageKey)
+    public JiraAdminPage(String addOnKey, String moduleKey)
     {
-        this.pageKey = pageKey;
+        this.addOnKey = addOnKey;
+        this.moduleKey = moduleKey;
     }
 
     @Override
@@ -51,27 +52,14 @@ public final class JiraAdminPage implements AdminPage
     }
 
     @Override
-    public RemotePluginTestPage clickRemotePluginLink()
-    {
-        return withLinkElement(new Function<WebElement, RemotePluginTestPage>()
-        {
-            @Override
-            public RemotePluginTestPage apply(WebElement linkElement)
-            {
-                linkElement.click();
-                logger.debug("Link '{}' was found and clicked.", linkElement);
-                return pageBinder.bind(RemotePluginTestPage.class, pageKey);
-            }
-        });
-    }
-
-    @Override
     public ConnectAddOnEmbeddedTestPage clickAddOnLink()
     {
-        throw new NotImplementedException("TODO as part of porting tests from xml descriptors to json descriptors");
+        final WebElement webElement = link.get().get();
+        webElement.click();
+        logger.debug("Link '{}' was found and clicked.", webElement);
+        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addOnKey, moduleKey, true);
     }
 
-    @Override
     public String getRemotePluginLinkHref()
     {
         return withLinkElement(new Function<WebElement, String>()
@@ -113,7 +101,7 @@ public final class JiraAdminPage implements AdminPage
 
     private By link()
     {
-        return By.id(pageKey);
+        return By.id(ModuleKeyUtils.addonAndModuleKey(addOnKey, moduleKey));
     }
 
 }

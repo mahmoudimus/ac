@@ -5,10 +5,13 @@ import com.atlassian.confluence.macro.browser.beans.MacroParameter;
 import com.atlassian.confluence.pages.thumbnail.Dimensions;
 import com.atlassian.confluence.plugin.descriptor.MacroMetadataParser;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
+import com.atlassian.gzipfilter.org.apache.commons.lang.StringEscapeUtils;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.nested.*;
+import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
+import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectDocumentationBeanFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
@@ -17,23 +20,26 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModulePr
 import com.atlassian.plugin.connect.plugin.module.confluence.FixedXhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.module.confluence.PageMacro;
 import com.atlassian.plugin.module.ModuleFactory;
-import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.Uri;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.LinkBean.newLinkBean;
+import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.printNode;
 
 public abstract class AbstractContentMacroModuleDescriptorFactory<B extends BaseContentMacroModuleBean>
         implements ConnectModuleDescriptorFactory<B, XhtmlMacroModuleDescriptor>
 {
+    private static final Logger log = LoggerFactory.getLogger(AbstractContentMacroModuleDescriptorFactory.class);
+
     private final AbsoluteAddOnUrlConverter urlConverter;
 
     public AbstractContentMacroModuleDescriptorFactory(
@@ -101,6 +107,10 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         element.setAttribute("i18n-name-key", bean.getName().getValue());
         element.setAttribute("class", PageMacro.class.getName());
         element.setAttribute("state", "enabled");
+        if (bean.getDescription() != null)
+        {
+            element.addElement("description").addCDATA(StringEscapeUtils.escapeHtml(bean.getDescription().getValue()));
+        }
 
 //        See ACDEV-1400 AC-1210
 //        if (bean.hasRenderModes())
@@ -141,6 +151,10 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         handleCategories(bean, element);
         handleAliases(bean, element);
 
+        if (log.isDebugEnabled())
+        {
+            log.debug("Created macro: " + printNode(element));
+        }
         return element;
     }
 

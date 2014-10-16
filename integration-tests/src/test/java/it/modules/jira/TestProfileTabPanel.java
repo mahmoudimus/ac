@@ -4,8 +4,8 @@ import com.atlassian.fugue.Option;
 import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.InsufficientPermissionsViewProfileTab;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProfilePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -82,8 +82,7 @@ public class TestProfileTabPanel extends ConnectWebDriverTestBase
         loginAndVisit(TestUser.ADMIN, ViewProfilePage.class);
         LinkedRemoteContent tabPanel = connectPageOperations.findTabPanel("up_" + moduleKey + "_a",
                 Option.<String>none(),moduleKey);
-        RemotePluginEmbeddedTestPage remotePage = tabPanel.click();
-        assertThat(remotePage.isLoaded(), equalTo(true));
+        ConnectAddOnEmbeddedTestPage remotePage = tabPanel.click();
         assertThat(remotePage.getMessage(), equalTo("Success"));
 
         Map<String,String> conditionRequestParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();

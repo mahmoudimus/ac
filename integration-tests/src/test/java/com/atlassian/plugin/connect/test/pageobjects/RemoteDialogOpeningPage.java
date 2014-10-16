@@ -4,8 +4,9 @@ import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
-import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
+import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+
 import java.util.concurrent.Callable;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
@@ -21,7 +23,7 @@ import static com.atlassian.plugin.connect.test.pageobjects.RemotePageUtil.runIn
 /**
  * Page with a single button to open a dialog
  */
-public class RemoteDialogOpeningPage
+public class RemoteDialogOpeningPage extends AbstractConnectIFrameComponent<RemoteDialogOpeningPage>
 {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -36,37 +38,19 @@ public class RemoteDialogOpeningPage
     @Inject
     protected PageElementFinder elementFinder;
 
-    // "servlet" || "remote-web-item"
-    @XmlDescriptor
-    @Deprecated
-    private final String type;
-
     private final String pageElementKey;
-    private final String pluginKey;
-
-    @XmlDescriptor
-    private final boolean isXmlDescriptor;
 
     protected WebElement containerDiv;
 
-    @XmlDescriptor
-    public RemoteDialogOpeningPage(String type, String pageElementKey, String pluginKey)
+    public RemoteDialogOpeningPage(String pageElementKey)
     {
-        this(type, pageElementKey, pluginKey, true);
-    }
-
-    public RemoteDialogOpeningPage(String type, String pageElementKey, String pluginKey, boolean isXmlDescriptor)
-    {
-        this.type = type;
         this.pageElementKey = pageElementKey;
-        this.pluginKey = pluginKey;
-        this.isXmlDescriptor = isXmlDescriptor;
     }
 
     @Init
     public void init()
     {
-        this.containerDiv = driver.findElement(By.id("embedded-" + ( (type == null) ? "" : (type + "-") ) + pageElementKey));
+        this.containerDiv = driver.findElement(By.id("embedded-" + pageElementKey));
     }
 
     public RemoteCloseDialogPage openKey(String expectedNamespace)
@@ -98,5 +82,11 @@ public class RemoteDialogOpeningPage
     public String waitForValue(String key)
     {
         return RemotePageUtil.waitForValue(driver, containerDiv, key);
+    }
+
+    @Override
+    protected String getFrameId()
+    {
+        return IframeUtils.iframeId("embedded-" + pageElementKey);
     }
 }

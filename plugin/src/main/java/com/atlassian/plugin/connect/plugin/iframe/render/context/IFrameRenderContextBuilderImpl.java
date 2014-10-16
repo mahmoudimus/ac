@@ -177,7 +177,7 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
             defaultContext.put("contextPath", hostApplicationInfo.getContextPath());
             defaultContext.put("userId", username);
             defaultContext.put("userKey", userKey);
-            defaultContext.put("data", ImmutableMap.of("timeZone", timeZone));
+            defaultContext.put("timeZone", timeZone);
 
             return defaultContext;
         }

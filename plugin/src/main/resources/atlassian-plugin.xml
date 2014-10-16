@@ -17,12 +17,12 @@
     </servlet-filter>
 
     <servlet-filter key="schema-resources" class="com.atlassian.plugin.connect.plugin.capabilities.schema.SchemaFilter"
-                    location="after-encoding">
+                    location="after-encoding" weight="90">
         <url-pattern>/atlassian-connect/schema/*</url-pattern>
     </servlet-filter>
 
     <servlet-filter key="documentation-filter" class="com.atlassian.plugin.connect.plugin.docs.DocumentationFilter"
-                    location="after-encoding">
+                    location="after-encoding" weight="90">
         <url-pattern>/atlassian-connect/docs*</url-pattern>
     </servlet-filter>
 

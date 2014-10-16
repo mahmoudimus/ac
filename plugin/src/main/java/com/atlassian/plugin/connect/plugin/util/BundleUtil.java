@@ -8,6 +8,7 @@ import com.google.common.collect.Iterables;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -17,6 +18,21 @@ public final class BundleUtil
 
     private BundleUtil()
     {
+    }
+
+    /**
+     * Returns the version number from the context bundle.
+     * Can be used to get the version of the Connect p2 plugin.
+     */
+
+    public static String getBundleVersion(BundleContext bundleContext)
+    {
+        Object bundleVersion = bundleContext.getBundle().getHeaders().get(Constants.BUNDLE_VERSION);
+        if(bundleVersion != null && bundleVersion instanceof String)
+        {
+            return (String) bundleVersion;
+        }
+        return null;
     }
 
     public static Bundle findBundleForPlugin(BundleContext bundleContext, String pluginKey)

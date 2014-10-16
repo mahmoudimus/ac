@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.test.pageobjects;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
-import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectMacroBrowserDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
@@ -44,16 +43,6 @@ public class ConnectPageOperations
     public RemoteWebPanel findWebPanel(String id)
     {
         return pageBinder.bind(RemoteWebPanel.class, id);
-    }
-
-    /**
-     * For XML descriptor tests. TODO remove when we ditch support for XML descriptors.
-     */
-    @Deprecated
-    @XmlDescriptor
-    public RemoteWebPanel findWebPanelFromXMLAddOn(String id)
-    {
-        return pageBinder.bind(RemoteWebPanel.class, id, "remote-web-panel-");
     }
 
     public RemoteWebItem findWebItem(String webItemId, Optional<String> dropDownLinkId)
@@ -173,5 +162,15 @@ public class ConnectPageOperations
     public void reorderConfluenceTableOnPage()
     {
         driver.findElement(By.className("tablesorter-header-inner")).click();
+    }
+
+    public WebElement findElement(By by)
+    {
+        return driver.findElement(by);
+    }
+
+    public WebElement findElementByClass(String className)
+    {
+        return findElement(By.className(className));
     }
 }

@@ -1,9 +1,5 @@
 package it.com.atlassian.plugin.connect.installer;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.modzdetector.IOUtils;
 import com.atlassian.plugin.ModuleDescriptor;
@@ -29,6 +25,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

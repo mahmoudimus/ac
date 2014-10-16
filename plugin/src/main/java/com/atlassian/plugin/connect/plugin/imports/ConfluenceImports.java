@@ -50,6 +50,7 @@ public class ConfluenceImports
             @ConfluenceImport UserAccessor userAccessor,
             @ConfluenceImport WebSudoManager webSudoManager,
             @ConfluenceImport XhtmlContent xhtmlContent
+
     )
     {
     }

@@ -16,9 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @since 1.0
@@ -36,9 +34,7 @@ public class TestLicenseRestResource extends ConnectWebDriverTestBase
             final InstallHandlerServlet installHandlerServlet = new InstallHandlerServlet();
             final String productBaseUrl = product.getProductInstance().getBaseUrl();
             runner = new ConnectRunner(productBaseUrl, AddonTestUtils.randomAddOnKey())
-                    .addJWT()
-                    .addInstallLifecycle()
-                    .addRoute(ConnectRunner.INSTALLED_PATH, installHandlerServlet)
+                    .addJWT(installHandlerServlet)
                     .enableLicensing()
                     .addScope(ScopeName.READ)
                     .addModule("generalPages", newPageBean()
