@@ -29,6 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -149,7 +150,7 @@ public class ConnectAddOnUserServiceImplTest
         connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService).addUser(eq(application), argThat(hasExpectedEmailAddress()), any(PasswordCredential.class));
         verify(applicationService).storeUserAttributes(eq(application), eq(USER_KEY), attributecaptor.capture());
-        assertThat(attributecaptor.getValue().get("synch." + APPLICATION_NAME + ".atlassian-connect-user"), contains("true"));
+        assertTrue(attributecaptor.getValue().get("synch." + APPLICATION_NAME + ".atlassian-connect-user").contains("true"));
     }
 
     @Test
