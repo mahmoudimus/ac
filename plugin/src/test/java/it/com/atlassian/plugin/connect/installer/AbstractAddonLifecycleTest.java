@@ -265,7 +265,6 @@ public abstract class AbstractAddonLifecycleTest
             addonKey = plugin.getKey();
 
             testPluginInstaller.uninstallJsonAddon(plugin);
-            plugin = null;
 
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
             Option<String> maybeHeader = getVersionHeader(request);
@@ -297,7 +296,6 @@ public abstract class AbstractAddonLifecycleTest
             addonKey = plugin.getKey();
 
             testPluginInstaller.enableAddon(addonKey);
-            plugin = null;
 
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, ENABLED);
 
@@ -333,7 +331,6 @@ public abstract class AbstractAddonLifecycleTest
             final String finalKey = addonKey;
 
             testPluginInstaller.disableAddon(addonKey);
-            plugin = null;
 
             waitForWebhook(addonKey,DISABLED);
 
