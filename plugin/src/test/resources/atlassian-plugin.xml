@@ -64,4 +64,9 @@
                class="it.com.atlassian.plugin.connect.workflow.jira.DefaultWorkflowImporter"
                interface="it.com.atlassian.plugin.connect.workflow.jira.WorkflowImporter"
                application="jira" />
+
+    <!-- MOCK REST RESOURCES -->
+    <rest key="agile-rest-mock" path="/greenhopper" version="1.0">
+        <package>com.atlassian.plugin.connect.testfixture.agile.rest</package>
+    </rest>
 </atlassian-plugin>
