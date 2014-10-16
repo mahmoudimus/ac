@@ -82,5 +82,36 @@
 
     });
 
+    asyncTest('no options are passed', function(){
+        var script = document.createElement("script");
+        script.setAttribute("src", "/atlassian-connect/all.js");
+        var container = document.getElementById("init-fixture");
+        container.appendChild(script);
+        loadInitScript(container, function(){
+            deepEqual(initStub.getCall(0).args[0], {});
+            start();
+        });
+
+    });
+
+    asyncTest('both script and div are present. script takes precendence', function(){
+        var script = document.createElement("script");
+        script.setAttribute("src", "/atlassian-connect/all.js");
+        script.setAttribute("data-options", "resize:false");
+        var container = document.getElementById("init-fixture");
+        container.appendChild(script);
+
+        var div = document.createElement("div");
+        div.setAttribute("data-options", "sizeToParent:false");
+        div.setAttribute("id", "ac-iframe-options");
+        container.appendChild(div);
+
+        loadInitScript(container, function(){
+            deepEqual(initStub.getCall(0).args[0], {resize: false});
+            start();
+        });
+
+    });
+
 
 })();
