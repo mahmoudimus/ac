@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.plugin.connect.plugin.util.BundleUtil;
 import com.atlassian.plugin.connect.spi.event.product.PluginsUpgradedEvent;
 import com.atlassian.plugin.connect.spi.event.product.ServerUpgradedEvent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
@@ -80,7 +81,7 @@ public class ProductEventPublisher implements LifecycleAware
 
     private String getCurrentPluginsVersion()
     {
-        return (String) bundleContext.getBundle().getHeaders().get(Constants.BUNDLE_VERSION_ATTRIBUTE);
+        return BundleUtil.getBundleVersion(bundleContext);
     }
 
     private String getLastVersion(String type)

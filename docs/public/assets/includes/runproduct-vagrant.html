@@ -1,15 +1,15 @@
 First, go to the directory from which you started the VM, and run the following to connect to the VM:
-<div class="CodeMirror-wrap"><pre><div class="CodeMirror">vagrant ssh</div></pre></div>
+<pre><code data-lang="text">vagrant ssh</code></pre>
 
 ### Stable versions
 To start a local JIRA/Confluence server with Connect matching what is currently in production in Atlassian Cloud,
 run the following from within the VM:
 
 #### JIRA
-<div class="CodeMirror-wrap"><pre><div class="CodeMirror">atlas-run-connect --product jira</div></pre></div>
+<pre><code data-lang="text">atlas-run-connect --product jira</code></pre>
 
 #### Confluence
-<div class="CodeMirror-wrap"><pre><div class="CodeMirror">atlas-run-connect --product confluence</div></pre></div>
+<pre><code data-lang="text">atlas-run-connect --product confluence</code></pre>
 
 ### Bleeding edge
 <div class="aui-message warning">
@@ -24,7 +24,7 @@ run the following from within the VM:
 To start a local JIRA/Confluence server with the latest development version of Connect (bleeding edge), run:
 
 #### JIRA
-<div class="CodeMirror-wrap"><pre><div class="CodeMirror">atlas-run-connect --product jira --beta</div></pre></div>
+<pre><code data-lang="text">atlas-run-connect --product jira --beta</code></pre>
 
 #### Confluence
-<div class="CodeMirror-wrap"><pre><div class="CodeMirror">atlas-run-connect --product confluence --beta</div></pre></div>
+<pre><code data-lang="text">atlas-run-connect --product confluence --beta</code></pre>

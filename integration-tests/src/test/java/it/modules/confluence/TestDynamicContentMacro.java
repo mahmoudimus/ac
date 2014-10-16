@@ -13,20 +13,24 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWithRemoteMacro;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+
 import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
+
 import redstone.xmlrpc.XmlRpcFault;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 
@@ -38,6 +42,8 @@ import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 import static org.junit.Assert.assertThat;
+import static it.matcher.ParamMatchers.isVersionNumber;
+
 
 public class TestDynamicContentMacro extends AbstractContentMacroTest
 {
@@ -354,9 +360,27 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         savedPage = editorPage.save();
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(CLIENT_SIDE_BODY_MACRO_KEY);
+
         String content = renderedMacro.getIFrameElementText("body");
 
         assertThat(content, is("body: " + EDITED_MACRO_BODY));
+    }
+
+    @Test
+    public void testIframeURLContainsVersion() throws Exception
+    {
+        RichTextBodyMacro macro = new RichTextBodyMacro(CLIENT_SIDE_BODY_MACRO_KEY, "");
+        EditContentPage editorPage = createAndEditPage(CLIENT_SIDE_BODY_MACRO_NAME, "<p>" + macro.getStorageFormat() + "</p>");
+
+        RemotePluginDialog dialog = connectPageOperations.editMacro(macro.getMacroKey());
+        dialog.submit();
+
+        savedPage = editorPage.save();
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(CLIENT_SIDE_BODY_MACRO_KEY);
+
+        String version = renderedMacro.getFromQueryString("cv");
+
+        assertThat(version, isVersionNumber());
     }
 
     @Test

@@ -39,6 +39,8 @@ import java.security.NoSuchAlgorithmException;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -54,7 +56,7 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
     protected static final CustomInstallationHandlerServlet installUninstallHandler = new CustomInstallationHandlerServlet();;
     protected static ConnectRunner remotePlugin;
 
-    private static String sharedSecret;
+    private String sharedSecret;
 
     private String pluginKey;
     protected String awesomePageModuleKey;
@@ -83,11 +85,16 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
 
     public void installAddonSuccess() throws Exception
     {
+        this.sharedSecret = installAddonSuccessAndReturnSecret();
+    }
+
+    public String installAddonSuccessAndReturnSecret() throws Exception
+    {
         installUninstallHandler.setShouldSend404(false);
         remotePlugin.start();
         this.pluginKey = remotePlugin.getAddon().getKey();
         this.awesomePageModuleKey = addonAndModuleKey(pluginKey, MY_AWESOME_PAGE_KEY);
-        sharedSecret = installUninstallHandler.getInstallPayload().getSharedSecret();
+        return installUninstallHandler.getInstallPayload().getSharedSecret();
     }
 
     public void installAddonFailure() throws Exception
@@ -119,6 +126,15 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
         installAddonSuccess();
         installAddonFailure();
         assertPageLinkWorks();
+    }
+
+    @Test
+    //See https://ecosystem.atlassian.net/browse/ACDEV-1174
+    public void testMultipleInstallsDoNotChangeSharedSecret() throws Exception
+    {
+        String firstSecret = installAddonSuccessAndReturnSecret();
+        String secondSecret = installAddonSuccessAndReturnSecret();
+        assertEquals(firstSecret, secondSecret);
     }
 
     @Test
