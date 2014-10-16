@@ -18,7 +18,7 @@
 		</table>
 </div>
 
-The version numbers for the Atlassian Connect framework and Atlassian products which support it are now published in 
+The version numbers for the Atlassian Connect framework and Atlassian products which support it are published in 
 [this JSON file](https://developer.atlassian.com/static/connect-versions.json), which you can poll periodically to 
 find out about new production and development (bleeding edge) releases. You can start a local instance of JIRA 
 or Confluence Cloud with Atlassian Connect as follows:
