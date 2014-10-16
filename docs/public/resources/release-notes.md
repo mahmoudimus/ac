@@ -25,12 +25,12 @@ or Confluence Cloud with Atlassian Connect as follows:
 
 <a data-replace-text="If you are using a local installation [-]" class="aui-expander-trigger" aria-controls="runproduct-local">If you are using a local installation [+]</a>
 <div id="runproduct-local" class="aui-expander-content">
-    <span data-include="/assets/includes/runproduct-local.html">Loading...</span>
+    <span data-include="../assets/includes/runproduct-local.html">Loading...</span>
 </div>
 
 <a data-replace-text="If you are using the Vagrant box [-]" class="aui-expander-trigger" aria-controls="runproduct-vagrant">If you are using the Vagrant box [+]</a>
 <div id="runproduct-vagrant" class="aui-expander-content">
-    <span data-include="/assets/includes/runproduct-vagrant.html">Loading...</span>
+    <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
 
 ## [1.1.9](../release-notes/1-1-0.html#1.1.9)
