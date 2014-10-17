@@ -11,12 +11,10 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditPa
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
-
 import it.modules.confluence.AbstractConfluenceWebDriverTest;
 import it.servlet.condition.CheckUsernameConditionServlet;
 import it.servlet.condition.ParameterCapturingConditionServlet;
 import it.util.TestUser;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -29,9 +27,7 @@ import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newW
 import static com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static it.matcher.IsLong.isLong;
-import static it.matcher.ParamMatchers.isLocale;
-import static it.matcher.ParamMatchers.isTimeZone;
-import static it.matcher.ParamMatchers.isVersionNumber;
+import static it.matcher.ParamMatchers.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.IsEqual.equalTo;

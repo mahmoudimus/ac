@@ -51,7 +51,6 @@ import com.atlassian.uri.UriBuilder;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
-
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -61,7 +60,6 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
-
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URI;

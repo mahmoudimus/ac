@@ -23,7 +23,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(AtlassianPluginsTestRunner.class)
 public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
@@ -256,7 +257,6 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
             assertNotNull((appLink));
             assertEquals(addon.getBaseUrl(), appLink.getDisplayUrl().toString());
             assertEquals("addon_" + addon.getKey(), appLink.getProperty("user.key"));
-
         }
         finally
         {

@@ -4,7 +4,11 @@ import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.core.reader.JwtIssuerSharedSecretService;
 import com.atlassian.jwt.core.reader.JwtIssuerValidator;
 import com.atlassian.jwt.core.reader.NimbusJwtReaderFactory;
-import com.atlassian.jwt.exception.*;
+import com.atlassian.jwt.exception.JwtInvalidClaimException;
+import com.atlassian.jwt.exception.JwtIssuerLacksSharedSecretException;
+import com.atlassian.jwt.exception.JwtParseException;
+import com.atlassian.jwt.exception.JwtUnknownIssuerException;
+import com.atlassian.jwt.exception.JwtVerificationException;
 import com.atlassian.jwt.reader.JwtClaimVerifier;
 import com.atlassian.jwt.reader.JwtReader;
 import com.atlassian.jwt.reader.JwtReaderFactory;
@@ -14,16 +18,19 @@ import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.*;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
+import com.atlassian.plugin.connect.test.pageobjects.RemoteCloseDialogPage;
+import com.atlassian.plugin.connect.test.pageobjects.RemoteDialogOpeningPage;
+import com.atlassian.plugin.connect.test.pageobjects.RemotePluginAwarePage;
+import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-
 import it.ConnectWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
 import it.servlet.condition.ParameterCapturingConditionServlet;
 import it.servlet.condition.ParameterCapturingServlet;
 import it.util.TestUser;
-
 import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -31,7 +38,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.annotation.Nonnull;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;

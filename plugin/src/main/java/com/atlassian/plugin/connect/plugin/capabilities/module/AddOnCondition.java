@@ -1,10 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities.module;
 
-import java.net.URI;
-import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
-
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
@@ -18,13 +13,17 @@ import com.atlassian.plugin.connect.spi.event.AddOnConditionInvokedEvent;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.util.concurrent.Promise;
-
 import org.apache.commons.lang3.time.StopWatch;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URI;
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

@@ -6,7 +6,6 @@ import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -14,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-
 import java.util.concurrent.Callable;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;

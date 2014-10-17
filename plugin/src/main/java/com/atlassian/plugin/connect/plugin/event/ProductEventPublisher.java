@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.plugin.event;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.connect.plugin.util.BundleUtil;
 import com.atlassian.plugin.connect.spi.event.product.PluginsUpgradedEvent;
@@ -11,9 +8,10 @@ import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
-
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * Publishes product and framework upgraded events when the host starts

@@ -16,10 +16,9 @@ import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import org.osgi.framework.BundleContext;
 
 import java.net.URI;
-
-import org.osgi.framework.BundleContext;
 
 import static com.google.common.base.Strings.nullToEmpty;
 

@@ -7,7 +7,6 @@ import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstit
 import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.sal.api.user.UserManager;
-
 import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

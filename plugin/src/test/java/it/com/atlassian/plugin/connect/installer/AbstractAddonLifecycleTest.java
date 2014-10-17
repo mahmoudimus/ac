@@ -1,7 +1,5 @@
 package it.com.atlassian.plugin.connect.installer;
 
-import java.io.IOException;
-
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
@@ -22,17 +20,16 @@ import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-
 import it.com.atlassian.plugin.connect.TestAuthenticator;
-
 import org.junit.Test;
+
+import java.io.IOException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
 import static it.com.atlassian.plugin.connect.HeaderUtil.getVersionHeader;
 import static it.com.atlassian.plugin.connect.util.ParamMatchers.isVersionNumber;
-import static com.google.common.collect.Sets.newHashSet;
 import static org.junit.Assert.*;
 
 public abstract class AbstractAddonLifecycleTest
@@ -509,14 +506,6 @@ public abstract class AbstractAddonLifecycleTest
             assertUserExistence(addon, false);
 
             testPluginInstaller.enableAddon(addonKey);
-            WaitUntil.invoke(new WaitUntil.WaitCondition()
-            {
-                @Override
-                public boolean isFinished()
-                {
-                    return null != testFilterResults.getRequest(finalKey, ENABLED);
-                }
-
             ServletRequestSnapshot request = waitForWebhook(addonKey,ENABLED);
 
             assertUserExistence(addon, true);
@@ -535,14 +524,17 @@ public abstract class AbstractAddonLifecycleTest
         }
     }
 
-    private void waitForWebhook(final String addonKey, final String path)
+    private ServletRequestSnapshot waitForWebhook(final String addonKey, final String path)
     {
+        final ServletRequestSnapshot[] request = {null};
+
         WaitUntil.invoke(new WaitUntil.WaitCondition()
         {
             @Override
             public boolean isFinished()
             {
-                return null != testFilterResults.getRequest(addonKey, path);
+                request[0] = testFilterResults.getRequest(addonKey, path);
+                return null != request[0];
             }
 
             @Override
@@ -551,6 +543,8 @@ public abstract class AbstractAddonLifecycleTest
                 return "waiting for enable webhook post...";
             }
         },5);
+
+        return request[0];
     }
 
     private void assertVersion(Option<String> maybeHeader)

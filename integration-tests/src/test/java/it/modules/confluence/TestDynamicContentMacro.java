@@ -5,7 +5,6 @@ import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.EditContentPage;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
-import com.atlassian.plugin.connect.modules.beans.nested.*;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
@@ -13,24 +12,20 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWithRemoteMacro;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-
 import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
-
 import redstone.xmlrpc.XmlRpcFault;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 
@@ -38,11 +33,11 @@ import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
 import static com.atlassian.plugin.connect.test.Utils.loadResourceAsString;
+import static it.matcher.ParamMatchers.isVersionNumber;
 import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 import static org.junit.Assert.assertThat;
-import static it.matcher.ParamMatchers.isVersionNumber;
 
 
 public class TestDynamicContentMacro extends AbstractContentMacroTest

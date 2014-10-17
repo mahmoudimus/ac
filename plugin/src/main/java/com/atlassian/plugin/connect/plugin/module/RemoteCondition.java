@@ -16,7 +16,6 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.google.common.base.Function;
-
 import org.apache.commons.lang3.time.StopWatch;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;

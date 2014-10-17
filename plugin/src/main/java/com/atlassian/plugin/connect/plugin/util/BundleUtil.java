@@ -1,11 +1,9 @@
 package com.atlassian.plugin.connect.plugin.util;
 
 import com.atlassian.plugin.osgi.factory.OsgiPlugin;
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
