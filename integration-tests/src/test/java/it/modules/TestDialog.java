@@ -16,12 +16,14 @@ import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.*;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+
 import it.ConnectWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
 import it.servlet.condition.ParameterCapturingConditionServlet;
 import it.servlet.condition.ParameterCapturingServlet;
 import it.util.TestUser;
+
 import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -29,6 +31,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.annotation.Nonnull;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +39,7 @@ import java.util.Map;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWebItemTargetBean;
+import static it.modules.ConnectAsserts.verifyIframeURLHasVersionNumber;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
@@ -232,6 +236,7 @@ public class TestDialog extends ConnectWebDriverTestBase
         assertThat(closeDialogPage.getIFrameSize().getHeight(), is(356));
         assertTrue(closeDialogPage.getFromQueryString("ui-params").length() > 0);
         assertThat(closeDialogPage.getFromQueryString("user_id"), is("admin"));
+        verifyIframeURLHasVersionNumber(closeDialogPage);
     }
 
     @Test
@@ -277,6 +282,15 @@ public class TestDialog extends ConnectWebDriverTestBase
     public void inlineDialogClickGetsNewJwt() throws JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtVerificationException, JwtParseException
     {
         verifyJwtIssuedAtTimeForDialog(JWT_EXPIRY_INLINE_DIALOG, JWT_EXPIRY_INLINE_DIALOG_NAME, true);
+    }
+
+    @Test
+    public void verifyInlineDialogHasVersionNumber()
+    {
+        RemotePluginAwarePage page = goToPageWithLink(JWT_EXPIRY_INLINE_DIALOG, JWT_EXPIRY_INLINE_DIALOG_NAME);
+        ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
+        RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, remotePluginTest, true);
+        verifyIframeURLHasVersionNumber(dialog);
     }
 
     private void verifyJwtIssuedAtTimeForDialog(String moduleKey, String moduleName, final boolean isInlineDialog) throws JwtUnknownIssuerException, JwtParseException, JwtIssuerLacksSharedSecretException, JwtVerificationException

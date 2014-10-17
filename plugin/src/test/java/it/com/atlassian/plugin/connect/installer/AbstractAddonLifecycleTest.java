@@ -1,9 +1,12 @@
 package it.com.atlassian.plugin.connect.installer;
 
+import java.io.IOException;
+
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
@@ -19,12 +22,16 @@ import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+
 import it.com.atlassian.plugin.connect.TestAuthenticator;
+
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
+import static it.com.atlassian.plugin.connect.HeaderUtil.getVersionHeader;
+import static it.com.atlassian.plugin.connect.util.ParamMatchers.isVersionNumber;
 import static com.google.common.collect.Sets.newHashSet;
 import static org.junit.Assert.*;
 
@@ -170,9 +177,9 @@ public abstract class AbstractAddonLifecycleTest
         try
         {
             plugin = testPluginInstaller.installAddon(addon);
-            
+
             addonKey = plugin.getKey();
-            
+
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
             assertEquals(POST, request.getMethod());
             assertEquals(false, request.hasJwt()); // the first installation cannot be signed because there is no pre-shared key
@@ -182,6 +189,32 @@ public abstract class AbstractAddonLifecycleTest
             plugin = testPluginInstaller.installAddon(addon);
             addonKey = plugin.getKey();
             assertEquals(signCallbacksWithJwt(), request.hasJwt());
+        }
+        finally
+        {
+            testFilterResults.clearRequest(addonKey, INSTALLED);
+            if (null != plugin)
+            {
+                testPluginInstaller.uninstallJsonAddon(plugin);
+            }
+        }
+    }
+
+    @Test
+    public void installRequestHasVersion() throws Exception
+    {
+        ConnectAddonBean addon = installOnlyBean;
+
+        Plugin plugin = null;
+        String addonKey = null;
+        try
+        {
+            plugin = testPluginInstaller.installAddon(addon);
+            addonKey = plugin.getKey();
+            final ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
+
+            Option<String> maybeHeader = getVersionHeader(request);
+            assertVersion(maybeHeader);
         }
         finally
         {
@@ -218,6 +251,105 @@ public abstract class AbstractAddonLifecycleTest
         {
             testFilterResults.clearRequest(addonKey, INSTALLED);
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
+            if (null != plugin)
+            {
+                testPluginInstaller.uninstallJsonAddon(plugin);
+            }
+        }
+    }
+
+    @Test
+    public void uninstallRequestHasVersion() throws Exception
+    {
+        ConnectAddonBean addon = installAndUninstallBean;
+
+        Plugin plugin = null;
+        String addonKey = null;
+
+        try
+        {
+            plugin = testPluginInstaller.installAddon(addon);
+
+            addonKey = plugin.getKey();
+
+            testPluginInstaller.uninstallJsonAddon(plugin);
+
+            ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
+            Option<String> maybeHeader = getVersionHeader(request);
+            assertVersion(maybeHeader);
+        }
+        finally
+        {
+            testFilterResults.clearRequest(addonKey, INSTALLED);
+            testFilterResults.clearRequest(addonKey, UNINSTALLED);
+            if (null != plugin)
+            {
+                testPluginInstaller.uninstallJsonAddon(plugin);
+            }
+        }
+    }
+
+    @Test
+    public void enableRequestHasVersion() throws IOException
+    {
+        ConnectAddonBean addon = installAndEnabledBean;
+
+        Plugin plugin = null;
+        String addonKey = null;
+
+        try
+        {
+            plugin = testPluginInstaller.installAddon(addon);
+
+            addonKey = plugin.getKey();
+
+            testPluginInstaller.enableAddon(addonKey);
+
+            ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, ENABLED);
+
+            waitForWebhook(addonKey,ENABLED);
+
+            Option<String> maybeHeader = getVersionHeader(request);
+            assertVersion(maybeHeader);
+        }
+        finally
+        {
+            testFilterResults.clearRequest(addonKey, INSTALLED);
+            testFilterResults.clearRequest(addonKey, ENABLED);
+            if (null != plugin)
+            {
+                testPluginInstaller.uninstallJsonAddon(plugin);
+            }
+        }
+    }
+
+    @Test
+    public void disableRequestHasVersion() throws IOException
+    {
+        ConnectAddonBean addon = installAndDisabledBean;
+
+        Plugin plugin = null;
+        String addonKey = null;
+
+        try
+        {
+            plugin = testPluginInstaller.installAddon(addon);
+
+            addonKey = plugin.getKey();
+            final String finalKey = addonKey;
+
+            testPluginInstaller.disableAddon(addonKey);
+
+            waitForWebhook(addonKey,DISABLED);
+
+            ServletRequestSnapshot request = testFilterResults.getRequest(finalKey, DISABLED);
+            Option<String> maybeHeader = getVersionHeader(request);
+            assertVersion(maybeHeader);
+        }
+        finally
+        {
+            testFilterResults.clearRequest(addonKey, INSTALLED);
+            testFilterResults.clearRequest(addonKey, DISABLED);
             if (null != plugin)
             {
                 testPluginInstaller.uninstallJsonAddon(plugin);
@@ -338,26 +470,9 @@ public abstract class AbstractAddonLifecycleTest
 
             assertUserExistence(addon, true);
             testPluginInstaller.disableAddon(addonKey);
-            final ServletRequestSnapshot[] request = new ServletRequestSnapshot[]{null}; // the array is a cheap trick to get around the requirement to use a final variable
-
-            WaitUntil.invoke(new WaitUntil.WaitCondition()
-            {
-                @Override
-                public boolean isFinished()
-                {
-                    request[0] = testFilterResults.getRequest(finalKey, DISABLED);
-                    return null != request[0];
-                }
-
-                @Override
-                public String getWaitMessage()
-                {
-                    return "waiting for disable webhook post...";
-                }
-            }, 5);
-
+            ServletRequestSnapshot request = waitForWebhook(addonKey, DISABLED);
             assertUserExistence(addon, false);
-            assertEquals(signCallbacksWithJwt(), request[0].hasJwt());
+            assertEquals(signCallbacksWithJwt(), request.hasJwt());
         }
         finally
         {
@@ -388,44 +503,24 @@ public abstract class AbstractAddonLifecycleTest
             assertUserExistence(addon, true);
 
             testPluginInstaller.disableAddon(addonKey);
-            WaitUntil.invoke(new WaitUntil.WaitCondition()
-            {
-                @Override
-                public boolean isFinished()
-                {
-                    return null != testFilterResults.getRequest(finalKey, DISABLED);
-                }
 
-                @Override
-                public String getWaitMessage()
-                {
-                    return "waiting for disable webhook post...";
-                }
-            },5);
+            waitForWebhook(addonKey,DISABLED);
 
             assertUserExistence(addon, false);
 
             testPluginInstaller.enableAddon(addonKey);
-            final ServletRequestSnapshot[] request = new ServletRequestSnapshot[]{null}; // the array is a cheap trick to get around the requirement to use a final variable
-
             WaitUntil.invoke(new WaitUntil.WaitCondition()
             {
                 @Override
                 public boolean isFinished()
                 {
-                    request[0] = testFilterResults.getRequest(finalKey, ENABLED);
-                    return null != request[0];
+                    return null != testFilterResults.getRequest(finalKey, ENABLED);
                 }
 
-                @Override
-                public String getWaitMessage()
-                {
-                    return "waiting for enable webhook post...";
-                }
-            },5);
+            ServletRequestSnapshot request = waitForWebhook(addonKey,ENABLED);
 
             assertUserExistence(addon, true);
-            assertEquals(signCallbacksWithJwt(), request[0].hasJwt());
+            assertEquals(signCallbacksWithJwt(), request.hasJwt());
         }
         finally
         {
@@ -438,6 +533,30 @@ public abstract class AbstractAddonLifecycleTest
                 testPluginInstaller.uninstallJsonAddon(plugin);
             }
         }
+    }
+
+    private void waitForWebhook(final String addonKey, final String path)
+    {
+        WaitUntil.invoke(new WaitUntil.WaitCondition()
+        {
+            @Override
+            public boolean isFinished()
+            {
+                return null != testFilterResults.getRequest(addonKey, path);
+            }
+
+            @Override
+            public String getWaitMessage()
+            {
+                return "waiting for enable webhook post...";
+            }
+        },5);
+    }
+
+    private void assertVersion(Option<String> maybeHeader)
+    {
+        //For some reason, assertThat fails with a java.lang.LinkageError
+        assertTrue("Invalid version number: " + maybeHeader.get(), isVersionNumber().matches(maybeHeader.get()));
     }
 
     private void assertUserExistence(ConnectAddonBean addon, boolean shouldBeActiveIfItExists)

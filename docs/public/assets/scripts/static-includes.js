@@ -14,11 +14,19 @@ $(function() {
     function insertMarkup($includeElement, markdown) {
         var $parentParagraph = $($includeElement.parent("p"));
         var markup = marked(markdown);
+        var $wrap = $("<span>").append(markup);
+
         if ($parentParagraph.children().length === 1) {
-            $parentParagraph.replaceWith(markup);
+            $parentParagraph.replaceWith($wrap);
         } else {
-            $includeElement.replaceWith(markup);
+            $includeElement.replaceWith($wrap);
         }
+
+        $wrap.find('pre code').each(function(){
+            cmIfyPreCodeBlocks(this);
+        });
+
+        startupCommands();
     }
 
     /**
