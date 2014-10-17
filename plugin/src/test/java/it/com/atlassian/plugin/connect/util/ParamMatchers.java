@@ -24,8 +24,8 @@ public class ParamMatchers
 
     public static Matcher<String> isVersionNumber()
     {
-        //Osgi converts versions with dashes to dots, for example
-        // '1.1.8-SNAPSHOT' becomes 1.1.8.SNAPSHOT
-        return matchesPattern("(\\d)*\\.(\\d)*\\.(\\d)*(\\.\\w*)?");
+        // jgitflow creates versions like x.y.z-SNAPSHOT-RC, so we'll just check
+        // the beginning of the string looks like a version number
+        return matchesPattern("(\\d)*\\.(\\d)*\\.(\\d)*");
     }
 }
