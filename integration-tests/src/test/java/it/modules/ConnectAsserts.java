@@ -1,8 +1,10 @@
 package it.modules;
 
+import com.atlassian.plugin.connect.test.pageobjects.AbstractConnectIFrameComponent;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+
 import org.hamcrest.collection.IsMapContaining;
 
 import java.net.URI;
@@ -11,6 +13,7 @@ import java.util.Map;
 
 import static it.matcher.ParamMatchers.isLocale;
 import static it.matcher.ParamMatchers.isTimeZone;
+import static it.matcher.ParamMatchers.isVersionNumber;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
@@ -60,10 +63,16 @@ public class ConnectAsserts
         return map;
     }
 
+    public static void verifyIframeURLHasVersionNumber(AbstractConnectIFrameComponent<?> connectIframeComponent)
+    {
+        String version = connectIframeComponent.getFromQueryString("cv");
+        assertThat(version, isVersionNumber());
+    }
+
     public static void verifyStandardAddOnRelativeQueryParameters(final RemoteWebItem webItem, String contextPath)
     {
         Map<String, String> parameters = Maps.newHashMap();
-        for (String key : new String[] {"tz", "loc", "cp", "lic"})
+        for (String key : new String[] {"tz", "loc", "cp", "lic", "cv"})
         {
             parameters.put(key, webItem.getFromQueryString(key));
         }
@@ -78,6 +87,7 @@ public class ConnectAsserts
         assertThat(parameters, IsMapContaining.hasEntry(is("loc"), isLocale()));
         assertThat(parameters, IsMapContaining.hasEntry(is("cp"), is(contextPath)));
         assertThat(parameters, IsMapContaining.hasEntry(is("lic"), is("none")));
+        assertThat(parameters, IsMapContaining.hasEntry(is("cv"), isVersionNumber()));
     }
 
 }

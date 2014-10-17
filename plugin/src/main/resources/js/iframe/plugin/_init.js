@@ -115,7 +115,12 @@ AP.require(
   // find the script element that imported this code
   var options = {},
       $script = $("script[src*='/atlassian-connect/all']");
-  if ($script && /\/atlassian-connect\/all(-debug)?\.js($|\?)/.test($script.attr("src"))) {
+
+  if ( !($script && /\/atlassian-connect\/all(-debug)?\.js($|\?)/.test($script.attr("src"))) ){
+    $script = $("#ac-iframe-options");
+  }
+
+  if($script && $script.length > 0) {
     // get its data-options attribute, if any
     var optStr = $script.attr("data-options");
     if (optStr) {

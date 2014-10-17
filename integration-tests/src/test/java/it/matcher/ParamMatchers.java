@@ -18,4 +18,11 @@ public class ParamMatchers
     {
         return matchesPattern("[A-Za-z0-9]{2,}-[A-Za-z0-9]{2,}");
     }
+
+    public static Matcher<String> isVersionNumber()
+    {
+        //Osgi converts versions with dashes to dots, for example
+        // '1.1.8-SNAPSHOT' becomes 1.1.8.SNAPSHOT
+        return matchesPattern("(\\d)*\\.(\\d)*\\.(\\d)*(\\.\\w*)?");
+    }
 }

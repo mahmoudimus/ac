@@ -11,8 +11,10 @@ window.xdmMock; //setup a global to be filled with xdmMocks.
 AP.define("_rpc", function(){
     return {
         extend: function(func){
-            var x = func(window.xdmMock);
-            return x.apis;
+            if(typeof func === "function"){
+                func = func(window.xdmMock);
+            }
+            return func.apis;
         }
     };
 });

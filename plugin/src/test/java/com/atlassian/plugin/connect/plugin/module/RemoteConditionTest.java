@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.plugin.module;
 
 import java.net.URI;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
-
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.gzipfilter.org.apache.commons.lang.ObjectUtils;
@@ -19,13 +19,17 @@ import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.util.concurrent.Promises;
+
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
+import static org.osgi.framework.Constants.BUNDLE_VERSION;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
@@ -114,15 +118,27 @@ public class RemoteConditionTest
     @Mock
     private EventPublisher eventPublisher;
 
+    @Mock
+    private BundleContext bundleContext;
+
+    @Mock
+    private Bundle bundle;
+
+    @Mock
+    private Dictionary bundleHeaders;
+
     private RemoteCondition remoteCondition;
 
     @Before
     public void init()
     {
         remoteCondition = new RemoteCondition(productAccessor, remotablePluginAccessorFactory, userManager, templateRenderer,
-                licenseRetriever, localeHelper, eventPublisher);
+                licenseRetriever, localeHelper, eventPublisher, bundleContext);
 
         when(remotablePluginAccessorFactory.get(anyString())).thenReturn(remotablePluginAccessor);
+        when(bundleContext.getBundle()).thenReturn(bundle);
+        when(bundle.getHeaders()).thenReturn(bundleHeaders);
+        when(bundleHeaders.get(BUNDLE_VERSION)).thenReturn("1.2.3");
     }
 
     @Test

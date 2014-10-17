@@ -179,6 +179,11 @@ public class ConnectAppServlets
         return wrapContextAwareServlet(new MustacheServlet("confluence/macro/editor.mu"));
     }
 
+    public static HttpServlet blueprintTemplateServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("confluence/test-blueprint.xml"));
+    }
+
     public static HttpServlet macroBodyEditor(String newMacroBody)
     {
         HttpContextServlet contextServlet = new HttpContextServlet(new MustacheServlet("confluence/macro/editor-macro-body.mu"));

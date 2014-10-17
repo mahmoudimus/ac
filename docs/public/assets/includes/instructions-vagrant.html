@@ -14,26 +14,26 @@ By default, we have done the following:
 * Configured the VM for faster internet connectivity than the default
 
 If you change these settings, you need to reload the VM:
-<div class="CodeMirror-wrap"><pre><div class="CodeMirror">vagrant reload</div></pre></div>
+<pre><code data-lang="text">vagrant reload</code></pre>
 
 #### Useful commands
 You don't need to keep the VM running at all times, as this consumes system resources.
 
 To start the VM:
-<div class="CodeMirror-wrap"><pre><div class="CodeMirror">vagrant up</div></pre></div>
+<pre><code data-lang="text">vagrant up</code></pre>
 
 To connect to the VM:
-<div class="CodeMirror-wrap"><pre><div class="CodeMirror">vagrant ssh</div></pre></div>
+<pre><code data-lang="text">vagrant ssh</code></pre>
 
 To halt the VM:
-<div class="CodeMirror-wrap"><pre><div class="CodeMirror">vagrant halt</div></pre></div>
+<pre><code data-lang="text">vagrant halt</code></pre>
 
 To destroy the VM:
-<div class="CodeMirror-wrap"><pre><div class="CodeMirror">vagrant destroy</div></pre></div>
+<pre><code data-lang="text">vagrant destroy</code></pre>
 
 And to recreate it from its base configuration:
-<div class="CodeMirror-wrap"><pre><div class="CodeMirror">vagrant destroy
-vagrant up</div></pre></div>
+<pre><code data-lang="text">vagrant destroy
+vagrant up</code></pre>
 
 #### Sharing files with the VM
 The VM is configured to share files with your local machine. By default, all files in the directory in which you

@@ -7,6 +7,8 @@ import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstit
 import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.sal.api.user.UserManager;
+
+import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,13 +25,15 @@ public class IFrameUriBuilderFactoryImpl implements IFrameUriBuilderFactory
     private final LicenseRetriever licenseRetriever;
     private final LocaleHelper localeHelper;
     private final UserPreferencesRetriever userPreferencesRetriever;
+    private final BundleContext bundleContext;
 
     @Autowired
     public IFrameUriBuilderFactoryImpl(final UrlVariableSubstitutor urlVariableSubstitutor,
                                        final RemotablePluginAccessorFactory pluginAccessorFactory,
                                        final UserManager userManager, final HostApplicationInfo hostApplicationInfo,
                                        final LicenseRetriever licenseRetriever, final LocaleHelper localeHelper,
-                                       final UserPreferencesRetriever userPreferencesRetriever)
+                                       final UserPreferencesRetriever userPreferencesRetriever,
+                                       final BundleContext bundleContext)
     {
         this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.pluginAccessorFactory = pluginAccessorFactory;
@@ -38,12 +42,13 @@ public class IFrameUriBuilderFactoryImpl implements IFrameUriBuilderFactory
         this.licenseRetriever = licenseRetriever;
         this.localeHelper = localeHelper;
         this.userPreferencesRetriever = userPreferencesRetriever;
+        this.bundleContext = bundleContext;
     }
 
     @Override
     public IFrameUriBuilder builder()
     {
         return new IFrameUriBuilderImpl(urlVariableSubstitutor, pluginAccessorFactory, userManager, hostApplicationInfo,
-                licenseRetriever, localeHelper, userPreferencesRetriever);
+                licenseRetriever, localeHelper, userPreferencesRetriever, bundleContext);
     }
 }

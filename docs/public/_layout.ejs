@@ -150,7 +150,7 @@
                 text = $sample.text().trim(),
                 newOpts = $.extend({}, codeDefaults);
 
-            if (text.split("\n").length <= 1) {
+            if (text.split("\n").length <= 1 || lang === "text") {
                 newOpts.lineNumbers = false;
                 newOpts.gutters = [];
             }
