@@ -23,6 +23,6 @@ public class ParamMatchers
     {
         // jgitflow creates versions like x.y.z-SNAPSHOT-RC, so we'll just check
         // the beginning of the string looks like a version number
-        return matchesPattern("(\\d)*\\.(\\d)*\\.(\\d)*");
+        return matchesPattern("(\\d)*\\.(\\d)*\\.(\\d)*.*");
     }
 }
