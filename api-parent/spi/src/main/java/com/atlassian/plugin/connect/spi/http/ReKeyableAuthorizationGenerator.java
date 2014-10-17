@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.spi.http;
 
-import com.atlassian.fugue.Option;
-
 import java.net.URI;
 import java.util.Map;
 
@@ -17,5 +15,5 @@ public interface ReKeyableAuthorizationGenerator extends AuthorizationGenerator
      * @return some authorisation header, none if not generated.
      * @since 0.10
      */
-    Option<String> generate(HttpMethod method, URI url, Map<String, String[]> parameters, String secret);
+    String generate(HttpMethod method, URI url, Map<String, String[]> parameters, String secret);
 }

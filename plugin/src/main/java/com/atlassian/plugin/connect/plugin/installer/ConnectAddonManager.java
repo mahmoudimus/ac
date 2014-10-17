@@ -211,9 +211,9 @@ public class ConnectAddonManager
         }
 
         String previousDescriptor = addonRegistry.getDescriptor(pluginKey);
-        final ConnectAddonBean previousAddOn = connectAddonBeanFactory.fromJson(previousDescriptor);
-        final Option<String> optionalPreviousSharedSecret = addOnUsesSymmetricSharedSecret(previousAddOn.getAuthentication().getType(), JWT_ALGORITHM)
-                ? Option.some(addonRegistry.getSecret(pluginKey))
+        final Option<ConnectAddonBean> previousAddOn = StringUtils.isEmpty(previousDescriptor) ? Option.<ConnectAddonBean>none() : Option.some(connectAddonBeanFactory.fromJson(previousDescriptor));
+        final Option<String> optionalPreviousSharedSecret = previousAddOn.isDefined() && addOnUsesSymmetricSharedSecret(previousAddOn.get().getAuthentication().getType(), JWT_ALGORITHM)
+                ? Option.some((String)connectApplinkManager.getAppLink(pluginKey).getProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME))
                 : Option.<String>none();
 
         AuthenticationType authType = addOn.getAuthentication().getType();
@@ -243,7 +243,14 @@ public class ConnectAddonManager
         //make the sync callback if needed
         if (!Strings.isNullOrEmpty(addOn.getLifecycle().getInstalled()))
         {
-            requestInstallCallback(addOn, sharedSecret, optionalPreviousSharedSecret);
+            if (optionalPreviousSharedSecret.isDefined())
+            {
+                requestInstallCallback(addOn, sharedSecret, optionalPreviousSharedSecret.get());
+            }
+            else
+            {
+                requestInstallCallback(addOn, sharedSecret);
+            }
         }
 
         eventPublisher.publish(new ConnectAddonInstalledEvent(pluginKey));
@@ -259,7 +266,7 @@ public class ConnectAddonManager
         return addOn;
     }
 
-    public String provisionUserIfNecessary(ConnectAddonBean addOn, ConnectAddonBean previousAddOn)
+    public String provisionUserIfNecessary(ConnectAddonBean addOn, Option<ConnectAddonBean> previousAddOn)
     {
         return addOnNeedsAUser(addOn) ? provisionAddOnUserAndScopes(addOn, previousAddOn) : null;
     }
@@ -430,38 +437,44 @@ public class ConnectAddonManager
         return connectAddonBeanFactory.fromJsonSkipValidation(descriptor);
     }
 
-    private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret, Option<String> optionalPreviousSharedSecret)
+    // first install: no previous shared secret, no signing
+    private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret)
+    {
+        final URI callbackUri = getURI(addon.getBaseUrl(), addon.getLifecycle().getInstalled());
+        requestInstallCallback(addon, sharedSecret, callbackUri, Option.<String>none());
+    }
+
+    // reinstalls: sign with the previous shared secret so that the add-on can verify that the sender of the request is in possession of the previous shared secret
+    private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret, String previousSharedSecret)
+    {
+        final URI callbackUri = getURI(addon.getBaseUrl(), addon.getLifecycle().getInstalled());
+        final AuthorizationGenerator authorizationGenerator = remotablePluginAccessorFactory.get(addon).getAuthorizationGenerator();
+
+        // NB: check that the auth generator matches the request/non-request to sign with an arbitrary key on installation, not on every callback,
+        // because signing with a previous key happens only on installation
+        // (the runtime "instanceof ReKeyableAuthorizationGenerator" check is necessary because the OAuthSigningRemotablePluginAccessor is explicityly not re-keyable: it must sign with the same oauth key every time)
+        if (authorizationGenerator instanceof ReKeyableAuthorizationGenerator)
+        {
+            String authHeader = getAuthHeader(callbackUri, (ReKeyableAuthorizationGenerator) authorizationGenerator, previousSharedSecret);
+            requestInstallCallback(addon, sharedSecret, callbackUri, Option.some(authHeader));
+        }
+        else
+        {
+            // this should never happen; if it does then it will result in a "something bad happened; talk to an admin" error message in the UI
+            throw new IllegalArgumentException(String.format("Cannot sign outgoing request to %s with an arbitrary secret because the authorization generator for add-on %s is a %s, which is not a %s!",
+                    callbackUri, addon.getKey(), authorizationGenerator.getClass().getSimpleName(), ReKeyableAuthorizationGenerator.class.getSimpleName()));
+        }
+    }
+
+    private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret, URI callbackUri, Option<String> authHeader)
     {
         try
         {
-            final URI callbackUri = getURI(addon.getBaseUrl(), addon.getLifecycle().getInstalled());
-            final AuthorizationGenerator authorizationGenerator = remotablePluginAccessorFactory.get(addon).getAuthorizationGenerator();
-            Option<String> authHeader;
-
-            // NB: check that the auth generator matches the request/non-request to sign with an arbitrary key on installation, not on every callback,
-            // because signing with a previous key happens only on installation
-            if (optionalPreviousSharedSecret.isDefined())
-            {
-                if (authorizationGenerator instanceof ReKeyableAuthorizationGenerator)
-                {
-                    authHeader = getAuthHeader(callbackUri, (ReKeyableAuthorizationGenerator) authorizationGenerator, optionalPreviousSharedSecret.get());
-                }
-                else
-                {
-                    throw new IllegalArgumentException(String.format("Cannot sign outgoing request to %s with an arbitrary secret because the authorization generator for add-on %s is a %s, which is not a %s!",
-                            callbackUri, addon.getKey(), authorizationGenerator.getClass().getSimpleName(), ReKeyableAuthorizationGenerator.class.getSimpleName()));
-                }
-            }
-            else
-            {
-                authHeader = getAuthHeader(callbackUri, authorizationGenerator);
-            }
-
             callSyncHandler(addon.getKey(),
-                            addOnUsesJwtAuthentication(addon),
-                            callbackUri,
-                            createEventDataForInstallation(addon.getKey(), sharedSecret, addon),
-                            authHeader);
+                    addOnUsesJwtAuthentication(addon),
+                    callbackUri,
+                    createEventDataForInstallation(addon.getKey(), sharedSecret, addon),
+                    authHeader);
         }
         catch (LifecycleCallbackException e)
         {
@@ -536,7 +549,7 @@ public class ConnectAddonManager
         return authorizationGenerator.generate(HttpMethod.POST, callbackUri, Collections.<String, String[]>emptyMap());
     }
 
-    private static Option<String> getAuthHeader(final URI callbackUri, final ReKeyableAuthorizationGenerator authorizationGenerator, final String secret)
+    private static String getAuthHeader(final URI callbackUri, final ReKeyableAuthorizationGenerator authorizationGenerator, final String secret)
     {
         return authorizationGenerator.generate(HttpMethod.POST, callbackUri, Collections.<String, String[]>emptyMap(), secret);
     }
@@ -682,15 +695,15 @@ public class ConnectAddonManager
         return AuthenticationType.JWT.equals(authType) && algorithm.requiresSharedSecret();
     }
 
-    private String provisionAddOnUserAndScopes(ConnectAddonBean addOn, ConnectAddonBean previousAddOn)
+    private String provisionAddOnUserAndScopes(ConnectAddonBean addOn, Option<ConnectAddonBean> previousAddOn)
             throws PluginInstallException
     {
         Set<ScopeName> previousScopes = Sets.newHashSet();
         Set<ScopeName> newScopes = addOn.getScopes();
 
-        if (null != previousAddOn)
+        if (previousAddOn.isDefined())
         {
-            previousScopes = previousAddOn.getScopes();
+            previousScopes = previousAddOn.get().getScopes();
         }
 
         try

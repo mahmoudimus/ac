@@ -67,14 +67,14 @@ public class JwtAuthorizationGenerator implements ReKeyableAuthorizationGenerato
     @Override
     public Option<String> generate(HttpMethod httpMethod, URI url, Map<String, String[]> parameters)
     {
-        return generate(httpMethod, url, parameters, secret);
+        return Option.some(generate(httpMethod, url, parameters, secret));
     }
 
     @Override
-    public Option<String> generate(HttpMethod httpMethod, URI url, Map<String, String[]> parameters, String secret)
+    public String generate(HttpMethod httpMethod, URI url, Map<String, String[]> parameters, String secret)
     {
         checkArgument(null != parameters, "Parameters Map argument cannot be null");
-        return Option.some(JWT_AUTH_HEADER_PREFIX + encodeJwt(httpMethod, url, addOnBaseUrl, parameters, null, consumerService.getConsumer().getKey(), jwtService, secret));
+        return JWT_AUTH_HEADER_PREFIX + encodeJwt(httpMethod, url, addOnBaseUrl, parameters, null, consumerService.getConsumer().getKey(), jwtService, secret);
     }
 
     static String encodeJwt(HttpMethod httpMethod, URI targetPath, URI addOnBaseUrl, Map<String, String[]> params, String userKeyValue, String issuerId, JwtService jwtService, String secret)

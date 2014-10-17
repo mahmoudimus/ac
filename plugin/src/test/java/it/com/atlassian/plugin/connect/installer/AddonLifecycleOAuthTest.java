@@ -249,4 +249,10 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
             }
         }
     }
+
+    @Override
+    protected boolean signCallbacksWithJwt()
+    {
+        return false;
+    }
 }

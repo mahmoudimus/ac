@@ -73,6 +73,8 @@ public abstract class AbstractAddonLifecycleTest
         this.applicationManager = applicationManager;
     }
 
+    protected abstract boolean signCallbacksWithJwt();
+
     protected void initBeans(AuthenticationBean authBean)
     {
         String pluginKeyPrefix = PLUGIN_KEY + "-" + authBean.getType().name().toLowerCase();
@@ -173,7 +175,13 @@ public abstract class AbstractAddonLifecycleTest
             
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
             assertEquals(POST, request.getMethod());
+            assertEquals(false, request.hasJwt()); // the first installation cannot be signed because there is no pre-shared key
 
+            // re-install, like when the vendor posts a new descriptor on marketplace
+            testFilterResults.clearRequest(addonKey, INSTALLED);
+            plugin = testPluginInstaller.installAddon(addon);
+            addonKey = plugin.getKey();
+            assertEquals(signCallbacksWithJwt(), request.hasJwt());
         }
         finally
         {
@@ -204,7 +212,7 @@ public abstract class AbstractAddonLifecycleTest
 
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
             assertEquals(POST, request.getMethod());
-
+            assertEquals(signCallbacksWithJwt(), request.hasJwt());
         }
         finally
         {
@@ -330,13 +338,15 @@ public abstract class AbstractAddonLifecycleTest
 
             assertUserExistence(addon, true);
             testPluginInstaller.disableAddon(addonKey);
+            final ServletRequestSnapshot[] request = new ServletRequestSnapshot[]{null}; // the array is a cheap trick to get around the requirement to use a final variable
 
             WaitUntil.invoke(new WaitUntil.WaitCondition()
             {
                 @Override
                 public boolean isFinished()
                 {
-                    return null != testFilterResults.getRequest(finalKey, DISABLED);
+                    request[0] = testFilterResults.getRequest(finalKey, DISABLED);
+                    return null != request[0];
                 }
 
                 @Override
@@ -347,6 +357,7 @@ public abstract class AbstractAddonLifecycleTest
             }, 5);
 
             assertUserExistence(addon, false);
+            assertEquals(signCallbacksWithJwt(), request[0].hasJwt());
         }
         finally
         {
@@ -395,12 +406,15 @@ public abstract class AbstractAddonLifecycleTest
             assertUserExistence(addon, false);
 
             testPluginInstaller.enableAddon(addonKey);
+            final ServletRequestSnapshot[] request = new ServletRequestSnapshot[]{null}; // the array is a cheap trick to get around the requirement to use a final variable
+
             WaitUntil.invoke(new WaitUntil.WaitCondition()
             {
                 @Override
                 public boolean isFinished()
                 {
-                    return null != testFilterResults.getRequest(finalKey, ENABLED);
+                    request[0] = testFilterResults.getRequest(finalKey, ENABLED);
+                    return null != request[0];
                 }
 
                 @Override
@@ -411,6 +425,7 @@ public abstract class AbstractAddonLifecycleTest
             },5);
 
             assertUserExistence(addon, true);
+            assertEquals(signCallbacksWithJwt(), request[0].hasJwt());
         }
         finally
         {

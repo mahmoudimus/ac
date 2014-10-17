@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.test.plugin;
 
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.jira.security.auth.trustedapps.KeyFactory;
+import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.core.HttpRequestCanonicalizer;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.oauth.Consumer;
@@ -34,7 +35,11 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
@@ -132,6 +137,7 @@ public class JwtSigningInteroperabilityTest
     {
         when(consumerService.getConsumer()).thenReturn(Consumer.key("jira:1234-5678-9000").name("whatever").signatureMethod(Consumer.SignatureMethod.HMAC_SHA1).publicKey(new KeyFactory.InvalidPublicKey(new Exception())).build());
         when(userManager.getRemoteUserKey()).thenReturn(new UserKey("123456789"));
+        when(applicationLink.getProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME)).thenReturn(SHARED_SECRET);
         when(connectApplinkManager.getAppLink(anyString())).thenReturn(applicationLink);
 
         ConnectAddonBean addon = ConnectAddonBean.newConnectAddonBean()
