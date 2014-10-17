@@ -18,9 +18,20 @@
 		</table>
 </div>
 
-The version numbers for the Atlassian Connect framework and Atlassian products which support it are now published in 
+The version numbers for the Atlassian Connect framework and Atlassian products which support it are published in 
 [this JSON file](https://developer.atlassian.com/static/connect-versions.json), which you can poll periodically to 
-find out about new production and development (bleeding edge) releases, and the commands to use them.
+find out about new production and development (bleeding edge) releases. You can start a local instance of JIRA 
+or Confluence Cloud with Atlassian Connect as follows:
+
+<a data-replace-text="If you are using a local installation [-]" class="aui-expander-trigger" aria-controls="runproduct-local">If you are using a local installation [+]</a>
+<div id="runproduct-local" class="aui-expander-content">
+    <span data-include="../assets/includes/runproduct-local.html">Loading...</span>
+</div>
+
+<a data-replace-text="If you are using the Vagrant box [-]" class="aui-expander-trigger" aria-controls="runproduct-vagrant">If you are using the Vagrant box [+]</a>
+<div id="runproduct-vagrant" class="aui-expander-content">
+    <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
+</div>
 
 ## [1.1.9](../release-notes/1-1-0.html#1.1.9)
 * First phase for [Blueprints](../modules/confluence/blueprint.html)
