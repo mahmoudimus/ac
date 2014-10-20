@@ -148,7 +148,7 @@ public class AddonsResourceTest
 
         List<Map> addons = getAddonList(response);
 
-        assertEquals("Addons resource should return list with two add-on", 2, addons.size());
+        assertEquals("Addons resource should return list with one add-on", 1, addons.size());
     }
 
     @Test
