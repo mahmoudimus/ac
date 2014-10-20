@@ -27,6 +27,6 @@ public class WriteScopeTest extends ScopeTestBase
     @ParameterizedWiredTest.Parameters(name="httpRequest", length=1)
     protected Object[][] data = new Object[][]
     {
-            { HttpMethod.PUT,  "/rest/greenhopper/1.0/api/rank/before", true }
+            { HttpMethod.PUT,  "/rest/greenhopper/1.0/api/rank/before", isJiraProduct() }
     };
 }

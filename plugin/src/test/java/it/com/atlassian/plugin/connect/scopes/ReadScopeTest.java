@@ -30,7 +30,7 @@ public class ReadScopeTest extends ScopeTestBase
             // TODO: ACDEV-1333 new Object[]{ HttpMethod.GET,  "/rest/atlassian-connect/1/license", true },
             { HttpMethod.GET,  "/rest/applinks/2.0/entities", true },
             { HttpMethod.POST, "/rest/applinks/2.0/entities", false },
-            { HttpMethod.GET,  "/rest/greenhopper/1.0/rapidview", true },
+            { HttpMethod.GET,  "/rest/greenhopper/1.0/rapidview", isJiraProduct() },
             { HttpMethod.PUT,  "/rest/greenhopper/1.0/api/rank/before", false }
     };
 }
