@@ -386,7 +386,6 @@ public class ConnectAddonManager
                     {
                         try
                         {
-                            // It's important to use the plugin in the call to remotablePluginAccessorFactory.get(plugin) as we might be calling this due to an uninstall event
                             final URI callbackUri = getURI(addon.getBaseUrl(), addon.getLifecycle().getUninstalled());
                             callSyncHandler(addon.getKey(),
                                             addOnUsesJwtAuthentication(addon),
