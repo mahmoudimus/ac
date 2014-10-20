@@ -1,7 +1,5 @@
 package it.com.atlassian.plugin.connect.installer;
 
-import java.io.IOException;
-
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
@@ -22,18 +20,20 @@ import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-
 import it.com.atlassian.plugin.connect.TestAuthenticator;
-
 import org.junit.Test;
+
+import java.io.IOException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
+import static com.google.common.collect.Sets.newHashSet;
 import static it.com.atlassian.plugin.connect.HeaderUtil.getVersionHeader;
 import static it.com.atlassian.plugin.connect.util.ParamMatchers.isVersionNumber;
-import static com.google.common.collect.Sets.newHashSet;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractAddonLifecycleTest
 {
@@ -213,7 +213,7 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, INSTALLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -264,7 +264,7 @@ public abstract class AbstractAddonLifecycleTest
 
             addonKey = plugin.getKey();
 
-            testPluginInstaller.uninstallJsonAddon(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
 
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
             Option<String> maybeHeader = getVersionHeader(request);
@@ -276,7 +276,7 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -310,7 +310,7 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, ENABLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -344,7 +344,7 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, DISABLED);
             if (null != plugin)
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -458,7 +458,6 @@ public abstract class AbstractAddonLifecycleTest
             plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
-            final String finalKey = addonKey;
 
             assertUserExistence(addon, true);
             testPluginInstaller.disableAddon(addonKey);
@@ -489,8 +488,6 @@ public abstract class AbstractAddonLifecycleTest
             plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
-            final String finalKey = addonKey;
-
             assertUserExistence(addon, true);
 
             testPluginInstaller.disableAddon(addonKey);
