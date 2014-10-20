@@ -4,13 +4,16 @@ import com.atlassian.plugin.connect.test.pageobjects.AbstractConnectIFrameCompon
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+
 import org.hamcrest.collection.IsMapContaining;
 
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import static it.matcher.ParamMatchers.*;
+import static it.matcher.ParamMatchers.isLocale;
+import static it.matcher.ParamMatchers.isTimeZone;
+import static it.matcher.ParamMatchers.isVersionNumber;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 

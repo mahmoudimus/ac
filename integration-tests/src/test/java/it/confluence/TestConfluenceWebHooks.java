@@ -7,8 +7,10 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceT
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
+
 import it.AbstractBrowserlessTest;
 import it.util.TestUser;
+
 import org.junit.Assert;
 import org.junit.Test;
 

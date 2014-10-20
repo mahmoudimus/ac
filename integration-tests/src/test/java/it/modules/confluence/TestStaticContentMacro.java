@@ -14,22 +14,26 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWi
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
+
 import it.servlet.ConnectAppServlets;
 import it.servlet.EchoContextServlet;
 import it.servlet.EchoQueryParametersServlet;
 import it.util.TestUser;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
+
 import redstone.xmlrpc.XmlRpcFault;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
@@ -38,10 +42,10 @@ import java.net.URL;
 
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
-import static it.matcher.ParamMatchers.isVersionNumber;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.both;
 import static org.junit.Assert.assertThat;
+import static it.matcher.ParamMatchers.isVersionNumber;
 
 public class TestStaticContentMacro extends AbstractContentMacroTest
 {

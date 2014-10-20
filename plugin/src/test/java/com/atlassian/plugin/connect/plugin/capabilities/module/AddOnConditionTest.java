@@ -1,5 +1,12 @@
 package com.atlassian.plugin.connect.plugin.capabilities.module;
 
+import javax.annotation.Nullable;
+import java.net.URI;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
+
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.gzipfilter.org.apache.commons.lang.ObjectUtils;
 import com.atlassian.plugin.connect.plugin.UserPreferencesRetriever;
@@ -30,17 +37,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
-import javax.annotation.Nullable;
-import java.net.URI;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
+import static org.osgi.framework.Constants.BUNDLE_VERSION;
 
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.osgi.framework.Constants.BUNDLE_VERSION;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddOnConditionTest
