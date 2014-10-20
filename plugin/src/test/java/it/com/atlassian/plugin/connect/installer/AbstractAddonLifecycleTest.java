@@ -28,6 +28,7 @@ import java.io.IOException;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
+import static com.google.common.collect.Sets.newHashSet;
 import static it.com.atlassian.plugin.connect.HeaderUtil.getVersionHeader;
 import static it.com.atlassian.plugin.connect.util.ParamMatchers.isVersionNumber;
 import static org.junit.Assert.*;

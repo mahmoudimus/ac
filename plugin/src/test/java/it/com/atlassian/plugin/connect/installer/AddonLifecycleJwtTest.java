@@ -23,8 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(AtlassianPluginsTestRunner.class)
 public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
