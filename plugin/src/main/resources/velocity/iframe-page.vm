@@ -7,7 +7,7 @@
   <meta name="decorator" content="$decorator"/>
   <content tag="show-main-container">false</content> <!-- confluence secret to not show the container with the header -->
 </head>
-<body>
+<body class="ac-content-page">
   <div class="ap-servlet-placeholder">
       #parse("velocity/iframe-body.vm")
   </div>

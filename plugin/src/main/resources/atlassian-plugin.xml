@@ -108,6 +108,7 @@
 
     <web-resource key="iframe-host-css">
         <resource type="download" name="host.css" location="/css/iframe/host.css" />
+        <resource type="download" name="admin.css" location="/css/iframe/admin.css" />
         <resource type="download" name="messages-main.css" location="css/messages/main.css" />
         <resource type="download" name="dialog.css" location="css/dialog/dialog.css" />
     </web-resource>

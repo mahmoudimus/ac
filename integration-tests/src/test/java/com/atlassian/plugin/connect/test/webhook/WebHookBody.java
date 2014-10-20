@@ -6,4 +6,5 @@ public interface WebHookBody
 {
     String find(String expression) throws Exception;
     URI getRequestURI() throws Exception;
+    String getConnectVersion();
 }

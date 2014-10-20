@@ -78,7 +78,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         PluginState targetState = null;
         Option<ApplicationLink> maybePreviousApplink = Option.none();
         Option<AuthenticationType> maybePreviousAuthType = Option.none();
-        String previousPublicKeyOrSharedSecret = "";
+        Option<String> maybePreviousPublicKeyOrSharedSecret = Option.none();
         String baseUrl = "";
 
         long startTime = System.currentTimeMillis();
@@ -90,16 +90,16 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
             pluginKey = nonValidatedAddon.getKey();
             maybePreviousApplink = Option.option(connectApplinkManager.getAppLink(pluginKey));
-            if (maybePreviousApplink.isDefined())
+            maybePreviousAddon = findAddon(pluginKey);
+            if (maybePreviousApplink.isDefined() && maybePreviousAddon.isDefined())
             {
                 ApplicationLink applink = maybePreviousApplink.get();
                 baseUrl = applink.getRpcUrl().toString();
                 maybePreviousAuthType = ConnectApplinkUtil.getAuthenticationType(applink);
-                previousPublicKeyOrSharedSecret = connectApplinkManager.getSharedSecretOrPublicKey(applink).getOrElse("");
+                maybePreviousPublicKeyOrSharedSecret = connectApplinkManager.getSharedSecretOrPublicKey(applink);
             }
             previousSettings = addonRegistry.getAddonSettings(pluginKey);
 
-            maybePreviousAddon = findAddon(pluginKey);
 
             if (nonValidatedAddon.getModules().isEmpty())
             {
@@ -111,7 +111,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
             removeOldPlugin(pluginKey);
 
-            addOn = connectAddonManager.installConnectAddon(jsonDescriptor, targetState);
+            addOn = connectAddonManager.installConnectAddon(jsonDescriptor, targetState, maybePreviousPublicKeyOrSharedSecret);
 
             PluginState actualState = addonRegistry.getRestartState(pluginKey);
             addonPluginWrapper = addonToPluginFactory.create(addOn, actualState);
@@ -135,7 +135,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                     connectApplinkManager.createAppLink(previousAddon,
                                                         baseUrl,
                                                         maybePreviousAuthType.get(),
-                                                        previousPublicKeyOrSharedSecret,
+                                                        maybePreviousPublicKeyOrSharedSecret.getOrElse(""),
                                                         addonUserKey);
                     try
                     {

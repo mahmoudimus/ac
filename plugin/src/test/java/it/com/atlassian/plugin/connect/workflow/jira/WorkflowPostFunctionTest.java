@@ -1,5 +1,6 @@
 package it.com.atlassian.plugin.connect.workflow.jira;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.jira.exception.CreateException;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueFactory;
@@ -21,7 +22,10 @@ import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+
+import it.com.atlassian.plugin.connect.HeaderUtil;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
+
 import org.apache.http.HttpHeaders;
 import org.json.JSONObject;
 import org.junit.AfterClass;
@@ -35,6 +39,8 @@ import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
+import static it.com.atlassian.plugin.connect.util.ParamMatchers.isVersionNumber;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -149,6 +155,14 @@ public class WorkflowPostFunctionTest
         ServletRequestSnapshot request = triggerWorkflowTransition();
         JSONObject payload = new JSONObject(request.getEntity());
         assertNotNull(payload.get("issue"));
+    }
+
+    @Test
+    public void requestContainsVersionNumber() throws Exception
+    {
+        ServletRequestSnapshot request = triggerWorkflowTransition();
+        Option<String> maybeVersion = HeaderUtil.getVersionHeader(request);
+        assertThat(maybeVersion.get(), isVersionNumber());
     }
 
     @Test
