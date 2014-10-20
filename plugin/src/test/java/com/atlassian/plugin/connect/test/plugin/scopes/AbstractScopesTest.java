@@ -107,9 +107,7 @@ public abstract class AbstractScopesTest
         final ConnectAddonBeanFactory addonBeanFactory = mock(ConnectAddonBeanFactory.class);
         when(addonBeanFactory.fromJsonSkipValidation(mockDescriptor)).thenReturn(addon);
 
-        permissionManager = new PermissionManagerImpl(
-                jsonConnectAddOnIdentifierService, scopeService,
-                connectAddonRegistry, addonBeanFactory);
+        permissionManager = new PermissionManagerImpl(pluginAccessor, pluginEventManager, scopeService, connectAddonRegistry, addonBeanFactory);
     }
 
     @Test
