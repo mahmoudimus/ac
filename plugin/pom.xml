@@ -669,16 +669,6 @@
                                     <version>${atlassian.confluence.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
-                                    <groupId>com.atlassian.confluence.plugins</groupId>
-                                    <artifactId>confluence-cache-management-plugin</artifactId>
-                                    <version>${atlassian.confluence.plugins.cache.management.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>com.atlassian.confluence.plugins</groupId>
-                                    <artifactId>share-page</artifactId>
-                                    <version>${atlassian.confluence.plugins.cache.share.page}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>atlassian-connect-test-support-plugin</artifactId>
                                     <version>${project.version}</version>
