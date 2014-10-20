@@ -28,7 +28,9 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
  */
 public class ConnectIFrameServlet extends HttpServlet
 {
+    public static final String CLASSIFIER = "classifier";
     public static final String RAW_CLASSIFIER = "raw";
+    public static final String JSON_CLASSIFIER = "json";
 
     private static final Pattern PATH_PATTERN = Pattern.compile("^/([^/]+)/([^/]+)");
 
@@ -71,9 +73,9 @@ public class ConnectIFrameServlet extends HttpServlet
 
             if (renderStrategy != null)
             {
-                resp.setContentType("text/html");
+                resp.setContentType(renderStrategy.getContentType());
                 ModuleContextParameters moduleContextParameters = moduleContextParser.parseContextParameters(req);
-                
+
                 if (renderStrategy.shouldShow(moduleContextParameters))
                 {
                     Option<String> moduleUiParameters = moduleUiParamParser.parseUiParameters(req);
@@ -93,15 +95,16 @@ public class ConnectIFrameServlet extends HttpServlet
 
     private IFrameRenderStrategy getiFrameRenderStrategyForJsonModule(final HttpServletRequest req, final String addOnKey, final String moduleKey)
     {
-        final IFrameRenderStrategy renderStrategy;
-        if (Boolean.valueOf(req.getParameter("raw")))
+        String classifier = req.getParameter(CLASSIFIER);
+        String lookupClassifier = JSON_CLASSIFIER.equals(classifier) ? null : classifier;
+
+        IFrameRenderStrategy renderStrategy = IFrameRenderStrategyRegistry.get(addOnKey, moduleKey, lookupClassifier);
+
+        if (null != renderStrategy && JSON_CLASSIFIER.equals(classifier))
         {
-            renderStrategy = IFrameRenderStrategyRegistry.get(addOnKey, moduleKey, RAW_CLASSIFIER);
+            return renderStrategy.toJsonRenderStrategy();
         }
-        else
-        {
-            renderStrategy = IFrameRenderStrategyRegistry.get(addOnKey, moduleKey);
-        }
+
         return renderStrategy;
     }
 

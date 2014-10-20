@@ -18,6 +18,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonI18nManager;
@@ -42,6 +43,7 @@ import com.atlassian.uri.UriBuilder;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -51,6 +53,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
+
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
@@ -84,6 +87,8 @@ public class ConnectAddonManager
     private int testConnectionTimeout = 5 * 1000;
     private int testSocketTimeout = 5 * 1000;
     private int testRequestTimeout = 5 * 3000;
+    private long testLeaseTimeout = TimeUnit.SECONDS.toMillis(3);
+
 
     public static final String USE_TEST_HTTP_CLIENT = "use.test.http.client";
 
@@ -150,6 +155,7 @@ public class ConnectAddonManager
             options.setConnectionTimeout(testConnectionTimeout, TimeUnit.MILLISECONDS);
             options.setRequestTimeout(testRequestTimeout, TimeUnit.MILLISECONDS);
             options.setSocketTimeout(testSocketTimeout, TimeUnit.MILLISECONDS);
+            options.setLeaseTimeout(testLeaseTimeout);
 
             this.httpClient = httpClientFactory.create(options);
             this.isTestHttpClient.set(true);
@@ -176,7 +182,7 @@ public class ConnectAddonManager
      * @param jsonDescriptor the json descriptor of the add-on to install
      * @return a {@link ConnectAddonBean} representation of the add-on
      */
-    public ConnectAddonBean installConnectAddon(String jsonDescriptor, PluginState targetState)
+    public ConnectAddonBean installConnectAddon(String jsonDescriptor, PluginState targetState, com.atlassian.fugue.Option<String> maybeSharedSecret)
     {
         long startTime = System.currentTimeMillis();
 
@@ -202,10 +208,10 @@ public class ConnectAddonManager
 
         AuthenticationType authType = addOn.getAuthentication().getType();
         final boolean useSharedSecret = addOnUsesSymmetricSharedSecret(authType); // TODO ACDEV-378: also check the algorithm
-        String sharedSecret = useSharedSecret ? sharedSecretService.next() : null;
+        String sharedSecret = useSharedSecret ? maybeSharedSecret.getOrElse(sharedSecretService.next()) : null;
         String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
 
-        String userKey = addOnNeedsAUser(addOn) ? provisionAddOnUserAndScopes(addOn, previousDescriptor) : null;
+        String userKey = provisionUserIfNecessary(addOn, previousDescriptor);
 
         AddonSettings settings = new AddonSettings()
                 .setAuth(authType.name())
@@ -241,6 +247,11 @@ public class ConnectAddonManager
         }
 
         return addOn;
+    }
+
+    public String provisionUserIfNecessary(ConnectAddonBean addOn, String previousDescriptor)
+    {
+        return addOnNeedsAUser(addOn) ? provisionAddOnUserAndScopes(addOn, previousDescriptor) : null;
     }
 
     public void enableConnectAddon(final String pluginKey) throws ConnectAddOnUserInitException
@@ -492,6 +503,8 @@ public class ConnectAddonManager
                 request.setHeader(AUTHORIZATION_HEADER, authHeader.get());
             }
 
+            request.setHeader(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION, getConnectPluginVersion());
+
             return request.execute(Request.Method.POST).claim();
         }
         catch (Exception e)
@@ -631,12 +644,21 @@ public class ConnectAddonManager
 
         try
         {
-            return connectAddOnUserService.provisionAddonUserForScopes(addOn.getKey(), addOn.getName(), previousScopes, newScopes);
+            return connectAddOnUserService.provisionAddonUserForScopes(addOn.getKey(),
+                                                                       addOn.getName(),
+                                                                       previousScopes,
+                                                                       newScopes);
         }
         catch (ConnectAddOnUserInitException e)
         {
-            throw new PluginInstallException(e.getMessage(), Option.some("connect.install.error.user.provisioning"), e, true);
+
+            String i18nMessage = i18nResolver.getText(e.getI18nKey(), addOn.getName());
+            // This is a hack; throwing with 18nkey and parameters does not work,
+            // when we throw an exception with a key that is not in the i18nproperties file
+            // UPM displays the 'key' (which is really our error message)
+            throw new PluginInstallException(e.getMessage(), Option.option(i18nMessage), e, true);
         }
+
     }
 
     private static boolean addOnNeedsAUser(ConnectAddonBean addOn)

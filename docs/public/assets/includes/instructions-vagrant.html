@@ -1,0 +1,46 @@
+### Working with the Vagrant VM
+
+#### Configuration file
+In the directory in which you started a VM instance of the Vagrant box, there is a file called Vagrantfile.
+This file defines the configuration of the VM, and you can tweak it to match your needs.
+By default, we have done the following:
+* Forwarded ports to your local machine:
+    * 2990: default port for JIRA
+    * 1990: default port for Confluence
+    * 3000: default port for the atlassian-connect-express framework
+    * 8000: default port for the embedded http-server
+* Defined default resource allocation, so the VM can use up to half of the memory available in your machine, and all CPUs.
+* Configured file synchronisation between the VM and the local machine to use NFS (which is faster than the default)
+* Configured the VM for faster internet connectivity than the default
+
+If you change these settings, you need to reload the VM:
+<pre><code data-lang="text">vagrant reload</code></pre>
+
+#### Useful commands
+You don't need to keep the VM running at all times, as this consumes system resources.
+
+To start the VM:
+<pre><code data-lang="text">vagrant up</code></pre>
+
+To connect to the VM:
+<pre><code data-lang="text">vagrant ssh</code></pre>
+
+To halt the VM:
+<pre><code data-lang="text">vagrant halt</code></pre>
+
+To destroy the VM:
+<pre><code data-lang="text">vagrant destroy</code></pre>
+
+And to recreate it from its base configuration:
+<pre><code data-lang="text">vagrant destroy
+vagrant up</code></pre>
+
+#### Sharing files with the VM
+The VM is configured to share files with your local machine. By default, all files in the directory in which you
+started the VM are available, from within the VM, in the directory /vagrant.
+
+All files you create should go in this directory, not in the VM. Otherwise you will lose any change you have made if
+you upgrade the VM, or recreate it.
+
+#### Advanced guide
+For more advanced topics, read the [Vagrant documentation](https://www.vagrantup.com).

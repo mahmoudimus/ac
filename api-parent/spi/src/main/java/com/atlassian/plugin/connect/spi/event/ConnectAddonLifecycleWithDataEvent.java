@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.spi.event;
 
-import com.atlassian.analytics.api.annotations.PrivacyPolicySafe;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public abstract class ConnectAddonLifecycleWithDataEvent extends ConnectAddonLifecycleEvent
@@ -10,7 +8,6 @@ public abstract class ConnectAddonLifecycleWithDataEvent extends ConnectAddonLif
      * A string representation of (usually JSON) data that is sent along with the lifecycle
      * event. May contain add-on sensitive information such as the shared secret.
      */
-    @PrivacyPolicySafe (false)
     private final String data;
 
     protected ConnectAddonLifecycleWithDataEvent(String pluginKey, String data)

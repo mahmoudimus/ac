@@ -2,7 +2,7 @@
   "scopes": [
     {
       "key": "READ",
-      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "worklog", "customFieldOption", "issueLink", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "comment", "user", "filter", "myself", "groupsPicker", "auditing"],
+      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "worklog", "customFieldOption", "issueLink", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "comment", "user", "filter", "myself", "userPicker", "groupsPicker", "auditing", "jql"],
       "pathKeys": ["download attachments", "project avatars"],
       "methods": ["GET"]
     },
@@ -43,7 +43,7 @@
     },
     {
       "key": "ADMIN",
-      "restPathKeys": ["issueLinkType"],
+      "restPathKeys": ["issueLinkType", "issuetype"],
       "methods": ["POST", "PUT", "DELETE"]
     },
     {
@@ -71,6 +71,13 @@
       "key": "user",
       "name": "api",
       "basePaths": ["/user($|/.*)"],
+      "versions": ["2", "2.0.alpha1", "latest"],
+      "public": true
+    },
+    {
+      "key": "userPicker",
+      "name": "api",
+      "basePaths": ["/user/picker($|/.*)"],
       "versions": ["2", "2.0.alpha1", "latest"],
       "public": true
     },
@@ -248,6 +255,13 @@
        "basePaths": ["/auditing($|/.*)"],
        "versions": ["2", "latest"],
        "public": true
+    },
+    {
+        "key": "jql",
+        "name": "api",
+        "basePaths": ["/jql/autocompletedata"],
+        "versions": ["2", "latest"],
+        "public": true
     }
   ],
   "soapRpcPaths": [

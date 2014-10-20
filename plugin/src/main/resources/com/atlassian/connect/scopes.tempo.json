@@ -1,0 +1,49 @@
+{
+    "scopes": [
+        {
+            "key": "READ",
+            "restPathKeys": ["planning", "teams", "core", "accounts"],
+            "methods": ["GET"]
+        },
+        {
+            "key": "WRITE",
+            "restPathKeys": ["planning", "teams", "core", "accounts"],
+            "methods": ["POST", "PUT"]
+        },
+        {
+            "key": "DELETE",
+            "restPathKeys": ["planning", "teams", "core", "accounts"],
+            "methods": ["DELETE"]
+        }
+    ],
+    "restPaths": [
+        {
+            "key": "planning",
+            "name": "tempo-planning",
+            "basePaths": ["/.*"],
+            "versions": ["1", "2", "latest"],
+            "public": false
+        },
+        {
+            "key": "teams",
+            "name": "tempo-teams",
+            "basePaths": ["/.*"],
+            "versions": ["1", "2", "latest"],
+            "public": false
+        },
+        {
+            "key": "core",
+            "name": "tempo-core",
+            "basePaths": ["/.*"],
+            "versions": ["1", "2", "latest"],
+            "public": false
+        },
+        {
+            "key": "accounts",
+            "name": "tempo-accounts",
+            "basePaths": ["/.*"],
+            "versions": ["1", "2", "latest"],
+            "public": false
+        }
+    ]
+}

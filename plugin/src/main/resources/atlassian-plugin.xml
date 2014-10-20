@@ -17,12 +17,12 @@
     </servlet-filter>
 
     <servlet-filter key="schema-resources" class="com.atlassian.plugin.connect.plugin.capabilities.schema.SchemaFilter"
-                    location="after-encoding">
+                    location="after-encoding" weight="90">
         <url-pattern>/atlassian-connect/schema/*</url-pattern>
     </servlet-filter>
 
     <servlet-filter key="documentation-filter" class="com.atlassian.plugin.connect.plugin.docs.DocumentationFilter"
-                    location="after-encoding">
+                    location="after-encoding" weight="90">
         <url-pattern>/atlassian-connect/docs*</url-pattern>
     </servlet-filter>
 
@@ -117,6 +117,7 @@
 
     <web-resource key="iframe-host-css">
         <resource type="download" name="host.css" location="/css/iframe/host.css" />
+        <resource type="download" name="admin.css" location="/css/iframe/admin.css" />
         <resource type="download" name="messages-main.css" location="css/messages/main.css" />
         <resource type="download" name="dialog.css" location="css/dialog/dialog.css" />
     </web-resource>
@@ -145,15 +146,6 @@
         <context>preview</context>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:dialog-page-resource</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:remote-condition</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-css</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-js</dependency>
-    </web-resource>
-
-    <web-resource key="atlassian-connect-mobile-resources" name="Connect resources for inclusion on every mobile page.">
-        <context>atl.mobile.confluence.view.content</context>
-        <context>preview</context>
-        <dependency>com.atlassian.auiplugin:jquery-lib</dependency>
-        <dependency>com.atlassian.auiplugin:aui-experimental-spinner</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-css</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-js</dependency>
     </web-resource>

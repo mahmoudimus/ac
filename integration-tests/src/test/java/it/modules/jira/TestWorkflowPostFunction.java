@@ -13,9 +13,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 public class TestWorkflowPostFunction extends JiraWebDriverTestBase
 {
@@ -75,7 +73,6 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
     {
         JiraWorkflowTransitionPage workflowTransitionPage = loginAndVisit(TestUser.ADMIN, JiraWorkflowTransitionPage.class, "live", WORKFLOW_NAME, WORKFLOW_STEP, WORKFLOW_TRANSITION).createOrEditDraft();
         JiraAddWorkflowTransitionFunctionParamsPage addonPage = workflowTransitionPage.addPostFunction("my-plugin", WORKFLOW_POST_FUNCTION_PAGE);
-        assertThat(addonPage.isLoaded(), equalTo(true));
         addonPage.submitWorkflowParams();
 
         JiraAddWorkflowTransitionFunctionParamsPage postFunction = workflowTransitionPage.updatePostFunction("my-plugin", WORKFLOW_POST_FUNCTION_PAGE);
@@ -88,12 +85,9 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
     {
         JiraWorkflowTransitionPage workflowTransitionPage = loginAndVisit(TestUser.ADMIN, JiraWorkflowTransitionPage.class, "live", WORKFLOW_NAME, WORKFLOW_STEP, WORKFLOW_TRANSITION).createOrEditDraft();
         JiraAddWorkflowTransitionFunctionParamsPage addonPage = workflowTransitionPage.addPostFunction("my-plugin", WORKFLOW_POST_FUNCTION_INVALID_PAGE);
-        assertThat(addonPage.isLoaded(), equalTo(true));
 
         String url = product.getTester().getDriver().getCurrentUrl();
         addonPage.submitWorkflowParams();
         assertEquals(url, product.getTester().getDriver().getCurrentUrl());
     }
-
-
 }

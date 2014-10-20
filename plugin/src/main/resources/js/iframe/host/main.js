@@ -37,7 +37,10 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
   * @param {Options} options These values come from the velocity template and can be overridden using uiParams
   */
   function create(options) {
-    $.extend(options, uiParams.fromUrl(options.src));
+
+    if(typeof options.uiParams !== "object"){
+      options.uiParams = uiParams.fromUrl(options.src);
+    }
 
     var ns = options.ns,
         $content = contentDiv(ns),
@@ -46,7 +49,6 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
         initWidth = options.w || "100%",
         initHeight = options.h || "0",
         start = new Date().getTime(),
-        isDialog = !!options.dlg,
         isInlineDialog = ($content.closest('.aui-inline-dialog').length > 0),
         isSimpleDialog = !!options.simpleDlg,
         isInited;
@@ -63,7 +65,7 @@ _AP.define("host/main", ["_dollar", "_xdm", "host/_addons", "_rpc", "_ui-params"
       options.uiParams.isDialog = true;
     }
 
-    if(options.isInlineDialog){
+    if(options.isInlineDialog || isInlineDialog){
       options.uiParams.isInlineDialog = true;
     }
 

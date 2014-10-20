@@ -19,6 +19,7 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Collections;
 
@@ -54,6 +55,24 @@ public class ConnectAddOnUserServiceImplTest
     public void returnsCorrectUserKeyWhenItCreatesTheUser() throws ConnectAddOnUserInitException
     {
         assertThat(connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME), is(USER_KEY));
+    }
+
+    @Test
+    public void recoversFromRaceConditionResultingInInvalidUserException() throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, UserNotFoundException
+    {
+        recoversFromRaceConditionResultingInException(new InvalidUserException(mock(User.class), "foo"));
+    }
+
+    @Test
+    public void recoversFromRaceConditionResultingInOperationFailedException() throws InvalidCredentialException, InvalidUserException, OperationFailedException, ApplicationPermissionException, UserNotFoundException
+    {
+        recoversFromRaceConditionResultingInException(new OperationFailedException("foo"));
+    }
+
+    @Test
+    public void recoversFromRaceConditionResultingInDataIntegrityViolationException() throws InvalidCredentialException, InvalidUserException, OperationFailedException, ApplicationPermissionException, UserNotFoundException
+    {
+        recoversFromRaceConditionResultingInException(new DataIntegrityViolationException("foo"));
     }
 
     @Test
@@ -145,6 +164,14 @@ public class ConnectAddOnUserServiceImplTest
         theUserExists();
         connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService).updateUserCredential(eq(application), eq(USER_KEY), eq(PasswordCredential.NONE));
+    }
+
+    private void recoversFromRaceConditionResultingInException(Exception exceptionToThrowOnUserCreation) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, UserNotFoundException
+    {
+        when(applicationService.addUser(any(Application.class), any(UserTemplate.class), any(PasswordCredential.class))).thenThrow(exceptionToThrowOnUserCreation);
+        when(applicationService.findUserByName(eq(application), eq(USER_KEY))).thenReturn(null, mock(User.class));
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+        verify(applicationService, times(2)).findUserByName(eq(application), eq(USER_KEY));
     }
 
     private ArgumentMatcher<UserTemplate> hasExpectedEmailAddress()

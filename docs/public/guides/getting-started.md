@@ -122,13 +122,14 @@ From the same project directory:
 That's it as far as coding goes. The next step is to make your files available on a web
 server. There are many ways to do this, but in this example you'll serve the file locally.
 
-You'll use a simple web server that ships with [Python](http://python.org) to serve the
-current directory containing your `atlassian-connect.json` and `helloworld.html` files.
+You'll use a simple web server to serve the current directory containing your 
+`atlassian-connect.json` and `helloworld.html` files.
 
 1. From the same directory, start your server on port 8000:
-     <pre><code data-lang="text">python -m SimpleHTTPServer 8000</code></pre>
+     <pre><code data-lang="text">npm install http-server
+http-server -p 8000</code></pre>
     The server indicates that it's serving HTTP at the current address and port. You'll see something like this:
-    <tt>Serving HTTP on 0.0.0.0 port 8000 ...</tt>
+    <tt>Starting up http-server, serving ./ on: http://0.0.0.0:8000</tt>
 2. Confirm the files you created in steps 1 and 2 are served. Visit:
     * <code data-lang="text"><a href="http://localhost:8000/atlassian-connect.json">http://localhost:8000/atlassian-connect.json</a></code>
     * <code data-lang="text"><a href="http://localhost:8000/helloworld.html">http://localhost:8000/helloworld.html</a></code>
@@ -149,8 +150,8 @@ Connect support is currently only for Atlassian-hosted products like JIRA Cloud,
         ATLAS Maven Home: /usr/share/atlassian-plugin-sdk-4.2.20/apache-maven  
     </tt>
 
-2. From a new terminal window, start JIRA with cloud environment flags:
-    <pre><code data-lang="text">atlas-run-standalone --product jira --version 6.3-OD-08-005-WN --bundled-plugins com.atlassian.plugins:atlassian-connect-plugin:1.1.0-rc.3,com.atlassian.jwt:jwt-plugin:1.1.0,com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.4,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.17.2,com.atlassian.webhooks:atlassian-webhooks-plugin:1.0.6 --jvmargs -Datlassian.upm.on.demand=true</code></pre>
+2. From a new terminal window, start a local JIRA instance matching the Atlassian Cloud environment:
+<span id="commands-jira-prd">Loading...</span>
 
     __Note:__ If you're not using the command above, ensure all components in the `--bundled-plugins` argument are present in your JIRA instances. These component versions will change as Connect development continues.  
 
@@ -206,7 +207,7 @@ You can add functionality using the [Atlassian REST APIs](https://developer.atla
 You can also [try the next tutorial](../project-activity-tutorial.html), where you can add a table of your projects to JIRA via the REST API and D3.js. 
 
 <div class="index-button">
-<a href="../project-activity-tutorial.html"><button class="primary-cta aui-button aui-button-primary">Try the next tutorial</button></a>
+<a href="../guides/project-activity-tutorial.html"><button class="primary-cta aui-button aui-button-primary">Try the next tutorial</button></a>
 </div>
 
 ## More resources

@@ -91,7 +91,7 @@ public class TestIFrameRenderer
         assertEquals("{}", ctx.get("productContextHtml"));
         assertEquals("jim-key", ctx.get("userKey"));
         assertEquals("jim", ctx.get("userId"));
-        assertEquals(ImmutableMap.of("timeZone", "my-timezone"), ctx.get("data"));
+        assertEquals("my-timezone", ctx.get("timeZone"));
         assertEquals("my-context-path", ctx.get("contextPath"));
         assertEquals("my-namespace", ctx.get("namespace"));
         assertEquals("my-signed-url", ctx.get("iframeSrcHtml"));

@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.1.5-SNAPSHOT</version>
+    <version>1.1.10-SNAPSHOT</version>
     <organization>
         <name>Atlassian</name>
         <url>http://atlassian.com/</url>
@@ -620,6 +620,14 @@
                 <scope>compile</scope>
             </dependency>
 
+            <!-- confluence bundled plugins -->
+            <dependency>
+                <groupId>com.atlassian.confluence.plugins</groupId>
+                <artifactId>confluence-create-content-plugin</artifactId>
+                <version>${blueprints.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
             <!-- Only exists for qunit -->
             <dependency>
                 <groupId>com.atlassian.aui</groupId>
@@ -678,13 +686,13 @@
         <amps.version>4.2.20</amps.version>
         <atlassian.analytics.version>3.38</atlassian.analytics.version>
         <atlassian.applinks.version>4.2.4</atlassian.applinks.version>
-        <atlassian.confluence.version>5.5-OD-30-009</atlassian.confluence.version>
+        <atlassian.confluence.version>5.6-OD-34-007</atlassian.confluence.version>
         <atlassian.crowd.version>2.8.0-OD-4</atlassian.crowd.version>
         <atlassian.fugue.version>1.1</atlassian.fugue.version>
         <atlassian.healthcheck.version>2.0.4</atlassian.healthcheck.version>
         <atlassian.httpclient.version>0.17.3</atlassian.httpclient.version>
         <atlassian.httpclient.api.version>0.17</atlassian.httpclient.api.version>
-        <atlassian.jira.version>6.4-OD-03-010</atlassian.jira.version>
+        <atlassian.jira.version>6.4-OD-05-008</atlassian.jira.version>
         <atlassian.jira.projects.version>1.0.32</atlassian.jira.projects.version>
         <atlassian.jira.rest.version>${atlassian.jira.version}</atlassian.jira.rest.version>
         <atlassian.jira.testkit.version>6.2.21</atlassian.jira.testkit.version>
@@ -698,6 +706,7 @@
         <atlassian.sal.version>2.10.0</atlassian.sal.version>
         <atlassian.selenium.version>2.2-rc3</atlassian.selenium.version>
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>
+        <atlassian.jira.projects.plugin.version>1.4.0-D20140829T122309</atlassian.jira.projects.plugin.version>
 
         <atlassian.upm.version>2.17.4</atlassian.upm.version>
 
@@ -708,7 +717,7 @@
         <atlassian.webhooks.api.version>1.0.6</atlassian.webhooks.api.version>
         <atlassian.jira.webhooks.version>1.2.5</atlassian.jira.webhooks.version>
 
-        <atlassian.webresource.version>3.0.0-m24</atlassian.webresource.version>
+        <atlassian.webresource.version>3.1.0</atlassian.webresource.version>
         <atlassian.webfragments.version>3.0.0-m7</atlassian.webfragments.version>
         <atlassian.html.encoder.version>1.4</atlassian.html.encoder.version>
 
@@ -730,7 +739,7 @@
 
         <!-- BUILD STUFF -->
         <apache-commons-version>3.1</apache-commons-version>
-        <jgitflow.version>1.0-m4</jgitflow.version>
+        <jgitflow.version>1.0-m4.3</jgitflow.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
         <atlassian.upm.on.demand>false</atlassian.upm.on.demand>
@@ -743,6 +752,7 @@
         <json.schema.validator.version>2.2.5</json.schema.validator.version>
         <node.version>v0.10.26</node.version>
         <npm.version>1.4.3</npm.version>
+        <blueprints.version>4.0.22</blueprints.version>
     </properties>
 
     <repositories>

@@ -16,6 +16,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet.CLASSIFIER;
+import static com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet.RAW_CLASSIFIER;
 import static com.google.common.collect.Maps.newHashMap;
 
 @Named
@@ -45,7 +47,7 @@ public class IFramePageRenderer
 
             Map<String, Object> ctx = newHashMap(iframeContext.getIFrameParams().getAsMap());
 
-            if (queryParams.get("raw") != null)
+            if (RAW_CLASSIFIER.equals(queryParams.get(CLASSIFIER)))
             {
                 iframeContext.getIFrameParams().setParam("width", "100%");
                 iframeContext.getIFrameParams().setParam("height", "100%");

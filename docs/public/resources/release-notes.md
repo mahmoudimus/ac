@@ -1,7 +1,54 @@
 
 # Release Notes
 
-## [1.1.2](../release-notes/1-1-0.html#1.1.2)
+<div class="aui-message info">
+	    <p class="title">
+	        <span class="aui-icon icon-success"></span>
+	        <strong>Latest Atlassian Connect versions</strong>
+	    </p>
+	    <table>
+	        <tr>
+	            <td>In production:</td>
+	            <td><span id="connect-version-prd"/></td>
+	        </tr>
+	        <tr>
+                <td>In development:</td>
+                <td><span id="connect-version-dev"/></td>
+            </tr>
+		</table>
+</div>
+
+The version numbers for the Atlassian Connect framework and Atlassian products which support it are published in 
+[this JSON file](https://developer.atlassian.com/static/connect-versions.json), which you can poll periodically to 
+find out about new production and development (bleeding edge) releases. You can start a local instance of JIRA 
+or Confluence Cloud with Atlassian Connect as follows:
+
+<a data-replace-text="If you are using a local installation [-]" class="aui-expander-trigger" aria-controls="runproduct-local">If you are using a local installation [+]</a>
+<div id="runproduct-local" class="aui-expander-content">
+    <span data-include="../assets/includes/runproduct-local.html">Loading...</span>
+</div>
+
+<a data-replace-text="If you are using the Vagrant box [-]" class="aui-expander-trigger" aria-controls="runproduct-vagrant">If you are using the Vagrant box [+]</a>
+<div id="runproduct-vagrant" class="aui-expander-content">
+    <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
+</div>
+
+## [1.1.9](../release-notes/1-1-0.html#1.1.9)
+* First phase for [Blueprints](../modules/confluence/blueprint.html)
+
+## [1.1.8](../release-notes/1-1-0.html#1.1.8)
+* Fixed: duplicate web panels in JIRA search-for-issues results
+* Fixed: iFrame resizing in Chrome
+* Better error message when group permissions prevent add-on installation
+
+## [1.1.7](../release-notes/1-1-0.html#1.1.7)
+* Bug fixes and minor improvements
+
+## [1.1.6](../release-notes/1-1-0.html#1.1.6)
+* More [JIRA reports](../modules/jira/report.html) features.
+* Add-ons are no longer automatically uninstalled when the installation lifecycle hook returns an error response.
+
+## [1.1.4](../release-notes/1-1-0.html#1.1.4)
 * Confluence now supports `content.*` variables everywhere that `page.*` variables were supported.
 * Support for [JIRA reports](../modules/jira/report.html)
 * Dialogs and inline dialogs will no longer suffer from expired JWTs.

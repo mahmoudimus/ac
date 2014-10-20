@@ -3,9 +3,11 @@ package com.atlassian.plugin.connect.plugin.webhooks;
 import com.atlassian.fugue.Option;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
+import com.atlassian.plugin.connect.plugin.util.BundleUtil;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
@@ -14,6 +16,9 @@ import com.atlassian.webhooks.spi.plugin.RequestSigner;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import org.osgi.framework.BundleContext;
+
 import java.net.URI;
 import java.util.Collections;
 
@@ -31,15 +36,17 @@ public class RemotePluginRequestSigner implements RequestSigner
     private final ConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
     private final ConnectAddOnIdentifierService legacyAddOnIdentifierService;
     private final ConnectAddonRegistry connectAddonRegistry;
+    private final BundleContext bundleContext;
 
     @Inject
     public RemotePluginRequestSigner(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory, JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, LegacyAddOnIdentifierService legacyAddOnIdentifierService,
-                                     ConnectAddonRegistry connectAddonRegistry)
+                                     ConnectAddonRegistry connectAddonRegistry, BundleContext bundleContext)
     {
         this.remotablePluginAccessorFactory = checkNotNull(remotablePluginAccessorFactory);
         this.jsonConnectAddOnIdentifierService = checkNotNull(jsonConnectAddOnIdentifierService);
         this.legacyAddOnIdentifierService = checkNotNull(legacyAddOnIdentifierService);
         this.connectAddonRegistry = checkNotNull(connectAddonRegistry);
+        this.bundleContext = checkNotNull(bundleContext);
     }
 
     @Override
@@ -52,6 +59,10 @@ public class RemotePluginRequestSigner implements RequestSigner
             {
                 request.setHeader(AUTHORIZATION_HEADER, authValue.get());
             }
+            //Webhooks SPI does not provide any other extension points for adding headers
+            //to requests, so we'll just do it here
+            String version = BundleUtil.getBundleVersion(bundleContext);
+            request.setHeader(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION, version);
         }
     }
 
