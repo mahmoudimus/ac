@@ -34,6 +34,11 @@ var outputFile = 'connect-versions';
 var secret = argv.secret;
 
 var manifestoBaseUrl = 'https://manifesto.uc-inf.net/api/env/jirastudio-';
+var dacBaseUrl = 'https://developer.atlassian.com/static/';
+var connectVersionsDACUrl = dacBaseUrl + outputFile + '.json';
+var indexFile = outputFile + '-history.json';
+var connectHistoryIndexUrl = dacBaseUrl +  historyFile;
+
 var plugins = [
     'com.atlassian.jwt:jwt-plugin',
     'com.atlassian.bundles:json-schema-validator-atlassian-bundle',
@@ -103,22 +108,47 @@ function getPluginVersions() {
     });
 }
 
+
 var commands = [];
+var oldCommands;
 
 function createAndPublishCommands() {
     var commands = createCommands();
-
-    publishCommands(commands);
+	console.log('connecting to DAC');
+	client.get(connectVersionsDACUrl, function (data, response) {
+		console.log('retrieved current versions from DAC');
+		var connect_dev = data.environment.dev.connectVersion;
+		var confluence_dev = data.environment.dev.confluenceVersion;
+		var jira_dev = data.environment.dev.jiraVersion;
+		var connect_prd = data.environment.prd.connectVersion;
+		var confluence_prd = data.environment.prd.confluenceVersion;
+		var jira_prd = data.environment.prd.jiraVersion;
+		
+		if(commands.environment.dev.connectVersion != data.environment.dev.connectVersion
+			|| commands.environment.dev.confluenceVersion != data.environment.dev.confluenceVersion
+			|| commands.environment.dev.jiraVersion != data.environment.dev.jiraVersion
+			|| commands.environment.prd.connectVersion != data.environment.prd.connectVersion
+			|| commands.environment.prd.confluenceVersion != data.environment.prd.confluenceVersion
+			|| commands.environment.prd.jiraVersion != data.environment.prd.jiraVersion) {
+			
+			console.log('New versions of the commands');	
+			publishCommands(commands, oldCommands);
+			
+		} else {
+			console.log('Commands are unchanged. Nothing to do. Just relax, you know, enjoy life a little.')
+		}
+	});
 }
-
-
 
 /**
  * Create the atlas-run-standalone commands
  */
 function createCommands() {
+	var validFrom = new Date();
     var commands =
     {
+		'validFrom': validFrom.toDateString(),
+		'validTo' : 'OPEN',
         'environment': {
             'dev': {
                 'connectVersion': connectVersionDev,
@@ -153,33 +183,63 @@ function createCommand(product, productVersion, connectVersion) {
  * (read supports anonymous)
  */
 
-function publishCommands(commands) {
+function publishCommands(commands, oldCommands) {
 
     console.log('writing output file: ' + outputDir + '/' + outputFile);
     mkdirp(outputDir, function(err) {
-
-        var commandsJson = JSON.stringify(commands);
-        var commandsJsonFile = outputDir + '/' + outputFile + '.json';
-        var commandsJsonp = 'evalCommands('+commandsJson+')';
-        var commandsJsonpFile = outputDir + '/' + outputFile + '.jsonp';
-
-        if(err) {
-            console.log('target directory ' + outputDir + ' could not be created: ' + err);
-        }
-        else {
-            fs.writeFile(commandsJsonFile, commandsJson, function(err) {
-                if(err)
-                    console.log('Error creating file ' + commandsJsonFile + ': ' + err);
-                else
-                    console.log('done');
-            });
-            fs.writeFile(commandsJsonpFile, commandsJsonp, function(err) {
-                if(err)
-                    console.log('Error creating file ' + commandsJsonpFile + ': ' + err);
-                else
-                    console.log('done');
-            });
-        }
+		
+		client.get(connectHistoryIndexUrl, function (data, response) {
+			
+			var index = data;
+			var validTo = new Date();
+			oldCommands.validTo = validTo.toDateString();
+			var indexEntry = {};
+			indexEntry.validFrom = oldCommands.validFrom;
+			indexEntry.validTo = oldCommands.validTo;
+			indexEntry.versionsFile = dacBaseUrl +
+				outputFile + '-' validTo.getYear() + '-' + validTo.getMonth() + '-' +  validTo.getDate() + '.json';
+			index.push(indexEntry);
+			
+    		var commandsJson = JSON.stringify(commands);
+    		var commandsJsonFile = outputDir + '/' + outputFile + '.json';
+   		 	var commandsJsonp = 'evalCommands('+commandsJson+')';
+  		  	var commandsJsonpFile = outputDir + '/' + outputFile + '.jsonp';
+			var oldCommandsJson = JSON.stringify(oldCommands);
+			var oldCommandsJsonFile = outputDir + '/' + versionsFile;
+			var indexJson = JSON.stringify(index);
+			var indexJsonFile = outputDir + '/' + indexFile;
+			
+       	 	if(err) {
+            	console.log('target directory ' + outputDir + ' could not be created: ' + err);
+       	 	}
+        	else {
+            	fs.writeFile(commandsJsonFile, commandsJson, function(err) {
+                	if(err)
+                    	console.log('Error creating file ' + commandsJsonFile + ': ' + err);
+                	else
+                    	console.log('done');
+            	});
+            	fs.writeFile(commandsJsonpFile, commandsJsonp, function(err) {
+                	if(err)
+                    	console.log('Error creating file ' + commandsJsonpFile + ': ' + err);
+                	else
+                		console.log('done');
+            	});
+            	fs.writeFile(oldCommandsJsonFile, oldCommandsJson, function(err) {
+                	if(err)
+                    	console.log('Error creating file ' + oldCommandsJsonFile + ': ' + err);
+                	else
+                		console.log('done');
+            	});
+				
+            	fs.writeFile(indexJsonFile, indexJson, function(err) {
+                	if(err)
+                    	console.log('Error creating file ' + indexJsonFile + ': ' + err);
+                	else
+                		console.log('done');
+            	});
+        	}
+		});
 
     });
 }
