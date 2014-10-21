@@ -240,7 +240,7 @@ public class ConnectAddonManager
         //make the sync callback if needed
         if (!Strings.isNullOrEmpty(addOn.getLifecycle().getInstalled()))
         {
-            if (maybeSharedSecret.isDefined())
+            if (maybeSharedSecret.isDefined() && useSharedSecret)
             {
                 requestInstallCallback(addOn, sharedSecret, maybeSharedSecret.get());
             }
