@@ -583,12 +583,19 @@ public class ConnectAddonManager
             }
             else if (e.getCause() instanceof SocketTimeoutException)
             {
-                String i18nMessage = i18nResolver.getText("connect.install.error.remote.host.timeout", installHandler);
+                String i18nMessage = i18nResolver.getText("connect.install.error.remote.host.timeout", removeQuery(installHandler));
                 throw new LifecycleCallbackException(message, Option.some(i18nMessage));
             }
 
             throw new LifecycleCallbackException(message, Option.some("connect.remote.upm.install.exception"));
         }
+    }
+
+    // we don't want to see "?user_key=2c9680504384c481014384c49e6a0004" in installation failure messages show to the users
+    private String removeQuery(URI installHandler)
+    {
+        final String trimmed = installHandler.toString().replace(installHandler.getQuery(), "");
+        return trimmed.endsWith("?") ? trimmed.substring(0, trimmed.length()-1) : trimmed;
     }
 
     private Option<String> findI18nKeyForHttpErrorCode(final int responseCode)
