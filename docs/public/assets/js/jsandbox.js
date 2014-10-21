@@ -117,7 +117,8 @@ function createConnectIframe(appendTo, clientCode){
             h: '',
             src: addonDomain + '/assets/js/blank.html?xdm_e=' + encodeURIComponent(addonDomain) + '&xdm_c=channel-' + addonKey + '__' + moduleKey + '&cp=&lic=none',
             productCtx: '{}',
-            data: {}
+            data: {},
+            "timeZone":"Europe/London"
         });
         var iframe = appendTo.find('iframe');
         iframe.load(function(){
