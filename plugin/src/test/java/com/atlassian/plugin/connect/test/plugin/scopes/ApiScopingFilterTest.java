@@ -6,11 +6,10 @@ import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.core.Clock;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
-import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManager;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
+import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManager;
 import com.atlassian.plugin.connect.plugin.scopes.ApiScopingFilter;
-import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploderUnitTestHelper;
 import com.atlassian.plugin.connect.spi.event.ScopedRequestAllowedEvent;
 import com.atlassian.plugin.connect.spi.event.ScopedRequestDeniedEvent;
 import com.atlassian.plugin.connect.spi.event.ScopedRequestEvent;
@@ -20,7 +19,6 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
@@ -73,12 +71,6 @@ public class ApiScopingFilterTest
 
     private ApiScopingFilter apiScopingFilter;
     private UserKey userKey = new UserKey("12345");
-
-    @BeforeClass
-    public static void beforeAnyTest()
-    {
-        XmlDescriptorExploderUnitTestHelper.runBeforeTests();
-    }
 
     @Before
     public void setup()

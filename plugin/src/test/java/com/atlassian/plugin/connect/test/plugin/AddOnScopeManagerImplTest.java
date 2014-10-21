@@ -5,19 +5,17 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManager;
-import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManagerImpl;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeApiPathBuilder;
+import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManager;
+import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManagerImpl;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
-import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploderUnitTestHelper;
 import com.atlassian.sal.api.user.UserKey;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -62,12 +60,6 @@ public class AddOnScopeManagerImplTest
     private Plugin plugin;
 
     private UserKey userKey = new UserKey("a_user_key");
-
-    @BeforeClass
-    public static void beforeAnyTest()
-    {
-        XmlDescriptorExploderUnitTestHelper.runBeforeTests();
-    }
 
     @Before
     public void beforeEachTest() throws IOException

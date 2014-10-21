@@ -6,13 +6,11 @@ import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
-import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploderUnitTestHelper;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import net.oauth.OAuthMessage;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -31,9 +29,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
-/**
- *
- */
 @ConvertToWiredTest
 @RunWith (MockitoJUnitRunner.class)
 public class OAuthLinkManagerTest
@@ -53,12 +48,6 @@ public class OAuthLinkManagerTest
             .name("name")
             .signatureMethod(Consumer.SignatureMethod.HMAC_SHA1)
             .build();
-
-    @BeforeClass
-    public static void beforeAnyTest()
-    {
-        XmlDescriptorExploderUnitTestHelper.runBeforeTests();
-    }
 
     @Before
     public void setUp()

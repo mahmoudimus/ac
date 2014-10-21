@@ -10,7 +10,6 @@ import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
 import com.atlassian.plugin.connect.plugin.util.OAuthHelper;
-import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -224,8 +223,6 @@ public class OAuthLinkManager
                               Map<String, List<String>> originalParams
     )
     {
-        XmlDescriptorExploder.notifyAndExplode(null == url ? null : url.getHost() + url.getPath()); // not the add-on key but we should be able to identify it, and it's not worth adding a dependency to up the add-on
-
         notNull(serviceProvider);
         notNull(url);
         checkNormalized(url);
