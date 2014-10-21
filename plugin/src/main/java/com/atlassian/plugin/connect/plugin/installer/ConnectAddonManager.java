@@ -240,6 +240,8 @@ public class ConnectAddonManager
         //make the sync callback if needed
         if (!Strings.isNullOrEmpty(addOn.getLifecycle().getInstalled()))
         {
+            // TODO ACDEV-1596: Because we've got exactly one auth generator per add-on this if statement's condition
+            // will cause us to NOT sign if the old descriptor used a shared secret but the new descriptor does NOT.
             if (maybeSharedSecret.isDefined() && useSharedSecret)
             {
                 requestInstallCallback(addOn, sharedSecret, maybeSharedSecret.get());
