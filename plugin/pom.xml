@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.8</version>
+        <version>1.1.10</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -456,6 +456,11 @@
             <artifactId>gson</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.atlassian.confluence.plugins</groupId>
+            <artifactId>confluence-create-content-plugin</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -633,6 +638,7 @@
                             <version>${atlassian.confluence.version}</version>
                             <log4jProperties>${basedir}/../integration-tests/src/test/resources/log4j-confluence.properties</log4jProperties>
                             <productDataPath>${basedir}/../integration-tests/src/test/resources/confluence-generated-test-resources.zip</productDataPath>
+                            <jvmArgs>-Xmx512m -XX:MaxPermSize=512m</jvmArgs>
                             <systemPropertyVariables>
                                 <product>confluence</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
@@ -672,6 +678,11 @@
                                     <groupId>${project.groupId}</groupId>
                                     <artifactId>atlassian-connect-test-support-plugin</artifactId>
                                     <version>${project.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.confluence.plugins</groupId>
+                                    <artifactId>confluence-create-content-plugin</artifactId>
+                                    <version>${blueprints.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
 

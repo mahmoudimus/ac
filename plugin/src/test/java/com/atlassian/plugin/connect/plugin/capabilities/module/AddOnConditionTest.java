@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.module;
 
 import javax.annotation.Nullable;
 import java.net.URI;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
@@ -33,6 +34,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+
+import static org.osgi.framework.Constants.BUNDLE_VERSION;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -48,105 +53,108 @@ public class AddOnConditionTest
     private static final String URL = "http://foo.com/bar?blah=1";
     private static final String URL_PATH = "/bar";
 
-    private final CustomTypeSafeMatcher<AddOnConditionEvent> eventWithCorrectUrl =
-            new CustomTypeSafeMatcher<AddOnConditionEvent>("an event with non negative elapsed time")
-            {
-                @Override
-                public boolean matchesSafely(AddOnConditionEvent event)
-                {
-                    return ObjectUtils.equals(event.getUrlPath(), URL_PATH);
-                }
-            };
+    private final CustomTypeSafeMatcher<AddOnConditionEvent> eventWithCorrectUrl = new CustomTypeSafeMatcher<AddOnConditionEvent>("an event with non negative elapsed time")
+    {
+        @Override
+        public boolean matchesSafely(AddOnConditionEvent event)
+        {
+            return ObjectUtils.equals(event.getUrlPath(), URL_PATH);
+        }
+    };
 
-    private final CustomTypeSafeMatcher<AddOnConditionEvent> eventWithCorrectAddonKey =
-            new CustomTypeSafeMatcher<AddOnConditionEvent>("an event with correct addon key")
-            {
-                @Override
-                public boolean matchesSafely(AddOnConditionEvent event)
-                {
-                    return ObjectUtils.equals(event.getAddonKey(), ADDON_KEY);
-                }
-            };
+    private final CustomTypeSafeMatcher<AddOnConditionEvent> eventWithCorrectAddonKey = new CustomTypeSafeMatcher<AddOnConditionEvent>("an event with correct addon key")
+    {
+        @Override
+        public boolean matchesSafely(AddOnConditionEvent event)
+        {
+            return ObjectUtils.equals(event.getAddonKey(), ADDON_KEY);
+        }
+    };
 
-    private final CustomTypeSafeMatcher<AddOnConditionFailedEvent> failEventWithExpectedMessage =
-            new CustomTypeSafeMatcher<AddOnConditionFailedEvent>("a fail event with expected message")
-            {
-                @Override
-                public boolean matchesSafely(AddOnConditionFailedEvent event)
-                {
-                    return event.getMessage().startsWith("Request to addon condition URL failed: ");
-                }
-            };
+    private final CustomTypeSafeMatcher<AddOnConditionFailedEvent> failEventWithExpectedMessage = new CustomTypeSafeMatcher<AddOnConditionFailedEvent>("a fail event with expected message")
+    {
+        @Override
+        public boolean matchesSafely(AddOnConditionFailedEvent event)
+        {
+            return event.getMessage().startsWith("Request to addon condition URL failed: ");
+        }
+    };
 
-    private final CustomTypeSafeMatcher<AddOnConditionFailedEvent> failEventWithExpectedBadJsonMessage =
-            new CustomTypeSafeMatcher<AddOnConditionFailedEvent>("a fail event with expected message")
-            {
-                @Override
-                public boolean matchesSafely(AddOnConditionFailedEvent event)
-                {
-                    return event.getMessage().startsWith("Malformed response from addon condition URL:");
-                }
-            };
+    private final CustomTypeSafeMatcher<AddOnConditionFailedEvent> failEventWithExpectedBadJsonMessage = new CustomTypeSafeMatcher<AddOnConditionFailedEvent>("a fail event with expected message")
+    {
+        @Override
+        public boolean matchesSafely(AddOnConditionFailedEvent event)
+        {
+            return event.getMessage().startsWith("Malformed response from addon condition URL:");
+        }
+    };
 
-    private final CustomTypeSafeMatcher<AddOnConditionEvent> eventWithNonNegativeElapsedTime =
-            new CustomTypeSafeMatcher<AddOnConditionEvent>("an event with non negative elapsed time")
-            {
-                @Override
-                public boolean matchesSafely(AddOnConditionEvent event)
-                {
-                    return event.getElapsedMillisecs() >= 0l;
-                }
-            };
+    private final CustomTypeSafeMatcher<AddOnConditionEvent> eventWithNonNegativeElapsedTime = new CustomTypeSafeMatcher<AddOnConditionEvent>("an event with non negative elapsed time")
+    {
+        @Override
+        public boolean matchesSafely(AddOnConditionEvent event)
+        {
+            return event.getElapsedMillisecs() >= 0l;
+        }
+    };
 
-    @Mock
-    private ProductAccessor productAccessor;
+    @Mock private ProductAccessor productAccessor;
 
-    @Mock
-    private RemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    @Mock private RemotablePluginAccessorFactory remotablePluginAccessorFactory;
 
+    @Mock private WebFragmentModuleContextExtractor webFragmentModuleContextExtractor;
 
-    @Mock
-    private WebFragmentModuleContextExtractor webFragmentModuleContextExtractor;
+    @Mock private RemotablePluginAccessor remotablePluginAccessor;
 
-    @Mock
-    private RemotablePluginAccessor remotablePluginAccessor;
+    @Mock private UserManager userManager;
 
-    @Mock
-    private UserManager userManager;
+    @Mock private TemplateRenderer templateRenderer;
 
-    @Mock
-    private TemplateRenderer templateRenderer;
+    @Mock private LicenseRetriever licenseRetriever;
 
-    @Mock
-    private LicenseRetriever licenseRetriever;
+    @Mock private LocaleHelper localeHelper;
 
-    @Mock
-    private LocaleHelper localeHelper;
+    @Mock private EventPublisher eventPublisher;
 
-    @Mock
-    private EventPublisher eventPublisher;
+    @Mock private BundleContext bundleContext;
+
+    @Mock private Bundle bundle;
+
+    @Mock private Dictionary bundleHeaders;
 
     private AddOnCondition addonCondition;
 
     @Before
     public void init()
     {
-        final IFrameUriBuilderFactoryImpl iFrameUriBuilderFactory = new IFrameUriBuilderFactoryImpl(new UrlVariableSubstitutor(new IsDevModeServiceImpl()), remotablePluginAccessorFactory,
-                userManager, new TestHostApplicationInfo(URL, "/"),
-                licenseRetriever, localeHelper, new UserPreferencesRetriever()
-        {
-            @Override
-            public TimeZone getTimeZoneFor(@Nullable String userName)
-            {
-                return TimeZone.getDefault();
-            }
-        });
-        addonCondition = new AddOnCondition(remotablePluginAccessorFactory, iFrameUriBuilderFactory,
-                webFragmentModuleContextExtractor, eventPublisher);
+        final IFrameUriBuilderFactoryImpl iFrameUriBuilderFactory = new IFrameUriBuilderFactoryImpl(new UrlVariableSubstitutor(new IsDevModeServiceImpl()),
+                                                                                                    remotablePluginAccessorFactory,
+                                                                                                    userManager,
+                                                                                                    new TestHostApplicationInfo(URL,
+                                                                                                                                "/"),
+                                                                                                    licenseRetriever,
+                                                                                                    localeHelper,
+                                                                                                    new UserPreferencesRetriever()
+                                                                                                    {
+                                                                                                        @Override
+                                                                                                        public TimeZone getTimeZoneFor(@Nullable String userName)
+                                                                                                        {
+                                                                                                            return TimeZone.getDefault();
+                                                                                                        }
+                                                                                                    },
+                                                                                                    bundleContext);
+        addonCondition = new AddOnCondition(remotablePluginAccessorFactory,
+                                            iFrameUriBuilderFactory,
+                                            webFragmentModuleContextExtractor,
+                                            eventPublisher,
+                                            bundleContext);
 
         when(remotablePluginAccessorFactory.getOrThrow(anyString())).thenReturn(remotablePluginAccessor);
         when(licenseRetriever.getLicenseStatus(anyString())).thenReturn(LicenseStatus.ACTIVE);
         when(localeHelper.getLocaleTag()).thenReturn("foo");
+        when(bundleContext.getBundle()).thenReturn(bundle);
+        when(bundle.getHeaders()).thenReturn(bundleHeaders);
+        when(bundleHeaders.get(BUNDLE_VERSION)).thenReturn("1.2.3");
     }
 
     @Test
@@ -320,7 +328,6 @@ public class AddOnConditionTest
     }
 
 }
-
 
 class TestHostApplicationInfo implements HostApplicationInfo
 {

@@ -38,6 +38,7 @@
 
     <!-- CONNECT MODULE PROVIDERS -->
     <component-import key="webItemModuleProvider" interface="com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider" />
+    <component-import key="blueprintModuleProvider" application="confluence" interface="com.atlassian.plugin.connect.plugin.capabilities.provider.BlueprintModuleProvider" />
     <component-import key="workflowPostFunctionModuleProvider" application="jira" interface="com.atlassian.plugin.connect.plugin.capabilities.provider.WorkflowPostFunctionModuleProvider" />
 
     <!-- CONNECT DESCRIPTOR FACTORIES -->

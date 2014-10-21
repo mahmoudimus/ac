@@ -84,6 +84,11 @@ using the `data-options` attribute.
 <script src="https://{HOSTNAME}:{PORT}/{CONTEXT}/atlassian-connect/all.js" data-options="option1:value;option2:value"></script>
 ```
 
+If you are using requirejs or other dynamic script loader. Use an element with an id of `ac-iframe-options` in place of a script tag.
+```
+<div id="ac-iframe-options" data-options="option1:value;option2:value"></div>
+```
+
 The following options are currently supported:
 
 <table class='aui'>

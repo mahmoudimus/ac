@@ -15,6 +15,16 @@
     "statusCode",
     "message"
   ],
+  "connect.plugin.serverUpgraded": [
+    "pluginKey",
+    "oldVersion",
+    "newVersion"
+  ],
+  "connect.plugin.upgraded": [
+    "pluginKey",
+    "oldVersion",
+    "newVersion"
+  ],
   "connect.addon.enabled": [
     "pluginKey"
   ],
@@ -74,5 +84,9 @@
   ],
   "connect.legacy.addon.installFailed": [
     "pluginKey"
+  ]
+  "connect.xmldescriptor.code.invoked": [
+    "pluginKey",
+    "stackTrace"
   ]
 }
