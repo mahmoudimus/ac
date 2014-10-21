@@ -1,11 +1,12 @@
 package com.atlassian.plugin.connect.plugin.module.webhook;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.plugin.webhooks.ConnectPluginIdentifierService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.webhooks.api.register.listener.WebHookListenerRegistrationDetails;
 import com.atlassian.webhooks.spi.UriResolver;
-import com.google.common.base.*;
+import com.google.common.base.Function;
 
 import java.net.URI;
 import javax.annotation.Nullable;
@@ -29,9 +30,9 @@ public final class RemotablePluginsPluginUriResolver implements UriResolver
     }
 
     @Override
-    public Optional<URI> getUri(final WebHookListenerRegistrationDetails listenerOriginDetails, final URI path)
+    public Option<URI> getUri(final WebHookListenerRegistrationDetails listenerOriginDetails, final URI path)
     {
-        return Optional.fromNullable(connectPluginIdentifierService.connectAddOnKey(listenerOriginDetails).map(new Function<String, URI>()
+        return connectPluginIdentifierService.connectAddOnKey(listenerOriginDetails).map(new Function<String, URI>()
         {
             @Override
             public URI apply(@Nullable final String addOnKey)
@@ -39,6 +40,6 @@ public final class RemotablePluginsPluginUriResolver implements UriResolver
                 return remotablePluginAccessorFactory.get(addOnKey).getTargetUrl(path);
 
             }
-        }).getOrNull());
+        });
     }
 }

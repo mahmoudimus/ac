@@ -715,8 +715,8 @@
         <atlassian.uri.version>0.1</atlassian.uri.version>
         <atlassian-util-concurrent.version>2.4.0</atlassian-util-concurrent.version>
 
-        <atlassian.webhooks.version>2.0.0-m08</atlassian.webhooks.version>
-        <atlassian.jira.webhooks.version>1.3.0-m04</atlassian.jira.webhooks.version>
+        <atlassian.webhooks.version>2.0.0-m09-SNAPSHOT</atlassian.webhooks.version>
+        <atlassian.jira.webhooks.version>1.3.0-m05-SNAPSHOT</atlassian.jira.webhooks.version>
 
         <atlassian.webresource.version>3.1.0</atlassian.webresource.version>
         <atlassian.webfragments.version>3.0.0-m7</atlassian.webfragments.version>
