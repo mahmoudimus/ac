@@ -1,5 +1,6 @@
-package com.atlassian.plugin.connect.spi.permission.scope;
+package com.atlassian.plugin.connect.spi.scope;
 
+import com.atlassian.plugin.connect.spi.scope.ApiResourceInfo;
 import com.atlassian.plugin.connect.spi.util.ServletUtils;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.annotations.VisibleForTesting;

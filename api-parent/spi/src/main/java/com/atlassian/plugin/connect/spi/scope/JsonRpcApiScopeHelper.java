@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.spi.permission.scope;
+package com.atlassian.plugin.connect.spi.scope;
 
 import com.atlassian.plugin.connect.spi.util.ServletUtils;
 import com.atlassian.sal.api.user.UserKey;

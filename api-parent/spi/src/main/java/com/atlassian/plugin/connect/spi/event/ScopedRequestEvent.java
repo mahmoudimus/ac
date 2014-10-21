@@ -2,9 +2,9 @@ package com.atlassian.plugin.connect.spi.event;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Pair;
-import com.atlassian.plugin.connect.spi.permission.scope.JsonRpcApiScopeHelper;
-import com.atlassian.plugin.connect.spi.permission.scope.RpcEncodedSoapApiScopeHelper;
-import com.atlassian.plugin.connect.spi.permission.scope.XmlRpcApiScopeHelper;
+import com.atlassian.plugin.connect.spi.scope.JsonRpcApiScopeHelper;
+import com.atlassian.plugin.connect.spi.scope.RpcEncodedSoapApiScopeHelper;
+import com.atlassian.plugin.connect.spi.scope.XmlRpcApiScopeHelper;
 import com.atlassian.plugin.connect.spi.util.ServletUtils;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;

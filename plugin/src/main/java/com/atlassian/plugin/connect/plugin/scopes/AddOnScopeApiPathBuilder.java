@@ -1,7 +1,11 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
 import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBean;
-import com.atlassian.plugin.connect.spi.permission.scope.*;
+import com.atlassian.plugin.connect.spi.scope.JsonRpcApiScopeHelper;
+import com.atlassian.plugin.connect.spi.scope.PathScopeHelper;
+import com.atlassian.plugin.connect.spi.scope.RestApiScopeHelper;
+import com.atlassian.plugin.connect.spi.scope.RpcEncodedSoapApiScopeHelper;
+import com.atlassian.plugin.connect.spi.scope.XmlRpcApiScopeHelper;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 

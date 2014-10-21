@@ -4,7 +4,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
-import com.atlassian.plugin.connect.spi.permission.scope.ApiScope;
+import com.atlassian.plugin.connect.spi.scope.ApiScope;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
