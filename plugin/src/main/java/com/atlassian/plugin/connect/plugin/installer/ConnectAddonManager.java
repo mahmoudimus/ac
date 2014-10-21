@@ -552,11 +552,11 @@ public class ConnectAddonManager
         return authorizationGenerator.generate(HttpMethod.POST, callbackUri, Collections.<String, String[]>emptyMap(), secret);
     }
 
-    private Response getSyncHandlerResponse(String addOnKey, URI installHandler, String jsonEventData, Option<String> authHeader) throws LifecycleCallbackException
+    private Response getSyncHandlerResponse(String addOnKey, URI callbackUri, String jsonEventData, Option<String> authHeader) throws LifecycleCallbackException
     {
         try
         {
-            Request.Builder request = httpClient.newRequest(installHandler);
+            Request.Builder request = httpClient.newRequest(callbackUri);
             request.setAttribute("purpose", "web-hook-notification");
             request.setAttribute("pluginKey", addOnKey);
             request.setContentType(MediaType.APPLICATION_JSON);
@@ -573,7 +573,7 @@ public class ConnectAddonManager
         }
         catch (Exception e)
         {
-            log.error("Error contacting remote application at " + installHandler + "  [" + e.getMessage() + "]", e);
+            log.error("Error contacting remote application at " + callbackUri + "  [" + e.getMessage() + "]", e);
             String message = "Error contacting remote application [" + e.getMessage() + "]";
 
             if (e.getCause() instanceof UnknownHostException)
@@ -583,7 +583,7 @@ public class ConnectAddonManager
             }
             else if (e.getCause() instanceof SocketTimeoutException)
             {
-                String i18nMessage = i18nResolver.getText("connect.install.error.remote.host.timeout", removeQuery(installHandler));
+                String i18nMessage = i18nResolver.getText("connect.install.error.remote.host.timeout", removeQuery(callbackUri));
                 throw new LifecycleCallbackException(message, Option.some(i18nMessage));
             }
 
