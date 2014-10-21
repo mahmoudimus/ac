@@ -45,14 +45,14 @@ public class ApiScopingFilter implements Filter
 
     private static final Logger log = LoggerFactory.getLogger(ApiScopingFilter.class);
 
-    private final AddOnScopeManager addOnScopeManager;
+    private final AddOnScopeManager2 addOnScopeManager;
     private final UserManager userManager;
     private final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
     private final String ourConsumerKey;
     private final EventPublisher eventPublisher;
     private final Clock clock;
 
-    public ApiScopingFilter(AddOnScopeManager addOnScopeManager, UserManager userManager,
+    public ApiScopingFilter(AddOnScopeManager2 addOnScopeManager, UserManager userManager,
         ConsumerService consumerService, JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, EventPublisher eventPublisher)
     {
         this(addOnScopeManager,
@@ -63,7 +63,7 @@ public class ApiScopingFilter implements Filter
              new SystemClock());
     }
 
-    public ApiScopingFilter(AddOnScopeManager addOnScopeManager, UserManager userManager,
+    public ApiScopingFilter(AddOnScopeManager2 addOnScopeManager, UserManager userManager,
             ConsumerService consumerService, JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, EventPublisher eventPublisher, Clock clock)
     {
         this.addOnScopeManager = addOnScopeManager;

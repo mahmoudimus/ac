@@ -6,7 +6,7 @@ import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.core.Clock;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
-import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManager;
+import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManager2;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.scopes.ApiScopingFilter;
@@ -53,7 +53,7 @@ public class ApiScopingFilterTest
     private static final String ADD_ON_KEY = "my-add-on";
 
     @Mock
-    private AddOnScopeManager addOnScopeManager;
+    private AddOnScopeManager2 addOnScopeManager;
     @Mock
     private UserManager userManager;
     @Mock

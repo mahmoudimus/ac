@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Handles permissions for remote plugin operations
  */
-public interface AddOnScopeManager
+public interface AddOnScopeManager2
 {
     /**
      * Tells whether a request can proceed given it's API scope and the plugin requested permissions.

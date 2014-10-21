@@ -13,7 +13,7 @@ import com.atlassian.jwt.JwtConstants;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
-import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManager;
+import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManager2;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.NotConnectAddonException;
@@ -48,7 +48,7 @@ public class DefaultConnectApplinkManagerTest
     @Mock private TypeAccessor typeAccessor;
     @Mock private PluginSettingsFactory pluginSettingsFactory;
     @Mock private OAuthLinkManager oAuthLinkManager;
-    @Mock private AddOnScopeManager addOnScopeManager;
+    @Mock private AddOnScopeManager2 addOnScopeManager;
     private TransactionTemplate transactionTemplate;
 
     private ConnectApplinkManager connectApplinkManager;

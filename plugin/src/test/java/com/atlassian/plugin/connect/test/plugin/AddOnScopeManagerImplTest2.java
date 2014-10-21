@@ -5,8 +5,8 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManager;
-import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManagerImpl;
+import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManager2;
+import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManagerImpl2;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
@@ -39,11 +39,11 @@ import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
 @RunWith (MockitoJUnitRunner.class)
-public class AddOnScopeManagerImplTest
+public class AddOnScopeManagerImplTest2
 {
     private static final String PLUGIN_KEY = "a plugin key";
 
-    private AddOnScopeManager addOnScopeManager;
+    private AddOnScopeManager2 addOnScopeManager;
 
     @Mock
     private PluginAccessor pluginAccessor;
@@ -78,7 +78,7 @@ public class AddOnScopeManagerImplTest
         when(request.getContextPath()).thenReturn("/jira");
         when(request.getMethod()).thenReturn("GET");
         when(scopeService.build()).thenReturn(buildTestScopes());
-        addOnScopeManager = new AddOnScopeManagerImpl(scopeService, connectAddonRegistry, connectAddonBeanFactory);
+        addOnScopeManager = new AddOnScopeManagerImpl2(scopeService, connectAddonRegistry, connectAddonBeanFactory);
     }
 
     @Test
