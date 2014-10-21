@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.test.plugin.scopes;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManagerImpl2;
+import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManagerImpl;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
@@ -36,7 +36,7 @@ public abstract class AbstractScopesTest
     private static final String PLUGIN_KEY = "my-plugin";
     private static final UserKey USER_KEY = null;
 
-    private AddOnScopeManagerImpl2 permissionManager;
+    private AddOnScopeManagerImpl permissionManager;
     private HttpServletRequest request;
 
     private final ScopeName scope;
@@ -98,7 +98,7 @@ public abstract class AbstractScopesTest
         final ConnectAddonBeanFactory addonBeanFactory = mock(ConnectAddonBeanFactory.class);
         when(addonBeanFactory.fromJsonSkipValidation(mockDescriptor)).thenReturn(addon);
 
-        permissionManager = new AddOnScopeManagerImpl2(scopeService, connectAddonRegistry, addonBeanFactory);
+        permissionManager = new AddOnScopeManagerImpl(scopeService, connectAddonRegistry, addonBeanFactory);
     }
 
     @Test

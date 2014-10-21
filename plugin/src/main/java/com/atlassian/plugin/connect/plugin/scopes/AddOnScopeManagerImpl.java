@@ -22,7 +22,7 @@ import static com.google.common.collect.ImmutableSet.copyOf;
 import static com.google.common.collect.Iterables.any;
 
 @Component
-public final class AddOnScopeManagerImpl2 implements AddOnScopeManager2
+public final class AddOnScopeManagerImpl implements AddOnScopeManager
 {
     private final Collection<AddOnScope> allScopes;
     private final ConnectAddonRegistry connectAddonRegistry;
@@ -30,7 +30,7 @@ public final class AddOnScopeManagerImpl2 implements AddOnScopeManager2
 
     @Autowired
     @VisibleForTesting
-    public AddOnScopeManagerImpl2(
+    public AddOnScopeManagerImpl(
             ScopeService scopeService,
             ConnectAddonRegistry connectAddonRegistry,
             ConnectAddonBeanFactory connectAddonBeanFactory) throws IOException
