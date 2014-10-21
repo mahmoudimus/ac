@@ -1,18 +1,9 @@
 /**
 * Retrieve plugin versions from Manifesto and generate startup commands for JIRA/Confluence
 * Then publish the commands in a file on DAC (Manifesto does not yet expose a public REST API, hence this workaround).
-* Format:
-* {
-*   'commands' :
-*     'jira': {
-*       'dev': 'command'
-*       'prd': 'command'
-*     },
-*     'confluence': {
-*       'dev': 'command'
-*       'prd': 'command'
-*     }
-* }
+* 
+* Save older versions of the commands.
+* 
 * Note: the only difference between the commands for dev and prod is the version of the Connect plugin.
 * Both the prod and dev commands use the production version of JIRA and Confluence, as well as other
 * plugin dependencies.
@@ -29,15 +20,18 @@ var argv = require('yargs')
     .argv;
 
 var outputDir = argv.outputDir;
-var outputFile = 'connect-versions';
-
 var secret = argv.secret;
 
-var manifestoBaseUrl = 'https://manifesto.uc-inf.net/api/env/jirastudio-';
-var dacBaseUrl = 'https://developer.atlassian.com/static/';
-var connectVersionsDACUrl = dacBaseUrl + outputFile + '.json';
-var indexFile = outputFile + '-history.json';
-var connectHistoryIndexUrl = dacBaseUrl +  historyFile;
+var OUTPUT_FILE = 'connect-versions';
+var MANIFESTO_BASE_URL = 'https://manifesto.uc-inf.net/api/env/jirastudio-';
+var DAC_BASE_URL = 'https://developer.atlassian.com/static/';
+//var DAC_BASE_URL = 'http://localhost:5555/';
+var CONNECT_VERSIONS_DAC_URL = DAC_BASE_URL + OUTPUT_FILE + '.json';
+var INDEX_FILE = OUTPUT_FILE + '-history.json';
+//an index file referencing old command files
+var VERSIONS_INDEX_URL = DAC_BASE_URL +  INDEX_FILE;
+//the maximum number of commands kept in the history
+var MAX_HISTORY = 150;
 
 var plugins = [
     'com.atlassian.jwt:jwt-plugin',
@@ -64,7 +58,7 @@ function getPluginVersions() {
     client = new Client();
     var connectPluginName = connectPlugin.split(':')[1];
     var processed = [];
-    client.get(manifestoBaseUrl + 'prd', function (data, response) {
+    client.get(MANIFESTO_BASE_URL + 'prd', function (data, response) {
         console.log('retrieved info for production');
         data.details.products.forEach(function (product) {
             if (product.artifact == 'jira') {
@@ -73,7 +67,8 @@ function getPluginVersions() {
             else if (product.artifact == 'confluence') {
                 confluenceVersion = product.version;
             }
-        });
+        })
+		
         data.details.plugins.forEach(function (manifestoPlugin) {
             plugins.forEach(function (plugin) {
                 var pluginName = plugin.split(':')[1];
@@ -93,7 +88,7 @@ function getPluginVersions() {
         });
 
 
-        client.get(manifestoBaseUrl + 'dev', function (data, response) {
+        client.get(MANIFESTO_BASE_URL + 'dev', function (data, response) {
             console.log('retrieved info for dev');
 
             data.details.plugins.forEach(function (manifestoPlugin) {
@@ -102,37 +97,35 @@ function getPluginVersions() {
                 }
             });
 
-            createAndPublishCommands();
+            createAndExportCommands();
         });
 
     });
 }
 
 
-var commands = [];
-var oldCommands;
+var _commands = [];
+var _oldCommands= {};
+var _index = [];
 
-function createAndPublishCommands() {
-    var commands = createCommands();
+function createAndExportCommands() {
+   	createCommands();
 	console.log('connecting to DAC');
-	client.get(connectVersionsDACUrl, function (data, response) {
+	client.get(CONNECT_VERSIONS_DAC_URL, function (data, response) {
 		console.log('retrieved current versions from DAC');
-		var connect_dev = data.environment.dev.connectVersion;
-		var confluence_dev = data.environment.dev.confluenceVersion;
-		var jira_dev = data.environment.dev.jiraVersion;
-		var connect_prd = data.environment.prd.connectVersion;
-		var confluence_prd = data.environment.prd.confluenceVersion;
-		var jira_prd = data.environment.prd.jiraVersion;
+		_oldCommands = data;
+		console.log(_commands);
+		console.log(_oldCommands);
 		
-		if(commands.environment.dev.connectVersion != data.environment.dev.connectVersion
-			|| commands.environment.dev.confluenceVersion != data.environment.dev.confluenceVersion
-			|| commands.environment.dev.jiraVersion != data.environment.dev.jiraVersion
-			|| commands.environment.prd.connectVersion != data.environment.prd.connectVersion
-			|| commands.environment.prd.confluenceVersion != data.environment.prd.confluenceVersion
-			|| commands.environment.prd.jiraVersion != data.environment.prd.jiraVersion) {
+		if(_commands.environment.dev.connectVersion != _oldCommands.environment.dev.connectVersion
+			|| _commands.environment.dev.confluenceVersion != _oldCommands.environment.dev.confluenceVersion
+			|| _commands.environment.dev.jiraVersion != _oldCommands.environment.dev.jiraVersion
+			|| _commands.environment.prd.connectVersion != _oldCommands.environment.prd.connectVersion
+			|| _commands.environment.prd.confluenceVersion != _oldCommands.environment.prd.confluenceVersion
+			|| _commands.environment.prd.jiraVersion != _oldCommands.environment.prd.jiraVersion) {
 			
 			console.log('New versions of the commands');	
-			publishCommands(commands, oldCommands);
+			exportCommands();
 			
 		} else {
 			console.log('Commands are unchanged. Nothing to do. Just relax, you know, enjoy life a little.')
@@ -145,7 +138,7 @@ function createAndPublishCommands() {
  */
 function createCommands() {
 	var validFrom = new Date();
-    var commands =
+    _commands =
     {
 		'validFrom': validFrom.toDateString(),
 		'validTo' : 'OPEN',
@@ -166,8 +159,6 @@ function createCommands() {
             }
         }
     }
-
-    return commands;
 }
 
 function createCommand(product, productVersion, connectVersion) {
@@ -183,65 +174,60 @@ function createCommand(product, productVersion, connectVersion) {
  * (read supports anonymous)
  */
 
-function publishCommands(commands, oldCommands) {
+function exportCommands() {
 
-    console.log('writing output file: ' + outputDir + '/' + outputFile);
+    console.log('writing output file: ' + outputDir + '/' + OUTPUT_FILE);
     mkdirp(outputDir, function(err) {
+   	 	
+		if(err) {
+        	console.log('target directory ' + outputDir + ' could not be created: ' + err);
+   	 	} else {
+			client.get(VERSIONS_INDEX_URL, function (data, response) {
+				if(response.statusCode != 404)
+					_index = data;
+				var validTo = new Date();
+				_oldCommands.validTo = validTo.toDateString();
+				var indexEntry = {};
+				indexEntry.validFrom = _oldCommands.validFrom;
+				indexEntry.validTo = _oldCommands.validTo;
+				var versionsFile = OUTPUT_FILE + '_' + validTo.getTime() + '.json';
+				indexEntry.versionsFile = DAC_BASE_URL + versionsFile;
 		
-		client.get(connectHistoryIndexUrl, function (data, response) {
-			
-			var index = data;
-			var validTo = new Date();
-			oldCommands.validTo = validTo.toDateString();
-			var indexEntry = {};
-			indexEntry.validFrom = oldCommands.validFrom;
-			indexEntry.validTo = oldCommands.validTo;
-			indexEntry.versionsFile = dacBaseUrl +
-				outputFile + '-' validTo.getYear() + '-' + validTo.getMonth() + '-' +  validTo.getDate() + '.json';
-			index.push(indexEntry);
-			
-    		var commandsJson = JSON.stringify(commands);
-    		var commandsJsonFile = outputDir + '/' + outputFile + '.json';
-   		 	var commandsJsonp = 'evalCommands('+commandsJson+')';
-  		  	var commandsJsonpFile = outputDir + '/' + outputFile + '.jsonp';
-			var oldCommandsJson = JSON.stringify(oldCommands);
-			var oldCommandsJsonFile = outputDir + '/' + versionsFile;
-			var indexJson = JSON.stringify(index);
-			var indexJsonFile = outputDir + '/' + indexFile;
-			
-       	 	if(err) {
-            	console.log('target directory ' + outputDir + ' could not be created: ' + err);
-       	 	}
-        	else {
-            	fs.writeFile(commandsJsonFile, commandsJson, function(err) {
-                	if(err)
-                    	console.log('Error creating file ' + commandsJsonFile + ': ' + err);
-                	else
-                    	console.log('done');
-            	});
-            	fs.writeFile(commandsJsonpFile, commandsJsonp, function(err) {
-                	if(err)
-                    	console.log('Error creating file ' + commandsJsonpFile + ': ' + err);
-                	else
-                		console.log('done');
-            	});
-            	fs.writeFile(oldCommandsJsonFile, oldCommandsJson, function(err) {
-                	if(err)
-                    	console.log('Error creating file ' + oldCommandsJsonFile + ': ' + err);
-                	else
-                		console.log('done');
-            	});
-				
-            	fs.writeFile(indexJsonFile, indexJson, function(err) {
-                	if(err)
-                    	console.log('Error creating file ' + indexJsonFile + ': ' + err);
-                	else
-                		console.log('done');
-            	});
-        	}
-		});
+				_index.unshift(indexEntry);
+				while(_index.length > MAX_HISTORY)
+					_index.pop();
 
-    });
+				var files = 
+				[
+					{
+						'content': JSON.stringify(_commands), 
+						'file': outputDir + '/' + OUTPUT_FILE + '.json'
+					},
+					{
+						'content': 'evalCommands(' + JSON.stringify(_commands) + ')', 
+						'file': outputDir + '/' + OUTPUT_FILE + '.jsonp'
+					},
+					{
+						'content': JSON.stringify(_oldCommands), 
+						'file': outputDir + '/' + versionsFile
+					},
+					{
+						'content': JSON.stringify(_index), 
+						'file': outputDir + '/' + INDEX_FILE
+					}
+				];
+
+				files.forEach(function(entry) {
+					fs.writeFile(entry.file, entry.content, function(err) {
+			    		if(err)
+			        		console.log('Error creating file ' + entry.file + ': ' + err);
+			    		else
+			        		console.log('Wrote file: ' + entry.file);
+					});
+				});
+    		});
+		}
+	});
 }
 
 
