@@ -46,7 +46,7 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
         this.consumerService = consumerService;
         this.connectApplinkManager = connectApplinkManager;
         this.userManager = userManager;
-        this.authorizationGenerator = new JwtAuthorizationGenerator(jwtService, requireSharedSecret(getAppLink()), consumerService, URI.create(addon.getBaseUrl()));
+        this.authorizationGenerator = new JwtAuthorizationGenerator(jwtService, sharedSecretSupplier(getAppLink()), consumerService, URI.create(addon.getBaseUrl()));
     }
 
     @Override
@@ -79,6 +79,18 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
     private ApplicationLink getAppLink()
     {
         return this.connectApplinkManager.getAppLink(getKey());
+    }
+
+    private static Supplier<String> sharedSecretSupplier(final ApplicationLink applicationLink)
+    {
+        return new Supplier<String>()
+        {
+            @Override
+            public String get()
+            {
+                return requireSharedSecret(applicationLink);
+            }
+        };
     }
 
     private static String requireSharedSecret(ApplicationLink applicationLink)

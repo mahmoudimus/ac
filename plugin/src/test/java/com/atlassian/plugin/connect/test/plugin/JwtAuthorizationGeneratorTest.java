@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.plugin.JwtAuthorizationGenerator;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -119,7 +120,7 @@ public class JwtAuthorizationGeneratorTest
     @Test(expected = NullPointerException.class)
     public void nullBaseUrlResultsInException()
     {
-        new JwtAuthorizationGenerator(jwtService, SECRET, consumerService, null);
+        new JwtAuthorizationGenerator(jwtService, constantSecretSupplier(SECRET), consumerService, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -181,8 +182,20 @@ public class JwtAuthorizationGeneratorTest
     {
         when(jwtService.issueJwt(any(String.class), eq(SECRET))).thenReturn(A_MOCK_JWT);
         when(consumerService.getConsumer()).thenReturn(Consumer.key("whatever").name("whatever").signatureMethod(Consumer.SignatureMethod.HMAC_SHA1).publicKey(new KeyFactory.InvalidPublicKey(new Exception())).build());
-        generator = new JwtAuthorizationGenerator(jwtService, SECRET, consumerService, A_URI_BASE);
+        generator = new JwtAuthorizationGenerator(jwtService, constantSecretSupplier(SECRET), consumerService, A_URI_BASE);
         generate();
+    }
+
+    private Supplier<String> constantSecretSupplier(final String secret)
+    {
+        return new Supplier<String>()
+        {
+            @Override
+            public String get()
+            {
+                return secret;
+            }
+        };
     }
 
     private ArgumentMatcher<String> hasQueryHash(String expectedQueryHash)
@@ -203,7 +216,7 @@ public class JwtAuthorizationGeneratorTest
 
     private String generateGet(String url, String baseUrl, Map<String, String[]> params)
     {
-        return new JwtAuthorizationGenerator(jwtService, SECRET, consumerService, URI.create(baseUrl)).generate(HttpMethod.GET, URI.create(url), params).get();
+        return new JwtAuthorizationGenerator(jwtService, constantSecretSupplier(SECRET), consumerService, URI.create(baseUrl)).generate(HttpMethod.GET, URI.create(url), params).get();
     }
 
     private static ArgumentMatcher<String> hasClaim(final String claimName)

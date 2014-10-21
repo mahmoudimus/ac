@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.plugin.util.ConfigurationUtils;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.http.ReKeyableAuthorizationGenerator;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Supplier;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicHeaderValueParser;
@@ -52,14 +53,14 @@ public class JwtAuthorizationGenerator implements ReKeyableAuthorizationGenerato
     private static final Logger log = LoggerFactory.getLogger(JwtAuthorizationGenerator.class);
 
     private final JwtService jwtService;
-    private final String secret;
+    private final Supplier<String> secretSupplier;
     private final ConsumerService consumerService;
     private final URI addOnBaseUrl;
 
-    public JwtAuthorizationGenerator(JwtService jwtService, String secret, ConsumerService consumerService, URI addOnBaseUrl)
+    public JwtAuthorizationGenerator(JwtService jwtService, Supplier<String> secretSupplier, ConsumerService consumerService, URI addOnBaseUrl)
     {
         this.jwtService = checkNotNull(jwtService);
-        this.secret = checkNotNull(secret);
+        this.secretSupplier = checkNotNull(secretSupplier);
         this.consumerService = checkNotNull(consumerService);
         this.addOnBaseUrl = checkNotNull(addOnBaseUrl);
     }
@@ -67,7 +68,7 @@ public class JwtAuthorizationGenerator implements ReKeyableAuthorizationGenerato
     @Override
     public Option<String> generate(HttpMethod httpMethod, URI url, Map<String, String[]> parameters)
     {
-        return Option.some(generate(httpMethod, url, parameters, secret));
+        return Option.some(generate(httpMethod, url, parameters, checkNotNull(secretSupplier.get())));
     }
 
     @Override

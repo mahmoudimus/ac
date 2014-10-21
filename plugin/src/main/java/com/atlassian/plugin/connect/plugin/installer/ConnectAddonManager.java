@@ -219,7 +219,7 @@ public class ConnectAddonManager
 
         AuthenticationType authType = addOn.getAuthentication().getType();
         final boolean useSharedSecret = addOnUsesSymmetricSharedSecret(authType, JWT_ALGORITHM);
-        String sharedSecret = useSharedSecret ? sharedSecretService.next() : null;
+        String sharedSecret = useSharedSecret ? optionalPreviousSharedSecret.getOrElse(sharedSecretService.next()) : null;
         String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
 
         String userKey = provisionUserIfNecessary(addOn, previousAddOn);
