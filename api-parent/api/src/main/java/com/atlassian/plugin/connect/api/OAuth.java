@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.api.xmldescriptor;
+package com.atlassian.plugin.connect.api;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

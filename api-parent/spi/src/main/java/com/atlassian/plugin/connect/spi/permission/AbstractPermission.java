@@ -1,18 +1,9 @@
 package com.atlassian.plugin.connect.spi.permission;
 
-import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
-/**
- * a good default implementation for permissions.
- *
- * @since 0.8
- */
-@XmlDescriptor
-public abstract class AbstractPermission implements Permission
+public abstract class AbstractPermission
 {
-
     private final String key;
     private final PermissionInfo permissionInfo;
 
@@ -42,7 +33,6 @@ public abstract class AbstractPermission implements Permission
         return permissionInfo.getDescription();
     }
 
-    @Override
     public boolean equals(Object o)
     {
         if (this == o)
@@ -59,7 +49,6 @@ public abstract class AbstractPermission implements Permission
         return key.equals(that.key);
     }
 
-    @Override
     public int hashCode()
     {
         return key.hashCode();
@@ -80,7 +69,5 @@ public abstract class AbstractPermission implements Permission
         {
             return "";
         }
-
-
     }
 }

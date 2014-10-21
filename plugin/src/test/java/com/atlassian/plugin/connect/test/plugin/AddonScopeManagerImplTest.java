@@ -5,8 +5,8 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.PermissionManager;
-import com.atlassian.plugin.connect.plugin.PermissionManagerImpl;
+import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManager;
+import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManagerImpl;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
@@ -15,11 +15,6 @@ import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeApiPathBuilder;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
 import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploderUnitTestHelper;
-import com.atlassian.plugin.connect.spi.permission.Permission;
-import com.atlassian.plugin.connect.spi.permission.PermissionModuleDescriptor;
-import com.atlassian.plugin.connect.spi.permission.scope.ApiResourceInfo;
-import com.atlassian.plugin.connect.spi.permission.scope.ApiScope;
-import com.atlassian.plugin.tracker.PluginModuleTracker;
 import com.atlassian.sal.api.user.UserKey;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -33,7 +28,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Arrays.asList;
@@ -45,18 +39,16 @@ import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
 @RunWith (MockitoJUnitRunner.class)
-public class PermissionManagerImplTest
+public class AddOnScopeManagerImplTest
 {
     private static final String PLUGIN_KEY = "a plugin key";
 
-    private PermissionManager permissionManager;
+    private AddOnScopeManager addOnScopeManager;
 
     @Mock
     private PluginAccessor pluginAccessor;
     @Mock
     private JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
-    @Mock
-    private PluginModuleTracker<Permission, PermissionModuleDescriptor> pluginModuleTracker;
     @Mock
     private ScopeService scopeService;
     @Mock
@@ -85,24 +77,22 @@ public class PermissionManagerImplTest
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user");
         when(request.getContextPath()).thenReturn("/jira");
         when(request.getMethod()).thenReturn("GET");
-        Permission permission = createPermission();
-        when(pluginModuleTracker.getModules()).thenReturn(asList(permission));
         when(scopeService.build()).thenReturn(buildTestScopes());
-        permissionManager = new PermissionManagerImpl(pluginModuleTracker, scopeService, connectAddonRegistry, connectAddonBeanFactory);
+        addOnScopeManager = new AddOnScopeManagerImpl(scopeService, connectAddonRegistry, connectAddonBeanFactory);
     }
 
     @Test
     public void validJsonDescriptorScopeIsInScopeInProdMode()
     {
         setup().withScope(ScopeName.READ);
-        assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
+        assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
     }
 
     @Test
     public void invalidJsonDescriptorScopeIsOutOfScope()
     {
         setup();
-        assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
+        assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
     }
 
     @Test
@@ -111,7 +101,7 @@ public class PermissionManagerImplTest
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/write/something");
         when(request.getMethod()).thenReturn("POST");
         setup().withScope(ScopeName.WRITE);
-        assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
+        assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
     }
 
     @Test
@@ -120,7 +110,7 @@ public class PermissionManagerImplTest
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/write/something");
         when(request.getMethod()).thenReturn("POST");
         setup().withScope(ScopeName.READ);
-        assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
+        assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
     }
 
     @Test
@@ -129,7 +119,7 @@ public class PermissionManagerImplTest
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/something/delete");
         when(request.getMethod()).thenReturn("DELETE");
         setup().withScope(ScopeName.DELETE);
-        assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
+        assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(true));
     }
 
     @Test
@@ -138,7 +128,7 @@ public class PermissionManagerImplTest
         when(request.getRequestURI()).thenReturn("/jira/rest/api/2/user/something/delete");
         when(request.getMethod()).thenReturn("DELETE");
         setup().withScope(ScopeName.WRITE);
-        assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
+        assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
     }
 
     // This test exists to ensure that signingNotVulnerableToNormalizedUris is not returning a false
@@ -150,7 +140,7 @@ public class PermissionManagerImplTest
         when(request.getRequestURI()).thenReturn("/jira/secure/Dashboard.jspa");
         when(request.getMethod()).thenReturn("GET");
         setup().withScope(ScopeName.READ);
-        assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
+        assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
     }
 
     @Test
@@ -159,7 +149,7 @@ public class PermissionManagerImplTest
         when(request.getRequestURI()).thenReturn("/jira/secure/Dashboard.jspa;../../../rest/api/2/user");
         when(request.getMethod()).thenReturn("GET");
         setup().withScope(ScopeName.READ);
-        assertThat(permissionManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
+        assertThat(addOnScopeManager.isRequestInApiScope(request, PLUGIN_KEY, userKey), is(false));
     }
 
     private Setup setup()
@@ -198,24 +188,6 @@ public class PermissionManagerImplTest
                     .withScopes(scopeNames)
                     .build();
         }
-    }
-
-    private ApiScope createPermission()
-    {
-        return new ApiScope()
-        {
-            @Override
-            public boolean allow(HttpServletRequest request, @Nullable UserKey user)
-            {
-                return request == PermissionManagerImplTest.this.request;
-            }
-
-            @Override
-            public Iterable<ApiResourceInfo> getApiResourceInfos()
-            {
-                return null;
-            }
-        };
     }
 
     private Collection<AddOnScope> buildTestScopes()

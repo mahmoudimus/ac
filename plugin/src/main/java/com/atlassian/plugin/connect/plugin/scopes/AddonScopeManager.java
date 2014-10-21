@@ -1,27 +1,14 @@
-package com.atlassian.plugin.connect.plugin;
+package com.atlassian.plugin.connect.plugin.scopes;
 
-import com.atlassian.plugin.connect.spi.permission.Permission;
 import com.atlassian.sal.api.user.UserKey;
 
-import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
 
 /**
  * Handles permissions for remote plugin operations
  */
-public interface PermissionManager
+public interface AddOnScopeManager
 {
-    /**
-     * Gets the set of permissions for the given installation mode.
-     *
-     * @return a set of permissions
-     * @throws NullPointerException if the {@code installationMode} is null.
-     * @since 0.8
-     */
-    @NotNull
-    Set<Permission> getPermissions();
-
     /**
      * Tells whether a request can proceed given it's API scope and the plugin requested permissions.
      *
@@ -31,5 +18,4 @@ public interface PermissionManager
      * @return {@code true} if the request is correctly in the current API scope, {@code false} otherwise
      */
     boolean isRequestInApiScope(HttpServletRequest req, String pluginKey, UserKey user);
-
 }

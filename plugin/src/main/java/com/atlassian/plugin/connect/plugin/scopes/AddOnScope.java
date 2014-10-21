@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.spi.permission.AbstractPermission;
 import com.atlassian.plugin.connect.spi.permission.scope.ApiResourceInfo;
 import com.atlassian.plugin.connect.spi.permission.scope.ApiScope;
 import com.atlassian.sal.api.user.UserKey;
@@ -12,21 +11,24 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.util.Collections;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Iterables.*;
+import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.transform;
 
-public class AddOnScope extends AbstractPermission implements ApiScope, Comparable<AddOnScope>
+public class AddOnScope implements ApiScope, Comparable<AddOnScope>
 {
+    private final String key;
     private final Iterable<AddOnScopeApiPath> paths;
     private transient final Iterable<ApiResourceInfo> apiResourceInfos;
 
     public AddOnScope(String key, Iterable<AddOnScopeApiPath> paths)
     {
-        super(checkNotNull(key));
+        this.key = checkNotNull(key);
         this.paths = checkNotNull(paths);
         this.apiResourceInfos = concat(transform(paths, new Function<AddOnScopeApiPath, Iterable<ApiResourceInfo>>()
         {
@@ -60,6 +62,11 @@ public class AddOnScope extends AbstractPermission implements ApiScope, Comparab
     public Iterable<AddOnScopeApiPath> getPaths()
     {
         return paths;
+    }
+
+    public String getKey()
+    {
+        return key;
     }
 
     @Override

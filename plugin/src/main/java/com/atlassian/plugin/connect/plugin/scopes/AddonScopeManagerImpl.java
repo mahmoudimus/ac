@@ -1,18 +1,10 @@
-package com.atlassian.plugin.connect.plugin;
+package com.atlassian.plugin.connect.plugin.scopes;
 
-import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
-import com.atlassian.plugin.connect.plugin.scopes.StaticAddOnScopes;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
-import com.atlassian.plugin.connect.spi.permission.Permission;
-import com.atlassian.plugin.connect.spi.permission.PermissionModuleDescriptor;
 import com.atlassian.plugin.connect.spi.permission.scope.ApiScope;
-import com.atlassian.plugin.event.PluginEventManager;
-import com.atlassian.plugin.tracker.DefaultPluginModuleTracker;
-import com.atlassian.plugin.tracker.PluginModuleTracker;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
@@ -29,49 +21,23 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableSet.copyOf;
 import static com.google.common.collect.Iterables.any;
 
-/**
- * Handles permissions for remote plugin operations
- */
 @Component
-public final class PermissionManagerImpl implements PermissionManager
+public final class AddOnScopeManagerImpl implements AddOnScopeManager
 {
-    private final PluginModuleTracker<Permission, PermissionModuleDescriptor> permissionTracker;
     private final Collection<AddOnScope> allScopes;
     private final ConnectAddonRegistry connectAddonRegistry;
     private final ConnectAddonBeanFactory connectAddonBeanFactory;
 
     @Autowired
-    public PermissionManagerImpl(
-            PluginAccessor pluginAccessor,
-            PluginEventManager pluginEventManager,
+    @VisibleForTesting
+    public AddOnScopeManagerImpl(
             ScopeService scopeService,
             ConnectAddonRegistry connectAddonRegistry,
             ConnectAddonBeanFactory connectAddonBeanFactory) throws IOException
     {
-        this(new DefaultPluginModuleTracker<Permission, PermissionModuleDescriptor>(
-                        pluginAccessor, pluginEventManager, PermissionModuleDescriptor.class),
-                scopeService,
-                connectAddonRegistry, connectAddonBeanFactory
-        );
-    }
-
-    @VisibleForTesting
-    public PermissionManagerImpl(
-            PluginModuleTracker<Permission, PermissionModuleDescriptor> pluginModuleTracker,
-            ScopeService scopeService,
-            ConnectAddonRegistry connectAddonRegistry, ConnectAddonBeanFactory connectAddonBeanFactory)
-            throws IOException
-    {
-        this.permissionTracker = checkNotNull(pluginModuleTracker);
         this.allScopes = scopeService.build();
         this.connectAddonRegistry = checkNotNull(connectAddonRegistry);
         this.connectAddonBeanFactory = checkNotNull(connectAddonBeanFactory);
-    }
-
-    @Override
-    public Set<Permission> getPermissions()
-    {
-        return copyOf(permissionTracker.getModules());
     }
 
     @Override
