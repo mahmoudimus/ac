@@ -27,8 +27,8 @@ var MANIFESTO_BASE_URL = 'https://manifesto.uc-inf.net/api/env/jirastudio-';
 var DAC_BASE_URL = 'https://developer.atlassian.com/static/';
 //var DAC_BASE_URL = 'http://localhost:5555/';
 var CONNECT_VERSIONS_DAC_URL = DAC_BASE_URL + OUTPUT_FILE + '.json';
-var INDEX_FILE = OUTPUT_FILE + '-history.json';
 //an index file referencing old command files
+var INDEX_FILE = OUTPUT_FILE + '-history.json';
 var VERSIONS_INDEX_URL = DAC_BASE_URL +  INDEX_FILE;
 //the maximum number of commands kept in the history
 var MAX_HISTORY = 150;
