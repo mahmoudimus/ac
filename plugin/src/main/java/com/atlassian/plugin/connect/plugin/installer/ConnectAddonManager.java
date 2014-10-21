@@ -212,17 +212,13 @@ public class ConnectAddonManager
         }
 
         String previousDescriptor = addonRegistry.getDescriptor(pluginKey);
-        final Option<ConnectAddonBean> previousAddOn = StringUtils.isEmpty(previousDescriptor) ? Option.<ConnectAddonBean>none() : Option.some(connectAddonBeanFactory.fromJson(previousDescriptor));
-        final Option<String> optionalPreviousSharedSecret = previousAddOn.isDefined() && addOnUsesSymmetricSharedSecret(previousAddOn.get().getAuthentication().getType(), JWT_ALGORITHM)
-                ? Option.some((String)connectApplinkManager.getAppLink(pluginKey).getProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME))
-                : Option.<String>none();
 
         AuthenticationType authType = addOn.getAuthentication().getType();
         final boolean useSharedSecret = addOnUsesSymmetricSharedSecret(authType, JWT_ALGORITHM);
-        String sharedSecret = useSharedSecret ? optionalPreviousSharedSecret.getOrElse(sharedSecretService.next()) : null;
+        String sharedSecret = useSharedSecret ? maybeSharedSecret.getOrElse(sharedSecretService.next()) : null;
         String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
 
-        String userKey = provisionUserIfNecessary(addOn, previousAddOn);
+        String userKey = provisionUserIfNecessary(addOn, previousDescriptor);
 
         AddonSettings settings = new AddonSettings()
                 .setAuth(authType.name())
@@ -244,9 +240,9 @@ public class ConnectAddonManager
         //make the sync callback if needed
         if (!Strings.isNullOrEmpty(addOn.getLifecycle().getInstalled()))
         {
-            if (optionalPreviousSharedSecret.isDefined())
+            if (maybeSharedSecret.isDefined())
             {
-                requestInstallCallback(addOn, sharedSecret, optionalPreviousSharedSecret.get());
+                requestInstallCallback(addOn, sharedSecret, maybeSharedSecret.get());
             }
             else
             {
@@ -267,9 +263,9 @@ public class ConnectAddonManager
         return addOn;
     }
 
-    public String provisionUserIfNecessary(ConnectAddonBean addOn, Option<ConnectAddonBean> previousAddOn)
+    public String provisionUserIfNecessary(ConnectAddonBean addOn, String previousDescriptor)
     {
-        return addOnNeedsAUser(addOn) ? provisionAddOnUserAndScopes(addOn, previousAddOn) : null;
+        return addOnNeedsAUser(addOn) ? provisionAddOnUserAndScopes(addOn, previousDescriptor) : null;
     }
 
     public void enableConnectAddon(final String pluginKey) throws ConnectAddOnUserInitException
@@ -697,15 +693,16 @@ public class ConnectAddonManager
         return AuthenticationType.JWT.equals(authType) && algorithm.requiresSharedSecret();
     }
 
-    private String provisionAddOnUserAndScopes(ConnectAddonBean addOn, Option<ConnectAddonBean> previousAddOn)
+    private String provisionAddOnUserAndScopes(ConnectAddonBean addOn, String previousDescriptor)
             throws PluginInstallException
     {
         Set<ScopeName> previousScopes = Sets.newHashSet();
         Set<ScopeName> newScopes = addOn.getScopes();
 
-        if (previousAddOn.isDefined())
+        if (StringUtils.isNotBlank(previousDescriptor))
         {
-            previousScopes = previousAddOn.get().getScopes();
+            ConnectAddonBean previousAddOn = connectAddonBeanFactory.fromJson(previousDescriptor);
+            previousScopes = previousAddOn.getScopes();
         }
 
         try
