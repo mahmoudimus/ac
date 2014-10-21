@@ -186,6 +186,7 @@ public abstract class AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, INSTALLED);
             plugin = testPluginInstaller.installAddon(addon);
             addonKey = plugin.getKey();
+            request = testFilterResults.getRequest(addonKey, INSTALLED);
             assertEquals(signCallbacksWithJwt(), request.hasJwt());
         }
         finally
