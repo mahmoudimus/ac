@@ -33,6 +33,12 @@ or Confluence Cloud with Atlassian Connect as follows:
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
 
+## [1.1.10](../release-notes/1-1-0.html#1.1.10)
+* Fixed: add-on loaded twice in the Issue Navigator
+* Fixed: adminpage iframe has padding / margin
+* Send Connect version information to the add-on
+* Scopes white-list JIRA user picker API
+
 ## [1.1.9](../release-notes/1-1-0.html#1.1.9)
 * First phase for [Blueprints](../modules/confluence/blueprint.html)
 
