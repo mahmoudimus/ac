@@ -167,7 +167,8 @@ window._AP.contentResolver = {
             "h: '100%'," + 
             "src: '" + url + "'," + 
             "productCtx: '{}'," + 
-            "data: {}" + 
+            "data: {}," +
+            "uiParams: " + (JSON.stringify(options.uiParams) || "{}") +
         '});' + 
       '});' +
     "</script></div>";
