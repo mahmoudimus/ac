@@ -189,7 +189,7 @@ public class ConnectAddonManager
      * @param jsonDescriptor the json descriptor of the add-on to install
      * @return a {@link ConnectAddonBean} representation of the add-on
      */
-    public ConnectAddonBean installConnectAddon(String jsonDescriptor, PluginState targetState, com.atlassian.fugue.Option<String> maybeSharedSecret)
+    public ConnectAddonBean installConnectAddon(String jsonDescriptor, PluginState targetState, com.atlassian.fugue.Option<String> maybePreviousSharedSecret)
     {
         long startTime = System.currentTimeMillis();
 
@@ -213,42 +213,42 @@ public class ConnectAddonManager
 
         String previousDescriptor = addonRegistry.getDescriptor(pluginKey);
 
-        AuthenticationType authType = addOn.getAuthentication().getType();
-        final boolean useSharedSecret = addOnUsesSymmetricSharedSecret(authType, JWT_ALGORITHM);
-        String sharedSecret = useSharedSecret ? maybeSharedSecret.getOrElse(sharedSecretService.next()) : null;
-        String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
+        AuthenticationType newAuthType = addOn.getAuthentication().getType();
+        final boolean newUseSharedSecret = addOnUsesSymmetricSharedSecret(newAuthType, JWT_ALGORITHM);
+        String newSharedSecret = newUseSharedSecret ? maybePreviousSharedSecret.getOrElse(sharedSecretService.next()) : null;
+        String newAddOnSigningKey = newUseSharedSecret ? newSharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
 
         String userKey = provisionUserIfNecessary(addOn, previousDescriptor);
 
         AddonSettings settings = new AddonSettings()
-                .setAuth(authType.name())
+                .setAuth(newAuthType.name())
                 .setBaseUrl(addOn.getBaseUrl())
                 .setDescriptor(jsonDescriptor)
                 .setRestartState(PluginState.DISABLED.name())
                 .setUserKey(userKey);
 
-        if (!Strings.isNullOrEmpty(sharedSecret))
+        if (!Strings.isNullOrEmpty(newSharedSecret))
         {
-            settings.setSecret(sharedSecret);
+            settings.setSecret(newSharedSecret);
         }
 
         addonRegistry.storeAddonSettings(pluginKey, settings);
 
         //applink MUST be created before any modules but AFTER we store the settings
-        connectApplinkManager.createAppLink(addOn, addOn.getBaseUrl(), authType, addOnSigningKey, userKey);
+        connectApplinkManager.createAppLink(addOn, addOn.getBaseUrl(), newAuthType, newAddOnSigningKey, userKey);
 
         //make the sync callback if needed
         if (!Strings.isNullOrEmpty(addOn.getLifecycle().getInstalled()))
         {
             // TODO ACDEV-1596: Because we've got exactly one auth generator per add-on this if statement's condition
             // will cause us to NOT sign if the old descriptor used a shared secret but the new descriptor does NOT.
-            if (maybeSharedSecret.isDefined() && useSharedSecret)
+            if (maybePreviousSharedSecret.isDefined() && newUseSharedSecret)
             {
-                requestInstallCallback(addOn, sharedSecret, maybeSharedSecret.get());
+                requestInstallCallback(addOn, newSharedSecret, maybePreviousSharedSecret.get());
             }
             else
             {
-                requestInstallCallback(addOn, sharedSecret);
+                requestInstallCallback(addOn, newSharedSecret);
             }
         }
 
