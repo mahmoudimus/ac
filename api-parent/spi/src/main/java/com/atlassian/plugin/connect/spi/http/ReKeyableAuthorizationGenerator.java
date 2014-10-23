@@ -3,6 +3,9 @@ package com.atlassian.plugin.connect.spi.http;
 import java.net.URI;
 import java.util.Map;
 
+/**
+ * Generates an authorization http header value, optionally using an arbitrary secret.
+ */
 public interface ReKeyableAuthorizationGenerator extends AuthorizationGenerator
 {
     /**
