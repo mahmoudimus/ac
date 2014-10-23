@@ -114,15 +114,8 @@ function createAndExportCommands() {
 	client.get(CONNECT_VERSIONS_DAC_URL, function (data, response) {
 		console.log('retrieved current versions from DAC');
 		_oldCommands = data;
-		console.log(_commands);
-		console.log(_oldCommands);
 		
-		if(_commands.environment.dev.connectVersion != _oldCommands.environment.dev.connectVersion
-			|| _commands.environment.dev.confluenceVersion != _oldCommands.environment.dev.confluenceVersion
-			|| _commands.environment.dev.jiraVersion != _oldCommands.environment.dev.jiraVersion
-			|| _commands.environment.prd.connectVersion != _oldCommands.environment.prd.connectVersion
-			|| _commands.environment.prd.confluenceVersion != _oldCommands.environment.prd.confluenceVersion
-			|| _commands.environment.prd.jiraVersion != _oldCommands.environment.prd.jiraVersion) {
+		if(newVersionsAvailable()) {
 			
 			console.log('New versions of the commands');	
 			exportCommands();
@@ -133,6 +126,15 @@ function createAndExportCommands() {
 	});
 }
 
+function newVersionsAvailable() {
+	return _commands.environment.dev.connectVersion != _oldCommands.environment.dev.connectVersion
+		|| _commands.environment.dev.confluenceVersion != _oldCommands.environment.dev.confluenceVersion
+		|| _commands.environment.dev.jiraVersion != _oldCommands.environment.dev.jiraVersion
+		|| _commands.environment.prd.connectVersion != _oldCommands.environment.prd.connectVersion
+		|| _commands.environment.prd.confluenceVersion != _oldCommands.environment.prd.confluenceVersion
+		|| _commands.environment.prd.jiraVersion != _oldCommands.environment.prd.jiraVersion;
+}
+
 /**
  * Create the atlas-run-standalone commands
  */
@@ -140,7 +142,7 @@ function createCommands() {
 	var validFrom = new Date();
     _commands =
     {
-		'validFrom': validFrom.toDateString(),
+		'validFrom': validFrom.toISOString(),
 		'validTo' : 'OPEN',
         'environment': {
             'dev': {
@@ -183,10 +185,11 @@ function exportCommands() {
         	console.log('target directory ' + outputDir + ' could not be created: ' + err);
    	 	} else {
 			client.get(VERSIONS_INDEX_URL, function (data, response) {
-				if(response.statusCode != 404)
+				if(response.statusCode != 404) {
 					_index = data;
+				}
 				var validTo = new Date();
-				_oldCommands.validTo = validTo.toDateString();
+				_oldCommands.validTo = validTo.toISOString();
 				var indexEntry = {};
 				indexEntry.validFrom = _oldCommands.validFrom;
 				indexEntry.validTo = _oldCommands.validTo;
@@ -194,8 +197,9 @@ function exportCommands() {
 				indexEntry.versionsFile = DAC_BASE_URL + versionsFile;
 		
 				_index.unshift(indexEntry);
-				while(_index.length > MAX_HISTORY)
+				while(_index.length > MAX_HISTORY) {
 					_index.pop();
+				}
 
 				var files = 
 				[
