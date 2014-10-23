@@ -300,11 +300,6 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.webhooks</groupId>
-            <artifactId>atlassian-webhooks-spi</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.webhooks</groupId>
             <artifactId>atlassian-webhooks-plugin</artifactId>
             <version>${atlassian.webhooks.version}</version>
             <scope>provided</scope>
