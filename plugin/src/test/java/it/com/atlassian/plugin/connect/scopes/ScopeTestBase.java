@@ -1,5 +1,6 @@
 package it.com.atlassian.plugin.connect.scopes;
 
+import com.atlassian.extras.api.Product;
 import com.atlassian.jwt.SigningAlgorithm;
 import com.atlassian.jwt.core.HttpRequestCanonicalizer;
 import com.atlassian.jwt.core.writer.JsonSmartJwtJsonBuilder;
@@ -165,5 +166,9 @@ public abstract class ScopeTestBase
                 .build();
 
         return requestUtil.makeRequest(request);
+    }
+
+    protected boolean isJiraProduct() {
+        return Product.JIRA.getName().equals(applicationProperties.getDisplayName());
     }
 }
