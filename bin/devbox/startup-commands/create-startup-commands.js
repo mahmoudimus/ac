@@ -17,7 +17,7 @@ var argv = require('yargs')
     .usage('Usage: $0 --outputDir [path]')
     .demand(['outputDir'])
     .describe('outputDir', 'Target directory')
-    .argv;
+    .argv; 
 
 var outputDir = argv.outputDir;
 var secret = argv.secret;
