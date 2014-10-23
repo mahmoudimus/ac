@@ -472,7 +472,12 @@
             <dependency>
                 <groupId>com.atlassian.webhooks</groupId>
                 <artifactId>atlassian-webhooks-provider-spi</artifactId>
-                <version>2.0.0-m09</version>
+                <version>${atlassian.webhooks.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.webhooks</groupId>
+                <artifactId>atlassian-webhooks-spi</artifactId>
+                <version>${atlassian.webhooks.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.atlassian.jira</groupId>

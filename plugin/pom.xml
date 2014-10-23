@@ -300,6 +300,11 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.webhooks</groupId>
+            <artifactId>atlassian-webhooks-spi</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.webhooks</groupId>
             <artifactId>atlassian-webhooks-plugin</artifactId>
             <version>${atlassian.webhooks.version}</version>
             <scope>provided</scope>
@@ -568,12 +573,12 @@
                                 <pluginArtifact>
                                     <groupId>com.atlassian.webhooks</groupId>
                                     <artifactId>atlassian-webhooks-plugin</artifactId>
-                                    <version>${atlassian.webhooks.version}</version>
+                                    <version>2.0.0-m09</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.jira.plugins.webhooks</groupId>
                                     <artifactId>jira-webhooks-plugin</artifactId>
-                                    <version>${atlassian.jira.webhooks.version}</version>
+                                    <version>2.0.0-m04</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.httpclient</groupId>
@@ -647,7 +652,7 @@
                                 <pluginArtifact>
                                     <groupId>com.atlassian.webhooks</groupId>
                                     <artifactId>atlassian-webhooks-plugin</artifactId>
-                                    <version>${atlassian.webhooks.version}</version>
+                                    <version>2.0.0-m09</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.httpclient</groupId>
