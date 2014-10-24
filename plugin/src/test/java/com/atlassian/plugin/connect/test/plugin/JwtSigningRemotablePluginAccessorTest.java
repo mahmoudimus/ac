@@ -31,7 +31,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
@@ -52,6 +57,7 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
     private static final URI FULL_PATH_URI = URI.create(FULL_PATH_URL);
     private static final URI GET_PATH = URI.create("/path");
     private static final URI UNEXPECTED_ABSOLUTE_URI = URI.create("http://www.example.com/path");
+    private static final String SECRET = "secret";
 
     private
     @Mock
@@ -118,63 +124,63 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
     public void issuedAtTimeIsClaimed()
     {
         createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
-        verify(jwtService).issueJwt(argThat(hasAnyIssuedAtTime()), any(ApplicationLink.class));
+        verify(jwtService).issueJwt(argThat(hasAnyIssuedAtTime()), eq(SECRET));
     }
 
     @Test
     public void issuedAtTimeClaimIsReasonable()
     {
         createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
-        verify(jwtService).issueJwt(argThat(hasIssuedAtTimeCloseToNow()), any(ApplicationLink.class));
+        verify(jwtService).issueJwt(argThat(hasIssuedAtTimeCloseToNow()), eq(SECRET));
     }
 
     @Test
     public void expirationTimeIsClaimed()
     {
         createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
-        verify(jwtService).issueJwt(argThat(hasAnyExpirationTime()), any(ApplicationLink.class));
+        verify(jwtService).issueJwt(argThat(hasAnyExpirationTime()), eq(SECRET));
     }
 
     @Test
     public void expirationTimeClaimIsReasonable()
     {
         createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
-        verify(jwtService).issueJwt(argThat(hasExpiresAtTimeCloseToDefaultWindowFromNow()), any(ApplicationLink.class));
+        verify(jwtService).issueJwt(argThat(hasExpiresAtTimeCloseToDefaultWindowFromNow()), eq(SECRET));
     }
 
     @Test
     public void issuerIsClaimed()
     {
         createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
-        verify(jwtService).issueJwt(argThat(hasAnyIssuer()), any(ApplicationLink.class));
+        verify(jwtService).issueJwt(argThat(hasAnyIssuer()), eq(SECRET));
     }
 
     @Test
     public void issuerClaimIsCorrect()
     {
         createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
-        verify(jwtService).issueJwt(argThat(hasIssuer(CONSUMER_KEY)), any(ApplicationLink.class));
+        verify(jwtService).issueJwt(argThat(hasIssuer(CONSUMER_KEY)), eq(SECRET));
     }
 
     @Test
     public void subjectIsClaimed()
     {
         createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
-        verify(jwtService).issueJwt(argThat(hasAnySubject()), any(ApplicationLink.class));
+        verify(jwtService).issueJwt(argThat(hasAnySubject()), eq(SECRET));
     }
 
     @Test
     public void subjectClaimIsCorrect()
     {
         createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
-        verify(jwtService).issueJwt(argThat(hasSubject(USER_KEY)), any(ApplicationLink.class));
+        verify(jwtService).issueJwt(argThat(hasSubject(USER_KEY)), eq(SECRET));
     }
 
     @Test
     public void queryHashIsClaimed()
     {
         createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
-        verify(jwtService).issueJwt(argThat(hasAnyQueryHash()), any(ApplicationLink.class));
+        verify(jwtService).issueJwt(argThat(hasAnyQueryHash()), eq(SECRET));
     }
 
     @Test
@@ -185,14 +191,14 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
         CanonicalHttpUriRequest request = new CanonicalHttpUriRequest(HttpMethod.GET.toString(), URI.create(OUTGOING_FULL_GET_URL).getPath(), CONTEXT_PATH, GET_PARAMS_STRING_ARRAY);
         String expectedQueryHash = HttpRequestCanonicalizer.computeCanonicalRequestHash(request);
 
-        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), any(ApplicationLink.class));
+        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(SECRET));
     }
 
     @Test
     public void thereAreNoUnexpectedClaims()
     {
         createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
-        verify(jwtService).issueJwt(argThat(hasExactlyTheseClaims("iss", "sub", "iat", "exp", JwtConstants.Claims.QUERY_HASH)), any(ApplicationLink.class));
+        verify(jwtService).issueJwt(argThat(hasExactlyTheseClaims("iss", "sub", "iat", "exp", JwtConstants.Claims.QUERY_HASH)), eq(SECRET));
     }
 
     @Test
@@ -411,9 +417,10 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
 
     private RemotablePluginAccessor createRemotePluginAccessor(final String baseUrl)
     {
-        when(jwtService.issueJwt(any(String.class), eq(applicationLink))).thenReturn(MOCK_JWT);
+        when(jwtService.issueJwt(any(String.class), eq(SECRET))).thenReturn(MOCK_JWT);
         ConnectApplinkManager connectApplinkManager = mock(DefaultConnectApplinkManager.class);
         when(connectApplinkManager.getAppLink(PLUGIN_KEY)).thenReturn(applicationLink);
+        when(applicationLink.getProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME)).thenReturn(SECRET);
         Supplier<URI> baseUrlSupplier = new Supplier<URI>()
         {
             @Override

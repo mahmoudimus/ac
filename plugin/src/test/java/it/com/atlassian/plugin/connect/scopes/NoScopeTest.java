@@ -23,11 +23,13 @@ public class NoScopeTest extends ScopeTestBase
     /**
      * These tests are not exhaustive. They are samples across the cross-product endpoints.
      */
-    @ParameterizedWiredTest.Parameters(name="httpRequest", length=3)
+    @ParameterizedWiredTest.Parameters(name="httpRequest", length=5)
     protected Object[][] data = new Object[][]
     {
-            new Object[]{ HttpMethod.GET,  "/rest/atlassian-connect/1/license",  false }, // ported from TestAppPermissions
-            new Object[]{ HttpMethod.GET,  "/plugins/servlet/atlassian-connect", false }, // ported from TestAppPermissions
-            new Object[]{ HttpMethod.GET,  "/rest/applinks/2.0/entities",        false }
+            { HttpMethod.GET,  "/rest/atlassian-connect/1/license",  false }, // ported from TestAppPermissions
+            { HttpMethod.GET,  "/plugins/servlet/atlassian-connect", false }, // ported from TestAppPermissions
+            { HttpMethod.GET,  "/rest/applinks/2.0/entities",        false },
+            { HttpMethod.GET,  "/rest/greenhopper/1.0/rapidview",    false },
+            { HttpMethod.PUT,  "/rest/greenhopper/1.0/api/rank/before", false }
     };
 }

@@ -43,6 +43,12 @@ public class TestJwtService implements JwtService
     @Override
     public String issueJwt(String jsonPayload, ApplicationLink applicationLink) throws NotAJwtPeerException, JwtSigningException
     {
+        return issueJwt(jsonPayload, sharedSecret);
+    }
+
+    @Override
+    public String issueJwt(String jsonPayload, String secret) throws NotAJwtPeerException, JwtSigningException
+    {
         return jwtWriterFactory.macSigningWriter(SigningAlgorithm.HS256, sharedSecret).jsonToJwt(jsonPayload);
     }
 }
