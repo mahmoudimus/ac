@@ -10,6 +10,13 @@ var marketplace = require('./marketplace'),
     colors = require('colors');
 
 var marketplaceOpts = {
+        cliOptsCallback: function (nomnom) {
+            return nomnom.option('cache', {
+                help: 'Use downloaded descriptor cache',
+                abbr: 'c',
+                flag: true
+            });
+        },
         downloadDirectory: path.resolve(__dirname, "./descriptors"),
         marketplaceAddonCallback: function (addon, opts) {
             var descriptorUrl = _.find(addon.version.links, {
@@ -35,45 +42,59 @@ function downloadDescriptor(opts, addon, descriptorUrl, callback) {
             }
         }, opts);
     }
-    request({
-        uri: descriptorUrl,
-        method: "GET",
-        auth: opts.auth
-    }, function(error, response, body) {
-        if (error || response.statusCode < 200 || response.statusCode >= 300) {
-            console.log(("" + response.statusCode).red, "Unable to download descriptor for add-on", addonKey);
-            callback(error);
-        } else {
-            var type = 'xml';
-            try {
-                JSON.parse(body);
-                type = 'json';
-            } catch (e) {}
 
-            if (!opts.type || opts.type === type) {
-                var filename = opts.downloadDirectory + '/' + addonKey + '-descriptor' + "." + type;
-                fs.writeFile(filename, body, function(err) {
-                    if (err) {
-                        console.log("Unable to write descriptor for add-on " + addonKey + " to disk", err);
-                        callback(err);
-                        return;
-                    }
+    var type = 'json';
+    var filename = opts.downloadDirectory + '/' + addonKey + '-descriptor.' + type;
+    if (opts.cache && fs.existsSync(filename)) {
+        callback && callback({
+            addon: {
+                key: addonKey,
+                listing: addon
+            },
+            descriptorFilename: filename,
+            type: type,
+        }, fs.readFileSync(filename), opts);
+    } else {
+        request({
+            uri: descriptorUrl,
+            method: "GET",
+            auth: opts.auth
+        }, function(error, response, body) {
+            if (error || response.statusCode < 200 || response.statusCode >= 300) {
+                console.log(("" + response.statusCode).red, "Unable to download descriptor for add-on", addonKey);
+                callback(error);
+            } else {
+                type = 'xml';
+                try {
+                    JSON.parse(body);
+                    type = 'json';
+                } catch (e) {}
 
-                    callback && callback({
-                        addon: {
-                            key: addonKey,
-                            listing: addon
-                        },
-                        descriptorFilename: filename,
-                        type: type,
-                    }, body, opts);
-                });
-            } else if (opts.debug) {
-                var t = "Ignored add-on " + addonKey + " (" + type + ")";
-                console.log(t.grey);
+                if (!opts.type || opts.type === type) {
+                    var filename = opts.downloadDirectory + '/' + addonKey + '-descriptor' + "." + type;
+                    fs.writeFile(filename, body, function(err) {
+                        if (err) {
+                            console.log("Unable to write descriptor for add-on " + addonKey + " to disk", err);
+                            callback(err);
+                            return;
+                        }
+
+                        callback && callback({
+                            addon: {
+                                key: addonKey,
+                                listing: addon
+                            },
+                            descriptorFilename: filename,
+                            type: type,
+                        }, body, opts);
+                    });
+                } else if (opts.debug) {
+                    var t = "Ignored add-on " + addonKey + " (" + type + ")";
+                    console.log(t.grey);
+                }
             }
-        }
-    });
+        });
+    }
 }
 
 exports.run = function(runOpts) {
