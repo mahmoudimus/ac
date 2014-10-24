@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtService;
+import com.atlassian.jwt.applinks.exception.NotAJwtPeerException;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
@@ -17,6 +18,8 @@ import com.google.common.base.Supplier;
 
 import java.net.URI;
 import java.util.Map;
+
+import static com.atlassian.jwt.JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME;
 
 /**
  * Constructs and signs outgoing URLs using the JWT protocol.
@@ -43,7 +46,7 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
         this.consumerService = consumerService;
         this.connectApplinkManager = connectApplinkManager;
         this.userManager = userManager;
-        this.authorizationGenerator = new JwtAuthorizationGenerator(jwtService, getAppLink(), consumerService, URI.create(addon.getBaseUrl()));
+        this.authorizationGenerator = new JwtAuthorizationGenerator(jwtService, sharedSecretSupplier(getAppLink()), consumerService, URI.create(addon.getBaseUrl()));
     }
 
     @Override
@@ -53,7 +56,7 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
 
         UserKey userKey = userManager.getRemoteUserKey();
         String userKeyValue = userKey == null ? "" : userKey.getStringValue();
-        String encodedJwt = JwtAuthorizationGenerator.encodeJwt(HttpMethod.GET, targetPath, getBaseUrl(), params, userKeyValue, consumerService.getConsumer().getKey(), jwtService, getAppLink());
+        String encodedJwt = JwtAuthorizationGenerator.encodeJwt(HttpMethod.GET, targetPath, getBaseUrl(), params, userKeyValue, consumerService.getConsumer().getKey(), jwtService, requireSharedSecret(getAppLink()));
         final UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(URI.create(createGetUrl(targetPath, params))));
         uriBuilder.addQueryParameter(JwtConstants.JWT_PARAM_NAME, encodedJwt);
 
@@ -76,5 +79,29 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
     private ApplicationLink getAppLink()
     {
         return this.connectApplinkManager.getAppLink(getKey());
+    }
+
+    private static Supplier<String> sharedSecretSupplier(final ApplicationLink applicationLink)
+    {
+        return new Supplier<String>()
+        {
+            @Override
+            public String get()
+            {
+                return requireSharedSecret(applicationLink);
+            }
+        };
+    }
+
+    private static String requireSharedSecret(ApplicationLink applicationLink)
+    {
+        String sharedSecret = (String) applicationLink.getProperty(SHARED_SECRET_PROPERTY_NAME);
+
+        if (sharedSecret == null)
+        {
+            throw new NotAJwtPeerException(applicationLink);
+        }
+
+        return sharedSecret;
     }
 }
