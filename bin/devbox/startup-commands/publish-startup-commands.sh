@@ -6,4 +6,7 @@ if [ -n "$1" ]; then
     SSH=$1
 fi
 
-scp target/* uploads@developer-app.internal.atlassian.com:~/static/
+if [ -d "target" ]; then
+	echo "New command was created, deploying to DAC"
+	scp target/* uploads@developer-app.internal.atlassian.com:~/static/
+fi
