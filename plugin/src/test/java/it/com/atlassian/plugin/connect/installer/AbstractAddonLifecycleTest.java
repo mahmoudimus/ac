@@ -80,6 +80,8 @@ public abstract class AbstractAddonLifecycleTest
         this.applicationManager = applicationManager;
     }
 
+    protected abstract boolean signCallbacksWithJwt();
+
     protected void initBeans(AuthenticationBean authBean)
     {
         String pluginKeyPrefix = PLUGIN_KEY + "-" + authBean.getType().name().toLowerCase();
@@ -180,7 +182,14 @@ public abstract class AbstractAddonLifecycleTest
 
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
             assertEquals(POST, request.getMethod());
+            assertEquals(false, request.hasJwt()); // the first installation cannot be signed because there is no pre-shared key
 
+            // re-install, like when the vendor posts a new descriptor on marketplace
+            testFilterResults.clearRequest(addonKey, INSTALLED);
+            plugin = testPluginInstaller.installAddon(addon);
+            addonKey = plugin.getKey();
+            request = testFilterResults.getRequest(addonKey, INSTALLED);
+            assertEquals(signCallbacksWithJwt(), request.hasJwt());
         }
         finally
         {
@@ -237,7 +246,7 @@ public abstract class AbstractAddonLifecycleTest
 
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
             assertEquals(POST, request.getMethod());
-
+            assertEquals(signCallbacksWithJwt(), request.hasJwt());
         }
         finally
         {
@@ -461,8 +470,9 @@ public abstract class AbstractAddonLifecycleTest
 
             assertUserExistence(addon, true);
             testPluginInstaller.disableAddon(addonKey);
-            waitForWebhook(addonKey, DISABLED);
+            ServletRequestSnapshot request = waitForWebhook(addonKey, DISABLED);
             assertUserExistence(addon, false);
+            assertEquals(signCallbacksWithJwt(), request.hasJwt());
         }
         finally
         {
@@ -497,10 +507,10 @@ public abstract class AbstractAddonLifecycleTest
             assertUserExistence(addon, false);
 
             testPluginInstaller.enableAddon(addonKey);
-
-            waitForWebhook(addonKey,ENABLED);
+            ServletRequestSnapshot request = waitForWebhook(addonKey,ENABLED);
 
             assertUserExistence(addon, true);
+            assertEquals(signCallbacksWithJwt(), request.hasJwt());
         }
         finally
         {
@@ -515,14 +525,17 @@ public abstract class AbstractAddonLifecycleTest
         }
     }
 
-    private void waitForWebhook(final String addonKey, final String path)
+    private ServletRequestSnapshot waitForWebhook(final String addonKey, final String path)
     {
+        final ServletRequestSnapshot[] request = {null};
+
         WaitUntil.invoke(new WaitUntil.WaitCondition()
         {
             @Override
             public boolean isFinished()
             {
-                return null != testFilterResults.getRequest(addonKey, path);
+                request[0] = testFilterResults.getRequest(addonKey, path);
+                return null != request[0];
             }
 
             @Override
@@ -531,6 +544,8 @@ public abstract class AbstractAddonLifecycleTest
                 return "waiting for enable webhook post...";
             }
         },5);
+
+        return request[0];
     }
 
     private void assertVersion(Option<String> maybeHeader)

@@ -2,12 +2,14 @@ package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.fugue.Option;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.Response;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.jwt.JwtConstants;
+import com.atlassian.jwt.SigningAlgorithm;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
@@ -29,21 +31,26 @@ import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserDisabl
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.spi.event.*;
+import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
+import com.atlassian.plugin.connect.spi.event.ConnectAddonEnableFailedEvent;
+import com.atlassian.plugin.connect.spi.event.ConnectAddonEnabledEvent;
+import com.atlassian.plugin.connect.spi.event.ConnectAddonInstalledEvent;
+import com.atlassian.plugin.connect.spi.event.ConnectAddonUninstallFailedEvent;
+import com.atlassian.plugin.connect.spi.event.ConnectAddonUninstalledEvent;
+import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.spi.http.ReKeyableAuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.UriBuilder;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
-
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -53,7 +60,6 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
-
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
@@ -81,11 +87,12 @@ public class ConnectAddonManager
     private static final Logger log = LoggerFactory.getLogger(ConnectAddonManager.class);
     private static final String HTTP_ERROR_I18N_KEY_PREFIX = "connect.install.error.remote.host.bad.response.";
     private static final List<Integer> OK_INSTALL_HTTP_CODES = asList(200, 201, 204);
+    private static final SigningAlgorithm JWT_ALGORITHM = SigningAlgorithm.HS256; // currently, this is the only algorithm that we support
 
-    private int testConnectionTimeout = 5 * 1000;
-    private int testSocketTimeout = 5 * 1000;
-    private int testRequestTimeout = 5 * 3000;
-    private long testLeaseTimeout = TimeUnit.SECONDS.toMillis(3);
+    private static final int TEST_CONNECTION_TIMEOUT = 5 * 1000;
+    private static final int TEST_SOCKET_TIMEOUT = 5 * 1000;
+    private static final int TEST_REQUEST_TIMEOUT = 5 * 3000;
+    private static final long TEST_LEASE_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
 
 
     public static final String USE_TEST_HTTP_CLIENT = "use.test.http.client";
@@ -150,10 +157,10 @@ public class ConnectAddonManager
         if (Boolean.parseBoolean(System.getProperty(USE_TEST_HTTP_CLIENT, "false")) && !isTestHttpClient.get())
         {
             HttpClientOptions options = new HttpClientOptions();
-            options.setConnectionTimeout(testConnectionTimeout, TimeUnit.MILLISECONDS);
-            options.setRequestTimeout(testRequestTimeout, TimeUnit.MILLISECONDS);
-            options.setSocketTimeout(testSocketTimeout, TimeUnit.MILLISECONDS);
-            options.setLeaseTimeout(testLeaseTimeout);
+            options.setConnectionTimeout(TEST_CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
+            options.setRequestTimeout(TEST_REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
+            options.setSocketTimeout(TEST_SOCKET_TIMEOUT, TimeUnit.MILLISECONDS);
+            options.setLeaseTimeout(TEST_LEASE_TIMEOUT);
 
             this.httpClient = httpClientFactory.create(options);
             this.isTestHttpClient.set(true);
@@ -180,7 +187,7 @@ public class ConnectAddonManager
      * @param jsonDescriptor the json descriptor of the add-on to install
      * @return a {@link ConnectAddonBean} representation of the add-on
      */
-    public ConnectAddonBean installConnectAddon(String jsonDescriptor, PluginState targetState, com.atlassian.fugue.Option<String> maybeSharedSecret)
+    public ConnectAddonBean installConnectAddon(String jsonDescriptor, PluginState targetState, com.atlassian.fugue.Option<String> maybePreviousSharedSecret)
     {
         long startTime = System.currentTimeMillis();
 
@@ -204,34 +211,43 @@ public class ConnectAddonManager
 
         String previousDescriptor = addonRegistry.getDescriptor(pluginKey);
 
-        AuthenticationType authType = addOn.getAuthentication().getType();
-        final boolean useSharedSecret = addOnUsesSymmetricSharedSecret(authType); // TODO ACDEV-378: also check the algorithm
-        String sharedSecret = useSharedSecret ? maybeSharedSecret.getOrElse(sharedSecretService.next()) : null;
-        String addOnSigningKey = useSharedSecret ? sharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
+        AuthenticationType newAuthType = addOn.getAuthentication().getType();
+        final boolean newUseSharedSecret = addOnUsesSymmetricSharedSecret(newAuthType, JWT_ALGORITHM);
+        String newSharedSecret = newUseSharedSecret ? maybePreviousSharedSecret.getOrElse(sharedSecretService.next()) : null;
+        String newAddOnSigningKey = newUseSharedSecret ? newSharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
 
         String userKey = provisionUserIfNecessary(addOn, previousDescriptor);
 
         AddonSettings settings = new AddonSettings()
-                .setAuth(authType.name())
+                .setAuth(newAuthType.name())
                 .setBaseUrl(addOn.getBaseUrl())
                 .setDescriptor(jsonDescriptor)
                 .setRestartState(PluginState.DISABLED.name())
                 .setUserKey(userKey);
 
-        if (!Strings.isNullOrEmpty(sharedSecret))
+        if (!Strings.isNullOrEmpty(newSharedSecret))
         {
-            settings.setSecret(sharedSecret);
+            settings.setSecret(newSharedSecret);
         }
 
         addonRegistry.storeAddonSettings(pluginKey, settings);
 
         //applink MUST be created before any modules but AFTER we store the settings
-        connectApplinkManager.createAppLink(addOn, addOn.getBaseUrl(), authType, addOnSigningKey, userKey);
+        connectApplinkManager.createAppLink(addOn, addOn.getBaseUrl(), newAuthType, newAddOnSigningKey, userKey);
 
         //make the sync callback if needed
         if (!Strings.isNullOrEmpty(addOn.getLifecycle().getInstalled()))
         {
-            requestInstallCallback(addOn, sharedSecret);
+            // TODO ACDEV-1596: Because we've got exactly one auth generator per add-on this if statement's condition
+            // will cause us to NOT sign if the old descriptor used a shared secret but the new descriptor does NOT.
+            if (maybePreviousSharedSecret.isDefined() && newUseSharedSecret)
+            {
+                requestInstallCallback(addOn, newSharedSecret, maybePreviousSharedSecret.get());
+            }
+            else
+            {
+                requestInstallCallback(addOn, newSharedSecret);
+            }
         }
 
         eventPublisher.publish(new ConnectAddonInstalledEvent(pluginKey));
@@ -366,7 +382,12 @@ public class ConnectAddonManager
                     {
                         try
                         {
-                            callSyncHandler(addon, addon.getLifecycle().getUninstalled(), createEventDataForUninstallation(pluginKey, addon));
+                            final URI callbackUri = getURI(addon.getBaseUrl(), addon.getLifecycle().getUninstalled());
+                            callSyncHandler(addon.getKey(),
+                                            addOnUsesJwtAuthentication(addon),
+                                            callbackUri,
+                                            createEventDataForUninstallation(pluginKey, addon),
+                                            getAuthHeader(callbackUri, remotablePluginAccessorFactory.get(addon).getAuthorizationGenerator()));
                         }
                         catch (LifecycleCallbackException e)
                         {
@@ -412,15 +433,49 @@ public class ConnectAddonManager
         return connectAddonBeanFactory.fromJsonSkipValidation(descriptor);
     }
 
+    // first install: no previous shared secret, no signing
     private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret)
+    {
+        final URI callbackUri = getURI(addon.getBaseUrl(), addon.getLifecycle().getInstalled());
+        requestInstallCallback(addon, sharedSecret, callbackUri, Option.<String>none());
+    }
+
+    // reinstalls: sign with the previous shared secret so that the add-on can verify that the sender of the request is in possession of the previous shared secret
+    private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret, String previousSharedSecret)
+    {
+        final URI callbackUri = getURI(addon.getBaseUrl(), addon.getLifecycle().getInstalled());
+        final AuthorizationGenerator authorizationGenerator = remotablePluginAccessorFactory.get(addon).getAuthorizationGenerator();
+
+        // NB: check that the auth generator matches the request/non-request to sign with an arbitrary key on installation, not on every callback,
+        // because signing with a previous key happens only on installation
+        // (the runtime "instanceof ReKeyableAuthorizationGenerator" check is necessary because the OAuthSigningRemotablePluginAccessor is explicityly not re-keyable: it must sign with the same oauth key every time)
+        if (authorizationGenerator instanceof ReKeyableAuthorizationGenerator)
+        {
+            String authHeader = getAuthHeader(callbackUri, (ReKeyableAuthorizationGenerator) authorizationGenerator, previousSharedSecret);
+            requestInstallCallback(addon, sharedSecret, callbackUri, Option.some(authHeader));
+        }
+        else
+        {
+            // this should never happen; if it does then it will result in a "something bad happened; talk to an admin" error message in the UI
+            throw new IllegalArgumentException(String.format("Cannot sign outgoing request to %s with an arbitrary secret because the authorization generator for add-on %s is a %s, which is not a %s!",
+                    callbackUri, addon.getKey(), authorizationGenerator.getClass().getSimpleName(), ReKeyableAuthorizationGenerator.class.getSimpleName()));
+        }
+    }
+
+    private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret, URI callbackUri, Option<String> authHeader)
     {
         try
         {
-            callSyncHandler(addon, addon.getLifecycle().getInstalled(), createEventDataForInstallation(addon.getKey(), sharedSecret, addon));
+            callSyncHandler(addon.getKey(),
+                    addOnUsesJwtAuthentication(addon),
+                    callbackUri,
+                    createEventDataForInstallation(addon.getKey(), sharedSecret, addon),
+                    authHeader);
         }
         catch (LifecycleCallbackException e)
         {
-            throw new PluginInstallException(e.getMessage(), e.getI18nKey());
+            final com.atlassian.upm.api.util.Option<String> i18nKey = e.getI18nKey().isDefined() ? com.atlassian.upm.api.util.Option.some(e.getI18nKey().get()) : com.atlassian.upm.api.util.Option.<String>none();
+            throw new PluginInstallException(e.getMessage(), i18nKey);
         }
     }
 
@@ -456,18 +511,16 @@ public class ConnectAddonManager
     }
 
     // NB: the sharedSecret should be distributed synchronously and only on installation
-    private void callSyncHandler(ConnectAddonBean addon, String path, String jsonEventData) throws LifecycleCallbackException
+    private void callSyncHandler(String addOnKey, final boolean addOnUsesJwtAuthentication, URI callbackUri, String jsonEventData, Option<String> authHeader) throws LifecycleCallbackException
     {
-        String callbackUrl = addon.getBaseUrl() + path;
-
         // try distributing prod shared secrets over http (note the lack of "s") and it shall be rejected
-        if (!isDevModeService.isDevMode() && null != addon.getAuthentication() && AuthenticationType.JWT.equals(addon.getAuthentication().getType()) && !callbackUrl.toLowerCase().startsWith("https"))
+        if (!isDevModeService.isDevMode() && addOnUsesJwtAuthentication && !callbackUri.getScheme().toLowerCase().startsWith("https"))
         {
-            String message = String.format("Cannot issue callback except via HTTPS. Current base URL = '%s'", addon.getBaseUrl());
+            String message = String.format("Cannot issue callback except via HTTPS. Current URL = '%s'", callbackUri);
             throw new LifecycleCallbackException(message, Option.some("connect.remote.upm.install.exception"));
         }
 
-        Response response = getSyncHandlerResponse(addon, callbackUrl, jsonEventData);
+        Response response = getSyncHandlerResponse(addOnKey, callbackUri, jsonEventData, authHeader);
 
         final int statusCode = response.getStatusCode();
         // a selection of 2xx response codes both indicate success and are semantically valid for this callback
@@ -475,27 +528,38 @@ public class ConnectAddonManager
         {
             String statusText = response.getStatusText();
             String responseEntity = response.getEntity(); // calling response.getEntity() multiple times results in IllegalStateException("Entity may only be accessed once")
-            log.error("Error contacting remote application at " + callbackUrl + " " + statusCode + ":[" + statusText + "]:" + responseEntity);
+            log.error("Error contacting remote application at " + callbackUri + " " + statusCode + ":[" + statusText + "]:" + responseEntity);
 
             String message = "Error contacting remote application " + statusCode + ":[" + statusText + "]:" + responseEntity;
             throw new LifecycleCallbackException(message, findI18nKeyForHttpErrorCode(statusCode));
         }
     }
 
-    private Response getSyncHandlerResponse(ConnectAddonBean addon, String callbackUrl, String jsonEventData) throws LifecycleCallbackException
+    private static boolean addOnUsesJwtAuthentication(ConnectAddonBean addon)
+    {
+        return null != addon.getAuthentication() && AuthenticationType.JWT.equals(addon.getAuthentication().getType());
+    }
+
+    private static Option<String> getAuthHeader(final URI callbackUri, final AuthorizationGenerator authorizationGenerator)
+    {
+        return authorizationGenerator.generate(HttpMethod.POST, callbackUri, Collections.<String, String[]>emptyMap());
+    }
+
+    private static String getAuthHeader(final URI callbackUri, final ReKeyableAuthorizationGenerator authorizationGenerator, final String secret)
+    {
+        return authorizationGenerator.generate(HttpMethod.POST, callbackUri, Collections.<String, String[]>emptyMap(), secret);
+    }
+
+    private Response getSyncHandlerResponse(String addOnKey, URI callbackUri, String jsonEventData, Option<String> authHeader) throws LifecycleCallbackException
     {
         try
         {
-            URI installHandler = getURI(callbackUrl);
-
-            Request.Builder request = httpClient.newRequest(installHandler);
+            Request.Builder request = httpClient.newRequest(callbackUri);
             request.setAttribute("purpose", "web-hook-notification");
-            request.setAttribute("pluginKey", addon.getKey());
+            request.setAttribute("pluginKey", addOnKey);
             request.setContentType(MediaType.APPLICATION_JSON);
             request.setEntity(jsonEventData);
 
-            // It's important to use the plugin in the call to remotablePluginAccessorFactory.get(plugin) as we might be calling this due to an uninstall event
-            com.atlassian.fugue.Option<String> authHeader = remotablePluginAccessorFactory.get(addon).getAuthorizationGenerator().generate(HttpMethod.POST, installHandler, Collections.<String, String[]>emptyMap());
             if (authHeader.isDefined())
             {
                 request.setHeader(AUTHORIZATION_HEADER, authHeader.get());
@@ -507,7 +571,7 @@ public class ConnectAddonManager
         }
         catch (Exception e)
         {
-            log.error("Error contacting remote application at " + callbackUrl + "  [" + e.getMessage() + "]", e);
+            log.error("Error contacting remote application at " + callbackUri + "  [" + e.getMessage() + "]", e);
             String message = "Error contacting remote application [" + e.getMessage() + "]";
 
             if (e.getCause() instanceof UnknownHostException)
@@ -517,12 +581,19 @@ public class ConnectAddonManager
             }
             else if (e.getCause() instanceof SocketTimeoutException)
             {
-                String i18nMessage = i18nResolver.getText("connect.install.error.remote.host.timeout", callbackUrl);
+                String i18nMessage = i18nResolver.getText("connect.install.error.remote.host.timeout", removeQuery(callbackUri));
                 throw new LifecycleCallbackException(message, Option.some(i18nMessage));
             }
 
             throw new LifecycleCallbackException(message, Option.some("connect.remote.upm.install.exception"));
         }
+    }
+
+    // we don't want to see "?user_key=2c9680504384c481014384c49e6a0004" in installation failure messages show to the users
+    private String removeQuery(URI installHandler)
+    {
+        final String trimmed = installHandler.toString().replace(installHandler.getQuery(), "");
+        return trimmed.endsWith("?") ? trimmed.substring(0, trimmed.length()-1) : trimmed;
     }
 
     private Option<String> findI18nKeyForHttpErrorCode(final int responseCode)
@@ -541,9 +612,9 @@ public class ConnectAddonManager
         return Option.some(i18nKey);
     }
 
-    private URI getURI(String url)
+    private URI getURI(String addOnBaseUrl, String endpointRelativePath)
     {
-        UriBuilder builder = new UriBuilder().setPath(url);
+        UriBuilder builder = new UriBuilder().setPath(addOnBaseUrl + endpointRelativePath);
 
         UserProfile user = userManager.getRemoteUser();
         if (null != user)
@@ -623,9 +694,10 @@ public class ConnectAddonManager
         return bundleVersion == null ? null : bundleVersion.toString();
     }
 
-    private boolean addOnUsesSymmetricSharedSecret(AuthenticationType authType)
+    // TODO ACDEV-378: also check the algorithm
+    private boolean addOnUsesSymmetricSharedSecret(AuthenticationType authType, SigningAlgorithm algorithm)
     {
-        return AuthenticationType.JWT.equals(authType);
+        return AuthenticationType.JWT.equals(authType) && algorithm.requiresSharedSecret();
     }
 
     private String provisionAddOnUserAndScopes(ConnectAddonBean addOn, String previousDescriptor)
@@ -654,7 +726,7 @@ public class ConnectAddonManager
             // This is a hack; throwing with 18nkey and parameters does not work,
             // when we throw an exception with a key that is not in the i18nproperties file
             // UPM displays the 'key' (which is really our error message)
-            throw new PluginInstallException(e.getMessage(), Option.option(i18nMessage), e, true);
+            throw new PluginInstallException(e.getMessage(), com.atlassian.upm.api.util.Option.some(i18nMessage), e, true);
         }
 
     }

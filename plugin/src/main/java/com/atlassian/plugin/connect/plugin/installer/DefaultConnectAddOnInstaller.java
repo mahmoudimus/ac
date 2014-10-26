@@ -107,7 +107,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 throw new PluginInstallException("Unable to install connect add on because it has no modules defined", errorI18nKey);
             }
 
-            targetState = addonRegistry.getRestartState(pluginKey);
+            targetState = PluginState.valueOf(previousSettings.getRestartState()); // don't go back to the registry unnecessarily; it will just return the same previousSettings
 
             removeOldPlugin(pluginKey);
 

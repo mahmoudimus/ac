@@ -23,6 +23,12 @@ public class AddonLifecycleAuthNoneTest extends AbstractAddonLifecycleTest
         super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService, userManager, applicationService, applicationManager);
     }
 
+    @Override
+    protected boolean signCallbacksWithJwt()
+    {
+        return false;
+    }
+
     @BeforeClass
     public void setup() throws Exception
     {

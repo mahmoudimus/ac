@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.testsupport.filter;
 
+import com.atlassian.fugue.Option;
+import com.atlassian.jwt.JwtConstants;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import org.apache.commons.io.IOUtils;
@@ -110,9 +112,28 @@ public class ServletRequestSnapshot
         return headers;
     }
 
+    public boolean hasJwtHeader()
+    {
+        Option<String> authorizationHeader = getAuthorizationHeader();
+        return authorizationHeader.isDefined() &&
+               authorizationHeader.get().matches("^" + JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX + ".+\\..+\\..+$");
+    }
+
     public Map<String, String[]> getParameters()
     {
         return parameters;
+    }
+
+    public boolean hasJwtParameter()
+    {
+        return parameters.containsKey(JwtConstants.JWT_PARAM_NAME) &&
+               parameters.get(JwtConstants.JWT_PARAM_NAME).length == 1 &&
+               parameters.get(JwtConstants.JWT_PARAM_NAME)[0].matches("^.+\\..+\\..+$");
+    }
+
+    public boolean hasJwt()
+    {
+        return hasJwtHeader() || hasJwtParameter();
     }
 
     public String getMethod()
@@ -138,5 +159,17 @@ public class ServletRequestSnapshot
     public String getRemoteUsername()
     {
         return remoteUsername;
+    }
+
+    // the case of the header can be changed at runtime :(
+    private Option<String> getAuthorizationHeader()
+    {
+        final Option<String> header = getHeader(JwtConstants.HttpRequests.AUTHORIZATION_HEADER);
+        return header.isDefined() ? header : getHeader(JwtConstants.HttpRequests.AUTHORIZATION_HEADER.toLowerCase());
+    }
+
+    private Option<String> getHeader(String headerName)
+    {
+        return headers.containsKey(headerName) ? Option.some(headers.get(headerName)) : Option.<String>none();
     }
 }
