@@ -30,9 +30,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
 
@@ -128,7 +126,7 @@ public abstract class ScopeTestBase
         {
             try
             {
-                testPluginInstaller.uninstallJsonAddon(addOn);
+                testPluginInstaller.uninstallAddon(addOn);
             }
             catch (IOException e)
             {

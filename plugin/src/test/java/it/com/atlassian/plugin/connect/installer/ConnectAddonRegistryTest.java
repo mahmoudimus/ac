@@ -85,7 +85,7 @@ public class ConnectAddonRegistryTest
         {
             if (null != plugin)
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -119,7 +119,7 @@ public class ConnectAddonRegistryTest
 
             assertEquals(BASE_URL, connectAddonRegistry.getBaseUrl(pluginKey));
 
-            testPluginInstaller.uninstallJsonAddon(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
             plugin = null;
 
             assertEquals("", connectAddonRegistry.getBaseUrl(pluginKey));
@@ -129,7 +129,7 @@ public class ConnectAddonRegistryTest
         {
             if (null != plugin)
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }

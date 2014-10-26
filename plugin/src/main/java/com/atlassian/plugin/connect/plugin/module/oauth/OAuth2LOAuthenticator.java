@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.module.oauth;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.Check;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
-import com.atlassian.plugin.connect.plugin.module.permission.ApiScopingFilter;
+import com.atlassian.plugin.connect.plugin.scopes.ApiScopingFilter;
 import com.atlassian.plugin.connect.plugin.util.DefaultMessage;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;

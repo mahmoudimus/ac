@@ -80,8 +80,6 @@ import static java.util.Arrays.asList;
 
 /**
  * The ConnectAddonManager handles all the stuff that needs to happen when an addon is enabled/disabled.
- *
- * @see com.atlassian.plugin.connect.plugin.event.RemoteEventsHandler for legacy xml-descriptor add-ons.
  */
 @Named
 public class ConnectAddonManager

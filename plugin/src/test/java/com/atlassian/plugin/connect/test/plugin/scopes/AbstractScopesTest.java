@@ -1,10 +1,8 @@
 package com.atlassian.plugin.connect.test.plugin.scopes;
 
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.PermissionManagerImpl;
+import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManagerImpl;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
@@ -12,9 +10,6 @@ import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
 import com.atlassian.plugin.connect.plugin.service.ScopeServiceImpl;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
-import com.atlassian.plugin.connect.spi.permission.PermissionsReader;
-import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
-import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.collect.Sets;
@@ -24,11 +19,11 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Set;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -41,9 +36,8 @@ public abstract class AbstractScopesTest
     private static final String PLUGIN_KEY = "my-plugin";
     private static final UserKey USER_KEY = null;
 
-    private PermissionManagerImpl permissionManager;
+    private AddOnScopeManagerImpl permissionManager;
     private HttpServletRequest request;
-    private Plugin plugin = new PluginForTests(PLUGIN_KEY, "My Plugin");
 
     private final ScopeName scope;
     private final HttpMethod method;
@@ -81,16 +75,12 @@ public abstract class AbstractScopesTest
             }
         });
 
-        PluginAccessor pluginAccessor = mock(PluginAccessor.class);
-        when(pluginAccessor.getPlugin(PLUGIN_KEY)).thenReturn(plugin);
-
         JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService = mock(JsonConnectAddOnIdentifierService.class);
         when(jsonConnectAddOnIdentifierService.isConnectAddOn(PLUGIN_KEY)).thenReturn(true);
 
         ApplicationProperties applicationProperties = mock(ApplicationProperties.class);
         when(applicationProperties.getDisplayName()).thenReturn(productName);
 
-        PluginEventManager pluginEventManager = mock(PluginEventManager.class);
         ScopeService scopeService = new ScopeServiceImpl(applicationProperties);
 
         Set<ScopeName> scopeSet = (null == scope) ? Sets.<ScopeName>newHashSet() : Sets.newHashSet(scope);
@@ -108,9 +98,7 @@ public abstract class AbstractScopesTest
         final ConnectAddonBeanFactory addonBeanFactory = mock(ConnectAddonBeanFactory.class);
         when(addonBeanFactory.fromJsonSkipValidation(mockDescriptor)).thenReturn(addon);
 
-        permissionManager = new PermissionManagerImpl(pluginAccessor, pluginEventManager,
-                mock(PermissionsReader.class), jsonConnectAddOnIdentifierService, scopeService,
-                connectAddonRegistry, addonBeanFactory);
+        permissionManager = new AddOnScopeManagerImpl(scopeService, connectAddonRegistry, addonBeanFactory);
     }
 
     @Test

@@ -12,7 +12,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Unit Test for {@link com.atlassian.plugin.connect.plugin.capabilities.module.MacroModuleContextExtractor}
+ * Unit Test for {@link com.atlassian.plugin.connect.plugin.capabilities.module.macro.MacroModuleContextExtractor}
  */
 public class MacroModuleContextExtractorImplTest
 {

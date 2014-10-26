@@ -46,7 +46,7 @@ public class AddOnUpgradeTest
     {
         if (null != plugin)
         {
-            testPluginInstaller.uninstallJsonAddon(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
         }
     }
 

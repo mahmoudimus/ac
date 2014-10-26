@@ -9,7 +9,6 @@ import com.atlassian.jwt.core.http.auth.SimplePrincipal;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
-import com.atlassian.plugin.connect.plugin.service.LegacyAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.util.DefaultMessage;
 import com.atlassian.sal.api.auth.AuthenticationListener;
 import com.atlassian.sal.api.auth.Authenticator;
@@ -24,12 +23,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.*;
+import java.io.IOException;
+import java.security.Principal;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.security.Principal;
 
 import static com.atlassian.jwt.JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -45,7 +49,6 @@ public class ThreeLeggedAuthFilter implements Filter
     private final JwtApplinkFinder jwtApplinkFinder;
     private final CrowdService crowdService;
     private final String badCredentialsMessage; // protect against phishing by not saying whether the add-on, user or secret was wrong
-    private final LegacyAddOnIdentifierService legacyAddOnIdentifierService;
 
     private final static Logger log = LoggerFactory.getLogger(ThreeLeggedAuthFilter.class);
     private static final String MSG_FORMAT_NOT_ALLOWING_IMPERSONATION = "NOT allowing add-on '%s' to impersonate user '%s'";
@@ -57,8 +60,7 @@ public class ThreeLeggedAuthFilter implements Filter
                                  AuthenticationListener authenticationListener,
                                  JwtApplinkFinder jwtApplinkFinder,
                                  CrowdService crowdService,
-                                 I18nResolver i18nResolver,
-                                 LegacyAddOnIdentifierService legacyAddOnIdentifierService)
+                                 I18nResolver i18nResolver)
     {
         this.threeLeggedAuthService = checkNotNull(threeLeggedAuthService);
         this.connectAddonManager = checkNotNull(connectAddonManager);
@@ -67,7 +69,6 @@ public class ThreeLeggedAuthFilter implements Filter
         this.jwtApplinkFinder = checkNotNull(jwtApplinkFinder);
         this.crowdService = checkNotNull(crowdService);
         this.badCredentialsMessage = i18nResolver.getText("connect.3la.bad_credentials");
-        this.legacyAddOnIdentifierService = legacyAddOnIdentifierService;
     }
 
     @Override
@@ -113,8 +114,7 @@ public class ThreeLeggedAuthFilter implements Filter
 
     private boolean requestIsFromAJsonJwtAddOn(String addOnKey, ConnectAddonBean addOnBean)
     {
-        return StringUtils.isEmpty(addOnKey) || legacyAddOnIdentifierService.isConnectAddOn(addOnKey) ||
-            null == addOnBean || null == addOnBean.getAuthentication() || addOnBean.getAuthentication().getType() != AuthenticationType.JWT;
+        return StringUtils.isEmpty(addOnKey) || null == addOnBean || null == addOnBean.getAuthentication() || addOnBean.getAuthentication().getType() != AuthenticationType.JWT;
     }
 
     private void processAddOnRequest(FilterChain filterChain, HttpServletRequest request, HttpServletResponse response, ConnectAddonBean addOnBean) throws IOException, ServletException

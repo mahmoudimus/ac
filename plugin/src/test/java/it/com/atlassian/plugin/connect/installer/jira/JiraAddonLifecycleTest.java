@@ -96,7 +96,7 @@ public class JiraAddonLifecycleTest
     {
         if(plugin != null)
         {
-            testPluginInstaller.uninstallJsonAddon(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
         }
         testFilterResults.clearRequest(addonKey, INSTALLED);
         jiraPermissionManager.addPermission(Permissions.ADMINISTER, "atlassian-addons-admin");

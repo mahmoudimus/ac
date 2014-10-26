@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -13,7 +12,6 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 
-import org.dom4j.Document;
 import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,27 +83,4 @@ public class JsonConnectAddOnIdentifierService implements ConnectAddOnIdentifier
         }
     }
 
-    @Override
-    public boolean isConnectAddOn(final Document pluginDescriptor)
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isConnectAddOn(final File descriptorFile)
-    {
-        return false;
-    }
-
-    @Override
-    public String getInstallerUser(Bundle bundle)
-    {
-        return null;
-    }
-
-    @Override
-    public String getRegistrationUrl(Bundle bundle)
-    {
-        return null;
-    }
 }
