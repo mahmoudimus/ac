@@ -48,43 +48,109 @@ function copyToGenSrc(filenames) {
     });
 }
 
+
+
+
+
+/**
+ * Delete the build dir, regenerate the model from the schema and rebuild the documentation.
+ */
+function rebuildHarpSite(callback) {
+    fs.deleteSync(buildDir);
+
+    fs.mkdirsSync(genSrcPrefix);
+
+    copyToGenSrc(srcFiles);
+    copyToGenSrc("node_modules");
+
+    dereferencer.run();
+
+    compileJsDocs();
+
+    console.log('jiraSchemaPath: ' + fs.realpathSync(schemaDirPath));
+
+    dart = spawn('dart', ['dartdoc/bin/main.dart',
+        fs.realpathSync(schemaDirPath), fs.realpathSync(genSrcPrefix)]);
+
+    dart.stdout.on('data', function (data) {
+        console.log('stdout: ' + data);
+    });
+
+    dart.stderr.on('data', function (data) {
+        console.log('stderr: ' + data);
+    });
+
+    dart.on('close', function (code) {
+        console.log('doc generator process exited with code ' + code);
+        callback();
+    });
+}
+
+
+/**
+ * Start the Harp server. Also sets up watches for all files used as inputs to the documentation and
+ * triggers a rebuild if they change.
+ */
+function startHarpServerAndWatchSrcFiles() {
+    var harpServer;
+    var restarting = false;
+
+    function startHarpServer() {
+        return fork('./node_modules/harp/bin/harp', ["server"], {'cwd': genSrcPrefix});
+    }
+
+    function restartHarpServer() {
+        if (restarting) return;
+
+        console.log("Rebuilding site and restarting harp server..");
+
+        restarting = true;
+        harpServer.on('exit', function() {
+            rebuildHarpSite(function() {
+                harpServer = startHarpServer();
+                restarting = false;
+            });
+        });
+
+        harpServer.kill();
+    }
+
+    // debounce to prevent multiple rapid saves from kicking off multiple rebuilds
+    restartHarpServer = _.debounce(restartHarpServer, 1000);
+
+    harpServer = startHarpServer();
+
+    var watchedFiles = srcFiles.concat(jiraSchemaSourcePath, confluenceSchemaSourcePath);
+
+    var watcher = chokidar.watch(watchedFiles, {
+        persistent:true,
+        ignoreInitial:true
+    });
+
+    _.each(['add', 'addDir', 'change', 'unlink', 'unlinkDir'], function(event) {
+        watcher.on(event, function(path) {
+            console.log(event + " on " + path + "!");
+            restartHarpServer();
+        });
+    });
+}
+
+/**
+ * Statically compile the documentation into build /www directory.
+ */
+function compileHarpSources() {
+    fork('./node_modules/harp/bin/harp', ["-o", "../www", "compile"], {'cwd': genSrcPrefix});
+}
+
 function compileJsDocs() {
     fork('./node_modules/.bin/jsdoc', ["-c", "jsdoc-conf.json", "-t", "jsdoc-template"]);
 }
 
-
-fs.deleteSync(buildDir);
-
-fs.mkdirsSync(genSrcPrefix);
-
-
-copyToGenSrc(srcFiles);
-copyToGenSrc("node_modules");
-
-dereferencer.run();
-
-compileJsDocs();
-
-console.log('jiraSchemaPath: ' + fs.realpathSync(schemaDirPath));
-
-dart = spawn('dart', ['dartdoc/bin/main.dart',
-    fs.realpathSync(schemaDirPath), fs.realpathSync(genSrcPrefix)]);
-
-dart.stdout.on('data', function (data) {
-    console.log('stdout: ' + data);
+rebuildHarpSite(function() {
+    if (program.serve) {
+        startHarpServerAndWatchSrcFiles()
+    } else {
+        compileHarpSources();
+    }
 });
 
-dart.stderr.on('data', function (data) {
-    console.log('stderr: ' + data);
-});
-
-dart.on('close', function (code) {
-    console.log('child process exited with code ' + code);
-
-    harp = fork('./node_modules/harp/bin/harp', ["-o", "../www", "compile"], {'cwd': genSrcPrefix});
-
-    harp.on('close', function (code) {
-        console.log('harp child process exited with code ' + code);
-    });
-
-});
