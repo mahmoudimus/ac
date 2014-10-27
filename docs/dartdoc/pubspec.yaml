@@ -1,0 +1,10 @@
+name: dartdoc
+version: 0.0.1
+description: A minimal command-line application.
+#author: First Last <email@example.com>
+#homepage: https://www.example.com
+environment:
+  sdk: '>=1.0.0 <2.0.0'
+dependencies:
+  connect_json_docs:
+    git: git@bitbucket.org:aholmgren/connect_json_docs.git
