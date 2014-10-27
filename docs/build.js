@@ -55,7 +55,7 @@ function copyToGenSrc(filenames) {
 /**
  * Delete the build dir, regenerate the model from the schema and rebuild the documentation.
  */
-function rebuildHarpSite(callback) {
+function rebuildHarpSite(done, error) {
     fs.deleteSync(buildDir);
 
     fs.mkdirsSync(genSrcPrefix);
@@ -82,7 +82,16 @@ function rebuildHarpSite(callback) {
 
     dart.on('close', function (code) {
         console.log('doc generator process exited with code ' + code);
-        callback();
+        if (code == 0) {
+            done();
+        }
+        else {
+            console.log('Failed to generate docs from schemas');
+            if (error) {
+                error();
+            }
+        }
+
     });
 }
 
@@ -146,11 +155,18 @@ function compileJsDocs() {
     fork('./node_modules/.bin/jsdoc', ["-c", "jsdoc-conf.json", "-t", "jsdoc-template"]);
 }
 
-rebuildHarpSite(function() {
-    if (program.serve) {
-        startHarpServerAndWatchSrcFiles()
-    } else {
-        compileHarpSources();
+rebuildHarpSite(
+    function() {
+        if (program.serve) {
+            startHarpServerAndWatchSrcFiles()
+        } else {
+            compileHarpSources();
+        }
+    },
+    function() {
+        if (!program.serve) {
+            process.exit(1);
+        }
     }
-});
+);
 
