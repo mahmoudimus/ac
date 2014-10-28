@@ -450,7 +450,7 @@ public class ConnectAddonManager
 
         // NB: check that the auth generator matches the request/non-request to sign with an arbitrary key on installation, not on every callback,
         // because signing with a previous key happens only on installation
-        // (the runtime "instanceof ReKeyableAuthorizationGenerator" check is necessary because the OAuthSigningRemotablePluginAccessor is explicityly not re-keyable: it must sign with the same oauth key every time)
+        // (the runtime "instanceof ReKeyableAuthorizationGenerator" check is necessary because the OAuthSigningRemotablePluginAccessor is explicitly not re-keyable: it must sign with the same oauth key every time)
         if (authorizationGenerator instanceof ReKeyableAuthorizationGenerator)
         {
             String authHeader = getAuthHeader(callbackUri, (ReKeyableAuthorizationGenerator) authorizationGenerator, previousSharedSecret);
