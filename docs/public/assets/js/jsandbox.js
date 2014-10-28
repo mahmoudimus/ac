@@ -129,7 +129,7 @@ function createConnectIframe(appendTo, clientCode){
 
 function removeConnectIframes(){
     //remove old iframes before creating new ones.
-    $(".runable iframe").trigger("ra.iframe.destroy");
+    $(".runnable iframe").trigger("ra.iframe.destroy");
     $(".iframecontainer").remove();
 }
 
@@ -142,7 +142,7 @@ function makeButton(container){
 }
 
 $(function(){
-    $(".runable").each(function(){
+    $(".runnable").each(function(){
         $(this).append(makeButton(this));
     });
 });
