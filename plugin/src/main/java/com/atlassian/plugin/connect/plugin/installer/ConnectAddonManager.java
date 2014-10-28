@@ -43,6 +43,7 @@ import com.atlassian.plugin.connect.spi.http.ReKeyableAuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
+import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
@@ -90,6 +91,7 @@ public class ConnectAddonManager
     private static final String HTTP_ERROR_I18N_KEY_PREFIX = "connect.install.error.remote.host.bad.response.";
     private static final List<Integer> OK_INSTALL_HTTP_CODES = asList(200, 201, 204);
     private static final SigningAlgorithm JWT_ALGORITHM = SigningAlgorithm.HS256; // currently, this is the only algorithm that we support
+    private static final String DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY = "connect.lifecycle.install.sign_with_prev_key.disable";
 
     private static final int TEST_CONNECTION_TIMEOUT = 5 * 1000;
     private static final int TEST_SOCKET_TIMEOUT = 5 * 1000;
@@ -124,6 +126,7 @@ public class ConnectAddonManager
     private final ConnectAddonBeanFactory connectAddonBeanFactory;
     private final SharedSecretService sharedSecretService;
     private final ConnectAddonI18nManager i18nManager;
+    private final DarkFeatureManager darkFeatureManager;
 
     private final AtomicBoolean isTestHttpClient;
 
@@ -133,7 +136,9 @@ public class ConnectAddonManager
                                BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService,
                                EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties,
                                LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext,
-                               ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory, SharedSecretService sharedSecretService, HttpClientFactory httpClientFactory, ConnectAddonI18nManager i18nManager)
+                               ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory,
+                               SharedSecretService sharedSecretService, HttpClientFactory httpClientFactory, ConnectAddonI18nManager i18nManager,
+                               DarkFeatureManager darkFeatureManager)
     {
         this.isDevModeService = isDevModeService;
         this.userManager = userManager;
@@ -153,6 +158,7 @@ public class ConnectAddonManager
         this.connectAddonBeanFactory = connectAddonBeanFactory;
         this.sharedSecretService = sharedSecretService;
         this.i18nManager = i18nManager;
+        this.darkFeatureManager = darkFeatureManager;
 
         this.isTestHttpClient = new AtomicBoolean(false);
 
@@ -242,7 +248,7 @@ public class ConnectAddonManager
         {
             // TODO ACDEV-1596: Because we've got exactly one auth generator per add-on this if statement's condition
             // will cause us to NOT sign if the old descriptor used a shared secret but the new descriptor does NOT.
-            if (maybePreviousSharedSecret.isDefined() && newUseSharedSecret)
+            if (maybePreviousSharedSecret.isDefined() && newUseSharedSecret && !darkFeatureManager.isFeatureEnabledForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY))
             {
                 requestInstallCallback(addOn, newSharedSecret, maybePreviousSharedSecret.get());
             }
