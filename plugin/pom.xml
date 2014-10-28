@@ -748,6 +748,24 @@
                     </testGroups>
                 </configuration>
             </plugin>
+            <!-- TODO: this plugin requires DART_SDK to be set!! -->
+            <plugin>
+                <groupId>com.github.dzwicker.dart</groupId>
+                <artifactId>dart-maven-plugin</artifactId>
+                <version>3.0.8</version>
+                <configuration>
+                    <sourceDirectory>../docs/dartdoc</sourceDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>pub get</id>
+                        <goals>
+                            <goal>pub</goal>
+                        </goals>
+                        <phase>process-sources</phase>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
