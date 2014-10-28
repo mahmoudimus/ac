@@ -5,6 +5,7 @@ import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.fugue.Option;
+import com.atlassian.jwt.JwtConstants;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
@@ -15,12 +16,14 @@ import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
+import com.atlassian.plugin.connect.testsupport.filter.JwtTestVerifier;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+import com.google.gson.JsonParser;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.Test;
 
@@ -52,7 +55,7 @@ public abstract class AbstractAddonLifecycleTest
     public static final String ADD_ON_USER_KEY_PREFIX = "addon_";
     public static final String CROWD_APPLICATION_NAME = "crowd-embedded"; // magic knowledge
 
-    private static final String DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL = "connect.lifecycle.install_and_uninstall.signing.disable";
+    private static final String DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY = "connect.lifecycle.install.sign_with_prev_key.disable";
 
     protected final TestPluginInstaller testPluginInstaller;
     protected final TestAuthenticator testAuthenticator;
@@ -183,15 +186,15 @@ public abstract class AbstractAddonLifecycleTest
     @Test
     public void installUrlIsPosted() throws Exception
     {
-        assertFalse(darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL)); // precondition
-        testInstallPost(signCallbacksWithJwt());
+        assertFalse(darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY)); // precondition
+        testInstallPost(true);
     }
 
-    // with the dark feature enabled we do NOT sign install callbacks
+    // with the dark feature enabled we do sign install callbacks using the new shared secret (which is useless, but the previous behaviour)
     @Test
-    public void callbackSigningDarkFeaturePreventsSigningTheInstalledCallback() throws IOException
+    public void callbackSigningDarkFeaturePreventsSigningTheInstalledCallback() throws Exception
     {
-        darkFeatureManager.enableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL);
+        darkFeatureManager.enableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);
 
         try
         {
@@ -199,11 +202,11 @@ public abstract class AbstractAddonLifecycleTest
         }
         finally
         {
-            darkFeatureManager.disableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL);
+            darkFeatureManager.disableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);
         }
     }
 
-    private void testInstallPost(boolean signCallbacksWithJwt) throws IOException
+    private void testInstallPost(boolean signsWithPreviousJwtSharedSecret) throws Exception
     {
         ConnectAddonBean addon = installOnlyBean;
 
@@ -217,14 +220,30 @@ public abstract class AbstractAddonLifecycleTest
 
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
             assertEquals(POST, request.getMethod());
-            assertEquals(false, request.hasJwt()); // the first installation cannot be signed because there is no pre-shared key
+            String firstSharedSecret = parseSharedSecret(request);
+            String clientKey = new JsonParser().parse(request.getEntity()).getAsJsonObject().get(CLIENT_KEY_FIELD_NAME).getAsString();
+            assertEquals(signCallbacksWithJwt() && !signsWithPreviousJwtSharedSecret, request.hasJwt()); // if signing with the *previous* secret then the first installation cannot be signed because there is no pre-shared key
+
+            if (signCallbacksWithJwt() && !signsWithPreviousJwtSharedSecret)
+            {
+                JwtTestVerifier verifier = new JwtTestVerifier(firstSharedSecret, clientKey);
+                assertTrue("JWT token should be signed with the shared secret in that same callback", verifier.jwtAndClientAreValid(JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX + request.getJwtToken()));
+            }
 
             // re-install, like when the vendor posts a new descriptor on marketplace
             testFilterResults.clearRequest(addonKey, INSTALLED);
             plugin = testPluginInstaller.installAddon(addon);
             addonKey = plugin.getKey();
             request = testFilterResults.getRequest(addonKey, INSTALLED);
-            assertEquals(signCallbacksWithJwt, request.hasJwt());
+            String secondSharedSecret = parseSharedSecret(request);
+            assertEquals(signCallbacksWithJwt(), request.hasJwt());
+
+            if (signCallbacksWithJwt())
+            {
+                final String secretUsedToSignSecondInstallCallback = signsWithPreviousJwtSharedSecret ? firstSharedSecret : secondSharedSecret;
+                JwtTestVerifier verifier = new JwtTestVerifier(firstSharedSecret, clientKey);
+                assertTrue("JWT token should be signed with the shared secret '" + secretUsedToSignSecondInstallCallback + "'", verifier.jwtAndClientAreValid(JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX + request.getJwtToken()));
+            }
         }
         finally
         {
@@ -234,6 +253,11 @@ public abstract class AbstractAddonLifecycleTest
                 testPluginInstaller.uninstallJsonAddon(plugin);
             }
         }
+    }
+
+    private String parseSharedSecret(ServletRequestSnapshot request)
+    {
+        return signCallbacksWithJwt() ? new JsonParser().parse(request.getEntity()).getAsJsonObject().get(SHARED_SECRET_FIELD_NAME).getAsString() : null;
     }
 
     @Test
@@ -265,27 +289,27 @@ public abstract class AbstractAddonLifecycleTest
     @Test
     public void uninstallUrlIsPosted() throws Exception
     {
-        assertFalse(darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL)); // precondition
-        testUninstallPost(signCallbacksWithJwt());
+        assertFalse(darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY)); // precondition
+        testUninstallPost();
     }
 
-    // with the dark feature enabled we do NOT sign uninstall callbacks
+    // the enabled and disabled callbacks have always been signed using the current secret, so we want to leave them unaffected by dark feature toggling
     @Test
     public void callbackSigningDarkFeaturePreventsSigningTheUninstalledCallback() throws IOException
     {
-        darkFeatureManager.enableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL);
+        darkFeatureManager.enableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);
 
         try
         {
-            testUninstallPost(false);
+            testUninstallPost();
         }
         finally
         {
-            darkFeatureManager.disableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL);
+            darkFeatureManager.disableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);
         }
     }
 
-    private void testUninstallPost(boolean signCallbacksWithJwt) throws IOException
+    private void testUninstallPost() throws IOException
     {
         ConnectAddonBean addon = installAndUninstallBean;
 
@@ -303,7 +327,7 @@ public abstract class AbstractAddonLifecycleTest
 
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
             assertEquals(POST, request.getMethod());
-            assertEquals(signCallbacksWithJwt, request.hasJwt());
+            assertEquals(signCallbacksWithJwt(), request.hasJwt());
         }
         finally
         {
@@ -363,9 +387,7 @@ public abstract class AbstractAddonLifecycleTest
 
             testPluginInstaller.enableAddon(addonKey);
 
-            ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, ENABLED);
-
-            waitForWebhook(addonKey,ENABLED);
+            ServletRequestSnapshot request = waitForWebhook(addonKey,ENABLED);
 
             Option<String> maybeHeader = getVersionHeader(request);
             assertVersion(maybeHeader);
@@ -514,7 +536,7 @@ public abstract class AbstractAddonLifecycleTest
     @Test
     public void disabledAddonHadDisabledUser() throws IOException
     {
-        assertFalse(darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL)); // precondition
+        assertFalse(darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY)); // precondition
         testDisabledCallback();
     }
 
@@ -522,7 +544,7 @@ public abstract class AbstractAddonLifecycleTest
     @Test
     public void callbackSigningDarkFeatureDoesNotAffectDisabledCallback() throws IOException
     {
-        darkFeatureManager.enableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL);
+        darkFeatureManager.enableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);
 
         try
         {
@@ -530,7 +552,7 @@ public abstract class AbstractAddonLifecycleTest
         }
         finally
         {
-            darkFeatureManager.disableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL);
+            darkFeatureManager.disableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);
         }
     }
 
@@ -568,7 +590,7 @@ public abstract class AbstractAddonLifecycleTest
     @Test
     public void enabledAddonHadEnabledUser() throws Exception
     {
-        assertFalse(darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL)); // precondition
+        assertFalse(darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY)); // precondition
         testEnabledCallback();
     }
 
@@ -576,7 +598,7 @@ public abstract class AbstractAddonLifecycleTest
     @Test
     public void callbackSigningDarkFeatureDoesNotAffectEnabledCallback() throws IOException
     {
-        darkFeatureManager.enableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL);
+        darkFeatureManager.enableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);
 
         try
         {
@@ -584,7 +606,7 @@ public abstract class AbstractAddonLifecycleTest
         }
         finally
         {
-            darkFeatureManager.disableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL);
+            darkFeatureManager.disableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);
         }
     }
 

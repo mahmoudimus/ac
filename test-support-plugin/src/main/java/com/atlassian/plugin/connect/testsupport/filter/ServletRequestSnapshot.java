@@ -136,6 +136,26 @@ public class ServletRequestSnapshot
         return hasJwtHeader() || hasJwtParameter();
     }
 
+    public String getJwtToken()
+    {
+        if (hasJwtHeader() && hasJwtParameter())
+        {
+            throw new RuntimeException("Request has JWT token as both a header and a parameter. I don't know which one to choose!");
+        }
+
+        if (hasJwtHeader())
+        {
+            return getJwtHeader();
+        }
+
+        if (hasJwtParameter())
+        {
+            return getJwtParameter();
+        }
+
+        throw new RuntimeException("This request does not contain a JWT token!");
+    }
+
     public String getMethod()
     {
         return method.toUpperCase();
@@ -159,6 +179,18 @@ public class ServletRequestSnapshot
     public String getRemoteUsername()
     {
         return remoteUsername;
+    }
+
+    private String getJwtHeader()
+    {
+        final Option<String> header = getAuthorizationHeader();
+        return header.isDefined() ? header.get().substring(4) : null; // if it exists, remove the "JWT " prefix
+    }
+
+    private String getJwtParameter()
+    {
+        final String[] jwtParams = parameters.get(JwtConstants.JWT_PARAM_NAME);
+        return null != jwtParams && jwtParams.length > 0 ? jwtParams[0] : null;
     }
 
     // the case of the header can be changed at runtime :(
