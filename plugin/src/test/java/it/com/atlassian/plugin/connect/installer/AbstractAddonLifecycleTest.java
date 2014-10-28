@@ -17,6 +17,7 @@ import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.plugin.util.WaitUntil;
+import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
@@ -31,7 +32,9 @@ import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean
 import static com.google.common.collect.Sets.newHashSet;
 import static it.com.atlassian.plugin.connect.HeaderUtil.getVersionHeader;
 import static it.com.atlassian.plugin.connect.util.ParamMatchers.isVersionNumber;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractAddonLifecycleTest
 {
@@ -49,6 +52,8 @@ public abstract class AbstractAddonLifecycleTest
     public static final String ADD_ON_USER_KEY_PREFIX = "addon_";
     public static final String CROWD_APPLICATION_NAME = "crowd-embedded"; // magic knowledge
 
+    private static final String DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL = "connect.lifecycle.install_and_uninstall.signing.disable";
+
     protected final TestPluginInstaller testPluginInstaller;
     protected final TestAuthenticator testAuthenticator;
     protected final AddonTestFilterResults testFilterResults;
@@ -57,6 +62,7 @@ public abstract class AbstractAddonLifecycleTest
     private final UserManager userManager;
     private final ApplicationService applicationService;
     private final ApplicationManager applicationManager;
+    private final DarkFeatureManager darkFeatureManager;
 
     protected ConnectAddonBean baseBean;
     protected ConnectAddonBean installOnlyBean;
@@ -66,7 +72,15 @@ public abstract class AbstractAddonLifecycleTest
     protected ConnectAddonBean installAndUninstallBean;
     protected ConnectAddonBean fullLifecycleBean;
 
-    protected AbstractAddonLifecycleTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, AddonTestFilterResults testFilterResults, ConnectApplinkManager connectApplinkManager, ConnectAddOnUserService connectAddOnUserService, UserManager userManager, ApplicationService applicationService, ApplicationManager applicationManager)
+    protected AbstractAddonLifecycleTest(TestPluginInstaller testPluginInstaller,
+                                         TestAuthenticator testAuthenticator,
+                                         AddonTestFilterResults testFilterResults,
+                                         ConnectApplinkManager connectApplinkManager,
+                                         ConnectAddOnUserService connectAddOnUserService,
+                                         UserManager userManager,
+                                         ApplicationService applicationService,
+                                         ApplicationManager applicationManager,
+                                         DarkFeatureManager darkFeatureManager)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
@@ -76,6 +90,7 @@ public abstract class AbstractAddonLifecycleTest
         this.userManager = userManager;
         this.applicationService = applicationService;
         this.applicationManager = applicationManager;
+        this.darkFeatureManager = darkFeatureManager;
     }
 
     protected abstract boolean signCallbacksWithJwt();
@@ -168,6 +183,28 @@ public abstract class AbstractAddonLifecycleTest
     @Test
     public void installUrlIsPosted() throws Exception
     {
+        assertFalse(darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL)); // precondition
+        testInstallPost(signCallbacksWithJwt());
+    }
+
+    // with the dark feature enabled we do NOT sign install callbacks
+    @Test
+    public void callbackSigningDarkFeaturePreventsSigningTheInstalledCallback() throws IOException
+    {
+        darkFeatureManager.enableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL);
+
+        try
+        {
+            testInstallPost(false);
+        }
+        finally
+        {
+            darkFeatureManager.disableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL);
+        }
+    }
+
+    private void testInstallPost(boolean signCallbacksWithJwt) throws IOException
+    {
         ConnectAddonBean addon = installOnlyBean;
 
         Plugin plugin = null;
@@ -187,7 +224,7 @@ public abstract class AbstractAddonLifecycleTest
             plugin = testPluginInstaller.installAddon(addon);
             addonKey = plugin.getKey();
             request = testFilterResults.getRequest(addonKey, INSTALLED);
-            assertEquals(signCallbacksWithJwt(), request.hasJwt());
+            assertEquals(signCallbacksWithJwt, request.hasJwt());
         }
         finally
         {
@@ -228,6 +265,28 @@ public abstract class AbstractAddonLifecycleTest
     @Test
     public void uninstallUrlIsPosted() throws Exception
     {
+        assertFalse(darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL)); // precondition
+        testUninstallPost(signCallbacksWithJwt());
+    }
+
+    // with the dark feature enabled we do NOT sign uninstall callbacks
+    @Test
+    public void callbackSigningDarkFeaturePreventsSigningTheUninstalledCallback() throws IOException
+    {
+        darkFeatureManager.enableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL);
+
+        try
+        {
+            testUninstallPost(false);
+        }
+        finally
+        {
+            darkFeatureManager.disableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL);
+        }
+    }
+
+    private void testUninstallPost(boolean signCallbacksWithJwt) throws IOException
+    {
         ConnectAddonBean addon = installAndUninstallBean;
 
         Plugin plugin = null;
@@ -238,13 +297,13 @@ public abstract class AbstractAddonLifecycleTest
             plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
-            
+
             testPluginInstaller.uninstallJsonAddon(plugin);
             plugin = null;
 
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
             assertEquals(POST, request.getMethod());
-            assertEquals(signCallbacksWithJwt(), request.hasJwt());
+            assertEquals(signCallbacksWithJwt, request.hasJwt());
         }
         finally
         {
@@ -453,7 +512,29 @@ public abstract class AbstractAddonLifecycleTest
     }
 
     @Test
-    public void disabledAddonHadDisabledUser() throws Exception
+    public void disabledAddonHadDisabledUser() throws IOException
+    {
+        assertFalse(darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL)); // precondition
+        testDisabledCallback();
+    }
+
+    // the enabled and disabled callbacks have always been signed using the current secret, so we want to leave them unaffected by dark feature toggling
+    @Test
+    public void callbackSigningDarkFeatureDoesNotAffectDisabledCallback() throws IOException
+    {
+        darkFeatureManager.enableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL);
+
+        try
+        {
+            testDisabledCallback();
+        }
+        finally
+        {
+            darkFeatureManager.disableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL);
+        }
+    }
+
+    private void testDisabledCallback() throws IOException
     {
         ConnectAddonBean addon = installAndDisabledBean;
 
@@ -486,6 +567,28 @@ public abstract class AbstractAddonLifecycleTest
 
     @Test
     public void enabledAddonHadEnabledUser() throws Exception
+    {
+        assertFalse(darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL)); // precondition
+        testEnabledCallback();
+    }
+
+    // the enabled and disabled callbacks have always been signed using the current secret, so we want to leave them unaffected by dark feature toggling
+    @Test
+    public void callbackSigningDarkFeatureDoesNotAffectEnabledCallback() throws IOException
+    {
+        darkFeatureManager.enableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL);
+
+        try
+        {
+            testEnabledCallback();
+        }
+        finally
+        {
+            darkFeatureManager.disableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_AND_UNINSTALL);
+        }
+    }
+
+    private void testEnabledCallback() throws IOException
     {
         ConnectAddonBean addon = fullLifecycleBean;
 

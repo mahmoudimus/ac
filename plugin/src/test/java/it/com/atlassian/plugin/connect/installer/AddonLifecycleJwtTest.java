@@ -15,6 +15,7 @@ import com.atlassian.plugin.connect.testsupport.filter.JwtTestVerifier;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.gson.JsonParser;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
@@ -23,14 +24,24 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(AtlassianPluginsTestRunner.class)
 public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
 {
-    public AddonLifecycleJwtTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, AddonTestFilterResults testFilterResults, ConnectApplinkManager connectApplinkManager, ConnectAddOnUserService connectAddOnUserService, UserManager userManager,ApplicationService applicationService,ApplicationManager applicationManager)
+    public AddonLifecycleJwtTest(TestPluginInstaller testPluginInstaller,
+                                 TestAuthenticator testAuthenticator,
+                                 AddonTestFilterResults testFilterResults,
+                                 ConnectApplinkManager connectApplinkManager,
+                                 ConnectAddOnUserService connectAddOnUserService,
+                                 UserManager userManager,
+                                 ApplicationService applicationService,
+                                 ApplicationManager applicationManager,
+                                 DarkFeatureManager darkFeatureManager)
     {
-        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService, userManager, applicationService, applicationManager);
+        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService, userManager, applicationService, applicationManager, darkFeatureManager);
     }
 
     @Override

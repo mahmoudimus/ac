@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserServic
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.atlassian.sal.api.user.UserManager;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.BeforeClass;
@@ -18,9 +19,17 @@ import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newA
 @RunWith(AtlassianPluginsTestRunner.class)
 public class AddonLifecycleAuthNoneTest extends AbstractAddonLifecycleTest
 {
-    protected AddonLifecycleAuthNoneTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, AddonTestFilterResults testFilterResults, ConnectApplinkManager connectApplinkManager, ConnectAddOnUserService connectAddOnUserService, UserManager userManager, ApplicationService applicationService, ApplicationManager applicationManager)
+    protected AddonLifecycleAuthNoneTest(TestPluginInstaller testPluginInstaller,
+                                         TestAuthenticator testAuthenticator,
+                                         AddonTestFilterResults testFilterResults,
+                                         ConnectApplinkManager connectApplinkManager,
+                                         ConnectAddOnUserService connectAddOnUserService,
+                                         UserManager userManager,
+                                         ApplicationService applicationService,
+                                         ApplicationManager applicationManager,
+                                         DarkFeatureManager darkFeatureManager)
     {
-        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService, userManager, applicationService, applicationManager);
+        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService, userManager, applicationService, applicationManager, darkFeatureManager);
     }
 
     @Override
