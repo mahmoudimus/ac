@@ -577,7 +577,7 @@ public class ConnectAddonManager
             if (e.getCause() instanceof UnknownHostException)
             {
                 String i18nMessage = i18nResolver.getText("connect.install.error.remote.host.bad.domain",
-                        e.getCause().getLocalizedMessage().replace(": Name or service not known", "").replace(": nodename nor servname provided, or not known", ""));
+                        e.getCause().getMessage().replace(": Name or service not known", "").replace(": nodename nor servname provided, or not known", ""));
                 throw new LifecycleCallbackException(message, Option.some(i18nMessage));
             }
             else if (e.getCause() instanceof SocketTimeoutException)
