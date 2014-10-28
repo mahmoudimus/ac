@@ -29,6 +29,7 @@ import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.apache.http.HttpHeaders;
 import org.json.JSONObject;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -114,6 +115,12 @@ public class WorkflowPostFunctionTest
 
         plugin = testPluginInstaller.installAddon(addon);
         workflow = workflowImporter.importWorkflow("postFunctionTestWorkflow", "/workflows/postFunctionTestWorkflow.xml");
+    }
+
+    @Before
+    public void beforeEach()
+    {
+        testFilterResults.clearRequest(plugin.getKey(), TRIGGERED_URL);
     }
 
     @AfterClass
