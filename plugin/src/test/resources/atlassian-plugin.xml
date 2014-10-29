@@ -50,9 +50,6 @@
     <component-import key="testPluginInstaller" interface="com.atlassian.plugin.connect.testsupport.TestPluginInstaller" />
     <component-import key="testFilterResults" interface="com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults" />
 
-    <component-import key="xmlPluginAutoUninstallHelper" interface="com.atlassian.plugin.connect.plugin.integration.plugins.XmlPluginAutoUninstallHelper" />
-
-
     <!-- OUR OWN LOCAL COMPONENTS -->
     <component key="jiraTestAuthenticator"
                class="it.com.atlassian.plugin.connect.JiraTestAuthenticator"

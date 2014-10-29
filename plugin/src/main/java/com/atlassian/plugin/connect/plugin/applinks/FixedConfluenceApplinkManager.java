@@ -8,10 +8,8 @@ import com.atlassian.applinks.spi.util.TypeAccessor;
 import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.user.persistence.dao.compatibility.FindUserHelper;
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
-import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
@@ -31,9 +29,9 @@ public class FixedConfluenceApplinkManager extends DefaultConnectApplinkManager 
     @Inject
     public FixedConfluenceApplinkManager(MutatingApplicationLinkService applicationLinkService, TypeAccessor typeAccessor,
                                          PluginSettingsFactory pluginSettingsFactory, OAuthLinkManager oAuthLinkManager,
-                                         PermissionManager permissionManager, TransactionTemplate transactionTemplate)
+                                         TransactionTemplate transactionTemplate)
     {
-        super(applicationLinkService, typeAccessor, pluginSettingsFactory, oAuthLinkManager, permissionManager, transactionTemplate);
+        super(applicationLinkService, typeAccessor, pluginSettingsFactory, oAuthLinkManager, transactionTemplate);
     }
 
     @Override
