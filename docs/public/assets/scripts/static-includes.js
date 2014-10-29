@@ -1,7 +1,5 @@
 $(function() {
 
-    var baseUrl = $("body").data("baseurl");
-
     /**
      * Renders the markdown and inserts it into article.
      *
@@ -32,14 +30,14 @@ $(function() {
     /**
      * Fetches a markdown file and renders a markdown include.
      *
-     * The mardown files need to have an .html suffix to prevent Harp from rendering it within the site layout.
+     * The markdown files need to have an .html suffix to prevent Harp from rendering it within the site layout.
      *
      * @param i
      * @param include
      */
     function fetchParseAndRenderInclude(i, include) {
         var $element = $(include);
-        $.get(baseUrl + $element.data("include"))
+        $.get($element.data("include"))
             .done(function(source) {
                 insertMarkup($element, source);
             })

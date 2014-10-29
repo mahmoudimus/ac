@@ -27,7 +27,7 @@ Contributions are encouraged! To start working on Atlassian Connect, follow this
 2. Run `mvn jgitflow:feature-start`
 3. Name your feature branch with your issue key and short description. e.g. `AC-1-implement-macro-editor`
 4. Commit and push
-5. Create a pull request in [Stash](https://stash.atlassian.com/projects/AC/repos/atlassian-connect/)
+5. Create a pull request in [Stash](https://stash.atlassian.com/projects/AC/repos/atlassian-connect/) with 1-3 reviewers from the team (depending on the complexity of the change).
 
 For more details see the [internal developer's guide](https://extranet.atlassian.com/x/cAhDg).
 
