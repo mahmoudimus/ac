@@ -221,6 +221,7 @@ public abstract class AbstractAddonLifecycleTest
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
             assertEquals(POST, request.getMethod());
             String firstSharedSecret = parseSharedSecret(request);
+            assertEquals(signCallbacksWithJwt(), null != firstSharedSecret);
             String clientKey = new JsonParser().parse(request.getEntity()).getAsJsonObject().get(CLIENT_KEY_FIELD_NAME).getAsString();
             assertEquals(signCallbacksWithJwt() && !signsWithPreviousJwtSharedSecret, request.hasJwt()); // if signing with the *previous* secret then the first installation cannot be signed because there is no pre-shared key
 
@@ -236,6 +237,7 @@ public abstract class AbstractAddonLifecycleTest
             addonKey = plugin.getKey();
             request = testFilterResults.getRequest(addonKey, INSTALLED);
             String secondSharedSecret = parseSharedSecret(request);
+            assertEquals(signCallbacksWithJwt(), null != secondSharedSecret);
             assertEquals(signCallbacksWithJwt(), request.hasJwt());
 
             if (signCallbacksWithJwt())
@@ -243,6 +245,26 @@ public abstract class AbstractAddonLifecycleTest
                 final String secretUsedToSignSecondInstallCallback = signsWithPreviousJwtSharedSecret ? firstSharedSecret : secondSharedSecret;
                 JwtTestVerifier verifier = new JwtTestVerifier(firstSharedSecret, clientKey);
                 assertTrue("JWT token should be signed with the shared secret '" + secretUsedToSignSecondInstallCallback + "'", verifier.jwtAndClientAreValid(JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX + request.getJwtToken()));
+            }
+
+            // uninstall, then re-install (like a customer fixing a problem, or like a customer changing their mind)
+            testFilterResults.clearRequest(addonKey, INSTALLED);
+            testPluginInstaller.uninstallJsonAddon(plugin);
+            plugin = testPluginInstaller.installAddon(addon);
+            addonKey = plugin.getKey();
+            request = testFilterResults.getRequest(addonKey, INSTALLED);
+            String thirdSharedSecret = parseSharedSecret(request);
+            assertEquals(signCallbacksWithJwt(), null != thirdSharedSecret);
+            assertEquals(signCallbacksWithJwt(), request.hasJwt());
+
+            if (signCallbacksWithJwt())
+            {
+                assert secondSharedSecret != null; // just to get rid of annoying intellij warning on the line below; it doesn't parse the assertion above
+                assertFalse("we should issue a new shared secret on a new installation after an uninstallation", !secondSharedSecret.equals(thirdSharedSecret));
+
+                final String secretUsedToSignThirdInstallCallback = signsWithPreviousJwtSharedSecret ? secondSharedSecret : thirdSharedSecret;
+                JwtTestVerifier verifier = new JwtTestVerifier(firstSharedSecret, clientKey);
+                assertTrue("JWT token should be signed with the shared secret '" + secretUsedToSignThirdInstallCallback + "'", verifier.jwtAndClientAreValid(JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX + request.getJwtToken()));
             }
         }
         finally
