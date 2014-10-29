@@ -246,15 +246,22 @@ public class ConnectAddonManager
         //make the sync callback if needed
         if (!Strings.isNullOrEmpty(addOn.getLifecycle().getInstalled()))
         {
-            // TODO ACDEV-1596: Because we've got exactly one auth generator per add-on this if statement's condition
-            // will cause us to NOT sign if the old descriptor used a shared secret but the new descriptor does NOT.
-            if (maybePreviousSharedSecret.isDefined() && newUseSharedSecret && !darkFeatureManager.isFeatureEnabledForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY))
+            if (darkFeatureManager.isFeatureEnabledForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY))
             {
-                requestInstallCallback(addOn, newSharedSecret, maybePreviousSharedSecret.get());
+                requestInstallCallback(addOn, newSharedSecret, true); // sign using whatever shared secret is looked up (the old code path)
             }
             else
             {
-                requestInstallCallback(addOn, newSharedSecret);
+                // TODO ACDEV-1596: Because we've got exactly one auth generator per add-on this if statement's condition
+                // will cause us to NOT sign if the old descriptor used a shared secret but the new descriptor does NOT.
+                if (maybePreviousSharedSecret.isDefined() && newUseSharedSecret)
+                {
+                    requestInstallCallback(addOn, newSharedSecret, maybePreviousSharedSecret.get()); // sign using the previous shared secret
+                }
+                else
+                {
+                    requestInstallCallback(addOn, newSharedSecret, false); // do not sign
+                }
             }
         }
 
@@ -442,10 +449,11 @@ public class ConnectAddonManager
     }
 
     // first install: no previous shared secret, no signing
-    private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret)
+    private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret, final boolean sign)
     {
         final URI callbackUri = getURI(addon.getBaseUrl(), addon.getLifecycle().getInstalled());
-        requestInstallCallback(addon, sharedSecret, callbackUri, Option.<String>none());
+        final Option<String> authHeader = sign ? getAuthHeader(callbackUri, remotablePluginAccessorFactory.get(addon).getAuthorizationGenerator()) : Option.<String>none();
+        requestInstallCallback(addon, sharedSecret, callbackUri, authHeader);
     }
 
     // reinstalls: sign with the previous shared secret so that the add-on can verify that the sender of the request is in possession of the previous shared secret
