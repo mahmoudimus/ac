@@ -755,6 +755,8 @@
                 <version>3.0.8</version>
                 <configuration>
                     <sourceDirectory>../docs/dartdoc</sourceDirectory>
+                    <!-- TODO: dodgy. Find a cleaner way -->
+                    <dartSdk>${env.bamboo_dart_sdk}</dartSdk>
                 </configuration>
                 <executions>
                     <execution>
