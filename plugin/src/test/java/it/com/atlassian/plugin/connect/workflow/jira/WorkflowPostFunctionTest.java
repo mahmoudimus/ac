@@ -22,10 +22,8 @@ import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-
 import it.com.atlassian.plugin.connect.HeaderUtil;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
-
 import org.apache.http.HttpHeaders;
 import org.json.JSONObject;
 import org.junit.AfterClass;

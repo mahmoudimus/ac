@@ -1,11 +1,5 @@
 package it.com.atlassian.plugin.connect.provider.confluence;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.atlassian.confluence.pages.Page;
 import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
 import com.atlassian.confluence.spaces.Space;
@@ -22,12 +16,15 @@ import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-
+import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import it.com.atlassian.plugin.connect.TestAuthenticator;
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
