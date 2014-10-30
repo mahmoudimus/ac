@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.api.xmldescriptor.OAuth;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
@@ -42,9 +43,10 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
                                       ApplicationService applicationService,
                                       ApplicationManager applicationManager,
                                       ApplicationProperties applicationProperties,
-                                      DarkFeatureManager darkFeatureManager)
+                                      DarkFeatureManager darkFeatureManager,
+                                      ConnectAddonRegistry connectAddonRegistry)
     {
-        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService, userManager, applicationService, applicationManager, darkFeatureManager);
+        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService, userManager, applicationService, applicationManager, darkFeatureManager, connectAddonRegistry);
         requestUtil = new RequestUtil(applicationProperties);
     }
 

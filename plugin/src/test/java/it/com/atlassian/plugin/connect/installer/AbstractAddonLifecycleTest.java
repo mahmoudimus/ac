@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
@@ -66,6 +67,7 @@ public abstract class AbstractAddonLifecycleTest
     private final ApplicationService applicationService;
     private final ApplicationManager applicationManager;
     private final DarkFeatureManager darkFeatureManager;
+    private final ConnectAddonRegistry connectAddonRegistry;
 
     protected ConnectAddonBean baseBean;
     protected ConnectAddonBean installOnlyBean;
@@ -83,7 +85,8 @@ public abstract class AbstractAddonLifecycleTest
                                          UserManager userManager,
                                          ApplicationService applicationService,
                                          ApplicationManager applicationManager,
-                                         DarkFeatureManager darkFeatureManager)
+                                         DarkFeatureManager darkFeatureManager,
+                                         ConnectAddonRegistry connectAddonRegistry)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
@@ -94,6 +97,7 @@ public abstract class AbstractAddonLifecycleTest
         this.applicationService = applicationService;
         this.applicationManager = applicationManager;
         this.darkFeatureManager = darkFeatureManager;
+        this.connectAddonRegistry = connectAddonRegistry;
     }
 
     protected abstract boolean signCallbacksWithJwt();
@@ -209,6 +213,11 @@ public abstract class AbstractAddonLifecycleTest
     private void testInstallPost(boolean signsWithPreviousJwtSharedSecret) throws Exception
     {
         ConnectAddonBean addon = installOnlyBean;
+
+        // clear the registry for this add-on
+        // in case any previous installation left an "uninstalled remnant" in the registry
+        // because lower down we need to test the "first install" use case
+        connectAddonRegistry.removeAll(addon.getKey());
 
         Plugin plugin = null;
         String addonKey = null;
