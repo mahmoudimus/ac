@@ -55,7 +55,7 @@ public abstract class AbstractAddonLifecycleTest
     public static final String ADD_ON_USER_KEY_PREFIX = "addon_";
     public static final String CROWD_APPLICATION_NAME = "crowd-embedded"; // magic knowledge
 
-    private static final String DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY = "connect.lifecycle.install.sign_with_prev_key.disable";
+    protected static final String DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY = "connect.lifecycle.install.sign_with_prev_key.disable";
 
     protected final TestPluginInstaller testPluginInstaller;
     protected final TestAuthenticator testAuthenticator;
@@ -222,7 +222,7 @@ public abstract class AbstractAddonLifecycleTest
             assertEquals(POST, request.getMethod());
             String firstSharedSecret = parseSharedSecret(request);
             assertEquals(signCallbacksWithJwt(), null != firstSharedSecret);
-            String clientKey = new JsonParser().parse(request.getEntity()).getAsJsonObject().get(CLIENT_KEY_FIELD_NAME).getAsString();
+            String clientKey = parseClientKey(request);
             assertEquals(signCallbacksWithJwt() && !signsWithPreviousJwtSharedSecret, request.hasJwt()); // if signing with the *previous* secret then the first installation cannot be signed because there is no pre-shared key
 
             if (signCallbacksWithJwt() && !signsWithPreviousJwtSharedSecret)
@@ -277,7 +277,12 @@ public abstract class AbstractAddonLifecycleTest
         }
     }
 
-    private String parseSharedSecret(ServletRequestSnapshot request)
+    protected String parseClientKey(ServletRequestSnapshot request)
+    {
+        return new JsonParser().parse(request.getEntity()).getAsJsonObject().get(CLIENT_KEY_FIELD_NAME).getAsString();
+    }
+
+    protected String parseSharedSecret(ServletRequestSnapshot request)
     {
         return signCallbacksWithJwt() ? new JsonParser().parse(request.getEntity()).getAsJsonObject().get(SHARED_SECRET_FIELD_NAME).getAsString() : null;
     }
