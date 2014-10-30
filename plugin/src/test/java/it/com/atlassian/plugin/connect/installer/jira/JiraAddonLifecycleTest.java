@@ -1,21 +1,5 @@
 package it.com.atlassian.plugin.connect.installer.jira;
 
-import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
-import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
-import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
-import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-import java.io.Serializable;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import com.atlassian.jira.security.GlobalPermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.plugin.Plugin;
@@ -30,6 +14,21 @@ import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.upm.api.util.Pair;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.google.common.collect.Sets;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.io.IOException;
+import java.io.Serializable;
+
+import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
+import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
+import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
+import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)

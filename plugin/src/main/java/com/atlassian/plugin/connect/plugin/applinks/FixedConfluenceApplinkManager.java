@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.plugin.applinks;
 
-import javax.inject.Inject;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.applinks.spi.util.TypeAccessor;
@@ -15,9 +13,10 @@ import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
 
 @ExportAsDevService
 @ConfluenceComponent

@@ -8,8 +8,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.module.macro.DynamicCont
 import com.atlassian.plugin.connect.plugin.capabilities.module.macro.MacroModuleContextExtractor;
 import com.atlassian.plugin.connect.plugin.capabilities.util.MacroEnumMapper;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
-import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.ContentEntityForTests;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
+import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.ContentEntityForTests;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
@@ -24,7 +24,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ContentMacroTest

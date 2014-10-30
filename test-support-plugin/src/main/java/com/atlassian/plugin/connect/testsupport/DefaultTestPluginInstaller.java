@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.testsupport;
 
-import com.atlassian.plugin.*;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
