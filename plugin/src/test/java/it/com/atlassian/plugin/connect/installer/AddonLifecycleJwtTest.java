@@ -333,7 +333,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
             final String firstSharedSecret = parseSharedSecret(firstInstallRequest);
             final String clientKey = parseClientKey(firstInstallRequest);
 
-            testPluginInstaller.uninstallJsonAddon(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
             addonPrecannedResponseHelper.queuePrecannedResponse(testPluginInstaller.getInternalAddonBaseUrlSuffix(addonKey, INSTALLED), 404);
 
             try
@@ -361,7 +361,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
 
             if (null != plugin)
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }

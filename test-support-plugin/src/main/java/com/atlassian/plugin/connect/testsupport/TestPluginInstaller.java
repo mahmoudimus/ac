@@ -5,9 +5,6 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 
 import java.io.IOException;
 
-import java.io.File;
-import java.io.IOException;
-
 public interface TestPluginInstaller
 {
     Plugin installAddon(ConnectAddonBean bean) throws IOException;

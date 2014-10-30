@@ -21,7 +21,6 @@ import com.atlassian.plugin.connect.spi.event.ConnectAddonInstallFailedEvent;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.google.common.base.Predicate;
 import org.apache.commons.lang3.StringUtils;
-import org.dom4j.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

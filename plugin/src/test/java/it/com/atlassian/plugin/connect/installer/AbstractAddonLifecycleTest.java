@@ -258,7 +258,7 @@ public abstract class AbstractAddonLifecycleTest
 
             // uninstall, then re-install (like a customer fixing a problem, or like a customer changing their mind)
             testFilterResults.clearRequest(addonKey, INSTALLED);
-            testPluginInstaller.uninstallJsonAddon(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
             plugin = testPluginInstaller.installAddon(addon);
             addonKey = plugin.getKey();
             request = testFilterResults.getRequest(addonKey, INSTALLED);
