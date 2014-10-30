@@ -1,0 +1,4 @@
+name: range
+description: An approximate implementation of the Python range() function.
+dependencies:
+  unittest: any

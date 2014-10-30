@@ -25,6 +25,7 @@
 
     <modules>
         <module>api-parent</module>
+        <module>dart-maven-plugin</module>
         <module>modules</module>
         <module>test-support-plugin</module>
         <module>plugin</module>

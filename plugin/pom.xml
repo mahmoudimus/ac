@@ -751,8 +751,8 @@
             <!-- TODO: this plugin requires DART_SDK to be set!! -->
             <plugin>
                 <groupId>com.github.dzwicker.dart</groupId>
-                <artifactId>dart-maven-plugin</artifactId>
-                <version>3.0.8</version>
+                <artifactId>dart-maven-plugin-jdk6</artifactId>
+                <version>3.0.9-SNAPSHOT</version>
                 <configuration>
                     <sourceDirectory>../docs/dartdoc</sourceDirectory>
                     <!-- TODO: dodgy. Find a cleaner way -->
