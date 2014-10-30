@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
@@ -55,7 +56,7 @@ public abstract class AbstractAddonLifecycleTest
     public static final String ADD_ON_USER_KEY_PREFIX = "addon_";
     public static final String CROWD_APPLICATION_NAME = "crowd-embedded"; // magic knowledge
 
-    private static final String DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY = "connect.lifecycle.install.sign_with_prev_key.disable";
+    protected static final String DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY = "connect.lifecycle.install.sign_with_prev_key.disable";
 
     protected final TestPluginInstaller testPluginInstaller;
     protected final TestAuthenticator testAuthenticator;
@@ -66,6 +67,7 @@ public abstract class AbstractAddonLifecycleTest
     private final ApplicationService applicationService;
     private final ApplicationManager applicationManager;
     private final DarkFeatureManager darkFeatureManager;
+    private final ConnectAddonRegistry connectAddonRegistry;
 
     protected ConnectAddonBean baseBean;
     protected ConnectAddonBean installOnlyBean;
@@ -83,7 +85,8 @@ public abstract class AbstractAddonLifecycleTest
                                          UserManager userManager,
                                          ApplicationService applicationService,
                                          ApplicationManager applicationManager,
-                                         DarkFeatureManager darkFeatureManager)
+                                         DarkFeatureManager darkFeatureManager,
+                                         ConnectAddonRegistry connectAddonRegistry)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
@@ -94,6 +97,7 @@ public abstract class AbstractAddonLifecycleTest
         this.applicationService = applicationService;
         this.applicationManager = applicationManager;
         this.darkFeatureManager = darkFeatureManager;
+        this.connectAddonRegistry = connectAddonRegistry;
     }
 
     protected abstract boolean signCallbacksWithJwt();
@@ -210,6 +214,11 @@ public abstract class AbstractAddonLifecycleTest
     {
         ConnectAddonBean addon = installOnlyBean;
 
+        // clear the registry for this add-on
+        // in case any previous installation left an "uninstalled remnant" in the registry
+        // because lower down we need to test the "first install" use case
+        connectAddonRegistry.removeAll(addon.getKey());
+
         Plugin plugin = null;
         String addonKey = null;
         try
@@ -221,7 +230,8 @@ public abstract class AbstractAddonLifecycleTest
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
             assertEquals(POST, request.getMethod());
             String firstSharedSecret = parseSharedSecret(request);
-            String clientKey = new JsonParser().parse(request.getEntity()).getAsJsonObject().get(CLIENT_KEY_FIELD_NAME).getAsString();
+            assertEquals(signCallbacksWithJwt(), null != firstSharedSecret);
+            String clientKey = parseClientKey(request);
             assertEquals(signCallbacksWithJwt() && !signsWithPreviousJwtSharedSecret, request.hasJwt()); // if signing with the *previous* secret then the first installation cannot be signed because there is no pre-shared key
 
             if (signCallbacksWithJwt() && !signsWithPreviousJwtSharedSecret)
@@ -236,6 +246,7 @@ public abstract class AbstractAddonLifecycleTest
             addonKey = plugin.getKey();
             request = testFilterResults.getRequest(addonKey, INSTALLED);
             String secondSharedSecret = parseSharedSecret(request);
+            assertEquals(signCallbacksWithJwt(), null != secondSharedSecret);
             assertEquals(signCallbacksWithJwt(), request.hasJwt());
 
             if (signCallbacksWithJwt())
@@ -243,6 +254,26 @@ public abstract class AbstractAddonLifecycleTest
                 final String secretUsedToSignSecondInstallCallback = signsWithPreviousJwtSharedSecret ? firstSharedSecret : secondSharedSecret;
                 JwtTestVerifier verifier = new JwtTestVerifier(firstSharedSecret, clientKey);
                 assertTrue("JWT token should be signed with the shared secret '" + secretUsedToSignSecondInstallCallback + "'", verifier.jwtAndClientAreValid(JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX + request.getJwtToken()));
+            }
+
+            // uninstall, then re-install (like a customer fixing a problem, or like a customer changing their mind)
+            testFilterResults.clearRequest(addonKey, INSTALLED);
+            testPluginInstaller.uninstallJsonAddon(plugin);
+            plugin = testPluginInstaller.installAddon(addon);
+            addonKey = plugin.getKey();
+            request = testFilterResults.getRequest(addonKey, INSTALLED);
+            String thirdSharedSecret = parseSharedSecret(request);
+            assertEquals(signCallbacksWithJwt(), null != thirdSharedSecret);
+            assertEquals(signCallbacksWithJwt(), request.hasJwt());
+
+            if (signCallbacksWithJwt())
+            {
+                assert secondSharedSecret != null; // just to get rid of annoying intellij warning on the line below; it doesn't parse the assertion above
+                assertFalse("we should issue a new shared secret on a new installation after an uninstallation", !secondSharedSecret.equals(thirdSharedSecret));
+
+                final String secretUsedToSignThirdInstallCallback = signsWithPreviousJwtSharedSecret ? secondSharedSecret : thirdSharedSecret;
+                JwtTestVerifier verifier = new JwtTestVerifier(firstSharedSecret, clientKey);
+                assertTrue("JWT token should be signed with the shared secret '" + secretUsedToSignThirdInstallCallback + "'", verifier.jwtAndClientAreValid(JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX + request.getJwtToken()));
             }
         }
         finally
@@ -255,7 +286,12 @@ public abstract class AbstractAddonLifecycleTest
         }
     }
 
-    private String parseSharedSecret(ServletRequestSnapshot request)
+    protected String parseClientKey(ServletRequestSnapshot request)
+    {
+        return new JsonParser().parse(request.getEntity()).getAsJsonObject().get(CLIENT_KEY_FIELD_NAME).getAsString();
+    }
+
+    protected String parseSharedSecret(ServletRequestSnapshot request)
     {
         return signCallbacksWithJwt() ? new JsonParser().parse(request.getEntity()).getAsJsonObject().get(SHARED_SECRET_FIELD_NAME).getAsString() : null;
     }
