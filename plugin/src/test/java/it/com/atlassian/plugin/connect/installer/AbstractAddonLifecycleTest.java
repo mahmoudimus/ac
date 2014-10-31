@@ -56,7 +56,7 @@ public abstract class AbstractAddonLifecycleTest
     public static final String ADD_ON_USER_KEY_PREFIX = "addon_";
     public static final String CROWD_APPLICATION_NAME = "crowd-embedded"; // magic knowledge
 
-    protected static final String DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY = "connect.lifecycle.install.sign_with_prev_key.disable";
+    public static final String DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY = "connect.lifecycle.install.sign_with_prev_key.disable";
 
     protected final TestPluginInstaller testPluginInstaller;
     protected final TestAuthenticator testAuthenticator;
@@ -254,6 +254,9 @@ public abstract class AbstractAddonLifecycleTest
                 final String secretUsedToSignSecondInstallCallback = signsWithPreviousJwtSharedSecret ? firstSharedSecret : secondSharedSecret;
                 JwtTestVerifier verifier = new JwtTestVerifier(firstSharedSecret, clientKey);
                 assertTrue("JWT token should be signed with the shared secret '" + secretUsedToSignSecondInstallCallback + "'", verifier.jwtAndClientAreValid(JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX + request.getJwtToken()));
+
+                assert firstSharedSecret != null; // just to get rid of annoying intellij warning on the line below; it doesn't parse the assertion above
+                assertTrue("we should keep the shared secret on a simple update", firstSharedSecret.equals(secondSharedSecret));
             }
 
             // uninstall, then re-install (like a customer fixing a problem, or like a customer changing their mind)
@@ -269,10 +272,10 @@ public abstract class AbstractAddonLifecycleTest
             if (signCallbacksWithJwt())
             {
                 assert secondSharedSecret != null; // just to get rid of annoying intellij warning on the line below; it doesn't parse the assertion above
-                assertFalse("we should issue a new shared secret on a new installation after an uninstallation", !secondSharedSecret.equals(thirdSharedSecret));
+                assertFalse("we should issue a new shared secret on a new installation after an uninstallation", secondSharedSecret.equals(thirdSharedSecret));
 
                 final String secretUsedToSignThirdInstallCallback = signsWithPreviousJwtSharedSecret ? secondSharedSecret : thirdSharedSecret;
-                JwtTestVerifier verifier = new JwtTestVerifier(firstSharedSecret, clientKey);
+                JwtTestVerifier verifier = new JwtTestVerifier(secretUsedToSignThirdInstallCallback, clientKey);
                 assertTrue("JWT token should be signed with the shared secret '" + secretUsedToSignThirdInstallCallback + "'", verifier.jwtAndClientAreValid(JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX + request.getJwtToken()));
             }
         }

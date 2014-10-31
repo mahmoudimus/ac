@@ -80,6 +80,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         Option<ApplicationLink> maybePreviousApplink = Option.none();
         Option<AuthenticationType> maybePreviousAuthType = Option.none();
         Option<String> maybePreviousPublicKeyOrSharedSecret = Option.none();
+        boolean reusePreviousPublicKeyOrSharedSecret = false;
         String baseUrl = "";
 
         long startTime = System.currentTimeMillis();
@@ -101,6 +102,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 baseUrl = applink.getRpcUrl().toString();
                 maybePreviousAuthType = ConnectApplinkUtil.getAuthenticationType(applink);
                 maybePreviousPublicKeyOrSharedSecret = connectApplinkManager.getSharedSecretOrPublicKey(applink);
+                reusePreviousPublicKeyOrSharedSecret = true; // do NOT issue a new secret every time the add-on vendor updates their descriptor
             }
             else if (PluginState.UNINSTALLED.equals(targetState))
             {
@@ -108,6 +110,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 if (!StringUtils.isEmpty(previousSettings.getSecret()))
                 {
                     maybePreviousPublicKeyOrSharedSecret = Option.some(previousSettings.getSecret());
+                    // leave reusePreviousPublicKeyOrSharedSecret=false because we crossed an uninstall/reinstall boundary
                 }
 
                 targetState = PluginState.ENABLED; // we want the add-on to be usable by default after it is reinstalled
@@ -121,7 +124,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 
             removeOldPlugin(pluginKey);
 
-            addOn = connectAddonManager.installConnectAddon(jsonDescriptor, targetState, maybePreviousPublicKeyOrSharedSecret);
+            addOn = connectAddonManager.installConnectAddon(jsonDescriptor, targetState, maybePreviousPublicKeyOrSharedSecret, reusePreviousPublicKeyOrSharedSecret);
 
             PluginState actualState = addonRegistry.getRestartState(pluginKey);
             addonPluginWrapper = addonToPluginFactory.create(addOn, actualState);
