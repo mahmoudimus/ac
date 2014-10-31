@@ -10,14 +10,12 @@ import com.atlassian.plugin.connect.plugin.capabilities.module.webpanel.IFrameWe
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.web.descriptors.WebPanelModuleDescriptor;
-
 import com.google.common.base.Strings;
-
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.apache.commons.lang3.StringUtils;
 
 
 @Component

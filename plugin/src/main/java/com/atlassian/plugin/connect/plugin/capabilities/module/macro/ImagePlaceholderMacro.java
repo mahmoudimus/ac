@@ -1,14 +1,17 @@
 package com.atlassian.plugin.connect.plugin.capabilities.module.macro;
 
-import java.util.Map;
-
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
-import com.atlassian.confluence.macro.*;
+import com.atlassian.confluence.macro.DefaultImagePlaceholder;
+import com.atlassian.confluence.macro.EditorImagePlaceholder;
+import com.atlassian.confluence.macro.ImagePlaceholder;
+import com.atlassian.confluence.macro.Macro;
+import com.atlassian.confluence.macro.MacroExecutionException;
 import com.atlassian.confluence.pages.thumbnail.Dimensions;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
-
 import com.google.common.base.Preconditions;
+
+import java.util.Map;
 
 public class ImagePlaceholderMacro implements Macro, EditorImagePlaceholder
 {

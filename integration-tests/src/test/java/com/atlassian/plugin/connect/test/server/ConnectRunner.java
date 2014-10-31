@@ -1,14 +1,22 @@
 package com.atlassian.plugin.connect.test.server;
 
 import com.atlassian.pageobjects.TestedProduct;
-import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.api.OAuth;
-import com.atlassian.plugin.connect.modules.beans.*;
+import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
-import com.atlassian.plugin.connect.test.*;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.BaseUrlLocator;
+import com.atlassian.plugin.connect.test.Environment;
+import com.atlassian.plugin.connect.test.HttpUtils;
+import com.atlassian.plugin.connect.test.Utils;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
 import com.google.common.collect.ImmutableMap;
 import it.servlet.ConnectAppServlets;

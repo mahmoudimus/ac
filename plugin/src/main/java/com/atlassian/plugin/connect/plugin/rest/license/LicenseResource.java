@@ -1,19 +1,18 @@
 package com.atlassian.plugin.connect.plugin.rest.license;
 
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
+import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
+import com.atlassian.plugin.connect.plugin.scopes.ApiScopingFilter;
+import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import com.atlassian.upm.api.license.entity.PluginLicense;
+import com.atlassian.upm.api.util.Option;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-
-import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
-import com.atlassian.plugin.connect.plugin.scopes.ApiScopingFilter;
-import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import com.atlassian.upm.api.license.entity.PluginLicense;
-import com.atlassian.upm.api.util.Option;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * fixme: mostly copied from UPM master at 75cee855ebd6475a3e7d9b619694e613c8906f09

@@ -25,7 +25,6 @@ import java.io.IOException;
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 
 @RunWith (AtlassianPluginsTestRunner.class)
 public class AddonsResourceReinstallTest

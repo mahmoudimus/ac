@@ -5,7 +5,10 @@
     ?>
         <p class="code-caption"><?js= example.caption ?></p>
     <?js } ?>
-    <pre><code><?js= example.code ?></code></pre>
+    <div class="<?js=(example.noDemo ? 'notrunnable' : 'runnable')?> example-container aui-buttons">
+        <pre><code><?js= example.code ?></code></pre>
+        <textarea class="demo"><?js= example.code ?></textarea>
+    </div>
 <?js
     });
 ?>
