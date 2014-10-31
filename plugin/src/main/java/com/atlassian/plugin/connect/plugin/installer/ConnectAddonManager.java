@@ -194,9 +194,12 @@ public class ConnectAddonManager
     /**
      * This method is public for test visibility. In preference, please use {@link ConnectAddOnInstaller#install(String)}
      * @param jsonDescriptor the json descriptor of the add-on to install
+     * @param targetState  the intended state of the add-on after a successful installation
+     * @param maybePreviousSharedSecret   optionally, the previous shared secret (used for signing)
+     * @param reusePreviousPublicKeyOrSharedSecret   toggle whether or not we issue a new secret/key if the previous one is defined
      * @return a {@link ConnectAddonBean} representation of the add-on
      */
-    public ConnectAddonBean installConnectAddon(String jsonDescriptor, PluginState targetState, com.atlassian.fugue.Option<String> maybePreviousSharedSecret)
+    public ConnectAddonBean installConnectAddon(String jsonDescriptor, PluginState targetState, Option<String> maybePreviousSharedSecret, boolean reusePreviousPublicKeyOrSharedSecret)
     {
         long startTime = System.currentTimeMillis();
 
@@ -222,7 +225,11 @@ public class ConnectAddonManager
 
         AuthenticationType newAuthType = addOn.getAuthentication().getType();
         final boolean newUseSharedSecret = addOnUsesSymmetricSharedSecret(newAuthType, JWT_ALGORITHM);
-        String newSharedSecret = newUseSharedSecret ? maybePreviousSharedSecret.getOrElse(sharedSecretService.next()) : null;
+        String newSharedSecret = newUseSharedSecret
+                ? reusePreviousPublicKeyOrSharedSecret && maybePreviousSharedSecret.isDefined()
+                    ? maybePreviousSharedSecret.get()
+                    : sharedSecretService.next()
+                : null;
         String newAddOnSigningKey = newUseSharedSecret ? newSharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
 
         String userKey = provisionUserIfNecessary(addOn, previousDescriptor);
