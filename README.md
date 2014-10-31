@@ -84,11 +84,7 @@ The atlassian connect plugin uses [quickreload](https://extranet.atlassian.com/p
 It will automatically reload the connect plugin as soon as it detects that the jar has changed. The recommended fastest way to make this happen
 is to keep `atlas-cli` running in the `plugin` directory, and enter the `package` command to re-build.
 
-If you want quickreload to watch and auto-load other plugins from source, add the directories at startup time thus:
-
-```
--Dquickreload.dirs=dir1,dir2,dir3
-```
+If you want quickreload to watch and auto-load other plugins from source, add the directories to the `.quickrelaod` file in the source tree root.
 
 quickreload also automatically finds and uses the `resources` directory of our plugin
 (and any plugin it's watching that has the standard maven layout), so there is no need to set `-Dplugin.resource.directories` in `MAVEN_OPTS` anymore.
