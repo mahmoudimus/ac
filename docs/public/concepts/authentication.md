@@ -38,6 +38,36 @@ Atlassian\nProduct->Browser: Confirmation\npage
 Browser->Administrator: Page\nrendered
 </div>
 
+#### Signing of the Lifecycle Callbacks
+
+When JWT authentication is used the [lifecycle](../modules/lifecycle.html) callbacks are signed using a shared secret.
+
+<table class='aui'>
+    <thead>
+        <tr>
+            <th>Use Case</th>
+            <th>Shared Secret used to Sign</th>
+        </tr>
+    </thead>
+    <tr>
+        <td>First install</td>
+        <td>None; no JWT token. Because there was no previous shared secret the recipient cannot validate a JWT token.</td>
+    </tr>
+    <tr>
+        <td>Second and subsequent installs</td>
+        <td>The shared secret sent in the preceeding <code>installed</code> callback.</td>
+    </tr>
+    <tr>
+        <td>Uninstall, Enable & Disable</td>
+        <td>The shared secret sent in the preceeding <code>installed</code> callback.</td>
+    </tr>
+    <tr>
+        <td>First install after being uninstalled</td>
+        <td>The shared secret sent in the preceeding <code>installed</code> callback. This allows add-ons to allow the new installation to access previous tenant data (if any exists).<br>
+            A valid signature demonstrates that the sender is in possession of the shared secret from when the old tenant data was accessed.</td>
+    </tr>
+</table>
+
 ### Making a service call
 
 When an add-on calls an API exposed by an Atlassian product, it must add a valid JWT token to the request, 
