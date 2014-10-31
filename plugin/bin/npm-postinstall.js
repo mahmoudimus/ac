@@ -10,6 +10,15 @@ helper.chain([
     [
         'cp',
         ['-a', helper.npmNormalize(atlassianConnectJsPath + '/dist/'), 'src/main/resources/js/core']
+    ],
+    [
+        'mkdir',
+        ['src/main/resources/css/core']
+    ],
+    [
+        'cp',
+        ['-a', helper.npmNormalize(atlassianConnectJsPath + '/dist/host-css.css'), 'src/main/resources/css/core/host-css.css']
     ]
+
 
 ]);
