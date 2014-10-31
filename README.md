@@ -87,7 +87,7 @@ is to keep `atlas-cli` running in the `plugin` directory, and enter the `package
 If you want quickreload to watch and auto-load other plugins from source, add the directories at startup time thus:
 
 ```
--Dquickreload.tracked=dir1,dir2,dir3
+-Dquickreload.dirs=dir1,dir2,dir3
 ```
 
 quickreload also automatically finds and uses the `resources` directory of our plugin
