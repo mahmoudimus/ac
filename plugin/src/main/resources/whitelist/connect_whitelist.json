@@ -84,7 +84,7 @@
   ],
   "connect.legacy.addon.installFailed": [
     "pluginKey"
-  ]
+  ],
   "connect.xmldescriptor.code.invoked": [
     "pluginKey",
     "stackTrace"
