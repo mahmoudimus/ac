@@ -683,7 +683,7 @@
     </pluginRepositories>
     <properties>
         <!-- VERSIONS -->
-        <amps.version>4.2.20</amps.version>
+        <amps.version>5.0.4</amps.version>
         <atlassian.analytics.version>3.38</atlassian.analytics.version>
         <atlassian.applinks.version>4.2.4</atlassian.applinks.version>
         <atlassian.confluence.version>5.6-OD-34-007</atlassian.confluence.version>
