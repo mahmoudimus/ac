@@ -76,7 +76,7 @@ public class AddOnConditionTest
         @Override
         public boolean matchesSafely(AddOnConditionFailedEvent event)
         {
-            return event.getMessage().startsWith("Request to addon condition URL failed: ");
+            return event.getMessage().equals("oops");
         }
     };
 
@@ -239,9 +239,6 @@ public class AddOnConditionTest
         invokeWhenErrorResponse();
         verify(eventPublisher).publish(argThat(eventWithCorrectUrl));
     }
-
-
-
 
     @Test
     public void publishesFailedEventOnMalformedJsonResponse()
