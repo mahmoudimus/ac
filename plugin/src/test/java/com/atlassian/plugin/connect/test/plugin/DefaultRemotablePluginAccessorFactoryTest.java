@@ -25,8 +25,10 @@ import com.atlassian.plugin.event.events.PluginDisabledEvent;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Supplier;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -62,6 +64,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
     @Mock private ConsumerService consumerService;
     @Mock private UserManager userManager;
     @Mock private ConnectAddonBeanFactory connectAddonBeanFactory;
+    @Mock private DarkFeatureManager darkFeatureManager;
 
     private DefaultRemotablePluginAccessorFactory factory;
 
@@ -227,7 +230,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
 
     private CachingHttpContentRetriever mockCachingHttpContentRetriever()
     {
-        return new CachingHttpContentRetriever(mock(HttpClientFactory.class, RETURNS_DEEP_STUBS), mock(PluginRetrievalService.class, RETURNS_DEEP_STUBS));
+        return new CachingHttpContentRetriever(mock(HttpClientFactory.class, RETURNS_DEEP_STUBS), mock(PluginRetrievalService.class, RETURNS_DEEP_STUBS), darkFeatureManager);
     }
 
     private void removePluginAppLink(String pluginKey)

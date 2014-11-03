@@ -6,7 +6,6 @@ import com.atlassian.fugue.Option;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.Response;
-import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.SigningAlgorithm;
@@ -20,6 +19,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.plugin.ConnectHttpClientFactory;
 import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
@@ -51,6 +51,7 @@ import com.atlassian.uri.UriBuilder;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -60,6 +61,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
+
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
@@ -133,7 +135,10 @@ public class ConnectAddonManager
                                BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService,
                                EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties,
                                LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext,
-                               ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory, SharedSecretService sharedSecretService, HttpClientFactory httpClientFactory, ConnectAddonI18nManager i18nManager)
+                               ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory, 
+                               SharedSecretService sharedSecretService,
+                               ConnectHttpClientFactory connectHttpClientFactory, 
+                               ConnectAddonI18nManager i18nManager)
     {
         this.isDevModeService = isDevModeService;
         this.userManager = userManager;
@@ -164,7 +169,7 @@ public class ConnectAddonManager
             options.setSocketTimeout(TEST_SOCKET_TIMEOUT, TimeUnit.MILLISECONDS);
             options.setLeaseTimeout(TEST_LEASE_TIMEOUT);
 
-            this.httpClient = httpClientFactory.create(options);
+            this.httpClient = connectHttpClientFactory.getInstance(options);
             this.isTestHttpClient.set(true);
         }
     }

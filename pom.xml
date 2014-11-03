@@ -690,6 +690,7 @@
         <atlassian.crowd.version>2.8.0-OD-4</atlassian.crowd.version>
         <atlassian.fugue.version>1.1</atlassian.fugue.version>
         <atlassian.healthcheck.version>2.0.4</atlassian.healthcheck.version>
+        <!--  <atlassian.httpclient.version>0.20.1-SNAPSHOT</atlassian.httpclient.version> -->
         <atlassian.httpclient.version>0.17.3</atlassian.httpclient.version>
         <atlassian.httpclient.api.version>0.17</atlassian.httpclient.api.version>
         <atlassian.jira.version>6.4-OD-05-008</atlassian.jira.version>

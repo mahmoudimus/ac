@@ -12,19 +12,27 @@ import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
+import com.atlassian.sal.api.features.DarkFeatureManager;
+import com.atlassian.sal.api.features.EnabledDarkFeatures;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -42,6 +50,8 @@ import static com.google.common.collect.Maps.newHashMap;
 @Named
 public final class CachingHttpContentRetriever implements HttpContentRetriever, DisposableBean
 {
+    private static final String DHE_DISABLED_DARK_FEATURE = "atlassian.connect.dhe.disabled.";
+
     private final static Logger log = LoggerFactory.getLogger(CachingHttpContentRetriever.class);
 
     private static final Set<HttpMethod> METHODS_WITH_BODY = Sets.immutableEnumSet(HttpMethod.POST, HttpMethod.PUT);
@@ -56,9 +66,9 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
     private final HttpClientFactory factory;
 
     @Inject
-    public CachingHttpContentRetriever(HttpClientFactory httpClientFactory, PluginRetrievalService pluginRetrievalService)
+    public CachingHttpContentRetriever(HttpClientFactory httpClientFactory, PluginRetrievalService pluginRetrievalService, DarkFeatureManager darkFeatureManager)
     {
-        this(httpClientFactory, getHttpClientOptions(checkNotNull(pluginRetrievalService, "pluginRetrievalService")));
+        this(httpClientFactory, getHttpClientOptions(checkNotNull(pluginRetrievalService, "pluginRetrievalService"), darkFeatureManager));
     }
 
     CachingHttpContentRetriever(HttpClientFactory httpClientFactory, HttpClientOptions httpClientOptions)
@@ -76,6 +86,29 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
     public void flushCacheByUriPattern(Pattern urlPattern)
     {
         httpClient.flushCacheByUriPattern(urlPattern);
+    }
+
+    private static Iterable<String> getNonDHEHosts(DarkFeatureManager darkFeatureManager)
+    {
+        EnabledDarkFeatures enabled = darkFeatureManager.getFeaturesEnabledForAllUsers();
+        Iterable<String> nonDHEHostFeatures = Iterables.filter(enabled.getFeatureKeys(), new Predicate<String>()
+        {
+
+            @Override
+            public boolean apply(String feature)
+            {
+                return feature.startsWith(DHE_DISABLED_DARK_FEATURE);
+            }
+        });
+        return Iterables.transform(nonDHEHostFeatures, new Function<String, String>()
+        {
+
+            @Override
+            public String apply(String input)
+            {
+                return input.replace(DHE_DISABLED_DARK_FEATURE, "");
+            }
+        });
     }
 
     @Override
@@ -144,9 +177,13 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
         return authorizationGenerator.generate(method, url, allParameters);
     }
 
-    private static HttpClientOptions getHttpClientOptions(PluginRetrievalService pluginRetrievalService)
+    private static HttpClientOptions getHttpClientOptions(PluginRetrievalService pluginRetrievalService, DarkFeatureManager darkFeatureManager)
     {
         HttpClientOptions options = new HttpClientOptions();
+
+        Iterable<String> nonDHEhostnames = getNonDHEHosts(darkFeatureManager);
+        options.setDheDisabledHosts(Lists.newArrayList(nonDHEhostnames));
+
         options.setIoSelectInterval(100, TimeUnit.MILLISECONDS);
         options.setThreadPrefix("http-content-retriever");
         options.setMaxConnectionsPerHost(100);

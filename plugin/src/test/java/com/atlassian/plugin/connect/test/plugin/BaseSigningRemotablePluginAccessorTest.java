@@ -8,6 +8,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.atlassian.util.concurrent.Promise;
 
 import java.net.URI;
@@ -53,7 +54,7 @@ public abstract class BaseSigningRemotablePluginAccessorTest
         HttpClient httpClient = mockHttpClient(mockRequest(EXPECTED_GET_RESPONSE));
         when(httpClientFactory.create(any(HttpClientOptions.class))).thenReturn(httpClient);
 
-        return new CachingHttpContentRetriever(httpClientFactory, mock(PluginRetrievalService.class, RETURNS_DEEP_STUBS));
+        return new CachingHttpContentRetriever(httpClientFactory, mock(PluginRetrievalService.class, RETURNS_DEEP_STUBS), mock(DarkFeatureManager.class));
     }
 
     private HttpClient mockHttpClient(Request.Builder request)

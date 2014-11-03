@@ -14,8 +14,10 @@ import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,6 +46,7 @@ public class CachingHttpContentRetrieverTest
     @Mock private PluginRetrievalService pluginRetrievalService;
     @Mock private Plugin plugin;
     @Mock private PluginInformation pluginInformation;
+    @Mock private DarkFeatureManager darkFeatureManager;
 
     private static final ImmutableMap<String, String[]> PARAMS = ImmutableMap.of("param", new String[]{"value"});
     private static final Map<String, String> HEADERS = ImmutableMap.of("some", "header");
@@ -74,6 +77,6 @@ public class CachingHttpContentRetrieverTest
         when(responseTransformationBuilder.others(any(Function.class))).thenReturn(responseTransformationBuilder);
         when(responseTransformationBuilder.fail(any(Function.class))).thenReturn(responseTransformationBuilder);
         when(responseTransformationBuilder.build()).thenReturn(responseTransformation);
-        httpContentRetriever = new CachingHttpContentRetriever(httpClientFactory, pluginRetrievalService);
+        httpContentRetriever = new CachingHttpContentRetriever(httpClientFactory, pluginRetrievalService, darkFeatureManager);
     }
 }
