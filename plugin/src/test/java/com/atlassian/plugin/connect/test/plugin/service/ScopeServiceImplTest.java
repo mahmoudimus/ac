@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.test.plugin.service;
 
+import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
 import com.atlassian.plugin.connect.plugin.scopes.StaticAddOnScopes;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
 import com.atlassian.plugin.connect.plugin.service.ScopeServiceImpl;
@@ -11,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -32,7 +34,12 @@ public class ScopeServiceImplTest
     public void loadsForJira() throws IOException
     {
         when(applicationProperties.getDisplayName()).thenReturn("jira");
-        assertThat(scopeService.build(), is(StaticAddOnScopes.buildForJira()));
+        Collection<AddOnScope> actual = scopeService.build();
+        Collection<AddOnScope> expected = StaticAddOnScopes.buildForJira();
+        AddOnScope actualFirst = actual.iterator().next();
+        AddOnScope expectedFirst = expected.iterator().next();
+        assertThat(actualFirst, is(expectedFirst));
+        assertThat(actual, is(expected));
     }
 
     @Test

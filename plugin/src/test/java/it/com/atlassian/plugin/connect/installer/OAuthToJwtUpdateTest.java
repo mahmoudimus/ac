@@ -87,7 +87,7 @@ public class OAuthToJwtUpdateTest
         {
             try
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
             catch (IOException e)
             {

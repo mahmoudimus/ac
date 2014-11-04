@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.spi.permission.scope;
 
+import com.atlassian.plugin.connect.spi.scope.RestApiScopeHelper;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;

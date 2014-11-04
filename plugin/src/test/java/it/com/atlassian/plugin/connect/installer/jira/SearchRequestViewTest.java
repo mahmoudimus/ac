@@ -63,7 +63,7 @@ public class SearchRequestViewTest
         }
         finally
         {
-            testPluginInstaller.uninstallJsonAddon(addon);
+            testPluginInstaller.uninstallAddon(addon);
         }
     }
 

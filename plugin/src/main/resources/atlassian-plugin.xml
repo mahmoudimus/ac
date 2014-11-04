@@ -32,7 +32,7 @@
         <url-pattern>/*</url-pattern>
     </servlet-filter>
 
-    <servlet-filter key="api-scoping" class="com.atlassian.plugin.connect.plugin.module.permission.ApiScopingFilter"
+    <servlet-filter key="api-scoping" class="com.atlassian.plugin.connect.plugin.scopes.ApiScopingFilter"
             location="before-decoration" weight="200">
         <url-pattern>/*</url-pattern>
     </servlet-filter>
@@ -56,15 +56,6 @@
             doesn't sign the request.  Request parameters are included in the redirect.
         </description>
         <url-pattern>/redirect/permanent</url-pattern>
-    </servlet>
-
-    <servlet key="remotablePluginsIframe"
-             name="Remotable Plugins Iframe Generator"
-             class="com.atlassian.plugin.connect.plugin.module.page.ContextFreeIFramePageServlet">
-        <description>
-            Generates a template for serving a signed remote iframe
-        </description>
-        <url-pattern>/render-signed-iframe</url-pattern>
     </servlet>
 
     <servlet-filter key="acPermanentRedirectingFilter"
@@ -155,91 +146,6 @@
                                    interface="com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType">
             <manifest-producer class="com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerManifestProducer"/>
     </applinks-application-type>
-
-    <!-- remote extension points -->
-
-    <described-module-type key="remote-plugin-container" name="Remote Plugin Container"
-                               class="com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerModuleDescriptor">
-        <description>The server that is hosting this plugin</description>
-        <optional-permissions>
-            <permission>create_oauth_link</permission>
-        </optional-permissions>
-    </described-module-type>
-
-    <described-module-type key="general-page" class="com.atlassian.plugin.connect.plugin.module.page.GeneralPageModuleDescriptor">
-        <description>
-            A full-sized page that will be decorated as a general page, meaning it will receive the product header
-            and footer.  A link will be created in a default location in the header.  Viewing the page allowed
-            for both authenticated and anonymous users.
-        </description>
-    </described-module-type>
-
-    <described-module-type key="admin-page" name="Administration Page" class="com.atlassian.plugin.connect.plugin.module.page.AdminPageModuleDescriptor">
-        <description>
-            A full-sized page that will be decorated as a product administration page.  A link will be created
-            in a default location in the administration menu.  Viewing the page will be restricted to product
-            administrators.
-        </description>
-    </described-module-type>
-
-    <described-module-type key="configure-page" class="com.atlassian.plugin.connect.plugin.module.page.ConfigurePageModuleDescriptor" max-occurs="1">
-        <description>
-            A full-sized page that will be decorated as a product administration page.  A link to the page
-            will show up in the plugin's details page in the Add-On Manager.  Viewing the page will be restricted to product
-            administrators.
-        </description>
-    </described-module-type>
-
-    <described-module-type key="dialog-page" class="com.atlassian.plugin.connect.plugin.module.page.dialog.DialogPageModuleDescriptor">
-        <description>Loads a remote URL (iframe-wrapped) in an AUI Dialog</description>
-    </described-module-type>
-
-    <described-module-type key="plugin-permission" name="Plugin Permission"
-                                   class="com.atlassian.plugin.connect.plugin.module.permission.DefaultPermissionModuleDescriptor">
-        <description>A permission that needs to be requested by a plugin in order to execute certain functionality</description>
-    </described-module-type>
-
-    <described-module-type key="remote-web-panel" class="com.atlassian.plugin.connect.plugin.module.webpanel.RemoteWebPanelModuleDescriptor">
-        <description>
-            A remote page decorated as a web panel on the project configuration page.
-        </description>
-    </described-module-type>
-
-    <described-module-type key="remote-web-item" class="com.atlassian.plugin.connect.plugin.module.webitem.RemoteWebItemModuleDescriptor">
-        <description>
-            Relative link leading to a remote page decorated as remote page, or an absolute link leading outside of a product.
-        </description>
-    </described-module-type>
-
-    <plugin-permission key="generate_any_html" name="Generate Any HTML">
-            <description>Ability to generate any HTML without any sanitisation.</description>
-    </plugin-permission>
-
-    <plugin-permission key="create_oauth_link" name="Create OAuth Link">
-        <description>Ability to create an incoming OAuth link that will allow trusted access</description>
-    </plugin-permission>
-
-    <plugin-permission key="read_app_links" name="Read Application Links"
-                       class="com.atlassian.plugin.connect.plugin.product.ReadAppLinksScope">
-        <description>Allows a Remotable Plugin to retrieve the host application's configured application links and entity links.</description>
-    </plugin-permission>
-
-    <plugin-permission key="modify_app_link" name="Modify Owned App Link"
-                       class="com.atlassian.plugin.connect.plugin.product.ModifyAppLinkScope">
-        <description>Allows a Remotable Plugin to modify the details of its own configured Application Link.</description>
-    </plugin-permission>
-
-    <plugin-permission key="read_license" name="Read License"
-                       class="com.atlassian.plugin.connect.plugin.product.ReadLicenseScope">
-        <description>Allows a Remotable Plugin to retrieve the information about its license.</description>
-    </plugin-permission>
-
-    <plugin-permission key="define_plugin_permission" name="Define Plugin Permission">
-        <description>Ability to define new plugin permissions.</description>
-    </plugin-permission>
-
-    <!-- product-specific modules included via xslt build process -->
-
 
     <analytics-whitelist key="analyticsWhitelist" resource="whitelist/connect_whitelist.json"/>
 </atlassian-plugin>
