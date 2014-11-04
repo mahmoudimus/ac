@@ -31,16 +31,11 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
     public static final String DESCRIPTOR_PREFIX = "connect-descriptor-";
     private ServiceTracker installServiceTracker;
     private ServiceTracker controlServiceTracker;
-    private final PluginController pluginController;
-    private final PluginAccessor pluginAccessor;
     private final ApplicationProperties applicationProperties;
     private final BundleContext bundleContext;
-    private PluginArtifactFactory pluginArtifactFactory = new DefaultPluginArtifactFactory();
 
-    public DefaultTestPluginInstaller(PluginController pluginController, PluginAccessor pluginAccessor, ApplicationProperties applicationProperties, BundleContext bundleContext)
+    public DefaultTestPluginInstaller(ApplicationProperties applicationProperties, BundleContext bundleContext)
     {
-        this.pluginController = pluginController;
-        this.pluginAccessor = pluginAccessor;
         this.applicationProperties = applicationProperties;
         this.bundleContext = bundleContext;
     }
@@ -64,29 +59,14 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
         return handler.installPlugin(descriptor, Option.some("application/json")).getPlugin();
     }
 
-    @Deprecated // @XmlDescriptor: I didn't feel like adding a dependency on the api module just to add a single annotation, so I used Deprecated instead of XmlDescriptor.
     @Override
-    public Plugin installPlugin(File jarFile) throws IOException
-    {
-        PluginArtifact artifact = pluginArtifactFactory.create(jarFile.toURI());
-        String key = pluginController.installPlugins(artifact).iterator().next();
-        return pluginAccessor.getPlugin(key);
-    }
-
-    @Override
-    public void uninstallJsonAddon(Plugin plugin) throws IOException
+    public void uninstallAddon(Plugin plugin) throws IOException
     {
         PluginControlHandler handler = getControlHandler();
 
         checkNotNull(handler);
 
         handler.uninstall(plugin);
-    }
-
-    @Override
-    public void uninstallXmlAddon(Plugin plugin) throws IOException
-    {
-        pluginController.uninstall(plugin);
     }
 
     @Override
@@ -107,18 +87,6 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
         checkNotNull(handler);
 
         handler.enablePlugins(pluginKey);
-    }
-
-    @Override
-    public void disablePlugin(String pluginKey) throws IOException
-    {
-        pluginController.disablePlugin(pluginKey);
-    }
-
-    @Override
-    public void enablePlugin(String pluginKey) throws IOException
-    {
-        pluginController.enablePlugins(pluginKey);
     }
 
     @Override

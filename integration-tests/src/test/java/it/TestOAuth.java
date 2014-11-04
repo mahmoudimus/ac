@@ -1,7 +1,7 @@
 package it;
 
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
-import com.atlassian.plugin.connect.api.xmldescriptor.OAuth;
+import com.atlassian.plugin.connect.api.OAuth;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import org.junit.Test;

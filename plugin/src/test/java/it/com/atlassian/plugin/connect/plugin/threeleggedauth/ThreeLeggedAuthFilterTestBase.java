@@ -138,7 +138,7 @@ public abstract class ThreeLeggedAuthFilterTestBase
         {
             try
             {
-                testPluginInstaller.uninstallJsonAddon(installed);
+                testPluginInstaller.uninstallAddon(installed);
             }
             catch (Exception e)
             {

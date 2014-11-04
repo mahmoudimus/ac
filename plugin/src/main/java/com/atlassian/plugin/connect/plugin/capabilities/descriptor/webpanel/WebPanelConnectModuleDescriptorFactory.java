@@ -6,9 +6,9 @@ import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.module.webpanel.IFrameWebPanel;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
-import com.atlassian.plugin.connect.plugin.module.webpanel.IFrameRemoteWebPanel;
 import com.atlassian.plugin.web.descriptors.WebPanelModuleDescriptor;
 
 import com.google.common.base.Strings;
@@ -77,7 +77,7 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
             tooltipElement.setText(toolTip.getValue());
         }
 
-        webPanelElement.addAttribute("class", IFrameRemoteWebPanel.class.getName());
+        webPanelElement.addAttribute("class", IFrameWebPanel.class.getName());
         webPanelElement.addAttribute("width", bean.getLayout().getWidth());
         webPanelElement.addAttribute("height", bean.getLayout().getHeight());
         webPanelElement.addAttribute("url", bean.getUrl());

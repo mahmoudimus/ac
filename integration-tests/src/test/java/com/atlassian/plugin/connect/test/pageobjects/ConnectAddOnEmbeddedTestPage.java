@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
-import com.atlassian.plugin.connect.api.xmldescriptor.OAuth;
+import com.atlassian.plugin.connect.api.OAuth;
 import org.openqa.selenium.By;
 
 import java.util.concurrent.Callable;

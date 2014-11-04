@@ -1,37 +1,32 @@
 package com.atlassian.plugin.connect.test.plugin.scopes;
 
-import java.io.IOException;
-import java.util.Date;
-
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jira.security.auth.trustedapps.KeyFactory;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.core.Clock;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
-import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
-import com.atlassian.plugin.connect.plugin.module.permission.ApiScopingFilter;
-import com.atlassian.plugin.connect.plugin.product.WebSudoService;
-import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploderUnitTestHelper;
+import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManager;
+import com.atlassian.plugin.connect.plugin.scopes.ApiScopingFilter;
 import com.atlassian.plugin.connect.spi.event.ScopedRequestAllowedEvent;
 import com.atlassian.plugin.connect.spi.event.ScopedRequestDeniedEvent;
 import com.atlassian.plugin.connect.spi.event.ScopedRequestEvent;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
-
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.IOException;
+import java.util.Date;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -43,7 +38,10 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.argThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
@@ -53,13 +51,11 @@ public class ApiScopingFilterTest
     private static final String ADD_ON_KEY = "my-add-on";
 
     @Mock
-    private PermissionManager permissionManager;
+    private AddOnScopeManager addOnScopeManager;
     @Mock
     private UserManager userManager;
     @Mock
     ConsumerService consumerService;
-    @Mock
-    private WebSudoService webSudoService;
     @Mock
     private JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
     @Mock
@@ -76,12 +72,6 @@ public class ApiScopingFilterTest
     private ApiScopingFilter apiScopingFilter;
     private UserKey userKey = new UserKey("12345");
 
-    @BeforeClass
-    public static void beforeAnyTest()
-    {
-        XmlDescriptorExploderUnitTestHelper.runBeforeTests();
-    }
-
     @Before
     public void setup()
     {
@@ -92,9 +82,7 @@ public class ApiScopingFilterTest
         when(consumerService.getConsumer()).thenReturn(Consumer.key(THIS_ADD_ON_KEY).name("whatever").signatureMethod(Consumer.SignatureMethod.HMAC_SHA1).publicKey(new KeyFactory.InvalidPublicKey(new Exception())).build());
 
         when(clock.now()).thenReturn(new Date(0));
-        apiScopingFilter = new ApiScopingFilter(permissionManager, userManager, consumerService, webSudoService, jsonConnectAddOnIdentifierService, eventPublisher, clock);
-
-
+        apiScopingFilter = new ApiScopingFilter(addOnScopeManager, userManager, consumerService, jsonConnectAddOnIdentifierService, eventPublisher, clock);
     }
 
     @Test
@@ -103,7 +91,7 @@ public class ApiScopingFilterTest
         when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
 
         apiScopingFilter.doFilter(request, response, chain);
-        verify(permissionManager).isRequestInApiScope(any(HttpServletRequest.class), eq(ADD_ON_KEY), eq(userKey));
+        verify(addOnScopeManager).isRequestInApiScope(any(HttpServletRequest.class), eq(ADD_ON_KEY), eq(userKey));
     }
 
     @Test
@@ -113,7 +101,7 @@ public class ApiScopingFilterTest
         when(jsonConnectAddOnIdentifierService.isConnectAddOn(ADD_ON_KEY)).thenReturn(true);
 
         apiScopingFilter.doFilter(request, response, chain);
-        verify(permissionManager).isRequestInApiScope(any(HttpServletRequest.class), eq(ADD_ON_KEY), eq(userKey));
+        verify(addOnScopeManager).isRequestInApiScope(any(HttpServletRequest.class), eq(ADD_ON_KEY), eq(userKey));
     }
 
     @Test
@@ -123,7 +111,7 @@ public class ApiScopingFilterTest
         when(jsonConnectAddOnIdentifierService.isConnectAddOn(ADD_ON_KEY)).thenReturn(false);
 
         apiScopingFilter.doFilter(request, response, chain);
-        verify(permissionManager, never()).isRequestInApiScope(any(HttpServletRequest.class), eq(ADD_ON_KEY), eq(userKey));
+        verify(addOnScopeManager, never()).isRequestInApiScope(any(HttpServletRequest.class), eq(ADD_ON_KEY), eq(userKey));
     }
 
     @Test
@@ -132,21 +120,21 @@ public class ApiScopingFilterTest
         when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(THIS_ADD_ON_KEY);
 
         apiScopingFilter.doFilter(request, response, chain);
-        verify(permissionManager, never()).isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class));
+        verify(addOnScopeManager, never()).isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class));
     }
 
     @Test
     public void testScopeIsNotCheckedForMissingAddOnKey() throws Exception
     {
         apiScopingFilter.doFilter(request, response, chain);
-        verify(permissionManager, never()).isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class));
+        verify(addOnScopeManager, never()).isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class));
     }
 
     @Test
     public void testDeniedApiAccessPublishesDeniedEvent() throws Exception
     {
         when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
-        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(false);
+        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(false);
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher).publish(argThat(isScopeRequestDeniedEvent()));
     }
@@ -155,7 +143,7 @@ public class ApiScopingFilterTest
     public void testDeniedApiAccessDoesntPublishAllowedEvent() throws Exception
     {
         when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
-        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(false);
+        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(false);
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher, never()).publish(argThat(isScopeRequestAllowedEvent()));
     }
@@ -164,7 +152,7 @@ public class ApiScopingFilterTest
     public void testAllowedApiAccessPublishesEvent() throws Exception
     {
         when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
-        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
+        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher).publish(argThat(isScopeRequestAllowedEvent()));
     }
@@ -173,7 +161,7 @@ public class ApiScopingFilterTest
     public void testAllowedApiAccessDoesntPublishDeniedEvent() throws Exception
     {
         when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
-        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
+        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher, never()).publish(argThat(isScopeRequestDeniedEvent()));
     }
@@ -182,7 +170,7 @@ public class ApiScopingFilterTest
     public void testURIsAreTrimmedInDeniedEvents() throws IOException, ServletException
     {
         when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
-        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(false);
+        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(false);
         when(request.getRequestURI()).thenReturn("http://localhost/jira/rest/atlassian-connect/1/foo/private-stuff");
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher).publish(argThat(hasRequestURI("atlassian-connect/1/foo")));
@@ -192,7 +180,7 @@ public class ApiScopingFilterTest
     public void testURIsAreTrimmedInAllowedEvents() throws IOException, ServletException
     {
         when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
-        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
+        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
         when(request.getRequestURI()).thenReturn("http://localhost/jira/rest/atlassian-connect/1/foo/private-stuff");
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher).publish(argThat(hasRequestURI("atlassian-connect/1/foo")));
@@ -202,7 +190,7 @@ public class ApiScopingFilterTest
     public void testAllowedEventsADuration() throws IOException, ServletException
     {
         when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
-        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
+        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
         Date start = new Date(0);
         Date end = new Date(101);
         when(clock.now()).thenReturn(start, end);
@@ -214,7 +202,7 @@ public class ApiScopingFilterTest
     public void testAllowedEventsHaveStatusCode() throws IOException, ServletException
     {
         when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
-        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
+        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
         FilterChain wrappedChain = new FilterChainWrapper();
         apiScopingFilter.doFilter(request, response, wrappedChain);
         verify(eventPublisher).publish(argThat(hasResponseCode(200)));
@@ -234,7 +222,7 @@ public class ApiScopingFilterTest
     public void testUnhandledErrorsInFilterChainCreateEvents() throws IOException, ServletException
     {
         when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
-        when(permissionManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
+        when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
         doThrow(new IOException("Something went wrong")).when(chain).doFilter(any(HttpServletRequest.class),
                                                                               any(HttpServletResponse.class));
         try
