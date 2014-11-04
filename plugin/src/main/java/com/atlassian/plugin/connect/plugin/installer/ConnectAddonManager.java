@@ -14,6 +14,7 @@ import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.PluginState;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData;
@@ -191,9 +192,12 @@ public class ConnectAddonManager
     /**
      * This method is public for test visibility. In preference, please use {@link ConnectAddOnInstaller#install(String)}
      * @param jsonDescriptor the json descriptor of the add-on to install
+     * @param targetState  the intended state of the add-on after a successful installation
+     * @param maybePreviousSharedSecret   optionally, the previous shared secret (used for signing)
+     * @param reusePreviousPublicKeyOrSharedSecret   toggle whether or not we issue a new secret/key if the previous one is defined
      * @return a {@link ConnectAddonBean} representation of the add-on
      */
-    public ConnectAddonBean installConnectAddon(String jsonDescriptor, PluginState targetState, com.atlassian.fugue.Option<String> maybePreviousSharedSecret)
+    public ConnectAddonBean installConnectAddon(String jsonDescriptor, PluginState targetState, Option<String> maybePreviousSharedSecret, boolean reusePreviousPublicKeyOrSharedSecret)
     {
         long startTime = System.currentTimeMillis();
 
@@ -219,7 +223,11 @@ public class ConnectAddonManager
 
         AuthenticationType newAuthType = addOn.getAuthentication().getType();
         final boolean newUseSharedSecret = addOnUsesSymmetricSharedSecret(newAuthType, JWT_ALGORITHM);
-        String newSharedSecret = newUseSharedSecret ? maybePreviousSharedSecret.getOrElse(sharedSecretService.next()) : null;
+        String newSharedSecret = newUseSharedSecret
+                ? reusePreviousPublicKeyOrSharedSecret && maybePreviousSharedSecret.isDefined()
+                    ? maybePreviousSharedSecret.get()
+                    : sharedSecretService.next()
+                : null;
         String newAddOnSigningKey = newUseSharedSecret ? newSharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
 
         String userKey = provisionUserIfNecessary(addOn, previousDescriptor);
@@ -383,6 +391,8 @@ public class ConnectAddonManager
         long startTime = System.currentTimeMillis();
         if (addonRegistry.hasDescriptor(pluginKey))
         {
+            Option<String> maybeSharedSecret = Option.none();
+
             try
             {
                 ConnectAddonBean addon = unmarshallDescriptor(pluginKey);
@@ -413,6 +423,16 @@ public class ConnectAddonManager
                         eventPublisher.publish(new ConnectAddonUninstalledEvent(pluginKey));
                     }
 
+                    if (addOnUsesSymmetricSharedSecret(addon, JWT_ALGORITHM))
+                    {
+                        final ApplicationLink appLink = connectApplinkManager.getAppLink(pluginKey);
+
+                        if (null != appLink)
+                        {
+                            maybeSharedSecret = connectApplinkManager.getSharedSecretOrPublicKey(appLink);
+                        }
+                    }
+
                     connectApplinkManager.deleteAppLink(addon);
                 }
                 else
@@ -428,6 +448,16 @@ public class ConnectAddonManager
             finally
             {
                 addonRegistry.removeAll(pluginKey);
+
+                // if the add-on had a shared secret then store it so that we can sign an installed callback
+                // in DefaultConnectAddOnInstaller.install(java.lang.String)() if the user turns around and re-installs the add-on
+                if (maybeSharedSecret.isDefined())
+                {
+                    AddonSettings uninstalledRemnant = new AddonSettings();
+                    uninstalledRemnant.setSecret(maybeSharedSecret.get());
+                    uninstalledRemnant.setRestartState(PluginState.UNINSTALLED.name());
+                    addonRegistry.storeAddonSettings(pluginKey, uninstalledRemnant); // do it in one call for efficiency
+                }
             }
         }
 
@@ -706,6 +736,12 @@ public class ConnectAddonManager
     {
         Object bundleVersion = bundleContext.getBundle().getHeaders().get(Constants.BUNDLE_VERSION);
         return bundleVersion == null ? null : bundleVersion.toString();
+    }
+
+    private boolean addOnUsesSymmetricSharedSecret(ConnectAddonBean addonBean, SigningAlgorithm jwtAlgorithm)
+    {
+        AuthenticationBean authenticationBean = addonBean.getAuthentication();
+        return null != authenticationBean && addOnUsesSymmetricSharedSecret(authenticationBean.getType(), jwtAlgorithm);
     }
 
     // TODO ACDEV-378: also check the algorithm

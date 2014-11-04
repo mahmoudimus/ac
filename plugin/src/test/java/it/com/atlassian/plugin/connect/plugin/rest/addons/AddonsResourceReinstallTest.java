@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.google.gson.JsonParser;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import it.com.atlassian.plugin.connect.util.RequestUtil;
@@ -23,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
+import static it.com.atlassian.plugin.connect.installer.AbstractAddonLifecycleTest.DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -35,18 +37,21 @@ public class AddonsResourceReinstallTest
     private final TestAuthenticator testAuthenticator;
     private final AddonTestFilterResults testFilterResults;
     private final RequestUtil requestUtil;
+    private final DarkFeatureManager darkFeatureManager;
 
     private static final String REST_BASE = "/atlassian-connect/1/addons";
     public static final String SHARED_SECRET_FIELD_NAME = "sharedSecret";
     public static final String INSTALLED = "/installed";
 
     public AddonsResourceReinstallTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,
-            AddonTestFilterResults testFilterResults, ApplicationProperties applicationProperties)
+                                       AddonTestFilterResults testFilterResults, ApplicationProperties applicationProperties,
+                                       DarkFeatureManager darkFeatureManager)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
         this.testFilterResults = testFilterResults;
         this.requestUtil = new RequestUtil(applicationProperties);
+        this.darkFeatureManager = darkFeatureManager;
     }
 
     @BeforeClass
@@ -58,11 +63,14 @@ public class AddonsResourceReinstallTest
     @Test
     public void reinstallJsonAddon() throws IOException
     {
+        assertFalse(darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY)); // precondition
         Plugin plugin = testPluginInstaller.installAddon(createAddonBean());
         String addonKey = plugin.getKey();
+
         try
         {
             ServletRequestSnapshot installRequest = testFilterResults.getRequest(addonKey, INSTALLED);
+            testFilterResults.clearRequest(addonKey, INSTALLED);
             String installPayload = installRequest.getEntity();
 
             String originalSharedSecret = getSharedSecret(installPayload);

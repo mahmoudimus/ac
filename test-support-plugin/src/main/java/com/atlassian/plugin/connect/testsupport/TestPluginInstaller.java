@@ -18,6 +18,7 @@ public interface TestPluginInstaller
     void enableAddon(String pluginKey) throws IOException;
 
     String getInternalAddonBaseUrl(String pluginKey);
+    String getInternalAddonBaseUrlSuffix(String pluginKey, String additionalSuffix); // no product base url in return value
     
     Iterable<String> getInstalledAddonKeys();
 }
