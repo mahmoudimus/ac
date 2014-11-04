@@ -182,7 +182,8 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
         HttpClientOptions options = new HttpClientOptions();
 
         Iterable<String> nonDHEhostnames = getNonDHEHosts(darkFeatureManager);
-        options.setDheDisabledHosts(Lists.newArrayList(nonDHEhostnames));
+        // TODO: refactor to use the ConnectHttpClientFactory
+        //options.setDheDisabledHosts(Lists.newArrayList(nonDHEhostnames));
 
         options.setIoSelectInterval(100, TimeUnit.MILLISECONDS);
         options.setThreadPrefix("http-content-retriever");
