@@ -5,10 +5,9 @@ import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.ResponsePromise;
 import com.atlassian.httpclient.api.ResponseTransformation;
-import com.atlassian.httpclient.api.factory.HttpClientFactory;
-import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginInformation;
+import com.atlassian.plugin.connect.plugin.ConnectHttpClientFactory;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
@@ -37,7 +36,7 @@ public class CachingHttpContentRetrieverTest
     private HttpContentRetriever httpContentRetriever;
 
     @Mock private AuthorizationGenerator authorizationGenerator;
-    @Mock private HttpClientFactory httpClientFactory;
+    @Mock private ConnectHttpClientFactory httpClientFactory;
     @Mock private HttpClient httpClient;
     @Mock private Request.Builder requestBuilder;
     @Mock private ResponseTransformation<String> responseTransformation;
@@ -66,7 +65,7 @@ public class CachingHttpContentRetrieverTest
         when(authorizationGenerator.generate(any(HttpMethod.class), any(URI.class), anyMap())).thenReturn(Option.<String>none());
         when(pluginRetrievalService.getPlugin()).thenReturn(plugin);
         when(plugin.getPluginInformation()).thenReturn(pluginInformation);
-        when(httpClientFactory.create(any(HttpClientOptions.class))).thenReturn(httpClient);
+        when(httpClientFactory.getInstance()).thenReturn(httpClient);
         when(httpClient.newRequest(anyString())).thenReturn(requestBuilder);
         when(requestBuilder.setAttributes(anyMap())).thenReturn(requestBuilder);
         when(requestBuilder.setHeaders(anyMap())).thenReturn(requestBuilder);
@@ -77,6 +76,6 @@ public class CachingHttpContentRetrieverTest
         when(responseTransformationBuilder.others(any(Function.class))).thenReturn(responseTransformationBuilder);
         when(responseTransformationBuilder.fail(any(Function.class))).thenReturn(responseTransformationBuilder);
         when(responseTransformationBuilder.build()).thenReturn(responseTransformation);
-        httpContentRetriever = new CachingHttpContentRetriever(httpClientFactory, pluginRetrievalService, darkFeatureManager);
+        httpContentRetriever = new CachingHttpContentRetriever(httpClientFactory);
     }
 }

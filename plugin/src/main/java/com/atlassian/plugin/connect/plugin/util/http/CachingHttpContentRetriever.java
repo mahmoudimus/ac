@@ -7,6 +7,7 @@ import com.atlassian.httpclient.api.Response;
 import com.atlassian.httpclient.api.ResponseTransformation;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.httpclient.api.factory.HttpClientOptions;
+import com.atlassian.plugin.connect.plugin.ConnectHttpClientFactory;
 import com.atlassian.plugin.connect.plugin.util.UriBuilderUtils;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
@@ -48,10 +49,8 @@ import static com.google.common.collect.Maps.newHashMap;
  */
 @ExportAsService(HttpContentRetriever.class)
 @Named
-public final class CachingHttpContentRetriever implements HttpContentRetriever, DisposableBean
+public final class CachingHttpContentRetriever implements HttpContentRetriever
 {
-    private static final String DHE_DISABLED_DARK_FEATURE = "atlassian.connect.dhe.disabled.";
-
     private final static Logger log = LoggerFactory.getLogger(CachingHttpContentRetriever.class);
 
     private static final Set<HttpMethod> METHODS_WITH_BODY = Sets.immutableEnumSet(HttpMethod.POST, HttpMethod.PUT);
@@ -63,52 +62,17 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
     );
 
     private final HttpClient httpClient;
-    private final HttpClientFactory factory;
 
     @Inject
-    public CachingHttpContentRetriever(HttpClientFactory httpClientFactory, PluginRetrievalService pluginRetrievalService, DarkFeatureManager darkFeatureManager)
+    public CachingHttpContentRetriever(ConnectHttpClientFactory httpClientFactory)
     {
-        this(httpClientFactory, getHttpClientOptions(checkNotNull(pluginRetrievalService, "pluginRetrievalService"), darkFeatureManager));
-    }
-
-    CachingHttpContentRetriever(HttpClientFactory httpClientFactory, HttpClientOptions httpClientOptions)
-    {
-        this(checkNotNull(httpClientFactory, "httpClientFactory").create(checkNotNull(httpClientOptions, "httpClientOptions")), httpClientFactory);
-    }
-
-    CachingHttpContentRetriever(HttpClient httpClient, HttpClientFactory factory)
-    {
-        this.httpClient = checkNotNull(httpClient);
-        this.factory = factory;
+        this.httpClient = httpClientFactory.getInstance();
     }
 
     @Override
     public void flushCacheByUriPattern(Pattern urlPattern)
     {
         httpClient.flushCacheByUriPattern(urlPattern);
-    }
-
-    private static Iterable<String> getNonDHEHosts(DarkFeatureManager darkFeatureManager)
-    {
-        EnabledDarkFeatures enabled = darkFeatureManager.getFeaturesEnabledForAllUsers();
-        Iterable<String> nonDHEHostFeatures = Iterables.filter(enabled.getFeatureKeys(), new Predicate<String>()
-        {
-
-            @Override
-            public boolean apply(String feature)
-            {
-                return feature.startsWith(DHE_DISABLED_DARK_FEATURE);
-            }
-        });
-        return Iterables.transform(nonDHEHostFeatures, new Function<String, String>()
-        {
-
-            @Override
-            public String apply(String input)
-            {
-                return input.replace(DHE_DISABLED_DARK_FEATURE, "");
-            }
-        });
     }
 
     @Override
@@ -175,32 +139,6 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
     private Option<String> getAuthHeaderValue(AuthorizationGenerator authorizationGenerator, HttpMethod method, URI url, Map<String, String[]> allParameters)
     {
         return authorizationGenerator.generate(method, url, allParameters);
-    }
-
-    private static HttpClientOptions getHttpClientOptions(PluginRetrievalService pluginRetrievalService, DarkFeatureManager darkFeatureManager)
-    {
-        HttpClientOptions options = new HttpClientOptions();
-
-        Iterable<String> nonDHEhostnames = getNonDHEHosts(darkFeatureManager);
-        // TODO: refactor to use the ConnectHttpClientFactory
-        //options.setDheDisabledHosts(Lists.newArrayList(nonDHEhostnames));
-
-        options.setIoSelectInterval(100, TimeUnit.MILLISECONDS);
-        options.setThreadPrefix("http-content-retriever");
-        options.setMaxConnectionsPerHost(100);
-        options.setUserAgent("Atlassian-Connect/" + pluginRetrievalService.getPlugin().getPluginInformation().getVersion());
-
-        options.setConnectionTimeout(3, TimeUnit.SECONDS);
-        options.setSocketTimeout(5, TimeUnit.SECONDS);
-        options.setRequestTimeout(10, TimeUnit.SECONDS);
-        options.setLeaseTimeout(TimeUnit.SECONDS.toMillis(3));
-        return options;
-    }
-
-    @Override
-    public void destroy() throws Exception
-    {
-        factory.dispose(httpClient);
     }
 
     private static class OkFunction implements Function<Response, String>

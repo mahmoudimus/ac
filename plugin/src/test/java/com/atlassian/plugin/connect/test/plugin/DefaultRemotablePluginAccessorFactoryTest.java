@@ -5,7 +5,6 @@ import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.applinks.api.event.ApplicationLinkAddedEvent;
 import com.atlassian.applinks.api.event.ApplicationLinkDeletedEvent;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.Plugin;
@@ -230,7 +229,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
 
     private CachingHttpContentRetriever mockCachingHttpContentRetriever()
     {
-        return new CachingHttpContentRetriever(mock(HttpClientFactory.class, RETURNS_DEEP_STUBS), mock(PluginRetrievalService.class, RETURNS_DEEP_STUBS), darkFeatureManager);
+        return new CachingHttpContentRetriever(mock(ConnectHttpClientFactory.class, RETURNS_DEEP_STUBS));
     }
 
     private void removePluginAppLink(String pluginKey)
