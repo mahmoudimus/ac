@@ -1,4 +1,4 @@
-_AP.define("jira/events", ["_dollar", "_rpc"], function($, rpc) {
+define("jira/events", ["_dollar", "_rpc"], function($, rpc) {
 
     var module = {
         refreshIssuePage: function(){

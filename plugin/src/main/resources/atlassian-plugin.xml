@@ -90,7 +90,7 @@
     </web-resource>
 
     <web-resource key="ap-core">
-        <resource type="download" name="core-host.js" location="/js/core/host-debug.js" />
+        <resource type="download" name="core-host.js" location="/js/core/connect-host.js" />
     </web-resource>
 
     <web-resource key="ap-user">

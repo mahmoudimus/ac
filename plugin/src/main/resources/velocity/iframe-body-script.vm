@@ -1,5 +1,3 @@
 <script class="ap-iframe-body-script">
-    _AP.require(["host/main"], function(create) {
-        create(#parse("velocity/iframe-json.vm"))
-    });
+    _AP.create(#parse("velocity/iframe-json.vm"));
 </script>

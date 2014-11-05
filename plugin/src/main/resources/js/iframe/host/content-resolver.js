@@ -1,4 +1,4 @@
-_AP.define('host/content-resolver', ['_dollar', '_ui-params'], function($, UiParams){
+define("host/content-resolver", ["_dollar", "_ui-params"], function($, UiParams){
     "use strict";
 
     function getContentUrl(pluginKey, moduleKey){
@@ -30,3 +30,6 @@ _AP.define('host/content-resolver', ['_dollar', '_ui-params'], function($, UiPar
     };
 
 });
+
+// add it to the global object. In future, this pattern might change.
+window._AP.contentResolver = require("host/content-resolver");

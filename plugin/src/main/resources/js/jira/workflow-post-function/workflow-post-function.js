@@ -1,4 +1,4 @@
-_AP.define("jira/workflow-post-function", ["_dollar"], function ($) {
+define("jira/workflow-post-function", ["_dollar"], function ($) {
 
     function postFunctionConfigInput (postFunctionId, val) {
         var element = $("#postFunction-config-" + postFunctionId);

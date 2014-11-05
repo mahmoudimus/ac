@@ -1,4 +1,4 @@
-_AP.define("condition/remote", ["_dollar"], function($) {
+define("condition/remote", ["_dollar"], function($) {
 
   var hidden;
 
@@ -33,7 +33,7 @@ _AP.define("condition/remote", ["_dollar"], function($) {
  * @deprecated
  */
 if (!_AP.RemoteConditions) {
-  _AP.require(["condition/remote"], function(main) {
+  require(["condition/remote"], function(main) {
     _AP.RemoteConditions = main;
   });
 }

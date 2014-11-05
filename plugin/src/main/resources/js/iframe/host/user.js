@@ -1,4 +1,4 @@
-_AP.define("user", ["_dollar", "_rpc"], function($, rpc) {
+define("user", ["_dollar", "_rpc"], function($, rpc) {
 
     var connectModuleData; // data sent from the velocity template
 
