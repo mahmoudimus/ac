@@ -1,11 +1,11 @@
-define("host/content-resolver", ["_dollar", "_ui-params"], function($, UiParams){
+require(["_dollar", "_ui-params"], function($, UiParams){
     "use strict";
 
     function getContentUrl(pluginKey, moduleKey){
         return AJS.contextPath() + "/plugins/servlet/ac/" + encodeURIComponent(pluginKey) + "/" + encodeURIComponent(moduleKey);
     }
 
-    return {
+    var contentResolver = {
         resolveByUrl: function(url) {
             var promise = jQuery.Deferred(function(defer){
                 defer.resolve(url);
@@ -29,7 +29,6 @@ define("host/content-resolver", ["_dollar", "_ui-params"], function($, UiParams)
         } 
     };
 
-});
+    window._AP.contentResolver = contentResolver;
 
-// add it to the global object. In future, this pattern might change.
-window._AP.contentResolver = require("host/content-resolver");
+});

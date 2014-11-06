@@ -1,8 +1,8 @@
-define("user", ["_dollar", "_rpc"], function($, rpc) {
+(function(){
+    var $ = AJS.$,
+    connectModuleData; // data sent from the velocity template
 
-    var connectModuleData; // data sent from the velocity template
-
-    rpc.extend(function (config) {
+    _AP.extend(function (config) {
         return {
             init: function (state) {
                 connectModuleData = state;
@@ -29,6 +29,4 @@ define("user", ["_dollar", "_rpc"], function($, rpc) {
         };
 
     });
-
-});
-
+})();

@@ -31,9 +31,6 @@ define("jira/workflow-post-function", ["_dollar"], function ($) {
         });
     }
 
-
-
-
     return {
         postFunctionConfigInput: postFunctionConfigInput,
         isOnWorkflowPostFunctionPage: isOnWorkflowPostFunctionPage,

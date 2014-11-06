@@ -1,5 +1,5 @@
-define("jira/workflow-post-function/rpc", ["_dollar","_rpc", "jira/workflow-post-function"], function($, rpc, workflowPostFunction) {
-
+require(["_dollar","_rpc", "jira/workflow-post-function"], function($, rpc, workflowPostFunction) {
+    "use strict";
 
     rpc.extend(function () {
         return {
