@@ -58,8 +58,7 @@ public class ConnectHttpClientFactory implements DisposableBean
 
     public HttpClient getInstance(HttpClientOptions options)
     {
-        //TODO: publish atlassian-httpclient, comment this back in
-        //options.setDheDisabledHosts(getNonDHEHosts());
+        options.setDheDisabledHosts(getNonDHEHosts());
         HttpClient client = httpClientFactory.create(options);
         instances.add(client);
         return client;
@@ -92,8 +91,7 @@ public class ConnectHttpClientFactory implements DisposableBean
     {
         HttpClientOptions options = new HttpClientOptions();
 
-        //TODO: comment back in when we release the atlassian-httpclient
-        //options.setDheDisabledHosts(getNonDHEHosts());
+        options.setDheDisabledHosts(getNonDHEHosts());
 
         options.setIoSelectInterval(100, TimeUnit.MILLISECONDS);
         options.setThreadPrefix("atlassian-connect");
