@@ -84,7 +84,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         DynamicContentMacroModuleBean smallInlineMacro = newDynamicContentMacroModuleBean()
                 .withUrl("/render-no-resize-macro")
-                .withDescription(new I18nProperty(SMALL_INLINE_MACRO_DESCRIPTION,""))
+                .withDescription(new I18nProperty(SMALL_INLINE_MACRO_DESCRIPTION, ""))
                 .withKey(SMALL_INLINE_MACRO_KEY)
                 .withName(new I18nProperty(SMALL_INLINE_MACRO_NAME, ""))
                 .withOutputType(MacroOutputType.INLINE)
@@ -94,7 +94,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         DynamicContentMacroModuleBean clientSideBodyEditingMacro = newDynamicContentMacroModuleBean()
                 .withUrl("/echo/params?body={macro.body}")
-                .withDescription(new I18nProperty(CLIENT_SIDE_BODY_MACRO_DESCRIPTION,""))
+                .withDescription(new I18nProperty(CLIENT_SIDE_BODY_MACRO_DESCRIPTION, ""))
                 .withKey(CLIENT_SIDE_BODY_MACRO_KEY)
                 .withName(new I18nProperty(CLIENT_SIDE_BODY_MACRO_NAME, ""))
                 .withOutputType(MacroOutputType.BLOCK)
@@ -248,8 +248,18 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Parameter Page"));
         MacroBrowserAndEditor macroInBrowser = findMacroInBrowser(editorPage, SMALL_INLINE_MACRO_KEY);
-        String description = macroInBrowser.macro.getItem().find(By.className("macro-desc")).timed().getText().byDefaultTimeout();
-        assertThat("description shows in macro browser", description, is(SMALL_INLINE_MACRO_DESCRIPTION));
+        try
+        {
+            String description = macroInBrowser.macro.getItem().find(By.className("macro-desc")).timed().getText().byDefaultTimeout();
+            assertThat("description shows in macro browser", description, is(SMALL_INLINE_MACRO_DESCRIPTION));
+        }
+        finally
+        {
+            // necessary to prevent Confluence from showing a navigate away alert
+            selectMacro(macroInBrowser);
+            editorPage.cancel();
+        }
+
     }
 
     @Test
@@ -258,8 +268,19 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Parameter Page"));
         MacroBrowserAndEditor macroInBrowser = findMacroInBrowser(editorPage, CLIENT_SIDE_BODY_MACRO_KEY);
-        String description = macroInBrowser.macro.getItem().find(By.className("macro-desc")).timed().getText().byDefaultTimeout();
-        assertThat("description shows in macro browser", description, is(CLIENT_SIDE_BODY_MACRO_DESCRIPTION));
+        try
+        {
+            String description = macroInBrowser.macro.getItem().find(By.className("macro-desc")).timed().getText().byDefaultTimeout();
+            assertThat("description shows in macro browser", description, is(CLIENT_SIDE_BODY_MACRO_DESCRIPTION));
+        }
+        finally
+        {
+            // necessary to prevent Confluence from showing a navigate away alert
+            macroInBrowser.macro.select();
+            RemotePluginDialog dialog = connectPageOperations.findDialog(CLIENT_SIDE_BODY_MACRO_KEY);
+            dialog.submit();
+            editorPage.cancel();
+        }
     }
 
     @Test

@@ -187,6 +187,13 @@ public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
         }
     }
 
+    protected void selectMacro(MacroBrowserAndEditor macroBrowserAndEditor)
+    {
+        MacroForm macroForm = macroBrowserAndEditor.macro.select();
+        macroForm.waitUntilVisible();
+        macroBrowserAndEditor.browserDialog.clickSave();
+    }
+
     protected MacroBrowserAndEditor findMacroInBrowser(CreatePage editorPage, String macroName)
     {
         final Editor editor = editorPage.getEditor();
