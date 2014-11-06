@@ -76,8 +76,6 @@ public class CommonImports
             @ComponentImport TypeAccessor typeAccessor,
             @ComponentImport WebResourceUrlProvider webResourceUrlProvider,
             @ComponentImport ModuleFactory moduleFactory,
-            @ComponentImport HttpClientFactory httpClientFactory,
-            @ComponentImport HttpClient httpClient,
             @ComponentImport ModuleDescriptorWebHookListenerRegistry webHookListenerRegistry,
             @ComponentImport RemotePluginLicenseService remotePluginLicenseService,
             @ComponentImport JwtService jwtService,
