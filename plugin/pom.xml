@@ -99,12 +99,6 @@
             </exclusions>
             <scope>test</scope>
         </dependency>
-        <!-- Only required for oAuth -->
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk16</artifactId>
-            <version>1.46</version>
-        </dependency>
 
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -291,7 +285,12 @@
         <dependency>
             <groupId>com.atlassian.httpclient</groupId>
             <artifactId>atlassian-httpclient-api</artifactId>
-            <scope>provided</scope>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.httpclient</groupId>
+            <artifactId>atlassian-httpclient-plugin</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.webhooks</groupId>
