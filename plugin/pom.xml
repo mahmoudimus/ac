@@ -469,7 +469,6 @@
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
                 <configuration>
-                    <extractDependencies>false</extractDependencies>
                     <enableDevToolbox>true</enableDevToolbox>
                     <enableFastdev>false</enableFastdev>
                     <skipManifestValidation>true</skipManifestValidation>
