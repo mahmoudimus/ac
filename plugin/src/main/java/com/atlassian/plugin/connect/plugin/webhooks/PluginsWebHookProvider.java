@@ -5,12 +5,10 @@ import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonEnabledEvent;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonLifecycleEvent;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonLifecycleWithDataEvent;
-import com.atlassian.plugin.connect.spi.event.RemotePluginEvent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.webhooks.spi.provider.EventMatcher;
 import com.atlassian.webhooks.spi.provider.EventSerializer;
 import com.atlassian.webhooks.spi.provider.EventSerializerFactory;
-import com.atlassian.webhooks.spi.provider.EventSerializers;
 import com.atlassian.webhooks.spi.provider.PluginModuleListenerParameters;
 import com.atlassian.webhooks.spi.provider.WebHookProvider;
 import com.atlassian.webhooks.spi.provider.WebHookRegistrar;
@@ -36,25 +34,6 @@ public final class PluginsWebHookProvider implements WebHookProvider
         registrar.webhook(CONNECT_ADDON_ENABLED).whenFired(ConnectAddonEnabledEvent.class).matchedBy(connectAddonEventMatcher).serializedWith(connectAddonEventSerializerFactory);
         registrar.webhook(CONNECT_ADDON_DISABLED).whenFired(ConnectAddonDisabledEvent.class).matchedBy(connectAddonEventMatcher).serializedWith(connectAddonEventSerializerFactory);
         //registrar.webhook(CONNECT_ADDON_UNINSTALLED).whenFired(ConnectAddonUninstalledEvent.class).matchedBy(connectAddonEventMatcher).serializedWith(connectAddonEventSerializerFactory);
-    }
-
-    private static final class RemotePluginEventMatcher<E extends RemotePluginEvent> implements EventMatcher<E>
-    {
-        @Override
-        public boolean matches(final E event, final Object consumerParams)
-        {
-            return consumerParams instanceof PluginModuleListenerParameters
-                    && ((PluginModuleListenerParameters) consumerParams).getPluginKey().equals(event.getPluginKey());
-        }
-    }
-
-    private static final class RemotePluginEventSerializerFactory<E extends RemotePluginEvent> implements EventSerializerFactory<E>
-    {
-        @Override
-        public EventSerializer create(final E event)
-        {
-            return EventSerializers.forMap(event, event.toMap());
-        }
     }
 
     private static final class ConnectAddonEventMatcher<E extends ConnectAddonLifecycleEvent> implements EventMatcher<E>

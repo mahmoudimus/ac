@@ -13,10 +13,10 @@ import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.webhooks.spi.plugin.RequestSigner;
 import org.osgi.framework.BundleContext;
 
-import java.net.URI;
-import java.util.Collections;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.net.URI;
+import java.util.Collections;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 import static com.google.common.base.Preconditions.checkNotNull;

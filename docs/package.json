@@ -10,7 +10,8 @@
     "chokidar": "*",
     "JSONPath": "*",
     "commander": "*",
-    "jsdoc": "*"
+    "jsdoc": "*",
+    "atlassian-connect-js": "git+ssh://git@stash.atlassian.com:7997/ac/atlassian-connect-js.git"
   },
   "scripts": {
     "start": "./build.js --serve",
