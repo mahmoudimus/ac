@@ -134,23 +134,23 @@ public class ApiScopingFilter implements Filter
         return (addOnKey != null && !ourConsumerKey.equals(addOnKey)) || (extractXdmRequestKey(request) != null);
     }
 
-    private void handleScopedRequest(String clientKey, HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException
+    private void handleScopedRequest(String addonKey, HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException
     {
         final long startTime = clock.now().getTime();
         // we consume the input to allow inspection of the body via getInputStream
         InputConsumingHttpServletRequest inputConsumingRequest = new InputConsumingHttpServletRequest(req);
         UserKey user = userManager.getRemoteUserKey(req);
         HttpServletResponseWithAnalytics wrappedResponse = new HttpServletResponseWithAnalytics(res);
-        if (!addOnScopeManager.isRequestInApiScope(inputConsumingRequest, clientKey, user))
+        if (!addOnScopeManager.isRequestInApiScope(inputConsumingRequest, addonKey, user))
         {
             log.warn("Request not in an authorized API scope from add-on '{}' as user '{}' on URL '{} {}'",
-                    new Object[]{clientKey, user, req.getMethod(), req.getRequestURI()});
+                    new Object[]{addonKey, user, req.getMethod(), req.getRequestURI()});
             res.sendError(HttpServletResponse.SC_FORBIDDEN, "Request not in an authorized API scope");
-            eventPublisher.publish(new ScopedRequestDeniedEvent(req));
+            eventPublisher.publish(new ScopedRequestDeniedEvent(req, addonKey));
             return;
         }
         log.info("Authorized add-on '{}' to access API at URL '{} {}' for user '{}'",
-                new Object[]{clientKey, req.getMethod(), req.getRequestURI(), user});
+                new Object[]{addonKey, req.getMethod(), req.getRequestURI(), user});
 
         try {
             chain.doFilter(inputConsumingRequest, wrappedResponse);
@@ -158,11 +158,11 @@ public class ApiScopingFilter implements Filter
         catch(Exception e)
         {
             long duration = clock.now().getTime() - startTime;
-            eventPublisher.publish(new ScopedRequestAllowedEvent(req, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, duration));
+            eventPublisher.publish(new ScopedRequestAllowedEvent(req, addonKey, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, duration));
             throw ServletException.class.cast(new ServletException("Unhandled error in ApiScopingFilter").initCause(e));
         }
         long duration = clock.now().getTime() - startTime;
-        eventPublisher.publish(new ScopedRequestAllowedEvent(req, wrappedResponse.getStatusCode(), duration));
+        eventPublisher.publish(new ScopedRequestAllowedEvent(req, addonKey, wrappedResponse.getStatusCode(), duration));
     }
 
     /**

@@ -34,13 +34,13 @@ For more details see the [internal developer's guide](https://extranet.atlassian
 ## Building
 
 To build the plugin, run:
-  
+
     mvn clean install -DskipTests=true
 
 ## Testing Locally
 
 To run the integration tests locally, *cd into the integration-tests directory*
-  
+
     mvn clean verify -P it -DtestGroups=jira
 
 or
@@ -52,7 +52,7 @@ To run a single test/method, do something like:
     mvn clean verify -P it -DtestGroups=jira -Dit.test=TestPageModules#testMyGeneralLoaded
 
 To run an integration test against a particular product in IDEA. (Note only applies to tests that can run against more than one product)
-    Edit configurations -> VM Options = -DtestedProduct=<product>    
+    Edit configurations -> VM Options = -DtestedProduct=<product>
 
 
 ### Wired Tests
@@ -62,7 +62,7 @@ To run manually
 
     cd plugin
     mvn amps:debug -Pwired -Dproduct=<jira|confluence> -Dproduct.version=<version>
-    
+
 
 ## Running
 
@@ -78,11 +78,18 @@ eg,
 
     mvn amps:debug -pl plugin -Dproduct=jira -Dproduct.version=6.1-for-AC-2 -Djvmargs='-Datlassian.upm.on.demand=true'
 
-To run with a fast JS dev loop, set MAVEN_OPTS such that it contains the `plugin/src/main/resources` directory:
+## Reloading
 
-    MAVEN_OPTS="$MAVEN_OPTS -Dplugin.resource.directories=/Users/Me/dev/atlassian-connect/plugin/src/main/resources"
+The atlassian connect plugin uses [quickreload](https://extranet.atlassian.com/pages/viewpage.action?pageId=2227343457).
+It will automatically reload the connect plugin as soon as it detects that the jar has changed. The recommended fastest way to make this happen
+is to keep `atlas-cli` running in the `plugin` directory, and enter the `package` command to re-build.
 
-To reload plugin (pi) within an Atlassian product:
+If you want quickreload to watch and auto-load other plugins from source, add the directories to the `.quickrelaod` file in the source tree root.
+
+quickreload also automatically finds and uses the `resources` directory of our plugin
+(and any plugin it's watching that has the standard maven layout), so there is no need to set `-Dplugin.resource.directories` in `MAVEN_OPTS` anymore.
+
+To load via the Atlassian SDK, use
 
     mvn amps:cli -pl plugin -Dproduct=jira
 

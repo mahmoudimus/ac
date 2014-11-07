@@ -103,6 +103,12 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
     }
 
     @Override
+    public String getInternalAddonBaseUrlSuffix(String pluginKey, String additionalSuffix)
+    {
+        return AddonTestFilter.FILTER_MAPPING + '/' + pluginKey + additionalSuffix;
+    }
+
+    @Override
     public Iterable<String> getInstalledAddonKeys()
     {
         PluginControlHandler handler = getControlHandler();

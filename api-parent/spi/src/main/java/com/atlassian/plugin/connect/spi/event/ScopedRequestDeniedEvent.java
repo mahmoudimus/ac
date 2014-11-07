@@ -7,8 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 @EventName ("connect.scoped.request.incoming.denied")
 public class ScopedRequestDeniedEvent extends ScopedRequestEvent
 {
-    public ScopedRequestDeniedEvent(HttpServletRequest rq)
+    public ScopedRequestDeniedEvent(HttpServletRequest rq, String addonKey)
     {
-        super(rq);
+        super(rq, addonKey);
     }
 }

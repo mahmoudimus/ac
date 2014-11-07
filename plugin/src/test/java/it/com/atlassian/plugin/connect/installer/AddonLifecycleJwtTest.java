@@ -4,12 +4,18 @@ import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.jwt.JwtConstants;
+import com.atlassian.jwt.exception.JwtIssuerLacksSharedSecretException;
+import com.atlassian.jwt.exception.JwtParseException;
+import com.atlassian.jwt.exception.JwtUnknownIssuerException;
+import com.atlassian.jwt.exception.JwtVerificationException;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.connect.testsupport.filter.AddonPrecannedResponseHelper;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.JwtTestVerifier;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
@@ -17,20 +23,28 @@ import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.upm.spi.PluginInstallException;
 import com.google.gson.JsonParser;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.IOException;
+
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @RunWith(AtlassianPluginsTestRunner.class)
 public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
 {
+    private final DarkFeatureManager darkFeatureManager;
+    private final AddonPrecannedResponseHelper addonPrecannedResponseHelper;
+
     public AddonLifecycleJwtTest(TestPluginInstaller testPluginInstaller,
                                  TestAuthenticator testAuthenticator,
                                  AddonTestFilterResults testFilterResults,
@@ -39,9 +53,13 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
                                  UserManager userManager,
                                  ApplicationService applicationService,
                                  ApplicationManager applicationManager,
-                                 DarkFeatureManager darkFeatureManager)
+                                 DarkFeatureManager darkFeatureManager,
+                                 AddonPrecannedResponseHelper addonPrecannedResponseHelper,
+                                 ConnectAddonRegistry connectAddonRegistry)
     {
-        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService, userManager, applicationService, applicationManager, darkFeatureManager);
+        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService, userManager, applicationService, applicationManager, darkFeatureManager, connectAddonRegistry);
+        this.darkFeatureManager = darkFeatureManager;
+        this.addonPrecannedResponseHelper = addonPrecannedResponseHelper;
     }
 
     @Override
@@ -278,4 +296,73 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
         }
     }
 
+    @Test
+    public void aFailedReinstallationPreservesPreviousUninstalledState() throws Exception
+    {
+        assertFalse(darkFeatureManager.isFeatureEnabledForCurrentUser(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY)); // precondition
+        testFailedReinstallation(true);
+    }
+
+    @Test
+    public void aFailedReinstallationPreservesPreviousUninstalledStateWhenTheDarkFeatureIsEnabled() throws Exception
+    {
+        darkFeatureManager.enableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);
+
+        try
+        {
+            testFailedReinstallation(false);
+        }
+        finally
+        {
+            darkFeatureManager.disableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);
+        }
+    }
+
+    private void testFailedReinstallation(final boolean signsWithPreviousSharedSecret) throws IOException, JwtParseException, JwtUnknownIssuerException, JwtVerificationException, JwtIssuerLacksSharedSecretException
+    {
+        ConnectAddonBean addon = installAndUninstallBean;
+
+        Plugin plugin = null;
+        String addonKey = null;
+
+        try
+        {
+            plugin = testPluginInstaller.installAddon(addon);
+            addonKey = plugin.getKey();
+            final ServletRequestSnapshot firstInstallRequest = testFilterResults.getRequest(addonKey, INSTALLED);
+            final String firstSharedSecret = parseSharedSecret(firstInstallRequest);
+            final String clientKey = parseClientKey(firstInstallRequest);
+
+            testPluginInstaller.uninstallAddon(plugin);
+            addonPrecannedResponseHelper.queuePrecannedResponse(testPluginInstaller.getInternalAddonBaseUrlSuffix(addonKey, INSTALLED), 404);
+
+            try
+            {
+                plugin = testPluginInstaller.installAddon(addon); // fail
+                fail("this installation attempt should have failed");
+            }
+            catch (PluginInstallException e)
+            {
+                plugin = null; // this is supposed to happen; see the pre-canned response above
+            }
+
+            plugin = testPluginInstaller.installAddon(addon); // successful re-installation following a failed re-installation
+            ServletRequestSnapshot secondInstallRequest = testFilterResults.getRequest(addonKey, INSTALLED);
+
+            assertEquals(true, secondInstallRequest.hasJwt());
+            final String keyForSigningReinstallRequest = signsWithPreviousSharedSecret ? firstSharedSecret : parseSharedSecret(secondInstallRequest);
+            JwtTestVerifier verifier = new JwtTestVerifier(keyForSigningReinstallRequest, clientKey);
+            assertTrue("JWT token should be signed with the shared secret '" + keyForSigningReinstallRequest + "'", verifier.jwtAndClientAreValid(JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX + secondInstallRequest.getJwtToken()));
+        }
+        finally
+        {
+            testFilterResults.clearRequest(addonKey, INSTALLED);
+            testFilterResults.clearRequest(addonKey, UNINSTALLED);
+
+            if (null != plugin)
+            {
+                testPluginInstaller.uninstallAddon(plugin);
+            }
+        }
+    }
 }

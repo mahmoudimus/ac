@@ -20,6 +20,7 @@ import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonInstallFailedEvent;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.google.common.base.Predicate;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +80,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         Option<ApplicationLink> maybePreviousApplink = Option.none();
         Option<AuthenticationType> maybePreviousAuthType = Option.none();
         Option<String> maybePreviousPublicKeyOrSharedSecret = Option.none();
+        boolean reusePreviousPublicKeyOrSharedSecret = false;
         String baseUrl = "";
 
         long startTime = System.currentTimeMillis();
@@ -91,15 +93,28 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             pluginKey = nonValidatedAddon.getKey();
             maybePreviousApplink = Option.option(connectApplinkManager.getAppLink(pluginKey));
             maybePreviousAddon = findAddon(pluginKey);
+            previousSettings = addonRegistry.getAddonSettings(pluginKey);
+            targetState = PluginState.valueOf(previousSettings.getRestartState()); // don't go back to the registry unnecessarily; it will just return the same previousSettings
+
             if (maybePreviousApplink.isDefined() && maybePreviousAddon.isDefined())
             {
                 ApplicationLink applink = maybePreviousApplink.get();
                 baseUrl = applink.getRpcUrl().toString();
                 maybePreviousAuthType = ConnectApplinkUtil.getAuthenticationType(applink);
                 maybePreviousPublicKeyOrSharedSecret = connectApplinkManager.getSharedSecretOrPublicKey(applink);
+                reusePreviousPublicKeyOrSharedSecret = true; // do NOT issue a new secret every time the add-on vendor updates their descriptor
             }
-            previousSettings = addonRegistry.getAddonSettings(pluginKey);
+            else if (PluginState.UNINSTALLED.equals(targetState))
+            {
+                // has been installed and then uninstalled: we should sign the new installation with the old secret (if there was one)
+                if (!StringUtils.isEmpty(previousSettings.getSecret()))
+                {
+                    maybePreviousPublicKeyOrSharedSecret = Option.some(previousSettings.getSecret());
+                    // leave reusePreviousPublicKeyOrSharedSecret=false because we crossed an uninstall/reinstall boundary
+                }
 
+                targetState = PluginState.ENABLED; // we want the add-on to be usable by default after it is reinstalled
+            }
 
             if (nonValidatedAddon.getModules().isEmpty())
             {
@@ -107,11 +122,9 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 throw new PluginInstallException("Unable to install connect add on because it has no modules defined", errorI18nKey);
             }
 
-            targetState = PluginState.valueOf(previousSettings.getRestartState()); // don't go back to the registry unnecessarily; it will just return the same previousSettings
-
             removeOldPlugin(pluginKey);
 
-            addOn = connectAddonManager.installConnectAddon(jsonDescriptor, targetState, maybePreviousPublicKeyOrSharedSecret);
+            addOn = connectAddonManager.installConnectAddon(jsonDescriptor, targetState, maybePreviousPublicKeyOrSharedSecret, reusePreviousPublicKeyOrSharedSecret);
 
             PluginState actualState = addonRegistry.getRestartState(pluginKey);
             addonPluginWrapper = addonToPluginFactory.create(addOn, actualState);
@@ -152,6 +165,16 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                     log.error("An exception occurred while installing the plugin '[" + pluginKey + "]. Uninstalling...",
                               e);
                     connectAddonManager.uninstallConnectAddonQuietly(pluginKey);
+
+                    // if we were trying to reinstall after uninstalling then leave the previous "uninstalled" settings behind
+                    // (i.e. nothing changed as a result of a failed re-installation attempt)
+                    if (PluginState.UNINSTALLED.equals(PluginState.valueOf(previousSettings.getRestartState())))
+                    {
+                        log.error("An exception occurred while installing the plugin '["
+                                + pluginKey
+                                + "]. Restoring previous uninstalled-remnant settings...", e);
+                        addonRegistry.storeAddonSettings(pluginKey, previousSettings);
+                    }
                 }
             }
             if(e instanceof PluginInstallException)
