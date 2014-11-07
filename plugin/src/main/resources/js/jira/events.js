@@ -1,4 +1,5 @@
-define("jira/events", ["_dollar", "_rpc"], function($, rpc) {
+(function(define, extend, $){
+    "use strict";
 
     var module = {
         refreshIssuePage: function(){
@@ -10,7 +11,7 @@ define("jira/events", ["_dollar", "_rpc"], function($, rpc) {
         }
     };
 
-    rpc.extend(function () {
+    extend(function () {
         return {
             internals: {
                 triggerJiraEvent: function () {
@@ -20,5 +21,4 @@ define("jira/events", ["_dollar", "_rpc"], function($, rpc) {
         };
     });
 
-    return module;
-});
+})(define, _AP.extend, AJS.$);

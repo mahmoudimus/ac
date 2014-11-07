@@ -1,8 +1,9 @@
-(function(){
-    var $ = AJS.$,
-    connectModuleData; // data sent from the velocity template
+(function($, extend){
+    "use strict";
 
-    _AP.extend(function (config) {
+    var connectModuleData; // data sent from the velocity template
+
+    extend(function (config) {
         return {
             init: function (state) {
                 connectModuleData = state;
@@ -29,4 +30,5 @@
         };
 
     });
-})();
+
+})(AJS.$, _AP.extend);

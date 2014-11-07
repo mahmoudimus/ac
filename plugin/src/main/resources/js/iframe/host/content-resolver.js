@@ -1,4 +1,4 @@
-require(["_dollar", "_ui-params"], function($, UiParams){
+(function($, UiParams, context){
     "use strict";
 
     function getContentUrl(pluginKey, moduleKey){
@@ -29,6 +29,7 @@ require(["_dollar", "_ui-params"], function($, UiParams){
         } 
     };
 
-    window._AP.contentResolver = contentResolver;
+    context._AP.contentResolver = contentResolver;
 
-});
+
+}(AJS.$, _AP.uiParams, this));
