@@ -16,7 +16,7 @@ AJS.bind("init.rte", function () {
       insertTitle: "%%INSERT_TITLE%%",
       url: AJS.params.contextPath + "%%URL%%"
     };
-    require(["confluence/macro/editor"], function(macroEditor) {
+    require(["ac/confluence/macro/editor"], function(macroEditor) {
         AJS.MacroBrowser.setMacroJsOverride(macroName, {
             opener: function(macroData) {
                 macroData = $.extend({name: macroName}, macroData);
