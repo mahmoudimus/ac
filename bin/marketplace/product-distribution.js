@@ -57,15 +57,25 @@ var getAddonPage = function(opts, uri, callback) {
                 var grouped = _.groupBy(p, opts.groupBy || 'patch');
 
                 var r = _.map(grouped, function (group, key) {
-                    return { version: key, count: _.reduce(group, function (memo, version) {
+                    var count = _.reduce(group, function (memo, version) {
                         return memo + version.elements[0].count;
-                    }, 0) };
+                    }, 0);
+                    return { version: key, count: count };
                 });
+
+                var total = _.reduce(r, function (m, n) { return m + n.count; }, 0);
+
+                _.each(r, function (v) {
+                    var pct = (v.count / total * 100);
+                    pct = Math.round(pct * 100) / 100
+                    v.percentage = (pct) + "%";
+                });
+
                 // _.forEach(_.sortBy(r, 'version'), function (v) {
                 //     console.log(v.version, v.count);
                 // });
                 console.log(_.sortBy(r, 'version'));
-                console.log("Total: " + _.reduce(r, function (m, n) { return m + n.count; }, 0));
+                console.log("Total: " + total);
             }
 
             _.forEach(series, function(s) {
