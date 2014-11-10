@@ -1,24 +1,26 @@
-(function(define, extend, $){
+(function(define, $){
     "use strict";
-
-    var module = {
-        refreshIssuePage: function(){
-            try {
-                JIRA.trigger(JIRA.Events.REFRESH_ISSUE_PAGE, [JIRA.Issue.getIssueId()]);
-            } catch (e){
-                throw new Error("Failed to refresh the issue page");
-            }
-        }
-    };
-
-    extend(function () {
-        return {
-            internals: {
-                triggerJiraEvent: function () {
-                    module.refreshIssuePage();
+    define("ac/jira/events", ['connect-host'], function(_AP){
+        var module = {
+            refreshIssuePage: function(){
+                try {
+                    JIRA.trigger(JIRA.Events.REFRESH_ISSUE_PAGE, [JIRA.Issue.getIssueId()]);
+                } catch (e){
+                    throw new Error("Failed to refresh the issue page");
                 }
             }
         };
+
+        _AP.extend(function () {
+            return {
+                internals: {
+                    triggerJiraEvent: function () {
+                        module.refreshIssuePage();
+                    }
+                }
+            };
+        });
+        return module;
     });
 
-})(define, _AP.extend, AJS.$);
+})(define, AJS.$);

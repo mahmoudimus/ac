@@ -1,6 +1,6 @@
-(function($, define, dialog, uiParams){
+(function($, define){
 
-    define("ac/confluence/macro/editor", function() {
+    define("ac/confluence/macro/editor", ['connect-host'], function(_AP) {
 
         // When openCustomEditor is invoked, it will assign a function for saving the macro
         // being edited to this field. This simplifies the client's job of saving the macro
@@ -74,7 +74,7 @@
                     var data = {
                             "width": "100%",
                             "height": "100%",
-                            "ui-params": uiParams.encode({dlg: 1})
+                            "ui-params": _AP.uiParams.encode({dlg: 1})
                         };
                     $.extend(data, openEditorMacroData);
                     return $.ajax(url, {
@@ -106,7 +106,7 @@
                     height: opts.height || null
                 };
 
-                dialog.create(dialogOpts, false);
+                _AP.Dialog.create(dialogOpts, false);
 
                 getIframeHtmlForMacro(opts.url).done(function(data){
                     var dialogHtml = $(data);
@@ -122,4 +122,4 @@
     });
 
 
-})(AJS.$, define, _AP.Dialog, _AP.uiParams);
+})(AJS.$, define);

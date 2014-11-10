@@ -1,8 +1,8 @@
-(function($, extend, require){
+(function($, require){
     "use strict";
 
-    require(["ac/confluence/macro/editor"], function(editor) {
-        extend(function () {
+    require(["ac/confluence/macro/editor", 'connect-host'], function(editor, _AP) {
+        _AP.extend(function () {
             return {
                 internals: {
                     saveMacro: function (updatedParams, updatedMacroBody) {
@@ -22,4 +22,4 @@
         });
     });
 
-}(AJS.$, _AP.extend, require));
+}(AJS.$, require));

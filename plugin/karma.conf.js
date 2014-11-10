@@ -19,7 +19,8 @@ module.exports = function(config) {
       {pattern: 'node_modules/atlassian-connect-js/bower_components/aui-dist/aui/js/aui.js', included: true},
       'http://aui-cdn.atlassian.com/aui-adg/5.4.3/js/aui-soy.js',
       {pattern: 'node_modules/atlassian-connect-js/bower_components/aui/src/js/atlassian.js', included: true},
-      'src/main/resources/js/core/host-debug.js',
+      {pattern: 'src/main/resources/js/core/connect-host.js',
+      included: false},
       'src/test/resources/test-main.js',
       {pattern: 'src/test/resources/**/*-test.js', included: false},
       {pattern: 'src/test/resources/fixtures/**', included: false},
@@ -73,7 +74,8 @@ module.exports = function(config) {
     // - PhantomJS
     // - IE (only Windows)
     //browsers: ['Chrome', 'Safari', 'Firefox', 'Opera', 'IE11 - Win7', 'IE10 - Win7', 'IE9 - Win7'],
-    browsers: ['PhantomJS'],
+//    browsers: ['PhantomJS'],
+    browsers: ['Chrome'],
 
 
     // If browser does not capture in given timeout [ms], kill it
@@ -82,6 +84,6 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
-    singleRun: true
+    singleRun: false
   });
 };

@@ -1,8 +1,8 @@
-(function($, extend, require){
+(function($, require){
     "use strict";
-    require(["ac/jira/workflow-post-function"], function(workflowPostFunction) {
+    require(["ac/jira/workflow-post-function", 'connect-host'], function(workflowPostFunction, _AP) {
 
-        extend(function () {
+        _AP.extend(function () {
             return {
                 init: function (state, xdm) {
                     if(!workflowPostFunction.isOnWorkflowPostFunctionPage()){
@@ -24,4 +24,4 @@
             };
         });
     });
-})(AJS.$, _AP.extend, require);
+})(AJS.$, require);
