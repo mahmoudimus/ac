@@ -1,0 +1,10 @@
+#
+# Add directories to this file, one on each line, and the quick reload support will monitor them
+# and automatically load them as soon as they are compiled and assembled.
+#
+# You can use -Dquickreload.dirs=dir1,dir2,dir3 on the JVM command line to also specify directories
+# to monitor.
+#
+
+# connect plugin
+plugin

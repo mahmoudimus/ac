@@ -50,7 +50,7 @@ public class AddOnEnablementTest
     {
         if (null != plugin)
         {
-            testPluginInstaller.uninstallJsonAddon(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
         }
     }
 

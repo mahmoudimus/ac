@@ -57,7 +57,7 @@ public class ConnectReflectionHelper
         }
     }
 
-    private static List<Field> getAllFieldsInObjectChain(Class someClass)
+    public static List<Field> getAllFieldsInObjectChain(Class someClass)
     {
         List<Field> fieldList = new ArrayList<Field>();
 

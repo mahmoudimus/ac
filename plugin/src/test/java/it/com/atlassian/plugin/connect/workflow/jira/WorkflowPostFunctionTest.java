@@ -20,15 +20,15 @@ import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
+import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-
 import it.com.atlassian.plugin.connect.HeaderUtil;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
-
 import org.apache.http.HttpHeaders;
 import org.json.JSONObject;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -116,12 +116,18 @@ public class WorkflowPostFunctionTest
         workflow = workflowImporter.importWorkflow("postFunctionTestWorkflow", "/workflows/postFunctionTestWorkflow.xml");
     }
 
+    @Before
+    public void beforeEach()
+    {
+        testFilterResults.clearRequest(plugin.getKey(), TRIGGERED_URL);
+    }
+
     @AfterClass
     public void cleanup() throws IOException
     {
         if (null != plugin)
         {
-            testPluginInstaller.uninstallJsonAddon(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
         }
     }
 
@@ -179,7 +185,30 @@ public class WorkflowPostFunctionTest
         workflowManager.migrateIssueToWorkflow(issue, workflow, issue.getStatusObject());
         workflowManager.doWorkflowAction(new WorkflowAction(authenticationContext.getUser(), issue, RESOLVE_ACTION));
 
-        return getTriggeredRequest();
+        return waitForWebhook(plugin.getKey(), TRIGGERED_URL);
+    }
+
+    private ServletRequestSnapshot waitForWebhook(final String addonKey, final String path)
+    {
+        final ServletRequestSnapshot[] request = {null};
+
+        WaitUntil.invoke(new WaitUntil.WaitCondition()
+        {
+            @Override
+            public boolean isFinished()
+            {
+                request[0] = testFilterResults.getRequest(addonKey, path);
+                return null != request[0];
+            }
+
+            @Override
+            public String getWaitMessage()
+            {
+                return "waiting for enable webhook post...";
+            }
+        }, 5);
+
+        return request[0];
     }
 
     private Issue createIssue(String summary) throws CreateException
@@ -194,10 +223,5 @@ public class WorkflowPostFunctionTest
         params.put("issue", issueObject);
 
         return issueManager.createIssueObject(authenticationContext.getUser().getDirectoryUser(), params);
-    }
-
-    private ServletRequestSnapshot getTriggeredRequest()
-    {
-        return testFilterResults.getRequest(plugin.getKey(), TRIGGERED_URL);
     }
 }

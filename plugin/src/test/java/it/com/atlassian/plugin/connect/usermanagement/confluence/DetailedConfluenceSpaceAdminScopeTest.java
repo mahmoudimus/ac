@@ -124,7 +124,7 @@ public class DetailedConfluenceSpaceAdminScopeTest
             {
                 try
                 {
-                    testPluginInstaller.uninstallJsonAddon(plugin);
+                    testPluginInstaller.uninstallAddon(plugin);
                 }
                 catch (Exception e)
                 {

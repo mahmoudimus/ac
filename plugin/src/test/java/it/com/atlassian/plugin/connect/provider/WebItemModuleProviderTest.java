@@ -3,7 +3,12 @@ package it.com.atlassian.plugin.connect.provider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.modules.beans.*;
+import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
@@ -223,7 +228,7 @@ public class WebItemModuleProviderTest
         {
             if (null != plugin)
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -288,7 +293,7 @@ public class WebItemModuleProviderTest
         {
             if (null != plugin)
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -343,7 +348,7 @@ public class WebItemModuleProviderTest
         {
             if (null != plugin)
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -397,7 +402,7 @@ public class WebItemModuleProviderTest
         {
             if (null != plugin)
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -445,7 +450,7 @@ public class WebItemModuleProviderTest
         {
             if (null != plugin)
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }

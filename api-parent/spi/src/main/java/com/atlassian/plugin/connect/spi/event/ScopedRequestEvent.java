@@ -2,9 +2,9 @@ package com.atlassian.plugin.connect.spi.event;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Pair;
-import com.atlassian.plugin.connect.spi.permission.scope.JsonRpcApiScopeHelper;
-import com.atlassian.plugin.connect.spi.permission.scope.RpcEncodedSoapApiScopeHelper;
-import com.atlassian.plugin.connect.spi.permission.scope.XmlRpcApiScopeHelper;
+import com.atlassian.plugin.connect.spi.scope.JsonRpcApiScopeHelper;
+import com.atlassian.plugin.connect.spi.scope.RpcEncodedSoapApiScopeHelper;
+import com.atlassian.plugin.connect.spi.scope.XmlRpcApiScopeHelper;
 import com.atlassian.plugin.connect.spi.util.ServletUtils;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
@@ -30,14 +30,15 @@ public abstract class ScopedRequestEvent
                                                                     "/soap/axis/confluenceservice-v1");
 
     private final String httpMethod;
-
     private final String httpRequestUri;
+    private final String addonKey;
 
-    public ScopedRequestEvent(HttpServletRequest rq)
+    public ScopedRequestEvent(HttpServletRequest rq, String addonKey)
     {
         super();
         this.httpMethod = rq.getMethod();
         this.httpRequestUri = toAnalyticsSafePath(rq);
+        this.addonKey = addonKey;
     }
 
     private static Predicate<String> endsWith(final String it)
@@ -52,7 +53,7 @@ public abstract class ScopedRequestEvent
             }
         };
     }
- 
+
     private static Predicate<String> startsWith(final String it)
     {
         return new Predicate<String>()
@@ -89,7 +90,7 @@ public abstract class ScopedRequestEvent
 
     /**
      * Trim potentially sensitive values from REST calls, append method name for SOAP/RPC.
-     * 
+     *
      * @param rq
      * @return a path that is safe to use for analytics
      */
@@ -132,11 +133,11 @@ public abstract class ScopedRequestEvent
 
     /**
      * Trim REST API urls to remove sensitive information and to avoid having too many discrete values.
-     * 
+     *
      * We take the first two elements of the path after '/rest' if the path does not include a version number
      * (Confluence), and first three elements if it includes a version number (JIRA).
-     * 
-     * 
+     *
+     *
      * @param uri
      * @return trimmed URI
      */
@@ -191,5 +192,10 @@ public abstract class ScopedRequestEvent
     public String getHttpRequestUri()
     {
         return httpRequestUri;
+    }
+
+    public String getAddonKey()
+    {
+        return addonKey;
     }
 }

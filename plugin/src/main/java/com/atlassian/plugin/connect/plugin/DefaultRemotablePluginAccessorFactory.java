@@ -8,18 +8,14 @@ import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.consumer.ConsumerService;
-import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.api.xmldescriptor.XmlDescriptor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
-import com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
-import com.atlassian.plugin.connect.plugin.xmldescriptor.XmlDescriptorExploder;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
@@ -157,7 +153,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
     @Override
     public RemotablePluginAccessor get(Plugin plugin)
     {
-        return get(plugin,plugin.getKey());
+        return get(plugin, plugin.getKey());
     }
 
     /**
@@ -229,7 +225,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
             );
         }
     }
-    
+
     /**
      * @deprecated use {@code getDisplayUrl(ConnectAddonBean addon)} instead
      */
@@ -237,16 +233,16 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
     private Supplier<URI> getDisplayUrl(final String pluginKey)
     {
         String addonBaseUrl = "";
-        
+
         if(connectAddonRegistry.hasBaseUrl(pluginKey))
         {
             addonBaseUrl = connectAddonRegistry.getBaseUrl(pluginKey);
         }
         else
         {
-            addonBaseUrl = getBaseUrlForXmlDescriptorAddOn(pluginKey);
+            throw new IllegalStateException(pluginKey + " appears to be an XML add-on");
         }
-        
+
         final String storedBaseUrl = addonBaseUrl;
 
         if (!Strings.isNullOrEmpty(storedBaseUrl))
@@ -275,28 +271,6 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
                     }
             );
         }
-    }
-
-    @XmlDescriptor
-    private String getBaseUrlForXmlDescriptorAddOn(String pluginKey)
-    {
-        XmlDescriptorExploder.notifyAndExplode(pluginKey);
-
-        String addonBaseUrl = null;
-        Plugin plugin = pluginAccessor.getPlugin(pluginKey);
-
-        if(null != plugin)
-        {
-            for(ModuleDescriptor descriptor : plugin.getModuleDescriptors())
-            {
-                if(RemotePluginContainerModuleDescriptor.class.isAssignableFrom(descriptor.getClass()))
-                {
-                    addonBaseUrl = ((RemotePluginContainerModuleDescriptor) descriptor).getAddonBaseUrl();
-                }
-            }
-        }
-
-        return addonBaseUrl;
     }
 
     /**

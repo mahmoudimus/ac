@@ -3,16 +3,18 @@ package it.com.atlassian.plugin.connect.installer;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.xmldescriptor.OAuth;
+import com.atlassian.plugin.connect.api.OAuth;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.gson.JsonParser;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
@@ -40,9 +42,11 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
                                       UserManager userManager,
                                       ApplicationService applicationService,
                                       ApplicationManager applicationManager,
-                                      ApplicationProperties applicationProperties)
+                                      ApplicationProperties applicationProperties,
+                                      DarkFeatureManager darkFeatureManager,
+                                      ConnectAddonRegistry connectAddonRegistry)
     {
-        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService, userManager, applicationService, applicationManager);
+        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService, userManager, applicationService, applicationManager, darkFeatureManager, connectAddonRegistry);
         requestUtil = new RequestUtil(applicationProperties);
     }
 
@@ -82,7 +86,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, INSTALLED);
             if(null != plugin)
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -110,7 +114,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, INSTALLED);
             if(null != plugin)
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -143,7 +147,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, INSTALLED);
             if(null != plugin)
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
         
@@ -163,7 +167,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
 
             addonKey = plugin.getKey();
 
-            testPluginInstaller.uninstallJsonAddon(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
             plugin = null;
 
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
@@ -178,7 +182,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if(null != plugin)
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -196,7 +200,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
 
             addonKey = plugin.getKey();
 
-            testPluginInstaller.uninstallJsonAddon(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
             plugin = null;
 
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
@@ -209,7 +213,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if(null != plugin)
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }
@@ -227,7 +231,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
 
             addonKey = plugin.getKey();
 
-            testPluginInstaller.uninstallJsonAddon(plugin);
+            testPluginInstaller.uninstallAddon(plugin);
             plugin = null;
 
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
@@ -245,7 +249,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
             testFilterResults.clearRequest(addonKey, UNINSTALLED);
             if(null != plugin)
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
         }
     }

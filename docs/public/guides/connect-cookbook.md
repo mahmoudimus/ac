@@ -20,7 +20,7 @@ Skip ahead to any section:
 * [Creating a JIRA issue](#jira-create-issue)  
 * [Searching JIRA with JQL](#jql-search)  
 
-* [Getting a list of Confluence spaces](#get-confluence-spaces)  
+* [Getting a list of Confluence spaces](#get-spaces)
 * [Getting information about specific spaces](#get-specific-space)  
 * [Getting Confluence space pages](#getting-space-pages)  
 

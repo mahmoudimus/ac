@@ -179,7 +179,7 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
             {
                 log.debug("An unknown error occurred retrieving HTTP content. Status is {}, body content " +
                         "is:\n{}\n", input.getStatusCode(), input.getEntity());
-                throw new ContentRetrievalException("An unknown error occurred!");
+                throw new ContentRetrievalException("Unknown error. Status is " + input.getStatusCode());
             }
         }
     }

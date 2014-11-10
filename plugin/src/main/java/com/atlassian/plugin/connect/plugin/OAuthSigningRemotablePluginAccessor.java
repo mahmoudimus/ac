@@ -25,7 +25,7 @@ import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.transformValues;
 import static java.util.Collections.singletonList;
 
-@com.atlassian.plugin.connect.api.xmldescriptor.OAuth
+@com.atlassian.plugin.connect.api.OAuth
 public class OAuthSigningRemotablePluginAccessor extends DefaultRemotablePluginAccessorBase
 {
     private final ServiceProvider serviceProvider;

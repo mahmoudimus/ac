@@ -4,7 +4,7 @@ import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.StaticContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.macro.StaticContentMacroModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.module.MacroModuleContextExtractor;
+import com.atlassian.plugin.connect.plugin.capabilities.module.macro.MacroModuleContextExtractor;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.StaticContentMacroModuleProvider;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.module.confluence.MacroContentManager;

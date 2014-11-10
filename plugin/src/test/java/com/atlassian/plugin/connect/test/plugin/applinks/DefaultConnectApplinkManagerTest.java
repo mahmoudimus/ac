@@ -13,12 +13,12 @@ import com.atlassian.jwt.JwtConstants;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
-import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.NotConnectAddonException;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerApplicationTypeImpl;
+import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManager;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
@@ -36,7 +36,9 @@ import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
@@ -48,7 +50,7 @@ public class DefaultConnectApplinkManagerTest
     @Mock private TypeAccessor typeAccessor;
     @Mock private PluginSettingsFactory pluginSettingsFactory;
     @Mock private OAuthLinkManager oAuthLinkManager;
-    @Mock private PermissionManager permissionManager;
+    @Mock private AddOnScopeManager addOnScopeManager;
     private TransactionTemplate transactionTemplate;
 
     private ConnectApplinkManager connectApplinkManager;
@@ -153,7 +155,7 @@ public class DefaultConnectApplinkManagerTest
         };
 
         connectApplinkManager = new DefaultConnectApplinkManager(applicationLinkService, typeAccessor,
-                pluginSettingsFactory, oAuthLinkManager, permissionManager, transactionTemplate);
+                pluginSettingsFactory, oAuthLinkManager, transactionTemplate);
 
         when(connectApplicationType.getId()).thenReturn(RemotePluginContainerApplicationTypeImpl.TYPE_ID);
     }

@@ -4,16 +4,14 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
-import com.atlassian.plugin.connect.plugin.capabilities.module.DynamicContentMacro;
-import com.atlassian.plugin.connect.plugin.capabilities.module.MacroModuleContextExtractor;
+import com.atlassian.plugin.connect.plugin.capabilities.module.macro.DynamicContentMacro;
+import com.atlassian.plugin.connect.plugin.capabilities.module.macro.MacroModuleContextExtractor;
 import com.atlassian.plugin.connect.plugin.capabilities.util.MacroEnumMapper;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 

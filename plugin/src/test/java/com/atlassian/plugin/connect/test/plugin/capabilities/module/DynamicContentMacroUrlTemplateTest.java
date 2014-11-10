@@ -2,8 +2,8 @@ package com.atlassian.plugin.connect.test.plugin.capabilities.module;
 
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.DynamicContentMacroModuleBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.module.DynamicContentMacro;
-import com.atlassian.plugin.connect.plugin.capabilities.module.MacroModuleContextExtractor;
+import com.atlassian.plugin.connect.plugin.capabilities.module.macro.DynamicContentMacro;
+import com.atlassian.plugin.connect.plugin.capabilities.module.macro.MacroModuleContextExtractor;
 import com.atlassian.plugin.connect.plugin.capabilities.util.MacroEnumMapper;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import org.mockito.ArgumentMatcher;
