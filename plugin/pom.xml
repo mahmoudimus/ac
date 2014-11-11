@@ -26,15 +26,6 @@
             <version>${schema.generator.version}</version>
             <scope>compile</scope>
         </dependency>
-<!--Without this, servlet-api gets bundled in the jar, 
- TODO: raise a bug in AMPS?
- -->      
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.3</version>
-            <scope>provided</scope>
-        </dependency>
 
         <!-- TODO: get schema-validator and guava 15.0+ versions into the products so we don't have to bundle them -->
         <dependency>
@@ -186,12 +177,6 @@
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-webfragment</artifactId>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>servlet-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.atlassian.sal</groupId>

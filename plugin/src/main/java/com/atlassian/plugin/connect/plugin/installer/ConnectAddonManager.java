@@ -137,9 +137,9 @@ public class ConnectAddonManager
                                BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService,
                                EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties,
                                LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext,
-                               ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory, 
+                               ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory,
                                SharedSecretService sharedSecretService,
-                               ConnectHttpClientFactory connectHttpClientFactory, 
+                               ConnectHttpClientFactory connectHttpClientFactory,
                                ConnectAddonI18nManager i18nManager,
                                DarkFeatureManager darkFeatureManager)
     {
