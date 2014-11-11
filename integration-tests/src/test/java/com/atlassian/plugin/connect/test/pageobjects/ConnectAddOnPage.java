@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
+import com.atlassian.jira.pageobjects.framework.util.TimedQueryFactory;
 import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
@@ -56,7 +57,7 @@ public class ConnectAddOnPage
                 ? pageElementKey
                 : ModuleKeyUtils.addonAndModuleKey(addOnKey, pageElementKey);
         final String id = prefix + suffix;
-        PageElement containerDivElement = elementFinder.find(By.id(id), TimeoutType.PAGE_LOAD);
+        PageElement containerDivElement = elementFinder.find(By.id(id), TimeoutType.SLOW_PAGE_LOAD);
 
         try
         {
