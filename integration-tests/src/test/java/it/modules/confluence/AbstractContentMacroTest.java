@@ -8,6 +8,7 @@ import com.atlassian.confluence.pageobjects.component.editor.EditorContent;
 import com.atlassian.confluence.pageobjects.component.editor.toolbars.InsertDropdownMenu;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
+import com.atlassian.confluence.pageobjects.page.content.EditorPage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
@@ -573,10 +574,15 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("The macro is in the comment!"));
-        savedPage = editorPage.save();
+        savedPage = save(editorPage);
 
         confluenceOps.addComment(some(TestUser.ADMIN), String.valueOf(savedPage.getPageId()), pageWithMacro(SIMPLE_MACRO_KEY));
         product.visit(ConfluencePageWithRemoteMacro.class, savedPage.getTitle(), SIMPLE_MACRO_KEY);
+    }
+
+    protected ViewPage save(EditorPage editorPage)
+    {
+        return editorPage.saveWithKeyboardShortcut();
     }
 
     private String pageWithMacro(String macroName)
@@ -590,7 +596,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName(title));
         selectMacroAndSave(editorPage, macroName);
-        savedPage = editorPage.save();
+        savedPage = save(editorPage);
         final long pageId = savedPage.getPageId(); // need to get it here because it parses the page, so if we log out it throws!
 
         // view the page as the specified user

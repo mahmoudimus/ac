@@ -19,13 +19,14 @@ import org.apache.http.auth.AuthenticationException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
+import org.openqa.selenium.UnhandledAlertException;
 
 import java.io.IOException;
 
 public abstract class ConnectWebDriverTestBase
 {
     protected static TestedProduct<WebDriverTester> product = OwnerOfTestedProduct.INSTANCE;
-    
+
     protected static String currentUsername = null;
 
     @Rule
@@ -45,8 +46,15 @@ public abstract class ConnectWebDriverTestBase
     @AfterClass
     public static void logout()
     {
-        currentUsername = null;
-        product.getTester().getDriver().manage().deleteAllCookies();
+        try
+        {
+            currentUsername = null;
+            product.getTester().getDriver().manage().deleteAllCookies();
+        }
+        catch (UnhandledAlertException e)
+        {
+            product.getTester().getDriver().switchTo().alert().accept();
+        }
     }
 
     protected void login(TestUser user)
