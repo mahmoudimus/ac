@@ -5,6 +5,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,6 +32,7 @@ public class ConnectHttpClientFactory implements DisposableBean
     private final PluginRetrievalService pluginRetrievalService;
     private final DarkFeatureManager darkFeatureManager;
     private final List<HttpClient> instances = Lists.newArrayList();
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     public ConnectHttpClientFactory(DarkFeatureManager darkFeatureManager, HttpClientFactory httpClientFactory,
@@ -43,11 +46,18 @@ public class ConnectHttpClientFactory implements DisposableBean
     }
 
     @Override
-    public void destroy() throws Exception
+    public void destroy()
     {
         for (HttpClient instance : instances)
         {
-            httpClientFactory.dispose(instance);
+            try
+            {
+                httpClientFactory.dispose(instance);
+            }
+            catch (Exception e)
+            {
+                log.warn("Could not dispose of HttpClient", e);
+            }
         }
     }
 

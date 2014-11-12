@@ -63,7 +63,6 @@ public class DefaultRemotablePluginAccessorFactoryTest
     @Mock private ConsumerService consumerService;
     @Mock private UserManager userManager;
     @Mock private ConnectAddonBeanFactory connectAddonBeanFactory;
-    @Mock private DarkFeatureManager darkFeatureManager;
 
     private DefaultRemotablePluginAccessorFactory factory;
 
