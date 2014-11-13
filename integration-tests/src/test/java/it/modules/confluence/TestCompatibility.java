@@ -90,7 +90,7 @@ public class TestCompatibility extends AbstractConfluenceWebDriverTest
 
         selectMacroAndSave(editorPage, MACRO_NAME_2);
 
-        ViewPage page = editorPage.save();
+        ViewPage page = editorPage.saveWithKeyboardShortcut();
         String content = rpc.getPageContent(page.getPageId());
         assertThat(content, endsWith("<p><ac:structured-macro ac:name=\"something-else\" /></p>"));
     }

@@ -2,7 +2,6 @@ package it;
 
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
-import com.atlassian.jira.tests.TestBase;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
@@ -25,7 +24,7 @@ import java.io.IOException;
 public abstract class ConnectWebDriverTestBase
 {
     protected static TestedProduct<WebDriverTester> product = OwnerOfTestedProduct.INSTANCE;
-    
+
     protected static String currentUsername = null;
 
     @Rule
