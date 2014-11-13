@@ -5,7 +5,6 @@ import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.applinks.api.event.ApplicationLinkAddedEvent;
 import com.atlassian.applinks.api.event.ApplicationLinkDeletedEvent;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.Plugin;
@@ -27,6 +26,7 @@ import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.base.Supplier;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -227,7 +227,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
 
     private CachingHttpContentRetriever mockCachingHttpContentRetriever()
     {
-        return new CachingHttpContentRetriever(mock(HttpClientFactory.class, RETURNS_DEEP_STUBS), mock(PluginRetrievalService.class, RETURNS_DEEP_STUBS));
+        return new CachingHttpContentRetriever(mock(ConnectHttpClientFactory.class, RETURNS_DEEP_STUBS));
     }
 
     private void removePluginAppLink(String pluginKey)

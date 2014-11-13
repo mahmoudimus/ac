@@ -6,7 +6,6 @@ import com.atlassian.fugue.Option;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.Response;
-import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.SigningAlgorithm;
@@ -21,6 +20,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.plugin.ConnectHttpClientFactory;
 import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
@@ -53,6 +53,7 @@ import com.atlassian.uri.UriBuilder;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -62,6 +63,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
+
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
@@ -92,14 +94,6 @@ public class ConnectAddonManager
     private static final SigningAlgorithm JWT_ALGORITHM = SigningAlgorithm.HS256; // currently, this is the only algorithm that we support
     private static final String DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY = "connect.lifecycle.install.sign_with_prev_key.disable";
 
-    private static final int TEST_CONNECTION_TIMEOUT = 5 * 1000;
-    private static final int TEST_SOCKET_TIMEOUT = 5 * 1000;
-    private static final int TEST_REQUEST_TIMEOUT = 5 * 3000;
-    private static final long TEST_LEASE_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
-
-
-    public static final String USE_TEST_HTTP_CLIENT = "use.test.http.client";
-
     public static final String USER_KEY = "user_key";
 
     public enum SyncHandler
@@ -127,22 +121,22 @@ public class ConnectAddonManager
     private final ConnectAddonI18nManager i18nManager;
     private final DarkFeatureManager darkFeatureManager;
 
-    private final AtomicBoolean isTestHttpClient;
-
     @Inject
     public ConnectAddonManager(IsDevModeService isDevModeService, UserManager userManager,
-                               RemotablePluginAccessorFactory remotablePluginAccessorFactory, HttpClient httpClient, ConnectAddonRegistry addonRegistry,
+                               RemotablePluginAccessorFactory remotablePluginAccessorFactory, ConnectAddonRegistry addonRegistry,
                                BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService,
                                EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties,
                                LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext,
                                ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory,
-                               SharedSecretService sharedSecretService, HttpClientFactory httpClientFactory, ConnectAddonI18nManager i18nManager,
+                               SharedSecretService sharedSecretService,
+                               ConnectHttpClientFactory connectHttpClientFactory,
+                               ConnectAddonI18nManager i18nManager,
                                DarkFeatureManager darkFeatureManager)
     {
         this.isDevModeService = isDevModeService;
         this.userManager = userManager;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
-        this.httpClient = httpClient;
+        this.httpClient = connectHttpClientFactory.getInstance();
         this.addonRegistry = addonRegistry;
         this.beanToModuleRegistrar = beanToModuleRegistrar;
         this.connectAddOnUserService = connectAddOnUserService;
@@ -158,20 +152,6 @@ public class ConnectAddonManager
         this.sharedSecretService = sharedSecretService;
         this.i18nManager = i18nManager;
         this.darkFeatureManager = darkFeatureManager;
-
-        this.isTestHttpClient = new AtomicBoolean(false);
-
-        if (Boolean.parseBoolean(System.getProperty(USE_TEST_HTTP_CLIENT, "false")) && !isTestHttpClient.get())
-        {
-            HttpClientOptions options = new HttpClientOptions();
-            options.setConnectionTimeout(TEST_CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
-            options.setRequestTimeout(TEST_REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
-            options.setSocketTimeout(TEST_SOCKET_TIMEOUT, TimeUnit.MILLISECONDS);
-            options.setLeaseTimeout(TEST_LEASE_TIMEOUT);
-
-            this.httpClient = httpClientFactory.create(options);
-            this.isTestHttpClient.set(true);
-        }
     }
 
     public boolean hasDescriptor(String pluginKey)
