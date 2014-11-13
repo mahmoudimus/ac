@@ -283,6 +283,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         }
     }
 
+    @Test
     public void testMultipleMacrosOnPage() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
