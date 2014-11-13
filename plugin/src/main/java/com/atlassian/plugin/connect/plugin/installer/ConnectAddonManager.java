@@ -94,14 +94,6 @@ public class ConnectAddonManager
     private static final SigningAlgorithm JWT_ALGORITHM = SigningAlgorithm.HS256; // currently, this is the only algorithm that we support
     private static final String DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY = "connect.lifecycle.install.sign_with_prev_key.disable";
 
-    private static final int TEST_CONNECTION_TIMEOUT = 5 * 1000;
-    private static final int TEST_SOCKET_TIMEOUT = 5 * 1000;
-    private static final int TEST_REQUEST_TIMEOUT = 5 * 3000;
-    private static final long TEST_LEASE_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
-
-
-    public static final String USE_TEST_HTTP_CLIENT = "use.test.http.client";
-
     public static final String USER_KEY = "user_key";
 
     public enum SyncHandler
@@ -128,8 +120,6 @@ public class ConnectAddonManager
     private final SharedSecretService sharedSecretService;
     private final ConnectAddonI18nManager i18nManager;
     private final DarkFeatureManager darkFeatureManager;
-
-    private final AtomicBoolean isTestHttpClient;
 
     @Inject
     public ConnectAddonManager(IsDevModeService isDevModeService, UserManager userManager,
@@ -162,20 +152,6 @@ public class ConnectAddonManager
         this.sharedSecretService = sharedSecretService;
         this.i18nManager = i18nManager;
         this.darkFeatureManager = darkFeatureManager;
-
-        this.isTestHttpClient = new AtomicBoolean(false);
-
-        if (Boolean.parseBoolean(System.getProperty(USE_TEST_HTTP_CLIENT, "false")) && !isTestHttpClient.get())
-        {
-            HttpClientOptions options = new HttpClientOptions();
-            options.setConnectionTimeout(TEST_CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
-            options.setRequestTimeout(TEST_REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
-            options.setSocketTimeout(TEST_SOCKET_TIMEOUT, TimeUnit.MILLISECONDS);
-            options.setLeaseTimeout(TEST_LEASE_TIMEOUT);
-
-            this.httpClient = connectHttpClientFactory.getInstance(options);
-            this.isTestHttpClient.set(true);
-        }
     }
 
     public boolean hasDescriptor(String pluginKey)

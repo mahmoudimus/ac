@@ -311,7 +311,6 @@
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                         <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                         <webdriver.browser>${webdriver.browser}</webdriver.browser>
-                        <use.test.http.client>true</use.test.http.client>
                     </systemPropertyVariables>
 
                     <functionalTestPattern>it/**/Test*.java</functionalTestPattern>
@@ -325,7 +324,6 @@
                             </productDataPath>
                             <systemPropertyVariables>
                                 <product>jira</product>
-                                <use.test.http.client>true</use.test.http.client>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -403,7 +401,6 @@
                             </productDataPath>
                             <systemPropertyVariables>
                                 <product>confluence</product>
-                                <use.test.http.client>true</use.test.http.client>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>

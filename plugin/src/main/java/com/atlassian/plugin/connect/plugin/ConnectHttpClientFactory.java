@@ -66,14 +66,6 @@ public class ConnectHttpClientFactory implements DisposableBean
         return this.httpClient;
     }
 
-    public HttpClient getInstance(HttpClientOptions options)
-    {
-        options.setDheDisabledHosts(getNonDHEHosts());
-        HttpClient client = httpClientFactory.create(options);
-        instances.add(client);
-        return client;
-    }
-
     private List<String> getNonDHEHosts()
     {
         EnabledDarkFeatures enabled = darkFeatureManager.getFeaturesEnabledForAllUsers();
