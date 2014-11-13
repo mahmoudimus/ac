@@ -93,7 +93,11 @@ public class ConnectHttpClientFactory implements DisposableBean
     {
         HttpClientOptions options = new HttpClientOptions();
 
-        options.setDheDisabledHosts(getNonDHEHosts());
+        List<String> nonDHEHosts = getNonDHEHosts();
+        if (!nonDHEHosts.isEmpty())
+        {
+            options.setDheDisabledHosts(getNonDHEHosts());
+        }
 
         options.setIoSelectInterval(100, TimeUnit.MILLISECONDS);
         options.setThreadPrefix("atlassian-connect");
