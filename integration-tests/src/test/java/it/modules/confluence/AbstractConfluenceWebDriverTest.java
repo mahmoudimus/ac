@@ -13,7 +13,6 @@ import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.component.editor.toolbars.InsertDropdownMenu;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
-import com.atlassian.plugin.connect.test.LicenseUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectMacroBrowserDialog;

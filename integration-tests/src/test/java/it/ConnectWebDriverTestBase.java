@@ -46,15 +46,8 @@ public abstract class ConnectWebDriverTestBase
     @AfterClass
     public static void logout()
     {
-        try
-        {
-            currentUsername = null;
-            product.getTester().getDriver().manage().deleteAllCookies();
-        }
-        catch (UnhandledAlertException e)
-        {
-            product.getTester().getDriver().switchTo().alert().accept();
-        }
+        currentUsername = null;
+        product.getTester().getDriver().manage().deleteAllCookies();
     }
 
     protected void login(TestUser user)
