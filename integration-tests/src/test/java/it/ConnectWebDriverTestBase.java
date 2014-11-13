@@ -2,7 +2,6 @@ package it;
 
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
-import com.atlassian.jira.tests.TestBase;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
@@ -19,7 +18,6 @@ import org.apache.http.auth.AuthenticationException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
-import org.openqa.selenium.UnhandledAlertException;
 
 import java.io.IOException;
 
