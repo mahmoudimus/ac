@@ -33,6 +33,10 @@ or Confluence Cloud with Atlassian Connect as follows:
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
 
+## [1.1.15](../release-notes/1.1.15.html/1-1-0.html#1.1.15)
+* Improvements in lifecycle webhook signatures.
+* Fixed: SSL issues for addons hosted on OpenShift.
+
 ## [1.1.10](../release-notes/1-1-0.html#1.1.10)
 * Fixed: add-on loaded twice in the Issue Navigator
 * Fixed: adminpage iframe has padding / margin
