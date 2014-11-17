@@ -116,6 +116,10 @@ public class JiraRestScopesTest extends AbstractScopesTest
                         // user picker requires READ
                         { null, HttpMethod.GET, "/jira/rest/api/2/user/picker?query", false },
                         { ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/user/picker?query", true }
+
+                        // configuration requires READ
+                        { null, HttpMethod.GET, "/jira/rest/api/2/configuration", false },
+                        { ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/configuration", true }
                 }));
 
         // never allow an add-on to change a user's details or password
