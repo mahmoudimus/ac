@@ -36,6 +36,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
 {
+    private boolean hasBeenFocused;
+
     public static class TestSpace
     {
         public static Space DEMO = new Space("ds", "Demonstration Space");
@@ -187,6 +189,13 @@ public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
         }
     }
 
+    protected void selectMacro(MacroBrowserAndEditor macroBrowserAndEditor)
+    {
+        MacroForm macroForm = macroBrowserAndEditor.macro.select();
+        macroForm.waitUntilVisible();
+        macroBrowserAndEditor.browserDialog.clickSave();
+    }
+
     protected MacroBrowserAndEditor findMacroInBrowser(CreatePage editorPage, String macroName)
     {
         final Editor editor = editorPage.getEditor();
@@ -201,7 +210,11 @@ public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
 
     protected void enableMacrosDropdown(Editor editor)
     {
-        editor.getContent().type("\n"); // otherwise the caret is in the heading (Confluence disables the macro insertion UI while the caret is in the heading)
+        if (!hasBeenFocused)
+        {
+            hasBeenFocused = true;
+            editor.getContent().focus();
+        }
     }
 
     protected Runnable macroDialogSubmitter(final String moduleKey)

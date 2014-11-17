@@ -34,8 +34,8 @@ var getAddonPage = function(opts, uri, callback) {
         auth: opts.auth,
         json: true
     }, function(error, response, body) {
-        if (error) {
-            console.log("ERROR".red + ": Unable to retrieve marketplace add-ons", response, error);
+        if (error || (response.statusCode < 200 || response.statusCode > 299)) {
+            console.log("ERROR".red + ": Unable to retrieve marketplace add-ons", response.statusCode, error || body);
             callback(error);
         } else {
             var links = body.links,
@@ -164,6 +164,9 @@ exports.run = function(runOpts) {
 
     // opts.includePrivate is deprecated now
     if (opts.includePrivate && !includePrivateAddons(opts)) {
+        if (!opts.status) {
+            opts.status = {};
+        }
         opts.status.push('private');
     }
 

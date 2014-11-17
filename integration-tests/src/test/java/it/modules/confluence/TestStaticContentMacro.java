@@ -155,7 +155,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
 
         selectMacroAndSave(editorPage, GET_MACRO_NAME);
 
-        savedPage = editorPage.save();
+        savedPage = save(editorPage);
 
         assertThat(String.valueOf(contextServlet.waitForContext().get("req_method")), is("GET"));
     }
@@ -171,7 +171,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
         editorContent.setRichTextMacroBody("a short body");
 
-        savedPage = editorPage.save();
+        savedPage = save(editorPage);
 
         String body = parameterServlet.waitForQueryParameters().any("body").getValue();
         assertThat(body, is("<p>a short body</p>"));
@@ -189,7 +189,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
         editorContent.setPlainTextMacroBody(body);
 
-        savedPage = editorPage.save();
+        savedPage = save(editorPage);
 
         String hash = parameterServlet.waitForQueryParameters().any("hash").getValue();
         assertThat(hash, is(DigestUtils.md5Hex(body)));
@@ -205,7 +205,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         macroBrowserAndEditor.macroForm.getAutocompleteField("param1").setValue("param value");
         macroBrowserAndEditor.browserDialog.clickSave();
 
-        savedPage = editorPage.save();
+        savedPage = save(editorPage);
 
         String value = parameterServlet.waitForQueryParameters().any("param1").getValue();
         assertThat(value, is("param value"));
@@ -238,7 +238,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(title);
         selectMacroAndSave(editorPage, COUNTER_MACRO_NAME);
-        editorPage.save();
+        save(editorPage);
 
         ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, title, COUNTER_MACRO_NAME);
         assertThat(getCounter(page), is(0));
