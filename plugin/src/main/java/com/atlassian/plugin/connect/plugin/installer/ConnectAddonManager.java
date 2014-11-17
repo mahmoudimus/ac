@@ -6,7 +6,6 @@ import com.atlassian.fugue.Option;
 import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.Response;
-import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.SigningAlgorithm;
@@ -14,12 +13,14 @@ import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.PluginState;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.plugin.ConnectHttpClientFactory;
 import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
@@ -43,6 +44,7 @@ import com.atlassian.plugin.connect.spi.http.ReKeyableAuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
+import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
@@ -51,6 +53,7 @@ import com.atlassian.uri.UriBuilder;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -60,6 +63,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
+
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
@@ -88,14 +92,7 @@ public class ConnectAddonManager
     private static final String HTTP_ERROR_I18N_KEY_PREFIX = "connect.install.error.remote.host.bad.response.";
     private static final List<Integer> OK_INSTALL_HTTP_CODES = asList(200, 201, 204);
     private static final SigningAlgorithm JWT_ALGORITHM = SigningAlgorithm.HS256; // currently, this is the only algorithm that we support
-
-    private static final int TEST_CONNECTION_TIMEOUT = 5 * 1000;
-    private static final int TEST_SOCKET_TIMEOUT = 5 * 1000;
-    private static final int TEST_REQUEST_TIMEOUT = 5 * 3000;
-    private static final long TEST_LEASE_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
-
-
-    public static final String USE_TEST_HTTP_CLIENT = "use.test.http.client";
+    private static final String DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY = "connect.lifecycle.install.sign_with_prev_key.disable";
 
     public static final String USER_KEY = "user_key";
 
@@ -122,21 +119,24 @@ public class ConnectAddonManager
     private final ConnectAddonBeanFactory connectAddonBeanFactory;
     private final SharedSecretService sharedSecretService;
     private final ConnectAddonI18nManager i18nManager;
-
-    private final AtomicBoolean isTestHttpClient;
+    private final DarkFeatureManager darkFeatureManager;
 
     @Inject
     public ConnectAddonManager(IsDevModeService isDevModeService, UserManager userManager,
-                               RemotablePluginAccessorFactory remotablePluginAccessorFactory, HttpClient httpClient, ConnectAddonRegistry addonRegistry,
+                               RemotablePluginAccessorFactory remotablePluginAccessorFactory, ConnectAddonRegistry addonRegistry,
                                BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService,
                                EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties,
                                LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext,
-                               ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory, SharedSecretService sharedSecretService, HttpClientFactory httpClientFactory, ConnectAddonI18nManager i18nManager)
+                               ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory,
+                               SharedSecretService sharedSecretService,
+                               ConnectHttpClientFactory connectHttpClientFactory,
+                               ConnectAddonI18nManager i18nManager,
+                               DarkFeatureManager darkFeatureManager)
     {
         this.isDevModeService = isDevModeService;
         this.userManager = userManager;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
-        this.httpClient = httpClient;
+        this.httpClient = connectHttpClientFactory.getInstance();
         this.addonRegistry = addonRegistry;
         this.beanToModuleRegistrar = beanToModuleRegistrar;
         this.connectAddOnUserService = connectAddOnUserService;
@@ -151,20 +151,7 @@ public class ConnectAddonManager
         this.connectAddonBeanFactory = connectAddonBeanFactory;
         this.sharedSecretService = sharedSecretService;
         this.i18nManager = i18nManager;
-
-        this.isTestHttpClient = new AtomicBoolean(false);
-
-        if (Boolean.parseBoolean(System.getProperty(USE_TEST_HTTP_CLIENT, "false")) && !isTestHttpClient.get())
-        {
-            HttpClientOptions options = new HttpClientOptions();
-            options.setConnectionTimeout(TEST_CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
-            options.setRequestTimeout(TEST_REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
-            options.setSocketTimeout(TEST_SOCKET_TIMEOUT, TimeUnit.MILLISECONDS);
-            options.setLeaseTimeout(TEST_LEASE_TIMEOUT);
-
-            this.httpClient = httpClientFactory.create(options);
-            this.isTestHttpClient.set(true);
-        }
+        this.darkFeatureManager = darkFeatureManager;
     }
 
     public boolean hasDescriptor(String pluginKey)
@@ -185,9 +172,12 @@ public class ConnectAddonManager
     /**
      * This method is public for test visibility. In preference, please use {@link ConnectAddOnInstaller#install(String)}
      * @param jsonDescriptor the json descriptor of the add-on to install
+     * @param targetState  the intended state of the add-on after a successful installation
+     * @param maybePreviousSharedSecret   optionally, the previous shared secret (used for signing)
+     * @param reusePreviousPublicKeyOrSharedSecret   toggle whether or not we issue a new secret/key if the previous one is defined
      * @return a {@link ConnectAddonBean} representation of the add-on
      */
-    public ConnectAddonBean installConnectAddon(String jsonDescriptor, PluginState targetState, com.atlassian.fugue.Option<String> maybePreviousSharedSecret)
+    public ConnectAddonBean installConnectAddon(String jsonDescriptor, PluginState targetState, Option<String> maybePreviousSharedSecret, boolean reusePreviousPublicKeyOrSharedSecret)
     {
         long startTime = System.currentTimeMillis();
 
@@ -213,7 +203,11 @@ public class ConnectAddonManager
 
         AuthenticationType newAuthType = addOn.getAuthentication().getType();
         final boolean newUseSharedSecret = addOnUsesSymmetricSharedSecret(newAuthType, JWT_ALGORITHM);
-        String newSharedSecret = newUseSharedSecret ? maybePreviousSharedSecret.getOrElse(sharedSecretService.next()) : null;
+        String newSharedSecret = newUseSharedSecret
+                ? reusePreviousPublicKeyOrSharedSecret && maybePreviousSharedSecret.isDefined()
+                    ? maybePreviousSharedSecret.get()
+                    : sharedSecretService.next()
+                : null;
         String newAddOnSigningKey = newUseSharedSecret ? newSharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
 
         String userKey = provisionUserIfNecessary(addOn, previousDescriptor);
@@ -238,15 +232,22 @@ public class ConnectAddonManager
         //make the sync callback if needed
         if (!Strings.isNullOrEmpty(addOn.getLifecycle().getInstalled()))
         {
-            // TODO ACDEV-1596: Because we've got exactly one auth generator per add-on this if statement's condition
-            // will cause us to NOT sign if the old descriptor used a shared secret but the new descriptor does NOT.
-            if (maybePreviousSharedSecret.isDefined() && newUseSharedSecret)
+            if (darkFeatureManager.isFeatureEnabledForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY))
             {
-                requestInstallCallback(addOn, newSharedSecret, maybePreviousSharedSecret.get());
+                requestInstallCallback(addOn, newSharedSecret, true); // sign using whatever shared secret is looked up (the old code path)
             }
             else
             {
-                requestInstallCallback(addOn, newSharedSecret);
+                // TODO ACDEV-1596: Because we've got exactly one auth generator per add-on this if statement's condition
+                // will cause us to NOT sign if the old descriptor used a shared secret but the new descriptor does NOT.
+                if (maybePreviousSharedSecret.isDefined() && newUseSharedSecret)
+                {
+                    requestInstallCallback(addOn, newSharedSecret, maybePreviousSharedSecret.get()); // sign using the previous shared secret
+                }
+                else
+                {
+                    requestInstallCallback(addOn, newSharedSecret, false); // do not sign
+                }
             }
         }
 
@@ -370,6 +371,8 @@ public class ConnectAddonManager
         long startTime = System.currentTimeMillis();
         if (addonRegistry.hasDescriptor(pluginKey))
         {
+            Option<String> maybeSharedSecret = Option.none();
+
             try
             {
                 ConnectAddonBean addon = unmarshallDescriptor(pluginKey);
@@ -400,6 +403,16 @@ public class ConnectAddonManager
                         eventPublisher.publish(new ConnectAddonUninstalledEvent(pluginKey));
                     }
 
+                    if (addOnUsesSymmetricSharedSecret(addon, JWT_ALGORITHM))
+                    {
+                        final ApplicationLink appLink = connectApplinkManager.getAppLink(pluginKey);
+
+                        if (null != appLink)
+                        {
+                            maybeSharedSecret = connectApplinkManager.getSharedSecretOrPublicKey(appLink);
+                        }
+                    }
+
                     connectApplinkManager.deleteAppLink(addon);
                 }
                 else
@@ -415,6 +428,16 @@ public class ConnectAddonManager
             finally
             {
                 addonRegistry.removeAll(pluginKey);
+
+                // if the add-on had a shared secret then store it so that we can sign an installed callback
+                // in DefaultConnectAddOnInstaller.install(java.lang.String)() if the user turns around and re-installs the add-on
+                if (maybeSharedSecret.isDefined())
+                {
+                    AddonSettings uninstalledRemnant = new AddonSettings();
+                    uninstalledRemnant.setSecret(maybeSharedSecret.get());
+                    uninstalledRemnant.setRestartState(PluginState.UNINSTALLED.name());
+                    addonRegistry.storeAddonSettings(pluginKey, uninstalledRemnant); // do it in one call for efficiency
+                }
             }
         }
 
@@ -434,10 +457,11 @@ public class ConnectAddonManager
     }
 
     // first install: no previous shared secret, no signing
-    private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret)
+    private void requestInstallCallback(ConnectAddonBean addon, String sharedSecret, final boolean sign)
     {
         final URI callbackUri = getURI(addon.getBaseUrl(), addon.getLifecycle().getInstalled());
-        requestInstallCallback(addon, sharedSecret, callbackUri, Option.<String>none());
+        final Option<String> authHeader = sign ? getAuthHeader(callbackUri, remotablePluginAccessorFactory.get(addon).getAuthorizationGenerator()) : Option.<String>none();
+        requestInstallCallback(addon, sharedSecret, callbackUri, authHeader);
     }
 
     // reinstalls: sign with the previous shared secret so that the add-on can verify that the sender of the request is in possession of the previous shared secret
@@ -448,7 +472,7 @@ public class ConnectAddonManager
 
         // NB: check that the auth generator matches the request/non-request to sign with an arbitrary key on installation, not on every callback,
         // because signing with a previous key happens only on installation
-        // (the runtime "instanceof ReKeyableAuthorizationGenerator" check is necessary because the OAuthSigningRemotablePluginAccessor is explicityly not re-keyable: it must sign with the same oauth key every time)
+        // (the runtime "instanceof ReKeyableAuthorizationGenerator" check is necessary because the OAuthSigningRemotablePluginAccessor is explicitly not re-keyable: it must sign with the same oauth key every time)
         if (authorizationGenerator instanceof ReKeyableAuthorizationGenerator)
         {
             String authHeader = getAuthHeader(callbackUri, (ReKeyableAuthorizationGenerator) authorizationGenerator, previousSharedSecret);
@@ -576,8 +600,8 @@ public class ConnectAddonManager
 
             if (e.getCause() instanceof UnknownHostException)
             {
-                String i18nMessage = i18nResolver.getText("connect.install.error.remote.host.bad.domain", e.getCause().getLocalizedMessage().replace(": Name or service not known", ""));
-                throw new LifecycleCallbackException(message, Option.some(i18nMessage));
+                String badDomainMessage = i18nResolver.getText("connect.install.error.remote.host.bad.domain", callbackUri.getHost());
+                throw new LifecycleCallbackException(message, Option.some(badDomainMessage));
             }
             else if (e.getCause() instanceof SocketTimeoutException)
             {
@@ -692,6 +716,12 @@ public class ConnectAddonManager
     {
         Object bundleVersion = bundleContext.getBundle().getHeaders().get(Constants.BUNDLE_VERSION);
         return bundleVersion == null ? null : bundleVersion.toString();
+    }
+
+    private boolean addOnUsesSymmetricSharedSecret(ConnectAddonBean addonBean, SigningAlgorithm jwtAlgorithm)
+    {
+        AuthenticationBean authenticationBean = addonBean.getAuthentication();
+        return null != authenticationBean && addOnUsesSymmetricSharedSecret(authenticationBean.getType(), jwtAlgorithm);
     }
 
     // TODO ACDEV-378: also check the algorithm

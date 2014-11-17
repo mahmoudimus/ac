@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.testsupport;
 
-import com.atlassian.plugin.*;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
@@ -100,6 +100,12 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
         }
 
         return productBase + AddonTestFilter.FILTER_MAPPING + "/" + pluginKey;
+    }
+
+    @Override
+    public String getInternalAddonBaseUrlSuffix(String pluginKey, String additionalSuffix)
+    {
+        return AddonTestFilter.FILTER_MAPPING + '/' + pluginKey + additionalSuffix;
     }
 
     @Override

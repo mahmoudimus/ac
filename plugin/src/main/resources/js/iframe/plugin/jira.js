@@ -8,6 +8,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
     var WorkflowConfiguration = {
         /**
         * Validate a workflow configuration before saving
+        * @noDemo
         * @memberOf WorkflowConfiguration
         * @param {Function} listener called on validation. Return false to indicate that validation has not passed and the workflow cannot be saved.
         */
@@ -16,6 +17,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
         },
         /**
         * Attach a callback function to run when a workflow is saved
+        * @noDemo
         * @memberOf WorkflowConfiguration
         * @param {Function} listener called on save.
         */
@@ -24,6 +26,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
         },
         /**
         * Save a workflow configuration if valid.
+        * @noDemo
         * @memberOf WorkflowConfiguration
         * @returns {WorkflowConfigurationTriggerResponse} An object Containing `{valid, value}` properties.valid (the result of the validation listener) and value (result of onSave listener) properties.
         */
@@ -65,6 +68,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                 /**
                 * Refresh an issue page without reloading the browser.
                 * This is helpful when your add-on updates information about an issue in the background.
+                * @noDemo
                 * @example
                 * AP.require('jira', function(jira){
                 *   jira.refreshIssuePage();

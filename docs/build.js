@@ -526,7 +526,31 @@ function compileHarpSources() {
     fork('./node_modules/harp/bin/harp', ["-o", "../www", "compile"], {'cwd': genSrcPrefix});
 }
 
+function mergeFiles(toFile, filesToMerge){
+    var toFileContents = fs.readFileSync(toFile, "utf-8");
+    var toAppend = "";
+    filesToMerge.forEach(function(file){
+        toAppend = toAppend + fs.readFileSync(file, "utf-8");
+    });
+    fs.writeFileSync(toFile, toAppend, {
+        flag: 'a'
+    });
+}
+
 function compileJsDocs() {
+    fs.copySync('./node_modules/atlassian-connect-js/dist/host-debug.js', 'target/gensrc/public/assets/js/connect-host.js');
+    fs.copySync('./node_modules/atlassian-connect-js/dist/all-debug.js', 'target/gensrc/public/assets/js/connect-client.js');
+    // append local modules that are not from core.
+    var pluginFiles = [
+        '../plugin/src/main/resources/js/iframe/plugin/user.js'
+    ],
+    hostFiles = [
+        '../plugin/src/main/resources/js/iframe/host/user.js',
+    ];
+    mergeFiles('target/gensrc/public/assets/js/connect-client.js', pluginFiles);
+    mergeFiles('target/gensrc/public/assets/js/connect-host.js', hostFiles);
+
+    fs.copySync('./node_modules/atlassian-connect-js/dist/host-css.css', 'target/gensrc/public/assets/css/connect-host.css');
     fork('./node_modules/.bin/jsdoc', ["-c", "jsdoc-conf.json", "-t", "jsdoc-template"]);
 }
 

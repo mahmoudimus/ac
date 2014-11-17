@@ -16,9 +16,9 @@ public class ScopedRequestAllowedEvent extends ScopedRequestEvent
 
     private final long duration;
 
-    public ScopedRequestAllowedEvent(HttpServletRequest rq, int responseCode, long duration)
+    public ScopedRequestAllowedEvent(HttpServletRequest rq, String addonKey, int responseCode, long duration)
     {
-        super(rq);
+        super(rq, addonKey);
         this.responseCode = responseCode;
         this.duration = duration > THRESHOLD ? -1 : duration / TRIMPRECISION;
     }

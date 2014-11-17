@@ -84,7 +84,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         DynamicContentMacroModuleBean smallInlineMacro = newDynamicContentMacroModuleBean()
                 .withUrl("/render-no-resize-macro")
-                .withDescription(new I18nProperty(SMALL_INLINE_MACRO_DESCRIPTION,""))
+                .withDescription(new I18nProperty(SMALL_INLINE_MACRO_DESCRIPTION, ""))
                 .withKey(SMALL_INLINE_MACRO_KEY)
                 .withName(new I18nProperty(SMALL_INLINE_MACRO_NAME, ""))
                 .withOutputType(MacroOutputType.INLINE)
@@ -94,7 +94,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         DynamicContentMacroModuleBean clientSideBodyEditingMacro = newDynamicContentMacroModuleBean()
                 .withUrl("/echo/params?body={macro.body}")
-                .withDescription(new I18nProperty(CLIENT_SIDE_BODY_MACRO_DESCRIPTION,""))
+                .withDescription(new I18nProperty(CLIENT_SIDE_BODY_MACRO_DESCRIPTION, ""))
                 .withKey(CLIENT_SIDE_BODY_MACRO_KEY)
                 .withName(new I18nProperty(CLIENT_SIDE_BODY_MACRO_NAME, ""))
                 .withOutputType(MacroOutputType.BLOCK)
@@ -198,7 +198,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
         editorContent.setRichTextMacroBody("a short body");
 
-        savedPage = editorPage.save();
+        savedPage = save(editorPage);
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SHORT_BODY_MACRO_KEY, 0);
         String body = renderedMacro.getFromQueryString("body");
 
@@ -217,7 +217,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
         editorContent.setPlainTextMacroBody(body);
 
-        savedPage = editorPage.save();
+        savedPage = save(editorPage);
 
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(LONG_BODY_MACRO_KEY, 0);
         String hash = renderedMacro.getFromQueryString("hash");
@@ -234,7 +234,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         macroBrowserAndEditor.macroForm.getAutocompleteField("param1").setValue("param value");
         macroBrowserAndEditor.browserDialog.clickSave();
 
-        savedPage = editorPage.save();
+        savedPage = save(editorPage);
 
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(PARAMETER_MACRO_KEY);
         String value = renderedMacro.getFromQueryString("param1");
@@ -248,8 +248,18 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Parameter Page"));
         MacroBrowserAndEditor macroInBrowser = findMacroInBrowser(editorPage, SMALL_INLINE_MACRO_KEY);
-        String description = macroInBrowser.macro.getItem().find(By.className("macro-desc")).timed().getText().byDefaultTimeout();
-        assertThat("description shows in macro browser", description, is(SMALL_INLINE_MACRO_DESCRIPTION));
+        try
+        {
+            String description = macroInBrowser.macro.getItem().find(By.className("macro-desc")).timed().getText().byDefaultTimeout();
+            assertThat("description shows in macro browser", description, is(SMALL_INLINE_MACRO_DESCRIPTION));
+        }
+        finally
+        {
+            // necessary to prevent Confluence from showing a navigate away alert
+            selectMacro(macroInBrowser);
+            editorPage.cancel();
+        }
+
     }
 
     @Test
@@ -258,8 +268,19 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Parameter Page"));
         MacroBrowserAndEditor macroInBrowser = findMacroInBrowser(editorPage, CLIENT_SIDE_BODY_MACRO_KEY);
-        String description = macroInBrowser.macro.getItem().find(By.className("macro-desc")).timed().getText().byDefaultTimeout();
-        assertThat("description shows in macro browser", description, is(CLIENT_SIDE_BODY_MACRO_DESCRIPTION));
+        try
+        {
+            String description = macroInBrowser.macro.getItem().find(By.className("macro-desc")).timed().getText().byDefaultTimeout();
+            assertThat("description shows in macro browser", description, is(CLIENT_SIDE_BODY_MACRO_DESCRIPTION));
+        }
+        finally
+        {
+            // necessary to prevent Confluence from showing a navigate away alert
+            macroInBrowser.macro.select();
+            RemotePluginDialog dialog = connectPageOperations.findDialog(CLIENT_SIDE_BODY_MACRO_KEY);
+            dialog.submit();
+            editorPage.cancel();
+        }
     }
 
     @Test
@@ -271,7 +292,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         selectMacroAndSave(editorPage, SIMPLE_MACRO_NAME);
         selectMacroAndSave(editorPage, SIMPLE_MACRO_NAME);
 
-        savedPage = editorPage.save();
+        savedPage = save(editorPage);
 
         connectPageOperations.waitUntilNConnectIFramesPresent(2); // preempt flakiness
 
@@ -293,7 +314,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         selectMacroAndSave(editorPage, SMALL_INLINE_MACRO_NAME);
 
-        savedPage = editorPage.save();
+        savedPage = save(editorPage);
 
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SMALL_INLINE_MACRO_KEY);
 
@@ -307,7 +328,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         editorPage.setTitle(randomName("Macro Editor"));
         selectMacro(editorPage, EDITOR_MACRO_NAME, macroDialogSubmitter(EDITOR_MACRO_KEY));
 
-        savedPage = editorPage.save();
+        savedPage = save(editorPage);
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(EDITOR_MACRO_KEY);
         String content = renderedMacro.getIFrameElementText("footy");
 
@@ -319,7 +340,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     {
         login(TestUser.ADMIN);
         EditContentPage editPage = createAndEditPage(TABLE_MACRO_NAME, loadResourceAsString("confluence/test-page-table-macro.xhtml"));
-        savedPage = editPage.save();
+        savedPage = save(editPage);
 
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(TABLE_MACRO_KEY);
         renderedMacro.waitUntilContentElementNotEmpty("client-http-status");
@@ -358,7 +379,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         RemotePluginDialog dialog = connectPageOperations.editMacro(macro.getMacroKey());
         dialog.submit();
 
-        savedPage = editorPage.save();
+        savedPage = save(editorPage);
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(CLIENT_SIDE_BODY_MACRO_KEY);
 
         String content = renderedMacro.getIFrameElementText("body");
@@ -375,7 +396,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         RemotePluginDialog dialog = connectPageOperations.editMacro(macro.getMacroKey());
         dialog.submit();
 
-        savedPage = editorPage.save();
+        savedPage = save(editorPage);
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(CLIENT_SIDE_BODY_MACRO_KEY);
 
         String version = renderedMacro.getFromQueryString("cv");
@@ -392,7 +413,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         RemotePluginDialog dialog = connectPageOperations.editMacro(macro.getMacroKey());
         dialog.submit();
 
-        savedPage = editorPage.save();
+        savedPage = save(editorPage);
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(CLIENT_SIDE_BODY_MACRO_SCRIPT_KEY);
         String content = renderedMacro.getIFrameElementText("body");
 
@@ -407,7 +428,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         selectMacroAndSave(editorPage, SLOW_MACRO_NAME);
 
-        savedPage = editorPage.save();
+        savedPage = save(editorPage);
         final ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, savedPage.getTitle(), SLOW_MACRO_KEY);
         assertThat(page.macroHasTimedOut(), is(true));
     }
@@ -420,7 +441,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         selectMacroAndSave(editorPage, SIMPLE_MACRO_NAME);
 
-        savedPage = editorPage.save();
+        savedPage = save(editorPage);
         final ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, savedPage.getTitle(), SLOW_MACRO_KEY);
         assertThat(page.macroHasTimedOut(), is(false));
     }

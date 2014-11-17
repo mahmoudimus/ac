@@ -30,12 +30,12 @@ import com.google.common.base.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
+import javax.inject.Inject;
 import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.security.PublicKey;
 import java.util.List;
-import javax.annotation.Nullable;
-import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
