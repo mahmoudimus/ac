@@ -23,7 +23,7 @@ public class TestHistory extends JiraWebDriverTestBase
 {
     private static final String PLUGIN_KEY = "my-plugin";
     private static final String PAGE_NAME = "History general page";
-    private static final String GENERAL_PAGE_KEY = "my-general-page";
+    private static final String GENERAL_PAGE_KEY = "my-history-general-page";
 
     private static ConnectRunner remotePlugin;
 
