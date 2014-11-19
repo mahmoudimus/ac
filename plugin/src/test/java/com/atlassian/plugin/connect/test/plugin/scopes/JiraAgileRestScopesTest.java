@@ -68,6 +68,16 @@ public class JiraAgileRestScopesTest extends AbstractScopesTest
                         {ScopeName.WRITE, HttpMethod.PUT, "/jira/rest/greenhopper/1.0/sprint/rank", true},
                         {ScopeName.READ, HttpMethod.PUT, "/jira/rest/greenhopper/1.0/sprint/rank", false},
                         {null, HttpMethod.PUT, "/jira/rest/greenhopper/1.0/sprint/rank", false},
+
+
+                        // epics READ
+                        {null, HttpMethod.GET, "jira/rest/greenhopper/1.0/epics/", false},
+                        {ScopeName.READ, HttpMethod.GET, "jira/rest/greenhopper/1.0/epics/", true},
+
+                        // Add issue to epic WRITE
+                        {null, HttpMethod.PUT, "jira/rest/greenhopper/1.0/epics/epicKey/add", false},
+                        {ScopeName.READ, HttpMethod.PUT, "jira/rest/greenhopper/1.0/epics/epicKey/add", false},
+                        {ScopeName.WRITE, HttpMethod.PUT, "jira/rest/greenhopper/1.0/epics/epicKey/add", true},
                 }));
 
         return params;
