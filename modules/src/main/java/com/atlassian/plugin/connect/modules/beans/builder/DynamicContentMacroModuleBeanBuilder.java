@@ -1,11 +1,19 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModeBean;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModeType;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class DynamicContentMacroModuleBeanBuilder extends BaseContentMacroModuleBeanBuilder<DynamicContentMacroModuleBeanBuilder, DynamicContentMacroModuleBean>
 {
     private String width;
     private String height;
+    private Map<MacroRenderModeType,EmbeddedStaticContentMacroBean> renderModes = new HashMap<MacroRenderModeType, EmbeddedStaticContentMacroBean>();
 
     public DynamicContentMacroModuleBeanBuilder()
     {
@@ -30,9 +38,16 @@ public class DynamicContentMacroModuleBeanBuilder extends BaseContentMacroModule
         return this;
     }
 
+    public DynamicContentMacroModuleBeanBuilder withRenderMode(MacroRenderModeType type, EmbeddedStaticContentMacroBean embeddedStaticContentMacroBean)
+    {
+        renderModes.put(type,embeddedStaticContentMacroBean);
+        return this;
+    }
+
     @Override
     public DynamicContentMacroModuleBean build()
     {
         return new DynamicContentMacroModuleBean(this);
     }
+
 }
