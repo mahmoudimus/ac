@@ -12,5 +12,6 @@ The following repositories contain sample Atlassian Connect add-ons. This list i
 - [JIRA Autowatcher](https://bitbucket.org/atlassianlabs/atlassian-autowatch-plugin) - automatically add watchers to newly created JIRAs
  
 ## Other
+- [My Reminders](https://bitbucket.org/atlassianlabs/my-reminders/overview) - reminds you about JIRA issues - implemented in Haskell, using the [Snap](http://snapframework.com/) framework
 - [Google Maps macro](https://bitbucket.org/acgmaps/acgmaps.bitbucket.org) - insert Google Maps into your Confluence pages
 - [Who's Looking Front-End Only Prototype](https://bitbucket.org/atlassianlabs/atlassian-connect-whoslooking-connect-v2) – similar functionality to the original [Who's Looking](https://bitbucket.org/atlassian/whoslooking-connect/overview) Play-based add-on, but written entirely using static HTML, JS & CSS using [Firebase](https://www.firebase.com/).
