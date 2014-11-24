@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.modules.beans;
 import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.beans.builder.DynamicContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModeBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModeType;
 
 import java.util.HashMap;
@@ -25,7 +24,7 @@ import java.util.Map;
  * 3. To prevent the macro output from being automatically resized, set the `data-options` attribute in the script tag for all.js to "`resize:false`". This turns off automatic resizing of the iframe.
  * 4. If the size of the macro output content size is dynamic, call `AP.resize(w,h)` immediately after the DOM of your iframe is loaded.
  *
- * #### Example
+ *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#DYNAMIC_MACRO_EXAMPLE}
  * @schemaTitle Dynamic Content Macro
