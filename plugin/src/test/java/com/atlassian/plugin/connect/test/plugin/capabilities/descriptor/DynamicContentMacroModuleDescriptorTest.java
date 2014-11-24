@@ -3,10 +3,6 @@ package com.atlassian.plugin.connect.test.plugin.capabilities.descriptor;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.DynamicContentMacroModuleBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.builder.EmbeddedStaticContentMacroBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModeBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModeType;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.macro.DynamicContentMacroModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
@@ -17,14 +13,11 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.module.confluence.MacroContentManager;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 @ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
@@ -42,7 +35,7 @@ public class DynamicContentMacroModuleDescriptorTest extends AbstractContentMacr
 
         DynamicContentMacroModuleDescriptorFactory macroModuleDescriptorFactory = new DynamicContentMacroModuleDescriptorFactory(
                 new AbsoluteAddOnUrlConverter(remotablePluginAccessorFactoryForTests),
-                new RemoteMacroRendererImpl(iFrameUriBuilderFactory, macroModuleContextExtractor, macroContentManager, remotablePluginAccessorFactoryForTests, iFrameRenderStrategyRegistry));
+                new RemoteMacroRendererImpl(iFrameUriBuilderFactory,macroModuleContextExtractor,macroContentManager,remotablePluginAccessorFactoryForTests,iFrameRenderStrategyRegistry));
 
         DynamicContentMacroModuleBean bean = createBeanBuilder().build();
         return macroModuleDescriptorFactory.createModuleDescriptor(new DefaultConnectModuleProviderContext(addon), plugin, bean);
@@ -52,18 +45,5 @@ public class DynamicContentMacroModuleDescriptorTest extends AbstractContentMacr
     protected DynamicContentMacroModuleBeanBuilder newContentMacroModuleBeanBuilder()
     {
         return newDynamicContentMacroModuleBean();
-    }
-
-    @Override
-    protected DynamicContentMacroModuleBeanBuilder createBeanBuilder()
-    {
-        return super
-                .createBeanBuilder()
-                .withRenderMode(
-                        MacroRenderModeType.STATIC,
-                        EmbeddedStaticContentMacroBean
-                                .newEmbeddedStaticContentMacroModuleBean()
-                                .withUrl("/my-macro-static")
-                                .build());
     }
 }
