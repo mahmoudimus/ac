@@ -38,34 +38,34 @@ public class WebSectionModuleBeanTest
         assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
     }
 
-//    @Test
-//    public void producesCorrectBeanWithFunkyWebSections() throws Exception
-//    {
-//        Gson gson = ConnectModulesGsonFactory.getGson();
-//
-//        WebSectionModuleBean webSectionBean = createWebSectionBeanBuilder().build();
-//
-//        WebSectionModuleBean hiddenSpoonSection = newWebSectionBean()
-//                        .withName(new I18nProperty("THERE IZ NO ∫Pººñ", null))
-//                        .withKey("∫πººñ")
-//                        .withLocation("hidden")
-//                        .withWeight(999)
-//                        .build();
-//
-//        WebSectionModuleBean falafelSection = newWebSectionBean()
-//                        .withName(new I18nProperty("أنا أحب الفلافل", "i.love.falafel"))
-//                        .withKey("my-falafel-section")
-//                        .withLocation("recipes")
-//                        .withTooltip(new I18nProperty("Chickpeas and hummous", "falafel.ingredients"))
-//                        .build();
-//
-//        ConnectAddonBean addon = createAddonBeanBuilder(webSectionBean, hiddenSpoonSection, falafelSection).build();
-//
-//        String json = readTestFile("funkyWebSectionTest.json");
-//        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
-//
-//        assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
-//    }
+    @Test
+    public void producesCorrectBeanWithFunkyWebSections() throws Exception
+    {
+        Gson gson = ConnectModulesGsonFactory.getGson();
+
+        WebSectionModuleBean webSectionBean = createWebSectionBeanBuilder().build();
+
+        WebSectionModuleBean hiddenSpoonSection = newWebSectionBean()
+                        .withName(new I18nProperty("THERE IZ NO ∫Pººñ", null))
+                        .withKey("∫πººñ")
+                        .withLocation("hidden")
+                        .withWeight(999)
+                        .build();
+
+        WebSectionModuleBean falafelSection = newWebSectionBean()
+                        .withName(new I18nProperty("أنا أحب الفلافل", "i.love.falafel"))
+                        .withKey("my-falafel-section")
+                        .withLocation("recipes")
+                        .withTooltip(new I18nProperty("Chickpeas and hummous", "falafel.ingredients"))
+                        .build();
+
+        ConnectAddonBean addon = createAddonBeanBuilder(webSectionBean, hiddenSpoonSection, falafelSection).build();
+
+        String json = readTestFile("funkyWebSectionTest.json");
+        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
+
+        assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
+    }
 
     private ConnectAddonBeanBuilder createAddonBeanBuilder(WebSectionModuleBean... webSectionBeans)
     {

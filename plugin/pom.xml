@@ -639,11 +639,11 @@
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                             </systemPropertyVariables>
                             <pluginArtifacts>
-                                <!--<pluginArtifact>-->
-                                    <!--<groupId>com.atlassian.labs.plugins</groupId>-->
-                                    <!--<artifactId>quickreload</artifactId>-->
-                                    <!--<version>${quickreload.version}</version>-->
-                                <!--</pluginArtifact>-->
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.labs.plugins</groupId>
+                                    <artifactId>quickreload</artifactId>
+                                    <version>${quickreload.version}</version>
+                                </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.webhooks</groupId>
                                     <artifactId>atlassian-webhooks-plugin</artifactId>
