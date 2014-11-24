@@ -13,11 +13,15 @@ import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
+
 import it.util.TestUser;
+
 import org.apache.http.auth.AuthenticationException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
+import org.openqa.selenium.remote.CapabilityType;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.IOException;
 
@@ -36,6 +40,9 @@ public abstract class ConnectWebDriverTestBase
     @BeforeClass
     public static void disableLicenseBanner() throws IOException, AuthenticationException
     {
+        // handle "unexpected" dialogs
+        DesiredCapabilities.firefox().setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, "ignore");
+        DesiredCapabilities.chrome().setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, "ignore");
         // disable license banner
         LicenseStatusBannerHelper.instance().execute(product);
     }
