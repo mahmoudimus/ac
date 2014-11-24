@@ -80,7 +80,10 @@
           }
         ],
         "url": "/my-macro",
-        "width": "100px"
+        "width": "100px",
+        "renderModes": {
+          "static": { "url": "/render-map-static"}
+        }
       }
     ]
   },

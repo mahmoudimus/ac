@@ -342,7 +342,7 @@ public class ConnectJsonExamples
                 )
                 .withRenderMode(MacroRenderModeType.STATIC,
                         EmbeddedStaticContentMacroBean.newEmbeddedStaticContentMacroModuleBean()
-                                .withUrl("/render-map-image")
+                                .withUrl("/render-map-static")
                                 .build())
                 .build();
 
