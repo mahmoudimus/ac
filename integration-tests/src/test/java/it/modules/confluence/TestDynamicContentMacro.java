@@ -4,6 +4,7 @@ import com.atlassian.confluence.it.Page;
 import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.EditContentPage;
+import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.*;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
@@ -19,6 +20,9 @@ import it.util.TestUser;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.pdfbox.PDFBox;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.util.PDFTextStripper;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -33,12 +37,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
 import static com.atlassian.plugin.connect.test.Utils.loadResourceAsString;
 import static org.hamcrest.CoreMatchers.both;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 import static org.junit.Assert.assertThat;
@@ -65,6 +71,10 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
     private static final String SLOW_MACRO_NAME = "Slow Macro";
     private static final String SLOW_MACRO_KEY = "slow-macro";
+
+    private static final String DYNAMIC_MACRO_KEY = "dynamic-macro";
+    private static final String DYNAMIC_MACRO_NAME = "Dynamic Macro";
+
 
     private static ConnectRunner remotePlugin;
 
@@ -132,6 +142,19 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                 .withName(new I18nProperty(SLOW_MACRO_NAME, null))
                 .build();
 
+        DynamicContentMacroModuleBean dynamicMacroMWithFallback = newDynamicContentMacroModuleBean()
+                .withUrl("/dynamic-macro")
+                .withKey(DYNAMIC_MACRO_KEY)
+                .withName(new I18nProperty(DYNAMIC_MACRO_NAME, null))
+                .withRenderMode(
+                        MacroRenderModeType.STATIC,
+                        EmbeddedStaticContentMacroBean
+                                .newEmbeddedStaticContentMacroModuleBean()
+                                .withUrl("/dynamic-macro-static")
+                                .build()
+                )
+                .build();
+
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
 
                 .setAuthenticationToNone()
@@ -151,7 +174,8 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                         clientSideBodyEditingMacro,
                         clientSideBodyEditingMacroScriptInjection,
                         macroInTableMacro,
-                        slowMacro
+                        slowMacro,
+                        dynamicMacroMWithFallback
                 )
                 .addRoute(DEFAULT_MACRO_URL, ConnectAppServlets.helloWorldServlet())
                 .addRoute("/render-editor", ConnectAppServlets.macroEditor())
@@ -163,6 +187,8 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                 .addRoute("/images/macro-icon.png", ConnectAppServlets.resourceServlet("atlassian-icon-16.png", "image/png"))
                 .addRoute("/render-macro-in-table-macro", ConnectAppServlets.apRequestServlet())
                 .addRoute("/slow-macro", new SlowMacroServlet(22))
+                .addRoute("/dynamic-macro", ConnectAppServlets.helloWorldServlet())
+                .addRoute("/dynamic-macro-static", ConnectAppServlets.dynamicMacroStaticServlet())
                 .start();
     }
 
@@ -179,6 +205,33 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     public void testMacroIsRendered() throws Exception
     {
         testMacroIsRendered(TestUser.ADMIN.confUser());
+    }
+
+    @Test
+    public void testDynamicMacroWithFallback() throws Exception
+    {
+        ViewPage viewPage = getMacroContent(TestUser.ADMIN.confUser(), DYNAMIC_MACRO_NAME, "Dynamic Macro");
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(DYNAMIC_MACRO_KEY, 0);
+        String content = renderedMacro.getIFrameElementText("hello-world-message");
+        assertThat(content, is("Hello world"));
+        assertThat(extractPDFText(viewPage), containsString("Hello world"));
+    }
+
+    private String extractPDFText(ViewPage viewPage) throws IOException
+    {
+        PDDocument pdf = null;
+        try
+        {
+            // Do I need to add os_username/os_password here?
+            // The page appears anonymously viewable
+            pdf = PDDocument.load(new URL(viewPage.openToolsMenu().getMenuItem(By.id("action-export-pdf-link")).getHref()));
+            return new PDFTextStripper().getText(pdf);
+        }
+        finally
+        {
+            if (pdf != null)
+                pdf.close();
+        }
     }
 
     @Test

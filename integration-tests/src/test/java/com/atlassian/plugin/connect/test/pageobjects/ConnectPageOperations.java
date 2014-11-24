@@ -173,4 +173,5 @@ public class ConnectPageOperations
     {
         return findElement(By.className(className));
     }
+
 }
