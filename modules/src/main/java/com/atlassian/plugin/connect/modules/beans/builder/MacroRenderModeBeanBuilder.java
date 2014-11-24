@@ -8,8 +8,6 @@ public class MacroRenderModeBeanBuilder extends BaseModuleBeanBuilder<MacroRende
     private MacroRenderModeType type;
     private StaticContentMacroModuleBean macro;
 
-
-
     public MacroRenderModeBeanBuilder()
     {
     }

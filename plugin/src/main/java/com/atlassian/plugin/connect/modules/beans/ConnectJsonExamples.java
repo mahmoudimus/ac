@@ -92,7 +92,7 @@ public class ConnectJsonExamples
     public static final String WEBSECTION_EXAMPLE = createWebSectionExample();
     public static final String BLUEPRINT_EXAMPLE = createBlueprintExample();
     public static final String BLUEPRINT_TEMPLATE_EXAMPLE = createBlueprintTemplateExample();
-
+    public static final String EMBEDDED_STATIC_MACRO_EXAMPLE = createEmbeddedStaticContentMacroExample();
 
     private static String createAddonExample()
     {
@@ -157,6 +157,18 @@ public class ConnectJsonExamples
     private static I18nProperty i18nProperty(String name)
     {
         return new I18nProperty(name, null);
+    }
+
+    private static String createEmbeddedStaticContentMacroExample()
+    {
+        return gson.toJson(createEmbeddedStaticMacroBean());
+    }
+
+    private static EmbeddedStaticContentMacroBean createEmbeddedStaticMacroBean()
+    {
+        return EmbeddedStaticContentMacroBean.newEmbeddedStaticContentMacroModuleBean()
+                .withUrl("/render-map-static")
+                .build();
     }
 
     private static String createPageExample()
@@ -340,10 +352,7 @@ public class ConnectJsonExamples
                                 .withEditTitle(new I18nProperty("Edit Map", ""))
                                 .build()
                 )
-                .withRenderMode(MacroRenderModeType.STATIC,
-                        EmbeddedStaticContentMacroBean.newEmbeddedStaticContentMacroModuleBean()
-                                .withUrl("/render-map-static")
-                                .build())
+                .withRenderMode(MacroRenderModeType.STATIC, createEmbeddedStaticMacroBean())
                 .build();
 
         return gson.toJson(createModuleArray("dynamicContentMacros", macroModuleBean));

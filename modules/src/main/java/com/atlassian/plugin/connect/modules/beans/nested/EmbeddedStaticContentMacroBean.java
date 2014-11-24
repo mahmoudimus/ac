@@ -5,6 +5,16 @@ import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.EmbeddedStaticContentMacroBeanBuilder;
 
+/**
+ * An embedded reference to a static macro resource.  These embedded versions of static macros are used to define
+ * a static macro render mode for a dynamic macro.
+ *
+ * #### Example
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#EMBEDDED_STATIC_MACRO_EXAMPLE}
+ * @schemaTitle Dynamic Content Macro
+ * @since 1.0
+ */
 @SchemaDefinition("embeddedStaticContentMacroBean")
 public class EmbeddedStaticContentMacroBean extends BaseModuleBean
 {
