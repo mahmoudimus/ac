@@ -5,7 +5,6 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModeBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModeType;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.module.macro.DynamicContentMacro;

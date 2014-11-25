@@ -1,9 +1,7 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
-import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModeBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModeType;
 
 import java.util.HashMap;

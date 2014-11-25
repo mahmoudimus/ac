@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.modules.beans.nested;
 
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.SchemaDefinition;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.EmbeddedStaticContentMacroBeanBuilder;
 
@@ -19,6 +20,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.EmbeddedStaticContentM
 public class EmbeddedStaticContentMacroBean extends BaseModuleBean
 {
     @Required
+    @StringSchemaAttributes(format = "uri-template")
     private String url;
 
     public EmbeddedStaticContentMacroBean(EmbeddedStaticContentMacroBeanBuilder builder)

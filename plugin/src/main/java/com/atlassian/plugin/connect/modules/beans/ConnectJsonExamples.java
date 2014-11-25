@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import com.atlassian.plugin.connect.modules.beans.builder.MacroRenderModeBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
