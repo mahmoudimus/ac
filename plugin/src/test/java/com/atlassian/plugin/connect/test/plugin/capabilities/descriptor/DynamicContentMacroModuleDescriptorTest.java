@@ -35,7 +35,7 @@ public class DynamicContentMacroModuleDescriptorTest extends AbstractContentMacr
 
         DynamicContentMacroModuleDescriptorFactory macroModuleDescriptorFactory = new DynamicContentMacroModuleDescriptorFactory(
                 new AbsoluteAddOnUrlConverter(remotablePluginAccessorFactoryForTests),
-                new RemoteMacroRendererImpl(iFrameUriBuilderFactory,macroModuleContextExtractor,macroContentManager,remotablePluginAccessorFactoryForTests,iFrameRenderStrategyRegistry));
+                new RemoteMacroRendererImpl(iFrameUriBuilderFactory, macroModuleContextExtractor, macroContentManager, remotablePluginAccessorFactoryForTests, iFrameRenderStrategyRegistry));
 
         DynamicContentMacroModuleBean bean = createBeanBuilder().build();
         return macroModuleDescriptorFactory.createModuleDescriptor(new DefaultConnectModuleProviderContext(addon), plugin, bean);

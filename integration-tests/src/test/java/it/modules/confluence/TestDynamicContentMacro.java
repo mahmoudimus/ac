@@ -230,7 +230,9 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         finally
         {
             if (pdf != null)
+            {
                 pdf.close();
+            }
         }
     }
 

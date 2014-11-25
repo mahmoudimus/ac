@@ -52,11 +52,8 @@ public class RemoteMacroRendererImpl implements RemoteMacroRenderer
     public String executeDynamic(String addOnKey, String moduleKey, Map<MacroRenderModeType, String> renderModeUriTemplates,
                                  Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext) throws MacroExecutionException
     {
-        log.info("execute dynamic macro [ " + moduleKey + " ] from add on [ " + addOnKey + " ] with render mode [ " + conversionContext.getOutputType() + " ] to device [ " + conversionContext.getOutputDeviceType() + " ]");
-
-        for (Map.Entry<MacroRenderModeType, String> entry : renderModeUriTemplates.entrySet())
-        {
-            log.info(" found render mode [ " + entry.getKey() + " ] url [ " + entry.getValue() + " ]");
+        if(log.isDebugEnabled()) {
+            log.info("execute dynamic macro [ " + moduleKey + " ] from add on [ " + addOnKey + " ] with render mode [ " + conversionContext.getOutputType() + " ] to device [ " + conversionContext.getOutputDeviceType() + " ]");
         }
 
         MacroRenderModeType macroRenderModeType = null;

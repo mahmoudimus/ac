@@ -11,7 +11,7 @@ public class DynamicContentMacroModuleBeanBuilder extends BaseContentMacroModule
 {
     private String width;
     private String height;
-    private Map<MacroRenderModeType,EmbeddedStaticContentMacroBean> renderModes = new HashMap<MacroRenderModeType, EmbeddedStaticContentMacroBean>();
+    private Map<MacroRenderModeType, EmbeddedStaticContentMacroBean> renderModes = new HashMap<MacroRenderModeType, EmbeddedStaticContentMacroBean>();
 
     public DynamicContentMacroModuleBeanBuilder()
     {
@@ -38,7 +38,7 @@ public class DynamicContentMacroModuleBeanBuilder extends BaseContentMacroModule
 
     public DynamicContentMacroModuleBeanBuilder withRenderMode(MacroRenderModeType type, EmbeddedStaticContentMacroBean embeddedStaticContentMacroBean)
     {
-        renderModes.put(type,embeddedStaticContentMacroBean);
+        renderModes.put(type, embeddedStaticContentMacroBean);
         return this;
     }
 

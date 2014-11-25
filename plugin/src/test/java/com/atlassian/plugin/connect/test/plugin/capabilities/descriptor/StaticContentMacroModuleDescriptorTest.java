@@ -41,7 +41,7 @@ public class StaticContentMacroModuleDescriptorTest extends AbstractContentMacro
 
         StaticContentMacroModuleDescriptorFactory macroModuleDescriptorFactory = new StaticContentMacroModuleDescriptorFactory(
                 new AbsoluteAddOnUrlConverter(remotablePluginAccessorFactoryForTests),
-                new RemoteMacroRendererImpl(iFrameUriBuilderFactory,macroModuleContextExtractor,macroContentManager,remotablePluginAccessorFactoryForTests,iFrameRenderStrategyRegistry));
+                new RemoteMacroRendererImpl(iFrameUriBuilderFactory, macroModuleContextExtractor, macroContentManager, remotablePluginAccessorFactoryForTests, iFrameRenderStrategyRegistry));
 
         StaticContentMacroModuleBean bean = createBeanBuilder()
                 .build();
