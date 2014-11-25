@@ -142,7 +142,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                 .withName(new I18nProperty(SLOW_MACRO_NAME, null))
                 .build();
 
-        DynamicContentMacroModuleBean dynamicMacroMWithFallback = newDynamicContentMacroModuleBean()
+        DynamicContentMacroModuleBean dynamicMacroWithFallback = newDynamicContentMacroModuleBean()
                 .withUrl("/dynamic-macro")
                 .withKey(DYNAMIC_MACRO_KEY)
                 .withName(new I18nProperty(DYNAMIC_MACRO_NAME, null))
@@ -175,7 +175,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                         clientSideBodyEditingMacroScriptInjection,
                         macroInTableMacro,
                         slowMacro,
-                        dynamicMacroMWithFallback
+                        dynamicMacroWithFallback
                 )
                 .addRoute(DEFAULT_MACRO_URL, ConnectAppServlets.helloWorldServlet())
                 .addRoute("/render-editor", ConnectAppServlets.macroEditor())
