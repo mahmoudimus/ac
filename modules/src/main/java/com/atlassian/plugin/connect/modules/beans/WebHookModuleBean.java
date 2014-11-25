@@ -77,6 +77,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *##### User events
  * * `user_created`
  * * `user_deleted`
+ * * `user_updated`
  *
  * Context parameters: `${modifiedUser.name}, ${modifiedUser.key}`
  *
