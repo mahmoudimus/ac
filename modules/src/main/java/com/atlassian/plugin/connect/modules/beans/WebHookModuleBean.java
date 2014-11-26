@@ -64,7 +64,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * * `version_unreleased`
  *
  * Context parameters are `${project.id}, ${project.key}, ${version.id}`.
- * 
+ *
  * Special context parameter for version_merged event is `${mergedVersion.id}`.
  *
  *##### Project events
@@ -81,7 +81,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * Context parameters: `${modifiedUser.name}, ${modifiedUser.key}`
  *
- *##### Option events
+ *##### Feature status events
  * * `option_voting_changed`
  * * `option_watching_changed`
  * * `option_unassigned_issues_changed`
