@@ -2,12 +2,12 @@
     "scopes": [
         {
             "key": "READ",
-            "restPathKeys": ["rapidview", "planBacklogData", "rapidviewconfigEditmodel"],
+            "restPathKeys": ["rapidview", "planBacklogData", "rapidviewconfigEditmodel", "epics"],
             "methods": ["GET"]
         },
         {
             "key": "WRITE",
-            "restPathKeys": ["rank", "sprintRank"],
+            "restPathKeys": ["rank", "sprintRank", "addIssueToEpic"],
             "methods": ["PUT"]
         }
     ],
@@ -44,6 +44,20 @@
             "key": "sprintRank",
             "name": "greenhopper",
             "basePaths": ["/sprint/rank$"],
+            "versions": ["1.0"],
+            "public": false
+        },
+        {
+            "key": "epics",
+            "name": "greenhopper",
+            "basePaths": ["/epics$"],
+            "versions": ["1.0"],
+            "public": false
+        },
+        {
+            "key": "addIssueToEpic",
+            "name": "greenhopper",
+            "basePaths": ["/epics/.+/add$"],
             "versions": ["1.0"],
             "public": false
         }
