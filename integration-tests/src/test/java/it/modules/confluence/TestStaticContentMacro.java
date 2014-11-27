@@ -14,26 +14,24 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWi
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
-
 import it.servlet.ConnectAppServlets;
 import it.servlet.EchoContextServlet;
 import it.servlet.EchoQueryParametersServlet;
 import it.util.TestUser;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
-
 import redstone.xmlrpc.XmlRpcFault;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
@@ -42,10 +40,13 @@ import java.net.URL;
 
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
-import static org.hamcrest.CoreMatchers.*;
+import static it.matcher.ParamMatchers.isVersionNumber;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.endsWith;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.Matchers.both;
 import static org.junit.Assert.assertThat;
-import static it.matcher.ParamMatchers.isVersionNumber;
 
 public class TestStaticContentMacro extends AbstractContentMacroTest
 {
@@ -62,6 +63,31 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     private static ConnectRunner remotePlugin;
     private static EchoQueryParametersServlet parameterServlet;
     private static EchoContextServlet contextServlet;
+
+    private CreatePage editorPage = null;
+
+    @Before
+    public void beforeEachTest()
+    {
+        editorPage = null;
+    }
+
+    // clean up so that we don't get "org.openqa.selenium.UnhandledAlertException: unexpected alert open" in subsequent tests
+    @After
+    public void afterEachTest()
+    {
+        if (null != editorPage)
+        {
+            try
+            {
+                editorPage.cancel();
+            }
+            catch (Throwable t)
+            {
+                // don't care
+            }
+        }
+    }
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -150,7 +176,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroHttpMethod() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("HTTP GET Macro"));
 
         selectMacroAndSave(editorPage, GET_MACRO_NAME);
@@ -163,7 +189,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testBodyInclusion() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Short Body Macro"));
 
         selectMacroAndSave(editorPage, SHORT_BODY_MACRO_NAME);
@@ -180,7 +206,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testBodyHashInclusion() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Long Body Macro"));
 
         selectMacroAndSave(editorPage, LONG_BODY_MACRO_NAME);
@@ -198,7 +224,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testParameterInclusion() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Parameter Page"));
         final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, PARAMETER_MACRO_NAME);
 
@@ -235,7 +261,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     public void testMacroCacheFlushes() throws Exception
     {
         final String title = randomName("Counter Page");
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(title);
         selectMacroAndSave(editorPage, COUNTER_MACRO_NAME);
         save(editorPage);

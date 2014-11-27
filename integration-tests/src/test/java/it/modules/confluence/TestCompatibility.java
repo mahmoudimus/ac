@@ -88,11 +88,26 @@ public class TestCompatibility extends AbstractConfluenceWebDriverTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
         editorPage.setTitle(RandomStringUtils.randomAlphanumeric(8));
 
-        selectMacroAndSave(editorPage, MACRO_NAME_2);
+        try
+        {
+            selectMacroAndSave(editorPage, MACRO_NAME_2);
 
-        ViewPage page = editorPage.saveWithKeyboardShortcut();
-        String content = rpc.getPageContent(page.getPageId());
-        assertThat(content, endsWith("<p><ac:structured-macro ac:name=\"something-else\" /></p>"));
+            ViewPage page = editorPage.saveWithKeyboardShortcut();
+            String content = rpc.getPageContent(page.getPageId());
+            assertThat(content, endsWith("<p><ac:structured-macro ac:name=\"something-else\" /></p>"));
+        }
+        finally
+        {
+            // clean up so that we don't get "org.openqa.selenium.UnhandledAlertException: unexpected alert open" in subsequent tests
+            try
+            {
+                editorPage.cancel();
+            }
+            catch (Throwable e)
+            {
+                // don't care
+            }
+        }
     }
 
     private void createAndVisitPage(String pageContent) throws MalformedURLException, XmlRpcFault
