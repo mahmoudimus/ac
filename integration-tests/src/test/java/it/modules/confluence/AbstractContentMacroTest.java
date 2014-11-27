@@ -414,12 +414,11 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     public void testImagePlaceholder() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-        editorPage.setTitle(randomName("Image Placeholder Macro"));
-
-        selectMacroAndSave(editorPage, IMAGE_PLACEHOLDER_MACRO_NAME);
 
         try
         {
+            editorPage.setTitle(randomName("Image Placeholder Macro"));
+            selectMacroAndSave(editorPage, IMAGE_PLACEHOLDER_MACRO_NAME);
             ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
             String url = editorContent.getImagePlaceholderUrl();
 
