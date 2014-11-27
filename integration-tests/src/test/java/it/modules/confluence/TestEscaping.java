@@ -7,6 +7,7 @@ import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.SpaceToolsTabModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
@@ -23,10 +24,12 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import redstone.xmlrpc.XmlRpcFault;
 
 import java.net.MalformedURLException;
+import java.util.NoSuchElementException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
@@ -261,11 +264,27 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     public void testSpaceToolsTab() throws Exception
     {
         loginAndVisit(TestUser.ADMIN, SpaceTemplatesPage.class, "ts");
-        RemoteWebItem webItem = connectPageOperations.findWebItem(RemoteWebItem.ItemMatchingMode.JQUERY,
-                "li[data-web-item-key='" + getModuleKey(SPACE_TOOLS_TAB_KEY) + "'] > a", Optional.<String>absent());
-        String reason = String.format("web item link text should be module name, text=%s, href=%s, isVisible=%s, title=%s",
-                webItem.getLinkText(), webItem.getPath(), webItem.isVisible(), webItem.getTitle());
-        assertIsEscaped(reason, webItem.getLinkText());
+        final String dropDownLinkId = "aui-responsive-header-dropdown-trigger-0";
+        Optional<String> maybeDropDownLinkId = Optional.<String>absent();
+
+        try
+        {
+            WebElement dropDown = connectPageOperations.findElement(By.id(dropDownLinkId));
+
+            if (null != dropDown && dropDown.isDisplayed())
+            {
+                maybeDropDownLinkId = Optional.of(dropDownLinkId);
+            }
+        }
+        catch (NoSuchElementException e)
+        {
+            // do nothing
+        }
+
+        RemoteWebItem webItem = connectPageOperations.findWebItem(RemoteWebItem.ItemMatchingMode.ID,
+                ModuleKeyUtils.addonAndModuleKey(runner.getAddon().getKey(), WEB_ITEM_KEY), maybeDropDownLinkId);
+        webItem.hover();
+        assertIsEscaped(webItem.getLinkText());
     }
 
     private void assertIsEscaped(String text)
@@ -274,14 +293,6 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
         // Note that we're checking against the original name, not an escaped version, as getText() returns the
         // unescaped text. If markup was interpreted, the tags would be missing in the text.
         assertThat(text, anyOf(is(MODULE_NAME), is(MODULE_NAME_CONF_ESCAPED)));
-    }
-
-    private void assertIsEscaped(String reason, String text)
-    {
-        // Confluence's own escaping leaves a '\' in front of the '$', which seems wrong, so checking both flavours
-        // Note that we're checking against the original name, not an escaped version, as getText() returns the
-        // unescaped text. If markup was interpreted, the tags would be missing in the text.
-        assertThat(reason, text, anyOf(is(MODULE_NAME), is(MODULE_NAME_CONF_ESCAPED)));
     }
 
     private RemoteWebItem findViewPageWebItem(String webItemId) throws Exception
