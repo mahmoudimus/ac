@@ -262,8 +262,10 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     {
         loginAndVisit(TestUser.ADMIN, SpaceTemplatesPage.class, "ts");
         RemoteWebItem webItem = connectPageOperations.findWebItem(RemoteWebItem.ItemMatchingMode.JQUERY,
-                "[data-web-item-key='" + getModuleKey(SPACE_TOOLS_TAB_KEY) + "'] > a", Optional.<String>absent());
-        assertIsEscaped(webItem.getLinkText());
+                "li[data-web-item-key='" + getModuleKey(SPACE_TOOLS_TAB_KEY) + "'] > a", Optional.<String>absent());
+        String reason = String.format("web item link text should be module name, text=%s, href=%s, isVisible=%s, title=%s",
+                webItem.getLinkText(), webItem.getPath(), webItem.isVisible(), webItem.getTitle());
+        assertIsEscaped(reason, webItem.getLinkText());
     }
 
     private void assertIsEscaped(String text)
@@ -272,6 +274,14 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
         // Note that we're checking against the original name, not an escaped version, as getText() returns the
         // unescaped text. If markup was interpreted, the tags would be missing in the text.
         assertThat(text, anyOf(is(MODULE_NAME), is(MODULE_NAME_CONF_ESCAPED)));
+    }
+
+    private void assertIsEscaped(String reason, String text)
+    {
+        // Confluence's own escaping leaves a '\' in front of the '$', which seems wrong, so checking both flavours
+        // Note that we're checking against the original name, not an escaped version, as getText() returns the
+        // unescaped text. If markup was interpreted, the tags would be missing in the text.
+        assertThat(reason, text, anyOf(is(MODULE_NAME), is(MODULE_NAME_CONF_ESCAPED)));
     }
 
     private RemoteWebItem findViewPageWebItem(String webItemId) throws Exception
