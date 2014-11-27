@@ -26,7 +26,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
-import redstone.xmlrpc.XmlRpcFault;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -35,7 +34,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
@@ -238,7 +236,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     }
 
     @Test
-    public void testMacroInComment() throws MalformedURLException, XmlRpcFault
+    public void testMacroInComment() throws Exception
     {
         addSimpleMacroToComment();
         final WebElement commentBody = connectPageOperations.findElementByClass("comment-content");

@@ -29,16 +29,16 @@ import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import redstone.xmlrpc.XmlRpcFault;
-
-import java.net.MalformedURLException;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
 import static java.lang.String.format;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -337,22 +337,29 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     public void testParameterTypes() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-        final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, ALL_PARAMETER_TYPES_MACRO_NAME);
-        MacroForm macroForm = macroBrowserAndEditor.macroForm;
 
         try
         {
-            assertThat(macroForm.hasField("attachment").byDefaultTimeout(), is(true));
-            assertThat(macroForm.hasField("boolean").byDefaultTimeout(), is(true));
-            assertThat(macroForm.hasField("content").byDefaultTimeout(), is(true));
-            assertThat(macroForm.hasField("enum").byDefaultTimeout(), is(true));
-            assertThat(macroForm.hasField("spacekey").byDefaultTimeout(), is(true));
-            assertThat(macroForm.hasField("string").byDefaultTimeout(), is(true));
-            assertThat(macroForm.hasField("username").byDefaultTimeout(), is(true));
+            final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, ALL_PARAMETER_TYPES_MACRO_NAME);
+
+            try
+            {
+                MacroForm macroForm = macroBrowserAndEditor.macroForm;
+                assertThat(macroForm.hasField("attachment").byDefaultTimeout(), is(true));
+                assertThat(macroForm.hasField("boolean").byDefaultTimeout(), is(true));
+                assertThat(macroForm.hasField("content").byDefaultTimeout(), is(true));
+                assertThat(macroForm.hasField("enum").byDefaultTimeout(), is(true));
+                assertThat(macroForm.hasField("spacekey").byDefaultTimeout(), is(true));
+                assertThat(macroForm.hasField("string").byDefaultTimeout(), is(true));
+                assertThat(macroForm.hasField("username").byDefaultTimeout(), is(true));
+            }
+            finally
+            {
+                macroBrowserAndEditor.browserDialog.clickCancel();
+            }
         }
         finally
         {
-            macroBrowserAndEditor.browserDialog.clickCancel();
             editorPage.cancel();
         }
     }
@@ -361,19 +368,26 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     public void testParameterLabel() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-        editorPage.setTitle(randomName("Parameter Page"));
-        final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, PARAMETER_MACRO_NAME);
 
         try
         {
-            assertTrue(macroBrowserAndEditor.macroForm.getField(SINGLE_PARAM_ID).isVisible());
+            editorPage.setTitle(randomName("Parameter Page"));
+            final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, PARAMETER_MACRO_NAME);
 
-            WebElement label = connectPageOperations.findLabel("macro-param-" + SINGLE_PARAM_ID);
-            assertThat(label.getText(), is(SINGLE_PARAM_NAME));
+            try
+            {
+                assertTrue(macroBrowserAndEditor.macroForm.getField(SINGLE_PARAM_ID).isVisible());
+
+                WebElement label = connectPageOperations.findLabel("macro-param-" + SINGLE_PARAM_ID);
+                assertThat(label.getText(), is(SINGLE_PARAM_NAME));
+            }
+            finally
+            {
+                macroBrowserAndEditor.browserDialog.clickCancel();
+            }
         }
         finally
         {
-            macroBrowserAndEditor.browserDialog.clickCancel();
             editorPage.cancel();
         }
     }
@@ -383,11 +397,11 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         final Editor editor = editorPage.getEditor();
-        enableMacrosDropdown(editor);
-        ConfluenceInsertMenu insertMenu = (ConfluenceInsertMenu) editor.openInsertMenu();
 
         try
         {
+            enableMacrosDropdown(editor);
+            ConfluenceInsertMenu insertMenu = (ConfluenceInsertMenu) editor.openInsertMenu();
             assertThat(insertMenu.hasEntryWithKey(FEATURED_MACRO_KEY), is(true));
         }
         finally
@@ -557,27 +571,51 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     public void testHiddenMacro() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-        final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, HIDDEN_MACRO_NAME);
 
         try
         {
-            assertThat(macroBrowserAndEditor.macroForm, is(nullValue()));
+            final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, HIDDEN_MACRO_NAME);
+
+            try
+            {
+                assertThat(macroBrowserAndEditor.macroForm, is(nullValue()));
+            }
+            finally
+            {
+                macroBrowserAndEditor.browserDialog.clickCancel();
+            }
         }
         finally
         {
-            macroBrowserAndEditor.browserDialog.clickCancel();
             editorPage.cancel();
         }
     }
 
-    protected void addSimpleMacroToComment() throws MalformedURLException, XmlRpcFault
+    protected void addSimpleMacroToComment() throws Exception
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-        editorPage.setTitle(randomName("The macro is in the comment!"));
-        savedPage = save(editorPage);
 
-        confluenceOps.addComment(some(TestUser.ADMIN), String.valueOf(savedPage.getPageId()), pageWithMacro(SIMPLE_MACRO_KEY));
-        product.visit(ConfluencePageWithRemoteMacro.class, savedPage.getTitle(), SIMPLE_MACRO_KEY);
+        try
+        {
+            editorPage.setTitle(randomName("The macro is in the comment!"));
+            savedPage = save(editorPage);
+
+            confluenceOps.addComment(some(TestUser.ADMIN), String.valueOf(savedPage.getPageId()), pageWithMacro(SIMPLE_MACRO_KEY));
+            product.visit(ConfluencePageWithRemoteMacro.class, savedPage.getTitle(), SIMPLE_MACRO_KEY);
+        }
+        catch (Exception e)
+        {
+            try
+            {
+                editorPage.cancel();
+            }
+            catch (Throwable t)
+            {
+                // don't care
+            }
+
+            throw e;
+        }
     }
 
     protected ViewPage save(EditorPage editorPage)
@@ -594,28 +632,45 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     {
         // create the page with the macro
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-        editorPage.setTitle(randomName(title));
-        selectMacroAndSave(editorPage, macroName);
-        savedPage = save(editorPage);
-        final long pageId = savedPage.getPageId(); // need to get it here because it parses the page, so if we log out it throws!
 
-        // view the page as the specified user
-        if (TestUser.ADMIN.confUser().equals(user))
+        try
         {
-            return savedPage;
-        }
-        else
-        {
-            getProduct().logOutFast();
+            editorPage.setTitle(randomName(title));
+            selectMacroAndSave(editorPage, macroName);
+            savedPage = save(editorPage);
+            final long pageId = savedPage.getPageId(); // need to get it here because it parses the page, so if we log out it throws!
 
-            if (null == user)
+            // view the page as the specified user
+            if (TestUser.ADMIN.confUser().equals(user))
             {
-                return getProduct().viewPage(String.valueOf(pageId));
+                return savedPage;
             }
             else
             {
-                return getProduct().loginAndView(user, new Page(pageId));
+                getProduct().logOutFast();
+
+                if (null == user)
+                {
+                    return getProduct().viewPage(String.valueOf(pageId));
+                }
+                else
+                {
+                    return getProduct().loginAndView(user, new Page(pageId));
+                }
             }
+        }
+        catch (Exception e)
+        {
+            try
+            {
+                editorPage.cancel();
+            }
+            catch (Throwable t)
+            {
+                // don't care
+            }
+
+            throw e;
         }
     }
 
