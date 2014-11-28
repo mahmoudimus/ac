@@ -6,15 +6,6 @@ public class EmbeddedStaticContentMacroBeanBuilder extends BaseModuleBeanBuilder
 {
     private String url;
 
-    public EmbeddedStaticContentMacroBeanBuilder()
-    {
-    }
-
-    public EmbeddedStaticContentMacroBeanBuilder(EmbeddedStaticContentMacroBean defaultBean)
-    {
-        this.url = defaultBean.getUrl();
-    }
-
     @Override
     public EmbeddedStaticContentMacroBean build()
     {

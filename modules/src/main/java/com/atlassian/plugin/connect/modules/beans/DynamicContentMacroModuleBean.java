@@ -2,11 +2,7 @@ package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.beans.builder.DynamicContentMacroModuleBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModeType;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
 
 /**
  * A Confluence macro that loads remote content as an iframe. Dynamic Content Macros render content on every page
@@ -44,13 +40,12 @@ public class DynamicContentMacroModuleBean extends BaseContentMacroModuleBean
     private String height;
 
     /**
-     * Static render mode fallback.
+     * Static content macro mappings for different render modes.
      */
-    private Map<MacroRenderModeType, EmbeddedStaticContentMacroBean> renderModes;
+    private MacroRenderModesBean renderModes;
 
     public DynamicContentMacroModuleBean()
     {
-        renderModes = new HashMap<MacroRenderModeType, EmbeddedStaticContentMacroBean>();
     }
 
     public DynamicContentMacroModuleBean(DynamicContentMacroModuleBeanBuilder builder)
@@ -58,11 +53,11 @@ public class DynamicContentMacroModuleBean extends BaseContentMacroModuleBean
         super(builder);
         if (renderModes == null)
         {
-            renderModes = new HashMap<MacroRenderModeType, EmbeddedStaticContentMacroBean>();
+            renderModes = MacroRenderModesBean.newMacroRenderModesBean().build();
         }
     }
 
-    public Map<MacroRenderModeType, EmbeddedStaticContentMacroBean> getRenderModes()
+    public MacroRenderModesBean getRenderModes()
     {
         return renderModes;
     }
@@ -82,8 +77,4 @@ public class DynamicContentMacroModuleBean extends BaseContentMacroModuleBean
         return new DynamicContentMacroModuleBeanBuilder();
     }
 
-    public static DynamicContentMacroModuleBeanBuilder newDynamicContentMacroModuleBean(DynamicContentMacroModuleBean defaultBean)
-    {
-        return new DynamicContentMacroModuleBeanBuilder(defaultBean);
-    }
 }

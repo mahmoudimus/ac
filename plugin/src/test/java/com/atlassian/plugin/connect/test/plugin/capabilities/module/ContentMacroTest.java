@@ -4,7 +4,7 @@ import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.macro.MacroExecutionException;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModeType;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
 import com.atlassian.plugin.connect.plugin.capabilities.module.macro.DynamicContentMacro;
 import com.atlassian.plugin.connect.plugin.capabilities.module.macro.RemoteMacroRenderer;
 import com.atlassian.plugin.connect.plugin.capabilities.util.MacroEnumMapper;
@@ -78,7 +78,8 @@ public class ContentMacroTest
 //                addOnKey, moduleKey,
                 "addon-key", "module-key",
                 MacroEnumMapper.map(bean.getBodyType()),
-                MacroEnumMapper.map(bean.getOutputType()), remoteMacroRenderer, new HashMap<MacroRenderModeType, String>());
+                MacroEnumMapper.map(bean.getOutputType()), remoteMacroRenderer,
+                MacroRenderModesBean.newMacroRenderModesBean().build());
         macro.execute(Maps.<String, String>newHashMap(), "some macro content", conversionContext);
     }
 

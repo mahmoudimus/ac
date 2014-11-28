@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.module.macro;
 
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.macro.MacroExecutionException;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModeType;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
 
 import java.util.Map;
 
@@ -14,23 +14,23 @@ public final class DynamicContentMacro extends AbstractMacro
     private final RemoteMacroRenderer remoteMacroRenderer;
     private final String addOnKey;
     private final String moduleKey;
-    private final Map<MacroRenderModeType, String> renderModeUriTemplates;
+    private final MacroRenderModesBean renderModes;
 
     public DynamicContentMacro(String addOnKey, String moduleKey, BodyType bodyType, OutputType outputType,
-                               RemoteMacroRenderer remoteMacroRenderer, Map<MacroRenderModeType, String> renderModeUriTemplates)
+                               RemoteMacroRenderer remoteMacroRenderer, MacroRenderModesBean renderModes)
     {
         super(bodyType, outputType);
         this.remoteMacroRenderer = remoteMacroRenderer;
         this.addOnKey = addOnKey;
         this.moduleKey = moduleKey;
-        this.renderModeUriTemplates = renderModeUriTemplates;
+        this.renderModes = renderModes;
     }
 
     @Override
     public String execute(Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext)
             throws MacroExecutionException
     {
-        return remoteMacroRenderer.executeDynamic(addOnKey, moduleKey, renderModeUriTemplates,
+        return remoteMacroRenderer.executeDynamic(addOnKey, moduleKey, renderModes,
                 parameters, storageFormatBody,conversionContext);
     }
 

@@ -8,25 +8,6 @@ package com.atlassian.plugin.connect.modules.beans.nested;
  */
 public enum MacroRenderModeType
 {
-    /*
-     * Indicates your macro should output for mobile rendering.
-     *
-     * Note: Currently disabled, see AC-1210 and ACDEV-1400
-     */
-//    mobile, /** Currently the ConversionContextOutputType doesn't cover mobile, it may be rendering as DISPLAY **/
-
-//    /**
-//     * Indicates your macro should out for desktop rendering.
-//     *
-//     * This is the default if a render mode is not specified.
-//     */
-//    desktop,
-
-    /**
-     * Used when rendering is occurring in display mode, such as when viewing a Confluence page. This is the default type.
-     */
-    DISPLAY, // Renamed from 'desktop' to be inline with Confluence
-
     /**
      * Used when rendering is occurring in a Word document, such as from using Confluence's "Edit in Word" option.
      */
@@ -55,7 +36,7 @@ public enum MacroRenderModeType
     /**
      * This render mode will match WORD, PDF, HTML_EXPORT, FEED and EMAIL if they are not specified individually.
      */
-    STATIC;
+    DEFAULT_FALLBACK;
 
     public String toString()
     {
@@ -71,7 +52,7 @@ public enum MacroRenderModeType
             case HTML_EXPORT:
             case FEED:
             case EMAIL:
-            case STATIC:
+            case DEFAULT_FALLBACK:
                 return true;
         }
         return false;

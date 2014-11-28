@@ -4,6 +4,7 @@ import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.macro.MacroExecutionException;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModeType;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
@@ -49,7 +50,7 @@ public class RemoteMacroRendererImpl implements RemoteMacroRenderer
     }
 
     @Override
-    public String executeDynamic(String addOnKey, String moduleKey, Map<MacroRenderModeType, String> renderModeUriTemplates,
+    public String executeDynamic(String addOnKey, String moduleKey, MacroRenderModesBean renderModes,
                                  Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext) throws MacroExecutionException
     {
         if(log.isDebugEnabled()) {
@@ -67,13 +68,13 @@ public class RemoteMacroRendererImpl implements RemoteMacroRenderer
             // need to be resilient to the scope of these values changing
         }
 
-        if (macroRenderModeType != null && renderModeUriTemplates.containsKey(macroRenderModeType))
+        if (macroRenderModeType==null || renderModes.hasMode(macroRenderModeType))
         {
-            return executeStatic(addOnKey, moduleKey, renderModeUriTemplates.get(macroRenderModeType), parameters, storageFormatBody, conversionContext);
+            return executeStatic(addOnKey, moduleKey, renderModes.getUrl(macroRenderModeType), parameters, storageFormatBody, conversionContext);
         }
-        else if (macroRenderModeType != null && renderModeUriTemplates.containsKey(MacroRenderModeType.STATIC) && macroRenderModeType.isStatic())
+        else if (renderModes.hasMode(MacroRenderModeType.DEFAULT_FALLBACK) && macroRenderModeType.isStatic())
         {
-            return executeStatic(addOnKey, moduleKey, renderModeUriTemplates.get(MacroRenderModeType.STATIC), parameters, storageFormatBody, conversionContext);
+            return executeStatic(addOnKey, moduleKey, renderModes.getUrl(MacroRenderModeType.DEFAULT_FALLBACK), parameters, storageFormatBody, conversionContext);
         }
         else
         {

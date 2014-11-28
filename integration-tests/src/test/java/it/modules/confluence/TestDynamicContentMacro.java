@@ -20,7 +20,6 @@ import it.util.TestUser;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.pdfbox.PDFBox;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
 import org.junit.AfterClass;
@@ -146,11 +145,12 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                 .withUrl("/dynamic-macro")
                 .withKey(DYNAMIC_MACRO_KEY)
                 .withName(new I18nProperty(DYNAMIC_MACRO_NAME, null))
-                .withRenderMode(
-                        MacroRenderModeType.STATIC,
-                        EmbeddedStaticContentMacroBean
-                                .newEmbeddedStaticContentMacroModuleBean()
-                                .withUrl("/dynamic-macro-static")
+                .withRenderModes(MacroRenderModesBean.newMacroRenderModesBean()
+                                .withDefaultfallback(
+                                        EmbeddedStaticContentMacroBean
+                                                .newEmbeddedStaticContentMacroModuleBean()
+                                                .withUrl("/dynamic-macro-static")
+                                                .build())
                                 .build()
                 )
                 .build();

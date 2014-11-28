@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.module.macro;
 
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.macro.MacroExecutionException;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModeType;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
 
 import java.util.Map;
 
@@ -18,14 +18,14 @@ public interface RemoteMacroRenderer
      *
      * @param addOnKey the add on key
      * @param moduleKey the module key
-     * @param renderModeUriTemplates the map of render modes
+     * @param renderModes the mappings between render mode and static content macro
      * @param parameters the parameters to the macro
      * @param storageFormatBody the body of the macro
      * @param conversionContext the conversion context for this rendering
      * @return the html output
      * @throws MacroExecutionException
      */
-    String executeDynamic(String addOnKey, String moduleKey, Map<MacroRenderModeType,String> renderModeUriTemplates,
+    String executeDynamic(String addOnKey, String moduleKey, MacroRenderModesBean renderModes,
                           Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext)
             throws MacroExecutionException;
 

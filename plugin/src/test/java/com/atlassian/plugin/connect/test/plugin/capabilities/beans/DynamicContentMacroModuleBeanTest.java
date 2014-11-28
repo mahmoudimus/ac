@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModeType;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.test.plugin.capabilities.TestFileReader;
 import com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs;
@@ -117,10 +118,12 @@ public class DynamicContentMacroModuleBeanTest
                                                 .withApplyChrome(true)
                                                 .build()
                                 )
-                                .withRenderMode(MacroRenderModeType.STATIC,
-                                        EmbeddedStaticContentMacroBean.newEmbeddedStaticContentMacroModuleBean()
-                                                .withUrl("/render-map-static")
-                                                .build())
+                                .withRenderModes(MacroRenderModesBean.newMacroRenderModesBean()
+                                        .withDefaultfallback(
+                                                EmbeddedStaticContentMacroBean.newEmbeddedStaticContentMacroModuleBean()
+                                                        .withUrl("/render-map-static")
+                                                        .build())
+                                        .build())
                                 .build()
                 )
                 .build();

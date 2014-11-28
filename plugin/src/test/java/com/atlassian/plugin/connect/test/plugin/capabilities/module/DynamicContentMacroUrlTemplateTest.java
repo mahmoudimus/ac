@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.test.plugin.capabilities.module;
 
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.DynamicContentMacroModuleBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModeType;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
 import com.atlassian.plugin.connect.plugin.capabilities.module.macro.DynamicContentMacro;
 import com.atlassian.plugin.connect.plugin.capabilities.module.macro.MacroModuleContextExtractor;
 import com.atlassian.plugin.connect.plugin.capabilities.module.macro.RemoteMacroRenderer;
@@ -11,7 +11,6 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
@@ -40,7 +39,7 @@ public class DynamicContentMacroUrlTemplateTest extends AbstractContentMacroUrlT
                 "addon-key", "module-key",
                 MacroEnumMapper.map(bean.getBodyType()),
                 MacroEnumMapper.map(bean.getOutputType()),
-                remoteMacroRenderer, new HashMap<MacroRenderModeType,String>());
+                remoteMacroRenderer,MacroRenderModesBean.newMacroRenderModesBean().build());
     }
 
     protected void verifyRendererInvokedWithQueryParameter(String name, String value) throws Exception

@@ -17,6 +17,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModeType;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
@@ -91,7 +92,7 @@ public class ConnectJsonExamples
     public static final String WEBSECTION_EXAMPLE = createWebSectionExample();
     public static final String BLUEPRINT_EXAMPLE = createBlueprintExample();
     public static final String BLUEPRINT_TEMPLATE_EXAMPLE = createBlueprintTemplateExample();
-    public static final String EMBEDDED_STATIC_MACRO_EXAMPLE = createEmbeddedStaticContentMacroExample();
+    public static final String MACRO_RENDER_MODES_EXAMPLE = createDynamicMacroExampleForRenderModes();
 
     private static String createAddonExample()
     {
@@ -158,15 +159,18 @@ public class ConnectJsonExamples
         return new I18nProperty(name, null);
     }
 
-    private static String createEmbeddedStaticContentMacroExample()
-    {
-        return gson.toJson(createEmbeddedStaticMacroBean());
-    }
 
-    private static EmbeddedStaticContentMacroBean createEmbeddedStaticMacroBean()
+    private static EmbeddedStaticContentMacroBean createEmbeddedStaticMacroBeanStatic()
     {
         return EmbeddedStaticContentMacroBean.newEmbeddedStaticContentMacroModuleBean()
                 .withUrl("/render-map-static")
+                .build();
+    }
+
+    private static EmbeddedStaticContentMacroBean createEmbeddedStaticMacroBeanPDF()
+    {
+        return EmbeddedStaticContentMacroBean.newEmbeddedStaticContentMacroModuleBean()
+                .withUrl("/render-map-pdf")
                 .build();
     }
 
@@ -351,7 +355,27 @@ public class ConnectJsonExamples
                                 .withEditTitle(new I18nProperty("Edit Map", ""))
                                 .build()
                 )
-                .withRenderMode(MacroRenderModeType.STATIC, createEmbeddedStaticMacroBean())
+                .withRenderModes(MacroRenderModesBean
+                        .newMacroRenderModesBean()
+                        .withPdf(createEmbeddedStaticMacroBeanPDF())
+                        .withDefaultfallback(createEmbeddedStaticMacroBeanStatic())
+                        .build())
+                .build();
+
+        return gson.toJson(createModuleArray("dynamicContentMacros", macroModuleBean));
+    }
+
+    private static String createDynamicMacroExampleForRenderModes()
+    {
+        DynamicContentMacroModuleBean macroModuleBean = DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean()
+                .withName(new I18nProperty("Maps", ""))
+                .withKey("dynamic-macro-example")
+                .withUrl("/render-map?pageTitle={page.title}")
+                .withRenderModes(MacroRenderModesBean
+                        .newMacroRenderModesBean()
+                        .withPdf(createEmbeddedStaticMacroBeanPDF())
+                        .withDefaultfallback(createEmbeddedStaticMacroBeanStatic())
+                        .build())
                 .build();
 
         return gson.toJson(createModuleArray("dynamicContentMacros", macroModuleBean));

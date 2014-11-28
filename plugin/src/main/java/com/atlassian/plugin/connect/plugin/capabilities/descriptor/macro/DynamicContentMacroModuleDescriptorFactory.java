@@ -4,8 +4,6 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
-import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModeType;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.plugin.capabilities.module.macro.DynamicContentMacro;
 import com.atlassian.plugin.connect.plugin.capabilities.module.macro.RemoteMacroRenderer;
@@ -14,9 +12,6 @@ import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @ConfluenceComponent
 public class DynamicContentMacroModuleDescriptorFactory extends AbstractContentMacroModuleDescriptorFactory<DynamicContentMacroModuleBean>
@@ -56,14 +51,10 @@ public class DynamicContentMacroModuleDescriptorFactory extends AbstractContentM
             public <T> T createModule(String name, ModuleDescriptor<T> moduleDescriptor) throws PluginParseException
             {
 
-                Map<MacroRenderModeType,String> renderModeUriTemplates = new HashMap<MacroRenderModeType,String>();
-                for (Map.Entry<MacroRenderModeType, EmbeddedStaticContentMacroBean> e : bean.getRenderModes().entrySet())
-                    renderModeUriTemplates.put(e.getKey(),e.getValue().getUrl());
-
                 DynamicContentMacro macro = new DynamicContentMacro(
                         addon.getKey(), bean.getRawKey(),
                         MacroEnumMapper.map(bean.getBodyType()),
-                        MacroEnumMapper.map(bean.getOutputType()), remoteMacroRenderer, renderModeUriTemplates);
+                        MacroEnumMapper.map(bean.getOutputType()), remoteMacroRenderer, bean.getRenderModes());
 
                 if (bean.hasImagePlaceholder())
                 {
