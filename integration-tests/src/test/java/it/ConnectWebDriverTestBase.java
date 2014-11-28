@@ -18,6 +18,8 @@ import org.apache.http.auth.AuthenticationException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebElement;
 
 import java.io.IOException;
 
@@ -30,7 +32,7 @@ public abstract class ConnectWebDriverTestBase
     @Rule
     public WebDriverScreenshotRule screenshotRule = new WebDriverScreenshotRule();
 
-    protected ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
+    protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
             product.getTester().getDriver());
 
     @BeforeClass
@@ -44,6 +46,24 @@ public abstract class ConnectWebDriverTestBase
     @AfterClass
     public static void logout()
     {
+        if (product instanceof ConfluenceTestedProduct)
+        {
+            // dismiss a "you have an unsaved draft" message, if any, because it actually blocks the logout
+            try
+            {
+                final WebElement discardLink = connectPageOperations.findElementByClass("discard-draft");
+
+                if (null != discardLink)
+                {
+                    discardLink.click();
+                }
+            }
+            catch (NoSuchElementException e)
+            {
+                // don't even care
+            }
+        }
+
         currentUsername = null;
         product.getTester().getDriver().manage().deleteAllCookies();
     }
