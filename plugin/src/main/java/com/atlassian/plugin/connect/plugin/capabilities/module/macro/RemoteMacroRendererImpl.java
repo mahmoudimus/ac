@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.module.macro;
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.macro.MacroExecutionException;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModeType;
+import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
@@ -53,28 +53,15 @@ public class RemoteMacroRendererImpl implements RemoteMacroRenderer
     public String executeDynamic(String addOnKey, String moduleKey, MacroRenderModesBean renderModes,
                                  Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext) throws MacroExecutionException
     {
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled())
+        {
             log.info("execute dynamic macro [ " + moduleKey + " ] from add on [ " + addOnKey + " ] with render mode [ " + conversionContext.getOutputType() + " ] to device [ " + conversionContext.getOutputDeviceType() + " ]");
         }
 
-        MacroRenderModeType macroRenderModeType = null;
-        try
+        EmbeddedStaticContentMacroBean fallback = renderModes.getEmbeddedStaticContentMacro(conversionContext.getOutputType());
+        if (fallback != null)
         {
-            macroRenderModeType = MacroRenderModeType.valueOf(conversionContext.getOutputType().toUpperCase());
-        }
-        catch (IllegalArgumentException e)
-        {
-            // Confluence sends these enums as their string value so we
-            // need to be resilient to the scope of these values changing
-        }
-
-        if (macroRenderModeType==null || renderModes.hasMode(macroRenderModeType))
-        {
-            return executeStatic(addOnKey, moduleKey, renderModes.getUrl(macroRenderModeType), parameters, storageFormatBody, conversionContext);
-        }
-        else if (renderModes.hasMode(MacroRenderModeType.DEFAULT_FALLBACK) && macroRenderModeType.isStatic())
-        {
-            return executeStatic(addOnKey, moduleKey, renderModes.getUrl(MacroRenderModeType.DEFAULT_FALLBACK), parameters, storageFormatBody, conversionContext);
+            return executeStatic(addOnKey, moduleKey, fallback.getUrl(), parameters, storageFormatBody, conversionContext);
         }
         else
         {

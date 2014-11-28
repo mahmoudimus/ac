@@ -14,7 +14,7 @@ import com.google.gson.annotations.SerializedName;
  * You can define a mapping for each render mode or define a global fallback mapping to catch all
  * static render modes.
  *
- *#### Example
+ * #### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#MACRO_RENDER_MODES_EXAMPLE}
  * @schemaTitle Macro Render Modes
@@ -22,6 +22,12 @@ import com.google.gson.annotations.SerializedName;
  */
 public class MacroRenderModesBean extends BaseModuleBean
 {
+    private static final String OUTPUT_WORD = "word";
+    private static final String OUTPUT_PDF = "pdf";
+    private static final String OUTPUT_HTML_EXPORT = "html_export";
+    private static final String OUTPUT_FEED = "feed";
+    private static final String OUTPUT_EMAIL = "email";
+
     /**
      * This render mode will be used when your macro is being rendered during "export to word"
      */
@@ -64,29 +70,41 @@ public class MacroRenderModesBean extends BaseModuleBean
         return new MacroRenderModesBeanBuilder();
     }
 
-    public boolean hasMode(MacroRenderModeType type)
+    /**
+     * Return the {@link com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean} for the
+     * output type specified by a {@link com.atlassian.confluence.content.render.xhtml.ConversionContext#getOutputType}
+     * during a macro execution.
+     *
+     * @param outputType the output type to find the render mode for
+     * @return the static macro fallback for the output type if one is found
+     */
+    public EmbeddedStaticContentMacroBean getEmbeddedStaticContentMacro(String outputType)
     {
-        switch(type) {
-            case EMAIL: return email != null;
-            case FEED: return feed != null;
-            case HTML_EXPORT: return htmlExport != null;
-            case PDF: return pdf != null;
-            case WORD: return word != null;
-            case DEFAULT_FALLBACK: return defaultFallback != null;
+        if (outputType.toLowerCase().equals(OUTPUT_WORD))
+        {
+            return fallbackFrom(word);
         }
-        return false;
+        else if (outputType.toLowerCase().equals(OUTPUT_PDF))
+        {
+            return fallbackFrom(pdf);
+        }
+        else if (outputType.toLowerCase().equals(OUTPUT_HTML_EXPORT))
+        {
+            return fallbackFrom(htmlExport);
+        }
+        else if (outputType.toLowerCase().equals(OUTPUT_FEED))
+        {
+            return fallbackFrom(feed);
+        }
+        else if (outputType.toLowerCase().equals(OUTPUT_EMAIL))
+        {
+            return fallbackFrom(email);
+        }
+        return defaultFallback;
     }
 
-    public String getUrl(MacroRenderModeType type)
+    private EmbeddedStaticContentMacroBean fallbackFrom(EmbeddedStaticContentMacroBean bean)
     {
-        switch(type) {
-            case EMAIL: return email.getUrl();
-            case FEED: return feed.getUrl();
-            case HTML_EXPORT: return htmlExport.getUrl();
-            case PDF: return pdf.getUrl();
-            case WORD: return word.getUrl();
-            case DEFAULT_FALLBACK: return defaultFallback.getUrl();
-        }
-        return null;
+        return (bean == null) ? defaultFallback : bean;
     }
 }
