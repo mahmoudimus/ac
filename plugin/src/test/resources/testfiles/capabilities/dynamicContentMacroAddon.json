@@ -83,7 +83,7 @@
         "width": "100px",
         "renderModes": {
           "pdf": { "url": "/render-map-pdf"},
-          "defaultFallback": { "url": "/render-map-default"}
+          "default": { "url": "/render-map-default"}
         }
       }
     ]

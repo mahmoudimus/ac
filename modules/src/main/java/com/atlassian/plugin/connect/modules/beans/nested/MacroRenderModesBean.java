@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.modules.beans.nested;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.MacroRenderModesBeanBuilder;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Describes a mapping between different render modes and a fallback static macro.
@@ -45,6 +46,7 @@ public class MacroRenderModesBean extends BaseModuleBean
      * This render mode will be used for any static render mode that is not mapped directly.  This is a catch
      * all mode which allows you to set a default static fallback for all render modes.
      */
+    @SerializedName("default")
     private EmbeddedStaticContentMacroBean defaultFallback;
 
     protected MacroRenderModesBean()
