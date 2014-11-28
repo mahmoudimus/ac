@@ -21,11 +21,14 @@ import com.google.common.base.Optional;
 import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
 import org.apache.commons.lang.RandomStringUtils;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redstone.xmlrpc.XmlRpcFault;
 
 import java.net.MalformedURLException;
@@ -57,6 +60,8 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     private static final String SPACE_TOOLS_TAB_KEY = "space-tools-tab";
 
     private static final String MODULE_URL = "/page";
+
+    private static final Logger logger = LoggerFactory.getLogger(TestEscaping.class);
 
     private static ConnectRunner runner;
 
@@ -121,6 +126,41 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
 
     }
 
+    protected CreatePage editorPage = null;
+
+    // clean up so that we don't get "org.openqa.selenium.UnhandledAlertException: unexpected alert open" in tests
+    @After
+    public void afterEachTest()
+    {
+        // dismiss a "you have an unsaved draft" message, if any, because it actually blocks the cancel button
+        try
+        {
+            final WebElement discardLink = connectPageOperations.findElementByClass("discard-draft");
+
+            if (null != discardLink)
+            {
+                discardLink.click();
+            }
+        }
+        catch (org.openqa.selenium.NoSuchElementException e)
+        {
+            // don't care
+        }
+
+        if (null != editorPage)
+        {
+            try
+            {
+                editorPage.cancel();
+                editorPage = null;
+            }
+            catch (Throwable t)
+            {
+                logger.error("Failed to cancel editor page due to the following Throwable. This will most likely result in 'unexpected alert open' exceptions in subsequent tests.", t);
+            }
+        }
+    }
+
     @AfterClass
     public static void stopConnectAddOn() throws Exception
     {
@@ -166,77 +206,56 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     @Test
     public void testMacroTitle() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+
+        final MacroBrowserAndEditor macroBrowserAndEditor = findMacroInBrowser(editorPage, "F1ND M3");
 
         try
         {
-            final MacroBrowserAndEditor macroBrowserAndEditor = findMacroInBrowser(editorPage, "F1ND M3");
-
-            try
-            {
-                assertNotNull(macroBrowserAndEditor.macro);
-                assertIsEscaped(macroBrowserAndEditor.macro.getTitle().byDefaultTimeout());
-            }
-            finally
-            {
-                macroBrowserAndEditor.browserDialog.clickCancel();
-            }
+            assertNotNull(macroBrowserAndEditor.macro);
+            assertIsEscaped(macroBrowserAndEditor.macro.getTitle().byDefaultTimeout());
         }
         finally
         {
-            editorPage.cancel();
+            macroBrowserAndEditor.browserDialog.clickCancel();
         }
     }
 
     @Test
     public void testMacroEditorTitle() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+
+        final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, "F1ND M3");
 
         try
         {
-            final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, "F1ND M3");
-
-            try
-            {
-                assertNotNull(macroBrowserAndEditor.macroForm);
-                assertEquals(MACRO_EDITOR_TITLE, macroBrowserAndEditor.macroForm.getTitle().byDefaultTimeout());
-            }
-            finally
-            {
-                macroBrowserAndEditor.browserDialog.clickCancel();
-            }
+            assertNotNull(macroBrowserAndEditor.macroForm);
+            assertEquals(MACRO_EDITOR_TITLE, macroBrowserAndEditor.macroForm.getTitle().byDefaultTimeout());
         }
         finally
         {
-            editorPage.cancel();
+            macroBrowserAndEditor.browserDialog.clickCancel();
         }
     }
 
     @Test
     public void testMacroParameter() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+
+        final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, "F1ND M3");
 
         try
         {
-            final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, "F1ND M3");
-
-            try
-            {
-                assertNotNull(macroBrowserAndEditor.macroForm);
-                assertTrue(macroBrowserAndEditor.macroForm.getField("test").isVisible());
-                WebElement label = connectPageOperations.findLabel("macro-param-test");
-                assertIsEscaped(label.getText());
-            }
-            finally
-            {
-                macroBrowserAndEditor.browserDialog.clickCancel();
-            }
+            assertNotNull(macroBrowserAndEditor.macroForm);
+            assertTrue(macroBrowserAndEditor.macroForm.getField("test").isVisible());
+            WebElement label = connectPageOperations.findLabel("macro-param-test");
+            assertIsEscaped(label.getText());
         }
         finally
         {
-            editorPage.cancel();
+            macroBrowserAndEditor.browserDialog.clickCancel();
         }
     }
 
