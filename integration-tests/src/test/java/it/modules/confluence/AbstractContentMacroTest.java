@@ -148,6 +148,20 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
                 logger.error("Failed to cancel editor page due to the following Throwable. This will most likely result in 'unexpected alert open' exceptions in subsequent tests.", t);
             }
         }
+
+        if (null != savedPage)
+        {
+            // Don't fail a test because cleanup failed
+            try
+            {
+                rpc.removePage(savedPage.getPageId());
+                savedPage = null;
+            }
+            catch (Exception e)
+            {
+                logger.error(e.getMessage());
+            }
+        }
     }
 
     protected static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createImagePlaceholderMacro(T builder)
@@ -328,24 +342,6 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         product.getPageBinder().override(MacroBrowserDialog.class, ConfluenceMacroBrowserDialog.class);
         product.getPageBinder().override(EditorContent.class, ConfluenceEditorContent.class);
         product.getPageBinder().override(InsertDropdownMenu.class, ConfluenceInsertMenu.class);
-    }
-
-    @After
-    public void cleanup()
-    {
-        if (null != savedPage)
-        {
-            // Don't fail a test because cleanup failed
-            try
-            {
-                rpc.removePage(savedPage.getPageId());
-                savedPage = null;
-            }
-            catch (Exception e)
-            {
-                logger.error(e.getMessage());
-            }
-        }
     }
 
     @Test
