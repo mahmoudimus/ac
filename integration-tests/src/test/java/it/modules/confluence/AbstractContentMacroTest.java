@@ -24,6 +24,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWi
 import it.util.TestUser;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.NoSuchElementException;
@@ -116,8 +117,9 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     protected CreatePage editorPage = null;
 
     // clean up so that we don't get "org.openqa.selenium.UnhandledAlertException: unexpected alert open" in tests
+    @Before
     @After
-    public void afterEachTest()
+    public void cleanUpAroundEachTest()
     {
         // dismiss a "you have an unsaved draft" message, if any, because it actually blocks the cancel button
         try
@@ -337,6 +339,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
             try
             {
                 rpc.removePage(savedPage.getPageId());
+                savedPage = null;
             }
             catch (Exception e)
             {
