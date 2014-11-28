@@ -121,7 +121,11 @@ public class DynamicContentMacroModuleBeanTest
                                 .withRenderModes(MacroRenderModesBean.newMacroRenderModesBean()
                                         .withDefaultfallback(
                                                 EmbeddedStaticContentMacroBean.newEmbeddedStaticContentMacroModuleBean()
-                                                        .withUrl("/render-map-static")
+                                                        .withUrl("/render-map-default")
+                                                        .build())
+                                        .withPdf(
+                                                EmbeddedStaticContentMacroBean.newEmbeddedStaticContentMacroModuleBean()
+                                                        .withUrl("/render-map-pdf")
                                                         .build())
                                         .build())
                                 .build()
