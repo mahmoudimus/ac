@@ -79,6 +79,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
             try
             {
                 editorPage.cancel();
+                editorPage = null;
             }
             catch (Throwable t)
             {
