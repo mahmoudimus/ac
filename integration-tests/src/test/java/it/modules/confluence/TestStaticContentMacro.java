@@ -1,7 +1,6 @@
 package it.modules.confluence;
 
 import com.atlassian.confluence.it.User;
-import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
@@ -20,9 +19,7 @@ import it.servlet.EchoQueryParametersServlet;
 import it.util.TestUser;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
@@ -61,32 +58,6 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     private static ConnectRunner remotePlugin;
     private static EchoQueryParametersServlet parameterServlet;
     private static EchoContextServlet contextServlet;
-
-    private CreatePage editorPage = null;
-
-    @Before
-    public void beforeEachTest()
-    {
-        editorPage = null;
-    }
-
-    // clean up so that we don't get "org.openqa.selenium.UnhandledAlertException: unexpected alert open" in subsequent tests
-    @After
-    public void afterEachTest()
-    {
-        if (null != editorPage)
-        {
-            try
-            {
-                editorPage.cancel();
-                editorPage = null;
-            }
-            catch (Throwable t)
-            {
-                // don't care
-            }
-        }
-    }
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -181,6 +152,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         selectMacroAndSave(editorPage, GET_MACRO_NAME);
 
         savedPage = save(editorPage);
+        editorPage = null;
 
         assertThat(String.valueOf(contextServlet.waitForContext().get("req_method")), is("GET"));
     }
@@ -197,6 +169,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         editorContent.setRichTextMacroBody("a short body");
 
         savedPage = save(editorPage);
+        editorPage = null;
 
         String body = parameterServlet.waitForQueryParameters().any("body").getValue();
         assertThat(body, is("<p>a short body</p>"));
@@ -215,6 +188,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         editorContent.setPlainTextMacroBody(body);
 
         savedPage = save(editorPage);
+        editorPage = null;
 
         String hash = parameterServlet.waitForQueryParameters().any("hash").getValue();
         assertThat(hash, is(DigestUtils.md5Hex(body)));
@@ -231,6 +205,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         macroBrowserAndEditor.browserDialog.clickSave();
 
         savedPage = save(editorPage);
+        editorPage = null;
 
         String value = parameterServlet.waitForQueryParameters().any("param1").getValue();
         assertThat(value, is("param value"));
@@ -264,6 +239,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         editorPage.setTitle(title);
         selectMacroAndSave(editorPage, COUNTER_MACRO_NAME);
         save(editorPage);
+        editorPage = null;
 
         ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, title, COUNTER_MACRO_NAME);
         assertThat(getCounter(page), is(0));
