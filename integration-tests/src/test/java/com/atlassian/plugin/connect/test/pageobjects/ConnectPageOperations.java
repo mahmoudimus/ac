@@ -197,7 +197,7 @@ public class ConnectPageOperations
         // dismiss a "you have an unsaved draft" message, if any, because it actually blocks the cancel and other buttons
         try
         {
-            final WebElement discardLink = connectPageOperations.findElementByClass("discard-draft");
+            final WebElement discardLink = findElementByClass("discard-draft");
 
             if (null != discardLink)
             {
