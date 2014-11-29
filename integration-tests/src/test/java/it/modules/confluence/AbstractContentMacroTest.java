@@ -121,6 +121,9 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     @After
     public void cleanUpAroundEachTest()
     {
+        // dismiss any alerts, because they would stop us from clicking on anything else on the screen
+        connectPageOperations.dismissAnyAlerts();
+
         // dismiss a "you have an unsaved draft" message, if any, because it actually blocks the cancel button
         try
         {

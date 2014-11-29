@@ -46,6 +46,9 @@ public abstract class ConnectWebDriverTestBase
     @AfterClass
     public static void logout()
     {
+        // dismiss any alerts, because they would stop the logout
+        connectPageOperations.dismissAnyAlerts();
+
         if (product instanceof ConfluenceTestedProduct)
         {
             // dismiss a "you have an unsaved draft" message, if any, because it actually blocks the logout

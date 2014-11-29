@@ -16,6 +16,8 @@ import com.google.inject.Inject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode;
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode.ID;
@@ -32,6 +34,8 @@ public class ConnectPageOperations
     private PageBinder pageBinder;
 
     private AtlassianWebDriver driver;
+
+    private static final Logger logger = LoggerFactory.getLogger(ConnectPageOperations.class);
 
     @Inject
     public ConnectPageOperations(PageBinder pageBinder, AtlassianWebDriver driver)
@@ -172,5 +176,18 @@ public class ConnectPageOperations
     public WebElement findElementByClass(String className)
     {
         return findElement(By.className(className));
+    }
+
+    public void dismissAnyAlerts()
+    {
+        try
+        {
+            driver.switchTo().alert().dismiss();
+            logger.debug("Dismissed an alert.");
+        }
+        catch (Exception e)
+        {
+            logger.debug("No alerts to dismiss, or failed to dismiss an alert.");
+        }
     }
 }
