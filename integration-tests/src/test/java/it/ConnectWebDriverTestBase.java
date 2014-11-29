@@ -17,9 +17,9 @@ import it.util.TestUser;
 import org.apache.http.auth.AuthenticationException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
 
 import java.io.IOException;
 
@@ -42,31 +42,23 @@ public abstract class ConnectWebDriverTestBase
         LicenseStatusBannerHelper.instance().execute(product);
     }
 
-    @BeforeClass
-    @AfterClass
-    public static void logout()
+    @Before
+    @After
+    public static void dismissPrompts()
     {
         // dismiss any alerts, because they would stop the logout
         connectPageOperations.dismissAnyAlerts();
 
         if (product instanceof ConfluenceTestedProduct)
         {
-            // dismiss a "you have an unsaved draft" message, if any, because it actually blocks the logout
-            try
-            {
-                final WebElement discardLink = connectPageOperations.findElementByClass("discard-draft");
-
-                if (null != discardLink)
-                {
-                    discardLink.click();
-                }
-            }
-            catch (NoSuchElementException e)
-            {
-                // don't even care
-            }
+            connectPageOperations.dismissConfluenceDiscardDraftsPrompt();
         }
+    }
 
+    @BeforeClass
+    @AfterClass
+    public static void logout()
+    {
         currentUsername = null;
         product.getTester().getDriver().manage().deleteAllCookies();
     }

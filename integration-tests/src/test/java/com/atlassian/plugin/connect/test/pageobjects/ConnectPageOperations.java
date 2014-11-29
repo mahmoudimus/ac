@@ -18,6 +18,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.openqa.selenium.NoSuchElementException;
 
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode;
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode.ID;
@@ -188,6 +189,24 @@ public class ConnectPageOperations
         catch (Exception e)
         {
             logger.debug("No alerts to dismiss, or failed to dismiss an alert.");
+        }
+    }
+
+    public void dismissConfluenceDiscardDraftsPrompt()
+    {
+        // dismiss a "you have an unsaved draft" message, if any, because it actually blocks the cancel and other buttons
+        try
+        {
+            final WebElement discardLink = connectPageOperations.findElementByClass("discard-draft");
+
+            if (null != discardLink)
+            {
+                discardLink.click();
+            }
+        }
+        catch (NoSuchElementException e)
+        {
+            // don't care
         }
     }
 }

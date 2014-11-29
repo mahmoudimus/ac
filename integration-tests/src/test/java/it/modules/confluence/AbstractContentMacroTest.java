@@ -27,7 +27,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,21 +122,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     {
         // dismiss any alerts, because they would stop us from clicking on anything else on the screen
         connectPageOperations.dismissAnyAlerts();
-
-        // dismiss a "you have an unsaved draft" message, if any, because it actually blocks the cancel button
-        try
-        {
-            final WebElement discardLink = connectPageOperations.findElementByClass("discard-draft");
-
-            if (null != discardLink)
-            {
-                discardLink.click();
-            }
-        }
-        catch (NoSuchElementException e)
-        {
-            // don't care
-        }
+        connectPageOperations.dismissConfluenceDiscardDraftsPrompt();
 
         if (null != editorPage)
         {
