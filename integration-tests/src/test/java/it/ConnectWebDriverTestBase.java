@@ -44,7 +44,7 @@ public abstract class ConnectWebDriverTestBase
 
     @Before
     @After
-    public static void dismissPrompts()
+    public void dismissPrompts()
     {
         // dismiss any alerts, because they would stop the logout
         connectPageOperations.dismissAnyAlerts();
