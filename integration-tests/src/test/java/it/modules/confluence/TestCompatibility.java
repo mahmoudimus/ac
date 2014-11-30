@@ -92,7 +92,19 @@ public class TestCompatibility extends AbstractConfluenceWebDriverTest
         {
             selectMacroAndSave(editorPage, MACRO_NAME_2);
 
-            ViewPage page = editorPage.saveWithKeyboardShortcut();
+            ViewPage page;
+
+            try
+            {
+                // since Confluence 5.6-OD-37-042 this line has been quite flaky, passing and failing seemingly randomly
+                page = editorPage.saveWithKeyboardShortcut();
+            }
+            catch (PageBindingWaitException e)
+            {
+                // try again - it will probably work the second time around
+                page = editorPage.saveWithKeyboardShortcut();
+            }
+
             String content = rpc.getPageContent(page.getPageId());
             assertThat(content, endsWith("<p><ac:structured-macro ac:name=\"something-else\" /></p>"));
         }
