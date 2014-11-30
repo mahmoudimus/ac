@@ -17,6 +17,7 @@ import org.junit.Test;
 import redstone.xmlrpc.XmlRpcFault;
 
 import java.net.MalformedURLException;
+import com.atlassian.pageobjects.binder.PageBindingWaitException;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
