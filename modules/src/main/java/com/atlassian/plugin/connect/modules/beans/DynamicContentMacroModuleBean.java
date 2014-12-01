@@ -20,6 +20,12 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
  * 3. To prevent the macro output from being automatically resized, set the `data-options` attribute in the script tag for all.js to "`resize:false`". This turns off automatic resizing of the iframe.
  * 4. If the size of the macro output content size is dynamic, call `AP.resize(w,h)` immediately after the DOM of your iframe is loaded.
  *
+ * Since Dynamic Content Macro are rendered with in an iframe and isolated from Confluence, you are able to include
+ * your own style sheets and javascript.  You can use these to create a rich, interactive experience for your users.
+ * When your macro is exported to a static format such as PDF or Word, you can use the `renderModes` property to define
+ * a mapping between a certain type of output device and a static macro implementation.  This will allow you to create
+ * a specific static view of your macro's data where an interactive model is not appropriate.
+ *
  *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#DYNAMIC_MACRO_EXAMPLE}
