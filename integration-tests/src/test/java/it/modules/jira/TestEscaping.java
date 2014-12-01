@@ -27,6 +27,7 @@ import com.google.common.collect.Iterables;
 import it.servlet.ConnectAppServlets;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -176,6 +177,14 @@ public class TestEscaping extends TestBase
                 .start();
 
         backdoor().project().addProject(PROJECT_KEY, PROJECT_KEY, "admin");
+    }
+
+    @Before
+    public void beforeEachTest()
+    {
+        // we've seen an AUI message unfortunately sit over other buttons on the page, causing errors like:
+        // org.openqa.selenium.WebDriverException: unknown error: Element is not clickable at point (863, 132). Other element would receive the click
+        connectPageOperations.dismissClosableAuiMessage();
     }
 
     @AfterClass

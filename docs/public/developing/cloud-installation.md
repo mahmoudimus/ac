@@ -43,7 +43,7 @@ There are a few prerequisites before you create your Markeptlace listing:
 With your Marketplace account set up and add-on descriptor on hand, create the Atlassian Connect
 listing as follows:
 
-<span data-include="/assets/includes/mpac-listing-instructions.html"></span>
+<span data-include="../assets/includes/mpac-listing-instructions.html"></span>
 
 Now, you can generate test license tokens for your add-on and install it in cloud instances, 
 either through MyAtlassian for live instances, or through the descriptor link of the
