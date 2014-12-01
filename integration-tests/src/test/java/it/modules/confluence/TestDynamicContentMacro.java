@@ -235,7 +235,9 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         {
             // Do I need to add os_username/os_password here?
             // The page appears anonymously viewable
-            pdf = PDDocument.load(new URL(viewPage.openToolsMenu().getMenuItem(By.id("action-export-pdf-link")).getHref()));
+            String pdfUrl = viewPage.openToolsMenu().getMenuItem(By.id("action-export-pdf-link")).getHref();
+            System.out.println("PDF: "+pdfUrl);
+            pdf = PDDocument.load(new URL(pdfUrl));
             return new PDFTextStripper().getText(pdf);
         }
         finally
