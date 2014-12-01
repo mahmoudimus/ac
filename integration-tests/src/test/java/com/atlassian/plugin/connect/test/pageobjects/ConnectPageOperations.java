@@ -14,11 +14,11 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.inject.Inject;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.openqa.selenium.NoSuchElementException;
 
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode;
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode.ID;
@@ -202,6 +202,28 @@ public class ConnectPageOperations
             if (null != discardLink)
             {
                 discardLink.click();
+            }
+        }
+        catch (NoSuchElementException e)
+        {
+            // don't care
+        }
+    }
+
+    public void dismissClosableAuiMessage()
+    {
+        try
+        {
+            final WebElement message = findElementByClass("aui-message");
+
+            if (null != message && message.isDisplayed())
+            {
+                final WebElement closeButton = message.findElement(By.className("icon-close"));
+
+                if (null != closeButton)
+                {
+                    closeButton.click();
+                }
             }
         }
         catch (NoSuchElementException e)
