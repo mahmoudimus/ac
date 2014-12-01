@@ -17,6 +17,8 @@ import it.util.TestUser;
 import org.apache.http.auth.AuthenticationException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 
 import java.io.IOException;
@@ -30,7 +32,7 @@ public abstract class ConnectWebDriverTestBase
     @Rule
     public WebDriverScreenshotRule screenshotRule = new WebDriverScreenshotRule();
 
-    protected ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
+    protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
             product.getTester().getDriver());
 
     @BeforeClass
@@ -38,6 +40,19 @@ public abstract class ConnectWebDriverTestBase
     {
         // disable license banner
         LicenseStatusBannerHelper.instance().execute(product);
+    }
+
+    @Before
+    @After
+    public void dismissPrompts()
+    {
+        // dismiss any alerts, because they would stop the logout
+        connectPageOperations.dismissAnyAlerts();
+
+        if (product instanceof ConfluenceTestedProduct)
+        {
+            connectPageOperations.dismissConfluenceDiscardDraftsPrompt();
+        }
     }
 
     @BeforeClass
