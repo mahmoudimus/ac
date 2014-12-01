@@ -14,7 +14,7 @@ import com.google.gson.annotations.SerializedName;
  * You can define a mapping for each render mode or define a global fallback mapping to catch all
  * static render modes.
  *
- * #### Example
+ *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#MACRO_RENDER_MODES_EXAMPLE}
  * @schemaTitle Macro Render Modes

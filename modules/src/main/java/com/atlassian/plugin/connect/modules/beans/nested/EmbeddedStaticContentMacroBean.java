@@ -10,7 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.EmbeddedStaticContentM
  * An embedded reference to a static macro resource.  These embedded versions of static macros are used to define
  * a static macro render mode for a dynamic macro.
  *
- * #### Example
+ *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#EMBEDDED_STATIC_MACRO_EXAMPLE}
  * @schemaTitle Dynamic Content Macro
