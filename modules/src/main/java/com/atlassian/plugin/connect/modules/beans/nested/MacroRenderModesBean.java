@@ -100,7 +100,7 @@ public class MacroRenderModesBean extends BaseModuleBean
         {
             return fallbackFrom(email);
         }
-        return defaultFallback;
+        return null;
     }
 
     private EmbeddedStaticContentMacroBean fallbackFrom(EmbeddedStaticContentMacroBean bean)

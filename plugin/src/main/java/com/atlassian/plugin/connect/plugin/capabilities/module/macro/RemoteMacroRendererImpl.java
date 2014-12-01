@@ -53,18 +53,18 @@ public class RemoteMacroRendererImpl implements RemoteMacroRenderer
     public String executeDynamic(String addOnKey, String moduleKey, MacroRenderModesBean renderModes,
                                  Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext) throws MacroExecutionException
     {
-        if (log.isDebugEnabled())
-        {
-            log.info("execute dynamic macro [ " + moduleKey + " ] from add on [ " + addOnKey + " ] with render mode [ " + conversionContext.getOutputType() + " ] to device [ " + conversionContext.getOutputDeviceType() + " ]");
-        }
-
         EmbeddedStaticContentMacroBean fallback = renderModes.getEmbeddedStaticContentMacro(conversionContext.getOutputType());
+
         if (fallback != null)
         {
+            log.debug("execute dynamic macro [ {} ] from add on [ {} ] with render mode [ {} ] to device [ {} ] to fallback [ {} ]",
+                    new Object[]{moduleKey,addOnKey,conversionContext.getOutputType(),conversionContext.getOutputDeviceType(), fallback.getUrl()});
             return executeStatic(addOnKey, moduleKey, fallback.getUrl(), parameters, storageFormatBody, conversionContext);
         }
         else
         {
+            log.debug("execute dynamic macro [ {} ] from add on [ {} ] with render mode [ {} ] to device [ {} ] without fallback",
+                    new Object[]{moduleKey,addOnKey,conversionContext.getOutputType(),conversionContext.getOutputDeviceType()});
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addOnKey, moduleKey, CONTENT_CLASSIFIER);
             ModuleContextParameters moduleContext = macroModuleContextExtractor.extractParameters(storageFormatBody, conversionContext, parameters);
             return IFrameRenderStrategyUtil.renderToString(moduleContext, renderStrategy);

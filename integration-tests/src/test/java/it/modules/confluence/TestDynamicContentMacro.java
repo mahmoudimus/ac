@@ -19,6 +19,7 @@ import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
@@ -208,13 +209,23 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     }
 
     @Test
-    public void testDynamicMacroWithFallback() throws Exception
+    public void testDynamicMacroWithPdfFallback() throws Exception
     {
         ViewPage viewPage = getMacroContent(TestUser.ADMIN.confUser(), DYNAMIC_MACRO_NAME, "Dynamic Macro");
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(DYNAMIC_MACRO_KEY, 0);
         String content = renderedMacro.getIFrameElementText("hello-world-message");
         assertThat(content, is("Hello world"));
         assertThat(extractPDFText(viewPage), containsString("Hello world"));
+    }
+
+    @Test
+    public void testDynamicMacroWithWordFallback() throws Exception
+    {
+        ViewPage viewPage = getMacroContent(TestUser.ADMIN.confUser(), DYNAMIC_MACRO_NAME, "Dynamic Macro");
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(DYNAMIC_MACRO_KEY, 0);
+        String content = renderedMacro.getIFrameElementText("hello-world-message");
+        assertThat(content, is("Hello world"));
+        assertThat(extractWordText(viewPage), containsString("Hello world"));
     }
 
     private String extractPDFText(ViewPage viewPage) throws IOException
@@ -234,6 +245,11 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                 pdf.close();
             }
         }
+    }
+
+    private String extractWordText(ViewPage viewPage) throws IOException
+    {
+        return IOUtils.toString(new URL(viewPage.openToolsMenu().getMenuItem(By.id("action-export-word-link")).getHref()));
     }
 
     @Test
