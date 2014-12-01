@@ -354,7 +354,7 @@ the page using [Atlassian User Interface (AUI)](https://docs.atlassian.com/aui/l
                     .classed({'project-name': true})
                     .append("a")
                     // make the name a link to the project
-                    .attr('href', function(item) { return baseUrl + item.key; })
+                    .attr('href', function(item) { return projectBaseUrl + item.key; })
                     // since we're in the iframe, we need to set _top
                     .attr('target', "_top")
                     .text(function(item) { return item.name; });
