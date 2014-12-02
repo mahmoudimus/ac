@@ -15,10 +15,10 @@ import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import it.util.TestUser;
 import org.apache.http.auth.AuthenticationException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 
 import java.io.IOException;
@@ -69,6 +69,8 @@ public abstract class ConnectWebDriverTestBase
         {
             logout();
             currentUsername = user.getUsername();
+            connectPageOperations.dismissAnyAlerts(); // we've seen an alert pop up after the @Before has run
+
             if (product instanceof JiraTestedProduct)
             {
                 JiraTestedProduct jiraTestedProduct = (JiraTestedProduct) product;
