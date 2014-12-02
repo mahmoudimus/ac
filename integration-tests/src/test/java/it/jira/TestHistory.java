@@ -94,7 +94,7 @@ public class TestHistory extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testHistoryForward() throws MalformedURLException, URISyntaxException
+    public void testHistoryPushForward() throws MalformedURLException, URISyntaxException
     {
         RemoteHistoryGeneralPage addonHistoryGeneralPage = loginAndVisit(TestUser.ADMIN, RemoteHistoryGeneralPage.class, PLUGIN_KEY, GENERAL_PAGE_KEY);
 
