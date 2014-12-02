@@ -92,11 +92,13 @@ public abstract class ConnectWebDriverTestBase
     {
         if (isAlreadyLoggedIn(user))
         {
+            connectPageOperations.dismissAnyAlerts();
             return product.visit(page, args);
         }
 
         logout();
         currentUsername = user.getUsername();
+
         if (product instanceof JiraTestedProduct)
         {
             JiraTestedProduct jiraTestedProduct = (JiraTestedProduct) product;
