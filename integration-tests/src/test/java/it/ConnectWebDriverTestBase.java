@@ -98,6 +98,7 @@ public abstract class ConnectWebDriverTestBase
 
         logout();
         currentUsername = user.getUsername();
+        connectPageOperations.dismissAnyAlerts(); // we've seen an alert at this point
 
         if (product instanceof JiraTestedProduct)
         {
