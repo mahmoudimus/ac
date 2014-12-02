@@ -6,13 +6,17 @@ import com.atlassian.plugin.connect.modules.beans.builder.MacroRenderModesBeanBu
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Describes a mapping between different render modes and a fallback static macro.
+ * Allows your dynamic content macro to provide different static macro implementations for different render modes.
  *
- * Defining a mapping for these render modes allows your dynamic macro to render static content for output
- * types where this is possible.  This can allow you to render a view of your data to pdf export.
+ * Dynamic Content Macros can include style sheets and javascript, allowing the development of rich interactive
+ * applications.  When your macro is rendered in a web browser this can provide a modern, interactive web experience.
  *
- * You can define a mapping for each render mode or define a global fallback mapping to catch all
- * static render modes.
+ * When your macro is rendered to static formats such as PDF, word or html export, these interactive modes are
+ * often undesirable, or technically impossible.
+ *
+ * Macro Render Modes allow you to map a render mode to a static content macro.  This allows you to
+ * provide an implementation of your macro for these formats, that will render safely to static formats such as PDF
+ * or word.
  *
  *#### Example
  *
