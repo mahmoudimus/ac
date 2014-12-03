@@ -9,6 +9,12 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
  * request and are suitable for add-ons that need to display content that changes over time, that calls for dynamic
  * interaction, or that is specific to the authenticated user.
  *
+ * Since Dynamic Content Macro are rendered with in an iframe and isolated from Confluence, you are able to include
+ * your own style sheets and javascript.  You can use these to create a rich, interactive experience for your users.
+ * When your macro is exported to a static format such as PDF or Word, you can use the `renderModes` property to define
+ * a mapping between a certain type of output device and a static macro implementation.  This will allow you to create
+ * a specific static view of your macro's data where an interactive model is not appropriate.
+ *
  * For most modules, you do not need to be concerned with iframe sizing. It's all handled for you. However, an exception
  * exists for inline macros.
  *
@@ -19,12 +25,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
  * 2. If the output content should occupy a certain width and height, set those values as the width and height attributes for the element.
  * 3. To prevent the macro output from being automatically resized, set the `data-options` attribute in the script tag for all.js to "`resize:false`". This turns off automatic resizing of the iframe.
  * 4. If the size of the macro output content size is dynamic, call `AP.resize(w,h)` immediately after the DOM of your iframe is loaded.
- *
- * Since Dynamic Content Macro are rendered with in an iframe and isolated from Confluence, you are able to include
- * your own style sheets and javascript.  You can use these to create a rich, interactive experience for your users.
- * When your macro is exported to a static format such as PDF or Word, you can use the `renderModes` property to define
- * a mapping between a certain type of output device and a static macro implementation.  This will allow you to create
- * a specific static view of your macro's data where an interactive model is not appropriate.
  *
  *#### Example
  *

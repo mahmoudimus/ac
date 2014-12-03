@@ -8,8 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.EmbeddedStaticContentM
 
 /**
  * An embedded reference to a static macro resource.  These macro definitions are a subset of
- * {@link com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean}, defining only
- * what cannot be inferred from the containing macro.
+ * a Static Content Macro, defining only what cannot be inferred from the containing dynamic macro.
  *
  * These embedded static content macros are used to define render mode mappings for your dynamic content macro.
  *
