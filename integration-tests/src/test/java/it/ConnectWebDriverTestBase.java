@@ -15,10 +15,10 @@ import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import it.util.TestUser;
 import org.apache.http.auth.AuthenticationException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 
 import java.io.IOException;
@@ -48,6 +48,8 @@ public abstract class ConnectWebDriverTestBase
     {
         // dismiss any alerts, because they would stop the logout
         connectPageOperations.dismissAnyAlerts();
+        connectPageOperations.dismissAnyAuiDialog();
+        connectPageOperations.dismissClosableAuiMessage();
 
         if (product instanceof ConfluenceTestedProduct)
         {
