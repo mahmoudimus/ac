@@ -1,4 +1,4 @@
-<% var auiVersion = "5.6.15" %>
+<% var auiVersion = "5.7.16" %>
 
 <%
    // calculate the relative path to the document root from the page depth
@@ -37,9 +37,6 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/mode/clike/clike.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.4/sequence-diagram-min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
-    <script src="<%= relDocRoot %>assets/scripts/startup-commands.js"></script>
-    <script src="<%= relDocRoot %>assets/scripts/static-includes.js"></script>
-
 </head>
 
 <body id="ac" class="aui-layout aui-theme-default aui-page-hybrid" data-baseurl="<%= relDocRoot %>">
@@ -226,6 +223,8 @@
     </script>
     <script src="<%= relDocRoot %>assets/js/connect-host.js"></script>
     <script src="<%= relDocRoot %>assets/js/jsandbox.js"></script>
+    <script src="<%= relDocRoot %>assets/js/startup-commands.js"></script>
+    <script src="<%= relDocRoot %>assets/js/static-includes.js"></script>
 </body>
 
 </html>

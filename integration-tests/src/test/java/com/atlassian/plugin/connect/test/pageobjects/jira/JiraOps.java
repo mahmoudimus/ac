@@ -1,15 +1,18 @@
 package com.atlassian.plugin.connect.test.pageobjects.jira;
 
+import com.atlassian.pageobjects.ProductInstance;
+import hudson.plugins.jira.soap.JiraSoapService;
+import hudson.plugins.jira.soap.JiraSoapServiceServiceLocator;
+import hudson.plugins.jira.soap.RemoteFieldValue;
+import hudson.plugins.jira.soap.RemoteIssue;
+import hudson.plugins.jira.soap.RemoteNamedObject;
+import hudson.plugins.jira.soap.RemoteProject;
+import org.apache.commons.lang.RandomStringUtils;
+
 import java.net.URL;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import com.atlassian.pageobjects.ProductInstance;
-
-import org.apache.commons.lang.RandomStringUtils;
-
-import hudson.plugins.jira.soap.*;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -58,7 +61,7 @@ public class JiraOps
     {
         RemoteIssue issue = new RemoteIssue();
         issue.setProject(projectKey);
-        issue.setType("1");
+        issue.setType("3"); // "task"
         issue.setSummary(summary);
         return soap.createIssue(token, issue);
     }

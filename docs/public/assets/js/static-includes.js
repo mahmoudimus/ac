@@ -42,7 +42,10 @@ $(function() {
                 insertMarkup($element, source);
             })
             .error(function() {
-                $element.text("An error occurred when fetching this include.")
+                AJS.messages.error($element, {
+                    body: "An error occurred when fetching this include.",
+                    closeable: false
+                });
             });
     }
 
