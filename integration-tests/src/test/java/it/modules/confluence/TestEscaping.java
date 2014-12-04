@@ -132,20 +132,7 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     @After
     public void afterEachTest()
     {
-        // dismiss a "you have an unsaved draft" message, if any, because it actually blocks the cancel button
-        try
-        {
-            final WebElement discardLink = connectPageOperations.findElementByClass("discard-draft");
-
-            if (null != discardLink)
-            {
-                discardLink.click();
-            }
-        }
-        catch (org.openqa.selenium.NoSuchElementException e)
-        {
-            // don't care
-        }
+        super.dismissPrompts();
 
         if (null != editorPage)
         {

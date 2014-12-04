@@ -14,9 +14,11 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.inject.Inject;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -230,5 +232,13 @@ public class ConnectPageOperations
         {
             // don't care
         }
+    }
+
+    public void dismissAnyAuiDialog()
+    {
+        // raising an aui dialog also displays a <div class="aui-blanket"> underneath the dialog and over everything else;
+        // pressing the escape key dismisses aui dialogs
+        Actions action = new Actions(driver);
+        action.sendKeys(Keys.ESCAPE).build().perform();
     }
 }
