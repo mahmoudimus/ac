@@ -9,11 +9,11 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
  * request and are suitable for add-ons that need to display content that changes over time, that calls for dynamic
  * interaction, or that is specific to the authenticated user.
  *
- * Since Dynamic Content Macro are rendered with in an iframe and isolated from Confluence, you are able to include
- * your own style sheets and javascript.  You can use these to create a rich, interactive experience for your users.
- * When your macro is exported to a static format such as PDF or Word, you can use the `renderModes` property to define
- * a mapping between a certain type of output device and a static macro implementation.  This will allow you to create
- * a specific static view of your macro's data where an interactive model is not appropriate.
+ * Since Dynamic Content Macros are rendered in an iframe, you are able to include your own style sheets and javascript.
+ * You can use these to create a rich, interactive experience for your users. When your macro is exported to a static
+ * format such as PDF or Word, you can use the `renderModes` property to define a mapping between a certain type of output
+ * device and a static macro implementation.  This will allow you to create a static view of your macro's data where an
+ * interactive model is not appropriate.
  *
  * For most modules, you do not need to be concerned with iframe sizing. It's all handled for you. However, an exception
  * exists for inline macros.
@@ -46,7 +46,10 @@ public class DynamicContentMacroModuleBean extends BaseContentMacroModuleBean
     private String height;
 
     /**
-     * Static content macro mappings for different render modes.
+     * Since Dynamic Content Macros are rendered in an iframe, you are able to include your own style sheets and javascript.
+     * When your macro is exported to a static format such as PDF or Word, you can use the `renderModes` property to
+     * define a mapping between a certain type of output device and a static macro implementation.  This will allow you
+     * to create a static view of your macro's data where an interactive model is not appropriate.
      */
     private MacroRenderModesBean renderModes;
 

@@ -33,23 +33,23 @@ public class MacroRenderModesBean extends BaseModuleBean
     private static final String OUTPUT_EMAIL = "email";
 
     /**
-     * This render mode will be used when your macro is being rendered during "export to word"
+     * This render mode will be used when your macro is being rendered during "export to word".
      */
     private EmbeddedStaticContentMacroBean word;
     /**
-     * This render mode will be used when your macro is being rendered during "export to pdf"
+     * This render mode will be used when your macro is being rendered during "export to pdf".
      */
     private EmbeddedStaticContentMacroBean pdf;
     /**
-     * This render mode will be used when your macro is being rendered during "export to html"
+     * This render mode will be used when your macro is being rendered during "export to html".
      */
     private EmbeddedStaticContentMacroBean htmlExport;
     /**
-     * This render mode will be used when your macro is being rendered in an rss feed
+     * This render mode will be used when your macro is being rendered in an rss feed.
      */
     private EmbeddedStaticContentMacroBean feed;
     /**
-     * This render mode will be used when your macro is being rendered in an email
+     * This render mode will be used when your macro is being rendered in an email.
      */
     private EmbeddedStaticContentMacroBean email;
     /**
