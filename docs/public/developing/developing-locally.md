@@ -2,7 +2,7 @@
 
 You will go through three phases during add-on development: developing and testing with a local version of the
 Atlassian product, testing on a Cloud instance, and finally making the add-on available via the Atlassian Marketplace 
-(as a public of private listing).
+(as a public or private listing).
 
 This document explains how you would go about developing your add-on with a local copy of the Atlassian product.
 [Installing in the cloud](./cloud-installation.html) explains how to use private Marketplace listings to test in
