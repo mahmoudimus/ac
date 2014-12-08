@@ -35,8 +35,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
@@ -235,8 +237,12 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
             // Do I need to add os_username/os_password here?
             // The page appears anonymously viewable
             String pdfUrl = viewPage.openToolsMenu().getMenuItem(By.id("action-export-pdf-link")).getHref();
+
+            // TODO: CE-67: temporary code to get more insite on the test failure
             System.out.println("PDF: "+pdfUrl);
-            pdf = PDDocument.load(new URL(pdfUrl));
+            byte[] data = IOUtils.toByteArray(new URL(pdfUrl));
+            System.out.println("PDF DATA: "+new String(data, Charset.forName("UTF-8")));
+            pdf = PDDocument.load(new ByteArrayInputStream(data));
             return new PDFTextStripper().getText(pdf);
         }
         finally
