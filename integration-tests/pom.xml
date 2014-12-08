@@ -294,13 +294,6 @@
             <version>1.11</version>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.apache.pdfbox</groupId>
-            <artifactId>pdfbox</artifactId>
-            <version>1.8.7</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
