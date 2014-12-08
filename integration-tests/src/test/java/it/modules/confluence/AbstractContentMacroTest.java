@@ -122,6 +122,8 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     {
         // dismiss any alerts, because they would stop us from clicking on anything else on the screen
         connectPageOperations.dismissAnyAlerts();
+        connectPageOperations.dismissAnyAuiDialog();
+        connectPageOperations.dismissClosableAuiMessage();
         connectPageOperations.dismissConfluenceDiscardDraftsPrompt();
 
         if (null != editorPage)
