@@ -76,6 +76,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.atlassian.labs</groupId>
+            <artifactId>fastdev-plugin</artifactId>
+            <version>${fastdev.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.devrel</groupId>
             <artifactId>developer-toolbox-plugin</artifactId>
             <version>${toolbox.version}</version>
@@ -1258,6 +1264,7 @@
         <skipITs>true</skipITs>
         <build.test.plugin>false</build.test.plugin>
         <devmode>true</devmode>
+        <fastdev.version>2.4</fastdev.version>
         <toolbox.version>2.0.12</toolbox.version>
         <test.plugin.artifact> </test.plugin.artifact>
         <runKarma>false</runKarma>
