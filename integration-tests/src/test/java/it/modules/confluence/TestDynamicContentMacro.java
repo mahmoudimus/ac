@@ -35,10 +35,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.Charset;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
@@ -238,11 +238,15 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
             // The page appears anonymously viewable
             String pdfUrl = viewPage.openToolsMenu().getMenuItem(By.id("action-export-pdf-link")).getHref();
 
-            // TODO: CE-67: temporary code to get more insite on the test failure
-            System.out.println("PDF: "+pdfUrl);
-            byte[] data = IOUtils.toByteArray(new URL(pdfUrl));
-            System.out.println("PDF DATA: "+new String(data, Charset.forName("UTF-8")));
-            pdf = PDDocument.load(new ByteArrayInputStream(data));
+            // This complex code is to make a connection for the PDF with a 15 second timeout.
+            // Without the timeout, test can fail if the PDF generation takes too long.
+            URL url = new URL(pdfUrl);
+            HttpURLConnection huc = (HttpURLConnection) url.openConnection();
+            huc.setConnectTimeout(15000);
+            huc.setRequestMethod("GET");
+            huc.connect();
+            InputStream input = huc.getInputStream();
+            pdf = PDDocument.load(input);
             return new PDFTextStripper().getText(pdf);
         }
         finally
