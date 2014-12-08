@@ -19,8 +19,13 @@ define(['ac/confluence/macro/editor', 'connect-host'], function(confluenceMacroE
             name: 'foo bar'
         };
         AJS.Rte = {
-          BookmarkManager: {
-            storeBookmark: sinon.spy()
+          getEditor: function() {
+            return {
+              selection: {
+                getBookmark: sinon.spy(),
+                moveToBookmark: sinon.spy()
+              }
+            };
           }
         };
         this.server = sinon.fakeServer.create();
