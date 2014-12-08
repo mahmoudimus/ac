@@ -93,6 +93,63 @@ public class ConnectJsonExamples
     public static final String BLUEPRINT_TEMPLATE_EXAMPLE = createBlueprintTemplateExample();
     public static final String MACRO_RENDER_MODES_EXAMPLE = createDynamicMacroExampleForRenderModes();
 
+    public static final String RENDER_MODE_EXAMPLE_WORD = createRenderModesExampleWord();
+    public static final String RENDER_MODE_EXAMPLE_PDF = createRenderModesExamplePdf();
+    public static final String RENDER_MODE_EXAMPLE_HTML_EXPORT = createRenderModesExampleHtmlExport();
+    public static final String RENDER_MODE_EXAMPLE_EMAIL = createRenderModesExampleEmail();
+    public static final String RENDER_MODE_EXAMPLE_FEED = createRenderModesExampleFeed();
+    public static final String RENDER_MODE_EXAMPLE_DEFAULT = createRenderModesExampleDefault();
+
+    public static final String EMBEDDED_STATIC_MACRO_EXAMPLE = MACRO_RENDER_MODES_EXAMPLE;
+
+    private static String createRenderModesExampleWord()
+    {
+        return gson.toJson(MacroRenderModesBean
+                .newMacroRenderModesBean()
+                .withWord(createEmbeddedStaticMacroBean("/render-map-word"))
+                .build());
+    }
+
+    private static String createRenderModesExamplePdf()
+    {
+        return gson.toJson(MacroRenderModesBean
+                .newMacroRenderModesBean()
+                .withPdf(createEmbeddedStaticMacroBean("/render-map-pdf"))
+                .build());
+    }
+
+    private static String createRenderModesExampleHtmlExport()
+    {
+        return gson.toJson(MacroRenderModesBean
+                .newMacroRenderModesBean()
+                .withHtmlExport(createEmbeddedStaticMacroBean("/render-map-html-export"))
+                .build());
+    }
+
+    private static String createRenderModesExampleEmail()
+    {
+        return gson.toJson(MacroRenderModesBean
+                .newMacroRenderModesBean()
+                .withEmail(createEmbeddedStaticMacroBean("/render-map-email"))
+                .build());
+    }
+
+    private static String createRenderModesExampleFeed()
+    {
+        return gson.toJson(MacroRenderModesBean
+                .newMacroRenderModesBean()
+                .withFeed(createEmbeddedStaticMacroBean("/render-map-rss-feed"))
+                .build());
+    }
+
+    private static String createRenderModesExampleDefault()
+    {
+        return gson.toJson(MacroRenderModesBean
+                .newMacroRenderModesBean()
+                .withDefaultfallback(createEmbeddedStaticMacroBean("/render-map-default"))
+                .build());
+    }
+
     private static String createAddonExample()
     {
         ConnectAddonBean addonBean = newConnectAddonBean()
@@ -166,10 +223,10 @@ public class ConnectJsonExamples
                 .build();
     }
 
-    private static EmbeddedStaticContentMacroBean createEmbeddedStaticMacroBeanPDF()
+    private static EmbeddedStaticContentMacroBean createEmbeddedStaticMacroBean(String url)
     {
         return EmbeddedStaticContentMacroBean.newEmbeddedStaticContentMacroModuleBean()
-                .withUrl("/render-map-pdf")
+                .withUrl(url)
                 .build();
     }
 
@@ -356,7 +413,7 @@ public class ConnectJsonExamples
                 )
                 .withRenderModes(MacroRenderModesBean
                         .newMacroRenderModesBean()
-                        .withPdf(createEmbeddedStaticMacroBeanPDF())
+                        .withPdf(createEmbeddedStaticMacroBean("/render-map-pdf"))
                         .withDefaultfallback(createEmbeddedStaticMacroBeanStatic())
                         .build())
                 .build();
@@ -372,7 +429,7 @@ public class ConnectJsonExamples
                 .withUrl("/render-map?pageTitle={page.title}")
                 .withRenderModes(MacroRenderModesBean
                         .newMacroRenderModesBean()
-                        .withPdf(createEmbeddedStaticMacroBeanPDF())
+                        .withPdf(createEmbeddedStaticMacroBean("/render-map-pdf"))
                         .withDefaultfallback(createEmbeddedStaticMacroBeanStatic())
                         .build())
                 .build();

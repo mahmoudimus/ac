@@ -34,27 +34,33 @@ public class MacroRenderModesBean extends BaseModuleBean
 
     /**
      * This render mode will be used when your macro is being rendered during "export to word".
+     * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#RENDER_MODE_EXAMPLE_WORD}
      */
     private EmbeddedStaticContentMacroBean word;
     /**
      * This render mode will be used when your macro is being rendered during "export to pdf".
+     * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#RENDER_MODE_EXAMPLE_PDF}
      */
     private EmbeddedStaticContentMacroBean pdf;
     /**
      * This render mode will be used when your macro is being rendered during "export to html".
+     * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#RENDER_MODE_EXAMPLE_HTML_EXPORT}
      */
     private EmbeddedStaticContentMacroBean htmlExport;
     /**
      * This render mode will be used when your macro is being rendered in an rss feed.
+     * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#RENDER_MODE_EXAMPLE_FEED}
      */
     private EmbeddedStaticContentMacroBean feed;
     /**
      * This render mode will be used when your macro is being rendered in an email.
+     * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#RENDER_MODE_EXAMPLE_EMAIL}
      */
     private EmbeddedStaticContentMacroBean email;
     /**
      * This render mode will be used for any static render mode that is not mapped directly.  This is a catch
      * all mode which allows you to set a default static fallback for all render modes.
+     * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#RENDER_MODE_EXAMPLE_DEFAULT}
      */
     @SerializedName("default")
     private EmbeddedStaticContentMacroBean defaultFallback;
