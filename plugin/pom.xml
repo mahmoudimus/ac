@@ -687,11 +687,6 @@
                                     <artifactId>developer-toolbox-plugin</artifactId>
                                     <version>${toolbox.version}</version>
                                 </bundledArtifact>
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.labs</groupId>
-                                    <artifactId>fastdev-plugin</artifactId>
-                                    <version>${fastdev.version}</version>
-                                </bundledArtifact>
 
                                 <!-- IMPORTANT: we need to forcefully bundle the same version of UPM that we compile with so we can do fastdev reloads -->
                                 <bundledArtifact>
