@@ -36,8 +36,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 
 import static com.atlassian.fugue.Option.some;
@@ -237,16 +235,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
             // Do I need to add os_username/os_password here?
             // The page appears anonymously viewable
             String pdfUrl = viewPage.openToolsMenu().getMenuItem(By.id("action-export-pdf-link")).getHref();
-
-            // This complex code is to make a connection for the PDF with a 15 second timeout.
-            // Without the timeout, test can fail if the PDF generation takes too long.
-            URL url = new URL(pdfUrl);
-            HttpURLConnection huc = (HttpURLConnection) url.openConnection();
-            huc.setConnectTimeout(15000);
-            huc.setRequestMethod("GET");
-            huc.connect();
-            InputStream input = huc.getInputStream();
-            pdf = PDDocument.load(input);
+            pdf = PDDocument.load(new URL(pdfUrl).openStream());
             return new PDFTextStripper().getText(pdf);
         }
         finally
