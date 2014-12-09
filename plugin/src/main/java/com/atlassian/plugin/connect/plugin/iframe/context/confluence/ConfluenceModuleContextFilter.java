@@ -10,8 +10,11 @@ import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.user.UserAccessor;
+import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.iframe.context.AbstractModuleContextFilter;
-import com.atlassian.plugin.connect.plugin.iframe.context.PermissionCheck;
+import com.atlassian.plugin.connect.spi.module.PermissionCheck;
+import com.atlassian.plugin.connect.spi.module.PermissionChecks;
+import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
@@ -45,10 +48,17 @@ public class ConfluenceModuleContextFilter extends AbstractModuleContextFilter<C
     private final Iterable<PermissionCheck<ConfluenceUser>> permissionChecks;
 
     @Autowired
-    public ConfluenceModuleContextFilter(PermissionManager permissionManager, UserAccessor userAccessor,
-            UserManager userManager, SpaceManager spaceManager, PageManager pageManager,
+    public ConfluenceModuleContextFilter(
+            PluginAccessor pluginAccessor,
+            PluginEventManager pluginEventManager,
+            PermissionManager permissionManager,
+            UserAccessor userAccessor,
+            UserManager userManager,
+            SpaceManager spaceManager,
+            PageManager pageManager,
             @Qualifier("contentEntityManager") ContentEntityManager contentEntityManager)
     {
+        super(pluginAccessor, pluginEventManager, ConfluenceUser.class);
         this.permissionManager = permissionManager;
         this.userAccessor = userAccessor;
         this.userManager = userManager;
@@ -89,7 +99,7 @@ public class ConfluenceModuleContextFilter extends AbstractModuleContextFilter<C
                     return space != null && permissionManager.hasPermission(user, Permission.VIEW, space);
                 }
             },
-            new PermissionCheck.LongValue<ConfluenceUser>()
+            new PermissionChecks.LongValue<ConfluenceUser>()
             {
                 @Override
                 public String getParameterName()
@@ -104,7 +114,7 @@ public class ConfluenceModuleContextFilter extends AbstractModuleContextFilter<C
                     return space != null && permissionManager.hasPermission(user, Permission.VIEW, space);
                 }
             },
-            new PermissionCheck.LongValue<ConfluenceUser>()
+            new PermissionChecks.LongValue<ConfluenceUser>()
             {
                 @Override
                 public String getParameterName()
@@ -119,10 +129,10 @@ public class ConfluenceModuleContextFilter extends AbstractModuleContextFilter<C
                     return content != null && permissionManager.hasPermission(user, Permission.VIEW, content);
                 }
             },
-            new PermissionCheck.AlwaysAllowed<ConfluenceUser>(CONTENT_TYPE),
-            new PermissionCheck.AlwaysAllowed<ConfluenceUser>(CONTENT_VERSION),
-            new PermissionCheck.AlwaysAllowed<ConfluenceUser>(CONTENT_PLUGIN),
-            new PermissionCheck.LongValue<ConfluenceUser>()
+            PermissionChecks.<ConfluenceUser>alwaysAllowed(CONTENT_TYPE),
+            PermissionChecks.<ConfluenceUser>alwaysAllowed(CONTENT_VERSION),
+            PermissionChecks.<ConfluenceUser>alwaysAllowed(CONTENT_PLUGIN),
+            new PermissionChecks.LongValue<ConfluenceUser>()
             {
                 @Override
                 public String getParameterName()
@@ -137,8 +147,8 @@ public class ConfluenceModuleContextFilter extends AbstractModuleContextFilter<C
                     return page != null && permissionManager.hasPermission(user, Permission.VIEW, page);
                 }
             },
-            new PermissionCheck.AlwaysAllowed<ConfluenceUser>(PAGE_TYPE),
-            new PermissionCheck.AlwaysAllowed<ConfluenceUser>(PAGE_VERSION),
+            PermissionChecks.<ConfluenceUser>alwaysAllowed(PAGE_TYPE),
+            PermissionChecks.<ConfluenceUser>alwaysAllowed(PAGE_VERSION),
             new PermissionCheck<ConfluenceUser>()
             {
                 @Override
@@ -171,5 +181,4 @@ public class ConfluenceModuleContextFilter extends AbstractModuleContextFilter<C
             }
         );
     }
-
 }
