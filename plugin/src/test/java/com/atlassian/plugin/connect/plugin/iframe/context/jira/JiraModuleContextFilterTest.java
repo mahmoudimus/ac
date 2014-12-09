@@ -11,8 +11,10 @@ import com.atlassian.jira.project.version.VersionManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.event.PluginEventManager;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.junit.Before;
@@ -55,6 +57,9 @@ public class JiraModuleContextFilterTest
     @Mock private VersionManager versionManager;
     @Mock private ProjectComponentManager projectComponentManager;
     @Mock private JiraAuthenticationContext authenticationContext;
+
+    @Mock private PluginAccessor pluginAccessor;
+    @Mock private PluginEventManager pluginEventManager;
 
     @InjectMocks private JiraModuleContextFilter jiraModuleContextFilter;
 
