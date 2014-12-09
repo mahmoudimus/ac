@@ -21,6 +21,11 @@
 
     <dependencies>
         <dependency>
+            <artifactId>itextpdf</artifactId>
+            <groupId>com.itextpdf</groupId>
+            <version>5.5.3</version>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>atlassian-connect-plugin</artifactId>
             <version>${project.version}</version>

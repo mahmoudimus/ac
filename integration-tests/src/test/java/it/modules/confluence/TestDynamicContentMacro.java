@@ -19,13 +19,15 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWithRemoteMacro;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.parser.PdfReaderContentParser;
+import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
+import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
 import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.util.PDFTextStripper;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -36,8 +38,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 
 import static com.atlassian.fugue.Option.some;
@@ -50,7 +50,6 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 import static org.junit.Assert.assertThat;
-
 
 public class TestDynamicContentMacro extends AbstractContentMacroTest
 {
@@ -229,33 +228,20 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         assertThat(extractWordText(viewPage), containsString("Hello world"));
     }
 
-    private String extractPDFText(ViewPage viewPage) throws IOException
+    public String extractPDFText(ViewPage viewPage) throws IOException
     {
-        PDDocument pdf = null;
-        try
+        String pdfUrl = viewPage.openToolsMenu().getMenuItem(By.id("action-export-pdf-link")).getHref();
+        PdfReader reader = new PdfReader(pdfUrl);
+        PdfReaderContentParser parser = new PdfReaderContentParser(reader);
+        TextExtractionStrategy strategy;
+        StringBuilder buf = new StringBuilder();
+        for (int i = 1; i <= reader.getNumberOfPages(); i++)
         {
-            // Do I need to add os_username/os_password here?
-            // The page appears anonymously viewable
-            String pdfUrl = viewPage.openToolsMenu().getMenuItem(By.id("action-export-pdf-link")).getHref();
-
-            // This complex code is to make a connection for the PDF with a 15 second timeout.
-            // Without the timeout, test can fail if the PDF generation takes too long.
-            URL url = new URL(pdfUrl);
-            HttpURLConnection huc = (HttpURLConnection) url.openConnection();
-            huc.setConnectTimeout(15000);
-            huc.setRequestMethod("GET");
-            huc.connect();
-            InputStream input = huc.getInputStream();
-            pdf = PDDocument.load(input);
-            return new PDFTextStripper().getText(pdf);
+            strategy = parser.processContent(i, new SimpleTextExtractionStrategy());
+            buf.append(strategy.getResultantText());
         }
-        finally
-        {
-            if (pdf != null)
-            {
-                pdf.close();
-            }
-        }
+        reader.close();
+        return buf.toString();
     }
 
     private String extractWordText(ViewPage viewPage) throws IOException
