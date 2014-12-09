@@ -38,7 +38,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.Charset;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
@@ -231,7 +234,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     public String extractPDFText(ViewPage viewPage) throws IOException
     {
         String pdfUrl = viewPage.openToolsMenu().getMenuItem(By.id("action-export-pdf-link")).getHref();
-        PdfReader reader = new PdfReader(pdfUrl);
+        PdfReader reader = new PdfReader(loadData(pdfUrl));
         PdfReaderContentParser parser = new PdfReaderContentParser(reader);
         TextExtractionStrategy strategy;
         StringBuilder buf = new StringBuilder();
@@ -242,6 +245,31 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         }
         reader.close();
         return buf.toString();
+    }
+
+    private String loadData(String urlString)
+    {
+        try
+        {
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setInstanceFollowRedirects(true);
+            connection.setConnectTimeout(15 * 1000); // 15 second time out
+            connection.setRequestMethod("GET");
+            connection.connect();
+            if (connection.getResponseCode() != 200)
+            {
+                throw new RuntimeException("Could not load remote PDF: " + connection.getResponseMessage());
+            }
+            else
+            {
+                return IOUtils.toString(connection.getInputStream(), Charset.forName("UTF-8"));
+            }
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException("Could not load remote PDF: "+e.getMessage(), e);
+        }
     }
 
     private String extractWordText(ViewPage viewPage) throws IOException
