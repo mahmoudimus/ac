@@ -34,8 +34,6 @@ public abstract class AbstractModuleContextFilter<User> implements ModuleContext
 
     private final Set<ContextVariablesValidator<User>> contextVariablesValidatorsFromPlugins = new CopyOnWriteArraySet<ContextVariablesValidator<User>>();
 
-    private final Class<User> userType; // will need this to load dynamic permission checks
-
     private final ResettableLazyReference<Iterable<PermissionCheck<User>>> allPermissionChecks = new ResettableLazyReference<Iterable<PermissionCheck<User>>>()
     {
         @Override
@@ -47,8 +45,6 @@ public abstract class AbstractModuleContextFilter<User> implements ModuleContext
 
     protected AbstractModuleContextFilter(final PluginAccessor pluginAccessor, final PluginEventManager pluginEventManager, final Class<User> userType)
     {
-        this.userType = checkNotNull(userType);
-
         DefaultPluginModuleTracker<ContextVariablesValidator<?>, ConnectContextVariablesValidatorModuleDescriptor> tracker = new DefaultPluginModuleTracker<ContextVariablesValidator<?>, ConnectContextVariablesValidatorModuleDescriptor>(
                 pluginAccessor, pluginEventManager, ConnectContextVariablesValidatorModuleDescriptor.class, new PluginModuleTracker.Customizer<ContextVariablesValidator<?>, ConnectContextVariablesValidatorModuleDescriptor>()
         {
