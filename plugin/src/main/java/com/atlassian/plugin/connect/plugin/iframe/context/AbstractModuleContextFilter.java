@@ -15,7 +15,6 @@ import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -37,7 +36,8 @@ public abstract class AbstractModuleContextFilter<User> implements ModuleContext
 
     private final Class<User> userType; // will need this to load dynamic permission checks
 
-    private final ResettableLazyReference<Iterable<PermissionCheck<User>>> allPermissionChecks = new ResettableLazyReference<Iterable<PermissionCheck<User>>>() {
+    private final ResettableLazyReference<Iterable<PermissionCheck<User>>> allPermissionChecks = new ResettableLazyReference<Iterable<PermissionCheck<User>>>()
+    {
         @Override
         protected Iterable<PermissionCheck<User>> create() throws Exception
         {
@@ -142,7 +142,6 @@ public abstract class AbstractModuleContextFilter<User> implements ModuleContext
      * @return the {@link PermissionCheck permission checks} to be run over the unfiltered context.
      */
     protected abstract Iterable<PermissionCheck<User>> getPermissionChecks();
-
 
     /**
      * This is a wrappeer for permission checks from plug-ins.
