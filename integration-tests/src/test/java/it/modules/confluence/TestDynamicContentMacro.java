@@ -247,7 +247,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         return buf.toString();
     }
 
-    private String loadData(String urlString)
+    private byte[] loadData(String urlString)
     {
         try
         {
@@ -263,7 +263,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
             }
             else
             {
-                return IOUtils.toString(connection.getInputStream(), Charset.forName("UTF-8"));
+                return IOUtils.toByteArray(connection.getInputStream());
             }
         }
         catch (IOException e)
