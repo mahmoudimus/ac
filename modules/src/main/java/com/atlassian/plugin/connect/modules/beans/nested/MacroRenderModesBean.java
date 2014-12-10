@@ -42,21 +42,7 @@ public class MacroRenderModesBean extends BaseModuleBean
      * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#RENDER_MODE_EXAMPLE_PDF}
      */
     private EmbeddedStaticContentMacroBean pdf;
-    /**
-     * This render mode will be used when your macro is being rendered during "export to html".
-     * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#RENDER_MODE_EXAMPLE_HTML_EXPORT}
-     */
-    private EmbeddedStaticContentMacroBean htmlExport;
-    /**
-     * This render mode will be used when your macro is being rendered in an rss feed.
-     * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#RENDER_MODE_EXAMPLE_FEED}
-     */
-    private EmbeddedStaticContentMacroBean feed;
-    /**
-     * This render mode will be used when your macro is being rendered in an email.
-     * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#RENDER_MODE_EXAMPLE_EMAIL}
-     */
-    private EmbeddedStaticContentMacroBean email;
+
     /**
      * This render mode will be used for any static render mode that is not mapped directly.  This is a catch
      * all mode which allows you to set a default static fallback for all render modes.
@@ -97,18 +83,6 @@ public class MacroRenderModesBean extends BaseModuleBean
         else if (outputType.toLowerCase().equals(OUTPUT_PDF))
         {
             return fallbackFrom(pdf);
-        }
-        else if (outputType.toLowerCase().equals(OUTPUT_HTML_EXPORT))
-        {
-            return fallbackFrom(htmlExport);
-        }
-        else if (outputType.toLowerCase().equals(OUTPUT_FEED))
-        {
-            return fallbackFrom(feed);
-        }
-        else if (outputType.toLowerCase().equals(OUTPUT_EMAIL))
-        {
-            return fallbackFrom(email);
         }
         return null;
     }
