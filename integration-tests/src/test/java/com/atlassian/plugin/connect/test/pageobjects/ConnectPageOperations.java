@@ -232,6 +232,10 @@ public class ConnectPageOperations
         {
             // don't care
         }
+        catch (StaleElementReferenceException sex)
+        {
+            // don't care - the page may have been navigated away
+        }
     }
 
     public void dismissAnyAuiDialog()
