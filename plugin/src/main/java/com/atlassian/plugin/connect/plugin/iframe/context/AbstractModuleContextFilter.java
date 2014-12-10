@@ -8,12 +8,16 @@ import com.atlassian.plugin.connect.spi.module.ContextVariablesValidator;
 import com.atlassian.plugin.connect.spi.module.PermissionCheck;
 import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import javax.annotation.Nullable;
 
 import static com.atlassian.fugue.Option.none;
 import static com.atlassian.fugue.Option.some;
@@ -27,6 +31,15 @@ public abstract class AbstractModuleContextFilter<User> implements ModuleContext
 {
     public static final String PROFILE_NAME = "profileUser.name";
     public static final String PROFILE_KEY = "profileUser.key";
+
+    private static final Predicate<String> IS_NOT_EMPTY = new Predicate<String>()
+    {
+        @Override
+        public boolean apply(@Nullable final String s)
+        {
+            return !Strings.isNullOrEmpty(s);
+        }
+    };
 
     private final PluginAccessor pluginAccessor;
     private final Class<User> userType;
@@ -43,16 +56,42 @@ public abstract class AbstractModuleContextFilter<User> implements ModuleContext
     public ModuleContextParameters filter(final ModuleContextParameters unfiltered)
     {
         final ModuleContextParameters filtered = new HashMapModuleContextParameters();
-        User currentUser = getCurrentUser();
-        for (PermissionCheck<User> permissionCheck : getAllPermissionChecks())
+        final User currentUser = getCurrentUser();
+
+        Multimap<String, PermissionCheck<User>> permissionChecksMultimap = getFieldNameToPermissionChecksMap();
+
+        for (final String parameterName : Iterables.filter(unfiltered.keySet(), IS_NOT_EMPTY))
         {
-            String value = unfiltered.get(permissionCheck.getParameterName());
-            if (!Strings.isNullOrEmpty(value) && permissionCheck.hasPermission(value, currentUser))
+            final String parameterValue = unfiltered.get(parameterName);
+            Collection<PermissionCheck<User>> permissionChecks = permissionChecksMultimap.get(parameterName);
+
+            boolean allValidatorsGrantedPermission = Iterables.all(permissionChecks, new Predicate<PermissionCheck<User>>()
             {
-                filtered.put(permissionCheck.getParameterName(), value);
+                @Override
+                public boolean apply(final PermissionCheck<User> userPermissionCheck)
+                {
+
+                    return userPermissionCheck.hasPermission(parameterValue, currentUser);
+                }
+            });
+
+            if (!permissionChecks.isEmpty() && allValidatorsGrantedPermission)
+            {
+                filtered.put(parameterName, parameterValue);
             }
         }
+
         return filtered;
+    }
+
+    private Multimap<String, PermissionCheck<User>> getFieldNameToPermissionChecksMap()
+    {
+        ImmutableMultimap.Builder<String, PermissionCheck<User>> result = ImmutableMultimap.builder();
+        for (PermissionCheck<User> userPermissionCheck : getAllPermissionChecks())
+        {
+            result.put(userPermissionCheck.getParameterName(), userPermissionCheck);
+        }
+        return result.build();
     }
 
     private Iterable<PermissionCheck<User>> getAllPermissionChecks()
