@@ -4,6 +4,7 @@ import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.pageobjects.elements.WebDriverElement;
+import com.atlassian.pageobjects.elements.timeout.TimeoutType;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.google.common.base.Function;
@@ -55,7 +56,8 @@ public class ConnectAddOnPage
                 ? pageElementKey
                 : ModuleKeyUtils.addonAndModuleKey(addOnKey, pageElementKey);
         final String id = prefix + suffix;
-        PageElement containerDivElement = elementFinder.find(By.id(id));
+        PageElement containerDivElement = elementFinder.find(By.id(id), TimeoutType.SLOW_PAGE_LOAD);
+        final long startTime = System.currentTimeMillis();
 
         try
         {
@@ -71,6 +73,8 @@ public class ConnectAddOnPage
             throw e;
         }
 
+        final long stopTime = System.currentTimeMillis();
+        log.debug("Milliseconds to find iframe-init class on ap-content container div: {}", stopTime - startTime);
         this.containerDiv = ((WebDriverElement)containerDivElement).asWebElement();
     }
 
