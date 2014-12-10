@@ -1,26 +1,22 @@
 package com.atlassian.plugin.connect.plugin.iframe.context;
 
-import com.atlassian.fugue.Effect;
 import com.atlassian.fugue.Option;
+import com.atlassian.fugue.Options;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.iframe.context.module.ConnectContextVariablesValidatorModuleDescriptor;
 import com.atlassian.plugin.connect.spi.module.ContextVariablesValidator;
 import com.atlassian.plugin.connect.spi.module.PermissionCheck;
-import com.atlassian.plugin.event.PluginEventManager;
-import com.atlassian.plugin.tracker.DefaultPluginModuleTracker;
-import com.atlassian.plugin.tracker.PluginModuleTracker;
-import com.atlassian.util.concurrent.ResettableLazyReference;
+import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.Collection;
 
 import static com.atlassian.fugue.Option.none;
 import static com.atlassian.fugue.Option.some;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.transform;
 
@@ -32,65 +28,14 @@ public abstract class AbstractModuleContextFilter<User> implements ModuleContext
     public static final String PROFILE_NAME = "profileUser.name";
     public static final String PROFILE_KEY = "profileUser.key";
 
-    private final Set<ContextVariablesValidator<User>> contextVariablesValidatorsFromPlugins = new CopyOnWriteArraySet<ContextVariablesValidator<User>>();
+    private final PluginAccessor pluginAccessor;
+    private final Class<User> userType;
 
-    private final ResettableLazyReference<Iterable<PermissionCheck<User>>> allPermissionChecks = new ResettableLazyReference<Iterable<PermissionCheck<User>>>()
+    protected AbstractModuleContextFilter(final PluginAccessor pluginAccessor, final Class<User> userType)
     {
-        @Override
-        protected Iterable<PermissionCheck<User>> create() throws Exception
-        {
-            return getAllPermissionChecks();
-        }
-    };
 
-    protected AbstractModuleContextFilter(final PluginAccessor pluginAccessor, final PluginEventManager pluginEventManager, final Class<User> userType)
-    {
-        DefaultPluginModuleTracker<ContextVariablesValidator<?>, ConnectContextVariablesValidatorModuleDescriptor> tracker = new DefaultPluginModuleTracker<ContextVariablesValidator<?>, ConnectContextVariablesValidatorModuleDescriptor>(
-                pluginAccessor, pluginEventManager, ConnectContextVariablesValidatorModuleDescriptor.class, new PluginModuleTracker.Customizer<ContextVariablesValidator<?>, ConnectContextVariablesValidatorModuleDescriptor>()
-        {
-
-            @Override
-            public ConnectContextVariablesValidatorModuleDescriptor adding(final ConnectContextVariablesValidatorModuleDescriptor descriptor)
-            {
-
-                tryCast(descriptor.getModule()).foreach(new Effect<ContextVariablesValidator<User>>()
-                {
-                    @Override
-                    public void apply(final ContextVariablesValidator<User> validator)
-                    {
-                        contextVariablesValidatorsFromPlugins.add(validator);
-                        allPermissionChecks.reset();
-                    }
-                });
-
-                return descriptor;
-            }
-
-            @Override
-            public void removed(final ConnectContextVariablesValidatorModuleDescriptor descriptor)
-            {
-                tryCast(descriptor.getModule()).foreach(new Effect<ContextVariablesValidator<User>>()
-                {
-                    @Override
-                    public void apply(final ContextVariablesValidator<User> validator)
-                    {
-                        contextVariablesValidatorsFromPlugins.remove(validator);
-                        allPermissionChecks.reset();
-                    }
-                });
-            }
-
-            private Option<ContextVariablesValidator<User>> tryCast(ContextVariablesValidator<?> unidentifiedValidator)
-            {
-                if (unidentifiedValidator.getUserType().equals(userType))
-                {
-                    @SuppressWarnings ("unchecked") // this supression is safe, because above we checked that user types match
-                            ContextVariablesValidator<User> castedModule = (ContextVariablesValidator<User>) unidentifiedValidator;
-                    return some(castedModule);
-                }
-                return none();
-            }
-        });
+        this.pluginAccessor = pluginAccessor;
+        this.userType = userType;
 
     }
 
@@ -99,7 +44,7 @@ public abstract class AbstractModuleContextFilter<User> implements ModuleContext
     {
         final ModuleContextParameters filtered = new HashMapModuleContextParameters();
         User currentUser = getCurrentUser();
-        for (PermissionCheck<User> permissionCheck : allPermissionChecks.get())
+        for (PermissionCheck<User> permissionCheck : getAllPermissionChecks())
         {
             String value = unfiltered.get(permissionCheck.getParameterName());
             if (!Strings.isNullOrEmpty(value) && permissionCheck.hasPermission(value, currentUser))
@@ -112,7 +57,7 @@ public abstract class AbstractModuleContextFilter<User> implements ModuleContext
 
     private Iterable<PermissionCheck<User>> getAllPermissionChecks()
     {
-        return concat(getPermissionChecks(), concat(transform(contextVariablesValidatorsFromPlugins, new Function<ContextVariablesValidator<User>, Iterable<PermissionCheck<User>>>()
+        return concat(getPermissionChecks(), concat(transform(getValidatorsFromPlugins(), new Function<ContextVariablesValidator<User>, Iterable<PermissionCheck<User>>>()
         {
             @Override
             public Iterable<PermissionCheck<User>> apply(final ContextVariablesValidator<User> validator)
@@ -127,6 +72,30 @@ public abstract class AbstractModuleContextFilter<User> implements ModuleContext
                 });
             }
         })));
+    }
+
+    private Iterable<ContextVariablesValidator<User>> getValidatorsFromPlugins()
+    {
+        Collection<ContextVariablesValidator<?>> validators = pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<ContextVariablesValidator<?>>(ConnectContextVariablesValidatorModuleDescriptor.class));
+        return Options.flatten(Iterables.transform(validators, new Function<ContextVariablesValidator<?>, Option<ContextVariablesValidator<User>>>()
+        {
+            @Override
+            public Option<ContextVariablesValidator<User>> apply(final ContextVariablesValidator<?> contextVariablesValidator)
+            {
+                return tryCast(contextVariablesValidator);
+            }
+        }));
+    }
+
+    private Option<ContextVariablesValidator<User>> tryCast(ContextVariablesValidator<?> unidentifiedValidator)
+    {
+        if (unidentifiedValidator.getUserType().equals(userType))
+        {
+            @SuppressWarnings ("unchecked") // this supression is safe, because above we checked that user types match
+                    ContextVariablesValidator<User> castedModule = (ContextVariablesValidator<User>) unidentifiedValidator;
+            return some(castedModule);
+        }
+        return none();
     }
 
     /**

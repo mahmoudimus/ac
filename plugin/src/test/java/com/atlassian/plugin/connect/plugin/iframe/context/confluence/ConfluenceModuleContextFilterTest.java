@@ -14,14 +14,12 @@ import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
-import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.user.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -39,26 +37,31 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith (MockitoJUnitRunner.class)
 public class ConfluenceModuleContextFilterTest
 {
-    @Mock private PermissionManager permissionManager;
-    @Mock private UserAccessor userAccessor;
-    @Mock private UserManager userManager;
-    @Mock private SpaceManager spaceManager;
-    @Mock private PageManager pageManager;
-    @Mock private ContentEntityManager contentEntityManager;
+    @Mock
+    private PermissionManager permissionManager;
+    @Mock
+    private UserAccessor userAccessor;
+    @Mock
+    private UserManager userManager;
+    @Mock
+    private SpaceManager spaceManager;
+    @Mock
+    private PageManager pageManager;
+    @Mock
+    private ContentEntityManager contentEntityManager;
 
-
-    @Mock private PluginAccessor pluginAccessor;
-    @Mock private PluginEventManager pluginEventManager;
+    @Mock
+    private PluginAccessor pluginAccessor;
 
     private ConfluenceModuleContextFilter filter;
 
     @Before
     public void setup()
     {
-        filter = new ConfluenceModuleContextFilter(pluginAccessor, pluginEventManager, permissionManager, userAccessor, userManager, spaceManager, pageManager, contentEntityManager);
+        filter = new ConfluenceModuleContextFilter(pluginAccessor, permissionManager, userAccessor, userManager, spaceManager, pageManager, contentEntityManager);
         when(userAccessor.getExistingUserByKey(any(UserKey.class))).thenReturn(mock(ConfluenceUser.class));
     }
 
