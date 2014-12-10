@@ -83,7 +83,8 @@ public class CommonImports
             @ComponentImport JwtApplinkFinder jwtApplinkFinder,
             @ComponentImport ServiceProviderTokenStore serviceProviderTokenStore,
             @ComponentImport CrowdService crowdService,
-            @ComponentImport DarkFeatureManager darkFeatureManager)
+            @ComponentImport DarkFeatureManager darkFeatureManager,
+            @ComponentImport com.atlassian.activeobjects.external.ActiveObjects activeObjects)
     {
     }
 }

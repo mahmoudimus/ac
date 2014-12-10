@@ -12,5 +12,5 @@ http://www.springframework.org/schema/osgi http://www.springframework.org/schema
             <beans:value>com.atlassian.plugin.connect.modules.schema.ConnectDescriptorValidator</beans:value>
         </osgi:interfaces>
     </osgi:service>
-    
+
 </beans:beans>
