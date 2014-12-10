@@ -64,7 +64,9 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params"], 
          * @param {String|Number} [opts.height="50%"] height of the dialog, expressed as either absolute pixels (eg 600) or percent (eg 50%)
          */
         openCustomEditor: function(macroData, opts) {
-            AJS.Rte.BookmarkManager.storeBookmark();
+            var editorSelection = AJS.Rte.getEditor().selection;
+            var bm = editorSelection.getBookmark();
+
             openEditorMacroData = macroData.params;
             openEditorMacroBody = macroData.body;
 
@@ -92,6 +94,8 @@ _AP.define("confluence/macro/editor", ["_dollar", "dialog/main", "_ui-params"], 
                         body: updatedMacroBody || (macroData.body ? macroData.body : "")
                     }
                 };
+
+                editorSelection.moveToBookmark(bm);
                 tinymce.confluence.MacroUtils.insertMacro(macroRenderRequest);
             };
 
