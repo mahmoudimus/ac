@@ -59,6 +59,7 @@ public class JwtAuthorizationGenerator implements ReKeyableAuthorizationGenerato
 
     public JwtAuthorizationGenerator(JwtService jwtService, Supplier<String> secretSupplier, ConsumerService consumerService, URI addOnBaseUrl)
     {
+        System.out.println("\n\n\n\n\n EXPIRATION_SECONDS \n\n\n\n" + JWT_EXPIRY_WINDOW_SECONDS);
         this.jwtService = checkNotNull(jwtService);
         this.secretSupplier = checkNotNull(secretSupplier);
         this.consumerService = checkNotNull(consumerService);

@@ -465,6 +465,7 @@
                                 <testedProductClass>
                                     com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct
                                 </testedProductClass>
+                                <com.atlassian.connect.jwt.expiry_seconds>5</com.atlassian.connect.jwt.expiry_seconds>
                             </systemProperties>
                             <excludes>
                                 <exclude>it/jira/**/*.java</exclude>
@@ -480,6 +481,7 @@
                                 <testedProductClass>
                                     com.atlassian.jira.pageobjects.JiraTestedProduct
                                 </testedProductClass>
+                                <com.atlassian.connect.jwt.expiry_seconds>5</com.atlassian.connect.jwt.expiry_seconds>
                             </systemProperties>
                             <excludes>
                                 <exclude>it/confluence/**/*.java</exclude>
