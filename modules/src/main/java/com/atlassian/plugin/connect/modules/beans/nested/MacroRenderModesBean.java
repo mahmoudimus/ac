@@ -11,12 +11,11 @@ import com.google.gson.annotations.SerializedName;
  * Dynamic Content Macros can include style sheets and javascript, allowing the development of rich interactive
  * applications.  When your macro is rendered in a web browser this can provide a modern, interactive web experience.
  *
- * When your macro is rendered to static formats such as PDF, word or html export, these interactive modes are
+ * When your macro is rendered to static formats such as PDF, or word, these interactive modes are
  * often undesirable, or technically impossible.
  *
  * Macro Render Modes allow you to map a render mode to a static content macro.  This allows you to
- * provide an implementation of your macro for these formats, that will render safely to static formats such as PDF
- * or word.
+ * provide an implementation of your macro for these formats, that will render safely to static formats.
  *
  *#### Example
  *
