@@ -1,7 +1,9 @@
 package com.atlassian.plugin.connect.plugin.rest.addons;
 
 import com.atlassian.applinks.api.ApplicationLink;
+import com.atlassian.jira.entity.property.JsonEntityPropertyManagerImpl;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnInstaller;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
@@ -9,21 +11,27 @@ import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.rest.RestError;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
+import com.atlassian.plugin.connect.plugin.rest.data.RestAddonProperty;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddonType;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddons;
 import com.atlassian.plugin.connect.plugin.rest.data.RestMinimalAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestNamedLink;
 import com.atlassian.plugin.connect.plugin.rest.data.RestRelatedLinks;
+import com.atlassian.plugin.connect.plugin.service.AddOnPropertyService;
+import com.atlassian.plugin.connect.plugin.service.AddOnPropertyServiceImpl;
 import com.atlassian.plugins.rest.common.Link;
 import com.atlassian.plugins.rest.common.security.jersey.SysadminOnlyResourceFilter;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.google.common.collect.Lists;
+import com.google.common.io.LimitInputStream;
 import com.sun.jersey.spi.container.ResourceFilters;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -31,8 +39,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,6 +52,7 @@ import java.util.List;
  */
 @ResourceFilters (SysadminOnlyResourceFilter.class)
 @Path (AddonsResource.REST_PATH)
+@Produces ("application/json")
 public class AddonsResource
 {
     public final static String REST_PATH = "addons";
@@ -53,10 +65,12 @@ public class AddonsResource
     private final ConnectAddonManager connectAddonManager;
     private final ConnectAddOnInstaller connectAddOnInstaller;
     private final ApplicationProperties applicationProperties;
+    private final AddOnPropertyService addOnPropertyService;
 
     public AddonsResource(ConnectAddonRegistry addonRegistry, LicenseRetriever licenseRetriever,
             ConnectApplinkManager connectApplinkManager, ConnectAddonManager connectAddonManager,
-            ConnectAddOnInstaller connectAddOnInstaller, ApplicationProperties applicationProperties)
+            ConnectAddOnInstaller connectAddOnInstaller, ApplicationProperties applicationProperties,
+            AddOnPropertyService addOnPropertyService)
     {
         this.addonRegistry = addonRegistry;
         this.licenseRetriever = licenseRetriever;
@@ -64,10 +78,10 @@ public class AddonsResource
         this.connectAddonManager = connectAddonManager;
         this.connectAddOnInstaller = connectAddOnInstaller;
         this.applicationProperties = applicationProperties;
+        this.addOnPropertyService = addOnPropertyService;
     }
 
     @GET
-    @Produces ("application/json")
     public Response getAddons(@QueryParam ("type") String type)
     {
         try
@@ -84,7 +98,6 @@ public class AddonsResource
     }
 
     @GET
-    @Produces ("application/json")
     @Path ("/{addonKey}")
     public Response getAddon(@PathParam ("addonKey") String addonKey)
     {
@@ -98,7 +111,6 @@ public class AddonsResource
     }
 
     @DELETE
-    @Produces ("application/json")
     @Path ("/{addonKey}")
     public Response uninstallAddon(@PathParam ("addonKey") String addonKey)
     {
@@ -124,7 +136,6 @@ public class AddonsResource
     }
 
     @PUT
-    @Produces ("application/json")
     @Path ("/{addonKey}/reinstall")
     public Response reinstallAddon(@PathParam ("addonKey") String addonKey)
     {
@@ -151,6 +162,64 @@ public class AddonsResource
 
         String message = "Add-on with key " + addonKey + " was not found";
         return getErrorResponse(message, Response.Status.NOT_FOUND);
+    }
+
+    @GET
+    @Path ("/{addonKey}/properties/{key}")
+    public Response getAddonProperties(@PathParam ("addonKey") String addonKey, @PathParam("key") String propertyKey)
+    {
+        RestAddon restAddon = getRestAddonByKey(addonKey);
+        if (restAddon == null)
+        {
+            String message = "Add-on with key " + addonKey + " was not found";
+            return getErrorResponse(message, Response.Status.NOT_FOUND);
+        }
+        AddOnProperty addonProperty = addOnPropertyService.getPropertyValue(addonKey, propertyKey);
+        if (addonProperty == null)
+        {
+            String message = "Property for key " + propertyKey + " was not found";
+            return getErrorResponse(message, Response.Status.NOT_FOUND);
+        }
+
+        return Response.ok().entity(RestAddonProperty.valueOf(addonProperty)).build();
+
+    }
+
+
+
+    @PUT
+    @Path ("/{addonKey}/properties/{key}")
+    public Response putKey(@PathParam ("addonKey") String addonKey, @PathParam("key") String propertyKey, @Context final HttpServletRequest request)
+    {
+        RestAddon restAddon = getRestAddonByKey(addonKey);
+        if (restAddon == null)
+        {
+            String message = "Add-on with key " + addonKey + " was not found";
+            return getErrorResponse(message, Response.Status.NOT_FOUND);
+        }
+
+        addOnPropertyService.setPropertyValue(addonKey,propertyKey,propertyValue(request));
+        return Response.ok().build();
+    }
+
+    private String propertyValue(final HttpServletRequest request)
+    {
+        try
+        {
+            LimitInputStream limitInputStream =
+                    new LimitInputStream(request.getInputStream(), JsonEntityPropertyManagerImpl.MAXIMUM_VALUE_LENGTH + 1);
+            byte[] bytes = IOUtils.toByteArray(limitInputStream);
+            if (bytes.length > AddOnPropertyServiceImpl.MAXIMUM_VALUE_LENGTH)
+            {
+                return null;
+            }
+            return new String(bytes, Charset.defaultCharset());//forName(ComponentAccessor.getApplicationProperties().getEncoding()));
+        }
+        catch (IOException e)
+        {
+            return null;
+            //throw new BadRequestWebException(ErrorCollection.of(e.getMessage()));
+        }
     }
 
     private RestAddons getAddonsByType(RestAddonType type)
