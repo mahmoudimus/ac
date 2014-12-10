@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
-import com.atlassian.jira.pageobjects.framework.util.TimedQueryFactory;
 import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
