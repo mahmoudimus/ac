@@ -89,6 +89,7 @@ public class AbstractPageTestBase extends ConnectWebDriverTestBase
             throws MalformedURLException, URISyntaxException
     {
         login(TestUser.ADMIN);
+        connectPageOperations.dismissAnyAlerts();
 
         T page = product.visit(pageClass);
         revealLinkIfNecessary(page);

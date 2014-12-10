@@ -550,7 +550,6 @@
                             <systemPropertyVariables>
                                 <product>jira</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
-                                <fastdev.mvn.command>${mvnCommand}</fastdev.mvn.command>
                                 <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
@@ -609,14 +608,6 @@
                             </pluginArtifacts>
 
                             <bundledArtifacts>
-
-                                <!-- IMPORTANT: we need to forcefully bundle the same version of UPM that we compile with so we can do fastdev reloads -->
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.upm</groupId>
-                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
-                                    <version>${atlassian.upm.version}</version>
-                                </bundledArtifact>
-
                                 <bundledArtifact>
                                     <groupId>com.atlassian.analytics</groupId>
                                     <artifactId>analytics-client</artifactId>
@@ -633,7 +624,6 @@
                             <systemPropertyVariables>
                                 <product>confluence</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
-                                <fastdev.mvn.command>${mvnCommand}</fastdev.mvn.command>
                                 <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
@@ -686,18 +676,6 @@
                                     <groupId>com.atlassian.devrel</groupId>
                                     <artifactId>developer-toolbox-plugin</artifactId>
                                     <version>${toolbox.version}</version>
-                                </bundledArtifact>
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.labs</groupId>
-                                    <artifactId>fastdev-plugin</artifactId>
-                                    <version>${fastdev.version}</version>
-                                </bundledArtifact>
-
-                                <!-- IMPORTANT: we need to forcefully bundle the same version of UPM that we compile with so we can do fastdev reloads -->
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.upm</groupId>
-                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
-                                    <version>${atlassian.upm.version}</version>
                                 </bundledArtifact>
 
                                 <bundledArtifact>

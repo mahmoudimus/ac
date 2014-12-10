@@ -71,6 +71,8 @@ public abstract class ConnectWebDriverTestBase
         {
             logout();
             currentUsername = user.getUsername();
+            connectPageOperations.dismissAnyAlerts(); // we've seen an alert pop up after the @Before has run
+
             if (product instanceof JiraTestedProduct)
             {
                 JiraTestedProduct jiraTestedProduct = (JiraTestedProduct) product;
@@ -92,11 +94,14 @@ public abstract class ConnectWebDriverTestBase
     {
         if (isAlreadyLoggedIn(user))
         {
+            connectPageOperations.dismissAnyAlerts();
             return product.visit(page, args);
         }
 
         logout();
         currentUsername = user.getUsername();
+        connectPageOperations.dismissAnyAlerts(); // we've seen an alert at this point
+
         if (product instanceof JiraTestedProduct)
         {
             JiraTestedProduct jiraTestedProduct = (JiraTestedProduct) product;
