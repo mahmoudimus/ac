@@ -58,6 +58,7 @@ public class ConnectAddOnPage
                 : ModuleKeyUtils.addonAndModuleKey(addOnKey, pageElementKey);
         final String id = prefix + suffix;
         PageElement containerDivElement = elementFinder.find(By.id(id), TimeoutType.SLOW_PAGE_LOAD);
+        final long startTime = System.currentTimeMillis();
 
         try
         {
@@ -73,6 +74,8 @@ public class ConnectAddOnPage
             throw e;
         }
 
+        final long stopTime = System.currentTimeMillis();
+        log.debug("Milliseconds to find iframe-init class on ap-content container div: {}", stopTime - startTime);
         this.containerDiv = ((WebDriverElement)containerDivElement).asWebElement();
     }
 
