@@ -16,6 +16,7 @@ import com.google.inject.Inject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -231,6 +232,10 @@ public class ConnectPageOperations
         catch (NoSuchElementException e)
         {
             // don't care
+        }
+        catch (StaleElementReferenceException sex)
+        {
+            // don't care - the page may have been navigated away
         }
     }
 
