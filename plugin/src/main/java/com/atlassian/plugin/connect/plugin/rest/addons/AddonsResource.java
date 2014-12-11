@@ -65,7 +65,6 @@ public class AddonsResource
     private final ConnectAddonManager connectAddonManager;
     private final ConnectAddOnInstaller connectAddOnInstaller;
     private final ApplicationProperties applicationProperties;
-    private final AddOnPropertyService addOnPropertyService;
 
     public AddonsResource(ConnectAddonRegistry addonRegistry, LicenseRetriever licenseRetriever,
             ConnectApplinkManager connectApplinkManager, ConnectAddonManager connectAddonManager,
@@ -78,7 +77,6 @@ public class AddonsResource
         this.connectAddonManager = connectAddonManager;
         this.connectAddOnInstaller = connectAddOnInstaller;
         this.applicationProperties = applicationProperties;
-        this.addOnPropertyService = addOnPropertyService;
     }
 
     @GET
@@ -162,64 +160,6 @@ public class AddonsResource
 
         String message = "Add-on with key " + addonKey + " was not found";
         return getErrorResponse(message, Response.Status.NOT_FOUND);
-    }
-
-    @GET
-    @Path ("/{addonKey}/properties/{key}")
-    public Response getAddonProperties(@PathParam ("addonKey") String addonKey, @PathParam("key") String propertyKey)
-    {
-        RestAddon restAddon = getRestAddonByKey(addonKey);
-        if (restAddon == null)
-        {
-            String message = "Add-on with key " + addonKey + " was not found";
-            return getErrorResponse(message, Response.Status.NOT_FOUND);
-        }
-        AddOnProperty addonProperty = addOnPropertyService.getPropertyValue(addonKey, propertyKey);
-        if (addonProperty == null)
-        {
-            String message = "Property for key " + propertyKey + " was not found";
-            return getErrorResponse(message, Response.Status.NOT_FOUND);
-        }
-
-        return Response.ok().entity(RestAddonProperty.valueOf(addonProperty)).build();
-
-    }
-
-
-
-    @PUT
-    @Path ("/{addonKey}/properties/{key}")
-    public Response putKey(@PathParam ("addonKey") String addonKey, @PathParam("key") String propertyKey, @Context final HttpServletRequest request)
-    {
-        RestAddon restAddon = getRestAddonByKey(addonKey);
-        if (restAddon == null)
-        {
-            String message = "Add-on with key " + addonKey + " was not found";
-            return getErrorResponse(message, Response.Status.NOT_FOUND);
-        }
-
-        addOnPropertyService.setPropertyValue(addonKey,propertyKey,propertyValue(request));
-        return Response.ok().build();
-    }
-
-    private String propertyValue(final HttpServletRequest request)
-    {
-        try
-        {
-            LimitInputStream limitInputStream =
-                    new LimitInputStream(request.getInputStream(), JsonEntityPropertyManagerImpl.MAXIMUM_VALUE_LENGTH + 1);
-            byte[] bytes = IOUtils.toByteArray(limitInputStream);
-            if (bytes.length > AddOnPropertyServiceImpl.MAXIMUM_VALUE_LENGTH)
-            {
-                return null;
-            }
-            return new String(bytes, Charset.defaultCharset());//forName(ComponentAccessor.getApplicationProperties().getEncoding()));
-        }
-        catch (IOException e)
-        {
-            return null;
-            //throw new BadRequestWebException(ErrorCollection.of(e.getMessage()));
-        }
     }
 
     private RestAddons getAddonsByType(RestAddonType type)
