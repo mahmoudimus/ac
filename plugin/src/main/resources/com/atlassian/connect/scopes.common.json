@@ -7,7 +7,7 @@
     },
     {
       "key": "ADMIN",
-      "restPathKeys": ["entitylink", "entitylink_primary", "manifest", "type_entity"],
+      "restPathKeys": ["entitylink", "entitylink_primary", "manifest", "type_entity", "addons"],
       "methods": ["GET", "POST", "PUT", "DELETE"]
     }
   ],

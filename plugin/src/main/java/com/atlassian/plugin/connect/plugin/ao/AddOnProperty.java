@@ -1,10 +1,13 @@
 package com.atlassian.plugin.connect.plugin.ao;
 
+import javax.annotation.concurrent.Immutable;
+
 /**
- * TODO: Document this class / interface here
+ * This class represents an addon property consisting of a key and a value.
  *
  * @since v6.3
  */
+@Immutable
 public final class AddOnProperty
 {
     private final String key;

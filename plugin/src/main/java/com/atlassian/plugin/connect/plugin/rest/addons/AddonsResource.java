@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.rest.addons;
 
 import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.jira.entity.property.JsonEntityPropertyManagerImpl;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
@@ -17,6 +16,7 @@ import com.atlassian.plugin.connect.plugin.rest.data.RestAddons;
 import com.atlassian.plugin.connect.plugin.rest.data.RestMinimalAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestNamedLink;
 import com.atlassian.plugin.connect.plugin.rest.data.RestRelatedLinks;
+import com.atlassian.plugin.connect.plugin.scopes.AddOnKeyHelper;
 import com.atlassian.plugin.connect.plugin.service.AddOnPropertyService;
 import com.atlassian.plugin.connect.plugin.service.AddOnPropertyServiceImpl;
 import com.atlassian.plugins.rest.common.Link;
@@ -31,6 +31,11 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -39,13 +44,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * REST endpoint which provides a view of Connect add-ons which are installed in the instance.
@@ -66,11 +67,13 @@ public class AddonsResource
     private final ConnectAddOnInstaller connectAddOnInstaller;
     private final ApplicationProperties applicationProperties;
     private final AddOnPropertyService addOnPropertyService;
+    private final AddOnKeyHelper addOnKeyHelper;
 
     public AddonsResource(ConnectAddonRegistry addonRegistry, LicenseRetriever licenseRetriever,
             ConnectApplinkManager connectApplinkManager, ConnectAddonManager connectAddonManager,
             ConnectAddOnInstaller connectAddOnInstaller, ApplicationProperties applicationProperties,
-            AddOnPropertyService addOnPropertyService)
+            AddOnPropertyService addOnPropertyService, AddOnPropertyService addOnPropertyService1,
+            AddOnKeyHelper addOnKeyHelper)
     {
         this.addonRegistry = addonRegistry;
         this.licenseRetriever = licenseRetriever;
@@ -78,7 +81,8 @@ public class AddonsResource
         this.connectAddonManager = connectAddonManager;
         this.connectAddOnInstaller = connectAddOnInstaller;
         this.applicationProperties = applicationProperties;
-        this.addOnPropertyService = addOnPropertyService;
+        this.addOnPropertyService = addOnPropertyService1;
+        this.addOnKeyHelper = addOnKeyHelper;
     }
 
     @GET
@@ -165,61 +169,41 @@ public class AddonsResource
     }
 
     @GET
-    @Path ("/{addonKey}/properties/{key}")
-    public Response getAddonProperties(@PathParam ("addonKey") String addonKey, @PathParam("key") String propertyKey)
+    @Path ("{addonKey}/properties/{propertyKey}")
+    public Response getAddonProperties(@PathParam ("addonKey") String addonKey, @PathParam("propertyKey") String propertyKey, @Context HttpServletRequest request)
     {
-        RestAddon restAddon = getRestAddonByKey(addonKey);
-        if (restAddon == null)
+        if (!hasPermissionsForAddon(request, addonKey))
         {
-            String message = "Add-on with key " + addonKey + " was not found";
-            return getErrorResponse(message, Response.Status.NOT_FOUND);
-        }
-        AddOnProperty addonProperty = addOnPropertyService.getPropertyValue(addonKey, propertyKey);
-        if (addonProperty == null)
-        {
-            String message = "Property for key " + propertyKey + " was not found";
-            return getErrorResponse(message, Response.Status.NOT_FOUND);
+            String message = "Add-on does not have permmision to access " + addonKey + "'s data.";
+            return getErrorResponse(message, Response.Status.FORBIDDEN);
         }
 
-        return Response.ok().entity(RestAddonProperty.valueOf(addonProperty)).build();
+/*
+        AddOnPropertyService.ValidationResult<AddOnPropertyService.GetPropertyInput> validationResult = addOnPropertyService.validateGetPropertyValue(addonKey, propertyKey);
+        if (!validationResult.isValid())
+        {
+            AddOnPropertyService.ValidationErrorWithReason worstError = validationResult.getWorstError();
+            return Response.status(worstError.getError().getHttpStatusCode()).entity(worstError.getReason()).cacheControl(never()).build();
+        }
+        AddOnProperty addonProperty = addOnPropertyService.getPropertyValue(validationResult);
+*/
+
+        return Response.ok().build();//.entity(RestAddonProperty.valueOf(addonProperty)).build();
 
     }
-
-
 
     @PUT
-    @Path ("/{addonKey}/properties/{key}")
-    public Response putKey(@PathParam ("addonKey") String addonKey, @PathParam("key") String propertyKey, @Context final HttpServletRequest request)
+    @Path ("{addonKey}/properties/{propertyKey}")
+    public Response putKey(@PathParam ("addonKey") String addonKey, @PathParam("propertyKey") String propertyKey, @Context HttpServletRequest request)
     {
-        RestAddon restAddon = getRestAddonByKey(addonKey);
-        if (restAddon == null)
+        if (!hasPermissionsForAddon(request, addonKey))
         {
-            String message = "Add-on with key " + addonKey + " was not found";
-            return getErrorResponse(message, Response.Status.NOT_FOUND);
+            String message = "Add-on does not have permmision to access " + addonKey + "'s data.";
+            return getErrorResponse(message, Response.Status.FORBIDDEN);
         }
 
-        addOnPropertyService.setPropertyValue(addonKey,propertyKey,propertyValue(request));
+        //addOnPropertyService.setPropertyValue(addonKey,propertyKey,propertyValue(request));
         return Response.ok().build();
-    }
-
-    private String propertyValue(final HttpServletRequest request)
-    {
-        try
-        {
-            LimitInputStream limitInputStream =
-                    new LimitInputStream(request.getInputStream(), JsonEntityPropertyManagerImpl.MAXIMUM_VALUE_LENGTH + 1);
-            byte[] bytes = IOUtils.toByteArray(limitInputStream);
-            if (bytes.length > AddOnPropertyServiceImpl.MAXIMUM_VALUE_LENGTH)
-            {
-                return null;
-            }
-            return new String(bytes, Charset.defaultCharset());//forName(ComponentAccessor.getApplicationProperties().getEncoding()));
-        }
-        catch (IOException e)
-        {
-            return null;
-            //throw new BadRequestWebException(ErrorCollection.of(e.getMessage()));
-        }
     }
 
     private RestAddons getAddonsByType(RestAddonType type)
@@ -308,4 +292,45 @@ public class AddonsResource
                 .entity(error)
                 .build();
     }
+
+    private Response getErrorResponse(final AddOnPropertyService.ValidationErrorWithReason validationErrorWithReason )
+    {
+        return Response.status(validationErrorWithReason.getError().getHttpStatusCode())
+                .entity(validationErrorWithReason.getReason())
+                .build();
+    }
+
+    private boolean hasPermissionsForAddon(HttpServletRequest request, final String addonKey)
+    {
+        return addOnKeyHelper.getAddOnKeyForScopeCheck(request).equals(addonKey);
+    }
+
+    private String propertyValue(final HttpServletRequest request)
+    {
+        try
+        {
+            LimitInputStream limitInputStream =
+                    new LimitInputStream(request.getInputStream(), AddOnPropertyServiceImpl.MAXIMUM_VALUE_LENGTH + 1);
+            byte[] bytes = IOUtils.toByteArray(limitInputStream);
+            if (bytes.length > AddOnPropertyServiceImpl.MAXIMUM_VALUE_LENGTH)
+            {
+                return null;//throw new BadRequestWebException();
+            }
+            return new String(bytes, Charset.defaultCharset());//forName(ComponentAccessor.getApplicationProperties().getEncoding()));
+        }
+        catch (IOException e)
+        {
+            return null;//throw new BadRequestWebException();
+        }
+    }
+
+    private static CacheControl never()
+    {
+        CacheControl cacheNever = new CacheControl();
+        cacheNever.setNoStore(true);
+        cacheNever.setNoCache(true);
+
+        return cacheNever;
+    }
+
 }
