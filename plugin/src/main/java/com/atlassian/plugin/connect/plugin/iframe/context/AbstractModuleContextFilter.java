@@ -4,7 +4,7 @@ import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Options;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.iframe.context.module.ConnectContextVariablesValidatorModuleDescriptor;
-import com.atlassian.plugin.connect.spi.module.ContextVariablesValidator;
+import com.atlassian.plugin.connect.spi.module.ContextParametersValidator;
 import com.atlassian.plugin.connect.spi.module.PermissionCheck;
 import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
 import com.google.common.base.Function;
@@ -96,10 +96,10 @@ public abstract class AbstractModuleContextFilter<User> implements ModuleContext
 
     private Iterable<PermissionCheck<User>> getAllPermissionChecks()
     {
-        return concat(getPermissionChecks(), concat(transform(getValidatorsFromPlugins(), new Function<ContextVariablesValidator<User>, Iterable<PermissionCheck<User>>>()
+        return concat(getPermissionChecks(), concat(transform(getValidatorsFromPlugins(), new Function<ContextParametersValidator<User>, Iterable<PermissionCheck<User>>>()
         {
             @Override
-            public Iterable<PermissionCheck<User>> apply(final ContextVariablesValidator<User> validator)
+            public Iterable<PermissionCheck<User>> apply(final ContextParametersValidator<User> validator)
             {
                 return transform(validator.getPermissionChecks(), new Function<PermissionCheck<User>, PermissionCheck<User>>()
                 {
@@ -113,25 +113,25 @@ public abstract class AbstractModuleContextFilter<User> implements ModuleContext
         })));
     }
 
-    private Iterable<ContextVariablesValidator<User>> getValidatorsFromPlugins()
+    private Iterable<ContextParametersValidator<User>> getValidatorsFromPlugins()
     {
-        Collection<ContextVariablesValidator<?>> validators = pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<ContextVariablesValidator<?>>(ConnectContextVariablesValidatorModuleDescriptor.class));
-        return Options.flatten(Iterables.transform(validators, new Function<ContextVariablesValidator<?>, Option<ContextVariablesValidator<User>>>()
+        Collection<ContextParametersValidator<?>> validators = pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<ContextParametersValidator<?>>(ConnectContextVariablesValidatorModuleDescriptor.class));
+        return Options.flatten(Iterables.transform(validators, new Function<ContextParametersValidator<?>, Option<ContextParametersValidator<User>>>()
         {
             @Override
-            public Option<ContextVariablesValidator<User>> apply(final ContextVariablesValidator<?> contextVariablesValidator)
+            public Option<ContextParametersValidator<User>> apply(final ContextParametersValidator<?> contextParametersValidator)
             {
-                return tryCast(contextVariablesValidator);
+                return tryCast(contextParametersValidator);
             }
         }));
     }
 
-    private Option<ContextVariablesValidator<User>> tryCast(ContextVariablesValidator<?> unidentifiedValidator)
+    private Option<ContextParametersValidator<User>> tryCast(ContextParametersValidator<?> unidentifiedValidator)
     {
         if (unidentifiedValidator.getUserType().equals(userType))
         {
             @SuppressWarnings ("unchecked") // this supression is safe, because above we checked that user types match
-                    ContextVariablesValidator<User> castedModule = (ContextVariablesValidator<User>) unidentifiedValidator;
+                    ContextParametersValidator<User> castedModule = (ContextParametersValidator<User>) unidentifiedValidator;
             return some(castedModule);
         }
         return none();

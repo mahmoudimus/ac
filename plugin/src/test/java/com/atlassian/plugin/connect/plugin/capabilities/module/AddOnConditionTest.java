@@ -1,17 +1,10 @@
 package com.atlassian.plugin.connect.plugin.capabilities.module;
 
-import javax.annotation.Nullable;
-import java.net.URI;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
-
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.gzipfilter.org.apache.commons.lang.ObjectUtils;
 import com.atlassian.plugin.connect.plugin.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactoryImpl;
-import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor;
+import com.atlassian.plugin.connect.plugin.iframe.webpanel.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.license.LicenseStatus;
 import com.atlassian.plugin.connect.plugin.module.HostApplicationInfo;
@@ -37,15 +30,21 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
-import static org.osgi.framework.Constants.BUNDLE_VERSION;
+import java.net.URI;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
+import javax.annotation.Nullable;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.osgi.framework.Constants.BUNDLE_VERSION;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith (MockitoJUnitRunner.class)
 public class AddOnConditionTest
 {
     private static final String ADDON_KEY = "myAddonKey";
@@ -98,29 +97,41 @@ public class AddOnConditionTest
         }
     };
 
-    @Mock private ProductAccessor productAccessor;
+    @Mock
+    private ProductAccessor productAccessor;
 
-    @Mock private RemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    @Mock
+    private RemotablePluginAccessorFactory remotablePluginAccessorFactory;
 
-    @Mock private WebFragmentModuleContextExtractor webFragmentModuleContextExtractor;
+    @Mock
+    private PluggableParametersExtractor webFragmentModuleContextExtractor;
 
-    @Mock private RemotablePluginAccessor remotablePluginAccessor;
+    @Mock
+    private RemotablePluginAccessor remotablePluginAccessor;
 
-    @Mock private UserManager userManager;
+    @Mock
+    private UserManager userManager;
 
-    @Mock private TemplateRenderer templateRenderer;
+    @Mock
+    private TemplateRenderer templateRenderer;
 
-    @Mock private LicenseRetriever licenseRetriever;
+    @Mock
+    private LicenseRetriever licenseRetriever;
 
-    @Mock private LocaleHelper localeHelper;
+    @Mock
+    private LocaleHelper localeHelper;
 
-    @Mock private EventPublisher eventPublisher;
+    @Mock
+    private EventPublisher eventPublisher;
 
-    @Mock private BundleContext bundleContext;
+    @Mock
+    private BundleContext bundleContext;
 
-    @Mock private Bundle bundle;
+    @Mock
+    private Bundle bundle;
 
-    @Mock private Dictionary bundleHeaders;
+    @Mock
+    private Dictionary bundleHeaders;
 
     private AddOnCondition addonCondition;
 
@@ -128,26 +139,26 @@ public class AddOnConditionTest
     public void init()
     {
         final IFrameUriBuilderFactoryImpl iFrameUriBuilderFactory = new IFrameUriBuilderFactoryImpl(new UrlVariableSubstitutor(new IsDevModeServiceImpl()),
-                                                                                                    remotablePluginAccessorFactory,
-                                                                                                    userManager,
-                                                                                                    new TestHostApplicationInfo(URL,
-                                                                                                                                "/"),
-                                                                                                    licenseRetriever,
-                                                                                                    localeHelper,
-                                                                                                    new UserPreferencesRetriever()
-                                                                                                    {
-                                                                                                        @Override
-                                                                                                        public TimeZone getTimeZoneFor(@Nullable String userName)
-                                                                                                        {
-                                                                                                            return TimeZone.getDefault();
-                                                                                                        }
-                                                                                                    },
-                                                                                                    bundleContext);
+                remotablePluginAccessorFactory,
+                userManager,
+                new TestHostApplicationInfo(URL,
+                        "/"),
+                licenseRetriever,
+                localeHelper,
+                new UserPreferencesRetriever()
+                {
+                    @Override
+                    public TimeZone getTimeZoneFor(@Nullable String userName)
+                    {
+                        return TimeZone.getDefault();
+                    }
+                },
+                bundleContext);
         addonCondition = new AddOnCondition(remotablePluginAccessorFactory,
-                                            iFrameUriBuilderFactory,
-                                            webFragmentModuleContextExtractor,
-                                            eventPublisher,
-                                            bundleContext);
+                iFrameUriBuilderFactory,
+                webFragmentModuleContextExtractor,
+                eventPublisher,
+                bundleContext);
 
         when(remotablePluginAccessorFactory.getOrThrow(anyString())).thenReturn(remotablePluginAccessor);
         when(licenseRetriever.getLicenseStatus(anyString())).thenReturn(LicenseStatus.ACTIVE);
@@ -194,7 +205,6 @@ public class AddOnConditionTest
         invokeWhenSuccessfulResponse();
         verify(eventPublisher).publish(argThat(eventWithCorrectUrl));
     }
-
 
     @Test
     public void publishesFailedEventOnUnsuccessfulCallToRemoteCondition()
@@ -284,7 +294,7 @@ public class AddOnConditionTest
         verify(eventPublisher).publish(argThat(eventWithCorrectUrl));
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings ("unchecked")
     private void invokeWhenSuccessfulResponse()
     {
         when(remotablePluginAccessor.executeAsync(any(HttpMethod.class), any(URI.class),
@@ -293,7 +303,7 @@ public class AddOnConditionTest
         invokeCondition();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings ("unchecked")
     private void invokeWhenMalformedJson()
     {
         when(remotablePluginAccessor.executeAsync(any(HttpMethod.class), any(URI.class),
@@ -302,7 +312,7 @@ public class AddOnConditionTest
         invokeCondition();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings ("unchecked")
     private void invokeWhenErrorResponse()
     {
         when(remotablePluginAccessor.executeAsync(any(HttpMethod.class), any(URI.class),
@@ -337,6 +347,7 @@ class TestHostApplicationInfo implements HostApplicationInfo
         this.url = URI.create(url);
         this.contextPath = contextPath;
     }
+
     @Override
     public URI getUrl()
     {

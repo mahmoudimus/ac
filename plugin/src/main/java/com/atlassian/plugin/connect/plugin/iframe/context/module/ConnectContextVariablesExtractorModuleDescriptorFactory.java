@@ -10,11 +10,11 @@ import org.springframework.stereotype.Component;
 
 @ModuleType (ListableModuleDescriptorFactory.class)
 @Component
-public final class ConnectContextVariablesValidatorModuleDescriptorFactory extends SingleModuleDescriptorFactory<ConnectContextVariablesValidatorModuleDescriptor>
+public final class ConnectContextVariablesExtractorModuleDescriptorFactory extends SingleModuleDescriptorFactory<ConnectContextVariablesExtractorModuleDescriptor>
 {
     @Autowired
-    public ConnectContextVariablesValidatorModuleDescriptorFactory(@Qualifier ("hostContainer") final HostContainer hostContainer)
+    public ConnectContextVariablesExtractorModuleDescriptorFactory(@Qualifier ("hostContainer") final HostContainer hostContainer)
     {
-        super(hostContainer, "connect-context-parameters-validator", ConnectContextVariablesValidatorModuleDescriptor.class);
+        super(hostContainer, "connect-context-parameters-extractor", ConnectContextVariablesExtractorModuleDescriptor.class);
     }
 }

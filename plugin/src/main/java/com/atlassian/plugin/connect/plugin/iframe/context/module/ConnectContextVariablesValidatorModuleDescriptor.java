@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.plugin.iframe.context.module;
 
-import com.atlassian.plugin.connect.spi.module.ContextVariablesValidator;
+import com.atlassian.plugin.connect.spi.module.ContextParametersValidator;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 
-public final class ConnectContextVariablesValidatorModuleDescriptor extends AbstractModuleDescriptor<ContextVariablesValidator<?>>
+public final class ConnectContextVariablesValidatorModuleDescriptor extends AbstractModuleDescriptor<ContextParametersValidator<?>>
 {
     public ConnectContextVariablesValidatorModuleDescriptor(final ModuleFactory moduleFactory)
     {
@@ -12,7 +12,7 @@ public final class ConnectContextVariablesValidatorModuleDescriptor extends Abst
     }
 
     @Override
-    public ContextVariablesValidator<?> getModule()
+    public ContextParametersValidator<?> getModule()
     {
         return moduleFactory.createModule(moduleClassName, this);
     }

@@ -3,22 +3,22 @@ package com.atlassian.plugin.connect.spi.module;
 import java.util.Collection;
 
 /**
- * Instances of this class can specify which context variables
- * can be passed on to the Connect add-ons and implement the
- * permission checks for those variables.
+ * Instances of this class can specify which context parameters
+ * can be passed on to the Connect add-ons by implementing the
+ * permission checks for those parameters.
  *
  * @param <User> a type of user this class can operate on, depends on a product, e.g. in Confluence this would be a {@code ConfluenceUser} and in JIRA {@code ApplicationUser}
  *
  * @since v6.4
  */
-public interface ContextVariablesValidator<User>
+public interface ContextParametersValidator<User>
 {
     /**
      * A collection of context variables permission checks.
      *
      * <p>
-     *     If you want any variable to be available in Connect context,
-     *     you must add a permission check for this variable. Even if
+     *     If you want a parameter to be available in Connect context,
+     *     you must add a permission check for this parameter. Even if
      *     it is always allowed.
      *
      * </p>
