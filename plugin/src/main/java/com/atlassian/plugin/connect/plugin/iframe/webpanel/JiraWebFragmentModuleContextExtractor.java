@@ -10,13 +10,10 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.ImmutableList;
 
-import javax.inject.Inject;
 import java.security.Principal;
 import java.util.Map;
+import javax.inject.Inject;
 
-/**
- *
- */
 @JiraComponent
 public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleContextExtractor
 {
@@ -33,11 +30,11 @@ public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleC
     @Override
     public ModuleContextParameters extractParameters(final Map<String, ? extends Object> webFragmentContext)
     {
-        if(ModuleContextParameters.class.isAssignableFrom(webFragmentContext.getClass()))
+        if (ModuleContextParameters.class.isAssignableFrom(webFragmentContext.getClass()))
         {
             return (ModuleContextParameters) webFragmentContext;
         }
-        
+
         JiraModuleContextParameters moduleContext = new JiraModuleContextParametersImpl();
 
         for (ParameterExtractor extractor : parameterExtractors)
@@ -141,7 +138,8 @@ public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleC
                         moduleContext.addProfileUser(profile);
                     }
                 },
-                new ParameterExtractor<Map<String, String>>()
+                // it needs to be Map<Object, Object> because we cannot guarantee generic type expectations, we can receive any map and there is nothing we can do about it!
+                new ParameterExtractor<Map<Object, Object>>()
                 {
                     @Override
                     public String getContextKey()
@@ -156,9 +154,15 @@ public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleC
                     }
 
                     @Override
-                    public void addToContext(final JiraModuleContextParameters moduleContext, final Map<String, String> value)
+                    public void addToContext(final JiraModuleContextParameters moduleContext, final Map<Object, Object> value)
                     {
-                        moduleContext.putAll(value);
+                        for (Map.Entry<Object, Object> entry : value.entrySet())
+                        {
+                            if (entry.getKey() instanceof String && entry.getValue() instanceof String)
+                            {
+                                moduleContext.put((String) entry.getKey(), (String) entry.getValue());
+                            }
+                        }
                     }
                 }
         );
