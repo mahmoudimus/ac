@@ -14,3 +14,5 @@ The following repositories contain sample Atlassian Connect add-ons. This list i
 ## Other
 - [Google Maps macro](https://bitbucket.org/acgmaps/acgmaps.bitbucket.org) - insert Google Maps into your Confluence pages
 - [Who's Looking Front-End Only Prototype](https://bitbucket.org/atlassianlabs/atlassian-connect-whoslooking-connect-v2) – similar functionality to the original [Who's Looking](https://bitbucket.org/atlassian/whoslooking-connect/overview) Play-based add-on, but written entirely using static HTML, JS & CSS using [Firebase](https://www.firebase.com/).
+- [Who's Looking (Play Scala)](https://bitbucket.org/atlassianlabs/whoslooking-connect-scala) - same functionality to the original [Who's Looking](https://bitbucket.org/atlassian/whoslooking-connect/overview) Play-based Java add-on, but written in Scala, built on the Play Scala framework.
+- [Atlas Lingo](https://bitbucket.org/atlassianlabs/atlas-lingo) - a sample Play Scala add-on to translate JIRA issues into other languages using Google Translate API.
