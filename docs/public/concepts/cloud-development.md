@@ -33,7 +33,7 @@ Each cloud instance has a set of licensed users. For these users:
 	Only Atlassian can access sysadmin-level functionality.  
 
 
-Your add-on automatically creats an add-on user in cloud instances. These "users" appear in the 
+Your add-on is automatically granted a new add-on user in cloud instances. These "users" appear in the
 user management portal, but don't count against actual user licenses. This user profile is assigned to two 
 groups by default: _atlassian-addons_ and _product-users_ (like _jira-users_ or _confluence-users_). Customers 
 should **not** remove add-on users from these groups.  
