@@ -1,15 +1,8 @@
 #!/usr/bin/env node
 
 var downloader = require('./download-descriptors'),
-    xml2js = require('xml2js'),
     _ = require('lodash'),
     util = require('util');
-
-var ignoredXmlElements = [
-    '$',
-    'plugin-info',
-    'remote-plugin-container'
-];
 
 var counter = 0,
     report = [];
@@ -80,39 +73,6 @@ downloader.run({
                             m.id = id;
                         }
                         modules.push(m);
-                    });
-                });
-            } else {
-                xml2js.parseString(body, {
-                    normalizeTags: true
-                }, function (err, descriptor) {
-                    _.forEach(descriptor['atlassian-plugin'], function (values, key) {
-                        if (_.contains(ignoredXmlElements, key)) {
-                            return;
-                        }
-                        _.forEach(values, function (value) {                        
-                            var attrs = value['$'],
-                                id;
-                            if (attrs) {
-                                if (attrs.location) {
-                                    id = attrs.location;
-                                }
-                                if (attrs.section) {
-                                    id = attrs.section;
-                                }
-                                if (attrs.event) {
-                                    id = attrs.event;
-                                }
-                            }
-                            var m = {
-                                key: key,
-                                count: 1
-                            }
-                            if (id) { 
-                                m.id = id;
-                            }
-                            modules.push(m);
-                        });
                     });
                 });
             }

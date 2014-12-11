@@ -33,7 +33,15 @@ or Confluence Cloud with Atlassian Connect as follows:
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
 
-## [1.1.15](../release-notes/1.1.15.html/1-1-0.html#1.1.15)
+## [1.1.18](../release-notes/1-1-0.html#1.1.18)
+* Fixed: Confluence macro editor replaces page content after it gets closed in Internet Explorer
+
+## [1.1.17](../release-notes/1-1-0.html#1.1.17)
+* Confluence: fixed a bug that made chromeless dialogs fail to display [AC-1449](https://ecosystem.atlassian.net/browse/AC-1449)
+* JIRA: Expose system properties with REST API: [ACJIRA-123](https://ecosystem.atlassian.net/browse/ACJIRA-123)
+* JIRA: Whitelist JIRA Agile REST calls for getting epics and adding issues to epics: [ACJIRA-219](https://ecosystem.atlassian.net/browse/ACJIRA-219)
+
+## [1.1.15](../release-notes/1-1-0.html#1.1.15)
 * Improvements in lifecycle webhook signatures.
 * Fixed: SSL issues for addons hosted on OpenShift.
 

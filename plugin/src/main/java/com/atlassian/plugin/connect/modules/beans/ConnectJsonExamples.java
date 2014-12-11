@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.modules.beans;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
+import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexType;
@@ -15,6 +16,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
@@ -47,7 +49,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBe
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 
-@SuppressWarnings ("UnusedDeclaration")
+@SuppressWarnings("UnusedDeclaration")
 public class ConnectJsonExamples
 {
     private static final Gson gson = ConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create();
@@ -89,7 +91,64 @@ public class ConnectJsonExamples
     public static final String WEBSECTION_EXAMPLE = createWebSectionExample();
     public static final String BLUEPRINT_EXAMPLE = createBlueprintExample();
     public static final String BLUEPRINT_TEMPLATE_EXAMPLE = createBlueprintTemplateExample();
+    public static final String MACRO_RENDER_MODES_EXAMPLE = createDynamicMacroExampleForRenderModes();
 
+    public static final String RENDER_MODE_EXAMPLE_WORD = createRenderModesExampleWord();
+    public static final String RENDER_MODE_EXAMPLE_PDF = createRenderModesExamplePdf();
+    public static final String RENDER_MODE_EXAMPLE_HTML_EXPORT = createRenderModesExampleHtmlExport();
+    public static final String RENDER_MODE_EXAMPLE_EMAIL = createRenderModesExampleEmail();
+    public static final String RENDER_MODE_EXAMPLE_FEED = createRenderModesExampleFeed();
+    public static final String RENDER_MODE_EXAMPLE_DEFAULT = createRenderModesExampleDefault();
+
+    public static final String EMBEDDED_STATIC_MACRO_EXAMPLE = MACRO_RENDER_MODES_EXAMPLE;
+
+    private static String createRenderModesExampleWord()
+    {
+        return gson.toJson(MacroRenderModesBean
+                .newMacroRenderModesBean()
+                .withWord(createEmbeddedStaticMacroBean("/render-map-word"))
+                .build());
+    }
+
+    private static String createRenderModesExamplePdf()
+    {
+        return gson.toJson(MacroRenderModesBean
+                .newMacroRenderModesBean()
+                .withPdf(createEmbeddedStaticMacroBean("/render-map-pdf"))
+                .build());
+    }
+
+    private static String createRenderModesExampleHtmlExport()
+    {
+        return gson.toJson(MacroRenderModesBean
+                .newMacroRenderModesBean()
+                .withHtmlExport(createEmbeddedStaticMacroBean("/render-map-html-export"))
+                .build());
+    }
+
+    private static String createRenderModesExampleEmail()
+    {
+        return gson.toJson(MacroRenderModesBean
+                .newMacroRenderModesBean()
+                .withEmail(createEmbeddedStaticMacroBean("/render-map-email"))
+                .build());
+    }
+
+    private static String createRenderModesExampleFeed()
+    {
+        return gson.toJson(MacroRenderModesBean
+                .newMacroRenderModesBean()
+                .withFeed(createEmbeddedStaticMacroBean("/render-map-rss-feed"))
+                .build());
+    }
+
+    private static String createRenderModesExampleDefault()
+    {
+        return gson.toJson(MacroRenderModesBean
+                .newMacroRenderModesBean()
+                .withDefaultfallback(createEmbeddedStaticMacroBean("/render-map-default"))
+                .build());
+    }
 
     private static String createAddonExample()
     {
@@ -104,7 +163,7 @@ public class ConnectJsonExamples
                 .withLicensing(true)
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").withUninstalled("/uninstalled").build())
                 .withScopes(Sets.newHashSet(ScopeName.READ, ScopeName.WRITE))
-                .withModules("webItems",                        WebItemModuleBean.newWebItemBean()
+                .withModules("webItems", WebItemModuleBean.newWebItemBean()
                                 .withName(i18nProperty("Web Item"))
                                 .withUrl("/my-web-item")
                                 .withKey("my-web-item")
@@ -154,6 +213,21 @@ public class ConnectJsonExamples
     private static I18nProperty i18nProperty(String name)
     {
         return new I18nProperty(name, null);
+    }
+
+
+    private static EmbeddedStaticContentMacroBean createEmbeddedStaticMacroBeanStatic()
+    {
+        return EmbeddedStaticContentMacroBean.newEmbeddedStaticContentMacroModuleBean()
+                .withUrl("/render-map-static")
+                .build();
+    }
+
+    private static EmbeddedStaticContentMacroBean createEmbeddedStaticMacroBean(String url)
+    {
+        return EmbeddedStaticContentMacroBean.newEmbeddedStaticContentMacroModuleBean()
+                .withUrl(url)
+                .build();
     }
 
     private static String createPageExample()
@@ -267,8 +341,8 @@ public class ConnectJsonExamples
     private static BlueprintTemplateBean createBlueprintTemplateBean()
     {
         return BlueprintTemplateBean.newBlueprintTemplateBeanBuilder()
-                    .withUrl("/blueprints/blueprint.xml")
-                    .build();
+                .withUrl("/blueprints/blueprint.xml")
+                .build();
     }
 
     public static String createComponentTabPanelExample()
@@ -313,30 +387,51 @@ public class ConnectJsonExamples
                 .withCategories("visuals")
                 .withDescription(new I18nProperty("Shows a configurable map", ""))
                 .withDocumentation(newLinkBean()
-                        .withUrl("http://docs.example.com/addons/maps")
-                        .build()
+                                .withUrl("http://docs.example.com/addons/maps")
+                                .build()
                 )
                 .withFeatured(true)
                 .withWidth("200px")
                 .withHeight("200px")
                 .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(80).withWidth(80).build())
                 .withParameters(newMacroParameterBean()
-                        .withIdentifier("view")
-                        .withName(new I18nProperty("Map View", ""))
-                        .withDescription(new I18nProperty("Allows switching between view types", ""))
-                        .withType("enum")
-                        .withDefaultValue("Map")
-                        .withMultiple(false)
-                        .withRequired(true)
-                        .withValues("Map", "Satellite")
-                        .build()
+                                .withIdentifier("view")
+                                .withName(new I18nProperty("Map View", ""))
+                                .withDescription(new I18nProperty("Allows switching between view types", ""))
+                                .withType("enum")
+                                .withDefaultValue("Map")
+                                .withMultiple(false)
+                                .withRequired(true)
+                                .withValues("Map", "Satellite")
+                                .build()
                 )
                 .withEditor(newMacroEditorBean()
-                        .withUrl("/map-editor")
-                        .withInsertTitle(new I18nProperty("Insert Map", ""))
-                        .withEditTitle(new I18nProperty("Edit Map", ""))
-                        .build()
+                                .withUrl("/map-editor")
+                                .withInsertTitle(new I18nProperty("Insert Map", ""))
+                                .withEditTitle(new I18nProperty("Edit Map", ""))
+                                .build()
                 )
+                .withRenderModes(MacroRenderModesBean
+                        .newMacroRenderModesBean()
+                        .withPdf(createEmbeddedStaticMacroBean("/render-map-pdf"))
+                        .withDefaultfallback(createEmbeddedStaticMacroBeanStatic())
+                        .build())
+                .build();
+
+        return gson.toJson(createModuleArray("dynamicContentMacros", macroModuleBean));
+    }
+
+    private static String createDynamicMacroExampleForRenderModes()
+    {
+        DynamicContentMacroModuleBean macroModuleBean = DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean()
+                .withName(new I18nProperty("Maps", ""))
+                .withKey("dynamic-macro-example")
+                .withUrl("/render-map?pageTitle={page.title}")
+                .withRenderModes(MacroRenderModesBean
+                        .newMacroRenderModesBean()
+                        .withPdf(createEmbeddedStaticMacroBean("/render-map-pdf"))
+                        .withDefaultfallback(createEmbeddedStaticMacroBeanStatic())
+                        .build())
                 .build();
 
         return gson.toJson(createModuleArray("dynamicContentMacros", macroModuleBean));
@@ -354,27 +449,27 @@ public class ConnectJsonExamples
                 .withCategories("visuals")
                 .withDescription(new I18nProperty("Shows a configurable map", ""))
                 .withDocumentation(newLinkBean()
-                        .withUrl("http://docs.example.com/addons/maps")
-                        .build()
+                                .withUrl("http://docs.example.com/addons/maps")
+                                .build()
                 )
                 .withFeatured(true)
                 .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(80).withWidth(80).build())
                 .withParameters(newMacroParameterBean()
-                        .withIdentifier("view")
-                        .withName(new I18nProperty("Map View", ""))
-                        .withDescription(new I18nProperty("Allows switching between view types", ""))
-                        .withType("enum")
-                        .withDefaultValue("Map")
-                        .withMultiple(false)
-                        .withRequired(true)
-                        .withValues("Map", "Satellite")
-                        .build()
+                                .withIdentifier("view")
+                                .withName(new I18nProperty("Map View", ""))
+                                .withDescription(new I18nProperty("Allows switching between view types", ""))
+                                .withType("enum")
+                                .withDefaultValue("Map")
+                                .withMultiple(false)
+                                .withRequired(true)
+                                .withValues("Map", "Satellite")
+                                .build()
                 )
                 .withEditor(newMacroEditorBean()
-                        .withUrl("/map-editor")
-                        .withInsertTitle(new I18nProperty("Insert Map", ""))
-                        .withEditTitle(new I18nProperty("Edit Map", ""))
-                        .build()
+                                .withUrl("/map-editor")
+                                .withInsertTitle(new I18nProperty("Insert Map", ""))
+                                .withEditTitle(new I18nProperty("Edit Map", ""))
+                                .build()
                 )
                 .build();
 
@@ -449,6 +544,7 @@ public class ConnectJsonExamples
 
         return gson.toJson(createJsonObject("target", bean));
     }
+
     private static String createLinkExample()
     {
         LinkBean bean = newLinkBean().withUrl("/go-somewhere").withAltText("somewhere").withTitle("Go Somewhere").build();
