@@ -18,7 +18,7 @@ is a separate instance. The actual JIRA and Confluence servers are individual ap
 running in separate, isolated JVMs, communicating only over HTTP. Our cloud products only serve content over 
 [HTTPS](../developing/cloud-installation.html). 
 
-Although each application is isolated from a security perspective, underlying resources like like hardware, 
+Although each application is isolated from a security perspective, underlying resources like hardware,
 CPU and memory can be shared between many customers. Servers for our cloud applications are [located in the US](https://www.atlassian.com/hosted/security). 
 
 Each JIRA or Confluence Cloud instance is identifiable by its tenant ID. An instance URL is liable to change 
