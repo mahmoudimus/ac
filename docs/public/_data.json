@@ -14,12 +14,12 @@
     },
     {
       "filename": "confluence-gardener-tutorial.html",
-      "title": "Tutorial: Confluence Gardener"
+      "title": "Tutorial: Confluence Gardener",
+      "new": true
     },
     {
       "filename": "connect-cookbook.html",
-      "title": "Connect cookbook",
-      "new": true
+      "title": "Connect cookbook"
     }
   ],
   "developing": [
