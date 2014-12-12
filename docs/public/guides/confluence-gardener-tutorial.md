@@ -407,11 +407,10 @@ full-screen dialog.
                 chrome: true
             }); 
     </code></pre>
-1. Unsubscribe from any previous `confirmPageRemoval` event bindings: 
-    <pre><code data-lang="javascript">
-           events.offAll("confirmPageRemoval");
-    </code></pre>
-1. Now, try subscribing to `confirmPageRemoval` event bindings.  
+1. After creating the dialog, unsubscribe from any previous `confirmPageRemoval` event bindings:
+   <pre><code data-lang="javascript">events.offAll("confirmPageRemoval");</code></pre>
+1. Now, try subscribing to `confirmPageRemoval` event bindings using `events.on` to register the event and
+   passing `deleteCallback`.
 
     <a data-replace-text="Hide removePageDialog.js [-]" class="aui-expander-trigger" aria-controls="complete-remove-dialog">Show removePageDialog.js with subscription to `confirmPageRemoval` [+]</a>
 
