@@ -12,7 +12,6 @@ import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
-import com.atlassian.webdriver.testing.rule.JavaScriptErrorsRule;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import it.util.TestUser;
@@ -37,8 +36,10 @@ public abstract class ConnectWebDriverTestBase
     @Rule
     public LogPageSourceRule pageSourceRule = new LogPageSourceRule();
 
+    /*
     @Rule
     public JavaScriptErrorsRule logConsoleOutputRule = new JavaScriptErrorsRule();
+    */
 
     protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
             product.getTester().getDriver());
