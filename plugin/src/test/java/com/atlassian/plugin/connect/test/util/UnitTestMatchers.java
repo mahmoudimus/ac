@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.test.util;
 
 import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.connect.plugin.iframe.context.module.ConnectContextVariablesExtractorModuleDescriptor;
 import com.atlassian.plugin.predicate.ModuleDescriptorPredicate;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -38,7 +37,7 @@ public final class UnitTestMatchers
             @Override
             public void describeTo(final Description description)
             {
-                description.appendText("predicate that matches a " + ConnectContextVariablesExtractorModuleDescriptor.class);
+                description.appendText("predicate that matches a " + exampleDescriptor.getClass().toString());
             }
         };
     }
