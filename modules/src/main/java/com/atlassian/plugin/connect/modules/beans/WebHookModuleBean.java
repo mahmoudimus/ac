@@ -33,7 +33,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * Below is a list of all available webhook events.
  *
- *#### Jira Webhook events
+ *#### JIRA Webhook events
  *
  * * `connect_addon_disabled`
  * * `connect_addon_enabled`

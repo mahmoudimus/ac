@@ -126,7 +126,7 @@ You'll use a simple web server to serve the current directory containing your
 `atlassian-connect.json` and `helloworld.html` files.
 
 1. From the same directory, start your server on port 8000:
-     <pre><code data-lang="text">npm install http-server
+     <pre><code data-lang="text">npm install http-server -g
 http-server -p 8000</code></pre>
     The server indicates that it's serving HTTP at the current address and port. You'll see something like this:
     <tt>Starting up http-server, serving ./ on: http://0.0.0.0:8000</tt>

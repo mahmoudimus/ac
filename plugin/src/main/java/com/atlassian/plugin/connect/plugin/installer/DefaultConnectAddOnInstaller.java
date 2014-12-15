@@ -116,12 +116,6 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                 targetState = PluginState.ENABLED; // we want the add-on to be usable by default after it is reinstalled
             }
 
-            if (nonValidatedAddon.getModules().isEmpty())
-            {
-                com.atlassian.upm.api.util.Option<String> errorI18nKey = com.atlassian.upm.api.util.Option.some("connect.install.error.no.modules");
-                throw new PluginInstallException("Unable to install connect add on because it has no modules defined", errorI18nKey);
-            }
-
             removeOldPlugin(pluginKey);
 
             addOn = connectAddonManager.installConnectAddon(jsonDescriptor, targetState, maybePreviousPublicKeyOrSharedSecret, reusePreviousPublicKeyOrSharedSecret);
