@@ -70,7 +70,4 @@
         <package>com.atlassian.plugin.connect.testfixture.agile.rest</package>
     </rest>
 
-    <connect-context-parameters-validator key="test-parameters-validator" class="it.com.atlassian.plugin.connect.TestContextParametersValidator" />
-    <connect-context-parameters-extractor key="test-parameters-extractor" class="it.com.atlassian.plugin.connect.TestContextParametersExtractor" />
-
 </atlassian-plugin>

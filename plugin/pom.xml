@@ -561,6 +561,11 @@
                                     <artifactId>quickreload</artifactId>
                                     <version>${quickreload.version}</version>
                                 </pluginArtifact>
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.labs</groupId>
+                                    <artifactId>fastdev-plugin</artifactId>
+                                    <version>${fastdev.version}</version>
+                                </bundledArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.webhooks</groupId>
                                     <artifactId>atlassian-webhooks-plugin</artifactId>
@@ -605,6 +610,11 @@
                                     <groupId>com.atlassian.jira</groupId>
                                     <artifactId>jira-projects-plugin</artifactId>
                                     <version>${atlassian.jira.projects.plugin.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.plugins</groupId>
+                                    <artifactId>connect-api-test-plugin</artifactId>
+                                    <version>${project.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
 

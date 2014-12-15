@@ -25,6 +25,7 @@
 
     <modules>
         <module>api-parent</module>
+        <module>test-plugin</module>
         <module>modules</module>
         <module>test-support-plugin</module>
         <module>plugin</module>

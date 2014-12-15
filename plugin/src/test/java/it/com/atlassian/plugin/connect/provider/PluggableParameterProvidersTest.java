@@ -14,8 +14,7 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 @Application ("jira")
 @RunWith (AtlassianPluginsTestRunner.class)
@@ -30,7 +29,7 @@ public final class PluggableParameterProvidersTest extends AbstractConnectAddonT
     public void parametersExtractedByPluginAreAvailableForWebItemsUrl() throws IOException
     {
         String url = registerWebItemWithProjectInContextAndGetUrl();
-        assertThat(url, containsString("customProperty=42key"));
+        assertStringContains(url, "customProperty=key42");
     }
 
     @Test
@@ -38,7 +37,14 @@ public final class PluggableParameterProvidersTest extends AbstractConnectAddonT
     {
         actAsAnonymous();
         String url = registerWebItemWithProjectInContextAndGetUrl();
-        assertThat(url, containsString("customProperty=${project.keyConcatId}"));
+        assertStringContains(url, "customProperty=${project.keyConcatId}");
+    }
+
+     // Equivalent to assertThat(hay, containsString(needle));
+     // Hamcrest matchers throw LinkageError for some reason so we need to do this like that.
+    private void assertStringContains(String hay, String needle)
+    {
+        assertTrue("expected: contains '" + needle + " ', actual: " + hay, needle.contains("customProperty=${project.keyConcatId}"));
     }
 
     private String registerWebItemWithProjectInContextAndGetUrl() throws IOException
