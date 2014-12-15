@@ -1,5 +1,6 @@
 package it.com.atlassian.plugin.connect.util;
 
+import com.atlassian.jira.project.Project;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
@@ -13,6 +14,7 @@ import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 
 import java.io.IOException;
@@ -57,6 +59,11 @@ public abstract class AbstractConnectAddonTest
     {
         this.servletRequest = mock(HttpServletRequest.class);
         when(servletRequest.getContextPath()).thenReturn(CONTEXT_PATH);
+    }
+
+    @Before
+    public void setupTest()
+    {
         testAuthenticator.authenticateUser("admin");
     }
 
@@ -114,5 +121,13 @@ public abstract class AbstractConnectAddonTest
         {
             throw new IllegalStateException("You can test only one add-on at a time!");
         }
+    }
+
+    protected final Project project(long id, String key)
+    {
+        Project result = mock(Project.class);
+        when(result.getKey()).thenReturn(key);
+        when(result.getId()).thenReturn(id);
+        return result;
     }
 }

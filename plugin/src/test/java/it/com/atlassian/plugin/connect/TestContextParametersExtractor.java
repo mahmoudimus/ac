@@ -13,7 +13,8 @@ public final class TestContextParametersExtractor implements ContextParametersEx
     public Map<String, String> extractParameters(final Map<String, ? extends Object> context)
     {
         Object projectObj = context.get("project");
-        if (projectObj != null && projectObj instanceof Project) {
+        if (projectObj != null && projectObj instanceof Project)
+        {
             Project project = (Project) projectObj;
             return ImmutableMap.of("project.keyConcatId", project.getKey() + project.getId());
         }

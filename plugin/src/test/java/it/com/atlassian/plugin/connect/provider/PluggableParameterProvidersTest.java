@@ -1,7 +1,5 @@
 package it.com.atlassian.plugin.connect.provider;
 
-import com.atlassian.jira.project.MockProject;
-import com.atlassian.jira.project.ProjectImpl;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
@@ -10,6 +8,7 @@ import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.google.common.collect.ImmutableMap;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import it.com.atlassian.plugin.connect.util.AbstractConnectAddonTest;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
@@ -27,13 +26,14 @@ public final class PluggableParameterProvidersTest extends AbstractConnectAddonT
         super(webItemModuleProvider, testPluginInstaller, testAuthenticator);
     }
 
-
+    @Test
     public void parametersExtractedByPluginAreAvailableForWebItemsUrl() throws IOException
     {
         String url = registerWebItemWithProjectInContextAndGetUrl();
         assertThat(url, containsString("customProperty=42key"));
     }
 
+    @Test
     public void permissionChecksFromPluginsAreRespected() throws IOException
     {
         actAsAnonymous();
@@ -45,7 +45,7 @@ public final class PluggableParameterProvidersTest extends AbstractConnectAddonT
     {
         WebItemModuleDescriptor descriptor = registerWebItem("customProperty=${project.keyConcatId}", "atl.admin/menu");
 
-        Map<String, Object> context = ImmutableMap.<String, Object>of("project", new MockProject(42L, "key"));
+        Map<String, Object> context = ImmutableMap.<String, Object>of("project", project(42L, "key"));
 
         return descriptor.getLink().getDisplayableUrl(servletRequest, context);
     }

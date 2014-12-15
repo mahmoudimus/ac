@@ -1,7 +1,5 @@
 package it.com.atlassian.plugin.connect.provider.jira;
 
-import com.atlassian.jira.project.MockProject;
-import com.atlassian.jira.project.Project;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
@@ -16,8 +14,6 @@ import org.junit.runner.RunWith;
 import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @Application ("jira")
 @RunWith (AtlassianPluginsTestRunner.class)
@@ -38,7 +34,7 @@ public class JiraWebitemModuleProviderTest extends AbstractConnectAddonTest
 
         descriptor.enabled();
 
-        Map<String, Object> context = ImmutableMap.<String, Object>of("project", new MockProject(PROJECT_ID, PROJECT_KEY));
+        Map<String, Object> context = ImmutableMap.<String, Object>of("project", project(PROJECT_ID, PROJECT_KEY));
 
         String convertedUrl = descriptor.getLink().getDisplayableUrl(servletRequest, context);
 
