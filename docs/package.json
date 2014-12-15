@@ -11,7 +11,7 @@
     "JSONPath": "*",
     "commander": "*",
     "jsdoc": "*",
-    "atlassian-connect-js": "git+ssh://git@stash.atlassian.com:7997/ac/atlassian-connect-js.git"
+    "atlassian-connect-js": "git+ssh://git@stash.atlassian.com:7997/ac/atlassian-connect-js.git#1.1.12"
   },
   "scripts": {
     "start": "./build.js --serve",
