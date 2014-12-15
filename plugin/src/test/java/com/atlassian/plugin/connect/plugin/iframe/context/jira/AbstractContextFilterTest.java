@@ -1,7 +1,10 @@
-package com.atlassian.plugin.connect.plugin.iframe.context;
+package com.atlassian.plugin.connect.plugin.iframe.context.jira;
 
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.plugin.iframe.context.AbstractModuleContextFilter;
+import com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters;
+import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.module.ConnectContextVariablesValidatorModuleDescriptor;
 import com.atlassian.plugin.connect.spi.module.ContextParametersValidator;
 import com.atlassian.plugin.connect.spi.module.PermissionCheck;
