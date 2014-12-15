@@ -69,4 +69,8 @@
     <rest key="agile-rest-mock" path="/greenhopper" version="1.0">
         <package>com.atlassian.plugin.connect.testfixture.agile.rest</package>
     </rest>
+
+    <connect-context-parameters-validator key="test-parameters-validator" class="it.com.atlassian.plugin.connect.TestContextParametersValidator" />
+    <connect-context-parameters-extractor key="test-parameters-extractor" class="it.com.atlassian.plugin.connect.TestContextParametersExtractor" />
+
 </atlassian-plugin>
