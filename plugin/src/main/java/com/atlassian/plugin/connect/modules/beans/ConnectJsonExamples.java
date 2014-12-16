@@ -691,9 +691,9 @@ public class ConnectJsonExamples
     private static String createEntityPropertyExample()
     {
         List<EntityPropertyIndexExtractionConfigurationBean> extractionConfiguration = Lists.newArrayList(
-                new EntityPropertyIndexExtractionConfigurationBean("attachment.size", EntityPropertyIndexType.number),
-                new EntityPropertyIndexExtractionConfigurationBean("attachment.extension", EntityPropertyIndexType.text),
-                new EntityPropertyIndexExtractionConfigurationBean("attachment.updated", EntityPropertyIndexType.date)
+                new EntityPropertyIndexExtractionConfigurationBean("attachment.size", EntityPropertyIndexType.number, "attachmentSize"),
+                new EntityPropertyIndexExtractionConfigurationBean("attachment.extension", EntityPropertyIndexType.text, "attachmentExtension"),
+                new EntityPropertyIndexExtractionConfigurationBean("attachment.updated", EntityPropertyIndexType.date, "attachmentUpdatedDate")
         );
         EntityPropertyIndexKeyConfigurationBean issueAttachmentIndexConfiguration =
                 new EntityPropertyIndexKeyConfigurationBean(extractionConfiguration, "attachment");
@@ -709,7 +709,7 @@ public class ConnectJsonExamples
 
     private static String createEntityPropertyIndexExtractionConfigurationExample()
     {
-        EntityPropertyIndexExtractionConfigurationBean bean = new EntityPropertyIndexExtractionConfigurationBean("attachment.size", EntityPropertyIndexType.number);
+        EntityPropertyIndexExtractionConfigurationBean bean = new EntityPropertyIndexExtractionConfigurationBean("attachment.size", EntityPropertyIndexType.number, "attachmentSize");
 
         return gson.toJson(bean);
     }
