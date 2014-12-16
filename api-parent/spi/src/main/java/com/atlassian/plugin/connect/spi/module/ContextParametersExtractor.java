@@ -4,7 +4,7 @@ import java.util.Map;
 
 /**
  * Components implementing this interface can provide
- * parameterss for Connect add-ons based on the current context.
+ * parameters for Connect add-ons based on the current context.
  *
  * <p>
  *     Note that it's not enough to simply provide the parameters.
@@ -15,11 +15,11 @@ import java.util.Map;
 public interface ContextParametersExtractor
 {
     /**
-     * Given an execution context, extract parameters to be used by the Connect add-ons.
+     * Extracts parameters from the rendering context so that they can be used by Connect add-ons.
      *
      * <p>
-     *     Execution context may contain arbitrary objects, e.g. a whole Issue. Connect
-     *     add-ons on the other hand expect plain Strings. So an example provider could
+     *     Rendering context may contain arbitrary objects, e.g. a whole Issue. Connect
+     *     add-ons on the other hand expect plain Strings. So an example extractor could
      *     take a context of the form
      *
      *     <pre>
@@ -38,7 +38,7 @@ public interface ContextParametersExtractor
      *     </pre>
      * </p>
      *
-     * @param context execution context
+     * @param context rendering context
      * @return context for Connect add-ons
      */
     public Map<String, String> extractParameters(Map<String, ? extends Object> context);

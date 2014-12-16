@@ -9,8 +9,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>connect-api-test-plugin</artifactId>
-    <name>Atlassian Connect API test plug-in</name>
+    <artifactId>connect-reference-plugin</artifactId>
+    <name>Atlassian Connect Reference Plugin</name>
     <packaging>atlassian-plugin</packaging>
 
     <dependencies>
@@ -68,7 +68,7 @@
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-jira-plugin</artifactId>
-                <version>4.2.10</version>
+                <version>${amps.version}</version>
                 <extensions>true</extensions>
             </plugin>
 

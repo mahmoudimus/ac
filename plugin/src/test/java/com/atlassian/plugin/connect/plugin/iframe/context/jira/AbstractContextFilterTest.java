@@ -63,25 +63,20 @@ public final class AbstractContextFilterTest
     {
         assumingImplementation()
                 .allows("a", "b")
+                .whenUnfilteredContextIs("a", "b", "c", "d")
+                .thenTheResultContextIs("a", "b");
+
+        assumingImplementation()
+                .allows("a", "b")
                 .andForbids("c")
-                .whenWeFilter("a", "b", "c", "d")
-                .thenRemainingElementsShouldBe("a", "b");
+                .whenUnfilteredContextIs("a", "b", "c", "d")
+                .thenTheResultContextIs("a", "b");
 
         assumingImplementation()
                 .allows("a", "b")
-                .whenWeFilter("a", "b", "c", "d")
-                .thenRemainingElementsShouldBe("a", "b");
-
-        assumingImplementation()
-                .allows("a", "b")
-                .whenWeFilter("a", "b", "c", "d")
-                .thenRemainingElementsShouldBe("a", "b");
-
-        assumingImplementation()
-                .allows("d")
-                .andForbids("a")
-                .whenWeFilter("a", "b", "c", "d")
-                .thenRemainingElementsShouldBe("d");
+                .andForbids("b")
+                .whenUnfilteredContextIs("a", "b", "c", "d")
+                .thenTheResultContextIs("a");
     }
 
     @Test
@@ -90,8 +85,8 @@ public final class AbstractContextFilterTest
         assumingImplementation()
                 .allows("a", "b")
                 .andPluginsAllow("c")
-                .whenWeFilter("a", "b", "c", "d")
-                .thenRemainingElementsShouldBe("a", "b", "c");
+                .whenUnfilteredContextIs("a", "b", "c", "d")
+                .thenTheResultContextIs("a", "b", "c");
     }
 
     @Test
@@ -101,22 +96,22 @@ public final class AbstractContextFilterTest
                 .allows("a", "b")
                 .andForbids("c")
                 .andPluginsAllow("c")
-                .whenWeFilter("a", "b", "c", "d")
-                .thenRemainingElementsShouldBe("a", "b");
+                .whenUnfilteredContextIs("a", "b", "c", "d")
+                .thenTheResultContextIs("a", "b");
 
         assumingImplementation()
                 .allows("a", "b")
                 .andPluginsAllow("c")
                 .andPluginsForbid("b")
-                .whenWeFilter("a", "b", "c", "d")
-                .thenRemainingElementsShouldBe("a", "c");
+                .whenUnfilteredContextIs("a", "b", "c", "d")
+                .thenTheResultContextIs("a", "c");
 
         assumingImplementation()
-                .allows("a")
+                .allows("a", "b")
                 .andPluginsAllow("a")
                 .andPluginsForbid("a")
-                .whenWeFilter("a", "b", "c", "d")
-                .thenRemainingElementsShouldBe();
+                .whenUnfilteredContextIs("a", "b", "c", "d")
+                .thenTheResultContextIs("b");
     }
 
     private TestSpecification assumingImplementation()
@@ -145,13 +140,13 @@ public final class AbstractContextFilterTest
             return this;
         }
 
-        public TestSpecification whenWeFilter(String... whatToFilter)
+        public TestSpecification whenUnfilteredContextIs(String... whatToFilter)
         {
             this.whatToFilter = Arrays.asList(whatToFilter);
             return this;
         }
 
-        public void thenRemainingElementsShouldBe(String... expected)
+        public void thenTheResultContextIs(String... expected)
         {
             this.expectedResult = Arrays.asList(expected);
             assertSpecification();

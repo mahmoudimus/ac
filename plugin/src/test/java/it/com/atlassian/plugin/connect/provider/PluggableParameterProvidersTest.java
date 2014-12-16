@@ -37,14 +37,14 @@ public final class PluggableParameterProvidersTest extends AbstractConnectAddonT
     {
         actAsAnonymous();
         String url = registerWebItemWithProjectInContextAndGetUrl();
-        assertStringContains(url, "customProperty=${project.keyConcatId}");
+        assertStringContains(url, "customProperty=&");
     }
 
-     // Equivalent to assertThat(hay, containsString(needle));
-     // Hamcrest matchers throw LinkageError for some reason so we need to do this like that.
+    // Equivalent to assertThat(hay, containsString(needle));
+    // Hamcrest matchers throw LinkageError for some reason so we need to do this like that.
     private void assertStringContains(String hay, String needle)
     {
-        assertTrue("expected: contains '" + needle + " ', actual: " + hay, needle.contains("customProperty=${project.keyConcatId}"));
+        assertTrue("expected: contains '" + needle + " ', actual: " + hay, hay.contains(needle));
     }
 
     private String registerWebItemWithProjectInContextAndGetUrl() throws IOException

@@ -138,11 +138,11 @@ public class AddOnConditionTest
     @Before
     public void init()
     {
-        final IFrameUriBuilderFactoryImpl iFrameUriBuilderFactory = new IFrameUriBuilderFactoryImpl(new UrlVariableSubstitutor(new IsDevModeServiceImpl()),
+        final IFrameUriBuilderFactoryImpl iFrameUriBuilderFactory = new IFrameUriBuilderFactoryImpl(
+                new UrlVariableSubstitutor(new IsDevModeServiceImpl()),
                 remotablePluginAccessorFactory,
                 userManager,
-                new TestHostApplicationInfo(URL,
-                        "/"),
+                new TestHostApplicationInfo(URL, "/"),
                 licenseRetriever,
                 localeHelper,
                 new UserPreferencesRetriever()
@@ -154,6 +154,7 @@ public class AddOnConditionTest
                     }
                 },
                 bundleContext);
+
         addonCondition = new AddOnCondition(remotablePluginAccessorFactory,
                 iFrameUriBuilderFactory,
                 webFragmentModuleContextExtractor,

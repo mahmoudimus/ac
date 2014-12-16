@@ -26,8 +26,10 @@ import static com.google.common.collect.Iterables.transform;
 
 /**
  * @since 1.0
+ *
+ * @param <T> user type, depends on the product (e.g. ApplicationUser, ConfluenceUser)
  */
-public abstract class AbstractModuleContextFilter<User> implements ModuleContextFilter
+public abstract class AbstractModuleContextFilter<T> implements ModuleContextFilter
 {
     public static final String PROFILE_NAME = "profileUser.name";
     public static final String PROFILE_KEY = "profileUser.key";
@@ -42,33 +44,31 @@ public abstract class AbstractModuleContextFilter<User> implements ModuleContext
     };
 
     private final PluginAccessor pluginAccessor;
-    private final Class<User> userType;
+    private final Class<T> userType;
 
-    protected AbstractModuleContextFilter(final PluginAccessor pluginAccessor, final Class<User> userType)
+    protected AbstractModuleContextFilter(final PluginAccessor pluginAccessor, final Class<T> userType)
     {
-
         this.pluginAccessor = pluginAccessor;
         this.userType = userType;
-
     }
 
     @Override
     public ModuleContextParameters filter(final ModuleContextParameters unfiltered)
     {
         final ModuleContextParameters filtered = new HashMapModuleContextParameters();
-        final User currentUser = getCurrentUser();
+        final T currentUser = getCurrentUser();
 
-        Multimap<String, PermissionCheck<User>> permissionChecksMultimap = getFieldNameToPermissionChecksMap();
+        Multimap<String, PermissionCheck<T>> permissionChecksMultimap = getFieldNameToPermissionChecksMap();
 
         for (final String parameterName : Iterables.filter(unfiltered.keySet(), IS_NOT_EMPTY))
         {
             final String parameterValue = unfiltered.get(parameterName);
-            Collection<PermissionCheck<User>> permissionChecks = permissionChecksMultimap.get(parameterName);
+            Collection<PermissionCheck<T>> permissionChecks = permissionChecksMultimap.get(parameterName);
 
-            boolean allValidatorsGrantedPermission = Iterables.all(permissionChecks, new Predicate<PermissionCheck<User>>()
+            boolean allValidatorsGrantedPermission = Iterables.all(permissionChecks, new Predicate<PermissionCheck<T>>()
             {
                 @Override
-                public boolean apply(final PermissionCheck<User> userPermissionCheck)
+                public boolean apply(final PermissionCheck<T> userPermissionCheck)
                 {
 
                     return userPermissionCheck.hasPermission(parameterValue, currentUser);
@@ -84,54 +84,54 @@ public abstract class AbstractModuleContextFilter<User> implements ModuleContext
         return filtered;
     }
 
-    private Multimap<String, PermissionCheck<User>> getFieldNameToPermissionChecksMap()
+    private Multimap<String, PermissionCheck<T>> getFieldNameToPermissionChecksMap()
     {
-        ImmutableMultimap.Builder<String, PermissionCheck<User>> result = ImmutableMultimap.builder();
-        for (PermissionCheck<User> userPermissionCheck : getAllPermissionChecks())
+        ImmutableMultimap.Builder<String, PermissionCheck<T>> result = ImmutableMultimap.builder();
+        for (PermissionCheck<T> userPermissionCheck : getAllPermissionChecks())
         {
             result.put(userPermissionCheck.getParameterName(), userPermissionCheck);
         }
         return result.build();
     }
 
-    private Iterable<PermissionCheck<User>> getAllPermissionChecks()
+    private Iterable<PermissionCheck<T>> getAllPermissionChecks()
     {
-        return concat(getPermissionChecks(), concat(transform(getValidatorsFromPlugins(), new Function<ContextParametersValidator<User>, Iterable<PermissionCheck<User>>>()
+        return concat(getPermissionChecks(), concat(transform(getValidatorsFromPlugins(), new Function<ContextParametersValidator<T>, Iterable<PermissionCheck<T>>>()
         {
             @Override
-            public Iterable<PermissionCheck<User>> apply(final ContextParametersValidator<User> validator)
+            public Iterable<PermissionCheck<T>> apply(final ContextParametersValidator<T> validator)
             {
-                return transform(validator.getPermissionChecks(), new Function<PermissionCheck<User>, PermissionCheck<User>>()
+                return transform(validator.getPermissionChecks(), new Function<PermissionCheck<T>, PermissionCheck<T>>()
                 {
                     @Override
-                    public PermissionCheck<User> apply(final PermissionCheck<User> permissionCheck)
+                    public PermissionCheck<T> apply(final PermissionCheck<T> permissionCheck)
                     {
-                        return new SafePermissionCheckFromPlugIn<User>(permissionCheck);
+                        return new SafePermissionCheckFromPlugIn<T>(permissionCheck);
                     }
                 });
             }
         })));
     }
 
-    private Iterable<ContextParametersValidator<User>> getValidatorsFromPlugins()
+    private Iterable<ContextParametersValidator<T>> getValidatorsFromPlugins()
     {
         Collection<ContextParametersValidator<?>> validators = pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<ContextParametersValidator<?>>(ConnectContextVariablesValidatorModuleDescriptor.class));
-        return Options.flatten(Iterables.transform(validators, new Function<ContextParametersValidator<?>, Option<ContextParametersValidator<User>>>()
+        return Options.flatten(Iterables.transform(validators, new Function<ContextParametersValidator<?>, Option<ContextParametersValidator<T>>>()
         {
             @Override
-            public Option<ContextParametersValidator<User>> apply(final ContextParametersValidator<?> contextParametersValidator)
+            public Option<ContextParametersValidator<T>> apply(final ContextParametersValidator<?> contextParametersValidator)
             {
                 return tryCast(contextParametersValidator);
             }
         }));
     }
 
-    private Option<ContextParametersValidator<User>> tryCast(ContextParametersValidator<?> unidentifiedValidator)
+    private Option<ContextParametersValidator<T>> tryCast(ContextParametersValidator<?> unidentifiedValidator)
     {
         if (unidentifiedValidator.getUserType().equals(userType))
         {
             @SuppressWarnings ("unchecked") // this supression is safe, because above we checked that user types match
-                    ContextParametersValidator<User> castedModule = (ContextParametersValidator<User>) unidentifiedValidator;
+                    ContextParametersValidator<T> castedModule = (ContextParametersValidator<T>) unidentifiedValidator;
             return some(castedModule);
         }
         return none();
@@ -140,25 +140,25 @@ public abstract class AbstractModuleContextFilter<User> implements ModuleContext
     /**
      * @return the context user, or {@code null} if the context request is executing anonymously.
      */
-    protected abstract User getCurrentUser();
+    protected abstract T getCurrentUser();
 
     /**
      * @return the {@link PermissionCheck permission checks} to be run over the unfiltered context.
      */
-    protected abstract Iterable<PermissionCheck<User>> getPermissionChecks();
+    protected abstract Iterable<PermissionCheck<T>> getPermissionChecks();
 
     /**
      * This is a wrappeer for permission checks from plug-ins.
      * If anything blows up we just keep calm, catch an exception and carry on.
      */
-    private static class SafePermissionCheckFromPlugIn<User> implements PermissionCheck<User>
+    private static class SafePermissionCheckFromPlugIn<T> implements PermissionCheck<T>
     {
 
         private static final Logger log = LoggerFactory.getLogger(SafePermissionCheckFromPlugIn.class);
 
-        private final PermissionCheck<User> wrappedPermissionCheck;
+        private final PermissionCheck<T> wrappedPermissionCheck;
 
-        private SafePermissionCheckFromPlugIn(final PermissionCheck<User> wrappedPermissionCheck)
+        private SafePermissionCheckFromPlugIn(final PermissionCheck<T> wrappedPermissionCheck)
         {
             this.wrappedPermissionCheck = wrappedPermissionCheck;
         }
@@ -178,7 +178,7 @@ public abstract class AbstractModuleContextFilter<User> implements ModuleContext
         }
 
         @Override
-        public boolean hasPermission(final String value, final User user)
+        public boolean hasPermission(final String value, final T user)
         {
             try
             {

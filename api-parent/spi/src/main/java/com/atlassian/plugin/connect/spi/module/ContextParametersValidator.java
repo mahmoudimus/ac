@@ -8,8 +8,6 @@ import java.util.Collection;
  * permission checks for those parameters.
  *
  * @param <User> a type of user this class can operate on, depends on a product, e.g. in Confluence this would be a {@code ConfluenceUser} and in JIRA {@code ApplicationUser}
- *
- * @since v6.4
  */
 public interface ContextParametersValidator<User>
 {
