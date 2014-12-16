@@ -1,5 +1,6 @@
-package it.com.atlassian.plugin.connect.provider.jira;
+package it.com.atlassian.plugin.connect.provider.confluence;
 
+import com.atlassian.confluence.spaces.Space;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
@@ -14,13 +15,14 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 import java.util.Map;
 
-import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-@Application ("jira")
+@Application ("confluence")
 @RunWith (AtlassianPluginsTestRunner.class)
-public final class PluggableParameterProvidersTest extends AbstractConnectAddonTest
+public final class ConfluencePluggableParametersProviderTest extends AbstractConnectAddonTest
 {
-    public PluggableParameterProvidersTest(final WebItemModuleProvider webItemModuleProvider, final TestPluginInstaller testPluginInstaller, final TestAuthenticator testAuthenticator)
+    public ConfluencePluggableParametersProviderTest(final WebItemModuleProvider webItemModuleProvider, final TestPluginInstaller testPluginInstaller, final TestAuthenticator testAuthenticator)
     {
         super(webItemModuleProvider, testPluginInstaller, testAuthenticator);
     }
@@ -40,20 +42,18 @@ public final class PluggableParameterProvidersTest extends AbstractConnectAddonT
         assertStringContains(url, "customProperty=&");
     }
 
-    // Equivalent to assertThat(hay, containsString(needle));
-    // Hamcrest matchers throw LinkageError for some reason so we need to do this like that.
-    private void assertStringContains(String hay, String needle)
-    {
-        assertTrue("expected: contains '" + needle + " ', actual: " + hay, hay.contains(needle));
-    }
-
     private String registerWebItemWithProjectInContextAndGetUrl() throws IOException
     {
-        WebItemModuleDescriptor descriptor = registerWebItem("customProperty=${project.keyConcatId}", "atl.admin/menu");
-
-        Map<String, Object> context = ImmutableMap.<String, Object>of("project", project(42L, "key"));
-
+        WebItemModuleDescriptor descriptor = registerWebItem("customProperty=${space.keyConcatId}", "atl.admin/menu");
+        Map<String, Object> context = ImmutableMap.<String, Object>of("space", space(42L, "key"));
         return descriptor.getLink().getDisplayableUrl(servletRequest, context);
     }
 
+    private Space space(long id, String key)
+    {
+        Space result = mock(Space.class);
+        when(result.getKey()).thenReturn(key);
+        when(result.getId()).thenReturn(id);
+        return result;
+    }
 }

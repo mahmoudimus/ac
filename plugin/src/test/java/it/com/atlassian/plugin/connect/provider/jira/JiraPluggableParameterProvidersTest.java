@@ -12,6 +12,7 @@ import it.com.atlassian.plugin.connect.util.AbstractConnectAddonTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.IOException;
 import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
@@ -20,29 +21,35 @@ import static org.mockito.Mockito.when;
 
 @Application ("jira")
 @RunWith (AtlassianPluginsTestRunner.class)
-public class JiraWebitemModuleProviderTest extends AbstractConnectAddonTest
+public final class JiraPluggableParameterProvidersTest extends AbstractConnectAddonTest
 {
-    public static final String PROJECT_KEY = "TEST";
-    public static final Long PROJECT_ID = 1234L;
-
-    public JiraWebitemModuleProviderTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
+    public JiraPluggableParameterProvidersTest(final WebItemModuleProvider webItemModuleProvider, final TestPluginInstaller testPluginInstaller, final TestAuthenticator testAuthenticator)
     {
         super(webItemModuleProvider, testPluginInstaller, testAuthenticator);
     }
 
     @Test
-    public void singleAddonLinkWithReplacement() throws Exception
+    public void parametersExtractedByPluginAreAvailableForWebItemsUrl() throws IOException
     {
-        WebItemModuleDescriptor descriptor = registerWebItem("myProject={project.key}", "atl.admin/menu");
+        String url = registerWebItemWithProjectInContextAndGetUrl();
+        assertStringContains(url, "customProperty=key42");
+    }
 
-        descriptor.enabled();
+    @Test
+    public void permissionChecksFromPluginsAreRespected() throws IOException
+    {
+        actAsAnonymous();
+        String url = registerWebItemWithProjectInContextAndGetUrl();
+        assertStringContains(url, "customProperty=&");
+    }
 
-        Map<String, Object> context = ImmutableMap.<String, Object>of("project", project(PROJECT_ID, PROJECT_KEY));
+    private String registerWebItemWithProjectInContextAndGetUrl() throws IOException
+    {
+        WebItemModuleDescriptor descriptor = registerWebItem("customProperty=${project.keyConcatId}", "atl.admin/menu");
 
-        String convertedUrl = descriptor.getLink().getDisplayableUrl(servletRequest, context);
+        Map<String, Object> context = ImmutableMap.<String, Object>of("project", project(42L, "key"));
 
-        assertTrue("wrong url prefix. expected: " + BASE_URL + ADDON_PATH + ", but got: " + convertedUrl, convertedUrl.startsWith(BASE_URL + "/my/addon"));
-        assertTrue("project key not found in: " + convertedUrl, convertedUrl.contains("myProject=" + PROJECT_KEY));
+        return descriptor.getLink().getDisplayableUrl(servletRequest, context);
     }
 
     private Project project(long id, String key)

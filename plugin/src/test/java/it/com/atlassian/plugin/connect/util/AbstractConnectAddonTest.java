@@ -1,6 +1,5 @@
 package it.com.atlassian.plugin.connect.util;
 
-import com.atlassian.jira.project.Project;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
@@ -25,6 +24,7 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newCon
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -33,7 +33,7 @@ import static org.mockito.Mockito.when;
  */
 public abstract class AbstractConnectAddonTest
 {
-    public static final String CONTEXT_PATH = "http://ondemand.com/jira";
+    public static final String CONTEXT_PATH = "http://ondemand.com/";
     public static final String PLUGIN_KEY = "my-plugin";
     public static final String PLUGIN_NAME = "My Plugin";
     public static final String MODULE_NAME = "My Web Item";
@@ -123,11 +123,10 @@ public abstract class AbstractConnectAddonTest
         }
     }
 
-    protected final Project project(long id, String key)
+    // Equivalent to assertThat(hay, containsString(needle));
+    // Hamcrest matchers throw LinkageError for some reason so we need to do this like that.
+    protected void assertStringContains(String hay, String needle)
     {
-        Project result = mock(Project.class);
-        when(result.getKey()).thenReturn(key);
-        when(result.getId()).thenReturn(id);
-        return result;
+        assertTrue("expected: contains '" + needle + " ', actual: " + hay, hay.contains(needle));
     }
 }
