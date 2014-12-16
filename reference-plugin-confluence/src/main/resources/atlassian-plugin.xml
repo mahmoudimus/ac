@@ -5,7 +5,13 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}"/>
     </plugin-info>
 
-    <connect-context-parameters-validator key="test-confluence-parameters-validator" class="com.atlassian.plugin.connect.TestConfluenceContextParametersValidator" />
-    <connect-context-parameters-extractor key="test-confluence-parameters-extractor" class="com.atlassian.plugin.connect.TestConfluenceContextParametersExtractor" />
+    <connect-context-parameters-resolver>
+        <extractors>
+            <extractor class="com.atlassian.plugin.connect.TestConfluenceContextParametersExtractor"/>
+        </extractors>
+        <validators>
+            <validator class="com.atlassian.plugin.connect.TestConfluenceContextParametersValidator"/>
+        </validators>
+    </connect-context-parameters-resolver>
 
 </atlassian-plugin>

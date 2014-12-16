@@ -3,15 +3,19 @@ package com.atlassian.plugin.connect.plugin.iframe.webpanel;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.plugin.iframe.context.module.ConnectContextVariablesExtractorModuleDescriptor;
+import com.atlassian.plugin.connect.plugin.iframe.context.module.ConnectContextParameterResolverModuleDescriptor;
+import com.atlassian.plugin.connect.plugin.iframe.context.module.ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver;
 import com.atlassian.plugin.connect.spi.module.ContextParametersExtractor;
 import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,7 +37,7 @@ public class PluggableParametersExtractor
         this.pluginAccessor = pluginAccessor;
     }
 
-    public ModuleContextParameters extractParameters(Map<String, ? extends Object> context)
+    public ModuleContextParameters extractParameters(Map<String, Object> context)
     {
         ModuleContextParameters moduleContextParameters = new HashMapModuleContextParameters();
         moduleContextParameters.putAll(connectModuleContextExtractor.extractParameters(context));
@@ -41,7 +45,7 @@ public class PluggableParametersExtractor
         return moduleContextParameters;
     }
 
-    private Map<String, String> extractByPlugins(final Map<String, ? extends Object> context)
+    private Map<String, String> extractByPlugins(final Map<String, Object> context)
     {
         ImmutableMap.Builder<String, String> result = ImmutableMap.builder();
         for (ContextParametersExtractor contextParametersExtractor : getExtractors())
@@ -61,6 +65,15 @@ public class PluggableParametersExtractor
 
     private Iterable<ContextParametersExtractor> getExtractors()
     {
-        return pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<ContextParametersExtractor>(ConnectContextVariablesExtractorModuleDescriptor.class));
+        return Iterables.concat(Iterables.transform(pluginAccessor.getModules(
+                new ModuleDescriptorOfClassPredicate<ConnectContextParametersResolver>(ConnectContextParameterResolverModuleDescriptor.class))
+                , new Function<ConnectContextParametersResolver, List<ContextParametersExtractor>>()
+        {
+            @Override
+            public List<ContextParametersExtractor> apply(final ConnectContextParametersResolver input)
+            {
+                return input.getExtractors();
+            }
+        }));
     }
 }

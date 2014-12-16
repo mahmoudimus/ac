@@ -41,5 +41,5 @@ public interface ContextParametersExtractor
      * @param context rendering context
      * @return context for Connect add-ons
      */
-    public Map<String, String> extractParameters(Map<String, ? extends Object> context);
+    public Map<String, String> extractParameters(Map<String, Object> context);
 }

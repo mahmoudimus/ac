@@ -5,7 +5,13 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}"/>
     </plugin-info>
 
-    <connect-context-parameters-validator key="test-jira-parameters-validator" class="com.atlassian.plugin.connect.TestJiraContextParametersValidator" />
-    <connect-context-parameters-extractor key="test-jira-parameters-extractor" class="com.atlassian.plugin.connect.TestJiraContextParametersExtractor" />
+    <connect-context-parameters-resolver>
+        <extractors>
+            <extractor class="com.atlassian.plugin.connect.TestJiraContextParametersExtractor"/>
+        </extractors>
+        <validators>
+            <validator class="com.atlassian.plugin.connect.TestJiraContextParametersValidator"/>
+        </validators>
+    </connect-context-parameters-resolver>
 
 </atlassian-plugin>

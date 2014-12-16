@@ -12,7 +12,7 @@ import java.util.Map;
 public final class TestJiraContextParametersExtractor implements ContextParametersExtractor
 {
     @Override
-    public Map<String, String> extractParameters(final Map<String, ? extends Object> context)
+    public Map<String, String> extractParameters(final Map<String, Object> context)
     {
         Object projectObj = context.get("project");
         if (projectObj != null && projectObj instanceof Project)

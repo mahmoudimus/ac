@@ -5,7 +5,9 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.iframe.context.AbstractModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.plugin.iframe.context.module.ConnectContextVariablesValidatorModuleDescriptor;
+import com.atlassian.plugin.connect.plugin.iframe.context.module.ConnectContextParameterResolverModuleDescriptor;
+import com.atlassian.plugin.connect.plugin.iframe.context.module.ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver;
+import com.atlassian.plugin.connect.spi.module.ContextParametersExtractor;
 import com.atlassian.plugin.connect.spi.module.ContextParametersValidator;
 import com.atlassian.plugin.connect.spi.module.PermissionCheck;
 import com.atlassian.plugin.connect.spi.module.PermissionChecks;
@@ -168,21 +170,26 @@ public final class AbstractContextFilterTest
         {
             ContextFilterImplementation filter = contextFilter(permissionChecks(allowed, forbidden));
 
-            when(pluginAccessor.getModules(argThat(predicateThatWillMatch(new ConnectContextVariablesValidatorModuleDescriptor(mock(ModuleFactory.class)))))).thenReturn(
-                    Collections.<ContextParametersValidator<?>>singletonList(new ContextParametersValidator<ApplicationUser>()
-                    {
-                        @Override
-                        public Collection<PermissionCheck<ApplicationUser>> getPermissionChecks()
-                        {
-                            return permissionChecks(allowedByPlugins, forbiddenByPlugins);
-                        }
+            when(pluginAccessor.getModules(argThat(predicateThatWillMatch(new ConnectContextParameterResolverModuleDescriptor(mock(ModuleFactory.class)))))).thenReturn(
+                    Collections.singletonList(new ConnectContextParametersResolver(
+                            Collections.<ContextParametersExtractor>emptyList(),
+                            Collections.<ContextParametersValidator>singletonList(
+                                    new ContextParametersValidator<ApplicationUser>()
+                                    {
+                                        @Override
+                                        public Collection<PermissionCheck<ApplicationUser>> getPermissionChecks()
+                                        {
+                                            return permissionChecks(allowedByPlugins, forbiddenByPlugins);
+                                        }
 
-                        @Override
-                        public Class<ApplicationUser> getUserType()
-                        {
-                            return ApplicationUser.class;
-                        }
-                    })
+                                        @Override
+                                        public Class<ApplicationUser> getUserType()
+                                        {
+                                            return ApplicationUser.class;
+                                        }
+                                    }
+                            )
+                    ))
             );
 
             ModuleContextParameters filtered = filter.filter(contextWithAllParameters(whatToFilter));

@@ -3,8 +3,10 @@ package com.atlassian.plugin.connect.plugin.iframe.webpanel;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.plugin.iframe.context.module.ConnectContextVariablesExtractorModuleDescriptor;
+import com.atlassian.plugin.connect.plugin.iframe.context.module.ConnectContextParameterResolverModuleDescriptor;
+import com.atlassian.plugin.connect.plugin.iframe.context.module.ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver;
 import com.atlassian.plugin.connect.spi.module.ContextParametersExtractor;
+import com.atlassian.plugin.connect.spi.module.ContextParametersValidator;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -61,7 +63,7 @@ public final class PluggableParametersExtractorTest
     public void extractorAddsStuffFromAllThePluginsToTheLocalConnectParameters()
     {
         when(connectModuleContextExtractor.extractParameters(CONTEXT)).thenReturn(LOCAL_PARAMS);
-        when(pluginAccessor.getModules(argThat(predicateThatWillMatch(new ConnectContextVariablesExtractorModuleDescriptor(mock(ModuleFactory.class)))))).thenReturn(ImmutableList.of(
+        when(pluginAccessor.getModules(argThat(predicateThatWillMatch(new ConnectContextParameterResolverModuleDescriptor(mock(ModuleFactory.class)))))).thenReturn(ImmutableList.of(
                 extractorReturning(ImmutableMap.of("q", "q")), extractorReturning(ImmutableMap.of("r", "r", "t", "t"))));
 
         assertThat(extractor.extractParameters(CONTEXT), equalTo(
@@ -73,26 +75,37 @@ public final class PluggableParametersExtractorTest
     public void extractorKeepsCalmsAndCarriesOnWhenThereIsAnExceptionInAnyPlugin()
     {
         when(connectModuleContextExtractor.extractParameters(CONTEXT)).thenReturn(LOCAL_PARAMS);
-        when(pluginAccessor.getModules(argThat(predicateThatWillMatch(new ConnectContextVariablesExtractorModuleDescriptor(mock(ModuleFactory.class)))))).thenReturn(Collections.<ContextParametersExtractor>singletonList(new ContextParametersExtractor() {
-            @Override
-            public Map<String, String> extractParameters(final Map<String, ? extends Object> context)
-            {
-                throw new RuntimeException("Geronimo!");
-            }
-        }));
+        when(pluginAccessor.getModules(argThat(predicateThatWillMatch(new ConnectContextParameterResolverModuleDescriptor(mock(ModuleFactory.class)))))).
+                thenReturn(Collections.singletonList(
+                        new ConnectContextParametersResolver(
+                                ImmutableList.<ContextParametersExtractor>of(new ContextParametersExtractor()
+                                {
+                                    @Override
+                                    public Map<String, String> extractParameters(final Map<String, Object> context)
+                                    {
+                                        throw new RuntimeException("Geronimo!");
+                                    }
+                                }),
+                                Collections.<ContextParametersValidator>emptyList())));
 
         assertThat(extractor.extractParameters(CONTEXT), equalTo(LOCAL_PARAMS));
     }
 
-    private ContextParametersExtractor extractorReturning(final ImmutableMap<String, String> parameters)
+    private ConnectContextParametersResolver extractorReturning(final ImmutableMap<String, String> parameters)
     {
-        return new ContextParametersExtractor() {
-            @Override
-            public Map<String, String> extractParameters(final Map<String, ? extends Object> context)
-            {
-                return parameters;
-            }
-        };
+        return new ConnectContextParametersResolver(
+                ImmutableList.<ContextParametersExtractor>of(
+                        new ContextParametersExtractor()
+                        {
+                            @Override
+                            public Map<String, String> extractParameters(final Map<String, Object> context)
+                            {
+                                return parameters;
+                            }
+                        }
+                ),
+                Collections.<ContextParametersValidator>emptyList()
+        );
     }
 
     private static ModuleContextParameters moduleParamsFromMap(Map<String, String> map)

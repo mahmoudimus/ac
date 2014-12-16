@@ -3,7 +3,8 @@ package com.atlassian.plugin.connect.plugin.iframe.context;
 import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Options;
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.plugin.iframe.context.module.ConnectContextVariablesValidatorModuleDescriptor;
+import com.atlassian.plugin.connect.plugin.iframe.context.module.ConnectContextParameterResolverModuleDescriptor;
+import com.atlassian.plugin.connect.plugin.iframe.context.module.ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver;
 import com.atlassian.plugin.connect.spi.module.ContextParametersValidator;
 import com.atlassian.plugin.connect.spi.module.PermissionCheck;
 import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
@@ -17,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.List;
 import javax.annotation.Nullable;
 
 import static com.atlassian.fugue.Option.none;
@@ -115,11 +117,19 @@ public abstract class AbstractModuleContextFilter<T> implements ModuleContextFil
 
     private Iterable<ContextParametersValidator<T>> getValidatorsFromPlugins()
     {
-        Collection<ContextParametersValidator<?>> validators = pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<ContextParametersValidator<?>>(ConnectContextVariablesValidatorModuleDescriptor.class));
-        return Options.flatten(Iterables.transform(validators, new Function<ContextParametersValidator<?>, Option<ContextParametersValidator<T>>>()
+        Iterable<ContextParametersValidator> validators = Iterables.concat(Iterables.transform(pluginAccessor.getModules(
+                        new ModuleDescriptorOfClassPredicate<ConnectContextParametersResolver>(ConnectContextParameterResolverModuleDescriptor.class)),
+                new Function<ConnectContextParametersResolver, List<ContextParametersValidator>>() {
+                    @Override
+                    public List<ContextParametersValidator> apply(final ConnectContextParametersResolver input)
+                    {
+                        return input.getValidators();
+                    }
+                }));
+        return Options.flatten(Iterables.transform(validators, new Function<ContextParametersValidator, Option<ContextParametersValidator<T>>>()
         {
             @Override
-            public Option<ContextParametersValidator<T>> apply(final ContextParametersValidator<?> contextParametersValidator)
+            public Option<ContextParametersValidator<T>> apply(final ContextParametersValidator contextParametersValidator)
             {
                 return tryCast(contextParametersValidator);
             }

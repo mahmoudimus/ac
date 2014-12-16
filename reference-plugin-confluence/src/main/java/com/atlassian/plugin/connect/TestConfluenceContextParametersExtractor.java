@@ -12,7 +12,7 @@ import java.util.Map;
 public final class TestConfluenceContextParametersExtractor implements ContextParametersExtractor
 {
     @Override
-    public Map<String, String> extractParameters(final Map<String, ? extends Object> context)
+    public Map<String, String> extractParameters(final Map<String, Object> context)
     {
         Object spaceObj = context.get("space");
         if (spaceObj != null && spaceObj instanceof Space)
