@@ -125,25 +125,6 @@ For example:
         "modules": {} // etc
     }
 
-
-<a name='installation'></a>
-### Installation handshake
-
-When the add-on is installed, the Atlassian application invokes a callback endpoint exposed by the add-on. 
-The request contains a payload with important tenant information that you will need to store in your add-on in 
-order to sign and verify future requests. The payload contains the following attributes:
-
-    {
-        "key": "atlassian-connect-addon",
-        "clientKey": "1234567890",
-        "publicKey": "MIGf....ZRWzwIDAQAB",
-        "sharedSecret": "1ad6f705-fe0b-4111-9551-7ce5d81d2884",
-        "baseUrl": "http://localhost:2990/jira",
-        "productType": "jira",
-        "eventType": "installed"
-    }
-
-
 <div class="aui-message warning">
     <p class="title">
         <span class="aui-icon icon-warning"></span>
@@ -153,41 +134,14 @@ order to sign and verify future requests. The payload contains the following att
     the operation will fail and the installation will be marked as incomplete.
 </div>
 
-<table class='aui'>
-    <thead>
-        <tr>
-            <th>Attribute</th>
-            <th>Description</th>
-        </tr>
-    </thead>
-    <tr>
-        <td>`key`</td>
-        <td>Add-on key that was installed into the Atlassian Product, as it appears in your add-on's descriptor.</td>
-    </tr>
-    <tr>
-        <td>`clientKey`</td>
-        <td>Identifying key for the Atlassian product instance that the add-on was installed into. This will never change for a given
-        instance, and is unique across all Atlassian product tenants. This value should be used to key tenant details
-        in your add-on.</td>
-    </tr>
-    <tr>
-        <td>`publicKey`</td>
-        <td>This is the public key for this Atlassian product instance. You may verify that this `baseUrl` 
-			uses this `publicKey` at the standard URL `<host baseUrl>/plugins/servlet/oauth/consumer-info`.</td>
-    </tr>
-    <tr>
-        <td>`sharedSecret`</td>
-        <td>Use this string to sign outgoing JWT tokens and validate incoming JWT tokens.</td>
-    </tr>
-    <tr>
-        <td>`baseUrl`</td>
-        <td>URL prefix for this Atlassian product instance. All of its REST endpoints begin with this `baseUrl`.</td>
-    </tr>
-    <tr>
-        <td>`productType`</td>
-        <td>Identifies the category of Atlassian product, e.g. `jira` or `confluence`.</td>
-    </tr>
-</table>
+<a name='installation'></a>
+### Installation data
+
+When the add-on is installed, the Atlassian application invokes a callback endpoint exposed by the add-on. 
+The request contains a payload with important tenant information that you will need to store in your add-on in 
+order to sign and verify future requests.
+
+For details on the contents of the payload, please see the [lifecycle attribute](../modules/lifecycle.html) documentation.
 
 
 ### Understanding JWT

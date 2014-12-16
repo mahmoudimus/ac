@@ -11,12 +11,11 @@ import com.google.gson.annotations.SerializedName;
  * Dynamic Content Macros can include style sheets and javascript, allowing the development of rich interactive
  * applications.  When your macro is rendered in a web browser this can provide a modern, interactive web experience.
  *
- * When your macro is rendered to static formats such as PDF, word or html export, these interactive modes are
+ * When your macro is rendered to static formats such as PDF, or word, these interactive modes are
  * often undesirable, or technically impossible.
  *
  * Macro Render Modes allow you to map a render mode to a static content macro.  This allows you to
- * provide an implementation of your macro for these formats, that will render safely to static formats such as PDF
- * or word.
+ * provide an implementation of your macro for these formats, that will render safely to static formats.
  *
  *#### Example
  *
@@ -42,21 +41,7 @@ public class MacroRenderModesBean extends BaseModuleBean
      * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#RENDER_MODE_EXAMPLE_PDF}
      */
     private EmbeddedStaticContentMacroBean pdf;
-    /**
-     * This render mode will be used when your macro is being rendered during "export to html".
-     * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#RENDER_MODE_EXAMPLE_HTML_EXPORT}
-     */
-    private EmbeddedStaticContentMacroBean htmlExport;
-    /**
-     * This render mode will be used when your macro is being rendered in an rss feed.
-     * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#RENDER_MODE_EXAMPLE_FEED}
-     */
-    private EmbeddedStaticContentMacroBean feed;
-    /**
-     * This render mode will be used when your macro is being rendered in an email.
-     * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#RENDER_MODE_EXAMPLE_EMAIL}
-     */
-    private EmbeddedStaticContentMacroBean email;
+
     /**
      * This render mode will be used for any static render mode that is not mapped directly.  This is a catch
      * all mode which allows you to set a default static fallback for all render modes.
@@ -97,18 +82,6 @@ public class MacroRenderModesBean extends BaseModuleBean
         else if (outputType.toLowerCase().equals(OUTPUT_PDF))
         {
             return fallbackFrom(pdf);
-        }
-        else if (outputType.toLowerCase().equals(OUTPUT_HTML_EXPORT))
-        {
-            return fallbackFrom(htmlExport);
-        }
-        else if (outputType.toLowerCase().equals(OUTPUT_FEED))
-        {
-            return fallbackFrom(feed);
-        }
-        else if (outputType.toLowerCase().equals(OUTPUT_EMAIL))
-        {
-            return fallbackFrom(email);
         }
         return null;
     }
