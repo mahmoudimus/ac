@@ -130,7 +130,7 @@ public abstract class AbstractModuleContextFilter<T> implements ModuleContextFil
     {
         if (unidentifiedValidator.getUserType().equals(userType))
         {
-            @SuppressWarnings ("unchecked") // this supression is safe, because above we checked that user types match
+            @SuppressWarnings ("unchecked") // this suppression is safe, because above we checked that user types match
                     ContextParametersValidator<T> castedModule = (ContextParametersValidator<T>) unidentifiedValidator;
             return some(castedModule);
         }
@@ -148,8 +148,8 @@ public abstract class AbstractModuleContextFilter<T> implements ModuleContextFil
     protected abstract Iterable<PermissionCheck<T>> getPermissionChecks();
 
     /**
-     * This is a wrappeer for permission checks from plug-ins.
-     * If anything blows up we just keep calm, catch an exception and carry on.
+     * This is a wrapper for permission checks from plug-ins.
+     * If anything blows up we just keep calm, catch the exception and carry on.
      */
     private static class SafePermissionCheckFromPlugIn<T> implements PermissionCheck<T>
     {
