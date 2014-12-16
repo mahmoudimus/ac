@@ -2,8 +2,6 @@ package com.atlassian.plugin.connect.spi.module;
 
 /**
  * Permission check for a single context variable.
- *
- * @since 1.1.16
  */
 public interface PermissionCheck<User>
 {

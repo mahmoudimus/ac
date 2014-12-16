@@ -10,8 +10,6 @@ import org.slf4j.LoggerFactory;
  * <p>
  *     It also contains some useful abstract implementations.
  * </p>
- *
- * @since 1.1.16
  */
 @PublicApi
 public final class PermissionChecks
