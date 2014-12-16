@@ -1,4 +1,4 @@
-package it.com.atlassian.plugin.connect.provider;
+package it.com.atlassian.plugin.connect.provider.jira;
 
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
