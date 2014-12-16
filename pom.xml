@@ -704,7 +704,7 @@
         <atlassian.plugins.api.version>2.10</atlassian.plugins.api.version>
         <atlassian.rest.version>2.3.0</atlassian.rest.version>
         <atlassian.sal.version>2.10.0</atlassian.sal.version>
-        <atlassian.selenium.version>2.2-rc3</atlassian.selenium.version>
+        <atlassian.selenium.version>2.3-m6</atlassian.selenium.version>
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>
         <atlassian.jira.projects.plugin.version>1.4.0-D20140829T122309</atlassian.jira.projects.plugin.version>
 
