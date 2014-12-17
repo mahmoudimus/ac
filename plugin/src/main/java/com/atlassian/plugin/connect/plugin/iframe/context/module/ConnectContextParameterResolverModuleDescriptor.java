@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.plugin.iframe.context.module;
 
-import com.atlassian.fugue.Option;
-import com.atlassian.fugue.Options;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.spi.module.ContextParametersExtractor;
@@ -18,9 +16,39 @@ import org.dom4j.Element;
 
 import java.util.List;
 
-import static com.atlassian.fugue.Option.none;
-import static com.atlassian.fugue.Option.some;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.transform;
 
+/**
+ * Descriptor for context parameter extractors and validators.
+ *
+ * <p>
+ *     This descriptor expects XML of the form:
+ *     <pre>{@code
+ *
+ *        <root>
+ *            <extractors>
+ *               <extractor class="..."/>
+ *               <extractor class="..."/>
+ *               ...
+ *            </extractors>
+ *            <validators>
+ *               <validator class="..."/>
+ *               <validator class="..."/>
+ *               ...
+ *            </validators>
+ *        <root>
+ *
+ *     }</pre>
+ * </p>
+ *
+ * <p>
+ *     Extractors need to be of type {@link com.atlassian.plugin.connect.spi.module.ContextParametersExtractor},
+ *     and validators of type {@link com.atlassian.plugin.connect.spi.module.ContextParametersValidator}.
+ *     The result is an object encapsulating both of the lists: extractors and validators.
+ * </p>
+ *
+ */
 public final class ConnectContextParameterResolverModuleDescriptor extends AbstractModuleDescriptor<ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver>
 {
 
@@ -66,22 +94,23 @@ public final class ConnectContextParameterResolverModuleDescriptor extends Abstr
     private static Iterable<String> loadClassNames(final Element root, final String containerName, final String elementName)
     {
         Element container = subElement(root, containerName);
-        return Options.flatten(Iterables.transform(subElements(container), new Function<Element, Option<String>>()
+
+        return transform(filter(subElements(container), new Predicate<Element>()
         {
             @Override
-            public Option<String> apply(final Element input)
+            public boolean apply(final Element input)
             {
-                Attribute aClass = input.attribute("class");
-                if (input.getName().equals(elementName) && aClass != null && aClass.getValue() != null)
-                {
-                    return some(aClass.getValue());
-                }
-                else
-                {
-                    return none();
-                }
+                Attribute classAttribute = input.attribute("class");
+                return input.getName().equals(elementName) && classAttribute != null && classAttribute.getValue() != null;
             }
-        }));
+        }), new Function<Element, String>()
+        {
+            @Override
+            public String apply(final Element input)
+            {
+                return input.attribute("class").getValue();
+            }
+        });
     }
 
     private static Element subElement(Element root, final String name)
@@ -123,7 +152,7 @@ public final class ConnectContextParameterResolverModuleDescriptor extends Abstr
 
     private <T> Iterable<T> loadClasses(final Iterable<String> classNames, final Class<T> type)
     {
-        return Iterables.transform(classNames, new Function<String, T>()
+        return transform(classNames, new Function<String, T>()
         {
             @Override
             public T apply(final String input)
