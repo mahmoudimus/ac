@@ -34,7 +34,8 @@ public class AddOnKeyHelper
     private final String ourConsumerKey;
 
     @Autowired
-    public AddOnKeyHelper(final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, ConsumerService consumerService) {
+    public AddOnKeyHelper(final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, ConsumerService consumerService)
+    {
         this.jsonConnectAddOnIdentifierService = jsonConnectAddOnIdentifierService;
         this.ourConsumerKey = consumerService.getConsumer().getKey();
     }
@@ -89,7 +90,7 @@ public class AddOnKeyHelper
      *         behalf of an add-on running in a sandboxed iframe; see AP.request(...) in the host-side AP js
      */
     @Nullable
-    public static String extractXdmRequestKey(HttpServletRequest req)
+    private static String extractXdmRequestKey(HttpServletRequest req)
     {
         return req.getHeader(AP_REQUEST_HEADER);
     }

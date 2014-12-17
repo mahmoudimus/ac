@@ -1,13 +1,8 @@
 package com.atlassian.plugin.connect.test.plugin.scopes;
 
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.jira.security.auth.trustedapps.KeyFactory;
-import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.core.Clock;
-import com.atlassian.oauth.Consumer;
-import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
-import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnKeyHelper;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManager;
 import com.atlassian.plugin.connect.plugin.scopes.ApiScopingFilter;
@@ -20,21 +15,20 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.IOException;
+import java.util.Date;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Date;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -47,20 +41,14 @@ import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
-@Ignore
 public class ApiScopingFilterTest
 {
-    private static final String THIS_ADD_ON_KEY = "ac";
     private static final String ADD_ON_KEY = "my-add-on";
 
     @Mock
     private AddOnScopeManager addOnScopeManager;
     @Mock
     private UserManager userManager;
-    //@Mock
-    //ConsumerService consumerService;
-    //@Mock
-    //private JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
     @Mock
     private HttpServletRequest request;
     @Mock
@@ -82,54 +70,24 @@ public class ApiScopingFilterTest
     {
         when(request.getRequestURI()).thenReturn("/confluence/rest/xyz");
         when(request.getContextPath()).thenReturn("/confluence");
-
-        //when(addOnKeyHelper.)
-
         when(userManager.getRemoteUserKey(any(HttpServletRequest.class))).thenReturn(userKey);
-
-        //when(consumerService.getConsumer()).thenReturn(Consumer.key(THIS_ADD_ON_KEY).name("whatever").signatureMethod(Consumer.SignatureMethod.HMAC_SHA1).publicKey(new KeyFactory.InvalidPublicKey(new Exception())).build());
-
         when(clock.now()).thenReturn(new Date(0));
-        //consumerService, jsonConnectAddOnIdentifierService
+
         apiScopingFilter = new ApiScopingFilter(addOnScopeManager, userManager, eventPublisher, addOnKeyHelper, clock);
     }
 
     @Test
-    public void testScopeIsCheckedForNonXDMRequests() throws Exception
+    public void testScopeIsCheckedForAddonRequestWithKey() throws Exception
     {
-        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
-
+        whenIsAddonRequestWithAddonKey();
         apiScopingFilter.doFilter(request, response, chain);
         verify(addOnScopeManager).isRequestInApiScope(any(HttpServletRequest.class), eq(ADD_ON_KEY), eq(userKey));
-    }
-
-    @Test
-    public void testScopeIsCheckedForJSONModuleXDMRequests() throws Exception
-    {
-        when(request.getHeader(AddOnKeyHelper.AP_REQUEST_HEADER)).thenReturn(ADD_ON_KEY);
-        when(addOnKeyHelper.getAddOnKeyForScopeCheck(request)).thenReturn(ADD_ON_KEY);
-        //when(jsonConnectAddOnIdentifierService.isConnectAddOn(ADD_ON_KEY)).thenReturn(true);
-
-        apiScopingFilter.doFilter(request, response, chain);
-        verify(addOnScopeManager).isRequestInApiScope(any(HttpServletRequest.class), eq(ADD_ON_KEY), eq(userKey));
-    }
-
-    @Test
-    public void testScopeIsNotCheckedForXMLModuleXDMRequests() throws Exception
-    {
-        when(request.getHeader(AddOnKeyHelper.AP_REQUEST_HEADER)).thenReturn(ADD_ON_KEY);
-        when(addOnKeyHelper.getAddOnKeyForScopeCheck(request)).thenReturn(ADD_ON_KEY);
-        //when(jsonConnectAddOnIdentifierService.isConnectAddOn(ADD_ON_KEY)).thenReturn(false);
-
-        apiScopingFilter.doFilter(request, response, chain);
-        verify(addOnScopeManager, never()).isRequestInApiScope(any(HttpServletRequest.class), eq(ADD_ON_KEY), eq(userKey));
     }
 
     @Test
     public void testScopeIsNotCheckedForNonAddOnRequests() throws Exception
     {
-        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(THIS_ADD_ON_KEY);
-
+        when(addOnKeyHelper.isAddOnRequest(request)).thenReturn(false);
         apiScopingFilter.doFilter(request, response, chain);
         verify(addOnScopeManager, never()).isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class));
     }
@@ -137,14 +95,17 @@ public class ApiScopingFilterTest
     @Test
     public void testScopeIsNotCheckedForMissingAddOnKey() throws Exception
     {
+        when(addOnKeyHelper.isAddOnRequest(request)).thenReturn(true);
+        when(addOnKeyHelper.getAddOnKeyForScopeCheck(request)).thenReturn(null);
         apiScopingFilter.doFilter(request, response, chain);
         verify(addOnScopeManager, never()).isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class));
     }
 
+
     @Test
     public void testDeniedApiAccessPublishesDeniedEvent() throws Exception
     {
-        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
+        whenIsAddonRequestWithAddonKey();
         when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(false);
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher).publish(argThat(isScopeRequestDeniedEvent()));
@@ -153,7 +114,6 @@ public class ApiScopingFilterTest
     @Test
     public void testDeniedApiAccessDoesntPublishAllowedEvent() throws Exception
     {
-        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
         when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(false);
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher, never()).publish(argThat(isScopeRequestAllowedEvent()));
@@ -162,7 +122,7 @@ public class ApiScopingFilterTest
     @Test
     public void testAllowedApiAccessPublishesEvent() throws Exception
     {
-        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
+        whenIsAddonRequestWithAddonKey();
         when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher).publish(argThat(isScopeRequestAllowedEvent()));
@@ -171,7 +131,7 @@ public class ApiScopingFilterTest
     @Test
     public void testAllowedApiAccessDoesntPublishDeniedEvent() throws Exception
     {
-        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
+        whenIsAddonRequestWithAddonKey();
         when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
         apiScopingFilter.doFilter(request, response, chain);
         verify(eventPublisher, never()).publish(argThat(isScopeRequestDeniedEvent()));
@@ -180,7 +140,7 @@ public class ApiScopingFilterTest
     @Test
     public void testURIsAreTrimmedInDeniedEvents() throws IOException, ServletException
     {
-        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
+        whenIsAddonRequestWithAddonKey();
         when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(false);
         when(request.getRequestURI()).thenReturn("http://localhost/jira/rest/atlassian-connect/1/foo/private-stuff");
         apiScopingFilter.doFilter(request, response, chain);
@@ -190,7 +150,7 @@ public class ApiScopingFilterTest
     @Test 
     public void testURIsAreTrimmedInAllowedEvents() throws IOException, ServletException
     {
-        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
+        whenIsAddonRequestWithAddonKey();
         when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
         when(request.getRequestURI()).thenReturn("http://localhost/jira/rest/atlassian-connect/1/foo/private-stuff");
         apiScopingFilter.doFilter(request, response, chain);
@@ -200,7 +160,7 @@ public class ApiScopingFilterTest
     @Test
     public void testAllowedEventsADuration() throws IOException, ServletException
     {
-        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
+        whenIsAddonRequestWithAddonKey();
         when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
         Date start = new Date(0);
         Date end = new Date(101);
@@ -212,7 +172,7 @@ public class ApiScopingFilterTest
     @Test
     public void testAllowedEventsHaveStatusCode() throws IOException, ServletException
     {
-        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
+        whenIsAddonRequestWithAddonKey();
         when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
         FilterChain wrappedChain = new FilterChainWrapper();
         apiScopingFilter.doFilter(request, response, wrappedChain);
@@ -232,7 +192,7 @@ public class ApiScopingFilterTest
     @Test(expected=ServletException.class)
     public void testUnhandledErrorsInFilterChainCreateEvents() throws IOException, ServletException
     {
-        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
+        whenIsAddonRequestWithAddonKey();
         when(addOnScopeManager.isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class))).thenReturn(true);
         doThrow(new IOException("Something went wrong")).when(chain).doFilter(any(HttpServletRequest.class),
                                                                               any(HttpServletResponse.class));
@@ -328,5 +288,11 @@ public class ApiScopingFilterTest
                 return argument instanceof ScopedRequestDeniedEvent;
             }
         };
+    }
+
+    private void whenIsAddonRequestWithAddonKey()
+    {
+        when(addOnKeyHelper.isAddOnRequest(request)).thenReturn(true);
+        when(addOnKeyHelper.getAddOnKeyForScopeCheck(request)).thenReturn(ADD_ON_KEY);
     }
 }
