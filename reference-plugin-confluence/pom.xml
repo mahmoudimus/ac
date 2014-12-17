@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>connect-reference-plugin-confluence</artifactId>
-    <name>Atlassian Connect Reference Plugin in Confluence</name>
+    <name>Atlassian Connect - Reference Plugin in Confluence</name>
     <packaging>atlassian-plugin</packaging>
 
     <dependencies>
