@@ -4,7 +4,7 @@
 
         _AP.extend(function () {
             return {
-                init: function (state, xdm) {
+                init: function workflowInit(state, xdm) {
                     if(!workflowPostFunction.isOnWorkflowPostFunctionPage()){
                         return;
                     }

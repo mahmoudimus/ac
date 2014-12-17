@@ -5,7 +5,7 @@
 
     extend(function (config) {
         return {
-            init: function (state) {
+            init: function userInit(state) {
                 connectModuleData = state;
             },
             internals: {
