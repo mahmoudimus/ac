@@ -15,10 +15,9 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectDocumentationBeanFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
-import com.atlassian.plugin.connect.plugin.capabilities.module.ImagePlaceholderMacro;
+import com.atlassian.plugin.connect.plugin.capabilities.module.macro.ImagePlaceholderMacro;
+import com.atlassian.plugin.connect.plugin.capabilities.module.macro.PageMacro;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
-import com.atlassian.plugin.connect.plugin.module.confluence.FixedXhtmlMacroModuleDescriptor;
-import com.atlassian.plugin.connect.plugin.module.confluence.PageMacro;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.uri.Uri;
 import com.google.common.base.Function;
@@ -111,29 +110,6 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         {
             element.addElement("description").addCDATA(StringEscapeUtils.escapeHtml(bean.getDescription().getValue()));
         }
-
-//        See ACDEV-1400 AC-1210
-//        if (bean.hasRenderModes())
-//        {
-//            for (MacroRenderModeBean renderMode : bean.getRenderModes())
-//            {
-//                if (renderMode.getRenderModeType() == MacroRenderModeType.mobile)
-//                {
-//                    element.addElement("device-type").addText("mobile");
-//                }
-//                else
-//                {
-//                    // help vendors find errors in their descriptors
-//                    throw new PluginInstallException("Unsupported render type '"
-//                            + renderMode.getRenderModeType()
-//                            + "' - "
-//                            + addon.getName()
-//                            + "' (" + addon.getKey() + ")");
-//
-//                }
-//            }
-//        }
-
         if (bean.hasDocumentation())
         {
             element.setAttribute("documentation-url", bean.getDocumentation().getUrl());

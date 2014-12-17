@@ -44,44 +44,11 @@ public final class Dom4jUtils
         return child.getTextTrim();
     }
 
-    public static URI getRequiredUriAttribute(Element e, String name)
-    {
-        String value = getRequiredAttribute(e, name);
-        return URI.create(value);
-    }
-
-    public static URI getOptionalUriAttribute(Element e, String name)
-    {
-        String value = e.attributeValue(name);
-        return value != null ? URI.create(value) : null;
-    }
-
     public static String getOptionalAttribute(Element e, String name, Object defaultValue)
     {
         String value = e.attributeValue(name);
         return value != null ? value :
                 defaultValue != null ? defaultValue.toString() : null;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static List<Node> content(Document schema)
-    {
-        return schema.content();
-    }
-
-    public static Document parseDocument(URL xmlUrl)
-    {
-        Document source;
-        try
-        {
-            source = createSecureSaxReader().read(xmlUrl);
-        }
-        catch (DocumentException e)
-        {
-            throw new IllegalArgumentException("Unable to parse XML", e);
-        }
-
-        return source;
     }
 
     public static String printNode(Node document)

@@ -8,6 +8,7 @@ import com.atlassian.confluence.pageobjects.component.editor.EditorContent;
 import com.atlassian.confluence.pageobjects.component.editor.toolbars.InsertDropdownMenu;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
+import com.atlassian.confluence.pageobjects.page.content.EditorPage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
@@ -23,21 +24,22 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWi
 import it.util.TestUser;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import redstone.xmlrpc.XmlRpcFault;
-
-import java.net.MalformedURLException;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
 import static java.lang.String.format;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -110,6 +112,47 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     protected static final String HIDDEN_MACRO_KEY = "hidden-macro";
 
     protected ViewPage savedPage;
+
+    protected CreatePage editorPage = null;
+
+    // clean up so that we don't get "org.openqa.selenium.UnhandledAlertException: unexpected alert open" in tests
+    @Before
+    @After
+    public void cleanUpAroundEachTest()
+    {
+        // dismiss any alerts, because they would stop us from clicking on anything else on the screen
+        connectPageOperations.dismissAnyAlerts();
+        connectPageOperations.dismissAnyAuiDialog();
+        connectPageOperations.dismissClosableAuiMessage();
+        connectPageOperations.dismissConfluenceDiscardDraftsPrompt();
+
+        if (null != editorPage)
+        {
+            try
+            {
+                editorPage.cancel();
+                editorPage = null;
+            }
+            catch (Throwable t)
+            {
+                logger.error("Failed to cancel editor page due to the following Throwable. This will most likely result in 'unexpected alert open' exceptions in subsequent tests.", t);
+            }
+        }
+
+        if (null != savedPage)
+        {
+            // Don't fail a test because cleanup failed
+            try
+            {
+                rpc.removePage(savedPage.getPageId());
+                savedPage = null;
+            }
+            catch (Exception e)
+            {
+                logger.error(e.getMessage());
+            }
+        }
+    }
 
     protected static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createImagePlaceholderMacro(T builder)
     {
@@ -291,56 +334,31 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         product.getPageBinder().override(InsertDropdownMenu.class, ConfluenceInsertMenu.class);
     }
 
-    @After
-    public void cleanup()
-    {
-        if (null != savedPage)
-        {
-            // Don't fail a test because cleanup failed
-            try
-            {
-                rpc.removePage(savedPage.getPageId());
-            }
-            catch (Exception e)
-            {
-                logger.error(e.getMessage());
-            }
-        }
-    }
-
     @Test
     public void testMacroIsListed() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, SIMPLE_MACRO_NAME);
 
         try
         {
-            final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, SIMPLE_MACRO_NAME);
-
-            try
-            {
-                assertThat(macroBrowserAndEditor.macroForm, is(not(nullValue())));
-            }
-            finally
-            {
-                macroBrowserAndEditor.browserDialog.clickCancel();
-            }
+            assertThat(macroBrowserAndEditor.macroForm, is(not(nullValue())));
         }
         finally
         {
-            editorPage.cancel();
+            macroBrowserAndEditor.browserDialog.clickCancel();
         }
     }
 
     @Test
     public void testParameterTypes() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, ALL_PARAMETER_TYPES_MACRO_NAME);
-        MacroForm macroForm = macroBrowserAndEditor.macroForm;
 
         try
         {
+            MacroForm macroForm = macroBrowserAndEditor.macroForm;
             assertThat(macroForm.hasField("attachment").byDefaultTimeout(), is(true));
             assertThat(macroForm.hasField("boolean").byDefaultTimeout(), is(true));
             assertThat(macroForm.hasField("content").byDefaultTimeout(), is(true));
@@ -352,14 +370,13 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         finally
         {
             macroBrowserAndEditor.browserDialog.clickCancel();
-            editorPage.cancel();
         }
     }
 
     @Test
     public void testParameterLabel() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Parameter Page"));
         final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, PARAMETER_MACRO_NAME);
 
@@ -373,189 +390,134 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         finally
         {
             macroBrowserAndEditor.browserDialog.clickCancel();
-            editorPage.cancel();
         }
     }
 
     @Test
     public void testFeaturedMacro() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         final Editor editor = editorPage.getEditor();
         enableMacrosDropdown(editor);
         ConfluenceInsertMenu insertMenu = (ConfluenceInsertMenu) editor.openInsertMenu();
-
-        try
-        {
-            assertThat(insertMenu.hasEntryWithKey(FEATURED_MACRO_KEY), is(true));
-        }
-        finally
-        {
-            editor.clickCancel();
-        }
+        assertThat(insertMenu.hasEntryWithKey(FEATURED_MACRO_KEY), is(true));
     }
 
     @Test
     public void testImagePlaceholder() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Image Placeholder Macro"));
-
         selectMacroAndSave(editorPage, IMAGE_PLACEHOLDER_MACRO_NAME);
+        ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
+        String url = editorContent.getImagePlaceholderUrl();
 
-        try
-        {
-            ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
-            String url = editorContent.getImagePlaceholderUrl();
-
-            assertThat(url, is(getAddonBaseUrl() + "/images/placeholder.png"));
-        }
-        finally
-        {
-            editorPage.cancel();
-        }
+        assertThat(url, is(getAddonBaseUrl() + "/images/placeholder.png"));
     }
 
     @Test
     public void testMacroEditorShowsAddOnContent() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
 
-        try
+        selectMacro(editorPage, EDITOR_MACRO_NAME, new Runnable()
         {
-            selectMacro(editorPage, EDITOR_MACRO_NAME, new Runnable()
+            @Override
+            public void run()
             {
-                @Override
-                public void run()
-                {
-                    RemotePluginDialog dialog = null;
+                RemotePluginDialog dialog = null;
 
-                    try
+                try
+                {
+                    dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
+                    String content = dialog.getValueById("description");
+                    assertThat(content, is("Select from:"));
+                }
+                finally
+                {
+                    if (dialog != null)
                     {
-                        dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
-                        String content = dialog.getValueById("description");
-                        assertThat(content, is("Select from:"));
-                    }
-                    finally
-                    {
-                        if (dialog != null)
-                        {
-                            dialog.cancel();
-                        }
+                        dialog.cancel();
                     }
                 }
-            });
-        }
-        finally
-        {
-            editorPage.cancel();
-        }
+            }
+        });
     }
 
     @Test
     public void testMacroEditorCancels() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-
-        try
-        {
-            selectMacro(editorPage, EDITOR_MACRO_NAME, macroDialogCanceller(EDITOR_MACRO_KEY));
-        }
-        finally
-        {
-            editorPage.cancel();
-        }
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        selectMacro(editorPage, EDITOR_MACRO_NAME, macroDialogCanceller(EDITOR_MACRO_KEY));
     }
 
     @Test
     public void testMacroEditorCustomTitle() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
 
-        try
+        selectMacro(editorPage, CUSTOM_TITLE_EDITOR_MACRO_NAME, new Runnable()
         {
-            selectMacro(editorPage, CUSTOM_TITLE_EDITOR_MACRO_NAME, new Runnable()
+            @Override
+            public void run()
             {
-                @Override
-                public void run()
-                {
-                    RemotePluginDialog dialog = null;
+                RemotePluginDialog dialog = null;
 
-                    try
+                try
+                {
+                    dialog = connectPageOperations.findDialog(CUSTOM_TITLE_EDITOR_MACRO_KEY);
+                    assertThat(dialog.getTitle(), is(CUSTOM_TITLE));
+                }
+                finally
+                {
+                    if (dialog != null)
                     {
-                        dialog = connectPageOperations.findDialog(CUSTOM_TITLE_EDITOR_MACRO_KEY);
-                        assertThat(dialog.getTitle(), is(CUSTOM_TITLE));
-                    }
-                    finally
-                    {
-                        if (dialog != null)
-                        {
-                            dialog.cancel();
-                        }
+                        dialog.cancel();
                     }
                 }
-            });
-        }
-        finally
-        {
-            editorPage.cancel();
-        }
+            }
+        });
     }
 
     @Test
     public void testMacroEditorDefaultTitle() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
 
-        try
+        selectMacro(editorPage, EDITOR_MACRO_NAME, new Runnable()
         {
-            selectMacro(editorPage, EDITOR_MACRO_NAME, new Runnable()
+            @Override
+            public void run()
             {
-                @Override
-                public void run()
-                {
-                    RemotePluginDialog dialog = null;
+                RemotePluginDialog dialog = null;
 
-                    try
+                try
+                {
+                    dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
+                    assertThat(dialog.getTitle(), containsString(EDITOR_MACRO_NAME));
+                }
+                finally
+                {
+                    if (dialog != null)
                     {
-                        dialog = connectPageOperations.findDialog(EDITOR_MACRO_KEY);
-                        assertThat(dialog.getTitle(), containsString(EDITOR_MACRO_NAME));
-                    }
-                    finally
-                    {
-                        if (dialog != null)
-                        {
-                            dialog.cancel();
-                        }
+                        dialog.cancel();
                     }
                 }
-            });
-        }
-        finally
-        {
-            editorPage.cancel();
-        }
+            }
+        });
     }
 
     @Test
     public void testMacroEditorSubmits() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-
-        try
-        {
-            selectMacro(editorPage, EDITOR_MACRO_NAME, macroDialogSubmitter(EDITOR_MACRO_KEY));
-        }
-        finally
-        {
-            editorPage.cancel();
-        }
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        selectMacro(editorPage, EDITOR_MACRO_NAME, macroDialogSubmitter(EDITOR_MACRO_KEY));
     }
 
     @Test
     public void testHiddenMacro() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, HIDDEN_MACRO_NAME);
 
         try
@@ -565,18 +527,43 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         finally
         {
             macroBrowserAndEditor.browserDialog.clickCancel();
-            editorPage.cancel();
         }
     }
 
-    protected void addSimpleMacroToComment() throws MalformedURLException, XmlRpcFault
+    protected void addSimpleMacroToComment() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-        editorPage.setTitle(randomName("The macro is in the comment!"));
-        savedPage = editorPage.save();
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
 
-        confluenceOps.addComment(some(TestUser.ADMIN), String.valueOf(savedPage.getPageId()), pageWithMacro(SIMPLE_MACRO_KEY));
-        product.visit(ConfluencePageWithRemoteMacro.class, savedPage.getTitle(), SIMPLE_MACRO_KEY);
+        try
+        {
+            editorPage.setTitle(randomName("The macro is in the comment!"));
+            savedPage = save(editorPage);
+            editorPage = null;
+
+            confluenceOps.addComment(some(TestUser.ADMIN), String.valueOf(savedPage.getPageId()), pageWithMacro(SIMPLE_MACRO_KEY));
+            product.visit(ConfluencePageWithRemoteMacro.class, savedPage.getTitle(), SIMPLE_MACRO_KEY);
+        }
+        catch (Exception e)
+        {
+            try
+            {
+                if (null != editorPage)
+                {
+                    editorPage.cancel();
+                }
+            }
+            catch (Throwable t)
+            {
+                // don't care
+            }
+
+            throw e;
+        }
+    }
+
+    protected ViewPage save(EditorPage editorPage)
+    {
+        return editorPage.saveWithKeyboardShortcut();
     }
 
     private String pageWithMacro(String macroName)
@@ -587,29 +574,50 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     protected ViewPage getMacroContent(User user, String macroName, String title) throws Exception
     {
         // create the page with the macro
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-        editorPage.setTitle(randomName(title));
-        selectMacroAndSave(editorPage, macroName);
-        savedPage = editorPage.save();
-        final long pageId = savedPage.getPageId(); // need to get it here because it parses the page, so if we log out it throws!
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
 
-        // view the page as the specified user
-        if (TestUser.ADMIN.confUser().equals(user))
+        try
         {
-            return savedPage;
-        }
-        else
-        {
-            getProduct().logOutFast();
+            editorPage.setTitle(randomName(title));
+            selectMacroAndSave(editorPage, macroName);
+            savedPage = save(editorPage);
+            editorPage = null;
+            final long pageId = savedPage.getPageId(); // need to get it here because it parses the page, so if we log out it throws!
 
-            if (null == user)
+            // view the page as the specified user
+            if (TestUser.ADMIN.confUser().equals(user))
             {
-                return getProduct().viewPage(String.valueOf(pageId));
+                return savedPage;
             }
             else
             {
-                return getProduct().loginAndView(user, new Page(pageId));
+                getProduct().logOutFast();
+
+                if (null == user)
+                {
+                    return getProduct().viewPage(String.valueOf(pageId));
+                }
+                else
+                {
+                    return getProduct().loginAndView(user, new Page(pageId));
+                }
             }
+        }
+        catch (Exception e)
+        {
+            try
+            {
+                if (null != editorPage)
+                {
+                    editorPage.cancel();
+                }
+            }
+            catch (Throwable t)
+            {
+                // don't care
+            }
+
+            throw e;
         }
     }
 

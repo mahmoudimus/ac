@@ -2,7 +2,7 @@
 
 You will go through three phases during add-on development: developing and testing with a local version of the
 Atlassian product, testing on a Cloud instance, and finally making the add-on available via the Atlassian Marketplace 
-(as a public of private listing).
+(as a public or private listing).
 
 This document explains how you would go about developing your add-on with a local copy of the Atlassian product.
 [Installing in the cloud](./cloud-installation.html) explains how to use private Marketplace listings to test in
@@ -18,17 +18,17 @@ or to save you the hassle you can spin up an instance of our pre-configured Vagr
 
 <a data-replace-text="Local installation instructions [-]" class="aui-expander-trigger" aria-controls="install-local">Local installation instructions [+]</a>
 <div id="install-local" class="aui-expander-content">
-    <span data-include="/assets/includes/install-local.html">Loading...</span>
+    <span data-include="../assets/includes/install-local.html">Loading...</span>
 </div>
 
 <a data-replace-text="Using our pre-configured Vagrant box [-]" class="aui-expander-trigger" aria-controls="install-vagrant">Using our pre-configured Vagrant box [+]</a>
 <div id="install-vagrant" class="aui-expander-content">
-    <span data-include="/assets/includes/install-vagrant.html">Loading...</span>
+    <span data-include="../assets/includes/install-vagrant.html">Loading...</span>
 </div>
 
 <a data-replace-text="More detailed information about using the Vagrant box [-]" class="aui-expander-trigger" aria-controls="instructions-vagrant">More detailed information about using the Vagrant box [+]</a>
 <div id="instructions-vagrant" class="aui-expander-content">
-    <span data-include="/assets/includes/instructions-vagrant.html">Loading...</span>
+    <span data-include="../assets/includes/instructions-vagrant.html">Loading...</span>
 </div>
 
 
@@ -38,12 +38,12 @@ You can start a local instance of JIRA or Confluence Cloud with Atlassian Connec
 
 <a data-replace-text="If you are using a local installation [-]" class="aui-expander-trigger" aria-controls="runproduct-local">If you are using a local installation [+]</a>
 <div id="runproduct-local" class="aui-expander-content">
-    <span data-include="/assets/includes/runproduct-local.html">Loading...</span>
+    <span data-include="../assets/includes/runproduct-local.html">Loading...</span>
 </div>
 
 <a data-replace-text="If you are using the Vagrant box [-]" class="aui-expander-trigger" aria-controls="runproduct-vagrant">If you are using the Vagrant box [+]</a>
 <div id="runproduct-vagrant" class="aui-expander-content">
-    <span data-include="/assets/includes/runproduct-vagrant.html">Loading...</span>
+    <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
 
 ## Step 3. Start your add-on
@@ -55,7 +55,7 @@ For an example of using a HTTP server, see the [getting started](../guides/getti
 
 <a data-replace-text="Example using atlassian-connect-express in the Vagrant box [-]" class="aui-expander-trigger" aria-controls="demo-vagrant-ace">Example using atlassian-connect-express in the Vagrant box [+]</a>
 <div id="demo-vagrant-ace" class="aui-expander-content">
-    <span data-include="/assets/includes/demo-vagrant-ace.html">Loading...</span>
+    <span data-include="../assets/includes/demo-vagrant-ace.html">Loading...</span>
 </div>
 
 

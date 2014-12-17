@@ -18,9 +18,7 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
-import com.atlassian.plugin.connect.plugin.PermissionManager;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
-import com.atlassian.plugin.connect.spi.Permissions;
 import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
@@ -51,17 +49,15 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
     private final TypeAccessor typeAccessor;
     private final PluginSettingsFactory pluginSettingsFactory;
     private final OAuthLinkManager oAuthLinkManager;
-    private final PermissionManager permissionManager;
     protected final TransactionTemplate transactionTemplate;
 
     @Inject
-    public DefaultConnectApplinkManager(MutatingApplicationLinkService applicationLinkService, TypeAccessor typeAccessor, PluginSettingsFactory pluginSettingsFactory, OAuthLinkManager oAuthLinkManager, PermissionManager permissionManager, TransactionTemplate transactionTemplate)
+    public DefaultConnectApplinkManager(MutatingApplicationLinkService applicationLinkService, TypeAccessor typeAccessor, PluginSettingsFactory pluginSettingsFactory, OAuthLinkManager oAuthLinkManager, TransactionTemplate transactionTemplate)
     {
         this.applicationLinkService = applicationLinkService;
         this.typeAccessor = typeAccessor;
         this.pluginSettingsFactory = pluginSettingsFactory;
         this.oAuthLinkManager = oAuthLinkManager;
-        this.permissionManager = permissionManager;
         this.transactionTemplate = transactionTemplate;
     }
 
@@ -358,7 +354,6 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
     private void registerOAuth(ApplicationLink link, Plugin plugin, String publicKey)
     {
         String pluginKey = plugin.getKey();
-        permissionManager.requirePermission(pluginKey, Permissions.CREATE_OAUTH_LINK);
 
         final PluginInformation pluginInfo = plugin.getPluginInformation();
         final String name = plugin.getName();
@@ -374,7 +369,6 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
     private void registerOAuth(ApplicationLink link, ConnectAddonBean addon, String publicKey)
     {
         String pluginKey = addon.getKey();
-        permissionManager.requirePermission(pluginKey, Permissions.CREATE_OAUTH_LINK);
 
         final String name = addon.getName();
         final String description = addon.getDescription();

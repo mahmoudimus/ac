@@ -75,13 +75,51 @@ public class JiraRestScopesTest extends AbstractScopesTest
                         {ScopeName.DELETE, HttpMethod.DELETE, "/jira/rest/api/2/issueLinkType/abc", false},
                         {ScopeName.ADMIN, HttpMethod.DELETE, "/jira/rest/api/2/issueLinkType/abc", true},
 
+                        // issue types get requires READ
+                        {null, HttpMethod.GET, "jira/rest/api/2/issuetype/2", false},
+                        {ScopeName.READ, HttpMethod.GET, "jira/rest/api/2/issuetype/2", true},
+                        {null, HttpMethod.GET, "jira/rest/api/2/issuetype", false},
+                        {ScopeName.READ, HttpMethod.GET, "jira/rest/api/2/issuetype", true},
+
+                        // issue type create requires ADMIN
+                        {null, HttpMethod.POST, "jira/rest/api/2/issuetype", false},
+                        {ScopeName.READ, HttpMethod.POST, "jira/rest/api/2/issuetype", false},
+                        {ScopeName.DELETE, HttpMethod.POST, "jira/rest/api/2/issuetype", false},
+                        {ScopeName.PROJECT_ADMIN, HttpMethod.POST, "jira/rest/api/2/issuetype", false},
+                        {ScopeName.WRITE, HttpMethod.POST, "jira/rest/api/2/issuetype", false},
+                        {ScopeName.ADMIN, HttpMethod.POST, "jira/rest/api/2/issuetype", true},
+
+                        // issue types put requires ADMIN
+                        {null, HttpMethod.PUT, "jira/rest/api/2/issuetype/2", false},
+                        {ScopeName.READ, HttpMethod.PUT, "jira/rest/api/2/issuetype/2", false},
+                        {ScopeName.WRITE, HttpMethod.PUT, "jira/rest/api/2/issuetype/2", false},
+                        {ScopeName.PROJECT_ADMIN, HttpMethod.PUT, "jira/rest/api/2/issuetype/2", false},
+                        {ScopeName.DELETE, HttpMethod.PUT, "jira/rest/api/2/issuetype/2", false},
+                        {ScopeName.ADMIN, HttpMethod.PUT, "jira/rest/api/2/issuetype/2", true},
+
+                        // issue types delete requires ADMIN
+                        {null, HttpMethod.DELETE, "jira/rest/api/2/issuetype/2", false},
+                        {ScopeName.READ, HttpMethod.DELETE, "jira/rest/api/2/issuetype/2", false},
+                        {ScopeName.WRITE, HttpMethod.DELETE, "jira/rest/api/2/issuetype/2", false},
+                        {ScopeName.PROJECT_ADMIN, HttpMethod.DELETE, "jira/rest/api/2/issuetype/2", false},
+                        {ScopeName.DELETE, HttpMethod.DELETE, "jira/rest/api/2/issuetype/2", false},
+                        {ScopeName.ADMIN, HttpMethod.DELETE, "jira/rest/api/2/issuetype/2", true},
+
                         // groups picker requires READ
                         {null, HttpMethod.GET, "/jira/rest/api/2/groups/picker", false},
                         {ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/groups/picker", true},
 
                         // JQL autocomplete require READ
                         { null, HttpMethod.GET,  "/jira/rest/api/2/jql/autocompletedata", false },
-                        { ScopeName.READ, HttpMethod.GET,  "/jira/rest/api/2/jql/autocompletedata", true }
+                        { ScopeName.READ, HttpMethod.GET,  "/jira/rest/api/2/jql/autocompletedata", true },
+
+                        // user picker requires READ
+                        { null, HttpMethod.GET, "/jira/rest/api/2/user/picker?query", false },
+                        { ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/user/picker?query", true },
+
+                        // configuration requires READ
+                        { null, HttpMethod.GET, "/jira/rest/api/2/configuration", false },
+                        { ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/configuration", true }
                 }));
 
         // never allow an add-on to change a user's details or password

@@ -24,11 +24,13 @@ public class ReadScopeTest extends ScopeTestBase
     /**
      * These tests are not exhaustive. They are samples across the cross-product endpoints.
      */
-    @ParameterizedWiredTest.Parameters(name="httpRequest", length=2)
+    @ParameterizedWiredTest.Parameters(name="httpRequest", length=4)
     protected Object[][] data = new Object[][]
     {
             // TODO: ACDEV-1333 new Object[]{ HttpMethod.GET,  "/rest/atlassian-connect/1/license", true },
-            new Object[]{ HttpMethod.GET,  "/rest/applinks/2.0/entities", true },
-            new Object[]{ HttpMethod.POST, "/rest/applinks/2.0/entities", false }
+            { HttpMethod.GET,  "/rest/applinks/2.0/entities", true },
+            { HttpMethod.POST, "/rest/applinks/2.0/entities", false },
+            { HttpMethod.GET,  "/rest/greenhopper/1.0/rapidview", isJiraProduct() },
+            { HttpMethod.PUT,  "/rest/greenhopper/1.0/api/rank/before", false }
     };
 }

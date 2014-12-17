@@ -1,2 +1,1 @@
-com.atlassian.connect.xmldescriptor.XmlDescriptorAnnotationProcessor
 com.atlassian.connect.xmldescriptor.OAuthAnnotationProcessor

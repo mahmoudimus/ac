@@ -1,6 +1,11 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
-import com.atlassian.plugin.connect.spi.permission.scope.*;
+import com.atlassian.plugin.connect.spi.scope.ApiResourceInfo;
+import com.atlassian.plugin.connect.spi.scope.JsonRpcApiScopeHelper;
+import com.atlassian.plugin.connect.spi.scope.PathScopeHelper;
+import com.atlassian.plugin.connect.spi.scope.RestApiScopeHelper;
+import com.atlassian.plugin.connect.spi.scope.RpcEncodedSoapApiScopeHelper;
+import com.atlassian.plugin.connect.spi.scope.XmlRpcApiScopeHelper;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -16,7 +21,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.Collections;
 
-import static com.google.common.collect.Iterables.*;
+import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.transform;
 
 public interface AddOnScopeApiPath
 {

@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameter
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.connect.plugin.util.BundleUtil;
+import com.atlassian.plugin.connect.plugin.util.http.ContentRetrievalException;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.event.AddOnConditionFailedEvent;
 import com.atlassian.plugin.connect.spi.event.AddOnConditionInvokedEvent;
@@ -41,6 +42,7 @@ public class AddOnCondition implements Condition
     private interface Configuration
     {
         String getUrl();
+
         String getAddOnKey();
     }
 
@@ -53,9 +55,9 @@ public class AddOnCondition implements Condition
     private BundleContext bundleContext;
 
     public AddOnCondition(final RemotablePluginAccessorFactory remotablePluginAccessorFactory,
-            final IFrameUriBuilderFactory iFrameUriBuilderFactory,
-            final WebFragmentModuleContextExtractor webFragmentModuleContextExtractor,
-            EventPublisher eventPublisher, BundleContext bundleContext)
+                          final IFrameUriBuilderFactory iFrameUriBuilderFactory,
+                          final WebFragmentModuleContextExtractor webFragmentModuleContextExtractor,
+                          EventPublisher eventPublisher, BundleContext bundleContext)
     {
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
         this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
@@ -71,8 +73,8 @@ public class AddOnCondition implements Condition
     public void init(final Map<String, String> params) throws PluginParseException
     {
         Configuration cfg = new ConfigurationImpl(
-            checkNotNull(params.get(ADDON_KEY), ADDON_KEY),
-            checkNotNull(params.get(URL), URL)
+                checkNotNull(params.get(ADDON_KEY), ADDON_KEY),
+                checkNotNull(params.get(URL), URL)
         );
         configuration.set(cfg);
     }
@@ -100,7 +102,7 @@ public class AddOnCondition implements Condition
         final String uriPath = uri.getPath();
         final String version = BundleUtil.getBundleVersion(bundleContext);
         final Map<String, String> httpHeaders = Collections.singletonMap(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION,
-                                                                         version);
+                version);
         Promise<String> responsePromise = remotablePluginAccessorFactory.getOrThrow(cfg.getAddOnKey())
                 .executeAsync(HttpMethod.GET, uri,
                         Collections.<String, String[]>emptyMap(), httpHeaders);
@@ -115,7 +117,7 @@ public class AddOnCondition implements Condition
             final long elapsedMillisecs = stopWatch.getTime();
             final String message = String.format(String.format("Request to addon condition URL failed: %s", cfg));
             log.warn(message, e);
-            eventPublisher.publish(new AddOnConditionFailedEvent(cfg.getAddOnKey(), uriPath, elapsedMillisecs, message));
+            eventPublisher.publish(new AddOnConditionFailedEvent(cfg.getAddOnKey(), uriPath, elapsedMillisecs, getErrorMessage(e, message)));
             return false;
         }
 
@@ -145,7 +147,7 @@ public class AddOnCondition implements Condition
             final long elapsedMillisecs = stopWatch.getTime();
             final String message = String.format("Malformed response from addon condition URL: %s", cfg);
             log.warn(message, e);
-            eventPublisher.publish(new AddOnConditionFailedEvent(cfg.getAddOnKey(), uriPath, elapsedMillisecs, message));
+            eventPublisher.publish(new AddOnConditionFailedEvent(cfg.getAddOnKey(), uriPath, elapsedMillisecs, getErrorMessage(e, message)));
             return false;
         }
     }
@@ -190,5 +192,23 @@ public class AddOnCondition implements Condition
         {
             return String.format("Condition for %s at %s", addonKey, url);
         }
+    }
+
+    private static String getErrorMessage(Exception e, String defaultMessage)
+    {
+        if (e instanceof ContentRetrievalException)
+        {
+            ContentRetrievalException cre = (ContentRetrievalException) e;
+            return cre.getErrors().getMessages().toString();
+        }
+        if (e.getMessage() != null)
+        {
+            return e.getMessage();
+        }
+        if (e.getCause() != null && e.getCause().getMessage() != null)
+        {
+            return e.getCause().getMessage();
+        }
+        return defaultMessage;
     }
 }

@@ -18,13 +18,13 @@ is a separate instance. The actual JIRA and Confluence servers are individual ap
 running in separate, isolated JVMs, communicating only over HTTP. Our cloud products only serve content over 
 [HTTPS](../developing/cloud-installation.html). 
 
-Although each application is isolated from a security perspective, underlying resources like like hardware, 
+Although each application is isolated from a security perspective, underlying resources like hardware,
 CPU and memory can be shared between many customers. Servers for our cloud applications are [located in the US](https://www.atlassian.com/hosted/security). 
 
 Each JIRA or Confluence Cloud instance is identifiable by its tenant ID. An instance URL is liable to change 
 without warning. 
 
-Each cloud instance has a set of users. For these users:
+Each cloud instance has a set of licensed users. For these users:
 
 * __Email addresses are unique within an instance, but may be used across multiple instances.__  
 * __Users are identified by key, rather than name or email.__ Keys are also unique within an
@@ -32,9 +32,15 @@ Each cloud instance has a set of users. For these users:
 * __No user can log in as a sysadmin, and your add-on cannot access any functionality reserved for sysadmins.__ 
 	Only Atlassian can access sysadmin-level functionality.  
 
-Your add-on accesses cloud instances through the [Universal Plugin Manager](https://confluence.atlassian.com/x/8AJTE). Admins install your add-on by registering your descriptor into an instance. Add-on installation and licensing are separate concerns. 
-It's possible for a cloud instance to have your descriptor installed, but not to have a valid license. 
 
+Your add-on is automatically granted a new add-on user in cloud instances. These "users" appear in the
+user management portal, but don't count against actual user licenses. This user profile is assigned to two 
+groups by default: _atlassian-addons_ and _product-users_ (like _jira-users_ or _confluence-users_). Customers 
+should **not** remove add-on users from these groups.  
+
+Your add-on accesses cloud instances through the [Universal Plugin Manager](https://confluence.atlassian.com/x/8AJTE). Admins install your add-on by registering your descriptor into an instance. Add-on installation and licensing are separate concerns. 
+
+It's possible for a cloud instance to have your descriptor installed, but not to have a valid license. 
 
 You won't receive any  communication from instances that don't have your add-on descriptor installed. As 
 expected, you're unable to communicate with instances that don't have your decriptor installed. 

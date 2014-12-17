@@ -6,9 +6,9 @@ var downloader = require('./download-descriptors'),
 
 downloader.run({
     cliOptsCallback: function (nomnom) {
-        return nomnom.option('webhook', {
+        return nomnom.option('filter', {
             help: 'Webhooks to filter for',
-            abbr: 'w',
+            abbr: 'f',
             list: true
         });
     },
@@ -21,8 +21,8 @@ downloader.run({
         }
 
         webhooks = _.uniq(_.pluck(webhooks, 'event'));
-        if (opts.webhook) {
-            webhooks = _.intersection(opts.webhook, webhooks);
+        if (opts.filter) {
+            webhooks = _.intersection(opts.filter, webhooks);
         }
 
         if (webhooks.length) {

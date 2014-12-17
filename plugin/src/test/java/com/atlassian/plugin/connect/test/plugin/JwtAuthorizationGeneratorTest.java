@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.test.plugin;
 
-import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.security.auth.trustedapps.KeyFactory;
 import com.atlassian.jwt.JwtConstants;
@@ -13,6 +12,7 @@ import com.atlassian.plugin.connect.plugin.JwtAuthorizationGenerator;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -47,11 +47,10 @@ public class JwtAuthorizationGeneratorTest
     private static final ImmutableMap<String, String[]> ALL_PARAMS = ImmutableMap.of("a_param", new String[]{"a_value"}, "b_param", new String[]{"b value with spaces"}, "c_param", new String[]{"c_value"});
     private static final URI A_URI_BASE = URI.create("http://any.url");
     private static final URI A_URI = URI.create(A_URI_BASE.toString() + "/path?b_param=b+value+with+spaces&c_param=c_value");
+    private static final String SECRET = "secret";
 
     @Mock
     private JwtService jwtService;
-    @Mock
-    private ApplicationLink applicationLink;
     @Mock
     private ConsumerService consumerService;
 
@@ -66,38 +65,38 @@ public class JwtAuthorizationGeneratorTest
     @Test
     public void hasIssuerClaim()
     {
-        verify(jwtService).issueJwt(argThat(hasClaim("iss")), eq(applicationLink));
+        verify(jwtService).issueJwt(argThat(hasClaim("iss")), eq(SECRET));
     }
 
     @Test
     public void hasIssuedAtClaim()
     {
-        verify(jwtService).issueJwt(argThat(hasClaim("iat")), eq(applicationLink));
+        verify(jwtService).issueJwt(argThat(hasClaim("iat")), eq(SECRET));
     }
 
     @Test
     public void hasExpiresAtClaim()
     {
-        verify(jwtService).issueJwt(argThat(hasClaim("exp")), eq(applicationLink));
+        verify(jwtService).issueJwt(argThat(hasClaim("exp")), eq(SECRET));
     }
 
     @Test
     public void hasNoSubjectClaim()
     {
-        verify(jwtService).issueJwt(argThat(hasNoSuchClaim("sub")), eq(applicationLink));
+        verify(jwtService).issueJwt(argThat(hasNoSuchClaim("sub")), eq(SECRET));
     }
 
     @Test
     public void hasQueryHashClaim()
     {
-        verify(jwtService).issueJwt(argThat(hasClaim(JwtConstants.Claims.QUERY_HASH)), eq(applicationLink));
+        verify(jwtService).issueJwt(argThat(hasClaim(JwtConstants.Claims.QUERY_HASH)), eq(SECRET));
     }
 
     @Test
     public void hasQueryHashClaimWithCorrectValue() throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
         final String expectedQueryHash = generateQueryHash(HttpMethod.POST, A_URI.getPath(), "", ALL_PARAMS);
-        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(applicationLink));
+        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(SECRET));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -121,7 +120,7 @@ public class JwtAuthorizationGeneratorTest
     @Test(expected = NullPointerException.class)
     public void nullBaseUrlResultsInException()
     {
-        new JwtAuthorizationGenerator(jwtService, applicationLink, consumerService, null);
+        new JwtAuthorizationGenerator(jwtService, constantSecretSupplier(SECRET), consumerService, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -135,7 +134,7 @@ public class JwtAuthorizationGeneratorTest
     {
         String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/path", "", ALL_PARAMS);
         generateGet("/path", "https://example.com", ALL_PARAMS);
-        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(applicationLink));
+        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(SECRET));
     }
 
     @Test
@@ -143,7 +142,7 @@ public class JwtAuthorizationGeneratorTest
     {
         String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/and/path", "", Collections.<String, String[]>emptyMap());
         generateGet("https://example.com/base/and/path", "https://example.com/base", Collections.<String, String[]>emptyMap());
-        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(applicationLink));
+        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(SECRET));
     }
 
     @Test
@@ -151,7 +150,7 @@ public class JwtAuthorizationGeneratorTest
     {
         String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/and/path", "", PARAMS);
         generateGet("https://example.com/base/and/path", "https://example.com/base", PARAMS);
-        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(applicationLink));
+        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(SECRET));
     }
 
     @Test
@@ -159,7 +158,7 @@ public class JwtAuthorizationGeneratorTest
     {
         String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/and/path", "", PARAMS);
         generateGet("https://example.com/base/and/path?a_param=a_value", "https://example.com/base", Collections.<String, String[]>emptyMap());
-        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(applicationLink));
+        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(SECRET));
     }
 
     @Test
@@ -167,7 +166,7 @@ public class JwtAuthorizationGeneratorTest
     {
         String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/path", "", ALL_PARAMS);
         generateGet("https://example.com/path", "https://example.com/", ALL_PARAMS);
-        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(applicationLink));
+        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(SECRET));
     }
 
     @Test
@@ -175,16 +174,28 @@ public class JwtAuthorizationGeneratorTest
     {
         String expectedQueryHash = generateQueryHash(HttpMethod.GET, "/", "", ALL_PARAMS);
         generateGet("https://example.com/base", "https://example.com/base", ALL_PARAMS);
-        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(applicationLink));
+        verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(SECRET));
     }
 
     @Before
     public void beforeEachTest()
     {
-        when(jwtService.issueJwt(any(String.class), eq(applicationLink))).thenReturn(A_MOCK_JWT);
+        when(jwtService.issueJwt(any(String.class), eq(SECRET))).thenReturn(A_MOCK_JWT);
         when(consumerService.getConsumer()).thenReturn(Consumer.key("whatever").name("whatever").signatureMethod(Consumer.SignatureMethod.HMAC_SHA1).publicKey(new KeyFactory.InvalidPublicKey(new Exception())).build());
-        generator = new JwtAuthorizationGenerator(jwtService, applicationLink, consumerService, A_URI_BASE);
+        generator = new JwtAuthorizationGenerator(jwtService, constantSecretSupplier(SECRET), consumerService, A_URI_BASE);
         generate();
+    }
+
+    private Supplier<String> constantSecretSupplier(final String secret)
+    {
+        return new Supplier<String>()
+        {
+            @Override
+            public String get()
+            {
+                return secret;
+            }
+        };
     }
 
     private ArgumentMatcher<String> hasQueryHash(String expectedQueryHash)
@@ -205,7 +216,7 @@ public class JwtAuthorizationGeneratorTest
 
     private String generateGet(String url, String baseUrl, Map<String, String[]> params)
     {
-        return new JwtAuthorizationGenerator(jwtService, applicationLink, consumerService, URI.create(baseUrl)).generate(HttpMethod.GET, URI.create(url), params).get();
+        return new JwtAuthorizationGenerator(jwtService, constantSecretSupplier(SECRET), consumerService, URI.create(baseUrl)).generate(HttpMethod.GET, URI.create(url), params).get();
     }
 
     private static ArgumentMatcher<String> hasClaim(final String claimName)

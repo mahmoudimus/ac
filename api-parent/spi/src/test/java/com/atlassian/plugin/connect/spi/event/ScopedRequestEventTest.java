@@ -20,15 +20,15 @@ import static org.mockito.Mockito.when;
 
 public class ScopedRequestEventTest
 {
-    @Mock 
+    @Mock
     private HttpServletRequest rq;
-    
+
     @Before
     public void setup()
     {
         this.rq = Mockito.mock(HttpServletRequest.class);
     }
-    
+
 
     @Test
     public void testJIRARestUrlsShouldBeTrimmed()
@@ -38,7 +38,7 @@ public class ScopedRequestEventTest
         when(rq.getMethod()).thenReturn("GET");
         when(rq.getRequestURI()).thenReturn(url);
         when(rq.getContextPath()).thenReturn("");
-        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq);
+        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq, "");
         assertEquals(expected, event.getHttpRequestUri());
     }
 
@@ -50,7 +50,7 @@ public class ScopedRequestEventTest
         when(rq.getMethod()).thenReturn("GET");
         when(rq.getRequestURI()).thenReturn(url);
         when(rq.getContextPath()).thenReturn("/confluence");
-        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq);
+        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq, "");
         assertEquals(expected, event.getHttpRequestUri());
     }
 
@@ -62,7 +62,7 @@ public class ScopedRequestEventTest
         when(rq.getMethod()).thenReturn("GET");
         when(rq.getRequestURI()).thenReturn(url);
         when(rq.getContextPath()).thenReturn("/confluence");
-        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq);
+        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq, "");
         assertEquals(expected, event.getHttpRequestUri());
     }
 
@@ -74,7 +74,7 @@ public class ScopedRequestEventTest
         when(rq.getMethod()).thenReturn("GET");
         when(rq.getRequestURI()).thenReturn(url);
         when(rq.getContextPath()).thenReturn("/confluence");
-        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq);
+        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq, "");
         assertEquals(expected, event.getHttpRequestUri());
     }
 
@@ -86,7 +86,7 @@ public class ScopedRequestEventTest
         when(rq.getRequestURI()).thenReturn(url);
         when(rq.getInputStream()).thenReturn(new MockServletInputStream(APITestUtil.createSoapRpcPayload("method")));
         when(rq.getContextPath()).thenReturn("");
-        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq);
+        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq, "");
         assertEquals("/rpc/soap/jirasoapservice-v2/method", event.getHttpRequestUri());
     }
 
@@ -98,10 +98,10 @@ public class ScopedRequestEventTest
         when(rq.getRequestURI()).thenReturn(url);
         when(rq.getInputStream()).thenReturn(new MockServletInputStream(APITestUtil.createJsonRpcPayload("method")));
         when(rq.getContextPath()).thenReturn("");
-        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq);
+        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq, "");
         assertEquals("/rpc/json-rpc/jirasoapservice-v2/method", event.getHttpRequestUri());
     }
-    
+
     @Test
     public void JIRARestURLWithNumericVersionShouldBeTrimmed() throws IOException
     {
@@ -110,7 +110,7 @@ public class ScopedRequestEventTest
         when(rq.getMethod()).thenReturn("GET");
         when(rq.getRequestURI()).thenReturn(url);
         when(rq.getContextPath()).thenReturn("");
-        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq);
+        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq, "");
         assertEquals(expected, event.getHttpRequestUri());
     }
     @Test
@@ -121,7 +121,7 @@ public class ScopedRequestEventTest
         when(rq.getMethod()).thenReturn("GET");
         when(rq.getRequestURI()).thenReturn(url);
         when(rq.getContextPath()).thenReturn("");
-        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq);
+        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq, "");
         assertEquals(expected, event.getHttpRequestUri());
     }
     @Test
@@ -132,7 +132,7 @@ public class ScopedRequestEventTest
         when(rq.getMethod()).thenReturn("GET");
         when(rq.getRequestURI()).thenReturn(url);
         when(rq.getContextPath()).thenReturn("");
-        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq);
+        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq, "");
         assertEquals(expected, event.getHttpRequestUri());
     }
 
@@ -145,11 +145,11 @@ public class ScopedRequestEventTest
         when(rq.getRequestURI()).thenReturn(url);
         when(rq.getInputStream()).thenReturn(new MockServletInputStream(APITestUtil.createJsonRpcPayload("method")));
         when(rq.getContextPath()).thenReturn("/confluence");
-        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq);
+        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq, "");
         assertEquals("/rpc/json-rpc/confluenceservice-v2/method", event.getHttpRequestUri());
     }
-    
-    @Test 
+
+    @Test
     public void testConfluenceJsonRpcLightUrlsShouldIncludeMethod() throws IOException
     {
         String url = "/confluence/rpc/json-rpc/confluenceservice-v2/methodName";
@@ -157,10 +157,10 @@ public class ScopedRequestEventTest
         when(rq.getRequestURI()).thenReturn(url);
         when(rq.getInputStream()).thenReturn(new MockServletInputStream("some json"));
         when(rq.getContextPath()).thenReturn("/confluence");
-        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq);
+        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq, "");
         assertEquals("/rpc/json-rpc/confluenceservice-v2/methodName", event.getHttpRequestUri());
     }
-    
+
     @Test
     public void testConfluenceXmlRpcUrlsShouldIncludeMethod() throws IOException
     {
@@ -169,15 +169,15 @@ public class ScopedRequestEventTest
         when(rq.getRequestURI()).thenReturn(url);
         when(rq.getInputStream()).thenReturn(new MockServletInputStream(APITestUtil.createXmlRpcPayload("method")));
         when(rq.getContextPath()).thenReturn("/confluence");
-        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq);
+        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq, "");
         assertEquals("/rpc/xmlrpc/method", event.getHttpRequestUri());
     }
-    
-    
+
+
     private class MockServletInputStream extends ServletInputStream
     {
         private InputStream in;
-        
+
         public MockServletInputStream(String body) {
             this.in = IOUtils.toInputStream(body);
         }
@@ -187,6 +187,6 @@ public class ScopedRequestEventTest
         {
             return in.read();
         }
-        
+
     }
 }

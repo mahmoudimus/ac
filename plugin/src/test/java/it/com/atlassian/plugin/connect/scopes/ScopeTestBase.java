@@ -1,5 +1,6 @@
 package it.com.atlassian.plugin.connect.scopes;
 
+import com.atlassian.extras.api.Product;
 import com.atlassian.jwt.SigningAlgorithm;
 import com.atlassian.jwt.core.HttpRequestCanonicalizer;
 import com.atlassian.jwt.core.writer.JsonSmartJwtJsonBuilder;
@@ -29,9 +30,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
 
@@ -127,7 +126,7 @@ public abstract class ScopeTestBase
         {
             try
             {
-                testPluginInstaller.uninstallJsonAddon(addOn);
+                testPluginInstaller.uninstallAddon(addOn);
             }
             catch (IOException e)
             {
@@ -165,5 +164,9 @@ public abstract class ScopeTestBase
                 .build();
 
         return requestUtil.makeRequest(request);
+    }
+
+    protected boolean isJiraProduct() {
+        return Product.JIRA.getName().equals(applicationProperties.getDisplayName());
     }
 }

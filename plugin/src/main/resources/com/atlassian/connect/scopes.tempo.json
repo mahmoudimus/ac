@@ -21,28 +21,28 @@
             "key": "planning",
             "name": "tempo-planning",
             "basePaths": ["/.*"],
-            "versions": ["1.0", "2.0", "latest"],
+            "versions": ["1", "2", "latest"],
             "public": false
         },
         {
             "key": "teams",
             "name": "tempo-teams",
             "basePaths": ["/.*"],
-            "versions": ["1.0", "2.0", "latest"],
+            "versions": ["1", "2", "latest"],
             "public": false
         },
         {
             "key": "core",
             "name": "tempo-core",
             "basePaths": ["/.*"],
-            "versions": ["1.0", "2.0", "latest"],
+            "versions": ["1", "2", "latest"],
             "public": false
         },
         {
             "key": "accounts",
             "name": "tempo-accounts",
             "basePaths": ["/.*"],
-            "versions": ["1.0", "2.0", "latest"],
+            "versions": ["1", "2", "latest"],
             "public": false
         }
     ]

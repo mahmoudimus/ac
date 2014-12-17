@@ -410,10 +410,20 @@ exports.publish = function ( taffyData, opts, tutorials ) {
                     caption = RegExp.$1;
                     code = RegExp.$3;
                 }
+                var noDemo = false;
+
+                if(doclet.tags && doclet.tags.length > 0){
+                    doclet.tags.forEach(function(entry){
+                        if(entry.originalTitle.toLowerCase() === "nodemo"){
+                            noDemo = true;
+                        }
+                    });
+                }
 
                 return {
                     caption : caption || '',
-                    code    : code || example
+                    code    : code || example,
+                    noDemo: noDemo
                 };
             } );
         }

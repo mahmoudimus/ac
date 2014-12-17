@@ -5,17 +5,18 @@ import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.Request;
 import com.atlassian.httpclient.api.ResponsePromise;
 import com.atlassian.httpclient.api.ResponseTransformation;
-import com.atlassian.httpclient.api.factory.HttpClientFactory;
-import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginInformation;
+import com.atlassian.plugin.connect.plugin.ConnectHttpClientFactory;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.plugin.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,7 +36,7 @@ public class CachingHttpContentRetrieverTest
     private HttpContentRetriever httpContentRetriever;
 
     @Mock private AuthorizationGenerator authorizationGenerator;
-    @Mock private HttpClientFactory httpClientFactory;
+    @Mock private ConnectHttpClientFactory httpClientFactory;
     @Mock private HttpClient httpClient;
     @Mock private Request.Builder requestBuilder;
     @Mock private ResponseTransformation<String> responseTransformation;
@@ -44,6 +45,7 @@ public class CachingHttpContentRetrieverTest
     @Mock private PluginRetrievalService pluginRetrievalService;
     @Mock private Plugin plugin;
     @Mock private PluginInformation pluginInformation;
+    @Mock private DarkFeatureManager darkFeatureManager;
 
     private static final ImmutableMap<String, String[]> PARAMS = ImmutableMap.of("param", new String[]{"value"});
     private static final Map<String, String> HEADERS = ImmutableMap.of("some", "header");
@@ -63,7 +65,7 @@ public class CachingHttpContentRetrieverTest
         when(authorizationGenerator.generate(any(HttpMethod.class), any(URI.class), anyMap())).thenReturn(Option.<String>none());
         when(pluginRetrievalService.getPlugin()).thenReturn(plugin);
         when(plugin.getPluginInformation()).thenReturn(pluginInformation);
-        when(httpClientFactory.create(any(HttpClientOptions.class))).thenReturn(httpClient);
+        when(httpClientFactory.getInstance()).thenReturn(httpClient);
         when(httpClient.newRequest(anyString())).thenReturn(requestBuilder);
         when(requestBuilder.setAttributes(anyMap())).thenReturn(requestBuilder);
         when(requestBuilder.setHeaders(anyMap())).thenReturn(requestBuilder);
@@ -74,6 +76,6 @@ public class CachingHttpContentRetrieverTest
         when(responseTransformationBuilder.others(any(Function.class))).thenReturn(responseTransformationBuilder);
         when(responseTransformationBuilder.fail(any(Function.class))).thenReturn(responseTransformationBuilder);
         when(responseTransformationBuilder.build()).thenReturn(responseTransformation);
-        httpContentRetriever = new CachingHttpContentRetriever(httpClientFactory, pluginRetrievalService);
+        httpContentRetriever = new CachingHttpContentRetriever(httpClientFactory);
     }
 }

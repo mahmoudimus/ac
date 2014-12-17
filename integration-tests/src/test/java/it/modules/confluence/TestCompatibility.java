@@ -17,6 +17,7 @@ import org.junit.Test;
 import redstone.xmlrpc.XmlRpcFault;
 
 import java.net.MalformedURLException;
+import com.atlassian.pageobjects.binder.PageBindingWaitException;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
@@ -88,11 +89,38 @@ public class TestCompatibility extends AbstractConfluenceWebDriverTest
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
         editorPage.setTitle(RandomStringUtils.randomAlphanumeric(8));
 
-        selectMacroAndSave(editorPage, MACRO_NAME_2);
+        try
+        {
+            selectMacroAndSave(editorPage, MACRO_NAME_2);
 
-        ViewPage page = editorPage.save();
-        String content = rpc.getPageContent(page.getPageId());
-        assertThat(content, endsWith("<p><ac:structured-macro ac:name=\"something-else\" /></p>"));
+            ViewPage page;
+
+            try
+            {
+                // since Confluence 5.6-OD-37-042 this line has been quite flaky, passing and failing seemingly randomly
+                page = editorPage.saveWithKeyboardShortcut();
+            }
+            catch (PageBindingWaitException e)
+            {
+                // try again - it will probably work the second time around
+                page = editorPage.saveWithKeyboardShortcut();
+            }
+
+            String content = rpc.getPageContent(page.getPageId());
+            assertThat(content, endsWith("<p><ac:structured-macro ac:name=\"something-else\" /></p>"));
+        }
+        finally
+        {
+            // clean up so that we don't get "org.openqa.selenium.UnhandledAlertException: unexpected alert open" in subsequent tests
+            try
+            {
+                editorPage.cancel();
+            }
+            catch (Throwable e)
+            {
+                // don't care
+            }
+        }
     }
 
     private void createAndVisitPage(String pageContent) throws MalformedURLException, XmlRpcFault

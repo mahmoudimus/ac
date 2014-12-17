@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin;
 
-import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.fugue.Option;
 import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.jwt.core.HttpRequestCanonicalizer;
@@ -11,9 +10,10 @@ import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.jwt.writer.JwtJsonBuilder;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.plugin.util.ConfigurationUtils;
-import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.spi.http.ReKeyableAuthorizationGenerator;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Supplier;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicHeaderValueParser;
@@ -39,7 +39,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Set the system property {@link JwtAuthorizationGenerator#JWT_EXPIRY_SECONDS_PROPERTY} with an integer value to control the size of the expiry window
  * (default is {@link JwtAuthorizationGenerator#JWT_EXPIRY_WINDOW_SECONDS_DEFAULT}).
  */
-public class JwtAuthorizationGenerator implements AuthorizationGenerator
+public class JwtAuthorizationGenerator implements ReKeyableAuthorizationGenerator
 {
     private static final char[] QUERY_DELIMITERS = new char[]{'&'};
 
@@ -53,14 +53,14 @@ public class JwtAuthorizationGenerator implements AuthorizationGenerator
     private static final Logger log = LoggerFactory.getLogger(JwtAuthorizationGenerator.class);
 
     private final JwtService jwtService;
-    private final ApplicationLink applicationLink;
+    private final Supplier<String> secretSupplier;
     private final ConsumerService consumerService;
     private final URI addOnBaseUrl;
 
-    public JwtAuthorizationGenerator(JwtService jwtService, ApplicationLink applicationLink, ConsumerService consumerService, URI addOnBaseUrl)
+    public JwtAuthorizationGenerator(JwtService jwtService, Supplier<String> secretSupplier, ConsumerService consumerService, URI addOnBaseUrl)
     {
         this.jwtService = checkNotNull(jwtService);
-        this.applicationLink = checkNotNull(applicationLink);
+        this.secretSupplier = checkNotNull(secretSupplier);
         this.consumerService = checkNotNull(consumerService);
         this.addOnBaseUrl = checkNotNull(addOnBaseUrl);
     }
@@ -68,15 +68,22 @@ public class JwtAuthorizationGenerator implements AuthorizationGenerator
     @Override
     public Option<String> generate(HttpMethod httpMethod, URI url, Map<String, String[]> parameters)
     {
-        checkArgument(null != parameters, "Parameters Map argument cannot be null");
-        return Option.some(JWT_AUTH_HEADER_PREFIX + encodeJwt(httpMethod, url, addOnBaseUrl, parameters, null, consumerService.getConsumer().getKey(), jwtService, applicationLink));
+        return Option.some(generate(httpMethod, url, parameters, checkNotNull(secretSupplier.get())));
     }
 
-    static String encodeJwt(HttpMethod httpMethod, URI targetPath, URI addOnBaseUrl, Map<String, String[]> params, String userKeyValue, String issuerId, JwtService jwtService, ApplicationLink appLink)
+    @Override
+    public String generate(HttpMethod httpMethod, URI url, Map<String, String[]> parameters, String secret)
+    {
+        checkArgument(null != parameters, "Parameters Map argument cannot be null");
+        return JWT_AUTH_HEADER_PREFIX + encodeJwt(httpMethod, url, addOnBaseUrl, parameters, null, consumerService.getConsumer().getKey(), jwtService, secret);
+    }
+
+    static String encodeJwt(HttpMethod httpMethod, URI targetPath, URI addOnBaseUrl, Map<String, String[]> params, String userKeyValue, String issuerId, JwtService jwtService, String secret)
     {
         checkArgument(null != httpMethod, "HttpMethod argument cannot be null");
         checkArgument(null != targetPath, "URI argument cannot be null");
         checkArgument(null != addOnBaseUrl, "base URI argument cannot be null");
+        checkArgument(null != secret, "secret argument cannot be null");
 
         JwtJsonBuilder jsonBuilder = new JsonSmartJwtJsonBuilder()
                 .issuedAt(TimeUtil.currentTimeSeconds())
@@ -112,7 +119,7 @@ public class JwtAuthorizationGenerator implements AuthorizationGenerator
             throw new RuntimeException(e);
         }
 
-        return jwtService.issueJwt(jsonBuilder.build(), appLink);
+        return jwtService.issueJwt(jsonBuilder.build(), secret);
     }
 
     private static String extractRelativePath(URI targetUri, URI addOnBaseUri)

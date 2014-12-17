@@ -6,8 +6,10 @@ import com.atlassian.plugin.connect.modules.beans.builder.StaticContentMacroModu
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.macro.StaticContentMacroModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
-import com.atlassian.plugin.connect.plugin.capabilities.module.MacroModuleContextExtractor;
+import com.atlassian.plugin.connect.plugin.capabilities.module.macro.MacroModuleContextExtractor;
+import com.atlassian.plugin.connect.plugin.capabilities.module.macro.RemoteMacroRendererImpl;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.module.confluence.MacroContentManager;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
@@ -24,6 +26,7 @@ import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModul
 @RunWith(MockitoJUnitRunner.class)
 public class StaticContentMacroModuleDescriptorTest extends AbstractContentMacroModuleDescriptorTest<StaticContentMacroModuleBean, StaticContentMacroModuleBeanBuilder>
 {
+    @Mock private IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     @Mock private IFrameUriBuilderFactory iFrameUriBuilderFactory;
     @Mock private MacroModuleContextExtractor macroModuleContextExtractor;
     @Mock private RemotablePluginAccessorFactory remotablePluginAccessorFactory;
@@ -38,10 +41,7 @@ public class StaticContentMacroModuleDescriptorTest extends AbstractContentMacro
 
         StaticContentMacroModuleDescriptorFactory macroModuleDescriptorFactory = new StaticContentMacroModuleDescriptorFactory(
                 new AbsoluteAddOnUrlConverter(remotablePluginAccessorFactoryForTests),
-                macroContentManager,
-                macroModuleContextExtractor,
-                iFrameUriBuilderFactory,
-                remotablePluginAccessorFactoryForTests);
+                new RemoteMacroRendererImpl(iFrameUriBuilderFactory, macroModuleContextExtractor, macroContentManager, remotablePluginAccessorFactoryForTests, iFrameRenderStrategyRegistry));
 
         StaticContentMacroModuleBean bean = createBeanBuilder()
                 .build();

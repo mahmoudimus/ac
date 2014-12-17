@@ -12,13 +12,25 @@ var authColor = {
 }
 
 downloader.run({
+    cliOptsCallback: function (nomnom) {
+        return nomnom.option('filter', {
+            help: 'Auth type to filter for',
+            abbr: 'f',
+            list: true
+        });
+    },
     descriptorDownloadedCallback: function (result, body, opts) {
         if (result.type === 'json') {
             var auth = JSON.parse(body).authentication;
-            if (auth) {
-                var type = auth.type;
-                console.log(result.addon.key + " : " + type[authColor[type]]);
+            var type = (auth && auth.type) ? auth.type : 'none';
+            // console.log(result.addon.key, util.inspect(auth));
+            var color = authColor[type];
+
+            if (opts.filter && !_.contains(opts.filter, type)) {
+                return;
             }
+            
+            console.log(type[color] + ' : ' + result.addon.key);
         } else {
             // console.log(result.addon.key, "XML descriptor not supported");
         }

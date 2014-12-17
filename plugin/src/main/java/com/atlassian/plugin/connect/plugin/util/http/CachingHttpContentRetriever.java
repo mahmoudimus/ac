@@ -7,24 +7,33 @@ import com.atlassian.httpclient.api.Response;
 import com.atlassian.httpclient.api.ResponseTransformation;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.httpclient.api.factory.HttpClientOptions;
+import com.atlassian.plugin.connect.plugin.ConnectHttpClientFactory;
 import com.atlassian.plugin.connect.plugin.util.UriBuilderUtils;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
+import com.atlassian.sal.api.features.DarkFeatureManager;
+import com.atlassian.sal.api.features.EnabledDarkFeatures;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -40,7 +49,7 @@ import static com.google.common.collect.Maps.newHashMap;
  */
 @ExportAsService(HttpContentRetriever.class)
 @Named
-public final class CachingHttpContentRetriever implements HttpContentRetriever, DisposableBean
+public final class CachingHttpContentRetriever implements HttpContentRetriever
 {
     private final static Logger log = LoggerFactory.getLogger(CachingHttpContentRetriever.class);
 
@@ -53,23 +62,11 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
     );
 
     private final HttpClient httpClient;
-    private final HttpClientFactory factory;
 
     @Inject
-    public CachingHttpContentRetriever(HttpClientFactory httpClientFactory, PluginRetrievalService pluginRetrievalService)
+    public CachingHttpContentRetriever(ConnectHttpClientFactory httpClientFactory)
     {
-        this(httpClientFactory, getHttpClientOptions(checkNotNull(pluginRetrievalService, "pluginRetrievalService")));
-    }
-
-    CachingHttpContentRetriever(HttpClientFactory httpClientFactory, HttpClientOptions httpClientOptions)
-    {
-        this(checkNotNull(httpClientFactory, "httpClientFactory").create(checkNotNull(httpClientOptions, "httpClientOptions")), httpClientFactory);
-    }
-
-    CachingHttpContentRetriever(HttpClient httpClient, HttpClientFactory factory)
-    {
-        this.httpClient = checkNotNull(httpClient);
-        this.factory = factory;
+        this.httpClient = httpClientFactory.getInstance();
     }
 
     @Override
@@ -144,27 +141,6 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
         return authorizationGenerator.generate(method, url, allParameters);
     }
 
-    private static HttpClientOptions getHttpClientOptions(PluginRetrievalService pluginRetrievalService)
-    {
-        HttpClientOptions options = new HttpClientOptions();
-        options.setIoSelectInterval(100, TimeUnit.MILLISECONDS);
-        options.setThreadPrefix("http-content-retriever");
-        options.setMaxConnectionsPerHost(100);
-        options.setUserAgent("Atlassian-Connect/" + pluginRetrievalService.getPlugin().getPluginInformation().getVersion());
-
-        options.setConnectionTimeout(3, TimeUnit.SECONDS);
-        options.setSocketTimeout(5, TimeUnit.SECONDS);
-        options.setRequestTimeout(10, TimeUnit.SECONDS);
-        options.setLeaseTimeout(TimeUnit.SECONDS.toMillis(3));
-        return options;
-    }
-
-    @Override
-    public void destroy() throws Exception
-    {
-        factory.dispose(httpClient);
-    }
-
     private static class OkFunction implements Function<Response, String>
     {
         private final URI url;
@@ -203,7 +179,7 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever, 
             {
                 log.debug("An unknown error occurred retrieving HTTP content. Status is {}, body content " +
                         "is:\n{}\n", input.getStatusCode(), input.getEntity());
-                throw new ContentRetrievalException("An unknown error occurred!");
+                throw new ContentRetrievalException("Unknown error. Status is " + input.getStatusCode());
             }
         }
     }

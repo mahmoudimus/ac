@@ -30,7 +30,9 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -87,7 +89,7 @@ public class OAuthToJwtUpdateTest
         {
             try
             {
-                testPluginInstaller.uninstallJsonAddon(plugin);
+                testPluginInstaller.uninstallAddon(plugin);
             }
             catch (IOException e)
             {
