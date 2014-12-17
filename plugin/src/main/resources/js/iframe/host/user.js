@@ -2,21 +2,9 @@
     "use strict";
 
     var connectModuleData; // data sent from the velocity template
-    if(extend){
-        log('extend is present');
-    } else {
-        log('extend is missing!');
-    }
     extend(function (config) {
-        log('in user extend');
         return {
             init: function userInit(state) {
-                log('userinit');
-                if(connectModuleData){
-                    log('connectmoduledata true');
-                } else {
-                    log('no connectmoduledata');
-                }
                 connectModuleData = state;
             },
             internals: {
