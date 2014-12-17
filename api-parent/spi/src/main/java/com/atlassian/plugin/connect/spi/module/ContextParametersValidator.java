@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.spi.module;
 
+import com.atlassian.annotations.PublicSpi;
+
 import java.util.Collection;
 
 /**
@@ -9,6 +11,7 @@ import java.util.Collection;
  *
  * @param <User> a type of user this class can operate on, depends on a product, e.g. in Confluence this would be a {@code ConfluenceUser} and in JIRA {@code ApplicationUser}
  */
+@PublicSpi
 public interface ContextParametersValidator<User>
 {
     /**

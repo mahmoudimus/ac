@@ -1,8 +1,11 @@
 package com.atlassian.plugin.connect.spi.module;
 
+import com.atlassian.annotations.PublicSpi;
+
 /**
  * Permission check for a single context variable.
  */
+@PublicSpi
 public interface PermissionCheck<User>
 {
     /**

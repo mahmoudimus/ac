@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.spi.module;
 
 import com.atlassian.annotations.PublicApi;
+import com.atlassian.annotations.PublicSpi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,7 @@ public final class PermissionChecks
      *
      * @param <User> user class
      */
+    @PublicSpi
     public static abstract class LongValue<User> implements PermissionCheck<User>
     {
         private static final Logger log = LoggerFactory.getLogger(LongValue.class);

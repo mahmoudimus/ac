@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.spi.module;
 
+import com.atlassian.annotations.PublicSpi;
+
 import java.util.Map;
 
 /**
@@ -12,6 +14,7 @@ import java.util.Map;
  *     You can define permission checks by implementing {@link ContextParametersValidator}
  * </p>
  */
+@PublicSpi
 public interface ContextParametersExtractor
 {
     /**
