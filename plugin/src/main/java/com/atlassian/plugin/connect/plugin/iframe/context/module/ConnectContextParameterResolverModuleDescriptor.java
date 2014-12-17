@@ -126,9 +126,16 @@ public final class ConnectContextParameterResolverModuleDescriptor extends Abstr
 
     private <T> T createBean(String className, Class<T> type)
     {
-        // the module descriptor generic type doesn't seem to matter in this method, so we can cheat a little
-        ModuleDescriptor<T> moduleDescriptorOfUnknownType = (ModuleDescriptor<T>) this;
-        return moduleFactory.createModule(className, moduleDescriptorOfUnknownType);
+        // the module descriptor generic type doesn't seem to matter at all in this method, so we can cheat a little
+        Object bean = moduleFactory.createModule(className, this);
+        if (bean != null && type.isInstance(bean))
+        {
+            return type.cast(bean);
+        }
+        else
+        {
+            throw new IllegalArgumentException("Expected component of type " + type.toString() + ", got " + bean + " instead");
+        }
     }
 
     @Override
