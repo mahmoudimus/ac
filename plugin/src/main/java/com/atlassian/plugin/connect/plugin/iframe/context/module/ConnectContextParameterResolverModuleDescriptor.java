@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.iframe.context.module;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Options;
-import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.spi.module.ContextParametersExtractor;
@@ -10,6 +9,8 @@ import com.atlassian.plugin.connect.spi.module.ContextParametersValidator;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import org.dom4j.Attribute;
@@ -83,17 +84,25 @@ public final class ConnectContextParameterResolverModuleDescriptor extends Abstr
         }));
     }
 
-    private static Element subElement(Element root, String name)
+    private static Element subElement(Element root, final String name)
     {
-        List<Element> subElements = subElements(root);
-        for (Element subElement : subElements)
+        Optional<Element> result = Iterables.tryFind(subElements(root), new Predicate<Element>()
         {
-            if (subElement.getName().equals(name))
+            @Override
+            public boolean apply(final Element input)
             {
-                return subElement;
+                return input.getName().equals(name);
             }
+        });
+
+        if (result.isPresent())
+        {
+            return result.get();
         }
-        throw new IllegalArgumentException("expected required element: " + name + " below " + root.getName());
+        else
+        {
+            throw new IllegalArgumentException("expected required element '" + name + "' below " + root.getName());
+        }
     }
 
     @SuppressWarnings ("unchecked")
