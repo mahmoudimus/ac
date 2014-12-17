@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.rest.data;
 
+import com.atlassian.plugin.connect.plugin.license.LicenseStatus;
 import org.codehaus.jackson.annotate.JsonProperty;
 import com.atlassian.plugins.rest.common.Link;
-
 
 public class RestAddon extends RestMinimalAddon
 {
@@ -10,19 +10,19 @@ public class RestAddon extends RestMinimalAddon
     private final String state;
 
     @JsonProperty
-    private final String license;
+    private final RestAddonLicense license;
 
     @JsonProperty
     private final AddonApplink applink;
 
     @JsonProperty
-    private final RestRelatedLinks links;
+    private RestRelatedLinks links;
 
     public RestAddon(@JsonProperty ("key") final String key,
             @JsonProperty ("version") final String version,
             @JsonProperty ("type") final RestAddonType type,
             @JsonProperty ("state") final String state,
-            @JsonProperty ("license") final String license,
+            @JsonProperty ("license") final RestAddonLicense license,
             @JsonProperty ("applink") final AddonApplink applink,
             @JsonProperty ("links") final RestRelatedLinks links)
     {
@@ -38,7 +38,7 @@ public class RestAddon extends RestMinimalAddon
         return state;
     }
 
-    public String getLicense()
+    public RestAddonLicense getLicense()
     {
         return license;
     }

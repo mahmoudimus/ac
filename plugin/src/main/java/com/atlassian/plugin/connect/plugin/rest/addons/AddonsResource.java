@@ -7,23 +7,30 @@ import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnInstaller;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.rest.AddonOrSysadminOnlyResourceFilter;
+import com.atlassian.plugin.connect.plugin.rest.ConnectRestConstants;
 import com.atlassian.plugin.connect.plugin.rest.RestError;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
+import com.atlassian.plugin.connect.plugin.rest.data.RestAddonLicense;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddonType;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddons;
 import com.atlassian.plugin.connect.plugin.rest.data.RestMinimalAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestNamedLink;
 import com.atlassian.plugin.connect.plugin.rest.data.RestRelatedLinks;
 import com.atlassian.plugins.rest.common.Link;
+import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.plugins.rest.common.security.jersey.SysadminOnlyResourceFilter;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
+import com.atlassian.upm.api.license.entity.PluginLicense;
+import com.atlassian.upm.api.util.Option;
 import com.google.common.collect.Lists;
 import com.sun.jersey.spi.container.ResourceFilters;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -31,15 +38,19 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.atlassian.plugin.connect.plugin.rest.ConnectRestConstants.ADDON_KEY_PATH_PARAMETER;
+
 /**
  * REST endpoint which provides a view of Connect add-ons which are installed in the instance.
+ *
+ * NOTE: This resource class exposes some functionality for add-on developers and some for system administrators.
  */
-@ResourceFilters (SysadminOnlyResourceFilter.class)
 @Path (AddonsResource.REST_PATH)
 public class AddonsResource
 {
@@ -67,6 +78,7 @@ public class AddonsResource
     }
 
     @GET
+    @ResourceFilters(SysadminOnlyResourceFilter.class)
     @Produces ("application/json")
     public Response getAddons(@QueryParam ("type") String type)
     {
@@ -84,9 +96,10 @@ public class AddonsResource
     }
 
     @GET
+    @Path ("/{" + ADDON_KEY_PATH_PARAMETER + "}")
+    @ResourceFilters(AddonOrSysadminOnlyResourceFilter.class)
     @Produces ("application/json")
-    @Path ("/{addonKey}")
-    public Response getAddon(@PathParam ("addonKey") String addonKey)
+    public Response getAddon(@PathParam (ADDON_KEY_PATH_PARAMETER) String addonKey)
     {
         RestAddon restAddon = getRestAddonByKey(addonKey);
         if (restAddon == null)
@@ -98,9 +111,10 @@ public class AddonsResource
     }
 
     @DELETE
+    @Path ("/{" + ADDON_KEY_PATH_PARAMETER + "}")
+    @ResourceFilters(SysadminOnlyResourceFilter.class)
     @Produces ("application/json")
-    @Path ("/{addonKey}")
-    public Response uninstallAddon(@PathParam ("addonKey") String addonKey)
+    public Response uninstallAddon(@PathParam (ADDON_KEY_PATH_PARAMETER) String addonKey)
     {
         try
         {
@@ -124,9 +138,10 @@ public class AddonsResource
     }
 
     @PUT
+    @Path ("/{" + ADDON_KEY_PATH_PARAMETER + "}/reinstall")
+    @ResourceFilters(SysadminOnlyResourceFilter.class)
     @Produces ("application/json")
-    @Path ("/{addonKey}/reinstall")
-    public Response reinstallAddon(@PathParam ("addonKey") String addonKey)
+    public Response reinstallAddon(@PathParam (ADDON_KEY_PATH_PARAMETER) String addonKey)
     {
         try
         {
@@ -170,15 +185,12 @@ public class AddonsResource
 
     private RestAddon getRestAddonByKey(String addonKey)
     {
-        for (ConnectAddonBean addonBean : addonRegistry.getAllAddonBeans())
+        RestAddon restAddon = null;
+        for (ConnectAddonBean addonBean : addonRegistry.getAddonBean(addonKey))
         {
-            if (addonKey.equals(addonBean.getKey()))
-            {
-                return createJsonAddonRest(addonBean);
-            }
+            restAddon = this.createJsonAddonRest(addonBean);
         }
-
-        return null;
+        return restAddon;
     }
 
     private RestAddon createJsonAddonRest(ConnectAddonBean addonBean)
@@ -186,10 +198,21 @@ public class AddonsResource
         String key = addonBean.getKey();
         String version = addonBean.getVersion();
         String state = addonRegistry.getRestartState(key).name();
-        String license = licenseRetriever.getLicenseStatus(key).value();
+        RestAddonLicense license = this.getLicenseResourceForAddon(key);
         RestAddon.AddonApplink appLinkResource = getApplinkResourceForAddon(key);
 
         return new RestAddon(key, version, RestAddonType.JSON, state, license, appLinkResource, getAddonLinks(key));
+    }
+
+    private RestAddonLicense getLicenseResourceForAddon(String key)
+    {
+        Option<PluginLicense> licenseOption = licenseRetriever.getLicense(key);
+        RestAddonLicense resource = null;
+        for (PluginLicense license : licenseOption) {
+            resource = new RestAddonLicense(licenseRetriever.getLicenseStatus(key), license.getLicenseType(),
+                    license.isEvaluation());
+        }
+        return resource;
     }
 
     private RestRelatedLinks getAddonLinks(String key)

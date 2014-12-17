@@ -1,20 +1,29 @@
 package it.com.atlassian.plugin.connect.plugin.rest.addons;
 
+import com.atlassian.httpclient.api.HttpStatus;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
+import com.atlassian.plugin.connect.plugin.rest.data.RestAddons;
+import com.atlassian.plugin.connect.plugin.rest.data.RestMinimalAddon;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.google.gson.reflect.TypeToken;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import it.com.atlassian.plugin.connect.util.RequestUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -22,31 +31,35 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
+import java.util.UUID;
 
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
-@RunWith (AtlassianPluginsTestRunner.class)
+@RunWith(AtlassianPluginsTestRunner.class)
 public class AddonsResourceTest
 {
     private static final Logger LOG = LoggerFactory.getLogger(AddonsResourceTest.class);
+    private static String REST_BASE = "/atlassian-connect/1/addons";
 
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
+    private final ConnectAddonRegistry connectAddonRegistry;
     private final RequestUtil requestUtil;
 
-    private static String REST_BASE = "/atlassian-connect/1/addons";
-
-    private Plugin jsonAddon;
+    private String addonKey;
+    private String addonSecret;
+    private Plugin addon;
 
     public AddonsResourceTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,
-            ApplicationProperties applicationProperties)
+                              ApplicationProperties applicationProperties, ConnectAddonRegistry connectAddonRegistry)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
+        this.connectAddonRegistry = connectAddonRegistry;
         this.requestUtil = new RequestUtil(applicationProperties);
     }
 
@@ -63,18 +76,20 @@ public class AddonsResourceTest
             }
         }
 
-        testAuthenticator.authenticateUser("admin");
-        jsonAddon = installJsonAddon();
+        this.testAuthenticator.authenticateUser("admin");
+        this.addonKey = this.generateAddonKey();
+        this.addon = this.installJsonAddon(this.addonKey);
+        this.addonSecret = this.connectAddonRegistry.getSecret(this.addonKey);
     }
 
     @AfterClass
     public void tearDown() throws IOException
     {
-        if (null != jsonAddon)
+        if (null != addon)
         {
             try
             {
-                testPluginInstaller.uninstallAddon(jsonAddon);
+                testPluginInstaller.uninstallAddon(addon);
             }
             catch (IOException e)
             {
@@ -94,161 +109,122 @@ public class AddonsResourceTest
     }
 
     @Test
-    public void anonymousRequestReturns401() throws IOException
+    public void shouldReturnUnauthorizedWhenAnonymousMakesAnyRequest() throws IOException
     {
-        RequestUtil.Request request = requestUtil.requestBuilder()
-                .setMethod(HttpMethod.GET)
-                .setUri(requestUtil.getApplicationRestUrl(REST_BASE))
-                .build();
-
-        RequestUtil.Response response = requestUtil.makeRequest(request);
-        assertEquals("Anonymous request to addons resource should return 401", 401, response.getStatusCode());
-        assertEquals("Anonymous request to addons resource should return 401 in body", 401, getStatusCode(response));
-    }
-
-    @Test
-    public void nonAdminRequestReturns403Unauthorised() throws IOException
-    {
-        RequestUtil.Request request = requestUtil.requestBuilder()
-                .setMethod(HttpMethod.GET)
-                .setUri(requestUtil.getApplicationRestUrl(REST_BASE))
-                .setUsername("barney")
-                .setPassword("barney")
-                .build();
-
-        RequestUtil.Response response = requestUtil.makeRequest(request);
-
-        // TODO: remove this hack when the code in jira 6.4-SNAPSHOT as at 2014-09-22 is released to a named version
-        // (the SysadminOnlyResourceFilter has been fixed to perform a 403 rejection instead of 401 when the user
-        //  is not a sysadmin, which seems correct but is backwards-incompatible and breaks this test case)
-        try
+        for (RequestUtil.Request.Builder builder : this.getBuildersForAllRequests(this.addonKey))
         {
-            assertEquals("User request to addons resource should return 403", 403, response.getStatusCode());
-            assertEquals("User request to addons resource should return 403 in body", 403, getStatusCode(response));
-        }
-        catch (AssertionError e)
-        {
-            assertEquals("User request to addons resource should return 401", 401, response.getStatusCode());
-            assertEquals("User request to addons resource should return 401 in body", 401, getStatusCode(response));
+            RequestUtil.Request request = builder.build();
+            RequestUtil.Response response = this.requestUtil.makeRequest(request);
+
+            assertErrorResponseStatusCode(request, response, HttpStatus.UNAUTHORIZED);
         }
     }
 
     @Test
-    public void correctAddonsList() throws IOException
+    public void shouldReturnUnauthorizedWhenAnonymousMakesRequestToInvalidAddon() throws IOException
     {
-        RequestUtil.Request request = requestUtil.requestBuilder()
-                .setMethod(HttpMethod.GET)
-                .setUri(requestUtil.getApplicationRestUrl(REST_BASE))
-                .setUsername("admin")
-                .setPassword("admin")
-                .build();
+        for (RequestUtil.Request.Builder builder : this.getBuildersForAllDocumentRequests("invalid-key"))
+        {
+            RequestUtil.Request request = builder.build();
+            RequestUtil.Response response = this.requestUtil.makeRequest(request);
 
-        RequestUtil.Response response = requestUtil.makeRequest(request);
-        assertEquals("Addons resource should return 200", 200, response.getStatusCode());
-
-        List<Map> addons = getAddonList(response);
-
-        assertEquals("Addons resource should return list with one add-on", 1, addons.size());
+            assertErrorResponseStatusCode(request, response, HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @Test
-    public void oneJsonAddonReturned() throws IOException
+    public void shouldReturnForbiddenWhenUserMakesAnyRequest() throws IOException
     {
-        RequestUtil.Request request = requestUtil.requestBuilder()
-                .setMethod(HttpMethod.GET)
-                .setUri(requestUtil.getApplicationRestUrl(REST_BASE + "?type=json"))
-                .setUsername("admin")
-                .setPassword("admin")
-                .build();
+        for (RequestUtil.Request.Builder builder : this.getBuildersForAllRequests(this.addonKey))
+        {
+            builder = builder.setUsername("barney").setPassword("barney");
+            RequestUtil.Request request = builder.build();
+            RequestUtil.Response response = this.requestUtil.makeRequest(request);
 
-        RequestUtil.Response response = requestUtil.makeRequest(request);
-        assertEquals("Addons resource should return 200", 200, response.getStatusCode());
-
-        List<Map> addons = getAddonList(response);
-
-        assertEquals("One json add-on should be returned", 1, addons.size());
-        assertEquals("Only add-on should be the created one", jsonAddon.getKey(), addons.get(0).get("key"));
-        assertEquals("Add-on type should be JSON", "JSON", addons.get(0).get("type"));
+            assertErrorResponseStatusCode(request, response, HttpStatus.FORBIDDEN);
+        }
     }
 
     @Test
-    public void incorrectTypeReturnsError() throws IOException
+    public void shouldReturnForbiddenWhenAddonMakesForbiddenRequest() throws IOException
     {
-        RequestUtil.Request request = requestUtil.requestBuilder()
-                .setMethod(HttpMethod.GET)
-                .setUri(requestUtil.getApplicationRestUrl(REST_BASE + "?type=yaml"))
-                .setUsername("admin")
-                .setPassword("admin")
-                .build();
+        String otherAddonKey = this.generateAddonKey();
+        Plugin otherAddon = this.installJsonAddon(otherAddonKey);
 
-        RequestUtil.Response response = requestUtil.makeRequest(request);
+        List<RequestUtil.Request.Builder> builders = Lists.newArrayList(
+                this.getBuilderForGetAddons(),
+                this.getBuilderForGetAddon(otherAddonKey),
+                this.getBuilderForUninstallAddon(this.addonKey),
+                this.getBuilderForReinstallAddon(this.addonKey)
+        );
+        for (RequestUtil.Request.Builder builder : builders)
+        {
+            builder.setIncludeJwtAuthentication(this.addonKey, this.addonSecret);
+            RequestUtil.Request request = builder.build();
+            RequestUtil.Response response = this.requestUtil.makeRequest(request);
 
-        assertEquals("Addons resource should return 400", 400, response.getStatusCode());
-        assertEquals("Error status code should be 400", 400, getStatusCode(response));
-        assertTrue("Error status message should exist", StringUtils.isNotBlank(getErrorMessage(response)));
+            assertResponseStatusCode(request, response, HttpStatus.FORBIDDEN);
+        }
+
+        this.testPluginInstaller.uninstallAddon(otherAddon);
     }
 
     @Test
-    public void testAddonKey() throws IOException
+    public void shouldReturnAddonsWhenRequestedByAdmin() throws IOException
     {
-        RequestUtil.Response response = getAddonByKey(jsonAddon.getKey());
+        String otherAddonKey = this.generateAddonKey();
+        Plugin otherAddon = this.installJsonAddon(otherAddonKey);
 
-        assertEquals("Addon should be found", 200, response.getStatusCode());
-        assertEquals("Addon key is incorrect", jsonAddon.getKey(), response.getJsonBody().get("key"));
+        RequestUtil.Request request = this.getBuilderForGetAddons().setUsername("admin").setPassword("admin").build();
+        RequestUtil.Response response = this.requestUtil.makeRequest(request);
+
+        assertResponseStatusCode(request, response, HttpStatus.OK);
+        Object[] expectedAddonKeys = new String[]{this.addonKey, otherAddonKey};
+        RestAddons<RestMinimalAddon> addonRepresentations = response.getJsonBody(new TypeToken<RestAddons<RestMinimalAddon>>()
+        {
+        }.getType());
+        Iterable<String> addonKeys = Iterables.transform(addonRepresentations.getAddons(), new Function<RestMinimalAddon, String>()
+        {
+            @Override
+            public String apply(RestMinimalAddon addonRepresentation)
+            {
+                return addonRepresentation.getKey();
+            }
+        });
+        assertThat("Wrong addons in response", addonKeys, containsInAnyOrder(expectedAddonKeys));
+
+        this.testPluginInstaller.uninstallAddon(otherAddon);
     }
 
     @Test
-    public void testAddonState() throws IOException
+    public void shouldReturnSingleAddonWhenRequestedByAdmin() throws IOException
     {
-        RequestUtil.Response response = getAddonByKey(jsonAddon.getKey());
+        RequestUtil.Request request = this.getBuilderForGetAddon(this.addonKey).setUsername("admin").setPassword("admin").build();
+        RequestUtil.Response response = this.requestUtil.makeRequest(request);
 
-        assertEquals("Addon should be found", 200, response.getStatusCode());
-        assertEquals("Addon state is incorrect", "ENABLED", response.getJsonBody().get("state"));
+        assertResponseStatusCode(request, response, HttpStatus.OK);
+        RestMinimalAddon addonRepresentation = response.getJsonBody(RestMinimalAddon.class);
+        assertThat(addonRepresentation.getKey(), equalTo(this.addonKey));
     }
 
     @Test
-    public void testAddonVersion() throws IOException
+    public void shouldReturnSingleAddonWhenRequestedByAddon() throws IOException
     {
-        RequestUtil.Response response = getAddonByKey(jsonAddon.getKey());
+        RequestUtil.Request request = this.getBuilderForGetAddon(this.addonKey)
+                .setIncludeJwtAuthentication(this.addonKey, this.addonSecret).build();
+        RequestUtil.Response response = this.requestUtil.makeRequest(request);
 
-        assertEquals("Addon should be found", 200, response.getStatusCode());
-        assertEquals("Addon version is incorrect", "1.0", response.getJsonBody().get("version"));
+        assertResponseStatusCode(request, response, HttpStatus.OK);
+        RestMinimalAddon addonRepresentation = response.getJsonBody(RestMinimalAddon.class);
+        assertThat(addonRepresentation.getKey(), equalTo(this.addonKey));
     }
 
     @Test
-    public void testAddonType() throws IOException
-    {
-        RequestUtil.Response response = getAddonByKey(jsonAddon.getKey());
-
-        assertEquals("Addon should be found", 200, response.getStatusCode());
-        assertEquals("Addon type is incorrect", "JSON", response.getJsonBody().get("type"));
-    }
-
-    @Test
-    public void testAddonApplink() throws IOException
-    {
-        RequestUtil.Response response = getAddonByKey(jsonAddon.getKey());
-
-        assertEquals("Addon should be found", 200, response.getStatusCode());
-        assertNotNull("Addon should have applink", response.getJsonBody().get("applink"));
-    }
-
-    @Test
-    public void testAddonLinks() throws IOException
-    {
-        RequestUtil.Response response = getAddonByKey(jsonAddon.getKey());
-
-        assertEquals("Addon should be found", 200, response.getStatusCode());
-        assertNotNull("Addon should have links", response.getJsonBody().get("links"));
-    }
-
-    @Test
-    @Ignore
-    public void uninstallJsonAddon() throws IOException
+    public void shouldUninstallJsonAddon() throws IOException
     {
         RequestUtil.Request request = requestUtil.requestBuilder()
                 .setMethod(HttpMethod.DELETE)
-                .setUri(requestUtil.getApplicationRestUrl(REST_BASE + "/" + jsonAddon.getKey()))
+                .setUri(requestUtil.getApplicationRestUrl(REST_BASE + "/" + this.addonKey))
                 .setUsername("admin")
                 .setPassword("admin")
                 .build();
@@ -256,7 +232,7 @@ public class AddonsResourceTest
         RequestUtil.Response response = requestUtil.makeRequest(request);
 
         assertEquals("Addon should be deleted", 200, response.getStatusCode());
-        assertEquals("Addon key is incorrect", jsonAddon.getKey(), response.getJsonBody().get("key"));
+        assertEquals("Addon key is incorrect", this.addonKey, response.getJsonBody().get("key"));
         assertEquals("Addon version is incorrect", "1.0", response.getJsonBody().get("version"));
         assertEquals("Addon type is incorrect", "JSON", response.getJsonBody().get("type"));
 
@@ -270,36 +246,72 @@ public class AddonsResourceTest
         response = requestUtil.makeRequest(request);
         assertEquals("Addons resource should return 200", 200, response.getStatusCode());
 
-        List<Map> addons = getAddonList(response);
-
-        assertEquals("No JSON add-ons should be returned", 0, addons.size());
+        RestAddons<RestAddon> addonRepresentations = response.getJsonBody(RestAddons.class);
+        assertEquals("No JSON add-ons should be returned", 0, addonRepresentations.getAddons().size());
     }
 
-    private RequestUtil.Response getAddonByKey(String addonKey) throws IOException
+    private String generateAddonKey()
     {
-        RequestUtil.Request request = requestUtil.requestBuilder()
-                .setMethod(HttpMethod.GET)
-                .setUri(requestUtil.getApplicationRestUrl(REST_BASE + "/" + addonKey))
-                .setUsername("admin")
-                .setPassword("admin")
-                .build();
-
-        return requestUtil.makeRequest(request);
+        return "ac-test-json-" + UUID.randomUUID();
     }
 
-    private Plugin installJsonAddon() throws IOException
+    private Plugin installJsonAddon(String addonKey) throws IOException
     {
-        String key = "ac-test-json-" + System.currentTimeMillis();
         ConnectAddonBean addonBean = ConnectAddonBean.newConnectAddonBean()
-                .withKey(key)
-                .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(key))
+                .withKey(addonKey)
+                .withBaseurl(this.testPluginInstaller.getInternalAddonBaseUrl(addonKey))
                 .withDescription(getClass().getCanonicalName())
                 .withAuthentication(AuthenticationBean.newAuthenticationBean().withType(AuthenticationType.JWT).build())
+                .withScopes(Sets.newHashSet(ScopeName.READ))
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())
                 .withModule("webItems", randomWebItemBean())
                 .build();
 
-        return testPluginInstaller.installAddon(addonBean);
+        return this.testPluginInstaller.installAddon(addonBean);
+    }
+
+    private List<RequestUtil.Request.Builder> getBuildersForAllRequests(String addonKey)
+    {
+        List<RequestUtil.Request.Builder> builders = this.getBuildersForAllDocumentRequests(addonKey);
+        builders.add(0, this.getBuilderForGetAddons());
+        return builders;
+    }
+
+    private List<RequestUtil.Request.Builder> getBuildersForAllDocumentRequests(String addonKey)
+    {
+        return Lists.newArrayList(
+                this.getBuilderForGetAddon(addonKey),
+                this.getBuilderForUninstallAddon(addonKey),
+                this.getBuilderForReinstallAddon(addonKey)
+        );
+    }
+
+    private RequestUtil.Request.Builder getBuilderForGetAddons()
+    {
+        return requestUtil.requestBuilder()
+                .setMethod(HttpMethod.GET)
+                .setUri(requestUtil.getApplicationRestUrl(REST_BASE));
+    }
+
+    private RequestUtil.Request.Builder getBuilderForGetAddon(String addonKey)
+    {
+        return requestUtil.requestBuilder()
+                .setMethod(HttpMethod.GET)
+                .setUri(requestUtil.getApplicationRestUrl(REST_BASE + "/" + addonKey));
+    }
+
+    private RequestUtil.Request.Builder getBuilderForUninstallAddon(String addonKey)
+    {
+        return requestUtil.requestBuilder()
+                .setMethod(HttpMethod.DELETE)
+                .setUri(requestUtil.getApplicationRestUrl(REST_BASE + "/" + addonKey));
+    }
+
+    private RequestUtil.Request.Builder getBuilderForReinstallAddon(String addonKey)
+    {
+        return requestUtil.requestBuilder()
+                .setMethod(HttpMethod.PUT)
+                .setUri(requestUtil.getApplicationRestUrl(REST_BASE + "/" + addonKey + "/reinstall"));
     }
 
     private int getStatusCode(RequestUtil.Response response)
@@ -307,14 +319,16 @@ public class AddonsResourceTest
         return ((Double) response.getJsonBody().get("status-code")).intValue();
     }
 
-    private String getErrorMessage(RequestUtil.Response response)
+    private void assertResponseStatusCode(RequestUtil.Request request, RequestUtil.Response response, HttpStatus status)
     {
-        return ((String) response.getJsonBody().get("message"));
+        String requestString = String.format("%s %s", request.getMethod(), request.getUri());
+        assertEquals(String.format("Expected status code %s not received for %s", status, requestString), status.code, response.getStatusCode());
     }
 
-    @SuppressWarnings ("unchecked")
-    private List<Map> getAddonList(RequestUtil.Response response)
+    private void assertErrorResponseStatusCode(RequestUtil.Request request, RequestUtil.Response response, HttpStatus status)
     {
-        return ((List<Map>) response.getJsonBody().get("addons"));
+        String requestString = String.format("%s %s", request.getMethod(), request.getUri());
+        assertEquals(String.format("Expected status code %s not received for %s", status, requestString), status.code, response.getStatusCode());
+        assertEquals(String.format("Status code not present in response body for %s", status, requestString), status.code, getStatusCode(response));
     }
 }
