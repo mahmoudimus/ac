@@ -5,7 +5,7 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}"/>
     </plugin-info>
 
-    <connect-context-parameters-resolver>
+    <connect-context-parameters-resolver key="test-connect-context-parameters-resolver">
         <extractors>
             <extractor class="com.atlassian.plugin.connect.TestConfluenceContextParametersExtractor"/>
         </extractors>

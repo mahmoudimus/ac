@@ -56,76 +56,93 @@ public final class ConnectContextParameterResolverModuleDescriptor extends Abstr
     @Override
     public void init(final Plugin plugin, final Element element) throws PluginParseException
     {
-        this.extractors = loadComponents(element, "extractors", ContextParametersExtractor.class);
-        this.validators = loadComponents(element, "validators", ContextParametersValidator.class);
+        new ModuleInitiator(plugin, element).init();
     }
 
-    private <T> Iterable<T> loadComponents(Element root, String componentName, final Class<T> componentClass)
+    private class ModuleInitiator
     {
-        Element subElement = subElement(root, componentName);
-        Iterable<String> classNames = loadClassNames(subElement);
-        return Iterables.transform(classNames, new Function<String, T>()
-        {
-            @Override
-            public T apply(final String input)
-            {
-                return createBean(input, componentClass);
-            }
-        });
-    }
+        private final Element root;
+        private final Plugin plugin;
 
-    private <T> T createBean(String className, Class<T> type)
-    {
-        try
+        public ModuleInitiator(final Plugin plugin, final Element root)
         {
-            ContainerManagedPlugin cmPlugin = (ContainerManagedPlugin) getPlugin();
-            Class<Object> clazz = getPlugin().loadClass(className, null);
-            Object bean = cmPlugin.getContainerAccessor().createBean(clazz);
-            return type.cast(bean);
+            this.root = root;
+            this.plugin = plugin;
         }
-        catch (ClassNotFoundException e)
+
+        public void init()
         {
-            throw new ModuleClassNotFoundException(name, getPluginKey(), getKey(), e, "Couldnt find class " + className);
+            extractors = loadComponents("extractors", ContextParametersExtractor.class);
+            validators = loadComponents("validators", ContextParametersValidator.class);
         }
-    }
 
-    private static Iterable<String> loadClassNames(Element container)
-    {
-        return Options.flatten(Iterables.transform(subElements(container), new Function<Element, Option<String>>()
+        private <T> Iterable<T> loadComponents(String componentName, final Class<T> componentClass)
         {
-
-            @Override
-            public Option<String> apply(final Element input)
+            Element subElement = subElement(root, componentName);
+            Iterable<String> classNames = loadClassNames(subElement);
+            return Iterables.transform(classNames, new Function<String, T>()
             {
-                Attribute aClass = input.attribute("class");
-                if (aClass != null && aClass.getValue() != null)
+                @Override
+                public T apply(final String input)
                 {
-                    return some(aClass.getValue());
+                    return createBean(input, componentClass);
                 }
-                else
-                {
-                    return none();
-                }
-            }
-        }));
-    }
+            });
+        }
 
-    private static Element subElement(Element root, String name)
-    {
-        List<Element> subElements = root.elements();
-        for (Element subElement : subElements)
+        private <T> T createBean(String className, Class<T> type)
         {
-            if (subElement.getName().equals(name))
+            try
             {
-                return subElement;
+                ContainerManagedPlugin cmPlugin = (ContainerManagedPlugin) plugin;
+                Class<Object> clazz = plugin.loadClass(className, null);
+                Object bean = cmPlugin.getContainerAccessor().createBean(clazz);
+                return type.cast(bean);
+            }
+            catch (ClassNotFoundException e)
+            {
+                throw new ModuleClassNotFoundException(name, getPluginKey(), getKey(), e, "Couldn't find class " + className);
             }
         }
-        throw new IllegalArgumentException("expected required element: " + name + " below " + root.getName());
-    }
 
-    private static List<Element> subElements(Element root)
-    {
-        return root.elements();
+        private Iterable<String> loadClassNames(Element container)
+        {
+            return Options.flatten(Iterables.transform(subElements(container), new Function<Element, Option<String>>()
+            {
+
+                @Override
+                public Option<String> apply(final Element input)
+                {
+                    Attribute aClass = input.attribute("class");
+                    if (aClass != null && aClass.getValue() != null)
+                    {
+                        return some(aClass.getValue());
+                    }
+                    else
+                    {
+                        return none();
+                    }
+                }
+            }));
+        }
+
+        private Element subElement(Element ofElement, String name)
+        {
+            List<Element> subElements = ofElement.elements();
+            for (Element subElement : subElements)
+            {
+                if (subElement.getName().equals(name))
+                {
+                    return subElement;
+                }
+            }
+            throw new IllegalArgumentException("expected required element: " + name + " below " + ofElement.getName());
+        }
+
+        private List<Element> subElements(Element ofElement)
+        {
+            return ofElement.elements();
+        }
     }
 
     @Override
