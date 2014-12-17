@@ -2,13 +2,12 @@ package com.atlassian.plugin.connect.plugin.iframe.context.module;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Options;
+import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.spi.module.ContextParametersExtractor;
 import com.atlassian.plugin.connect.spi.module.ContextParametersValidator;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
-import com.atlassian.plugin.module.ContainerManagedPlugin;
-import com.atlassian.plugin.module.ModuleClassNotFoundException;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
@@ -23,8 +22,10 @@ import static com.atlassian.fugue.Option.some;
 
 public final class ConnectContextParameterResolverModuleDescriptor extends AbstractModuleDescriptor<ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver>
 {
-    private Iterable<ContextParametersExtractor> extractors;
-    private Iterable<ContextParametersValidator> validators;
+
+    private Iterable<String> extractorClasses;
+    private Iterable<String> validatorClasses;
+    private ConnectContextParametersResolver module;
 
     public static final class ConnectContextParametersResolver
     {
@@ -56,98 +57,89 @@ public final class ConnectContextParameterResolverModuleDescriptor extends Abstr
     @Override
     public void init(final Plugin plugin, final Element element) throws PluginParseException
     {
-        new ModuleInitiator(plugin, element).init();
+        super.init(plugin, element);
+        this.extractorClasses = loadClassNames(element, "extractors", "extractor");
+        this.validatorClasses = loadClassNames(element, "validators", "validator");
     }
 
-    private class ModuleInitiator
+    private static Iterable<String> loadClassNames(final Element root, final String containerName, final String elementName)
     {
-        private final Element root;
-        private final Plugin plugin;
-
-        public ModuleInitiator(final Plugin plugin, final Element root)
+        Element container = subElement(root, containerName);
+        return Options.flatten(Iterables.transform(subElements(container), new Function<Element, Option<String>>()
         {
-            this.root = root;
-            this.plugin = plugin;
-        }
-
-        public void init()
-        {
-            extractors = loadComponents("extractors", ContextParametersExtractor.class);
-            validators = loadComponents("validators", ContextParametersValidator.class);
-        }
-
-        private <T> Iterable<T> loadComponents(String componentName, final Class<T> componentClass)
-        {
-            Element subElement = subElement(root, componentName);
-            Iterable<String> classNames = loadClassNames(subElement);
-            return Iterables.transform(classNames, new Function<String, T>()
+            @Override
+            public Option<String> apply(final Element input)
             {
-                @Override
-                public T apply(final String input)
+                Attribute aClass = input.attribute("class");
+                if (input.getName().equals(elementName) && aClass != null && aClass.getValue() != null)
                 {
-                    return createBean(input, componentClass);
+                    return some(aClass.getValue());
                 }
-            });
-        }
-
-        private <T> T createBean(String className, Class<T> type)
-        {
-            try
-            {
-                ContainerManagedPlugin cmPlugin = (ContainerManagedPlugin) plugin;
-                Class<Object> clazz = plugin.loadClass(className, null);
-                Object bean = cmPlugin.getContainerAccessor().createBean(clazz);
-                return type.cast(bean);
-            }
-            catch (ClassNotFoundException e)
-            {
-                throw new ModuleClassNotFoundException(name, getPluginKey(), getKey(), e, "Couldn't find class " + className);
-            }
-        }
-
-        private Iterable<String> loadClassNames(Element container)
-        {
-            return Options.flatten(Iterables.transform(subElements(container), new Function<Element, Option<String>>()
-            {
-
-                @Override
-                public Option<String> apply(final Element input)
+                else
                 {
-                    Attribute aClass = input.attribute("class");
-                    if (aClass != null && aClass.getValue() != null)
-                    {
-                        return some(aClass.getValue());
-                    }
-                    else
-                    {
-                        return none();
-                    }
-                }
-            }));
-        }
-
-        private Element subElement(Element ofElement, String name)
-        {
-            List<Element> subElements = ofElement.elements();
-            for (Element subElement : subElements)
-            {
-                if (subElement.getName().equals(name))
-                {
-                    return subElement;
+                    return none();
                 }
             }
-            throw new IllegalArgumentException("expected required element: " + name + " below " + ofElement.getName());
-        }
+        }));
+    }
 
-        private List<Element> subElements(Element ofElement)
+    private static Element subElement(Element root, String name)
+    {
+        List<Element> subElements = subElements(root);
+        for (Element subElement : subElements)
         {
-            return ofElement.elements();
+            if (subElement.getName().equals(name))
+            {
+                return subElement;
+            }
         }
+        throw new IllegalArgumentException("expected required element: " + name + " below " + root.getName());
+    }
+
+    @SuppressWarnings ("unchecked")
+    private static List<Element> subElements(Element root)
+    {
+        return root.elements();
+    }
+
+    @Override
+    public void enabled()
+    {
+        super.enabled();
+        this.module = new ConnectContextParametersResolver(
+                loadClasses(extractorClasses, ContextParametersExtractor.class),
+                loadClasses(validatorClasses, ContextParametersValidator.class)
+        );
+    }
+
+    private <T> Iterable<T> loadClasses(final Iterable<String> classNames, final Class<T> type)
+    {
+        return Iterables.transform(classNames, new Function<String, T>()
+        {
+            @Override
+            public T apply(final String input)
+            {
+                return createBean(input, type);
+            }
+        });
+    }
+
+    private <T> T createBean(String className, Class<T> type)
+    {
+        // the module descriptor generic type doesn't seem to matter in this method, so we can cheat a little
+        ModuleDescriptor<T> moduleDescriptorOfUnknownType = (ModuleDescriptor<T>) this;
+        return moduleFactory.createModule(className, moduleDescriptorOfUnknownType);
     }
 
     @Override
     public ConnectContextParametersResolver getModule()
     {
-        return new ConnectContextParametersResolver(extractors, validators);
+        return module;
+    }
+
+    @Override
+    public Class<ConnectContextParametersResolver> getModuleClass()
+    {
+        return super.getModuleClass();
     }
 }
