@@ -8,6 +8,7 @@ import com.atlassian.pageobjects.elements.timeout.TimeoutType;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.google.common.base.Function;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -16,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -89,8 +91,9 @@ public class ConnectAddOnPage
 
             if (iframe.isPresent())
             {
-                log.debug("iframe src='{}'", iframe.getAttribute("src"));
-                log.debug("iframe text='{}'", iframe.getText());
+                final String iframeSrc = iframe.getAttribute("src");
+                log.debug("iframe src='{}'", iframeSrc);
+                log.debug("iframe src response='{}'", IOUtils.toString(URI.create(iframeSrc)));
             }
             else
             {
