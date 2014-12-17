@@ -16,11 +16,7 @@ import javax.annotation.Nonnull;
  */
 public interface AddOnPropertyService
 {
-    /**
-
-     TODO: add user?
-     */
-    enum OperationStatus
+    enum ServiceResult
     {
         PROPERTY_UPDATED(HttpStatus.SC_OK),
         PROPERTY_CREATED(HttpStatus.SC_CREATED),
@@ -29,11 +25,16 @@ public interface AddOnPropertyService
         ADDON_NOT_FOUND(HttpStatus.SC_NOT_FOUND),
         MAXIMUM_PROPERTIES_EXCEEDED(HttpStatus.SC_CONFLICT),
         PROPERTY_NOT_FOUND(HttpStatus.SC_NOT_FOUND),
-        VALUE_TOO_BIG(HttpStatus.SC_FORBIDDEN);
+        VALUE_TOO_BIG(HttpStatus.SC_FORBIDDEN),
+        ACCESS_FORBIDDEN(HttpStatus.SC_FORBIDDEN),
+        INVALID_FORMAT(HttpStatus.SC_BAD_REQUEST);
 
         private final int httpStatusCode;
 
-        private OperationStatus(int httpStatusCode) { this.httpStatusCode = httpStatusCode; }
+        private ServiceResult(int httpStatusCode)
+        {
+            this.httpStatusCode = httpStatusCode;
+        }
 
         public int getHttpStatusCode()
         {
@@ -41,19 +42,20 @@ public interface AddOnPropertyService
         }
     }
 
-    class ValidationErrorWithReason
+    class ServiceResultWithReason
     {
-        final OperationStatus error;
+        final ServiceResult result;
         final String reason;
 
-        public ValidationErrorWithReason(final OperationStatus error, final String reason) {
-            this.error = error;
+        public ServiceResultWithReason(final ServiceResult result, final String reason)
+        {
+            this.result = result;
             this.reason = reason;
         }
 
-        public OperationStatus getError()
+        public ServiceResult getResult()
         {
-            return error;
+            return result;
         }
 
         public String getReason()
@@ -62,36 +64,32 @@ public interface AddOnPropertyService
         }
     }
 
-    Either<AddOnProperty,Iterable<ValidationErrorWithReason>> getPropertyValue(@Nonnull String addonKey,@Nonnull String propertyKey);
+    Either<ServiceResultWithReason, AddOnProperty> getPropertyValue(String sourcePluginKey, @Nonnull String addonKey,@Nonnull String propertyKey);
 
-    OperationStatus setPropertyValue(@Nonnull String addonKey, String propertyKey, String value);
+    ServiceResult setPropertyValue(String sourcePluginKey, @Nonnull String addonKey, String propertyKey, String value);
 
     class ValidationResult<T>
     {
-        private final Either<T,List<ValidationErrorWithReason>> result;
+        private final Either<List<ServiceResultWithReason>,T> result;
 
-        public ValidationResult(final Either<T, List<ValidationErrorWithReason>> result) {
+        public ValidationResult(Either<List<ServiceResultWithReason>,T> result)
+        {
             this.result = result;
-            }
+        }
 
         public boolean isValid()
         {
-            return result.isRight() && result.right().get().isEmpty();
+            return result.isRight();
         }
 
-        public Iterable<ValidationErrorWithReason> getErrorCollection()
+        public Iterable<ServiceResultWithReason> getErrorCollection()
         {
-            return result.isRight() ? result.right().get() : Collections.EMPTY_LIST;
-        }
-
-        public ValidationErrorWithReason getWorstError()
-        {
-            return isValid()? null: result.right().get().get(0) ;
+            return result.isLeft() ? result.left().get() : Collections.EMPTY_LIST;
         }
 
         public Option<T> getValue()
         {
-            return result.left().toOption();
+            return result.right().toOption();
         }
     }
 

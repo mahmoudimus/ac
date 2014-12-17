@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.rest.addons;
 
 import com.atlassian.applinks.api.ApplicationLink;
+import com.atlassian.fugue.Either;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
@@ -20,12 +21,13 @@ import com.atlassian.plugin.connect.plugin.scopes.AddOnKeyHelper;
 import com.atlassian.plugin.connect.plugin.service.AddOnPropertyService;
 import com.atlassian.plugin.connect.plugin.service.AddOnPropertyServiceImpl;
 import com.atlassian.plugins.rest.common.Link;
-import com.atlassian.plugins.rest.common.security.jersey.SysadminOnlyResourceFilter;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.io.LimitInputStream;
-import com.sun.jersey.spi.container.ResourceFilters;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -48,10 +50,11 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import static com.atlassian.plugin.connect.plugin.service.AddOnPropertyService.ServiceResultWithReason;
+
 /**
  * REST endpoint which provides a view of Connect add-ons which are installed in the instance.
  */
-@ResourceFilters (SysadminOnlyResourceFilter.class)
 @Path (AddonsResource.REST_PATH)
 @Produces ("application/json")
 public class AddonsResource
@@ -68,12 +71,12 @@ public class AddonsResource
     private final ApplicationProperties applicationProperties;
     private final AddOnPropertyService addOnPropertyService;
     private final AddOnKeyHelper addOnKeyHelper;
+    private final UserManager userManager;
 
     public AddonsResource(ConnectAddonRegistry addonRegistry, LicenseRetriever licenseRetriever,
             ConnectApplinkManager connectApplinkManager, ConnectAddonManager connectAddonManager,
             ConnectAddOnInstaller connectAddOnInstaller, ApplicationProperties applicationProperties,
-            AddOnPropertyService addOnPropertyService, AddOnPropertyService addOnPropertyService1,
-            AddOnKeyHelper addOnKeyHelper)
+            AddOnPropertyService addOnPropertyService, AddOnKeyHelper addOnKeyHelper, UserManager userManager)
     {
         this.addonRegistry = addonRegistry;
         this.licenseRetriever = licenseRetriever;
@@ -81,13 +84,19 @@ public class AddonsResource
         this.connectAddonManager = connectAddonManager;
         this.connectAddOnInstaller = connectAddOnInstaller;
         this.applicationProperties = applicationProperties;
-        this.addOnPropertyService = addOnPropertyService1;
+        this.addOnPropertyService = addOnPropertyService;
         this.addOnKeyHelper = addOnKeyHelper;
+        this.userManager = userManager;
     }
 
     @GET
-    public Response getAddons(@QueryParam ("type") String type)
+    public Response getAddons(@QueryParam ("type") String type, @Context HttpServletRequest request)
     {
+        Optional<Response> errorResponse = checkIfSystemAdmin();
+        if (errorResponse.isPresent())
+        {
+            return errorResponse.get();
+        }
         try
         {
             RestAddonType addonType = StringUtils.isBlank(type) ? null : RestAddonType.valueOf(type.toUpperCase());
@@ -101,10 +110,29 @@ public class AddonsResource
         }
     }
 
+    private Optional<Response> checkIfSystemAdmin()
+    {
+        UserProfile user = userManager.getRemoteUser();
+        if (user == null)
+        {
+            return Optional.of(getErrorResponse("Client must be authenticated to access this resource.", Response.Status.UNAUTHORIZED));
+        }
+        if (!userManager.isSystemAdmin(user.getUserKey()))
+        {
+            return Optional.of(getErrorResponse("Client must be authenticated as a system administrator to access this resource.", Response.Status.FORBIDDEN));
+        }
+        return Optional.absent();
+    }
+
     @GET
     @Path ("/{addonKey}")
     public Response getAddon(@PathParam ("addonKey") String addonKey)
     {
+        Optional<Response> errorResponse = checkIfSystemAdmin();
+        if (errorResponse.isPresent())
+        {
+            return errorResponse.get();
+        }
         RestAddon restAddon = getRestAddonByKey(addonKey);
         if (restAddon == null)
         {
@@ -118,6 +146,11 @@ public class AddonsResource
     @Path ("/{addonKey}")
     public Response uninstallAddon(@PathParam ("addonKey") String addonKey)
     {
+        Optional<Response> errorResponse = checkIfSystemAdmin();
+        if (errorResponse.isPresent())
+        {
+            return errorResponse.get();
+        }
         try
         {
             ConnectAddonBean addonBean = connectAddonManager.getExistingAddon(addonKey);
@@ -143,6 +176,11 @@ public class AddonsResource
     @Path ("/{addonKey}/reinstall")
     public Response reinstallAddon(@PathParam ("addonKey") String addonKey)
     {
+        Optional<Response> errorResponse = checkIfSystemAdmin();
+        if (errorResponse.isPresent())
+        {
+            return errorResponse.get();
+        }
         try
         {
             ConnectAddonBean addonBean = connectAddonManager.getExistingAddon(addonKey);
@@ -172,38 +210,27 @@ public class AddonsResource
     @Path ("{addonKey}/properties/{propertyKey}")
     public Response getAddonProperties(@PathParam ("addonKey") String addonKey, @PathParam("propertyKey") String propertyKey, @Context HttpServletRequest request)
     {
-        if (!hasPermissionsForAddon(request, addonKey))
+        String sourcePluginKey = addOnKeyHelper.getAddOnKeyForScopeCheck(request);
+        Either<ServiceResultWithReason, AddOnProperty> propertyValue = addOnPropertyService.getPropertyValue(sourcePluginKey, addonKey, propertyKey);
+
+        if (propertyValue.isLeft())
         {
-            String message = "Add-on does not have permmision to access " + addonKey + "'s data.";
-            return getErrorResponse(message, Response.Status.FORBIDDEN);
+            return getErrorResponse(propertyValue.left().get());
         }
-
-/*
-        AddOnPropertyService.ValidationResult<AddOnPropertyService.GetPropertyInput> validationResult = addOnPropertyService.validateGetPropertyValue(addonKey, propertyKey);
-        if (!validationResult.isValid())
-        {
-            AddOnPropertyService.ValidationErrorWithReason worstError = validationResult.getWorstError();
-            return Response.status(worstError.getError().getHttpStatusCode()).entity(worstError.getReason()).cacheControl(never()).build();
-        }
-        AddOnProperty addonProperty = addOnPropertyService.getPropertyValue(validationResult);
-*/
-
-        return Response.ok().build();//.entity(RestAddonProperty.valueOf(addonProperty)).build();
-
+        return Response.ok().entity(RestAddonProperty.valueOf(propertyValue.right().get())).cacheControl(never()).build();
     }
 
     @PUT
     @Path ("{addonKey}/properties/{propertyKey}")
     public Response putKey(@PathParam ("addonKey") String addonKey, @PathParam("propertyKey") String propertyKey, @Context HttpServletRequest request)
     {
-        if (!hasPermissionsForAddon(request, addonKey))
-        {
-            String message = "Add-on does not have permmision to access " + addonKey + "'s data.";
-            return getErrorResponse(message, Response.Status.FORBIDDEN);
-        }
+        String sourcePluginKey = addOnKeyHelper.getAddOnKeyForScopeCheck(request);
+        Either<RestParamError, String> errorStringEither = propertyValue(request);
+        if (errorStringEither.isLeft())
+            return getErrorResponse("Value too long", Response.Status.FORBIDDEN);
+        AddOnPropertyService.ServiceResult serviceResult = addOnPropertyService.setPropertyValue(sourcePluginKey, addonKey, propertyKey, errorStringEither.right().get());
 
-        //addOnPropertyService.setPropertyValue(addonKey,propertyKey,propertyValue(request));
-        return Response.ok().build();
+        return Response.status(serviceResult.getHttpStatusCode()).cacheControl(never()).build();
     }
 
     private RestAddons getAddonsByType(RestAddonType type)
@@ -290,22 +317,19 @@ public class AddonsResource
         RestError error = new RestError(status.getStatusCode(), message);
         return Response.status(status)
                 .entity(error)
+                .cacheControl(never())
                 .build();
     }
 
-    private Response getErrorResponse(final AddOnPropertyService.ValidationErrorWithReason validationErrorWithReason )
+    private Response getErrorResponse(final ServiceResultWithReason validationErrorWithReason )
     {
-        return Response.status(validationErrorWithReason.getError().getHttpStatusCode())
+        return Response.status(validationErrorWithReason.getResult().getHttpStatusCode())
                 .entity(validationErrorWithReason.getReason())
+                .cacheControl(never())
                 .build();
     }
 
-    private boolean hasPermissionsForAddon(HttpServletRequest request, final String addonKey)
-    {
-        return addOnKeyHelper.getAddOnKeyForScopeCheck(request).equals(addonKey);
-    }
-
-    private String propertyValue(final HttpServletRequest request)
+    private Either<RestParamError, String> propertyValue(final HttpServletRequest request)
     {
         try
         {
@@ -314,14 +338,19 @@ public class AddonsResource
             byte[] bytes = IOUtils.toByteArray(limitInputStream);
             if (bytes.length > AddOnPropertyServiceImpl.MAXIMUM_VALUE_LENGTH)
             {
-                return null;//throw new BadRequestWebException();
+                return Either.left(RestParamError.VALUE_LENGTH_TOO_BIG);
             }
-            return new String(bytes, Charset.defaultCharset());//forName(ComponentAccessor.getApplicationProperties().getEncoding()));
+            return Either.right(new String(bytes, Charset.defaultCharset()));//forName(ComponentAccessor.getApplicationProperties().getEncoding()));
         }
         catch (IOException e)
         {
-            return null;//throw new BadRequestWebException();
+            return Either.left(RestParamError.VALUE_LENGTH_TOO_BIG);
         }
+    }
+
+    private enum RestParamError
+    {
+        VALUE_LENGTH_TOO_BIG
     }
 
     private static CacheControl never()

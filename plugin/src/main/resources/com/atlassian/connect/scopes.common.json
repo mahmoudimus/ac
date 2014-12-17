@@ -2,12 +2,12 @@
   "scopes": [
     {
       "key": "READ",
-      "restPathKeys": ["entities", "license", "addons"],
+      "restPathKeys": ["entities", "license"],
       "methods": ["GET"]
     },
     {
       "key": "ADMIN",
-      "restPathKeys": ["entitylink", "entitylink_primary", "manifest", "type_entity", "addons"],
+      "restPathKeys": ["entitylink", "entitylink_primary", "manifest", "type_entity"],
       "methods": ["GET", "POST", "PUT", "DELETE"]
     }
   ],
@@ -52,13 +52,6 @@
       "name": "atlassian-connect",
       "basePaths": ["/license($|/.*)"],
       "versions": ["1", "latest"],
-      "public": true
-    },
-    {
-      "key": "addons",
-      "name": "atlassian-connect",
-      "basePaths": ["/addons($|/.*)"],
-      "versions":  ["1","latest"],
       "public": true
     }
   ]

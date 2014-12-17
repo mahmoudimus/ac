@@ -1,11 +1,10 @@
 package com.atlassian.plugin.connect.plugin.rest.data;
 
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
-import com.atlassian.plugin.connect.plugin.service.AddOnPropertyService;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
- * TODO: Document this class / interface here
+ * This class represents an addon property
  *
  * @since v6.3
  */
