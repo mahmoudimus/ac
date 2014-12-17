@@ -215,4 +215,9 @@ public class ConnectAppServlets
     {
         return new MustacheServlet("dialog.mu");
     }
+
+    public static HttpServlet dynamicMacroStaticServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet("confluence/macro/dynamic-macro-static.mu"));
+    }
 }

@@ -3,11 +3,14 @@ package it.modules.confluence;
 import com.atlassian.confluence.it.Page;
 import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.pageobjects.page.content.EditContentPage;
+import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
@@ -16,9 +19,14 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWithRemoteMacro;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.parser.PdfReaderContentParser;
+import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
+import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
 import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -30,6 +38,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.Charset;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
@@ -37,10 +49,10 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomNam
 import static com.atlassian.plugin.connect.test.Utils.loadResourceAsString;
 import static it.matcher.ParamMatchers.isVersionNumber;
 import static org.hamcrest.CoreMatchers.both;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 import static org.junit.Assert.assertThat;
-
 
 public class TestDynamicContentMacro extends AbstractContentMacroTest
 {
@@ -62,6 +74,10 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
     private static final String SLOW_MACRO_NAME = "Slow Macro";
     private static final String SLOW_MACRO_KEY = "slow-macro";
+
+    private static final String DYNAMIC_MACRO_KEY = "dynamic-macro";
+    private static final String DYNAMIC_MACRO_NAME = "Dynamic Macro";
+
 
     private static ConnectRunner remotePlugin;
 
@@ -129,6 +145,20 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                 .withName(new I18nProperty(SLOW_MACRO_NAME, null))
                 .build();
 
+        DynamicContentMacroModuleBean dynamicMacroWithFallback = newDynamicContentMacroModuleBean()
+                .withUrl("/dynamic-macro")
+                .withKey(DYNAMIC_MACRO_KEY)
+                .withName(new I18nProperty(DYNAMIC_MACRO_NAME, null))
+                .withRenderModes(MacroRenderModesBean.newMacroRenderModesBean()
+                                .withDefaultfallback(
+                                        EmbeddedStaticContentMacroBean
+                                                .newEmbeddedStaticContentMacroModuleBean()
+                                                .withUrl("/dynamic-macro-static")
+                                                .build())
+                                .build()
+                )
+                .build();
+
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
 
                 .setAuthenticationToNone()
@@ -148,7 +178,8 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                         clientSideBodyEditingMacro,
                         clientSideBodyEditingMacroScriptInjection,
                         macroInTableMacro,
-                        slowMacro
+                        slowMacro,
+                        dynamicMacroWithFallback
                 )
                 .addRoute(DEFAULT_MACRO_URL, ConnectAppServlets.helloWorldServlet())
                 .addRoute("/render-editor", ConnectAppServlets.macroEditor())
@@ -160,6 +191,8 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                 .addRoute("/images/macro-icon.png", ConnectAppServlets.resourceServlet("atlassian-icon-16.png", "image/png"))
                 .addRoute("/render-macro-in-table-macro", ConnectAppServlets.apRequestServlet())
                 .addRoute("/slow-macro", new SlowMacroServlet(22))
+                .addRoute("/dynamic-macro", ConnectAppServlets.helloWorldServlet())
+                .addRoute("/dynamic-macro-static", ConnectAppServlets.dynamicMacroStaticServlet())
                 .start();
     }
 
@@ -176,6 +209,72 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     public void testMacroIsRendered() throws Exception
     {
         testMacroIsRendered(TestUser.ADMIN.confUser());
+    }
+
+    @Test
+    public void testDynamicMacroWithPdfFallback() throws Exception
+    {
+        ViewPage viewPage = getMacroContent(TestUser.ADMIN.confUser(), DYNAMIC_MACRO_NAME, "Dynamic Macro");
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(DYNAMIC_MACRO_KEY, 0);
+        String content = renderedMacro.getIFrameElementText("hello-world-message");
+        assertThat(content, is("Hello world"));
+        assertThat(extractPDFText(viewPage), containsString("Hello world"));
+    }
+
+    @Test
+    public void testDynamicMacroWithWordFallback() throws Exception
+    {
+        ViewPage viewPage = getMacroContent(TestUser.ADMIN.confUser(), DYNAMIC_MACRO_NAME, "Dynamic Macro");
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(DYNAMIC_MACRO_KEY, 0);
+        String content = renderedMacro.getIFrameElementText("hello-world-message");
+        assertThat(content, is("Hello world"));
+        assertThat(extractWordText(viewPage), containsString("Hello world"));
+    }
+
+    public String extractPDFText(ViewPage viewPage) throws IOException
+    {
+        String pdfUrl = viewPage.openToolsMenu().getMenuItem(By.id("action-export-pdf-link")).getHref();
+        PdfReader reader = new PdfReader(loadData(pdfUrl));
+        PdfReaderContentParser parser = new PdfReaderContentParser(reader);
+        TextExtractionStrategy strategy;
+        StringBuilder buf = new StringBuilder();
+        for (int i = 1; i <= reader.getNumberOfPages(); i++)
+        {
+            strategy = parser.processContent(i, new SimpleTextExtractionStrategy());
+            buf.append(strategy.getResultantText());
+        }
+        reader.close();
+        return buf.toString();
+    }
+
+    private byte[] loadData(String urlString)
+    {
+        try
+        {
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setInstanceFollowRedirects(true);
+            connection.setConnectTimeout(15 * 1000); // 15 second time out
+            connection.setRequestMethod("GET");
+            connection.connect();
+            if (connection.getResponseCode() != 200)
+            {
+                throw new RuntimeException("Could not load remote PDF: " + connection.getResponseMessage());
+            }
+            else
+            {
+                return IOUtils.toByteArray(connection.getInputStream());
+            }
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException("Could not load remote PDF: "+e.getMessage(), e);
+        }
+    }
+
+    private String extractWordText(ViewPage viewPage) throws IOException
+    {
+        return IOUtils.toString(new URL(viewPage.openToolsMenu().getMenuItem(By.id("action-export-word-link")).getHref()));
     }
 
     @Test
