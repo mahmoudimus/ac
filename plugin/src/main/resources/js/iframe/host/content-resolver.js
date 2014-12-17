@@ -1,6 +1,21 @@
 (function($, UiParams, context){
     "use strict";
-
+    log('in content resolver');
+    if(context){
+        log('context in reslover');
+        if(context._AP){
+            log('AP exists');
+        } else {
+            log('no context._AP');
+        }
+    } else{
+        log('no context in reoslver');
+    }
+    if(UiParams){
+        log('UiParams true');
+    } else {
+        log('no UiParams');
+    }
     function getContentUrl(pluginKey, moduleKey){
         return AJS.contextPath() + "/plugins/servlet/ac/" + encodeURIComponent(pluginKey) + "/" + encodeURIComponent(moduleKey);
     }

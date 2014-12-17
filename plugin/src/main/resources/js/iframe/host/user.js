@@ -11,6 +11,12 @@
         log('in user extend');
         return {
             init: function userInit(state) {
+                log('userinit');
+                if(connectModuleData){
+                    log('connectmoduledata true');
+                } else {
+                    log('no connectmoduledata');
+                }
                 connectModuleData = state;
             },
             internals: {
