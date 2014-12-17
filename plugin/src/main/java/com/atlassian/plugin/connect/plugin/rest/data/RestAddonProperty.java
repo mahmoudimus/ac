@@ -14,15 +14,18 @@ public class RestAddonProperty
     private final String key;
     @JsonProperty
     private final String value;
+    @JsonProperty
+    private final String self;
 
-    public RestAddonProperty(@JsonProperty ("key") final String key, @JsonProperty ("value") final String value)
+    public RestAddonProperty(@JsonProperty ("key") final String key, @JsonProperty ("value") final String value, @JsonProperty ("self") final String self)
     {
         this.key = key;
         this.value = value;
+        this.self = self;
     }
 
-    public static RestAddonProperty valueOf(final AddOnProperty addonProperty)
+    public static RestAddonProperty valueOf(final AddOnProperty addonProperty, final String baseURL)
     {
-        return new RestAddonProperty(addonProperty.getKey(), addonProperty.getValue());
+        return new RestAddonProperty(addonProperty.getKey(), addonProperty.getValue(), baseURL + addonProperty.getKey());
     }
 }

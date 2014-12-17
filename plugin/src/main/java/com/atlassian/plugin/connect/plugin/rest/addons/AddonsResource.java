@@ -217,7 +217,8 @@ public class AddonsResource
         {
             return getErrorResponse(propertyValue.left().get());
         }
-        return Response.ok().entity(RestAddonProperty.valueOf(propertyValue.right().get())).cacheControl(never()).build();
+        String baseURL = applicationProperties.getBaseUrl(UrlMode.CANONICAL) + "/rest/atlassian-connect/1/addons/" + addonKey + "/properties/";
+        return Response.ok().entity(RestAddonProperty.valueOf(propertyValue.right().get(), baseURL)).cacheControl(never()).build();
     }
 
     @PUT
