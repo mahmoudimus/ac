@@ -65,17 +65,42 @@ public class ConnectAddOnPage
         }
         catch (AssertionError e)
         {
-            // failed to find the iframe, or iframe initialization never finished...
-            // the developer debugging this will appreciate a little help in the bamboo logs
-            // so that they don't have to run the product and attach a debugger just to find out the parameters
-            log.error("Waiting for the container div '{}' to get the class '{}' timed out. addOnKey='{}', pageElementKey='{}', includeEmbeddedPrefix={}",
-                    new Object[]{ id, IFRAME_INIT, addOnKey, pageElementKey, includedEmbeddedPrefix });
+            debugIframeFailure(id, containerDivElement);
             throw e;
         }
 
         final long stopTime = System.currentTimeMillis();
         log.debug("Milliseconds to find iframe-init class on ap-content container div: {}", stopTime - startTime);
         this.containerDiv = ((WebDriverElement)containerDivElement).asWebElement();
+    }
+
+    private void debugIframeFailure(String containerDivId, PageElement containerDivElement)
+    {
+        // failed to find the iframe, or iframe initialization never finished...
+        // the developer debugging this will appreciate a little help in the bamboo logs
+        // so that they don't have to run the product and attach a debugger just to find out the parameters
+        log.error("Waiting for the container div '{}' to get the class '{}' timed out. addOnKey='{}', pageElementKey='{}', includeEmbeddedPrefix={}",
+                new Object[]{ containerDivId, IFRAME_INIT, addOnKey, pageElementKey, includedEmbeddedPrefix });
+
+        // this could be because the add-on is not responding to requests for iframe content, so log iframe content
+        try
+        {
+            final PageElement iframe = containerDivElement.find(By.tagName("iframe"));
+
+            if (iframe.isPresent())
+            {
+                log.debug("iframe src='{}'", iframe.getAttribute("src"));
+                log.debug("iframe text='{}'", iframe.getText());
+            }
+            else
+            {
+                log.error("iframe element is not present inside div '{}'", containerDivId);
+            }
+        }
+        catch (Exception e)
+        {
+            log.error("Failed to log iframe content for debugging.", e);
+        }
     }
 
     public Map<String, String> getIframeQueryParams()
