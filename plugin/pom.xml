@@ -749,6 +749,17 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>npm connect-js plugin install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <workingDirectory>../plugin</workingDirectory>
+                            <arguments>install ${atlassian.connect-js.path}</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>install connect npm</id>
                         <goals>
                             <goal>npm</goal>
@@ -1214,10 +1225,21 @@
                                 <goals>
                                     <goal>install-node-and-npm</goal>
                                 </goals>
-                                <phase>prepare-package</phase>
+                                <phase>generate-resources</phase>
                                 <configuration>
                                     <nodeVersion>${node.version}</nodeVersion>
                                     <npmVersion>${npm.version}</npmVersion>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>npm connect-js install</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <workingDirectory>../docs</workingDirectory>
+                                    <arguments>install ${atlassian.connect-js.path}</arguments>
                                 </configuration>
                             </execution>
                             <execution>
