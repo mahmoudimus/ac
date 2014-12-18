@@ -11,9 +11,9 @@ import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * TODO: Document this class / interface here
+ * Class allowing for extracting of plugin key from http requests.
  *
- * @since v6.3
+ * @since TODO: fill in the proper version before merge
  */
 @Component
 public class AddOnKeyExtractor
@@ -57,11 +57,11 @@ public class AddOnKeyExtractor
     }
 
     /**
-     * Checks to see if the request have been made from an add-on.
-     * Possible cases:
-     * 1. The request has an attribute named Plugin-Key and is equal to the client key. ??
-     * 2. The request has a AP-Client-Key header.
-     * This function does not check for the validity of the keys.
+     * Checks to see if the request have been made from an add-on. We consider the request to be issued by and add-on
+     * in the following cases.
+     * 1. When the request is coming from an add-on server, is it attributed with Plugin-Key and has to be equal to the client key.
+     * 2. When the request is coming from a browser, it comes with AP-Client-Key header.
+     * This function does not check if the add-on exists, only if the the request could have been made by an add-on.
      *
      * @param request the http request where the key is looked for
      * @return if the request has been made by an add-on.
