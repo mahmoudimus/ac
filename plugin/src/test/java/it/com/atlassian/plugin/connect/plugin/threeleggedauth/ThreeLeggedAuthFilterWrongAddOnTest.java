@@ -35,9 +35,9 @@ public class ThreeLeggedAuthFilterWrongAddOnTest extends ThreeLeggedAuthFilterTe
                                                ApplicationProperties applicationProperties,
                                                ThreeLeggedAuthService threeLeggedAuthService,
                                                ApplicationService applicationService,
-                                               ApplicationFactory applicationFactory)
+                                               ApplicationManager applicationManager)
     {
-        super(testPluginInstaller, testAuthenticator, testFilterResults, jwtWriterFactory, connectAddonRegistry, applicationProperties, threeLeggedAuthService, applicationService, applicationFactory);
+        super(testPluginInstaller, testAuthenticator, testFilterResults, jwtWriterFactory, connectAddonRegistry, applicationProperties, threeLeggedAuthService, applicationService, applicationManager);
     }
 
     @Override
