@@ -335,7 +335,7 @@ public class AddonsResourceTest
             // TODO Remove when Confluence has been upgraded to atlassian-rest-common 2.9.12, including the fix for REST-286
             if (status.equals(HttpStatus.FORBIDDEN))
             {
-                assertErrorResponseStatusCode(request, response, HttpStatus.UNAUTHORIZED);
+                assertResponseStatusCode(request, response, HttpStatus.UNAUTHORIZED);
             }
             else
             {
