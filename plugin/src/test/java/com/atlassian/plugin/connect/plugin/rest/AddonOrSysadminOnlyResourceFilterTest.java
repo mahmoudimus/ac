@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.rest;
 
 import com.atlassian.jwt.JwtConstants;
+import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugins.rest.common.security.AuthenticationRequiredException;
-import com.atlassian.plugins.rest.common.security.AuthorisationException;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.Lists;
@@ -61,7 +61,7 @@ public class AddonOrSysadminOnlyResourceFilterTest
         this.resourceFilter.getRequestFilter().filter(this.containerRequest);
     }
 
-    @Test(expected = AuthorisationException.class)
+    @Test(expected = PermissionDeniedException.class)
     public void shouldRejectUserRequest()
     {
         UserKey userKey = new UserKey("charlie");
@@ -107,7 +107,7 @@ public class AddonOrSysadminOnlyResourceFilterTest
         assertThat(this.resourceFilter.getRequestFilter().filter(this.containerRequest), equalTo(this.containerRequest));
     }
 
-    @Test(expected = AuthorisationException.class)
+    @Test(expected = PermissionDeniedException.class)
     public void shouldRejectAddonRequestToResourceForOtherAddOn()
     {
         String pluginKey = "my-addon";

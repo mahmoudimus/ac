@@ -70,6 +70,17 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
     }
 
     @Override
+    public void uninstallAddon(String pluginKey) throws IOException
+    {
+        PluginControlHandler handler = getControlHandler();
+
+        checkNotNull(handler);
+
+        Plugin plugin = handler.getPlugin(pluginKey);
+        this.uninstallAddon(plugin);
+    }
+
+    @Override
     public void disableAddon(String pluginKey) throws IOException
     {
         PluginControlHandler handler = getControlHandler();

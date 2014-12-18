@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.rest;
 
 import com.atlassian.jwt.JwtConstants;
+import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugins.rest.common.security.AuthenticationRequiredException;
-import com.atlassian.plugins.rest.common.security.AuthorisationException;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.annotations.VisibleForTesting;
@@ -14,10 +14,8 @@ import com.sun.jersey.spi.container.ResourceFilter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
-
 import java.util.List;
 
 import static com.atlassian.plugin.connect.plugin.rest.ConnectRestConstants.ADDON_KEY_PATH_PARAMETER;
@@ -92,10 +90,13 @@ public class AddonOrSysadminOnlyResourceFilter implements ResourceFilter
         private void assertResourceAllowedForAddon(Object pluginKey)
         {
             List<String> resourceAddonKeys = uriInfo.getPathParameters().get(ADDON_KEY_PATH_PARAMETER);
-            if (resourceAddonKeys != null && !resourceAddonKeys.isEmpty()) {
+            if (resourceAddonKeys != null && !resourceAddonKeys.isEmpty())
+            {
                 String resourceAddonKey = resourceAddonKeys.iterator().next();
-                if (!pluginKey.equals(resourceAddonKey)) {
-                    throw new AuthorisationException(null);
+                if (!pluginKey.equals(resourceAddonKey))
+                {
+                    // TODO Change to AuthorisationException when Confluence has been upgraded to atlassian-rest-common 2.9.12
+                    throw new PermissionDeniedException(null);
                 }
             }
         }
@@ -104,7 +105,8 @@ public class AddonOrSysadminOnlyResourceFilter implements ResourceFilter
         {
             if (!userManager.isSystemAdmin(userKey))
             {
-                throw new AuthorisationException(null);
+                // TODO Change to AuthorisationException when Confluence has been upgraded to atlassian-rest-common 2.9.12
+                throw new PermissionDeniedException(null);
             }
         }
     }
