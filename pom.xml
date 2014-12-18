@@ -25,6 +25,8 @@
 
     <modules>
         <module>api-parent</module>
+        <module>reference-plugin-jira</module>
+        <module>reference-plugin-confluence</module>
         <module>modules</module>
         <module>test-support-plugin</module>
         <module>plugin</module>

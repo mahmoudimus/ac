@@ -13,9 +13,13 @@
       "title": "Tutorial: JIRA activity"
     },
     {
-      "filename": "connect-cookbook.html",
-      "title": "Connect cookbook",
+      "filename": "confluence-gardener-tutorial.html",
+      "title": "Tutorial: Confluence Gardener",
       "new": true
+    },
+    {
+      "filename": "connect-cookbook.html",
+      "title": "Connect cookbook"
     }
   ],
   "developing": [

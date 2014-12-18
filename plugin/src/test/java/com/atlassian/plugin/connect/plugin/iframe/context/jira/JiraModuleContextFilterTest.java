@@ -11,6 +11,7 @@ import com.atlassian.jira.project.version.VersionManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.google.common.collect.ImmutableMap;
@@ -49,20 +50,34 @@ import static org.mockito.Mockito.when;
 @RunWith (MockitoJUnitRunner.class)
 public class JiraModuleContextFilterTest
 {
-    @Mock private PermissionManager permissionManager;
-    @Mock private ProjectService projectService;
-    @Mock private IssueManager issueManager;
-    @Mock private VersionManager versionManager;
-    @Mock private ProjectComponentManager projectComponentManager;
-    @Mock private JiraAuthenticationContext authenticationContext;
+    @Mock
+    private PermissionManager permissionManager;
+    @Mock
+    private ProjectService projectService;
+    @Mock
+    private IssueManager issueManager;
+    @Mock
+    private VersionManager versionManager;
+    @Mock
+    private ProjectComponentManager projectComponentManager;
+    @Mock
+    private JiraAuthenticationContext authenticationContext;
 
-    @InjectMocks private JiraModuleContextFilter jiraModuleContextFilter;
+    @Mock
+    private PluginAccessor pluginAccessor;
 
-    @Mock private ProjectService.GetProjectResult validResult;
-    @Mock private ProjectService.GetProjectResult invalidResult;
+    @InjectMocks
+    private JiraModuleContextFilter jiraModuleContextFilter;
 
-    @Mock private MutableIssue allowedIssue;
-    @Mock private MutableIssue forbiddenIssue;
+    @Mock
+    private ProjectService.GetProjectResult validResult;
+    @Mock
+    private ProjectService.GetProjectResult invalidResult;
+
+    @Mock
+    private MutableIssue allowedIssue;
+    @Mock
+    private MutableIssue forbiddenIssue;
 
     private final static String ALLOWED_ISSUE_ID = "101";
     private final static String FORBIDDEN_ISSUE_ID = "202";
@@ -70,8 +85,10 @@ public class JiraModuleContextFilterTest
     private final static String ALLOWED_ISSUE_KEY = "GOOD-1";
     private final static String FORBIDDEN_ISSUE_KEY = "BAD-1";
 
-    @Mock private Project allowedProject;
-    @Mock private Project forbiddenProject;
+    @Mock
+    private Project allowedProject;
+    @Mock
+    private Project forbiddenProject;
 
     private final static String ALLOWED_PROJECT_ID = "303";
     private final static String FORBIDDEN_PROJECT_ID = "404";
@@ -79,14 +96,18 @@ public class JiraModuleContextFilterTest
     private final static String ALLOWED_PROJECT_KEY = "GOOD";
     private final static String FORBIDDEN_PROJECT_KEY = "BAD";
 
-    @Mock private Version allowedVersion;
-    @Mock private Version forbiddenVersion;
+    @Mock
+    private Version allowedVersion;
+    @Mock
+    private Version forbiddenVersion;
 
     private final static String ALLOWED_VERSION_ID = "10001";
     private final static String FORBIDDEN_VERSION_ID = "20002";
 
-    @Mock private ProjectComponent allowedComponent;
-    @Mock private ProjectComponent forbiddenComponent;
+    @Mock
+    private ProjectComponent allowedComponent;
+    @Mock
+    private ProjectComponent forbiddenComponent;
 
     private final static String ALLOWED_COMPONENT_ID = "777";
     private final static String FORBIDDEN_COMPONENT_ID = "888";
@@ -167,8 +188,8 @@ public class JiraModuleContextFilterTest
     public void testAllowedIssueIdAndKey()
     {
         testFilter(ImmutableMap.of(
-            ISSUE_KEY, ALLOWED_ISSUE_KEY,
-            ISSUE_ID, ALLOWED_ISSUE_ID
+                ISSUE_KEY, ALLOWED_ISSUE_KEY,
+                ISSUE_ID, ALLOWED_ISSUE_ID
         ));
     }
 
@@ -176,10 +197,10 @@ public class JiraModuleContextFilterTest
     public void testAllowedIssueIdButForbiddenKey()
     {
         testFilter(ImmutableMap.of(
-            ISSUE_KEY, FORBIDDEN_ISSUE_KEY,
-            ISSUE_ID, ALLOWED_ISSUE_ID
+                ISSUE_KEY, FORBIDDEN_ISSUE_KEY,
+                ISSUE_ID, ALLOWED_ISSUE_ID
         ), ImmutableMap.of(
-            ISSUE_ID, ALLOWED_ISSUE_ID
+                ISSUE_ID, ALLOWED_ISSUE_ID
         ));
     }
 
@@ -196,8 +217,8 @@ public class JiraModuleContextFilterTest
     public void testAllowedProjectIdAndKey()
     {
         testFilter(ImmutableMap.of(
-            PROJECT_KEY, ALLOWED_PROJECT_KEY,
-            PROJECT_ID, ALLOWED_PROJECT_ID
+                PROJECT_KEY, ALLOWED_PROJECT_KEY,
+                PROJECT_ID, ALLOWED_PROJECT_ID
         ));
     }
 
@@ -205,10 +226,10 @@ public class JiraModuleContextFilterTest
     public void testAllowedProjectIdButForbiddenKey()
     {
         testFilter(ImmutableMap.of(
-            PROJECT_KEY, FORBIDDEN_PROJECT_KEY,
-            PROJECT_ID, ALLOWED_PROJECT_ID
+                PROJECT_KEY, FORBIDDEN_PROJECT_KEY,
+                PROJECT_ID, ALLOWED_PROJECT_ID
         ), ImmutableMap.of(
-            PROJECT_ID, ALLOWED_PROJECT_ID
+                PROJECT_ID, ALLOWED_PROJECT_ID
         ));
     }
 
@@ -216,8 +237,8 @@ public class JiraModuleContextFilterTest
     public void testForbiddenProjectIdAndKey()
     {
         testFilteredOut(ImmutableMap.of(
-            PROJECT_KEY, FORBIDDEN_PROJECT_KEY,
-            PROJECT_ID, FORBIDDEN_PROJECT_ID
+                PROJECT_KEY, FORBIDDEN_PROJECT_KEY,
+                PROJECT_ID, FORBIDDEN_PROJECT_ID
         ));
     }
 

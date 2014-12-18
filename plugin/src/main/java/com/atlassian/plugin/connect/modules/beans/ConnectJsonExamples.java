@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.modules.beans;
 
+import com.atlassian.oauth.util.RSAKeys;
+import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
@@ -25,12 +27,14 @@ import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.osgi.framework.Constants;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,6 +43,7 @@ import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
+import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
 import static com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean.newEntityPropertyModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
@@ -48,6 +53,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean.
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
+import static com.google.common.base.Strings.nullToEmpty;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ConnectJsonExamples
@@ -92,6 +98,8 @@ public class ConnectJsonExamples
     public static final String BLUEPRINT_EXAMPLE = createBlueprintExample();
     public static final String BLUEPRINT_TEMPLATE_EXAMPLE = createBlueprintTemplateExample();
     public static final String MACRO_RENDER_MODES_EXAMPLE = createDynamicMacroExampleForRenderModes();
+
+    public static final String LIFECYCLE_PAYLOAD_EXAMPLE = createLifecyclePayloadExample();
 
     public static final String RENDER_MODE_EXAMPLE_WORD = createRenderModesExampleWord();
     public static final String RENDER_MODE_EXAMPLE_PDF = createRenderModesExamplePdf();
@@ -632,6 +640,27 @@ public class ConnectJsonExamples
                 .build();
 
         return gson.toJson(bean);
+    }
+
+    private static String createLifecyclePayloadExample()
+    {
+        ConnectAddonEventDataBuilder dataBuilder = newConnectAddonEventData();
+
+        dataBuilder.withBaseUrl("http://example.atlassian.net")
+                    .withPluginKey("installed-addon-key")
+                    .withClientKey("unique-client-identifier")
+                    .withPublicKey("MIGf....ZRWzwIDAQAB")
+                    .withSharedSecret("a-secret-key-not-to-be-lost")
+                    .withPluginsVersion("version-of-connect")
+                    .withServerVersion("server-version")
+                    .withServiceEntitlementNumber("SEN-number")
+                    .withProductType("jira")
+                    .withDescription("Atlassian JIRA at https://example.atlassian.net")
+                    .withEventType(ConnectAddonManager.SyncHandler.INSTALLED.name().toLowerCase());
+
+        ConnectAddonEventData data = dataBuilder.build();
+
+        return gson.toJson(data);
     }
 
     private static String createMacroEditorExample()
