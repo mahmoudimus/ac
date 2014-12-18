@@ -1,10 +1,10 @@
 package it.com.atlassian.plugin.connect.plugin.threeleggedauth;
 
-import com.atlassian.crowd.embedded.api.ApplicationFactory;
 import com.atlassian.crowd.exception.ApplicationPermissionException;
 import com.atlassian.crowd.exception.InvalidCredentialException;
 import com.atlassian.crowd.exception.InvalidUserException;
 import com.atlassian.crowd.exception.OperationFailedException;
+import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.jwt.writer.JwtWriterFactory;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
@@ -36,9 +36,9 @@ public class ThreeLeggedAuthFilterAddOnSpecificTest extends ThreeLeggedAuthFilte
                                                  ApplicationProperties applicationProperties,
                                                  ThreeLeggedAuthService threeLeggedAuthService,
                                                  ApplicationService applicationService,
-                                                 ApplicationFactory applicationFactory)
+                                                 ApplicationManager applicationManager)
     {
-        super(testPluginInstaller, testAuthenticator, testFilterResults, jwtWriterFactory, connectAddonRegistry, applicationProperties, threeLeggedAuthService, applicationService, applicationFactory);
+        super(testPluginInstaller, testAuthenticator, testFilterResults, jwtWriterFactory, connectAddonRegistry, applicationProperties, threeLeggedAuthService, applicationService, applicationManager);
     }
 
     @Override

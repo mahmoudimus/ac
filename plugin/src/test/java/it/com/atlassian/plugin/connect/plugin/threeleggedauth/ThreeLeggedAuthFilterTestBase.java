@@ -64,7 +64,7 @@ public abstract class ThreeLeggedAuthFilterTestBase
     private final ConnectAddonRegistry connectAddonRegistry;
     private final ApplicationProperties applicationProperties;
     protected final ThreeLeggedAuthService threeLeggedAuthService;
-    private final ApplicationFactory applicationFactory;
+    private final ApplicationManager applicationManager;
     private final ApplicationService applicationService;
     private final AtomicReference<Plugin> installedPlugin = new AtomicReference<Plugin>();
     protected final RequestUtil requestUtil;
@@ -87,7 +87,7 @@ public abstract class ThreeLeggedAuthFilterTestBase
                                          ApplicationProperties applicationProperties,
                                          ThreeLeggedAuthService threeLeggedAuthService,
                                          ApplicationService applicationService,
-                                         ApplicationFactory applicationFactory)
+                                         ApplicationManager applicationManager)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
@@ -96,7 +96,7 @@ public abstract class ThreeLeggedAuthFilterTestBase
         this.connectAddonRegistry = connectAddonRegistry;
         this.applicationProperties = applicationProperties;
         this.threeLeggedAuthService = threeLeggedAuthService;
-        this.applicationFactory = applicationFactory;
+        this.applicationManager = applicationManager;
         this.applicationService = applicationService;
         this.requestUtil = new RequestUtil(applicationProperties);
     }
@@ -156,7 +156,7 @@ public abstract class ThreeLeggedAuthFilterTestBase
         final UserTemplate userTemplate = new UserTemplate(INACTIVE_USERKEY);
         userTemplate.setActive(false);
         ensureUserDoesNotExist(userTemplate.getName());
-        User user = applicationService.addUser(applicationFactory.getApplication(), userTemplate, PasswordCredential.NONE);
+        User user = applicationService.addUser(applicationManager.findAll().iterator().next(), userTemplate, PasswordCredential.NONE);
         return createRequestUri(user.getName());
     }
 
@@ -170,7 +170,7 @@ public abstract class ThreeLeggedAuthFilterTestBase
         // precondition: the user should not exist
         try
         {
-            applicationService.removeUser(applicationFactory.getApplication(), username);
+            applicationService.removeUser(applicationManager.findAll().iterator().next(), username);
         }
         catch (UserNotFoundException e)
         {
