@@ -1,12 +1,8 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.core.Clock;
 import com.atlassian.jwt.core.SystemClock;
-import com.atlassian.oauth.consumer.ConsumerService;
-import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
-import com.atlassian.plugin.connect.plugin.module.oauth.OAuth2LOAuthenticator;
 import com.atlassian.plugin.connect.plugin.module.permission.HttpServletResponseWithAnalytics;
 import com.atlassian.plugin.connect.plugin.module.permission.InputConsumingHttpServletRequest;
 import com.atlassian.plugin.connect.spi.event.ScopedRequestAllowedEvent;
@@ -17,8 +13,6 @@ import com.atlassian.sal.api.user.UserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -41,25 +35,25 @@ public class ApiScopingFilter implements Filter
     private final UserManager userManager;
     private final EventPublisher eventPublisher;
     private final Clock clock;
-    private final AddOnKeyHelper addOnKeyHelper;
+    private final AddOnKeyExtractor addOnKeyExtractor;
 
     public ApiScopingFilter(AddOnScopeManager addOnScopeManager, UserManager userManager,
-            EventPublisher eventPublisher, AddOnKeyHelper addOnKeyHelper)
+            EventPublisher eventPublisher, AddOnKeyExtractor addOnKeyExtractor)
     {
         this(addOnScopeManager,
              userManager,
              eventPublisher,
-             addOnKeyHelper,
+                addOnKeyExtractor,
              new SystemClock());
     }
 
     public ApiScopingFilter(AddOnScopeManager addOnScopeManager, UserManager userManager,
-            EventPublisher eventPublisher, AddOnKeyHelper addOnKeyHelper, Clock clock)
+            EventPublisher eventPublisher, AddOnKeyExtractor addOnKeyExtractor, Clock clock)
     {
         this.addOnScopeManager = addOnScopeManager;
         this.userManager = userManager;
         this.eventPublisher = eventPublisher;
-        this.addOnKeyHelper = addOnKeyHelper;
+        this.addOnKeyExtractor = addOnKeyExtractor;
         this.clock = clock;
     }
 
@@ -74,7 +68,7 @@ public class ApiScopingFilter implements Filter
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
 
-        if (addOnKeyHelper.isAddOnRequest(req))
+        if (addOnKeyExtractor.isAddOnRequest(req))
         {
             // Don't accept requests when the normalised and the original request uris are not the same -- see ACDEV-656
             if (ServletUtils.normalisedAndOriginalRequestUrisDiffer(req))
@@ -88,7 +82,7 @@ public class ApiScopingFilter implements Filter
             // apply scopes if this is an authenticated request from
             // a/ A server-to-server call using JWT or OAuth
             // b/ A XDM bridge call from an add-on that declared scopes (== JSON descriptor)
-            String addOnKey = addOnKeyHelper.getAddOnKeyForScopeCheck(req);
+            String addOnKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(req);
             if (addOnKey != null)
             {
                 handleScopedRequest(addOnKey, req, res, chain);

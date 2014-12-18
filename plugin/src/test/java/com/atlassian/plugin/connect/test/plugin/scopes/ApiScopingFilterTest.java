@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.test.plugin.scopes;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jwt.core.Clock;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
-import com.atlassian.plugin.connect.plugin.scopes.AddOnKeyHelper;
+import com.atlassian.plugin.connect.plugin.scopes.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManager;
 import com.atlassian.plugin.connect.plugin.scopes.ApiScopingFilter;
 import com.atlassian.plugin.connect.spi.event.ScopedRequestAllowedEvent;
@@ -60,7 +60,7 @@ public class ApiScopingFilterTest
     @Mock
     private Clock clock;
     @Mock
-    AddOnKeyHelper addOnKeyHelper;
+    AddOnKeyExtractor addOnKeyExtractor;
 
     private ApiScopingFilter apiScopingFilter;
     private UserKey userKey = new UserKey("12345");
@@ -73,7 +73,7 @@ public class ApiScopingFilterTest
         when(userManager.getRemoteUserKey(any(HttpServletRequest.class))).thenReturn(userKey);
         when(clock.now()).thenReturn(new Date(0));
 
-        apiScopingFilter = new ApiScopingFilter(addOnScopeManager, userManager, eventPublisher, addOnKeyHelper, clock);
+        apiScopingFilter = new ApiScopingFilter(addOnScopeManager, userManager, eventPublisher, addOnKeyExtractor, clock);
     }
 
     @Test
@@ -87,7 +87,7 @@ public class ApiScopingFilterTest
     @Test
     public void testScopeIsNotCheckedForNonAddOnRequests() throws Exception
     {
-        when(addOnKeyHelper.isAddOnRequest(request)).thenReturn(false);
+        when(addOnKeyExtractor.isAddOnRequest(request)).thenReturn(false);
         apiScopingFilter.doFilter(request, response, chain);
         verify(addOnScopeManager, never()).isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class));
     }
@@ -95,8 +95,8 @@ public class ApiScopingFilterTest
     @Test
     public void testScopeIsNotCheckedForMissingAddOnKey() throws Exception
     {
-        when(addOnKeyHelper.isAddOnRequest(request)).thenReturn(true);
-        when(addOnKeyHelper.getAddOnKeyForScopeCheck(request)).thenReturn(null);
+        when(addOnKeyExtractor.isAddOnRequest(request)).thenReturn(true);
+        when(addOnKeyExtractor.getAddOnKeyFromHttpRequest(request)).thenReturn(null);
         apiScopingFilter.doFilter(request, response, chain);
         verify(addOnScopeManager, never()).isRequestInApiScope(any(HttpServletRequest.class), anyString(), any(UserKey.class));
     }
@@ -292,7 +292,7 @@ public class ApiScopingFilterTest
 
     private void whenIsAddonRequestWithAddonKey()
     {
-        when(addOnKeyHelper.isAddOnRequest(request)).thenReturn(true);
-        when(addOnKeyHelper.getAddOnKeyForScopeCheck(request)).thenReturn(ADD_ON_KEY);
+        when(addOnKeyExtractor.isAddOnRequest(request)).thenReturn(true);
+        when(addOnKeyExtractor.getAddOnKeyFromHttpRequest(request)).thenReturn(ADD_ON_KEY);
     }
 }

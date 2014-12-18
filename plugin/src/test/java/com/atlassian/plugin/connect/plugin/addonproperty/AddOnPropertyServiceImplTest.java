@@ -1,8 +1,10 @@
 package com.atlassian.plugin.connect.plugin.addonproperty;
 
 import com.atlassian.fugue.Either;
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
+import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.service.AddOnPropertyService;
@@ -30,7 +32,6 @@ public class AddOnPropertyServiceImplTest
     private final String addOnKey = "testAddon";
     private final AddOnProperty property = new AddOnProperty("testProperty", "{}");
 
-
     private AddOnPropertyService service;
 
     @Before
@@ -43,7 +44,7 @@ public class AddOnPropertyServiceImplTest
     @Test
     public void testGetExistingProperty() throws Exception
     {
-        when(store.getPropertyValue(addOnKey, property.getKey())).thenReturn(Optional.of(property));
+        when(store.getPropertyValue(addOnKey, property.getKey())).thenReturn(Option.some(property));
 
         Either<AddOnPropertyService.ServiceResultWithReason, AddOnProperty> result = service.getPropertyValue(addOnKey, addOnKey, property.getKey());
         assertTrue(result.isRight());
@@ -54,7 +55,7 @@ public class AddOnPropertyServiceImplTest
     @Test
     public void testGetNonExistingProperty() throws Exception
     {
-        when(store.getPropertyValue(addOnKey, property.getKey())).thenReturn(Optional.<AddOnProperty>absent());
+        when(store.getPropertyValue(addOnKey, property.getKey())).thenReturn(Option.<AddOnProperty>none());
 
         Either<AddOnPropertyService.ServiceResultWithReason, AddOnProperty> result = service.getPropertyValue(addOnKey, addOnKey, property.getKey());
         assertTrue(result.isLeft());
@@ -83,7 +84,7 @@ public class AddOnPropertyServiceImplTest
     @Test
     public void testPutInvalidPropertyWithTooLongKey() throws Exception
     {
-        String tooLongKey = StringUtils.repeat(".", AddOnPropertyServiceImpl.MAXIMUM_KEY_LENGTH);
+        String tooLongKey = StringUtils.repeat(".", AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH);
 
         AddOnPropertyService.ServiceResult result = service.setPropertyValue(addOnKey, addOnKey, tooLongKey, property.getValue());
         assertEquals(AddOnPropertyService.ServiceResult.KEY_TOO_LONG, result);

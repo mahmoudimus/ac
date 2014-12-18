@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since v6.3
  */
 @Component
-public class AddOnKeyHelper
+public class AddOnKeyExtractor
 {
     /**
      * Set by a {@link javax.servlet.Filter}, possibly using {@link com.atlassian.plugin.connect.plugin.module.oauth.OAuth2LOAuthenticator} or {@link com.atlassian.jwt.plugin.sal.JwtAuthenticator},
@@ -34,13 +34,14 @@ public class AddOnKeyHelper
     private final String ourConsumerKey;
 
     @Autowired
-    public AddOnKeyHelper(final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, ConsumerService consumerService)
+    public AddOnKeyExtractor(final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, ConsumerService consumerService)
     {
         this.jsonConnectAddOnIdentifierService = jsonConnectAddOnIdentifierService;
         this.ourConsumerKey = consumerService.getConsumer().getKey();
     }
 
-    public String getAddOnKeyForScopeCheck(HttpServletRequest req)
+    @Nullable
+    public String getAddOnKeyFromHttpRequest(@Nonnull HttpServletRequest req)
     {
         String addOnKey = extractClientKey(req);
         if (addOnKey != null)
@@ -55,7 +56,17 @@ public class AddOnKeyHelper
         return null;
     }
 
-    public boolean isAddOnRequest(HttpServletRequest request)
+    /**
+     * Checks to see if the request have been made from an add-on.
+     * Possible cases:
+     * 1. The request has an attribute named Plugin-Key and is equal to the client key. ??
+     * 2. The request has a AP-Client-Key header.
+     * This function does not check for the validity of the keys.
+     *
+     * @param request the http request where the key is looked for
+     * @return if the request has been made by an add-on.
+     */
+    public boolean isAddOnRequest(@Nonnull HttpServletRequest request)
     {
         String addOnKey = extractClientKey(request);
         return (addOnKey != null && !ourConsumerKey.equals(addOnKey)) || (extractXdmRequestKey(request) != null);
@@ -67,7 +78,7 @@ public class AddOnKeyHelper
      *         attempted
      */
     @Nullable
-    public static String extractClientKey(HttpServletRequest req)
+    public static String extractClientKey(@Nonnull HttpServletRequest req)
     {
         return (String) req.getAttribute(PLUGIN_KEY);
     }

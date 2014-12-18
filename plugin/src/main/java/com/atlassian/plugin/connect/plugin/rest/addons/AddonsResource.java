@@ -11,13 +11,13 @@ import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.rest.RestError;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
-import com.atlassian.plugin.connect.plugin.rest.data.RestAddonProperty;
+import com.atlassian.plugin.connect.plugin.rest.data.RestAddOnProperty;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddonType;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddons;
 import com.atlassian.plugin.connect.plugin.rest.data.RestMinimalAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestNamedLink;
 import com.atlassian.plugin.connect.plugin.rest.data.RestRelatedLinks;
-import com.atlassian.plugin.connect.plugin.scopes.AddOnKeyHelper;
+import com.atlassian.plugin.connect.plugin.scopes.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.plugin.service.AddOnPropertyService;
 import com.atlassian.plugin.connect.plugin.service.AddOnPropertyServiceImpl;
 import com.atlassian.plugins.rest.common.Link;
@@ -70,13 +70,13 @@ public class AddonsResource
     private final ConnectAddOnInstaller connectAddOnInstaller;
     private final ApplicationProperties applicationProperties;
     private final AddOnPropertyService addOnPropertyService;
-    private final AddOnKeyHelper addOnKeyHelper;
+    private final AddOnKeyExtractor addOnKeyExtractor;
     private final UserManager userManager;
 
     public AddonsResource(ConnectAddonRegistry addonRegistry, LicenseRetriever licenseRetriever,
             ConnectApplinkManager connectApplinkManager, ConnectAddonManager connectAddonManager,
             ConnectAddOnInstaller connectAddOnInstaller, ApplicationProperties applicationProperties,
-            AddOnPropertyService addOnPropertyService, AddOnKeyHelper addOnKeyHelper, UserManager userManager)
+            AddOnPropertyService addOnPropertyService, AddOnKeyExtractor addOnKeyExtractor, UserManager userManager)
     {
         this.addonRegistry = addonRegistry;
         this.licenseRetriever = licenseRetriever;
@@ -85,7 +85,7 @@ public class AddonsResource
         this.connectAddOnInstaller = connectAddOnInstaller;
         this.applicationProperties = applicationProperties;
         this.addOnPropertyService = addOnPropertyService;
-        this.addOnKeyHelper = addOnKeyHelper;
+        this.addOnKeyExtractor = addOnKeyExtractor;
         this.userManager = userManager;
     }
 
@@ -210,7 +210,7 @@ public class AddonsResource
     @Path ("{addonKey}/properties/{propertyKey}")
     public Response getAddonProperties(@PathParam ("addonKey") String addonKey, @PathParam("propertyKey") String propertyKey, @Context HttpServletRequest request)
     {
-        String sourcePluginKey = addOnKeyHelper.getAddOnKeyForScopeCheck(request);
+        String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(request);
         Either<ServiceResultWithReason, AddOnProperty> propertyValue = addOnPropertyService.getPropertyValue(sourcePluginKey, addonKey, propertyKey);
 
         if (propertyValue.isLeft())
@@ -218,14 +218,14 @@ public class AddonsResource
             return getErrorResponse(propertyValue.left().get());
         }
         String baseURL = applicationProperties.getBaseUrl(UrlMode.CANONICAL) + "/rest/atlassian-connect/1/addons/" + addonKey + "/properties/";
-        return Response.ok().entity(RestAddonProperty.valueOf(propertyValue.right().get(), baseURL)).cacheControl(never()).build();
+        return Response.ok().entity(RestAddOnProperty.valueOf(propertyValue.right().get(), baseURL)).cacheControl(never()).build();
     }
 
     @PUT
     @Path ("{addonKey}/properties/{propertyKey}")
     public Response putKey(@PathParam ("addonKey") String addonKey, @PathParam("propertyKey") String propertyKey, @Context HttpServletRequest request)
     {
-        String sourcePluginKey = addOnKeyHelper.getAddOnKeyForScopeCheck(request);
+        String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(request);
         Either<RestParamError, String> errorStringEither = propertyValue(request);
         if (errorStringEither.isLeft())
             return getErrorResponse("Value too long", Response.Status.FORBIDDEN);

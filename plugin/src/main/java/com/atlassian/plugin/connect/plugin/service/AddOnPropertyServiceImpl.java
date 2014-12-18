@@ -1,10 +1,12 @@
 package com.atlassian.plugin.connect.plugin.service;
 
 import com.atlassian.fugue.Either;
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
+import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
-import com.google.common.base.Optional;
+import com.google.common.base.Supplier;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,14 +19,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.getFirst;
 
 /**
- * TODO: Document this class / interface here
- *
- * @since v6.3
+ * @since TODO: fill in the proper version before merge
  */
 @Component
 public class AddOnPropertyServiceImpl implements AddOnPropertyService
 {
-    public static final int MAXIMUM_KEY_LENGTH = 255;
     public static final int MAXIMUM_VALUE_LENGTH = 32*1024; //32KB
 
     private final AddOnPropertyStore store;
@@ -39,27 +38,27 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         this.store = checkNotNull(store);
     }
 
-    private ValidationResult<GetPropertyInput> validateGetPropertyValue(final String sourceAddonKey, @Nonnull final String addonKey, @Nonnull final String propertyKey)
+    private ValidationResult<GetPropertyInput> validateGetPropertyValue(final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey)
     {
         List<ServiceResultWithReason> errorCollection = new ArrayList<ServiceResultWithReason>();
 
-        if (!hasPermissions(sourceAddonKey,addonKey))
+        if (!hasPermissions(sourceAddOnKey,addOnKey))
         {
-            errorCollection.add(new ServiceResultWithReason(ServiceResult.ACCESS_FORBIDDEN, "Add-on does not have permission to access " + addonKey + "'s data."));
-            return new ValidationResult<GetPropertyInput>(Either.<List<ServiceResultWithReason>,GetPropertyInput>left(errorCollection));
+            errorCollection.add(new ServiceResultWithReason(ServiceResult.ACCESS_FORBIDDEN, "Add-on does not have permission to access " + addOnKey + "'s data."));
+            return ValidationResult.fromError(errorCollection);
         }
-        if (!existsAddon(addonKey)) //a request cannot be made from an addon that does not exist, but we check just in case
+        if (!existsAddOn(addOnKey)) //a request cannot be made from an addon that does not exist, but we check just in case
         {
-            errorCollection.add(new ServiceResultWithReason(ServiceResult.ADDON_NOT_FOUND, "Addon with key " + propertyKey + " not found."));
-            return new ValidationResult<GetPropertyInput>(Either.<List<ServiceResultWithReason>,GetPropertyInput>left(errorCollection));
+            errorCollection.add(new ServiceResultWithReason(ServiceResult.ADD_ON_NOT_FOUND, "Add-on with key " + propertyKey + " not found."));
+            return ValidationResult.fromError(errorCollection);
         }
-        return new ValidationResult<GetPropertyInput>(Either.<List<ServiceResultWithReason>,GetPropertyInput>right(new GetPropertyInput(addonKey, propertyKey)));
+        return ValidationResult.fromValue(new GetPropertyInput(addOnKey, propertyKey));
     }
 
     @Override
-    public Either<ServiceResultWithReason, AddOnProperty> getPropertyValue(final String sourceAddonKey, @Nonnull final String addonKey, @Nonnull final String propertyKey)
+    public Either<ServiceResultWithReason, AddOnProperty> getPropertyValue(final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey)
     {
-        ValidationResult<GetPropertyInput> validationResult = validateGetPropertyValue(sourceAddonKey, addonKey, propertyKey);
+        ValidationResult<GetPropertyInput> validationResult = validateGetPropertyValue(sourceAddOnKey, addOnKey, propertyKey);
         checkNotNull(validationResult);
         if (!validationResult.isValid())
         {
@@ -67,60 +66,66 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         }
         else
         {
-            Optional<AddOnProperty> propertyValue = store.getPropertyValue(addonKey, propertyKey);
-            if (propertyValue.isPresent())
-            {
-                return Either.right(propertyValue.get());
-            }
-            else
-            {
-                return Either.left(new ServiceResultWithReason(ServiceResult.PROPERTY_NOT_FOUND, "Property with key not found."));
-            }
+            Option<AddOnProperty> propertyValue = store.getPropertyValue(addOnKey, propertyKey);
+            return propertyValue.toRight(getSupplierForServiceResultWithReason(new ServiceResultWithReason(ServiceResult.PROPERTY_NOT_FOUND, "Property with key not found.")));
         }
     }
 
-    private ValidationResult<SetPropertyInput> validateSetPropertyValue(final String sourceAddonKey, @Nonnull final String addonKey, final String propertyKey, final String value)
+    private Supplier<ServiceResultWithReason> getSupplierForServiceResultWithReason(final ServiceResultWithReason resultWithReason)
+    {
+        return new Supplier<ServiceResultWithReason>() {
+
+            @Override
+            public ServiceResultWithReason get()
+            {
+                return resultWithReason;
+            }
+        };
+    }
+
+    private ValidationResult<SetPropertyInput> validateSetPropertyValue(final String sourceAddOnKey, @Nonnull final String addOnKey, final String propertyKey, final String value)
     {
         List<ServiceResultWithReason> errorCollection = new ArrayList<ServiceResultWithReason>();
-        if (!hasPermissions(sourceAddonKey,addonKey))
+        if (!hasPermissions(sourceAddOnKey,addOnKey))
         {
-            errorCollection.add(new ServiceResultWithReason(ServiceResult.ACCESS_FORBIDDEN, "Add-on does not have permission to access " + addonKey + "'s data."));
-            return new ValidationResult<SetPropertyInput>(Either.<List<ServiceResultWithReason>,SetPropertyInput>left(errorCollection));
+            errorCollection.add(new ServiceResultWithReason(ServiceResult.ACCESS_FORBIDDEN, "Add-on does not have permission to access " + addOnKey + "'s data."));
+            return ValidationResult.fromError(errorCollection);
         }
-        if (!existsAddon(addonKey))
+        if (!existsAddOn(addOnKey))
         {
-            errorCollection.add(new ServiceResultWithReason(ServiceResult.ADDON_NOT_FOUND, "Addon with key " + propertyKey + " not found."));
-            return new ValidationResult<SetPropertyInput>(Either.<List<ServiceResultWithReason>,SetPropertyInput>left(errorCollection));
+            errorCollection.add(new ServiceResultWithReason(ServiceResult.ADD_ON_NOT_FOUND, "Add-on with key " + propertyKey + " not found."));
+            return ValidationResult.fromError(errorCollection);
         }
 
-        if (propertyKey.length() >= MAXIMUM_KEY_LENGTH)
+        if (propertyKey.length() >= AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH)
         {
-            errorCollection.add(new ServiceResultWithReason(ServiceResult.KEY_TOO_LONG, "The property key cannot be longer than 255 bytes."));
-            return new ValidationResult<SetPropertyInput>(Either.<List<ServiceResultWithReason>,SetPropertyInput>left(errorCollection));
+            errorCollection.add(new ServiceResultWithReason(ServiceResult.KEY_TOO_LONG, "The property key cannot be longer than 256 bytes."));
+            return ValidationResult.fromError(errorCollection);
         }
 
         if (value.length() >= MAXIMUM_VALUE_LENGTH)
         {
             errorCollection.add(new ServiceResultWithReason(ServiceResult.VALUE_TOO_BIG, "The value cannot be bigger than 32 KB."));
-            return new ValidationResult<SetPropertyInput>(Either.<List<ServiceResultWithReason>,SetPropertyInput>left(errorCollection));
+            return ValidationResult.fromError(errorCollection);
         }
 
         if (!isJSONValid(value))
         {
             errorCollection.add(new ServiceResultWithReason(ServiceResult.INVALID_FORMAT, "The value has to be a valid json."));
-            return new ValidationResult<SetPropertyInput>(Either.<List<ServiceResultWithReason>,SetPropertyInput>left(errorCollection));
+            return ValidationResult.fromError(errorCollection);
         }
-        return new ValidationResult<SetPropertyInput>(Either.<List<ServiceResultWithReason>,SetPropertyInput>right(new SetPropertyInput(addonKey, propertyKey, value)));
+
+        return ValidationResult.fromValue(new SetPropertyInput(addOnKey, propertyKey, value));
     }
 
     @Override
-    public ServiceResult setPropertyValue(final String sourceAddonKey, @Nonnull final String addonKey, final String propertyKey, final String value)
+    public ServiceResult setPropertyValue(final String sourceAddOnKey, @Nonnull final String addOnKey, final String propertyKey, final String value)
     {
-        ValidationResult<SetPropertyInput> validationResult = validateSetPropertyValue(sourceAddonKey, addonKey, propertyKey, value);
+        ValidationResult<SetPropertyInput> validationResult = validateSetPropertyValue(sourceAddOnKey, addOnKey, propertyKey, value);
         if (validationResult.isValid())
         {
             SetPropertyInput input = validationResult.getValue().getOrNull();
-            AddOnPropertyStore.PutResult putResult = store.setPropertyValue(input.addonKey, input.propertyKey, input.value);
+            AddOnPropertyStore.PutResult putResult = store.setPropertyValue(input.addOnKey, input.propertyKey, input.value);
             switch (putResult)
             {
                 case PROPERTY_CREATED: return ServiceResult.PROPERTY_CREATED;
@@ -136,30 +141,30 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         return null;
     }
 
-    private boolean existsAddon(final String addonKey)
+    private boolean existsAddOn(final String addOnKey)
     {
-        return connectAddonManager.getExistingAddon(addonKey) != null;
+        return connectAddonManager.getExistingAddon(addOnKey) != null;
     }
 
-    private boolean hasPermissions(String requestKey, String addonKey)
+    private boolean hasPermissions(String requestKey, String addOnKey)
     {
-        return requestKey != null && requestKey.equals(addonKey);
+        return requestKey != null && requestKey.equals(addOnKey);
     }
 
     private class GetPropertyInput
     {
-        final String addonKey;
+        final String addOnKey;
         final String propertyKey;
 
-        public GetPropertyInput(final String addonKey, final String propertyKey)
+        public GetPropertyInput(final String addOnKey, final String propertyKey)
         {
-            this.addonKey = addonKey;
+            this.addOnKey = addOnKey;
             this.propertyKey = propertyKey;
         }
 
-        public String getAddonKey()
+        public String getAddOnKey()
         {
-            return addonKey;
+            return addOnKey;
         }
 
         public String getPropertyKey()
@@ -169,20 +174,20 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
     }
     private class SetPropertyInput
     {
-        final String addonKey;
+        final String addOnKey;
         final String propertyKey;
         final String value;
 
-        public SetPropertyInput(final String addonKey, final String propertyKey, final String value)
+        public SetPropertyInput(final String addOnKey, final String propertyKey, final String value)
         {
-            this.addonKey = addonKey;
+            this.addOnKey = addOnKey;
             this.propertyKey = propertyKey;
             this.value = value;
         }
 
-        public String getAddonKey()
+        public String getAddOnKey()
         {
-            return addonKey;
+            return addOnKey;
         }
 
         public String getPropertyKey()

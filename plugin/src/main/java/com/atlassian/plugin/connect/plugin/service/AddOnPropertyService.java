@@ -10,9 +10,10 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 /**
- * TODO: Document this class / interface here
+ * This service is used to add, remove, list and update add-on properties.
+ * Checks permissions and constraints on input before executing an action.
  *
- * @since v6.3
+ * @since TODO: fill in the proper version before merge
  */
 public interface AddOnPropertyService
 {
@@ -21,8 +22,8 @@ public interface AddOnPropertyService
         PROPERTY_UPDATED(HttpStatus.SC_OK),
         PROPERTY_CREATED(HttpStatus.SC_CREATED),
         KEY_TOO_LONG(HttpStatus.SC_BAD_REQUEST),
-        INVALID_ADDON(HttpStatus.SC_FORBIDDEN),
-        ADDON_NOT_FOUND(HttpStatus.SC_NOT_FOUND),
+        INVALID_ADD_ON(HttpStatus.SC_FORBIDDEN),
+        ADD_ON_NOT_FOUND(HttpStatus.SC_NOT_FOUND),
         MAXIMUM_PROPERTIES_EXCEEDED(HttpStatus.SC_CONFLICT),
         PROPERTY_NOT_FOUND(HttpStatus.SC_NOT_FOUND),
         VALUE_TOO_BIG(HttpStatus.SC_FORBIDDEN),
@@ -64,9 +65,9 @@ public interface AddOnPropertyService
         }
     }
 
-    Either<ServiceResultWithReason, AddOnProperty> getPropertyValue(String sourcePluginKey, @Nonnull String addonKey,@Nonnull String propertyKey);
+    Either<ServiceResultWithReason, AddOnProperty> getPropertyValue(String sourcePluginKey, @Nonnull String addOnKey,@Nonnull String propertyKey);
 
-    ServiceResult setPropertyValue(String sourcePluginKey, @Nonnull String addonKey, String propertyKey, String value);
+    ServiceResult setPropertyValue(String sourcePluginKey, @Nonnull String addOnKey, String propertyKey, String value);
 
     class ValidationResult<T>
     {
@@ -84,12 +85,19 @@ public interface AddOnPropertyService
 
         public Iterable<ServiceResultWithReason> getErrorCollection()
         {
-            return result.isLeft() ? result.left().get() : Collections.EMPTY_LIST;
+            return result.isLeft() ? result.left().get() : Collections.<ServiceResultWithReason>emptyList();
         }
 
         public Option<T> getValue()
         {
             return result.right().toOption();
+        }
+
+        public static <T> ValidationResult<T> fromValue(T value){
+            return new ValidationResult<T>(Either.<List<ServiceResultWithReason>,T>right(value));
+        }
+        public static <T> ValidationResult<T> fromError(List<ServiceResultWithReason> errorCollection){
+            return new ValidationResult<T>(Either.<List<ServiceResultWithReason>,T>left(errorCollection));
         }
     }
 

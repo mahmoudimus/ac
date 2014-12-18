@@ -1,11 +1,16 @@
 package com.atlassian.plugin.connect.plugin.ao;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import javax.annotation.concurrent.Immutable;
 
+import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
+
 /**
- * This class represents an addon property consisting of a key and a value.
+ * This class represents an add-on property consisting of a key and a value.
  *
- * @since v6.3
+ * @since TODO: fill in the proper version before merge
  */
 @Immutable
 public final class AddOnProperty
@@ -13,9 +18,10 @@ public final class AddOnProperty
     private final String key;
     private final String value;
 
-    public AddOnProperty(final String key, final String value) {
-        this.key = key;
-        this.value = value;
+    public AddOnProperty(final String key, final String value)
+    {
+        this.key = checkNotNull(key);
+        this.value = checkNotNull(value);
     }
 
     public String getKey()
@@ -31,23 +37,29 @@ public final class AddOnProperty
     @Override
     public boolean equals(final Object o)
     {
-        if (this == o) { return true; }
-        if (o == null || getClass() != o.getClass()) { return false; }
-
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
         final AddOnProperty that = (AddOnProperty) o;
 
-        if (!key.equals(that.key)) { return false; }
-        if (!value.equals(that.value)) { return false; }
-
-        return true;
+        return new EqualsBuilder()
+                .append(key,that.key)
+                .append(value, that.value)
+                .isEquals();
     }
 
     @Override
     public int hashCode()
     {
-        int result = key.hashCode();
-        result = 31 * result + value.hashCode();
-        return result;
+        return new HashCodeBuilder()
+                .append(key)
+                .append(value)
+                .hashCode();
     }
 
     @Override

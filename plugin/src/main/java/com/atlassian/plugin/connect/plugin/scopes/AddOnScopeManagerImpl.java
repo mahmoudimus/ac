@@ -43,18 +43,17 @@ public final class AddOnScopeManagerImpl implements AddOnScopeManager
         this.allScopes = scopeService.build();
         this.connectAddonRegistry = checkNotNull(connectAddonRegistry);
         this.connectAddonBeanFactory = checkNotNull(connectAddonBeanFactory);
-        this.addOnPropertyScope = createAddonPropertyScope();
+        this.addOnPropertyScope = createAddOnPropertyScope();
     }
 
-    private AddOnScope createAddonPropertyScope()
+    private AddOnScope createAddOnPropertyScope()
     {
         RestApiScopeHelper.RestScope restScope = new RestApiScopeHelper.RestScope("atlassian-connect", Arrays.asList("1", "latest"), "/addons($|/.*)", Arrays.asList("GET", "POST", "PUT", "DELETE"), true);
 
         ArrayList<AddOnScopeApiPath> paths = new ArrayList<AddOnScopeApiPath>();
         paths.add(new AddOnScopeApiPath.RestApiPath(Collections.singleton(restScope)));
 
-        AddOnScope addonPropertyScope = new AddOnScope("ADDON_PROPERTIES", paths);
-        return addonPropertyScope;
+        return new AddOnScope("ADD_ON_PROPERTIES", paths);
     }
 
     @Override
