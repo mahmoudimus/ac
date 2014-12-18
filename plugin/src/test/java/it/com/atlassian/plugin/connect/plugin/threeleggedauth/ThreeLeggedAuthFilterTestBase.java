@@ -1,5 +1,6 @@
 package it.com.atlassian.plugin.connect.plugin.threeleggedauth;
 
+import com.atlassian.crowd.embedded.api.ApplicationFactory;
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.exception.ApplicationPermissionException;
 import com.atlassian.crowd.exception.InvalidCredentialException;
@@ -63,8 +64,8 @@ public abstract class ThreeLeggedAuthFilterTestBase
     private final ConnectAddonRegistry connectAddonRegistry;
     private final ApplicationProperties applicationProperties;
     protected final ThreeLeggedAuthService threeLeggedAuthService;
+    private final ApplicationFactory applicationFactory;
     private final ApplicationService applicationService;
-    private final ApplicationManager applicationManager;
     private final AtomicReference<Plugin> installedPlugin = new AtomicReference<Plugin>();
     protected final RequestUtil requestUtil;
 
@@ -73,9 +74,9 @@ public abstract class ThreeLeggedAuthFilterTestBase
 
     private final static Logger log = LoggerFactory.getLogger(ThreeLeggedAuthFilterTestBase.class);
     private final static String ADMIN_USERNAME = "admin";
-    protected final static String SUBJECT_USERNAME = "barney";
-    protected static final String INACTIVE_USERNAME = "inactive_user";
-    protected static final String NON_EXISTENT_USERNAME = "non_existent_user";
+    protected final static String SUBJECT_USERKEY = "barney";
+    protected static final String INACTIVE_USERKEY = "inactive_user";
+    protected static final String NON_EXISTENT_USERKEY = "non_existent_user";
     private static final String REQUEST_PATH = "/path";
 
     public ThreeLeggedAuthFilterTestBase(TestPluginInstaller testPluginInstaller,
@@ -86,7 +87,7 @@ public abstract class ThreeLeggedAuthFilterTestBase
                                          ApplicationProperties applicationProperties,
                                          ThreeLeggedAuthService threeLeggedAuthService,
                                          ApplicationService applicationService,
-                                         ApplicationManager applicationManager)
+                                         ApplicationFactory applicationFactory)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
@@ -95,8 +96,8 @@ public abstract class ThreeLeggedAuthFilterTestBase
         this.connectAddonRegistry = connectAddonRegistry;
         this.applicationProperties = applicationProperties;
         this.threeLeggedAuthService = threeLeggedAuthService;
+        this.applicationFactory = applicationFactory;
         this.applicationService = applicationService;
-        this.applicationManager = applicationManager;
         this.requestUtil = new RequestUtil(applicationProperties);
     }
 
@@ -152,10 +153,10 @@ public abstract class ThreeLeggedAuthFilterTestBase
 
     protected URI createUriForInactiveSubject() throws OperationFailedException, ApplicationPermissionException, InvalidUserException, InvalidCredentialException, UnsupportedEncodingException, NoSuchAlgorithmException
     {
-        final UserTemplate userTemplate = new UserTemplate(INACTIVE_USERNAME);
+        final UserTemplate userTemplate = new UserTemplate(INACTIVE_USERKEY);
         userTemplate.setActive(false);
         ensureUserDoesNotExist(userTemplate.getName());
-        User user = applicationService.addUser(applicationManager.findAll().iterator().next(), userTemplate, PasswordCredential.NONE);
+        User user = applicationService.addUser(applicationFactory.getApplication(), userTemplate, PasswordCredential.NONE);
         return createRequestUri(user.getName());
     }
 
@@ -169,7 +170,7 @@ public abstract class ThreeLeggedAuthFilterTestBase
         // precondition: the user should not exist
         try
         {
-            applicationService.removeUser(applicationManager.findAll().iterator().next(), username);
+            applicationService.removeUser(applicationFactory.getApplication(), username);
         }
         catch (UserNotFoundException e)
         {
