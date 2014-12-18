@@ -121,7 +121,8 @@ public class ConnectRunner
 
     public void register() throws Exception
     {
-        installer.install("http://localhost:" + port + REGISTRATION_ROUTE, checkInstallationStatus);
+        URI host = URI.create(this.productBaseUrl);
+        installer.install("http://" + host.getHost() + ":" + port + REGISTRATION_ROUTE, checkInstallationStatus);
     }
 
     public void uninstall() throws Exception
@@ -374,8 +375,9 @@ public class ConnectRunner
 
     public ConnectRunner start() throws Exception
     {
+        URI host = URI.create(this.productBaseUrl);
         port = Utils.pickFreePort();
-        final String displayUrl = "http://localhost:" + port;
+        final String displayUrl ="http://" + host.getHost() + ':' + port;
 
         addonBuilder.withBaseurl(displayUrl);
         addonBuilder.withScopes(scopes);

@@ -7,6 +7,7 @@ import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.SpaceToolsTabModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
@@ -20,13 +21,18 @@ import com.google.common.base.Optional;
 import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
 import org.apache.commons.lang.RandomStringUtils;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redstone.xmlrpc.XmlRpcFault;
 
 import java.net.MalformedURLException;
+import java.util.NoSuchElementException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
@@ -35,7 +41,10 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWe
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class TestEscaping extends AbstractConfluenceWebDriverTest
 {
@@ -51,6 +60,8 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     private static final String SPACE_TOOLS_TAB_KEY = "space-tools-tab";
 
     private static final String MODULE_URL = "/page";
+
+    private static final Logger logger = LoggerFactory.getLogger(TestEscaping.class);
 
     private static ConnectRunner runner;
 
@@ -115,6 +126,28 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
 
     }
 
+    protected CreatePage editorPage = null;
+
+    // clean up so that we don't get "org.openqa.selenium.UnhandledAlertException: unexpected alert open" in tests
+    @After
+    public void afterEachTest()
+    {
+        super.dismissPrompts();
+
+        if (null != editorPage)
+        {
+            try
+            {
+                editorPage.cancel();
+                editorPage = null;
+            }
+            catch (Throwable t)
+            {
+                logger.error("Failed to cancel editor page due to the following Throwable. This will most likely result in 'unexpected alert open' exceptions in subsequent tests.", t);
+            }
+        }
+    }
+
     @AfterClass
     public static void stopConnectAddOn() throws Exception
     {
@@ -160,77 +193,56 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     @Test
     public void testMacroTitle() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+
+        final MacroBrowserAndEditor macroBrowserAndEditor = findMacroInBrowser(editorPage, "F1ND M3");
 
         try
         {
-            final MacroBrowserAndEditor macroBrowserAndEditor = findMacroInBrowser(editorPage, "F1ND M3");
-
-            try
-            {
-                assertNotNull(macroBrowserAndEditor.macro);
-                assertIsEscaped(macroBrowserAndEditor.macro.getTitle().byDefaultTimeout());
-            }
-            finally
-            {
-                macroBrowserAndEditor.browserDialog.clickCancel();
-            }
+            assertNotNull(macroBrowserAndEditor.macro);
+            assertIsEscaped(macroBrowserAndEditor.macro.getTitle().byDefaultTimeout());
         }
         finally
         {
-            editorPage.cancel();
+            macroBrowserAndEditor.browserDialog.clickCancel();
         }
     }
 
     @Test
     public void testMacroEditorTitle() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+
+        final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, "F1ND M3");
 
         try
         {
-            final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, "F1ND M3");
-
-            try
-            {
-                assertNotNull(macroBrowserAndEditor.macroForm);
-                assertEquals(MACRO_EDITOR_TITLE, macroBrowserAndEditor.macroForm.getTitle().byDefaultTimeout());
-            }
-            finally
-            {
-                macroBrowserAndEditor.browserDialog.clickCancel();
-            }
+            assertNotNull(macroBrowserAndEditor.macroForm);
+            assertEquals(MACRO_EDITOR_TITLE, macroBrowserAndEditor.macroForm.getTitle().byDefaultTimeout());
         }
         finally
         {
-            editorPage.cancel();
+            macroBrowserAndEditor.browserDialog.clickCancel();
         }
     }
 
     @Test
     public void testMacroParameter() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+
+        final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, "F1ND M3");
 
         try
         {
-            final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, "F1ND M3");
-
-            try
-            {
-                assertNotNull(macroBrowserAndEditor.macroForm);
-                assertTrue(macroBrowserAndEditor.macroForm.getField("test").isVisible());
-                WebElement label = connectPageOperations.findLabel("macro-param-test");
-                assertIsEscaped(label.getText());
-            }
-            finally
-            {
-                macroBrowserAndEditor.browserDialog.clickCancel();
-            }
+            assertNotNull(macroBrowserAndEditor.macroForm);
+            assertTrue(macroBrowserAndEditor.macroForm.getField("test").isVisible());
+            WebElement label = connectPageOperations.findLabel("macro-param-test");
+            assertIsEscaped(label.getText());
         }
         finally
         {
-            editorPage.cancel();
+            macroBrowserAndEditor.browserDialog.clickCancel();
         }
     }
 
@@ -258,8 +270,26 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     public void testSpaceToolsTab() throws Exception
     {
         loginAndVisit(TestUser.ADMIN, SpaceTemplatesPage.class, "ts");
-        RemoteWebItem webItem = connectPageOperations.findWebItem(RemoteWebItem.ItemMatchingMode.JQUERY,
-                "li[data-web-item-key='" + getModuleKey(SPACE_TOOLS_TAB_KEY) + "'] > a", Optional.<String>absent());
+        final String dropDownLinkId = "aui-responsive-header-dropdown-trigger-0";
+        Optional<String> maybeDropDownLinkId = Optional.<String>absent();
+
+        try
+        {
+            WebElement dropDown = connectPageOperations.findElement(By.id(dropDownLinkId));
+
+            if (null != dropDown && dropDown.isDisplayed())
+            {
+                maybeDropDownLinkId = Optional.of(dropDownLinkId);
+            }
+        }
+        catch (NoSuchElementException e)
+        {
+            // do nothing
+        }
+
+        RemoteWebItem webItem = connectPageOperations.findWebItem(RemoteWebItem.ItemMatchingMode.ID,
+                ModuleKeyUtils.addonAndModuleKey(runner.getAddon().getKey(), WEB_ITEM_KEY), maybeDropDownLinkId);
+        webItem.hover();
         assertIsEscaped(webItem.getLinkText());
     }
 

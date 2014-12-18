@@ -1,7 +1,6 @@
 package it.modules.confluence;
 
 import com.atlassian.confluence.it.User;
-import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
@@ -14,12 +13,10 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWi
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
-
 import it.servlet.ConnectAppServlets;
 import it.servlet.EchoContextServlet;
 import it.servlet.EchoQueryParametersServlet;
 import it.util.TestUser;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
@@ -27,25 +24,24 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
-import redstone.xmlrpc.XmlRpcFault;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
-import static org.hamcrest.CoreMatchers.*;
+import static it.matcher.ParamMatchers.isVersionNumber;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.endsWith;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.Matchers.both;
 import static org.junit.Assert.assertThat;
-import static it.matcher.ParamMatchers.isVersionNumber;
 
 public class TestStaticContentMacro extends AbstractContentMacroTest
 {
@@ -150,12 +146,13 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroHttpMethod() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("HTTP GET Macro"));
 
         selectMacroAndSave(editorPage, GET_MACRO_NAME);
 
         savedPage = save(editorPage);
+        editorPage = null;
 
         assertThat(String.valueOf(contextServlet.waitForContext().get("req_method")), is("GET"));
     }
@@ -163,7 +160,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testBodyInclusion() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Short Body Macro"));
 
         selectMacroAndSave(editorPage, SHORT_BODY_MACRO_NAME);
@@ -172,6 +169,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         editorContent.setRichTextMacroBody("a short body");
 
         savedPage = save(editorPage);
+        editorPage = null;
 
         String body = parameterServlet.waitForQueryParameters().any("body").getValue();
         assertThat(body, is("<p>a short body</p>"));
@@ -180,7 +178,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testBodyHashInclusion() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Long Body Macro"));
 
         selectMacroAndSave(editorPage, LONG_BODY_MACRO_NAME);
@@ -190,6 +188,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         editorContent.setPlainTextMacroBody(body);
 
         savedPage = save(editorPage);
+        editorPage = null;
 
         String hash = parameterServlet.waitForQueryParameters().any("hash").getValue();
         assertThat(hash, is(DigestUtils.md5Hex(body)));
@@ -198,7 +197,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testParameterInclusion() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Parameter Page"));
         final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, PARAMETER_MACRO_NAME);
 
@@ -206,13 +205,14 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         macroBrowserAndEditor.browserDialog.clickSave();
 
         savedPage = save(editorPage);
+        editorPage = null;
 
         String value = parameterServlet.waitForQueryParameters().any("param1").getValue();
         assertThat(value, is("param value"));
     }
 
     @Test
-    public void testMacroInComment() throws MalformedURLException, XmlRpcFault
+    public void testMacroInComment() throws Exception
     {
         addSimpleMacroToComment();
         final WebElement commentBody = connectPageOperations.findElementByClass("comment-content");
@@ -235,10 +235,11 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     public void testMacroCacheFlushes() throws Exception
     {
         final String title = randomName("Counter Page");
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(title);
         selectMacroAndSave(editorPage, COUNTER_MACRO_NAME);
         save(editorPage);
+        editorPage = null;
 
         ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, title, COUNTER_MACRO_NAME);
         assertThat(getCounter(page), is(0));

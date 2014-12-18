@@ -2,15 +2,13 @@
 
 Scopes allow an add-on to request a particular level of access to an Atlassian product.
 
-This level of access sets a static upper limit on the set of API endpoints that the add-on may use, in *every* Atlassian product instance into which it is installed,
-and does not guarantee that every attempt to every endpoint them will succeed at run time.
-
 For example:
 
-* Within a particular product instance an administrator may further limit the actions that an add-on may perform. This is valuable because it allows administrators
-to safely install add-ons that they otherwise would not.
-* The scopes may allow the *potential* to access beta or non-public APIs that are later changed in or removed from the Atlassian product. The inclusion of the API
-endpoint in a scope does not imply that the product makes this endpoint public: read the product's API documentation for API details.
+* Within a particular product instance an administrator may further limit the actions that an add-on may perform. This
+is valuable because it allows administrators to safely install add-ons that they otherwise would not.
+* The scopes may allow the *potential* to access beta or non-public APIs that are later changed in or removed from the
+Atlassian product. The inclusion of the API endpoint in a scope does not imply that the product makes this endpoint
+public: read the product's API documentation for API details.
 
 The following scopes are available for use by Atlassian Connect add-ons:
 

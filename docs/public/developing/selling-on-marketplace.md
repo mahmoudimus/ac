@@ -34,7 +34,7 @@ Before anything else, make sure your add-on meets our [approval guidelines](http
 When you're ready to list your add-on for the world to see, follow the process below and choose 
 **Public** for your add-on visibility. 
 
-<span data-include="/assets/includes/mpac-listing-instructions.html"></span>
+<span data-include="../assets/includes/mpac-listing-instructions.html"></span>
 
 After you've gone through the steps above, we automatically create a JIRA issue for our Marketplace 
 team. We'll check your add-on and listing information against our [approval guidelines](https://developer.atlassian.com/x/WQaf#Add-onapprovalguidelines-AdditionalcriteriaforAtlassianConnectadd-ons). 

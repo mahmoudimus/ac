@@ -6,7 +6,7 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor;
+import com.atlassian.plugin.connect.plugin.iframe.webpanel.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.web.WebFragmentHelper;
@@ -28,7 +28,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final JiraAuthenticationContext jiraAuthenticationContext;
-    private final WebFragmentModuleContextExtractor webFragmentModuleContextExtractor;
+    private final PluggableParametersExtractor webFragmentModuleContextExtractor;
     private final ModuleContextFilter moduleContextFilter;
 
     @Autowired
@@ -37,7 +37,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
             WebInterfaceManager webInterfaceManager,
             IFrameUriBuilderFactory iFrameUriBuilderFactory,
             JiraAuthenticationContext jiraAuthenticationContext,
-            WebFragmentModuleContextExtractor webFragmentModuleContextExtractor,
+            PluggableParametersExtractor webFragmentModuleContextExtractor,
             ModuleContextFilter moduleContextFilter,
             UrlVariableSubstitutor urlVariableSubstitutor)
     {
@@ -63,7 +63,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
         private final WebFragmentHelper webFragmentHelper;
         private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
         private final UrlVariableSubstitutor urlVariableSubstitutor;
-        private final WebFragmentModuleContextExtractor webFragmentModuleContextExtractor;
+        private final PluggableParametersExtractor webFragmentModuleContextExtractor;
         private final ModuleContextFilter moduleContextFilter;
         private final String url;
         private final String pluginKey;
@@ -78,7 +78,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
                 WebFragmentHelper webFragmentHelper,
                 IFrameUriBuilderFactory iFrameUriBuilderFactory,
                 UrlVariableSubstitutor urlVariableSubstitutor,
-                WebFragmentModuleContextExtractor webFragmentModuleContextExtractor,
+                PluggableParametersExtractor webFragmentModuleContextExtractor,
                 ModuleContextFilter moduleContextFilter,
                 String url,
                 String pluginKey,
