@@ -10,6 +10,7 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.plugin.iframe.webpanel.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.connect.plugin.util.BundleUtil;
 import com.atlassian.plugin.connect.plugin.util.http.ContentRetrievalException;
@@ -50,13 +51,13 @@ public class AddOnCondition implements Condition
 
     private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
-    private final WebFragmentModuleContextExtractor webFragmentModuleContextExtractor;
+    private final PluggableParametersExtractor webFragmentModuleContextExtractor;
     private final EventPublisher eventPublisher;
     private BundleContext bundleContext;
 
     public AddOnCondition(final RemotablePluginAccessorFactory remotablePluginAccessorFactory,
                           final IFrameUriBuilderFactory iFrameUriBuilderFactory,
-                          final WebFragmentModuleContextExtractor webFragmentModuleContextExtractor,
+                          final PluggableParametersExtractor webFragmentModuleContextExtractor,
                           EventPublisher eventPublisher, BundleContext bundleContext)
     {
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
