@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.plugin.iframe.servlet.context;
 
-import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.fugue.Option;
-import com.atlassian.fugue.Options;
 import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueManager;
@@ -61,7 +58,7 @@ public class JiraContextFactory implements ProductSpecificContextFactory
     private JiraHelper createJiraHelper(final ApplicationUser user, final Map<String, String> params)
     {
         final Issue issue = issueManager.getIssueObject(params.get(JiraModuleContextFilter.ISSUE_KEY));
-        final Project project = projectService.getProjectByKey(user, params.get(JiraModuleContextFilter.PROFILE_KEY)).getProject();
+        final Project project = projectService.getProjectByKey(user, params.get(JiraModuleContextFilter.PROJECT_KEY)).getProject();
         final Map<String, Object> helperParams = issue == null ? Collections.<String, Object>emptyMap() : ImmutableMap.<String, Object>of("issue", issue);
 
         return new JiraHelper(ExecutingHttpRequest.get(), project, helperParams);
