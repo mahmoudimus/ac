@@ -1,10 +1,7 @@
 var mockSimpleDialog;
 var mockConfluence = {};
 
-
-define(['confluence/macro/editor'], function() {
-
-  _AP.require(["confluence/macro/editor"], function(confluenceMacroEditor) {
+define(['ac/confluence/macro/editor', 'connect-host'], function(confluenceMacroEditor, _AP) {
 
     module("Confluence Macro Editor", {
       setup: function() {
@@ -153,5 +150,4 @@ define(['confluence/macro/editor'], function() {
       equal(spy.args[0][0], MacroData.body, 'getMacroBody passes the macro body to the callback function');
     });
 
-  });
 });

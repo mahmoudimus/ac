@@ -16,9 +16,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;

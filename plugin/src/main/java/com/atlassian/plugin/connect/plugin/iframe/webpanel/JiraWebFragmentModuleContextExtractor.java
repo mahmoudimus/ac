@@ -10,9 +10,9 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.ImmutableList;
 
+import javax.inject.Inject;
 import java.security.Principal;
 import java.util.Map;
-import javax.inject.Inject;
 
 @JiraComponent
 public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleContextExtractor
