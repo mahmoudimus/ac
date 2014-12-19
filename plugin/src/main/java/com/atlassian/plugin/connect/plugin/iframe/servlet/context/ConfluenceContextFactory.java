@@ -14,9 +14,6 @@ import java.util.Map;
 @ConfluenceComponent
 public class ConfluenceContextFactory implements ProductSpecificContextFactory {
 
-    @Autowired
-    public ConfluenceContextFactory() {}
-
     public Map<String, Object> createProductSpecificContext(final ModuleContextParameters params) {
         return ImmutableMap.of();
     }
