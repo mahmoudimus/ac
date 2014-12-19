@@ -115,7 +115,7 @@ public class AddOnPropertyStore
 
     private boolean hasReachedPropertyLimit(@Nonnull final String addOnKey)
     {
-        return getAddOnPropertyAOArrayForAddOnKey(addOnKey).length >= MAX_PROPERTIES_PER_ADD_ON;
+        return ao.count(AddOnPropertyAO.class, Query.select().where("PLUGIN_KEY = ?", addOnKey)) >= MAX_PROPERTIES_PER_ADD_ON;
     }
 
     public enum PutResult

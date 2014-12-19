@@ -3,11 +3,10 @@ package com.atlassian.plugin.connect.plugin.service;
 import com.atlassian.fugue.Either;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
-import org.apache.commons.httpclient.HttpStatus;
+import com.atlassian.sal.api.user.UserProfile;
 
-import java.util.Collections;
-import java.util.List;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * This service is used to add, remove, list and update add-on properties.
@@ -17,63 +16,35 @@ import javax.annotation.Nonnull;
  */
 public interface AddOnPropertyService
 {
-    enum ServiceResult
+    /**
+     * Gets a property from the add-on store.
+     * <p>
+     *     This method checks parameter validity and tries to add get a property for an add-on.
+     * </p>
+     * @return either error result or add-on property.
+     **/
+    Either<ServiceResult, AddOnProperty> getPropertyValue(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey,@Nonnull String propertyKey);
+
+    /**
+     * Sets a property from the add-on store.
+     * <p>
+     *     This method checks parameter validity and tries to add set a property for an add-on.
+     * </p>
+     * @return either error result or add-on property.
+     **/
+    ServiceResult setPropertyValue(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey, @Nonnull String propertyKey, @Nonnull String value);
+
+    interface ServiceResult
     {
-        PROPERTY_UPDATED(HttpStatus.SC_OK),
-        PROPERTY_CREATED(HttpStatus.SC_CREATED),
-        KEY_TOO_LONG(HttpStatus.SC_BAD_REQUEST),
-        INVALID_ADD_ON(HttpStatus.SC_FORBIDDEN),
-        ADD_ON_NOT_FOUND(HttpStatus.SC_NOT_FOUND),
-        MAXIMUM_PROPERTIES_EXCEEDED(HttpStatus.SC_CONFLICT),
-        PROPERTY_NOT_FOUND(HttpStatus.SC_NOT_FOUND),
-        VALUE_TOO_BIG(HttpStatus.SC_FORBIDDEN),
-        ACCESS_FORBIDDEN(HttpStatus.SC_FORBIDDEN),
-        INVALID_FORMAT(HttpStatus.SC_BAD_REQUEST);
-
-        private final int httpStatusCode;
-
-        private ServiceResult(int httpStatusCode)
-        {
-            this.httpStatusCode = httpStatusCode;
-        }
-
-        public int getHttpStatusCode()
-        {
-            return httpStatusCode;
-        }
+        public int getHttpStatusCode();
+        public String message();
     }
-
-    class ServiceResultWithReason
-    {
-        final ServiceResult result;
-        final String reason;
-
-        public ServiceResultWithReason(final ServiceResult result, final String reason)
-        {
-            this.result = result;
-            this.reason = reason;
-        }
-
-        public ServiceResult getResult()
-        {
-            return result;
-        }
-
-        public String getReason()
-        {
-            return reason;
-        }
-    }
-
-    Either<ServiceResultWithReason, AddOnProperty> getPropertyValue(String sourcePluginKey, @Nonnull String addOnKey,@Nonnull String propertyKey);
-
-    ServiceResult setPropertyValue(String sourcePluginKey, @Nonnull String addOnKey, String propertyKey, String value);
 
     class ValidationResult<T>
     {
-        private final Either<List<ServiceResultWithReason>,T> result;
+        private final Either<ServiceResult,T> result;
 
-        public ValidationResult(Either<List<ServiceResultWithReason>,T> result)
+        public ValidationResult(Either<ServiceResult,T> result)
         {
             this.result = result;
         }
@@ -83,9 +54,9 @@ public interface AddOnPropertyService
             return result.isRight();
         }
 
-        public Iterable<ServiceResultWithReason> getErrorCollection()
+        public Option<ServiceResult> getError()
         {
-            return result.isLeft() ? result.left().get() : Collections.<ServiceResultWithReason>emptyList();
+            return result.left().toOption();
         }
 
         public Option<T> getValue()
@@ -93,13 +64,13 @@ public interface AddOnPropertyService
             return result.right().toOption();
         }
 
-        public static <T> ValidationResult<T> fromValue(T value){
-            return new ValidationResult<T>(Either.<List<ServiceResultWithReason>,T>right(value));
+        public static <T> ValidationResult<T> fromValue(T value)
+        {
+            return new ValidationResult<T>(Either.<ServiceResult,T>right(value));
         }
-        public static <T> ValidationResult<T> fromError(List<ServiceResultWithReason> errorCollection){
-            return new ValidationResult<T>(Either.<List<ServiceResultWithReason>,T>left(errorCollection));
+        public static <T> ValidationResult<T> fromError(ServiceResult error)
+        {
+            return new ValidationResult<T>(Either.<ServiceResult,T>left(error));
         }
     }
-
-
 }

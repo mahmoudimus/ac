@@ -25,6 +25,7 @@ import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.io.LimitInputStream;
@@ -50,7 +51,7 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import static com.atlassian.plugin.connect.plugin.service.AddOnPropertyService.ServiceResultWithReason;
+import static com.atlassian.plugin.connect.plugin.service.AddOnPropertyService.*;
 
 /**
  * REST endpoint which provides a view of Connect add-ons which are installed in the instance.
@@ -208,30 +209,55 @@ public class AddonsResource
 
     @GET
     @Path ("{addonKey}/properties/{propertyKey}")
-    public Response getAddonProperties(@PathParam ("addonKey") String addonKey, @PathParam("propertyKey") String propertyKey, @Context HttpServletRequest request)
+    public Response getAddOnProperty(@PathParam ("addonKey") final String addonKey, @PathParam("propertyKey") String propertyKey, @Context HttpServletRequest request)
     {
-        String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(request);
-        Either<ServiceResultWithReason, AddOnProperty> propertyValue = addOnPropertyService.getPropertyValue(sourcePluginKey, addonKey, propertyKey);
+        UserProfile user = userManager.getRemoteUser(request);
 
-        if (propertyValue.isLeft())
+        String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(request);
+        Either<ServiceResult, AddOnProperty> propertyValue = addOnPropertyService.getPropertyValue(user, sourcePluginKey, addonKey, propertyKey);
+
+        return propertyValue.fold(new Function<ServiceResult, Response>()
         {
-            return getErrorResponse(propertyValue.left().get());
-        }
-        String baseURL = applicationProperties.getBaseUrl(UrlMode.CANONICAL) + "/rest/atlassian-connect/1/addons/" + addonKey + "/properties/";
-        return Response.ok().entity(RestAddOnProperty.valueOf(propertyValue.right().get(), baseURL)).cacheControl(never()).build();
+            @Override
+            public Response apply(final ServiceResult input)
+            {
+                return getErrorResponse(input);
+            }
+        }, new Function<AddOnProperty, Response>()
+        {
+            @Override
+            public Response apply(final AddOnProperty input)
+            {
+                String baseURL = applicationProperties.getBaseUrl(UrlMode.CANONICAL) + "/rest/atlassian-connect/1/addons/" + addonKey + "/properties/";
+                return Response.ok().entity(RestAddOnProperty.valueOf(input, baseURL)).cacheControl(never()).build();
+            }
+        });
     }
 
     @PUT
     @Path ("{addonKey}/properties/{propertyKey}")
-    public Response putKey(@PathParam ("addonKey") String addonKey, @PathParam("propertyKey") String propertyKey, @Context HttpServletRequest request)
+    public Response putAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam("propertyKey") final String propertyKey, @Context HttpServletRequest request)
     {
-        String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(request);
+        final UserProfile user = userManager.getRemoteUser(request);
+        // can be null, it is checked in the service.
+        final String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(request);
         Either<RestParamError, String> errorStringEither = propertyValue(request);
-        if (errorStringEither.isLeft())
-            return getErrorResponse("Value too long", Response.Status.FORBIDDEN);
-        AddOnPropertyService.ServiceResult serviceResult = addOnPropertyService.setPropertyValue(sourcePluginKey, addonKey, propertyKey, errorStringEither.right().get());
-
-        return Response.status(serviceResult.getHttpStatusCode()).cacheControl(never()).build();
+        return errorStringEither.fold(new Function<RestParamError, Response>()
+        {
+            @Override
+            public Response apply(final RestParamError input)
+            {
+                return getErrorResponse("The value cannot be bigger than 32 KB.", Response.Status.FORBIDDEN);
+            }
+        }, new Function<String, Response>()
+        {
+            @Override
+            public Response apply(final String propertyValue)
+            {
+                ServiceResult serviceResult = addOnPropertyService.setPropertyValue(user, sourcePluginKey, addOnKey, propertyKey, propertyValue);
+                return Response.status(serviceResult.getHttpStatusCode()).cacheControl(never()).build();
+            }
+        });
     }
 
     private RestAddons getAddonsByType(RestAddonType type)
@@ -322,10 +348,10 @@ public class AddonsResource
                 .build();
     }
 
-    private Response getErrorResponse(final ServiceResultWithReason validationErrorWithReason )
+    private Response getErrorResponse(final ServiceResult validationErrorWithReason )
     {
-        return Response.status(validationErrorWithReason.getResult().getHttpStatusCode())
-                .entity(validationErrorWithReason.getReason())
+        return Response.status(validationErrorWithReason.getHttpStatusCode())
+                .entity(validationErrorWithReason.message())
                 .cacheControl(never())
                 .build();
     }
@@ -339,19 +365,19 @@ public class AddonsResource
             byte[] bytes = IOUtils.toByteArray(limitInputStream);
             if (bytes.length > AddOnPropertyServiceImpl.MAXIMUM_VALUE_LENGTH)
             {
-                return Either.left(RestParamError.VALUE_LENGTH_TOO_BIG);
+                return Either.left(RestParamError.PROPERTY_VALUE_TOO_LONG);
             }
-            return Either.right(new String(bytes, Charset.defaultCharset()));//forName(ComponentAccessor.getApplicationProperties().getEncoding()));
+            return Either.right(new String(bytes, Charset.defaultCharset()));
         }
         catch (IOException e)
         {
-            return Either.left(RestParamError.VALUE_LENGTH_TOO_BIG);
+            return Either.left(RestParamError.PROPERTY_VALUE_TOO_LONG);
         }
     }
 
     private enum RestParamError
     {
-        VALUE_LENGTH_TOO_BIG
+        PROPERTY_VALUE_TOO_LONG
     }
 
     private static CacheControl never()

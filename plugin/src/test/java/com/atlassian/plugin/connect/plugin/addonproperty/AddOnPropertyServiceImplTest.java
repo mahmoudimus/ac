@@ -2,14 +2,12 @@ package com.atlassian.plugin.connect.plugin.addonproperty;
 
 import com.atlassian.fugue.Either;
 import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.service.AddOnPropertyService;
 import com.atlassian.plugin.connect.plugin.service.AddOnPropertyServiceImpl;
-import com.google.common.base.Optional;
+import com.atlassian.sal.api.user.UserProfile;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +15,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static com.atlassian.plugin.connect.plugin.service.AddOnPropertyService.ServiceResult;
+import static com.atlassian.plugin.connect.plugin.service.AddOnPropertyServiceImpl.ServiceResultImpl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
@@ -27,7 +27,7 @@ public class AddOnPropertyServiceImplTest
     @Mock
     private AddOnPropertyStore store;
     @Mock
-    private ConnectAddonManager manager;
+    private UserProfile user;
 
     private final String addOnKey = "testAddon";
     private final AddOnProperty property = new AddOnProperty("testProperty", "{}");
@@ -37,8 +37,7 @@ public class AddOnPropertyServiceImplTest
     @Before
     public void init()
     {
-        service = new AddOnPropertyServiceImpl(store, manager);
-        when(manager.getExistingAddon(addOnKey)).thenReturn(new ConnectAddonBean());
+        service = new AddOnPropertyServiceImpl(store);
     }
 
     @Test
@@ -46,7 +45,7 @@ public class AddOnPropertyServiceImplTest
     {
         when(store.getPropertyValue(addOnKey, property.getKey())).thenReturn(Option.some(property));
 
-        Either<AddOnPropertyService.ServiceResultWithReason, AddOnProperty> result = service.getPropertyValue(addOnKey, addOnKey, property.getKey());
+        Either<AddOnPropertyService.ServiceResult, AddOnProperty> result = service.getPropertyValue(user, addOnKey, addOnKey, property.getKey());
         assertTrue(result.isRight());
 
         assertEquals(property, result.right().get());
@@ -57,10 +56,9 @@ public class AddOnPropertyServiceImplTest
     {
         when(store.getPropertyValue(addOnKey, property.getKey())).thenReturn(Option.<AddOnProperty>none());
 
-        Either<AddOnPropertyService.ServiceResultWithReason, AddOnProperty> result = service.getPropertyValue(addOnKey, addOnKey, property.getKey());
+        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, addOnKey, addOnKey, property.getKey());
         assertTrue(result.isLeft());
-
-        assertEquals(AddOnPropertyService.ServiceResult.PROPERTY_NOT_FOUND, result.left().get().getResult());
+        assertEquals(ServiceResultImpl.PROPERTY_NOT_FOUND, result.left().get());
     }
 
     @Test
@@ -68,8 +66,8 @@ public class AddOnPropertyServiceImplTest
     {
         when(store.setPropertyValue(addOnKey, property.getKey(), property.getValue())).thenReturn(AddOnPropertyStore.PutResult.PROPERTY_CREATED);
 
-        AddOnPropertyService.ServiceResult result = service.setPropertyValue(addOnKey, addOnKey, property.getKey(), property.getValue());
-        assertEquals(AddOnPropertyService.ServiceResult.PROPERTY_CREATED, result);
+        ServiceResult result = service.setPropertyValue(user, addOnKey, addOnKey, property.getKey(), property.getValue());
+        assertEquals(ServiceResultImpl.PROPERTY_CREATED, result);
     }
 
     @Test
@@ -77,8 +75,8 @@ public class AddOnPropertyServiceImplTest
     {
         when(store.setPropertyValue(addOnKey, property.getKey(), property.getValue())).thenReturn(AddOnPropertyStore.PutResult.PROPERTY_UPDATED);
 
-        AddOnPropertyService.ServiceResult result = service.setPropertyValue(addOnKey, addOnKey, property.getKey(), property.getValue());
-        assertEquals(AddOnPropertyService.ServiceResult.PROPERTY_UPDATED, result);
+        ServiceResult result = service.setPropertyValue(user, addOnKey, addOnKey, property.getKey(), property.getValue());
+        assertEquals(ServiceResultImpl.PROPERTY_UPDATED, result);
     }
 
     @Test
@@ -86,8 +84,8 @@ public class AddOnPropertyServiceImplTest
     {
         String tooLongKey = StringUtils.repeat(".", AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH);
 
-        AddOnPropertyService.ServiceResult result = service.setPropertyValue(addOnKey, addOnKey, tooLongKey, property.getValue());
-        assertEquals(AddOnPropertyService.ServiceResult.KEY_TOO_LONG, result);
+        ServiceResult result = service.setPropertyValue(user, addOnKey, addOnKey, tooLongKey, property.getValue());
+        assertEquals(ServiceResultImpl.KEY_TOO_LONG, result);
     }
 
     @Test
@@ -95,53 +93,94 @@ public class AddOnPropertyServiceImplTest
     {
         when(store.setPropertyValue(addOnKey, property.getKey(), property.getValue())).thenReturn(AddOnPropertyStore.PutResult.PROPERTY_LIMIT_EXCEEDED);
 
-        AddOnPropertyService.ServiceResult result = service.setPropertyValue(addOnKey, addOnKey, property.getKey(), property.getValue());
-        assertEquals(AddOnPropertyService.ServiceResult.MAXIMUM_PROPERTIES_EXCEEDED, result);
-    }
-
-    @Test
-    public void testValueTooBig() throws Exception
-    {
-        final String tooBigValue = StringUtils.repeat(" ", AddOnPropertyServiceImpl.MAXIMUM_VALUE_LENGTH);
-        AddOnPropertyService.ServiceResult result = service.setPropertyValue(addOnKey, addOnKey, property.getKey(),tooBigValue);
-        assertEquals(AddOnPropertyService.ServiceResult.VALUE_TOO_BIG, result);
+        ServiceResult result = service.setPropertyValue(user, addOnKey, addOnKey, property.getKey(), property.getValue());
+        assertEquals(ServiceResultImpl.MAXIMUM_PROPERTIES_EXCEEDED, result);
     }
 
     @Test
     public void testNoAccessToGetDifferentPluginData() throws Exception
     {
-        Either<AddOnPropertyService.ServiceResultWithReason, AddOnProperty> result = service.getPropertyValue("DIFF_PLUGIN_KEY", addOnKey, property.getKey());
+        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, "DIFF_PLUGIN_KEY", addOnKey, property.getKey());
         assertTrue(result.isLeft());
-        assertEquals(AddOnPropertyService.ServiceResult.ACCESS_FORBIDDEN, result.left().get().getResult());
-    }
-    @Test
-    public void testNoAccessToPutDifferentPluginData() throws Exception
-    {
-        AddOnPropertyService.ServiceResult result = service.setPropertyValue("DIFF_PLUGIN_KEY", addOnKey, property.getKey(), property.getValue());
-        assertEquals(AddOnPropertyService.ServiceResult.ACCESS_FORBIDDEN, result);
+        assertEquals(ServiceResultImpl.ACCESS_FORBIDDEN, result.left().get());
     }
 
     @Test
-    public void testValidJsons() throws Exception
+    public void testNoAccessToPutDifferentPluginData() throws Exception
     {
-        assertValidJson("null");
-        assertValidJson("true");
-        assertValidJson("false");
-        assertValidJson("0");
-        assertValidJson("{}");
+        ServiceResult result = service.setPropertyValue(user, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), property.getValue());
+        assertEquals(ServiceResultImpl.ACCESS_FORBIDDEN, result);
+    }
+
+    @Test
+    public void testGetNoAccessWhenNotLoggedIn() throws Exception
+    {
+        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(null, "DIFF_PLUGIN_KEY", addOnKey, property.getKey());
+        assertTrue(result.isLeft());
+        assertEquals(ServiceResultImpl.NOT_LOGGED_IN, result.left().get());
+    }
+
+    @Test
+    public void testSetNoAccessWhenNotLoggedIn() throws Exception
+    {
+        ServiceResult result = service.setPropertyValue(null, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), property.getValue());
+        assertEquals(ServiceResultImpl.NOT_LOGGED_IN, result);
     }
 
     @Test
     public void testInvalidJson()
     {
-        AddOnPropertyService.ServiceResult result = service.setPropertyValue(addOnKey, addOnKey, property.getKey(), "[");
-        assertEquals(AddOnPropertyService.ServiceResult.INVALID_FORMAT, result);
+        assertInvalidJson("[");
+        assertInvalidJson("{");
+    }
+
+    private void assertInvalidJson(final String value)
+    {
+        ServiceResult result = service.setPropertyValue(user, addOnKey, addOnKey, property.getKey(), value);
+        assertEquals(ServiceResultImpl.INVALID_FORMAT, result);
+    }
+
+    @Test
+    public void testValidNullPrimitiveValue() throws Exception
+    {
+        assertValidJson("null");
+    }
+
+    @Test
+    public void testValidBooleanValues() throws Exception
+    {
+        assertValidJson("true");
+        assertValidJson("false");
+    }
+
+    @Test
+    public void testValidNumbers() throws Exception
+    {
+        assertValidJson("0");
+        assertValidJson("0.1");
+        assertValidJson("2.0E5");
+        assertValidJson("-4");
+    }
+
+    @Test
+    public void testValidArray() throws Exception
+    {
+        assertValidJson("[]");
+        assertValidJson("[true]");
+        assertValidJson("[true,false]");
+    }
+
+    @Test
+    public void testValidJsonValue() throws Exception
+    {
+        assertValidJson("{}");
+        assertValidJson("{k : true}");
     }
 
     private void assertValidJson(String value)
     {
         when(store.setPropertyValue(addOnKey, property.getKey(), value)).thenReturn(AddOnPropertyStore.PutResult.PROPERTY_UPDATED);
-        AddOnPropertyService.ServiceResult result = service.setPropertyValue(addOnKey, addOnKey, property.getKey(), value);
-        assertEquals(AddOnPropertyService.ServiceResult.PROPERTY_UPDATED, result);
+        ServiceResult result = service.setPropertyValue(user, addOnKey, addOnKey, property.getKey(), value);
+        assertEquals(ServiceResultImpl.PROPERTY_UPDATED, result);
     }
 }

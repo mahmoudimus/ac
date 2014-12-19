@@ -1,11 +1,13 @@
 package it;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
 import com.google.gson.Gson;
 import it.servlet.InstallHandlerServlet;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -31,6 +33,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class TestAddOnProperties extends AbstractBrowserlessTest
 {
+    public static final int MAX_VALUE_SIZE = 1024 * 32;
     final String addOnKey = "testAddOnPropertyAddOnKey";
     final String restPath = baseUrl + "/rest/atlassian-connect/1/addons/" + addOnKey;
     final static Gson gson = new Gson();
@@ -101,34 +104,57 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
         int responseCode = craftPutRequest(propertyKey, "TEST_VALUE_2");
         assertEquals(Response.SC_CREATED, responseCode);
 
-        assertNotAccessibleGetRequest(propertyKey, secondAddOn.getSignedRequestHandler());
+        assertNotAccessibleGetRequest(propertyKey, Option.option(secondAddOn.getSignedRequestHandler()));
 
         ConnectRunner.stopAndUninstallQuietly(secondAddOn);
     }
+
+    @Test
+    public void testNoAccessWithoutPluginKeyInHeader() throws Exception
+    {
+        final String propertyKey = RandomStringUtils.randomAlphanumeric(15);
+
+        HttpURLConnection connection = craftGetRequest(propertyKey, Option.<SignedRequestHandler>none());
+        assertEquals(Response.SC_UNAUTHORIZED, connection.getResponseCode());
+    }
+
+    @Test
+    public void testPutValueTooBigReturnsForbidden() throws Exception
+    {
+        final String propertyKey = RandomStringUtils.randomAlphanumeric(15);
+        final String tooBigValue = StringUtils.repeat(" ", MAX_VALUE_SIZE + 1);
+
+        int responseCode = craftPutRequest(propertyKey, tooBigValue);
+        assertEquals(Response.SC_FORBIDDEN, responseCode);
+    }
+
     private String sendSuccessfulGetRequest(final String propertyKey)
             throws IOException, URISyntaxException
     {
-        HttpURLConnection connection = craftGetRequest(propertyKey, runner.getSignedRequestHandler());
+        HttpURLConnection connection = craftGetRequest(propertyKey, Option.option(runner.getSignedRequestHandler()));
         assertEquals(Response.SC_OK, connection.getResponseCode());
         Optional<String> json = getJSON(connection);
         assertTrue(json.isPresent());
         return json.get();
     }
 
-    private void assertNotAccessibleGetRequest(final String propertyKey, final SignedRequestHandler signedRequestHandler)
+    private void assertNotAccessibleGetRequest(final String propertyKey, final Option<SignedRequestHandler> signedRequestHandler)
             throws IOException, URISyntaxException
     {
         HttpURLConnection connection = craftGetRequest(propertyKey, signedRequestHandler);
         assertEquals(Response.SC_FORBIDDEN, connection.getResponseCode());
     }
 
-    private HttpURLConnection craftGetRequest(final String propertyKey, final SignedRequestHandler signedRequestHandler) throws IOException, URISyntaxException
+    private HttpURLConnection craftGetRequest(final String propertyKey, final Option<SignedRequestHandler> signedRequestHandler) throws IOException, URISyntaxException
     {
         URL url = new URL(restPath + "/properties/" + propertyKey);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
         connection.setDoInput(true);
-        signedRequestHandler.sign(url.toURI(), "GET", null, connection);
+        if (signedRequestHandler.isDefined())
+        {
+            signedRequestHandler.get().sign(url.toURI(), "GET", null, connection);
+        }
         return connection;
     }
 
