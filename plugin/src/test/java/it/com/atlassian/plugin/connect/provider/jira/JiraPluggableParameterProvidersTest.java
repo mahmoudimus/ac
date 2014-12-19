@@ -15,7 +15,6 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 import java.util.Map;
 
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

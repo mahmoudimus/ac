@@ -30,12 +30,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
+import javax.annotation.Nullable;
 import java.net.URI;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
-import javax.annotation.Nullable;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
