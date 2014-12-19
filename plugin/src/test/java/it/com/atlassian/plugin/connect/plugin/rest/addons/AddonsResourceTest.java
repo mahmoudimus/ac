@@ -206,6 +206,7 @@ public class AddonsResourceTest
         assertResponseStatusCode(request, response, HttpStatus.OK);
         RestMinimalAddon addonRepresentation = response.getJsonBody(RestMinimalAddon.class);
         assertThat(addonRepresentation.getKey(), equalTo(this.addonKey));
+        assertThat((String)response.getJsonBody().get("state"), equalTo("ENABLED"));
     }
 
     @Test
@@ -220,6 +221,7 @@ public class AddonsResourceTest
         assertResponseStatusCode(request, response, HttpStatus.OK);
         RestMinimalAddon addonRepresentation = response.getJsonBody(RestMinimalAddon.class);
         assertThat(addonRepresentation.getKey(), equalTo(this.addonKey));
+        assertThat((String)response.getJsonBody().get("state"), equalTo("DISABLED"));
     }
 
     @Test

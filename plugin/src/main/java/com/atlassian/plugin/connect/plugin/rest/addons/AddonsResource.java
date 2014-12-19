@@ -92,6 +92,12 @@ public class AddonsResource
         }
     }
 
+    /**
+     * Returns the add-on with the given key.
+     *
+     * @param addonKey the key of the addon, as defined in its descriptor
+     * @return a JSON representation of the add-on
+     */
     @GET
     @Path ("/{" + ADDON_KEY_PATH_PARAMETER + "}")
     @ResourceFilters(AddonOrSysadminOnlyResourceFilter.class)
