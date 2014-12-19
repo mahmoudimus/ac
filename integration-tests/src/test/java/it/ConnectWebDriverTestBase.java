@@ -36,11 +36,6 @@ public abstract class ConnectWebDriverTestBase
     @Rule
     public LogPageSourceRule pageSourceRule = new LogPageSourceRule();
 
-    /*
-    @Rule
-    public JavaScriptErrorsRule logConsoleOutputRule = new JavaScriptErrorsRule();
-    */
-
     protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
             product.getTester().getDriver());
 
