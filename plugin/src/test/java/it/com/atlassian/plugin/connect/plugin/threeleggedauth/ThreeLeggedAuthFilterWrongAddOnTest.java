@@ -1,6 +1,5 @@
 package it.com.atlassian.plugin.connect.plugin.threeleggedauth;
 
-import com.atlassian.crowd.embedded.api.ApplicationFactory;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.jwt.writer.JwtWriterFactory;
@@ -12,6 +11,7 @@ import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.user.UserManager;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import it.com.atlassian.plugin.connect.util.RequestUtil;
 import org.junit.Test;
@@ -35,9 +35,10 @@ public class ThreeLeggedAuthFilterWrongAddOnTest extends ThreeLeggedAuthFilterTe
                                                ApplicationProperties applicationProperties,
                                                ThreeLeggedAuthService threeLeggedAuthService,
                                                ApplicationService applicationService,
-                                               ApplicationManager applicationManager)
+                                               ApplicationManager applicationManager,
+                                               UserManager userManager)
     {
-        super(testPluginInstaller, testAuthenticator, testFilterResults, jwtWriterFactory, connectAddonRegistry, applicationProperties, threeLeggedAuthService, applicationService, applicationManager);
+        super(testPluginInstaller, testAuthenticator, testFilterResults, jwtWriterFactory, connectAddonRegistry, applicationProperties, threeLeggedAuthService, applicationService, applicationManager, userManager);
     }
 
     @Override

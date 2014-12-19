@@ -32,6 +32,8 @@ import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.ImmutableSet;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import it.com.atlassian.plugin.connect.util.RequestUtil;
@@ -63,31 +65,36 @@ public abstract class ThreeLeggedAuthFilterTestBase
     private final JwtWriterFactory jwtWriterFactory;
     private final ConnectAddonRegistry connectAddonRegistry;
     private final ApplicationProperties applicationProperties;
-    protected final ThreeLeggedAuthService threeLeggedAuthService;
     private final ApplicationManager applicationManager;
     private final ApplicationService applicationService;
+    private final UserManager userManager;
     private final AtomicReference<Plugin> installedPlugin = new AtomicReference<Plugin>();
+
+    protected final ThreeLeggedAuthService threeLeggedAuthService;
     protected final RequestUtil requestUtil;
 
     protected ConnectAddonBean addOnBean;
     private boolean globalImpersonationWasEnabled;
 
-    private final static Logger log = LoggerFactory.getLogger(ThreeLeggedAuthFilterTestBase.class);
-    private final static String ADMIN_USERNAME = "admin";
-    protected final static String SUBJECT_USERKEY = "barney";
-    protected static final String INACTIVE_USERKEY = "inactive_user";
-    protected static final String NON_EXISTENT_USERKEY = "non_existent_user";
+    private static final Logger log = LoggerFactory.getLogger(ThreeLeggedAuthFilterTestBase.class);
+    private static final String ADMIN_USERNAME = "admin";
+    protected String SUBJECT_USERNAME = "barney";
+    protected String SUBJECT_USERKEY;
+    protected String INACTIVE_USERNAME = "inactive_user";
+    protected String INACTIVE_USERKEY;
+    protected String NON_EXISTENT_USERKEY = "non_existent_user";
+
     private static final String REQUEST_PATH = "/path";
 
     public ThreeLeggedAuthFilterTestBase(TestPluginInstaller testPluginInstaller,
-                                         TestAuthenticator testAuthenticator,
-                                         AddonTestFilterResults testFilterResults,
-                                         JwtWriterFactory jwtWriterFactory,
-                                         ConnectAddonRegistry connectAddonRegistry,
-                                         ApplicationProperties applicationProperties,
-                                         ThreeLeggedAuthService threeLeggedAuthService,
-                                         ApplicationService applicationService,
-                                         ApplicationManager applicationManager)
+            TestAuthenticator testAuthenticator,
+            AddonTestFilterResults testFilterResults,
+            JwtWriterFactory jwtWriterFactory,
+            ConnectAddonRegistry connectAddonRegistry,
+            ApplicationProperties applicationProperties,
+            ThreeLeggedAuthService threeLeggedAuthService,
+            ApplicationService applicationService,
+            ApplicationManager applicationManager, final UserManager userManager)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
@@ -98,6 +105,7 @@ public abstract class ThreeLeggedAuthFilterTestBase
         this.threeLeggedAuthService = threeLeggedAuthService;
         this.applicationManager = applicationManager;
         this.applicationService = applicationService;
+        this.userManager = userManager;
         this.requestUtil = new RequestUtil(applicationProperties);
     }
 
@@ -115,12 +123,25 @@ public abstract class ThreeLeggedAuthFilterTestBase
     public void beforeEachTest()
     {
         globalImpersonationWasEnabled = isGlobalImpersonationEnabled();
+        SUBJECT_USERKEY = getUserKeyForUserName(SUBJECT_USERNAME);
+        INACTIVE_USERKEY = getUserKeyForUserName(INACTIVE_USERNAME);
     }
 
     @After
     public void afterEachTest()
     {
         setGlobalImpersonationEnabled(globalImpersonationWasEnabled);
+    }
+
+    protected String getUserKeyForUserName(String username)
+    {
+        UserProfile userProfile = userManager.getUserProfile(username);
+        if (userProfile != null)
+        {
+            log.warn("User key for user " + username + ":" + userProfile.getUserKey().getStringValue());
+            return userProfile.getUserKey().getStringValue();
+        }
+        return null;
     }
 
     protected boolean isGlobalImpersonationEnabled()
@@ -153,7 +174,7 @@ public abstract class ThreeLeggedAuthFilterTestBase
 
     protected URI createUriForInactiveSubject() throws OperationFailedException, ApplicationPermissionException, InvalidUserException, InvalidCredentialException, UnsupportedEncodingException, NoSuchAlgorithmException
     {
-        final UserTemplate userTemplate = new UserTemplate(INACTIVE_USERKEY);
+        final UserTemplate userTemplate = new UserTemplate(INACTIVE_USERNAME);
         userTemplate.setActive(false);
         ensureUserDoesNotExist(userTemplate.getName());
         User user = applicationService.addUser(applicationManager.findAll().iterator().next(), userTemplate, PasswordCredential.NONE);
