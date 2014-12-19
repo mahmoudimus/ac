@@ -8,7 +8,6 @@ import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.rest.AddonOrSysadminOnlyResourceFilter;
-import com.atlassian.plugin.connect.plugin.rest.ConnectRestConstants;
 import com.atlassian.plugin.connect.plugin.rest.RestError;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddonLicense;
@@ -30,7 +29,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -38,7 +36,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.Arrays;
@@ -98,6 +95,7 @@ public class AddonsResource
     @GET
     @Path ("/{" + ADDON_KEY_PATH_PARAMETER + "}")
     @ResourceFilters(AddonOrSysadminOnlyResourceFilter.class)
+    @AnonymousAllowed
     @Produces ("application/json")
     public Response getAddon(@PathParam (ADDON_KEY_PATH_PARAMETER) String addonKey)
     {

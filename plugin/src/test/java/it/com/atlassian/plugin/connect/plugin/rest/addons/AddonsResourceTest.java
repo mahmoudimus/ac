@@ -33,6 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -55,7 +57,6 @@ public class AddonsResourceTest
 
     private String addonKey;
     private String addonSecret;
-    private Plugin addon;
 
     public AddonsResourceTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,
                               ApplicationProperties applicationProperties, ConnectAddonRegistry connectAddonRegistry)
@@ -67,7 +68,7 @@ public class AddonsResourceTest
     }
 
     @BeforeClass
-    public void setUp() throws IOException
+    public void setUpClass()
     {
         Iterable<String> installedAddonKeys = testPluginInstaller.getInstalledAddonKeys();
         if (installedAddonKeys.iterator().hasNext())
@@ -75,40 +76,26 @@ public class AddonsResourceTest
             System.out.println("*** INSTALLED ADD-ONS: ");
             for (String key : installedAddonKeys)
             {
-                System.out.println("*** " + key);
+                LOG.debug("*** " + key);
             }
         }
+    }
 
+    @Before
+    public void setUp() throws IOException
+    {
         this.testAuthenticator.authenticateUser("admin");
         this.addonKey = this.generateAddonKey();
-        this.addon = this.installJsonAddon(this.addonKey);
+        this.installJsonAddon(this.addonKey);
         this.addonSecret = this.connectAddonRegistry.getSecret(this.addonKey);
     }
 
-    @AfterClass
+    @After
     public void tearDown() throws IOException
     {
-        if (null != addon)
+        for (String key : testPluginInstaller.getInstalledAddonKeys())
         {
-            try
-            {
-                testPluginInstaller.uninstallAddon(addon);
-            }
-            catch (IOException e)
-            {
-                LOG.error("Could not uninstall json addon", e);
-            }
-        }
-
-        Iterable<String> installedAddonKeys = testPluginInstaller.getInstalledAddonKeys();
-        if (installedAddonKeys.iterator().hasNext())
-        {
-            System.out.println("*** REMAINING ADD-ONS: ");
-            for (String key : installedAddonKeys)
-            {
-                System.out.println("*** " + key);
-                this.testPluginInstaller.uninstallAddon(key);
-            }
+            this.testPluginInstaller.uninstallAddon(key);
         }
     }
 
@@ -153,7 +140,7 @@ public class AddonsResourceTest
     public void shouldReturnForbiddenWhenAddonMakesForbiddenRequest() throws IOException
     {
         String otherAddonKey = this.generateAddonKey();
-        Plugin otherAddon = this.installJsonAddon(otherAddonKey);
+        this.installJsonAddon(otherAddonKey);
 
         List<RequestUtil.Request.Builder> builders = Lists.newArrayList(
                 this.getBuilderForGetAddons(),
@@ -169,8 +156,6 @@ public class AddonsResourceTest
 
             assertResponseStatusCode(request, response, HttpStatus.FORBIDDEN);
         }
-
-        this.testPluginInstaller.uninstallAddon(otherAddon);
     }
 
     @Test
@@ -214,6 +199,20 @@ public class AddonsResourceTest
     @Test
     public void shouldReturnSingleAddonWhenRequestedByAddon() throws IOException
     {
+        RequestUtil.Request request = this.getBuilderForGetAddon(this.addonKey)
+                .setIncludeJwtAuthentication(this.addonKey, this.addonSecret).build();
+        RequestUtil.Response response = this.requestUtil.makeRequest(request);
+
+        assertResponseStatusCode(request, response, HttpStatus.OK);
+        RestMinimalAddon addonRepresentation = response.getJsonBody(RestMinimalAddon.class);
+        assertThat(addonRepresentation.getKey(), equalTo(this.addonKey));
+    }
+
+    @Test
+    public void shouldReturnSingleAddonWhenRequestedByDisabledAddon() throws IOException
+    {
+        this.testPluginInstaller.disableAddon(this.addonKey);
+
         RequestUtil.Request request = this.getBuilderForGetAddon(this.addonKey)
                 .setIncludeJwtAuthentication(this.addonKey, this.addonSecret).build();
         RequestUtil.Response response = this.requestUtil.makeRequest(request);
@@ -269,6 +268,7 @@ public class AddonsResourceTest
                 .withScopes(Sets.newHashSet(ScopeName.READ))
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())
                 .withModule("webItems", randomWebItemBean())
+                .withLicensing(true)
                 .build();
 
         return this.testPluginInstaller.installAddon(addonBean);
