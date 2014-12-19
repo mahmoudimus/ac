@@ -538,7 +538,7 @@ function mergeFiles(toFile, filesToMerge){
 }
 
 function compileJsDocs() {
-    fs.copySync('./node_modules/atlassian-connect-js/dist/connect-host.js', 'target/gensrc/public/assets/js/connect-host.js');
+    fs.copySync('../plugin/src/main/resources/js/core/connect-host.js', 'target/gensrc/public/assets/js/connect-host.js');
     fs.copySync('./node_modules/atlassian-connect-js/dist/all-debug.js', 'target/gensrc/public/assets/js/connect-client.js');
     // append local modules that are not from core.
     var pluginFiles = [
