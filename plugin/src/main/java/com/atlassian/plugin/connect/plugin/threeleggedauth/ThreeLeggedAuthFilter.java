@@ -133,9 +133,15 @@ public class ThreeLeggedAuthFilter implements Filter
             HttpSession session = request.getSession(false); // don't create a session if there is none
             try
             {
-                if (null != subject && shouldAllowImpersonation(request, response, subject, addOnBean))
+                UserProfile impersonatedUserProfile = null;
+                if (null != subject)
                 {
-                    impersonateSubject(filterChain, request, response, subject);
+                    impersonatedUserProfile = getUserProfileIfImpersonationAllowed(request, response, subject, addOnBean);
+                }
+
+                if (impersonatedUserProfile != null)
+                {
+                    impersonateSubject(filterChain, request, response, impersonatedUserProfile);
                 }
                 else
                 {
@@ -163,15 +169,15 @@ public class ThreeLeggedAuthFilter implements Filter
         fail(request, response, externallyVisibleMessage, HttpServletResponse.SC_BAD_REQUEST);
     }
 
-    private boolean shouldAllowImpersonation(HttpServletRequest request, HttpServletResponse response, String subject, ConnectAddonBean addOnBean) throws InvalidSubjectException
+    /**
+     * @return Return the user profile to impersonate with if allowed, otherwise null
+     */
+    private UserProfile getUserProfileIfImpersonationAllowed(HttpServletRequest request, HttpServletResponse response, String subject, ConnectAddonBean addOnBean) throws InvalidSubjectException
     {
-        boolean allowImpersonation = false;
-
         if (getBoolean(SYS_PROP_ALLOW_IMPERSONATION))
         {
             log.warn("Allowing add-on '{}' to impersonate user '{}' because the system property '{}' is set to true.", new String[]{ addOnBean.getKey(), subject, SYS_PROP_ALLOW_IMPERSONATION });
-            getUserProfile(request, response, addOnBean.getKey(), subject);
-            allowImpersonation = true;
+            return getUserProfile(request, response, addOnBean.getKey(), subject);
         }
         else
         {
@@ -179,6 +185,7 @@ public class ThreeLeggedAuthFilter implements Filter
             {
                 log.warn("Ignoring subject claim '{}' on incoming request '{}' from Connect add-on '{}' because the {} said so.",
                         new String[]{subject, request.getRequestURI(), addOnBean.getKey(), threeLeggedAuthService.getClass().getSimpleName()});
+                return null;
             }
             else
             {
@@ -188,7 +195,7 @@ public class ThreeLeggedAuthFilter implements Filter
                 if (threeLeggedAuthService.hasGrant(userProfile.getUserKey(), addOnBean))
                 {
                     log.info("Allowing add-on '{}' to impersonate user '{}' because a user-agent grant exists.", addOnBean.getKey(), subject);
-                    allowImpersonation = true;
+                    return userProfile;
                 }
                 else
                 {
@@ -199,13 +206,13 @@ public class ThreeLeggedAuthFilter implements Filter
                 }
             }
         }
-
-        return allowImpersonation;
     }
 
-    private void impersonateSubject(FilterChain filterChain, HttpServletRequest request, HttpServletResponse response, String subject) throws IOException, ServletException
+    private void impersonateSubject(FilterChain filterChain, HttpServletRequest request, HttpServletResponse response, UserProfile userProfile) throws IOException, ServletException
     {
-        final Authenticator.Result authenticationResult = new Authenticator.Result.Success(createMessage("Successful three-legged-auth"), new SimplePrincipal(subject));
+        // Products use the username to set the authentication context.
+        SimplePrincipal principal = new SimplePrincipal(userProfile.getUsername());
+        final Authenticator.Result authenticationResult = new Authenticator.Result.Success(createMessage("Successful three-legged-auth"), principal);
         authenticationListener.authenticationSuccess(authenticationResult, request, response);
         filterChain.doFilter(request, response);
     }
