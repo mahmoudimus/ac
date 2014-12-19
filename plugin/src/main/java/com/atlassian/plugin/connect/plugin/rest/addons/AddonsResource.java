@@ -77,25 +77,16 @@ public class AddonsResource
     @GET
     @ResourceFilters(SysadminOnlyResourceFilter.class)
     @Produces ("application/json")
-    public Response getAddons(@QueryParam ("type") String type)
+    public Response getAddons()
     {
-        try
-        {
-            RestAddonType addonType = StringUtils.isBlank(type) ? null : RestAddonType.valueOf(type.toUpperCase());
-            RestAddons restAddons = getAddonsByType(addonType);
-            return Response.ok().entity(restAddons).build();
-        }
-        catch (IllegalArgumentException e)
-        {
-            String message = "Type " + type + " is not valid. Valid options: " + Arrays.toString(RestAddonType.values());
-            return getErrorResponse(message, Response.Status.BAD_REQUEST);
-        }
+        RestAddons restAddons = this.getAddonResources();
+        return Response.ok().entity(restAddons).build();
     }
 
     /**
      * Returns the add-on with the given key.
      *
-     * @param addonKey the key of the addon, as defined in its descriptor
+     * @param addonKey the key of the add-on, as defined in its descriptor
      * @return a JSON representation of the add-on
      */
     @GET
@@ -172,18 +163,13 @@ public class AddonsResource
         return getErrorResponse(message, Response.Status.NOT_FOUND);
     }
 
-    private RestAddons getAddonsByType(RestAddonType type)
+    private RestAddons getAddonResources()
     {
         List<RestAddon> result = Lists.newArrayList();
-
-        if (type == null || type == RestAddonType.JSON)
+        for (ConnectAddonBean addonBean : addonRegistry.getAllAddonBeans())
         {
-            for (ConnectAddonBean addonBean : addonRegistry.getAllAddonBeans())
-            {
-                result.add(createJsonAddonRest(addonBean));
-            }
+            result.add(createJsonAddonRest(addonBean));
         }
-
         return new RestAddons<RestAddon>(result);
     }
 
