@@ -193,7 +193,8 @@ public class ThreeLeggedAuthFilterAddOnSpecificTest extends ThreeLeggedAuthFilte
     {
         setGlobalImpersonationEnabled(true);
         issueRequest(createRequestUri(SUBJECT_USERKEY));
-        assertEquals(SUBJECT_USERKEY, getCapturedRequest().getRemoteUsername());
+        assertEquals(SUBJECT_USERNAME, getCapturedRequest().getRemoteUsername());
+        assertEquals(SUBJECT_USERKEY, getCapturedRequest().getRemoteUserProfile().getUserKey().getStringValue());
     }
 
     @Test
