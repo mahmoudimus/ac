@@ -23,25 +23,24 @@ import com.google.gson.reflect.TypeToken;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import it.com.atlassian.plugin.connect.util.RequestUtil;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.core.HttpHeaders;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(AtlassianPluginsTestRunner.class)
@@ -100,9 +99,9 @@ public class AddonsResourceTest
     }
 
     @Test
-    public void shouldReturnUnauthorizedWhenAnonymousMakesAnyRequest() throws IOException
+    public void shouldReturnUnauthorizedWhenAnonymousMakesAnySysAdminRestrictedRequest() throws IOException
     {
-        for (RequestUtil.Request.Builder builder : this.getBuildersForAllRequests(this.addonKey))
+        for (RequestUtil.Request.Builder builder : this.getBuildersForAllSysAdminRequests(this.addonKey))
         {
             RequestUtil.Request request = builder.build();
             RequestUtil.Response response = this.requestUtil.makeRequest(request);
@@ -112,15 +111,13 @@ public class AddonsResourceTest
     }
 
     @Test
-    public void shouldReturnUnauthorizedWhenAnonymousMakesRequestToInvalidAddon() throws IOException
+    public void shouldReturnUnauthorizedWithAddonChallengeWhenAnonymousMakesAddonRestrictedRequest() throws IOException
     {
-        for (RequestUtil.Request.Builder builder : this.getBuildersForAllDocumentRequests("invalid-key"))
-        {
-            RequestUtil.Request request = builder.build();
-            RequestUtil.Response response = this.requestUtil.makeRequest(request);
+        RequestUtil.Request request = this.getBuilderForGetAddon(this.addonKey).build();
+        RequestUtil.Response response = this.requestUtil.makeRequest(request);
 
-            assertErrorResponseStatusCode(request, response, HttpStatus.UNAUTHORIZED);
-        }
+        assertResponseStatusCode(request, response, HttpStatus.UNAUTHORIZED);
+        assertResponseHeaderValue(response, HttpHeaders.WWW_AUTHENTICATE, "JWT realm=\"Atlassian Connect\"");
     }
 
     @Test
@@ -206,7 +203,7 @@ public class AddonsResourceTest
         assertResponseStatusCode(request, response, HttpStatus.OK);
         RestMinimalAddon addonRepresentation = response.getJsonBody(RestMinimalAddon.class);
         assertThat(addonRepresentation.getKey(), equalTo(this.addonKey));
-        assertThat((String)response.getJsonBody().get("state"), equalTo("ENABLED"));
+        assertThat((String) response.getJsonBody().get("state"), equalTo("ENABLED"));
     }
 
     @Test
@@ -221,7 +218,7 @@ public class AddonsResourceTest
         assertResponseStatusCode(request, response, HttpStatus.OK);
         RestMinimalAddon addonRepresentation = response.getJsonBody(RestMinimalAddon.class);
         assertThat(addonRepresentation.getKey(), equalTo(this.addonKey));
-        assertThat((String)response.getJsonBody().get("state"), equalTo("DISABLED"));
+        assertThat((String) response.getJsonBody().get("state"), equalTo("DISABLED"));
     }
 
     @Test
@@ -278,15 +275,15 @@ public class AddonsResourceTest
 
     private List<RequestUtil.Request.Builder> getBuildersForAllRequests(String addonKey)
     {
-        List<RequestUtil.Request.Builder> builders = this.getBuildersForAllDocumentRequests(addonKey);
-        builders.add(0, this.getBuilderForGetAddons());
+        List<RequestUtil.Request.Builder> builders = this.getBuildersForAllSysAdminRequests(addonKey);
+        builders.add(0, this.getBuilderForGetAddon(addonKey));
         return builders;
     }
 
-    private List<RequestUtil.Request.Builder> getBuildersForAllDocumentRequests(String addonKey)
+    private List<RequestUtil.Request.Builder> getBuildersForAllSysAdminRequests(String addonKey)
     {
         return Lists.newArrayList(
-                this.getBuilderForGetAddon(addonKey),
+                this.getBuilderForGetAddons(),
                 this.getBuilderForUninstallAddon(addonKey),
                 this.getBuilderForReinstallAddon(addonKey)
         );
@@ -346,10 +343,17 @@ public class AddonsResourceTest
         }
     }
 
+    private void assertResponseHeaderValue(RequestUtil.Response response, String headerName, String value)
+    {
+        Map<String, List<String>> headerFields = response.getHeaderFields();
+        assertThat("Expected response header not set", headerFields.keySet(), hasItem(headerName));
+        assertThat(String.format("Unexpected response value for header %s", headerName), headerFields.get(headerName), hasItem(value));
+    }
+
     private void assertErrorResponseStatusCode(RequestUtil.Request request, RequestUtil.Response response, HttpStatus status)
     {
         String requestString = String.format("%s %s", request.getMethod(), request.getUri());
-        assertEquals(String.format("Expected status code %s not received for %s", status, requestString), status.code, response.getStatusCode());
-        assertEquals(String.format("Status code not present in response body for %s", status, requestString), status.code, getStatusCode(response));
+        assertThat(String.format("Expected status code %s not received for %s", status, requestString), status.code, equalTo(response.getStatusCode()));
+        assertThat(String.format("Status code not present in response body for %s", status, requestString), status.code, equalTo(getStatusCode(response)));
     }
 }

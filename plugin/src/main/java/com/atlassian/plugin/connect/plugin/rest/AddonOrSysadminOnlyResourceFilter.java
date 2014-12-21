@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.rest;
 
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
-import com.atlassian.plugins.rest.common.security.AuthenticationRequiredException;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.annotations.VisibleForTesting;
@@ -80,7 +79,7 @@ public class AddonOrSysadminOnlyResourceFilter implements ResourceFilter
                 }
                 else
                 {
-                    throw new AuthenticationRequiredException();
+                    throw new ConnectAddonAuthenticationRequiredException();
                 }
             }
 
@@ -95,7 +94,6 @@ public class AddonOrSysadminOnlyResourceFilter implements ResourceFilter
                 String resourceAddonKey = resourceAddonKeys.iterator().next();
                 if (!pluginKey.equals(resourceAddonKey))
                 {
-                    // TODO Change to AuthorisationException when Confluence has been upgraded to atlassian-rest-common 2.9.12
                     throw new PermissionDeniedException(null);
                 }
             }
@@ -105,7 +103,6 @@ public class AddonOrSysadminOnlyResourceFilter implements ResourceFilter
         {
             if (!userManager.isSystemAdmin(userKey))
             {
-                // TODO Change to AuthorisationException when Confluence has been upgraded to atlassian-rest-common 2.9.12
                 throw new PermissionDeniedException(null);
             }
         }

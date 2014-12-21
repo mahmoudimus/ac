@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.net.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class RequestUtil
@@ -122,6 +123,7 @@ public class RequestUtil
         try
         {
             int responseCode = connection.getResponseCode();
+            Map<String, List<String>> headerFields = connection.getHeaderFields();
             StringBuilder output = new StringBuilder();
 
             InputStream response = responseCode == 200 ? connection.getInputStream() : connection.getErrorStream();
@@ -139,7 +141,7 @@ public class RequestUtil
                 reader.close();
                 response.close();
             }
-            return new Response(responseCode, output.toString());
+            return new Response(responseCode, headerFields, output.toString());
         }
         finally
         {
@@ -290,11 +292,13 @@ public class RequestUtil
     public static class Response
     {
         private final int statusCode;
+        private Map<String, List<String>> headerFields;
         private final String body;
 
-        public Response(int statusCode, String body)
+        public Response(int statusCode, Map<String, List<String>> headerFields, String body)
         {
             this.statusCode = statusCode;
+            this.headerFields = headerFields;
             this.body = body;
         }
 
@@ -303,6 +307,10 @@ public class RequestUtil
             return statusCode;
         }
 
+        public Map<String, List<String>> getHeaderFields()
+        {
+            return this.headerFields;
+        }
         public String getBody()
         {
             return body;

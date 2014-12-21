@@ -53,7 +53,7 @@ public class AddonOrSysadminOnlyResourceFilterTest
         this.resourceFilter = new AddonOrSysadminOnlyResourceFilter(this.userManager, this.httpRequest, this.uriInfo);
     }
 
-    @Test(expected = AuthenticationRequiredException.class)
+    @Test(expected = ConnectAddonAuthenticationRequiredException.class)
     public void shouldRejectAnonymousRequest()
     {
         when(this.userManager.getRemoteUserKey()).thenReturn(null);
