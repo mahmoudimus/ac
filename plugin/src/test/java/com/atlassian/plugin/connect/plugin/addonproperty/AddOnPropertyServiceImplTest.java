@@ -132,6 +132,48 @@ public class AddOnPropertyServiceImplTest
         testPutExistingValidProperty(null);
     }
 
+    private void testDeleteExistingProperty(final String sourcePluginKey)
+    {
+        when(store.deletePropertyValue(addOnKey, property.getKey())).thenReturn(AddOnPropertyStore.DeleteResult.PROPERTY_DELETED);
+
+        ServiceResult result = service.deletePropertyValue(user, sourcePluginKey, addOnKey, property.getKey());
+        assertEquals(ServiceResultImpl.PROPERTY_DELETED, result);
+    }
+
+    @Test
+    public void testDeleteExistingPropertyWhenPlugin() throws Exception
+    {
+        testDeleteExistingProperty(addOnKey);
+    }
+
+    @Test
+    public void testDeleteExistingPropertyWhenSysAdmin() throws Exception
+    {
+        when(userManager.isSystemAdmin(userKey)).thenReturn(true);
+        testDeleteExistingProperty(null);
+    }
+
+    private void testDeleteNonExistingProperty(final String sourcePluginKey)
+    {
+        when(store.deletePropertyValue(addOnKey, property.getKey())).thenReturn(AddOnPropertyStore.DeleteResult.PROPERTY_NOT_FOUND);
+
+        ServiceResult result = service.deletePropertyValue(user, sourcePluginKey, addOnKey, property.getKey());
+        assertEquals(ServiceResultImpl.PROPERTY_NOT_FOUND, result);
+    }
+
+    @Test
+    public void testDeleteNonExistingPropertyWhenPlugin() throws Exception
+    {
+        testDeleteNonExistingProperty(addOnKey);
+    }
+
+    @Test
+    public void testDeleteNonExistingPropertyWhenSysAdmin() throws Exception
+    {
+        when(userManager.isSystemAdmin(userKey)).thenReturn(true);
+        testDeleteNonExistingProperty(null);
+    }
+
     @Test
     public void testGetInvalidPropertyWithTooLongKey() throws Exception
     {
@@ -148,6 +190,15 @@ public class AddOnPropertyServiceImplTest
         String tooLongKey = StringUtils.repeat(".", AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH + 1);
 
         ServiceResult result = service.setPropertyValue(user, addOnKey, addOnKey, tooLongKey, property.getValue());
+        assertEquals(ServiceResultImpl.KEY_TOO_LONG, result);
+    }
+
+    @Test
+    public void testDeleteInvalidPropertyWithTooLongKey() throws Exception
+    {
+        String tooLongKey = StringUtils.repeat(".", AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH + 1);
+
+        ServiceResult result = service.deletePropertyValue(user, addOnKey, addOnKey, tooLongKey);
         assertEquals(ServiceResultImpl.KEY_TOO_LONG, result);
     }
 
@@ -176,6 +227,13 @@ public class AddOnPropertyServiceImplTest
     }
 
     @Test
+    public void testNoAccessToDeleteDifferentPluginData() throws Exception
+    {
+        ServiceResult result = service.deletePropertyValue(user, "DIFF_PLUGIN_KEY", addOnKey, property.getKey());
+        assertEquals(ServiceResultImpl.ACCESS_TO_OTHER_DATA_FORBIDDEN, result);
+    }
+
+    @Test
     public void testGetNoAccessWhenNotLoggedIn() throws Exception
     {
         Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(null, "DIFF_PLUGIN_KEY", addOnKey, property.getKey());
@@ -187,6 +245,13 @@ public class AddOnPropertyServiceImplTest
     public void testSetNoAccessWhenNotLoggedIn() throws Exception
     {
         ServiceResult result = service.setPropertyValue(null, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), property.getValue());
+        assertEquals(ServiceResultImpl.NOT_AUTHENTICATED, result);
+    }
+
+    @Test
+    public void testDeleteNoAccessWhenLoggedIn() throws Exception
+    {
+        ServiceResult result = service.deletePropertyValue(null, "DIFF_PLUGIN_KEY", addOnKey, property.getKey());
         assertEquals(ServiceResultImpl.NOT_AUTHENTICATED, result);
     }
 

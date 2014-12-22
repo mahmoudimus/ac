@@ -83,6 +83,30 @@ public class AddOnPropertyStore
         });
     }
 
+    public DeleteResult deletePropertyValue(@Nonnull final String addOnKey, @Nonnull final String propertyKey)
+    {
+        checkNotNull(addOnKey);
+        checkNotNull(propertyKey);
+
+        return ao.executeInTransaction(new TransactionCallback<DeleteResult>()
+        {
+            @Override
+            public DeleteResult doInTransaction()
+            {
+                if (existsProperty(addOnKey, propertyKey))
+                {
+                    AddOnPropertyAO propertyAO = getAddOnPropertyForKey(addOnKey, propertyKey);
+                    ao.delete(propertyAO);
+                    return DeleteResult.PROPERTY_DELETED;
+                }
+                else
+                {
+                    return DeleteResult.PROPERTY_NOT_FOUND;
+                }
+            }
+        });
+    }
+
     private boolean existsProperty(@Nonnull final String addOnKey, @Nonnull final String propertyKey)
     {
         return getAddOnPropertyForKey(addOnKey, propertyKey) != null;
@@ -123,6 +147,11 @@ public class AddOnPropertyStore
         PROPERTY_CREATED,
         PROPERTY_UPDATED,
         PROPERTY_LIMIT_EXCEEDED
+    }
+    public enum DeleteResult
+    {
+        PROPERTY_DELETED,
+        PROPERTY_NOT_FOUND
     }
 }
 

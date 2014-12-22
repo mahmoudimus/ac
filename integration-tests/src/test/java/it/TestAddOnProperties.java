@@ -64,6 +64,35 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
         String response = sendSuccessfulGetRequest(property.key);
         RestAddOnProperty result = gson.fromJson(response, RestAddOnProperty.class);
         assertEquals(property, result);
+
+        assertDeleted(propertyKey);
+    }
+
+    @Test
+    public void testCreateAndDeleteProperty() throws Exception
+    {
+        final String propertyKey = RandomStringUtils.randomAlphanumeric(15);
+        RestAddOnProperty property = new RestAddOnProperty(propertyKey, "TEST_VALUE", getSelfForPropertyKey(propertyKey));
+
+        int responseCode = executePutRequest(property.key, property.value);
+        assertEquals(Response.SC_CREATED, responseCode);
+
+        assertDeleted(propertyKey);
+    }
+
+    @Test
+    public void testDeleteNonExistentProperty() throws Exception
+    {
+        final String propertyKey = RandomStringUtils.randomAlphanumeric(15);
+
+        int responseCode = executeDeleteRequest(propertyKey);
+        assertEquals(Response.SC_NOT_FOUND, responseCode);
+    }
+
+    private void assertDeleted(String propertyKey) throws IOException, URISyntaxException
+    {
+        int responseCode = executeDeleteRequest(propertyKey);
+        assertEquals(Response.SC_NO_CONTENT, responseCode);
     }
 
     private String getSelfForPropertyKey(final String propertyKey)
@@ -86,6 +115,9 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
         String response = sendSuccessfulGetRequest(property.key);
         RestAddOnProperty result = gson.fromJson(response, RestAddOnProperty.class);
         assertEquals(property, result);
+
+        int responseCode3 = executeDeleteRequest(property.key);
+        assertEquals(Response.SC_NO_CONTENT, responseCode3);
     }
 
     @Test
@@ -102,6 +134,9 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
         assertEquals(Response.SC_CREATED, responseCode);
 
         assertNotAccessibleGetRequest(propertyKey, Option.option(secondAddOn.getSignedRequestHandler()));
+
+        int responseCode3 = executeDeleteRequest(propertyKey);
+        assertEquals(Response.SC_NO_CONTENT, responseCode3);
 
         ConnectRunner.stopAndUninstallQuietly(secondAddOn);
     }
@@ -161,6 +196,15 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
         runner.getSignedRequestHandler().sign(url.toURI(), "PUT", null, yc);
         yc.setDoOutput(true);
         yc.getOutputStream().write(value.getBytes());
+        return yc.getResponseCode();
+    }
+
+    private int executeDeleteRequest(final String propertyKey) throws IOException, URISyntaxException
+    {
+        URL url = new URL(restPath + "/properties/" + propertyKey);
+        HttpURLConnection yc = (HttpURLConnection) url.openConnection();
+        yc.setRequestMethod("DELETE");
+        runner.getSignedRequestHandler().sign(url.toURI(), "DELETE", null, yc);
         return yc.getResponseCode();
     }
 
