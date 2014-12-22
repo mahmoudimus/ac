@@ -13,7 +13,6 @@ import com.atlassian.plugin.connect.plugin.rest.RestError;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddonLicense;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddonLicenseMapper;
-import com.atlassian.plugin.connect.plugin.rest.data.RestAddonType;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddons;
 import com.atlassian.plugin.connect.plugin.rest.data.RestMinimalAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestNamedLink;
@@ -116,7 +115,7 @@ public class AddonsResource
             ConnectAddonBean addonBean = connectAddonManager.getExistingAddon(addonKey);
             if (addonBean != null)
             {
-                RestMinimalAddon addon = new RestMinimalAddon(addonKey, addonBean.getVersion(), RestAddonType.JSON);
+                RestMinimalAddon addon = new RestMinimalAddon(addonKey, addonBean.getVersion());
                 connectAddonManager.uninstallConnectAddon(addonKey);
                 return Response.ok().entity(addon).build();
             }
@@ -191,7 +190,7 @@ public class AddonsResource
         RestAddonLicense license = this.getLicenseResourceForAddon(key);
         RestAddon.AddonApplink appLinkResource = getApplinkResourceForAddon(key);
 
-        return new RestAddon(key, version, RestAddonType.JSON, state, license, appLinkResource, getAddonLinks(key));
+        return new RestAddon(key, version, state, license, appLinkResource, getAddonLinks(key));
     }
 
     private RestAddonLicense getLicenseResourceForAddon(String key)

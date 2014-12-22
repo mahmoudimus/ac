@@ -20,13 +20,12 @@ public class RestAddon extends RestMinimalAddon
 
     public RestAddon(@JsonProperty ("key") final String key,
             @JsonProperty ("version") final String version,
-            @JsonProperty ("type") final RestAddonType type,
             @JsonProperty ("state") final String state,
             @JsonProperty ("license") final RestAddonLicense license,
             @JsonProperty ("applink") final AddonApplink applink,
             @JsonProperty ("links") final RestRelatedLinks links)
     {
-        super(key, version, type);
+        super(key, version);
         this.state = state;
         this.license = license;
         this.applink = applink;

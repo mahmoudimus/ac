@@ -11,7 +11,6 @@ import com.atlassian.plugin.connect.plugin.license.LicenseStatus;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddonLicense;
-import com.atlassian.plugin.connect.plugin.rest.data.RestAddonType;
 import com.atlassian.plugin.connect.plugin.rest.data.RestRelatedLinks;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
@@ -113,7 +112,6 @@ public class AddonsResourceTest
 
         assertThat(addon.getKey(), equalTo(key));
         assertThat(addon.getVersion(), equalTo(version));
-        assertThat(addon.getType(), equalTo(RestAddonType.JSON));
         assertThat(addon.getState(), equalTo(state.name()));
 
         RestAddonLicense license = addon.getLicense();
