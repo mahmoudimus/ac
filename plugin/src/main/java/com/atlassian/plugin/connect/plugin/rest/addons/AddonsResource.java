@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.rest.addons;
 
+import com.atlassian.annotations.PublicApi;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
@@ -94,6 +95,7 @@ public class AddonsResource
     @ResourceFilters(AddonOrSysadminOnlyResourceFilter.class)
     @AnonymousAllowed
     @Produces ("application/json")
+    @PublicApi
     public Response getAddon(@PathParam (ADDON_KEY_PATH_PARAMETER) String addonKey)
     {
         RestAddon restAddon = getRestAddonByKey(addonKey);
