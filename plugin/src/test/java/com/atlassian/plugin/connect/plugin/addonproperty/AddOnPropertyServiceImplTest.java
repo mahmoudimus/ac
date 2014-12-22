@@ -80,9 +80,19 @@ public class AddOnPropertyServiceImplTest
     }
 
     @Test
+    public void testGetInvalidPropertyWithTooLongKey() throws Exception
+    {
+        String tooLongKey = StringUtils.repeat(".", AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH + 1);
+
+        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, addOnKey, addOnKey, tooLongKey);
+        assertTrue(result.isLeft());
+        assertEquals(ServiceResultImpl.KEY_TOO_LONG, result.left().get());
+    }
+
+    @Test
     public void testPutInvalidPropertyWithTooLongKey() throws Exception
     {
-        String tooLongKey = StringUtils.repeat(".", AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH);
+        String tooLongKey = StringUtils.repeat(".", AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH + 1);
 
         ServiceResult result = service.setPropertyValue(user, addOnKey, addOnKey, tooLongKey, property.getValue());
         assertEquals(ServiceResultImpl.KEY_TOO_LONG, result);
@@ -102,14 +112,14 @@ public class AddOnPropertyServiceImplTest
     {
         Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, "DIFF_PLUGIN_KEY", addOnKey, property.getKey());
         assertTrue(result.isLeft());
-        assertEquals(ServiceResultImpl.ACCESS_FORBIDDEN, result.left().get());
+        assertEquals(ServiceResultImpl.ACCESS_TO_OTHER_DATA_FORBIDDEN, result.left().get());
     }
 
     @Test
     public void testNoAccessToPutDifferentPluginData() throws Exception
     {
         ServiceResult result = service.setPropertyValue(user, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), property.getValue());
-        assertEquals(ServiceResultImpl.ACCESS_FORBIDDEN, result);
+        assertEquals(ServiceResultImpl.ACCESS_TO_OTHER_DATA_FORBIDDEN, result);
     }
 
     @Test
@@ -117,14 +127,14 @@ public class AddOnPropertyServiceImplTest
     {
         Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(null, "DIFF_PLUGIN_KEY", addOnKey, property.getKey());
         assertTrue(result.isLeft());
-        assertEquals(ServiceResultImpl.NOT_LOGGED_IN, result.left().get());
+        assertEquals(ServiceResultImpl.NOT_AUTHENTICATED, result.left().get());
     }
 
     @Test
     public void testSetNoAccessWhenNotLoggedIn() throws Exception
     {
         ServiceResult result = service.setPropertyValue(null, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), property.getValue());
-        assertEquals(ServiceResultImpl.NOT_LOGGED_IN, result);
+        assertEquals(ServiceResultImpl.NOT_AUTHENTICATED, result);
     }
 
     @Test
@@ -137,7 +147,7 @@ public class AddOnPropertyServiceImplTest
     private void assertInvalidJson(final String value)
     {
         ServiceResult result = service.setPropertyValue(user, addOnKey, addOnKey, property.getKey(), value);
-        assertEquals(ServiceResultImpl.INVALID_FORMAT, result);
+        assertEquals(ServiceResultImpl.INVALID_PROPERTY_VALUE, result);
     }
 
     @Test
@@ -168,6 +178,7 @@ public class AddOnPropertyServiceImplTest
         assertValidJson("[]");
         assertValidJson("[true]");
         assertValidJson("[true,false]");
+        assertValidJson("[true, { \"hello\": 3 }]");
     }
 
     @Test

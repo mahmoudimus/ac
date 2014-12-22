@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.ao;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.annotation.concurrent.Immutable;
 
@@ -65,9 +66,9 @@ public final class AddOnProperty
     @Override
     public String toString()
     {
-        return "AddOnProperty{" +
-                "key='" + key + '\'' +
-                ", value='" + value + '\'' +
-                '}';
+        return new ToStringBuilder(this)
+                .append("key", key)
+                .append("value", value)
+                .toString();
     }
 }

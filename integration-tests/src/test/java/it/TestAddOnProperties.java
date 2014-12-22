@@ -3,28 +3,25 @@ package it;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import com.google.common.base.Optional;
 import com.google.gson.Gson;
 import it.servlet.InstallHandlerServlet;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.eclipse.jetty.server.Response;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Functional test for add-on properties
@@ -61,7 +58,7 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
         final String propertyKey = RandomStringUtils.randomAlphanumeric(15);
         RestAddOnProperty property = new RestAddOnProperty(propertyKey, "TEST_VALUE", getSelfForPropertyKey(propertyKey));
 
-        int responseCode = craftPutRequest(property.key, property.value);
+        int responseCode = executePutRequest(property.key, property.value);
         assertEquals(Response.SC_CREATED, responseCode);
 
         String response = sendSuccessfulGetRequest(property.key);
@@ -80,10 +77,10 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
         final String propertyKey = RandomStringUtils.randomAlphanumeric(15);
         RestAddOnProperty property = new RestAddOnProperty(propertyKey, "TEST_VALUE", getSelfForPropertyKey(propertyKey));
 
-        int responseCode = craftPutRequest(property.key, "TEST_VALUE_2");
+        int responseCode = executePutRequest(property.key, "TEST_VALUE_2");
         assertEquals(Response.SC_CREATED, responseCode);
 
-        int responseCode2 = craftPutRequest(property.key, property.value);
+        int responseCode2 = executePutRequest(property.key, property.value);
         assertEquals(Response.SC_OK, responseCode2);
 
         String response = sendSuccessfulGetRequest(property.key);
@@ -101,7 +98,7 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
 
         final String propertyKey = RandomStringUtils.randomAlphanumeric(15);
 
-        int responseCode = craftPutRequest(propertyKey, "TEST_VALUE_2");
+        int responseCode = executePutRequest(propertyKey, "TEST_VALUE_2");
         assertEquals(Response.SC_CREATED, responseCode);
 
         assertNotAccessibleGetRequest(propertyKey, Option.option(secondAddOn.getSignedRequestHandler()));
@@ -114,7 +111,7 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
     {
         final String propertyKey = RandomStringUtils.randomAlphanumeric(15);
 
-        HttpURLConnection connection = craftGetRequest(propertyKey, Option.<SignedRequestHandler>none());
+        HttpURLConnection connection = executeGetRequest(propertyKey, Option.<SignedRequestHandler>none());
         assertEquals(Response.SC_UNAUTHORIZED, connection.getResponseCode());
     }
 
@@ -124,28 +121,26 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
         final String propertyKey = RandomStringUtils.randomAlphanumeric(15);
         final String tooBigValue = StringUtils.repeat(" ", MAX_VALUE_SIZE + 1);
 
-        int responseCode = craftPutRequest(propertyKey, tooBigValue);
+        int responseCode = executePutRequest(propertyKey, tooBigValue);
         assertEquals(Response.SC_FORBIDDEN, responseCode);
     }
 
     private String sendSuccessfulGetRequest(final String propertyKey)
             throws IOException, URISyntaxException
     {
-        HttpURLConnection connection = craftGetRequest(propertyKey, Option.option(runner.getSignedRequestHandler()));
+        HttpURLConnection connection = executeGetRequest(propertyKey, Option.option(runner.getSignedRequestHandler()));
         assertEquals(Response.SC_OK, connection.getResponseCode());
-        Optional<String> json = getJSON(connection);
-        assertTrue(json.isPresent());
-        return json.get();
+        return IOUtils.toString(connection.getInputStream());
     }
 
     private void assertNotAccessibleGetRequest(final String propertyKey, final Option<SignedRequestHandler> signedRequestHandler)
             throws IOException, URISyntaxException
     {
-        HttpURLConnection connection = craftGetRequest(propertyKey, signedRequestHandler);
+        HttpURLConnection connection = executeGetRequest(propertyKey, signedRequestHandler);
         assertEquals(Response.SC_FORBIDDEN, connection.getResponseCode());
     }
 
-    private HttpURLConnection craftGetRequest(final String propertyKey, final Option<SignedRequestHandler> signedRequestHandler) throws IOException, URISyntaxException
+    private HttpURLConnection executeGetRequest(final String propertyKey, final Option<SignedRequestHandler> signedRequestHandler) throws IOException, URISyntaxException
     {
         URL url = new URL(restPath + "/properties/" + propertyKey);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -158,7 +153,7 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
         return connection;
     }
 
-    private int craftPutRequest(final String propertyKey, String value) throws IOException, URISyntaxException
+    private int executePutRequest(final String propertyKey, String value) throws IOException, URISyntaxException
     {
         URL url = new URL(restPath + "/properties/" + propertyKey);
         HttpURLConnection yc = (HttpURLConnection) url.openConnection();
@@ -221,25 +216,5 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
                     ", self='" + self + '\'' +
                     '}';
         }
-    }
-    public Optional<String> getJSON(HttpURLConnection c) {
-        try
-        {
-            int status = c.getResponseCode();
-            switch (status) {
-                case 200:
-                    BufferedReader br = new BufferedReader(new InputStreamReader(c.getInputStream()));
-                    StringBuilder sb = new StringBuilder();
-                    String line;
-                    while ((line = br.readLine()) != null) {
-                        sb.append(line);
-                        sb.append("\n");
-                    }
-                    br.close();
-                    return Optional.of(sb.toString());
-            }
-        }
-        catch (IOException e) {}
-        return Optional.absent();
     }
 }

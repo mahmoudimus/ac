@@ -15,7 +15,7 @@ import net.java.ao.schema.StringLength;
  */
 public interface AddOnPropertyAO extends RawEntity<String>
 {
-    int MAXIMUM_PROPERTY_KEY_LENGTH = 256;
+    int MAXIMUM_PROPERTY_KEY_LENGTH = 255;
     // we need to have a primary key consisting of both plugin key and property key
     // not possible to have a multi-column: https://ecosystem.atlassian.net/browse/AO-96
     // since this is impossible, we had to create a new field that will have to be manually filled with the joined string.
