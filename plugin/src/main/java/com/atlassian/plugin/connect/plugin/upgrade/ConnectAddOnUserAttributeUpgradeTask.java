@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.usermanagement.upgrade;
+package com.atlassian.plugin.connect.plugin.upgrade;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -15,11 +15,10 @@ import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupP
 import com.atlassian.sal.api.message.Message;
 import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
 
-import com.google.common.collect.ImmutableMap;
-
 import static com.atlassian.crowd.search.builder.QueryBuilder.queryFor;
 import static com.atlassian.crowd.search.query.entity.EntityQuery.ALL_RESULTS;
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.Constants.ADDON_USER_GROUP_KEY;
+import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
 
 /**
  * A {@link com.atlassian.sal.api.upgrade.PluginUpgradeTask} that will iterate over all Connect AddOn Users and add a new attribute to them
@@ -60,7 +59,7 @@ public class ConnectAddOnUserAttributeUpgradeTask implements PluginUpgradeTask
         for (String user : connectAddonUsers)
         {
             // Set connect attributes on user
-            applicationService.storeUserAttributes(getApplication(), user, ImmutableMap.of("synch." + getApplication().getName() + ".atlassian-connect-user", Collections.singleton("true")));
+            applicationService.storeUserAttributes(getApplication(), user, buildConnectAddOnUserAttribute(getApplication().getName()));
         }
 
         return Collections.emptyList();

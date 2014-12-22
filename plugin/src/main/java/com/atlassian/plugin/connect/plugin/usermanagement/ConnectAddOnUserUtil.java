@@ -1,5 +1,11 @@
 package com.atlassian.plugin.connect.plugin.usermanagement;
 
+import com.atlassian.crowd.exception.ApplicationNotFoundException;
+import com.google.common.collect.ImmutableMap;
+
+import java.util.Collections;
+import java.util.Set;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ConnectAddOnUserUtil
@@ -8,6 +14,28 @@ public class ConnectAddOnUserUtil
     {
         checkNotNull(addonKey);
         return Constants.ADDON_USERNAME_PREFIX + addonKey;
+    }
+
+    /**
+     * Will return the a Map containing a value that will mark the Connect AddOn user as a 'Connect User'. This will be a 'synch-able'
+     * Crowd attribute (shared attribute across all Crowd connected applications) when this is finally enabled in Crowd.
+     * @param applicationName the name of the application the attribute was created from. This is mostly for an audit trail.
+     * @return An ImmutableMap allowing the marking of a user as a Connect AddOn user
+     * @throws com.atlassian.crowd.exception.ApplicationNotFoundException
+     */
+    public static ImmutableMap<String, Set<String>> buildConnectAddOnUserAttribute(String applicationName) throws ApplicationNotFoundException
+    {
+        return ImmutableMap.of(buildAttributeConnectAddOnAttributeName(applicationName), Collections.singleton("true"));
+    }
+
+    /**
+     * Builds the Connect AddOn attribute name that is used to store against Connect AddOn Users, which 'marks' them as a Connect AddOn.
+     * @param applicationName the name of the application the attribute was created from. This is mostly for an audit trail.
+     * @return String representation of the Connect AddOn User attribute name. <em>synch.APPLICATION_NAME.atlassian-connect-user</em>
+     */
+    public static String buildAttributeConnectAddOnAttributeName(String applicationName)
+    {
+        return "synch." + applicationName + ".atlassian-connect-user";
     }
 
     public static class Constants

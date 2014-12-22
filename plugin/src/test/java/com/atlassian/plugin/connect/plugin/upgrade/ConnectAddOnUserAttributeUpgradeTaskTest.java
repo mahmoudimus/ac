@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.usermanagement.upgrade;
+package com.atlassian.plugin.connect.plugin.upgrade;
 
 import java.util.Map;
 import java.util.Set;
@@ -19,6 +19,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.buildAttributeConnectAddOnAttributeName;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.mockito.Matchers.any;
@@ -64,6 +65,6 @@ public class ConnectAddOnUserAttributeUpgradeTaskTest
 
         verify(applicationService).storeUserAttributes(eq(application), eq("connect-addon-one"), userAttributeCaptor.capture());
 
-        assertThat(userAttributeCaptor.getValue().keySet(), containsInAnyOrder("synch." + APPLICATION_NAME + ".atlassian-connect-user"));
+        assertThat(userAttributeCaptor.getValue().keySet(), containsInAnyOrder(buildAttributeConnectAddOnAttributeName(APPLICATION_NAME)));
     }
 }

@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.buildAttributeConnectAddOnAttributeName;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -150,7 +151,7 @@ public class ConnectAddOnUserServiceImplTest
         connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService).addUser(eq(application), argThat(hasExpectedEmailAddress()), any(PasswordCredential.class));
         verify(applicationService).storeUserAttributes(eq(application), eq(USER_KEY), attributecaptor.capture());
-        assertTrue(attributecaptor.getValue().get("synch." + APPLICATION_NAME + ".atlassian-connect-user").contains("true"));
+        assertTrue(attributecaptor.getValue().get(buildAttributeConnectAddOnAttributeName(APPLICATION_NAME)).contains("true"));
     }
 
     @Test

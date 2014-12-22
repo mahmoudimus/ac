@@ -10,7 +10,6 @@ import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.Set;
 
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.Constants;
+import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @ExportAsDevService
@@ -237,7 +236,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             }
 
             // Set connect attributes on user
-            applicationService.storeUserAttributes(getApplication(), user.getName(), ImmutableMap.of("synch." + getApplication().getName() + ".atlassian-connect-user", Collections.singleton("true")));
+            applicationService.storeUserAttributes(getApplication(), user.getName(), buildConnectAddOnUserAttribute(getApplication().getName()));
         }
         catch (InvalidUserException iue)
         {
