@@ -17,8 +17,12 @@ public class RestAddonLicense
 
     @JsonProperty
     private final boolean evaluation;
-    private String contactEmail;
-    private String supportEntitlementNumber;
+
+    @JsonProperty
+    private final String contactEmail;
+
+    @JsonProperty
+    private final String supportEntitlementNumber;
 
     public RestAddonLicense(@JsonProperty("status") final LicenseStatus status,
                             @JsonProperty("type") final LicenseType type,

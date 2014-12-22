@@ -10,8 +10,8 @@ public class RestMinimalAddon
     @JsonProperty
     private final String version;
 
-    public RestMinimalAddon(@JsonProperty ("key") final String key,
-            @JsonProperty ("version") final String version)
+    public RestMinimalAddon(@JsonProperty("key") final String key,
+                            @JsonProperty("version") final String version)
     {
         this.key = key;
         this.version = version;

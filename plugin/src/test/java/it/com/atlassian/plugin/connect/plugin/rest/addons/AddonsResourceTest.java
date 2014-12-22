@@ -236,7 +236,6 @@ public class AddonsResourceTest
         assertEquals("Addon should be deleted", 200, response.getStatusCode());
         assertEquals("Addon key is incorrect", this.addonKey, response.getJsonBody().get("key"));
         assertEquals("Addon version is incorrect", "1.0", response.getJsonBody().get("version"));
-        assertEquals("Addon type is incorrect", "JSON", response.getJsonBody().get("type"));
 
         request = requestUtil.requestBuilder()
                 .setMethod(HttpMethod.GET)
