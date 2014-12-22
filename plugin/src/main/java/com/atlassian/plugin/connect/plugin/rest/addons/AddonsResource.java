@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.plugin.rest.AddonOrSysadminOnlyResourceFilte
 import com.atlassian.plugin.connect.plugin.rest.RestError;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddonLicense;
+import com.atlassian.plugin.connect.plugin.rest.data.RestAddonLicenseMapper;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddonType;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddons;
 import com.atlassian.plugin.connect.plugin.rest.data.RestMinimalAddon;
@@ -26,7 +27,6 @@ import com.atlassian.upm.api.license.entity.PluginLicense;
 import com.atlassian.upm.api.util.Option;
 import com.google.common.collect.Lists;
 import com.sun.jersey.spi.container.ResourceFilters;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,10 +36,8 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.atlassian.plugin.connect.plugin.rest.ConnectRestConstants.ADDON_KEY_PATH_PARAMETER;
@@ -199,10 +197,10 @@ public class AddonsResource
     private RestAddonLicense getLicenseResourceForAddon(String key)
     {
         Option<PluginLicense> licenseOption = licenseRetriever.getLicense(key);
+        RestAddonLicenseMapper mapper = new RestAddonLicenseMapper();
         RestAddonLicense resource = null;
         for (PluginLicense license : licenseOption) {
-            resource = new RestAddonLicense(licenseRetriever.getLicenseStatus(key), license.getLicenseType(),
-                    license.isEvaluation());
+            resource = mapper.getRestAddonLicense(license);
         }
         return resource;
     }

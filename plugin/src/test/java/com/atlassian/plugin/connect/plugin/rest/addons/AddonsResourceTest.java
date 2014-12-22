@@ -15,8 +15,10 @@ import com.atlassian.plugin.connect.plugin.rest.data.RestAddonType;
 import com.atlassian.plugin.connect.plugin.rest.data.RestRelatedLinks;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
+import com.atlassian.upm.api.license.entity.Contact;
 import com.atlassian.upm.api.license.entity.LicenseType;
 import com.atlassian.upm.api.license.entity.PluginLicense;
+import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -80,22 +82,30 @@ public class AddonsResourceTest
         String key = "my-addon-key";
         String version = "0.1";
         PluginState state = PluginState.INSTALLED;
+        boolean isActive = true;
         LicenseStatus licenseStatus = LicenseStatus.ACTIVE;
         LicenseType licenseType = LicenseType.DEVELOPER;
         boolean isEvaluationLicense = false;
+        String contactEmail = "charlie@atlassian.com";
+        String supportEntitlementNumber = "abc123";
 
         ConnectAddonBean beanMock = mock(ConnectAddonBean.class);
         when(beanMock.getKey()).thenReturn(key);
         when(beanMock.getVersion()).thenReturn(version);
 
+        Contact contactMock = mock(Contact.class);
+        when(contactMock.getEmail()).thenReturn(contactEmail);
+
         PluginLicense licenseMock = mock(PluginLicense.class);
+        when(licenseMock.isActive()).thenReturn(isActive);
         when(licenseMock.getLicenseType()).thenReturn(licenseType);
         when(licenseMock.isEvaluation()).thenReturn(isEvaluationLicense);
+        when(licenseMock.getContacts()).thenReturn(Lists.newArrayList(contactMock));
+        when(licenseMock.getSupportEntitlementNumber()).thenReturn(com.atlassian.upm.api.util.Option.some(supportEntitlementNumber));
 
         when(this.addonRegistry.getAddonBean(key)).thenReturn(Option.some(beanMock));
         when(this.addonRegistry.getRestartState(key)).thenReturn(state);
         when(this.licenseRetriever.getLicense(key)).thenReturn(com.atlassian.upm.api.util.Option.some(licenseMock));
-        when(this.licenseRetriever.getLicenseStatus(key)).thenReturn(licenseStatus);
         when(this.applicationProperties.getBaseUrl(UrlMode.CANONICAL)).thenReturn("http://localhost:2990/jira");
 
         Response response = this.resource.getAddon(key);
@@ -110,6 +120,8 @@ public class AddonsResourceTest
         assertThat(license.getStatus(), equalTo(licenseStatus));
         assertThat(license.getType(), equalTo(licenseType));
         assertThat(license.isEvaluation(), equalTo(isEvaluationLicense));
+        assertThat(license.getContactEmail(), equalTo(contactEmail));
+        assertThat(license.getSupportEntitlementNumber(), equalTo(supportEntitlementNumber));
 
         assertThat(addon.getApplink(), nullValue());
         assertThat(addon.getLinks(), instanceOf(RestRelatedLinks.class));
