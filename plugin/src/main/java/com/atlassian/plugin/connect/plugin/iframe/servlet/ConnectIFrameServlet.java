@@ -39,8 +39,9 @@ public class ConnectIFrameServlet extends HttpServlet
     private final ProductSpecificContextFactory productSpecificContextFactory;
 
     public ConnectIFrameServlet(IFrameRenderStrategyRegistry IFrameRenderStrategyRegistry,
-                                ModuleContextParser moduleContextParser,
-                                ModuleUiParamParser moduleUiParamParser, JiraContextFactory productSpecificContextFactory)
+            ModuleContextParser moduleContextParser,
+            ModuleUiParamParser moduleUiParamParser,
+            ProductSpecificContextFactory productSpecificContextFactory)
     {
         this.IFrameRenderStrategyRegistry = IFrameRenderStrategyRegistry;
         this.moduleContextParser = moduleContextParser;
