@@ -4,7 +4,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor;
+import com.atlassian.plugin.connect.plugin.iframe.webpanel.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.module.webitem.ConfluenceWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
@@ -54,7 +54,7 @@ public class ConfluenceWebItemModuleDescriptorFactoryTest
     private IFrameUriBuilderFactory iFrameUriBuilderFactory;
 
     @Mock
-    private WebFragmentModuleContextExtractor webFragmentModuleContextExtractor;
+    private PluggableParametersExtractor webFragmentModuleContextExtractor;
 
     @Mock
     private UrlVariableSubstitutor urlVariableSubstitutor;

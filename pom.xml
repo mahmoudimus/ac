@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.1.19-SNAPSHOT</version>
+    <version>1.1.20-SNAPSHOT</version>
     <organization>
         <name>Atlassian</name>
         <url>http://atlassian.com/</url>
@@ -25,6 +25,8 @@
 
     <modules>
         <module>api-parent</module>
+        <module>reference-plugin-jira</module>
+        <module>reference-plugin-confluence</module>
         <module>modules</module>
         <module>test-support-plugin</module>
         <module>plugin</module>
@@ -706,6 +708,8 @@
         <atlassian.sal.version>2.10.0</atlassian.sal.version>
         <atlassian.selenium.version>2.2-rc3</atlassian.selenium.version>
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>
+        <atlassian.connect-js.version>2.0.0</atlassian.connect-js.version>
+        <atlassian.connect-js.path>git+ssh://git@stash.atlassian.com:7997/ac/atlassian-connect-js.git#${atlassian.connect-js.version}</atlassian.connect-js.path>
         <atlassian.jira.projects.plugin.version>1.4.0-D20140829T122309</atlassian.jira.projects.plugin.version>
 
         <atlassian.upm.version>2.17.4</atlassian.upm.version>
