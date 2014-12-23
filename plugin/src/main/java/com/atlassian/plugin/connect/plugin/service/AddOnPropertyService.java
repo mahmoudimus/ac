@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.service;
 import com.atlassian.fugue.Either;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
+import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyIterable;
 import com.atlassian.sal.api.user.UserProfile;
 
 import javax.annotation.Nonnull;
@@ -42,6 +43,15 @@ public interface AddOnPropertyService
      * @return either error result or add-on property.
      **/
     ServiceResult deletePropertyValue(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey, @Nonnull String propertyKey);
+
+    /**
+     * List all stored properties for a given add-on.
+     * <p>
+     *     This method checks parameter validity and list all properties belonging to an add-on.
+     * </p>
+     * @return either error result or add-on property.
+     **/
+    Either<ServiceResult, AddOnPropertyIterable> listProperties(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey);
 
     interface ServiceResult
     {

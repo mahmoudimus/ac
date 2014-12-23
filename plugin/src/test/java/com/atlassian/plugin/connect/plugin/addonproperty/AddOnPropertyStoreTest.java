@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.addonproperty;
 
 import com.atlassian.activeobjects.test.TestActiveObjects;
+import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
@@ -11,14 +12,19 @@ import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
 import net.java.ao.test.jdbc.NonTransactional;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
+import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore.DeleteResult;
 import static com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore.MAX_PROPERTIES_PER_ADD_ON;
 import static com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore.PutResult;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 @RunWith (ActiveObjectsJUnitRunner.class)
@@ -100,6 +106,34 @@ public class AddOnPropertyStoreTest
         store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE);
         DeleteResult deleteResult = store.deletePropertyValue(ADD_ON_KEY, PROPERTY_KEY);
         assertEquals(DeleteResult.PROPERTY_DELETED, deleteResult);
+    }
+
+    @Test
+    @NonTransactional
+    public void testListProperties() throws Exception
+    {
+        List<AddOnProperty> propertyList = Arrays.asList(
+                  new AddOnProperty("1", VALUE),
+                  new AddOnProperty("2", VALUE),
+                  new AddOnProperty("3", VALUE)
+        );
+        for (AddOnProperty property : propertyList)
+        {
+            store.setPropertyValue(ADD_ON_KEY, property.getKey(), property.getValue());
+        }
+
+        Iterable<AddOnProperty> result = store.getAllPropertiesForAddOnKey(ADD_ON_KEY);
+
+        assertThat(result,
+                IsIterableContainingInOrder.contains(propertyList.toArray()));
+    }
+
+    @Test
+    @NonTransactional
+    public void testListEmptyProperties() throws Exception
+    {
+        Iterable<AddOnProperty> result = store.getAllPropertiesForAddOnKey(ADD_ON_KEY);
+        assertTrue(Iterables.isEmpty().apply(result));
     }
 
     public static final class Data implements DatabaseUpdater

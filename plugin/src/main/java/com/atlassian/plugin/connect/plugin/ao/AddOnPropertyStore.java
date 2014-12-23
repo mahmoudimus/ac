@@ -112,15 +112,15 @@ public class AddOnPropertyStore
         return getAddOnPropertyForKey(addOnKey, propertyKey) != null;
     }
     
-    public List<String> getAllPropertyKeysForAddOnKey(@Nonnull final String addOnKey)
+    public AddOnPropertyIterable getAllPropertiesForAddOnKey(@Nonnull final String addOnKey)
     {
-        ImmutableList<AddOnPropertyAO> addOnPropertyList = ImmutableList.<AddOnPropertyAO>builder().add(getAddOnPropertyAOArrayForAddOnKey(addOnKey)).build();
-        return Lists.transform(addOnPropertyList, new Function<AddOnPropertyAO, String>()
+        return ao.executeInTransaction(new TransactionCallback<AddOnPropertyIterable>()
         {
             @Override
-            public String apply(final AddOnPropertyAO input)
+            public AddOnPropertyIterable doInTransaction()
             {
-                return input.getPropertyKey();
+                ImmutableList<AddOnPropertyAO> addOnPropertyList = ImmutableList.<AddOnPropertyAO>builder().add(getAddOnPropertyAOArrayForAddOnKey(addOnKey)).build();
+                return AddOnPropertyIterable.fromAddOnPropertyAOList(addOnPropertyList);
             }
         });
     }

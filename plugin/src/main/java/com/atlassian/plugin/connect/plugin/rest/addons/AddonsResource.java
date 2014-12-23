@@ -4,12 +4,14 @@ import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.fugue.Either;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
+import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyIterable;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnInstaller;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.rest.RestResult;
+import com.atlassian.plugin.connect.plugin.rest.data.RestAddOnPropertiesBean;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddOnProperty;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddonType;
@@ -209,6 +211,33 @@ public class AddonsResource
 
         String message = "Add-on with key " + addonKey + " was not found";
         return getResponseForMessageAndStatus(message, Response.Status.NOT_FOUND);
+    }
+
+    @GET
+    @Path ("{addonKey}/properties")
+    public Response getAddOnProperties(@PathParam ("addonKey") final String addOnKey, @Context HttpServletRequest request)
+    {
+        UserProfile user = userManager.getRemoteUser(request);
+
+        String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(request);
+        Either<ServiceResult, AddOnPropertyIterable> result = addOnPropertyService.listProperties(user, sourcePluginKey, addOnKey);
+
+        return result.fold(new Function<ServiceResult, Response>()
+        {
+            @Override
+            public Response apply(final ServiceResult input)
+            {
+                return getResponseFromServiceResult(input);
+            }
+        }, new Function<AddOnPropertyIterable, Response>()
+        {
+            @Override
+            public Response apply(final AddOnPropertyIterable input)
+            {
+                String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties/";
+                return Response.ok().entity(RestAddOnPropertiesBean.valueOf(input.getPropertyKeysIterable(), baseURL)).cacheControl(never()).build();
+            }
+        });
     }
 
     @GET

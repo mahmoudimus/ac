@@ -4,6 +4,7 @@ import com.atlassian.fugue.Either;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
+import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyIterable;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore;
 import com.atlassian.plugin.connect.plugin.service.AddOnPropertyService;
 import com.atlassian.plugin.connect.plugin.service.AddOnPropertyServiceImpl;
@@ -15,7 +16,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Collections;
 
 import static com.atlassian.plugin.connect.plugin.service.AddOnPropertyService.ServiceResult;
 import static com.atlassian.plugin.connect.plugin.service.AddOnPropertyServiceImpl.ServiceResultImpl;
@@ -175,6 +179,14 @@ public class AddOnPropertyServiceImplTest
     }
 
     @Test
+    public void testListProperties() throws Exception
+    {
+        when(store.getAllPropertiesForAddOnKey(addOnKey)).thenReturn(new AddOnPropertyIterable(Collections.<AddOnProperty>emptyList()));
+        service.listProperties(user, addOnKey, addOnKey);
+        Mockito.verify(store).getAllPropertiesForAddOnKey(addOnKey);
+    }
+
+    @Test
     public void testGetInvalidPropertyWithTooLongKey() throws Exception
     {
         String tooLongKey = StringUtils.repeat(".", AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH + 1);
@@ -234,6 +246,14 @@ public class AddOnPropertyServiceImplTest
     }
 
     @Test
+    public void testNoAccessToListDifferentPluginData() throws Exception
+    {
+        Either<ServiceResult, AddOnPropertyIterable> result = service.listProperties(user, "DIFF_PLUGIN_KEY", addOnKey);
+        assertTrue(result.isLeft());
+        assertEquals(ServiceResultImpl.ACCESS_TO_OTHER_DATA_FORBIDDEN, result.left().get());
+    }
+
+    @Test
     public void testGetNoAccessWhenNotLoggedIn() throws Exception
     {
         Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(null, "DIFF_PLUGIN_KEY", addOnKey, property.getKey());
@@ -253,6 +273,13 @@ public class AddOnPropertyServiceImplTest
     {
         ServiceResult result = service.deletePropertyValue(null, "DIFF_PLUGIN_KEY", addOnKey, property.getKey());
         assertEquals(ServiceResultImpl.NOT_AUTHENTICATED, result);
+    }
+    @Test
+    public void testListNoAccessWhenLoggedIn() throws Exception
+    {
+        Either<ServiceResult, AddOnPropertyIterable> result = service.listProperties(null, "DIFF_PLUGIN_KEY", addOnKey);
+        assertTrue(result.isLeft());
+        assertEquals(ServiceResultImpl.NOT_AUTHENTICATED, result.left().get());
     }
 
     @Test

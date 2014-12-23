@@ -5,6 +5,7 @@ import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Suppliers;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
+import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyIterable;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
@@ -110,7 +111,7 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         {
             GetOrDeletePropertyInput input = validationResult.getValue().getOrNull();
             Option<AddOnProperty> propertyValue = store.getPropertyValue(input.getAddOnKey(), input.getPropertyKey());
-            return propertyValue.toRight(Suppliers.ofInstance((ServiceResult)ServiceResultImpl.PROPERTY_NOT_FOUND));
+            return propertyValue.toRight(Suppliers.ofInstance((ServiceResult) ServiceResultImpl.PROPERTY_NOT_FOUND));
         }
         else
         {
@@ -208,6 +209,32 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
             return validationResult.getError().getOrNull();
         }
     }
+    private ValidationResult<ListPropertiesInput> validateListProperties(final UserProfile user, final String sourcePluginKey, final String addOnKey)
+    {
+        if (!loggedIn(user))
+        {
+            return ValidationResult.fromError(ServiceResultImpl.NOT_AUTHENTICATED);
+        }
+        if (!pluginHasPermissions(sourcePluginKey,addOnKey))
+        {
+            return ValidationResult.fromError(ServiceResultImpl.ACCESS_TO_OTHER_DATA_FORBIDDEN);
+        }
+        return ValidationResult.fromValue(new ListPropertiesInput(addOnKey));
+    }
+
+    @Override
+    public Either<ServiceResult, AddOnPropertyIterable> listProperties(@Nullable final UserProfile user, @Nullable final String sourcePluginKey, @Nonnull final String addOnKey)
+    {
+        ValidationResult<ListPropertiesInput> validationResult = validateListProperties(user, sourcePluginKey, checkNotNull(addOnKey));
+        if (validationResult.isValid())
+        {
+            ListPropertiesInput input = validationResult.getValue().getOrNull();
+            AddOnPropertyIterable propertiesIterable = store.getAllPropertiesForAddOnKey(input.addOnKey);
+            return Either.right(propertiesIterable);
+
+        }
+        return Either.left(validationResult.getError().getOrNull());
+    }
 
     private boolean pluginHasPermissions(String requestKey, String addOnKey)
     {
@@ -272,6 +299,21 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         {
             log.debug("Invalid json when setting property value for plugin.");
             return false;
+        }
+    }
+
+    private class ListPropertiesInput
+    {
+        final String addOnKey;
+
+        public ListPropertiesInput(final String addOnKey)
+        {
+            this.addOnKey = addOnKey;
+        }
+
+        public String getAddOnKey()
+        {
+            return addOnKey;
         }
     }
 }
