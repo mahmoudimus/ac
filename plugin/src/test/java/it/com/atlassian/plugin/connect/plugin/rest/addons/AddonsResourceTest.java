@@ -239,7 +239,7 @@ public class AddonsResourceTest
 
         request = requestUtil.requestBuilder()
                 .setMethod(HttpMethod.GET)
-                .setUri(requestUtil.getApplicationRestUrl(REST_BASE + "?type=json"))
+                .setUri(requestUtil.getApplicationRestUrl(REST_BASE))
                 .setUsername("admin")
                 .setPassword("admin")
                 .build();
