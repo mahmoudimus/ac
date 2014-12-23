@@ -39,12 +39,13 @@ echo "${PREFIX} switching back to develop"
 git checkout develop
 echo "${PREFIX} incrementing -SNAPSHOT version in poms"
 mvn --batch-mode release:update-versions -DautoVersionSubmodules=true
+NEW_SNAPSHOT_VERSION=$(mvn -npu org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version | grep -v '\[' | grep -iv 'download' | grep -ve '[0-9]*/[0-9]*K')
 POM_FILENAMES=`git status --porcelain | grep " M .*pom.xml" | sed "s/ M //"`
 echo "${PREFIX} pom files: ${POM_FILENAMES}"
 echo "${PREFIX} git-adding pom files"
 git add ${POM_FILENAMES}
 echo "${PREFIX} git-committing pom files"
-git commit -m "removed -SNAPSHOT suffix; release version is ${NEW_VERSION}" ${POM_FILENAMES}
+git commit -m "advanced snapshot version from ${STARTING_VERSION} to ${NEW_SNAPSHOT_VERSION}" ${POM_FILENAMES}
 echo "${PREFIX} git-pushing develop branch to origin"
 git push origin develop
 echo "${PREFIX} done!"
