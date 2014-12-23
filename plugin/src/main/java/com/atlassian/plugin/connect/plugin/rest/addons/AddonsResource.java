@@ -1,29 +1,47 @@
 package com.atlassian.plugin.connect.plugin.rest.addons;
 
 import com.atlassian.applinks.api.ApplicationLink;
+import com.atlassian.fugue.Either;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnInstaller;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.rest.RestError;
+import com.atlassian.plugin.connect.plugin.rest.RestResult;
+import com.atlassian.plugin.connect.plugin.rest.data.RestAddOnProperty;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddonType;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddons;
 import com.atlassian.plugin.connect.plugin.rest.data.RestMinimalAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestNamedLink;
 import com.atlassian.plugin.connect.plugin.rest.data.RestRelatedLinks;
+import com.atlassian.plugin.connect.plugin.scopes.AddOnKeyExtractor;
+import com.atlassian.plugin.connect.plugin.service.AddOnPropertyService;
+import com.atlassian.plugin.connect.plugin.service.AddOnPropertyServiceImpl;
 import com.atlassian.plugins.rest.common.Link;
-import com.atlassian.plugins.rest.common.security.jersey.SysadminOnlyResourceFilter;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
-import com.sun.jersey.spi.container.ResourceFilters;
+import com.google.common.io.LimitInputStream;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -31,21 +49,24 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
+
+import static com.atlassian.plugin.connect.plugin.service.AddOnPropertyService.ServiceResult;
 
 /**
  * REST endpoint which provides a view of Connect add-ons which are installed in the instance.
  */
-@ResourceFilters (SysadminOnlyResourceFilter.class)
 @Path (AddonsResource.REST_PATH)
+@Produces ("application/json")
+@Consumes ("application/json")
 public class AddonsResource
 {
     public final static String REST_PATH = "addons";
 
     private static final Logger log = LoggerFactory.getLogger(AddonsResource.class);
+    public static final String VALUE_TOO_LONG_ERROR_MSG = String.format("The value cannot be bigger than %s.", FileUtils.byteCountToDisplaySize(AddOnPropertyServiceImpl.MAXIMUM_PROPERTY_VALUE_LENGTH));
 
     private final ConnectAddonRegistry addonRegistry;
     private final LicenseRetriever licenseRetriever;
@@ -53,10 +74,14 @@ public class AddonsResource
     private final ConnectAddonManager connectAddonManager;
     private final ConnectAddOnInstaller connectAddOnInstaller;
     private final ApplicationProperties applicationProperties;
+    private final AddOnPropertyService addOnPropertyService;
+    private final AddOnKeyExtractor addOnKeyExtractor;
+    private final UserManager userManager;
 
     public AddonsResource(ConnectAddonRegistry addonRegistry, LicenseRetriever licenseRetriever,
             ConnectApplinkManager connectApplinkManager, ConnectAddonManager connectAddonManager,
-            ConnectAddOnInstaller connectAddOnInstaller, ApplicationProperties applicationProperties)
+            ConnectAddOnInstaller connectAddOnInstaller, ApplicationProperties applicationProperties,
+            AddOnPropertyService addOnPropertyService, AddOnKeyExtractor addOnKeyExtractor, UserManager userManager)
     {
         this.addonRegistry = addonRegistry;
         this.licenseRetriever = licenseRetriever;
@@ -64,12 +89,19 @@ public class AddonsResource
         this.connectAddonManager = connectAddonManager;
         this.connectAddOnInstaller = connectAddOnInstaller;
         this.applicationProperties = applicationProperties;
+        this.addOnPropertyService = addOnPropertyService;
+        this.addOnKeyExtractor = addOnKeyExtractor;
+        this.userManager = userManager;
     }
 
     @GET
-    @Produces ("application/json")
-    public Response getAddons(@QueryParam ("type") String type)
+    public Response getAddons(@QueryParam ("type") String type, @Context HttpServletRequest request)
     {
+        Optional<Response> errorResponse = checkIfSystemAdmin();
+        if (errorResponse.isPresent())
+        {
+            return errorResponse.get();
+        }
         try
         {
             RestAddonType addonType = StringUtils.isBlank(type) ? null : RestAddonType.valueOf(type.toUpperCase());
@@ -79,29 +111,51 @@ public class AddonsResource
         catch (IllegalArgumentException e)
         {
             String message = "Type " + type + " is not valid. Valid options: " + Arrays.toString(RestAddonType.values());
-            return getErrorResponse(message, Response.Status.BAD_REQUEST);
+            return getResponseForMessageAndStatus(message, Response.Status.BAD_REQUEST);
         }
     }
 
+    private Optional<Response> checkIfSystemAdmin()
+    {
+        UserProfile user = userManager.getRemoteUser();
+        if (user == null)
+        {
+            return Optional.of(getResponseForMessageAndStatus("Client must be authenticated to access this resource.", Response.Status.UNAUTHORIZED));
+        }
+        if (!userManager.isSystemAdmin(user.getUserKey()))
+        {
+            return Optional.of(getResponseForMessageAndStatus("Client must be authenticated as a system administrator to access this resource.", Response.Status.FORBIDDEN));
+        }
+        return Optional.absent();
+    }
+
     @GET
-    @Produces ("application/json")
     @Path ("/{addonKey}")
     public Response getAddon(@PathParam ("addonKey") String addonKey)
     {
+        Optional<Response> errorResponse = checkIfSystemAdmin();
+        if (errorResponse.isPresent())
+        {
+            return errorResponse.get();
+        }
         RestAddon restAddon = getRestAddonByKey(addonKey);
         if (restAddon == null)
         {
             String message = "Add-on with key " + addonKey + " was not found";
-            return getErrorResponse(message, Response.Status.NOT_FOUND);
+            return getResponseForMessageAndStatus(message, Response.Status.NOT_FOUND);
         }
         return Response.ok().entity(restAddon).build();
     }
 
     @DELETE
-    @Produces ("application/json")
     @Path ("/{addonKey}")
     public Response uninstallAddon(@PathParam ("addonKey") String addonKey)
     {
+        Optional<Response> errorResponse = checkIfSystemAdmin();
+        if (errorResponse.isPresent())
+        {
+            return errorResponse.get();
+        }
         try
         {
             ConnectAddonBean addonBean = connectAddonManager.getExistingAddon(addonKey);
@@ -116,18 +170,22 @@ public class AddonsResource
         {
             String message = "Unable to uninstall add-on " + addonKey + ": " + e.getMessage();
             log.error(message, e);
-            return getErrorResponse(message, Response.Status.INTERNAL_SERVER_ERROR);
+            return getResponseForMessageAndStatus(message, Response.Status.INTERNAL_SERVER_ERROR);
         }
 
         String message = "Add-on with key " + addonKey + " was not found";
-        return getErrorResponse(message, Response.Status.NOT_FOUND);
+        return getResponseForMessageAndStatus(message, Response.Status.NOT_FOUND);
     }
 
     @PUT
-    @Produces ("application/json")
     @Path ("/{addonKey}/reinstall")
     public Response reinstallAddon(@PathParam ("addonKey") String addonKey)
     {
+        Optional<Response> errorResponse = checkIfSystemAdmin();
+        if (errorResponse.isPresent())
+        {
+            return errorResponse.get();
+        }
         try
         {
             ConnectAddonBean addonBean = connectAddonManager.getExistingAddon(addonKey);
@@ -146,11 +204,64 @@ public class AddonsResource
         {
             String message = "Unable to reinstall add-on " + addonKey + ": " + e.getMessage();
             log.error(message, e);
-            return getErrorResponse(message, Response.Status.INTERNAL_SERVER_ERROR);
+            return getResponseForMessageAndStatus(message, Response.Status.INTERNAL_SERVER_ERROR);
         }
 
         String message = "Add-on with key " + addonKey + " was not found";
-        return getErrorResponse(message, Response.Status.NOT_FOUND);
+        return getResponseForMessageAndStatus(message, Response.Status.NOT_FOUND);
+    }
+
+    @GET
+    @Path ("{addonKey}/properties/{propertyKey}")
+    public Response getAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam("propertyKey") String propertyKey, @Context HttpServletRequest request)
+    {
+        UserProfile user = userManager.getRemoteUser(request);
+
+        String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(request);
+        Either<ServiceResult, AddOnProperty> propertyValue = addOnPropertyService.getPropertyValue(user, sourcePluginKey, addOnKey, propertyKey);
+
+        return propertyValue.fold(new Function<ServiceResult, Response>()
+        {
+            @Override
+            public Response apply(final ServiceResult input)
+            {
+                return getResponseFromServiceResult(input);
+            }
+        }, new Function<AddOnProperty, Response>()
+        {
+            @Override
+            public Response apply(final AddOnProperty input)
+            {
+                String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties/";
+                return Response.ok().entity(RestAddOnProperty.valueOf(input, baseURL)).cacheControl(never()).build();
+            }
+        });
+    }
+
+    @PUT
+    @Path ("{addonKey}/properties/{propertyKey}")
+    public Response putAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam("propertyKey") final String propertyKey, @Context HttpServletRequest request)
+    {
+        final UserProfile user = userManager.getRemoteUser(request);
+        // can be null, it is checked in the service.
+        final String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(request);
+        Either<RestParamError, String> errorStringEither = propertyValue(request);
+        return errorStringEither.fold(new Function<RestParamError, Response>()
+        {
+            @Override
+            public Response apply(final RestParamError input)
+            {
+                return getResponseForMessageAndStatus(VALUE_TOO_LONG_ERROR_MSG, Response.Status.FORBIDDEN);
+            }
+        }, new Function<String, Response>()
+        {
+            @Override
+            public Response apply(final String propertyValue)
+            {
+                ServiceResult serviceResult = addOnPropertyService.setPropertyValue(user, sourcePluginKey, addOnKey, propertyKey, propertyValue);
+                return Response.status(serviceResult.getHttpStatusCode()).cacheControl(never()).build();
+            }
+        });
     }
 
     private RestAddons getAddonsByType(RestAddonType type)
@@ -194,8 +305,7 @@ public class AddonsResource
 
     private RestRelatedLinks getAddonLinks(String key)
     {
-        String path = applicationProperties.getBaseUrl(UrlMode.CANONICAL) + "/rest/atlassian-connect/1/" + REST_PATH + "/" + key;
-        RestNamedLink selfLink = new RestNamedLink(path);
+        RestNamedLink selfLink = new RestNamedLink(getRestPathForAddOnKey(key));
 
         RestNamedLink mpacLink = new RestNamedLink("https://marketplace.atlassian.com/plugins/" + key);
 
@@ -203,6 +313,11 @@ public class AddonsResource
                 .addRelatedLink(RestRelatedLinks.RELATIONSHIP_SELF, selfLink)
                 .addRelatedLink("marketplace", mpacLink)
                 .build();
+    }
+
+    private String getRestPathForAddOnKey(final String key)
+    {
+        return applicationProperties.getBaseUrl(UrlMode.CANONICAL) + "/rest/atlassian-connect/1/" + REST_PATH + "/" + key;
     }
 
     private RestAddon.AddonApplink getApplinkResourceForAddon(String key)
@@ -232,11 +347,51 @@ public class AddonsResource
         }
     }
 
-    private Response getErrorResponse(final String message, final Response.Status status)
+    private Response getResponseForMessageAndStatus(final String message, final Response.Status status)
     {
-        RestError error = new RestError(status.getStatusCode(), message);
+        RestResult error = new RestResult(status.getStatusCode(), message);
         return Response.status(status)
                 .entity(error)
+                .cacheControl(never())
                 .build();
     }
+
+    private Response getResponseFromServiceResult(final ServiceResult serviceResult)
+    {
+        return getResponseForMessageAndStatus(serviceResult.message(), Response.Status.fromStatusCode(serviceResult.getHttpStatusCode()));
+    }
+
+    private Either<RestParamError, String> propertyValue(final HttpServletRequest request)
+    {
+        try
+        {
+            LimitInputStream limitInputStream =
+                    new LimitInputStream(request.getInputStream(), AddOnPropertyServiceImpl.MAXIMUM_PROPERTY_VALUE_LENGTH + 1);
+            byte[] bytes = IOUtils.toByteArray(limitInputStream);
+            if (bytes.length > AddOnPropertyServiceImpl.MAXIMUM_PROPERTY_VALUE_LENGTH)
+            {
+                return Either.left(RestParamError.PROPERTY_VALUE_TOO_LONG);
+            }
+            return Either.right(new String(bytes, Charset.defaultCharset()));
+        }
+        catch (IOException e)
+        {
+            return Either.left(RestParamError.PROPERTY_VALUE_TOO_LONG);
+        }
+    }
+
+    private enum RestParamError
+    {
+        PROPERTY_VALUE_TOO_LONG
+    }
+
+    private static CacheControl never()
+    {
+        CacheControl cacheNever = new CacheControl();
+        cacheNever.setNoStore(true);
+        cacheNever.setNoCache(true);
+
+        return cacheNever;
+    }
+
 }
