@@ -6,6 +6,7 @@ import com.atlassian.fugue.Suppliers;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore;
+import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
@@ -64,11 +65,13 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
     private static final Gson gson = new Gson();
 
     private final AddOnPropertyStore store;
+    private final UserManager userManager;
 
     @Autowired
-    public AddOnPropertyServiceImpl(AddOnPropertyStore store)
+    public AddOnPropertyServiceImpl(AddOnPropertyStore store, UserManager userManager)
     {
         this.store = checkNotNull(store);
+        this.userManager = checkNotNull(userManager);
     }
 
     private ValidationResult<GetPropertyInput> validateGetPropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey)
@@ -77,7 +80,7 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         {
             return ValidationResult.fromError(ServiceResultImpl.NOT_AUTHENTICATED);
         }
-        if (!hasPermissions(sourceAddOnKey,addOnKey))
+        if (!pluginHasPermissions(sourceAddOnKey, addOnKey) && !isSysAdmin(user))
         {
             return ValidationResult.fromError(ServiceResultImpl.ACCESS_TO_OTHER_DATA_FORBIDDEN);
         }
@@ -86,6 +89,11 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
             return ValidationResult.fromError(ServiceResultImpl.KEY_TOO_LONG);
         }
         return ValidationResult.fromValue(new GetPropertyInput(addOnKey, propertyKey));
+    }
+
+    private boolean isSysAdmin(final UserProfile user)
+    {
+        return userManager.isSystemAdmin(user.getUserKey());
     }
 
     private boolean loggedIn(final UserProfile user)
@@ -115,7 +123,7 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         {
             return ValidationResult.fromError(ServiceResultImpl.NOT_AUTHENTICATED);
         }
-        if (!hasPermissions(sourceAddOnKey,addOnKey))
+        if (!pluginHasPermissions(sourceAddOnKey, addOnKey) && !isSysAdmin(user))
         {
             return ValidationResult.fromError(ServiceResultImpl.ACCESS_TO_OTHER_DATA_FORBIDDEN);
         }
@@ -153,7 +161,7 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         }
     }
 
-    private boolean hasPermissions(String requestKey, String addOnKey)
+    private boolean pluginHasPermissions(String requestKey, String addOnKey)
     {
         return requestKey != null && requestKey.equals(addOnKey);
     }

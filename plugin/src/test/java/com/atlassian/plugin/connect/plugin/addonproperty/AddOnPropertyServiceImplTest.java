@@ -7,6 +7,8 @@ import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore;
 import com.atlassian.plugin.connect.plugin.service.AddOnPropertyService;
 import com.atlassian.plugin.connect.plugin.service.AddOnPropertyServiceImpl;
+import com.atlassian.sal.api.user.UserKey;
+import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
@@ -28,55 +30,106 @@ public class AddOnPropertyServiceImplTest
     private AddOnPropertyStore store;
     @Mock
     private UserProfile user;
+    @Mock
+    private UserManager userManager;
 
     private final String addOnKey = "testAddon";
     private final AddOnProperty property = new AddOnProperty("testProperty", "{}");
+    public static final UserKey userKey = new UserKey("userkey");
 
     private AddOnPropertyService service;
 
     @Before
     public void init()
     {
-        service = new AddOnPropertyServiceImpl(store);
+        service = new AddOnPropertyServiceImpl(store, userManager);
+        when(user.getUserKey()).thenReturn(userKey);
     }
 
-    @Test
-    public void testGetExistingProperty() throws Exception
+    private void testGetExistingProperty(String sourcePlugin)
     {
         when(store.getPropertyValue(addOnKey, property.getKey())).thenReturn(Option.some(property));
 
-        Either<AddOnPropertyService.ServiceResult, AddOnProperty> result = service.getPropertyValue(user, addOnKey, addOnKey, property.getKey());
+        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, sourcePlugin, addOnKey, property.getKey());
         assertTrue(result.isRight());
 
         assertEquals(property, result.right().get());
     }
 
     @Test
-    public void testGetNonExistingProperty() throws Exception
+    public void testGetExistingPropertyWhenPlugin() throws Exception
+    {
+        testGetExistingProperty(addOnKey);
+    }
+
+    @Test
+    public void testGetExistingPropertyWhenSysAdmin() throws Exception
+    {
+        when(userManager.isSystemAdmin(userKey)).thenReturn(true);
+        testGetExistingProperty(null);
+    }
+
+    private void testGetNonExistingProperty(String sourcePlugin)
     {
         when(store.getPropertyValue(addOnKey, property.getKey())).thenReturn(Option.<AddOnProperty>none());
 
-        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, addOnKey, addOnKey, property.getKey());
+        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, sourcePlugin, addOnKey, property.getKey());
         assertTrue(result.isLeft());
         assertEquals(ServiceResultImpl.PROPERTY_NOT_FOUND, result.left().get());
     }
 
     @Test
-    public void testPutNonExistingValidProperty() throws Exception
+    public void testGetNonExistingPropertyWhenPlugin() throws Exception
+    {
+        testGetNonExistingProperty(addOnKey);
+    }
+
+    @Test
+    public void testGetNonExistingPropertyWhenSysAdmin() throws Exception
+    {
+        when(userManager.isSystemAdmin(userKey)).thenReturn(true);
+        testGetNonExistingProperty(null);
+    }
+
+    private void testPutNonExistingValidProperty(final String sourcePluginKey)
     {
         when(store.setPropertyValue(addOnKey, property.getKey(), property.getValue())).thenReturn(AddOnPropertyStore.PutResult.PROPERTY_CREATED);
-
-        ServiceResult result = service.setPropertyValue(user, addOnKey, addOnKey, property.getKey(), property.getValue());
+        ServiceResult result = service.setPropertyValue(user, sourcePluginKey, addOnKey, property.getKey(), property.getValue());
         assertEquals(ServiceResultImpl.PROPERTY_CREATED, result);
     }
 
     @Test
-    public void testPutExistingValidProperty() throws Exception
+    public void testPutNonExistingValidPropertyWhenPlugin() throws Exception
+    {
+        testPutNonExistingValidProperty(addOnKey);
+    }
+
+    @Test
+    public void testPutNonExistingValidPropertyWhenSysAdmin() throws Exception
+    {
+        when(userManager.isSystemAdmin(userKey)).thenReturn(true);
+        testPutNonExistingValidProperty(null);
+    }
+
+    private void testPutExistingValidProperty(final String sourcePluginKey)
     {
         when(store.setPropertyValue(addOnKey, property.getKey(), property.getValue())).thenReturn(AddOnPropertyStore.PutResult.PROPERTY_UPDATED);
 
-        ServiceResult result = service.setPropertyValue(user, addOnKey, addOnKey, property.getKey(), property.getValue());
+        ServiceResult result = service.setPropertyValue(user, sourcePluginKey, addOnKey, property.getKey(), property.getValue());
         assertEquals(ServiceResultImpl.PROPERTY_UPDATED, result);
+    }
+
+    @Test
+    public void testPutExistingValidPropertyWhenPlugin() throws Exception
+    {
+        testPutExistingValidProperty(addOnKey);
+    }
+
+    @Test
+    public void testPutExistingValidPropertyWhenSysAdmin() throws Exception
+    {
+        when(userManager.isSystemAdmin(userKey)).thenReturn(true);
+        testPutExistingValidProperty(null);
     }
 
     @Test
