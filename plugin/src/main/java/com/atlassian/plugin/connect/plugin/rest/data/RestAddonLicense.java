@@ -39,26 +39,26 @@ public class RestAddonLicense
 
     public LicenseStatus getStatus()
     {
-        return this.status;
+        return status;
     }
 
     public LicenseType getType()
     {
-        return this.type;
+        return type;
     }
 
     public boolean isEvaluation()
     {
-        return this.evaluation;
+        return evaluation;
     }
 
     public String getContactEmail()
     {
-        return this.contactEmail;
+        return contactEmail;
     }
 
     public String getSupportEntitlementNumber()
     {
-        return this.supportEntitlementNumber;
+        return supportEntitlementNumber;
     }
 }

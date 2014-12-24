@@ -77,7 +77,7 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
         checkNotNull(handler);
 
         Plugin plugin = handler.getPlugin(pluginKey);
-        this.uninstallAddon(plugin);
+        uninstallAddon(plugin);
     }
 
     @Override

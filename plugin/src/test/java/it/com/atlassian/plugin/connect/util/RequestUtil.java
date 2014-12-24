@@ -93,7 +93,7 @@ public class RequestUtil
 
     public Request.Builder requestBuilder()
     {
-        return new Request.Builder(this.applicationProperties.getBaseUrl(UrlMode.ABSOLUTE));
+        return new Request.Builder(applicationProperties.getBaseUrl(UrlMode.ABSOLUTE));
     }
 
     public String getApplicationRestUrl(String path)
@@ -261,7 +261,7 @@ public class RequestUtil
             public Request build()
             {
                 if (this.includeJwtAuthentication) {
-                    this.appendJwtToUri();
+                    appendJwtToUri();
                 }
                 return new Request(method, uri, username, password, isJson);
             }
@@ -272,8 +272,8 @@ public class RequestUtil
                 try
                 {
                     queryHash = HttpRequestCanonicalizer.computeCanonicalRequestHash(
-                            new CanonicalHttpUriRequest(this.method.name(), this.uri.getPath(),
-                                    URI.create(this.applicationBaseUrl).getPath()));
+                            new CanonicalHttpUriRequest(method.name(), uri.getPath(),
+                                    URI.create(applicationBaseUrl).getPath()));
                 }
                 catch (Exception e)
                 {
@@ -309,7 +309,7 @@ public class RequestUtil
 
         public Map<String, List<String>> getHeaderFields()
         {
-            return this.headerFields;
+            return headerFields;
         }
         public String getBody()
         {
@@ -323,11 +323,11 @@ public class RequestUtil
         }
 
         public <T> T getJsonBody(Class<T> bodyClass) {
-            return new Gson().fromJson(this.body, bodyClass);
+            return new Gson().fromJson(body, bodyClass);
         }
 
         public <T> T getJsonBody(Type bodyType) {
-            return new Gson().fromJson(this.body, bodyType);
+            return new Gson().fromJson(body, bodyType);
         }
     }
 }

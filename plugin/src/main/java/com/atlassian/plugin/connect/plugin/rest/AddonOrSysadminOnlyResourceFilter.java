@@ -68,14 +68,14 @@ public class AddonOrSysadminOnlyResourceFilter implements ResourceFilter
             Object pluginKey = httpRequest.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME);
             if (pluginKey != null)
             {
-                this.assertResourceAllowedForAddon(pluginKey);
+                assertResourceAllowedForAddon(pluginKey);
             }
             else
             {
                 UserKey userKey = userManager.getRemoteUserKey();
                 if (userKey != null)
                 {
-                    this.assertUserIsSystemAdmin(userKey);
+                    assertUserIsSystemAdmin(userKey);
                 }
                 else
                 {

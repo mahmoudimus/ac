@@ -84,7 +84,7 @@ public class AddonsResource
     @Produces ("application/json")
     public Response getAddons()
     {
-        RestAddons restAddons = this.getAddonResources();
+        RestAddons restAddons = getAddonResources();
         return Response.ok().entity(restAddons).build();
     }
 
@@ -184,7 +184,7 @@ public class AddonsResource
         RestMinimalAddon restAddon = null;
         for (ConnectAddonBean addonBean : addonRegistry.getAddonBean(addonKey))
         {
-            restAddon = this.createJsonAddonRest(addonBean);
+            restAddon = createJsonAddonRest(addonBean);
         }
         return restAddon;
     }
@@ -195,9 +195,9 @@ public class AddonsResource
         String version = addonBean.getVersion();
         PluginState state = addonRegistry.getRestartState(key);
         String stateString = state.name();
-        RestAddonLicense license = this.getLicenseResourceForAddon(key);
-        RestRelatedLinks addonLinks = this.getAddonLinks(key);
-        RestInternalAddon.AddonApplink appLinkResource = this.getApplinkResourceForAddon(key);
+        RestAddonLicense license = getLicenseResourceForAddon(key);
+        RestRelatedLinks addonLinks = getAddonLinks(key);
+        RestInternalAddon.AddonApplink appLinkResource = getApplinkResourceForAddon(key);
 
         RestLimitedAddon resource;
         if (userManager.isSystemAdmin(userManager.getRemoteUserKey()))

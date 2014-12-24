@@ -80,9 +80,9 @@ public class AddonsResourceTest
     {
         String key = "invalid-key";
 
-        when(this.addonRegistry.getAddonBean(key)).thenReturn(Option.none(ConnectAddonBean.class));
+        when(addonRegistry.getAddonBean(key)).thenReturn(Option.none(ConnectAddonBean.class));
 
-        Response response = this.resource.getAddon(key);
+        Response response = resource.getAddon(key);
         assertThat(response.getStatus(), equalTo(Response.Status.NOT_FOUND.getStatusCode()));
     }
 }

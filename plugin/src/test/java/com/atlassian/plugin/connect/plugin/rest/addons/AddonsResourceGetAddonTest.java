@@ -103,7 +103,7 @@ public class AddonsResourceGetAddonTest
     {
         String key = "my-addon-key";
         String version = "0.1";
-        PluginState state = this.isPluginEnabled ? PluginState.INSTALLED : PluginState.DISABLED;
+        PluginState state = isPluginEnabled ? PluginState.INSTALLED : PluginState.DISABLED;
         LicenseStatus licenseStatus = LicenseStatus.ACTIVE;
         LicenseType licenseType = LicenseType.DEVELOPER;
         boolean isEvaluationLicense = false;
@@ -111,8 +111,8 @@ public class AddonsResourceGetAddonTest
         String supportEntitlementNumber = "abc123";
 
         UserKey userKey = new UserKey("charlie");
-        when(this.userManager.getRemoteUserKey()).thenReturn(userKey);
-        when(this.userManager.isSystemAdmin(userKey)).thenReturn(this.isSystemAdmin);
+        when(userManager.getRemoteUserKey()).thenReturn(userKey);
+        when(userManager.isSystemAdmin(userKey)).thenReturn(isSystemAdmin);
 
         ConnectAddonBean beanMock = mock(ConnectAddonBean.class);
         when(beanMock.getKey()).thenReturn(key);
@@ -122,26 +122,26 @@ public class AddonsResourceGetAddonTest
         when(contactMock.getEmail()).thenReturn(contactEmail);
 
         PluginLicense licenseMock = mock(PluginLicense.class);
-        when(licenseMock.isActive()).thenReturn(this.isPluginEnabled);
+        when(licenseMock.isActive()).thenReturn(isPluginEnabled);
         when(licenseMock.getLicenseType()).thenReturn(licenseType);
         when(licenseMock.isEvaluation()).thenReturn(isEvaluationLicense);
         when(licenseMock.getContacts()).thenReturn(Lists.newArrayList(contactMock));
         when(licenseMock.getSupportEntitlementNumber()).thenReturn(com.atlassian.upm.api.util.Option.some(supportEntitlementNumber));
 
-        when(this.addonRegistry.getAddonBean(key)).thenReturn(Option.some(beanMock));
-        when(this.addonRegistry.getRestartState(key)).thenReturn(state);
-        when(this.licenseRetriever.getLicense(key)).thenReturn(com.atlassian.upm.api.util.Option.some(licenseMock));
-        when(this.applicationProperties.getBaseUrl(UrlMode.CANONICAL)).thenReturn("http://localhost:2990/jira");
+        when(addonRegistry.getAddonBean(key)).thenReturn(Option.some(beanMock));
+        when(addonRegistry.getRestartState(key)).thenReturn(state);
+        when(licenseRetriever.getLicense(key)).thenReturn(com.atlassian.upm.api.util.Option.some(licenseMock));
+        when(applicationProperties.getBaseUrl(UrlMode.CANONICAL)).thenReturn("http://localhost:2990/jira");
 
-        Response response = this.resource.getAddon(key);
+        Response response = resource.getAddon(key);
         Object entity = response.getEntity();
-        RestLimitedAddon limitedAddon = this.expectedEntityClass.cast(entity);
+        RestLimitedAddon limitedAddon = expectedEntityClass.cast(entity);
 
         assertThat(limitedAddon.getKey(), equalTo(key));
         assertThat(limitedAddon.getVersion(), equalTo(version));
         assertThat(limitedAddon.getState(), equalTo(state.name()));
 
-        if (RestAddon.class.isAssignableFrom(this.expectedEntityClass)) {
+        if (RestAddon.class.isAssignableFrom(expectedEntityClass)) {
             RestAddon addon = (RestAddon)limitedAddon;
 
             RestAddonLicense license = addon.getLicense();
@@ -153,7 +153,7 @@ public class AddonsResourceGetAddonTest
 
             assertThat(addon.getLinks(), instanceOf(RestRelatedLinks.class));
 
-            if (RestInternalAddon.class.isAssignableFrom(this.expectedEntityClass))
+            if (RestInternalAddon.class.isAssignableFrom(expectedEntityClass))
             {
                 RestInternalAddon internalAddon = (RestInternalAddon) limitedAddon;
 

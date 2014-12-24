@@ -56,9 +56,9 @@ public class AddonOrSysadminOnlyResourceFilterTest
     @Test(expected = ConnectAddonAuthenticationRequiredException.class)
     public void shouldRejectAnonymousRequest()
     {
-        when(this.userManager.getRemoteUserKey()).thenReturn(null);
+        when(userManager.getRemoteUserKey()).thenReturn(null);
 
-        this.resourceFilter.getRequestFilter().filter(this.containerRequest);
+        resourceFilter.getRequestFilter().filter(containerRequest);
     }
 
     @Test(expected = PermissionDeniedException.class)
@@ -66,10 +66,10 @@ public class AddonOrSysadminOnlyResourceFilterTest
     {
         UserKey userKey = new UserKey("charlie");
 
-        when(this.userManager.getRemoteUserKey()).thenReturn(userKey);
-        when(this.userManager.isSystemAdmin(userKey)).thenReturn(false);
+        when(userManager.getRemoteUserKey()).thenReturn(userKey);
+        when(userManager.isSystemAdmin(userKey)).thenReturn(false);
 
-        this.resourceFilter.getRequestFilter().filter(this.containerRequest);
+        resourceFilter.getRequestFilter().filter(containerRequest);
     }
 
     @Test
@@ -77,10 +77,10 @@ public class AddonOrSysadminOnlyResourceFilterTest
     {
         UserKey userKey = new UserKey("charlie");
 
-        when(this.userManager.getRemoteUserKey()).thenReturn(userKey);
-        when(this.userManager.isSystemAdmin(userKey)).thenReturn(true);
+        when(userManager.getRemoteUserKey()).thenReturn(userKey);
+        when(userManager.isSystemAdmin(userKey)).thenReturn(true);
 
-        assertThat(this.resourceFilter.getRequestFilter().filter(this.containerRequest), equalTo(this.containerRequest));
+        assertThat(resourceFilter.getRequestFilter().filter(containerRequest), equalTo(containerRequest));
     }
 
     @Test
@@ -88,11 +88,11 @@ public class AddonOrSysadminOnlyResourceFilterTest
     {
         String pluginKey = "my-addon";
 
-        when(this.httpRequest.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(pluginKey);
-        when(this.uriInfo.getPathParameters()).thenReturn(this.pathParameters);
-        when(this.pathParameters.get(ADDON_KEY_PATH_PARAMETER)).thenReturn(Collections.EMPTY_LIST);
+        when(httpRequest.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(pluginKey);
+        when(uriInfo.getPathParameters()).thenReturn(pathParameters);
+        when(pathParameters.get(ADDON_KEY_PATH_PARAMETER)).thenReturn(Collections.EMPTY_LIST);
 
-        assertThat(this.resourceFilter.getRequestFilter().filter(this.containerRequest), equalTo(this.containerRequest));
+        assertThat(resourceFilter.getRequestFilter().filter(containerRequest), equalTo(containerRequest));
     }
 
     @Test
@@ -100,11 +100,11 @@ public class AddonOrSysadminOnlyResourceFilterTest
     {
         String pluginKey = "my-addon";
 
-        when(this.httpRequest.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(pluginKey);
-        when(this.uriInfo.getPathParameters()).thenReturn(this.pathParameters);
-        when(this.pathParameters.get(ADDON_KEY_PATH_PARAMETER)).thenReturn(Lists.newArrayList(pluginKey));
+        when(httpRequest.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(pluginKey);
+        when(uriInfo.getPathParameters()).thenReturn(pathParameters);
+        when(pathParameters.get(ADDON_KEY_PATH_PARAMETER)).thenReturn(Lists.newArrayList(pluginKey));
 
-        assertThat(this.resourceFilter.getRequestFilter().filter(this.containerRequest), equalTo(this.containerRequest));
+        assertThat(resourceFilter.getRequestFilter().filter(containerRequest), equalTo(containerRequest));
     }
 
     @Test(expected = PermissionDeniedException.class)
@@ -113,10 +113,10 @@ public class AddonOrSysadminOnlyResourceFilterTest
         String pluginKey = "my-addon";
         String otherPluginKey = "other-addon";
 
-        when(this.httpRequest.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(pluginKey);
-        when(this.uriInfo.getPathParameters()).thenReturn(this.pathParameters);
-        when(this.pathParameters.get(ADDON_KEY_PATH_PARAMETER)).thenReturn(Lists.newArrayList(otherPluginKey));
+        when(httpRequest.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(pluginKey);
+        when(uriInfo.getPathParameters()).thenReturn(pathParameters);
+        when(pathParameters.get(ADDON_KEY_PATH_PARAMETER)).thenReturn(Lists.newArrayList(otherPluginKey));
 
-        assertThat(this.resourceFilter.getRequestFilter().filter(this.containerRequest), equalTo(this.containerRequest));
+        assertThat(resourceFilter.getRequestFilter().filter(containerRequest), equalTo(containerRequest));
     }
 }

@@ -286,20 +286,20 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     @Override
     public AddonSettings getAddonSettings(String pluginKey)
     {
-        return this.getAddonSettings(pluginKey, this.settings(), new Gson());
+        return getAddonSettings(pluginKey, settings(), new Gson());
     }
 
     @Override
     public Option<ConnectAddonBean> getAddonBean(String pluginKey)
     {
-        AddonSettings addonSettings = this.getAddonSettings(pluginKey);
-        return this.getAddonBeanFromSettings(addonSettings);
+        AddonSettings addonSettings = getAddonSettings(pluginKey);
+        return getAddonBeanFromSettings(addonSettings);
     }
 
     private AddonSettings getAddonSettings(String pluginKey, PluginSettings settings, Gson gson)
     {
         AddonSettings addonSettings = new AddonSettings();
-        String json = (String) settings.get(this.addonStorageKey(pluginKey));
+        String json = (String) settings.get(addonStorageKey(pluginKey));
         if (!Strings.isNullOrEmpty(json))
         {
             addonSettings = gson.fromJson(json, AddonSettings.class);
