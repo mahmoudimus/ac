@@ -22,6 +22,7 @@ import com.google.common.collect.Sets;
 import com.google.gson.reflect.TypeToken;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import it.com.atlassian.plugin.connect.util.RequestUtil;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -166,15 +167,15 @@ public class AddonsResourceTest
 
         assertResponseStatusCode(request, response, HttpStatus.OK);
         Object[] expectedAddonKeys = new String[]{addonKey, otherAddonKey};
-        RestAddons<RestMinimalAddon> addonRepresentations = response.getJsonBody(new TypeToken<RestAddons<RestMinimalAddon>>()
+        AddonsInterpretation addonsRepresentation = response.getJsonBody(new TypeToken<AddonsInterpretation>()
         {
         }.getType());
-        Iterable<String> addonKeys = Iterables.transform(addonRepresentations.getAddons(), new Function<RestMinimalAddon, String>()
+        Iterable<String> addonKeys = Iterables.transform(addonsRepresentation.addons, new Function<AddonInterpretation, String>()
         {
             @Override
-            public String apply(RestMinimalAddon addonRepresentation)
+            public String apply(AddonInterpretation addonInterpretation)
             {
-                return addonRepresentation.getKey();
+                return addonInterpretation.key;
             }
         });
         assertThat("Wrong addons in response", addonKeys, containsInAnyOrder(expectedAddonKeys));
@@ -189,8 +190,8 @@ public class AddonsResourceTest
         RequestUtil.Response response = requestUtil.makeRequest(request);
 
         assertResponseStatusCode(request, response, HttpStatus.OK);
-        RestMinimalAddon addonRepresentation = response.getJsonBody(RestMinimalAddon.class);
-        assertThat(addonRepresentation.getKey(), equalTo(addonKey));
+        AddonInterpretation addonInterpretation = response.getJsonBody(AddonInterpretation.class);
+        assertThat(addonInterpretation.key, equalTo(addonKey));
     }
 
     @Test
@@ -201,9 +202,9 @@ public class AddonsResourceTest
         RequestUtil.Response response = requestUtil.makeRequest(request);
 
         assertResponseStatusCode(request, response, HttpStatus.OK);
-        RestMinimalAddon addonRepresentation = response.getJsonBody(RestMinimalAddon.class);
-        assertThat(addonRepresentation.getKey(), equalTo(addonKey));
-        assertThat((String) response.getJsonBody().get("state"), equalTo("ENABLED"));
+        AddonInterpretation addonInterpretation = response.getJsonBody(AddonInterpretation.class);
+        assertThat(addonInterpretation.key, equalTo(addonKey));
+        assertThat(addonInterpretation.state, equalTo("ENABLED"));
     }
 
     @Test
@@ -216,9 +217,9 @@ public class AddonsResourceTest
         RequestUtil.Response response = requestUtil.makeRequest(request);
 
         assertResponseStatusCode(request, response, HttpStatus.OK);
-        RestMinimalAddon addonRepresentation = response.getJsonBody(RestMinimalAddon.class);
-        assertThat(addonRepresentation.getKey(), equalTo(addonKey));
-        assertThat((String) response.getJsonBody().get("state"), equalTo("DISABLED"));
+        AddonInterpretation addonInterpretation = response.getJsonBody(AddonInterpretation.class);
+        assertThat(addonInterpretation.key, equalTo(addonKey));
+        assertThat(addonInterpretation.state, equalTo("DISABLED"));
     }
 
     @Test
@@ -247,8 +248,8 @@ public class AddonsResourceTest
         response = requestUtil.makeRequest(request);
         assertEquals("Addons resource should return 200", 200, response.getStatusCode());
 
-        RestAddons<RestAddon> addonRepresentations = response.getJsonBody(RestAddons.class);
-        assertEquals("No JSON add-ons should be returned", 0, addonRepresentations.getAddons().size());
+        AddonsInterpretation addonsInterpretation = response.getJsonBody(AddonsInterpretation.class);
+        assertEquals("No JSON add-ons should be returned", 0, addonsInterpretation.addons.size());
     }
 
     private String generateAddonKey()
@@ -354,5 +355,30 @@ public class AddonsResourceTest
         String requestString = String.format("%s %s", request.getMethod(), request.getUri());
         assertThat(String.format("Expected status code %s not received for %s", status, requestString), status.code, equalTo(response.getStatusCode()));
         assertThat(String.format("Status code not present in response body for %s", status, requestString), status.code, equalTo(getStatusCode(response)));
+    }
+
+    /**
+     * @see com.atlassian.plugin.connect.plugin.rest.data.RestLimitedAddon
+     */
+    private static class AddonInterpretation
+    {
+
+        @JsonProperty
+        public String key;
+
+        @JsonProperty
+        public String version;
+
+        @JsonProperty
+        public String state;
+    }
+
+    /**
+     * @see com.atlassian.plugin.connect.plugin.rest.data.RestAddons
+     */
+    private static class AddonsInterpretation
+    {
+        @JsonProperty
+        public List<AddonInterpretation> addons;
     }
 }
