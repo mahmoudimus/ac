@@ -23,7 +23,7 @@ public class TestHistory extends JiraWebDriverTestBase
 {
     private static final String PLUGIN_KEY = "my-plugin";
     private static final String PAGE_NAME = "History general page";
-    private static final String GENERAL_PAGE_KEY = "my-general-page";
+    private static final String GENERAL_PAGE_KEY = "my-history-general-page";
 
     private static ConnectRunner remotePlugin;
 
@@ -94,7 +94,7 @@ public class TestHistory extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testHistoryForward() throws MalformedURLException, URISyntaxException
+    public void testHistoryPushForward() throws MalformedURLException, URISyntaxException
     {
         RemoteHistoryGeneralPage addonHistoryGeneralPage = loginAndVisit(TestUser.ADMIN, RemoteHistoryGeneralPage.class, PLUGIN_KEY, GENERAL_PAGE_KEY);
 

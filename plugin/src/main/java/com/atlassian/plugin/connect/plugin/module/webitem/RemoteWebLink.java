@@ -12,8 +12,8 @@ import com.atlassian.plugin.web.descriptors.WebFragmentModuleDescriptor;
 import com.atlassian.plugin.web.model.AbstractWebItem;
 import com.atlassian.plugin.web.model.WebLink;
 
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.addon;
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.page;
