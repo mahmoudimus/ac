@@ -46,7 +46,8 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         PROPERTY_DELETED(HttpStatus.SC_NO_CONTENT, null),
         ADD_ON_NOT_FOUND(HttpStatus.SC_NOT_FOUND, "Add-on with key not found."),
         PROPERTY_NOT_MODIFIED(HttpStatus.SC_NOT_MODIFIED, "Not modified"),
-        PROPERTY_MODIFIED(HttpStatus.SC_PRECONDITION_FAILED, "This resource has been updated."),;
+        PROPERTY_MODIFIED(HttpStatus.SC_PRECONDITION_FAILED, "This resource has been updated."),
+        PROPERTIES_NOT_MODIFIED(HttpStatus.SC_NOT_MODIFIED, "No properties have been updated.");
 
         private final int httpStatusCode;
         private final String message;
@@ -168,14 +169,27 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
     }
 
     @Override
-    public Either<ServiceResult, AddOnPropertyIterable> getAddOnProperties(@Nullable final UserProfile user, @Nullable final String sourcePluginKey, @Nonnull final String addOnKey)
+    public Either<ServiceResult, AddOnPropertyIterable> getAddOnProperties(@Nullable final UserProfile user, @Nullable final String sourcePluginKey, @Nonnull final String addOnKey, @Nonnull final ETag eTag)
     {
         ValidationResult<String> validationResult = validateListProperties(user, sourcePluginKey, checkNotNull(addOnKey));
         if (validationResult.isValid())
         {
-            String input = validationResult.getValue().getOrNull();
-            AddOnPropertyIterable propertiesIterable = store.getAllPropertiesForAddOnKey(input);
-            return Either.right(propertiesIterable);
+            String input = validationResult.getValue().get();
+            Either<AddOnPropertyStore.ListResult, AddOnPropertyIterable> listPropertiesResult = store.getAllPropertiesForAddOnKey(input, eTag);
+
+            return listPropertiesResult.left().map(new Function<AddOnPropertyStore.ListResult, ServiceResult>()
+            {
+                @Override
+                public ServiceResult apply(final AddOnPropertyStore.ListResult input)
+                {
+                    switch (input)
+                    {
+                        case PROPERTIES_NOT_MODIFIED:
+                            return ServiceResultImpl.PROPERTIES_NOT_MODIFIED;
+                    }
+                    throw new IllegalStateException();
+                }
+            });
         }
         return Either.left(validationResult.getError().get());
     }

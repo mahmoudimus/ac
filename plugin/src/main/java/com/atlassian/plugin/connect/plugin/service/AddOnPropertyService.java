@@ -32,7 +32,7 @@ public interface AddOnPropertyService
      * <p>
      *     This method checks parameter validity and tries to set a property for an add-on.
      * </p>
-     * @return either error result or add-on property.
+     * @return ServiceResult containing http status and status message
      **/
     ServiceResult setPropertyValue(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey, @Nonnull String propertyKey, @Nonnull String value, ETag eTag);
 
@@ -41,7 +41,7 @@ public interface AddOnPropertyService
      * <p>
      *     This method checks parameter validity and tries to delete a property for an add-on.
      * </p>
-     * @return either error result or add-on property.
+     * @return ServiceResult containing http status and status message
      **/
     ServiceResult deletePropertyValue(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey, @Nonnull String propertyKey);
 
@@ -52,7 +52,7 @@ public interface AddOnPropertyService
      * </p>
      * @return either error result or list of add-on properties.
      **/
-    Either<ServiceResult, AddOnPropertyIterable> getAddOnProperties(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey);
+    Either<ServiceResult, AddOnPropertyIterable> getAddOnProperties(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey, @Nonnull ETag eTag);
 
     interface ServiceResult
     {

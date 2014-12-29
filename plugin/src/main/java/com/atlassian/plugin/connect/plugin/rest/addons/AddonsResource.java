@@ -222,9 +222,10 @@ public class AddonsResource
     public Response getAddOnProperties(@PathParam ("addonKey") final String addOnKey, @Context HttpServletRequest request)
     {
         UserProfile user = userManager.getRemoteUser(request);
-
+        ETag eTag = getETagFromRequest(request);
         String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(request);
-        Either<ServiceResult, AddOnPropertyIterable> result = addOnPropertyService.getAddOnProperties(user, sourcePluginKey, addOnKey);
+
+        Either<ServiceResult, AddOnPropertyIterable> result = addOnPropertyService.getAddOnProperties(user, sourcePluginKey, addOnKey, eTag);
 
         return result.fold(new Function<ServiceResult, Response>()
         {
@@ -239,7 +240,11 @@ public class AddonsResource
             public Response apply(final AddOnPropertyIterable input)
             {
                 String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties";
-                return Response.ok().entity(RestAddOnPropertiesBean.valueOf(input.getPropertyKeys(), baseURL)).cacheControl(never()).build();
+                return Response.ok()
+                        .entity(RestAddOnPropertiesBean.valueOf(input.getPropertyKeys(), baseURL))
+                        .tag(input.getETag().toString())
+                        .cacheControl(never())
+                        .build();
             }
         });
     }
@@ -249,7 +254,6 @@ public class AddonsResource
     public Response getAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam("propertyKey") String propertyKey, @Context HttpServletRequest request)
     {
         UserProfile user = userManager.getRemoteUser(request);
-
         ETag eTag = getETagFromRequest(request);
         String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(request);
 
@@ -273,19 +277,9 @@ public class AddonsResource
         });
     }
 
-    // TODO: return HashCode instead of String, that would require Guava v15
     private ETag getETagFromRequest(final HttpServletRequest request)
     {
         return new ETag(request.getHeader(HttpHeaders.IF_MATCH));
-                    /*.map(new Function<String, HashCode>()
-                    {
-                        @Override
-                        public HashCode apply(final String s)
-                        {
-                            final byte[] stringBytes = BaseEncoding.base16().decode(s);
-                            return new MyHashCode(stringBytes);
-                        }
-                    });*/
     }
 
     @PUT

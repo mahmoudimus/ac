@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.addonproperty;
 
 import com.atlassian.fugue.Either;
-import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyIterable;
@@ -188,8 +187,8 @@ public class AddOnPropertyServiceImplTest
     private void testListProperties(final String sourcePluginKey)
     {
         AddOnPropertyIterable emptyIterable = new AddOnPropertyIterable(Collections.<AddOnProperty>emptyList());
-        when(store.getAllPropertiesForAddOnKey(addOnKey)).thenReturn(emptyIterable);
-        Either<ServiceResult, AddOnPropertyIterable> result = service.getAddOnProperties(user, sourcePluginKey, addOnKey);
+        when(store.getAllPropertiesForAddOnKey(addOnKey, ETag.emptyETag())).thenReturn(Either.<AddOnPropertyStore.ListResult, AddOnPropertyIterable>right(emptyIterable));
+        Either<ServiceResult, AddOnPropertyIterable> result = service.getAddOnProperties(user, sourcePluginKey, addOnKey, ETag.emptyETag());
 
         assertEquals(emptyIterable, result.right().get());
     }
@@ -269,7 +268,7 @@ public class AddOnPropertyServiceImplTest
     @Test
     public void testNoAccessToListDifferentPluginData() throws Exception
     {
-        Either<ServiceResult, AddOnPropertyIterable> result = service.getAddOnProperties(user, "DIFF_PLUGIN_KEY", addOnKey);
+        Either<ServiceResult, AddOnPropertyIterable> result = service.getAddOnProperties(user, "DIFF_PLUGIN_KEY", addOnKey, ETag.emptyETag());
         assertTrue(result.isLeft());
         assertEquals(ServiceResultImpl.ACCESS_TO_OTHER_DATA_FORBIDDEN, result.left().get());
     }
@@ -298,7 +297,7 @@ public class AddOnPropertyServiceImplTest
     @Test
     public void testListNoAccessWhenLoggedIn() throws Exception
     {
-        Either<ServiceResult, AddOnPropertyIterable> result = service.getAddOnProperties(null, "DIFF_PLUGIN_KEY", addOnKey);
+        Either<ServiceResult, AddOnPropertyIterable> result = service.getAddOnProperties(null, "DIFF_PLUGIN_KEY", addOnKey, ETag.emptyETag());
         assertTrue(result.isLeft());
         assertEquals(ServiceResultImpl.NOT_AUTHENTICATED, result.left().get());
     }
@@ -307,10 +306,8 @@ public class AddOnPropertyServiceImplTest
     public void testGetNotModifiedWithETag() throws Exception
     {
         ETag eTag = property.getETag();
-
         when(store.getPropertyValue(addOnKey, property.getKey(), eTag)).thenReturn(Either.<AddOnPropertyStore.GetResult, AddOnProperty>left(AddOnPropertyStore.GetResult.PROPERTY_NOT_MODIFIED));
 
-        // TODO: can't mock string, change to better mock with HashCode when version will be changed
         Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, addOnKey, addOnKey, property.getKey(), eTag);
 
         assertTrue(result.isLeft());
@@ -321,10 +318,8 @@ public class AddOnPropertyServiceImplTest
     public void testGetModifiedWithETag() throws Exception
     {
         ETag eTag = property.getETag();
-
         when(store.getPropertyValue(addOnKey, property.getKey(), eTag)).thenReturn(Either.<AddOnPropertyStore.GetResult, AddOnProperty>right(property));
 
-        // TODO: can't mock string, change to better mock with HashCode when version will be changed
         Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, addOnKey, addOnKey, property.getKey(), eTag);
 
         assertTrue(result.isRight());

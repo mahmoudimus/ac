@@ -8,15 +8,12 @@ import com.atlassian.plugin.connect.plugin.rest.data.ETag;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.hash.HashCode;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
-import java.util.List;
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -132,15 +129,21 @@ public class AddOnPropertyStore
         return getAddOnPropertyForKey(addOnKey, propertyKey) != null;
     }
     
-    public AddOnPropertyIterable getAllPropertiesForAddOnKey(@Nonnull final String addOnKey)
+    public Either<ListResult,AddOnPropertyIterable> getAllPropertiesForAddOnKey(@Nonnull final String addOnKey, final ETag eTag)
     {
-        return ao.executeInTransaction(new TransactionCallback<AddOnPropertyIterable>()
+        return ao.executeInTransaction(new TransactionCallback<Either<ListResult, AddOnPropertyIterable>>()
         {
             @Override
-            public AddOnPropertyIterable doInTransaction()
+            public Either<ListResult, AddOnPropertyIterable> doInTransaction()
             {
-                ImmutableList<AddOnPropertyAO> addOnPropertyList = ImmutableList.<AddOnPropertyAO>builder().add(getAddOnPropertyAOArrayForAddOnKey(addOnKey)).build();
-                return AddOnPropertyIterable.fromAddOnPropertyAOList(addOnPropertyList);
+                ImmutableList<AddOnPropertyAO> addOnPropertyAOList = ImmutableList.<AddOnPropertyAO>builder().add(getAddOnPropertyAOArrayForAddOnKey(addOnKey)).build();
+                AddOnPropertyIterable addOnProperties = AddOnPropertyIterable.fromAddOnPropertyAOList(addOnPropertyAOList);
+
+                if (eTag.isDefined() && eTag.equals(addOnProperties.getETag()))
+                {
+                    return Either.left(ListResult.PROPERTIES_NOT_MODIFIED);
+                }
+                return Either.right(addOnProperties);
             }
         });
     }
@@ -175,11 +178,16 @@ public class AddOnPropertyStore
         PROPERTY_MODIFIED,
         PROPERTY_LIMIT_EXCEEDED
     }
-
+    
     public enum DeleteResult
     {
         PROPERTY_DELETED,
         PROPERTY_NOT_FOUND
+    }
+    
+    public enum ListResult
+    {
+        PROPERTIES_NOT_MODIFIED
     }
 }
 

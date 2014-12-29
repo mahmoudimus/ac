@@ -6,6 +6,7 @@ import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
+import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyIterable;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore;
 import com.atlassian.plugin.connect.plugin.rest.data.ETag;
 import com.google.common.base.Predicate;
@@ -143,7 +144,7 @@ public class AddOnPropertyStoreTest
         DeleteResult deleteResult = store.deletePropertyValue(ADD_ON_KEY, PROPERTY_KEY);
         assertEquals(DeleteResult.PROPERTY_DELETED, deleteResult);
     }
-
+    
     private void testListProperties(final List<AddOnProperty> propertyList)
     {
         for (AddOnProperty property : propertyList)
@@ -151,11 +152,11 @@ public class AddOnPropertyStoreTest
             store.setPropertyValue(ADD_ON_KEY, property.getKey(), property.getValue(), ETag.emptyETag());
         }
 
-        Iterable<AddOnProperty> result = store.getAllPropertiesForAddOnKey(ADD_ON_KEY);
+        Either<AddOnPropertyStore.ListResult, AddOnPropertyIterable> result = store.getAllPropertiesForAddOnKey(ADD_ON_KEY, ETag.emptyETag());
 
-        if (Iterables.isEmpty().apply(result) && Iterables.isEmpty().apply(propertyList)) return;
+        if (Iterables.isEmpty().apply(result.right().get()) && Iterables.isEmpty().apply(propertyList)) return;
 
-        assertThat(result,
+        assertThat(result.right().get(),
                 IsIterableContainingInOrder.contains(propertyList.toArray()));
     }
 
@@ -194,6 +195,39 @@ public class AddOnPropertyStoreTest
                 return input.equals(AddOnPropertyStore.GetResult.PROPERTY_NOT_MODIFIED);
             }
         }));
+    }
+
+    @Test
+    @NonTransactional
+    public void testListPropertiesWithNoETag() throws Exception
+    {
+        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, ETag.emptyETag());
+        Iterable<String> keys = store.getAllPropertiesForAddOnKey(ADD_ON_KEY, ETag.emptyETag()).right().get().getPropertyKeys();
+        Option<String> first = Iterables.first(keys);
+        assertTrue(first.isDefined());
+        assertEquals(PROPERTY_KEY, first.get());
+    }
+
+    @Test
+    @NonTransactional
+    public void testListPropertiesWithSameETag() throws Exception
+    {
+        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, ETag.emptyETag());
+        AddOnPropertyIterable addOnProperties = store.getAllPropertiesForAddOnKey(ADD_ON_KEY, ETag.emptyETag()).right().get();
+
+        AddOnPropertyStore.ListResult listResult = store.getAllPropertiesForAddOnKey(ADD_ON_KEY, addOnProperties.getETag()).left().get();
+        assertEquals(AddOnPropertyStore.ListResult.PROPERTIES_NOT_MODIFIED, listResult);
+    }
+
+    @Test
+    @NonTransactional
+    public void testListPropertiesWithDifferentETag() throws Exception
+    {
+        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, ETag.emptyETag());
+        Iterable<String> keys = store.getAllPropertiesForAddOnKey(ADD_ON_KEY, new ETag("1")).right().get().getPropertyKeys();
+        Option<String> first = Iterables.first(keys);
+        assertTrue(first.isDefined());
+        assertEquals(PROPERTY_KEY, first.get());
     }
 
     @Test

@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.ao;
 
 import com.atlassian.plugin.connect.plugin.rest.data.ETag;
-import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
