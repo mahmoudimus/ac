@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.rest.data;
 
 import com.atlassian.plugin.connect.plugin.license.LicenseStatus;
-import com.atlassian.upm.Strings;
+import com.atlassian.plugin.connect.plugin.rest.license.Strings;
 import com.atlassian.upm.api.license.entity.Contact;
 import com.atlassian.upm.api.license.entity.PluginLicense;
 import com.google.common.annotations.VisibleForTesting;
