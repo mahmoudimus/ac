@@ -26,6 +26,8 @@ import org.junit.rules.TestName;
 
 import javax.annotation.Nullable;
 
+import com.sun.jersey.api.client.UniformInterfaceException;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -97,7 +99,14 @@ public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
         installTestPlugins(rpc);
 
         // Hangs the Chrome WebDriver tests, so it's disabled for now.
-        rpc.getPluginHelper().disablePlugin(new SimplePlugin("com.atlassian.confluence.confluence-editor-hide-tools", null));
+        try
+        {
+            rpc.getPluginHelper().disablePlugin(new SimplePlugin("com.atlassian.confluence.confluence-editor-hide-tools", null));
+        }
+        catch (UniformInterfaceException ignored)
+        {
+            // Missing or already disabled. Carry on.
+        }
 
         rpc.getDarkFeaturesHelper().enableSiteFeature("webdriver.test.mode");
 
