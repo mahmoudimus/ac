@@ -8,13 +8,11 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
-import com.atlassian.plugin.connect.plugin.rest.data.RestAddons;
-import com.atlassian.plugin.connect.plugin.rest.data.RestMinimalAddon;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.license.LicenseHandler;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -42,28 +40,34 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(AtlassianPluginsTestRunner.class)
 public class AddonsResourceTest
 {
+    final static String TIMEBOMB_WILDCARD_PLUGIN_LICENSE = "AAACCg0ODAoPeNp1U8uO2jAU3ecrInVXKcjmMRqQsuDhGWiZDCKhrUbdOMkF3CZ25AcMf9+Q8IgLLLLI9bnn3nN8/CXaGvcFYreNXfw8QGiAeu4ijNw2wh0nBLkDOZv4o9d+5P1a/eh63z8+pt4I4Z/OnCXAFUSHAgKagx+RMJoFr05IAr/8vB5CTiLFPm01kP74WPk9cCewg0wUIJ1E8HWLJprtwNfSQNlkEhZnYBVPHOSzYPIwoRr8RWd6hdoj6qI15Q+T1CJcGJls6Q1jkZkN46r1tcVNPhVKQ7pSIJWPkROYPAb5vq4LHm6AI8loRnh64ZmASiQrNBPcj0BpN6s3dNdCunWfm563Uw7Z0czQCl1td2UeGi2WwGFfH7xRxjVwypMbL44+Wj6UhcxAibScGEuoBlWNbYw7HsJeu1/3nyWOM1NKl4FIQfnImVOl30TK1gxSH3eecLf/3EW93hN2BE8hpzyt14tpHgtxoRlVv3OR0Gy4Aa4r106YW39PB00NNYFLSs2ykEzZUq4uNW/WpiEpq2wlQUSWi+UsJHUWbsdfwvRwM1vWEnKh4aQLn7JuB/lYuWVbM7WFw7051WaPFz833lFrr7bIKK+8fpcbypmqkzXUGVWKUe6EJr7Gs/m+yre+4n+52PM6Dw+tuPeU/k9UU011m99my+Gjuzxra+Jfyho52Lh//5qpzTAtAhUAj8L7xWFb4yfemMFIqVBg6p3ZzS8CFDVulZlFOu+THivlIbkZbjF76WhHX02ok";
+
     private static final Logger LOG = LoggerFactory.getLogger(AddonsResourceTest.class);
     private static String REST_BASE = "/atlassian-connect/1/addons";
 
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
     private final ConnectAddonRegistry connectAddonRegistry;
+    private final LicenseHandler licenseHandler;
     private final RequestUtil requestUtil;
 
     private String addonKey;
     private String addonSecret;
 
     public AddonsResourceTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,
-                              ApplicationProperties applicationProperties, ConnectAddonRegistry connectAddonRegistry)
+                              ApplicationProperties applicationProperties, ConnectAddonRegistry connectAddonRegistry,
+                              LicenseHandler licenseHandler)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
         this.connectAddonRegistry = connectAddonRegistry;
+        this.licenseHandler = licenseHandler;
         this.requestUtil = new RequestUtil(applicationProperties);
     }
 
@@ -84,6 +88,7 @@ public class AddonsResourceTest
     @Before
     public void setUp() throws IOException
     {
+        licenseHandler.setLicense(TIMEBOMB_WILDCARD_PLUGIN_LICENSE);
         testAuthenticator.authenticateUser("admin");
         addonKey = generateAddonKey();
         installJsonAddon(addonKey);
@@ -205,6 +210,11 @@ public class AddonsResourceTest
         AddonInterpretation addonInterpretation = response.getJsonBody(AddonInterpretation.class);
         assertThat(addonInterpretation.key, equalTo(addonKey));
         assertThat(addonInterpretation.state, equalTo("ENABLED"));
+        assertThat(addonInterpretation.license, notNullValue());
+        assertThat(addonInterpretation.license.status, equalTo("ACTIVE"));
+        assertThat(addonInterpretation.license.type, equalTo("TESTING"));
+        assertThat(addonInterpretation.license.evaluation, equalTo(true));
+        assertThat(addonInterpretation.license.supportEntitlementNumber, equalTo("SEN-500"));
     }
 
     @Test
@@ -371,6 +381,9 @@ public class AddonsResourceTest
 
         @JsonProperty
         public String state;
+
+        @JsonProperty
+        public AddonLicenseInterpretation license;
     }
 
     /**
@@ -378,7 +391,27 @@ public class AddonsResourceTest
      */
     private static class AddonsInterpretation
     {
+
         @JsonProperty
         public List<AddonInterpretation> addons;
+    }
+
+    private static class AddonLicenseInterpretation
+    {
+
+        @JsonProperty
+        public String status;
+
+        @JsonProperty
+        public String type;
+
+        @JsonProperty
+        public boolean evaluation;
+
+        @JsonProperty
+        public String contactEmail;
+
+        @JsonProperty
+        public String supportEntitlementNumber;
     }
 }
