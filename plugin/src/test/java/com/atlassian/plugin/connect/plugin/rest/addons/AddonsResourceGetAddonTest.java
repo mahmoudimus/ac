@@ -89,7 +89,7 @@ public class AddonsResourceGetAddonTest
     }
 
     @Parameterized.Parameters
-    public static Collection primeNumbers()
+    public static Collection entityClassByClientType()
     {
         return Arrays.asList(new Object[][]{
                 {RestInternalAddon.class, true, true},
