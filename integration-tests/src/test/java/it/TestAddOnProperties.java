@@ -191,21 +191,21 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
     private int executePutRequest(final String propertyKey, String value) throws IOException, URISyntaxException
     {
         URL url = new URL(restPath + "/properties/" + propertyKey);
-        HttpURLConnection yc = (HttpURLConnection) url.openConnection();
-        yc.setRequestMethod("PUT");
-        runner.getSignedRequestHandler().sign(url.toURI(), "PUT", null, yc);
-        yc.setDoOutput(true);
-        yc.getOutputStream().write(value.getBytes());
-        return yc.getResponseCode();
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("PUT");
+        runner.getSignedRequestHandler().sign(url.toURI(), "PUT", null, connection);
+        connection.setDoOutput(true);
+        connection.getOutputStream().write(value.getBytes());
+        return connection.getResponseCode();
     }
 
     private int executeDeleteRequest(final String propertyKey) throws IOException, URISyntaxException
     {
         URL url = new URL(restPath + "/properties/" + propertyKey);
-        HttpURLConnection yc = (HttpURLConnection) url.openConnection();
-        yc.setRequestMethod("DELETE");
-        runner.getSignedRequestHandler().sign(url.toURI(), "DELETE", null, yc);
-        return yc.getResponseCode();
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("DELETE");
+        runner.getSignedRequestHandler().sign(url.toURI(), "DELETE", null, connection);
+        return connection.getResponseCode();
     }
 
     private class RestAddOnProperty

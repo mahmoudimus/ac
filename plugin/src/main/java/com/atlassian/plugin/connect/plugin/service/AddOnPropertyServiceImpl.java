@@ -153,7 +153,7 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
                 case PROPERTY_CREATED: return ServiceResultImpl.PROPERTY_CREATED;
                 case PROPERTY_UPDATED: return ServiceResultImpl.PROPERTY_UPDATED;
                 case PROPERTY_LIMIT_EXCEEDED: return ServiceResultImpl.MAXIMUM_PROPERTIES_EXCEEDED;
-                default: throw new IllegalStateException();
+                default: throw new IllegalStateException("PutResult case not covered.");
             }
         }
         else
@@ -192,7 +192,8 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
             {
                 case PROPERTY_DELETED: return ServiceResultImpl.PROPERTY_DELETED;
                 case PROPERTY_NOT_FOUND: return ServiceResultImpl.PROPERTY_NOT_FOUND;
-                default: throw new IllegalStateException();
+                default:
+                    throw new IllegalStateException("DeleteResult case not covered.");
             }
         }
         else

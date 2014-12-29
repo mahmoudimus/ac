@@ -114,8 +114,8 @@ public class AddOnPropertyStore
     
     public List<String> getAllPropertyKeysForAddOnKey(@Nonnull final String addOnKey)
     {
-        ImmutableList<AddOnPropertyAO> build = ImmutableList.<AddOnPropertyAO>builder().add(getAddOnPropertyAOArrayForAddOnKey(addOnKey)).build();
-        return Lists.transform(build, new Function<AddOnPropertyAO, String>()
+        ImmutableList<AddOnPropertyAO> addOnPropertyList = ImmutableList.<AddOnPropertyAO>builder().add(getAddOnPropertyAOArrayForAddOnKey(addOnKey)).build();
+        return Lists.transform(addOnPropertyList, new Function<AddOnPropertyAO, String>()
         {
             @Override
             public String apply(final AddOnPropertyAO input)
@@ -148,6 +148,7 @@ public class AddOnPropertyStore
         PROPERTY_UPDATED,
         PROPERTY_LIMIT_EXCEEDED
     }
+
     public enum DeleteResult
     {
         PROPERTY_DELETED,

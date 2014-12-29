@@ -263,6 +263,7 @@ public class AddonsResource
             }
         });
     }
+
     @DELETE
     @Path ("{addonKey}/properties/{propertyKey}")
     public Response deleteAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam("propertyKey") final String propertyKey, @Context HttpServletRequest request)
