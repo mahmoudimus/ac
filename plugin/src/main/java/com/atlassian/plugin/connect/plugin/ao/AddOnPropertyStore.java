@@ -1,12 +1,15 @@
 package com.atlassian.plugin.connect.plugin.ao;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+import com.atlassian.fugue.Either;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
+import com.atlassian.plugin.connect.plugin.rest.data.ETag;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.hash.HashCode;
 import net.java.ao.DBParam;
 import net.java.ao.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +36,13 @@ public class AddOnPropertyStore
     @Autowired
     public AddOnPropertyStore(final ActiveObjects ao) {this.ao = checkNotNull(ao);}
 
-    public Option<AddOnProperty> getPropertyValue(@Nonnull final String addOnKey, @Nonnull final String propertyKey)
+    public Either<GetResult, AddOnProperty> getPropertyValue(@Nonnull final String addOnKey, @Nonnull final String propertyKey, final ETag eTag)
     {
         AddOnPropertyAO[] properties = ao.find(AddOnPropertyAO.class, Query.select().where("PLUGIN_KEY = ? AND PROPERTY_KEY = ?", addOnKey, propertyKey));
 
         Option<AddOnPropertyAO> option = Iterables.first(Arrays.asList(properties));
-        return option.map(new Function<AddOnPropertyAO, AddOnProperty>()
+
+        Option<AddOnProperty> propertyOption = option.map(new Function<AddOnPropertyAO, AddOnProperty>()
         {
             @Override
             public AddOnProperty apply(final AddOnPropertyAO input)
@@ -46,9 +50,20 @@ public class AddOnPropertyStore
                 return new AddOnProperty(input.getPropertyKey(), input.getValue());
             }
         });
+
+        if (!propertyOption.isDefined())
+        {
+            return Either.left(GetResult.PROPERTY_NOT_FOUND);
+        }
+        AddOnProperty property = propertyOption.get();
+        if (eTag.isDefined() && eTag.equals(property.getETag()))
+        {
+            return Either.left(GetResult.PROPERTY_NOT_MODIFIED);
+        }
+        return Either.right(property);
     }
 
-    public PutResult setPropertyValue(@Nonnull final String addOnKey, @Nonnull final String propertyKey, @Nonnull final String value)
+    public PutResult setPropertyValue(@Nonnull final String addOnKey, @Nonnull final String propertyKey, @Nonnull final String value, final ETag eTag)
     {
         checkNotNull(addOnKey);
         checkNotNull(propertyKey);
@@ -65,6 +80,11 @@ public class AddOnPropertyStore
                 if (existsProperty(addOnKey, propertyKey))
                 {
                     AddOnPropertyAO propertyAO = getAddOnPropertyForKey(addOnKey, propertyKey);
+                    ETag oldETag = new AddOnProperty(propertyAO.getPropertyKey(), propertyAO.getValue()).getETag();
+                    if (eTag.isDefined() && !eTag.equals(oldETag))
+                    {
+                        return PutResult.PROPERTY_MODIFIED;
+                    }
                     propertyAO.setValue(value);
                     propertyAO.save();
                     return PutResult.PROPERTY_UPDATED;
@@ -142,10 +162,17 @@ public class AddOnPropertyStore
         return ao.count(AddOnPropertyAO.class, Query.select().where("PLUGIN_KEY = ?", addOnKey)) >= MAX_PROPERTIES_PER_ADD_ON;
     }
 
+    public enum GetResult
+    {
+        PROPERTY_NOT_FOUND,
+        PROPERTY_NOT_MODIFIED
+    }
+
     public enum PutResult
     {
         PROPERTY_CREATED,
         PROPERTY_UPDATED,
+        PROPERTY_MODIFIED,
         PROPERTY_LIMIT_EXCEEDED
     }
 

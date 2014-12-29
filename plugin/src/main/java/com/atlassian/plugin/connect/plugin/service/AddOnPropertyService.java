@@ -4,6 +4,7 @@ import com.atlassian.fugue.Either;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyIterable;
+import com.atlassian.plugin.connect.plugin.rest.data.ETag;
 import com.atlassian.sal.api.user.UserProfile;
 
 import javax.annotation.Nonnull;
@@ -24,7 +25,7 @@ public interface AddOnPropertyService
      * </p>
      * @return either error result or add-on property.
      **/
-    Either<ServiceResult, AddOnProperty> getPropertyValue(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey,@Nonnull String propertyKey);
+    Either<ServiceResult, AddOnProperty> getPropertyValue(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey,@Nonnull String propertyKey, ETag eTag);
 
     /**
      * Sets a property from the add-on store.
@@ -33,7 +34,7 @@ public interface AddOnPropertyService
      * </p>
      * @return either error result or add-on property.
      **/
-    ServiceResult setPropertyValue(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey, @Nonnull String propertyKey, @Nonnull String value);
+    ServiceResult setPropertyValue(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey, @Nonnull String propertyKey, @Nonnull String value, ETag eTag);
 
     /**
      * Deletes a property from the add-on store.

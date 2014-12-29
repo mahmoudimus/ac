@@ -2,14 +2,15 @@ package com.atlassian.plugin.connect.plugin.service;
 
 import com.atlassian.fugue.Either;
 import com.atlassian.fugue.Option;
-import com.atlassian.fugue.Suppliers;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyIterable;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.rest.data.ETag;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import org.apache.commons.httpclient.HttpStatus;
@@ -43,7 +44,9 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         INVALID_PROPERTY_VALUE(HttpStatus.SC_BAD_REQUEST, "Property value must be a valid JSON object"),
         NOT_AUTHENTICATED(HttpStatus.SC_UNAUTHORIZED, "Access to this resource must be authenticated as an add-on"),
         PROPERTY_DELETED(HttpStatus.SC_NO_CONTENT, null),
-        ADD_ON_NOT_FOUND(HttpStatus.SC_NOT_FOUND, "Add-on with key not found.");
+        ADD_ON_NOT_FOUND(HttpStatus.SC_NOT_FOUND, "Add-on with key not found."),
+        PROPERTY_NOT_MODIFIED(HttpStatus.SC_NOT_MODIFIED, "Not modified"),
+        PROPERTY_MODIFIED(HttpStatus.SC_PRECONDITION_FAILED, "This resource has been updated."),;
 
         private final int httpStatusCode;
         private final String message;
@@ -81,14 +84,29 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
     }
 
     @Override
-    public Either<ServiceResult, AddOnProperty> getPropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey)
+    public Either<ServiceResult, AddOnProperty> getPropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey, final ETag eTag)
     {
         ValidationResult<GetOrDeletePropertyInput> validationResult = validateGetPropertyValue(user, sourceAddOnKey, addOnKey, propertyKey);
         if (validationResult.isValid())
         {
             GetOrDeletePropertyInput input = validationResult.getValue().getOrNull();
-            Option<AddOnProperty> propertyValue = store.getPropertyValue(input.getAddOnKey(), input.getPropertyKey());
-            return propertyValue.toRight(Suppliers.<ServiceResult>ofInstance( ServiceResultImpl.PROPERTY_NOT_FOUND));
+            Either<AddOnPropertyStore.GetResult, AddOnProperty> propertyValue = store.getPropertyValue(input.getAddOnKey(), input.getPropertyKey(), eTag);
+            return propertyValue.left().map(new Function<AddOnPropertyStore.GetResult, ServiceResult>()
+            {
+                @Override
+                public ServiceResult apply(@Nullable final AddOnPropertyStore.GetResult getResult)
+                {
+                    switch (getResult)
+                    {
+                        case PROPERTY_NOT_FOUND:
+                            return ServiceResultImpl.PROPERTY_NOT_FOUND;
+                        case PROPERTY_NOT_MODIFIED:
+                            return ServiceResultImpl.PROPERTY_NOT_MODIFIED;
+                        default:
+                            throw new IllegalStateException();
+                    }
+                }
+            });
         }
         else
         {
@@ -97,19 +115,20 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
     }
 
     @Override
-    public ServiceResult setPropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey, @Nonnull final String value)
+    public ServiceResult setPropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey, @Nonnull final String value, final ETag eTag)
     {
         Preconditions.checkArgument(value.length() <= MAXIMUM_PROPERTY_VALUE_LENGTH);
         ValidationResult<SetPropertyInput> validationResult = validateSetPropertyValue(user, sourceAddOnKey, checkNotNull(addOnKey), checkNotNull(propertyKey), checkNotNull(value));
         if (validationResult.isValid())
         {
             SetPropertyInput input = validationResult.getValue().getOrNull();
-            AddOnPropertyStore.PutResult putResult = store.setPropertyValue(input.getAddOnKey(), input.getPropertyKey(), input.getValue());
+            AddOnPropertyStore.PutResult putResult = store.setPropertyValue(input.getAddOnKey(), input.getPropertyKey(), input.getValue(), eTag);
             switch (putResult)
             {
                 case PROPERTY_CREATED: return ServiceResultImpl.PROPERTY_CREATED;
                 case PROPERTY_UPDATED: return ServiceResultImpl.PROPERTY_UPDATED;
                 case PROPERTY_LIMIT_EXCEEDED: return ServiceResultImpl.MAXIMUM_PROPERTIES_EXCEEDED;
+                case PROPERTY_MODIFIED: return ServiceResultImpl.PROPERTY_MODIFIED;
                 default:
                 {
                     log.error("PutResult case not covered. Method setPropertyValue has returned an enum for which there is no corresponding ServiceResult.");

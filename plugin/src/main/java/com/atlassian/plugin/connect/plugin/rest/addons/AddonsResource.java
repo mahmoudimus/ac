@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.rest.addons;
 
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.fugue.Either;
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyIterable;
@@ -11,6 +12,7 @@ import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.rest.RestResult;
+import com.atlassian.plugin.connect.plugin.rest.data.ETag;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddOnPropertiesBean;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddOnProperty;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
@@ -31,6 +33,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.io.LimitInputStream;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -53,6 +56,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 
 import static com.atlassian.plugin.connect.plugin.service.AddOnPropertyService.ServiceResult;
@@ -246,8 +250,10 @@ public class AddonsResource
     {
         UserProfile user = userManager.getRemoteUser(request);
 
+        ETag eTag = getETagFromRequest(request);
         String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(request);
-        Either<ServiceResult, AddOnProperty> propertyValue = addOnPropertyService.getPropertyValue(user, sourcePluginKey, addOnKey, propertyKey);
+
+        Either<ServiceResult, AddOnProperty> propertyValue = addOnPropertyService.getPropertyValue(user, sourcePluginKey, addOnKey, propertyKey, eTag);
 
         return propertyValue.fold(new Function<ServiceResult, Response>()
         {
@@ -262,9 +268,24 @@ public class AddonsResource
             public Response apply(final AddOnProperty input)
             {
                 String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties";
-                return Response.ok().entity(RestAddOnProperty.valueOf(input, baseURL)).cacheControl(never()).build();
+                return Response.ok().entity(RestAddOnProperty.valueOf(input, baseURL)).tag(input.getETag().toString()).cacheControl(never()).build();
             }
         });
+    }
+
+    // TODO: return HashCode instead of String, that would require Guava v15
+    private ETag getETagFromRequest(final HttpServletRequest request)
+    {
+        return new ETag(request.getHeader(HttpHeaders.IF_MATCH));
+                    /*.map(new Function<String, HashCode>()
+                    {
+                        @Override
+                        public HashCode apply(final String s)
+                        {
+                            final byte[] stringBytes = BaseEncoding.base16().decode(s);
+                            return new MyHashCode(stringBytes);
+                        }
+                    });*/
     }
 
     @PUT
@@ -274,6 +295,8 @@ public class AddonsResource
         final UserProfile user = userManager.getRemoteUser(request);
         // can be null, it is checked in the service.
         final String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(request);
+        final ETag eTag = getETagFromRequest(request);
+
         Either<RestParamError, String> errorStringEither = propertyValue(request);
         return errorStringEither.fold(new Function<RestParamError, Response>()
         {
@@ -287,10 +310,25 @@ public class AddonsResource
             @Override
             public Response apply(final String propertyValue)
             {
-                ServiceResult serviceResult = addOnPropertyService.setPropertyValue(user, sourcePluginKey, addOnKey, propertyKey, propertyValue);
-                return getResponseFromServiceResult(serviceResult);
+                ServiceResult serviceResult = addOnPropertyService.setPropertyValue(user, sourcePluginKey, addOnKey, propertyKey, propertyValue, eTag);
+                Response responseFromServiceResult = getResponseFromServiceResult(serviceResult);
+                if (shouldReturnETag(serviceResult))
+                {
+                    return getResponseFromServiceResult(serviceResult, Option.some(new AddOnProperty(propertyKey, propertyValue).getETag().toString()));
+                }
+                return responseFromServiceResult;
             }
         });
+    }
+
+    private boolean shouldReturnETag(final ServiceResult serviceResult)
+    {
+        switch (serviceResult.getHttpStatusCode()) {
+            case HttpStatus.SC_CREATED:
+            case HttpStatus.SC_OK:
+                return true;
+        }
+        return false;
     }
 
     @DELETE
@@ -390,11 +428,20 @@ public class AddonsResource
 
     private Response getResponseForMessageAndStatus(final String message, final Response.Status status)
     {
+        return getResponseForMessageAndStatus(message, status, Option.<String>none());
+    }
+
+    private Response getResponseForMessageAndStatus(final String message, final Response.Status status, final Option<String> eTag)
+    {
         RestResult result = new RestResult(status.getStatusCode(), message);
         Response.ResponseBuilder responseBuilder = Response.status(status);
         if (status != Response.Status.NO_CONTENT)
         {
             responseBuilder.entity(result);
+        }
+        if (eTag.isDefined())
+        {
+            responseBuilder.tag(eTag.get());
         }
         return responseBuilder
                 .cacheControl(never())
@@ -403,7 +450,12 @@ public class AddonsResource
 
     private Response getResponseFromServiceResult(final ServiceResult serviceResult)
     {
-        return getResponseForMessageAndStatus(serviceResult.message(), Response.Status.fromStatusCode(serviceResult.getHttpStatusCode()));
+        return getResponseForMessageAndStatus(serviceResult.message(), Response.Status.fromStatusCode(serviceResult.getHttpStatusCode()), Option.<String>none());
+    }
+
+    private Response getResponseFromServiceResult(final ServiceResult serviceResult, final Option<String> eTag)
+    {
+        return getResponseForMessageAndStatus(serviceResult.message(), Response.Status.fromStatusCode(serviceResult.getHttpStatusCode()), eTag);
     }
 
     private Either<RestParamError, String> propertyValue(final HttpServletRequest request)
