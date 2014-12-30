@@ -1,8 +1,15 @@
 package com.atlassian.plugin.connect.modules.beans;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
+import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexType;
@@ -23,6 +30,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -30,13 +38,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
+import static com.atlassian.plugin.connect.modules.beans.ContentPropertyIndexSchemaModuleBean.newContentPropertyIndexSchemaModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean.newEntityPropertyModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
@@ -104,7 +108,7 @@ public class ConnectJsonExamples
                 .withLicensing(true)
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").withUninstalled("/uninstalled").build())
                 .withScopes(Sets.newHashSet(ScopeName.READ, ScopeName.WRITE))
-                .withModules("webItems",                        WebItemModuleBean.newWebItemBean()
+                .withModules("webItems", WebItemModuleBean.newWebItemBean()
                                 .withName(i18nProperty("Web Item"))
                                 .withUrl("/my-web-item")
                                 .withKey("my-web-item")
@@ -267,8 +271,8 @@ public class ConnectJsonExamples
     private static BlueprintTemplateBean createBlueprintTemplateBean()
     {
         return BlueprintTemplateBean.newBlueprintTemplateBeanBuilder()
-                    .withUrl("/blueprints/blueprint.xml")
-                    .build();
+                .withUrl("/blueprints/blueprint.xml")
+                .build();
     }
 
     public static String createComponentTabPanelExample()
@@ -313,29 +317,29 @@ public class ConnectJsonExamples
                 .withCategories("visuals")
                 .withDescription(new I18nProperty("Shows a configurable map", ""))
                 .withDocumentation(newLinkBean()
-                        .withUrl("http://docs.example.com/addons/maps")
-                        .build()
+                                .withUrl("http://docs.example.com/addons/maps")
+                                .build()
                 )
                 .withFeatured(true)
                 .withWidth("200px")
                 .withHeight("200px")
                 .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(80).withWidth(80).build())
                 .withParameters(newMacroParameterBean()
-                        .withIdentifier("view")
-                        .withName(new I18nProperty("Map View", ""))
-                        .withDescription(new I18nProperty("Allows switching between view types", ""))
-                        .withType("enum")
-                        .withDefaultValue("Map")
-                        .withMultiple(false)
-                        .withRequired(true)
-                        .withValues("Map", "Satellite")
-                        .build()
+                                .withIdentifier("view")
+                                .withName(new I18nProperty("Map View", ""))
+                                .withDescription(new I18nProperty("Allows switching between view types", ""))
+                                .withType("enum")
+                                .withDefaultValue("Map")
+                                .withMultiple(false)
+                                .withRequired(true)
+                                .withValues("Map", "Satellite")
+                                .build()
                 )
                 .withEditor(newMacroEditorBean()
-                        .withUrl("/map-editor")
-                        .withInsertTitle(new I18nProperty("Insert Map", ""))
-                        .withEditTitle(new I18nProperty("Edit Map", ""))
-                        .build()
+                                .withUrl("/map-editor")
+                                .withInsertTitle(new I18nProperty("Insert Map", ""))
+                                .withEditTitle(new I18nProperty("Edit Map", ""))
+                                .build()
                 )
                 .build();
 
@@ -354,27 +358,27 @@ public class ConnectJsonExamples
                 .withCategories("visuals")
                 .withDescription(new I18nProperty("Shows a configurable map", ""))
                 .withDocumentation(newLinkBean()
-                        .withUrl("http://docs.example.com/addons/maps")
-                        .build()
+                                .withUrl("http://docs.example.com/addons/maps")
+                                .build()
                 )
                 .withFeatured(true)
                 .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(80).withWidth(80).build())
                 .withParameters(newMacroParameterBean()
-                        .withIdentifier("view")
-                        .withName(new I18nProperty("Map View", ""))
-                        .withDescription(new I18nProperty("Allows switching between view types", ""))
-                        .withType("enum")
-                        .withDefaultValue("Map")
-                        .withMultiple(false)
-                        .withRequired(true)
-                        .withValues("Map", "Satellite")
-                        .build()
+                                .withIdentifier("view")
+                                .withName(new I18nProperty("Map View", ""))
+                                .withDescription(new I18nProperty("Allows switching between view types", ""))
+                                .withType("enum")
+                                .withDefaultValue("Map")
+                                .withMultiple(false)
+                                .withRequired(true)
+                                .withValues("Map", "Satellite")
+                                .build()
                 )
                 .withEditor(newMacroEditorBean()
-                        .withUrl("/map-editor")
-                        .withInsertTitle(new I18nProperty("Insert Map", ""))
-                        .withEditTitle(new I18nProperty("Edit Map", ""))
-                        .build()
+                                .withUrl("/map-editor")
+                                .withInsertTitle(new I18nProperty("Insert Map", ""))
+                                .withEditTitle(new I18nProperty("Edit Map", ""))
+                                .build()
                 )
                 .build();
 
@@ -449,6 +453,7 @@ public class ConnectJsonExamples
 
         return gson.toJson(createJsonObject("target", bean));
     }
+
     private static String createLinkExample()
     {
         LinkBean bean = newLinkBean().withUrl("/go-somewhere").withAltText("somewhere").withTitle("Go Somewhere").build();
@@ -597,6 +602,26 @@ public class ConnectJsonExamples
                 new EntityPropertyIndexKeyConfigurationBean(Lists.newArrayList(extractionConfiguration), "attachment");
 
         return gson.toJson(issueAttachmentIndexConfiguration);
+    }
+
+    private static String createContentPropertyIndexSchemaExample()
+    {
+        List<ContentPropertyIndexExtractionConfigurationBean> extractionConfiguration = Lists.newArrayList(
+                new ContentPropertyIndexExtractionConfigurationBean("attachment.size", "number"),
+                new ContentPropertyIndexExtractionConfigurationBean("attachment.extension", "string"),
+                new ContentPropertyIndexExtractionConfigurationBean("attachment.updated", "date"),
+                new ContentPropertyIndexExtractionConfigurationBean("attachment.author", "text")
+        );
+        ContentPropertyIndexKeyConfigurationBean indexConfiguration =
+                new ContentPropertyIndexKeyConfigurationBean("attachment", extractionConfiguration);
+
+        ContentPropertyIndexSchemaModuleBean contentPropertyIndexSchemaModuleBean =
+                newContentPropertyIndexSchemaModuleBean()
+                        .withName(new I18nProperty("Attachment Index Document", ""))
+                        .withKeyConfiguration(indexConfiguration)
+                        .build();
+
+        return gson.toJson(createJsonArray("contentPropertyIndexSchema", contentPropertyIndexSchemaModuleBean));
     }
 
     private static JsonObject createJsonArray(String name, ModuleBean bean)

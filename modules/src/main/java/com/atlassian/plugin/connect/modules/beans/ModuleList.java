@@ -295,6 +295,14 @@ public class ModuleList extends BaseModuleBean
     @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultBlueprintModuleProvider", products = {ProductFilter.CONFLUENCE})
     private List<BlueprintModuleBean> blueprints;
 
+    /**
+     * Definition of content property index schema.
+     *
+     * @schemaTitle Content property index schema
+     */
+    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultBlueprintModuleProvider", products = {ProductFilter.CONFLUENCE})
+    private List<ContentPropertyIndexSchemaModuleBean> contentPropertyIndexSchema;
+
     public ModuleList()
     {
         this.adminPages = newArrayList();
