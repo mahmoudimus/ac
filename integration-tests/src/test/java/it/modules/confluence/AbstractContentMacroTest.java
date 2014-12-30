@@ -399,7 +399,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     {
         editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         final Editor editor = editorPage.getEditor();
-        enableMacrosDropdown(editor);
+        enableMacrosDropdown(editorPage);
         ConfluenceInsertMenu insertMenu = (ConfluenceInsertMenu) editor.openInsertMenu();
         assertThat(insertMenu.hasEntryWithKey(FEATURED_MACRO_KEY), is(true));
     }

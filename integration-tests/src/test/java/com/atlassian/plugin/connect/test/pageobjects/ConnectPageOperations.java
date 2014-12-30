@@ -202,11 +202,11 @@ public class ConnectPageOperations
         // dismiss a "you have an unsaved draft" message, if any, because it actually blocks the cancel and other buttons
         try
         {
-            final WebElement discardLink = findElementByClass("discard-draft");
+            final WebElement closeLink = findElement(By.cssSelector("#draft-messages .icon-close"));
 
-            if (null != discardLink)
+            if (null != closeLink)
             {
-                discardLink.click();
+                closeLink.click();
             }
         }
         catch (NoSuchElementException e)

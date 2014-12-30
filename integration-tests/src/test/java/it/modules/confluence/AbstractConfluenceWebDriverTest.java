@@ -209,7 +209,7 @@ public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
     protected MacroBrowserAndEditor findMacroInBrowser(CreatePage editorPage, String macroName)
     {
         final Editor editor = editorPage.getEditor();
-        enableMacrosDropdown(editor);
+        enableMacrosDropdown(editorPage);
         final InsertDropdownMenu insertDropdownMenu = editor.openInsertMenu();
         insertDropdownMenu.click(InsertDropdownMenu.InsertItem.MACRO);
         ConnectMacroBrowserDialog browserDialog = connectPageOperations.findConnectMacroBrowserDialog();
@@ -218,12 +218,13 @@ public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
         return new MacroBrowserAndEditor(browserDialog, macro, null);
     }
 
-    protected void enableMacrosDropdown(Editor editor)
+    protected void enableMacrosDropdown(CreatePage editorPage)
     {
+        editorPage.dismissEditorNotifications();
         if (!hasBeenFocused)
         {
             hasBeenFocused = true;
-            editor.getContent().focus();
+            editorPage.getContent().focus();
         }
     }
 
