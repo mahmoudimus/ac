@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
+import java.util.concurrent.TimeUnit;
+
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
@@ -245,5 +247,19 @@ public class ConnectPageOperations
         // pressing the escape key dismisses aui dialogs
         Actions action = new Actions(driver);
         action.sendKeys(Keys.ESCAPE).build().perform();
+        waitForDialogToClear();
     }
+
+   private void waitForDialogToClear()
+   {
+       new WebDriverPoller(driver, 5L, TimeUnit.SECONDS).waitUntil(new Function<WebDriver, Boolean>()
+       {
+           @Override
+           public Boolean apply(WebDriver webDriver)
+           {
+               return webDriver.findElements(By.className("aui-blanket")).size() == 0 ||
+                       !webDriver.findElement(By.className("aui-blanket")).isDisplayed();
+           }
+       });
+   }
 }

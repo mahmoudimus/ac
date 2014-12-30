@@ -175,6 +175,7 @@ public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
 
     protected MacroBrowserAndEditor selectMacro(CreatePage editorPage, String macroName, @Nullable Runnable macroDialogSubmitter)
     {
+        editorPage.dismissEditorNotifications();
         MacroBrowserAndEditor browserAndEditor = findMacroInBrowser(editorPage, macroName);
 
         if (null == browserAndEditor.macro)
