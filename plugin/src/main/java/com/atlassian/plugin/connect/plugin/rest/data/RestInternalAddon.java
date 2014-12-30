@@ -11,11 +11,12 @@ public class RestInternalAddon extends RestAddon
     public RestInternalAddon(@JsonProperty("key") String key,
                              @JsonProperty("version") String version,
                              @JsonProperty("state") String state,
+                             @JsonProperty("host") RestHost host,
                              @JsonProperty("license") RestAddonLicense license,
                              @JsonProperty("links") RestRelatedLinks links,
                              @JsonProperty("applink") AddonApplink applink)
     {
-        super(key, version, state, license, links);
+        super(key, version, state, host, license, links);
         this.applink = applink;
     }
 

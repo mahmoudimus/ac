@@ -19,21 +19,16 @@ public class RestAddonLicense
     private final boolean evaluation;
 
     @JsonProperty
-    private final String contactEmail;
-
-    @JsonProperty
     private final String supportEntitlementNumber;
 
     public RestAddonLicense(@JsonProperty("status") final LicenseStatus status,
                             @JsonProperty("type") final LicenseType type,
                             @JsonProperty("evaluation") final boolean evaluation,
-                            @JsonProperty("contactEmail") String contactEmail,
                             @JsonProperty("supportEntitlementNumber") String supportEntitlementNumber)
     {
         this.status = status;
         this.type = type;
         this.evaluation = evaluation;
-        this.contactEmail = contactEmail;
         this.supportEntitlementNumber = supportEntitlementNumber;
     }
 
@@ -50,11 +45,6 @@ public class RestAddonLicense
     public boolean isEvaluation()
     {
         return evaluation;
-    }
-
-    public String getContactEmail()
-    {
-        return contactEmail;
     }
 
     public String getSupportEntitlementNumber()

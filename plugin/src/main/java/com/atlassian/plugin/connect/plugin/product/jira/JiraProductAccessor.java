@@ -1,10 +1,15 @@
 package com.atlassian.plugin.connect.plugin.product.jira;
 
+import com.atlassian.extras.api.ProductLicense;
+import com.atlassian.jira.bc.license.JiraLicenseService;
+import com.atlassian.jira.license.LicenseDetails;
 import com.atlassian.plugin.connect.modules.beans.JiraConditions;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.web.Condition;
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
@@ -13,11 +18,13 @@ import java.util.Map;
 public final class JiraProductAccessor implements ProductAccessor
 {
     private final JiraConditions jiraConditions;
+    private final JiraLicenseService licenseService;
 
     @Autowired
-    public JiraProductAccessor(JiraConditions jiraConditions)
+    public JiraProductAccessor(JiraConditions jiraConditions, JiraLicenseService licenseService)
     {
         this.jiraConditions = jiraConditions;
+        this.licenseService = licenseService;
     }
 
     @Override
@@ -82,5 +89,19 @@ public final class JiraProductAccessor implements ProductAccessor
     public boolean needsAdminPageNameEscaping()
     {
         return false;
+    }
+
+    @Override
+    public Iterable<ProductLicense> getProductLicenses()
+    {
+        Iterable<LicenseDetails> licenses = licenseService.getLicenses();
+        return Iterables.transform(licenses, new Function<LicenseDetails, ProductLicense>()
+        {
+            @Override
+            public ProductLicense apply(LicenseDetails license)
+            {
+                return license.getJiraLicense();
+            }
+        });
     }
 }

@@ -14,6 +14,7 @@ import com.atlassian.plugin.connect.plugin.rest.data.RestAddonLicense;
 import com.atlassian.plugin.connect.plugin.rest.data.RestInternalAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestLimitedAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestRelatedLinks;
+import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserKey;
@@ -68,11 +69,15 @@ public class AddonsResourceTest
     @Mock
     private UserManager userManager;
 
+    @Mock
+    private ProductAccessor productAccessor;
+
     @Before
     public void setup()
     {
         this.resource = new AddonsResource(this.addonRegistry, this.licenseRetriever, this.connectApplinkManager,
-                this.connectAddonManager, this.connectAddOnInstaller, this.applicationProperties, this.userManager);
+                this.connectAddonManager, this.connectAddOnInstaller, this.applicationProperties, this.userManager,
+                this.productAccessor);
     }
 
     @Test

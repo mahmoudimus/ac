@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.rest.data.RestContact;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
@@ -37,16 +38,18 @@ import java.util.UUID;
 
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(AtlassianPluginsTestRunner.class)
 public class AddonsResourceTest
 {
-    final static String TIMEBOMB_WILDCARD_PLUGIN_LICENSE = "AAACCg0ODAoPeNp1U8uO2jAU3ecrInVXKcjmMRqQsuDhGWiZDCKhrUbdOMkF3CZ25AcMf9+Q8IgLLLLI9bnn3nN8/CXaGvcFYreNXfw8QGiAeu4ijNw2wh0nBLkDOZv4o9d+5P1a/eh63z8+pt4I4Z/OnCXAFUSHAgKagx+RMJoFr05IAr/8vB5CTiLFPm01kP74WPk9cCewg0wUIJ1E8HWLJprtwNfSQNlkEhZnYBVPHOSzYPIwoRr8RWd6hdoj6qI15Q+T1CJcGJls6Q1jkZkN46r1tcVNPhVKQ7pSIJWPkROYPAb5vq4LHm6AI8loRnh64ZmASiQrNBPcj0BpN6s3dNdCunWfm563Uw7Z0czQCl1td2UeGi2WwGFfH7xRxjVwypMbL44+Wj6UhcxAibScGEuoBlWNbYw7HsJeu1/3nyWOM1NKl4FIQfnImVOl30TK1gxSH3eecLf/3EW93hN2BE8hpzyt14tpHgtxoRlVv3OR0Gy4Aa4r106YW39PB00NNYFLSs2ykEzZUq4uNW/WpiEpq2wlQUSWi+UsJHUWbsdfwvRwM1vWEnKh4aQLn7JuB/lYuWVbM7WFw7051WaPFz833lFrr7bIKK+8fpcbypmqkzXUGVWKUe6EJr7Gs/m+yre+4n+52PM6Dw+tuPeU/k9UU011m99my+Gjuzxra+Jfyho52Lh//5qpzTAtAhUAj8L7xWFb4yfemMFIqVBg6p3ZzS8CFDVulZlFOu+THivlIbkZbjF76WhHX02ok";
+    final static String TIMEBOMB_WILDCARD_PLUGIN_LICENSE = "AAACKw0ODAoPeNqFVNuO2jAQfc9XROpbpaCYm7pIkcolXWjZLILQVqu+mGRg3Tp25AuUv69xkk2ygPqQh4xnzsw5c+wPsQZ3Bonb8100HPXRaOC74SZ2uz7qOxsQRxCLWTB5fIi9n9vvfe/by8vcm/joh7MkCTAJ8TmHCGcQxKZsET06mzAKzOcNfN9JBD+lnUZmML1Efo1MzyNQnoNwEs72HZwocoRACQ2mSCdkR6EVLDHCvzkR5xlWEKx68zq13aIItrr8JgK3AFdaJK/4CjGn+kCY7HzsMJ3NuVSQbiUIGSDfiXS2A/G8LwIeaiTHgmAasvQNZwYyESRXhLMgBqlcWkzo7rlwizo3raaTTnjEVGObbaerkcda8TUwOBUHT5gwBQyz5EqLi44tHUyAajCZLSWmAmwjW9hFqOf5yOs+FPUVxSnVhrqIeAoy8J0lluqJp2RPIA1Qb4j6D5/6/mAwRA5nKWSYpcV4O5ztOH+DmdjfJU8wHR+AKatamXOtb3nQ5FAAuKHhLHJBZJtKrVJzs3bV/0MPU2LVDqM4XK/Wi03oGL2UwQmNxDQw3hCUwGesKJaSYNZJeFb77S58m/kaMq6gpI7K69D2+iVyjbYn8hXOt/pYdvdJVIXNJjdHW1HM7Do2eldb1eY/iwNmRBZ2HFcCFAa5HqicxbwSW/aH8ROr+t26be9N12RjF/51sR7fW3fFrZn/xcTC8zuHF4u0r9K02KNb0/gH0dzB7jAsAhR57uHDWPnpB6fEIvWR5ojy91DbLgIUICMxFTZJcgaUcq46PBpkDHzwBOY=X02q2";
 
     private static final Logger LOG = LoggerFactory.getLogger(AddonsResourceTest.class);
     private static String REST_BASE = "/atlassian-connect/1/addons";
@@ -210,6 +213,11 @@ public class AddonsResourceTest
         AddonInterpretation addonInterpretation = response.getJsonBody(AddonInterpretation.class);
         assertThat(addonInterpretation.key, equalTo(addonKey));
         assertThat(addonInterpretation.state, equalTo("ENABLED"));
+        assertThat(addonInterpretation.host, notNullValue());
+        assertThat(addonInterpretation.host.contacts, notNullValue());
+        assertThat(addonInterpretation.host.contacts, hasSize(1));
+        assertThat(addonInterpretation.host.contacts.get(0).name, equalTo("Charlie Atlassian"));
+        assertThat(addonInterpretation.host.contacts.get(0).email, equalTo("charlie@atlassian.com"));
         assertThat(addonInterpretation.license, notNullValue());
         assertThat(addonInterpretation.license.status, equalTo("ACTIVE"));
         assertThat(addonInterpretation.license.type, equalTo("TESTING"));
@@ -368,6 +376,16 @@ public class AddonsResourceTest
     }
 
     /**
+     * @see com.atlassian.plugin.connect.plugin.rest.data.RestAddons
+     */
+    private static class AddonsInterpretation
+    {
+
+        @JsonProperty
+        public List<AddonInterpretation> addons;
+    }
+
+    /**
      * @see com.atlassian.plugin.connect.plugin.rest.data.RestLimitedAddon
      */
     private static class AddonInterpretation
@@ -383,19 +401,28 @@ public class AddonsResourceTest
         public String state;
 
         @JsonProperty
+        public HostInterpretation host;
+
+        @JsonProperty
         public AddonLicenseInterpretation license;
     }
 
     /**
-     * @see com.atlassian.plugin.connect.plugin.rest.data.RestAddons
+     * @see com.atlassian.plugin.connect.plugin.rest.data.RestHost
      */
-    private static class AddonsInterpretation
+    private static class HostInterpretation
     {
 
         @JsonProperty
-        public List<AddonInterpretation> addons;
+        public String product;
+
+        @JsonProperty
+        public List<ContactInterpretation> contacts;
     }
 
+    /**
+     * @see com.atlassian.plugin.connect.plugin.rest.data.RestAddonLicense
+     */
     private static class AddonLicenseInterpretation
     {
 
@@ -409,9 +436,25 @@ public class AddonsResourceTest
         public boolean evaluation;
 
         @JsonProperty
-        public String contactEmail;
+        public String supportEntitlementNumber;
+    }
+
+    /**
+     * @see com.atlassian.plugin.connect.plugin.rest.data.RestContact
+     */
+    public class ContactInterpretation
+    {
 
         @JsonProperty
-        public String supportEntitlementNumber;
+        public String name;
+
+        @JsonProperty
+        public String email;
+
+        public ContactInterpretation(String name, String email)
+        {
+            this.name = name;
+            this.email = email;
+        }
     }
 }

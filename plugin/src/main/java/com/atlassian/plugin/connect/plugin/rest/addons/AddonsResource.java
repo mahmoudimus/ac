@@ -2,24 +2,29 @@ package com.atlassian.plugin.connect.plugin.rest.addons;
 
 import com.atlassian.annotations.PublicApi;
 import com.atlassian.applinks.api.ApplicationLink;
+import com.atlassian.extras.api.Contact;
+import com.atlassian.extras.api.ProductLicense;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnInstaller;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
+import com.atlassian.plugin.connect.plugin.license.LicenseStatus;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.rest.AddonOrSysadminOnlyResourceFilter;
 import com.atlassian.plugin.connect.plugin.rest.RestError;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddonLicense;
-import com.atlassian.plugin.connect.plugin.rest.data.RestAddonLicenseMapper;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddons;
+import com.atlassian.plugin.connect.plugin.rest.data.RestContact;
+import com.atlassian.plugin.connect.plugin.rest.data.RestHost;
 import com.atlassian.plugin.connect.plugin.rest.data.RestInternalAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestLimitedAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestMinimalAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestNamedLink;
 import com.atlassian.plugin.connect.plugin.rest.data.RestRelatedLinks;
+import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugins.rest.common.Link;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.plugins.rest.common.security.jersey.SysadminOnlyResourceFilter;
@@ -28,6 +33,8 @@ import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.upm.api.license.entity.PluginLicense;
 import com.atlassian.upm.api.util.Option;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.sun.jersey.spi.container.ResourceFilters;
 import org.slf4j.Logger;
@@ -41,6 +48,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
 
 import static com.atlassian.plugin.connect.plugin.rest.ConnectRestConstants.ADDON_KEY_PATH_PARAMETER;
@@ -64,11 +72,12 @@ public class AddonsResource
     private final ConnectAddOnInstaller connectAddOnInstaller;
     private final ApplicationProperties applicationProperties;
     private final UserManager userManager;
+    private final ProductAccessor productAccessor;
 
     public AddonsResource(ConnectAddonRegistry addonRegistry, LicenseRetriever licenseRetriever,
             ConnectApplinkManager connectApplinkManager, ConnectAddonManager connectAddonManager,
             ConnectAddOnInstaller connectAddOnInstaller, ApplicationProperties applicationProperties,
-            UserManager userManager)
+            UserManager userManager, ProductAccessor productAccessor)
     {
         this.addonRegistry = addonRegistry;
         this.licenseRetriever = licenseRetriever;
@@ -77,6 +86,7 @@ public class AddonsResource
         this.connectAddOnInstaller = connectAddOnInstaller;
         this.applicationProperties = applicationProperties;
         this.userManager = userManager;
+        this.productAccessor = productAccessor;
     }
 
     @GET
@@ -195,6 +205,7 @@ public class AddonsResource
         String version = addonBean.getVersion();
         PluginState state = addonRegistry.getRestartState(key);
         String stateString = state.name();
+        RestHost host = getHostResource();
         RestAddonLicense license = getLicenseResourceForAddon(key);
         RestRelatedLinks addonLinks = getAddonLinks(key);
         RestInternalAddon.AddonApplink appLinkResource = getApplinkResourceForAddon(key);
@@ -202,7 +213,7 @@ public class AddonsResource
         RestLimitedAddon resource;
         if (userManager.isSystemAdmin(userManager.getRemoteUserKey()))
         {
-            resource = new RestInternalAddon(key, version, stateString, license, addonLinks, appLinkResource);
+            resource = new RestInternalAddon(key, version, stateString, host, license, addonLinks, appLinkResource);
         }
         else
         {
@@ -212,20 +223,48 @@ public class AddonsResource
             }
             else
             {
-                resource = new RestAddon(key, version, stateString, license, addonLinks);
+                resource = new RestAddon(key, version, stateString, host, license, addonLinks);
             }
         }
         return resource;
     }
 
+    private RestHost getHostResource()
+    {
+        Iterable<ProductLicense> productLicenses = productAccessor.getProductLicenses();
+        RestHost host = null;
+        if (!Iterables.isEmpty(productLicenses))
+        {
+            ProductLicense productLicense = productLicenses.iterator().next();
+            String productName = productLicense.getProduct().getName();
+            Collection<Contact> licenseContacts = productLicense.getContacts();
+            Iterable<RestContact> contactRepresentations = Iterables.transform(licenseContacts, new Function<Contact, RestContact>()
+            {
+                @Override
+                public RestContact apply(Contact contact)
+                {
+                    return new RestContact(contact.getName(), contact.getEmail());
+                }
+            });
+
+            List<RestContact> contactList = Lists.newArrayList(contactRepresentations);
+            host = new RestHost(productName, contactList);
+        }
+        return host;
+    }
+
     private RestAddonLicense getLicenseResourceForAddon(String key)
     {
         Option<PluginLicense> licenseOption = licenseRetriever.getLicense(key);
-        RestAddonLicenseMapper mapper = new RestAddonLicenseMapper();
         RestAddonLicense resource = null;
         for (PluginLicense license : licenseOption)
         {
-            resource = mapper.getRestAddonLicense(license);
+            resource = new RestAddonLicense(
+                    LicenseStatus.fromBoolean(license.isActive()),
+                    license.getLicenseType(),
+                    license.isEvaluation(),
+                    license.getSupportEntitlementNumber().getOrElse((String) null));
+
         }
         return resource;
     }
