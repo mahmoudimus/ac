@@ -43,19 +43,19 @@ Once you have all the prerequisites, you'll clone an existing repository to kick
 <a data-replace-text="Hide Git installation instructions [-]" class="aui-expander-trigger" aria-controls="install-git">Show Git installation instructions [+]</a>
 
 <div id="install-git" class="aui-expander-content">
-    <span data-include="/assets/includes/install-git.html"></span>
+    <span data-include="../assets/includes/install-git.html"></span>
 </div>
 
 <a data-replace-text="Hide Node.js instructions [-]" class="aui-expander-trigger" aria-controls="install-node">Show Node.js instructions [+]</a>
 
 <div id="install-node" class="aui-expander-content">
-    <span data-include="/assets/includes/install-nodejs.html"></span>
+    <span data-include="../assets/includes/install-nodejs.html"></span>
 </div>
 
 <a data-replace-text="Hide SDK instructions [-]" class="aui-expander-trigger" aria-controls="install-sdk">Show SDK instructions [+]</a>
 
 <div id="install-sdk" class="aui-expander-content">
-    <span data-include="/assets/includes/install-atlassian-sdk.html"></span>
+    <span data-include="../assets/includes/install-atlassian-sdk.html"></span>
 </div>
 
 1. Clone the Confluence Gardener repository. 
@@ -86,7 +86,7 @@ After you've spun up your server, you'll install your copy of Gardener to Conflu
 included in the repo you cloned to install the add-on.   
 
 1. From the `confluence-gardener` directory, start your server on port 8000:
-    <span data-include="/assets/includes/start-http-server.html"></span>
+    <span data-include="../assets/includes/start-http-server.html"></span>
 
 1. In your browser, navigate to your descriptor file at <a href="http://localhost:8000/atlassian-connect.json" 
     target="_blank">http://localhost:8000/atlassian-connect.json</a>  
