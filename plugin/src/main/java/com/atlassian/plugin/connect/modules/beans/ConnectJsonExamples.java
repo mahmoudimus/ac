@@ -93,6 +93,7 @@ public class ConnectJsonExamples
     public static final String WEBSECTION_EXAMPLE = createWebSectionExample();
     public static final String BLUEPRINT_EXAMPLE = createBlueprintExample();
     public static final String BLUEPRINT_TEMPLATE_EXAMPLE = createBlueprintTemplateExample();
+    public static final String CONTENT_PROPERTY_EXAMPLE = createContentPropertyIndexSchemaExample();
 
 
     private static String createAddonExample()
