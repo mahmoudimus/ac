@@ -153,7 +153,11 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
                 case PROPERTY_CREATED: return ServiceResultImpl.PROPERTY_CREATED;
                 case PROPERTY_UPDATED: return ServiceResultImpl.PROPERTY_UPDATED;
                 case PROPERTY_LIMIT_EXCEEDED: return ServiceResultImpl.MAXIMUM_PROPERTIES_EXCEEDED;
-                default: throw new IllegalStateException("PutResult case not covered.");
+                default:
+                {
+                    log.error("PutResult case not covered. Method setPropertyValue has returned an enum for which there is no corresponding ServiceResult.");
+                    throw new IllegalStateException("PutResult case not covered.");
+                }
             }
         }
         else
@@ -193,7 +197,10 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
                 case PROPERTY_DELETED: return ServiceResultImpl.PROPERTY_DELETED;
                 case PROPERTY_NOT_FOUND: return ServiceResultImpl.PROPERTY_NOT_FOUND;
                 default:
+                {
+                    log.error("DeleteResult case not covered. Method deletePropertyValue has returned an enum for which there is no corresponding ServiceResult.");
                     throw new IllegalStateException("DeleteResult case not covered.");
+                }
             }
         }
         else
