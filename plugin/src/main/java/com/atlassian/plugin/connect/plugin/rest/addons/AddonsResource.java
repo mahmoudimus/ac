@@ -231,12 +231,9 @@ public class AddonsResource
 
     private RestHost getHostResource()
     {
-        Iterable<ProductLicense> productLicenses = productAccessor.getProductLicenses();
-        RestHost host = null;
-        if (!Iterables.isEmpty(productLicenses))
+        List<RestContact> contactList = null;
+        for (ProductLicense productLicense : productAccessor.getProductLicense())
         {
-            ProductLicense productLicense = productLicenses.iterator().next();
-            String productName = productLicense.getProduct().getName();
             Collection<Contact> licenseContacts = productLicense.getContacts();
             Iterable<RestContact> contactRepresentations = Iterables.transform(licenseContacts, new Function<Contact, RestContact>()
             {
@@ -247,10 +244,9 @@ public class AddonsResource
                 }
             });
 
-            List<RestContact> contactList = Lists.newArrayList(contactRepresentations);
-            host = new RestHost(productName, contactList);
+            contactList = Lists.newArrayList(contactRepresentations);
         }
-        return host;
+        return new RestHost(applicationProperties.getDisplayName(), contactList);
     }
 
     private RestAddonLicense getLicenseResourceForAddon(String key)

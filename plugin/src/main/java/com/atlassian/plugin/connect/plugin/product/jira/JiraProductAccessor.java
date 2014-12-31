@@ -1,15 +1,16 @@
 package com.atlassian.plugin.connect.plugin.product.jira;
 
+import com.atlassian.extras.api.Product;
 import com.atlassian.extras.api.ProductLicense;
+import com.atlassian.extras.api.jira.JiraLicense;
+import com.atlassian.fugue.Option;
 import com.atlassian.jira.bc.license.JiraLicenseService;
 import com.atlassian.jira.license.LicenseDetails;
 import com.atlassian.plugin.connect.modules.beans.JiraConditions;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.web.Condition;
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
@@ -92,16 +93,18 @@ public final class JiraProductAccessor implements ProductAccessor
     }
 
     @Override
-    public Iterable<ProductLicense> getProductLicenses()
+    public Option<ProductLicense> getProductLicense()
     {
         Iterable<LicenseDetails> licenses = licenseService.getLicenses();
-        return Iterables.transform(licenses, new Function<LicenseDetails, ProductLicense>()
+        Option<ProductLicense> jiraProductLicenseOption = Option.none();
+        for (LicenseDetails licenseDetails : licenses)
         {
-            @Override
-            public ProductLicense apply(LicenseDetails license)
+            ProductLicense productLicense = licenseDetails.getJiraLicense();
+            if (productLicense.getProduct().equals(Product.JIRA))
             {
-                return license.getJiraLicense();
+                jiraProductLicenseOption = Option.some(productLicense);
             }
-        });
+        }
+        return jiraProductLicenseOption;
     }
 }

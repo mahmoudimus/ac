@@ -3,7 +3,9 @@ package com.atlassian.plugin.connect.plugin.product.confluence;
 import com.atlassian.confluence.license.LicenseService;
 import com.atlassian.core.task.MultiQueueTaskManager;
 import com.atlassian.extras.api.AtlassianLicense;
+import com.atlassian.extras.api.Product;
 import com.atlassian.extras.api.ProductLicense;
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.ConfluenceConditions;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
@@ -100,9 +102,9 @@ public final class ConfluenceProductAccessor implements ProductAccessor
     }
 
     @Override
-    public Iterable<ProductLicense> getProductLicenses()
+    public Option<ProductLicense> getProductLicense()
     {
         AtlassianLicense atlassianLicense = licenseService.retrieveAtlassianLicense();
-        return atlassianLicense.getProductLicenses();
+        return Option.option(atlassianLicense.getProductLicense(Product.CONFLUENCE));
     }
 }

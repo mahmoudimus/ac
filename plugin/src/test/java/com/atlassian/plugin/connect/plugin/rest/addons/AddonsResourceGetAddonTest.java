@@ -113,7 +113,7 @@ public class AddonsResourceGetAddonTest
         String key = "my-addon-key";
         String version = "0.1";
         PluginState state = isPluginEnabled ? PluginState.INSTALLED : PluginState.DISABLED;
-        Product product = Product.JIRA;
+        String productName = Product.JIRA.getName();
         LicenseStatus licenseStatus = LicenseStatus.ACTIVE;
         LicenseType licenseType = LicenseType.DEVELOPER;
         boolean isEvaluationLicense = false;
@@ -134,7 +134,6 @@ public class AddonsResourceGetAddonTest
         when(contactMock.getEmail()).thenReturn(contactEmail);
 
         ProductLicense productLicenseMock = mock(ProductLicense.class);
-        when(productLicenseMock.getProduct()).thenReturn(product);
         when(productLicenseMock.getContacts()).thenReturn(Lists.newArrayList(contactMock));
 
         PluginLicense licenseMock = mock(PluginLicense.class);
@@ -145,7 +144,8 @@ public class AddonsResourceGetAddonTest
 
         when(addonRegistry.getAddonBean(key)).thenReturn(Option.some(beanMock));
         when(addonRegistry.getRestartState(key)).thenReturn(state);
-        when(productAccessor.getProductLicenses()).thenReturn(Lists.newArrayList(productLicenseMock));
+        when(productAccessor.getProductLicense()).thenReturn(Option.option(productLicenseMock));
+        when(applicationProperties.getDisplayName()).thenReturn(productName);
         when(licenseRetriever.getLicense(key)).thenReturn(com.atlassian.upm.api.util.Option.some(licenseMock));
         when(applicationProperties.getBaseUrl(UrlMode.CANONICAL)).thenReturn("http://localhost:2990/jira");
 
@@ -161,7 +161,7 @@ public class AddonsResourceGetAddonTest
             RestAddon addon = (RestAddon)limitedAddon;
 
             RestHost host = addon.getHost();
-            assertThat(host.getProduct(), equalTo(product.getName()));
+            assertThat(host.getProduct(), equalTo(productName));
             assertThat(host.getContacts(), hasSize(1));
             assertThat(host.getContacts().get(0).getName(), equalTo(contactName));
             assertThat(host.getContacts().get(0).getEmail(), equalTo(contactEmail));
