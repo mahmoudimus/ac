@@ -19,7 +19,7 @@ public interface AddOnPropertyService
     /**
      * Gets a property from the add-on store.
      * <p>
-     *     This method checks parameter validity and tries to add get a property for an add-on.
+     *     This method checks parameter validity and tries to get a property for an add-on.
      * </p>
      * @return either error result or add-on property.
      **/
@@ -28,11 +28,20 @@ public interface AddOnPropertyService
     /**
      * Sets a property from the add-on store.
      * <p>
-     *     This method checks parameter validity and tries to add set a property for an add-on.
+     *     This method checks parameter validity and tries to set a property for an add-on.
      * </p>
      * @return either error result or add-on property.
      **/
     ServiceResult setPropertyValue(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey, @Nonnull String propertyKey, @Nonnull String value);
+
+    /**
+     * Deletes a property from the add-on store.
+     * <p>
+     *     This method checks parameter validity and tries to delete a property for an add-on.
+     * </p>
+     * @return either error result or add-on property.
+     **/
+    ServiceResult deletePropertyValue(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey, @Nonnull String propertyKey);
 
     interface ServiceResult
     {

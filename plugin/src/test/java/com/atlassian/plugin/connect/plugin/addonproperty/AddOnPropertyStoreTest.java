@@ -15,8 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Nullable;
-
+import static com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore.DeleteResult;
 import static com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore.MAX_PROPERTIES_PER_ADD_ON;
 import static com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore.PutResult;
 import static org.junit.Assert.assertEquals;
@@ -86,6 +85,22 @@ public class AddOnPropertyStoreTest
         assertEquals(PutResult.PROPERTY_LIMIT_EXCEEDED, last);
     }
 
+    @Test
+    @NonTransactional
+    public void testDeleteNonExistentProperty() throws Exception
+    {
+        DeleteResult deleteResult = store.deletePropertyValue(ADD_ON_KEY, PROPERTY_KEY);
+        assertEquals(DeleteResult.PROPERTY_NOT_FOUND, deleteResult);
+    }
+
+    @Test
+    @NonTransactional
+    public void testDeleteExistingProperty() throws Exception
+    {
+        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE);
+        DeleteResult deleteResult = store.deletePropertyValue(ADD_ON_KEY, PROPERTY_KEY);
+        assertEquals(DeleteResult.PROPERTY_DELETED, deleteResult);
+    }
 
     public static final class Data implements DatabaseUpdater
     {

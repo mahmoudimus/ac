@@ -259,9 +259,21 @@ public class AddonsResource
             public Response apply(final String propertyValue)
             {
                 ServiceResult serviceResult = addOnPropertyService.setPropertyValue(user, sourcePluginKey, addOnKey, propertyKey, propertyValue);
-                return Response.status(serviceResult.getHttpStatusCode()).cacheControl(never()).build();
+                return getResponseFromServiceResult(serviceResult);
             }
         });
+    }
+
+    @DELETE
+    @Path ("{addonKey}/properties/{propertyKey}")
+    public Response deleteAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam("propertyKey") final String propertyKey, @Context HttpServletRequest request)
+    {
+        final UserProfile user = userManager.getRemoteUser(request);
+        // can be null, it is checked in the service.
+        final String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(request);
+
+        ServiceResult serviceResult = addOnPropertyService.deletePropertyValue(user, sourcePluginKey, addOnKey, propertyKey);
+        return getResponseFromServiceResult(serviceResult);
     }
 
     private RestAddons getAddonsByType(RestAddonType type)
@@ -349,9 +361,13 @@ public class AddonsResource
 
     private Response getResponseForMessageAndStatus(final String message, final Response.Status status)
     {
-        RestResult error = new RestResult(status.getStatusCode(), message);
-        return Response.status(status)
-                .entity(error)
+        RestResult result = new RestResult(status.getStatusCode(), message);
+        Response.ResponseBuilder responseBuilder = Response.status(status);
+        if (status != Response.Status.NO_CONTENT)
+        {
+            responseBuilder.entity(result);
+        }
+        return responseBuilder
                 .cacheControl(never())
                 .build();
     }

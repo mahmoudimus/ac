@@ -39,7 +39,8 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         PROPERTY_NOT_FOUND(HttpStatus.SC_NOT_FOUND, "Property with key not found."),
         ACCESS_TO_OTHER_DATA_FORBIDDEN(HttpStatus.SC_FORBIDDEN, "An add-on may only access it's own data"),
         INVALID_PROPERTY_VALUE(HttpStatus.SC_BAD_REQUEST, "Property value must be a valid JSON object"),
-        NOT_AUTHENTICATED(HttpStatus.SC_UNAUTHORIZED, "Access to this resource must be authenticated as an add-on");
+        NOT_AUTHENTICATED(HttpStatus.SC_UNAUTHORIZED, "Access to this resource must be authenticated as an add-on"),
+        PROPERTY_DELETED(HttpStatus.SC_NO_CONTENT, null);
 
         private final int httpStatusCode;
         private final String message;
@@ -74,7 +75,7 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         this.userManager = checkNotNull(userManager);
     }
 
-    private ValidationResult<GetPropertyInput> validateGetPropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey)
+    private ValidationResult<GetOrDeletePropertyInput> validateGetPropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey)
     {
         if (!loggedIn(user))
         {
@@ -88,7 +89,7 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         {
             return ValidationResult.fromError(ServiceResultImpl.KEY_TOO_LONG);
         }
-        return ValidationResult.fromValue(new GetPropertyInput(addOnKey, propertyKey));
+        return ValidationResult.fromValue(new GetOrDeletePropertyInput(addOnKey, propertyKey));
     }
 
     private boolean isSysAdmin(final UserProfile user)
@@ -104,10 +105,10 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
     @Override
     public Either<ServiceResult, AddOnProperty> getPropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey)
     {
-        ValidationResult<GetPropertyInput> validationResult = validateGetPropertyValue(user, sourceAddOnKey, addOnKey, propertyKey);
+        ValidationResult<GetOrDeletePropertyInput> validationResult = validateGetPropertyValue(user, sourceAddOnKey, addOnKey, propertyKey);
         if (validationResult.isValid())
         {
-            GetPropertyInput input = validationResult.getValue().getOrNull();
+            GetOrDeletePropertyInput input = validationResult.getValue().getOrNull();
             Option<AddOnProperty> propertyValue = store.getPropertyValue(input.getAddOnKey(), input.getPropertyKey());
             return propertyValue.toRight(Suppliers.ofInstance((ServiceResult)ServiceResultImpl.PROPERTY_NOT_FOUND));
         }
@@ -152,7 +153,54 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
                 case PROPERTY_CREATED: return ServiceResultImpl.PROPERTY_CREATED;
                 case PROPERTY_UPDATED: return ServiceResultImpl.PROPERTY_UPDATED;
                 case PROPERTY_LIMIT_EXCEEDED: return ServiceResultImpl.MAXIMUM_PROPERTIES_EXCEEDED;
-                default: throw new IllegalStateException();
+                default:
+                {
+                    log.error("PutResult case not covered. Method setPropertyValue has returned an enum for which there is no corresponding ServiceResult.");
+                    throw new IllegalStateException("PutResult case not covered.");
+                }
+            }
+        }
+        else
+        {
+            return validationResult.getError().getOrNull();
+        }
+    }
+
+    
+    private ValidationResult<GetOrDeletePropertyInput> validateDeletePropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey)
+    {
+        if (!loggedIn(user))
+        {
+            return ValidationResult.fromError(ServiceResultImpl.NOT_AUTHENTICATED);
+        }
+        if (!pluginHasPermissions(sourceAddOnKey,addOnKey) && !isSysAdmin(user))
+        {
+            return ValidationResult.fromError(ServiceResultImpl.ACCESS_TO_OTHER_DATA_FORBIDDEN);
+        }
+        if (propertyKey.length() > AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH)
+        {
+            return ValidationResult.fromError(ServiceResultImpl.KEY_TOO_LONG);
+        }
+        return ValidationResult.fromValue(new GetOrDeletePropertyInput(addOnKey, propertyKey));
+    }
+
+    @Override
+    public ServiceResult deletePropertyValue(@Nullable final UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey)
+    {
+        ValidationResult<GetOrDeletePropertyInput> validationResult = validateDeletePropertyValue(user, sourceAddOnKey, checkNotNull(addOnKey), checkNotNull(propertyKey));
+        if (validationResult.isValid())
+        {
+            GetOrDeletePropertyInput input = validationResult.getValue().getOrNull();
+            AddOnPropertyStore.DeleteResult deleteResult = store.deletePropertyValue(input.addOnKey, input.propertyKey);
+            switch (deleteResult)
+            {
+                case PROPERTY_DELETED: return ServiceResultImpl.PROPERTY_DELETED;
+                case PROPERTY_NOT_FOUND: return ServiceResultImpl.PROPERTY_NOT_FOUND;
+                default:
+                {
+                    log.error("DeleteResult case not covered. Method deletePropertyValue has returned an enum for which there is no corresponding ServiceResult.");
+                    throw new IllegalStateException("DeleteResult case not covered.");
+                }
             }
         }
         else
@@ -166,12 +214,12 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         return requestKey != null && requestKey.equals(addOnKey);
     }
 
-    private class GetPropertyInput
+    private class GetOrDeletePropertyInput
     {
         final String addOnKey;
         final String propertyKey;
 
-        public GetPropertyInput(final String addOnKey, final String propertyKey)
+        public GetOrDeletePropertyInput(final String addOnKey, final String propertyKey)
         {
             this.addOnKey = addOnKey;
             this.propertyKey = propertyKey;
@@ -189,12 +237,12 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
     }
     private class SetPropertyInput
     {
-        final GetPropertyInput input;
+        final GetOrDeletePropertyInput input;
         final String value;
 
         public SetPropertyInput(final String addOnKey, final String propertyKey, final String value)
         {
-            this.input = new GetPropertyInput(addOnKey,propertyKey);
+            this.input = new GetOrDeletePropertyInput(addOnKey,propertyKey);
             this.value = value;
         }
 

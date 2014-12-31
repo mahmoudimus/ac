@@ -83,6 +83,30 @@ public class AddOnPropertyStore
         });
     }
 
+    public DeleteResult deletePropertyValue(@Nonnull final String addOnKey, @Nonnull final String propertyKey)
+    {
+        checkNotNull(addOnKey);
+        checkNotNull(propertyKey);
+
+        return ao.executeInTransaction(new TransactionCallback<DeleteResult>()
+        {
+            @Override
+            public DeleteResult doInTransaction()
+            {
+                if (existsProperty(addOnKey, propertyKey))
+                {
+                    AddOnPropertyAO propertyAO = getAddOnPropertyForKey(addOnKey, propertyKey);
+                    ao.delete(propertyAO);
+                    return DeleteResult.PROPERTY_DELETED;
+                }
+                else
+                {
+                    return DeleteResult.PROPERTY_NOT_FOUND;
+                }
+            }
+        });
+    }
+
     private boolean existsProperty(@Nonnull final String addOnKey, @Nonnull final String propertyKey)
     {
         return getAddOnPropertyForKey(addOnKey, propertyKey) != null;
@@ -90,8 +114,8 @@ public class AddOnPropertyStore
     
     public List<String> getAllPropertyKeysForAddOnKey(@Nonnull final String addOnKey)
     {
-        ImmutableList<AddOnPropertyAO> build = ImmutableList.<AddOnPropertyAO>builder().add(getAddOnPropertyAOArrayForAddOnKey(addOnKey)).build();
-        return Lists.transform(build, new Function<AddOnPropertyAO, String>()
+        ImmutableList<AddOnPropertyAO> addOnPropertyList = ImmutableList.<AddOnPropertyAO>builder().add(getAddOnPropertyAOArrayForAddOnKey(addOnKey)).build();
+        return Lists.transform(addOnPropertyList, new Function<AddOnPropertyAO, String>()
         {
             @Override
             public String apply(final AddOnPropertyAO input)
@@ -123,6 +147,12 @@ public class AddOnPropertyStore
         PROPERTY_CREATED,
         PROPERTY_UPDATED,
         PROPERTY_LIMIT_EXCEEDED
+    }
+
+    public enum DeleteResult
+    {
+        PROPERTY_DELETED,
+        PROPERTY_NOT_FOUND
     }
 }
 
