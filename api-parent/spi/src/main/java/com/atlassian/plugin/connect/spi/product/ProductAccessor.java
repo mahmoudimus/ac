@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.spi.product;
 
 import com.atlassian.extras.api.ProductLicense;
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.web.Condition;
 
-import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -30,5 +30,5 @@ public interface ProductAccessor extends HostProperties
 
     boolean needsAdminPageNameEscaping();
 
-    Iterable<ProductLicense> getProductLicenses();
+    Option<ProductLicense> getProductLicense();
 }
