@@ -288,11 +288,6 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.webhooks</groupId>
-            <artifactId>atlassian-webhooks-spi</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.webhooks</groupId>
             <artifactId>atlassian-webhooks-plugin</artifactId>
             <version>${atlassian.webhooks.version}</version>
             <scope>provided</scope>
@@ -458,7 +453,7 @@
                 <artifactId>maven-amps-plugin</artifactId>
                 <configuration>
                     <enableDevToolbox>true</enableDevToolbox>
-                    <enableFastdev>false</enableFastdev>
+                    <enableFastdev>true</enableFastdev>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <versionOverridesPath>${basedir}/../bin/amps-overrides.properties</versionOverridesPath>
