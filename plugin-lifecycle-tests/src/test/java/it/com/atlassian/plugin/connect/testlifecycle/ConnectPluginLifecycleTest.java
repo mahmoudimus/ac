@@ -243,7 +243,8 @@ public class ConnectPluginLifecycleTest
 
     }
 
-    @Test
+    // TODO: Re-enable when CONFDEV-31285 is fixed
+    // @Test
     public void upgradingConnectEnablesAddon() throws Exception
     {
         theConnectPlugin = installConnectPlugin();
@@ -316,7 +317,8 @@ public class ConnectPluginLifecycleTest
 
     }
 
-    @Test
+    // TODO: Re-enable when CONFDEV-31285 is fixed
+    // @Test
     public void upgradingConnectEnablesMultipleAddons() throws Exception
     {
         theConnectPlugin = installConnectPlugin();
