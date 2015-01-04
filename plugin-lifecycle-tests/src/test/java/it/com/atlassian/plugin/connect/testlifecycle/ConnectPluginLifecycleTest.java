@@ -13,7 +13,6 @@ import com.google.common.collect.Lists;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -244,8 +243,8 @@ public class ConnectPluginLifecycleTest
 
     }
 
-    @Ignore("Re-enable when CONFDEV-31285 is fixed")
-    @Test
+    // TODO: Re-enable when CONFDEV-31285 is fixed
+    // @Test
     public void upgradingConnectEnablesAddon() throws Exception
     {
         theConnectPlugin = installConnectPlugin();
@@ -318,8 +317,8 @@ public class ConnectPluginLifecycleTest
 
     }
 
-    @Ignore("Re-enable when CONFDEV-31285 is fixed")
-    @Test
+    // TODO: Re-enable when CONFDEV-31285 is fixed
+    // @Test
     public void upgradingConnectEnablesMultipleAddons() throws Exception
     {
         theConnectPlugin = installConnectPlugin();
