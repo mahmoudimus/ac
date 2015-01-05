@@ -37,7 +37,7 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
     {
         PROPERTY_UPDATED(HttpStatus.SC_OK, "Property updated."),
         PROPERTY_CREATED(HttpStatus.SC_CREATED, "Property created."),
-        KEY_TOO_LONG(HttpStatus.SC_BAD_REQUEST, String.format("The property key cannot be longer than %s bytes.", AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH)),
+        KEY_TOO_LONG(HttpStatus.SC_BAD_REQUEST, String.format("The property key cannot be longer than %s characters.", AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH)),
         MAXIMUM_PROPERTIES_EXCEEDED(HttpStatus.SC_CONFLICT, String.format("Maximum number of properties allowed to be stored (%s) has been reached.", AddOnPropertyStore.MAX_PROPERTIES_PER_ADD_ON)),
         PROPERTY_NOT_FOUND(HttpStatus.SC_NOT_FOUND, "Property with key not found."),
         ACCESS_TO_OTHER_DATA_FORBIDDEN(HttpStatus.SC_FORBIDDEN, "An add-on may only access it's own data"),
