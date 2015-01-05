@@ -11,6 +11,7 @@ import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.user.UserAccessor;
+import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.sal.api.user.UserKey;
@@ -36,22 +37,31 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith (MockitoJUnitRunner.class)
 public class ConfluenceModuleContextFilterTest
 {
-    @Mock private PermissionManager permissionManager;
-    @Mock private UserAccessor userAccessor;
-    @Mock private UserManager userManager;
-    @Mock private SpaceManager spaceManager;
-    @Mock private PageManager pageManager;
-    @Mock private ContentEntityManager contentEntityManager;
+    @Mock
+    private PermissionManager permissionManager;
+    @Mock
+    private UserAccessor userAccessor;
+    @Mock
+    private UserManager userManager;
+    @Mock
+    private SpaceManager spaceManager;
+    @Mock
+    private PageManager pageManager;
+    @Mock
+    private ContentEntityManager contentEntityManager;
+
+    @Mock
+    private PluginAccessor pluginAccessor;
 
     private ConfluenceModuleContextFilter filter;
 
     @Before
     public void setup()
     {
-        this.filter = new ConfluenceModuleContextFilter(permissionManager, userAccessor, userManager, spaceManager, pageManager, contentEntityManager);
+        filter = new ConfluenceModuleContextFilter(pluginAccessor, permissionManager, userAccessor, userManager, spaceManager, pageManager, contentEntityManager);
         when(userAccessor.getExistingUserByKey(any(UserKey.class))).thenReturn(mock(ConfluenceUser.class));
     }
 
