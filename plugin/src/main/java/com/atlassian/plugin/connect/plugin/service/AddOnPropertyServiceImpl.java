@@ -206,34 +206,33 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         }
         else
         {
-            return validationResult.getError().getOrNull();
+            return validationResult.getError().get();
         }
     }
-    private ValidationResult<ListPropertiesInput> validateListProperties(final UserProfile user, final String sourcePluginKey, final String addOnKey)
+    private ValidationResult<String> validateListProperties(final UserProfile user, final String sourcePluginKey, final String addOnKey)
     {
         if (!loggedIn(user))
         {
             return ValidationResult.fromError(ServiceResultImpl.NOT_AUTHENTICATED);
         }
-        if (!pluginHasPermissions(sourcePluginKey,addOnKey))
+        if (!pluginHasPermissions(sourcePluginKey,addOnKey) && !isSysAdmin(user))
         {
             return ValidationResult.fromError(ServiceResultImpl.ACCESS_TO_OTHER_DATA_FORBIDDEN);
         }
-        return ValidationResult.fromValue(new ListPropertiesInput(addOnKey));
+        return ValidationResult.fromValue(addOnKey);
     }
 
     @Override
     public Either<ServiceResult, AddOnPropertyIterable> listProperties(@Nullable final UserProfile user, @Nullable final String sourcePluginKey, @Nonnull final String addOnKey)
     {
-        ValidationResult<ListPropertiesInput> validationResult = validateListProperties(user, sourcePluginKey, checkNotNull(addOnKey));
+        ValidationResult<String> validationResult = validateListProperties(user, sourcePluginKey, checkNotNull(addOnKey));
         if (validationResult.isValid())
         {
-            ListPropertiesInput input = validationResult.getValue().getOrNull();
-            AddOnPropertyIterable propertiesIterable = store.getAllPropertiesForAddOnKey(input.addOnKey);
+            String input = validationResult.getValue().getOrNull();
+            AddOnPropertyIterable propertiesIterable = store.getAllPropertiesForAddOnKey(input);
             return Either.right(propertiesIterable);
-
         }
-        return Either.left(validationResult.getError().getOrNull());
+        return Either.left(validationResult.getError().get());
     }
 
     private boolean pluginHasPermissions(String requestKey, String addOnKey)
@@ -299,21 +298,6 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         {
             log.debug("Invalid json when setting property value for plugin.");
             return false;
-        }
-    }
-
-    private class ListPropertiesInput
-    {
-        final String addOnKey;
-
-        public ListPropertiesInput(final String addOnKey)
-        {
-            this.addOnKey = addOnKey;
-        }
-
-        public String getAddOnKey()
-        {
-            return addOnKey;
         }
     }
 }

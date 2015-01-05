@@ -12,7 +12,8 @@ import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
 import net.java.ao.test.jdbc.NonTransactional;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
-import org.hamcrest.collection.IsIterableContainingInOrder;
+import org.apache.commons.lang3.StringUtils;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,6 +61,15 @@ public class AddOnPropertyStoreTest
                 return input.getKey().equals(PROPERTY_KEY) && input.getValue().equals(VALUE);
             }
         }));
+    }
+
+    @Test
+    @NonTransactional
+    public void testCreatePropertyWithBigValue()
+    {
+        String bigValue = StringUtils.repeat('.' , 65000);
+        PutResult putResult = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, bigValue);
+        assertEquals(PutResult.PROPERTY_CREATED, putResult);
     }
 
     @Test
@@ -125,7 +135,7 @@ public class AddOnPropertyStoreTest
         Iterable<AddOnProperty> result = store.getAllPropertiesForAddOnKey(ADD_ON_KEY);
 
         assertThat(result,
-                IsIterableContainingInOrder.contains(propertyList.toArray()));
+                Matchers.contains(propertyList.toArray()));
     }
 
     @Test

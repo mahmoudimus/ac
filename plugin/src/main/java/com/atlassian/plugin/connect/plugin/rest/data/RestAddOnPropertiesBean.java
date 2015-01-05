@@ -5,7 +5,6 @@ import com.google.common.collect.Iterables;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.util.List;
-import javax.annotation.Nullable;
 
 import static com.google.common.collect.ImmutableList.copyOf;
 
@@ -25,9 +24,9 @@ public class RestAddOnPropertiesBean
         properties = copyOf(Iterables.transform(keys, new Function<String, RestAddOnPropertyBean>()
         {
             @Override
-            public RestAddOnPropertyBean apply(@Nullable final String key)
+            public RestAddOnPropertyBean apply(final String key)
             {
-                return new RestAddOnPropertyBean(baseURL + key, key);
+                return new RestAddOnPropertyBean(baseURL + "/" + key, key);
             }
         }));
     }

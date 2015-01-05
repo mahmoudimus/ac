@@ -234,7 +234,7 @@ public class AddonsResource
             @Override
             public Response apply(final AddOnPropertyIterable input)
             {
-                String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties/";
+                String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties";
                 return Response.ok().entity(RestAddOnPropertiesBean.valueOf(input.getPropertyKeysIterable(), baseURL)).cacheControl(never()).build();
             }
         });
@@ -261,7 +261,7 @@ public class AddonsResource
             @Override
             public Response apply(final AddOnProperty input)
             {
-                String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties/";
+                String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties";
                 return Response.ok().entity(RestAddOnProperty.valueOf(input, baseURL)).cacheControl(never()).build();
             }
         });

@@ -16,7 +16,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collections;
@@ -178,12 +177,26 @@ public class AddOnPropertyServiceImplTest
         testDeleteNonExistingProperty(null);
     }
 
-    @Test
-    public void testListProperties() throws Exception
+    private void testListProperties(final String sourcePluginKey)
     {
-        when(store.getAllPropertiesForAddOnKey(addOnKey)).thenReturn(new AddOnPropertyIterable(Collections.<AddOnProperty>emptyList()));
-        service.listProperties(user, addOnKey, addOnKey);
-        Mockito.verify(store).getAllPropertiesForAddOnKey(addOnKey);
+        AddOnPropertyIterable emptyIterable = new AddOnPropertyIterable(Collections.<AddOnProperty>emptyList());
+        when(store.getAllPropertiesForAddOnKey(addOnKey)).thenReturn(emptyIterable);
+        Either<ServiceResult, AddOnPropertyIterable> result = service.listProperties(user, sourcePluginKey, addOnKey);
+
+        assertEquals(emptyIterable, result.right().get());
+    }
+
+    @Test
+    public void testListPropertiesWhenPlugin() throws Exception
+    {
+        testListProperties(addOnKey);
+    }
+
+    @Test
+    public void testListPropertiesWhenSysAdmin() throws Exception
+    {
+        when(userManager.isSystemAdmin(userKey)).thenReturn(true);
+        testListProperties(null);
     }
 
     @Test

@@ -2,12 +2,8 @@ package com.atlassian.plugin.connect.plugin.ao;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.google.common.hash.HashCode;
-import com.google.common.hash.Hashing;
 
 import java.util.Iterator;
-import java.util.List;
-import javax.annotation.Nullable;
 
 /**
  * This class represents an add-on property list which consist of a key and a value.
@@ -34,21 +30,31 @@ public class AddOnPropertyIterable implements Iterable<AddOnProperty>
         return Iterables.transform(properties, new Function<AddOnProperty, String>()
         {
             @Override
-            public String apply(@Nullable final AddOnProperty input)
+            public String apply(final AddOnProperty property)
             {
-                return input.getKey();
+                return property.getKey();
             }
         });
     }
 
-    public static AddOnPropertyIterable fromAddOnPropertyAOList(List<AddOnPropertyAO> propertyList)
+    @Override
+    public boolean equals(final Object obj)
+    {
+        if (obj == null) {return false;}
+        if (getClass() != obj.getClass()) {return false;}
+        final AddOnPropertyIterable other = (AddOnPropertyIterable) obj;
+
+        return Iterables.elementsEqual(properties, other);
+    }
+
+    public static AddOnPropertyIterable fromAddOnPropertyAOList(Iterable<AddOnPropertyAO> propertyList)
     {
         return new AddOnPropertyIterable(Iterables.transform(propertyList, new Function<AddOnPropertyAO, AddOnProperty>()
         {
             @Override
-            public AddOnProperty apply(@Nullable final AddOnPropertyAO input)
+            public AddOnProperty apply(final AddOnPropertyAO propertyAO)
             {
-                return new AddOnProperty(input.getPropertyKey(), input.getValue());
+                return new AddOnProperty(propertyAO.getPropertyKey(), propertyAO.getValue());
             }
         }));
     }
