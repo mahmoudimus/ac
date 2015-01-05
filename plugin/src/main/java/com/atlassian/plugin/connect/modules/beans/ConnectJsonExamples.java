@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
@@ -34,7 +33,6 @@ import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import org.osgi.framework.Constants;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,7 +51,6 @@ import static com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean.
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
-import static com.google.common.base.Strings.nullToEmpty;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ConnectJsonExamples
@@ -109,6 +106,7 @@ public class ConnectJsonExamples
     public static final String RENDER_MODE_EXAMPLE_DEFAULT = createRenderModesExampleDefault();
 
     public static final String EMBEDDED_STATIC_MACRO_EXAMPLE = MACRO_RENDER_MODES_EXAMPLE;
+    public static final String ATTACHMENT_SIZE_ALIAS = "attachmentSize";
 
     private static String createRenderModesExampleWord()
     {
@@ -691,7 +689,7 @@ public class ConnectJsonExamples
     private static String createEntityPropertyExample()
     {
         List<EntityPropertyIndexExtractionConfigurationBean> extractionConfiguration = Lists.newArrayList(
-                new EntityPropertyIndexExtractionConfigurationBean("attachment.size", EntityPropertyIndexType.number, "attachmentSize"),
+                new EntityPropertyIndexExtractionConfigurationBean("attachment.size", EntityPropertyIndexType.number, ATTACHMENT_SIZE_ALIAS),
                 new EntityPropertyIndexExtractionConfigurationBean("attachment.extension", EntityPropertyIndexType.text, "attachmentExtension"),
                 new EntityPropertyIndexExtractionConfigurationBean("attachment.updated", EntityPropertyIndexType.date, "attachmentUpdatedDate")
         );
@@ -709,7 +707,7 @@ public class ConnectJsonExamples
 
     private static String createEntityPropertyIndexExtractionConfigurationExample()
     {
-        EntityPropertyIndexExtractionConfigurationBean bean = new EntityPropertyIndexExtractionConfigurationBean("attachment.size", EntityPropertyIndexType.number, "attachmentSize");
+        EntityPropertyIndexExtractionConfigurationBean bean = new EntityPropertyIndexExtractionConfigurationBean("attachment.size", EntityPropertyIndexType.number, ATTACHMENT_SIZE_ALIAS);
 
         return gson.toJson(bean);
     }
