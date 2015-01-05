@@ -5,6 +5,7 @@ import com.atlassian.fugue.Either;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.rest.data.ETag;
+import com.atlassian.plugin.connect.plugin.util.ConfigurationUtils;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
@@ -28,7 +29,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class AddOnPropertyStore
 {
     private final ActiveObjects ao;
-    public static final int MAX_PROPERTIES_PER_ADD_ON = 100;
+
+    private static final String MAX_PROPERTIES_SYSTEM_PROPERTY = "com.atlassian.plugin.connect.add_on_properties.max_properties";
+    private static final int MAX_PROPERTIES_DEFAULT = 100;
+    public static final int MAX_PROPERTIES_PER_ADD_ON = ConfigurationUtils.getIntSystemProperty(MAX_PROPERTIES_SYSTEM_PROPERTY, MAX_PROPERTIES_DEFAULT);
 
     @Autowired
     public AddOnPropertyStore(final ActiveObjects ao) {this.ao = checkNotNull(ao);}
