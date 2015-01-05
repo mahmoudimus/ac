@@ -234,9 +234,6 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             {
                 log.info("Created user '{}'", user.getName());
             }
-
-            // Set connect attributes on user
-            applicationService.storeUserAttributes(getApplication(), user.getName(), buildConnectAddOnUserAttribute(getApplication().getName()));
         }
         catch (InvalidUserException iue)
         {
@@ -257,6 +254,9 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             // --> handle the race condition of something else creating this user at around the same time (as unlikely as that should be)
             user = findUserWithFastFailure(username, e);
         }
+
+        // Set connect attributes on user -- at this point we are confident we have a user
+        applicationService.storeUserAttributes(getApplication(), user.getName(), buildConnectAddOnUserAttribute(getApplication().getName()));
 
         return user;
     }
