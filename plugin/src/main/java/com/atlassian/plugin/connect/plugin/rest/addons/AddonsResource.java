@@ -235,7 +235,7 @@ public class AddonsResource
             public Response apply(final AddOnPropertyIterable input)
             {
                 String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties";
-                return Response.ok().entity(RestAddOnPropertiesBean.valueOf(input.getPropertyKeysIterable(), baseURL)).cacheControl(never()).build();
+                return Response.ok().entity(RestAddOnPropertiesBean.valueOf(input.getPropertyKeys(), baseURL)).cacheControl(never()).build();
             }
         });
     }

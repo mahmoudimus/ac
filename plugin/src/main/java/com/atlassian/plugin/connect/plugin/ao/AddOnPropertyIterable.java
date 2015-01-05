@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.ao;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import java.util.Iterator;
 
@@ -12,7 +13,7 @@ import java.util.Iterator;
  */
 public class AddOnPropertyIterable implements Iterable<AddOnProperty>
 {
-    final Iterable<AddOnProperty> properties;
+    private final Iterable<AddOnProperty> properties;
 
     public AddOnPropertyIterable(final Iterable<AddOnProperty> properties)
     {
@@ -25,7 +26,7 @@ public class AddOnPropertyIterable implements Iterable<AddOnProperty>
         return properties.iterator();
     }
 
-    public Iterable<String> getPropertyKeysIterable()
+    public Iterable<String> getPropertyKeys()
     {
         return Iterables.transform(properties, new Function<AddOnProperty, String>()
         {
@@ -49,7 +50,7 @@ public class AddOnPropertyIterable implements Iterable<AddOnProperty>
 
     public static AddOnPropertyIterable fromAddOnPropertyAOList(Iterable<AddOnPropertyAO> propertyList)
     {
-        return new AddOnPropertyIterable(Iterables.transform(propertyList, new Function<AddOnPropertyAO, AddOnProperty>()
+        return new AddOnPropertyIterable(Lists.transform(Lists.newArrayList(propertyList), new Function<AddOnPropertyAO, AddOnProperty>()
         {
             @Override
             public AddOnProperty apply(final AddOnPropertyAO propertyAO)
