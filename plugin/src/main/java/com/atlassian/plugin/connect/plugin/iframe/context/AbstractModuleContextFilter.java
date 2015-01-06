@@ -17,9 +17,9 @@ import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
-import javax.annotation.Nullable;
 
 import static com.atlassian.fugue.Option.none;
 import static com.atlassian.fugue.Option.some;

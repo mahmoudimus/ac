@@ -22,8 +22,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product;
 import static org.hamcrest.CoreMatchers.is;

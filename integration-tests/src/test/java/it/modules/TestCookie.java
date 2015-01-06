@@ -19,8 +19,8 @@ import static org.junit.Assert.assertEquals;
 
 public class TestCookie extends ConnectWebDriverTestBase
 {
-    private static final String ADDON_GENERALPAGE = "ac-general-page";
-    private static final String ADDON_GENERALPAGE_NAME = "AC General Page";
+    private static final String ADDON_GENERALPAGE = "ac-general-cookie-page";
+    private static final String ADDON_GENERALPAGE_NAME = "AC Cookie Page";
 
     private static ConnectRunner remotePlugin;
 

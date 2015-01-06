@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.19-SNAPSHOT</version>
+        <version>1.1.20-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -288,11 +288,6 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.webhooks</groupId>
-            <artifactId>atlassian-webhooks-spi</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.webhooks</groupId>
             <artifactId>atlassian-webhooks-plugin</artifactId>
             <version>${atlassian.webhooks.version}</version>
             <scope>provided</scope>
@@ -458,7 +453,7 @@
                 <artifactId>maven-amps-plugin</artifactId>
                 <configuration>
                     <enableDevToolbox>true</enableDevToolbox>
-                    <enableFastdev>false</enableFastdev>
+                    <enableFastdev>true</enableFastdev>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <versionOverridesPath>${basedir}/../bin/amps-overrides.properties</versionOverridesPath>
@@ -746,6 +741,17 @@
                             <workingDirectory>../plugin</workingDirectory>
                             <nodeVersion>${node.version}</nodeVersion>
                             <npmVersion>${npm.version}</npmVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm connect-js plugin install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <workingDirectory>../plugin</workingDirectory>
+                            <arguments>install ${atlassian.connect-js.path}</arguments>
                         </configuration>
                     </execution>
                     <execution>
@@ -1214,10 +1220,21 @@
                                 <goals>
                                     <goal>install-node-and-npm</goal>
                                 </goals>
-                                <phase>prepare-package</phase>
+                                <phase>generate-resources</phase>
                                 <configuration>
                                     <nodeVersion>${node.version}</nodeVersion>
                                     <npmVersion>${npm.version}</npmVersion>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>npm connect-js install</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <workingDirectory>../docs</workingDirectory>
+                                    <arguments>install ${atlassian.connect-js.path}</arguments>
                                 </configuration>
                             </execution>
                             <execution>
