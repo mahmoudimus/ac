@@ -8,7 +8,6 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.rest.data.RestContact;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
@@ -38,7 +37,6 @@ import java.util.UUID;
 
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -219,7 +217,7 @@ public class AddonsResourceTest
         assertThat(addonInterpretation.host.contacts.get(0).name, equalTo("Charlie Atlassian"));
         assertThat(addonInterpretation.host.contacts.get(0).email, equalTo("charlie@atlassian.com"));
         assertThat(addonInterpretation.license, notNullValue());
-        assertThat(addonInterpretation.license.status, equalTo("ACTIVE"));
+        assertThat(addonInterpretation.license.active, equalTo(true));
         assertThat(addonInterpretation.license.type, equalTo("TESTING"));
         assertThat(addonInterpretation.license.evaluation, equalTo(true));
         assertThat(addonInterpretation.license.supportEntitlementNumber, equalTo("SEN-500"));
@@ -427,7 +425,7 @@ public class AddonsResourceTest
     {
 
         @JsonProperty
-        public String status;
+        public boolean active;
 
         @JsonProperty
         public String type;

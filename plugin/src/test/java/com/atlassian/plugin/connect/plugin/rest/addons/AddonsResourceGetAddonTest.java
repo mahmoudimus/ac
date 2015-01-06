@@ -10,7 +10,6 @@ import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnInstaller;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
-import com.atlassian.plugin.connect.plugin.license.LicenseStatus;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddonLicense;
@@ -81,7 +80,8 @@ public class AddonsResourceGetAddonTest
     private final boolean isPluginEnabled;
 
     public AddonsResourceGetAddonTest(Class<? extends RestLimitedAddon> expectedEntityClass,
-                                      boolean isSystemAdmin, boolean isPluginEnabled) {
+                                      boolean isSystemAdmin, boolean isPluginEnabled)
+    {
 
         MockitoAnnotations.initMocks(this);
         this.expectedEntityClass = expectedEntityClass;
@@ -114,7 +114,7 @@ public class AddonsResourceGetAddonTest
         String version = "0.1";
         PluginState state = isPluginEnabled ? PluginState.INSTALLED : PluginState.DISABLED;
         String productName = Product.JIRA.getName();
-        LicenseStatus licenseStatus = LicenseStatus.ACTIVE;
+        boolean isLicenseActive = true;
         LicenseType licenseType = LicenseType.DEVELOPER;
         boolean isEvaluationLicense = false;
         String contactName = "Charlie Atlassian";
@@ -157,8 +157,9 @@ public class AddonsResourceGetAddonTest
         assertThat(limitedAddon.getVersion(), equalTo(version));
         assertThat(limitedAddon.getState(), equalTo(state.name()));
 
-        if (RestAddon.class.isAssignableFrom(expectedEntityClass)) {
-            RestAddon addon = (RestAddon)limitedAddon;
+        if (RestAddon.class.isAssignableFrom(expectedEntityClass))
+        {
+            RestAddon addon = (RestAddon) limitedAddon;
 
             RestHost host = addon.getHost();
             assertThat(host.getProduct(), equalTo(productName));
@@ -167,7 +168,7 @@ public class AddonsResourceGetAddonTest
             assertThat(host.getContacts().get(0).getEmail(), equalTo(contactEmail));
 
             RestAddonLicense license = addon.getLicense();
-            assertThat(license.getStatus(), equalTo(licenseStatus));
+            assertThat(license.isActive(), equalTo(isLicenseActive));
             assertThat(license.getType(), equalTo(licenseType));
             assertThat(license.isEvaluation(), equalTo(isEvaluationLicense));
             assertThat(license.getSupportEntitlementNumber(), equalTo(supportEntitlementNumber));

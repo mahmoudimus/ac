@@ -10,7 +10,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class RestAddonLicense
 {
     @JsonProperty
-    private final LicenseStatus status;
+    private final boolean active;
 
     @JsonProperty
     private final LicenseType type;
@@ -21,20 +21,20 @@ public class RestAddonLicense
     @JsonProperty
     private final String supportEntitlementNumber;
 
-    public RestAddonLicense(@JsonProperty("status") final LicenseStatus status,
+    public RestAddonLicense(@JsonProperty("active") final boolean active,
                             @JsonProperty("type") final LicenseType type,
                             @JsonProperty("evaluation") final boolean evaluation,
                             @JsonProperty("supportEntitlementNumber") String supportEntitlementNumber)
     {
-        this.status = status;
+        this.active = active;
         this.type = type;
         this.evaluation = evaluation;
         this.supportEntitlementNumber = supportEntitlementNumber;
     }
 
-    public LicenseStatus getStatus()
+    public boolean isActive()
     {
-        return status;
+        return active;
     }
 
     public LicenseType getType()

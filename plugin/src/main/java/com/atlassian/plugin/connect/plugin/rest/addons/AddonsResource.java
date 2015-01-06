@@ -256,7 +256,7 @@ public class AddonsResource
         for (PluginLicense license : licenseOption)
         {
             resource = new RestAddonLicense(
-                    LicenseStatus.fromBoolean(license.isActive()),
+                    license.isActive(),
                     license.getLicenseType(),
                     license.isEvaluation(),
                     license.getSupportEntitlementNumber().getOrElse((String) null));
