@@ -54,12 +54,13 @@ public class ConnectAddOnUserAttributeUpgradeTask implements PluginUpgradeTask
     {
         MembershipQuery<String> membershipQuery = queryFor(String.class, EntityDescriptor.user()).childrenOf(EntityDescriptor.group()).withName(ADDON_USER_GROUP_KEY).returningAtMost(ALL_RESULTS);
 
-        List<String> connectAddonUsers = applicationService.searchDirectGroupRelationships(getApplication(), membershipQuery);
+        Application application = getApplication();
+        List<String> connectAddonUsers = applicationService.searchDirectGroupRelationships(application, membershipQuery);
 
         for (String user : connectAddonUsers)
         {
             // Set connect attributes on user
-            applicationService.storeUserAttributes(getApplication(), user, buildConnectAddOnUserAttribute(getApplication().getName()));
+            applicationService.storeUserAttributes(application, user, buildConnectAddOnUserAttribute(application.getName()));
         }
 
         return Collections.emptyList();
