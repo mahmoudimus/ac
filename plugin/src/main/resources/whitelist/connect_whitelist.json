@@ -76,6 +76,6 @@
   "connect.addon.dialog.fail": [
     "addonKey",
     "moduleKey",
-    "status"
+    "statusCode"
   ]
 }
