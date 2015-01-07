@@ -5,7 +5,9 @@ import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Suppliers;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
+import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyIterable;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Preconditions;
@@ -40,7 +42,8 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         ACCESS_TO_OTHER_DATA_FORBIDDEN(HttpStatus.SC_FORBIDDEN, "An add-on may only access it's own data"),
         INVALID_PROPERTY_VALUE(HttpStatus.SC_BAD_REQUEST, "Property value must be a valid JSON object"),
         NOT_AUTHENTICATED(HttpStatus.SC_UNAUTHORIZED, "Access to this resource must be authenticated as an add-on"),
-        PROPERTY_DELETED(HttpStatus.SC_NO_CONTENT, null);
+        PROPERTY_DELETED(HttpStatus.SC_NO_CONTENT, null),
+        ADD_ON_NOT_FOUND(HttpStatus.SC_NOT_FOUND, "Add-on with key not found.");
 
         private final int httpStatusCode;
         private final String message;
@@ -67,39 +70,14 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
 
     private final AddOnPropertyStore store;
     private final UserManager userManager;
+    private final ConnectAddonRegistry connectAddonRegistry;
 
     @Autowired
-    public AddOnPropertyServiceImpl(AddOnPropertyStore store, UserManager userManager)
+    public AddOnPropertyServiceImpl(AddOnPropertyStore store, UserManager userManager, ConnectAddonRegistry connectAddonRegistry)
     {
         this.store = checkNotNull(store);
         this.userManager = checkNotNull(userManager);
-    }
-
-    private ValidationResult<GetOrDeletePropertyInput> validateGetPropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey)
-    {
-        if (!loggedIn(user))
-        {
-            return ValidationResult.fromError(ServiceResultImpl.NOT_AUTHENTICATED);
-        }
-        if (!pluginHasPermissions(sourceAddOnKey, addOnKey) && !isSysAdmin(user))
-        {
-            return ValidationResult.fromError(ServiceResultImpl.ACCESS_TO_OTHER_DATA_FORBIDDEN);
-        }
-        if (propertyKey.length() > AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH)
-        {
-            return ValidationResult.fromError(ServiceResultImpl.KEY_TOO_LONG);
-        }
-        return ValidationResult.fromValue(new GetOrDeletePropertyInput(addOnKey, propertyKey));
-    }
-
-    private boolean isSysAdmin(final UserProfile user)
-    {
-        return userManager.isSystemAdmin(user.getUserKey());
-    }
-
-    private boolean loggedIn(final UserProfile user)
-    {
-        return user != null;
+        this.connectAddonRegistry = checkNotNull(connectAddonRegistry);
     }
 
     @Override
@@ -110,33 +88,12 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         {
             GetOrDeletePropertyInput input = validationResult.getValue().getOrNull();
             Option<AddOnProperty> propertyValue = store.getPropertyValue(input.getAddOnKey(), input.getPropertyKey());
-            return propertyValue.toRight(Suppliers.ofInstance((ServiceResult)ServiceResultImpl.PROPERTY_NOT_FOUND));
+            return propertyValue.toRight(Suppliers.<ServiceResult>ofInstance( ServiceResultImpl.PROPERTY_NOT_FOUND));
         }
         else
         {
             return Either.left(validationResult.getError().getOrNull());
         }
-    }
-
-    private ValidationResult<SetPropertyInput> validateSetPropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, final String propertyKey, final String value)
-    {
-        if (!loggedIn(user))
-        {
-            return ValidationResult.fromError(ServiceResultImpl.NOT_AUTHENTICATED);
-        }
-        if (!pluginHasPermissions(sourceAddOnKey, addOnKey) && !isSysAdmin(user))
-        {
-            return ValidationResult.fromError(ServiceResultImpl.ACCESS_TO_OTHER_DATA_FORBIDDEN);
-        }
-        if (propertyKey.length() > AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH)
-        {
-            return ValidationResult.fromError(ServiceResultImpl.KEY_TOO_LONG);
-        }
-        if (!isJSONValid(value))
-        {
-            return ValidationResult.fromError(ServiceResultImpl.INVALID_PROPERTY_VALUE);
-        }
-        return ValidationResult.fromValue(new SetPropertyInput(addOnKey, propertyKey, value));
     }
 
     @Override
@@ -166,24 +123,6 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         }
     }
 
-    
-    private ValidationResult<GetOrDeletePropertyInput> validateDeletePropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey)
-    {
-        if (!loggedIn(user))
-        {
-            return ValidationResult.fromError(ServiceResultImpl.NOT_AUTHENTICATED);
-        }
-        if (!pluginHasPermissions(sourceAddOnKey,addOnKey) && !isSysAdmin(user))
-        {
-            return ValidationResult.fromError(ServiceResultImpl.ACCESS_TO_OTHER_DATA_FORBIDDEN);
-        }
-        if (propertyKey.length() > AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH)
-        {
-            return ValidationResult.fromError(ServiceResultImpl.KEY_TOO_LONG);
-        }
-        return ValidationResult.fromValue(new GetOrDeletePropertyInput(addOnKey, propertyKey));
-    }
-
     @Override
     public ServiceResult deletePropertyValue(@Nullable final UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey)
     {
@@ -205,8 +144,108 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         }
         else
         {
-            return validationResult.getError().getOrNull();
+            return validationResult.getError().get();
         }
+    }
+
+    @Override
+    public Either<ServiceResult, AddOnPropertyIterable> getAddOnProperties(@Nullable final UserProfile user, @Nullable final String sourcePluginKey, @Nonnull final String addOnKey)
+    {
+        ValidationResult<String> validationResult = validateListProperties(user, sourcePluginKey, checkNotNull(addOnKey));
+        if (validationResult.isValid())
+        {
+            String input = validationResult.getValue().getOrNull();
+            AddOnPropertyIterable propertiesIterable = store.getAllPropertiesForAddOnKey(input);
+            return Either.right(propertiesIterable);
+        }
+        return Either.left(validationResult.getError().get());
+    }
+
+    private Option<ServiceResult> validateCommonParameters(UserProfile user, String sourceAddOnKey, String addOnKey, String propertyKey)
+    {
+        if (!loggedIn(user))
+        {
+            return Option.<ServiceResult>some(ServiceResultImpl.NOT_AUTHENTICATED);
+        }
+        if (!hasAccessToData(user, sourceAddOnKey, addOnKey))
+        {
+            return Option.<ServiceResult>some(ServiceResultImpl.ACCESS_TO_OTHER_DATA_FORBIDDEN);
+        }
+        if (propertyKey.length() > AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH)
+        {
+            return Option.<ServiceResult>some(ServiceResultImpl.KEY_TOO_LONG);
+        }
+        if (!connectAddonRegistry.hasAddonWithKey(addOnKey))
+        {
+            return Option.<ServiceResult>some(ServiceResultImpl.ADD_ON_NOT_FOUND);
+        }
+        return Option.none();
+    }
+
+    private ValidationResult<GetOrDeletePropertyInput> validateGetPropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey)
+    {
+        Option<ServiceResult> validationError = validateCommonParameters(user, sourceAddOnKey, addOnKey, propertyKey);
+        if (validationError.isDefined())
+        {
+            return ValidationResult.fromError(validationError.get());
+        }
+        return ValidationResult.fromValue(new GetOrDeletePropertyInput(addOnKey, propertyKey));
+    }
+
+    private ValidationResult<SetPropertyInput> validateSetPropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, final String propertyKey, final String value)
+    {
+        Option<ServiceResult> validationError = validateCommonParameters(user, sourceAddOnKey, addOnKey, propertyKey);
+        if (validationError.isDefined())
+        {
+            return ValidationResult.fromError(validationError.get());
+        }
+        if (!isJSONValid(value))
+        {
+            return ValidationResult.fromError(ServiceResultImpl.INVALID_PROPERTY_VALUE);
+        }
+        return ValidationResult.fromValue(new SetPropertyInput(addOnKey, propertyKey, value));
+    }
+
+    private ValidationResult<GetOrDeletePropertyInput> validateDeletePropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey)
+    {
+        Option<ServiceResult> validationError = validateCommonParameters(user, sourceAddOnKey, addOnKey, propertyKey);
+        if (validationError.isDefined())
+        {
+            return ValidationResult.fromError(validationError.get());
+        }
+        return ValidationResult.fromValue(new GetOrDeletePropertyInput(addOnKey, propertyKey));
+    }
+
+    private ValidationResult<String> validateListProperties(final UserProfile user, final String sourcePluginKey, final String addOnKey)
+    {
+        if (!loggedIn(user))
+        {
+            return ValidationResult.fromError(ServiceResultImpl.NOT_AUTHENTICATED);
+        }
+        if (!hasAccessToData(user, sourcePluginKey, addOnKey))
+        {
+            return ValidationResult.fromError(ServiceResultImpl.ACCESS_TO_OTHER_DATA_FORBIDDEN);
+        }
+        if (!connectAddonRegistry.hasAddonWithKey(addOnKey))
+        {
+            return ValidationResult.fromError(ServiceResultImpl.ADD_ON_NOT_FOUND);
+        }
+        return ValidationResult.fromValue(addOnKey);
+    }
+
+    private boolean hasAccessToData(final UserProfile user, final String sourcePluginKey, final String addOnKey)
+    {
+        return pluginHasPermissions(sourcePluginKey, addOnKey) || (sourcePluginKey == null && isSysAdmin(user));
+    }
+
+    private boolean isSysAdmin(final UserProfile user)
+    {
+        return userManager.isSystemAdmin(user.getUserKey());
+    }
+
+    private boolean loggedIn(final UserProfile user)
+    {
+        return user != null;
     }
 
     private boolean pluginHasPermissions(String requestKey, String addOnKey)
@@ -235,6 +274,7 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
             return propertyKey;
         }
     }
+
     private class SetPropertyInput
     {
         final GetOrDeletePropertyInput input;

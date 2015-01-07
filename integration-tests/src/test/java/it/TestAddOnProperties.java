@@ -175,6 +175,32 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
         assertEquals(Response.SC_FORBIDDEN, connection.getResponseCode());
     }
 
+    @Test
+    public void testSuccessfulListRequest() throws IOException, URISyntaxException
+    {
+        // should clean all properties before running, else this test depends on previous test failures!
+        final String propertyKey = RandomStringUtils.randomAlphanumeric(15);
+        RestAddOnProperty property = new RestAddOnProperty(propertyKey, "TEST_VALUE", getSelfForPropertyKey(propertyKey));
+
+        int responseCode = executePutRequest(property.key, property.value);
+        assertEquals(Response.SC_CREATED, responseCode);
+
+        URL url = new URL(restPath + "/properties");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setDoInput(true);
+        runner.getSignedRequestHandler().sign(url.toURI(), "GET", null, connection);
+
+        assertEquals(Response.SC_OK, connection.getResponseCode());
+
+        String response = IOUtils.toString(connection.getInputStream());
+        RestAddOnPropertiesBean result = gson.fromJson(response, RestAddOnPropertiesBean.class);
+
+        RestAddOnPropertiesBean expected = RestAddOnPropertiesBean.fromRestAddOnProperties(property);
+        assertEquals(expected, result);
+        assertDeleted(propertyKey);
+    }
+
     private HttpURLConnection executeGetRequest(final String propertyKey, final Option<SignedRequestHandler> signedRequestHandler) throws IOException, URISyntaxException
     {
         URL url = new URL(restPath + "/properties/" + propertyKey);
@@ -259,6 +285,79 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
                     ", value='" + value + '\'' +
                     ", self='" + self + '\'' +
                     '}';
+        }
+    }
+
+    private static class RestAddOnPropertiesBean
+    {
+        @JsonProperty
+        private RestAddOnPropertyBean[] keys;
+
+        public RestAddOnPropertiesBean(@JsonProperty RestAddOnPropertyBean[] keys)
+        {
+            this.keys = keys;
+        }
+
+        @Override
+        public int hashCode() { return new HashCodeBuilder().append(this.keys).toHashCode();}
+
+        @Override
+        public boolean equals(final Object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+            if (getClass() != obj.getClass())
+            {
+                return false;
+            }
+            final RestAddOnPropertiesBean other = (RestAddOnPropertiesBean) obj;
+            return new EqualsBuilder().append(this.keys, other.keys).isEquals();
+        }
+
+        @Override
+        public String toString()
+        {
+            return "RestAddOnPropertiesBean{" +
+                    "properties=" + keys +
+                    '}';
+        }
+
+        static RestAddOnPropertiesBean fromRestAddOnProperties(RestAddOnProperty... properties)
+        {
+            RestAddOnPropertyBean[] propertyBeans = new RestAddOnPropertyBean[properties.length];
+            for (int i = 0; i < properties.length; i++)
+            {
+                propertyBeans[i] = new RestAddOnPropertyBean(properties[i].self, properties[i].key);
+            }
+            return new RestAddOnPropertiesBean(propertyBeans);
+        }
+
+        public static class RestAddOnPropertyBean
+        {
+            @JsonProperty
+            private final String self;
+            @JsonProperty
+            private final String key;
+
+            public RestAddOnPropertyBean(@JsonProperty final String self, @JsonProperty final String key)
+            {
+                this.self = self;
+                this.key = key;
+            }
+
+            @Override
+            public int hashCode() { return new HashCodeBuilder().append(this.self).append(this.key).toHashCode();}
+
+            @Override
+            public boolean equals(final Object obj)
+            {
+                if (obj == null) {return false;}
+                if (getClass() != obj.getClass()) {return false;}
+                final RestAddOnPropertyBean other = (RestAddOnPropertyBean) obj;
+                return new EqualsBuilder().append(this.self, other.self).append(this.key, other.key).isEquals();
+            }
         }
     }
 }

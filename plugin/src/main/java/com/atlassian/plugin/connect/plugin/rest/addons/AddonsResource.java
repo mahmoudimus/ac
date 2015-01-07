@@ -4,12 +4,14 @@ import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.fugue.Either;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
+import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyIterable;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnInstaller;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.rest.RestResult;
+import com.atlassian.plugin.connect.plugin.rest.data.RestAddOnPropertiesBean;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddOnProperty;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddonType;
@@ -212,6 +214,33 @@ public class AddonsResource
     }
 
     @GET
+    @Path ("{addonKey}/properties")
+    public Response getAddOnProperties(@PathParam ("addonKey") final String addOnKey, @Context HttpServletRequest request)
+    {
+        UserProfile user = userManager.getRemoteUser(request);
+
+        String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(request);
+        Either<ServiceResult, AddOnPropertyIterable> result = addOnPropertyService.getAddOnProperties(user, sourcePluginKey, addOnKey);
+
+        return result.fold(new Function<ServiceResult, Response>()
+        {
+            @Override
+            public Response apply(final ServiceResult input)
+            {
+                return getResponseFromServiceResult(input);
+            }
+        }, new Function<AddOnPropertyIterable, Response>()
+        {
+            @Override
+            public Response apply(final AddOnPropertyIterable input)
+            {
+                String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties";
+                return Response.ok().entity(RestAddOnPropertiesBean.valueOf(input.getPropertyKeys(), baseURL)).cacheControl(never()).build();
+            }
+        });
+    }
+
+    @GET
     @Path ("{addonKey}/properties/{propertyKey}")
     public Response getAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam("propertyKey") String propertyKey, @Context HttpServletRequest request)
     {
@@ -232,7 +261,7 @@ public class AddonsResource
             @Override
             public Response apply(final AddOnProperty input)
             {
-                String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties/";
+                String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties";
                 return Response.ok().entity(RestAddOnProperty.valueOf(input, baseURL)).cacheControl(never()).build();
             }
         });
