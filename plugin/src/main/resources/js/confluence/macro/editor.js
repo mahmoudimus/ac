@@ -66,8 +66,8 @@
              * @param {String|Number} [opts.height="50%"] height of the dialog, expressed as either absolute pixels (eg 600) or percent (eg 50%)
              */
             openCustomEditor: function(macroData, opts) {
-                // CE-74: if any macros cause the editor to lose focus before this is executed, this will cause
-                // a HierarchyRequestError in Internet Explorer, so we'll restore focus just in case.
+                // CE-74: if the editor loses focus before getBookmark() is called, a HierarchyRequestError
+                // will occur in Internet Explorer, so restore focus just in case.
                 AJS.Rte.getEditor().focus();
                 var editorSelection = AJS.Rte.getEditor().selection;
                 var bm = editorSelection.getBookmark();
