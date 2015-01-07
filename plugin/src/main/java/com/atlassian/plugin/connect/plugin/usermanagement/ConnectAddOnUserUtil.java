@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.usermanagement;
 
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
+import com.atlassian.crowd.model.user.User;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Collections;
@@ -10,7 +11,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ConnectAddOnUserUtil
 {
-    public static String  usernameForAddon(String addonKey)
+    public static String usernameForAddon(String addonKey)
     {
         checkNotNull(addonKey);
         return Constants.ADDON_USERNAME_PREFIX + addonKey;
@@ -37,6 +38,29 @@ public class ConnectAddOnUserUtil
     {
         return "synch." + applicationName + ".atlassian-connect-user";
     }
+
+    /**
+     * Will validate that a user's username adheres to the correct AddOn format
+     * @param user the user to validate
+     * @return true if the user has a valid username
+     */
+    public static boolean validAddOnUsername(User user)
+    {
+        String name = user.getName();
+        return name != null && name.startsWith(Constants.ADDON_USERNAME_PREFIX);
+    }
+
+    /**
+     * Will validate that the user has an email address that equals the desired AddOn email ({@link Constants#ADDON_USER_EMAIL_ADDRESS}).
+     * @param user the user to validate
+     * @return true if the email address is valid
+     */
+    public static boolean validAddOnEmailAddress(User user)
+    {
+        return Constants.ADDON_USER_EMAIL_ADDRESS.equals(user.getEmailAddress());
+    }
+
+
 
     public static class Constants
     {

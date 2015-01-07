@@ -8,6 +8,7 @@ import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
+import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.search.EntityDescriptor;
 import com.atlassian.crowd.search.query.membership.MembershipQuery;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
@@ -19,6 +20,8 @@ import static com.atlassian.crowd.search.builder.QueryBuilder.queryFor;
 import static com.atlassian.crowd.search.query.entity.EntityQuery.ALL_RESULTS;
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.Constants.ADDON_USER_GROUP_KEY;
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
+import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.validAddOnEmailAddress;
+import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.validAddOnUsername;
 
 /**
  * A {@link com.atlassian.sal.api.upgrade.PluginUpgradeTask} that will iterate over all Connect AddOn Users and add a new attribute to them
@@ -52,15 +55,20 @@ public class ConnectAddOnUserAttributeUpgradeTask implements PluginUpgradeTask
     @Override
     public Collection<Message> doUpgrade() throws Exception
     {
-        MembershipQuery<String> membershipQuery = queryFor(String.class, EntityDescriptor.user()).childrenOf(EntityDescriptor.group()).withName(ADDON_USER_GROUP_KEY).returningAtMost(ALL_RESULTS);
+        MembershipQuery<User> membershipQuery = queryFor(User.class, EntityDescriptor.user()).childrenOf(EntityDescriptor.group()).withName(ADDON_USER_GROUP_KEY).returningAtMost(ALL_RESULTS);
 
         Application application = getApplication();
-        List<String> connectAddonUsers = applicationService.searchDirectGroupRelationships(application, membershipQuery);
+        List<User> connectAddonUsers = applicationService.searchDirectGroupRelationships(application, membershipQuery);
 
-        for (String user : connectAddonUsers)
+        for (User user : connectAddonUsers)
         {
+            // Validate the connect-addon user
+            if (!validAddOnEmailAddress(user) || !validAddOnUsername(user))
+            {
+                throw new Exception(String.format("Failed to complete Upgrade Task. User had an invalid username %s or email address %s", user.getName(), user.getEmailAddress()));
+            }
             // Set connect attributes on user
-            applicationService.storeUserAttributes(application, user, buildConnectAddOnUserAttribute(application.getName()));
+            applicationService.storeUserAttributes(application, user.getName(), buildConnectAddOnUserAttribute(application.getName()));
         }
 
         return Collections.emptyList();
