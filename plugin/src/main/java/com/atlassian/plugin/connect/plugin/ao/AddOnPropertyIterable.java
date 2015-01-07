@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.ao;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import java.util.Iterator;
 
@@ -39,13 +40,19 @@ public class AddOnPropertyIterable implements Iterable<AddOnProperty>
     }
 
     @Override
+    public int hashCode()
+    {
+        return new HashCodeBuilder().append(this.properties).toHashCode();
+    }
+
+    @Override
     public boolean equals(final Object obj)
     {
         if (obj == null) {return false;}
         if (getClass() != obj.getClass()) {return false;}
         final AddOnPropertyIterable other = (AddOnPropertyIterable) obj;
 
-        return Iterables.elementsEqual(properties, other);
+        return Iterables.elementsEqual(properties, other.properties);
     }
 
     public static AddOnPropertyIterable fromAddOnPropertyAOList(Iterable<AddOnPropertyAO> propertyList)

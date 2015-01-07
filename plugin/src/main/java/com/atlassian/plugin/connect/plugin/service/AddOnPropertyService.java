@@ -45,13 +45,13 @@ public interface AddOnPropertyService
     ServiceResult deletePropertyValue(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey, @Nonnull String propertyKey);
 
     /**
-     * List all stored properties for a given add-on.
+     * Returns a list of all properties for a given add-on.
      * <p>
      *     This method checks parameter validity and list all properties belonging to an add-on.
      * </p>
-     * @return either error result or add-on property.
+     * @return either error result or list of add-on properties.
      **/
-    Either<ServiceResult, AddOnPropertyIterable> listProperties(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey);
+    Either<ServiceResult, AddOnPropertyIterable> getAddOnProperties(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey);
 
     interface ServiceResult
     {

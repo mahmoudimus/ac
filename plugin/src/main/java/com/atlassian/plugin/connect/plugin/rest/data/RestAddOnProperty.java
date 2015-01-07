@@ -26,6 +26,11 @@ public class RestAddOnProperty
 
     public static RestAddOnProperty valueOf(final AddOnProperty addOnProperty, final String baseURL)
     {
-        return new RestAddOnProperty(addOnProperty.getKey(), addOnProperty.getValue(), baseURL + "/" + addOnProperty.getKey());
+        return new RestAddOnProperty(addOnProperty.getKey(), addOnProperty.getValue(), propertySelf(baseURL, addOnProperty.getKey()));
+    }
+
+    public static String propertySelf(String baseURL, String propertyKey)
+    {
+        return baseURL + "/" + propertyKey;
     }
 }

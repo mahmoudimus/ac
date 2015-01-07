@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyIterable;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore;
+import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.service.AddOnPropertyService;
 import com.atlassian.plugin.connect.plugin.service.AddOnPropertyServiceImpl;
 import com.atlassian.sal.api.user.UserKey;
@@ -35,6 +36,8 @@ public class AddOnPropertyServiceImplTest
     private UserProfile user;
     @Mock
     private UserManager userManager;
+    @Mock
+    private ConnectAddonRegistry connectAddonRegistry;
 
     private final String addOnKey = "testAddon";
     private final AddOnProperty property = new AddOnProperty("testProperty", "{}");
@@ -45,8 +48,9 @@ public class AddOnPropertyServiceImplTest
     @Before
     public void init()
     {
-        service = new AddOnPropertyServiceImpl(store, userManager);
+        service = new AddOnPropertyServiceImpl(store, userManager, connectAddonRegistry);
         when(user.getUserKey()).thenReturn(userKey);
+        when(connectAddonRegistry.hasAddonWithKey(addOnKey)).thenReturn(true);
     }
 
     private void testGetExistingProperty(String sourcePlugin)
@@ -181,7 +185,7 @@ public class AddOnPropertyServiceImplTest
     {
         AddOnPropertyIterable emptyIterable = new AddOnPropertyIterable(Collections.<AddOnProperty>emptyList());
         when(store.getAllPropertiesForAddOnKey(addOnKey)).thenReturn(emptyIterable);
-        Either<ServiceResult, AddOnPropertyIterable> result = service.listProperties(user, sourcePluginKey, addOnKey);
+        Either<ServiceResult, AddOnPropertyIterable> result = service.getAddOnProperties(user, sourcePluginKey, addOnKey);
 
         assertEquals(emptyIterable, result.right().get());
     }
@@ -261,7 +265,7 @@ public class AddOnPropertyServiceImplTest
     @Test
     public void testNoAccessToListDifferentPluginData() throws Exception
     {
-        Either<ServiceResult, AddOnPropertyIterable> result = service.listProperties(user, "DIFF_PLUGIN_KEY", addOnKey);
+        Either<ServiceResult, AddOnPropertyIterable> result = service.getAddOnProperties(user, "DIFF_PLUGIN_KEY", addOnKey);
         assertTrue(result.isLeft());
         assertEquals(ServiceResultImpl.ACCESS_TO_OTHER_DATA_FORBIDDEN, result.left().get());
     }
@@ -290,9 +294,20 @@ public class AddOnPropertyServiceImplTest
     @Test
     public void testListNoAccessWhenLoggedIn() throws Exception
     {
-        Either<ServiceResult, AddOnPropertyIterable> result = service.listProperties(null, "DIFF_PLUGIN_KEY", addOnKey);
+        Either<ServiceResult, AddOnPropertyIterable> result = service.getAddOnProperties(null, "DIFF_PLUGIN_KEY", addOnKey);
         assertTrue(result.isLeft());
         assertEquals(ServiceResultImpl.NOT_AUTHENTICATED, result.left().get());
+    }
+
+    @Test
+    public void testAddOnNotFoundWhenPluginNotInstalledAndSysAdmin() throws Exception
+    {
+        when(connectAddonRegistry.hasAddonWithKey(addOnKey)).thenReturn(false);
+        when(userManager.isSystemAdmin(userKey)).thenReturn(true);
+
+        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, null, addOnKey, "");
+        assertTrue(result.isLeft());
+        assertEquals(ServiceResultImpl.ADD_ON_NOT_FOUND, result.left().get());
     }
 
     @Test

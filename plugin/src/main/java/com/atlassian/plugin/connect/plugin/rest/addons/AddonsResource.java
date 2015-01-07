@@ -220,7 +220,7 @@ public class AddonsResource
         UserProfile user = userManager.getRemoteUser(request);
 
         String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(request);
-        Either<ServiceResult, AddOnPropertyIterable> result = addOnPropertyService.listProperties(user, sourcePluginKey, addOnKey);
+        Either<ServiceResult, AddOnPropertyIterable> result = addOnPropertyService.getAddOnProperties(user, sourcePluginKey, addOnKey);
 
         return result.fold(new Function<ServiceResult, Response>()
         {

@@ -70,4 +70,6 @@ public interface ConnectAddonRegistry
     Iterable<String> getAddonKeysToEnableOnRestart();
 
     AddonSettings getAddonSettings(String pluginKey);
+
+    boolean hasAddonWithKey(String pluginKey);
 }
