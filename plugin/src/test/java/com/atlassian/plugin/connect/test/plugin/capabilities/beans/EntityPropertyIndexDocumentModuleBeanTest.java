@@ -73,7 +73,7 @@ public class EntityPropertyIndexDocumentModuleBeanTest
     {
         List<EntityPropertyIndexExtractionConfigurationBean> extractions = Lists.newArrayList(
                 new EntityPropertyIndexExtractionConfigurationBean("attachment.size", EntityPropertyIndexType.number),
-                new EntityPropertyIndexExtractionConfigurationBean("attachment.extension", EntityPropertyIndexType.string)
+                new EntityPropertyIndexExtractionConfigurationBean("attachment.extension", EntityPropertyIndexType.string, "attachmentExtension")
         );
 
         return EntityPropertyModuleBean.newEntityPropertyModuleBean()

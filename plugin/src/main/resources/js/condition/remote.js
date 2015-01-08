@@ -1,5 +1,4 @@
-_AP.define("condition/remote", ["_dollar"], function($) {
-
+(function($, context){
   var hidden;
 
   function hide() {
@@ -19,21 +18,12 @@ _AP.define("condition/remote", ["_dollar"], function($) {
 
   AJS.toInit(hide);
 
-  return {
+  context.RemoteConditions = {
     /**
      * Hides UI elements that are protected by remote conditions. These are all hacks hiding is supported
      * by the module types directly
      */
     hide: hide
   };
-});
 
-/**
- * Legacy namespace
- * @deprecated
- */
-if (!_AP.RemoteConditions) {
-  _AP.require(["condition/remote"], function(main) {
-    _AP.RemoteConditions = main;
-  });
-}
+})(AJS.$, _AP);

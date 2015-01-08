@@ -5,6 +5,7 @@ import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 
+import com.atlassian.webdriver.utils.Check;
 import com.google.common.base.Optional;
 import org.openqa.selenium.By;
 
@@ -46,6 +47,6 @@ public class JiraViewProjectPage implements Page
 
     public Boolean webItemDoesNotExist(String webItemId)
     {
-        return !driver.elementExists(By.id(webItemId));
+        return !Check.elementExists(By.id(webItemId), driver);
     }
 }

@@ -6,6 +6,7 @@ import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteXdmEventPanel;
+import com.atlassian.webdriver.utils.Check;
 import com.google.common.base.Optional;
 import org.openqa.selenium.By;
 
@@ -59,5 +60,10 @@ public class JiraViewIssuePage implements Page
     public Section getSection(String moduleKey)
     {
         return pageBinder.bind(Section.class, moduleKey);
+    }
+
+    public Boolean webItemDoesNotExist(String webItemId)
+    {
+        return !Check.elementExists(By.id(webItemId), driver);
     }
 }

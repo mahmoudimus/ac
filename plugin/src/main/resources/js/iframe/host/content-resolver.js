@@ -1,11 +1,11 @@
-_AP.define('host/content-resolver', ['_dollar', '_ui-params'], function($, UiParams){
+(function($, UiParams, context){
     "use strict";
 
     function getContentUrl(pluginKey, moduleKey){
         return AJS.contextPath() + "/plugins/servlet/ac/" + encodeURIComponent(pluginKey) + "/" + encodeURIComponent(moduleKey);
     }
 
-    return {
+    var contentResolver = {
         resolveByUrl: function(url) {
             var promise = jQuery.Deferred(function(defer){
                 defer.resolve(url);
@@ -29,4 +29,7 @@ _AP.define('host/content-resolver', ['_dollar', '_ui-params'], function($, UiPar
         } 
     };
 
-});
+    context._AP.contentResolver = contentResolver;
+
+
+}(AJS.$, _AP.uiParams, this));

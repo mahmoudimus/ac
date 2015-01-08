@@ -4,11 +4,16 @@ import com.atlassian.jwt.writer.JwtWriterFactory;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
-import it.com.atlassian.plugin.connect.ParameterizedWiredTest;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-@ParameterizedWiredTest
+/**
+ * These tests are not exhaustive. They are samples across the cross-product endpoints.
+ */
+@RunWith(AtlassianPluginsTestRunner.class)
 public class NoScopeTest extends ScopeTestBase
 {
     public NoScopeTest(TestPluginInstaller testPluginInstaller,
@@ -20,16 +25,33 @@ public class NoScopeTest extends ScopeTestBase
         super(null, testPluginInstaller, testAuthenticator, jwtWriterFactory, connectAddonRegistry, applicationProperties);
     }
 
-    /**
-     * These tests are not exhaustive. They are samples across the cross-product endpoints.
-     */
-    @ParameterizedWiredTest.Parameters(name="httpRequest", length=5)
-    protected Object[][] data = new Object[][]
+    @Test
+    public void shouldForbidGetAtlassianConnectLicense() throws Exception
     {
-            { HttpMethod.GET,  "/rest/atlassian-connect/1/license",  false }, // ported from TestAppPermissions
-            { HttpMethod.GET,  "/plugins/servlet/atlassian-connect", false }, // ported from TestAppPermissions
-            { HttpMethod.GET,  "/rest/applinks/2.0/entities",        false },
-            { HttpMethod.GET,  "/rest/greenhopper/1.0/rapidview",    false },
-            { HttpMethod.PUT,  "/rest/greenhopper/1.0/api/rank/before", false }
-    };
+        assertForbiddenRequest(HttpMethod.GET, "/rest/atlassian-connect/1/license");
+    }
+
+    @Test
+    public void shouldForbidGetPluginsServletAtlassianConnect() throws Exception
+    {
+        assertForbiddenRequest(HttpMethod.GET, "/plugins/servlet/atlassian-connect");
+    }
+
+    @Test
+    public void shouldForbidGetApplinksEntities() throws Exception
+    {
+        assertForbiddenRequest(HttpMethod.GET, "/rest/applinks/2.0/entities");
+    }
+
+    @Test
+    public void shouldForbidGetGreenhopperRapidview() throws Exception
+    {
+        assertForbiddenRequest(HttpMethod.GET, "/rest/greenhopper/1.0/rapidview");
+    }
+
+    @Test
+    public void shouldForbidPutGreenhopperRankBefore() throws Exception
+    {
+        assertForbiddenRequest(HttpMethod.PUT, "/rest/greenhopper/1.0/api/rank/before");
+    }
 }

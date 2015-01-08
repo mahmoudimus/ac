@@ -4,12 +4,13 @@ import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.iframe.webpanel.ConnectIFrameWebPanel;
-import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor;
+import com.atlassian.plugin.connect.plugin.iframe.webpanel.PluggableParametersExtractor;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.DefaultWebPanelModuleDescriptor;
 import com.atlassian.plugin.web.model.WebPanel;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonKeyOnly;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
@@ -21,11 +22,11 @@ public class WebPanelConnectModuleDescriptor extends DefaultWebPanelModuleDescri
 {
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final ModuleContextFilter moduleContextFilter;
-    private final WebFragmentModuleContextExtractor webFragmentModuleContextExtractor;
+    private final PluggableParametersExtractor webFragmentModuleContextExtractor;
 
-    public WebPanelConnectModuleDescriptor(HostContainer hostContainer, WebInterfaceManager webInterfaceManager,
+    public WebPanelConnectModuleDescriptor(@Qualifier ("hostContainer") HostContainer hostContainer, WebInterfaceManager webInterfaceManager,
             ModuleFactory moduleFactory, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            ModuleContextFilter moduleContextFilter, WebFragmentModuleContextExtractor webFragmentModuleContextExtractor)
+            ModuleContextFilter moduleContextFilter, PluggableParametersExtractor webFragmentModuleContextExtractor)
     {
         super(hostContainer, moduleFactory, webInterfaceManager);
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
