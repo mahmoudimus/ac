@@ -329,6 +329,7 @@
                             </productDataPath>
                             <systemPropertyVariables>
                                 <product>jira</product>
+                                <com.atlassian.plugin.connect.add_on_properties.max_properties>50</com.atlassian.plugin.connect.add_on_properties.max_properties>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -406,6 +407,7 @@
                             </productDataPath>
                             <systemPropertyVariables>
                                 <product>confluence</product>
+                                <com.atlassian.plugin.connect.add_on_properties.max_properties>50</com.atlassian.plugin.connect.add_on_properties.max_properties>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>

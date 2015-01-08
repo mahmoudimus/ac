@@ -170,6 +170,9 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
         HttpURLConnection connection = executeGetRequest(propertyKey, Option.option(runner.getSignedRequestHandler()));
         connection.setRequestProperty("If-Match", putResponse.eTag.get());
         assertEquals(Response.SC_NOT_MODIFIED, connection.getResponseCode());
+
+        int responseCode3 = executeDeleteRequest(propertyKey);
+        assertEquals(Response.SC_NO_CONTENT, responseCode3);
     }
 
     @Test
@@ -180,6 +183,43 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
         executePutRequest(propertyKey, "TEST_VALUE");
         RequestResponse putResponse = executePutRequest(propertyKey, "TEST_VALUE2", Option.some(""));
         assertEquals(Response.SC_PRECONDITION_FAILED, putResponse.httpStatusCode);
+
+        int responseCode3 = executeDeleteRequest(propertyKey);
+        assertEquals(Response.SC_NO_CONTENT, responseCode3);
+    }
+
+    @Test
+    public void testMaximumPropertiesNotReached() throws Exception
+    {
+        final String propertyKeyPrefix = RandomStringUtils.randomAlphanumeric(15);
+        for (int i = 0; i < 50; i++)
+        {
+            int responseCode = executePutRequest(propertyKeyPrefix + String.valueOf(i), "value").httpStatusCode;
+            assertEquals(Response.SC_CREATED, responseCode);
+        }
+        for (int i = 0; i < 50; i++)
+        {
+            assertDeleted(propertyKeyPrefix + String.valueOf(i));
+        }
+    }
+
+    @Test
+    public void testMaximumPropertiesReached() throws Exception
+    {
+        final String propertyKeyPrefix = RandomStringUtils.randomAlphanumeric(15);
+        for (int i = 0; i < 50; i++)
+        {
+            int responseCode = executePutRequest(propertyKeyPrefix + String.valueOf(i), "value").httpStatusCode;
+            assertEquals(Response.SC_CREATED, responseCode);
+        }
+
+        int responseCode = executePutRequest(propertyKeyPrefix + String.valueOf(51), "value").httpStatusCode;
+        assertEquals(Response.SC_CONFLICT, responseCode);
+
+        for (int i = 0; i < 50; i++)
+        {
+            assertDeleted(propertyKeyPrefix + String.valueOf(i));
+        }
     }
 
     private String sendSuccessfulGetRequest(final String propertyKey)
@@ -412,6 +452,15 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
                 if (getClass() != obj.getClass()) {return false;}
                 final RestAddOnPropertyBean other = (RestAddOnPropertyBean) obj;
                 return new EqualsBuilder().append(this.self, other.self).append(this.key, other.key).isEquals();
+            }
+
+            @Override
+            public String toString()
+            {
+                return "RestAddOnPropertyBean{" +
+                        "self='" + self + '\'' +
+                        ", key='" + key + '\'' +
+                        '}';
             }
         }
     }

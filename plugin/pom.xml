@@ -566,6 +566,7 @@
                                 <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
+                                <com.atlassian.plugin.connect.add_on_properties.max_properties>50</com.atlassian.plugin.connect.add_on_properties.max_properties>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -640,6 +641,7 @@
                                 <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
+                                <com.atlassian.plugin.connect.add_on_properties.max_properties>50</com.atlassian.plugin.connect.add_on_properties.max_properties>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
