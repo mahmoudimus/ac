@@ -21,6 +21,7 @@ define(['ac/confluence/macro/editor', 'connect-host'], function(confluenceMacroE
         AJS.Rte = {
           getEditor: function() {
             return {
+              focus: sinon.spy(),
               selection: {
                 getBookmark: sinon.spy(),
                 moveToBookmark: sinon.spy()

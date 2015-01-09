@@ -4,6 +4,8 @@ import com.atlassian.json.schema.annotation.Required;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import javax.annotation.Nullable;
+
 /**
  * Defines an entity property to be indexed by JIRA. An entity property is a reference to a JSON object, which also defines it's type.
  *#### Example
@@ -41,10 +43,22 @@ public class EntityPropertyIndexExtractionConfigurationBean
     @Required
     private EntityPropertyIndexType type;
 
+    /**
+     * The name, under which this property will be searchable with JQL.
+     */
+    @Nullable
+    private String alias;
+
     public EntityPropertyIndexExtractionConfigurationBean(String objectName, EntityPropertyIndexType type)
+    {
+        this(objectName, type, null);
+    }
+
+    public EntityPropertyIndexExtractionConfigurationBean(String objectName, EntityPropertyIndexType type, String alias)
     {
         this.objectName = objectName;
         this.type = type;
+        this.alias = alias;
     }
 
     public String getObjectName()
@@ -55,6 +69,11 @@ public class EntityPropertyIndexExtractionConfigurationBean
     public EntityPropertyIndexType getType()
     {
         return type;
+    }
+
+    public String getAlias()
+    {
+        return alias;
     }
 
     @Override
@@ -75,6 +94,7 @@ public class EntityPropertyIndexExtractionConfigurationBean
         return new EqualsBuilder()
                 .append(objectName, other.objectName)
                 .append(type, other.type)
+                .append(alias, other.alias)
                 .isEquals();
     }
 
@@ -84,6 +104,7 @@ public class EntityPropertyIndexExtractionConfigurationBean
         return new HashCodeBuilder(53, 11)
                 .append(objectName)
                 .append(type)
+                .append(alias)
                 .build();
     }
 }

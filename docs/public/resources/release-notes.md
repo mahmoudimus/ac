@@ -32,6 +32,8 @@ or Confluence Cloud with Atlassian Connect as follows:
 <div id="runproduct-vagrant" class="aui-expander-content">
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
+## [1.1.20](../release-notes/1-1-0.html#1.1.20)
+* JIRA: Added support for aliases in Entity Properties [ACJIRA-250](https://ecosystem.atlassian.net/browse/ACJIRA-250) 
 
 ## [1.1.20](../release-notes/1-1-0.html#1.1.20)
 * JIRA: Whitelisted endpoints for thumbnails and user avatars [AC-1472](https://ecosystem.atlassian.net/browse/AC-1472)
