@@ -2,6 +2,9 @@ package it;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
+import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.BaseUrlLocator;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Function;
 import com.google.gson.Gson;
@@ -21,7 +24,9 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -37,11 +42,12 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
     final static Gson gson = new Gson();
 
     ConnectRunner runner = null;
+    private InstallHandlerServlet installHandlerServlet;
 
     @Before
     public void init() throws Exception
     {
-        InstallHandlerServlet installHandlerServlet = new InstallHandlerServlet();
+        installHandlerServlet = new InstallHandlerServlet();
         runner = new ConnectRunner(baseUrl, addOnKey)
                 .addJWT(installHandlerServlet)
                 .start();
@@ -51,6 +57,29 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
     public void after()
     {
         ConnectRunner.stopAndUninstallQuietly(runner);
+    }
+
+    @Test
+    public void testCreatePropertyWithJWTQueryParameter()
+            throws IOException, URISyntaxException, NoSuchAlgorithmException
+    {
+        final String propertyKey = RandomStringUtils.randomAlphanumeric(15);
+
+        URL url = new URL(restPath + "/properties/" + propertyKey);
+
+        final String sharedSecret = checkNotNull(installHandlerServlet.getInstallPayload().getSharedSecret());
+        final String jwt = AddonTestUtils.generateJwtSignature(HttpMethod.PUT, url.toURI(), addOnKey, sharedSecret, BaseUrlLocator.getBaseUrl(), null);
+
+        URL longerUrl = new URL(restPath + "/properties/" + propertyKey + "?jwt=" + jwt);
+        HttpURLConnection connection = (HttpURLConnection) longerUrl.openConnection();
+        connection.setRequestMethod("PUT");
+        connection.setDoOutput(true);
+        connection.getOutputStream().write(propertyKey.getBytes());
+
+        int responseCode = connection.getResponseCode();
+        assertEquals(Response.SC_CREATED, responseCode);
+
+        assertDeleted(propertyKey);
     }
 
     @Test

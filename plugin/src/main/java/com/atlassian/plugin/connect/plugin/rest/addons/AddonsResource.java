@@ -283,7 +283,13 @@ public class AddonsResource
 
     private ETag getETagFromRequest(final HttpServletRequest request)
     {
-        return new ETag(request.getHeader(HttpHeaders.IF_MATCH));
+        String header = request.getHeader(HttpHeaders.IF_MATCH);
+        if (header != null && header.startsWith("\"") && header.endsWith("\""))
+        {
+            header = header.substring(1);
+            header = header.substring(0, header.length() - 1);
+        }
+        return new ETag(header);
     }
 
     @PUT
