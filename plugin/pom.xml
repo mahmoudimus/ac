@@ -186,7 +186,6 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-server</artifactId>
-            <version>1.8-atlassian-8</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -261,12 +260,31 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.plugins.rest</groupId>
+            <artifactId>atlassian-rest-doclet</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.fugue</groupId>
+            <artifactId>fugue</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.confluence</groupId>
             <artifactId>confluence</artifactId>
             <version>${atlassian.confluence.version}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>com.atlassian.uri</groupId>
             <artifactId>atlassian-uri</artifactId>
@@ -447,6 +465,21 @@
     </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>xml-maven-plugin</artifactId>
+                    <version>1.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.sun.jersey.contribs</groupId>
+                    <artifactId>maven-wadl-plugin</artifactId>
+                    <version>${jersey-release-version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
@@ -760,7 +793,7 @@
                             <goal>npm</goal>
                         </goals>
                         <phase>generate-resources</phase>
-                         <configuration>
+                        <configuration>
                             <workingDirectory>../plugin</workingDirectory>
                             <arguments>install</arguments>
                         </configuration>
@@ -868,7 +901,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>xml-maven-plugin</artifactId>
-                <version>1.0</version>
                 <executions>
                     <execution>
                         <goals>
@@ -1284,6 +1316,127 @@
                 </plugins>
             </build>
         </profile>
+
+        <profile>
+            <id>restdocs</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- Generate WADL -->
+                    <plugin>
+                        <groupId>com.sun.jersey.contribs</groupId>
+                        <artifactId>maven-wadl-plugin</artifactId>
+                        <executions>
+                            <!--
+                            Defer execution from the default (compile) phase, since the pre-requisite goal
+                            amps:generate-rest-docs runs in the process-classes phase
+                            -->
+                            <execution>
+                                <id>generate</id>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <phase>pre-site</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <wadlFile>${project.build.outputDirectory}/${project.artifactId}.wadl</wadlFile>
+                            <formatWadlFile>true</formatWadlFile>
+                            <baseUri>/rest/atlassian-connect/latest</baseUri>
+                            <packagesResourceConfig>
+                                <param>com.atlassian.plugin.connect.plugin.rest</param>
+                                <param>com.atlassian.plugin.connect.plugin.product.confluence.rest</param>
+                            </packagesResourceConfig>
+                            <wadlGenerators>
+                                <wadlGeneratorDescription>
+                                    <className>com.sun.jersey.server.wadl.generators.WadlGeneratorApplicationDoc</className>
+                                    <properties>
+                                        <property>
+                                            <name>applicationDocsFile</name>
+                                            <value>${project.build.outputDirectory}/application-doc.xml</value>
+                                        </property>
+                                    </properties>
+                                </wadlGeneratorDescription>
+                                <wadlGeneratorDescription>
+                                    <className>com.sun.jersey.server.wadl.generators.WadlGeneratorGrammarsSupport</className>
+                                    <properties>
+                                        <property>
+                                            <name>grammarsFile</name>
+                                            <value>${project.build.outputDirectory}/application-grammars.xml</value>
+                                        </property>
+                                    </properties>
+                                </wadlGeneratorDescription>
+                                <wadlGeneratorDescription>
+                                    <className>com.sun.jersey.server.wadl.generators.resourcedoc.WadlGeneratorResourceDocSupport</className>
+                                    <properties>
+                                        <property>
+                                            <name>resourceDocFile</name>
+                                            <value>${project.build.outputDirectory}/resourcedoc.xml</value>
+                                        </property>
+                                    </properties>
+                                </wadlGeneratorDescription>
+                            </wadlGenerators>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.slf4j</groupId>
+                                <artifactId>slf4j-simple</artifactId>
+                                <version>${slf4j.version}</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                    <!-- Generate HTML -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>xml-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>transform-wadl-to-html</id>
+                                <goals>
+                                    <goal>transform</goal>
+                                </goals>
+                                <phase>site</phase>
+                                <configuration>
+                                    <transformationSets>
+                                        <transformationSet>
+                                            <stylesheet>${restdoc.stylesheet.filename}</stylesheet>
+                                            <dir>${project.build.outputDirectory}</dir>
+                                            <includes>
+                                                <include>${project.artifactId}.wadl</include>
+                                            </includes>
+                                            <outputDir>${restdoc.directory}</outputDir>
+                                            <fileMappers>
+                                                <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                                    <pattern>${project.artifactId}.wadl</pattern>
+                                                    <replacement>index.html</replacement>
+                                                </fileMapper>
+                                            </fileMappers>
+                                        </transformationSet>
+                                    </transformationSets>
+                                    <!-- the XSL above requires EXSLT node-set support, which xalan doesn't provide? -->
+                                    <transformerFactory>net.sf.saxon.TransformerFactoryImpl</transformerFactory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>net.sf.saxon</groupId>
+                                <artifactId>saxon</artifactId>
+                                <version>8.7</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+            <distributionManagement>
+                <site>
+                    <id>atlassian-documentation</id>
+                    <url>scpexe://docs-app.internal.atlassian.com/var/www/domains/docs.atlassian.com/${project.artifactId}/${project.version}</url>
+                </site>
+            </distributionManagement>
+        </profile>
     </profiles>
 
     <properties>
@@ -1302,5 +1455,6 @@
             use-maven,3
             include-artifact,com.atlassian.plugins:atlassian-connect-cloud-acceptance-tests
         </od.testing.configuration>
+        <restdoc.directory>${project.build.directory}/restapi</restdoc.directory>
     </properties>
 </project>

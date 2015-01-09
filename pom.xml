@@ -437,6 +437,12 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <groupId>com.atlassian.plugins.rest</groupId>
+                <artifactId>atlassian-rest-doclet</artifactId>
+                <version>${atlassian.rest.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.atlassian.uri</groupId>
                 <artifactId>atlassian-uri</artifactId>
                 <version>${atlassian.uri.version}</version>
@@ -568,6 +574,23 @@
                 <artifactId>commons-io</artifactId>
                 <version>2.4</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-server</artifactId>
+                <version>${atlassian.rest.jersey.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>2.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <version>2.5.6.SEC02</version>
+            </dependency>
+
             <!--Non-ancient version of Xerces for unit tests -->
             <dependency>
                 <groupId>xerces</groupId>
@@ -700,6 +723,9 @@
         <atlassian.plugins.version>3.0.7</atlassian.plugins.version>
         <atlassian.plugins.api.version>2.10</atlassian.plugins.api.version>
         <atlassian.rest.version>2.3.0</atlassian.rest.version>
+        <atlassian.rest.jersey.version>1.8-atlassian-8</atlassian.rest.jersey.version>
+        <!--keep it as close as possible to ${atlassian.rest.jersey.version}-->
+        <jersey-release-version>1.8</jersey-release-version>
         <atlassian.sal.version>2.10.0</atlassian.sal.version>
         <atlassian.selenium.version>2.2-rc3</atlassian.selenium.version>
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>

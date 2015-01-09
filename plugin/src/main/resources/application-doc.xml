@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<applicationDocs targetNamespace="http://research.sun.com/wadl/2006/10">
+    <doc xml:lang="en" title="Atlassian Connect REST API documentation">
+        <section>
+            <p>
+                This is the reference document for the REST API and resources provided by
+                <a href="https://connect.atlassian.com">Atlassian Connect</a>.
+
+                The REST APIs are for developers of Atlassian Connect add-ons for JIRA or Confluence and for
+                administrators
+                who want to script interactions with the product servers.
+            </p>
+
+            <p>
+                Atlassian Connect's REST APIs provide access to resources (data entities) via URI paths.
+                To use a REST API, your application will make an HTTP request and parse the response.
+                The response format is JSON. Your methods will be the standard HTTP methods like GET, PUT, POST and
+                DELETE.
+            </p>
+
+            <p>
+                Because the REST API is based on open standards, you can use any web development language to access the
+                API.
+            </p>
+        </section>
+
+        <section>
+            <h2 id="uri-structure">
+                Structure of the REST URIs
+            </h2>
+
+            <p>URIs for the Atlassian Connect REST API resource have the following structure:</p>
+
+            <p>
+                With context:
+                <a href="http://host:port/context/rest/atlassian-connect/api-version/resource-name"
+                   class="external-link"
+                   rel="nofollow">
+                    http://host:port/context/rest/atlassian-connect/api-version/resource-name
+                </a>
+
+            </p>
+
+            <p>
+                Or without context:
+                <a href="http://host:port/rest/atlassian-connect/api-version/resource-name"
+                   class="external-link"
+                   rel="nofollow">
+                    http://host:port/rest/atlassian-connect/api-version/resource-name
+                </a>
+            </p>
+
+            <p>
+                Example with context:
+                <a href="http://example.com:8080/confluence/rest/atlassian-connect/latest/addons"
+                   class="external-link"
+                   rel="nofollow">
+                    http://example.com:8080/confluence/rest/atlassian-connect/latest/addons
+                </a>
+            </p>
+
+            <p>
+                Example without context:
+                <a href="http://confluence.myhost.com:8095/rest/atlassian-connect/latest/addons"
+                   class="external-link"
+                   rel="nofollow">
+                    http://confluence.myhost.com:8095/rest/atlassian-connect/latest/addons
+                </a>
+            </p>
+        </section>
+
+        <section>
+            <h2 id="index">
+                Index
+            </h2>
+            <p>
+                This documents the current REST API provided by Atlassian Connect.
+            </p>
+        </section>
+    </doc>
+</applicationDocs>

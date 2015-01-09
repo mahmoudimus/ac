@@ -290,7 +290,6 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-server</artifactId>
-            <version>1.8-atlassian-8</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
