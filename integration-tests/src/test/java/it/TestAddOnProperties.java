@@ -234,7 +234,7 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
             throws IOException, URISyntaxException
     {
         HttpURLConnection connection = executeGetRequest(propertyKey, signedRequestHandler);
-        assertEquals(Response.SC_FORBIDDEN, connection.getResponseCode());
+        assertEquals(Response.SC_NOT_FOUND, connection.getResponseCode());
     }
 
     @Test

@@ -27,6 +27,7 @@ public class AddOnPropertyIterable implements Iterable<AddOnProperty>
 
     public ETag getETag()
     {
+        if (Iterables.isEmpty(properties)) { return new ETag(""); }
         final HashFunction hashFunction = Hashing.md5();
         HashCode hashCode = Hashing.combineOrdered(Iterables.transform(properties, new Function<AddOnProperty, HashCode>()
         {

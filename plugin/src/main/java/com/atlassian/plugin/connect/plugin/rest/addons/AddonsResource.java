@@ -272,7 +272,11 @@ public class AddonsResource
             public Response apply(final AddOnProperty input)
             {
                 String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties";
-                return Response.ok().entity(RestAddOnProperty.valueOf(input, baseURL)).tag(input.getETag().toString()).cacheControl(never()).build();
+                return Response.ok()
+                        .entity(RestAddOnProperty.valueOf(input, baseURL))
+                        .tag(input.getETag().toString())
+                        .cacheControl(never())
+                        .build();
             }
         });
     }

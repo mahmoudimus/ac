@@ -40,11 +40,10 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         KEY_TOO_LONG(HttpStatus.SC_BAD_REQUEST, String.format("The property key cannot be longer than %s characters.", AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH)),
         MAXIMUM_PROPERTIES_EXCEEDED(HttpStatus.SC_CONFLICT, String.format("Maximum number of properties allowed to be stored (%s) has been reached.", AddOnPropertyStore.MAX_PROPERTIES_PER_ADD_ON)),
         PROPERTY_NOT_FOUND(HttpStatus.SC_NOT_FOUND, "Property with key not found."),
-        ACCESS_TO_OTHER_DATA_FORBIDDEN(HttpStatus.SC_FORBIDDEN, "An add-on may only access it's own data"),
         INVALID_PROPERTY_VALUE(HttpStatus.SC_BAD_REQUEST, "Property value must be a valid JSON object"),
         NOT_AUTHENTICATED(HttpStatus.SC_UNAUTHORIZED, "Access to this resource must be authenticated as an add-on"),
         PROPERTY_DELETED(HttpStatus.SC_NO_CONTENT, null),
-        ADD_ON_NOT_FOUND(HttpStatus.SC_NOT_FOUND, "Add-on with key not found."),
+        ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN(HttpStatus.SC_NOT_FOUND, "Add-on with key does not exist."),
         PROPERTY_NOT_MODIFIED(HttpStatus.SC_NOT_MODIFIED, "Not modified"),
         PROPERTY_MODIFIED(HttpStatus.SC_PRECONDITION_FAILED, "This resource has been updated."),
         PROPERTIES_NOT_MODIFIED(HttpStatus.SC_NOT_MODIFIED, "No properties have been updated.");
@@ -95,7 +94,7 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
             return propertyValue.left().map(new Function<AddOnPropertyStore.GetResult, ServiceResult>()
             {
                 @Override
-                public ServiceResult apply(@Nullable final AddOnPropertyStore.GetResult getResult)
+                public ServiceResult apply(final AddOnPropertyStore.GetResult getResult)
                 {
                     switch (getResult)
                     {
@@ -202,7 +201,7 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         }
         if (!hasAccessToData(user, sourceAddOnKey, addOnKey))
         {
-            return Option.<ServiceResult>some(ServiceResultImpl.ACCESS_TO_OTHER_DATA_FORBIDDEN);
+            return Option.<ServiceResult>some(ServiceResultImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN);
         }
         if (propertyKey.length() > AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH)
         {
@@ -210,7 +209,7 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         }
         if (!connectAddonRegistry.hasAddonWithKey(addOnKey))
         {
-            return Option.<ServiceResult>some(ServiceResultImpl.ADD_ON_NOT_FOUND);
+            return Option.<ServiceResult>some(ServiceResultImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN);
         }
         return Option.none();
     }
@@ -257,11 +256,11 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         }
         if (!hasAccessToData(user, sourcePluginKey, addOnKey))
         {
-            return ValidationResult.fromError(ServiceResultImpl.ACCESS_TO_OTHER_DATA_FORBIDDEN);
+            return ValidationResult.fromError(ServiceResultImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN);
         }
         if (!connectAddonRegistry.hasAddonWithKey(addOnKey))
         {
-            return ValidationResult.fromError(ServiceResultImpl.ADD_ON_NOT_FOUND);
+            return ValidationResult.fromError(ServiceResultImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN);
         }
         return ValidationResult.fromValue(addOnKey);
     }

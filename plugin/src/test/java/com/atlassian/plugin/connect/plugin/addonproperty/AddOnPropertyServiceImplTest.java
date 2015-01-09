@@ -248,21 +248,21 @@ public class AddOnPropertyServiceImplTest
     {
         Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), ETag.emptyETag());
         assertTrue(result.isLeft());
-        assertEquals(ServiceResultImpl.ACCESS_TO_OTHER_DATA_FORBIDDEN, result.left().get());
+        assertEquals(ServiceResultImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN, result.left().get());
     }
 
     @Test
     public void testNoAccessToPutDifferentPluginData() throws Exception
     {
         ServiceResult result = service.setPropertyValue(user, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), property.getValue(), ETag.emptyETag());
-        assertEquals(ServiceResultImpl.ACCESS_TO_OTHER_DATA_FORBIDDEN, result);
+        assertEquals(ServiceResultImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN, result);
     }
 
     @Test
     public void testNoAccessToDeleteDifferentPluginData() throws Exception
     {
         ServiceResult result = service.deletePropertyValue(user, "DIFF_PLUGIN_KEY", addOnKey, property.getKey());
-        assertEquals(ServiceResultImpl.ACCESS_TO_OTHER_DATA_FORBIDDEN, result);
+        assertEquals(ServiceResultImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN, result);
     }
 
     @Test
@@ -270,7 +270,7 @@ public class AddOnPropertyServiceImplTest
     {
         Either<ServiceResult, AddOnPropertyIterable> result = service.getAddOnProperties(user, "DIFF_PLUGIN_KEY", addOnKey, ETag.emptyETag());
         assertTrue(result.isLeft());
-        assertEquals(ServiceResultImpl.ACCESS_TO_OTHER_DATA_FORBIDDEN, result.left().get());
+        assertEquals(ServiceResultImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN, result.left().get());
     }
 
     @Test
