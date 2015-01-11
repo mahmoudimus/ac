@@ -77,7 +77,8 @@ Atlassian Connect provides a set of REST APIs specifically designed for use by a
    "license": {
       "active": true,
       "type": "COMMERCIAL",
-      "evaluation": false
+      "evaluation": false,
+      "supportEntitlementNumber": "SEN-###"
    },
    "links": {
       "marketplace": [
