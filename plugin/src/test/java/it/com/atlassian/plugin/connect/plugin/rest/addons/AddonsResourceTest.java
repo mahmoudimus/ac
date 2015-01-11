@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
+import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
@@ -125,6 +126,7 @@ public class AddonsResourceTest
 
         assertResponseStatusCode(request, response, HttpStatus.UNAUTHORIZED);
         assertResponseHeaderValue(response, HttpHeaders.WWW_AUTHENTICATE, "JWT realm=\"Atlassian Connect\"");
+        assertThat(response.getJsonBody().containsKey("message"), equalTo(true));
     }
 
     @Test

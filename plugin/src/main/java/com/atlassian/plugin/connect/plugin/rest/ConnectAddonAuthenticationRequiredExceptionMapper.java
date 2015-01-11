@@ -27,6 +27,7 @@ public class ConnectAddonAuthenticationRequiredExceptionMapper
         log.error(exception.getMessage(), exception.getCause());
         return Response.status(Response.Status.UNAUTHORIZED)
                 .header(HttpHeaders.WWW_AUTHENTICATE, "JWT realm=\"" + AUTHENTICATION_REALM + "\"")
+                .type("application/json")
                 .entity(exception)
                 .build();
     }
