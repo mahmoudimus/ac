@@ -17,14 +17,14 @@ You can use the Atlassian Connect framework to build add-ons for Atlassian appli
  You can also create add-ons for HipChat. To learn how, <a href="https://www.hipchat.com/docs/apiv2/addons" 
  target="_blank">check out the HipChat add-on documentation</a>. 
 
-Simply understood, Atlassian Connect add-ons are web applications. 
+Simply understood, Atlassian Connect add-ons are web applications.
 Connect add-ons operate remotely over HTTP and can be written with any programming
 language and web framework.
 
 Fundamentally, Connect add-ons have three major capabilities:
 
 1. Insert content in [certain defined places](./modules/jira/index.html) in the Atlassian application's UI.
-2. Make calls to the Atlassian application's [REST API](./rest-apis/product-api-browser.html).
+2. Make calls to the Atlassian application's [REST API](./rest-apis/index.html).
 3. Listen and respond to [WebHooks](./modules/jira/webhook.html) fired by the Atlassian application.
 
 ## Getting started with Connect documentation

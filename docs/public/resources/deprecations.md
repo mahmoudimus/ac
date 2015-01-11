@@ -1,5 +1,36 @@
 # Deprecation Notices
 
+### /license REST API resource
+
+Description
+<div class="ac-deprecations">
+<div class="aui-group">
+    <div class="aui-item ac-property-key">
+        <h5>Deprecated in</h5>
+    </div>
+    <div class="aui-item">
+        <span class="aui-lozenge">1.1.20</span>
+    </div>
+</div>
+<div class="aui-group">
+    <div class="aui-item ac-property-key">
+        <h5>OnDemand removal</h5>
+    </div>
+    <div class="aui-item">
+        __August, 2015__
+    </div>
+</div>
+<div class="aui-group">
+    <div class="aui-item ac-property-key">
+        <h5>Upgrade guide</h5>
+    </div>
+    <div class="aui-item">
+        Use the newly available REST API resource [`/addons/{addonKey}`](../rest-apis#get-addons-addonkey) instead.
+    </div>
+</div>
+</div>
+
+
 ### Opening Dialogs by URL
 
 Dialogs will no longer open via javascript using the url option. Instead all dialogs must be opened by their module key.
