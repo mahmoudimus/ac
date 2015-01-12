@@ -295,12 +295,24 @@ public class AddOnPropertyServiceImplTest
         ServiceResult result = service.deletePropertyValue(null, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), Option.<ETag>none());
         assertEquals(ServiceResultImpl.NOT_AUTHENTICATED, result);
     }
+
     @Test
     public void testListNoAccessWhenLoggedIn() throws Exception
     {
         Either<ServiceResult, AddOnPropertyIterable> result = service.getAddOnProperties(null, "DIFF_PLUGIN_KEY", addOnKey, Option.<ETag>none());
         assertTrue(result.isLeft());
         assertEquals(ServiceResultImpl.NOT_AUTHENTICATED, result.left().get());
+    }
+
+    @Test
+    public void testAddOnNotFoundWhenPluginNotInstalledAndSysAdmin() throws Exception
+    {
+        when(connectAddonRegistry.hasAddonWithKey(addOnKey)).thenReturn(false);
+        when(userManager.isSystemAdmin(userKey)).thenReturn(true);
+
+        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, null, addOnKey, "", Option.<ETag>none());
+        assertTrue(result.isLeft());
+        assertEquals(ServiceResultImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN, result.left().get());
     }
 
     @Test

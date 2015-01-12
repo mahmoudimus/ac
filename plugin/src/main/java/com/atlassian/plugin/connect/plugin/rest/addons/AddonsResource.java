@@ -323,12 +323,11 @@ public class AddonsResource
             public Response apply(final String propertyValue)
             {
                 ServiceResult serviceResult = addOnPropertyService.setPropertyValue(user, sourcePluginKey, addOnKey, propertyKey, propertyValue, eTag);
-                Response responseFromServiceResult = getResponseFromServiceResult(serviceResult);
                 if (shouldReturnETag(serviceResult))
                 {
                     return getResponseFromServiceResult(serviceResult, Option.some(new AddOnProperty(propertyKey, propertyValue).getETag().toString()));
                 }
-                return responseFromServiceResult;
+                return getResponseFromServiceResult(serviceResult);
             }
         });
     }
