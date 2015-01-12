@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyIterable;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.rest.data.ETag;
+import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;
@@ -35,26 +36,33 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
 
     public enum ServiceResultImpl implements ServiceResult
     {
-        PROPERTY_UPDATED(HttpStatus.SC_OK, "Property updated."),
-        PROPERTY_CREATED(HttpStatus.SC_CREATED, "Property created."),
-        KEY_TOO_LONG(HttpStatus.SC_BAD_REQUEST, String.format("The property key cannot be longer than %s characters.", AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH)),
-        MAXIMUM_PROPERTIES_EXCEEDED(HttpStatus.SC_CONFLICT, String.format("Maximum number of properties allowed to be stored (%s) has been reached.", AddOnPropertyStore.MAX_PROPERTIES_PER_ADD_ON)),
-        PROPERTY_NOT_FOUND(HttpStatus.SC_NOT_FOUND, "Property with key not found."),
-        INVALID_PROPERTY_VALUE(HttpStatus.SC_BAD_REQUEST, "Property value must be a valid JSON object"),
-        NOT_AUTHENTICATED(HttpStatus.SC_UNAUTHORIZED, "Access to this resource must be authenticated as an add-on"),
+        PROPERTY_UPDATED(HttpStatus.SC_OK, "connect.rest.add_on_properties.property_updated"),
+        PROPERTY_CREATED(HttpStatus.SC_CREATED, "connect.rest.add_on_properties.property_created"),
+        KEY_TOO_LONG(HttpStatus.SC_BAD_REQUEST, "connect.rest.add_on_properties.key_too_long", String.valueOf(AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH)),
+        MAXIMUM_PROPERTIES_EXCEEDED(HttpStatus.SC_CONFLICT, "connect.rest.add_on_properties.maximum_properties_exceeded", String.valueOf(AddOnPropertyStore.MAX_PROPERTIES_PER_ADD_ON)),
+        PROPERTY_NOT_FOUND(HttpStatus.SC_NOT_FOUND, "connect.rest.add_on_properties.property_not_found"),
+        INVALID_PROPERTY_VALUE(HttpStatus.SC_BAD_REQUEST, "connect.rest.add_on_properties.invalid_property_value"),
+        NOT_AUTHENTICATED(HttpStatus.SC_UNAUTHORIZED, "connect.rest.add_on_properties.not_authenticated"),
         PROPERTY_DELETED(HttpStatus.SC_NO_CONTENT, null),
-        ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN(HttpStatus.SC_NOT_FOUND, "Add-on with key does not exist."),
-        PROPERTY_NOT_MODIFIED(HttpStatus.SC_NOT_MODIFIED, "Not modified"),
-        PROPERTY_MODIFIED(HttpStatus.SC_PRECONDITION_FAILED, "This resource has been updated."),
-        PROPERTIES_NOT_MODIFIED(HttpStatus.SC_NOT_MODIFIED, "No properties have been updated.");
+        ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN(HttpStatus.SC_NOT_FOUND, "connect.rest.add_on_properties.add_on_not_found_or_access_to_other_data_forbidden"),
+        PROPERTY_NOT_MODIFIED(HttpStatus.SC_NOT_MODIFIED, "connect.rest.add_on_properties.property_not_modified"),
+        PROPERTY_MODIFIED(HttpStatus.SC_PRECONDITION_FAILED, "connect.rest.add_on_properties.property_modified"),
+        PROPERTIES_NOT_MODIFIED(HttpStatus.SC_NOT_MODIFIED, "connect.rest.add_on_properties.properties_not_modified"),;
 
         private final int httpStatusCode;
-        private final String message;
+        private final String i18nKey;
+        private final String[] values;
 
-        private ServiceResultImpl(int httpStatusCode, String message)
+        private ServiceResultImpl(int httpStatusCode, String i18nKey)
+        {
+            this(httpStatusCode, i18nKey, new String[0]);
+        }
+
+        private ServiceResultImpl(int httpStatusCode, String i18nKey, String... values)
         {
             this.httpStatusCode = httpStatusCode;
-            this.message = message;
+            this.i18nKey = i18nKey;
+            this.values = values;
         }
 
         public int getHttpStatusCode()
@@ -62,9 +70,13 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
             return httpStatusCode;
         }
 
-        public String message()
+        public String message(I18nResolver resolver)
         {
-            return message;
+            if (i18nKey == null)
+            {
+                return null;
+            }
+            return resolver.getText(i18nKey, values);
         }
     }
 

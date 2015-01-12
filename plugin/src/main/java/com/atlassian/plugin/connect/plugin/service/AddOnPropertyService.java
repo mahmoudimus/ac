@@ -5,6 +5,7 @@ import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyIterable;
 import com.atlassian.plugin.connect.plugin.rest.data.ETag;
+import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserProfile;
 
 import javax.annotation.Nonnull;
@@ -57,7 +58,7 @@ public interface AddOnPropertyService
     interface ServiceResult
     {
         public int getHttpStatusCode();
-        public String message();
+        public String message(I18nResolver resolver);
     }
 
     class ValidationResult<T>

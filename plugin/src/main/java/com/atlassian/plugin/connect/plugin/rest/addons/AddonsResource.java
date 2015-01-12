@@ -27,6 +27,7 @@ import com.atlassian.plugin.connect.plugin.service.AddOnPropertyServiceImpl;
 import com.atlassian.plugins.rest.common.Link;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
+import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;
@@ -83,11 +84,13 @@ public class AddonsResource
     private final AddOnPropertyService addOnPropertyService;
     private final AddOnKeyExtractor addOnKeyExtractor;
     private final UserManager userManager;
+    private final I18nResolver i18nResolver;
 
     public AddonsResource(ConnectAddonRegistry addonRegistry, LicenseRetriever licenseRetriever,
             ConnectApplinkManager connectApplinkManager, ConnectAddonManager connectAddonManager,
             ConnectAddOnInstaller connectAddOnInstaller, ApplicationProperties applicationProperties,
-            AddOnPropertyService addOnPropertyService, AddOnKeyExtractor addOnKeyExtractor, UserManager userManager)
+            AddOnPropertyService addOnPropertyService, AddOnKeyExtractor addOnKeyExtractor, UserManager userManager,
+            I18nResolver i18nResolver)
     {
         this.addonRegistry = addonRegistry;
         this.licenseRetriever = licenseRetriever;
@@ -98,6 +101,7 @@ public class AddonsResource
         this.addOnPropertyService = addOnPropertyService;
         this.addOnKeyExtractor = addOnKeyExtractor;
         this.userManager = userManager;
+        this.i18nResolver = i18nResolver;
     }
 
     @GET
@@ -284,7 +288,11 @@ public class AddonsResource
     private Option<ETag> getETagFromRequest(final HttpServletRequest request)
     {
         String header = request.getHeader(HttpHeaders.IF_MATCH);
-        if (header != null && header.startsWith("\"") && header.endsWith("\""))
+        if (header == null)
+        {
+            return Option.none();
+        }
+        if (header.startsWith("\"") && header.endsWith("\""))
         {
             header = header.substring(1);
             header = header.substring(0, header.length() - 1);
@@ -455,12 +463,12 @@ public class AddonsResource
 
     private Response getResponseFromServiceResult(final ServiceResult serviceResult)
     {
-        return getResponseForMessageAndStatus(serviceResult.message(), Response.Status.fromStatusCode(serviceResult.getHttpStatusCode()), Option.<String>none());
+        return getResponseForMessageAndStatus(serviceResult.message(i18nResolver), Response.Status.fromStatusCode(serviceResult.getHttpStatusCode()), Option.<String>none());
     }
 
     private Response getResponseFromServiceResult(final ServiceResult serviceResult, final Option<String> eTag)
     {
-        return getResponseForMessageAndStatus(serviceResult.message(), Response.Status.fromStatusCode(serviceResult.getHttpStatusCode()), eTag);
+        return getResponseForMessageAndStatus(serviceResult.message(i18nResolver), Response.Status.fromStatusCode(serviceResult.getHttpStatusCode()), eTag);
     }
 
     private Either<RestParamError, String> propertyValue(final HttpServletRequest request)
