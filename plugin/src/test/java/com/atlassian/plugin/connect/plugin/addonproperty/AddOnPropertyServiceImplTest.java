@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.addonproperty;
 
 import com.atlassian.fugue.Either;
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyIterable;
@@ -58,9 +59,9 @@ public class AddOnPropertyServiceImplTest
 
     private void testGetExistingProperty(String sourcePlugin)
     {
-        when(store.getPropertyValue(addOnKey, property.getKey(), ETag.emptyETag())).thenReturn(Either.<AddOnPropertyStore.GetResult, AddOnProperty>right(property));
+        when(store.getPropertyValue(addOnKey, property.getKey(), Option.<ETag>none())).thenReturn(Either.<AddOnPropertyStore.GetResult, AddOnProperty>right(property));
 
-        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, sourcePlugin, addOnKey, property.getKey(), ETag.emptyETag());
+        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, sourcePlugin, addOnKey, property.getKey(), Option.<ETag>none());
 
         assertTrue(result.isRight());
         assertEquals(property, result.right().get());
@@ -81,9 +82,9 @@ public class AddOnPropertyServiceImplTest
 
     private void testGetNonExistingProperty(String sourcePlugin)
     {
-        when(store.getPropertyValue(addOnKey, property.getKey(), ETag.emptyETag())).thenReturn(Either.<AddOnPropertyStore.GetResult, AddOnProperty>left(AddOnPropertyStore.GetResult.PROPERTY_NOT_FOUND));
+        when(store.getPropertyValue(addOnKey, property.getKey(), Option.<ETag>none())).thenReturn(Either.<AddOnPropertyStore.GetResult, AddOnProperty>left(AddOnPropertyStore.GetResult.PROPERTY_NOT_FOUND));
 
-        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, sourcePlugin, addOnKey, property.getKey(), ETag.emptyETag());
+        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, sourcePlugin, addOnKey, property.getKey(), Option.<ETag>none());
         assertTrue(result.isLeft());
         assertEquals(ServiceResultImpl.PROPERTY_NOT_FOUND, result.left().get());
     }
@@ -103,8 +104,8 @@ public class AddOnPropertyServiceImplTest
 
     private void testPutNonExistingValidProperty(final String sourcePluginKey)
     {
-        when(store.setPropertyValue(addOnKey, property.getKey(), property.getValue(), ETag.emptyETag())).thenReturn(AddOnPropertyStore.PutResult.PROPERTY_CREATED);
-        ServiceResult result = service.setPropertyValue(user, sourcePluginKey, addOnKey, property.getKey(), property.getValue(), ETag.emptyETag());
+        when(store.setPropertyValue(addOnKey, property.getKey(), property.getValue(), Option.<ETag>none())).thenReturn(AddOnPropertyStore.PutResult.PROPERTY_CREATED);
+        ServiceResult result = service.setPropertyValue(user, sourcePluginKey, addOnKey, property.getKey(), property.getValue(), Option.<ETag>none());
         assertEquals(ServiceResultImpl.PROPERTY_CREATED, result);
     }
 
@@ -123,9 +124,9 @@ public class AddOnPropertyServiceImplTest
 
     private void testPutExistingValidProperty(final String sourcePluginKey)
     {
-        when(store.setPropertyValue(addOnKey, property.getKey(), property.getValue(), ETag.emptyETag())).thenReturn(AddOnPropertyStore.PutResult.PROPERTY_UPDATED);
+        when(store.setPropertyValue(addOnKey, property.getKey(), property.getValue(), Option.<ETag>none())).thenReturn(AddOnPropertyStore.PutResult.PROPERTY_UPDATED);
 
-        ServiceResult result = service.setPropertyValue(user, sourcePluginKey, addOnKey, property.getKey(), property.getValue(), ETag.emptyETag());
+        ServiceResult result = service.setPropertyValue(user, sourcePluginKey, addOnKey, property.getKey(), property.getValue(), Option.<ETag>none());
         assertEquals(ServiceResultImpl.PROPERTY_UPDATED, result);
     }
 
@@ -144,9 +145,9 @@ public class AddOnPropertyServiceImplTest
 
     private void testDeleteExistingProperty(final String sourcePluginKey)
     {
-        when(store.deletePropertyValue(addOnKey, property.getKey())).thenReturn(AddOnPropertyStore.DeleteResult.PROPERTY_DELETED);
+        when(store.deletePropertyValue(addOnKey, property.getKey(), Option.<ETag>none())).thenReturn(AddOnPropertyStore.DeleteResult.PROPERTY_DELETED);
 
-        ServiceResult result = service.deletePropertyValue(user, sourcePluginKey, addOnKey, property.getKey());
+        ServiceResult result = service.deletePropertyValue(user, sourcePluginKey, addOnKey, property.getKey(), Option.<ETag>none());
         assertEquals(ServiceResultImpl.PROPERTY_DELETED, result);
     }
 
@@ -165,9 +166,9 @@ public class AddOnPropertyServiceImplTest
 
     private void testDeleteNonExistingProperty(final String sourcePluginKey)
     {
-        when(store.deletePropertyValue(addOnKey, property.getKey())).thenReturn(AddOnPropertyStore.DeleteResult.PROPERTY_NOT_FOUND);
+        when(store.deletePropertyValue(addOnKey, property.getKey(), Option.<ETag>none())).thenReturn(AddOnPropertyStore.DeleteResult.PROPERTY_NOT_FOUND);
 
-        ServiceResult result = service.deletePropertyValue(user, sourcePluginKey, addOnKey, property.getKey());
+        ServiceResult result = service.deletePropertyValue(user, sourcePluginKey, addOnKey, property.getKey(), Option.<ETag>none());
         assertEquals(ServiceResultImpl.PROPERTY_NOT_FOUND, result);
     }
 
@@ -187,8 +188,8 @@ public class AddOnPropertyServiceImplTest
     private void testListProperties(final String sourcePluginKey)
     {
         AddOnPropertyIterable emptyIterable = new AddOnPropertyIterable(Collections.<AddOnProperty>emptyList());
-        when(store.getAllPropertiesForAddOnKey(addOnKey, ETag.emptyETag())).thenReturn(Either.<AddOnPropertyStore.ListResult, AddOnPropertyIterable>right(emptyIterable));
-        Either<ServiceResult, AddOnPropertyIterable> result = service.getAddOnProperties(user, sourcePluginKey, addOnKey, ETag.emptyETag());
+        when(store.getAllPropertiesForAddOnKey(addOnKey, Option.<ETag>none())).thenReturn(Either.<AddOnPropertyStore.ListResult, AddOnPropertyIterable>right(emptyIterable));
+        Either<ServiceResult, AddOnPropertyIterable> result = service.getAddOnProperties(user, sourcePluginKey, addOnKey, Option.<ETag>none());
 
         assertEquals(emptyIterable, result.right().get());
     }
@@ -211,7 +212,7 @@ public class AddOnPropertyServiceImplTest
     {
         String tooLongKey = StringUtils.repeat(".", AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH + 1);
 
-        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, addOnKey, addOnKey, tooLongKey, ETag.emptyETag());
+        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, addOnKey, addOnKey, tooLongKey, Option.<ETag>none());
         assertTrue(result.isLeft());
         assertEquals(ServiceResultImpl.KEY_TOO_LONG, result.left().get());
     }
@@ -221,7 +222,7 @@ public class AddOnPropertyServiceImplTest
     {
         String tooLongKey = StringUtils.repeat(".", AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH + 1);
 
-        ServiceResult result = service.setPropertyValue(user, addOnKey, addOnKey, tooLongKey, property.getValue(), ETag.emptyETag());
+        ServiceResult result = service.setPropertyValue(user, addOnKey, addOnKey, tooLongKey, property.getValue(), Option.<ETag>none());
         assertEquals(ServiceResultImpl.KEY_TOO_LONG, result);
     }
 
@@ -230,23 +231,23 @@ public class AddOnPropertyServiceImplTest
     {
         String tooLongKey = StringUtils.repeat(".", AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH + 1);
 
-        ServiceResult result = service.deletePropertyValue(user, addOnKey, addOnKey, tooLongKey);
+        ServiceResult result = service.deletePropertyValue(user, addOnKey, addOnKey, tooLongKey, Option.<ETag>none());
         assertEquals(ServiceResultImpl.KEY_TOO_LONG, result);
     }
 
     @Test
     public void testMaximumPropertiesExceeded() throws Exception
     {
-        when(store.setPropertyValue(addOnKey, property.getKey(), property.getValue(), ETag.emptyETag())).thenReturn(AddOnPropertyStore.PutResult.PROPERTY_LIMIT_EXCEEDED);
+        when(store.setPropertyValue(addOnKey, property.getKey(), property.getValue(), Option.<ETag>none())).thenReturn(AddOnPropertyStore.PutResult.PROPERTY_LIMIT_EXCEEDED);
 
-        ServiceResult result = service.setPropertyValue(user, addOnKey, addOnKey, property.getKey(), property.getValue(), ETag.emptyETag());
+        ServiceResult result = service.setPropertyValue(user, addOnKey, addOnKey, property.getKey(), property.getValue(), Option.<ETag>none());
         assertEquals(ServiceResultImpl.MAXIMUM_PROPERTIES_EXCEEDED, result);
     }
 
     @Test
     public void testNoAccessToGetDifferentPluginData() throws Exception
     {
-        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), ETag.emptyETag());
+        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), Option.<ETag>none());
         assertTrue(result.isLeft());
         assertEquals(ServiceResultImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN, result.left().get());
     }
@@ -254,21 +255,21 @@ public class AddOnPropertyServiceImplTest
     @Test
     public void testNoAccessToPutDifferentPluginData() throws Exception
     {
-        ServiceResult result = service.setPropertyValue(user, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), property.getValue(), ETag.emptyETag());
+        ServiceResult result = service.setPropertyValue(user, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), property.getValue(), Option.<ETag>none());
         assertEquals(ServiceResultImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN, result);
     }
 
     @Test
     public void testNoAccessToDeleteDifferentPluginData() throws Exception
     {
-        ServiceResult result = service.deletePropertyValue(user, "DIFF_PLUGIN_KEY", addOnKey, property.getKey());
+        ServiceResult result = service.deletePropertyValue(user, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), Option.<ETag>none());
         assertEquals(ServiceResultImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN, result);
     }
 
     @Test
     public void testNoAccessToListDifferentPluginData() throws Exception
     {
-        Either<ServiceResult, AddOnPropertyIterable> result = service.getAddOnProperties(user, "DIFF_PLUGIN_KEY", addOnKey, ETag.emptyETag());
+        Either<ServiceResult, AddOnPropertyIterable> result = service.getAddOnProperties(user, "DIFF_PLUGIN_KEY", addOnKey, Option.<ETag>none());
         assertTrue(result.isLeft());
         assertEquals(ServiceResultImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN, result.left().get());
     }
@@ -276,7 +277,7 @@ public class AddOnPropertyServiceImplTest
     @Test
     public void testGetNoAccessWhenNotLoggedIn() throws Exception
     {
-        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(null, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), ETag.emptyETag());
+        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(null, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), Option.<ETag>none());
         assertTrue(result.isLeft());
         assertEquals(ServiceResultImpl.NOT_AUTHENTICATED, result.left().get());
     }
@@ -284,20 +285,20 @@ public class AddOnPropertyServiceImplTest
     @Test
     public void testSetNoAccessWhenNotLoggedIn() throws Exception
     {
-        ServiceResult result = service.setPropertyValue(null, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), property.getValue(), ETag.emptyETag());
+        ServiceResult result = service.setPropertyValue(null, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), property.getValue(), Option.<ETag>none());
         assertEquals(ServiceResultImpl.NOT_AUTHENTICATED, result);
     }
 
     @Test
     public void testDeleteNoAccessWhenLoggedIn() throws Exception
     {
-        ServiceResult result = service.deletePropertyValue(null, "DIFF_PLUGIN_KEY", addOnKey, property.getKey());
+        ServiceResult result = service.deletePropertyValue(null, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), Option.<ETag>none());
         assertEquals(ServiceResultImpl.NOT_AUTHENTICATED, result);
     }
     @Test
     public void testListNoAccessWhenLoggedIn() throws Exception
     {
-        Either<ServiceResult, AddOnPropertyIterable> result = service.getAddOnProperties(null, "DIFF_PLUGIN_KEY", addOnKey, ETag.emptyETag());
+        Either<ServiceResult, AddOnPropertyIterable> result = service.getAddOnProperties(null, "DIFF_PLUGIN_KEY", addOnKey, Option.<ETag>none());
         assertTrue(result.isLeft());
         assertEquals(ServiceResultImpl.NOT_AUTHENTICATED, result.left().get());
     }
@@ -305,7 +306,7 @@ public class AddOnPropertyServiceImplTest
     @Test
     public void testGetNotModifiedWithETag() throws Exception
     {
-        ETag eTag = property.getETag();
+        Option<ETag> eTag = Option.some(property.getETag());
         when(store.getPropertyValue(addOnKey, property.getKey(), eTag)).thenReturn(Either.<AddOnPropertyStore.GetResult, AddOnProperty>left(AddOnPropertyStore.GetResult.PROPERTY_NOT_MODIFIED));
 
         Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, addOnKey, addOnKey, property.getKey(), eTag);
@@ -317,7 +318,7 @@ public class AddOnPropertyServiceImplTest
     @Test
     public void testGetModifiedWithETag() throws Exception
     {
-        ETag eTag = property.getETag();
+        Option<ETag> eTag = Option.some(property.getETag());
         when(store.getPropertyValue(addOnKey, property.getKey(), eTag)).thenReturn(Either.<AddOnPropertyStore.GetResult, AddOnProperty>right(property));
 
         Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, addOnKey, addOnKey, property.getKey(), eTag);
@@ -335,7 +336,7 @@ public class AddOnPropertyServiceImplTest
 
     private void assertInvalidJson(final String value)
     {
-        ServiceResult result = service.setPropertyValue(user, addOnKey, addOnKey, property.getKey(), value, ETag.emptyETag());
+        ServiceResult result = service.setPropertyValue(user, addOnKey, addOnKey, property.getKey(), value, Option.<ETag>none());
         assertEquals(ServiceResultImpl.INVALID_PROPERTY_VALUE, result);
     }
 
@@ -379,8 +380,8 @@ public class AddOnPropertyServiceImplTest
 
     private void assertValidJson(String value)
     {
-        when(store.setPropertyValue(addOnKey, property.getKey(), value, ETag.emptyETag())).thenReturn(AddOnPropertyStore.PutResult.PROPERTY_UPDATED);
-        ServiceResult result = service.setPropertyValue(user, addOnKey, addOnKey, property.getKey(), value, ETag.emptyETag());
+        when(store.setPropertyValue(addOnKey, property.getKey(), value, Option.<ETag>none())).thenReturn(AddOnPropertyStore.PutResult.PROPERTY_UPDATED);
+        ServiceResult result = service.setPropertyValue(user, addOnKey, addOnKey, property.getKey(), value, Option.<ETag>none());
         assertEquals(ServiceResultImpl.PROPERTY_UPDATED, result);
     }
 }

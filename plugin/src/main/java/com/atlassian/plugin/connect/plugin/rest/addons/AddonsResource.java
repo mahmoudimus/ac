@@ -222,7 +222,7 @@ public class AddonsResource
     public Response getAddOnProperties(@PathParam ("addonKey") final String addOnKey, @Context HttpServletRequest request)
     {
         UserProfile user = userManager.getRemoteUser(request);
-        ETag eTag = getETagFromRequest(request);
+        Option<ETag> eTag = getETagFromRequest(request);
         String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(request);
 
         Either<ServiceResult, AddOnPropertyIterable> result = addOnPropertyService.getAddOnProperties(user, sourcePluginKey, addOnKey, eTag);
@@ -254,7 +254,7 @@ public class AddonsResource
     public Response getAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam("propertyKey") String propertyKey, @Context HttpServletRequest request)
     {
         UserProfile user = userManager.getRemoteUser(request);
-        ETag eTag = getETagFromRequest(request);
+        Option<ETag> eTag = getETagFromRequest(request);
         String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(request);
 
         Either<ServiceResult, AddOnProperty> propertyValue = addOnPropertyService.getPropertyValue(user, sourcePluginKey, addOnKey, propertyKey, eTag);
@@ -281,7 +281,7 @@ public class AddonsResource
         });
     }
 
-    private ETag getETagFromRequest(final HttpServletRequest request)
+    private Option<ETag> getETagFromRequest(final HttpServletRequest request)
     {
         String header = request.getHeader(HttpHeaders.IF_MATCH);
         if (header != null && header.startsWith("\"") && header.endsWith("\""))
@@ -289,7 +289,7 @@ public class AddonsResource
             header = header.substring(1);
             header = header.substring(0, header.length() - 1);
         }
-        return new ETag(header);
+        return Option.some(new ETag(header));
     }
 
     @PUT
@@ -299,7 +299,7 @@ public class AddonsResource
         final UserProfile user = userManager.getRemoteUser(request);
         // can be null, it is checked in the service.
         final String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(request);
-        final ETag eTag = getETagFromRequest(request);
+        final Option<ETag> eTag = getETagFromRequest(request);
 
         Either<RestParamError, String> errorStringEither = propertyValue(request);
         return errorStringEither.fold(new Function<RestParamError, Response>()
@@ -342,8 +342,9 @@ public class AddonsResource
         final UserProfile user = userManager.getRemoteUser(request);
         // can be null, it is checked in the service.
         final String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(request);
+        final Option<ETag> eTag = getETagFromRequest(request);
 
-        ServiceResult serviceResult = addOnPropertyService.deletePropertyValue(user, sourcePluginKey, addOnKey, propertyKey);
+        ServiceResult serviceResult = addOnPropertyService.deletePropertyValue(user, sourcePluginKey, addOnKey, propertyKey, eTag);
         return getResponseFromServiceResult(serviceResult);
     }
 

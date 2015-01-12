@@ -53,10 +53,10 @@ public class AddOnPropertyStoreTest
     @NonTransactional
     public void testCreateAndGetPropertyWithNoETag() throws Exception
     {
-        PutResult putResult = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, ETag.emptyETag());
+        PutResult putResult = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
         assertEquals(PutResult.PROPERTY_CREATED, putResult);
 
-        Either<AddOnPropertyStore.GetResult, AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY, ETag.emptyETag());
+        Either<AddOnPropertyStore.GetResult, AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY, noETag());
         assertTrue(propertyValue.right().toOption().exists(new Predicate<AddOnProperty>()
         {
             @Override
@@ -72,7 +72,7 @@ public class AddOnPropertyStoreTest
     public void testCreatePropertyWithBigValue()
     {
         String bigValue = StringUtils.repeat('.' , 65000);
-        PutResult putResult = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, bigValue, ETag.emptyETag());
+        PutResult putResult = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, bigValue, noETag());
         assertEquals(PutResult.PROPERTY_CREATED, putResult);
     }
     
@@ -80,8 +80,8 @@ public class AddOnPropertyStoreTest
     @NonTransactional
     public void testCreateAndUpdateProperty() throws Exception
     {
-        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, ETag.emptyETag());
-        PutResult putResult = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE + "1", ETag.emptyETag());
+        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
+        PutResult putResult = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE + "1", noETag());
         assertEquals(PutResult.PROPERTY_UPDATED, putResult);
     }
 
@@ -90,11 +90,11 @@ public class AddOnPropertyStoreTest
     public void testCreateAndUpdatePropertyWithSameETag() throws Exception
     {
         AddOnProperty property = new AddOnProperty(PROPERTY_KEY, VALUE);
-        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, ETag.emptyETag());
-        PutResult putResult = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE + "1", property.getETag());
+        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
+        PutResult putResult = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE + "1", Option.some(property.getETag()));
         assertEquals(PutResult.PROPERTY_UPDATED, putResult);
 
-        Either<AddOnPropertyStore.GetResult, AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY, ETag.emptyETag());
+        Either<AddOnPropertyStore.GetResult, AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY, noETag());
         assertTrue(propertyValue.right().toOption().exists(new Predicate<AddOnProperty>()
         {
             @Override
@@ -109,9 +109,9 @@ public class AddOnPropertyStoreTest
     @NonTransactional
     public void testCreateAndUpdatePropertyWithDifferentETag() throws Exception
     {
-        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, ETag.emptyETag());
+        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
 
-        PutResult putResult = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE + "1", new ETag("asd"));
+        PutResult putResult = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE + "1", Option.some(new ETag("asd")));
         assertEquals(PutResult.PROPERTY_MODIFIED, putResult);
     }
 
@@ -121,10 +121,10 @@ public class AddOnPropertyStoreTest
     {
         for (int i = 0; i < MAX_PROPERTIES_PER_ADD_ON; i++)
         {
-            PutResult putResult = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY + String.valueOf(i), VALUE, ETag.emptyETag());
+            PutResult putResult = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY + String.valueOf(i), VALUE, noETag());
             assertEquals(PutResult.PROPERTY_CREATED, putResult);
         }
-        PutResult last = store.setPropertyValue(ADD_ON_KEY, "last", VALUE, ETag.emptyETag());
+        PutResult last = store.setPropertyValue(ADD_ON_KEY, "last", VALUE, noETag());
         assertEquals(PutResult.PROPERTY_LIMIT_EXCEEDED, last);
     }
 
@@ -132,7 +132,7 @@ public class AddOnPropertyStoreTest
     @NonTransactional
     public void testDeleteNonExistentProperty() throws Exception
     {
-        DeleteResult deleteResult = store.deletePropertyValue(ADD_ON_KEY, PROPERTY_KEY);
+        DeleteResult deleteResult = store.deletePropertyValue(ADD_ON_KEY, PROPERTY_KEY, noETag());
         assertEquals(DeleteResult.PROPERTY_NOT_FOUND, deleteResult);
     }
 
@@ -140,8 +140,27 @@ public class AddOnPropertyStoreTest
     @NonTransactional
     public void testDeleteExistingProperty() throws Exception
     {
-        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, ETag.emptyETag());
-        DeleteResult deleteResult = store.deletePropertyValue(ADD_ON_KEY, PROPERTY_KEY);
+        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
+        DeleteResult deleteResult = store.deletePropertyValue(ADD_ON_KEY, PROPERTY_KEY, noETag());
+        assertEquals(DeleteResult.PROPERTY_DELETED, deleteResult);
+    }
+
+    @Test
+    @NonTransactional
+    public void testDeleteExistentPropertyWithWrongETag() throws Exception
+    {
+        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
+        DeleteResult deleteResult = store.deletePropertyValue(ADD_ON_KEY, PROPERTY_KEY, Option.some(new ETag("a")));
+        assertEquals(DeleteResult.PROPERTY_MODIFIED, deleteResult);
+    }
+
+
+    @Test
+    @NonTransactional
+    public void testDeleteExistentPropertyWithRightETag() throws Exception
+    {
+        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
+        DeleteResult deleteResult = store.deletePropertyValue(ADD_ON_KEY, PROPERTY_KEY, Option.some(new AddOnProperty(PROPERTY_KEY, VALUE).getETag()));
         assertEquals(DeleteResult.PROPERTY_DELETED, deleteResult);
     }
     
@@ -149,10 +168,10 @@ public class AddOnPropertyStoreTest
     {
         for (AddOnProperty property : propertyList)
         {
-            store.setPropertyValue(ADD_ON_KEY, property.getKey(), property.getValue(), ETag.emptyETag());
+            store.setPropertyValue(ADD_ON_KEY, property.getKey(), property.getValue(), noETag());
         }
 
-        Either<AddOnPropertyStore.ListResult, AddOnPropertyIterable> result = store.getAllPropertiesForAddOnKey(ADD_ON_KEY, ETag.emptyETag());
+        Either<AddOnPropertyStore.ListResult, AddOnPropertyIterable> result = store.getAllPropertiesForAddOnKey(ADD_ON_KEY, noETag());
 
         if (Iterables.isEmpty().apply(result.right().get()) && Iterables.isEmpty().apply(propertyList)) return;
 
@@ -184,9 +203,9 @@ public class AddOnPropertyStoreTest
     public void testCreateAndGetPropertyWithSameETag() throws Exception
     {
         AddOnProperty property = new AddOnProperty(PROPERTY_KEY, VALUE);
-        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, ETag.emptyETag());
+        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
 
-        Either<AddOnPropertyStore.GetResult, AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY, property.getETag());
+        Either<AddOnPropertyStore.GetResult, AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY, Option.some(property.getETag()));
         assertTrue(propertyValue.left().toOption().exists(new Predicate<AddOnPropertyStore.GetResult>()
         {
             @Override
@@ -201,8 +220,8 @@ public class AddOnPropertyStoreTest
     @NonTransactional
     public void testListPropertiesWithNoETag() throws Exception
     {
-        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, ETag.emptyETag());
-        Iterable<String> keys = store.getAllPropertiesForAddOnKey(ADD_ON_KEY, ETag.emptyETag()).right().get().getPropertyKeys();
+        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
+        Iterable<String> keys = store.getAllPropertiesForAddOnKey(ADD_ON_KEY, noETag()).right().get().getPropertyKeys();
         Option<String> first = Iterables.first(keys);
         assertTrue(first.isDefined());
         assertEquals(PROPERTY_KEY, first.get());
@@ -212,10 +231,10 @@ public class AddOnPropertyStoreTest
     @NonTransactional
     public void testListPropertiesWithSameETag() throws Exception
     {
-        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, ETag.emptyETag());
-        AddOnPropertyIterable addOnProperties = store.getAllPropertiesForAddOnKey(ADD_ON_KEY, ETag.emptyETag()).right().get();
+        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
+        AddOnPropertyIterable addOnProperties = store.getAllPropertiesForAddOnKey(ADD_ON_KEY, noETag()).right().get();
 
-        AddOnPropertyStore.ListResult listResult = store.getAllPropertiesForAddOnKey(ADD_ON_KEY, addOnProperties.getETag()).left().get();
+        AddOnPropertyStore.ListResult listResult = store.getAllPropertiesForAddOnKey(ADD_ON_KEY, Option.some(addOnProperties.getETag())).left().get();
         assertEquals(AddOnPropertyStore.ListResult.PROPERTIES_NOT_MODIFIED, listResult);
     }
 
@@ -223,8 +242,8 @@ public class AddOnPropertyStoreTest
     @NonTransactional
     public void testListPropertiesWithDifferentETag() throws Exception
     {
-        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, ETag.emptyETag());
-        Iterable<String> keys = store.getAllPropertiesForAddOnKey(ADD_ON_KEY, new ETag("1")).right().get().getPropertyKeys();
+        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
+        Iterable<String> keys = store.getAllPropertiesForAddOnKey(ADD_ON_KEY, Option.some(new ETag("1"))).right().get().getPropertyKeys();
         Option<String> first = Iterables.first(keys);
         assertTrue(first.isDefined());
         assertEquals(PROPERTY_KEY, first.get());
@@ -235,8 +254,8 @@ public class AddOnPropertyStoreTest
     public void testCreateAndGetPropertyWithDifferentETag() throws Exception
     {
         AddOnProperty property = new AddOnProperty(PROPERTY_KEY, VALUE + "1");
-        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, ETag.emptyETag());
-        Either<AddOnPropertyStore.GetResult, AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY, property.getETag());
+        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
+        Either<AddOnPropertyStore.GetResult, AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY, Option.some(property.getETag()));
         assertTrue(propertyValue.right().toOption().exists(new Predicate<AddOnProperty>()
         {
             @Override
@@ -254,5 +273,10 @@ public class AddOnPropertyStoreTest
         {
             entityManager.migrate(AddOnPropertyAO.class);
         }
+    }
+
+    private static Option<ETag> noETag()
+    {
+        return Option.none();
     }
 }

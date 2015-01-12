@@ -1,41 +1,24 @@
 package com.atlassian.plugin.connect.plugin.rest.data;
 
-import com.atlassian.fugue.Option;
-import com.google.common.base.Suppliers;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
- * TODO: Document this class / interface here
+ * Class representing an entity tag used to identify a resource
  *
- * @since v6.3
+ * @since TODO: fill in the proper version before merge
  */
-public class ETag
+public final class ETag
 {
-    private final Option<String> eTag;
+    private final String hash;
 
-    private ETag()
+    public ETag(final String hash)
     {
-        eTag = Option.none();
-    }
-
-    public ETag(final String eTag)
-    {
-        this.eTag = Option.option(eTag);
-    }
-
-    public boolean isDefined()
-    {
-        return eTag.isDefined();
-    }
-
-    public static ETag emptyETag()
-    {
-        return new ETag();
+        this.hash = hash;
     }
 
     @Override
-    public int hashCode() { return new HashCodeBuilder().append(this.eTag).toHashCode();}
+    public int hashCode() { return new HashCodeBuilder().append(this.hash).toHashCode();}
 
     @Override
     public boolean equals(final Object obj)
@@ -43,12 +26,12 @@ public class ETag
         if (obj == null) {return false;}
         if (getClass() != obj.getClass()) {return false;}
         final ETag other = (ETag) obj;
-        return new EqualsBuilder().append(this.eTag, other.eTag).isEquals();
+        return new EqualsBuilder().append(this.hash, other.hash).isEquals();
     }
 
     @Override
     public String toString()
     {
-        return eTag.getOrElse(Suppliers.ofInstance(""));
+        return hash;
     }
 }

@@ -25,7 +25,7 @@ public interface AddOnPropertyService
      * </p>
      * @return either error result or add-on property.
      **/
-    Either<ServiceResult, AddOnProperty> getPropertyValue(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey,@Nonnull String propertyKey, ETag eTag);
+    Either<ServiceResult, AddOnProperty> getPropertyValue(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey,@Nonnull String propertyKey, Option<ETag> eTag);
 
     /**
      * Sets a property from the add-on store.
@@ -34,7 +34,7 @@ public interface AddOnPropertyService
      * </p>
      * @return ServiceResult containing http status and status message
      **/
-    ServiceResult setPropertyValue(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey, @Nonnull String propertyKey, @Nonnull String value, ETag eTag);
+    ServiceResult setPropertyValue(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey, @Nonnull String propertyKey, @Nonnull String value, Option<ETag> eTag);
 
     /**
      * Deletes a property from the add-on store.
@@ -43,7 +43,7 @@ public interface AddOnPropertyService
      * </p>
      * @return ServiceResult containing http status and status message
      **/
-    ServiceResult deletePropertyValue(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey, @Nonnull String propertyKey);
+    ServiceResult deletePropertyValue(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey, @Nonnull String propertyKey, @Nonnull Option<ETag> eTag);
 
     /**
      * Returns a list of all properties for a given add-on.
@@ -52,7 +52,7 @@ public interface AddOnPropertyService
      * </p>
      * @return either error result or list of add-on properties.
      **/
-    Either<ServiceResult, AddOnPropertyIterable> getAddOnProperties(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey, @Nonnull ETag eTag);
+    Either<ServiceResult, AddOnPropertyIterable> getAddOnProperties(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey, @Nonnull Option<ETag> eTag);
 
     interface ServiceResult
     {

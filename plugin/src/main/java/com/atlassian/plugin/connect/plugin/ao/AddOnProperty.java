@@ -78,4 +78,9 @@ public final class AddOnProperty
     {
         return new ETag(Hashing.md5().hashString(value).toString());
     }
+
+    public static AddOnProperty fromAO(AddOnPropertyAO ao)
+    {
+        return new AddOnProperty(ao.getPropertyKey(), ao.getValue());
+    }
 }

@@ -37,7 +37,7 @@ public class AddOnPropertyStore
     @Autowired
     public AddOnPropertyStore(final ActiveObjects ao) {this.ao = checkNotNull(ao);}
 
-    public Either<GetResult, AddOnProperty> getPropertyValue(@Nonnull final String addOnKey, @Nonnull final String propertyKey, final ETag eTag)
+    public Either<GetResult, AddOnProperty> getPropertyValue(@Nonnull final String addOnKey, @Nonnull final String propertyKey, final Option<ETag> eTag)
     {
         AddOnPropertyAO[] properties = ao.find(AddOnPropertyAO.class, Query.select().where("PLUGIN_KEY = ? AND PROPERTY_KEY = ?", addOnKey, propertyKey));
 
@@ -57,14 +57,14 @@ public class AddOnPropertyStore
             return Either.left(GetResult.PROPERTY_NOT_FOUND);
         }
         AddOnProperty property = propertyOption.get();
-        if (eTag.isDefined() && eTag.equals(property.getETag()))
+        if (eTag.isDefined() && eTag.get().equals(property.getETag()))
         {
             return Either.left(GetResult.PROPERTY_NOT_MODIFIED);
         }
         return Either.right(property);
     }
 
-    public PutResult setPropertyValue(@Nonnull final String addOnKey, @Nonnull final String propertyKey, @Nonnull final String value, final ETag eTag)
+    public PutResult setPropertyValue(@Nonnull final String addOnKey, @Nonnull final String propertyKey, @Nonnull final String value, final Option<ETag> eTag)
     {
         checkNotNull(addOnKey);
         checkNotNull(propertyKey);
@@ -81,8 +81,8 @@ public class AddOnPropertyStore
                 if (existsProperty(addOnKey, propertyKey))
                 {
                     AddOnPropertyAO propertyAO = getAddOnPropertyForKey(addOnKey, propertyKey);
-                    ETag oldETag = new AddOnProperty(propertyAO.getPropertyKey(), propertyAO.getValue()).getETag();
-                    if (eTag.isDefined() && !eTag.equals(oldETag))
+                    ETag oldETag = AddOnProperty.fromAO(propertyAO).getETag();
+                    if (eTag.isDefined() && !eTag.get().equals(oldETag))
                     {
                         return PutResult.PROPERTY_MODIFIED;
                     }
@@ -104,7 +104,7 @@ public class AddOnPropertyStore
         });
     }
 
-    public DeleteResult deletePropertyValue(@Nonnull final String addOnKey, @Nonnull final String propertyKey)
+    public DeleteResult deletePropertyValue(@Nonnull final String addOnKey, @Nonnull final String propertyKey, @Nonnull final Option<ETag> eTag)
     {
         checkNotNull(addOnKey);
         checkNotNull(propertyKey);
@@ -117,6 +117,12 @@ public class AddOnPropertyStore
                 if (existsProperty(addOnKey, propertyKey))
                 {
                     AddOnPropertyAO propertyAO = getAddOnPropertyForKey(addOnKey, propertyKey);
+                    ETag oldETag = AddOnProperty.fromAO(propertyAO).getETag();
+                    if (eTag.isDefined() && !eTag.get().equals(oldETag))
+                    {
+                        return DeleteResult.PROPERTY_MODIFIED;
+                    }
+
                     ao.delete(propertyAO);
                     return DeleteResult.PROPERTY_DELETED;
                 }
@@ -133,7 +139,7 @@ public class AddOnPropertyStore
         return getAddOnPropertyForKey(addOnKey, propertyKey) != null;
     }
     
-    public Either<ListResult,AddOnPropertyIterable> getAllPropertiesForAddOnKey(@Nonnull final String addOnKey, final ETag eTag)
+    public Either<ListResult,AddOnPropertyIterable> getAllPropertiesForAddOnKey(@Nonnull final String addOnKey, final Option<ETag> eTag)
     {
         return ao.executeInTransaction(new TransactionCallback<Either<ListResult, AddOnPropertyIterable>>()
         {
@@ -143,7 +149,7 @@ public class AddOnPropertyStore
                 ImmutableList<AddOnPropertyAO> addOnPropertyAOList = ImmutableList.<AddOnPropertyAO>builder().add(getAddOnPropertyAOArrayForAddOnKey(addOnKey)).build();
                 AddOnPropertyIterable addOnProperties = AddOnPropertyIterable.fromAddOnPropertyAOList(addOnPropertyAOList);
 
-                if (eTag.isDefined() && eTag.equals(addOnProperties.getETag()))
+                if (eTag.isDefined() && eTag.get().equals(addOnProperties.getETag()))
                 {
                     return Either.left(ListResult.PROPERTIES_NOT_MODIFIED);
                 }
@@ -186,6 +192,7 @@ public class AddOnPropertyStore
     public enum DeleteResult
     {
         PROPERTY_DELETED,
+        PROPERTY_MODIFIED,
         PROPERTY_NOT_FOUND
     }
     

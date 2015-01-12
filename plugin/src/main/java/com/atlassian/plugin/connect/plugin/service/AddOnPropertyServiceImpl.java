@@ -84,7 +84,7 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
     }
 
     @Override
-    public Either<ServiceResult, AddOnProperty> getPropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey, final ETag eTag)
+    public Either<ServiceResult, AddOnProperty> getPropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey, final Option<ETag> eTag)
     {
         ValidationResult<GetOrDeletePropertyInput> validationResult = validateGetPropertyValue(user, sourceAddOnKey, addOnKey, propertyKey);
         if (validationResult.isValid())
@@ -115,7 +115,7 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
     }
 
     @Override
-    public ServiceResult setPropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey, @Nonnull final String value, final ETag eTag)
+    public ServiceResult setPropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey, @Nonnull final String value, final Option<ETag> eTag)
     {
         Preconditions.checkArgument(value.length() <= MAXIMUM_PROPERTY_VALUE_LENGTH);
         ValidationResult<SetPropertyInput> validationResult = validateSetPropertyValue(user, sourceAddOnKey, checkNotNull(addOnKey), checkNotNull(propertyKey), checkNotNull(value));
@@ -143,17 +143,18 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
     }
 
     @Override
-    public ServiceResult deletePropertyValue(@Nullable final UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey)
+    public ServiceResult deletePropertyValue(@Nullable final UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey, @Nonnull Option<ETag> eTag)
     {
         ValidationResult<GetOrDeletePropertyInput> validationResult = validateDeletePropertyValue(user, sourceAddOnKey, checkNotNull(addOnKey), checkNotNull(propertyKey));
         if (validationResult.isValid())
         {
             GetOrDeletePropertyInput input = validationResult.getValue().getOrNull();
-            AddOnPropertyStore.DeleteResult deleteResult = store.deletePropertyValue(input.addOnKey, input.propertyKey);
+            AddOnPropertyStore.DeleteResult deleteResult = store.deletePropertyValue(input.addOnKey, input.propertyKey, eTag);
             switch (deleteResult)
             {
                 case PROPERTY_DELETED: return ServiceResultImpl.PROPERTY_DELETED;
                 case PROPERTY_NOT_FOUND: return ServiceResultImpl.PROPERTY_NOT_FOUND;
+                case PROPERTY_MODIFIED: return ServiceResultImpl.PROPERTY_MODIFIED;
                 default:
                 {
                     log.error("DeleteResult case not covered. Method deletePropertyValue has returned an enum for which there is no corresponding ServiceResult.");
@@ -168,7 +169,7 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
     }
 
     @Override
-    public Either<ServiceResult, AddOnPropertyIterable> getAddOnProperties(@Nullable final UserProfile user, @Nullable final String sourcePluginKey, @Nonnull final String addOnKey, @Nonnull final ETag eTag)
+    public Either<ServiceResult, AddOnPropertyIterable> getAddOnProperties(@Nullable final UserProfile user, @Nullable final String sourcePluginKey, @Nonnull final String addOnKey, @Nonnull final Option<ETag> eTag)
     {
         ValidationResult<String> validationResult = validateListProperties(user, sourcePluginKey, checkNotNull(addOnKey));
         if (validationResult.isValid())
