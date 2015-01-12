@@ -38,7 +38,7 @@ public class LicenseRetriever
             @Override
             public LicenseStatus apply(final PluginLicense input)
             {
-                return input.isActive() ? LicenseStatus.ACTIVE : LicenseStatus.NONE;
+                return LicenseStatus.fromBoolean(input.isActive());
             }
         }).getOrElse(LicenseStatus.NONE);
     }

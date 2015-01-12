@@ -699,7 +699,7 @@
         <atlassian.json.schema.validator.version>1.0.4</atlassian.json.schema.validator.version>
         <atlassian.plugins.version>3.0.7</atlassian.plugins.version>
         <atlassian.plugins.api.version>2.10</atlassian.plugins.api.version>
-        <atlassian.rest.version>2.3.0</atlassian.rest.version>
+        <atlassian.rest.version>2.9.13</atlassian.rest.version>
         <atlassian.sal.version>2.10.0</atlassian.sal.version>
         <atlassian.selenium.version>2.2-rc3</atlassian.selenium.version>
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>

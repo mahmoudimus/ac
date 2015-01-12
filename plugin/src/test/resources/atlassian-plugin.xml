@@ -25,6 +25,7 @@
     <component-import key="jwtWriterFactory" interface="com.atlassian.jwt.writer.JwtWriterFactory" />
     <component-import key="httpClientFactory" interface="com.atlassian.httpclient.api.factory.HttpClientFactory" />
     <component-import key="darkFeatureManager" interface="com.atlassian.sal.api.features.DarkFeatureManager" />
+    <component-import key="licenseHandler" interface="com.atlassian.sal.api.license.LicenseHandler" />
 
     <!-- CONNECT COMPONENTS -->
     <component-import key="connectApplinkManager" interface="com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager" />

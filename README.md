@@ -56,7 +56,12 @@ To run an integration test against a particular product in IDEA. (Note only appl
 
 
 ### Wired Tests
-See [doco for details](https://developer.atlassian.com/display/DOCS/Run+Wired+Tests+with+the+Plugin+Test+Console)
+
+Wired tests can be run from [the Plugin Test Console](https://developer.atlassian.com/display/DOCS/Run+Wired+Tests+with+the+Plugin+Test+Console) inside the host application.
+They can also be run directly with Maven or IDEA, but that requires setting the `baseUrl` parameter to point the test runner to your local instance, e.g. `-Dbaseurl=http://localhost:2990/jira`.
+
+To debug a test, you must first [create a remote debug target](https://developer.atlassian.com/docs/developer-tools/working-in-an-ide/creating-a-remote-debug-target).
+Then, start debugging using the remote debug target and thereafter run the test in debug mode.
 
 To run manually
 

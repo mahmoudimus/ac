@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.registry;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -70,4 +71,6 @@ public interface ConnectAddonRegistry
     Iterable<String> getAddonKeysToEnableOnRestart();
 
     AddonSettings getAddonSettings(String pluginKey);
+
+    Option<ConnectAddonBean> getAddonBean(String pluginKey);
 }

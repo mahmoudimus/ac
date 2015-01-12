@@ -1,6 +1,11 @@
 package com.atlassian.plugin.connect.plugin.product.confluence;
 
+import com.atlassian.confluence.license.LicenseService;
 import com.atlassian.core.task.MultiQueueTaskManager;
+import com.atlassian.extras.api.AtlassianLicense;
+import com.atlassian.extras.api.Product;
+import com.atlassian.extras.api.ProductLicense;
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.ConfluenceConditions;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
@@ -23,12 +28,15 @@ public final class ConfluenceProductAccessor implements ProductAccessor
     private static final Logger log = LoggerFactory.getLogger(ConfluenceProductAccessor.class);
     private final MultiQueueTaskManager taskManager;
     private final ConfluenceConditions confluenceConditions;
+    private final LicenseService licenseService;
 
     @Autowired
-    public ConfluenceProductAccessor(MultiQueueTaskManager taskManager, ConfluenceConditions confluenceConditions)
+    public ConfluenceProductAccessor(MultiQueueTaskManager taskManager, ConfluenceConditions confluenceConditions,
+                                     LicenseService licenseService)
     {
         this.confluenceConditions = confluenceConditions;
         this.taskManager = checkNotNull(taskManager);
+        this.licenseService = licenseService;
     }
 
     @Override
@@ -91,5 +99,12 @@ public final class ConfluenceProductAccessor implements ProductAccessor
     public boolean needsAdminPageNameEscaping()
     {
         return true;
+    }
+
+    @Override
+    public Option<ProductLicense> getProductLicense()
+    {
+        AtlassianLicense atlassianLicense = licenseService.retrieveAtlassianLicense();
+        return Option.option(atlassianLicense.getProductLicense(Product.CONFLUENCE));
     }
 }

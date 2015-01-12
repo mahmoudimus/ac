@@ -1,26 +1,42 @@
 package com.atlassian.plugin.connect.plugin.rest.addons;
 
+import com.atlassian.annotations.PublicApi;
 import com.atlassian.applinks.api.ApplicationLink;
+import com.atlassian.extras.api.Contact;
+import com.atlassian.extras.api.ProductLicense;
+import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnInstaller;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
+import com.atlassian.plugin.connect.plugin.license.LicenseStatus;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.rest.AddonOrSysadminOnlyResourceFilter;
 import com.atlassian.plugin.connect.plugin.rest.RestError;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
-import com.atlassian.plugin.connect.plugin.rest.data.RestAddonType;
+import com.atlassian.plugin.connect.plugin.rest.data.RestAddonLicense;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddons;
+import com.atlassian.plugin.connect.plugin.rest.data.RestContact;
+import com.atlassian.plugin.connect.plugin.rest.data.RestHost;
+import com.atlassian.plugin.connect.plugin.rest.data.RestInternalAddon;
+import com.atlassian.plugin.connect.plugin.rest.data.RestLimitedAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestMinimalAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestNamedLink;
 import com.atlassian.plugin.connect.plugin.rest.data.RestRelatedLinks;
+import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugins.rest.common.Link;
+import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.atlassian.plugins.rest.common.security.jersey.SysadminOnlyResourceFilter;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.upm.api.license.entity.PluginLicense;
+import com.atlassian.upm.api.util.Option;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.sun.jersey.spi.container.ResourceFilters;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,16 +46,18 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.net.URI;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+
+import static com.atlassian.plugin.connect.plugin.rest.ConnectRestConstants.ADDON_KEY_PATH_PARAMETER;
 
 /**
  * REST endpoint which provides a view of Connect add-ons which are installed in the instance.
+ * <p/>
+ * NOTE: This resource class exposes some functionality for add-on developers and some for system administrators.
  */
-@ResourceFilters (SysadminOnlyResourceFilter.class)
 @Path (AddonsResource.REST_PATH)
 public class AddonsResource
 {
@@ -53,10 +71,13 @@ public class AddonsResource
     private final ConnectAddonManager connectAddonManager;
     private final ConnectAddOnInstaller connectAddOnInstaller;
     private final ApplicationProperties applicationProperties;
+    private final UserManager userManager;
+    private final ProductAccessor productAccessor;
 
     public AddonsResource(ConnectAddonRegistry addonRegistry, LicenseRetriever licenseRetriever,
             ConnectApplinkManager connectApplinkManager, ConnectAddonManager connectAddonManager,
-            ConnectAddOnInstaller connectAddOnInstaller, ApplicationProperties applicationProperties)
+            ConnectAddOnInstaller connectAddOnInstaller, ApplicationProperties applicationProperties,
+            UserManager userManager, ProductAccessor productAccessor)
     {
         this.addonRegistry = addonRegistry;
         this.licenseRetriever = licenseRetriever;
@@ -64,31 +85,34 @@ public class AddonsResource
         this.connectAddonManager = connectAddonManager;
         this.connectAddOnInstaller = connectAddOnInstaller;
         this.applicationProperties = applicationProperties;
+        this.userManager = userManager;
+        this.productAccessor = productAccessor;
     }
 
     @GET
+    @ResourceFilters(SysadminOnlyResourceFilter.class)
     @Produces ("application/json")
-    public Response getAddons(@QueryParam ("type") String type)
+    public Response getAddons()
     {
-        try
-        {
-            RestAddonType addonType = StringUtils.isBlank(type) ? null : RestAddonType.valueOf(type.toUpperCase());
-            RestAddons restAddons = getAddonsByType(addonType);
-            return Response.ok().entity(restAddons).build();
-        }
-        catch (IllegalArgumentException e)
-        {
-            String message = "Type " + type + " is not valid. Valid options: " + Arrays.toString(RestAddonType.values());
-            return getErrorResponse(message, Response.Status.BAD_REQUEST);
-        }
+        RestAddons restAddons = getAddonResources();
+        return Response.ok().entity(restAddons).build();
     }
 
+    /**
+     * Returns the add-on with the given key.
+     *
+     * @param addonKey the key of the add-on, as defined in its descriptor
+     * @return a JSON representation of the add-on
+     */
     @GET
+    @Path ("/{" + ADDON_KEY_PATH_PARAMETER + "}")
+    @ResourceFilters(AddonOrSysadminOnlyResourceFilter.class)
+    @AnonymousAllowed
     @Produces ("application/json")
-    @Path ("/{addonKey}")
-    public Response getAddon(@PathParam ("addonKey") String addonKey)
+    @PublicApi
+    public Response getAddon(@PathParam (ADDON_KEY_PATH_PARAMETER) String addonKey)
     {
-        RestAddon restAddon = getRestAddonByKey(addonKey);
+        RestMinimalAddon restAddon = getRestAddonByKey(addonKey);
         if (restAddon == null)
         {
             String message = "Add-on with key " + addonKey + " was not found";
@@ -98,16 +122,17 @@ public class AddonsResource
     }
 
     @DELETE
+    @Path ("/{" + ADDON_KEY_PATH_PARAMETER + "}")
+    @ResourceFilters(SysadminOnlyResourceFilter.class)
     @Produces ("application/json")
-    @Path ("/{addonKey}")
-    public Response uninstallAddon(@PathParam ("addonKey") String addonKey)
+    public Response uninstallAddon(@PathParam (ADDON_KEY_PATH_PARAMETER) String addonKey)
     {
         try
         {
             ConnectAddonBean addonBean = connectAddonManager.getExistingAddon(addonKey);
             if (addonBean != null)
             {
-                RestMinimalAddon addon = new RestMinimalAddon(addonKey, addonBean.getVersion(), RestAddonType.JSON);
+                RestMinimalAddon addon = new RestMinimalAddon(addonKey, addonBean.getVersion());
                 connectAddonManager.uninstallConnectAddon(addonKey);
                 return Response.ok().entity(addon).build();
             }
@@ -124,9 +149,10 @@ public class AddonsResource
     }
 
     @PUT
+    @Path ("/{" + ADDON_KEY_PATH_PARAMETER + "}/reinstall")
+    @ResourceFilters(SysadminOnlyResourceFilter.class)
     @Produces ("application/json")
-    @Path ("/{addonKey}/reinstall")
-    public Response reinstallAddon(@PathParam ("addonKey") String addonKey)
+    public Response reinstallAddon(@PathParam (ADDON_KEY_PATH_PARAMETER) String addonKey)
     {
         try
         {
@@ -138,7 +164,7 @@ public class AddonsResource
                 connectAddonManager.uninstallConnectAddonQuietly(addonKey);
                 connectAddOnInstaller.install(descriptor);
 
-                RestAddon restAddon = getRestAddonByKey(addonKey);
+                RestMinimalAddon restAddon = getRestAddonByKey(addonKey);
                 return Response.ok().entity(restAddon).build();
             }
         }
@@ -153,43 +179,90 @@ public class AddonsResource
         return getErrorResponse(message, Response.Status.NOT_FOUND);
     }
 
-    private RestAddons getAddonsByType(RestAddonType type)
+    private RestAddons getAddonResources()
     {
-        List<RestAddon> result = Lists.newArrayList();
-
-        if (type == null || type == RestAddonType.JSON)
-        {
-            for (ConnectAddonBean addonBean : addonRegistry.getAllAddonBeans())
-            {
-                result.add(createJsonAddonRest(addonBean));
-            }
-        }
-
-        return new RestAddons<RestAddon>(result);
-    }
-
-    private RestAddon getRestAddonByKey(String addonKey)
-    {
+        List<RestMinimalAddon> result = Lists.newArrayList();
         for (ConnectAddonBean addonBean : addonRegistry.getAllAddonBeans())
         {
-            if (addonKey.equals(addonBean.getKey()))
-            {
-                return createJsonAddonRest(addonBean);
-            }
+            result.add(createJsonAddonRest(addonBean));
         }
-
-        return null;
+        return new RestAddons<RestMinimalAddon>(result);
     }
 
-    private RestAddon createJsonAddonRest(ConnectAddonBean addonBean)
+    private RestMinimalAddon getRestAddonByKey(String addonKey)
+    {
+        RestMinimalAddon restAddon = null;
+        for (ConnectAddonBean addonBean : addonRegistry.getAddonBean(addonKey))
+        {
+            restAddon = createJsonAddonRest(addonBean);
+        }
+        return restAddon;
+    }
+
+    private RestLimitedAddon createJsonAddonRest(ConnectAddonBean addonBean)
     {
         String key = addonBean.getKey();
         String version = addonBean.getVersion();
-        String state = addonRegistry.getRestartState(key).name();
-        String license = licenseRetriever.getLicenseStatus(key).value();
-        RestAddon.AddonApplink appLinkResource = getApplinkResourceForAddon(key);
+        PluginState state = addonRegistry.getRestartState(key);
+        String stateString = state.name();
+        RestHost host = getHostResource();
+        RestAddonLicense license = getLicenseResourceForAddon(key);
+        RestRelatedLinks addonLinks = getAddonLinks(key);
+        RestInternalAddon.AddonApplink appLinkResource = getApplinkResourceForAddon(key);
 
-        return new RestAddon(key, version, RestAddonType.JSON, state, license, appLinkResource, getAddonLinks(key));
+        RestLimitedAddon resource;
+        if (userManager.isSystemAdmin(userManager.getRemoteUserKey()))
+        {
+            resource = new RestInternalAddon(key, version, stateString, host, license, addonLinks, appLinkResource);
+        }
+        else
+        {
+            if (state.equals(PluginState.DISABLED) || state.equals(PluginState.DISABLING))
+            {
+                resource = new RestLimitedAddon(key, version, stateString);
+            }
+            else
+            {
+                resource = new RestAddon(key, version, stateString, host, license, addonLinks);
+            }
+        }
+        return resource;
+    }
+
+    private RestHost getHostResource()
+    {
+        List<RestContact> contactList = null;
+        for (ProductLicense productLicense : productAccessor.getProductLicense())
+        {
+            Collection<Contact> licenseContacts = productLicense.getContacts();
+            Iterable<RestContact> contactRepresentations = Iterables.transform(licenseContacts, new Function<Contact, RestContact>()
+            {
+                @Override
+                public RestContact apply(Contact contact)
+                {
+                    return new RestContact(contact.getName(), contact.getEmail());
+                }
+            });
+
+            contactList = Lists.newArrayList(contactRepresentations);
+        }
+        return new RestHost(applicationProperties.getDisplayName(), contactList);
+    }
+
+    private RestAddonLicense getLicenseResourceForAddon(String key)
+    {
+        Option<PluginLicense> licenseOption = licenseRetriever.getLicense(key);
+        RestAddonLicense resource = null;
+        for (PluginLicense license : licenseOption)
+        {
+            resource = new RestAddonLicense(
+                    license.isActive(),
+                    license.getLicenseType(),
+                    license.isEvaluation(),
+                    license.getSupportEntitlementNumber().getOrElse((String) null));
+
+        }
+        return resource;
     }
 
     private RestRelatedLinks getAddonLinks(String key)
@@ -205,7 +278,7 @@ public class AddonsResource
                 .build();
     }
 
-    private RestAddon.AddonApplink getApplinkResourceForAddon(String key)
+    private RestInternalAddon.AddonApplink getApplinkResourceForAddon(String key)
     {
         try
         {
@@ -223,7 +296,7 @@ public class AddonsResource
             String appLinkId = appLink.getId().get();
             URI selfUri = connectApplinkManager.getApplinkLinkSelfLink(appLink);
 
-            return new RestAddon.AddonApplink(appLinkId, Link.self(selfUri));
+            return new RestInternalAddon.AddonApplink(appLinkId, Link.self(selfUri));
         }
         catch (Exception e)
         {
