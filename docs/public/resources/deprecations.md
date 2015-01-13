@@ -14,7 +14,7 @@ Description
 </div>
 <div class="aui-group">
     <div class="aui-item ac-property-key">
-        <h5>OnDemand removal</h5>
+        <h5>Atlassian Cloud removal</h5>
     </div>
     <div class="aui-item">
         __August, 2015__
@@ -45,7 +45,7 @@ Dialogs will no longer open via javascript using the url option. Instead all dia
 </div>
 <div class="aui-group">
     <div class="aui-item ac-property-key">
-        <h5>OnDemand removal</h5>
+        <h5>Atlassian Cloud removal</h5>
     </div>
     <div class="aui-item">
         __May, 2014__
@@ -82,7 +82,7 @@ approved after Atlassian Connect 1.0.0 is released.
 </div>
 <div class="aui-group">
     <div class="aui-item ac-property-key">
-        <h5>OnDemand removal</h5>
+        <h5>Atlassian Cloud removal</h5>
     </div>
     <div class="aui-item">
         __May, 2014__
@@ -113,7 +113,7 @@ Atlassian Connect is replacing the OAuth 1.0 2LO implementation with JWT.
 </div>
 <div class="aui-group">
     <div class="aui-item ac-property-key">
-        <h5>OnDemand removal</h5>
+        <h5>Atlassian Cloud removal</h5>
     </div>
     <div class="aui-item">
         __May, 2014__
@@ -146,7 +146,7 @@ JSON descriptor based add-ons can no longer open dialogs using a `url` parameter
 </div>
 <div class="aui-group">
     <div class="aui-item ac-property-key">
-        <h5>OnDemand removal</h5>
+        <h5>Atlassian Cloud removal</h5>
     </div>
     <div class="aui-item">
         __24th March, 2014__
@@ -182,7 +182,7 @@ Atlassian Connect will no longer provide a REST endpoint allowing add-ons to sen
 </div>
 <div class="aui-group">
     <div class="aui-item ac-property-key">
-        <h5>OnDemand removal</h5>
+        <h5>Atlassian Cloud removal</h5>
     </div>
     <div class="aui-item">
         __10th February, 2014__
@@ -226,7 +226,7 @@ Both global and project permissions are changing from integer based to a key bas
     </div>
     <div class="aui-group">
         <div class="aui-item ac-property-key">
-            <h5>OnDemand removal</h5>
+            <h5>Atlassian Cloud removal</h5>
         </div>
         <div class="aui-item">
             __January, 2015__
@@ -259,7 +259,7 @@ The `page.id`, `page.version`, `page.type` context variables available in Conflu
 </div>
 <div class="aui-group">
     <div class="aui-item ac-property-key">
-        <h5>OnDemand removal</h5>
+        <h5>Atlassian Cloud removal</h5>
     </div>
     <div class="aui-item">
         __2015__
