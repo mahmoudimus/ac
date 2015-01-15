@@ -24,7 +24,7 @@ fi
 
 PREFIX="--> "
 SNAPSHOT="-SNAPSHOT"
-STARTING_VERSION=$(mvn -npu org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version | grep -v '\[' | grep -iv 'download' | grep -ve '[0-9]*/[0-9]*K')
+STARTING_VERSION=$(mvn3 -npu org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version | grep -v '\[' | grep -iv 'download' | grep -ve '[0-9]*/[0-9]*K')
 NEW_VERSION=`echo ${STARTING_VERSION} | sed "s/${SNAPSHOT}//"`
 echo "${PREFIX} next release version: '${NEW_VERSION}'"
 echo "${PREFIX} switching to master branch"
@@ -40,8 +40,8 @@ git push --tags origin master
 echo "${PREFIX} switching back to develop"
 git checkout develop
 echo "${PREFIX} incrementing -SNAPSHOT version in poms"
-mvn --batch-mode release:update-versions -DautoVersionSubmodules=true
-NEW_SNAPSHOT_VERSION=$(mvn -npu org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version | grep -v '\[' | grep -iv 'download' | grep -ve '[0-9]*/[0-9]*K')
+mvn3 --batch-mode release:update-versions -DautoVersionSubmodules=true
+NEW_SNAPSHOT_VERSION=$(mvn3 -npu org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version | grep -v '\[' | grep -iv 'download' | grep -ve '[0-9]*/[0-9]*K')
 POM_FILENAMES=`git status --porcelain | grep " M .*pom.xml" | sed "s/ M //"`
 echo "${PREFIX} pom files: ${POM_FILENAMES}"
 echo "${PREFIX} git-adding pom files"
