@@ -28,7 +28,7 @@ STARTING_VERSION=$(mvn -npu org.apache.maven.plugins:maven-help-plugin:2.1.1:eva
 NEW_VERSION=`echo ${STARTING_VERSION} | sed "s/${SNAPSHOT}//"`
 echo "${PREFIX} next release version: '${NEW_VERSION}'"
 echo "${PREFIX} switching to master branch"
-git remote add origin $bamboo_planRepository_repositoryUrl
+git remote set-url origin $bamboo_planRepository_repositoryUrl
 git fetch origin master
 git checkout master
 echo "${PREFIX} merging develop into master"
