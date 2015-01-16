@@ -13,20 +13,25 @@ import com.atlassian.plugin.connect.plugin.service.AddOnPropertyServiceImpl;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+import com.google.common.base.Predicates;
 import com.google.common.hash.HashCode;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 import java.util.Collections;
+import java.util.concurrent.Callable;
 
 import static com.atlassian.plugin.connect.plugin.service.AddOnPropertyService.ServiceResult;
 import static com.atlassian.plugin.connect.plugin.service.AddOnPropertyServiceImpl.ServiceResultImpl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -145,9 +150,20 @@ public class AddOnPropertyServiceImplTest
 
     private void testDeleteExistingProperty(final String sourcePluginKey)
     {
-        when(store.deletePropertyValue(addOnKey, property.getKey(), Option.<ETag>none())).thenReturn(AddOnPropertyStore.DeleteResult.PROPERTY_DELETED);
+        when(store.executeInTransaction(any(Callable.class))).thenAnswer(new Answer<Object>()
+        {
+            @Override
+            public Object answer(final InvocationOnMock invocationOnMock) throws Throwable
+            {
+                Object[] arguments = invocationOnMock.getArguments();
+                Callable c = (Callable) arguments[0];
+                return c.call();
+            }
+        });
+        when(store.getPropertyValue(addOnKey, property.getKey())).thenReturn(Option.some(new AddOnProperty("", "")));
+        when(store.deletePropertyValue(addOnKey, property.getKey())).thenReturn(AddOnPropertyStore.DeleteResult.PROPERTY_DELETED);
 
-        ServiceResult result = service.deletePropertyValue(user, sourcePluginKey, addOnKey, property.getKey(), Option.<ETag>none());
+        ServiceResult result = service.deletePropertyValueIfConditionSatisfied(user, sourcePluginKey, addOnKey, property.getKey(), Predicates.<AddOnProperty>alwaysTrue());
         assertEquals(ServiceResultImpl.PROPERTY_DELETED, result);
     }
 
@@ -166,9 +182,20 @@ public class AddOnPropertyServiceImplTest
 
     private void testDeleteNonExistingProperty(final String sourcePluginKey)
     {
-        when(store.deletePropertyValue(addOnKey, property.getKey(), Option.<ETag>none())).thenReturn(AddOnPropertyStore.DeleteResult.PROPERTY_NOT_FOUND);
+        when(store.executeInTransaction(any(Callable.class))).thenAnswer(new Answer<Object>()
+        {
+            @Override
+            public Object answer(final InvocationOnMock invocationOnMock) throws Throwable
+            {
+                Object[] arguments = invocationOnMock.getArguments();
+                Callable c = (Callable) arguments[0];
+                return c.call();
+            }
+        });
+        when(store.getPropertyValue(addOnKey, property.getKey())).thenReturn(Option.<AddOnProperty>none());
+        when(store.deletePropertyValue(addOnKey, property.getKey())).thenReturn(AddOnPropertyStore.DeleteResult.PROPERTY_NOT_FOUND);
 
-        ServiceResult result = service.deletePropertyValue(user, sourcePluginKey, addOnKey, property.getKey(), Option.<ETag>none());
+        ServiceResult result = service.deletePropertyValueIfConditionSatisfied(user, sourcePluginKey, addOnKey, property.getKey(), Predicates.<AddOnProperty>alwaysTrue());
         assertEquals(ServiceResultImpl.PROPERTY_NOT_FOUND, result);
     }
 
@@ -231,7 +258,7 @@ public class AddOnPropertyServiceImplTest
     {
         String tooLongKey = StringUtils.repeat(".", AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH + 1);
 
-        ServiceResult result = service.deletePropertyValue(user, addOnKey, addOnKey, tooLongKey, Option.<ETag>none());
+        ServiceResult result = service.deletePropertyValueIfConditionSatisfied(user, addOnKey, addOnKey, tooLongKey, Predicates.<AddOnProperty>alwaysTrue());
         assertEquals(ServiceResultImpl.KEY_TOO_LONG, result);
     }
 
@@ -262,7 +289,7 @@ public class AddOnPropertyServiceImplTest
     @Test
     public void testNoAccessToDeleteDifferentPluginData() throws Exception
     {
-        ServiceResult result = service.deletePropertyValue(user, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), Option.<ETag>none());
+        ServiceResult result = service.deletePropertyValueIfConditionSatisfied(user, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), Predicates.<AddOnProperty>alwaysTrue());
         assertEquals(ServiceResultImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN, result);
     }
 
@@ -292,7 +319,7 @@ public class AddOnPropertyServiceImplTest
     @Test
     public void testDeleteNoAccessWhenLoggedIn() throws Exception
     {
-        ServiceResult result = service.deletePropertyValue(null, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), Option.<ETag>none());
+        ServiceResult result = service.deletePropertyValueIfConditionSatisfied(null, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), Predicates.<AddOnProperty>alwaysTrue());
         assertEquals(ServiceResultImpl.NOT_AUTHENTICATED, result);
     }
 

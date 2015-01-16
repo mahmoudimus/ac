@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.concurrent.Callable;
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -92,34 +93,21 @@ public class AddOnPropertyStore
         });
     }
 
-    public DeleteResult deletePropertyValue(@Nonnull final String addOnKey, @Nonnull final String propertyKey, @Nonnull final Option<ETag> eTag)
+    public DeleteResult deletePropertyValue(@Nonnull final String addOnKey, @Nonnull final String propertyKey)
     {
         checkNotNull(addOnKey);
         checkNotNull(propertyKey);
 
-        return ao.executeInTransaction(new TransactionCallback<DeleteResult>()
+        if (existsProperty(addOnKey, propertyKey))
         {
-            @Override
-            public DeleteResult doInTransaction()
-            {
-                if (existsProperty(addOnKey, propertyKey))
-                {
-                    AddOnPropertyAO propertyAO = getAddOnPropertyForKey(addOnKey, propertyKey);
-                    ETag oldETag = AddOnProperty.fromAO(propertyAO).getETag();
-                    if (eTag.isDefined() && !eTag.get().equals(oldETag))
-                    {
-                        return DeleteResult.PROPERTY_MODIFIED;
-                    }
-
-                    ao.delete(propertyAO);
-                    return DeleteResult.PROPERTY_DELETED;
-                }
-                else
-                {
-                    return DeleteResult.PROPERTY_NOT_FOUND;
-                }
-            }
-        });
+            AddOnPropertyAO propertyAO = getAddOnPropertyForKey(addOnKey, propertyKey);
+            ao.delete(propertyAO);
+            return DeleteResult.PROPERTY_DELETED;
+        }
+        else
+        {
+            return DeleteResult.PROPERTY_NOT_FOUND;
+        }
     }
 
     private boolean existsProperty(@Nonnull final String addOnKey, @Nonnull final String propertyKey)
@@ -157,6 +145,25 @@ public class AddOnPropertyStore
         return ao.count(AddOnPropertyAO.class, Query.select().where("PLUGIN_KEY = ?", addOnKey)) >= MAX_PROPERTIES_PER_ADD_ON;
     }
 
+    public <T> T executeInTransaction(final Callable<T> function)
+    {
+        return ao.executeInTransaction(new TransactionCallback<T>()
+        {
+            @Override
+            public T doInTransaction()
+            {
+                try
+                {
+                    return function.call();
+                }
+                catch (Exception e)
+                {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+    }
+
     public enum PutResult
     {
         PROPERTY_CREATED,
@@ -168,7 +175,6 @@ public class AddOnPropertyStore
     public enum DeleteResult
     {
         PROPERTY_DELETED,
-        PROPERTY_MODIFIED,
         PROPERTY_NOT_FOUND
     }
 }

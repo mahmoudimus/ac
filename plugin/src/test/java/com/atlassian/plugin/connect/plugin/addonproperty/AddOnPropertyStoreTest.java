@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import static com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore.DeleteResult;
 import static com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore.MAX_PROPERTIES_PER_ADD_ON;
@@ -108,7 +109,7 @@ public class AddOnPropertyStoreTest
     @NonTransactional
     public void testDeleteNonExistentProperty() throws Exception
     {
-        DeleteResult deleteResult = store.deletePropertyValue(ADD_ON_KEY, PROPERTY_KEY, noETag());
+        DeleteResult deleteResult = store.deletePropertyValue(ADD_ON_KEY, PROPERTY_KEY);
         assertEquals(DeleteResult.PROPERTY_NOT_FOUND, deleteResult);
     }
 
@@ -117,26 +118,7 @@ public class AddOnPropertyStoreTest
     public void testDeleteExistingProperty() throws Exception
     {
         store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
-        DeleteResult deleteResult = store.deletePropertyValue(ADD_ON_KEY, PROPERTY_KEY, noETag());
-        assertEquals(DeleteResult.PROPERTY_DELETED, deleteResult);
-    }
-
-    @Test
-    @NonTransactional
-    public void testDeleteExistentPropertyWithWrongETag() throws Exception
-    {
-        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
-        DeleteResult deleteResult = store.deletePropertyValue(ADD_ON_KEY, PROPERTY_KEY, Option.some(new ETag("a")));
-        assertEquals(DeleteResult.PROPERTY_MODIFIED, deleteResult);
-    }
-
-
-    @Test
-    @NonTransactional
-    public void testDeleteExistentPropertyWithRightETag() throws Exception
-    {
-        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
-        DeleteResult deleteResult = store.deletePropertyValue(ADD_ON_KEY, PROPERTY_KEY, Option.some(new AddOnProperty(PROPERTY_KEY, VALUE).getETag()));
+        DeleteResult deleteResult = store.deletePropertyValue(ADD_ON_KEY, PROPERTY_KEY);
         assertEquals(DeleteResult.PROPERTY_DELETED, deleteResult);
     }
     
@@ -172,6 +154,21 @@ public class AddOnPropertyStoreTest
     public void testEmptyListProperties() throws Exception
     {
         testListProperties(Collections.<AddOnProperty>emptyList());
+    }
+
+    @Test
+    @NonTransactional
+    public void testExecuteDeleteInTransaction() throws Exception
+    {
+        store.executeInTransaction(new Callable<Void>()
+        {
+            @Override
+            public Void call() throws Exception
+            {
+                store.deletePropertyValue("", "");
+                return null;
+            }
+        });
     }
 
     public static final class Data implements DatabaseUpdater

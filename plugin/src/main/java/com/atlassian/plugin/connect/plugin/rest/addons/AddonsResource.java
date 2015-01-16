@@ -32,6 +32,7 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.io.LimitInputStream;
 import org.apache.commons.httpclient.HttpStatus;
@@ -355,15 +356,34 @@ public class AddonsResource
 
     @DELETE
     @Path ("{addonKey}/properties/{propertyKey}")
-    public Response deleteAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam("propertyKey") final String propertyKey, @Context HttpServletRequest request)
+    public Response deleteAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam("propertyKey") final String propertyKey, @Context final Request request, @Context HttpServletRequest servletRequest)
     {
-        final UserProfile user = userManager.getRemoteUser(request);
+        final UserProfile user = userManager.getRemoteUser(servletRequest);
         // can be null, it is checked in the service.
-        final String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(request);
-        final Option<ETag> eTag = getETagFromRequest(request);
+        final String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(servletRequest);
+        final Container<EntityTag> tagContainer = new Container<EntityTag>();
+        ServiceResult serviceResult = addOnPropertyService.deletePropertyValueIfConditionSatisfied(user, sourcePluginKey, addOnKey, propertyKey, new Predicate<AddOnProperty>()
+        {
+            @Override
+            public boolean apply(final AddOnProperty input)
+            {
+                tagContainer.element = new EntityTag(input.getETag().toString());
+                return null == request.evaluatePreconditions(tagContainer.element);
+            }
+        });
+        if (tagContainer.element != null)
+        {
+            Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(tagContainer.element);
+            if (responseBuilder != null)
+                return responseBuilder.cacheControl(never()).build();
+        }
 
-        ServiceResult serviceResult = addOnPropertyService.deletePropertyValue(user, sourcePluginKey, addOnKey, propertyKey, eTag);
         return getResponseFromServiceResult(serviceResult);
+    }
+
+    private class Container<T>
+    {
+        public T element = null;
     }
 
     private RestAddons getAddonsByType(RestAddonType type)

@@ -12,7 +12,10 @@ import com.atlassian.plugin.connect.plugin.rest.data.ETag;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
 import com.google.gson.Gson;
 import org.apache.commons.httpclient.HttpStatus;
 import org.slf4j.Logger;
@@ -20,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.Callable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -138,24 +142,50 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
     }
 
     @Override
-    public ServiceResult deletePropertyValue(@Nullable final UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey, @Nonnull Option<ETag> eTag)
+    public ServiceResult deletePropertyValueIfConditionSatisfied(@Nullable final UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey, @Nonnull final Predicate<AddOnProperty> testFunction)
     {
         ValidationResult<GetOrDeletePropertyInput> validationResult = validateDeletePropertyValue(user, sourceAddOnKey, checkNotNull(addOnKey), checkNotNull(propertyKey));
         if (validationResult.isValid())
         {
-            GetOrDeletePropertyInput input = validationResult.getValue().getOrNull();
-            AddOnPropertyStore.DeleteResult deleteResult = store.deletePropertyValue(input.addOnKey, input.propertyKey, eTag);
-            switch (deleteResult)
+            final GetOrDeletePropertyInput input = validationResult.getValue().getOrNull();
+
+            return store.executeInTransaction(new Callable<ServiceResult>()
             {
-                case PROPERTY_DELETED: return ServiceResultImpl.PROPERTY_DELETED;
-                case PROPERTY_NOT_FOUND: return ServiceResultImpl.PROPERTY_NOT_FOUND;
-                case PROPERTY_MODIFIED: return ServiceResultImpl.PROPERTY_MODIFIED;
-                default:
+                @Override
+                public ServiceResult call() throws Exception
                 {
-                    log.error("DeleteResult case not covered. Method deletePropertyValue has returned an enum for which there is no corresponding ServiceResult.");
-                    throw new IllegalStateException("DeleteResult case not covered.");
+                    Option<AddOnProperty> propertyOption = store.getPropertyValue(input.getAddOnKey(), input.getPropertyKey());
+                    Either<ServiceResult, AddOnProperty> propertyEither = propertyOption.toRight(Suppliers.<ServiceResult>ofInstance(ServiceResultImpl.PROPERTY_NOT_FOUND));
+
+                    Function<ServiceResult, ServiceResult> identity = Functions.identity();
+                    Function<AddOnProperty, ServiceResult> function = new Function<AddOnProperty, ServiceResult>()
+                    {
+                        @Override
+                        public ServiceResult apply(final AddOnProperty property)
+                        {
+                            boolean shouldContinue = testFunction.apply(property);
+                            if (shouldContinue)
+                            {
+                                AddOnPropertyStore.DeleteResult deleteResult = store.deletePropertyValue(input.getAddOnKey(), input.getPropertyKey());
+                                switch (deleteResult)
+                                {
+                                    case PROPERTY_DELETED:
+                                        return ServiceResultImpl.PROPERTY_DELETED;
+                                    case PROPERTY_NOT_FOUND:
+                                        return ServiceResultImpl.PROPERTY_NOT_FOUND;
+                                    default:
+                                    {
+                                        log.error("DeleteResult case not covered. Method deletePropertyValueIfConditionSatisfied has returned an enum for which there is no corresponding ServiceResult.");
+                                        throw new IllegalStateException("DeleteResult case not covered.");
+                                    }
+                                }
+                            }
+                            return ServiceResultImpl.PROPERTY_MODIFIED;
+                        }
+                    };
+                    return propertyEither.fold(identity, function);
                 }
-            }
+            });
         }
         else
         {

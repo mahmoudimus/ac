@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyIterable;
 import com.atlassian.plugin.connect.plugin.rest.data.ETag;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserProfile;
+import com.google.common.base.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,7 +45,7 @@ public interface AddOnPropertyService
      * </p>
      * @return ServiceResult containing http status and status message
      **/
-    ServiceResult deletePropertyValue(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey, @Nonnull String propertyKey, @Nonnull Option<ETag> eTag);
+    ServiceResult deletePropertyValueIfConditionSatisfied(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey, @Nonnull String propertyKey, @Nonnull Predicate<AddOnProperty> testFunction);
 
     /**
      * Returns a list of all properties for a given add-on.
