@@ -197,7 +197,7 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
 
         RequestResponse putResponse = executePutRequest(propertyKey, "TEST_VALUE");
         HttpURLConnection connection = executeGetRequest(propertyKey, Option.option(runner.getSignedRequestHandler()));
-        connection.setRequestProperty("If-Match", putResponse.eTag.get());
+        connection.setRequestProperty("If-None-Match", putResponse.eTag.get());
         assertEquals(Response.SC_NOT_MODIFIED, connection.getResponseCode());
 
         int responseCode3 = executeDeleteRequest(propertyKey);
@@ -328,7 +328,7 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
             @Override
             public String apply(final String input)
             {
-                return input.replace("\"", "");
+                return input;//.replace("\"", "");
             }
         });
         return new RequestResponse(connection.getResponseCode(), returnedETag);

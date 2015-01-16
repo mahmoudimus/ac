@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.service;
 
 import com.atlassian.fugue.Either;
 import com.atlassian.fugue.Option;
+import com.atlassian.fugue.Suppliers;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyIterable;
@@ -11,7 +12,6 @@ import com.atlassian.plugin.connect.plugin.rest.data.ETag;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import org.apache.commons.httpclient.HttpStatus;
@@ -45,7 +45,6 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         NOT_AUTHENTICATED(HttpStatus.SC_UNAUTHORIZED, "connect.rest.add_on_properties.not_authenticated"),
         PROPERTY_DELETED(HttpStatus.SC_NO_CONTENT, null),
         ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN(HttpStatus.SC_NOT_FOUND, "connect.rest.add_on_properties.add_on_not_found_or_access_to_other_data_forbidden"),
-        PROPERTY_NOT_MODIFIED(HttpStatus.SC_NOT_MODIFIED, "connect.rest.add_on_properties.property_not_modified"),
         PROPERTY_MODIFIED(HttpStatus.SC_PRECONDITION_FAILED, "connect.rest.add_on_properties.property_modified");
 
         private final int httpStatusCode;
@@ -95,29 +94,14 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
     }
 
     @Override
-    public Either<ServiceResult, AddOnProperty> getPropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey, final Option<ETag> eTag)
+    public Either<ServiceResult, AddOnProperty> getPropertyValue(@Nullable UserProfile user, @Nullable final String sourceAddOnKey, @Nonnull final String addOnKey, @Nonnull final String propertyKey)
     {
         ValidationResult<GetOrDeletePropertyInput> validationResult = validateGetPropertyValue(user, sourceAddOnKey, addOnKey, propertyKey);
         if (validationResult.isValid())
         {
             GetOrDeletePropertyInput input = validationResult.getValue().getOrNull();
-            Either<AddOnPropertyStore.GetResult, AddOnProperty> propertyValue = store.getPropertyValue(input.getAddOnKey(), input.getPropertyKey(), eTag);
-            return propertyValue.left().map(new Function<AddOnPropertyStore.GetResult, ServiceResult>()
-            {
-                @Override
-                public ServiceResult apply(final AddOnPropertyStore.GetResult getResult)
-                {
-                    switch (getResult)
-                    {
-                        case PROPERTY_NOT_FOUND:
-                            return ServiceResultImpl.PROPERTY_NOT_FOUND;
-                        case PROPERTY_NOT_MODIFIED:
-                            return ServiceResultImpl.PROPERTY_NOT_MODIFIED;
-                        default:
-                            throw new IllegalStateException();
-                    }
-                }
-            });
+            Option<AddOnProperty> propertyValue = store.getPropertyValue(input.getAddOnKey(), input.getPropertyKey());
+            return propertyValue.toRight(Suppliers.<ServiceResult>ofInstance(ServiceResultImpl.PROPERTY_NOT_FOUND));
         }
         else
         {

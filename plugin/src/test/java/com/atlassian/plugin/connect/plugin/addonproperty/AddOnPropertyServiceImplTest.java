@@ -59,9 +59,9 @@ public class AddOnPropertyServiceImplTest
 
     private void testGetExistingProperty(String sourcePlugin)
     {
-        when(store.getPropertyValue(addOnKey, property.getKey(), Option.<ETag>none())).thenReturn(Either.<AddOnPropertyStore.GetResult, AddOnProperty>right(property));
+        when(store.getPropertyValue(addOnKey, property.getKey())).thenReturn(Option.some(property));
 
-        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, sourcePlugin, addOnKey, property.getKey(), Option.<ETag>none());
+        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, sourcePlugin, addOnKey, property.getKey());
 
         assertTrue(result.isRight());
         assertEquals(property, result.right().get());
@@ -82,9 +82,9 @@ public class AddOnPropertyServiceImplTest
 
     private void testGetNonExistingProperty(String sourcePlugin)
     {
-        when(store.getPropertyValue(addOnKey, property.getKey(), Option.<ETag>none())).thenReturn(Either.<AddOnPropertyStore.GetResult, AddOnProperty>left(AddOnPropertyStore.GetResult.PROPERTY_NOT_FOUND));
+        when(store.getPropertyValue(addOnKey, property.getKey())).thenReturn(Option.<AddOnProperty>none());
 
-        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, sourcePlugin, addOnKey, property.getKey(), Option.<ETag>none());
+        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, sourcePlugin, addOnKey, property.getKey());
         assertTrue(result.isLeft());
         assertEquals(ServiceResultImpl.PROPERTY_NOT_FOUND, result.left().get());
     }
@@ -212,7 +212,7 @@ public class AddOnPropertyServiceImplTest
     {
         String tooLongKey = StringUtils.repeat(".", AddOnPropertyAO.MAXIMUM_PROPERTY_KEY_LENGTH + 1);
 
-        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, addOnKey, addOnKey, tooLongKey, Option.<ETag>none());
+        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, addOnKey, addOnKey, tooLongKey);
         assertTrue(result.isLeft());
         assertEquals(ServiceResultImpl.KEY_TOO_LONG, result.left().get());
     }
@@ -247,7 +247,7 @@ public class AddOnPropertyServiceImplTest
     @Test
     public void testNoAccessToGetDifferentPluginData() throws Exception
     {
-        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), Option.<ETag>none());
+        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, "DIFF_PLUGIN_KEY", addOnKey, property.getKey());
         assertTrue(result.isLeft());
         assertEquals(ServiceResultImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN, result.left().get());
     }
@@ -277,7 +277,7 @@ public class AddOnPropertyServiceImplTest
     @Test
     public void testGetNoAccessWhenNotLoggedIn() throws Exception
     {
-        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(null, "DIFF_PLUGIN_KEY", addOnKey, property.getKey(), Option.<ETag>none());
+        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(null, "DIFF_PLUGIN_KEY", addOnKey, property.getKey());
         assertTrue(result.isLeft());
         assertEquals(ServiceResultImpl.NOT_AUTHENTICATED, result.left().get());
     }
@@ -310,33 +310,9 @@ public class AddOnPropertyServiceImplTest
         when(connectAddonRegistry.hasAddonWithKey(addOnKey)).thenReturn(false);
         when(userManager.isSystemAdmin(userKey)).thenReturn(true);
 
-        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, null, addOnKey, "", Option.<ETag>none());
+        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, null, addOnKey, "");
         assertTrue(result.isLeft());
         assertEquals(ServiceResultImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN, result.left().get());
-    }
-
-    @Test
-    public void testGetNotModifiedWithETag() throws Exception
-    {
-        Option<ETag> eTag = Option.some(property.getETag());
-        when(store.getPropertyValue(addOnKey, property.getKey(), eTag)).thenReturn(Either.<AddOnPropertyStore.GetResult, AddOnProperty>left(AddOnPropertyStore.GetResult.PROPERTY_NOT_MODIFIED));
-
-        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, addOnKey, addOnKey, property.getKey(), eTag);
-
-        assertTrue(result.isLeft());
-        assertEquals(ServiceResultImpl.PROPERTY_NOT_MODIFIED, result.left().get());
-    }
-
-    @Test
-    public void testGetModifiedWithETag() throws Exception
-    {
-        Option<ETag> eTag = Option.some(property.getETag());
-        when(store.getPropertyValue(addOnKey, property.getKey(), eTag)).thenReturn(Either.<AddOnPropertyStore.GetResult, AddOnProperty>right(property));
-
-        Either<ServiceResult, AddOnProperty> result = service.getPropertyValue(user, addOnKey, addOnKey, property.getKey(), eTag);
-
-        assertTrue(result.isRight());
-        assertEquals(property, result.right().get());
     }
 
     @Test

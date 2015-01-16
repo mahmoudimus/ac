@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.addonproperty;
 
 import com.atlassian.activeobjects.test.TestActiveObjects;
-import com.atlassian.fugue.Either;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
@@ -9,7 +8,6 @@ import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyIterable;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore;
 import com.atlassian.plugin.connect.plugin.rest.data.ETag;
-import com.google.common.base.Predicate;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
@@ -31,7 +29,6 @@ import static com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore.PutResul
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 @RunWith (ActiveObjectsJUnitRunner.class)
 @Data (AddOnPropertyStoreTest.Data.class)
@@ -52,22 +49,14 @@ public class AddOnPropertyStoreTest
 
     @Test
     @NonTransactional
-    public void testCreateAndGetPropertyWithNoETag() throws Exception
+    public void testCreateAndGetProperty() throws Exception
     {
         AddOnProperty property = new AddOnProperty(PROPERTY_KEY, VALUE);
         PutResult putResult = store.setPropertyValue(ADD_ON_KEY, property.getKey(), property.getValue(), noETag());
         assertEquals(PutResult.PROPERTY_CREATED, putResult);
 
-        Either<AddOnPropertyStore.GetResult, AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY, noETag());
-        assertThat(propertyValue.right().get(), is(property));
-        assertTrue(propertyValue.right().toOption().exists(new Predicate<AddOnProperty>()
-        {
-            @Override
-            public boolean apply(final AddOnProperty input)
-            {
-                return input.getKey().equals(PROPERTY_KEY) && input.getValue().equals(VALUE);
-            }
-        }));
+        Option<AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY);
+        assertThat(propertyValue.get(), is(property));
     }
 
     @Test
@@ -84,22 +73,12 @@ public class AddOnPropertyStoreTest
     public void testCreateAndUpdateProperty() throws Exception
     {
         store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
-        PutResult putResult = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE + "1", noETag());
-        assertEquals(PutResult.PROPERTY_UPDATED, putResult);
-    }
-
-    @Test
-    @NonTransactional
-    public void testCreateAndUpdatePropertyWithSameETag() throws Exception
-    {
-        AddOnProperty property = new AddOnProperty(PROPERTY_KEY, VALUE);
-        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
         AddOnProperty property2 = new AddOnProperty(PROPERTY_KEY, VALUE + "1");
-        PutResult putResult = store.setPropertyValue(ADD_ON_KEY, property2.getKey(), property2.getValue(), Option.some(property.getETag()));
+        PutResult putResult = store.setPropertyValue(ADD_ON_KEY, property2.getKey(), property2.getValue(), noETag());
         assertEquals(PutResult.PROPERTY_UPDATED, putResult);
 
-        Either<AddOnPropertyStore.GetResult, AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY, noETag());
-        assertThat(propertyValue.right().get(), is(property2));
+        Option<AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY);
+        assertThat(propertyValue.get(), is(property2));
     }
 
     @Test
@@ -193,62 +172,6 @@ public class AddOnPropertyStoreTest
     public void testEmptyListProperties() throws Exception
     {
         testListProperties(Collections.<AddOnProperty>emptyList());
-    }
-
-    @Test
-    @NonTransactional
-    public void testCreateAndGetPropertyWithSameETag() throws Exception
-    {
-        AddOnProperty property = new AddOnProperty(PROPERTY_KEY, VALUE);
-        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
-
-        Either<AddOnPropertyStore.GetResult, AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY, Option.some(property.getETag()));
-        assertThat(propertyValue.left().get(), is(AddOnPropertyStore.GetResult.PROPERTY_NOT_MODIFIED));
-    }
-
-    /*@Test
-    @NonTransactional
-    public void testListPropertiesWithNoETag() throws Exception
-    {
-        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
-        Iterable<String> keys = store.getAllPropertiesForAddOnKey(ADD_ON_KEY).right().get().getPropertyKeys();
-        Option<String> first = Iterables.first(keys);
-        assertTrue(first.isDefined());
-        assertEquals(PROPERTY_KEY, first.get());
-    }
-
-    @Test
-    @NonTransactional
-    public void testListPropertiesWithSameETag() throws Exception
-    {
-        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
-        AddOnPropertyIterable addOnProperties = store.getAllPropertiesForAddOnKey(ADD_ON_KEY).right().get();
-
-        AddOnPropertyStore.ListResult listResult = store.getAllPropertiesForAddOnKey(ADD_ON_KEY, Option.some(addOnProperties.getETag())).left().get();
-        assertEquals(AddOnPropertyStore.ListResult.PROPERTIES_NOT_MODIFIED, listResult);
-    }
-
-    @Test
-    @NonTransactional
-    public void testListPropertiesWithDifferentETag() throws Exception
-    {
-        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
-        Iterable<String> keys = store.getAllPropertiesForAddOnKey(ADD_ON_KEY, Option.some(new ETag("1"))).right().get().getPropertyKeys();
-        Option<String> first = Iterables.first(keys);
-        assertTrue(first.isDefined());
-        assertEquals(PROPERTY_KEY, first.get());
-    }*/
-
-    @Test
-    @NonTransactional
-    public void testCreateAndGetPropertyWithDifferentETag() throws Exception
-    {
-        AddOnProperty property = new AddOnProperty(PROPERTY_KEY, VALUE);
-        store.setPropertyValue(ADD_ON_KEY, property.getKey(), property.getValue(), noETag());
-
-        AddOnProperty property2 = new AddOnProperty(PROPERTY_KEY, VALUE + "1");
-        Either<AddOnPropertyStore.GetResult, AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY, Option.some(property2.getETag()));
-        assertThat(propertyValue.right().get(), is(property));
     }
 
     public static final class Data implements DatabaseUpdater

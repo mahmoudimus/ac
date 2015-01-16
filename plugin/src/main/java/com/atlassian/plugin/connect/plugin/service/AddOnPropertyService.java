@@ -26,7 +26,7 @@ public interface AddOnPropertyService
      * </p>
      * @return either error result or add-on property.
      **/
-    Either<ServiceResult, AddOnProperty> getPropertyValue(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey,@Nonnull String propertyKey, Option<ETag> eTag);
+    Either<ServiceResult, AddOnProperty> getPropertyValue(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey, @Nonnull String propertyKey);
 
     /**
      * Sets a property from the add-on store.

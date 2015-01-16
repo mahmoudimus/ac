@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.ao;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
-import com.atlassian.fugue.Either;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.rest.data.ETag;
@@ -37,13 +36,13 @@ public class AddOnPropertyStore
     @Autowired
     public AddOnPropertyStore(final ActiveObjects ao) {this.ao = checkNotNull(ao);}
 
-    public Either<GetResult, AddOnProperty> getPropertyValue(@Nonnull final String addOnKey, @Nonnull final String propertyKey, final Option<ETag> eTag)
+    public Option<AddOnProperty> getPropertyValue(@Nonnull final String addOnKey, @Nonnull final String propertyKey)
     {
         AddOnPropertyAO[] properties = ao.find(AddOnPropertyAO.class, Query.select().where("PLUGIN_KEY = ? AND PROPERTY_KEY = ?", addOnKey, propertyKey));
 
         Option<AddOnPropertyAO> option = Iterables.first(Arrays.asList(properties));
 
-        Option<AddOnProperty> propertyOption = option.map(new Function<AddOnPropertyAO, AddOnProperty>()
+        return option.map(new Function<AddOnPropertyAO, AddOnProperty>()
         {
             @Override
             public AddOnProperty apply(final AddOnPropertyAO input)
@@ -51,17 +50,6 @@ public class AddOnPropertyStore
                 return new AddOnProperty(input.getPropertyKey(), input.getValue());
             }
         });
-
-        if (!propertyOption.isDefined())
-        {
-            return Either.left(GetResult.PROPERTY_NOT_FOUND);
-        }
-        AddOnProperty property = propertyOption.get();
-        if (eTag.isDefined() && eTag.get().equals(property.getETag()))
-        {
-            return Either.left(GetResult.PROPERTY_NOT_MODIFIED);
-        }
-        return Either.right(property);
     }
 
     public PutResult setPropertyValue(@Nonnull final String addOnKey, @Nonnull final String propertyKey, @Nonnull final String value, final Option<ETag> eTag)
@@ -167,12 +155,6 @@ public class AddOnPropertyStore
     private boolean hasReachedPropertyLimit(@Nonnull final String addOnKey)
     {
         return ao.count(AddOnPropertyAO.class, Query.select().where("PLUGIN_KEY = ?", addOnKey)) >= MAX_PROPERTIES_PER_ADD_ON;
-    }
-
-    public enum GetResult
-    {
-        PROPERTY_NOT_FOUND,
-        PROPERTY_NOT_MODIFIED
     }
 
     public enum PutResult

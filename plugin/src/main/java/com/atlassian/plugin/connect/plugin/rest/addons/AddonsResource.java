@@ -262,13 +262,12 @@ public class AddonsResource
 
     @GET
     @Path ("{addonKey}/properties/{propertyKey}")
-    public Response getAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam("propertyKey") String propertyKey, @Context HttpServletRequest request)
+    public Response getAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam("propertyKey") String propertyKey, @Context final Request request, @Context final HttpServletRequest servletRequest)
     {
-        UserProfile user = userManager.getRemoteUser(request);
-        Option<ETag> eTag = getETagFromRequest(request);
-        String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(request);
+        UserProfile user = userManager.getRemoteUser(servletRequest);
+        String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(servletRequest);
 
-        Either<ServiceResult, AddOnProperty> propertyValue = addOnPropertyService.getPropertyValue(user, sourcePluginKey, addOnKey, propertyKey, eTag);
+        Either<ServiceResult, AddOnProperty> propertyValue = addOnPropertyService.getPropertyValue(user, sourcePluginKey, addOnKey, propertyKey);
 
         return propertyValue.fold(new Function<ServiceResult, Response>()
         {
@@ -282,9 +281,14 @@ public class AddonsResource
             @Override
             public Response apply(final AddOnProperty input)
             {
-                String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties";
-                return Response.ok()
-                        .entity(RestAddOnProperty.valueOf(input, baseURL))
+                Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(new EntityTag(input.getETag().toString()));
+                if (responseBuilder == null)
+                {
+                    String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties";
+                    responseBuilder = Response.ok()
+                            .entity(RestAddOnProperty.valueOf(input, baseURL));
+                }
+                return responseBuilder
                         .tag(input.getETag().toString())
                         .cacheControl(never())
                         .build();
