@@ -139,21 +139,15 @@ public class AddOnPropertyStore
         return getAddOnPropertyForKey(addOnKey, propertyKey) != null;
     }
     
-    public Either<ListResult,AddOnPropertyIterable> getAllPropertiesForAddOnKey(@Nonnull final String addOnKey, final Option<ETag> eTag)
+    public AddOnPropertyIterable getAllPropertiesForAddOnKey(@Nonnull final String addOnKey)
     {
-        return ao.executeInTransaction(new TransactionCallback<Either<ListResult, AddOnPropertyIterable>>()
+        return ao.executeInTransaction(new TransactionCallback<AddOnPropertyIterable>()
         {
             @Override
-            public Either<ListResult, AddOnPropertyIterable> doInTransaction()
+            public AddOnPropertyIterable doInTransaction()
             {
                 ImmutableList<AddOnPropertyAO> addOnPropertyAOList = ImmutableList.<AddOnPropertyAO>builder().add(getAddOnPropertyAOArrayForAddOnKey(addOnKey)).build();
-                AddOnPropertyIterable addOnProperties = AddOnPropertyIterable.fromAddOnPropertyAOList(addOnPropertyAOList);
-
-                if (eTag.isDefined() && eTag.get().equals(addOnProperties.getETag()))
-                {
-                    return Either.left(ListResult.PROPERTIES_NOT_MODIFIED);
-                }
-                return Either.right(addOnProperties);
+                return AddOnPropertyIterable.fromAddOnPropertyAOList(addOnPropertyAOList);
             }
         });
     }
@@ -194,11 +188,6 @@ public class AddOnPropertyStore
         PROPERTY_DELETED,
         PROPERTY_MODIFIED,
         PROPERTY_NOT_FOUND
-    }
-    
-    public enum ListResult
-    {
-        PROPERTIES_NOT_MODIFIED
     }
 }
 

@@ -57,7 +57,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 import static com.atlassian.plugin.connect.plugin.service.AddOnPropertyService.ServiceResult;
@@ -223,13 +225,12 @@ public class AddonsResource
 
     @GET
     @Path ("{addonKey}/properties")
-    public Response getAddOnProperties(@PathParam ("addonKey") final String addOnKey, @Context HttpServletRequest request)
+    public Response getAddOnProperties(@PathParam ("addonKey") final String addOnKey, @Context final Request request, @Context HttpServletRequest servletRequest)
     {
-        UserProfile user = userManager.getRemoteUser(request);
-        Option<ETag> eTag = getETagFromRequest(request);
-        String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(request);
+        UserProfile user = userManager.getRemoteUser(servletRequest);
+        String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(servletRequest);
 
-        Either<ServiceResult, AddOnPropertyIterable> result = addOnPropertyService.getAddOnProperties(user, sourcePluginKey, addOnKey, eTag);
+        Either<ServiceResult, AddOnPropertyIterable> result = addOnPropertyService.getAddOnProperties(user, sourcePluginKey, addOnKey);
 
         return result.fold(new Function<ServiceResult, Response>()
         {
@@ -243,9 +244,15 @@ public class AddonsResource
             @Override
             public Response apply(final AddOnPropertyIterable input)
             {
-                String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties";
-                return Response.ok()
-                        .entity(RestAddOnPropertiesBean.valueOf(input.getPropertyKeys(), baseURL))
+                Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(new EntityTag(input.getETag().toString()));
+
+                if (responseBuilder == null)
+                {
+                    //the properties have changed
+                    String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties";
+                    responseBuilder = Response.ok().entity(RestAddOnPropertiesBean.valueOf(input.getPropertyKeys(), baseURL));
+                }
+                return responseBuilder
                         .tag(input.getETag().toString())
                         .cacheControl(never())
                         .build();

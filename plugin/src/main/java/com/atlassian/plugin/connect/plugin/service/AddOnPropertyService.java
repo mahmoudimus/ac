@@ -53,7 +53,7 @@ public interface AddOnPropertyService
      * </p>
      * @return either error result or list of add-on properties.
      **/
-    Either<ServiceResult, AddOnPropertyIterable> getAddOnProperties(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey, @Nonnull Option<ETag> eTag);
+    Either<ServiceResult, AddOnPropertyIterable> getAddOnProperties(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey);
 
     interface ServiceResult
     {

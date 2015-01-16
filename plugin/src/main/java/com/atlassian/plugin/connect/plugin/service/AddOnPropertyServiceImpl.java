@@ -46,8 +46,7 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
         PROPERTY_DELETED(HttpStatus.SC_NO_CONTENT, null),
         ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN(HttpStatus.SC_NOT_FOUND, "connect.rest.add_on_properties.add_on_not_found_or_access_to_other_data_forbidden"),
         PROPERTY_NOT_MODIFIED(HttpStatus.SC_NOT_MODIFIED, "connect.rest.add_on_properties.property_not_modified"),
-        PROPERTY_MODIFIED(HttpStatus.SC_PRECONDITION_FAILED, "connect.rest.add_on_properties.property_modified"),
-        PROPERTIES_NOT_MODIFIED(HttpStatus.SC_NOT_MODIFIED, "connect.rest.add_on_properties.properties_not_modified"),;
+        PROPERTY_MODIFIED(HttpStatus.SC_PRECONDITION_FAILED, "connect.rest.add_on_properties.property_modified");
 
         private final int httpStatusCode;
         private final String i18nKey;
@@ -181,27 +180,13 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
     }
 
     @Override
-    public Either<ServiceResult, AddOnPropertyIterable> getAddOnProperties(@Nullable final UserProfile user, @Nullable final String sourcePluginKey, @Nonnull final String addOnKey, @Nonnull final Option<ETag> eTag)
+    public Either<ServiceResult, AddOnPropertyIterable> getAddOnProperties(@Nullable final UserProfile user, @Nullable final String sourcePluginKey, @Nonnull final String addOnKey)
     {
         ValidationResult<String> validationResult = validateListProperties(user, sourcePluginKey, checkNotNull(addOnKey));
         if (validationResult.isValid())
         {
             String input = validationResult.getValue().get();
-            Either<AddOnPropertyStore.ListResult, AddOnPropertyIterable> listPropertiesResult = store.getAllPropertiesForAddOnKey(input, eTag);
-
-            return listPropertiesResult.left().map(new Function<AddOnPropertyStore.ListResult, ServiceResult>()
-            {
-                @Override
-                public ServiceResult apply(final AddOnPropertyStore.ListResult input)
-                {
-                    switch (input)
-                    {
-                        case PROPERTIES_NOT_MODIFIED:
-                            return ServiceResultImpl.PROPERTIES_NOT_MODIFIED;
-                    }
-                    throw new IllegalStateException();
-                }
-            });
+            return Either.right(store.getAllPropertiesForAddOnKey(input));
         }
         return Either.left(validationResult.getError().get());
     }

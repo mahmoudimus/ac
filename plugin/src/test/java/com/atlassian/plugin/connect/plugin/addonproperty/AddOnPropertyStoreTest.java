@@ -168,11 +168,11 @@ public class AddOnPropertyStoreTest
             store.setPropertyValue(ADD_ON_KEY, property.getKey(), property.getValue(), noETag());
         }
 
-        Either<AddOnPropertyStore.ListResult, AddOnPropertyIterable> result = store.getAllPropertiesForAddOnKey(ADD_ON_KEY, noETag());
+        AddOnPropertyIterable result = store.getAllPropertiesForAddOnKey(ADD_ON_KEY);
 
-        if (Iterables.isEmpty().apply(result.right().get()) && Iterables.isEmpty().apply(propertyList)) return;
+        if (Iterables.isEmpty().apply(result) && Iterables.isEmpty().apply(propertyList)) return;
 
-        assertThat(result.right().get(),
+        assertThat(result,
                 IsIterableContainingInOrder.contains(propertyList.toArray()));
     }
 
@@ -206,12 +206,12 @@ public class AddOnPropertyStoreTest
         assertThat(propertyValue.left().get(), is(AddOnPropertyStore.GetResult.PROPERTY_NOT_MODIFIED));
     }
 
-    @Test
+    /*@Test
     @NonTransactional
     public void testListPropertiesWithNoETag() throws Exception
     {
         store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
-        Iterable<String> keys = store.getAllPropertiesForAddOnKey(ADD_ON_KEY, noETag()).right().get().getPropertyKeys();
+        Iterable<String> keys = store.getAllPropertiesForAddOnKey(ADD_ON_KEY).right().get().getPropertyKeys();
         Option<String> first = Iterables.first(keys);
         assertTrue(first.isDefined());
         assertEquals(PROPERTY_KEY, first.get());
@@ -222,7 +222,7 @@ public class AddOnPropertyStoreTest
     public void testListPropertiesWithSameETag() throws Exception
     {
         store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
-        AddOnPropertyIterable addOnProperties = store.getAllPropertiesForAddOnKey(ADD_ON_KEY, noETag()).right().get();
+        AddOnPropertyIterable addOnProperties = store.getAllPropertiesForAddOnKey(ADD_ON_KEY).right().get();
 
         AddOnPropertyStore.ListResult listResult = store.getAllPropertiesForAddOnKey(ADD_ON_KEY, Option.some(addOnProperties.getETag())).left().get();
         assertEquals(AddOnPropertyStore.ListResult.PROPERTIES_NOT_MODIFIED, listResult);
@@ -237,7 +237,7 @@ public class AddOnPropertyStoreTest
         Option<String> first = Iterables.first(keys);
         assertTrue(first.isDefined());
         assertEquals(PROPERTY_KEY, first.get());
-    }
+    }*/
 
     @Test
     @NonTransactional

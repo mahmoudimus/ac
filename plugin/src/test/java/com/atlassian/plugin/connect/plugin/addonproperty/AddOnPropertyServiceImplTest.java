@@ -188,8 +188,8 @@ public class AddOnPropertyServiceImplTest
     private void testListProperties(final String sourcePluginKey)
     {
         AddOnPropertyIterable emptyIterable = new AddOnPropertyIterable(Collections.<AddOnProperty>emptyList());
-        when(store.getAllPropertiesForAddOnKey(addOnKey, Option.<ETag>none())).thenReturn(Either.<AddOnPropertyStore.ListResult, AddOnPropertyIterable>right(emptyIterable));
-        Either<ServiceResult, AddOnPropertyIterable> result = service.getAddOnProperties(user, sourcePluginKey, addOnKey, Option.<ETag>none());
+        when(store.getAllPropertiesForAddOnKey(addOnKey)).thenReturn(emptyIterable);
+        Either<ServiceResult, AddOnPropertyIterable> result = service.getAddOnProperties(user, sourcePluginKey, addOnKey);
 
         assertEquals(emptyIterable, result.right().get());
     }
@@ -269,7 +269,7 @@ public class AddOnPropertyServiceImplTest
     @Test
     public void testNoAccessToListDifferentPluginData() throws Exception
     {
-        Either<ServiceResult, AddOnPropertyIterable> result = service.getAddOnProperties(user, "DIFF_PLUGIN_KEY", addOnKey, Option.<ETag>none());
+        Either<ServiceResult, AddOnPropertyIterable> result = service.getAddOnProperties(user, "DIFF_PLUGIN_KEY", addOnKey);
         assertTrue(result.isLeft());
         assertEquals(ServiceResultImpl.ADD_ON_NOT_FOUND_OR_ACCESS_TO_OTHER_DATA_FORBIDDEN, result.left().get());
     }
@@ -299,7 +299,7 @@ public class AddOnPropertyServiceImplTest
     @Test
     public void testListNoAccessWhenLoggedIn() throws Exception
     {
-        Either<ServiceResult, AddOnPropertyIterable> result = service.getAddOnProperties(null, "DIFF_PLUGIN_KEY", addOnKey, Option.<ETag>none());
+        Either<ServiceResult, AddOnPropertyIterable> result = service.getAddOnProperties(null, "DIFF_PLUGIN_KEY", addOnKey);
         assertTrue(result.isLeft());
         assertEquals(ServiceResultImpl.NOT_AUTHENTICATED, result.left().get());
     }
