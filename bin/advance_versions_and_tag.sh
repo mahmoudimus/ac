@@ -40,7 +40,7 @@ git push --tags origin master
 echo "${PREFIX} switching back to develop"
 git checkout develop
 echo "${PREFIX} incrementing -SNAPSHOT version in poms"
-mvn3 --batch-mode release:update-versions -DautoVersionSubmodules=true
+mvn3 --batch-mode release:update-versions -DautoVersionSubmodules=true versions:update-child-modules
 NEW_SNAPSHOT_VERSION=$(mvn3 -npu org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version | grep -v '\[' | grep -iv 'download' | grep -ve '[0-9]*/[0-9]*K')
 POM_FILENAMES=`git status --porcelain | grep " M .*pom.xml" | sed "s/ M //"`
 echo "${PREFIX} pom files: ${POM_FILENAMES}"
