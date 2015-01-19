@@ -186,22 +186,6 @@
                 <version>2.4</version>
                 <!-- !versions 2.5 and 2.5.1 broke tree filtering -->
             </plugin>
-            <plugin>
-                <groupId>external.atlassian.jgitflow</groupId>
-                <artifactId>jgitflow-maven-plugin</artifactId>
-                <version>${jgitflow.version}</version>
-                <configuration>
-                    <allowSnapshots>true</allowSnapshots>
-                    <enableFeatureVersions>false</enableFeatureVersions>
-                    <pushFeatures>true</pushFeatures>
-                    <pushReleases>true</pushReleases>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <releaseBranchVersionSuffix>RC</releaseBranchVersionSuffix>
-                    <pullMaster>true</pullMaster>
-                    <pullDevelop>true</pullDevelop>
-                    <defaultOriginUrl>ssh://git@stash.atlassian.com:7997/ac/atlassian-connect.git</defaultOriginUrl>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
     <reporting>
@@ -654,30 +638,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <!-- REMOVE WHEN JGITFLOW IS FINAL -->
-    <pluginRepositories>
-        <!-- REMOVE WHEN JGITFLOW IS FINAL -->
-        <pluginRepository>
-            <id>snapshots-repo</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>mulesoft-releases</id>
-            <name>MuleSoft Repository</name>
-            <url>https://repository.mulesoft.org/releases</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>maven-central</id>
-            <url>http://repo1.maven.org/maven2</url>
-        </pluginRepository>
-    </pluginRepositories>
     <properties>
         <!-- VERSIONS -->
         <amps.version>5.0.4</amps.version>
@@ -739,7 +699,6 @@
 
         <!-- BUILD STUFF -->
         <apache-commons-version>3.1</apache-commons-version>
-        <jgitflow.version>1.0-m4.3</jgitflow.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
         <atlassian.upm.on.demand>false</atlassian.upm.on.demand>
