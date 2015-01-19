@@ -1,14 +1,17 @@
 {
   "name": "connect-scripts",
   "version": "1.0.0",
+  "private": true,
   "description": "Utility scripts for Connect",
   "dependencies": {
-    "node-rest-client": "~1.0.3",
-    "yargs": "~1.3.1",
+    "async": "~0.6.2",
+    "colors": "*",
     "fs": "0.0.2",
-    "mkdirp": "~0.5.0"
-  },
-  "devDependencies": {},
-  "author": "",
-  "license": "ISC"
+    "lodash": "*",
+    "mkdirp": "~0.5.0",
+    "node-rest-client": "~1.0.3",
+    "node.extend": "~1.0.9",
+    "nomnom": "~1.6.1",
+    "yargs": "~1.3.1"
+  }
 }
