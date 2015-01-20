@@ -13,14 +13,14 @@
 */
 
 var client = new (require('node-rest-client').Client)(),
-		fs = require('fs'),
-		_ = require('lodash'),
-		async = require('async'),
-		extend = require('node.extend'),
-		nomnom = require('nomnom'),
-		mkdirp = require('mkdirp'),
-		colors = require('colors'),
-		util = require('util');
+        fs = require('fs'),
+        _ = require('lodash'),
+        async = require('async'),
+        extend = require('node.extend'),
+        nomnom = require('nomnom'),
+        mkdirp = require('mkdirp'),
+        colors = require('colors'),
+        util = require('util');
 
 var selfExecute = require.main === module;
 
@@ -43,32 +43,32 @@ var baseCommand = 'atlas-run-standalone --product {{product}} ' +
     '--jvmargs -Datlassian.upm.on.demand=true';
 
 var versionOverrides = {
-	'prd': {
-		jira: {
-			'atlassian-webhooks-plugin': '2.0.0'
-		}
-	},
-	'dev': {
-		jira: {
-			'atlassian-webhooks-plugin': '2.0.0'
-		}
-	}
+    'prd': {
+        jira: {
+            'atlassian-webhooks-plugin': '2.0.0'
+        }
+    },
+    'dev': {
+        jira: {
+            'atlassian-webhooks-plugin': '2.0.0'
+        }
+    }
 };
 
 var versions = {
-	'prd': {},
-	'dev': {}
+    'prd': {},
+    'dev': {}
 };
 
 var bundledPlugins = {
-	'prd': {
-		'jira': [],
-		'confluence': []
-	},
-	'dev': {
-		'jira': [],
-		'confluence': []
-	}
+    'prd': {
+        'jira': [],
+        'confluence': []
+    },
+    'dev': {
+        'jira': [],
+        'confluence': []
+    }
 };
 
 var _commands = [];
@@ -76,64 +76,70 @@ var _oldCommands= {};
 var _index = [];
 
 function getVersionsForEnv(opts, env, callback) {
-	client.get(opts.manifestoBaseUrl + '/api/env/jirastudio-' + env, function (data, response) {
-		opts.debug && console.log('Info'.yellow, 'Retrieved manifesto versions for ' + env.blue);
+    client.get(opts.manifestoBaseUrl + '/api/env/jirastudio-' + env, function (data, response) {
+        opts.debug && console.log('Info'.yellow, 'Retrieved manifesto versions for ' + env.blue);
 
-		_.each(['jira', 'confluence'], function (product) {
-			versions[env][product] = _.first(_.where(data.details.products, { artifact: product })).version;
+        _.each(['jira', 'confluence'], function (product) {
+            versions[env][product] = _.first(_.where(data.details.products, { artifact: product })).version;
 
-			_.each(_.where(data.details.plugins, {product: product}), function (plugin) {
-				var artifact = plugins[plugin.artifact];
-				if (artifact) {
-					var v = plugin.version;
-					var envOverride = versionOverrides[env];
-					var productOverride = envOverride && envOverride[product];
-					var pluginVersionOverride = productOverride && productOverride[plugin.artifact];
-					if (pluginVersionOverride) {
-						opts.debug && console.log("Version override".red, ("[" + product + ":" + env + "]").grey, artifact, ("" + v).yellow, '-->', pluginVersionOverride.green);
-						v = pluginVersionOverride;
-					}
-					bundledPlugins[env][product].push(artifact + ':' + v);
-				} else if (plugin.artifact === 'atlassian-connect-plugin') {
-					versions[env].connect = plugin.version;
-				}
-			});
-		});
+            _.each(_.where(data.details.plugins, {product: product}), function (plugin) {
+                var artifact = plugins[plugin.artifact];
+                if (artifact) {
+                    var v = plugin.version;
+                    var envOverride = versionOverrides[env];
+                    var productOverride = envOverride && envOverride[product];
+                    var pluginVersionOverride = productOverride && productOverride[plugin.artifact];
+                    if (pluginVersionOverride) {
+                        opts.debug && console.log("Version override".red, ("[" + product + ":" + env + "]").grey, artifact, ("" + v).yellow, '-->', pluginVersionOverride.green);
+                        v = pluginVersionOverride;
+                    }
+                    bundledPlugins[env][product].push(artifact + ':' + v);
+                } else if (plugin.artifact === 'atlassian-connect-plugin') {
+                    versions[env].connect = plugin.version;
+                }
+            });
+        });
 
-		callback && callback();
-	});
+        callback && callback();
+    });
 }
 
 function createAndExportCommands(opts) {
-   	createCommands();
-	opts.debug && console.log('Info'.yellow, 'Retrieving versions from DAC');
+       createCommands();
+    opts.debug && console.log('Info'.yellow, 'Retrieving versions from DAC');
 
-	var dacConnectVersionsUrl = opts.dacBaseUrl + '/' + opts.outputFile + '.json';
+    var dacConnectVersionsUrl = opts.dacBaseUrl + '/' + opts.outputFile + '.json';
 
-	client.get(dacConnectVersionsUrl, function (data, response) {
-		_oldCommands = data;
-		
-		if (newVersionsAvailable()) {
-			opts.debug && console.log('Info'.blue, 'New versions available, regenerating commands');
-			exportCommands(opts);
-		}
-	});
+    client.get(dacConnectVersionsUrl, function (data, response) {
+        _oldCommands = data;
+        
+        if (newVersionsAvailable(opts)) {
+            opts.debug && console.log('Info'.blue, 'New versions available, regenerating commands');
+            exportCommands(opts);
+        }
+    });
 }
 
-function newVersionsAvailable() {
-	return _commands.environment.dev.jiraCommand != _oldCommands.environment.dev.jiraCommand
-		|| _commands.environment.dev.confluenceCommand != _oldCommands.environment.dev.confluenceCommand;
+function newVersionsAvailable(opts) {
+    if (!_oldCommands.environment) {
+        opts.debug && console.log('Warn'.yellow, 'No old commands available');
+        return true;
+    }
+    return _commands.environment.dev.jiraCommand != _oldCommands.environment.dev.jiraCommand
+            || _commands.environment.dev.confluenceCommand != _oldCommands.environment.dev.confluenceCommand
+            || _commands.environment.prd.jiraCommand != _oldCommands.environment.prd.jiraCommand
+            || _commands.environment.prd.confluenceCommand != _oldCommands.environment.prd.confluenceCommand;
 }
 
 /**
  * Create the atlas-run-standalone commands
  */
 function createCommands(opts) {
-	var validFrom = new Date();
+    var validFrom = new Date();
     _commands =
     {
-		'validFrom': validFrom.toISOString(),
-		'validTo' : 'OPEN',
+        'validFrom': validFrom.toISOString(),
+        'validTo' : 'OPEN',
         'environment': {
             'dev': createEnvironment('dev'),
             'prd': createEnvironment('prd')
@@ -142,13 +148,13 @@ function createCommands(opts) {
 }
 
 function createEnvironment(env) {
-	return {
-		'connectVersion': versions[env].connect,
-		'jiraVersion' : versions.jira,
-		'confluenceVersion' : versions.confluence,
-		'jiraCommand': createProductRunCommand('jira', env),
-		'confluenceCommand': createProductRunCommand('confluence', env)
-	}
+    return {
+        'connectVersion': versions[env].connect,
+        'jiraVersion' : versions.jira,
+        'confluenceVersion' : versions.confluence,
+        'jiraCommand': createProductRunCommand('jira', env),
+        'confluenceCommand': createProductRunCommand('confluence', env)
+    }
 }
 
 function createProductRunCommand(product, env) {
@@ -165,63 +171,63 @@ function createProductRunCommand(product, env) {
  */
 
 function exportCommands(opts) {
-	mkdirp(opts.outputDir, function(err) {
-		if(err) {
-        	console.log('Error'.red, ' Target directory ' + opts.outputDir + ' could not be created: ' + err);
-   	 	} else {
-			var indexFile = opts.outputFile + '-history.json';
-			var versionsIndexUrl = opts.dacBaseUrl + indexFile;
-			client.get(versionsIndexUrl, function (data, response) {
-				if(response.statusCode != 404) {
-					_index = data;
-				}
-				var validTo = new Date();
-				_oldCommands.validTo = validTo.toISOString();
-				var indexEntry = {};
-				indexEntry.validFrom = _oldCommands.validFrom;
-				indexEntry.validTo = _oldCommands.validTo;
-				var versionsFile = opts.outputFile + '_' + validTo.getTime() + '.json';
-				indexEntry.versionsFile = opts.dacBaseUrl + '/' + versionsFile;
-		
-				_index.unshift(indexEntry);
-				while(_index.length > opts.maxHistory) {
-					_index.pop();
-				}
+    mkdirp(opts.outputDir, function(err) {
+        if(err) {
+            console.log('Error'.red, ' Target directory ' + opts.outputDir + ' could not be created: ' + err);
+            } else {
+            var indexFile = opts.outputFile + '-history.json';
+            var versionsIndexUrl = opts.dacBaseUrl + indexFile;
+            client.get(versionsIndexUrl, function (data, response) {
+                if(response.statusCode != 404) {
+                    _index = data;
+                }
+                var validTo = new Date();
+                _oldCommands.validTo = validTo.toISOString();
+                var indexEntry = {};
+                indexEntry.validFrom = _oldCommands.validFrom;
+                indexEntry.validTo = _oldCommands.validTo;
+                var versionsFile = opts.outputFile + '_' + validTo.getTime() + '.json';
+                indexEntry.versionsFile = opts.dacBaseUrl + '/' + versionsFile;
+        
+                _index.unshift(indexEntry);
+                while(_index.length > opts.maxHistory) {
+                    _index.pop();
+                }
 
-				var files = 
-				[
-					{
-						'content': JSON.stringify(_commands), 
-						'file': opts.outputDir + '/' + opts.outputFile + '.json'
-					},
-					{
-						'content': 'evalCommands(' + JSON.stringify(_commands) + ')', 
-						'file': opts.outputDir + '/' + opts.outputFile + '.jsonp'
-					},
-					{
-						'content': JSON.stringify(_oldCommands), 
-						'file': opts.outputDir + '/' + versionsFile
-					},
-					{
-						'content': JSON.stringify(_index), 
-						'file': opts.outputDir + '/' + indexFile
-					}
-				];
+                var files = 
+                [
+                    {
+                        'content': JSON.stringify(_commands), 
+                        'file': opts.outputDir + '/' + opts.outputFile + '.json'
+                    },
+                    {
+                        'content': 'evalCommands(' + JSON.stringify(_commands) + ')', 
+                        'file': opts.outputDir + '/' + opts.outputFile + '.jsonp'
+                    },
+                    {
+                        'content': JSON.stringify(_oldCommands), 
+                        'file': opts.outputDir + '/' + versionsFile
+                    },
+                    {
+                        'content': JSON.stringify(_index), 
+                        'file': opts.outputDir + '/' + indexFile
+                    }
+                ];
 
-				files.forEach(function(entry) {
-					fs.writeFile(entry.file, entry.content, function(err) {
-						if (opts.debug) {
-							console.log(
-									err ?
-											('Error'.red + ' Could not write file ' + entry.file + ': ' + err) :
-											('Saved'.green + ' ' + entry.file)
-							);
-						}
-					});
-				});
-    		});
-		}
-	});
+                files.forEach(function(entry) {
+                    fs.writeFile(entry.file, entry.content, function(err) {
+                        if (opts.debug) {
+                            console.log(
+                                    err ?
+                                            ('Error'.red + ' Could not write file ' + entry.file + ': ' + err) :
+                                            ('Saved'.green + ' ' + entry.file)
+                            );
+                        }
+                    });
+                });
+            });
+        }
+    });
 }
 
 var getCliOpts = function(callback) {
@@ -233,21 +239,21 @@ var getCliOpts = function(callback) {
         })
         .option('outputDir', {
             abbr: 'o',
-			default: 'target',
-			required: true,
+            default: 'target',
+            required: true,
             help: 'Output directory'
         })
         .option('manifestoBaseUrl', {
-			default: 'https://manifesto.uc-inf.net'
+            default: 'https://manifesto.uc-inf.net'
         })
         .option('dacBaseUrl', {
-			default: 'https://developer.atlassian.com/static'
+            default: 'https://developer.atlassian.com/static'
         })
         .option('outputFile', {
-			default: 'connect-versions'
+            default: 'connect-versions'
         })
         .option('maxHistory', {
-			default: 150
+            default: 150
         });
 
     if (callback) {
@@ -257,26 +263,26 @@ var getCliOpts = function(callback) {
 };
 
 exports.run = function(runOpts) {
-	var nomnom = getCliOpts(runOpts ? runOpts.cliOptsCallback : false);
+    var nomnom = getCliOpts(runOpts ? runOpts.cliOptsCallback : false);
 
-	var opts = runOpts;
-	opts = extend(opts, nomnom.parse());
+    var opts = runOpts;
+    opts = extend(opts, nomnom.parse());
 
-	downloadQueue.push({
-		self: this,
-		executor: getVersionsForEnv,
-		args: [opts, 'dev']
-	}, function () { });
+    downloadQueue.push({
+        self: this,
+        executor: getVersionsForEnv,
+        args: [opts, 'dev']
+    }, function () { });
 
-	downloadQueue.push({
-		self: this,
-		executor: getVersionsForEnv,
-		args: [opts, 'prd']
-	}, function () { });
+    downloadQueue.push({
+        self: this,
+        executor: getVersionsForEnv,
+        args: [opts, 'prd']
+    }, function () { });
 
-	downloadQueue.drain = function () {
-		createAndExportCommands(opts);
-	};
+    downloadQueue.drain = function () {
+        createAndExportCommands(opts);
+    };
 };
 
 if (selfExecute) {
