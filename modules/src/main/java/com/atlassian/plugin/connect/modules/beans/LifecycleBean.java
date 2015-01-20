@@ -11,9 +11,69 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * absolute or relative to the add-on's baseUrl. When a lifecycle event is fired, it will POST to the appropriate url
  * registered for the event.
  * <p/>
- *#### Example
+ *#### Lifecycle Attribute Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#LIFECYCLE_EXAMPLE}
+ *
+ *#### Lifecycle Payload
+ *Lifecycle callbacks contain a JSON data payload with important tenant information that you will need to store in your
+ *  add-on in order to sign and verify future requests. The payload contains the following attributes:
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#LIFECYCLE_PAYLOAD_EXAMPLE}
+ *
+ *<table class='aui'>
+ *    <thead>
+ *        <tr>
+ *            <th>Attribute</th>
+ *            <th>Description</th>
+ *        </tr>
+ *    </thead>
+ *    <tr>
+ *        <td><code>key</td>
+ *        <td>Add-on key that was installed into the Atlassian Product, as it appears in your add-on's descriptor.</td>
+ *    </tr>
+ *    <tr>
+ *        <td><code>clientKey</code></td>
+ *        <td>Identifying key for the Atlassian product instance that the add-on was installed into. This will never change for a given
+ *        instance, and is unique across all Atlassian product tenants. This value should be used to key tenant details
+ *        in your add-on.</td>
+ *    </tr>
+ *    <tr>
+ *        <td><code>publicKey</code></td>
+ *        <td>This is the public key for this Atlassian product instance. You may verify that this <code>baseUrl</code>
+ * 			uses this <code>publicKey</code> at the standard URL <code>&lt;baseUrl&gt;/plugins/servlet/oauth/consumer-info</code>.</td>
+ *    </tr>
+ *    <tr>
+ *        <td><code>sharedSecret</code></td>
+ *        <td>Use this string to sign outgoing JWT tokens and validate incoming JWT tokens. Optional: and may not
+ *        be present on non-JWT add-on installations, and is only sent on the <code>installed</code> event.</td>
+ *    </tr>
+ *    <tr>
+ *        <td><code>serverVersion</code></td>
+ *        <td>This is a string representation of the host product's version. Generally you should not need it.</td>
+ *    </tr>
+ *    <tr>
+ *        <td><code>pluginsVersion</code></td>
+ *        <td>This is a semver compliant version of Atlassian Connect which is running on the host server, for example: <code>1.1.15</code>.</td>
+ *    </tr>
+ *    <tr>
+ *        <td><code>baseUrl</code></td>
+ *        <td>URL prefix for this Atlassian product instance. All of its REST endpoints begin with this `baseUrl`.</td>
+ *    </tr>
+ *    <tr>
+ *        <td><code>productType</code></td>
+ *        <td>Identifies the category of Atlassian product, e.g. <code>jira</code> or <code>confluence</code>.</td>
+ *    </tr>
+ *    <tr>
+ *        <td><code>description</code></td>
+ *        <td>The host product description - this is customisable by an instance administrator.</td>
+ *    </tr>
+ *    <tr>
+ *        <td><code>serviceEntitlementNumber</code></td>
+ *        <td>Also known as the SEN, the service entitlement number is a the add-on license id.</td>
+ *    </tr>
+ *</table>
+ *
  * @schemaTitle Lifecycle
  */
 public class LifecycleBean extends BaseModuleBean
@@ -22,6 +82,14 @@ public class LifecycleBean extends BaseModuleBean
      * When a Connect add-on is installed, a synchronous request is fired to this URL to initiate the installation
      * handshake. In order to successfully complete installation, the add-on must respond with either a `200 OK` or
      * `204 No Content` status.
+     *<div class="aui-message warning">
+     *    <p class="title">
+     *        <span class="aui-icon icon-warning"></span>
+     *        <strong>Important</strong>
+     *    </p>
+     *    Upon successful registration, the add-on must return either a `200 OK` or `204 No Content` response code, otherwise
+     *    the operation will fail and the installation will be marked as incomplete.
+     *</div>
      */
     @StringSchemaAttributes(format = "uri")
     private String installed;

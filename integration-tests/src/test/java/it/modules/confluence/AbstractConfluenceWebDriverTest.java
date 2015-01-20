@@ -26,6 +26,8 @@ import org.junit.rules.TestName;
 
 import javax.annotation.Nullable;
 
+import com.sun.jersey.api.client.UniformInterfaceException;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -97,7 +99,14 @@ public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
         installTestPlugins(rpc);
 
         // Hangs the Chrome WebDriver tests, so it's disabled for now.
-        rpc.getPluginHelper().disablePlugin(new SimplePlugin("com.atlassian.confluence.confluence-editor-hide-tools", null));
+        try
+        {
+            rpc.getPluginHelper().disablePlugin(new SimplePlugin("com.atlassian.confluence.confluence-editor-hide-tools", null));
+        }
+        catch (UniformInterfaceException ignored)
+        {
+            // Missing or already disabled. Carry on.
+        }
 
         rpc.getDarkFeaturesHelper().enableSiteFeature("webdriver.test.mode");
 
@@ -166,6 +175,7 @@ public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
 
     protected MacroBrowserAndEditor selectMacro(CreatePage editorPage, String macroName, @Nullable Runnable macroDialogSubmitter)
     {
+        editorPage.dismissEditorNotifications();
         MacroBrowserAndEditor browserAndEditor = findMacroInBrowser(editorPage, macroName);
 
         if (null == browserAndEditor.macro)
@@ -199,7 +209,7 @@ public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
     protected MacroBrowserAndEditor findMacroInBrowser(CreatePage editorPage, String macroName)
     {
         final Editor editor = editorPage.getEditor();
-        enableMacrosDropdown(editor);
+        enableMacrosDropdown(editorPage);
         final InsertDropdownMenu insertDropdownMenu = editor.openInsertMenu();
         insertDropdownMenu.click(InsertDropdownMenu.InsertItem.MACRO);
         ConnectMacroBrowserDialog browserDialog = connectPageOperations.findConnectMacroBrowserDialog();
@@ -208,12 +218,13 @@ public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
         return new MacroBrowserAndEditor(browserDialog, macro, null);
     }
 
-    protected void enableMacrosDropdown(Editor editor)
+    protected void enableMacrosDropdown(CreatePage editorPage)
     {
+        editorPage.dismissEditorNotifications();
         if (!hasBeenFocused)
         {
             hasBeenFocused = true;
-            editor.getContent().focus();
+            editorPage.getContent().focus();
         }
     }
 

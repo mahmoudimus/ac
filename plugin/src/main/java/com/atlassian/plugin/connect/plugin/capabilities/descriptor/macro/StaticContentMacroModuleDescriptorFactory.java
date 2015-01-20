@@ -5,12 +5,9 @@ import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
-import com.atlassian.plugin.connect.plugin.capabilities.module.macro.MacroModuleContextExtractor;
+import com.atlassian.plugin.connect.plugin.capabilities.module.macro.RemoteMacroRenderer;
 import com.atlassian.plugin.connect.plugin.capabilities.module.macro.StaticContentMacro;
 import com.atlassian.plugin.connect.plugin.capabilities.util.MacroEnumMapper;
-import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.plugin.module.confluence.MacroContentManager;
-import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import org.dom4j.dom.DOMElement;
@@ -19,22 +16,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ConfluenceComponent
 public class StaticContentMacroModuleDescriptorFactory extends AbstractContentMacroModuleDescriptorFactory<StaticContentMacroModuleBean>
 {
-    private final MacroContentManager macroContentManager;
-    private final MacroModuleContextExtractor macroModuleContextExtractor;
-    private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
-    private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
+    private final RemoteMacroRenderer remoteMacroRenderer;
 
     @Autowired
     public StaticContentMacroModuleDescriptorFactory(AbsoluteAddOnUrlConverter urlConverter,
-            MacroContentManager macroContentManager, MacroModuleContextExtractor macroModuleContextExtractor,
-            IFrameUriBuilderFactory iFrameUriBuilderFactory,
-            RemotablePluginAccessorFactory remotablePluginAccessorFactory)
+                                                     RemoteMacroRenderer remoteMacroRenderer)
     {
         super(urlConverter);
-        this.macroContentManager = macroContentManager;
-        this.macroModuleContextExtractor = macroModuleContextExtractor;
-        this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
-        this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
+        this.remoteMacroRenderer = remoteMacroRenderer;
     }
 
     protected ModuleFactory createModuleFactory(final ConnectAddonBean addon, final DOMElement element, final StaticContentMacroModuleBean bean)
@@ -47,8 +36,7 @@ public class StaticContentMacroModuleDescriptorFactory extends AbstractContentMa
                 StaticContentMacro macro = new StaticContentMacro(
                         addon.getKey(), bean.getRawKey(), bean.getUrl(),
                         MacroEnumMapper.map(bean.getBodyType()), MacroEnumMapper.map(bean.getOutputType()),
-                        iFrameUriBuilderFactory, macroModuleContextExtractor, macroContentManager,
-                        remotablePluginAccessorFactory);
+                        remoteMacroRenderer);
 
                 if (bean.hasImagePlaceholder())
                 {

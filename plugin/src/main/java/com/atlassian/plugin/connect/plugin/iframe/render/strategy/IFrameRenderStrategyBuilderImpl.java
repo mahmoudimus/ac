@@ -402,14 +402,13 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         }
 
         @Override
-        public boolean shouldShow(Map<String, ? extends Object> conditionContext)
+        public boolean shouldShow(Map<String, ?> conditionContext)
         {
-            boolean show = condition == null || condition.shouldDisplay((Map<String,Object>)conditionContext);
-            return show;
+            return condition == null || condition.shouldDisplay((Map<String, Object>)conditionContext);
         }
 
         @Override
-        public void shouldShowOrThrow(final Map<String, Object> conditionContext)
+        public void shouldShowOrThrow(final Map<String, ?> conditionContext)
         {
             if (!shouldShow(conditionContext))
             {

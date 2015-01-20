@@ -5,11 +5,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
+import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexType;
@@ -22,6 +24,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
@@ -30,6 +33,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -40,6 +44,7 @@ import com.google.gson.JsonObject;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
+import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
 import static com.atlassian.plugin.connect.modules.beans.ContentPropertyIndexSchemaModuleBean.newContentPropertyIndexSchemaModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean.newEntityPropertyModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean.newCompositeConditionBean;
@@ -94,7 +99,67 @@ public class ConnectJsonExamples
     public static final String BLUEPRINT_EXAMPLE = createBlueprintExample();
     public static final String BLUEPRINT_TEMPLATE_EXAMPLE = createBlueprintTemplateExample();
     public static final String CONTENT_PROPERTY_EXAMPLE = createContentPropertyIndexSchemaExample();
+    public static final String MACRO_RENDER_MODES_EXAMPLE = createDynamicMacroExampleForRenderModes();
 
+    public static final String LIFECYCLE_PAYLOAD_EXAMPLE = createLifecyclePayloadExample();
+
+    public static final String RENDER_MODE_EXAMPLE_WORD = createRenderModesExampleWord();
+    public static final String RENDER_MODE_EXAMPLE_PDF = createRenderModesExamplePdf();
+    public static final String RENDER_MODE_EXAMPLE_HTML_EXPORT = createRenderModesExampleHtmlExport();
+    public static final String RENDER_MODE_EXAMPLE_EMAIL = createRenderModesExampleEmail();
+    public static final String RENDER_MODE_EXAMPLE_FEED = createRenderModesExampleFeed();
+    public static final String RENDER_MODE_EXAMPLE_DEFAULT = createRenderModesExampleDefault();
+
+    public static final String EMBEDDED_STATIC_MACRO_EXAMPLE = MACRO_RENDER_MODES_EXAMPLE;
+    public static final String ATTACHMENT_SIZE_ALIAS = "attachmentSize";
+
+    private static String createRenderModesExampleWord()
+    {
+        return gson.toJson(MacroRenderModesBean
+                .newMacroRenderModesBean()
+                .withWord(createEmbeddedStaticMacroBean("/render-map-word"))
+                .build());
+    }
+
+    private static String createRenderModesExamplePdf()
+    {
+        return gson.toJson(MacroRenderModesBean
+                .newMacroRenderModesBean()
+                .withPdf(createEmbeddedStaticMacroBean("/render-map-pdf"))
+                .build());
+    }
+
+    private static String createRenderModesExampleHtmlExport()
+    {
+        return gson.toJson(MacroRenderModesBean
+                .newMacroRenderModesBean()
+                .withHtmlExport(createEmbeddedStaticMacroBean("/render-map-html-export"))
+                .build());
+    }
+
+    private static String createRenderModesExampleEmail()
+    {
+        return gson.toJson(MacroRenderModesBean
+                .newMacroRenderModesBean()
+                .withEmail(createEmbeddedStaticMacroBean("/render-map-email"))
+                .build());
+    }
+
+    private static String createRenderModesExampleFeed()
+    {
+        return gson.toJson(MacroRenderModesBean
+                .newMacroRenderModesBean()
+                .withFeed(createEmbeddedStaticMacroBean("/render-map-rss-feed"))
+                .build());
+    }
+
+    private static String createRenderModesExampleDefault()
+    {
+        return gson.toJson(MacroRenderModesBean
+                .newMacroRenderModesBean()
+                .withDefaultfallback(createEmbeddedStaticMacroBean("/render-map-default"))
+                .build());
+    }
 
     private static String createAddonExample()
     {
@@ -159,6 +224,21 @@ public class ConnectJsonExamples
     private static I18nProperty i18nProperty(String name)
     {
         return new I18nProperty(name, null);
+    }
+
+
+    private static EmbeddedStaticContentMacroBean createEmbeddedStaticMacroBeanStatic()
+    {
+        return EmbeddedStaticContentMacroBean.newEmbeddedStaticContentMacroModuleBean()
+                .withUrl("/render-map-static")
+                .build();
+    }
+
+    private static EmbeddedStaticContentMacroBean createEmbeddedStaticMacroBean(String url)
+    {
+        return EmbeddedStaticContentMacroBean.newEmbeddedStaticContentMacroModuleBean()
+                .withUrl(url)
+                .build();
     }
 
     private static String createPageExample()
@@ -342,6 +422,27 @@ public class ConnectJsonExamples
                                 .withEditTitle(new I18nProperty("Edit Map", ""))
                                 .build()
                 )
+                .withRenderModes(MacroRenderModesBean
+                        .newMacroRenderModesBean()
+                        .withPdf(createEmbeddedStaticMacroBean("/render-map-pdf"))
+                        .withDefaultfallback(createEmbeddedStaticMacroBeanStatic())
+                        .build())
+                .build();
+
+        return gson.toJson(createModuleArray("dynamicContentMacros", macroModuleBean));
+    }
+
+    private static String createDynamicMacroExampleForRenderModes()
+    {
+        DynamicContentMacroModuleBean macroModuleBean = DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean()
+                .withName(new I18nProperty("Maps", ""))
+                .withKey("dynamic-macro-example")
+                .withUrl("/render-map?pageTitle={page.title}")
+                .withRenderModes(MacroRenderModesBean
+                        .newMacroRenderModesBean()
+                        .withPdf(createEmbeddedStaticMacroBean("/render-map-pdf"))
+                        .withDefaultfallback(createEmbeddedStaticMacroBeanStatic())
+                        .build())
                 .build();
 
         return gson.toJson(createModuleArray("dynamicContentMacros", macroModuleBean));
@@ -544,6 +645,27 @@ public class ConnectJsonExamples
         return gson.toJson(bean);
     }
 
+    private static String createLifecyclePayloadExample()
+    {
+        ConnectAddonEventDataBuilder dataBuilder = newConnectAddonEventData();
+
+        dataBuilder.withBaseUrl("http://example.atlassian.net")
+                .withPluginKey("installed-addon-key")
+                .withClientKey("unique-client-identifier")
+                .withPublicKey("MIGf....ZRWzwIDAQAB")
+                .withSharedSecret("a-secret-key-not-to-be-lost")
+                .withPluginsVersion("version-of-connect")
+                .withServerVersion("server-version")
+                .withServiceEntitlementNumber("SEN-number")
+                .withProductType("jira")
+                .withDescription("Atlassian JIRA at https://example.atlassian.net")
+                .withEventType(ConnectAddonManager.SyncHandler.INSTALLED.name().toLowerCase());
+
+        ConnectAddonEventData data = dataBuilder.build();
+
+        return gson.toJson(data);
+    }
+
     private static String createMacroEditorExample()
     {
         MacroEditorBean macroEditorBean = newMacroEditorBean()
@@ -572,9 +694,9 @@ public class ConnectJsonExamples
     private static String createEntityPropertyExample()
     {
         List<EntityPropertyIndexExtractionConfigurationBean> extractionConfiguration = Lists.newArrayList(
-                new EntityPropertyIndexExtractionConfigurationBean("attachment.size", EntityPropertyIndexType.number),
-                new EntityPropertyIndexExtractionConfigurationBean("attachment.extension", EntityPropertyIndexType.text),
-                new EntityPropertyIndexExtractionConfigurationBean("attachment.updated", EntityPropertyIndexType.date)
+                new EntityPropertyIndexExtractionConfigurationBean("attachment.size", EntityPropertyIndexType.number, ATTACHMENT_SIZE_ALIAS),
+                new EntityPropertyIndexExtractionConfigurationBean("attachment.extension", EntityPropertyIndexType.text, "attachmentExtension"),
+                new EntityPropertyIndexExtractionConfigurationBean("attachment.updated", EntityPropertyIndexType.date, "attachmentUpdatedDate")
         );
         EntityPropertyIndexKeyConfigurationBean issueAttachmentIndexConfiguration =
                 new EntityPropertyIndexKeyConfigurationBean(extractionConfiguration, "attachment");
@@ -590,7 +712,7 @@ public class ConnectJsonExamples
 
     private static String createEntityPropertyIndexExtractionConfigurationExample()
     {
-        EntityPropertyIndexExtractionConfigurationBean bean = new EntityPropertyIndexExtractionConfigurationBean("attachment.size", EntityPropertyIndexType.number);
+        EntityPropertyIndexExtractionConfigurationBean bean = new EntityPropertyIndexExtractionConfigurationBean("attachment.size", EntityPropertyIndexType.number, ATTACHMENT_SIZE_ALIAS);
 
         return gson.toJson(bean);
     }

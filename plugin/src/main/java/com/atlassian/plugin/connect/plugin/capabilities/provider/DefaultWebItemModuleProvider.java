@@ -93,6 +93,7 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
 
             iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getKey(connectAddonBean), iFrameRenderStrategy);
             iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), RAW_CLASSIFIER, iFrameRenderStrategy);
+            iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), iFrameRenderStrategy);
         }
 
         return descriptors;

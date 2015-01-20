@@ -13,9 +13,13 @@
       "title": "Tutorial: JIRA activity"
     },
     {
-      "filename": "connect-cookbook.html",
-      "title": "Connect cookbook",
+      "filename": "confluence-gardener-tutorial.html",
+      "title": "Tutorial: Confluence Gardener",
       "new": true
+    },
+    {
+      "filename": "connect-cookbook.html",
+      "title": "Connect cookbook"
     }
   ],
   "developing": [
@@ -74,6 +78,26 @@
     {
       "filename": "cloud-development.html",
       "title": "Cloud development"
+    }
+  ],
+  "modules": [
+    {
+      "filename": "authentication.html",
+      "title": "Authentication"
+    },
+    {
+      "filename": "lifecycle.html",
+      "title": "Lifecycle"
+    },
+    {
+      "filename": "plugin-vendor.html",
+      "title": "Plugin Vendor"
+    }
+  ],
+  "rest-apis": [
+    {
+      "filename": "product-api-browser.html",
+      "title": "Product API Browser"
     }
   ],
   "scopes": [

@@ -29,24 +29,66 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * Each webhook POST sent to the add-on will also include the authentication headers that allow the add-on to validate
  * the authenticity of that request.
  *
+ *### Variable Substitution
+ *
+ * JIRA webhooks also provide a way to add and substitute variables in the url. This is similar to context parameters for add-ons. See [context parameters](../../concepts/context-parameters.html).
+ *
+ * For example, if we register to listen for one of the project events with a url containing `${project.id}`, a POST message will
+ * be sent to the address with the `${project.id}` replaced by the id of the project that the event was triggered for.
+ *
  *### Webhook event types
  *
  * Below is a list of all available webhook events.
  *
- *#### Jira Webhook events
+ *##### Add-on and system events
  *
  * * `connect_addon_disabled`
  * * `connect_addon_enabled`
- * * `jira-webhook-post-function`
+ * * `server_upgraded`
+ *
+ *##### Issue events
  * * `jira:issue_created`
  * * `jira:issue_deleted`
  * * `jira:issue_updated`
  * * `jira:worklog_updated`
- * * `plugin_enabled`
- * * `plugins_upgraded`
- * * `remote_issue_link_aggregate_cleared_event`
- * * `remote_workflow_post_function`
- * * `server_upgraded`
+ *
+ * Context parameters are `${project.id}, ${project.key}, ${issue.key}, ${issue.id}`
+ *
+ *##### Version events
+ * * `version_created`
+ * * `version_deleted`
+ * * `version_merged`
+ * * `version_updated`
+ * * `version_moved`
+ * * `version_released`
+ * * `version_unreleased`
+ *
+ * Context parameters are `${project.id}, ${project.key}, ${version.id}`.
+ *
+ * Special context parameter for version_merged event is `${mergedVersion.id}`.
+ *
+ *##### Project events
+ * * `project_created`
+ * * `project_updated`
+ * * `project_deleted`
+ *
+ * Context parameters are `${project.id}, ${project.key}`
+ *
+ *##### User events
+ * * `user_created`
+ * * `user_deleted`
+ * * `user_updated`
+ *
+ * Context parameters: `${modifiedUser.name}, ${modifiedUser.key}`
+ *
+ *##### Feature status events
+ * * `option_voting_changed`
+ * * `option_watching_changed`
+ * * `option_unassigned_issues_changed`
+ * * `option_subtasks_changed`
+ * * `option_attachments_changed`
+ * * `option_issuelinks_changed`
+ * * `option_timetracking_changed`
  *
  *#### Confluence Webhook events
  *
@@ -132,7 +174,7 @@ public class WebHookModuleBean extends BeanWithParams
      * Specifies your add-on's POST webhook handler URL. This property has to be a relative URL.
      */
     @Required
-    @StringSchemaAttributes (format = "uri")
+    @StringSchemaAttributes (format = "uri-template")
     private String url;
 
     public WebHookModuleBean(WebHookModuleBeanBuilder builder)

@@ -94,7 +94,7 @@ public class ConnectAddonManager
     private static final SigningAlgorithm JWT_ALGORITHM = SigningAlgorithm.HS256; // currently, this is the only algorithm that we support
     private static final String DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY = "connect.lifecycle.install.sign_with_prev_key.disable";
 
-    public static final String USER_KEY = "user_key";
+    private static final String USER_KEY = "user_key";
 
     public enum SyncHandler
     {

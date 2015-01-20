@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
+import java.util.concurrent.TimeUnit;
+
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
@@ -16,6 +18,7 @@ import com.google.inject.Inject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -199,11 +202,11 @@ public class ConnectPageOperations
         // dismiss a "you have an unsaved draft" message, if any, because it actually blocks the cancel and other buttons
         try
         {
-            final WebElement discardLink = findElementByClass("discard-draft");
+            final WebElement closeLink = findElement(By.cssSelector("#draft-messages .icon-close"));
 
-            if (null != discardLink)
+            if (null != closeLink)
             {
-                discardLink.click();
+                closeLink.click();
             }
         }
         catch (NoSuchElementException e)
@@ -232,6 +235,10 @@ public class ConnectPageOperations
         {
             // don't care
         }
+        catch (StaleElementReferenceException sex)
+        {
+            // don't care - the page may have been navigated away
+        }
     }
 
     public void dismissAnyAuiDialog()
@@ -240,5 +247,19 @@ public class ConnectPageOperations
         // pressing the escape key dismisses aui dialogs
         Actions action = new Actions(driver);
         action.sendKeys(Keys.ESCAPE).build().perform();
+        waitForDialogToClear();
     }
+
+   private void waitForDialogToClear()
+   {
+       new WebDriverPoller(driver, 5L, TimeUnit.SECONDS).waitUntil(new Function<WebDriver, Boolean>()
+       {
+           @Override
+           public Boolean apply(WebDriver webDriver)
+           {
+               return webDriver.findElements(By.className("aui-blanket")).size() == 0 ||
+                       !webDriver.findElement(By.className("aui-blanket")).isDisplayed();
+           }
+       });
+   }
 }

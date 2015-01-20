@@ -13,7 +13,7 @@ By the end, you'll see your web application displayed in an iframe inside of JIR
 
 <img src="../assets/images/helloworld-inapp.png" width="80%" style="border:1px solid #999;margin-top:10px;" />
 
-__Note__: This is a beginner tutorial. You can build this add-on even if you've never built one before. You'll need the [Atlassian SDK](https://developer.atlassian.com/display/DOCS/Downloads) installed and ready to go before you start.
+__Note__: This is a beginner tutorial. You can build this add-on even if you've never built one before. You'll need the [Atlassian SDK](https://developer.atlassian.com/docs/getting-started/set-up-the-atlassian-plugin-sdk-and-build-a-project) installed and ready to go before you start.
 
 
 ## <a name="descriptor"></a>Create the add-on descriptor (`atlassian-connect.json`)
@@ -126,7 +126,7 @@ You'll use a simple web server to serve the current directory containing your
 `atlassian-connect.json` and `helloworld.html` files.
 
 1. From the same directory, start your server on port 8000:
-     <pre><code data-lang="text">npm install http-server
+     <pre><code data-lang="text">npm install http-server -g
 http-server -p 8000</code></pre>
     The server indicates that it's serving HTTP at the current address and port. You'll see something like this:
     <tt>Starting up http-server, serving ./ on: http://0.0.0.0:8000</tt>
@@ -140,7 +140,7 @@ You've created the essential components of a Connect add-on: an `atlassian-conne
 
 Connect support is currently only for Atlassian-hosted products like JIRA Cloud, and not yet included with downloaded or locally-hosted instances. To simulate cloud products, components like the Connect framework are included in startup commands. Without these components Connect add-ons aren't installable.
 
-1. Ensure you have the [Atlassian SDK installed](https://developer.atlassian.com/display/DOCS/Downloads).  
+1. Ensure you have the [Atlassian SDK installed](https://developer.atlassian.com/docs/getting-started/set-up-the-atlassian-plugin-sdk-and-build-a-project).
     You'll need at least SDK version 4.2.20. If you run the <tt>atlas-version</tt> command, you should see something similar to this:  
 
     <tt>

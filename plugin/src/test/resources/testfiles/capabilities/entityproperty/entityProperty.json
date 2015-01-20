@@ -11,7 +11,8 @@
             "type" : "number"
         }, {
             "objectName" : "attachment.extension",
-            "type" : "string"
+            "type" : "string",
+            "alias": "attachmentExtension"
         }]
     }]
 }

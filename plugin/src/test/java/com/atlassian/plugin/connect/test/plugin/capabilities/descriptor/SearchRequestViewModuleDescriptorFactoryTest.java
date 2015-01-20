@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.descriptor;
 
+import com.atlassian.jira.bc.license.JiraLicenseService;
 import com.atlassian.jira.issue.views.util.SearchRequestViewBodyWriterUtil;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestURLHandler;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptorImpl;
@@ -22,7 +23,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.util.DelegatingComponent
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.module.jira.searchrequestview.ConnectConditionDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.product.jira.JiraProductAccessor;
-import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -37,10 +37,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
@@ -86,7 +89,7 @@ public class SearchRequestViewModuleDescriptorFactoryTest
 
         ConditionDescriptorFactory conditionDescriptorFactory = new ConditionDescriptorFactoryImpl(webFragmentHelper);
         ConditionModuleFragmentFactory conditionModuleFragmentFactory = new ConditionModuleFragmentFactory(
-                new JiraProductAccessor(new JiraConditions()), new ParamsModuleFragmentFactory());
+                new JiraProductAccessor(new JiraConditions(), mock(JiraLicenseService.class)), new ParamsModuleFragmentFactory());
         when(webFragmentHelper.loadCondition(eq(UserLoggedInCondition.class.getCanonicalName()), eq(plugin))).thenReturn(new UserLoggedInCondition());
 
         when(componentAccessor.getComponent(SearchRequestURLHandler.class)).thenReturn(urlHandler);

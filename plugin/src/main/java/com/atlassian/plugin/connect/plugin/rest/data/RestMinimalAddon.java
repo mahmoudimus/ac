@@ -10,16 +10,11 @@ public class RestMinimalAddon
     @JsonProperty
     private final String version;
 
-    @JsonProperty
-    private final RestAddonType type;
-
-    public RestMinimalAddon(@JsonProperty ("key") final String key,
-            @JsonProperty ("version") final String version,
-            @JsonProperty ("type") final RestAddonType type)
+    public RestMinimalAddon(@JsonProperty("key") final String key,
+                            @JsonProperty("version") final String version)
     {
         this.key = key;
         this.version = version;
-        this.type = type;
     }
 
     public String getKey()
@@ -31,10 +26,4 @@ public class RestMinimalAddon
     {
         return version;
     }
-
-    public RestAddonType getType()
-    {
-        return type;
-    }
-
 }
