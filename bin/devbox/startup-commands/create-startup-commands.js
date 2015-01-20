@@ -43,17 +43,32 @@ var baseCommand = 'atlas-run-standalone --product {{product}} ' +
     '--jvmargs -Datlassian.upm.on.demand=true';
 
 var versionOverrides = {
-    jira: {
-        webhooks: '2.0.0'
-    }
+	'prd': {
+		jira: {
+			'atlassian-webhooks-plugin': '2.0.0'
+		}
+	},
+	'dev': {
+		jira: {
+			'atlassian-webhooks-plugin': '2.0.0'
+		}
+	}
 };
 
-var versions = {};
-var connectVersions = {};
+var versions = {
+	'prd': {},
+	'dev': {}
+};
 
 var bundledPlugins = {
-    'jira': [],
-    'confluence': []
+	'prd': {
+		'jira': [],
+		'confluence': []
+	},
+	'dev': {
+		'jira': [],
+		'confluence': []
+	}
 };
 
 var _commands = [];
@@ -62,17 +77,25 @@ var _index = [];
 
 function getVersionsForEnv(opts, env, callback) {
 	client.get(opts.manifestoBaseUrl + '/api/env/jirastudio-' + env, function (data, response) {
-		opts.debug && console.log('retrieved info for ' + env);
+		opts.debug && console.log('Info'.yellow, 'Retrieved manifesto versions for ' + env.blue);
 
 		_.each(['jira', 'confluence'], function (product) {
-			versions[product] = _.first(_.where(data.details.products, { artifact: product })).version;
+			versions[env][product] = _.first(_.where(data.details.products, { artifact: product })).version;
 
 			_.each(_.where(data.details.plugins, {product: product}), function (plugin) {
 				var artifact = plugins[plugin.artifact];
 				if (artifact) {
-					bundledPlugins[product].push(artifact + ':' + plugin.version);
+					var v = plugin.version;
+					var envOverride = versionOverrides[env];
+					var productOverride = envOverride && envOverride[product];
+					var pluginVersionOverride = productOverride && productOverride[plugin.artifact];
+					if (pluginVersionOverride) {
+						opts.debug && console.log("Version override".red, ("[" + product + ":" + env + "]").grey, artifact, ("" + v).yellow, '-->', pluginVersionOverride.green);
+						v = pluginVersionOverride;
+					}
+					bundledPlugins[env][product].push(artifact + ':' + v);
 				} else if (plugin.artifact === 'atlassian-connect-plugin') {
-					connectVersions[env] = plugin.version;
+					versions[env].connect = plugin.version;
 				}
 			});
 		});
@@ -83,31 +106,23 @@ function getVersionsForEnv(opts, env, callback) {
 
 function createAndExportCommands(opts) {
    	createCommands();
-	opts.debug && console.log('connecting to DAC');
+	opts.debug && console.log('Info'.yellow, 'Retrieving versions from DAC');
 
 	var dacConnectVersionsUrl = opts.dacBaseUrl + '/' + opts.outputFile + '.json';
 
 	client.get(dacConnectVersionsUrl, function (data, response) {
-		opts.debug && console.log('retrieved current versions from DAC');
 		_oldCommands = data;
 		
-		if(newVersionsAvailable()) {
-			opts.debug && console.log('New versions of the commands');
+		if (newVersionsAvailable()) {
+			opts.debug && console.log('Info'.blue, 'New versions available, regenerating commands');
 			exportCommands(opts);
-		} else {
-			opts.debug && console.log('Commands are unchanged. Nothing to do. Just relax, you know, enjoy life a little.')
 		}
 	});
 }
 
 function newVersionsAvailable() {
-	return true;
-	//return _commands.environment.dev.connectVersion != _oldCommands.environment.dev.connectVersion
-	//	|| _commands.environment.dev.confluenceVersion != _oldCommands.environment.dev.confluenceVersion
-	//	|| _commands.environment.dev.jiraVersion != _oldCommands.environment.dev.jiraVersion
-	//	|| _commands.environment.prd.connectVersion != _oldCommands.environment.prd.connectVersion
-	//	|| _commands.environment.prd.confluenceVersion != _oldCommands.environment.prd.confluenceVersion
-	//	|| _commands.environment.prd.jiraVersion != _oldCommands.environment.prd.jiraVersion;
+	return _commands.environment.dev.jiraCommand != _oldCommands.environment.dev.jiraCommand
+		|| _commands.environment.dev.confluenceCommand != _oldCommands.environment.dev.confluenceCommand;
 }
 
 /**
@@ -128,19 +143,19 @@ function createCommands(opts) {
 
 function createEnvironment(env) {
 	return {
-		'connectVersion': connectVersions[env],
+		'connectVersion': versions[env].connect,
 		'jiraVersion' : versions.jira,
 		'confluenceVersion' : versions.confluence,
-		'jiraCommand': createCommand('jira', env),
-		'confluenceCommand': createCommand('confluence', env)
+		'jiraCommand': createProductRunCommand('jira', env),
+		'confluenceCommand': createProductRunCommand('confluence', env)
 	}
 }
 
-function createCommand(product, connectVersion) {
+function createProductRunCommand(product, env) {
     return baseCommand
         .replace('{{product}}', product)
-        .replace('{{productVersion}}', versions[product])
-        .replace('{{bundledPlugins}}', bundledPlugins[product].join(',') + ',' + connectPlugin + ':' + connectVersion);
+        .replace('{{productVersion}}', versions[env][product])
+        .replace('{{bundledPlugins}}', bundledPlugins[env][product].join(',') + ',' + connectPlugin + ':' + versions[env].connect);
 }
 
 /**
@@ -150,11 +165,9 @@ function createCommand(product, connectVersion) {
  */
 
 function exportCommands(opts) {
-    opts.debug && console.log('writing output file: ' + opts.outputDir + '/' + opts.outputFile);
-
 	mkdirp(opts.outputDir, function(err) {
 		if(err) {
-        	console.log('target directory ' + outputDir + ' could not be created: ' + err);
+        	console.log('Error'.red, ' Target directory ' + opts.outputDir + ' could not be created: ' + err);
    	 	} else {
 			var indexFile = opts.outputFile + '-history.json';
 			var versionsIndexUrl = opts.dacBaseUrl + indexFile;
@@ -200,8 +213,8 @@ function exportCommands(opts) {
 						if (opts.debug) {
 							console.log(
 									err ?
-											('Error creating file ' + entry.file + ': ' + err) :
-											('Wrote file: ' + entry.file)
+											('Error'.red + ' Could not write file ' + entry.file + ': ' + err) :
+											('Saved'.green + ' ' + entry.file)
 							);
 						}
 					});
