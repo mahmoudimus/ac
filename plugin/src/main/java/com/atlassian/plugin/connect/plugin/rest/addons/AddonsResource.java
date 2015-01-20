@@ -12,7 +12,6 @@ import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.rest.RestResult;
-import com.atlassian.plugin.connect.plugin.rest.data.ETag;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddOnPropertiesBean;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddOnProperty;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
@@ -32,10 +31,8 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.io.LimitInputStream;
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -59,7 +56,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.EntityTag;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
@@ -245,16 +241,15 @@ public class AddonsResource
             @Override
             public Response apply(final AddOnPropertyIterable input)
             {
-                Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(new EntityTag(input.getETag().toString()));
+                Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(new EntityTag(String.valueOf(input.hashCode())));
 
-                if (responseBuilder == null)
+                if (responseBuilder == null) //the properties have changed
                 {
-                    //the properties have changed
                     String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties";
                     responseBuilder = Response.ok().entity(RestAddOnPropertiesBean.valueOf(input.getPropertyKeys(), baseURL));
                 }
                 return responseBuilder
-                        .tag(input.getETag().toString())
+                        .tag(new EntityTag(String.valueOf(input.hashCode()), true))
                         .cacheControl(never())
                         .build();
             }
@@ -282,7 +277,7 @@ public class AddonsResource
             @Override
             public Response apply(final AddOnProperty input)
             {
-                Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(new EntityTag(input.getETag().toString()));
+                Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(new EntityTag(String.valueOf(input.hashCode())));
                 if (responseBuilder == null)
                 {
                     String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties";
@@ -290,38 +285,22 @@ public class AddonsResource
                             .entity(RestAddOnProperty.valueOf(input, baseURL));
                 }
                 return responseBuilder
-                        .tag(input.getETag().toString())
+                        .tag(new EntityTag(String.valueOf(input.hashCode()), true))
                         .cacheControl(never())
                         .build();
             }
         });
     }
 
-    private Option<ETag> getETagFromRequest(final HttpServletRequest request)
-    {
-        String header = request.getHeader(HttpHeaders.IF_MATCH);
-        if (header == null)
-        {
-            return Option.none();
-        }
-        if (header.startsWith("\"") && header.endsWith("\""))
-        {
-            header = header.substring(1);
-            header = header.substring(0, header.length() - 1);
-        }
-        return Option.some(new ETag(header));
-    }
-
     @PUT
     @Path ("{addonKey}/properties/{propertyKey}")
-    public Response putAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam("propertyKey") final String propertyKey, @Context HttpServletRequest request)
+    public Response putAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam("propertyKey") final String propertyKey, @Context final Request request, @Context HttpServletRequest servletRequest)
     {
-        final UserProfile user = userManager.getRemoteUser(request);
+        final UserProfile user = userManager.getRemoteUser(servletRequest);
         // can be null, it is checked in the service.
-        final String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(request);
-        final Option<ETag> eTag = getETagFromRequest(request);
+        final String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(servletRequest);
 
-        Either<RestParamError, String> errorStringEither = propertyValue(request);
+        Either<RestParamError, String> errorStringEither = propertyValue(servletRequest);
         return errorStringEither.fold(new Function<RestParamError, Response>()
         {
             @Override
@@ -334,24 +313,67 @@ public class AddonsResource
             @Override
             public Response apply(final String propertyValue)
             {
-                ServiceResult serviceResult = addOnPropertyService.setPropertyValue(user, sourcePluginKey, addOnKey, propertyKey, propertyValue, eTag);
-                if (shouldReturnETag(serviceResult))
-                {
-                    return getResponseFromServiceResult(serviceResult, Option.some(new AddOnProperty(propertyKey, propertyValue).getETag().toString()));
-                }
-                return getResponseFromServiceResult(serviceResult);
+                return addOnPropertyService.setPropertyValueIfConditionSatisfied(user, sourcePluginKey, addOnKey, propertyKey, propertyValue, eTagValidationFunction(request))
+                .fold(onPreconditionFailed(), onFailure(), onSuccess());
             }
         });
     }
 
-    private boolean shouldReturnETag(final ServiceResult serviceResult)
+    private Function<ServiceResult, Response> onFailure()
     {
-        switch (serviceResult.getHttpStatusCode()) {
-            case HttpStatus.SC_CREATED:
-            case HttpStatus.SC_OK:
-                return true;
-        }
-        return false;
+        return new Function<ServiceResult, Response>()
+        {
+            @Override
+            public Response apply(final ServiceResult serviceResult)
+            {
+                return getResponseFromServiceResult(serviceResult);
+            }
+        };
+    }
+
+    private Function<AddOnPropertyService.ServicePutResult, Response> onSuccess()
+    {
+        return new Function<AddOnPropertyService.ServicePutResult, Response>()
+        {
+            @Override
+            public Response apply(final AddOnPropertyService.ServicePutResult serviceResult)
+            {
+                return getResponseFromServiceResult(serviceResult, Option.some(String.valueOf(serviceResult.getProperty().hashCode())));
+            }
+        };
+    }
+
+    private Function<Response.ResponseBuilder, Response> onPreconditionFailed()
+    {
+        return new Function<Response.ResponseBuilder, Response>()
+        {
+            @Override
+            public Response apply(final Response.ResponseBuilder responseBuilder)
+            {
+                return responseBuilder.cacheControl(never()).build();
+            }
+        };
+    }
+
+    private Function<Option<AddOnProperty>, AddOnPropertyService.ServiceConditionResult<Response.ResponseBuilder>> eTagValidationFunction(final Request request)
+    {
+        return new Function<Option<AddOnProperty>, AddOnPropertyService.ServiceConditionResult<Response.ResponseBuilder>>()
+        {
+            @Override
+            public AddOnPropertyService.ServiceConditionResult<Response.ResponseBuilder> apply(final Option<AddOnProperty> input)
+            {
+                if (input.isEmpty())
+                {
+                    return AddOnPropertyService.ServiceConditionResult.SUCCESS();
+                }
+                Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(new EntityTag(String.valueOf(input.hashCode())));
+                if (responseBuilder == null)
+                {
+                    return AddOnPropertyService.ServiceConditionResult.SUCCESS();
+                }
+                return AddOnPropertyService.ServiceConditionResult.FAILURE_WITH_OBJECT(responseBuilder);
+            }
+        };
     }
 
     @DELETE
@@ -361,29 +383,21 @@ public class AddonsResource
         final UserProfile user = userManager.getRemoteUser(servletRequest);
         // can be null, it is checked in the service.
         final String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(servletRequest);
-        final Container<EntityTag> tagContainer = new Container<EntityTag>();
-        ServiceResult serviceResult = addOnPropertyService.deletePropertyValueIfConditionSatisfied(user, sourcePluginKey, addOnKey, propertyKey, new Predicate<AddOnProperty>()
-        {
-            @Override
-            public boolean apply(final AddOnProperty input)
-            {
-                tagContainer.element = new EntityTag(input.getETag().toString());
-                return null == request.evaluatePreconditions(tagContainer.element);
-            }
-        });
-        if (tagContainer.element != null)
-        {
-            Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(tagContainer.element);
-            if (responseBuilder != null)
-                return responseBuilder.cacheControl(never()).build();
-        }
 
-        return getResponseFromServiceResult(serviceResult);
+        return addOnPropertyService.deletePropertyValueIfConditionSatisfied(user, sourcePluginKey, addOnKey, propertyKey, eTagValidationFunction(request))
+                        .fold(onPreconditionFailed(), onFailure(), onDeleteSuccess());
     }
 
-    private class Container<T>
+    private Function<ServiceResult, Response> onDeleteSuccess()
     {
-        public T element = null;
+        return new Function<ServiceResult, Response>()
+        {
+            @Override
+            public Response apply(final ServiceResult serviceResult)
+            {
+                return getResponseFromServiceResult(serviceResult);
+            }
+        };
     }
 
     private RestAddons getAddonsByType(RestAddonType type)
@@ -484,7 +498,7 @@ public class AddonsResource
         }
         if (eTag.isDefined())
         {
-            responseBuilder.tag(eTag.get());
+            responseBuilder.tag(new EntityTag(eTag.get(), true));
         }
         return responseBuilder
                 .cacheControl(never())

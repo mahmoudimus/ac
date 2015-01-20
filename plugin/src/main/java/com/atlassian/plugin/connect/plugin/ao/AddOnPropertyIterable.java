@@ -1,13 +1,9 @@
 package com.atlassian.plugin.connect.plugin.ao;
 
-import com.atlassian.plugin.connect.plugin.rest.data.ETag;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import com.google.common.hash.HashCode;
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
 
 import java.util.Iterator;
 
@@ -23,21 +19,6 @@ public class AddOnPropertyIterable implements Iterable<AddOnProperty>
     public AddOnPropertyIterable(final Iterable<AddOnProperty> properties)
     {
         this.properties = properties;
-    }
-
-    public ETag getETag()
-    {
-        if (Iterables.isEmpty(properties)) { return new ETag(""); }
-        final HashFunction hashFunction = Hashing.md5();
-        HashCode hashCode = Hashing.combineOrdered(Iterables.transform(properties, new Function<AddOnProperty, HashCode>()
-        {
-            @Override
-            public HashCode apply(final AddOnProperty input)
-            {
-                return hashFunction.hashString(input.getValue());
-            }
-        }));
-        return new ETag(hashCode.toString());
     }
 
     @Override
@@ -81,7 +62,7 @@ public class AddOnPropertyIterable implements Iterable<AddOnProperty>
             @Override
             public AddOnProperty apply(final AddOnPropertyAO propertyAO)
             {
-                return new AddOnProperty(propertyAO.getPropertyKey(), propertyAO.getValue());
+                return new AddOnProperty(propertyAO.getPropertyKey(), propertyAO.getValue(), propertyAO.getModificationTime());
             }
         }));
     }

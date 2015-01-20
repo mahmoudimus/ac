@@ -41,4 +41,8 @@ public interface AddOnPropertyAO extends RawEntity<String>
     @StringLength(StringLength.UNLIMITED)
     String getValue();
     void setValue(String value);
+
+    @NotNull
+    long getModificationTime();
+    void setModificationTime(long modificationTime);
 }

@@ -1,15 +1,13 @@
 package com.atlassian.plugin.connect.plugin.ao;
 
-import com.atlassian.plugin.connect.plugin.rest.data.ETag;
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.annotation.concurrent.Immutable;
 
-import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 
 /**
  * This class represents an add-on property consisting of a key and a value.
@@ -21,13 +19,13 @@ public final class AddOnProperty
 {
     private final String key;
     private final String value;
+    private final Long modificationTime;
 
-    private static final HashFunction HASH_FUNCTION = Hashing.md5();
-
-    public AddOnProperty(final String key, final String value)
+    public AddOnProperty(final String key, final String value, final long modificationTime)
     {
         this.key = checkNotNull(key);
         this.value = checkNotNull(value);
+        this.modificationTime = modificationTime;
     }
 
     public String getKey()
@@ -56,6 +54,7 @@ public final class AddOnProperty
         return new EqualsBuilder()
                 .append(key,that.key)
                 .append(value, that.value)
+                .append(modificationTime, that.modificationTime)
                 .isEquals();
     }
 
@@ -63,8 +62,7 @@ public final class AddOnProperty
     public int hashCode()
     {
         return new HashCodeBuilder()
-                .append(key)
-                .append(value)
+                .append(modificationTime)
                 .hashCode();
     }
 
@@ -74,16 +72,12 @@ public final class AddOnProperty
         return new ToStringBuilder(this)
                 .append("key", key)
                 .append("value", value)
+                .append("modificationTime", modificationTime)
                 .toString();
-    }
-
-    public ETag getETag()
-    {
-        return new ETag(HASH_FUNCTION.hashString(value).toString());
     }
 
     public static AddOnProperty fromAO(AddOnPropertyAO ao)
     {
-        return new AddOnProperty(ao.getPropertyKey(), ao.getValue());
+        return new AddOnProperty(ao.getPropertyKey(), ao.getValue(), ao.getModificationTime());
     }
 }

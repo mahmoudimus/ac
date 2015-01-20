@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.ao;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.plugin.rest.data.ETag;
 import com.atlassian.plugin.connect.plugin.util.ConfigurationUtils;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.google.common.base.Function;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
-import java.util.concurrent.Callable;
 import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -48,73 +46,50 @@ public class AddOnPropertyStore
             @Override
             public AddOnProperty apply(final AddOnPropertyAO input)
             {
-                return new AddOnProperty(input.getPropertyKey(), input.getValue());
+                return new AddOnProperty(input.getPropertyKey(), input.getValue(), input.getModificationTime());
             }
         });
     }
 
-    public PutResult setPropertyValue(@Nonnull final String addOnKey, @Nonnull final String propertyKey, @Nonnull final String value, final Option<ETag> eTag)
+    public PutResultWithOptionalProperty setPropertyValue(@Nonnull final String addOnKey, @Nonnull final String propertyKey, @Nonnull final String value)
     {
         checkNotNull(addOnKey);
         checkNotNull(propertyKey);
         checkNotNull(value);
-        return ao.executeInTransaction(new TransactionCallback<PutResult>()
+        if (hasReachedPropertyLimit(addOnKey))
         {
-            @Override
-            public PutResult doInTransaction()
-            {
-                if (hasReachedPropertyLimit(addOnKey))
-                {
-                    return PutResult.PROPERTY_LIMIT_EXCEEDED;
-                }
-                if (existsProperty(addOnKey, propertyKey))
-                {
-                    AddOnPropertyAO propertyAO = getAddOnPropertyForKey(addOnKey, propertyKey);
-                    ETag oldETag = AddOnProperty.fromAO(propertyAO).getETag();
-                    if (eTag.isDefined() && !eTag.get().equals(oldETag))
-                    {
-                        return PutResult.PROPERTY_MODIFIED;
-                    }
-                    propertyAO.setValue(value);
-                    propertyAO.save();
-                    return PutResult.PROPERTY_UPDATED;
-                }
-                else
-                {
-                    AddOnPropertyAO property = ao.create(AddOnPropertyAO.class,
-                            new DBParam("PLUGIN_KEY", addOnKey),
-                            new DBParam("PROPERTY_KEY", propertyKey),
-                            new DBParam("VALUE", value),
-                            new DBParam("PRIMARY_KEY", getPrimaryKeyForProperty(addOnKey, propertyKey)));
-                    property.save();
-                    return PutResult.PROPERTY_CREATED;
-                }
-            }
-        });
+            return new PutResultWithOptionalProperty(PutResult.PROPERTY_LIMIT_EXCEEDED, Option.<AddOnProperty>none());
+        }
+        if (existsProperty(addOnKey, propertyKey))
+        {
+            AddOnPropertyAO propertyAO = getAddOnPropertyForKey(addOnKey, propertyKey);
+            propertyAO.setValue(value);
+            propertyAO.setModificationTime(System.nanoTime());
+            propertyAO.save();
+            return new PutResultWithOptionalProperty(PutResult.PROPERTY_UPDATED, Option.some(AddOnProperty.fromAO(propertyAO)));
+        }
+        else
+        {
+            AddOnPropertyAO property = ao.create(AddOnPropertyAO.class,
+                    new DBParam("PLUGIN_KEY", addOnKey),
+                    new DBParam("PROPERTY_KEY", propertyKey),
+                    new DBParam("VALUE", value),
+                    new DBParam("PRIMARY_KEY", getPrimaryKeyForProperty(addOnKey, propertyKey)),
+                    new DBParam("MODIFICATION_TIME", System.nanoTime()));
+            property.save();
+            return new PutResultWithOptionalProperty(PutResult.PROPERTY_CREATED, Option.some(AddOnProperty.fromAO(property)));
+        }
     }
 
-    public DeleteResult deletePropertyValue(@Nonnull final String addOnKey, @Nonnull final String propertyKey)
+    public void deletePropertyValue(@Nonnull final String addOnKey, @Nonnull final String propertyKey)
     {
         checkNotNull(addOnKey);
         checkNotNull(propertyKey);
 
-        if (existsProperty(addOnKey, propertyKey))
-        {
-            AddOnPropertyAO propertyAO = getAddOnPropertyForKey(addOnKey, propertyKey);
-            ao.delete(propertyAO);
-            return DeleteResult.PROPERTY_DELETED;
-        }
-        else
-        {
-            return DeleteResult.PROPERTY_NOT_FOUND;
-        }
+        AddOnPropertyAO propertyAO = getAddOnPropertyForKey(addOnKey, propertyKey);
+        ao.delete(propertyAO);
     }
 
-    private boolean existsProperty(@Nonnull final String addOnKey, @Nonnull final String propertyKey)
-    {
-        return getAddOnPropertyForKey(addOnKey, propertyKey) != null;
-    }
-    
     public AddOnPropertyIterable getAllPropertiesForAddOnKey(@Nonnull final String addOnKey)
     {
         return ao.executeInTransaction(new TransactionCallback<AddOnPropertyIterable>()
@@ -126,6 +101,23 @@ public class AddOnPropertyStore
                 return AddOnPropertyIterable.fromAddOnPropertyAOList(addOnPropertyAOList);
             }
         });
+    }
+
+    public <T> T executeInTransaction(@Nonnull final TransactionCallable<T> function)
+    {
+        return ao.executeInTransaction(new TransactionCallback<T>()
+        {
+            @Override
+            public T doInTransaction()
+            {
+                return function.call();
+            }
+        });
+    }
+
+    private boolean existsProperty(@Nonnull final String addOnKey, @Nonnull final String propertyKey)
+    {
+        return getAddOnPropertyForKey(addOnKey, propertyKey) != null;
     }
 
     private AddOnPropertyAO[] getAddOnPropertyAOArrayForAddOnKey(final String addOnKey) {return ao.find(AddOnPropertyAO.class, Query.select().where("PLUGIN_KEY = ?", addOnKey));}
@@ -145,26 +137,7 @@ public class AddOnPropertyStore
         return ao.count(AddOnPropertyAO.class, Query.select().where("PLUGIN_KEY = ?", addOnKey)) >= MAX_PROPERTIES_PER_ADD_ON;
     }
 
-    public <T> T executeInTransaction(final Callable<T> function)
-    {
-        return ao.executeInTransaction(new TransactionCallback<T>()
-        {
-            @Override
-            public T doInTransaction()
-            {
-                try
-                {
-                    return function.call();
-                }
-                catch (Exception e)
-                {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
-    }
-
-    public enum PutResult
+    public enum PutResult implements StoreResult
     {
         PROPERTY_CREATED,
         PROPERTY_UPDATED,
@@ -172,10 +145,39 @@ public class AddOnPropertyStore
         PROPERTY_LIMIT_EXCEEDED
     }
     
-    public enum DeleteResult
+    public enum DeleteResult implements StoreResult
     {
         PROPERTY_DELETED,
         PROPERTY_NOT_FOUND
+    }
+
+    public interface StoreResult {}
+
+    public static class PutResultWithOptionalProperty
+    {
+        private final PutResult result;
+        private final Option<AddOnProperty> property;
+
+        public PutResultWithOptionalProperty(final PutResult result, final Option<AddOnProperty> property)
+        {
+            this.result = result;
+            this.property = property;
+        }
+
+        public PutResult getResult()
+        {
+            return result;
+        }
+
+        public Option<AddOnProperty> getProperty()
+        {
+            return property;
+        }
+    }
+
+    public interface TransactionCallable<T>
+    {
+        T call();
     }
 }
 

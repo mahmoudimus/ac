@@ -7,14 +7,19 @@ import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyIterable;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore;
-import com.atlassian.plugin.connect.plugin.rest.data.ETag;
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import net.java.ao.EntityManager;
 import net.java.ao.test.jdbc.Data;
 import net.java.ao.test.jdbc.DatabaseUpdater;
 import net.java.ao.test.jdbc.NonTransactional;
 import net.java.ao.test.junit.ActiveObjectsJUnitRunner;
+import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang3.StringUtils;
-import org.hamcrest.collection.IsIterableContainingInOrder;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,14 +27,13 @@ import org.junit.runner.RunWith;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Callable;
 
-import static com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore.DeleteResult;
 import static com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore.MAX_PROPERTIES_PER_ADD_ON;
 import static com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore.PutResult;
-import static org.hamcrest.core.Is.is;
+import static com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore.StoreResult;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 @RunWith (ActiveObjectsJUnitRunner.class)
 @Data (AddOnPropertyStoreTest.Data.class)
@@ -52,12 +56,12 @@ public class AddOnPropertyStoreTest
     @NonTransactional
     public void testCreateAndGetProperty() throws Exception
     {
-        AddOnProperty property = new AddOnProperty(PROPERTY_KEY, VALUE);
-        PutResult putResult = store.setPropertyValue(ADD_ON_KEY, property.getKey(), property.getValue(), noETag());
-        assertEquals(PutResult.PROPERTY_CREATED, putResult);
+        AddOnProperty property = new AddOnProperty(PROPERTY_KEY, VALUE, 0);
+        StoreResult storeResult = store.setPropertyValue(ADD_ON_KEY, property.getKey(), property.getValue()).getResult();
+        assertEquals(PutResult.PROPERTY_CREATED, storeResult);
 
         Option<AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY);
-        assertThat(propertyValue.get(), is(property));
+        assertThat(propertyValue.get(), isSameProperty(property));
     }
 
     @Test
@@ -65,7 +69,7 @@ public class AddOnPropertyStoreTest
     public void testCreatePropertyWithBigValue()
     {
         String bigValue = StringUtils.repeat('.' , 65000);
-        PutResult putResult = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, bigValue, noETag());
+        StoreResult putResult = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, bigValue).getResult();
         assertEquals(PutResult.PROPERTY_CREATED, putResult);
     }
     
@@ -73,23 +77,13 @@ public class AddOnPropertyStoreTest
     @NonTransactional
     public void testCreateAndUpdateProperty() throws Exception
     {
-        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
-        AddOnProperty property2 = new AddOnProperty(PROPERTY_KEY, VALUE + "1");
-        PutResult putResult = store.setPropertyValue(ADD_ON_KEY, property2.getKey(), property2.getValue(), noETag());
+        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE);
+        AddOnProperty property2 = new AddOnProperty(PROPERTY_KEY, VALUE + "1", 0);
+        StoreResult putResult = store.setPropertyValue(ADD_ON_KEY, property2.getKey(), property2.getValue()).getResult();
         assertEquals(PutResult.PROPERTY_UPDATED, putResult);
 
         Option<AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY);
-        assertThat(propertyValue.get(), is(property2));
-    }
-
-    @Test
-    @NonTransactional
-    public void testCreateAndUpdatePropertyWithDifferentETag() throws Exception
-    {
-        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
-
-        PutResult putResult = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE + "1", Option.some(new ETag("asd")));
-        assertEquals(PutResult.PROPERTY_MODIFIED, putResult);
+        assertThat(propertyValue.get(), isSameProperty(property2));
     }
 
     @Test
@@ -98,53 +92,32 @@ public class AddOnPropertyStoreTest
     {
         for (int i = 0; i < MAX_PROPERTIES_PER_ADD_ON; i++)
         {
-            PutResult putResult = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY + String.valueOf(i), VALUE, noETag());
-            assertEquals(PutResult.PROPERTY_CREATED, putResult);
+            AddOnPropertyStore.PutResultWithOptionalProperty storeResultWithOptionalProperty = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY + String.valueOf(i), VALUE);
+            assertEquals(PutResult.PROPERTY_CREATED, storeResultWithOptionalProperty.getResult());
+            assertEquals(PutResult.PROPERTY_CREATED, storeResultWithOptionalProperty.getResult());
         }
-        PutResult last = store.setPropertyValue(ADD_ON_KEY, "last", VALUE, noETag());
+        StoreResult last = store.setPropertyValue(ADD_ON_KEY, "last", VALUE).getResult();
         assertEquals(PutResult.PROPERTY_LIMIT_EXCEEDED, last);
-    }
-
-    @Test
-    @NonTransactional
-    public void testDeleteNonExistentProperty() throws Exception
-    {
-        DeleteResult deleteResult = store.deletePropertyValue(ADD_ON_KEY, PROPERTY_KEY);
-        assertEquals(DeleteResult.PROPERTY_NOT_FOUND, deleteResult);
     }
 
     @Test
     @NonTransactional
     public void testDeleteExistingProperty() throws Exception
     {
-        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE, noETag());
-        DeleteResult deleteResult = store.deletePropertyValue(ADD_ON_KEY, PROPERTY_KEY);
-        assertEquals(DeleteResult.PROPERTY_DELETED, deleteResult);
+        store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE);
+        store.deletePropertyValue(ADD_ON_KEY, PROPERTY_KEY);
+        Option<AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY);
+        assertTrue(propertyValue.isEmpty());
     }
     
-    private void testListProperties(final List<AddOnProperty> propertyList)
-    {
-        for (AddOnProperty property : propertyList)
-        {
-            store.setPropertyValue(ADD_ON_KEY, property.getKey(), property.getValue(), noETag());
-        }
-
-        AddOnPropertyIterable result = store.getAllPropertiesForAddOnKey(ADD_ON_KEY);
-
-        if (Iterables.isEmpty().apply(result) && Iterables.isEmpty().apply(propertyList)) return;
-
-        assertThat(result,
-                IsIterableContainingInOrder.contains(propertyList.toArray()));
-    }
-
     @Test
     @NonTransactional
     public void testNonEmptyListProperties() throws Exception
     {
         List<AddOnProperty> propertyList = Arrays.asList(
-                  new AddOnProperty("1", VALUE),
-                  new AddOnProperty("2", VALUE),
-                  new AddOnProperty("3", VALUE)
+                  new AddOnProperty("1", VALUE, 0),
+                  new AddOnProperty("2", VALUE, 1),
+                  new AddOnProperty("3", VALUE, 2)
         );
         testListProperties(propertyList);
     }
@@ -158,17 +131,39 @@ public class AddOnPropertyStoreTest
 
     @Test
     @NonTransactional
-    public void testExecuteDeleteInTransaction() throws Exception
+    public void testExecuteSetInTransaction() throws Exception
     {
-        store.executeInTransaction(new Callable<Void>()
+        store.executeInTransaction(new AddOnPropertyStore.TransactionCallable<Void>()
         {
             @Override
-            public Void call() throws Exception
+            public Void call()
             {
-                store.deletePropertyValue("", "");
+                store.setPropertyValue("a", "a", "a");
                 return null;
             }
         });
+    }
+
+    private void testListProperties(final List<AddOnProperty> propertyList)
+    {
+        for (AddOnProperty property : propertyList)
+        {
+            store.setPropertyValue(ADD_ON_KEY, property.getKey(), property.getValue());
+        }
+
+        AddOnPropertyIterable result = store.getAllPropertiesForAddOnKey(ADD_ON_KEY);
+
+        if (Iterables.isEmpty().apply(result) && Iterables.isEmpty().apply(propertyList)) return;
+
+        List<Matcher<? super AddOnProperty>> matchers = Lists.transform(propertyList, new Function<AddOnProperty, Matcher<? super AddOnProperty>>()
+        {
+            @Override
+            public Matcher<AddOnProperty> apply(final AddOnProperty input)
+            {
+                return isSameProperty(input);
+            }
+        });
+        assertThat(result, Matchers.contains(matchers));
     }
 
     public static final class Data implements DatabaseUpdater
@@ -180,8 +175,24 @@ public class AddOnPropertyStoreTest
         }
     }
 
-    private static Option<ETag> noETag()
+    private TypeSafeMatcher<AddOnProperty> isSameProperty(final AddOnProperty property)
     {
-        return Option.none();
+        return new TypeSafeMatcher<AddOnProperty>()
+        {
+            @Override
+            protected boolean matchesSafely(final AddOnProperty item)
+            {
+                return new EqualsBuilder()
+                        .append(property.getKey(), item.getKey())
+                        .append(property.getValue(), property.getValue())
+                        .isEquals();
+            }
+
+            @Override
+            public void describeTo(final Description description)
+            {
+                description.appendText("[key=" + property.getKey() + ",value=" + property.getValue() + "]");
+            }
+        };
     }
 }
