@@ -14,11 +14,14 @@ import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceCompon
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 @ConfluenceComponent
 public class DefaultContentPropertyIndexSchemaModuleProvider implements ContentPropertyIndexSchemaModuleProvider
 {
     private final ContentPropertyIndexSchemaModuleDescriptorFactory factory;
 
+    @Autowired
     public DefaultContentPropertyIndexSchemaModuleProvider(
             ContentPropertyIndexSchemaModuleDescriptorFactory factory)
     {
