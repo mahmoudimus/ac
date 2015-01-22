@@ -23,7 +23,8 @@ Most of the connect javascript is now part of it's [own project](https://stash.a
 
 Contributions are encouraged! To start working on Atlassian Connect, follow this guide:
 
-1. Ensure there is a relevant JIRA issue in project [AC](https://ecosystem.atlassian.net/browse/AC)
+1. Ensure there is a relevant JIRA issue in project [AC](https://ecosystem.atlassian.net/browse/AC),
+   [ACJIRA](https://ecosystem.atlassian.net/browse/ACJIRA) or [CE](https://ecosystem.atlassian.net/browse/CE)
 2. Create your feature branch, e.g. `feature/AC-1-implement-macro-editor`
     * The prefix `feature/` or `issue/` is required for branch builds to run (without passing builds, you cannot merge your pull request)
     * Include your issue key and a short description
