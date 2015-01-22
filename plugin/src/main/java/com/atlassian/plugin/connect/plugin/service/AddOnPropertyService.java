@@ -24,35 +24,86 @@ public interface AddOnPropertyService
      * Gets a property from the add-on store. <p> This method checks parameter validity and tries to get a property for
      * an add-on. </p>
      *
-     * @return either error result or add-on property.
+     * @return GetServiceResult which calls one of two callbacks: OnFailed or OnSuccess,
+     * OnFailed is called with OperationResult explaining the reason
+     * OnSuccess is called with AddOnProperty that was retrieved.
      */
-    Either<ServiceResult, AddOnProperty> getPropertyValue(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey, @Nonnull String propertyKey);
+    GetServiceResult getPropertyValue(
+            @Nullable UserProfile user,
+            @Nullable String sourcePluginKey,
+            @Nonnull String addOnKey,
+            @Nonnull String propertyKey);
 
     /**
      * Sets a property from the add-on store. <p> This method checks parameter validity and tries to set a property for
      * an add-on. </p>
      *
-     * @return FoldableServiceResult which calls one of three callbacks: onPreconditionFailed, OnFailed or OnSuccess
+     * @return PutServiceResult which calls one of three callbacks: onPreconditionFailed, OnFailed or OnSuccess
+     * PreconditionFailed is called with an object of type T that was the result of testFunction failure.
+     * OnFailed is called with OperationResult explaining the reason of failure
+     * OnSuccess is called with OperationPutResult explaining the reason of success and the resulting AddOnProperty
      */
-    <X> PutServiceResult<X> setPropertyValueIfConditionSatisfied(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey, @Nonnull String propertyKey, @Nonnull String value, @Nonnull final Function<Option<AddOnProperty>, ServiceConditionResult<X>> testFunction);
+    <T> PutServiceResult<T> setPropertyValueIfConditionSatisfied(
+            @Nullable UserProfile user,
+            @Nullable String sourcePluginKey,
+            @Nonnull String addOnKey,
+            @Nonnull String propertyKey,
+            @Nonnull String value,
+            @Nonnull final Function<Option<AddOnProperty>, ServiceConditionResult<T>> testFunction);
 
     /**
      * Deletes a property from the add-on store. <p> This method checks parameter validity and tries to delete a
      * property for an add-on. </p>
      *
-     * @return FoldableServiceResult which calls one of three callbacks: onPreconditionFailed, OnFailed or OnSuccess
+     * @return DeleteServiceResult which calls one of three callbacks: onPreconditionFailed, OnFailed or OnSuccess
+     * PreconditionFailed is called with an object of type T that was the result of testFunction failure.
+     * OnFailed is called with OperationResult explaining the reason of failure
+     * OnSuccess is called with OperationResult explaining the reason of success
      */
-    <X> DeleteServiceResult<X> deletePropertyValueIfConditionSatisfied(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey, @Nonnull String propertyKey, @Nonnull final Function<Option<AddOnProperty>, ServiceConditionResult<X>> testFunction);
+    <T> DeleteServiceResult<T> deletePropertyValueIfConditionSatisfied(
+            @Nullable UserProfile user,
+            @Nullable String sourcePluginKey,
+            @Nonnull String addOnKey,
+            @Nonnull String propertyKey,
+            @Nonnull final Function<Option<AddOnProperty>, ServiceConditionResult<T>> testFunction);
 
     /**
-     * Returns a list of all properties for a given add-on. <p> This method checks parameter validity and list all
+     * Returns a list of all properties for a given add-on. <p> This method checks parameter validity and lists all
      * properties belonging to an add-on. </p>
      *
-     * @return either error result or list of add-on properties.
+     * @return GetAllServiceResult which calls one of two callbacks: OnFailed or OnSuccess,
+     * OnFailed is called with OperationResult explaining the reason
+     * OnSuccess is called with AddOnPropertyIterable that was retrieved.
      */
-    Either<ServiceResult, AddOnPropertyIterable> getAddOnProperties(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey);
+    GetAllServiceResult getAddOnProperties(@Nullable UserProfile user, @Nullable String sourcePluginKey, @Nonnull String addOnKey);
 
-    interface ServiceResult
+
+    /**
+     * Represents a result of the Get operation in service. Can be folded by giving two functions, which are called depending on the result.
+     * @param <T> type of object which is passed to onSuccess function.
+     */
+    interface FoldableGetServiceResult<T>
+    {
+        public <R> R fold(Function<OperationStatus, R> onFail,
+                Function<T, R> onSuccess);
+    }
+
+    /**
+     * Represents a result of an operation in service. Can be folded by giving three functions, which are called depending on the result.
+     * @param <T> type of object which is passed to onSuccess function.
+     * @param <SRT> type of object passed to onSuccess function.
+     */
+    interface FoldableServiceResult<T, SRT extends OperationStatus>
+    {
+        public <R> R fold(Function<T, R> onPreconditionFailed,
+                Function<OperationStatus,R> onFail,
+                Function<SRT, R> onSuccess);
+    }
+
+    /**
+     * Represents a status of the operation. Contains an httpStatus code and I18N key and message.
+     */
+    interface OperationStatus
     {
         public int getHttpStatusCode();
 
@@ -61,13 +112,154 @@ public interface AddOnPropertyService
         public String getKey();
     }
 
+
+    /**
+     * Represents a condition result which is a boolean along with an optional object
+     * @param <T> type of optional object
+     */
     @Immutable
-    class ServicePutResult implements ServiceResult
+    class ServiceConditionResult<T>
     {
-        private final ServiceResult base;
+        private final Option<T> object;
+
+        private final boolean successful;
+
+        private ServiceConditionResult(Option<T> object, boolean isSuccessful)
+        {
+            this.object = object;
+            this.successful = isSuccessful;
+        }
+
+        public boolean isSuccessful()
+        {
+            return successful;
+        }
+
+        public Option<T> getObject()
+        {
+            return object;
+        }
+
+        public static <T> ServiceConditionResult<T> SUCCESS()
+        {
+            return new ServiceConditionResult<T>(null, true);
+        }
+
+        public static <T> ServiceConditionResult<T> FAILURE_WITH_OBJECT(T obj)
+        {
+            return new ServiceConditionResult<T>(Option.some(obj), false);
+        }
+    }
+
+    @Immutable
+    class ValidationResult<T>
+    {
+        private final Either<OperationStatus,T> result;
+
+        public ValidationResult(Either<OperationStatus,T> result)
+        {
+            this.result = result;
+        }
+
+        public boolean isValid()
+        {
+            return result.isRight();
+        }
+
+        public Option<OperationStatus> getError()
+        {
+            return result.left().toOption();
+        }
+
+        public Option<T> getValue()
+        {
+            return result.right().toOption();
+        }
+
+        public static <T> ValidationResult<T> fromValue(T value)
+        {
+            return new ValidationResult<T>(Either.<OperationStatus,T>right(value));
+        }
+        public static <T> ValidationResult<T> fromError(OperationStatus error)
+        {
+            return new ValidationResult<T>(Either.<OperationStatus,T>left(error));
+        }
+    }
+
+    interface GetServiceResult extends FoldableGetServiceResult<AddOnProperty>
+    {
+        class Fail implements GetServiceResult
+        {
+            private final OperationStatus reason;
+
+            public Fail(OperationStatus reason)
+            {
+                this.reason = reason;
+            }
+            @Override
+            public <R> R fold(final Function<OperationStatus, R> onFail, final Function<AddOnProperty, R> onSuccess)
+            {
+                return onFail.apply(reason);
+            }
+        }
+        class Success implements GetServiceResult
+        {
+            private final AddOnProperty property;
+
+            public Success(AddOnProperty property)
+            {
+                this.property = property;
+            }
+            @Override
+            public <R> R fold(final Function<OperationStatus, R> onFail, final Function<AddOnProperty, R> onSuccess)
+            {
+                return onSuccess.apply(property);
+            }
+        }
+    }
+    interface GetAllServiceResult extends FoldableGetServiceResult<AddOnPropertyIterable>
+    {
+        class Fail implements GetAllServiceResult
+        {
+            private final OperationStatus reason;
+
+            public Fail(OperationStatus reason)
+            {
+                this.reason = reason;
+            }
+
+            @Override
+            public <R> R fold(final Function<OperationStatus, R> onFail, final Function<AddOnPropertyIterable, R> onSuccess)
+            {
+                return onFail.apply(reason);
+            }
+        }
+
+        class Success implements GetAllServiceResult
+        {
+            private final AddOnPropertyIterable propertyIterable;
+
+            public Success(AddOnPropertyIterable propertyIterable)
+            {
+                this.propertyIterable = propertyIterable;
+            }
+
+            @Override
+            public <R> R fold(final Function<OperationStatus, R> onFail, final Function<AddOnPropertyIterable, R> onSuccess)
+            {
+                return onSuccess.apply(propertyIterable);
+            }
+        }
+
+    }
+
+    @Immutable
+    class PutOperationStatus implements OperationStatus
+    {
+        private final OperationStatus base;
         private final AddOnProperty property;
 
-        public ServicePutResult(final ServiceResult base, final AddOnProperty property)
+        public PutOperationStatus(final OperationStatus base, final AddOnProperty property)
         {
             this.base = base;
             this.property = property;
@@ -91,7 +283,7 @@ public interface AddOnPropertyService
             return base.getKey();
         }
 
-        public ServiceResult getBase()
+        public OperationStatus getBase()
         {
             return base;
         }
@@ -102,176 +294,103 @@ public interface AddOnPropertyService
         }
     }
 
-    @Immutable
-    class ServiceConditionResult<X>
+    interface PutServiceResult<T> extends FoldableServiceResult<T, PutOperationStatus>
     {
-        private final Option<X> object;
-        private final boolean successful;
-
-        private ServiceConditionResult(Option<X> object, boolean isSuccessful)
+        class PreconditionFail<T> implements PutServiceResult<T>
         {
-            this.object = object;
-            this.successful = isSuccessful;
-        }
+            private final T object;
 
-        public boolean isSuccessful()
-        {
-            return successful;
-        }
-
-        public Option<X> getObject()
-        {
-            return object;
-        }
-
-        public static <X> ServiceConditionResult<X> SUCCESS()
-        {
-            return new ServiceConditionResult<X>(null, true);
-        }
-
-        public static <X> ServiceConditionResult<X> FAILURE_WITH_OBJECT(X obj)
-        {
-            return new ServiceConditionResult<X>(Option.some(obj), false);
-        }
-    }
-
-    interface PutServiceResult<X> extends FoldableServiceResult<X, ServicePutResult>
-    {
-        class PreconditionFail<X> implements PutServiceResult<X>
-        {
-            private final X object;
-
-            public PreconditionFail(X object)
+            public PreconditionFail(T object)
             {
                 this.object = object;
             }
 
             @Override
-            public <R> R fold(final Function<X, R> onPreconditionFailed, final Function<ServiceResult, R> onFail, final Function<ServicePutResult, R> onSuccess)
+            public <R> R fold(final Function<T, R> onPreconditionFailed, final Function<OperationStatus, R> onFail, final Function<PutOperationStatus, R> onSuccess)
             {
                 return onPreconditionFailed.apply(object);
             }
         }
-        class Fail<X> implements PutServiceResult<X>
+        class Fail<T> implements PutServiceResult<T>
         {
-            private final ServiceResult reason;
+            private final OperationStatus reason;
 
-            public Fail(ServiceResult reason)
+            public Fail(OperationStatus reason)
             {
                 this.reason = reason;
             }
 
             @Override
-            public <R> R fold(final Function<X, R> onPreconditionFailed, final Function<ServiceResult, R> onFail, final Function<ServicePutResult, R> onSuccess)
+            public <R> R fold(final Function<T, R> onPreconditionFailed, final Function<OperationStatus, R> onFail, final Function<PutOperationStatus, R> onSuccess)
             {
                 return onFail.apply(reason);
             }
         }
-        class Success<X> implements PutServiceResult<X>
+        class Success<T> implements PutServiceResult<T>
         {
-            private final ServicePutResult result;
+            private final PutOperationStatus result;
 
-            public Success(ServicePutResult result)
+            public Success(PutOperationStatus result)
             {
                 this.result = result;
             }
 
             @Override
-            public <R> R fold(final Function<X, R> onPreconditionFailed, final Function<ServiceResult, R> onFail, final Function<ServicePutResult, R> onSuccess)
+            public <R> R fold(final Function<T, R> onPreconditionFailed, final Function<OperationStatus, R> onFail, final Function<PutOperationStatus, R> onSuccess)
             {
                 return onSuccess.apply(result);
             }
         }
     }
 
-    interface DeleteServiceResult<X> extends FoldableServiceResult<X, ServiceResult>
+    interface DeleteServiceResult<T> extends FoldableServiceResult<T, OperationStatus>
     {
-        class PreconditionFail<X> implements DeleteServiceResult<X>
+        class PreconditionFail<T> implements DeleteServiceResult<T>
         {
-            private final X object;
+            private final T object;
 
-            public PreconditionFail(X object)
+            public PreconditionFail(T object)
             {
                 this.object = object;
             }
 
             @Override
-            public <R> R fold(final Function<X, R> onPreconditionFailed, final Function<ServiceResult, R> onFail, final Function<ServiceResult, R> onSuccess)
+            public <R> R fold(final Function<T, R> onPreconditionFailed, final Function<OperationStatus, R> onFail, final Function<OperationStatus, R> onSuccess)
             {
                 return onPreconditionFailed.apply(object);
             }
         }
-        class Fail<X> implements DeleteServiceResult<X>
+        class Fail<T> implements DeleteServiceResult<T>
         {
-            private final ServiceResult reason;
+            private final OperationStatus reason;
 
-            public Fail(ServiceResult reason)
+            public Fail(OperationStatus reason)
             {
                 this.reason = reason;
             }
 
             @Override
-            public <R> R fold(final Function<X, R> onPreconditionFailed, final Function<ServiceResult, R> onFail, final Function<ServiceResult, R> onSuccess)
+            public <R> R fold(final Function<T, R> onPreconditionFailed, final Function<OperationStatus, R> onFail, final Function<OperationStatus, R> onSuccess)
             {
                 return onFail.apply(reason);
             }
         }
-        class Success<X> implements DeleteServiceResult<X>
+        class Success<T> implements DeleteServiceResult<T>
         {
-            private final ServiceResult reason;
+            private final OperationStatus reason;
 
-            public Success(ServiceResult reason)
+            public Success(OperationStatus reason)
             {
                 this.reason = reason;
             }
 
             @Override
-            public <R> R fold(final Function<X, R> onPreconditionFailed, final Function<ServiceResult, R> onFail, final Function<ServiceResult, R> onSuccess)
+            public <R> R fold(final Function<T, R> onPreconditionFailed, final Function<OperationStatus, R> onFail, final Function<OperationStatus, R> onSuccess)
             {
                 return onSuccess.apply(reason);
             }
         }
     }
 
-    interface FoldableServiceResult<X, SRT extends ServiceResult>
-    {
-        public <R> R fold(Function<X, R> onPreconditionFailed,
-                Function<ServiceResult,R> onFail,
-                Function<SRT, R> onSuccess);
-    }
 
-    @Immutable
-    class ValidationResult<T>
-    {
-        private final Either<ServiceResult,T> result;
-
-        public ValidationResult(Either<ServiceResult,T> result)
-        {
-            this.result = result;
-        }
-
-        public boolean isValid()
-        {
-            return result.isRight();
-        }
-
-        public Option<ServiceResult> getError()
-        {
-            return result.left().toOption();
-        }
-
-        public Option<T> getValue()
-        {
-            return result.right().toOption();
-        }
-
-        public static <T> ValidationResult<T> fromValue(T value)
-        {
-            return new ValidationResult<T>(Either.<ServiceResult,T>right(value));
-        }
-        public static <T> ValidationResult<T> fromError(ServiceResult error)
-        {
-            return new ValidationResult<T>(Either.<ServiceResult,T>left(error));
-        }
-    }
 }

@@ -46,7 +46,7 @@ public class AddOnPropertyStore
             @Override
             public AddOnProperty apply(final AddOnPropertyAO input)
             {
-                return new AddOnProperty(input.getPropertyKey(), input.getValue(), input.getModificationTime());
+                return AddOnProperty.fromAO(input);
             }
         });
     }
@@ -63,22 +63,27 @@ public class AddOnPropertyStore
         if (existsProperty(addOnKey, propertyKey))
         {
             AddOnPropertyAO propertyAO = getAddOnPropertyForKey(addOnKey, propertyKey);
-            propertyAO.setValue(value);
-            propertyAO.setModificationTime(System.nanoTime());
-            propertyAO.save();
+            ao.delete(propertyAO); //delete and create to get a new auto-incremented version for property
+
+            AddOnPropertyAO addOnProperty = createAddOnProperty(addOnKey, propertyKey, value);
+            addOnProperty.save();
             return new PutResultWithOptionalProperty(PutResult.PROPERTY_UPDATED, Option.some(AddOnProperty.fromAO(propertyAO)));
         }
         else
         {
-            AddOnPropertyAO property = ao.create(AddOnPropertyAO.class,
-                    new DBParam("PLUGIN_KEY", addOnKey),
-                    new DBParam("PROPERTY_KEY", propertyKey),
-                    new DBParam("VALUE", value),
-                    new DBParam("PRIMARY_KEY", getPrimaryKeyForProperty(addOnKey, propertyKey)),
-                    new DBParam("MODIFICATION_TIME", System.nanoTime()));
+            AddOnPropertyAO property = createAddOnProperty(addOnKey, propertyKey, value);
             property.save();
             return new PutResultWithOptionalProperty(PutResult.PROPERTY_CREATED, Option.some(AddOnProperty.fromAO(property)));
         }
+    }
+
+    private AddOnPropertyAO createAddOnProperty(final String addOnKey, final String propertyKey, final String value)
+    {
+        return ao.create(AddOnPropertyAO.class,
+                new DBParam("PLUGIN_KEY", addOnKey),
+                new DBParam("PROPERTY_KEY", propertyKey),
+                new DBParam("VALUE", value),
+                new DBParam("PRIMARY_KEY", getPrimaryKeyForProperty(addOnKey, propertyKey)));
     }
 
     public void deletePropertyValue(@Nonnull final String addOnKey, @Nonnull final String propertyKey)
@@ -87,7 +92,10 @@ public class AddOnPropertyStore
         checkNotNull(propertyKey);
 
         AddOnPropertyAO propertyAO = getAddOnPropertyForKey(addOnKey, propertyKey);
-        ao.delete(propertyAO);
+        if (propertyAO != null)
+        {
+            ao.delete(propertyAO);
+        }
     }
 
     public AddOnPropertyIterable getAllPropertiesForAddOnKey(@Nonnull final String addOnKey)
@@ -103,7 +111,7 @@ public class AddOnPropertyStore
         });
     }
 
-    public <T> T executeInTransaction(@Nonnull final TransactionCallable<T> function)
+    public <T> T executeInTransaction(@Nonnull final TransactionAction<T> function)
     {
         return ao.executeInTransaction(new TransactionCallback<T>()
         {
@@ -129,7 +137,8 @@ public class AddOnPropertyStore
 
     private AddOnPropertyAO getAddOnPropertyForKey(@Nonnull final String addOnKey, @Nonnull final String propertyKey)
     {
-        return ao.get(AddOnPropertyAO.class, getPrimaryKeyForProperty(addOnKey, propertyKey));
+        AddOnPropertyAO[] addOnPropertyAOs = ao.find(AddOnPropertyAO.class, Query.select().where("PRIMARY_KEY = ?", getPrimaryKeyForProperty(addOnKey, propertyKey)));
+        return Iterables.first(Arrays.asList(addOnPropertyAOs)).getOrNull();
     }
 
     private boolean hasReachedPropertyLimit(@Nonnull final String addOnKey)
@@ -137,21 +146,12 @@ public class AddOnPropertyStore
         return ao.count(AddOnPropertyAO.class, Query.select().where("PLUGIN_KEY = ?", addOnKey)) >= MAX_PROPERTIES_PER_ADD_ON;
     }
 
-    public enum PutResult implements StoreResult
+    public enum PutResult
     {
         PROPERTY_CREATED,
         PROPERTY_UPDATED,
-        PROPERTY_MODIFIED,
         PROPERTY_LIMIT_EXCEEDED
     }
-    
-    public enum DeleteResult implements StoreResult
-    {
-        PROPERTY_DELETED,
-        PROPERTY_NOT_FOUND
-    }
-
-    public interface StoreResult {}
 
     public static class PutResultWithOptionalProperty
     {
@@ -175,7 +175,7 @@ public class AddOnPropertyStore
         }
     }
 
-    public interface TransactionCallable<T>
+    public interface TransactionAction<T>
     {
         T call();
     }

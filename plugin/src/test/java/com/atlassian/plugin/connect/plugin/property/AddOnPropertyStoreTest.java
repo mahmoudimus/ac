@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.addonproperty;
+package com.atlassian.plugin.connect.plugin.property;
 
 import com.atlassian.activeobjects.test.TestActiveObjects;
 import com.atlassian.fugue.Iterables;
@@ -30,7 +30,6 @@ import java.util.List;
 
 import static com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore.MAX_PROPERTIES_PER_ADD_ON;
 import static com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore.PutResult;
-import static com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore.StoreResult;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -57,8 +56,8 @@ public class AddOnPropertyStoreTest
     public void testCreateAndGetProperty() throws Exception
     {
         AddOnProperty property = new AddOnProperty(PROPERTY_KEY, VALUE, 0);
-        StoreResult storeResult = store.setPropertyValue(ADD_ON_KEY, property.getKey(), property.getValue()).getResult();
-        assertEquals(PutResult.PROPERTY_CREATED, storeResult);
+        PutResult putResult = store.setPropertyValue(ADD_ON_KEY, property.getKey(), property.getValue()).getResult();
+        assertEquals(PutResult.PROPERTY_CREATED, putResult);
 
         Option<AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY);
         assertThat(propertyValue.get(), isSameProperty(property));
@@ -69,7 +68,7 @@ public class AddOnPropertyStoreTest
     public void testCreatePropertyWithBigValue()
     {
         String bigValue = StringUtils.repeat('.' , 65000);
-        StoreResult putResult = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, bigValue).getResult();
+        PutResult putResult = store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, bigValue).getResult();
         assertEquals(PutResult.PROPERTY_CREATED, putResult);
     }
     
@@ -79,7 +78,7 @@ public class AddOnPropertyStoreTest
     {
         store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE);
         AddOnProperty property2 = new AddOnProperty(PROPERTY_KEY, VALUE + "1", 0);
-        StoreResult putResult = store.setPropertyValue(ADD_ON_KEY, property2.getKey(), property2.getValue()).getResult();
+        PutResult putResult = store.setPropertyValue(ADD_ON_KEY, property2.getKey(), property2.getValue()).getResult();
         assertEquals(PutResult.PROPERTY_UPDATED, putResult);
 
         Option<AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY);
@@ -96,7 +95,7 @@ public class AddOnPropertyStoreTest
             assertEquals(PutResult.PROPERTY_CREATED, storeResultWithOptionalProperty.getResult());
             assertEquals(PutResult.PROPERTY_CREATED, storeResultWithOptionalProperty.getResult());
         }
-        StoreResult last = store.setPropertyValue(ADD_ON_KEY, "last", VALUE).getResult();
+        PutResult last = store.setPropertyValue(ADD_ON_KEY, "last", VALUE).getResult();
         assertEquals(PutResult.PROPERTY_LIMIT_EXCEEDED, last);
     }
 
@@ -133,7 +132,7 @@ public class AddOnPropertyStoreTest
     @NonTransactional
     public void testExecuteSetInTransaction() throws Exception
     {
-        store.executeInTransaction(new AddOnPropertyStore.TransactionCallable<Void>()
+        store.executeInTransaction(new AddOnPropertyStore.TransactionAction<Void>()
         {
             @Override
             public Void call()

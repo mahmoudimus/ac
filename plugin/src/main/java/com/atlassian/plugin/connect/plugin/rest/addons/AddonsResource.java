@@ -32,6 +32,8 @@ import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
 import com.google.common.io.LimitInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -59,7 +61,7 @@ import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
-import static com.atlassian.plugin.connect.plugin.service.AddOnPropertyService.ServiceResult;
+import static com.atlassian.plugin.connect.plugin.service.AddOnPropertyService.OperationStatus;
 
 /**
  * REST endpoint which provides a view of Connect add-ons which are installed in the instance.
@@ -69,10 +71,11 @@ import static com.atlassian.plugin.connect.plugin.service.AddOnPropertyService.S
 @Consumes ("application/json")
 public class AddonsResource
 {
-    public final static String REST_PATH = "addons";
+    public static final String REST_PATH = "addons";
+    public static final String VALUE_TOO_LONG_ERROR_MSG = String.format("The value cannot be bigger than %s.", FileUtils.byteCountToDisplaySize(AddOnPropertyServiceImpl.MAXIMUM_PROPERTY_VALUE_LENGTH));
 
     private static final Logger log = LoggerFactory.getLogger(AddonsResource.class);
-    public static final String VALUE_TOO_LONG_ERROR_MSG = String.format("The value cannot be bigger than %s.", FileUtils.byteCountToDisplaySize(AddOnPropertyServiceImpl.MAXIMUM_PROPERTY_VALUE_LENGTH));
+    private static final HashFunction HASH_FUNCTION = Hashing.md5();
 
     private final ConnectAddonRegistry addonRegistry;
     private final LicenseRetriever licenseRetriever;
@@ -227,33 +230,38 @@ public class AddonsResource
         UserProfile user = userManager.getRemoteUser(servletRequest);
         String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(servletRequest);
 
-        Either<ServiceResult, AddOnPropertyIterable> result = addOnPropertyService.getAddOnProperties(user, sourcePluginKey, addOnKey);
-
-        return result.fold(new Function<ServiceResult, Response>()
-        {
-            @Override
-            public Response apply(final ServiceResult input)
-            {
-                return getResponseFromServiceResult(input);
-            }
-        }, new Function<AddOnPropertyIterable, Response>()
-        {
-            @Override
-            public Response apply(final AddOnPropertyIterable input)
-            {
-                Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(new EntityTag(String.valueOf(input.hashCode())));
-
-                if (responseBuilder == null) //the properties have changed
+        return addOnPropertyService.getAddOnProperties(user, sourcePluginKey, addOnKey).fold(
+                new Function<OperationStatus, Response>()
                 {
-                    String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties";
-                    responseBuilder = Response.ok().entity(RestAddOnPropertiesBean.valueOf(input.getPropertyKeys(), baseURL));
-                }
-                return responseBuilder
-                        .tag(new EntityTag(String.valueOf(input.hashCode()), true))
-                        .cacheControl(never())
-                        .build();
-            }
-        });
+                    @Override
+                    public Response apply(final OperationStatus status)
+                    {
+                        return getResponseBuilderFromOperationStatus(status).build();
+                    }
+
+                }, new Function<AddOnPropertyIterable, Response>()
+                {
+                    @Override
+                    public Response apply(final AddOnPropertyIterable propertyIterable)
+                    {
+                        Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(getEntityTagForPropertyIterable(propertyIterable));
+
+                        if (responseBuilder == null) //the properties have changed
+                        {
+                            String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties";
+                            responseBuilder = Response.ok().entity(RestAddOnPropertiesBean.valueOf(propertyIterable.getPropertyKeys(), baseURL));
+                        }
+                        return responseBuilder
+                                .tag(getEntityTagForPropertyIterable(propertyIterable))
+                                .cacheControl(never())
+                                .build();
+                    }
+                });
+    }
+
+    private EntityTag getEntityTagForPropertyIterable(final AddOnPropertyIterable propertyIterable)
+    {
+        return new EntityTag(HASH_FUNCTION.hashLong(propertyIterable.hashCode()).toString(), false);
     }
 
     @GET
@@ -263,33 +271,36 @@ public class AddonsResource
         UserProfile user = userManager.getRemoteUser(servletRequest);
         String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(servletRequest);
 
-        Either<ServiceResult, AddOnProperty> propertyValue = addOnPropertyService.getPropertyValue(user, sourcePluginKey, addOnKey, propertyKey);
-
-        return propertyValue.fold(new Function<ServiceResult, Response>()
+        return addOnPropertyService.getPropertyValue(user, sourcePluginKey, addOnKey, propertyKey).fold(new Function<OperationStatus, Response>()
         {
             @Override
-            public Response apply(final ServiceResult input)
+            public Response apply(final OperationStatus status)
             {
-                return getResponseFromServiceResult(input);
+                return getResponseBuilderFromOperationStatus(status).build();
             }
         }, new Function<AddOnProperty, Response>()
         {
             @Override
-            public Response apply(final AddOnProperty input)
+            public Response apply(final AddOnProperty property)
             {
-                Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(new EntityTag(String.valueOf(input.hashCode())));
+                Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(getEntityTagForProperty(property));
                 if (responseBuilder == null)
                 {
                     String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties";
                     responseBuilder = Response.ok()
-                            .entity(RestAddOnProperty.valueOf(input, baseURL));
+                            .entity(RestAddOnProperty.valueOf(property, baseURL));
                 }
                 return responseBuilder
-                        .tag(new EntityTag(String.valueOf(input.hashCode()), true))
+                        .tag(getEntityTagForProperty(property))
                         .cacheControl(never())
-                        .build();
+                    .build();
             }
         });
+    }
+
+    private EntityTag getEntityTagForProperty(final AddOnProperty property)
+    {
+        return new EntityTag(HASH_FUNCTION.hashLong(property.hashCode()).toString());
     }
 
     @PUT
@@ -304,7 +315,7 @@ public class AddonsResource
         return errorStringEither.fold(new Function<RestParamError, Response>()
         {
             @Override
-            public Response apply(final RestParamError input)
+            public Response apply(final RestParamError error)
             {
                 return getResponseForMessageAndStatus(VALUE_TOO_LONG_ERROR_MSG, Response.Status.FORBIDDEN);
             }
@@ -319,26 +330,29 @@ public class AddonsResource
         });
     }
 
-    private Function<ServiceResult, Response> onFailure()
+    private Function<OperationStatus, Response> onFailure()
     {
-        return new Function<ServiceResult, Response>()
+        return new Function<OperationStatus, Response>()
         {
             @Override
-            public Response apply(final ServiceResult serviceResult)
+            public Response apply(final OperationStatus operationStatus)
             {
-                return getResponseFromServiceResult(serviceResult);
+                return getResponseBuilderFromOperationStatus(operationStatus)
+                        .build();
             }
         };
     }
 
-    private Function<AddOnPropertyService.ServicePutResult, Response> onSuccess()
+    private Function<AddOnPropertyService.PutOperationStatus, Response> onSuccess()
     {
-        return new Function<AddOnPropertyService.ServicePutResult, Response>()
+        return new Function<AddOnPropertyService.PutOperationStatus, Response>()
         {
             @Override
-            public Response apply(final AddOnPropertyService.ServicePutResult serviceResult)
+            public Response apply(final AddOnPropertyService.PutOperationStatus operationStatus)
             {
-                return getResponseFromServiceResult(serviceResult, Option.some(String.valueOf(serviceResult.getProperty().hashCode())));
+                return getResponseBuilderFromOperationStatus(operationStatus)
+                        .tag(getEntityTagForProperty(operationStatus.getProperty()))
+                        .build();
             }
         };
     }
@@ -360,13 +374,13 @@ public class AddonsResource
         return new Function<Option<AddOnProperty>, AddOnPropertyService.ServiceConditionResult<Response.ResponseBuilder>>()
         {
             @Override
-            public AddOnPropertyService.ServiceConditionResult<Response.ResponseBuilder> apply(final Option<AddOnProperty> input)
+            public AddOnPropertyService.ServiceConditionResult<Response.ResponseBuilder> apply(final Option<AddOnProperty> propertyOption)
             {
-                if (input.isEmpty())
+                if (propertyOption.isEmpty())
                 {
                     return AddOnPropertyService.ServiceConditionResult.SUCCESS();
                 }
-                Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(new EntityTag(String.valueOf(input.hashCode())));
+                Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(getEntityTagForProperty(propertyOption.get()));
                 if (responseBuilder == null)
                 {
                     return AddOnPropertyService.ServiceConditionResult.SUCCESS();
@@ -388,14 +402,14 @@ public class AddonsResource
                         .fold(onPreconditionFailed(), onFailure(), onDeleteSuccess());
     }
 
-    private Function<ServiceResult, Response> onDeleteSuccess()
+    private Function<OperationStatus, Response> onDeleteSuccess()
     {
-        return new Function<ServiceResult, Response>()
+        return new Function<OperationStatus, Response>()
         {
             @Override
-            public Response apply(final ServiceResult serviceResult)
+            public Response apply(final OperationStatus operationStatus)
             {
-                return getResponseFromServiceResult(serviceResult);
+                return getResponseBuilderFromOperationStatus(operationStatus).build();
             }
         };
     }
@@ -483,12 +497,7 @@ public class AddonsResource
         }
     }
 
-    private Response getResponseForMessageAndStatus(final String message, final Response.Status status)
-    {
-        return getResponseForMessageAndStatus(message, status, Option.<String>none());
-    }
-
-    private Response getResponseForMessageAndStatus(final String message, final Response.Status status, final Option<String> eTag)
+    private Response.ResponseBuilder getResponseBuilderForMessageAndStatus(final String message, final Response.Status status)
     {
         RestResult result = new RestResult(status.getStatusCode(), message);
         Response.ResponseBuilder responseBuilder = Response.status(status);
@@ -496,23 +505,17 @@ public class AddonsResource
         {
             responseBuilder.entity(result);
         }
-        if (eTag.isDefined())
-        {
-            responseBuilder.tag(new EntityTag(eTag.get(), true));
-        }
-        return responseBuilder
-                .cacheControl(never())
-                .build();
+        return responseBuilder.cacheControl(never());
     }
 
-    private Response getResponseFromServiceResult(final ServiceResult serviceResult)
+    private Response.ResponseBuilder getResponseBuilderFromOperationStatus(final OperationStatus operationStatus)
     {
-        return getResponseForMessageAndStatus(serviceResult.message(i18nResolver), Response.Status.fromStatusCode(serviceResult.getHttpStatusCode()), Option.<String>none());
+        return getResponseBuilderForMessageAndStatus(operationStatus.message(i18nResolver), Response.Status.fromStatusCode(operationStatus.getHttpStatusCode()));
     }
 
-    private Response getResponseFromServiceResult(final ServiceResult serviceResult, final Option<String> eTag)
+    private Response getResponseForMessageAndStatus(final String message, final Response.Status status)
     {
-        return getResponseForMessageAndStatus(serviceResult.message(i18nResolver), Response.Status.fromStatusCode(serviceResult.getHttpStatusCode()), eTag);
+        return getResponseBuilderForMessageAndStatus(message, status).build();
     }
 
     private Either<RestParamError, String> propertyValue(final HttpServletRequest request)

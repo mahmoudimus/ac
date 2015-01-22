@@ -37,11 +37,12 @@ import static org.junit.Assert.assertEquals;
 public class TestAddOnProperties extends AbstractBrowserlessTest
 {
     public static final int MAX_VALUE_SIZE = 1024 * 32;
-    final String addOnKey = "testAddOnPropertyAddOnKey";
-    final String restPath = baseUrl + "/rest/atlassian-connect/1/addons/" + addOnKey;
     final static Gson gson = new Gson();
 
-    ConnectRunner runner = null;
+    final String addOnKey = "testAddOnPropertyAddOnKey";
+    final String restPath = baseUrl + "/rest/atlassian-connect/1/addons/" + addOnKey;
+
+    private ConnectRunner runner = null;
     private InstallHandlerServlet installHandlerServlet;
 
     @Before
@@ -119,17 +120,6 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
         assertEquals(Response.SC_NOT_FOUND, responseCode);
     }
 
-    private void assertDeleted(String propertyKey) throws IOException, URISyntaxException
-    {
-        int responseCode = executeDeleteRequest(propertyKey);
-        assertEquals(Response.SC_NO_CONTENT, responseCode);
-    }
-
-    private String getSelfForPropertyKey(final String propertyKey)
-    {
-        return restPath + "/properties/" + propertyKey;
-    }
-
     @Test
     public void testUpdateAndGetProperty() throws Exception
     {
@@ -203,14 +193,6 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
         assertEquals(Response.SC_NO_CONTENT, responseCode3);
     }
 
-    private HttpURLConnection executeGetRequestWithETag(final String propertyKey, final String eTag)
-            throws IOException, URISyntaxException
-    {
-        HttpURLConnection connection = executeGetRequest(propertyKey, Option.option(runner.getSignedRequestHandler()));
-        connection.setRequestProperty("If-None-Match", eTag);
-        return connection;
-    }
-
     @Test
     public void testSetModifiedForDifferentETag() throws Exception
     {
@@ -258,21 +240,6 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
         }
     }
 
-    private String sendSuccessfulGetRequestForPropertyKey(final String propertyKey)
-            throws IOException, URISyntaxException
-    {
-        HttpURLConnection connection = executeGetRequest(propertyKey, Option.option(runner.getSignedRequestHandler()));
-        assertEquals(Response.SC_OK, connection.getResponseCode());
-        return IOUtils.toString(connection.getInputStream());
-    }
-
-    private void assertNotAccessibleGetRequest(final String propertyKey, final Option<SignedRequestHandler> signedRequestHandler)
-            throws IOException, URISyntaxException
-    {
-        HttpURLConnection connection = executeGetRequest(propertyKey, signedRequestHandler);
-        assertEquals(Response.SC_NOT_FOUND, connection.getResponseCode());
-    }
-
     @Test
     public void testSuccessfulListRequest() throws IOException, URISyntaxException
     {
@@ -289,6 +256,32 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
         RestAddOnPropertiesBean expected = RestAddOnPropertiesBean.fromRestAddOnProperties(property);
         assertEquals(expected, result);
         assertDeleted(propertyKey);
+    }
+
+    private String getSelfForPropertyKey(final String propertyKey)
+    {
+        return restPath + "/properties/" + propertyKey;
+    }
+
+    private void assertDeleted(String propertyKey) throws IOException, URISyntaxException
+    {
+        int responseCode = executeDeleteRequest(propertyKey);
+        assertEquals(Response.SC_NO_CONTENT, responseCode);
+    }
+
+    private void assertNotAccessibleGetRequest(final String propertyKey, final Option<SignedRequestHandler> signedRequestHandler)
+            throws IOException, URISyntaxException
+    {
+        HttpURLConnection connection = executeGetRequest(propertyKey, signedRequestHandler);
+        assertEquals(Response.SC_NOT_FOUND, connection.getResponseCode());
+    }
+
+    private String sendSuccessfulGetRequestForPropertyKey(final String propertyKey)
+            throws IOException, URISyntaxException
+    {
+        HttpURLConnection connection = executeGetRequest(propertyKey, Option.option(runner.getSignedRequestHandler()));
+        assertEquals(Response.SC_OK, connection.getResponseCode());
+        return IOUtils.toString(connection.getInputStream());
     }
 
     private String sendSuccessfulGetRequestForPropertyList() throws IOException, URISyntaxException
@@ -314,6 +307,14 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
         {
             signedRequestHandler.get().sign(url.toURI(), "GET", null, connection);
         }
+        return connection;
+    }
+
+    private HttpURLConnection executeGetRequestWithETag(final String propertyKey, final String eTag)
+            throws IOException, URISyntaxException
+    {
+        HttpURLConnection connection = executeGetRequest(propertyKey, Option.option(runner.getSignedRequestHandler()));
+        connection.setRequestProperty("If-None-Match", eTag);
         return connection;
     }
 

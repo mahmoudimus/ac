@@ -62,7 +62,7 @@ public class AddOnPropertyIterable implements Iterable<AddOnProperty>
             @Override
             public AddOnProperty apply(final AddOnPropertyAO propertyAO)
             {
-                return new AddOnProperty(propertyAO.getPropertyKey(), propertyAO.getValue(), propertyAO.getModificationTime());
+                return new AddOnProperty(propertyAO.getPropertyKey(), propertyAO.getValue(), propertyAO.getID());
             }
         }));
     }

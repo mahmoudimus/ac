@@ -19,13 +19,13 @@ public final class AddOnProperty
 {
     private final String key;
     private final String value;
-    private final Long modificationTime;
+    private final long propertyID;
 
-    public AddOnProperty(final String key, final String value, final long modificationTime)
+    public AddOnProperty(final String key, final String value, final long propertyID)
     {
         this.key = checkNotNull(key);
         this.value = checkNotNull(value);
-        this.modificationTime = modificationTime;
+        this.propertyID = propertyID;
     }
 
     public String getKey()
@@ -54,7 +54,7 @@ public final class AddOnProperty
         return new EqualsBuilder()
                 .append(key,that.key)
                 .append(value, that.value)
-                .append(modificationTime, that.modificationTime)
+                .append(propertyID, that.propertyID)
                 .isEquals();
     }
 
@@ -62,7 +62,7 @@ public final class AddOnProperty
     public int hashCode()
     {
         return new HashCodeBuilder()
-                .append(modificationTime)
+                .append(propertyID)
                 .hashCode();
     }
 
@@ -72,12 +72,12 @@ public final class AddOnProperty
         return new ToStringBuilder(this)
                 .append("key", key)
                 .append("value", value)
-                .append("modificationTime", modificationTime)
+                .append("propertyID", propertyID)
                 .toString();
     }
 
     public static AddOnProperty fromAO(AddOnPropertyAO ao)
     {
-        return new AddOnProperty(ao.getPropertyKey(), ao.getValue(), ao.getModificationTime());
+        return new AddOnProperty(ao.getPropertyKey(), ao.getValue(), ao.getID());
     }
 }
