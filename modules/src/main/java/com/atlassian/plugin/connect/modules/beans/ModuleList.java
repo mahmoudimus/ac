@@ -296,11 +296,15 @@ public class ModuleList extends BaseModuleBean
     private List<BlueprintModuleBean> blueprints;
 
     /**
-     * Definition of content property index schema.
+     * Definition of a content property index schema for an add-on. It allows extracting specific parts of the JSON
+     * documents stored as a content property values, and write them to a search index. Once stored,
+     * they can participate in a content search using CQL.
      *
      * @schemaTitle Content property index schema
+     * @see <a href="https://developer.atlassian.com/display/CONFDEV/Content+Properties+in+the+REST+API">
+     *     developer.atlassian.com</a> for more details
      */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultContentPropertyIndexSchemaModuleProvider", products = {ProductFilter.CONFLUENCE})
+    @ConnectModule (value = "com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultContentPropertyIndexSchemaModuleProvider", products = { ProductFilter.CONFLUENCE })
     private List<ContentPropertyIndexSchemaModuleBean> contentPropertyIndexSchema;
 
     public ModuleList()
