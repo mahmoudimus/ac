@@ -4,8 +4,6 @@ import java.util.List;
 
 /**
  * Representation of a group of extractions from a single JSON documents, associated with a given content property key.
- *
- * @since 1.1.20
  */
 public class ContentPropertyIndexKeyConfigurationBean
 {

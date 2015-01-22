@@ -16,6 +16,9 @@ import com.google.common.collect.Lists;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * Representation of a group of extractions specified by an add-on.
+ */
 @ConfluenceComponent
 public class DefaultContentPropertyIndexSchemaModuleProvider implements ContentPropertyIndexSchemaModuleProvider
 {

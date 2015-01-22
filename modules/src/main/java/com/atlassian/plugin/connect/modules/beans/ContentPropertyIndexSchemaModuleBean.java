@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKey
 import com.google.common.collect.Lists;
 
 /**
- * @since 1.1.20
+ * Representation of a group of extractions from a single JSON documents, associated with a given content property key.
  */
 public class ContentPropertyIndexSchemaModuleBean extends RequiredKeyBean
 {

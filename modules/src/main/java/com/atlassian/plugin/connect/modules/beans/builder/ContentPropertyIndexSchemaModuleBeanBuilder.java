@@ -7,9 +7,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKey
 
 import com.google.common.collect.Lists;
 
-/**
- * @since 1.1.20
- */
 public class ContentPropertyIndexSchemaModuleBeanBuilder
         extends RequiredKeyBeanBuilder<ContentPropertyIndexSchemaModuleBeanBuilder, ContentPropertyIndexSchemaModuleBean>
 {

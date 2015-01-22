@@ -2,8 +2,6 @@ package com.atlassian.plugin.connect.modules.beans.nested;
 
 /**
  * Representation of a extraction recipe for a single JSON value.
- *
- * @since 1.1.20
  */
 public class ContentPropertyIndexExtractionConfigurationBean
 {
