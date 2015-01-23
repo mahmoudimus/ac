@@ -10,7 +10,7 @@ var argv = require('yargs')
     .argv;
 
 var commandsCacheFile = '/home/vagrant/scripts/cache/commands.json';
-var startupCommandsUrl = 'https://developer.atlassian.com/static/connect-versions.json';
+var startupCommandsUrl = 'https://developer.atlassian.com/static/connect/commands/connect-versions.json';
 var product = argv.product;
 var beta = argv.beta;
 var download = argv.downloadOnly;
