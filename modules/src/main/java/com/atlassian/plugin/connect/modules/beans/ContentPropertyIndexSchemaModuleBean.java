@@ -8,10 +8,22 @@ import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKey
 import com.google.common.collect.Lists;
 
 /**
- * Representation of a group of extractions from a single JSON documents, associated with a given content property key.
+ * Content properties are one of the forms of persistence available for add-on developers,
+ * a key-value storage associated with a piece of Confluence content.
+ * These values are indexed by Confluence and able to be queried using CQL. For more information,
+ * please see the [Confluence documentation on content properties](https://developer.atlassian.com/display/CONFDEV/Content+Properties+in+the+REST+API).
+ *
+ *#### Example
+ *
+ * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#CONTENT_PROPERTY_EXAMPLE}
+ * @schemaTitle Content Property
+ * @since 1.0
  */
 public class ContentPropertyIndexSchemaModuleBean extends RequiredKeyBean
 {
+    /**
+     * List of properties from which selected values are indexed.
+     */
     private final List<ContentPropertyIndexKeyConfigurationBean> keyConfigurations = Lists.newArrayList();
 
     public ContentPropertyIndexSchemaModuleBean()
