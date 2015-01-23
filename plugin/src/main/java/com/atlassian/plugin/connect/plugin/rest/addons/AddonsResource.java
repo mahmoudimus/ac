@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.rest.addons;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.fugue.Either;
 import com.atlassian.fugue.Option;
+import com.atlassian.fugue.Suppliers;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyIterable;
@@ -303,6 +304,18 @@ public class AddonsResource
         return new EntityTag(HASH_FUNCTION.hashLong(property.hashCode()).toString());
     }
 
+    private EntityTag getEntityTagForPropertyOption(final Option<AddOnProperty> propertyOption)
+    {
+        return propertyOption.fold(Suppliers.ofInstance(new EntityTag("")), new Function<AddOnProperty, EntityTag>()
+        {
+            @Override
+            public EntityTag apply(final AddOnProperty property)
+            {
+                return getEntityTagForProperty(property);
+            }
+        });
+    }
+
     @PUT
     @Path ("{addonKey}/properties/{propertyKey}")
     public Response putAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam("propertyKey") final String propertyKey, @Context final Request request, @Context HttpServletRequest servletRequest)
@@ -376,11 +389,7 @@ public class AddonsResource
             @Override
             public AddOnPropertyService.ServiceConditionResult<Response.ResponseBuilder> apply(final Option<AddOnProperty> propertyOption)
             {
-                if (propertyOption.isEmpty())
-                {
-                    return AddOnPropertyService.ServiceConditionResult.SUCCESS();
-                }
-                Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(getEntityTagForProperty(propertyOption.get()));
+                Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(getEntityTagForPropertyOption(propertyOption));
                 if (responseBuilder == null)
                 {
                     return AddOnPropertyService.ServiceConditionResult.SUCCESS();

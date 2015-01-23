@@ -194,12 +194,37 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
     }
 
     @Test
-    public void testSetModifiedForDifferentETag() throws Exception
+    public void testSetNotModifiedForDifferentETag() throws Exception
     {
         String propertyKey = RandomStringUtils.randomAlphanumeric(15);
 
         executePutRequest(propertyKey, "TEST_VALUE");
         RequestResponse putResponse = executePutRequest(propertyKey, "TEST_VALUE2", Option.some("\"a\""));
+        assertEquals(Response.SC_PRECONDITION_FAILED, putResponse.httpStatusCode);
+
+        int responseCode3 = executeDeleteRequest(propertyKey);
+        assertEquals(Response.SC_NO_CONTENT, responseCode3);
+    }
+
+    @Test
+    public void testSetModifiedForEmptyETag() throws Exception
+    {
+        String propertyKey = RandomStringUtils.randomAlphanumeric(15);
+
+        RequestResponse putResponse = executePutRequest(propertyKey, "TEST_VALUE2", Option.some("\"\""));
+        assertEquals(Response.SC_CREATED, putResponse.httpStatusCode);
+
+        int responseCode3 = executeDeleteRequest(propertyKey);
+        assertEquals(Response.SC_NO_CONTENT, responseCode3);
+    }
+
+    @Test
+    public void testSetNotModifiedForDifferentEmptyETag() throws Exception
+    {
+        String propertyKey = RandomStringUtils.randomAlphanumeric(15);
+
+        executePutRequest(propertyKey, "TEST_VALUE");
+        RequestResponse putResponse = executePutRequest(propertyKey, "TEST_VALUE2", Option.some("\"\""));
         assertEquals(Response.SC_PRECONDITION_FAILED, putResponse.httpStatusCode);
 
         int responseCode3 = executeDeleteRequest(propertyKey);
