@@ -36,9 +36,9 @@ public class ContentPropertyIndexExtractionConfigurationBean
      *
      */
     @Required
-    private final String type;
+    private final ContentPropertyIndexFieldType type;
 
-    public ContentPropertyIndexExtractionConfigurationBean(String objectName, String type)
+    public ContentPropertyIndexExtractionConfigurationBean(String objectName, ContentPropertyIndexFieldType type)
     {
         this.objectName = objectName;
         this.type = type;
@@ -49,7 +49,7 @@ public class ContentPropertyIndexExtractionConfigurationBean
         return objectName;
     }
 
-    public String getType()
+    public ContentPropertyIndexFieldType getType()
     {
         return type;
     }
