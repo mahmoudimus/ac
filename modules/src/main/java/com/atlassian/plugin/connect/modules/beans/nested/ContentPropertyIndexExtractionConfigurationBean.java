@@ -7,8 +7,8 @@ import com.atlassian.json.schema.annotation.Required;
  * please see the [Confluence documentation on content properties](https://developer.atlassian.com/display/CONFDEV/Content+Properties+in+the+REST+API).
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#CONTENT_PROPERTY_EXAMPLE}
- * @schemaTitle Property Index
+ * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_EXAMPLE}
+ * @schemaTitle Content Property Index
  */
 public class ContentPropertyIndexExtractionConfigurationBean
 {
@@ -28,7 +28,7 @@ public class ContentPropertyIndexExtractionConfigurationBean
      * The type can be one of the following values:
      *
      * * `number` - Extracted number will be indexed as a double value for efficient range filtering and sorting.
-     * * `text`, - Extracted value will be tokenized before indexing, allowing searching for a particular words.
+     * * `text` - Extracted value will be tokenized before indexing, allowing searching for a particular words.
      * * `string` - Entire extracted value will be indexed as a single token, without any filtering. When extraction
      * expression evaluates to a JSON array, each element will be indexed separately. Enables searching for an exact value, e.g. unique identifier.
      * * `date` - Two representation are possible, either a String following the ISO 8601 datetime format,

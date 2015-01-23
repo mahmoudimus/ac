@@ -12,7 +12,7 @@ import com.atlassian.json.schema.annotation.Required;
  *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#CONTENT_PROPERTY_EXAMPLE}
- * @schemaTitle Index Key Configuration
+ * @schemaTitle Content Property Index Key Configuration
  */
 public class ContentPropertyIndexKeyConfigurationBean
 {
