@@ -305,7 +305,7 @@ public class ModuleList extends BaseModuleBean
      *     developer.atlassian.com</a> for more details
      */
     @ConnectModule (value = "com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultContentPropertyIndexSchemaModuleProvider", products = { ProductFilter.CONFLUENCE })
-    private List<ContentPropertyIndexSchemaModuleBean> contentPropertyIndexSchema;
+    private List<ContentPropertyIndexSchemaModuleBean> confluenceContentProperties;
 
     public ModuleList()
     {
