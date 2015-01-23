@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFieldType;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
@@ -730,10 +731,10 @@ public class ConnectJsonExamples
     private static String createContentPropertyIndexSchemaExample()
     {
         List<ContentPropertyIndexExtractionConfigurationBean> extractionConfiguration = Lists.newArrayList(
-                new ContentPropertyIndexExtractionConfigurationBean("attachment.size", "number"),
-                new ContentPropertyIndexExtractionConfigurationBean("attachment.extension", "string"),
-                new ContentPropertyIndexExtractionConfigurationBean("attachment.updated", "date"),
-                new ContentPropertyIndexExtractionConfigurationBean("attachment.author", "text")
+                new ContentPropertyIndexExtractionConfigurationBean("attachment.size", ContentPropertyIndexFieldType.number),
+                new ContentPropertyIndexExtractionConfigurationBean("attachment.extension", ContentPropertyIndexFieldType.string),
+                new ContentPropertyIndexExtractionConfigurationBean("attachment.updated", ContentPropertyIndexFieldType.date),
+                new ContentPropertyIndexExtractionConfigurationBean("attachment.author", ContentPropertyIndexFieldType.text)
         );
         ContentPropertyIndexKeyConfigurationBean indexConfiguration =
                 new ContentPropertyIndexKeyConfigurationBean("attachment", extractionConfiguration);
