@@ -58,7 +58,7 @@ public class OAuthSigningRemotablePluginAccessorTest extends BaseSigningRemotabl
     public void createdRemotePluginAccessorCorrectlySignsTheRequestUrl() throws ExecutionException, InterruptedException
     {
         assertThat(createRemotePluginAccessor().signGetUrl(GET_PATH, Collections.singletonMap("param", new String[]{"value"})),
-                is("http://server:1234/contextPath/path?param=value&oauth_nonce=fake_nonce&oauth_version=1.0&oauth_signature_method=RSA-SHA1&oauth_timestamp=fake_timestamp"));
+                is("http://server:1234/contextPath/path?param=value&oauth_signature_method=RSA-SHA1&oauth_nonce=fake_nonce&oauth_version=1.0&oauth_timestamp=fake_timestamp"));
     }
 
     @Test
@@ -145,7 +145,7 @@ public class OAuthSigningRemotablePluginAccessorTest extends BaseSigningRemotabl
                                                                 URI url,
                                                                 Map<String, List<String>> originalParams)
         {
-            Map<String, List<String>> paramsWithPredicatableOAuthValues = new HashMap<String, List<String>>(originalParams.size());
+            Map<String, List<String>> paramsWithPredicatableOAuthValues = new LinkedHashMap<String, List<String>>(originalParams.size());
 
             for (Map.Entry<String, List<String>> param : originalParams.entrySet())
             {
