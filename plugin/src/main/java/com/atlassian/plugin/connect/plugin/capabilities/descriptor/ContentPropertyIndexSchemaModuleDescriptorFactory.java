@@ -52,7 +52,7 @@ public class ContentPropertyIndexSchemaModuleDescriptorFactory implements
             for (ContentPropertyIndexExtractionConfigurationBean extractionBean : keyConfigurationBean.getExtractions())
             {
                 Element propertyExtractionElement = keyConfigurationElement.addElement("extract");
-                propertyExtractionElement.addAttribute("path", extractionBean.getPath());
+                propertyExtractionElement.addAttribute("path", extractionBean.getObjectName());
                 propertyExtractionElement.addAttribute("type", extractionBean.getType());
             }
         }
