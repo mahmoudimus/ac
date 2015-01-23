@@ -38,6 +38,8 @@ public interface AddOnPropertyService
      * Sets a property from the add-on store. <p> This method checks parameter validity and tries to set a property for
      * an add-on. </p>
      *
+     * @param <T> type of object which is the reason of testFunction failure
+     *
      * @return PutServiceResult which calls one of three callbacks: onPreconditionFailed, OnFailed or OnSuccess
      * PreconditionFailed is called with an object of type T that was the result of testFunction failure.
      * OnFailed is called with OperationResult explaining the reason of failure
@@ -54,6 +56,8 @@ public interface AddOnPropertyService
     /**
      * Deletes a property from the add-on store. <p> This method checks parameter validity and tries to delete a
      * property for an add-on. </p>
+     *
+     ** @param <T> type of object which is the reason of testFunction failure
      *
      * @return DeleteServiceResult which calls one of three callbacks: onPreconditionFailed, OnFailed or OnSuccess
      * PreconditionFailed is called with an object of type T that was the result of testFunction failure.
