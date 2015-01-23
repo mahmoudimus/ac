@@ -745,7 +745,7 @@ public class ConnectJsonExamples
                         .withKeyConfiguration(indexConfiguration)
                         .build();
 
-        return gson.toJson(createJsonArray("contentPropertyIndexSchema", contentPropertyIndexSchemaModuleBean));
+        return gson.toJson(createJsonArray("confluenceContentProperties", contentPropertyIndexSchemaModuleBean));
     }
 
     private static JsonObject createJsonArray(String name, ModuleBean bean)
