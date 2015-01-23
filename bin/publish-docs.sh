@@ -18,3 +18,6 @@ if [ -z "${VERSION}" ]; then
 fi
 
 rsync -avz --delete -e 'ssh' target/www/* uploads@developer-app.internal.atlassian.com:/opt/j2ee/domains/atlassian.com/developer-prod/static-content/static/connect/$VERSION/docs/
+
+# symlink latest -> latest doc version
+
