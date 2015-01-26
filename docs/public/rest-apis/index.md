@@ -129,7 +129,6 @@ Atlassian Connect provides a set of REST APIs specifically designed for use by a
                 <p>Request issued by disabled add-on.</p>
                 <div class="notrunnable example-container aui-buttons">
                     <textarea class="code">
-```
 {
    "key": "example-addon",
    "version": "1.0",
