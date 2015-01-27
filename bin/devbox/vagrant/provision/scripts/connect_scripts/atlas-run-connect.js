@@ -31,23 +31,23 @@ function doRun(opts) {
 
 function runCommand(opts, data) {
     var product = opts.product,
-        beta = opts.beta;
+            beta = opts.beta;
     var command;
     var productVersion;
     var connectVersion;
-    if(product == 'jira' && !beta) {
+    if (product == 'jira' && !beta) {
         command = data.environment.prd.jiraCommand;
         productVersion = data.environment.prd.jiraVersion;
         connectVersion = data.environment.prd.connectVersion;
-    } else if(product == 'jira' && beta) {
+    } else if (product == 'jira' && beta) {
         command = data.environment.dev.jiraCommand;
         productVersion = data.environment.dev.jiraVersion;
         connectVersion = data.environment.dev.connectVersion;
-    } else if(product == 'confluence' && !beta) {
+    } else if (product == 'confluence' && !beta) {
         command = data.environment.prd.confluenceCommand;
         productVersion = data.environment.prd.confluenceVersion;
         connectVersion = data.environment.prd.connectVersion;
-    } else if(product == 'confluence' && beta) {
+    } else if (product == 'confluence' && beta) {
         command = data.environment.dev.confluenceCommand;
         productVersion = data.environment.dev.confluenceVersion;
         connectVersion = data.environment.dev.connectVersion;
@@ -56,18 +56,18 @@ function runCommand(opts, data) {
         process.exit(0);
     }
 
-    if(command) {
+    if (command) {
         console.log("Starting local instance of " + product + " " + productVersion + " with Connect " + connectVersion);
         var commandName = 'atlas-run-standalone';
         command += " -DskipAllPrompts=true";
         var args = command.substr(commandName.length);
-        run_cmd(commandName, args.split(' '));
+        run_cmd(opts, commandName, args.split(' '));
     }
 }
 
 function cacheCommands(opts, data) {
-    fs.writeFile(opts.commandsCacheFile, JSON.stringify(data), function(err) {
-        if(err) {
+    fs.writeFile(opts.commandsCacheFile, JSON.stringify(data), function (err) {
+        if (err) {
             console.log("Error".red, "Couldn't save commands in file: " + opts.commandsCacheFile);
         } else {
             console.log("Info".yellow, "Cached commands in file: " + opts.commandsCacheFile);
@@ -76,8 +76,8 @@ function cacheCommands(opts, data) {
 }
 
 function useCachedCommands(opts) {
-    fs.readFile(opts.commandsCacheFile, function(err, data) {
-        if(err) {
+    fs.readFile(opts.commandsCacheFile, function (err, data) {
+        if (err) {
             console.log("Error".red, "Couldn't find local commands file: " + opts.commandsCacheFile);
             console.log("Is it the first time you have run this command? Make sure you are connected to the internet!")
         } else {
@@ -89,41 +89,54 @@ function useCachedCommands(opts) {
 
 var child;
 
-function run_cmd(cmd, args) {
+function run_cmd(opts, cmd, args) {
     child = spawn(cmd, args);
 
     child.stdout.on('data', function (buffer) {
         var text = buffer.toString();
         process.stdout.write(text);
-        if(text.indexOf("==> default: [INFO] BUILD FAILURE") > -1) {
+        if (text.indexOf("==> default: [INFO] BUILD FAILURE") > -1) {
             killProcess(1);
+        }
+        if (opts.downloadOnly) {
+            if (text.indexOf("starting...") > -1) {
+                console.log("Finished downloading artifacts, terminating the process.");
+                killProcess(0);
+            }
         }
     });
 }
 
-var getCliOpts = function(callback) {
+var getCliOpts = function (callback) {
     var nn = nomnom
-        .option('debug', {
-            abbr: 'd',
-            flag: true,
-            help: 'Print debugging info'
-        })
-        .option('product', {
-            abbr: 'p',
-            required: true,
-            choices: ['jira', 'confluence']
-        })
-        .option('beta', {
-            flag: true,
-            default: false,
-            help: 'Use the version of Connect in development (bleeding edge, may be unstable)'
-        })
-        .option('startupCommandsUrl', {
-            default: 'https://developer.atlassian.com/static/connect/commands/connect-versions.json'
-        })
-        .option('commandsCacheFile', {
-            default: '/home/vagrant/scripts/cache/commands.json'
-        });
+            .option('debug', {
+                abbr: 'd',
+                flag: true,
+                help: 'Print debugging info'
+            })
+            .option('product', {
+                abbr: 'p',
+                required: true,
+                choices: ['jira', 'confluence'],
+                help: 'Selects the product to start'
+            })
+            .option('beta', {
+                flag: true,
+                default: false,
+                help: 'Use the version of Connect in development (bleeding edge, may be unstable)'
+            })
+            .option('downloadOnly', {
+                flag: true,
+                help: 'If true, downloads but does not start the product'
+            })
+            .option('startupCommandsUrl', {
+                default: 'https://developer.atlassian.com/static/connect/commands/connect-versions.json',
+                help: 'The URL with connect versions to download'
+            })
+            .option('commandsCacheFile', {
+                default: '/home/vagrant/scripts/cache/commands.json',
+                help: 'The local file to cache command versions'
+            });
 
     if (callback) {
         nn = callback(nn);
@@ -131,7 +144,7 @@ var getCliOpts = function(callback) {
     return nn;
 };
 
-exports.run = function(runOpts) {
+exports.run = function (runOpts) {
     var nomnom = getCliOpts(runOpts ? runOpts.cliOptsCallback : false);
 
     var opts = runOpts;
