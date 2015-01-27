@@ -1,5 +1,5 @@
 <script class="ap-iframe-body-script">
-    require(['connect-host'], function(host){
+    require(['connect-host', 'ac/cookie', 'ac/env', 'ac/messages', 'ac/request', 'ac/history'], function(host){
         host.create(#parse("velocity/iframe-json.vm"));
     });
 </script>
