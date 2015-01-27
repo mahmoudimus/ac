@@ -9,13 +9,13 @@ import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.jwt.writer.JwtWriterFactory;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.threeleggedauth.AddOnSpecificImpersonationService;
 import com.atlassian.plugin.connect.plugin.threeleggedauth.NoUserAgencyException;
 import com.atlassian.plugin.connect.plugin.threeleggedauth.ThreeLeggedAuthService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.sal.api.user.UserManager;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import it.com.atlassian.plugin.connect.util.RequestUtil;
 import org.junit.Test;
@@ -37,9 +37,10 @@ public class ThreeLeggedAuthFilterAddOnSpecificTest extends ThreeLeggedAuthFilte
                                                  ApplicationProperties applicationProperties,
                                                  ThreeLeggedAuthService threeLeggedAuthService,
                                                  ApplicationService applicationService,
-                                                 ApplicationManager applicationManager)
+                                                 ApplicationManager applicationManager,
+                                                 UserManager userManager)
     {
-        super(testPluginInstaller, testAuthenticator, testFilterResults, jwtWriterFactory, connectAddonRegistry, applicationProperties, threeLeggedAuthService, applicationService, applicationManager);
+        super(testPluginInstaller, testAuthenticator, testFilterResults, jwtWriterFactory, connectAddonRegistry, applicationProperties, threeLeggedAuthService, applicationService, applicationManager, userManager);
     }
 
     @Override
@@ -52,7 +53,7 @@ public class ThreeLeggedAuthFilterAddOnSpecificTest extends ThreeLeggedAuthFilte
     public void authorisedUserAgencyIsAllowed() throws IOException, NoSuchAlgorithmException, NoUserAgencyException
     {
         setGlobalImpersonationEnabled(false);
-        RequestUtil.Response response = issueRequest(createRequestUri(SUBJECT_USERNAME));
+        RequestUtil.Response response = issueRequest(createRequestUri(SUBJECT_USERKEY));
         assertEquals(200, response.getStatusCode());
     }
 
@@ -60,7 +61,7 @@ public class ThreeLeggedAuthFilterAddOnSpecificTest extends ThreeLeggedAuthFilte
     public void authorisedUserAgencyHasSubjectAsRemoteUser() throws IOException, NoSuchAlgorithmException, NoUserAgencyException
     {
         setGlobalImpersonationEnabled(false);
-        issueRequest(createRequestUri(SUBJECT_USERNAME));
+        issueRequest(createRequestUri(SUBJECT_USERKEY));
         assertEquals(SUBJECT_USERNAME, getCapturedRequest().getRemoteUsername());
     }
 
@@ -68,16 +69,16 @@ public class ThreeLeggedAuthFilterAddOnSpecificTest extends ThreeLeggedAuthFilte
     public void authorisedUserAgencyHasSubjectAttribute() throws IOException, NoSuchAlgorithmException, NoUserAgencyException
     {
         setGlobalImpersonationEnabled(false);
-        issueRequest(createRequestUri(SUBJECT_USERNAME));
-        assertEquals(SUBJECT_USERNAME, getSubjectFromRequestAttribute(getCapturedRequest()));
+        issueRequest(createRequestUri(SUBJECT_USERKEY));
+        assertEquals(SUBJECT_USERKEY, getSubjectFromRequestAttribute(getCapturedRequest()));
     }
 
     @Test
     public void cannotActForANonExistentUser() throws IOException, NoSuchAlgorithmException, NoUserAgencyException, OperationFailedException, ApplicationPermissionException
     {
         setGlobalImpersonationEnabled(false);
-        ensureUserDoesNotExist(NON_EXISTENT_USERNAME);
-        RequestUtil.Response response = issueRequest(createRequestUri(NON_EXISTENT_USERNAME));
+        ensureUserDoesNotExist(NON_EXISTENT_USERKEY);
+        RequestUtil.Response response = issueRequest(createRequestUri(NON_EXISTENT_USERKEY));
         assertEquals(401, response.getStatusCode());
     }
 
@@ -167,7 +168,7 @@ public class ThreeLeggedAuthFilterAddOnSpecificTest extends ThreeLeggedAuthFilte
     public void aNonExistentAddOnIsRejected() throws IOException, NoSuchAlgorithmException
     {
         setGlobalImpersonationEnabled(false);
-        RequestUtil.Response response = issueRequest(createRequestUri(SUBJECT_USERNAME, "non-existent add-on key"));
+        RequestUtil.Response response = issueRequest(createRequestUri(SUBJECT_USERKEY, "non-existent add-on key"));
         assertEquals(401, response.getStatusCode());
     }
 
@@ -183,7 +184,7 @@ public class ThreeLeggedAuthFilterAddOnSpecificTest extends ThreeLeggedAuthFilte
     public void impersonationSetAndNo3LAIsOk() throws IOException, NoSuchAlgorithmException
     {
         setGlobalImpersonationEnabled(true);
-        RequestUtil.Response response = issueRequest(createRequestUri(SUBJECT_USERNAME));
+        RequestUtil.Response response = issueRequest(createRequestUri(SUBJECT_USERKEY));
         assertEquals(200, response.getStatusCode());
     }
 
@@ -191,23 +192,24 @@ public class ThreeLeggedAuthFilterAddOnSpecificTest extends ThreeLeggedAuthFilte
     public void impersonationSetAndNo3LAImpliesThatTheSubjectIsTheAssignedUser() throws IOException, NoSuchAlgorithmException
     {
         setGlobalImpersonationEnabled(true);
-        issueRequest(createRequestUri(SUBJECT_USERNAME));
+        issueRequest(createRequestUri(SUBJECT_USERKEY));
         assertEquals(SUBJECT_USERNAME, getCapturedRequest().getRemoteUsername());
+        assertEquals(SUBJECT_USERKEY, getCapturedRequest().getRemoteUserProfile().getUserKey().getStringValue());
     }
 
     @Test
     public void impersonationSetAndNo3LAImpliesThatTheSubjectAttributeIsSet() throws IOException, NoSuchAlgorithmException
     {
         setGlobalImpersonationEnabled(true);
-        issueRequest(createRequestUri(SUBJECT_USERNAME));
-        assertEquals(SUBJECT_USERNAME, getSubjectFromRequestAttribute(getCapturedRequest()));
+        issueRequest(createRequestUri(SUBJECT_USERKEY));
+        assertEquals(SUBJECT_USERKEY, getSubjectFromRequestAttribute(getCapturedRequest()));
     }
 
     @Test
     public void impersonationSetAndNo3LAImpliesThatTheAddOnAttributeIsSet() throws IOException, NoSuchAlgorithmException
     {
         setGlobalImpersonationEnabled(true);
-        issueRequest(createRequestUri(SUBJECT_USERNAME));
+        issueRequest(createRequestUri(SUBJECT_USERKEY));
         assertEquals(addOnBean.getKey(), getAddOnIdFromRequestAttribute(getCapturedRequest()));
     }
 
@@ -215,7 +217,7 @@ public class ThreeLeggedAuthFilterAddOnSpecificTest extends ThreeLeggedAuthFilte
     public void impersonationSetButNonExistentAddOnResultsInError() throws IOException, NoSuchAlgorithmException
     {
         setGlobalImpersonationEnabled(true);
-        RequestUtil.Response response = issueRequest(createRequestUri(SUBJECT_USERNAME, "non-existent-add-on"));
+        RequestUtil.Response response = issueRequest(createRequestUri(SUBJECT_USERKEY, "non-existent-add-on"));
         assertEquals(401, response.getStatusCode());
     }
 

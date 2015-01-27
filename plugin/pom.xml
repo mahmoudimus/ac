@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.19-SNAPSHOT</version>
+        <version>1.1.22-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -295,11 +295,6 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.webhooks</groupId>
-            <artifactId>atlassian-webhooks-spi</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.webhooks</groupId>
             <artifactId>atlassian-webhooks-plugin</artifactId>
             <version>${atlassian.webhooks.version}</version>
             <scope>provided</scope>
@@ -471,7 +466,7 @@
                 <artifactId>maven-amps-plugin</artifactId>
                 <configuration>
                     <enableDevToolbox>true</enableDevToolbox>
-                    <enableFastdev>false</enableFastdev>
+                    <enableFastdev>true</enableFastdev>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <versionOverridesPath>${basedir}/../bin/amps-overrides.properties</versionOverridesPath>
@@ -566,6 +561,7 @@
                                 <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
+                                <com.atlassian.plugin.connect.add_on_properties.max_properties>50</com.atlassian.plugin.connect.add_on_properties.max_properties>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -618,6 +614,11 @@
                                     <artifactId>jira-projects-plugin</artifactId>
                                     <version>${atlassian.jira.projects.plugin.version}</version>
                                 </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.plugins</groupId>
+                                    <artifactId>connect-reference-plugin-jira</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
                             </pluginArtifacts>
 
                             <bundledArtifacts>
@@ -640,6 +641,7 @@
                                 <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
+                                <com.atlassian.plugin.connect.add_on_properties.max_properties>50</com.atlassian.plugin.connect.add_on_properties.max_properties>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -681,6 +683,11 @@
                                     <groupId>com.atlassian.confluence.plugins</groupId>
                                     <artifactId>confluence-create-content-plugin</artifactId>
                                     <version>${blueprints.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.plugins</groupId>
+                                    <artifactId>connect-reference-plugin-confluence</artifactId>
+                                    <version>${project.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
 
@@ -749,6 +756,17 @@
                             <workingDirectory>../plugin</workingDirectory>
                             <nodeVersion>${node.version}</nodeVersion>
                             <npmVersion>${npm.version}</npmVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm connect-js plugin install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <workingDirectory>../plugin</workingDirectory>
+                            <arguments>install ${atlassian.connect-js.path}</arguments>
                         </configuration>
                     </execution>
                     <execution>
@@ -1217,10 +1235,21 @@
                                 <goals>
                                     <goal>install-node-and-npm</goal>
                                 </goals>
-                                <phase>prepare-package</phase>
+                                <phase>generate-resources</phase>
                                 <configuration>
                                     <nodeVersion>${node.version}</nodeVersion>
                                     <npmVersion>${npm.version}</npmVersion>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>npm connect-js install</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <workingDirectory>../docs</workingDirectory>
+                                    <arguments>install ${atlassian.connect-js.path}</arguments>
                                 </configuration>
                             </execution>
                             <execution>

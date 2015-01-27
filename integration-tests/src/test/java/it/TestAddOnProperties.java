@@ -2,7 +2,11 @@ package it;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
+import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.BaseUrlLocator;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.google.common.base.Function;
 import com.google.gson.Gson;
 import it.servlet.InstallHandlerServlet;
 import org.apache.commons.io.IOUtils;
@@ -20,7 +24,9 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -31,16 +37,18 @@ import static org.junit.Assert.assertEquals;
 public class TestAddOnProperties extends AbstractBrowserlessTest
 {
     public static final int MAX_VALUE_SIZE = 1024 * 32;
-    final String addOnKey = "testAddOnPropertyAddOnKey";
-    final String restPath = baseUrl + "/rest/atlassian-connect/1/addons/" + addOnKey;
     final static Gson gson = new Gson();
 
-    ConnectRunner runner = null;
+    final String addOnKey = "testAddOnPropertyAddOnKey";
+    final String restPath = baseUrl + "/rest/atlassian-connect/1/addons/" + addOnKey;
+
+    private ConnectRunner runner = null;
+    private InstallHandlerServlet installHandlerServlet;
 
     @Before
     public void init() throws Exception
     {
-        InstallHandlerServlet installHandlerServlet = new InstallHandlerServlet();
+        installHandlerServlet = new InstallHandlerServlet();
         runner = new ConnectRunner(baseUrl, addOnKey)
                 .addJWT(installHandlerServlet)
                 .start();
@@ -53,15 +61,38 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
     }
 
     @Test
-    public void testCreateAndGetProperty() throws Exception
+    public void testCreatePropertyWithJWTQueryParameter()
+            throws IOException, URISyntaxException, NoSuchAlgorithmException
     {
         final String propertyKey = RandomStringUtils.randomAlphanumeric(15);
-        RestAddOnProperty property = new RestAddOnProperty(propertyKey, "TEST_VALUE", getSelfForPropertyKey(propertyKey));
 
-        int responseCode = executePutRequest(property.key, property.value);
+        URL url = new URL(restPath + "/properties/" + propertyKey);
+
+        String sharedSecret = checkNotNull(installHandlerServlet.getInstallPayload().getSharedSecret());
+        String jwt = AddonTestUtils.generateJwtSignature(HttpMethod.PUT, url.toURI(), addOnKey, sharedSecret, BaseUrlLocator.getBaseUrl(), null);
+
+        URL longerUrl = new URL(restPath + "/properties/" + propertyKey + "?jwt=" + jwt);
+        HttpURLConnection connection = (HttpURLConnection) longerUrl.openConnection();
+        connection.setRequestMethod("PUT");
+        connection.setDoOutput(true);
+        connection.getOutputStream().write(propertyKey.getBytes());
+
+        int responseCode = connection.getResponseCode();
         assertEquals(Response.SC_CREATED, responseCode);
 
-        String response = sendSuccessfulGetRequest(property.key);
+        assertDeleted(propertyKey);
+    }
+
+    @Test
+    public void testCreateAndGetProperty() throws Exception
+    {
+        String propertyKey = RandomStringUtils.randomAlphanumeric(15);
+        RestAddOnProperty property = new RestAddOnProperty(propertyKey, "TEST_VALUE", getSelfForPropertyKey(propertyKey));
+
+        int responseCode = executePutRequest(property.key, property.value).httpStatusCode;
+        assertEquals(Response.SC_CREATED, responseCode);
+
+        String response = sendSuccessfulGetRequestForPropertyKey(property.key);
         RestAddOnProperty result = gson.fromJson(response, RestAddOnProperty.class);
         assertEquals(property, result);
 
@@ -71,10 +102,10 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
     @Test
     public void testCreateAndDeleteProperty() throws Exception
     {
-        final String propertyKey = RandomStringUtils.randomAlphanumeric(15);
+        String propertyKey = RandomStringUtils.randomAlphanumeric(15);
         RestAddOnProperty property = new RestAddOnProperty(propertyKey, "TEST_VALUE", getSelfForPropertyKey(propertyKey));
 
-        int responseCode = executePutRequest(property.key, property.value);
+        int responseCode = executePutRequest(property.key, property.value).httpStatusCode;
         assertEquals(Response.SC_CREATED, responseCode);
 
         assertDeleted(propertyKey);
@@ -83,36 +114,25 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
     @Test
     public void testDeleteNonExistentProperty() throws Exception
     {
-        final String propertyKey = RandomStringUtils.randomAlphanumeric(15);
+        String propertyKey = RandomStringUtils.randomAlphanumeric(15);
 
         int responseCode = executeDeleteRequest(propertyKey);
         assertEquals(Response.SC_NOT_FOUND, responseCode);
     }
 
-    private void assertDeleted(String propertyKey) throws IOException, URISyntaxException
-    {
-        int responseCode = executeDeleteRequest(propertyKey);
-        assertEquals(Response.SC_NO_CONTENT, responseCode);
-    }
-
-    private String getSelfForPropertyKey(final String propertyKey)
-    {
-        return restPath + "/properties/" + propertyKey;
-    }
-
     @Test
     public void testUpdateAndGetProperty() throws Exception
     {
-        final String propertyKey = RandomStringUtils.randomAlphanumeric(15);
+        String propertyKey = RandomStringUtils.randomAlphanumeric(15);
         RestAddOnProperty property = new RestAddOnProperty(propertyKey, "TEST_VALUE", getSelfForPropertyKey(propertyKey));
 
-        int responseCode = executePutRequest(property.key, "TEST_VALUE_2");
+        int responseCode = executePutRequest(property.key, "TEST_VALUE_2").httpStatusCode;
         assertEquals(Response.SC_CREATED, responseCode);
 
-        int responseCode2 = executePutRequest(property.key, property.value);
+        int responseCode2 = executePutRequest(property.key, property.value).httpStatusCode;
         assertEquals(Response.SC_OK, responseCode2);
 
-        String response = sendSuccessfulGetRequest(property.key);
+        String response = sendSuccessfulGetRequestForPropertyKey(property.key);
         RestAddOnProperty result = gson.fromJson(response, RestAddOnProperty.class);
         assertEquals(property, result);
 
@@ -128,9 +148,9 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
                 .addJWT(installHandlerServlet)
                 .start();
 
-        final String propertyKey = RandomStringUtils.randomAlphanumeric(15);
+        String propertyKey = RandomStringUtils.randomAlphanumeric(15);
 
-        int responseCode = executePutRequest(propertyKey, "TEST_VALUE_2");
+        int responseCode = executePutRequest(propertyKey, "TEST_VALUE_2").httpStatusCode;
         assertEquals(Response.SC_CREATED, responseCode);
 
         assertNotAccessibleGetRequest(propertyKey, Option.option(secondAddOn.getSignedRequestHandler()));
@@ -144,7 +164,7 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
     @Test
     public void testNoAccessWithoutPluginKeyInHeader() throws Exception
     {
-        final String propertyKey = RandomStringUtils.randomAlphanumeric(15);
+        String propertyKey = RandomStringUtils.randomAlphanumeric(15);
 
         HttpURLConnection connection = executeGetRequest(propertyKey, Option.<SignedRequestHandler>none());
         assertEquals(Response.SC_UNAUTHORIZED, connection.getResponseCode());
@@ -153,14 +173,135 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
     @Test
     public void testPutValueTooBigReturnsForbidden() throws Exception
     {
-        final String propertyKey = RandomStringUtils.randomAlphanumeric(15);
-        final String tooBigValue = StringUtils.repeat(" ", MAX_VALUE_SIZE + 1);
+        String propertyKey = RandomStringUtils.randomAlphanumeric(15);
+        String tooBigValue = StringUtils.repeat(" ", MAX_VALUE_SIZE + 1);
 
-        int responseCode = executePutRequest(propertyKey, tooBigValue);
+        int responseCode = executePutRequest(propertyKey, tooBigValue).httpStatusCode;
         assertEquals(Response.SC_FORBIDDEN, responseCode);
     }
 
-    private String sendSuccessfulGetRequest(final String propertyKey)
+    @Test
+    public void testGetNotModifiedForSameETag() throws Exception
+    {
+        String propertyKey = RandomStringUtils.randomAlphanumeric(15);
+
+        RequestResponse putResponse = executePutRequest(propertyKey, "TEST_VALUE");
+        HttpURLConnection connection = executeGetRequestWithETag(propertyKey, putResponse.eTag.get());
+        assertEquals(Response.SC_NOT_MODIFIED, connection.getResponseCode());
+
+        int responseCode3 = executeDeleteRequest(propertyKey);
+        assertEquals(Response.SC_NO_CONTENT, responseCode3);
+    }
+
+    @Test
+    public void testSetNotModifiedForDifferentETag() throws Exception
+    {
+        String propertyKey = RandomStringUtils.randomAlphanumeric(15);
+
+        executePutRequest(propertyKey, "TEST_VALUE");
+        RequestResponse putResponse = executePutRequest(propertyKey, "TEST_VALUE2", Option.some("\"a\""));
+        assertEquals(Response.SC_PRECONDITION_FAILED, putResponse.httpStatusCode);
+
+        int responseCode3 = executeDeleteRequest(propertyKey);
+        assertEquals(Response.SC_NO_CONTENT, responseCode3);
+    }
+
+    @Test
+    public void testSetModifiedForEmptyETag() throws Exception
+    {
+        String propertyKey = RandomStringUtils.randomAlphanumeric(15);
+
+        RequestResponse putResponse = executePutRequest(propertyKey, "TEST_VALUE2", Option.some("\"\""));
+        assertEquals(Response.SC_CREATED, putResponse.httpStatusCode);
+
+        int responseCode3 = executeDeleteRequest(propertyKey);
+        assertEquals(Response.SC_NO_CONTENT, responseCode3);
+    }
+
+    @Test
+    public void testSetNotModifiedForDifferentEmptyETag() throws Exception
+    {
+        String propertyKey = RandomStringUtils.randomAlphanumeric(15);
+
+        executePutRequest(propertyKey, "TEST_VALUE");
+        RequestResponse putResponse = executePutRequest(propertyKey, "TEST_VALUE2", Option.some("\"\""));
+        assertEquals(Response.SC_PRECONDITION_FAILED, putResponse.httpStatusCode);
+
+        int responseCode3 = executeDeleteRequest(propertyKey);
+        assertEquals(Response.SC_NO_CONTENT, responseCode3);
+    }
+
+    @Test
+    public void testMaximumPropertiesNotReached() throws Exception
+    {
+        String propertyKeyPrefix = RandomStringUtils.randomAlphanumeric(15);
+        for (int i = 0; i < 50; i++)
+        {
+            int responseCode = executePutRequest(propertyKeyPrefix + String.valueOf(i), "value").httpStatusCode;
+            assertEquals(Response.SC_CREATED, responseCode);
+        }
+        for (int i = 0; i < 50; i++)
+        {
+            assertDeleted(propertyKeyPrefix + String.valueOf(i));
+        }
+    }
+
+    @Test
+    public void testMaximumPropertiesReached() throws Exception
+    {
+        String propertyKeyPrefix = RandomStringUtils.randomAlphanumeric(15);
+        for (int i = 0; i < 50; i++)
+        {
+            int responseCode = executePutRequest(propertyKeyPrefix + String.valueOf(i), "value").httpStatusCode;
+            assertEquals(Response.SC_CREATED, responseCode);
+        }
+
+        int responseCode = executePutRequest(propertyKeyPrefix + String.valueOf(51), "value").httpStatusCode;
+        assertEquals(Response.SC_CONFLICT, responseCode);
+
+        for (int i = 0; i < 50; i++)
+        {
+            assertDeleted(propertyKeyPrefix + String.valueOf(i));
+        }
+    }
+
+    @Test
+    public void testSuccessfulListRequest() throws IOException, URISyntaxException
+    {
+        // should clean all properties before running, else this test depends on previous test failures!
+        String propertyKey = RandomStringUtils.randomAlphanumeric(15);
+        RestAddOnProperty property = new RestAddOnProperty(propertyKey, "TEST_VALUE", getSelfForPropertyKey(propertyKey));
+
+        int responseCode = executePutRequest(property.key, property.value).httpStatusCode;
+        assertEquals(Response.SC_CREATED, responseCode);
+
+        String response = sendSuccessfulGetRequestForPropertyList();
+        RestAddOnPropertiesBean result = gson.fromJson(response, RestAddOnPropertiesBean.class);
+
+        RestAddOnPropertiesBean expected = RestAddOnPropertiesBean.fromRestAddOnProperties(property);
+        assertEquals(expected, result);
+        assertDeleted(propertyKey);
+    }
+
+    private String getSelfForPropertyKey(final String propertyKey)
+    {
+        return restPath + "/properties/" + propertyKey;
+    }
+
+    private void assertDeleted(String propertyKey) throws IOException, URISyntaxException
+    {
+        int responseCode = executeDeleteRequest(propertyKey);
+        assertEquals(Response.SC_NO_CONTENT, responseCode);
+    }
+
+    private void assertNotAccessibleGetRequest(final String propertyKey, final Option<SignedRequestHandler> signedRequestHandler)
+            throws IOException, URISyntaxException
+    {
+        HttpURLConnection connection = executeGetRequest(propertyKey, signedRequestHandler);
+        assertEquals(Response.SC_NOT_FOUND, connection.getResponseCode());
+    }
+
+    private String sendSuccessfulGetRequestForPropertyKey(final String propertyKey)
             throws IOException, URISyntaxException
     {
         HttpURLConnection connection = executeGetRequest(propertyKey, Option.option(runner.getSignedRequestHandler()));
@@ -168,23 +309,8 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
         return IOUtils.toString(connection.getInputStream());
     }
 
-    private void assertNotAccessibleGetRequest(final String propertyKey, final Option<SignedRequestHandler> signedRequestHandler)
-            throws IOException, URISyntaxException
+    private String sendSuccessfulGetRequestForPropertyList() throws IOException, URISyntaxException
     {
-        HttpURLConnection connection = executeGetRequest(propertyKey, signedRequestHandler);
-        assertEquals(Response.SC_FORBIDDEN, connection.getResponseCode());
-    }
-
-    @Test
-    public void testSuccessfulListRequest() throws IOException, URISyntaxException
-    {
-        // should clean all properties before running, else this test depends on previous test failures!
-        final String propertyKey = RandomStringUtils.randomAlphanumeric(15);
-        RestAddOnProperty property = new RestAddOnProperty(propertyKey, "TEST_VALUE", getSelfForPropertyKey(propertyKey));
-
-        int responseCode = executePutRequest(property.key, property.value);
-        assertEquals(Response.SC_CREATED, responseCode);
-
         URL url = new URL(restPath + "/properties");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
@@ -193,12 +319,7 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
 
         assertEquals(Response.SC_OK, connection.getResponseCode());
 
-        String response = IOUtils.toString(connection.getInputStream());
-        RestAddOnPropertiesBean result = gson.fromJson(response, RestAddOnPropertiesBean.class);
-
-        RestAddOnPropertiesBean expected = RestAddOnPropertiesBean.fromRestAddOnProperties(property);
-        assertEquals(expected, result);
-        assertDeleted(propertyKey);
+        return IOUtils.toString(connection.getInputStream());
     }
 
     private HttpURLConnection executeGetRequest(final String propertyKey, final Option<SignedRequestHandler> signedRequestHandler) throws IOException, URISyntaxException
@@ -214,15 +335,41 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
         return connection;
     }
 
-    private int executePutRequest(final String propertyKey, String value) throws IOException, URISyntaxException
+    private HttpURLConnection executeGetRequestWithETag(final String propertyKey, final String eTag)
+            throws IOException, URISyntaxException
+    {
+        HttpURLConnection connection = executeGetRequest(propertyKey, Option.option(runner.getSignedRequestHandler()));
+        connection.setRequestProperty("If-None-Match", eTag);
+        return connection;
+    }
+
+    private RequestResponse executePutRequest(final String propertyKey, String value) throws IOException, URISyntaxException
+    {
+        return executePutRequest(propertyKey, value, Option.<String>none());
+    }
+
+    private RequestResponse executePutRequest(final String propertyKey, String value, Option<String> eTag) throws IOException, URISyntaxException
     {
         URL url = new URL(restPath + "/properties/" + propertyKey);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("PUT");
+        if (eTag.isDefined())
+        {
+            connection.setRequestProperty("If-Match", eTag.get());
+        }
         runner.getSignedRequestHandler().sign(url.toURI(), "PUT", null, connection);
         connection.setDoOutput(true);
         connection.getOutputStream().write(value.getBytes());
-        return connection.getResponseCode();
+
+        Option<String> returnedETag = Option.option(connection.getHeaderField("ETag")).map(new Function<String, String>()
+        {
+            @Override
+            public String apply(final String input)
+            {
+                return input;
+            }
+        });
+        return new RequestResponse(connection.getResponseCode(), returnedETag);
     }
 
     private int executeDeleteRequest(final String propertyKey) throws IOException, URISyntaxException
@@ -232,6 +379,17 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
         connection.setRequestMethod("DELETE");
         runner.getSignedRequestHandler().sign(url.toURI(), "DELETE", null, connection);
         return connection.getResponseCode();
+    }
+
+    private class RequestResponse
+    {
+        private final int httpStatusCode;
+        private final Option<String> eTag;
+
+        private RequestResponse(final int httpStatusCode, final Option<String> eTag) {
+            this.httpStatusCode = httpStatusCode;
+            this.eTag = eTag;
+        }
     }
 
     private class RestAddOnProperty
@@ -357,6 +515,15 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
                 if (getClass() != obj.getClass()) {return false;}
                 final RestAddOnPropertyBean other = (RestAddOnPropertyBean) obj;
                 return new EqualsBuilder().append(this.self, other.self).append(this.key, other.key).isEquals();
+            }
+
+            @Override
+            public String toString()
+            {
+                return "RestAddOnPropertyBean{" +
+                        "self='" + self + '\'' +
+                        ", key='" + key + '\'' +
+                        '}';
             }
         }
     }

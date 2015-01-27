@@ -4,7 +4,7 @@ import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor;
+import com.atlassian.plugin.connect.plugin.iframe.webpanel.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.module.webitem.RemoteWebLink;
 import com.atlassian.plugin.web.WebFragmentHelper;
@@ -19,14 +19,16 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.*;
+import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.addon;
+import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.page;
+import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
-@Ignore("convert to wire test")
-@RunWith(MockitoJUnitRunner.class)
+@Ignore ("convert to wire test")
+@RunWith (MockitoJUnitRunner.class)
 public class RemoteWebLinkTest
 {
     private static final String PLUGIN_KEY = "my-plug";
@@ -38,7 +40,6 @@ public class RemoteWebLinkTest
     private static final String HOST_CONTEXT = "hostContext";
     private static final String ADDON_BASEURL = "http://myaddon.com";
     private static final String SIGNED_ADDON_URL = ADDON_BASEURL + SUBSTITUTED_URL + "&signOnTheDottedLine";
-
 
     @Mock
     private WebFragmentModuleDescriptor webFragmentModuleDescriptor;
@@ -53,7 +54,7 @@ public class RemoteWebLinkTest
     private IFrameUriBuilderFactory iFrameUriBuilderFactory;
 
     @Mock
-    private WebFragmentModuleContextExtractor webFragmentModuleContextExtractor;
+    private PluggableParametersExtractor webFragmentModuleContextExtractor;
 
     @Mock
     private UrlVariableSubstitutor urlVariableSubstitutor;
@@ -66,7 +67,6 @@ public class RemoteWebLinkTest
     {
         when(servletRequest.getContextPath()).thenReturn(HOST_CONTEXT);
     }
-
 
     @Test
     public void productUrlsRelativeToHost()

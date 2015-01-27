@@ -2,7 +2,7 @@
   "scopes": [
     {
       "key": "READ",
-      "restPathKeys": ["entities", "license"],
+      "restPathKeys": ["entities", "addons", "license"],
       "methods": ["GET"]
     },
     {
@@ -46,6 +46,13 @@
       "basePaths": ["/entitylink/primary($|/.*)"],
       "versions": ["1.0", "2.0", "latest"],
       "public": false
+    },
+    {
+      "key": "addons",
+      "name": "atlassian-connect",
+      "basePaths": ["/addons/.*"],
+      "versions": ["1", "latest"],
+      "public": true
     },
     {
       "key": "license",

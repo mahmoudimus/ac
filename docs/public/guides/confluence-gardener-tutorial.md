@@ -43,19 +43,19 @@ Once you have all the prerequisites, you'll clone an existing repository to kick
 <a data-replace-text="Hide Git installation instructions [-]" class="aui-expander-trigger" aria-controls="install-git">Show Git installation instructions [+]</a>
 
 <div id="install-git" class="aui-expander-content">
-    <span data-include="/assets/includes/install-git.html"></span>
+    <span data-include="../assets/includes/install-git.html"></span>
 </div>
 
 <a data-replace-text="Hide Node.js instructions [-]" class="aui-expander-trigger" aria-controls="install-node">Show Node.js instructions [+]</a>
 
 <div id="install-node" class="aui-expander-content">
-    <span data-include="/assets/includes/install-nodejs.html"></span>
+    <span data-include="../assets/includes/install-nodejs.html"></span>
 </div>
 
 <a data-replace-text="Hide SDK instructions [-]" class="aui-expander-trigger" aria-controls="install-sdk">Show SDK instructions [+]</a>
 
 <div id="install-sdk" class="aui-expander-content">
-    <span data-include="/assets/includes/install-atlassian-sdk.html"></span>
+    <span data-include="../assets/includes/install-atlassian-sdk.html"></span>
 </div>
 
 1. Clone the Confluence Gardener repository. 
@@ -86,7 +86,7 @@ After you've spun up your server, you'll install your copy of Gardener to Conflu
 included in the repo you cloned to install the add-on.   
 
 1. From the `confluence-gardener` directory, start your server on port 8000:
-    <span data-include="/assets/includes/start-http-server.html"></span>
+    <span data-include="../assets/includes/start-http-server.html"></span>
 
 1. In your browser, navigate to your descriptor file at <a href="http://localhost:8000/atlassian-connect.json" 
     target="_blank">http://localhost:8000/atlassian-connect.json</a>  
@@ -166,8 +166,8 @@ All the functions that request data from Confluence are in your `js/data.js` fil
 so in this step you'll flesh these out. 
 
 You'll use the [Confluence REST API browser](https://bunjil.jira-dev.com/wiki/plugins/servlet/restbrowser) and
-the [AP.request documentation](/static/connect/docs/javascript/module-request.html) to implement functions to get 
-page and space hiearchy in Confluence, and add Gardener functionality to move and remove pages. 
+the [AP.request documentation](../javascript/module-request.html) to implement functions to get
+page and space hierarchy in Confluence, and add Gardener functionality to move and remove pages.
 
 1. Open the `js/data.js` file from your `confluence-gardener` source code.
     You should see the stub code below:  
@@ -293,12 +293,12 @@ step.
 ## <a name="dialog"></a> Display a full-screen dialog
 
 When you attempt to remove a page, nothing happens. In this step, you'll add a [a full-screen 
-dialog](https://developer.atlassian.com/static/connect/docs/javascript/module-Dialog.html) to confirm the action, 
+dialog](../javascript/module-Dialog.html) to confirm the action,
 and make sure it actually works. 
 
 First, you'll declare the dialog in your `atlassian-connect.json` descriptor file. These dialogs are full-fledged AUI dialogs 
 that exist in the parent frame (not in the same iframe Gardener uses). We'll provide the HTML source for the dialog, you'll 
-register a new [`webItem`](https://developer.atlassian.com/static/connect/docs/modules/jira/web-item.html) that loads inside the 
+register a new [`webItem`](../modules/jira/web-item.html) that loads inside the
 full-screen dialog.
 
 1. Open `atlassian-connect.json` in your editor.  
@@ -392,8 +392,8 @@ full-screen dialog.
         }
     });
     </code></pre>
-1. Load the [`dialog`](https://developer.atlassian.com/static/connect/docs/javascript/module-Dialog.html)
-    and [`events`](https://developer.atlassian.com/static/connect/docs/javascript/module-Events.html) modules using `AP.require`: 
+1. Load the [`dialog`](../javascript/module-Dialog.html)
+    and [`events`](../javascript/module-Events.html) modules using `AP.require`:
     <pre><code data-lang="javascript">
     return function(deleteCallback) {
         AP.require(["dialog", "events"], function (dialog, events) {

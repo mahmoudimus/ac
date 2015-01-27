@@ -23,11 +23,13 @@ Most of the connect javascript is now part of it's [own project](https://stash.a
 
 Contributions are encouraged! To start working on Atlassian Connect, follow this guide:
 
-1. Ensure there is a relevant JIRA issue in project [AC](https://ecosystem.atlassian.net/browse/AC)
-2. Run `mvn jgitflow:feature-start`
-3. Name your feature branch with your issue key and short description. e.g. `AC-1-implement-macro-editor`
-4. Commit and push
-5. Create a pull request in [Stash](https://stash.atlassian.com/projects/AC/repos/atlassian-connect/) with 1-3 reviewers from the team (depending on the complexity of the change).
+1. Ensure there is a relevant JIRA issue in project [AC](https://ecosystem.atlassian.net/browse/AC),
+   [ACJIRA](https://ecosystem.atlassian.net/browse/ACJIRA) or [CE](https://ecosystem.atlassian.net/browse/CE)
+2. Create your feature branch, e.g. `feature/AC-1-implement-macro-editor`
+    * The prefix `feature/` or `issue/` is required for branch builds to run (without passing builds, you cannot merge your pull request)
+    * Include your issue key and a short description
+3. Commit and push
+4. Create a pull request in [Stash](https://stash.atlassian.com/projects/AC/repos/atlassian-connect/) with 1-3 reviewers from the team (depending on the complexity of the change).
 
 For more details see the [internal developer's guide](https://extranet.atlassian.com/x/cAhDg).
 
@@ -56,7 +58,12 @@ To run an integration test against a particular product in IDEA. (Note only appl
 
 
 ### Wired Tests
-See [doco for details](https://developer.atlassian.com/display/DOCS/Run+Wired+Tests+with+the+Plugin+Test+Console)
+
+Wired tests can be run from [the Plugin Test Console](https://developer.atlassian.com/display/DOCS/Run+Wired+Tests+with+the+Plugin+Test+Console) inside the host application.
+They can also be run directly with Maven or IDEA, but that requires setting the `baseUrl` parameter to point the test runner to your local instance, e.g. `-Dbaseurl=http://localhost:2990/jira`.
+
+To debug a test, you must first [create a remote debug target](https://developer.atlassian.com/docs/developer-tools/working-in-an-ide/creating-a-remote-debug-target).
+Then, start debugging using the remote debug target and thereafter run the test in debug mode.
 
 To run manually
 

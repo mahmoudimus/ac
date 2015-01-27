@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
+import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import it.util.TestUser;
 import org.apache.http.auth.AuthenticationException;
@@ -31,6 +32,9 @@ public abstract class ConnectWebDriverTestBase
 
     @Rule
     public WebDriverScreenshotRule screenshotRule = new WebDriverScreenshotRule();
+
+    @Rule
+    public LogPageSourceRule pageSourceRule = new LogPageSourceRule();
 
     protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
             product.getTester().getDriver());

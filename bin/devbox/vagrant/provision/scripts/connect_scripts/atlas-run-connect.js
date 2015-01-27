@@ -1,111 +1,104 @@
-var Client = require('node-rest-client').Client;
-var fs = require('fs');
-var sys = require('sys')
-var exec = require('child_process').exec;
-var argv = require('yargs')
-    .usage('atlas-run-connect --product [product] --beta')
-    .demand(['product'])
-    .describe('product', 'jira/confluence')
-    .describe ('beta', 'use the version of Connect in development (bleeding edge, may be unstable)')
-    .argv;
+#!/usr/bin/env node
 
-var commandsCacheFile = '/home/vagrant/scripts/cache/commands.json';
-var startupCommandsUrl = 'https://developer.atlassian.com/static/connect-versions.json';
-var product = argv.product;
-var beta = argv.beta;
-var download = argv.downloadOnly;
-var foo;
-client = new Client();
-var child;
+var request = require('request'),
+        fs = require('fs'),
+        exec = require('child_process').exec,
+        spawn = require('child_process').spawn,
+        extend = require('node.extend'),
+        nomnom = require('nomnom'),
+        colors = require('colors'),
+        util = require('util');
 
+var selfExecute = require.main === module;
 
-client.registerMethod("jsonMethod", startupCommandsUrl, "GET");
+function doRun(opts) {
+    request.get({
+        url: opts.startupCommandsUrl,
+        json: true
+    }, function (error, response, data) {
+        if (error) {
+            console.log('ERROR'.red, 'Could not download versions file from: ' + opts.startupCommandsUrl);
+            console.log('ERROR'.red, 'Using cached copy: ' + opts.commandsCacheFile);
+            useCachedCommands(opts);
+        } else {
+            console.log('Info'.yellow, 'Downloaded versions file from: ' + opts.startupCommandsUrl);
+            opts.debug && console.log(data);
+            cacheCommands(opts, data);
+            runCommand(opts, data);
+        }
+    })
+}
 
-var req=client.methods.jsonMethod(function (data, response) {
-    console.log('Downloaded versions file from ' + startupCommandsUrl);
-    cacheCommands(data);
-    runCommand(data);
-
-});
-
-
-req.on('error',function(err){
-    console.log('Could not download versions file from: ' + startupCommandsUrl);
-    useCachedCommands();
-});
-
-function runCommand(data) {
+function runCommand(opts, data) {
+    var product = opts.product,
+            beta = opts.beta;
     var command;
     var productVersion;
     var connectVersion;
-    if(product == 'jira' && !beta) {
+    if (product == 'jira' && !beta) {
         command = data.environment.prd.jiraCommand;
         productVersion = data.environment.prd.jiraVersion;
         connectVersion = data.environment.prd.connectVersion;
-    } else
-    if(product == 'jira' && beta) {
+    } else if (product == 'jira' && beta) {
         command = data.environment.dev.jiraCommand;
         productVersion = data.environment.dev.jiraVersion;
         connectVersion = data.environment.dev.connectVersion;
-    } else
-    if(product == 'confluence' && !beta) {
+    } else if (product == 'confluence' && !beta) {
         command = data.environment.prd.confluenceCommand;
         productVersion = data.environment.prd.confluenceVersion;
         connectVersion = data.environment.prd.connectVersion;
-    } else
-    if(product == 'confluence' && beta) {
+    } else if (product == 'confluence' && beta) {
         command = data.environment.dev.confluenceCommand;
         productVersion = data.environment.dev.confluenceVersion;
         connectVersion = data.environment.dev.connectVersion;
     } else {
-        console.log("Command not found for product " + product + ". Exiting.")
+        console.log("Error".red, "Command not found for product " + product + ".");
         process.exit(0);
     }
 
-    if(command) {
-        console.log("Starting local instance of "
-            + product + " " + productVersion + " with Connect " + connectVersion);
+    if (command) {
+        console.log("Starting local instance of " + product + " " + productVersion + " with Connect " + connectVersion);
         var commandName = 'atlas-run-standalone';
-        command += " -DskipAllPrompts=true"
+        command += " -DskipAllPrompts=true";
         var args = command.substr(commandName.length);
-        run_cmd( commandName, args.split(' '));
+        run_cmd(opts, commandName, args.split(' '));
     }
 }
 
-function cacheCommands(data) {
-    fs.writeFile(commandsCacheFile, JSON.stringify(data), function(err) {
-        if(err) {
-            console.log("WARN: couldn't save commands in file: " + commandsCacheFile);
+function cacheCommands(opts, data) {
+    fs.writeFile(opts.commandsCacheFile, JSON.stringify(data), function (err) {
+        if (err) {
+            console.log("Error".red, "Couldn't save commands in file: " + opts.commandsCacheFile);
         } else {
-            console.log("Cached commands in file: " + commandsCacheFile);
+            console.log("Info".yellow, "Cached commands in file: " + opts.commandsCacheFile);
         }
     });
 }
 
-function useCachedCommands() {
-    fs.readFile(commandsCacheFile, function(err, data) {
-        if(err) {
-            console.log("ERROR: Couldn't find local commands file: " + commandsCacheFile);
-            console.log("Is it the first time you try to run this command? Make sure you are connected to the internet!")
+function useCachedCommands(opts) {
+    fs.readFile(opts.commandsCacheFile, function (err, data) {
+        if (err) {
+            console.log("Error".red, "Couldn't find local commands file: " + opts.commandsCacheFile);
+            console.log("Is it the first time you have run this command? Make sure you are connected to the internet!")
         } else {
-            console.log("WARN: using the latest cached command - this may not be the version currently in production!");
+            console.log("Warn".yellow, "Using the latest cached command - this may not be the version currently in production!");
             runCommand(JSON.parse(data));
         }
     });
 }
 
-function run_cmd(cmd, args ) {
-    var spawn = require('child_process').spawn;
+var child;
+
+function run_cmd(opts, cmd, args) {
     child = spawn(cmd, args);
-    var resp = "";
 
     child.stdout.on('data', function (buffer) {
         var text = buffer.toString();
         process.stdout.write(text);
-        if(text.indexOf("==> default: [INFO] BUILD FAILURE") > -1) {
+        if (text.indexOf("==> default: [INFO] BUILD FAILURE") > -1) {
             killProcess(1);
         }
-        if(download) {
+        if (opts.downloadOnly) {
             if (text.indexOf("starting...") > -1) {
                 console.log("Finished downloading artifacts, terminating the process.");
                 killProcess(0);
@@ -114,7 +107,58 @@ function run_cmd(cmd, args ) {
     });
 }
 
+var getCliOpts = function (callback) {
+    var nn = nomnom
+            .option('debug', {
+                abbr: 'd',
+                flag: true,
+                help: 'Print debugging info'
+            })
+            .option('product', {
+                abbr: 'p',
+                required: true,
+                choices: ['jira', 'confluence'],
+                help: 'Selects the product to start'
+            })
+            .option('beta', {
+                flag: true,
+                default: false,
+                help: 'Use the version of Connect in development (bleeding edge, may be unstable)'
+            })
+            .option('downloadOnly', {
+                flag: true,
+                help: 'If true, downloads but does not start the product'
+            })
+            .option('startupCommandsUrl', {
+                default: 'https://developer.atlassian.com/static/connect/commands/connect-versions.json',
+                help: 'The URL with connect versions to download'
+            })
+            .option('commandsCacheFile', {
+                default: '/home/vagrant/scripts/cache/commands.json',
+                help: 'The local file to cache command versions'
+            });
+
+    if (callback) {
+        nn = callback(nn);
+    }
+    return nn;
+};
+
+exports.run = function (runOpts) {
+    var nomnom = getCliOpts(runOpts ? runOpts.cliOptsCallback : false);
+
+    var opts = runOpts;
+    opts = extend(opts, nomnom.parse());
+
+    doRun(opts);
+};
+
+if (selfExecute) {
+    exports.run();
+}
+
+
 function killProcess(code) {
-    child.kill();
+    child && child.kill();
     process.exit(code);
 }

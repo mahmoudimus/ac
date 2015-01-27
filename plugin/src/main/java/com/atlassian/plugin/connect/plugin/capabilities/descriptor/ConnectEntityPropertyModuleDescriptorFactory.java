@@ -48,6 +48,10 @@ public class ConnectEntityPropertyModuleDescriptorFactory implements ConnectModu
                 final Element propertyExtractionElement = keyConfigurationElement.addElement("extract");
                 propertyExtractionElement.addAttribute("path", extractionBean.getObjectName());
                 propertyExtractionElement.addAttribute("type", extractionBean.getType().toString());
+                if (extractionBean.getAlias() != null)
+                {
+                    propertyExtractionElement.addAttribute("alias", extractionBean.getAlias());
+                }
             }
         }
 
