@@ -12,7 +12,7 @@
 *
 */
 
-var client = new (require('node-rest-client').Client)(),
+var request = require('request'),
         fs = require('fs'),
         _ = require('lodash'),
         async = require('async'),
@@ -76,7 +76,10 @@ var _oldCommands= {};
 var _index = [];
 
 function getVersionsForEnv(opts, env, callback) {
-    client.get(opts.manifestoBaseUrl + '/api/env/jirastudio-' + env, function (data, response) {
+    request.get({
+        url: opts.manifestoBaseUrl + '/api/env/jirastudio-' + env,
+        json: true
+    }, function (error, response, data) {
         opts.debug && console.log('Info'.yellow, 'Retrieved manifesto versions for ' + env.blue);
 
         _.each(['jira', 'confluence'], function (product) {
@@ -105,17 +108,22 @@ function getVersionsForEnv(opts, env, callback) {
 }
 
 function createAndExportCommands(opts) {
-       createCommands();
+    createCommands();
     opts.debug && console.log('Info'.yellow, 'Retrieving versions from DAC');
 
-    var dacConnectVersionsUrl = opts.dacBaseUrl + '/' + opts.outputFile + '.json';
+    request.get({
+        url: opts.dacBaseUrl + '/connect/commands/' + opts.outputFile + '.json',
+        json: true
+    }, function (error, response, data) {
+        if (error) {
+            console.log(error);
+        } else {
+            _oldCommands = data;
 
-    client.get(dacConnectVersionsUrl, function (data, response) {
-        _oldCommands = data;
-        
-        if (newVersionsAvailable(opts)) {
-            opts.debug && console.log('Info'.blue, 'New versions available, regenerating commands');
-            exportCommands(opts);
+            if (newVersionsAvailable(opts)) {
+                opts.debug && console.log('Info'.blue, 'New versions available, regenerating commands');
+                exportCommands(opts);
+            }
         }
     });
 }
@@ -174,10 +182,16 @@ function exportCommands(opts) {
     mkdirp(opts.outputDir, function(err) {
         if(err) {
             console.log('Error'.red, ' Target directory ' + opts.outputDir + ' could not be created: ' + err);
-            } else {
+        } else {
             var indexFile = opts.outputFile + '-history.json';
-            var versionsIndexUrl = opts.dacBaseUrl + indexFile;
-            client.get(versionsIndexUrl, function (data, response) {
+            request.get({
+                url: opts.dacBaseUrl + indexFile,
+                json: true
+            }, function (error, response, data) {
+                if (error) {
+                    console.log(error);
+                    return;
+                }
                 if(response.statusCode != 404) {
                     _index = data;
                 }
