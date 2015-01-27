@@ -17,7 +17,7 @@ import java.util.List;
  *
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#ENTITY_PROPERTY_EXAMPLE}
+ * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ENTITY_PROPERTY_EXAMPLE}
  * @schemaTitle Entity Property
  * @since 1.0
  */

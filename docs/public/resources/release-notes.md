@@ -19,7 +19,7 @@
 </div>
 
 The version numbers for the Atlassian Connect framework and Atlassian products which support it are published in 
-[this JSON file](https://developer.atlassian.com/static/connect-versions.json), which you can poll periodically to 
+[this JSON file](https://developer.atlassian.com/static/connect/commands/connect-versions.json), which you can poll periodically to
 find out about new production and development (bleeding edge) releases. You can start a local instance of JIRA 
 or Confluence Cloud with Atlassian Connect as follows:
 
@@ -32,6 +32,16 @@ or Confluence Cloud with Atlassian Connect as follows:
 <div id="runproduct-vagrant" class="aui-expander-content">
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
+## [1.1.21](../release-notes/1-1-0.html#1.1.21)
+* Confluence: Added support for render modes for Dynamic Content Macros [CE-66](https://ecosystem.atlassian.net/browse/CE-66)
+* JIRA: Added support for aliases in Entity Properties [ACJIRA-250](https://ecosystem.atlassian.net/browse/ACJIRA-250)
+* JIRA: Added context parameters for Agile Boards [ACJIRA-272](https://ecosystem.atlassian.net/browse/ACJIRA-272)
+* Improved REST API for license information [AC-1370](https://ecosystem.atlassian.net/browse/AC-1370)
+* Confluence: Fixed error when inserting Connect macros in Internet Explorer [CE-74](https://ecosystem.atlassian.net/browse/CE-74)
+* JIRA: Whitelisted endpoints for thumbnails and user avatars [AC-1472](https://ecosystem.atlassian.net/browse/AC-1472)
+* JIRA: Fixed `has_issue_permission` or `has_project_permission` for web items [ACJIRA-263](https://ecosystem.atlassian.net/browse/ACJIRA-263)
+* JIRA: Fixed rendering strategy for dialogs when JWT token expired [ACJIRA-275](https://ecosystem.atlassian.net/browse/ACJIRA-275)
+* Enabled installation of add-ons without modules [AC-1439](https://ecosystem.atlassian.net/browse/AC-1439)
 
 ## [1.1.18](../release-notes/1-1-0.html#1.1.18)
 * Fixed: Confluence macro editor replaces page content after it gets closed in Internet Explorer

@@ -7,6 +7,7 @@ import com.atlassian.pageobjects.elements.WebDriverElement;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.google.common.base.Function;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -15,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +58,7 @@ public class ConnectAddOnPage
                 : ModuleKeyUtils.addonAndModuleKey(addOnKey, pageElementKey);
         final String id = prefix + suffix;
         PageElement containerDivElement = elementFinder.find(By.id(id));
+        final long startTime = System.currentTimeMillis();
 
         try
         {
@@ -63,15 +66,43 @@ public class ConnectAddOnPage
         }
         catch (AssertionError e)
         {
-            // failed to find the iframe, or iframe initialization never finished...
-            // the developer debugging this will appreciate a little help in the bamboo logs
-            // so that they don't have to run the product and attach a debugger just to find out the parameters
-            log.error("Waiting for the container div '{}' to get the class '{}' timed out. addOnKey='{}', pageElementKey='{}', includeEmbeddedPrefix={}",
-                    new Object[]{ id, IFRAME_INIT, addOnKey, pageElementKey, includedEmbeddedPrefix });
+            debugIframeFailure(id, containerDivElement);
             throw e;
         }
 
+        final long stopTime = System.currentTimeMillis();
+        log.debug("Milliseconds to find iframe-init class on ap-content container div: {}", stopTime - startTime);
         this.containerDiv = ((WebDriverElement)containerDivElement).asWebElement();
+    }
+
+    private void debugIframeFailure(String containerDivId, PageElement containerDivElement)
+    {
+        // failed to find the iframe, or iframe initialization never finished...
+        // the developer debugging this will appreciate a little help in the bamboo logs
+        // so that they don't have to run the product and attach a debugger just to find out the parameters
+        log.error("Waiting for the container div '{}' to get the class '{}' timed out. addOnKey='{}', pageElementKey='{}', includeEmbeddedPrefix={}",
+                new Object[]{ containerDivId, IFRAME_INIT, addOnKey, pageElementKey, includedEmbeddedPrefix });
+
+        // this could be because the add-on is not responding to requests for iframe content, so log iframe content
+        try
+        {
+            final PageElement iframe = containerDivElement.find(By.tagName("iframe"));
+
+            if (iframe.isPresent())
+            {
+                final String iframeSrc = iframe.getAttribute("src");
+                log.debug("iframe src='{}'", iframeSrc);
+                log.debug("iframe src response='{}'", IOUtils.toString(URI.create(iframeSrc)));
+            }
+            else
+            {
+                log.error("iframe element is not present inside div '{}'", containerDivId);
+            }
+        }
+        catch (Exception e)
+        {
+            log.error("Failed to log iframe content for debugging.", e);
+        }
     }
 
     public Map<String, String> getIframeQueryParams()

@@ -1,6 +1,14 @@
 package it.com.atlassian.plugin.connect.util;
 
+import com.atlassian.jwt.SigningAlgorithm;
+import com.atlassian.jwt.core.HttpRequestCanonicalizer;
 import com.atlassian.jwt.core.JwtUtil;
+import com.atlassian.jwt.core.writer.JsonSmartJwtJsonBuilder;
+import com.atlassian.jwt.core.writer.NimbusJwtWriterFactory;
+import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
+import com.atlassian.jwt.writer.JwtJsonBuilder;
+import com.atlassian.jwt.writer.JwtWriter;
+import com.atlassian.jwt.writer.JwtWriterFactory;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
@@ -16,8 +24,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.net.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class RequestUtil
@@ -83,7 +93,7 @@ public class RequestUtil
 
     public Request.Builder requestBuilder()
     {
-        return new Request.Builder();
+        return new Request.Builder(applicationProperties.getBaseUrl(UrlMode.ABSOLUTE));
     }
 
     public String getApplicationRestUrl(String path)
@@ -113,6 +123,7 @@ public class RequestUtil
         try
         {
             int responseCode = connection.getResponseCode();
+            Map<String, List<String>> headerFields = connection.getHeaderFields();
             StringBuilder output = new StringBuilder();
 
             InputStream response = responseCode == 200 ? connection.getInputStream() : connection.getErrorStream();
@@ -130,7 +141,7 @@ public class RequestUtil
                 reader.close();
                 response.close();
             }
-            return new Response(responseCode, output.toString());
+            return new Response(responseCode, headerFields, output.toString());
         }
         finally
         {
@@ -193,6 +204,15 @@ public class RequestUtil
             private String username;
             private String password;
             private boolean isJson = true;
+            private boolean includeJwtAuthentication = false;
+            private String applicationBaseUrl;
+            private String addonKey;
+            private String addonSecret;
+
+            private Builder(String applicationBaseUrl)
+            {
+                this.applicationBaseUrl = applicationBaseUrl;
+            }
 
             public Builder setMethod(final HttpMethod method)
             {
@@ -230,9 +250,41 @@ public class RequestUtil
                 return this;
             }
 
+            public Builder setIncludeJwtAuthentication(String addonKey, String addonSecret)
+            {
+                this.includeJwtAuthentication = true;
+                this.addonKey = addonKey;
+                this.addonSecret = addonSecret;
+                return this;
+            }
+
             public Request build()
             {
+                if (this.includeJwtAuthentication) {
+                    appendJwtToUri();
+                }
                 return new Request(method, uri, username, password, isJson);
+            }
+
+            private void appendJwtToUri()
+            {
+                String queryHash;
+                try
+                {
+                    queryHash = HttpRequestCanonicalizer.computeCanonicalRequestHash(
+                            new CanonicalHttpUriRequest(method.name(), uri.getPath(),
+                                    URI.create(applicationBaseUrl).getPath()));
+                }
+                catch (Exception e)
+                {
+                    throw new RuntimeException(e);
+                }
+
+                JwtWriterFactory jwtWriterFactory = new NimbusJwtWriterFactory();
+                JwtWriter jwtWriter = jwtWriterFactory.macSigningWriter(SigningAlgorithm.HS256, addonSecret);
+                JwtJsonBuilder jsonBuilder = new JsonSmartJwtJsonBuilder().issuer(addonKey).queryHash(queryHash);
+                String jwtToken = jwtWriter.jsonToJwt(jsonBuilder.build());
+                this.uri = URI.create(uri.toString() + "?jwt=" + jwtToken);
             }
         }
     }
@@ -240,11 +292,13 @@ public class RequestUtil
     public static class Response
     {
         private final int statusCode;
+        private Map<String, List<String>> headerFields;
         private final String body;
 
-        public Response(int statusCode, String body)
+        public Response(int statusCode, Map<String, List<String>> headerFields, String body)
         {
             this.statusCode = statusCode;
+            this.headerFields = headerFields;
             this.body = body;
         }
 
@@ -253,6 +307,10 @@ public class RequestUtil
             return statusCode;
         }
 
+        public Map<String, List<String>> getHeaderFields()
+        {
+            return headerFields;
+        }
         public String getBody()
         {
             return body;
@@ -262,6 +320,14 @@ public class RequestUtil
         {
             Gson gson = new Gson();
             return gson.fromJson(body, Map.class);
+        }
+
+        public <T> T getJsonBody(Class<T> bodyClass) {
+            return new Gson().fromJson(body, bodyClass);
+        }
+
+        public <T> T getJsonBody(Type bodyType) {
+            return new Gson().fromJson(body, bodyType);
         }
     }
 }

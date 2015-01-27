@@ -130,6 +130,11 @@ public class ConnectRunner
         installer.uninstall(addon.getKey());
     }
 
+    public void setAddonEnabled(boolean enabled) throws Exception
+    {
+        installer.setEnabled(addon.getKey(), enabled);
+    }
+
     public ConnectAddonBean getAddon()
     {
         return addon;

@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.imports;
 import com.atlassian.bandana.BandanaManager;
 import com.atlassian.confluence.content.render.xhtml.StorageFormatCleaner;
 import com.atlassian.confluence.core.ContentEntityManager;
+import com.atlassian.confluence.license.LicenseService;
 import com.atlassian.confluence.pages.PageManager;
 import com.atlassian.confluence.plugin.descriptor.web.ConfluenceWebFragmentHelper;
 import com.atlassian.confluence.security.PermissionManager;
@@ -39,6 +40,7 @@ public class ConfluenceImports
             @ConfluenceImport BandanaManager bandanaManager,
             @ConfluenceImport @Qualifier("contentEntityManager") ContentEntityManager contentEntityManager,
             @ConfluenceImport I18NBeanFactory i18NBeanFactory,
+            @ConfluenceImport LicenseService licenseService,
             @ConfluenceImport MultiQueueTaskManager multiQueueTaskManager,
             @ConfluenceImport PageManager pageManager,
             @ConfluenceImport ("confluencePermissionManager") PermissionManager permissionManager,

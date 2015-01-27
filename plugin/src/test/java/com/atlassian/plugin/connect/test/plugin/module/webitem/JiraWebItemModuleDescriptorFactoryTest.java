@@ -5,7 +5,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor;
+import com.atlassian.plugin.connect.plugin.iframe.webpanel.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.module.webitem.JiraWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
@@ -32,8 +32,8 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
-@Ignore("convert to wired test")
-@RunWith(MockitoJUnitRunner.class)
+@Ignore ("convert to wired test")
+@RunWith (MockitoJUnitRunner.class)
 public class JiraWebItemModuleDescriptorFactoryTest
 {
     @Mock
@@ -52,7 +52,7 @@ public class JiraWebItemModuleDescriptorFactoryTest
     private IFrameUriBuilderFactory iFrameUriBuilderFactory;
 
     @Mock
-    private WebFragmentModuleContextExtractor webFragmentModuleContextExtractor;
+    private PluggableParametersExtractor webFragmentModuleContextExtractor;
 
     @Mock
     private UrlVariableSubstitutor urlVariableSubstitutor;
@@ -80,7 +80,7 @@ public class JiraWebItemModuleDescriptorFactoryTest
                 false,
                 product,
                 false);
-        
+
         descriptor.init(plugin, createElement());
         descriptor.enabled();
     }
@@ -103,6 +103,5 @@ public class JiraWebItemModuleDescriptorFactoryTest
     {
         assertThat(descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()), is("ElContexto/myplugin?my_project_id=&my_project_key="));
     }
-
 
 }

@@ -164,7 +164,8 @@ public class TestReport extends JiraWebDriverTestBase
         final AbstractProjectReportPage reportPage = goToProjectsReportPage(page);
         List<ReportLink> reports = reportPage.getReports();
 
-        assertThat(reports, hasItems(equalToReport(firstTestReport), equalToReport(secondTestReport)));
+        Matcher<Iterable<ReportLink>> matcher = hasItems(equalToReport(firstTestReport), equalToReport(secondTestReport));
+        assertThat(reports, matcher);
     }
 
     public <T extends AbstractProjectReportPage> void connectReportDisplaysIframe(final Class<T> page)

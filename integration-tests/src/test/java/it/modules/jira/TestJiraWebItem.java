@@ -32,9 +32,17 @@ import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionB
 import static com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions.newDialogOptions;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static it.modules.ConnectAsserts.verifyStandardAddOnRelativeQueryParameters;
-import static it.util.TestUser.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static it.util.TestUser.ADMIN;
+import static it.util.TestUser.BARNEY;
+import static it.util.TestUser.BETTY;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @since 1.0
@@ -174,7 +182,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         assertThat(webItem.getPath(), startsWith("http://www.google.com/?"));
         assertThat(webItem.getFromQueryString("myProjectKey"), equalTo(project.getKey()));
     }
-    
+
     @Test
     public void testRelativePageWebItem()
     {
@@ -348,8 +356,8 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(moduleKey), Optional.<String>absent());
         webItem.click();
         RemoteDialog dialogPage = product.getPageBinder().bind(RemoteDialog.class);
-        assertNotEquals("webitem dialog has a height that is not 0", dialogPage.getIFrameSize().getHeight(), 0);
-        assertNotEquals("webitem dialog has a width that is not 0", dialogPage.getIFrameSize().getWidth(), 0);
+        assertThat("webitem dialog has a height that is not 0", dialogPage.getIFrameSize().getHeight(), is(not(0)));
+        assertThat("webitem dialog has a width that is not 0", dialogPage.getIFrameSize().getWidth(), is(not(0)));
 
     }
 

@@ -26,6 +26,7 @@ public class ServletRequestSnapshot
     private final String serverName;
     private final int serverPort;
     private final String entity;
+    private final UserProfile remoteUserProfile;
     private final String remoteUsername;
 
     public ServletRequestSnapshot(HttpServletRequest request, UserManager userManager)
@@ -61,7 +62,8 @@ public class ServletRequestSnapshot
         }
         
         this.entity = extractEntity(request);
-        final UserProfile remoteUser = userManager.getRemoteUser(request);
+        UserProfile remoteUser = userManager.getRemoteUser(request);
+        this.remoteUserProfile = remoteUser;
         this.remoteUsername = null == remoteUser ? null : remoteUser.getUsername();
     }
 
@@ -179,6 +181,11 @@ public class ServletRequestSnapshot
     public String getRemoteUsername()
     {
         return remoteUsername;
+    }
+
+    public UserProfile getRemoteUserProfile()
+    {
+        return remoteUserProfile;
     }
 
     private String getJwtHeader()
