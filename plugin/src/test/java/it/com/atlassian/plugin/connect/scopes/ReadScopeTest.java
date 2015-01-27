@@ -5,11 +5,16 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
-import it.com.atlassian.plugin.connect.ParameterizedWiredTest;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-@ParameterizedWiredTest
+/**
+ * These tests are not exhaustive. They are samples across the cross-product endpoints.
+ */
+@RunWith(AtlassianPluginsTestRunner.class)
 public class ReadScopeTest extends ScopeTestBase
 {
     public ReadScopeTest(TestPluginInstaller testPluginInstaller,
@@ -18,19 +23,19 @@ public class ReadScopeTest extends ScopeTestBase
                          ConnectAddonRegistry connectAddonRegistry,
                          ApplicationProperties applicationProperties)
     {
-        super(ScopeName.READ, testPluginInstaller, testAuthenticator, jwtWriterFactory, connectAddonRegistry, applicationProperties);
+        super(ScopeName.READ, testPluginInstaller, testAuthenticator, jwtWriterFactory, connectAddonRegistry,
+                applicationProperties);
     }
 
-    /**
-     * These tests are not exhaustive. They are samples across the cross-product endpoints.
-     */
-    @ParameterizedWiredTest.Parameters(name="httpRequest", length=4)
-    protected Object[][] data = new Object[][]
+    @Test
+    public void shouldAllowGetApplinksEntities() throws Exception
     {
-            // TODO: ACDEV-1333 new Object[]{ HttpMethod.GET,  "/rest/atlassian-connect/1/license", true },
-            { HttpMethod.GET,  "/rest/applinks/2.0/entities", true },
-            { HttpMethod.POST, "/rest/applinks/2.0/entities", false },
-            { HttpMethod.GET,  "/rest/greenhopper/1.0/rapidview", isJiraProduct() },
-            { HttpMethod.PUT,  "/rest/greenhopper/1.0/api/rank/before", false }
-    };
+        assertValidRequest(HttpMethod.GET, "/rest/applinks/2.0/entities");
+    }
+
+    @Test
+    public void shouldForbidPostApplinksEntities() throws Exception
+    {
+        assertForbiddenRequest(HttpMethod.POST, "/rest/applinks/2.0/entities");
+    }
 }

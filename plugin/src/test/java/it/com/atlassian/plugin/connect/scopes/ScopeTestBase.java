@@ -1,6 +1,7 @@
 package it.com.atlassian.plugin.connect.scopes;
 
 import com.atlassian.extras.api.Product;
+import com.atlassian.httpclient.api.HttpStatus;
 import com.atlassian.jwt.SigningAlgorithm;
 import com.atlassian.jwt.core.HttpRequestCanonicalizer;
 import com.atlassian.jwt.core.writer.JsonSmartJwtJsonBuilder;
@@ -19,7 +20,6 @@ import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
-import it.com.atlassian.plugin.connect.ParameterizedWiredTest;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import it.com.atlassian.plugin.connect.util.RequestUtil;
 import org.junit.AfterClass;
@@ -53,7 +53,7 @@ public abstract class ScopeTestBase
     private final JwtWriterFactory jwtWriterFactory;
     private final ConnectAddonRegistry connectAddonRegistry;
     private final ApplicationProperties applicationProperties;
-    private final RequestUtil requestUtil;
+    protected final RequestUtil requestUtil;
 
     private ConnectAddonBean addOnBean;
     private Plugin addOn;
@@ -74,16 +74,6 @@ public abstract class ScopeTestBase
         this.connectAddonRegistry = connectAddonRegistry;
         this.applicationProperties = applicationProperties;
         this.requestUtil = new RequestUtil(applicationProperties);
-    }
-
-    @ParameterizedWiredTest.Test
-    protected void test(HttpMethod httpMethod, String uriSuffix, boolean shouldBeOk) throws IOException, NoSuchAlgorithmException
-    {
-        int expectedResponseCode = shouldBeOk ? 200 : 403;
-        URI uri = constructUri(httpMethod, uriSuffix);
-        RequestUtil.Response response = issueRequest(httpMethod, uri);
-        String message = String.format("Expecting HTTP response code %d from %s %s but was %d.", expectedResponseCode, httpMethod, uri, response.getStatusCode());
-        assertEquals(message, expectedResponseCode, response.getStatusCode());
     }
 
     @BeforeClass
@@ -137,6 +127,26 @@ public abstract class ScopeTestBase
         testAuthenticator.unauthenticate();
     }
 
+    protected void assertValidRequest(HttpMethod method, String path) throws IOException, NoSuchAlgorithmException
+    {
+        assertResponseCodeForRequest(method, path, HttpStatus.OK);
+    }
+
+    protected void assertForbiddenRequest(HttpMethod method, String path) throws IOException, NoSuchAlgorithmException
+    {
+        assertResponseCodeForRequest(method, path, HttpStatus.FORBIDDEN);
+    }
+
+    private void assertResponseCodeForRequest(HttpMethod httpMethod, String uriSuffix, HttpStatus status)
+            throws IOException, NoSuchAlgorithmException
+    {
+        URI uri = constructUri(httpMethod, uriSuffix);
+        RequestUtil.Response response = issueRequest(httpMethod, uri);
+        String message = String.format("Expecting HTTP response code %d from %s %s but was %d.",
+                status.code, httpMethod, uri, response.getStatusCode());
+        assertEquals(message, status.code, response.getStatusCode());
+    }
+
     private URI constructUri(HttpMethod httpMethod, String uriSuffix) throws UnsupportedEncodingException, NoSuchAlgorithmException
     {
         final URI hostProductBaseUrl = URI.create(applicationProperties.getBaseUrl(UrlMode.CANONICAL));
@@ -164,9 +174,5 @@ public abstract class ScopeTestBase
                 .build();
 
         return requestUtil.makeRequest(request);
-    }
-
-    protected boolean isJiraProduct() {
-        return Product.JIRA.getName().equals(applicationProperties.getDisplayName());
     }
 }

@@ -19,10 +19,10 @@ public class ConnectIFrameWebPanel implements WebPanel
 {
     private final IFrameRenderStrategy renderStrategy;
     private final ModuleContextFilter moduleContextFilter;
-    private final WebFragmentModuleContextExtractor moduleContextExtractor;
+    private final PluggableParametersExtractor moduleContextExtractor;
 
     public ConnectIFrameWebPanel(IFrameRenderStrategy renderStrategy, ModuleContextFilter moduleContextFilter,
-            WebFragmentModuleContextExtractor moduleContextExtractor)
+            PluggableParametersExtractor moduleContextExtractor)
     {
         this.renderStrategy = renderStrategy;
         this.moduleContextFilter = moduleContextFilter;

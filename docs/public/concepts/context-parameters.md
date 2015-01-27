@@ -27,6 +27,7 @@ Confluence supports these context variables:
  * `content.id`, `content.version`, `content.type`, `content.plugin`
  * `space.id`, `space.key`
  * `page.id`, `page.version`, `page.type` <span class="aui-lozenge">DEPRECATED</span>
+ * `agileBoard.id`, `agileBoard.mode`
 
 A particular variable is available only where it makes sense given the application context. For example, a JIRA issue
 page only exposes issue and project data. Similarly, version and component information is available only in project

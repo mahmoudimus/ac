@@ -84,3 +84,7 @@ After you do that, you'll need to run:
     npm run-script update
 
 This will pick up the updated JSON schema and update `harp.json` with the new schema.
+
+## Doc redirects
+
+See https://extranet.atlassian.com/x/aYk3j

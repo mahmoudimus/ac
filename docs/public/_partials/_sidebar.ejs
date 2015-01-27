@@ -26,21 +26,12 @@
             <%- partial('_sidebar_list.ejs', { category: 'developing' }) %>
 
             <div class="aui-nav-heading">
-                <a href="<%= relDocRoot %>modules/">AddOn Descriptor</a>
+                <a href="<%= relDocRoot %>modules/">Addon Descriptor</a>
             </div>
-            <ul class="aui-nav">
-                <li <%= selected('modules/authentication') %>>
-                    <a href="<%= relDocRoot %>modules/authentication.html">Authentication</a>
-                </li>
-                <li <%= selected('modules/lifecycle') %>>
-                    <a href="<%= relDocRoot %>modules/lifecycle.html">Lifecycle</a>
-                </li>
-                <li <%= selected('modules/plugin-vendor') %>>
-                    <a href="<%= relDocRoot %>modules/plugin-vendor.html">Plugin Vendor</a>
-                </li>
-            </ul>
+            <%- partial('_sidebar_list.ejs', { category: 'modules' }) %>
 
             <%- partial('_module_list.ejs', { title: "JIRA Modules", modules: entities.jira, relDocRoot: relDocRoot }) %>
+
             <%- partial('_module_list.ejs', { title: "Confluence Modules", modules: entities.confluence, relDocRoot: relDocRoot }) %>
 
             <div class="aui-nav-heading">
@@ -49,14 +40,18 @@
             <%- partial('_module_list.ejs', { title: "Javascript API", modules: public.javascript._data, relDocRoot: relDocRoot }) %>
 
             <div class="aui-nav-heading">
-                <a href="<%= relDocRoot %>rest-apis/product-api-browser.html">Using Product APIs</a>
+                <a href="<%= relDocRoot %>rest-apis/index.html">REST APIs</a>
             </div>
+            <%- partial('_sidebar_list.ejs', { category: 'rest-apis' }) %>
 
             <div class="aui-nav-heading">
                 <a href="<%= relDocRoot %>scopes/scopes.html">Product API Scopes</a> <span class="aui-lozenge aui-lozenge-success">new!</span>
             </div>
             <%- partial('_sidebar_list.ejs', { category: 'scopes' }) %>
 
+            <div class="aui-nav-heading">
+                <strong>Resources</strong>
+            </div>
             <%- partial('_sidebar_list.ejs', { category: 'resources' }) %>
 
         </div>

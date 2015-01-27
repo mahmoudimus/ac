@@ -27,6 +27,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -398,7 +399,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     {
         editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         final Editor editor = editorPage.getEditor();
-        enableMacrosDropdown(editor);
+        enableMacrosDropdown(editorPage);
         ConfluenceInsertMenu insertMenu = (ConfluenceInsertMenu) editor.openInsertMenu();
         assertThat(insertMenu.hasEntryWithKey(FEATURED_MACRO_KEY), is(true));
     }
@@ -578,6 +579,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
 
         try
         {
+            editorPage.dismissEditorNotifications();
             editorPage.setTitle(randomName(title));
             selectMacroAndSave(editorPage, macroName);
             savedPage = save(editorPage);

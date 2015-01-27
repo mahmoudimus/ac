@@ -13,4 +13,9 @@ public enum LicenseStatus
     {
         return toString().toLowerCase(Locale.US);
     }
+
+    public static LicenseStatus fromBoolean(boolean active)
+    {
+        return active ? LicenseStatus.ACTIVE : LicenseStatus.NONE;
+    }
 }

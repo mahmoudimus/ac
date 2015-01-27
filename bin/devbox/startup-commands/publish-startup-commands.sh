@@ -8,5 +8,5 @@ fi
 
 if [ -d "target" ]; then
 	echo "New command was created, deploying to DAC"
-	scp target/* uploads@developer-app.internal.atlassian.com:~/static/
+	scp target/* uploads@developer-app.internal.atlassian.com:~/static/connect/commands
 fi

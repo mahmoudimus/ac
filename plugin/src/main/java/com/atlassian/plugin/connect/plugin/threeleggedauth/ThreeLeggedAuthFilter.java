@@ -23,6 +23,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.security.Principal;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -32,8 +34,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.security.Principal;
 
 import static com.atlassian.jwt.JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -51,7 +51,7 @@ public class ThreeLeggedAuthFilter implements Filter
     private final String badCredentialsMessage; // protect against phishing by not saying whether the add-on, user or secret was wrong
 
     private final static Logger log = LoggerFactory.getLogger(ThreeLeggedAuthFilter.class);
-    private static final String MSG_FORMAT_NOT_ALLOWING_IMPERSONATION = "NOT allowing add-on '%s' to impersonate user '%s'";
+    private static final String MSG_FORMAT_NOT_ALLOWING_IMPERSONATION = "Add-on '%s' disallowed to impersonate user '%s'";
 
     @Autowired
     public ThreeLeggedAuthFilter(ThreeLeggedAuthService threeLeggedAuthService,
@@ -133,9 +133,15 @@ public class ThreeLeggedAuthFilter implements Filter
             HttpSession session = request.getSession(false); // don't create a session if there is none
             try
             {
-                if (null != subject && shouldAllowImpersonation(request, response, subject, addOnBean))
+                UserProfile impersonatedUserProfile = null;
+                if (null != subject)
                 {
-                    impersonateSubject(filterChain, request, response, subject);
+                    impersonatedUserProfile = getUserProfileIfImpersonationAllowed(request, response, subject, addOnBean);
+                }
+
+                if (impersonatedUserProfile != null)
+                {
+                    impersonateSubject(filterChain, request, response, impersonatedUserProfile);
                 }
                 else
                 {
@@ -163,15 +169,15 @@ public class ThreeLeggedAuthFilter implements Filter
         fail(request, response, externallyVisibleMessage, HttpServletResponse.SC_BAD_REQUEST);
     }
 
-    private boolean shouldAllowImpersonation(HttpServletRequest request, HttpServletResponse response, String subject, ConnectAddonBean addOnBean) throws InvalidSubjectException
+    /**
+     * @return Return the user profile to impersonate with if allowed, otherwise null
+     */
+    private UserProfile getUserProfileIfImpersonationAllowed(HttpServletRequest request, HttpServletResponse response, String subject, ConnectAddonBean addOnBean) throws InvalidSubjectException
     {
-        boolean allowImpersonation = false;
-
         if (getBoolean(SYS_PROP_ALLOW_IMPERSONATION))
         {
             log.warn("Allowing add-on '{}' to impersonate user '{}' because the system property '{}' is set to true.", new String[]{ addOnBean.getKey(), subject, SYS_PROP_ALLOW_IMPERSONATION });
-            getUserKey(request, response, addOnBean.getKey(), subject);
-            allowImpersonation = true;
+            return getUserProfile(request, response, addOnBean.getKey(), subject);
         }
         else
         {
@@ -179,16 +185,17 @@ public class ThreeLeggedAuthFilter implements Filter
             {
                 log.warn("Ignoring subject claim '{}' on incoming request '{}' from Connect add-on '{}' because the {} said so.",
                         new String[]{subject, request.getRequestURI(), addOnBean.getKey(), threeLeggedAuthService.getClass().getSimpleName()});
+                return null;
             }
             else
             {
-                final UserKey userKey = getUserKey(request, response, addOnBean.getKey(), subject);
+                final UserProfile userProfile = getUserProfile(request, response, addOnBean.getKey(), subject);
 
                 // a valid grant must exist
-                if (threeLeggedAuthService.hasGrant(userKey, addOnBean))
+                if (threeLeggedAuthService.hasGrant(userProfile.getUserKey(), addOnBean))
                 {
                     log.info("Allowing add-on '{}' to impersonate user '{}' because a user-agent grant exists.", addOnBean.getKey(), subject);
-                    allowImpersonation = true;
+                    return userProfile;
                 }
                 else
                 {
@@ -199,13 +206,13 @@ public class ThreeLeggedAuthFilter implements Filter
                 }
             }
         }
-
-        return allowImpersonation;
     }
 
-    private void impersonateSubject(FilterChain filterChain, HttpServletRequest request, HttpServletResponse response, String subject) throws IOException, ServletException
+    private void impersonateSubject(FilterChain filterChain, HttpServletRequest request, HttpServletResponse response, UserProfile userProfile) throws IOException, ServletException
     {
-        final Authenticator.Result authenticationResult = new Authenticator.Result.Success(createMessage("Successful three-legged-auth"), new SimplePrincipal(subject));
+        // Products use the username to set the authentication context.
+        SimplePrincipal principal = new SimplePrincipal(userProfile.getUsername());
+        final Authenticator.Result authenticationResult = new Authenticator.Result.Success(createMessage("Successful three-legged-auth"), principal);
         authenticationListener.authenticationSuccess(authenticationResult, request, response);
         filterChain.doFilter(request, response);
     }
@@ -226,34 +233,28 @@ public class ThreeLeggedAuthFilter implements Filter
     }
 
     // a null return value means that a failure response has been returned
-    private UserKey getUserKey(HttpServletRequest request, HttpServletResponse response, String addOnKey, String subject) throws InvalidSubjectException
+    private UserProfile getUserProfile(HttpServletRequest request, HttpServletResponse response, String addOnKey, String subject) throws InvalidSubjectException
     {
-        final User user = crowdService.getUser(subject);
+        UserKey userKey = new UserKey(subject);
+        UserProfile userProfile = userManager.getUserProfile(userKey);
 
-        // the user must exist
-        if (null == user)
+        if (null == userProfile)
         {
             String externallyVisibleMessage = String.format(MSG_FORMAT_NOT_ALLOWING_IMPERSONATION, addOnKey, subject);
-            log.warn("{} because the crowd service says that there is no user with this username.", externallyVisibleMessage);
+            log.warn("{} because we can't find a user with this user key.", externallyVisibleMessage);
             fail(request, response, externallyVisibleMessage, HttpServletResponse.SC_UNAUTHORIZED);
             throw new InvalidSubjectException(subject);
         }
         else
         {
+            User user = crowdService.getUser(userProfile.getUsername());
             // no impersonating an inactive user; no zombies
-            if (user.isActive())
+            if (user == null)
             {
-                UserProfile userProfile = userManager.getUserProfile(user.getName());
-
-                if (null == userProfile)
-                {
-                    // if this ever happens then our internal libs disagree on what is a user and what is not
-                    throw new RuntimeException(String.format("The Crowd service said that user '%s' exists but the SAL user manager cannot find a profile.", user.getName()));
-                }
-
-                return userProfile.getUserKey();
+                // if this ever happens then our internal libs disagree on what is a user and what is not
+                throw new RuntimeException(String.format("The user manager said that user '%s' exists but Crowd does not know about it.", userProfile.getUsername()));
             }
-            else
+            else if (!user.isActive())
             {
                 String externallyVisibleMessage = String.format(MSG_FORMAT_NOT_ALLOWING_IMPERSONATION, addOnKey, subject);
                 log.debug("{} because the crowd service says that this user is inactive.", externallyVisibleMessage);
@@ -261,6 +262,7 @@ public class ThreeLeggedAuthFilter implements Filter
                 throw new InvalidSubjectException(subject);
             }
         }
+        return userProfile;
     }
 
     private void fail(HttpServletRequest request, HttpServletResponse response, String externallyVisibleMessage, int httpResponseCode)

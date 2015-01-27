@@ -312,9 +312,9 @@ public class TestDialog extends ConnectWebDriverTestBase
         clickAndVerifyIssuedAtTime(jwtReaderFactory, page, isInlineDialog); // clicking multiple times should result in a new JWT on subsequent clicks
     }
 
-    private void sleepForAtLeast1Second()
+    private void sleepForAtLeast5Seconds()
     {
-        sleepUntil(System.currentTimeMillis() + 3000);
+        sleepUntil(System.currentTimeMillis() + 5000);
     }
 
     private void sleepUntil(final long wakeTimeMillis)
@@ -337,7 +337,7 @@ public class TestDialog extends ConnectWebDriverTestBase
     private void clickAndVerifyIssuedAtTime(JwtReaderFactory jwtReaderFactory, RemotePluginAwarePage page, final boolean isInlineDialog) throws JwtUnknownIssuerException, JwtParseException, JwtIssuerLacksSharedSecretException, JwtVerificationException
     {
         final long timeBeforeClick = System.currentTimeMillis();
-        sleepForAtLeast1Second(); // because the JWT "iat" claim is specified in seconds there is no way to differentiate between "now" and "now + a few milliseconds"
+        sleepForAtLeast5Seconds(); // because the JWT "iat" claim is specified in seconds there is no way to differentiate between "now" and "now + a few milliseconds"
         openAndCloseDialog(page, isInlineDialog);
         verifyIssuedAtTime(jwtReaderFactory, timeBeforeClick);
     }

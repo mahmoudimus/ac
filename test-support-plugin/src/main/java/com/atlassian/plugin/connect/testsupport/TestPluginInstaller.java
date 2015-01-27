@@ -13,6 +13,8 @@ public interface TestPluginInstaller
 
     void uninstallAddon(Plugin plugin) throws IOException;
 
+    void uninstallAddon(String pluginKey) throws IOException;
+
     void disableAddon(String pluginKey) throws IOException;
 
     void enableAddon(String pluginKey) throws IOException;

@@ -17,11 +17,11 @@ var downloadQueue = async.queue(function (task, callback) {
 }, 3);
 
 downloadQueue.drain = function () {
-}
+};
 
 var includePrivateAddons = function(opts) {
     return _.contains(opts.status, 'private');
-}
+};
 
 var getAddonPage = function(opts, uri, callback) {
     if (opts.debug) {
