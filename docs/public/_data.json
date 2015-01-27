@@ -133,6 +133,11 @@
     {
       "filename": "getting-help.html",
       "title": "Getting help"
+    },
+    {
+      "filename": "add-on-properties.html",
+      "title": "Add-on properties",
+      "new": true
     }
   ]
 }
