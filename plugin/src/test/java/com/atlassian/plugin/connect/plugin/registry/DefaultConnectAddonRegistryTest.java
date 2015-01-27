@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.emptyIterable;
 
 import org.junit.Before;
@@ -68,7 +69,7 @@ public class DefaultConnectAddonRegistryTest
         String[] keys = new String[]{"foo", "bar"};
         List<String> keyList = Arrays.asList(keys);
         when(this.pluginSettings.get(any(String.class))).thenReturn(keyList);
-        assertThat(this.registry.getAllAddonKeys(), contains(keys));
+        assertThat(this.registry.getAllAddonKeys(), containsInAnyOrder(keys));
     }
 
     @Test
