@@ -4,14 +4,12 @@
   "description": "",
   "main": "atlas-run-connect.js",
   "dependencies": {
-    "node-rest-client": "~1.0.3",
-    "sys": "0.0.1",
-    "yargs": "~1.3.1"
+    "colors": "*",
+    "node.extend": "~1.0.9",
+    "nomnom": "~1.6.1",
+    "request": "~2.51.0"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC"
+  }
 }
