@@ -138,6 +138,7 @@ Most modern languages have JWT libraries available. We recommend you use one of 
         </tr>
     </thead>
 	<tr><td>Java</td><td>[atlassian-jwt](https://bitbucket.org/atlassian/atlassian-jwt/) and [jsontoken](https://code.google.com/p/jsontoken/)</td></tr>
+	<tr><td>Python</td><td>[pyjwt](https://github.com/jpadilla/pyjwt)</td></tr>
 	<tr><td>Node.js</td><td>[node-jwt-simple](https://github.com/hokaccha/node-jwt-simple)</td></tr>
 	<tr><td>Ruby</td><td>[ruby-jwt](https://github.com/progrium/ruby-jwt)</td></tr>
 	<tr><td>PHP</td><td>[firebase php-jwt](https://github.com/firebase/php-jwt) and [luciferous jwt](https://github.com/luciferous/jwt)</td></tr>
