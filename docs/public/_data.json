@@ -98,6 +98,11 @@
     {
       "filename": "product-api-browser.html",
       "title": "Product API Browser"
+    },
+    {
+      "filename": "add-on-properties.html",
+      "title": "Add-on properties",
+      "new": true
     }
   ],
   "scopes": [
