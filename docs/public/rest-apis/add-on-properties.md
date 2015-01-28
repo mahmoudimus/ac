@@ -7,120 +7,289 @@ Add-on properties allow plugins to store and retrieve key value pairs. These pro
 
 The following resources are available.
 
-### List all properties
-
-    GET /rest/atlassian-connect/{version}/addons/{addOnKey}/properties
-
-#### Path parameters
-
-* `{version}` - current API version (1)
-* `{addOnKey}` - add-on key for which to list the properties
-
-#### Response Body
-
-##### Success
-    {
-        "keys" : [
-              {
-                "key" : "first_key",
-                "self" : "/rest/api/atlassian-connect/${addOnKey}/properties/first_key"
-              },
-              {
-                  "key" : "another_key",
-                  "self" : "/rest/api/atlassian-connect/${addOnKey}/properties/another_key"
-              }
-        ]
-    }
-##### Error Responses
-
-* **400** - if the property key is longer than 255 characters
-* **401** - if the request was executed by anonymous user with AP.request or without a valid JWT token in the "Authorization" header or "jwt" query parameter
-* **404** - if the property with given key does not exist
-* **404** - if no plugin with given add-on key exists or the request has been made from another plugin
-
-### Get property
-
-    GET /rest/atlassian-connect/{version}/addons/{addOnKey}/properties/{key}
-
-#### Path parameters
-
-* `{version}` - current API version (1)
-* `{addOnKey}` - add-on key from which to get the property
-* `{key}` - property key to get
-
-#### Response Body
-
-##### Success
-    {
-      "key" : "abcd",
-      "value" : true,
-      "self" : "/rest/api/atlassian-connect/${addOnKey}/properties/abcd"
-    }
-
-##### Error Responses
-
-* **400** - if the property key is longer than 255 characters
-* **401** - if the request was executed by anonymous user with AP.request or without a valid JWT token in the "Authorization" header or "jwt" query parameter
-* **404** - if the property with given key does not exist
-* **404** - if no plugin with given add-on key exists or the request has been made from another plugin
-
-### Create or update property
-
-    PUT /rest/atlassian-connect/{version}/addons/{addOnKey}/properties/{key}
-
-#### Path parameters
-
-* `{version}` - current API version (1)
-* `{addOnKey}` - add-on key from which to get the property
-* `{key}` - property key to get
-
-#### Example Input body
-
-    {
-      "key" : "abcd",
-      "value" : true,
-      "self" : "/rest/api/atlassian-connect/${addOnKey}/properties/abcd"
-    }
-
-#### Response Body
-
-##### Success
-
-* **200** - if the property has been updated
-* **201** - if the property has been created
-
-##### Error Responses
-
-* **400** - if the property key is longer than 255 characters
-* **400** - if the value is not a valid json
-* **401** - if the request was executed by anonymous user with AP.request or without a valid JWT token in the "Authorization" header or "jwt" query parameter
-* **404** - if the property with given key does not exist
-* **404** - if no plugin with given add-on key exists or the request has been made from another plugin
-
-### Delete property
-
-    DELETE /rest/atlassian-connect/{version}/addons/{addOnKey}/properties/{key}
-
-#### Path parameters
-
-* `{version}` - current API version (1)
-* `{addOnKey}` - add-on key from which to get the property
-* `{key}` - property key to get
-
-#### Response Body
-
-##### Success
-
-* **204** - if the property was successfully deleted
-
-##### Error Responses
-
-* **400** - if the property key is longer than 255 characters
-* **401** - if the request was executed by anonymous user with AP.request or without a valid JWT token in the "Authorization" header or "jwt" query parameter
-* **404** - if the property with given key does not exist
-* **404** - if no plugin with given add-on key exists or the request has been made from another plugin
-
-The above endpoints do not require any scope to be defined in the plugin descriptor.
+<div class="ac-js-methods">
+    <dl>
+        <dt>
+            <h3 class="name" id="get-addons-addonkey">
+                <code class="method">GET</code>
+                <code class="resource">/addons/{addonKey}/properties</code>
+            </h3>
+        </dt>
+        <dd>
+            <div class="class-description">
+                <p>
+                    Returns a list of property keys for the given add-on key.
+                </p>
+            </div>
+            <h4>Parameters:</h4>
+            <table class="params table table-striped aui">
+                <thead>
+                <tr>
+                    <th>Location</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th class="last">Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="location">
+                            Path
+                        </td>
+                        <td class="name">
+                            <code>addonKey</code>
+                        </td>
+                        <td class="type">
+                            <code>string</code>
+                        </td>
+                        <td class="description last">
+                            <p>The key of the add-on, as defined in its descriptor</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <h4>Response representations:</h4>
+                <h5><code>200</code> - application/json</h5>
+                <p>-----------------------------------</p>
+                <div class="notrunnable example-container aui-buttons">
+                    <textarea class="code">
+{
+    "keys" : [
+          {
+            "key" : "first_key",
+            "self" : "/rest/api/atlassian-connect/${addOnKey}/properties/first_key"
+          },
+          {
+              "key" : "another_key",
+              "self" : "/rest/api/atlassian-connect/${addOnKey}/properties/another_key"
+          }
+    ]
+}</textarea>
+                </div>
+                <h5><code>401</code> - application/json</h5>
+                <p>Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.</p> if the request was executed by anonymous user with AP.request or without a valid JWT token in the "Authorization" header or "jwt" query parameter
+                <h5><code>404</code> - application/json</h5>
+                <p>Request issued by a user with insufficient credentials, e.g. for an add-on's data by anyone but the
+                add-on itself, or for a plugin that does not exist.</p>
+        </dd>
+    </dl>
+    <dl>
+        <dt>
+            <h3 class="name" id="get-addons-addonkey">
+                <code class="method">GET</code>
+                <code class="resource">/addons/{addonKey}/properties/{propertyKey}</code>
+            </h3>
+        </dt>
+        <dd>
+            <div class="class-description">
+                <p>
+                    Returns a property for the given property key.
+                </p>
+            </div>
+            <h4>Parameters:</h4>
+            <table class="params table table-striped aui">
+                <thead>
+                <tr>
+                    <th>Location</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th class="last">Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="location">
+                            Path
+                        </td>
+                        <td class="name">
+                            <code>addonKey</code>
+                        </td>
+                        <td class="type">
+                            <code>string</code>
+                        </td>
+                        <td class="description last">
+                            <p>The key of the add-on, as defined in its descriptor</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="location">
+                            Path
+                        </td>
+                        <td class="name">
+                            <code>propertyKey</code>
+                        </td>
+                        <td class="type">
+                            <code>string</code>
+                        </td>
+                        <td class="description last">
+                            <p>The key of the property</p>
+                        </td>
+                    </tr>
+                </tbody>
+        </table>
+        <h4>Response representations:</h4>
+            <h5><code>200</code> - application/json</h5>
+            <p>-----------------------------------</p>
+            <div class="notrunnable example-container aui-buttons">
+                <textarea class="code">
+{
+  "key" : "abcd",
+  "value" : true,
+  "self" : "/rest/api/atlassian-connect/${addOnKey}/properties/abcd"
+}</textarea>
+</div>
+            <h5><code>400</code> - application/json</h5>
+            <p>Property key longer than 255 characters.</p>
+            <h5><code>401</code> - application/json</h5>
+            <p>Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.</p> if the request was executed by anonymous user with AP.request or without a valid JWT token in the "Authorization" header or "jwt" query parameter
+            <h5><code>404</code> - application/json</h5>
+            <p>Request to get a property that does not exist.</p>
+            <h5><code>404</code> - application/json</h5>
+            <p>Request issued by a user with insufficient credentials, e.g. for an add-on's data by anyone but the
+            add-on itself, or for a plugin that does not exist.</p>
+        </dd>
+    </dl>
+    <dl>
+        <dt>
+            <h3 class="name" id="get-addons-addonkey">
+                <code class="method">PUT</code>
+                <code class="resource">/addons/{addonKey}/properties/{propertyKey}</code>
+            </h3>
+        </dt>
+        <dd>
+            <div class="class-description">
+                <p>
+                    Creates or updates a property.
+                </p>
+            </div>
+            <h4>Parameters:</h4>
+            <table class="params table table-striped aui">
+                <thead>
+                <tr>
+                    <th>Location</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th class="last">Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="location">
+                            Path
+                        </td>
+                        <td class="name">
+                            <code>addonKey</code>
+                        </td>
+                        <td class="type">
+                            <code>string</code>
+                        </td>
+                        <td class="description last">
+                            <p>The key of the add-on, as defined in its descriptor</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="location">
+                            Path
+                        </td>
+                        <td class="name">
+                            <code>propertyKey</code>
+                        </td>
+                        <td class="type">
+                            <code>string</code>
+                        </td>
+                        <td class="description last">
+                            <p>The key of the property</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <h4>Response representations:</h4>
+                <h5><code>200</code> - application/json</h5>
+                <p>Property updated.</p>
+                <h5><code>201</code> - application/json</h5>
+                <p>Property created.</p>
+                <h5><code>400</code> - application/json</h5>
+                <p>Property key longer than 255 characters.</p>
+                <h5><code>400</code> - application/json</h5>
+                <p>Request made with invalid JSON.</p>
+                <h5><code>401</code> - application/json</h5>
+                <p>Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.</p> if the request was executed by anonymous user with AP.request or without a valid JWT token in the "Authorization" header or "jwt" query parameter
+                <h5><code>404</code> - application/json</h5>
+                <p>Request to get a property that does not exist.</p>
+                <h5><code>404</code> - application/json</h5>
+                <p>Request issued by a user with insufficient credentials, e.g. for an add-on's data by anyone but the
+                add-on itself, or for a plugin that does not exist.</p>
+        </dd>
+    </dl>
+    <dl>
+        <dt>
+            <h3 class="name" id="get-addons-addonkey">
+                <code class="method">DELETE</code>
+                <code class="resource">/addons/{addonKey}/properties/{propertyKey}</code>
+            </h3>
+        </dt>
+        <dd>
+            <div class="class-description">
+                <p>
+                    Deletes a property.
+                </p>
+            </div>
+            <h4>Parameters:</h4>
+            <table class="params table table-striped aui">
+                <thead>
+                <tr>
+                    <th>Location</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th class="last">Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="location">
+                            Path
+                        </td>
+                        <td class="name">
+                            <code>addonKey</code>
+                        </td>
+                        <td class="type">
+                            <code>string</code>
+                        </td>
+                        <td class="description last">
+                            <p>The key of the add-on, as defined in its descriptor</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="location">
+                            Path
+                        </td>
+                        <td class="name">
+                            <code>propertyKey</code>
+                        </td>
+                        <td class="type">
+                            <code>string</code>
+                        </td>
+                        <td class="description last">
+                            <p>The key of the property</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <h4>Response representations:</h4>
+                <h5><code>204</code> - application/json</h5>
+                <p>Property deleted.</p>
+                <h5><code>400</code> - application/json</h5>
+                <p>Property key longer than 255 characters.</p>
+                <h5><code>401</code> - application/json</h5>
+                <p>Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.</p> if the request was executed by anonymous user with AP.request or without a valid JWT token in the "Authorization" header or "jwt" query parameter
+                <h5><code>404</code> - application/json</h5>
+                <p>Request to get a property that does not exist.</p>
+                <h5><code>404</code> - application/json</h5>
+                <p>Request issued by a user with insufficient credentials, e.g. for an add-on's data by anyone but the
+                add-on itself, or for a plugin that does not exist.</p>
+        </dd>
+    </dl>
+</div>
 
 ## Limitations
 
@@ -215,4 +384,6 @@ Executed by User 1 with Entity Tag from previous PUT request.
           });
 
 The second request will result in a response status 412 - Precondition Failed.
+
+To make a put if absent request, the ETag has to be set to "".
 
