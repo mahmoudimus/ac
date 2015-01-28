@@ -101,6 +101,8 @@
         <resource type="download" name="connect-messages.js" location="/js/core/connect-host-messages.js" />
         <resource type="download" name="connect-request.js" location="/js/core/connect-host-request.js" />
         <resource type="download" name="connect-history.js" location="/js/core/connect-host-history.js" />
+        <resource type="download" name="connect-dialog.js" location="/js/core/connect-host-dialog.js" />
+        <resource type="download" name="connect-inline-dialog.js" location="/js/core/connect-host-inline-dialog.js" />
 
         <dependency>jira.webresources:almond</dependency>
         <dependency>confluence.web.resources:almond</dependency>
