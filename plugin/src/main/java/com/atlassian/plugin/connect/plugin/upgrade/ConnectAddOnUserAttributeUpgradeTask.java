@@ -16,6 +16,7 @@ import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupP
 import com.atlassian.sal.api.message.Message;
 import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import static com.atlassian.crowd.search.builder.QueryBuilder.queryFor;
@@ -36,6 +37,7 @@ public class ConnectAddOnUserAttributeUpgradeTask implements PluginUpgradeTask
     private final ApplicationManager applicationManager;
     private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
 
+    @Autowired
     public ConnectAddOnUserAttributeUpgradeTask(ApplicationService applicationService, ApplicationManager applicationManager, ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService)
     {
         this.applicationService = applicationService;
