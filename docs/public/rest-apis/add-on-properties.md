@@ -50,7 +50,6 @@ The following resources are available.
             </table>
             <h4>Response representations:</h4>
                 <h5><code>200</code> - application/json</h5>
-                <p>-----------------------------------</p>
                 <div class="notrunnable example-container aui-buttons">
                     <textarea class="code">
 {
@@ -60,14 +59,14 @@ The following resources are available.
             "self" : "/rest/api/atlassian-connect/${addOnKey}/properties/first_key"
           },
           {
-              "key" : "another_key",
-              "self" : "/rest/api/atlassian-connect/${addOnKey}/properties/another_key"
+            "key" : "another_key",
+            "self" : "/rest/api/atlassian-connect/${addOnKey}/properties/another_key"
           }
     ]
 }</textarea>
                 </div>
                 <h5><code>401</code> - application/json</h5>
-                <p>Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.</p> if the request was executed by anonymous user with AP.request or without a valid JWT token in the "Authorization" header or "jwt" query parameter
+                <p>Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.</p>
                 <h5><code>404</code> - application/json</h5>
                 <p>Request issued by a user with insufficient credentials, e.g. for an add-on's data by anyone but the
                 add-on itself, or for a plugin that does not exist.</p>
@@ -129,7 +128,6 @@ The following resources are available.
         </table>
         <h4>Response representations:</h4>
             <h5><code>200</code> - application/json</h5>
-            <p>-----------------------------------</p>
             <div class="notrunnable example-container aui-buttons">
                 <textarea class="code">
 {
@@ -141,7 +139,7 @@ The following resources are available.
             <h5><code>400</code> - application/json</h5>
             <p>Property key longer than 255 characters.</p>
             <h5><code>401</code> - application/json</h5>
-            <p>Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.</p> if the request was executed by anonymous user with AP.request or without a valid JWT token in the "Authorization" header or "jwt" query parameter
+            <p>Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.</p>
             <h5><code>404</code> - application/json</h5>
             <p>Request to get a property that does not exist.</p>
             <h5><code>404</code> - application/json</h5>
@@ -213,7 +211,7 @@ The following resources are available.
                 <h5><code>400</code> - application/json</h5>
                 <p>Request made with invalid JSON.</p>
                 <h5><code>401</code> - application/json</h5>
-                <p>Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.</p> if the request was executed by anonymous user with AP.request or without a valid JWT token in the "Authorization" header or "jwt" query parameter
+                <p>Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.</p>
                 <h5><code>404</code> - application/json</h5>
                 <p>Request to get a property that does not exist.</p>
                 <h5><code>404</code> - application/json</h5>
@@ -281,7 +279,7 @@ The following resources are available.
                 <h5><code>400</code> - application/json</h5>
                 <p>Property key longer than 255 characters.</p>
                 <h5><code>401</code> - application/json</h5>
-                <p>Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.</p> if the request was executed by anonymous user with AP.request or without a valid JWT token in the "Authorization" header or "jwt" query parameter
+                <p>Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.</p>
                 <h5><code>404</code> - application/json</h5>
                 <p>Request to get a property that does not exist.</p>
                 <h5><code>404</code> - application/json</h5>

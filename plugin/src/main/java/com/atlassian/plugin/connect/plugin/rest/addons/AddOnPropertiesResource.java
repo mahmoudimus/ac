@@ -71,6 +71,20 @@ public class AddOnPropertiesResource
         this.userManager = userManager;
     }
 
+    /**
+     * Lists all properties of a plugin with the given plugin key.
+     *
+     * @param addOnKey the add-on key of the plugin to fetch the property from
+     * @return a Response containing a list of properties or an error code with message.
+     *
+     * @response.representation.200.mediaType application/json
+     * @response.representation.200.doc
+     *      A list of property keys with links to themselves.
+     * @response.representation.401.doc
+     *      Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.
+     * @response.representation.404.doc
+     *      Request issued by a user with insufficient credentials, e.g. for an add-on's data by anyone but the add-on itself, or for a plugin that does not exist.
+     */
     @GET
     public Response getAddOnProperties(@PathParam ("addonKey") final String addOnKey, @Context final Request request, @Context HttpServletRequest servletRequest)
     {
@@ -106,6 +120,25 @@ public class AddOnPropertiesResource
                 });
     }
 
+    /**
+     * Gets a property with the given property key.
+     *
+     * @param addOnKey the add-on key of the plugin to fetch the property from
+     * @param propertyKey the key of the property
+     * @return a Response containing a list of properties or an error code with message.
+     *
+     * @response.representation.200.mediaType application/json
+     * @response.representation.200.doc
+     *      The property containing key, value and link to self.
+     * @response.representation.400.doc
+     *      Property key longer than 255 characters.
+     * @response.representation.401.doc
+     *      Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.
+     * @response.representation.404.doc
+     *      Request to get a property that does not exist.
+     * @response.representation.404.doc
+     *      Request issued by a user with insufficient credentials, e.g. for an add-on's data by anyone but the add-on itself, or for a plugin that does not exist.
+     */
     @GET
     @Path ("{propertyKey}")
     public Response getAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam ("propertyKey") String propertyKey, @Context final Request request, @Context final HttpServletRequest servletRequest)
@@ -139,7 +172,28 @@ public class AddOnPropertiesResource
             }
         });
     }
-
+    /**
+     * Creates or updates a property with the given property key.
+     *
+     * @param addOnKey the add-on key of the plugin to fetch the property from
+     * @param propertyKey the key of the property
+     * @return a Response containing a list of properties or an error code with message.
+     *
+     * @response.representation.200.mediaType application/json
+     * @response.representation.200.doc
+     *      Property has been updated.
+     * @response.representation.201.mediaType application/json
+     * @response.representation.201.doc
+     *      Property has been created.
+     * @response.representation.400.doc
+     *      Property key longer than 255 characters.
+     * @response.representation.401.doc
+     *      Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.
+     * @response.representation.404.doc
+     *      Request to get a property that does not exist.
+     * @response.representation.404.doc
+     *      Request issued by a user with insufficient credentials, e.g. for an add-on's data by anyone but the add-on itself, or for a plugin that does not exist.
+     */
     @PUT
     @Path ("{propertyKey}")
     public Response putAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam ("propertyKey") final String propertyKey, @Context final Request request, @Context HttpServletRequest servletRequest)
@@ -167,6 +221,24 @@ public class AddOnPropertiesResource
         });
     }
 
+    /**
+     * Deletes property with the given property key.
+     *
+     * @param addOnKey the add-on key of the plugin to fetch the property from
+     * @param propertyKey the key of the property
+     * @return a Response containing a list of properties or an error code with message.
+     *
+     * @response.representation.204.doc
+     *      Nothing is returned on success.
+     * @response.representation.400.doc
+     *      Property key longer than 255 characters.
+     * @response.representation.401.doc
+     *      Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.
+     * @response.representation.404.doc
+     *      Request to get a property that does not exist.
+     * @response.representation.404.doc
+     *      Request issued by a user with insufficient credentials, e.g. for an add-on's data by anyone but the add-on itself, or for a plugin that does not exist.
+     */
     @DELETE
     @Path ("{propertyKey}")
     public Response deleteAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam ("propertyKey") final String propertyKey, @Context final Request request, @Context HttpServletRequest servletRequest)
