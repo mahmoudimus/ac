@@ -10,11 +10,11 @@ be digitally signed or MACed and/or encrypted.
 
 A JWT token looks like this:
 
-	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzODY4OTkxMzEsImlzcyI6ImppcmE6MTU0ODk1OTUiLCJxc2giOiI4MDYzZmY0Y2ExZTQxZGY3YmM5MGM4YWI2ZDBmNjIwN2Q0OTFjZjZkYWQ3YzY2ZWE3OTdiNDYxNGI3MTkyMmU5IiwiaWF0IjoxMzg2ODk4OTUxfQ.uKqU9dTB6gKwG6jQCuXYAiMNdfNRw98Hw_IWuA5MaMo
+    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEzODY4OTkxMzEsImlzcyI6ImppcmE6MTU0ODk1OTUiLCJxc2giOiI4MDYzZmY0Y2ExZTQxZGY3YmM5MGM4YWI2ZDBmNjIwN2Q0OTFjZjZkYWQ3YzY2ZWE3OTdiNDYxNGI3MTkyMmU5IiwiaWF0IjoxMzg2ODk4OTUxfQ.uKqU9dTB6gKwG6jQCuXYAiMNdfNRw98Hw_IWuA5MaMo
 
 Once you understand the format, it's actually pretty simple:
 
-	<base64-encoded header>.<base64-encoded claims>.<base64-encoded signature>
+    <base64-encoded header>.<base64-encoded claims>.<base64-encoded signature>
 
 In other words:
 
@@ -30,27 +30,27 @@ However it is important you understand the fields in the JSON header and claims 
 
 The JWT Header declares that the encoded object is a JSON Web Token (JWT) and the JWT is a JWS that is MACed using the HMAC SHA-256 algorithm. For example:
 
-	{
-		"typ":"JWT",
-		"alg":"HS256"
-	}
+    {
+        "typ":"JWT",
+        "alg":"HS256"
+    }
 
 <table class='aui'>
-	<thead>
+    <thead>
         <tr>
             <th>Attribute</th>
-			<th>Type</th>
+            <th>Type</th>
             <th>Description</th>
         </tr>
     </thead>
     <tr>
         <td>"typ" (mandatory)</td><td>String</td><td>Type for the token, defaulted to "JWT". Specifies that this is a JWT token</td>
-	</tr>
-	<tr>
-		<td>"alg" (mandatory)</td><td>String</td><td>Algorithm. specifies the algorithm used to sign the token.
-			In atlassian-connect version 1.0 we support the HMAC SHA-256 algorithm, which the
-			[JWT specification](http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-13) identifies using the string ["HS256"](http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-18#section-3.1).</td>
-	</tr>
+    </tr>
+    <tr>
+        <td>"alg" (mandatory)</td><td>String</td><td>Algorithm. specifies the algorithm used to sign the token.
+            In atlassian-connect version 1.0 we support the HMAC SHA-256 algorithm, which the
+            [JWT specification](http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-13) identifies using the string ["HS256"](http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-18#section-3.1).</td>
+    </tr>
 </table>
 
 <a name='claims'></a>
@@ -58,25 +58,25 @@ The JWT Header declares that the encoded object is a JSON Web Token (JWT) and th
 
 The JWT claims object contains security information about the message. For example:
 
-	{
-		"iss": "jira:1314039",
-		"iat": 1300819370,
-		"exp": 1300819380,
-		"qsh": "8063ff4ca1e41df7bc90c8ab6d0f6207d491cf6dad7c66ea797b4614b71922e9",
-		"sub": "a_user_key"
-	}
+    {
+        "iss": "jira:1314039",
+        "iat": 1300819370,
+        "exp": 1300819380,
+        "qsh": "8063ff4ca1e41df7bc90c8ab6d0f6207d491cf6dad7c66ea797b4614b71922e9",
+        "sub": "a_user_key"
+    }
 
 <table class='aui'>
     <thead>
         <tr>
             <th>Attribute</th>
-			<th>Type</th>
+            <th>Type</th>
             <th>Description</th>
         </tr>
     </thead>
     <tr>
         <td>`iss` (mandatory)</td>
-		<td>String</td>
+        <td>String</td>
         <td>the issuer of the claim. Connect uses it to identify the application making the call. for example:
 
  * If the Atlassian product is the calling application: contains the unique identifier of the tenant.
@@ -85,32 +85,32 @@ The JWT claims object contains security information about the message. For examp
     </tr>
     <tr>
         <td>`iat` (mandatory)</td>
-		<td>Long</td>
+        <td>Long</td>
         <td>Issued-at time. Contains the UTC Unix time at which this token was issued. There are no hard
-			requirements around this claim but it does not make sense for it to be significantly in the future.
-			Also, significantly old issued-at times may indicate the replay of suspiciously old tokens. </td>
+            requirements around this claim but it does not make sense for it to be significantly in the future.
+            Also, significantly old issued-at times may indicate the replay of suspiciously old tokens. </td>
     </tr>
     <tr>
         <td>`exp` (mandatory)</td>
-		<td>Long</td>
+        <td>Long</td>
         <td>Expiration time. It contains the UTC Unix time after which you should no longer accept this token.
-			It should be after the issued-at time.</td>
+            It should be after the issued-at time.</td>
     </tr>
     <tr>
         <td>`qsh` (mandatory)</td>
-		<td>String</td>
+        <td>String</td>
         <td>query hash. A custom Atlassian claim that prevents URL tampering.</td>
     </tr>
     <tr>
         <td>`sub` (optional)</td>
-		<td>String</td>
+        <td>String</td>
         <td>The subject of this token. In atlassian-connect pre 1.0 we use this to identify the user key
-			of the user that the add-on wishes to impersonate with this call; from 1.0 onwards this claim
-			will be ignored, as user impersonation will not be possible.</td>
+            of the user that the add-on wishes to impersonate with this call; from 1.0 onwards this claim
+            will be ignored, as user impersonation will not be possible.</td>
     </tr>
     <tr>
         <td>`aud` (optional)</td>
-		<td>String or String[]</td>
+        <td>String or String[]</td>
         <td>The audience(s) of this token. For REST API calls from an add-on to a product, the audience claim can be
         used to disambiguate the intended recipients. This attribute is not used for JIRA and Confluence at the moment,
         but will become mandatory when making REST calls from an add-on to e.g. the bitbucket.org domain.</td>
@@ -134,14 +134,15 @@ Most modern languages have JWT libraries available. We recommend you use one of 
     <thead>
         <tr>
             <th>Language</th>
-			<th>Library</th>
+            <th>Library</th>
         </tr>
     </thead>
-	<tr><td>Java</td><td>[atlassian-jwt](https://bitbucket.org/atlassian/atlassian-jwt/) and [jsontoken](https://code.google.com/p/jsontoken/)</td></tr>
-	<tr><td>Node.js</td><td>[node-jwt-simple](https://github.com/hokaccha/node-jwt-simple)</td></tr>
-	<tr><td>Ruby</td><td>[ruby-jwt](https://github.com/progrium/ruby-jwt)</td></tr>
-	<tr><td>PHP</td><td>[firebase php-jwt](https://github.com/firebase/php-jwt) and [luciferous jwt](https://github.com/luciferous/jwt)</td></tr>
-	<tr><td>.NET</td><td>[jwt](https://github.com/johnsheehan/jwt)</td></tr>
+    <tr><td>Java</td><td>[atlassian-jwt](https://bitbucket.org/atlassian/atlassian-jwt/) and [jsontoken](https://code.google.com/p/jsontoken/)</td></tr>
+    <tr><td>Python</td><td>[pyjwt](https://github.com/jpadilla/pyjwt)</td></tr>
+    <tr><td>Node.js</td><td>[node-jwt-simple](https://github.com/hokaccha/node-jwt-simple)</td></tr>
+    <tr><td>Ruby</td><td>[ruby-jwt](https://github.com/progrium/ruby-jwt)</td></tr>
+    <tr><td>PHP</td><td>[firebase php-jwt](https://github.com/firebase/php-jwt) and [luciferous jwt](https://github.com/luciferous/jwt)</td></tr>
+    <tr><td>.NET</td><td>[jwt](https://github.com/johnsheehan/jwt)</td></tr>
     <tr><td>Haskell</td><td>[haskell-jwt](http://hackage.haskell.org/package/jwt)</td></tr>
 </table>
 
@@ -164,35 +165,35 @@ import com.atlassian.jwt.writer.JwtWriterFactory;
 
 public class JWTSample {
 
-	public String createUriWithJwt()
-			throws UnsupportedEncodingException, NoSuchAlgorithmException {
-		long issuedAt = System.currentTimeMillis() / 1000L;
-		long expiresAt = issuedAt + 180L;
-		String key = "atlassian-connect-addon"; //the key from the add-on descriptor
-		String sharedSecret = "..."; 	//the sharedsecret key received
-										//during the addon installation handshake
-		String method = "GET";
-		String baseUrl = "http://localhost:2990/jira";
-		String contextPath = "/jira";
-		String apiPath = "/rest/api/latest/serverInfo";
+    public String createUriWithJwt()
+            throws UnsupportedEncodingException, NoSuchAlgorithmException {
+        long issuedAt = System.currentTimeMillis() / 1000L;
+        long expiresAt = issuedAt + 180L;
+        String key = "atlassian-connect-addon"; //the key from the add-on descriptor
+        String sharedSecret = "...";    //the sharedsecret key received
+                                        //during the addon installation handshake
+        String method = "GET";
+        String baseUrl = "http://localhost:2990/jira";
+        String contextPath = "/jira";
+        String apiPath = "/rest/api/latest/serverInfo";
 
-		JwtJsonBuilder jwtBuilder = new JsonSmartJwtJsonBuilder()
-		        .issuedAt(issuedAt)
-		        .expirationTime(expiresAt)
-		        .issuer(key);
+        JwtJsonBuilder jwtBuilder = new JsonSmartJwtJsonBuilder()
+                .issuedAt(issuedAt)
+                .expirationTime(expiresAt)
+                .issuer(key);
 
-		CanonicalHttpUriRequest canonical = new CanonicalHttpUriRequest(method,
-		        apiPath, contextPath, new HashMap());
-		JwtClaimsBuilder.appendHttpRequestClaims(jwtBuilder, canonical);
+        CanonicalHttpUriRequest canonical = new CanonicalHttpUriRequest(method,
+                apiPath, contextPath, new HashMap());
+        JwtClaimsBuilder.appendHttpRequestClaims(jwtBuilder, canonical);
 
-		JwtWriterFactory jwtWriterFactory = new NimbusJwtWriterFactory();
-		String jwtbuilt = jwtBuilder.build();
-		String jwtToken = jwtWriterFactory.macSigningWriter(SigningAlgorithm.HS256,
-		        sharedSecret).jsonToJwt(jwtbuilt);
+        JwtWriterFactory jwtWriterFactory = new NimbusJwtWriterFactory();
+        String jwtbuilt = jwtBuilder.build();
+        String jwtToken = jwtWriterFactory.macSigningWriter(SigningAlgorithm.HS256,
+                sharedSecret).jsonToJwt(jwtbuilt);
 
-		String apiUrl = baseUrl + apiPath + "?jwt=" + jwtToken;
-		return apiUrl;
-	}
+        String apiUrl = baseUrl + apiPath + "?jwt=" + jwtToken;
+        return apiUrl;
+    }
 }</code></pre>
 
 <a name='decode'></a>
@@ -217,10 +218,10 @@ This gives us the following:
 
 Header:
 
-	{
-		"alg": "HS256",
-		"typ": "JWT"
-	}
+    {
+        "alg": "HS256",
+        "typ": "JWT"
+    }
 
 Claims:
 
@@ -266,8 +267,8 @@ public JWTClaimsSet read(String jwt, JWSVerifier verifier) throws ParseException
 
 A query string hash is a signed canonical request for the URI of the API you want to call.
 
-	qsh = `sign(canonical-request)`
-	canonical-request = `canonical-method + '&' + canonical-URI + '&' + canonical-query-string`
+    qsh = `sign(canonical-request)`
+    canonical-request = `canonical-method + '&' + canonical-URI + '&' + canonical-query-string`
 
 A canonical request is a normalised representation of the URI. Here is an example. For the following URL,
 assuming you want to do a "GET" operation:
@@ -316,13 +317,13 @@ To create a query string hash, follow the detailed instructions below:
 ## Advanced: Creating a JWT Token Manually
 
 <div class="aui-message warning">
-	    <p class="title">
-	        <span class="aui-icon icon-warning"></span>
-	        <strong>Disclaimer</strong>
-	    </p>
-	    You should only need to read this section if you are planning to create JWT tokens manually,
-		i.e. if you are not using one of the libraries listed in the previous section
-	</div>
+        <p class="title">
+            <span class="aui-icon icon-warning"></span>
+            <strong>Disclaimer</strong>
+        </p>
+        You should only need to read this section if you are planning to create JWT tokens manually,
+        i.e. if you are not using one of the libraries listed in the previous section
+    </div>
 
 ### More details on JWT Tokens
 
@@ -361,20 +362,20 @@ The format of a JWT token is simple: ```<base64-encoded header>.<base64-encoded 
 
  <pre><code data-lang="java">
 public class JwtClaims {
- 	protected String iss;
- 	protected long iat;
- 	protected long exp;
- 	protected String qsh;
- 	protected String sub;
-	// + getters/setters/constructors
+     protected String iss;
+     protected long iat;
+     protected long exp;
+     protected String qsh;
+     protected String sub;
+    // + getters/setters/constructors
 }
 
 [...]
 
 public class JwtHeader {
-	protected String alg;
-	protected String typ;
-	 // + getters/setters/constructors
+    protected String alg;
+    protected String typ;
+     // + getters/setters/constructors
 }
 
 [...]
@@ -391,8 +392,8 @@ public class JwtBuilder {
 
     public static String generateJWTToken(String requestUrl, String canonicalUrl,
         String key, String sharedSecret)
-        		 throws NoSuchAlgorithmException, UnsupportedEncodingException,
-        		 InvalidKeyException {
+                 throws NoSuchAlgorithmException, UnsupportedEncodingException,
+                 InvalidKeyException {
 
         JwtClaims claims = new JwtClaims();
         claims.setIss(key);
@@ -446,18 +447,18 @@ public class JwtBuilder {
 [...]
 
 public class Sample {
-	public String getUrlSample() throws Exception {
-    	String requestUrl =
-			"http://localhost:2990/jira/rest/atlassian-connect/latest/license";
-		String canonicalUrl = "GET&/rest/atlassian-connect/latest/license&";
-		String key = "..."; 	//from the add-on descriptor
-							//and received during installation handshake
-		String sharedSecret = "..."; //received during installation Handshake
+    public String getUrlSample() throws Exception {
+        String requestUrl =
+            "http://localhost:2990/jira/rest/atlassian-connect/latest/license";
+        String canonicalUrl = "GET&/rest/atlassian-connect/latest/license&";
+        String key = "...";     //from the add-on descriptor
+                            //and received during installation handshake
+        String sharedSecret = "..."; //received during installation Handshake
 
-		String jwtToken = JwtBuilder.generateJWTToken(
-			requestUrl, canonicalUrl, key, sharedSecret);
-		String restAPIUrl = requestUrl + "?jwt=" + jwtToken;
-		return restAPIUrl;
-	}
+        String jwtToken = JwtBuilder.generateJWTToken(
+            requestUrl, canonicalUrl, key, sharedSecret);
+        String restAPIUrl = requestUrl + "?jwt=" + jwtToken;
+        return restAPIUrl;
+    }
 }
  </code></pre>

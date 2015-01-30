@@ -166,8 +166,8 @@ All the functions that request data from Confluence are in your `js/data.js` fil
 so in this step you'll flesh these out. 
 
 You'll use the [Confluence REST API browser](https://bunjil.jira-dev.com/wiki/plugins/servlet/restbrowser) and
-the [AP.request documentation](/static/connect/docs/javascript/module-request.html) to implement functions to get 
-page and space hiearchy in Confluence, and add Gardener functionality to move and remove pages. 
+the [AP.request documentation](../javascript/module-request.html) to implement functions to get
+page and space hierarchy in Confluence, and add Gardener functionality to move and remove pages.
 
 1. Open the `js/data.js` file from your `confluence-gardener` source code.
     You should see the stub code below:  
@@ -293,12 +293,12 @@ step.
 ## <a name="dialog"></a> Display a full-screen dialog
 
 When you attempt to remove a page, nothing happens. In this step, you'll add a [a full-screen 
-dialog](https://developer.atlassian.com/static/connect/docs/javascript/module-Dialog.html) to confirm the action, 
+dialog](../javascript/module-Dialog.html) to confirm the action,
 and make sure it actually works. 
 
 First, you'll declare the dialog in your `atlassian-connect.json` descriptor file. These dialogs are full-fledged AUI dialogs 
 that exist in the parent frame (not in the same iframe Gardener uses). We'll provide the HTML source for the dialog, you'll 
-register a new [`webItem`](https://developer.atlassian.com/static/connect/docs/modules/jira/web-item.html) that loads inside the 
+register a new [`webItem`](../modules/jira/web-item.html) that loads inside the
 full-screen dialog.
 
 1. Open `atlassian-connect.json` in your editor.  
@@ -392,8 +392,8 @@ full-screen dialog.
         }
     });
     </code></pre>
-1. Load the [`dialog`](https://developer.atlassian.com/static/connect/docs/javascript/module-Dialog.html)
-    and [`events`](https://developer.atlassian.com/static/connect/docs/javascript/module-Events.html) modules using `AP.require`: 
+1. Load the [`dialog`](../javascript/module-Dialog.html)
+    and [`events`](../javascript/module-Events.html) modules using `AP.require`:
     <pre><code data-lang="javascript">
     return function(deleteCallback) {
         AP.require(["dialog", "events"], function (dialog, events) {

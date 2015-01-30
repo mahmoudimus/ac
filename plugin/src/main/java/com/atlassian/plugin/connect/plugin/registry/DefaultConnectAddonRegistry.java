@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.registry;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -63,7 +64,7 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
             return new HashSet<String>();
         }
 
-        return new HashSet<String>(keyList);
+        return new LinkedHashSet<String>(keyList);
     }
 
     @Override

@@ -13,6 +13,7 @@ import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.collect.Maps;
 import net.oauth.OAuth;
 
 import java.net.URI;
@@ -21,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.atlassian.fugue.Option.option;
-import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.transformValues;
 import static java.util.Collections.singletonList;
 
@@ -88,7 +88,7 @@ public class OAuthSigningRemotablePluginAccessor extends DefaultRemotablePluginA
         String signatureMethod = OAuth.RSA_SHA1;
         String oauthVersion = "1.0";
 
-        Map<String, List<String>> params = newHashMap(transformValues(queryParams, new Function<String[], List<String>>()
+        Map<String, List<String>> params = Maps.newLinkedHashMap(transformValues(queryParams, new Function<String[], List<String>>()
         {
             @Override
             public List<String> apply(String[] from)

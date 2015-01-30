@@ -40,7 +40,6 @@ import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang.Validate.notNull;
 
@@ -227,7 +226,7 @@ public class OAuthLinkManager
         notNull(url);
         checkNormalized(url);
 
-        Map<String, List<String>> params = newHashMap(originalParams);
+        Map<String, List<String>> params = Maps.newLinkedHashMap(originalParams);
         Consumer self = consumerService.getConsumer();
         params.put(OAuth.OAUTH_CONSUMER_KEY, singletonList(self.getKey()));
         if (log.isDebugEnabled())
