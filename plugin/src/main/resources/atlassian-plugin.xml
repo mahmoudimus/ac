@@ -106,6 +106,8 @@
 
         <dependency>jira.webresources:almond</dependency>
         <dependency>confluence.web.resources:almond</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-core</dependency>
+
     </web-resource>
 
     <web-resource key="ap-user">
