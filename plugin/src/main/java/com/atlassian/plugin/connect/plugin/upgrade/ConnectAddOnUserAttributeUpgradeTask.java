@@ -13,6 +13,8 @@ import com.atlassian.crowd.search.EntityDescriptor;
 import com.atlassian.crowd.search.query.membership.MembershipQuery;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningService;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
+import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.message.Message;
 import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
 
@@ -30,6 +32,7 @@ import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUse
  * A {@link com.atlassian.sal.api.upgrade.PluginUpgradeTask} that will iterate over all Connect AddOn Users and add a new attribute to them
  * <em>synch.APPLICATION_NAME.atlassian-connect-user</em>
  */
+@ExportAsService
 @Component
 public class ConnectAddOnUserAttributeUpgradeTask implements PluginUpgradeTask
 {
@@ -38,7 +41,10 @@ public class ConnectAddOnUserAttributeUpgradeTask implements PluginUpgradeTask
     private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
 
     @Autowired
-    public ConnectAddOnUserAttributeUpgradeTask(ApplicationService applicationService, ApplicationManager applicationManager, ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService)
+    public ConnectAddOnUserAttributeUpgradeTask(
+            @ComponentImport ApplicationService applicationService,
+            @ComponentImport ApplicationManager applicationManager,
+            ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService)
     {
         this.applicationService = applicationService;
         this.applicationManager = applicationManager;
