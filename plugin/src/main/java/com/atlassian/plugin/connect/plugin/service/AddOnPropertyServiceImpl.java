@@ -15,18 +15,20 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.Gson;
 import org.apache.commons.httpclient.HttpStatus;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Map;
 
-import static com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore.*;
+import static com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore.MAX_PROPERTIES_PER_ADD_ON;
+import static com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore.PutResult;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -88,7 +90,6 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
     }
 
     public static final int MAXIMUM_PROPERTY_VALUE_LENGTH = 32*1024; //32KB
-    private static final Gson gson = new Gson();
 
     private final AddOnPropertyStore store;
     private final UserManager userManager;
@@ -387,11 +388,11 @@ public class AddOnPropertyServiceImpl implements AddOnPropertyService
     private boolean isJSONValid(String jsonString) {
         try
         {
-            gson.fromJson(jsonString, Object.class);
+            JSONParser parser = new JSONParser();
+            parser.parse(jsonString);
             return true;
         }
-        catch(com.google.gson.JsonSyntaxException ex)
-        {
+        catch (ParseException e) {
             log.debug("Invalid json when setting property value for plugin.");
             return false;
         }

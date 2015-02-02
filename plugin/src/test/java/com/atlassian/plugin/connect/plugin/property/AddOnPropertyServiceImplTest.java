@@ -32,9 +32,7 @@ import static com.atlassian.plugin.connect.plugin.service.AddOnPropertyService.O
 import static com.atlassian.plugin.connect.plugin.service.AddOnPropertyServiceImpl.OperationStatusImpl;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddOnPropertyServiceImplTest
@@ -287,6 +285,14 @@ public class AddOnPropertyServiceImplTest
     }
 
     @Test
+    public void testInvalidJsonString()
+    {
+        assertInvalidJson("asdadf");
+        assertInvalidJson("\"asdadf");
+        assertInvalidJson("asdadf\"");
+    }
+
+    @Test
     public void testValidNullPrimitiveValue() throws Exception
     {
         mockExecuteInTransaction();
@@ -312,6 +318,13 @@ public class AddOnPropertyServiceImplTest
     }
 
     @Test
+    public void testValidStrings() throws Exception
+    {
+        mockExecuteInTransaction();
+        assertValidJson("\"asdasd\"");
+    }
+
+    @Test
     public void testValidArray() throws Exception
     {
         mockExecuteInTransaction();
@@ -326,7 +339,7 @@ public class AddOnPropertyServiceImplTest
     {
         mockExecuteInTransaction();
         assertValidJson("{}");
-        assertValidJson("{k : true}");
+        assertValidJson("{ \"k\" : true}");
     }
 
     @Test
@@ -334,7 +347,7 @@ public class AddOnPropertyServiceImplTest
     {
         mockExecuteInTransaction();
         final Object obj = new Object();
-        PutServiceResult<Object> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(user, addOnKey, addOnKey, property.getKey(), "", new Function<Option<AddOnProperty>, AddOnPropertyService.ServiceConditionResult<Object>>()
+        PutServiceResult<Object> foldableServiceResult = service.setPropertyValueIfConditionSatisfied(user, addOnKey, addOnKey, property.getKey(), "0", new Function<Option<AddOnProperty>, AddOnPropertyService.ServiceConditionResult<Object>>()
         {
             @Override
             public AddOnPropertyService.ServiceConditionResult<Object> apply(final Option<AddOnProperty> input)

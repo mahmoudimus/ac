@@ -3,11 +3,14 @@ package com.atlassian.plugin.connect.plugin.rest.data;
 import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
 import org.codehaus.jackson.annotate.JsonProperty;
 
+import javax.annotation.concurrent.Immutable;
+
 /**
  * This class represents an add-on property
  *
  * @since TODO: fill in the proper version before merge
  */
+@Immutable
 public class RestAddOnProperty
 {
     @JsonProperty

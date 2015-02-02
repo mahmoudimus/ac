@@ -301,7 +301,7 @@ Here is an example snippet that will show a popup with a json property named my-
 
      AP.require(['request'], function(request) {
          request({
-             url: '/rest/api/1/atlassian-connect/my-add-on-key/properties/my-property-key',
+             url: '/rest/atlassian-connect/1/addons/my-add-on-key/properties/my-property-key',
              success: function(response) {
                  // Convert the string response to JSON
                  response = JSON.parse(response);
@@ -333,12 +333,13 @@ Executed by User 1:
     var eTag;
     AP.require(['request'], function(request) {
          request({
-             url: '/rest/api/1/atlassian-connect/my-add-on-key/properties/my-property-key',
+             url: '/rest/atlassian-connect/1/addons/my-add-on-key/properties/my-property-key',
              success: function(responseText, textStatus, jqXHR) {
                  eTag = jqXHR.getResponseHeader("ETag");
                  alert("ETag = " + jqXHR.getResponseHeader("ETag"));
              },
              type: 'PUT',
+             data: "5",
              contentType: "application/json"
          });
      });
@@ -347,12 +348,13 @@ Executed by User 2
 
     AP.require(['request'], function(request) {
          request({
-             url: '/rest/api/1/atlassian-connect/my-add-on-key/properties/my-property-key',
+             url: '/rest/atlassian-connect/1/addons/my-add-on-key/properties/my-property-key',
              success: function(responseText) {
                  response = JSON.parse(responseText);
                  alert(response);
              },
              type: 'PUT',
+             data: "10",
              contentType: "application/json"
          });
      });
@@ -361,21 +363,20 @@ Executed by User 1 with Entity Tag from previous PUT request.
 
      AP.require(['request'], function(request) {
           request({
-              url: '/rest/api/1/atlassian-connect/my-add-on-key/properties/my-property-key',
+              url: '/rest/atlassian-connect/1/addons/my-add-on-key/properties/my-property-key',
               success: function(responseText, textStatus, jqXHR) {
-                    response = JSON.parse(responseText);
-                    alert(response);
-                  }
+                  response = JSON.parse(responseText);
+                  alert(response);
               },
               error: function(responseText, textStatus, jqXHR) {
                   if (jqXHR.status == 412) {
-                    alert("Precondition failed!");
+                      alert("Precondition failed!");
                   } else {
-                    console.log("Error loading API (" + uri + ")");
-                    console.log(arguments);
+                      console.log("Error with status code: " + jqXHR.status);
                   }
               },
               type: 'PUT',
+              data: "15",
               headers: {If-Match : ETag},
               contentType: "application/json"
           });

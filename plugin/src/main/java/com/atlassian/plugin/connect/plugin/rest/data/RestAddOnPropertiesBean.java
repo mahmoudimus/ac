@@ -13,7 +13,6 @@ import static com.google.common.collect.ImmutableList.copyOf;
  *
  * @since TODO: fill in the proper version before merge
  */
-
 public class RestAddOnPropertiesBean
 {
     @JsonProperty(value="keys")
