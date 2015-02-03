@@ -14,7 +14,7 @@ import com.atlassian.crowd.search.query.membership.MembershipQuery;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
-import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
+import com.atlassian.plugin.spring.scanner.annotation.imports.JiraImport;
 import com.atlassian.sal.api.message.Message;
 import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
 
@@ -42,8 +42,8 @@ public class ConnectAddOnUserAttributeUpgradeTask implements PluginUpgradeTask
 
     @Autowired
     public ConnectAddOnUserAttributeUpgradeTask(
-            @ComponentImport ApplicationService applicationService,
-            @ComponentImport ApplicationManager applicationManager,
+            @JiraImport ApplicationService applicationService,
+            @JiraImport ApplicationManager applicationManager,
             ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService)
     {
         this.applicationService = applicationService;
