@@ -42,8 +42,8 @@ public class ConnectAddOnUserAttributeUpgradeTask implements PluginUpgradeTask
 
     @Autowired
     public ConnectAddOnUserAttributeUpgradeTask(
-            @JiraImport ApplicationService applicationService,
-            @JiraImport ApplicationManager applicationManager,
+            ApplicationService applicationService,
+            ApplicationManager applicationManager,
             ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService)
     {
         this.applicationService = applicationService;
