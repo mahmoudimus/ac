@@ -117,7 +117,7 @@
 
     <web-resource key="iframe-host-js">
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-core</dependency>
-         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-extensions</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-extensions</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-user</dependency>
         <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
         <resource type="download" name="content-resolver.js" location="/js/iframe/host/content-resolver.js" />
