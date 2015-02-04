@@ -25,6 +25,7 @@ import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.junit.Assert.assertEquals;
@@ -64,7 +65,8 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
     public void testCreatePropertyWithJWTQueryParameter()
             throws IOException, URISyntaxException, NoSuchAlgorithmException
     {
-        final String propertyKey = RandomStringUtils.randomAlphanumeric(15);
+        String propertyKey = RandomStringUtils.randomAlphanumeric(15);
+        String value = "0";
 
         URL url = new URL(restPath + "/properties/" + propertyKey);
 
@@ -75,7 +77,7 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
         HttpURLConnection connection = (HttpURLConnection) longerUrl.openConnection();
         connection.setRequestMethod("PUT");
         connection.setDoOutput(true);
-        connection.getOutputStream().write(propertyKey.getBytes());
+        connection.getOutputStream().write(value.getBytes());
 
         int responseCode = connection.getResponseCode();
         assertEquals(Response.SC_CREATED, responseCode);
@@ -88,6 +90,24 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
     {
         String propertyKey = RandomStringUtils.randomAlphanumeric(15);
         RestAddOnProperty property = new RestAddOnProperty(propertyKey, "0", getSelfForPropertyKey(propertyKey));
+
+        int responseCode = executePutRequest(property.key, property.value).httpStatusCode;
+        assertEquals(Response.SC_CREATED, responseCode);
+
+        String response = sendSuccessfulGetRequestForPropertyKey(property.key);
+        RestAddOnProperty result = gson.fromJson(response, RestAddOnProperty.class);
+        assertEquals(property, result);
+
+        assertDeleted(propertyKey);
+    }
+
+    @Test
+    public void testCreateAndGetNonAsciProperty() throws Exception
+    {
+        String propertyKey = RandomStringUtils.randomAlphanumeric(15);
+
+        String value = "\"κόσμε\"";
+        RestAddOnProperty property = new RestAddOnProperty(propertyKey, value, getSelfForPropertyKey(propertyKey));
 
         int responseCode = executePutRequest(property.key, property.value).httpStatusCode;
         assertEquals(Response.SC_CREATED, responseCode);
@@ -478,7 +498,7 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
         public String toString()
         {
             return "RestAddOnPropertiesBean{" +
-                    "properties=" + keys +
+                    "properties=" + Arrays.toString(keys) +
                     '}';
         }
 
