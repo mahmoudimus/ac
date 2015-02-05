@@ -2,6 +2,9 @@ package com.atlassian.plugin.connect.plugin.usermanagement;
 
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.model.user.User;
+import com.atlassian.crowd.service.client.ClientProperties;
+import com.atlassian.crowd.service.client.ClientPropertiesImpl;
+import com.atlassian.crowd.service.client.ClientResourceLocator;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Collections;
@@ -60,7 +63,15 @@ public class ConnectAddOnUserUtil
         return Constants.ADDON_USER_EMAIL_ADDRESS.equals(user.getEmailAddress());
     }
 
-
+    /**
+     * Will return the required configuration to communicate with the configured RemoteCrowd Server
+     * @return authentication and configuration properties for the RemoteCrowd Server
+     */
+    public static ClientProperties getClientProperties()
+    {
+        ClientResourceLocator resourceLocator = new ClientResourceLocator(com.atlassian.crowd.integration.Constants.PROPERTIES_FILE);
+        return ClientPropertiesImpl.newInstanceFromResourceLocator(resourceLocator);
+    }
 
     public static class Constants
     {

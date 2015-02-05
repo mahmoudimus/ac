@@ -7,10 +7,13 @@ import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.UserTemplate;
+import com.atlassian.crowd.service.client.CrowdClient;
+import com.atlassian.crowd.service.factory.CrowdClientFactory;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.annotations.VisibleForTesting;
 
+import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,7 @@ import java.util.Set;
 
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.Constants;
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
+import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.getClientProperties;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @ExportAsDevService
@@ -33,13 +37,15 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
 
     private static final Logger log = LoggerFactory.getLogger(ConnectAddOnUserServiceImpl.class);
+    private CrowdClientFactory crowdClientFactory;
 
     @Autowired
     public ConnectAddOnUserServiceImpl(ApplicationService applicationService,
-                                       ApplicationManager applicationManager,
-                                       ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService,
-                                       ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService)
+            ApplicationManager applicationManager,
+            ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService,
+            ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService, final CrowdClientFactory crowdClientFactory)
     {
+        this.crowdClientFactory = checkNotNull(crowdClientFactory);
         this.applicationService = checkNotNull(applicationService);
         this.applicationManager= checkNotNull(applicationManager);
         this.connectAddOnUserProvisioningService = checkNotNull(connectAddOnUserProvisioningService);
@@ -87,6 +93,10 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             throw new ConnectAddOnUserInitException(e);
         }
         catch (ApplicationNotFoundException e)
+        {
+            throw new ConnectAddOnUserInitException(e);
+        }
+        catch (InvalidAuthenticationException e)
         {
             throw new ConnectAddOnUserInitException(e);
         }
@@ -160,7 +170,8 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return username;
     }
 
-    private String createOrEnableAddOnUser(String username, String addOnDisplayName) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException, ApplicationNotFoundException, ConnectAddOnUserInitException
+    private String createOrEnableAddOnUser(String username, String addOnDisplayName)
+            throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException, ApplicationNotFoundException, ConnectAddOnUserInitException, InvalidAuthenticationException
     {
         connectAddOnUserGroupProvisioningService.ensureGroupExists(Constants.ADDON_USER_GROUP_KEY);
         User user = ensureUserExists(username, addOnDisplayName);
@@ -183,7 +194,8 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return user.getName();
     }
 
-    private User ensureUserExists(String username, String addOnDisplayName) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, UserNotFoundException, InvalidUserException, ApplicationNotFoundException, ConnectAddOnUserInitException
+    private User ensureUserExists(String username, String addOnDisplayName)
+            throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, UserNotFoundException, InvalidUserException, ApplicationNotFoundException, ConnectAddOnUserInitException, InvalidAuthenticationException
     {
         User user = findUserByUsername(username);
 
@@ -211,7 +223,8 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return user;
     }
 
-    private User createUser(String username, String addOnDisplayName) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, ApplicationNotFoundException, ConnectAddOnUserInitException, UserNotFoundException
+    private User createUser(String username, String addOnDisplayName)
+            throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, ApplicationNotFoundException, ConnectAddOnUserInitException, UserNotFoundException, InvalidAuthenticationException
     {
         User user;
         try
@@ -256,7 +269,14 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         }
 
         // Set connect attributes on user -- at this point we are confident we have a user
-        applicationService.storeUserAttributes(getApplication(), user.getName(), buildConnectAddOnUserAttribute(getApplication().getName()));
+        ImmutableMap<String, Set<String>> connectAddOnUserAttribute = buildConnectAddOnUserAttribute(getApplication().getName());
+        applicationService.storeUserAttributes(getApplication(), user.getName(), connectAddOnUserAttribute);
+
+        // Sets the connect attribute on the Remote Crowd Server
+        // This is currently required due to the fact that the DbCachingRemoteDirectory implementation used by JIRA and Confluence doesn't currently
+        // write attributes back to the Crowd Server. This can be removed completely with Crowd 2.9 since addUser can take a UserWithAttributes in this version
+        CrowdClient crowdClient = crowdClientFactory.newInstance(getClientProperties());
+        crowdClient.storeUserAttributes(user.getName(), connectAddOnUserAttribute);
 
         return user;
     }

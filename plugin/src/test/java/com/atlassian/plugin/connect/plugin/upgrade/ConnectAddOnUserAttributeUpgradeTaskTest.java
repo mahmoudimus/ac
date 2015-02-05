@@ -8,6 +8,9 @@ import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.crowd.search.query.membership.MembershipQuery;
+import com.atlassian.crowd.service.client.ClientProperties;
+import com.atlassian.crowd.service.client.CrowdClient;
+import com.atlassian.crowd.service.factory.CrowdClientFactory;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningService;
 
 import com.google.common.collect.ImmutableList;
@@ -19,7 +22,6 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -52,18 +54,21 @@ public class ConnectAddOnUserAttributeUpgradeTaskTest
     private ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
     @Mock
     private Application application;
+    @Mock
+    private CrowdClientFactory crowdClientFactory;
+    @Mock
+    private CrowdClient crowdClient;
     @Captor
-    private ArgumentCaptor<String> connectAddOnUserCaptor;
+    private ArgumentCaptor<Map<String, Set<String>>> localUserAttributeCaptor;
     @Captor
-    private ArgumentCaptor<Map<String, Set<String>>> userAttributeCaptor;
+    private ArgumentCaptor<Map<String, Set<String>>> remoteUserAttributeCaptor;
 
     private static final String VALID_CONNECT_ADD_ON_USERNAME = ADDON_USERNAME_PREFIX + "correct_user";
 
     @Before
     public void setup()
     {
-        upgradeTask = new ConnectAddOnUserAttributeUpgradeTask(applicationService, applicationManager, connectAddOnUserGroupProvisioningService);
-
+        upgradeTask = new ConnectAddOnUserAttributeUpgradeTask(applicationService, applicationManager, connectAddOnUserGroupProvisioningService, crowdClientFactory);
     }
 
     @Test
@@ -76,12 +81,15 @@ public class ConnectAddOnUserAttributeUpgradeTaskTest
         when(connectAddOnUserGroupProvisioningService.getCrowdApplicationName()).thenReturn(APPLICATION_NAME);
         when(applicationManager.findByName(APPLICATION_NAME)).thenReturn(application);
         when(applicationService.searchDirectGroupRelationships(eq(application), any(MembershipQuery.class))).thenReturn(ImmutableList.of(userTemplate));
+        when(crowdClientFactory.newInstance(any(ClientProperties.class))).thenReturn(crowdClient);
 
         upgradeTask.doUpgrade();
 
-        verify(applicationService).storeUserAttributes(eq(application), eq(VALID_CONNECT_ADD_ON_USERNAME), userAttributeCaptor.capture());
+        verify(applicationService).storeUserAttributes(eq(application), eq(VALID_CONNECT_ADD_ON_USERNAME), localUserAttributeCaptor.capture());
+        verify(crowdClient).storeUserAttributes(eq(VALID_CONNECT_ADD_ON_USERNAME), remoteUserAttributeCaptor.capture());
 
-        assertThat(userAttributeCaptor.getValue().keySet(), containsInAnyOrder(buildAttributeConnectAddOnAttributeName(APPLICATION_NAME)));
+        assertThat(localUserAttributeCaptor.getValue().keySet(), containsInAnyOrder(buildAttributeConnectAddOnAttributeName(APPLICATION_NAME)));
+        assertThat(remoteUserAttributeCaptor.getValue().keySet(), containsInAnyOrder(buildAttributeConnectAddOnAttributeName(APPLICATION_NAME)));
     }
 
     @Test
@@ -99,5 +107,6 @@ public class ConnectAddOnUserAttributeUpgradeTaskTest
         upgradeTask.doUpgrade();
 
         verify(applicationService, never()).storeUserAttributes(any(Application.class), anyString(), anyMap());
+        verify(crowdClient, never()).storeUserAttributes(anyString(), anyMap());
     }
 }

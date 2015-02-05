@@ -11,6 +11,8 @@ import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.search.EntityDescriptor;
 import com.atlassian.crowd.search.query.membership.MembershipQuery;
+import com.atlassian.crowd.service.client.CrowdClient;
+import com.atlassian.crowd.service.factory.CrowdClientFactory;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
@@ -18,6 +20,7 @@ import com.atlassian.plugin.spring.scanner.annotation.imports.JiraImport;
 import com.atlassian.sal.api.message.Message;
 import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
 
+import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,8 +28,10 @@ import static com.atlassian.crowd.search.builder.QueryBuilder.queryFor;
 import static com.atlassian.crowd.search.query.entity.EntityQuery.ALL_RESULTS;
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.Constants.ADDON_USER_GROUP_KEY;
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
+import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.getClientProperties;
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.validAddOnEmailAddress;
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.validAddOnUsername;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A {@link com.atlassian.sal.api.upgrade.PluginUpgradeTask} that will iterate over all Connect AddOn Users and add a new attribute to them
@@ -39,16 +44,19 @@ public class ConnectAddOnUserAttributeUpgradeTask implements PluginUpgradeTask
     private final ApplicationService applicationService;
     private final ApplicationManager applicationManager;
     private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
+    private final CrowdClientFactory crowdClientFactory;
 
     @Autowired
     public ConnectAddOnUserAttributeUpgradeTask(
             ApplicationService applicationService,
             ApplicationManager applicationManager,
-            ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService)
+            ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService,
+            CrowdClientFactory crowdClientFactory)
     {
-        this.applicationService = applicationService;
-        this.applicationManager = applicationManager;
-        this.connectAddOnUserGroupProvisioningService = connectAddOnUserGroupProvisioningService;
+        this.applicationService = checkNotNull(applicationService);
+        this.applicationManager = checkNotNull(applicationManager);
+        this.crowdClientFactory = checkNotNull(crowdClientFactory);
+        this.connectAddOnUserGroupProvisioningService = checkNotNull(connectAddOnUserGroupProvisioningService);
     }
 
     @Override
@@ -80,6 +88,13 @@ public class ConnectAddOnUserAttributeUpgradeTask implements PluginUpgradeTask
             }
             // Set connect attributes on user
             applicationService.storeUserAttributes(application, user.getName(), buildConnectAddOnUserAttribute(application.getName()));
+
+            // Sets the connect attribute on the Remote Crowd Server
+            // This is currently required due to the fact that the DbCachingRemoteDirectory implementation used by JIRA and Confluence doesn't currently
+            // write attributes back to the Crowd Server. https://ecosystem.atlassian.net/browse/EMBCWD-975 has been raised to look at re-implementing this
+            // feature!
+            CrowdClient crowdClient = crowdClientFactory.newInstance(getClientProperties());
+            crowdClient.storeUserAttributes(user.getName(), buildConnectAddOnUserAttribute(application.getName()));
         }
 
         return Collections.emptyList();
