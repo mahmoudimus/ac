@@ -1,5 +1,6 @@
-package com.atlassian.plugin.connect.plugin.ao;
+package com.atlassian.plugin.connect.plugin.property;
 
+import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;

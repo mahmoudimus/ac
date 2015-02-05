@@ -1,8 +1,9 @@
-package com.atlassian.plugin.connect.plugin.ao;
+package com.atlassian.plugin.connect.plugin.property;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
+import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
 import com.atlassian.plugin.connect.plugin.util.ConfigurationUtils;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.google.common.base.Function;
@@ -12,14 +13,14 @@ import net.java.ao.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * This class allows for persisting add-on properties.
- * @see com.atlassian.plugin.connect.plugin.service.AddOnPropertyServiceImpl
+ * @see com.atlassian.plugin.connect.plugin.property.AddOnPropertyServiceImpl
  *
  * @since TODO: fill in the proper version before merge
  */

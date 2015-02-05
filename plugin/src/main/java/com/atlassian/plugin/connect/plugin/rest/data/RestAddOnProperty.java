@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.rest.data;
 
-import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
+import com.atlassian.plugin.connect.plugin.property.AddOnProperty;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import javax.annotation.concurrent.Immutable;

@@ -1,9 +1,7 @@
-package com.atlassian.plugin.connect.plugin.service;
+package com.atlassian.plugin.connect.plugin.property;
 
 import com.atlassian.fugue.Either;
 import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
-import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyIterable;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;

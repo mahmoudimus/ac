@@ -1,12 +1,10 @@
-package com.atlassian.plugin.connect.plugin.service;
+package com.atlassian.plugin.connect.plugin.property;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Suppliers;
-import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
-import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore;
-import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore.PutResultWithOptionalProperty;
-import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore.TransactionAction;
+import com.atlassian.plugin.connect.plugin.property.AddOnPropertyStore.PutResultWithOptionalProperty;
+import com.atlassian.plugin.connect.plugin.property.AddOnPropertyStore.TransactionAction;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserManager;
@@ -27,8 +25,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-import static com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore.MAX_PROPERTIES_PER_ADD_ON;
-import static com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore.PutResult;
+import static com.atlassian.plugin.connect.plugin.property.AddOnPropertyStore.MAX_PROPERTIES_PER_ADD_ON;
+import static com.atlassian.plugin.connect.plugin.property.AddOnPropertyStore.PutResult;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**

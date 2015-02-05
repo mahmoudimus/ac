@@ -1,5 +1,6 @@
-package com.atlassian.plugin.connect.plugin.ao;
+package com.atlassian.plugin.connect.plugin.property;
 
+import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;

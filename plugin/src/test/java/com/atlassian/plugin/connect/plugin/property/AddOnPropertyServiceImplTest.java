@@ -1,16 +1,11 @@
 package com.atlassian.plugin.connect.plugin.property;
 
 import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.plugin.ao.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
-import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyIterable;
-import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore;
-import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyStore.PutResultWithOptionalProperty;
+import com.atlassian.plugin.connect.plugin.property.AddOnPropertyStore.PutResultWithOptionalProperty;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.service.AddOnPropertyService;
-import com.atlassian.plugin.connect.plugin.service.AddOnPropertyService.DeleteServiceResult;
-import com.atlassian.plugin.connect.plugin.service.AddOnPropertyService.PutServiceResult;
-import com.atlassian.plugin.connect.plugin.service.AddOnPropertyServiceImpl;
+import com.atlassian.plugin.connect.plugin.property.AddOnPropertyService.DeleteServiceResult;
+import com.atlassian.plugin.connect.plugin.property.AddOnPropertyService.PutServiceResult;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
@@ -28,8 +23,8 @@ import org.mockito.stubbing.Answer;
 
 import java.util.Collections;
 
-import static com.atlassian.plugin.connect.plugin.service.AddOnPropertyService.OperationStatus;
-import static com.atlassian.plugin.connect.plugin.service.AddOnPropertyServiceImpl.OperationStatusImpl;
+import static com.atlassian.plugin.connect.plugin.property.AddOnPropertyService.OperationStatus;
+import static com.atlassian.plugin.connect.plugin.property.AddOnPropertyServiceImpl.OperationStatusImpl;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
