@@ -1335,7 +1335,7 @@
         <ao.version>0.25.2</ao.version>
         <od.testing.configuration>
             use-maven,3
-            include-artifact,com.atlassian.plugins:atlassian-connect-cloud-acceptance-tests
+            include-artifact,com.atlassian.plugins:atlassian-connect-integration-tests
         </od.testing.configuration>
         <frontend.plugin.version>0.0.22</frontend.plugin.version>
         <skipNpm>false</skipNpm>
