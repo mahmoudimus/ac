@@ -15,6 +15,7 @@ import com.atlassian.crowd.service.client.CrowdClient;
 import com.atlassian.crowd.service.factory.CrowdClientFactory;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningService;
+import com.atlassian.plugin.connect.plugin.util.FeatureManager;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.plugin.spring.scanner.annotation.imports.JiraImport;
 import com.atlassian.sal.api.message.Message;
@@ -45,14 +46,16 @@ public class ConnectAddOnUserAttributeUpgradeTask implements PluginUpgradeTask
     private final ApplicationManager applicationManager;
     private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
     private final CrowdClientFactory crowdClientFactory;
+    private final FeatureManager featureManager;
 
     @Autowired
     public ConnectAddOnUserAttributeUpgradeTask(
             ApplicationService applicationService,
             ApplicationManager applicationManager,
             ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService,
-            CrowdClientFactory crowdClientFactory)
+            CrowdClientFactory crowdClientFactory, FeatureManager featureManager)
     {
+        this.featureManager = featureManager;
         this.applicationService = checkNotNull(applicationService);
         this.applicationManager = checkNotNull(applicationManager);
         this.crowdClientFactory = checkNotNull(crowdClientFactory);
@@ -89,12 +92,15 @@ public class ConnectAddOnUserAttributeUpgradeTask implements PluginUpgradeTask
             // Set connect attributes on user
             applicationService.storeUserAttributes(application, user.getName(), buildConnectAddOnUserAttribute(application.getName()));
 
-            // Sets the connect attribute on the Remote Crowd Server
-            // This is currently required due to the fact that the DbCachingRemoteDirectory implementation used by JIRA and Confluence doesn't currently
-            // write attributes back to the Crowd Server. https://ecosystem.atlassian.net/browse/EMBCWD-975 has been raised to look at re-implementing this
-            // feature!
-            CrowdClient crowdClient = crowdClientFactory.newInstance(getClientProperties());
-            crowdClient.storeUserAttributes(user.getName(), buildConnectAddOnUserAttribute(application.getName()));
+            if (featureManager.isOnDemand())
+            {
+                // Sets the connect attribute on the Remote Crowd Server if running in OD
+                // This is currently required due to the fact that the DbCachingRemoteDirectory implementation used by JIRA and Confluence doesn't currently
+                // write attributes back to the Crowd Server. https://ecosystem.atlassian.net/browse/EMBCWD-975 has been raised to look at re-implementing this
+                // feature!
+                CrowdClient crowdClient = crowdClientFactory.newInstance(getClientProperties());
+                crowdClient.storeUserAttributes(user.getName(), buildConnectAddOnUserAttribute(application.getName()));
+            }
         }
 
         return Collections.emptyList();

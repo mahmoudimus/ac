@@ -10,6 +10,7 @@ import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.crowd.service.client.CrowdClient;
 import com.atlassian.crowd.service.factory.CrowdClientFactory;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.util.FeatureManager;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.annotations.VisibleForTesting;
 
@@ -35,21 +36,22 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     private final ApplicationManager applicationManager;
     private final ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService;
     private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
-
+    private final FeatureManager featureManager;
+    private final CrowdClientFactory crowdClientFactory;
     private static final Logger log = LoggerFactory.getLogger(ConnectAddOnUserServiceImpl.class);
-    private CrowdClientFactory crowdClientFactory;
 
     @Autowired
     public ConnectAddOnUserServiceImpl(ApplicationService applicationService,
             ApplicationManager applicationManager,
             ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService,
-            ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService, final CrowdClientFactory crowdClientFactory)
+            ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService, CrowdClientFactory crowdClientFactory, FeatureManager featureManager)
     {
         this.crowdClientFactory = checkNotNull(crowdClientFactory);
         this.applicationService = checkNotNull(applicationService);
         this.applicationManager= checkNotNull(applicationManager);
         this.connectAddOnUserProvisioningService = checkNotNull(connectAddOnUserProvisioningService);
         this.connectAddOnUserGroupProvisioningService = checkNotNull(connectAddOnUserGroupProvisioningService);
+        this.featureManager = checkNotNull(featureManager);
     }
 
     @Override
@@ -272,11 +274,14 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         ImmutableMap<String, Set<String>> connectAddOnUserAttribute = buildConnectAddOnUserAttribute(getApplication().getName());
         applicationService.storeUserAttributes(getApplication(), user.getName(), connectAddOnUserAttribute);
 
-        // Sets the connect attribute on the Remote Crowd Server
-        // This is currently required due to the fact that the DbCachingRemoteDirectory implementation used by JIRA and Confluence doesn't currently
-        // write attributes back to the Crowd Server. This can be removed completely with Crowd 2.9 since addUser can take a UserWithAttributes in this version
-        CrowdClient crowdClient = crowdClientFactory.newInstance(getClientProperties());
-        crowdClient.storeUserAttributes(user.getName(), connectAddOnUserAttribute);
+        if (featureManager.isOnDemand())
+        {
+            // Sets the connect attribute on the Remote Crowd Server if running in OD
+            // This is currently required due to the fact that the DbCachingRemoteDirectory implementation used by JIRA and Confluence doesn't currently
+            // write attributes back to the Crowd Server. This can be removed completely with Crowd 2.9 since addUser can take a UserWithAttributes in this version
+            CrowdClient crowdClient = crowdClientFactory.newInstance(getClientProperties());
+            crowdClient.storeUserAttributes(user.getName(), connectAddOnUserAttribute);
+        }
 
         return user;
     }

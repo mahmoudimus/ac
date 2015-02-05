@@ -13,6 +13,7 @@ import com.atlassian.crowd.service.client.CrowdClient;
 import com.atlassian.crowd.service.factory.CrowdClientFactory;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningService;
 
+import com.atlassian.plugin.connect.plugin.util.FeatureManager;
 import com.google.common.collect.ImmutableList;
 
 import org.junit.Before;
@@ -58,6 +59,8 @@ public class ConnectAddOnUserAttributeUpgradeTaskTest
     private CrowdClientFactory crowdClientFactory;
     @Mock
     private CrowdClient crowdClient;
+    @Mock
+    private FeatureManager featureManager;
     @Captor
     private ArgumentCaptor<Map<String, Set<String>>> localUserAttributeCaptor;
     @Captor
@@ -68,7 +71,7 @@ public class ConnectAddOnUserAttributeUpgradeTaskTest
     @Before
     public void setup()
     {
-        upgradeTask = new ConnectAddOnUserAttributeUpgradeTask(applicationService, applicationManager, connectAddOnUserGroupProvisioningService, crowdClientFactory);
+        upgradeTask = new ConnectAddOnUserAttributeUpgradeTask(applicationService, applicationManager, connectAddOnUserGroupProvisioningService, crowdClientFactory, featureManager);
     }
 
     @Test
@@ -82,6 +85,7 @@ public class ConnectAddOnUserAttributeUpgradeTaskTest
         when(applicationManager.findByName(APPLICATION_NAME)).thenReturn(application);
         when(applicationService.searchDirectGroupRelationships(eq(application), any(MembershipQuery.class))).thenReturn(ImmutableList.of(userTemplate));
         when(crowdClientFactory.newInstance(any(ClientProperties.class))).thenReturn(crowdClient);
+        when(featureManager.isOnDemand()).thenReturn(true);
 
         upgradeTask.doUpgrade();
 
@@ -90,6 +94,27 @@ public class ConnectAddOnUserAttributeUpgradeTaskTest
 
         assertThat(localUserAttributeCaptor.getValue().keySet(), containsInAnyOrder(buildAttributeConnectAddOnAttributeName(APPLICATION_NAME)));
         assertThat(remoteUserAttributeCaptor.getValue().keySet(), containsInAnyOrder(buildAttributeConnectAddOnAttributeName(APPLICATION_NAME)));
+    }
+
+    @Test
+    public void testDoUpgradeWhenNotRunningInOnDemand() throws Exception
+    {
+        UserTemplate userTemplate = new UserTemplate(VALID_CONNECT_ADD_ON_USERNAME);
+        userTemplate.setEmailAddress(ADDON_USER_EMAIL_ADDRESS);
+
+        when(application.getName()).thenReturn(APPLICATION_NAME);
+        when(connectAddOnUserGroupProvisioningService.getCrowdApplicationName()).thenReturn(APPLICATION_NAME);
+        when(applicationManager.findByName(APPLICATION_NAME)).thenReturn(application);
+        when(applicationService.searchDirectGroupRelationships(eq(application), any(MembershipQuery.class))).thenReturn(ImmutableList.of(userTemplate));
+        when(crowdClientFactory.newInstance(any(ClientProperties.class))).thenReturn(crowdClient);
+        when(featureManager.isOnDemand()).thenReturn(false);
+
+        upgradeTask.doUpgrade();
+
+        verify(crowdClient, never()).storeUserAttributes(anyString(), anyMap());
+        verify(applicationService).storeUserAttributes(eq(application), eq(VALID_CONNECT_ADD_ON_USERNAME), localUserAttributeCaptor.capture());
+
+        assertThat(localUserAttributeCaptor.getValue().keySet(), containsInAnyOrder(buildAttributeConnectAddOnAttributeName(APPLICATION_NAME)));
     }
 
     @Test

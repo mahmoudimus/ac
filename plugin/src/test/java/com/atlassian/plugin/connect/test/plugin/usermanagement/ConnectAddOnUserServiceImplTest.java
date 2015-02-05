@@ -12,6 +12,7 @@ import com.atlassian.crowd.service.client.CrowdClient;
 import com.atlassian.crowd.service.factory.CrowdClientFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.usermanagement.*;
+import com.atlassian.plugin.connect.plugin.util.FeatureManager;
 import com.google.common.collect.ImmutableSet;
 import org.hamcrest.Description;
 import org.junit.Before;
@@ -54,6 +55,8 @@ public class ConnectAddOnUserServiceImplTest
     private @Mock ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService;
     private @Mock CrowdClientFactory crowdClientFactory;
     private @Mock CrowdClient crowdClient;
+    private @Mock FeatureManager featureManager;
+
     private ConnectAddOnUserService connectAddOnUserService;
 
     @SuppressWarnings ("UnusedDeclaration")
@@ -165,6 +168,20 @@ public class ConnectAddOnUserServiceImplTest
     }
 
     @Test
+    public void userIsCreatedWithAtlassianConnectUserAttributeWhenNotInOnDemand()
+            throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, UserNotFoundException, InvalidAuthenticationException
+    {
+        when(featureManager.isOnDemand()).thenReturn(false);
+
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+        verify(applicationService).addUser(eq(application), argThat(hasExpectedEmailAddress()), any(PasswordCredential.class));
+        verify(applicationService).storeUserAttributes(eq(application), eq(USER_KEY), localAttributeCaptor.capture());
+        verify(crowdClient, never()).storeUserAttributes(anyString(), anyMap());
+
+        assertTrue(localAttributeCaptor.getValue().get(buildAttributeConnectAddOnAttributeName(APPLICATION_NAME)).contains("true"));
+    }
+
+    @Test
     public void userIsAddedToDefaultProductGroupsIfItExistedAndWasNotAMember() throws UserNotFoundException, InvalidUserException, InvalidCredentialException, ApplicationPermissionException, OperationFailedException, ConnectAddOnUserInitException, GroupNotFoundException, MembershipAlreadyExistsException
     {
         theUserExists();
@@ -233,7 +250,8 @@ public class ConnectAddOnUserServiceImplTest
         when(user.getName()).thenReturn(USER_KEY);
         when(connectAddOnUserProvisioningService.getDefaultProductGroups()).thenReturn(Collections.<String>emptySet());
         when(crowdClientFactory.newInstance(any(ClientProperties.class))).thenReturn(crowdClient);
+        when(featureManager.isOnDemand()).thenReturn(true);
         ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService = new ConnectAddOnUserGroupProvisioningServiceImpl(applicationService, applicationManager);
-        connectAddOnUserService = new ConnectAddOnUserServiceImpl(applicationService, applicationManager, connectAddOnUserProvisioningService, connectAddOnUserGroupProvisioningService, crowdClientFactory);
+        connectAddOnUserService = new ConnectAddOnUserServiceImpl(applicationService, applicationManager, connectAddOnUserProvisioningService, connectAddOnUserGroupProvisioningService, crowdClientFactory, featureManager);
     }
 }
