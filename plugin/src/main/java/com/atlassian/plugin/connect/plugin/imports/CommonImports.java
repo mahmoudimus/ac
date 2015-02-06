@@ -1,10 +1,12 @@
 package com.atlassian.plugin.connect.plugin.imports;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.applinks.spi.util.TypeAccessor;
 import com.atlassian.crowd.embedded.api.CrowdService;
-import com.atlassian.crowd.service.factory.CrowdClientFactory;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
@@ -36,9 +38,6 @@ import com.atlassian.soy.renderer.SoyTemplateRenderer;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.upm.api.license.RemotePluginLicenseService;
 import com.atlassian.webhooks.spi.provider.ModuleDescriptorWebHookListenerRegistry;
-
-import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * This class does nothing but is here to centralize the cross-product component imports.
@@ -83,7 +82,6 @@ public class CommonImports
             @ComponentImport JwtApplinkFinder jwtApplinkFinder,
             @ComponentImport ServiceProviderTokenStore serviceProviderTokenStore,
             @ComponentImport CrowdService crowdService,
-            @ComponentImport CrowdClientFactory crowdClientFactory,
             @ComponentImport DarkFeatureManager darkFeatureManager)
     {
     }
