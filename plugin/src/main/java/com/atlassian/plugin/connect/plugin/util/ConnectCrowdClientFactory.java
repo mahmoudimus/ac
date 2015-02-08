@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
  * {@link com.atlassian.plugin.connect.plugin.upgrade.ConnectAddOnUserAttributeUpgradeTask} to work around
  * a crowd bug (https://ecosystem.atlassian.net/browse/EMBCWD-975)
  */
+@SuppressWarnings ("UnusedDeclaration")
 @Component
-public class ConnectClientFactory extends RestCrowdClientFactory implements CrowdClientFactory
+public class ConnectCrowdClientFactory extends RestCrowdClientFactory implements CrowdClientFactory
 { }
