@@ -2,6 +2,7 @@ package it.util;
 
 public class TestUser
 {
+    public static final TestUser SYSADMIN = new TestUser("sysadmin", "sysadmin", "System Administrator", "noreply@atlassian.com");
     public static final TestUser ADMIN = new TestUser("admin", "admin", "A. D. Ministrator (Sysadmin)", "admin@example.com");
     public static final TestUser BARNEY = new TestUser("barney", "barney", "Barney", "barney@example.com");
     public static final TestUser BETTY = new TestUser("betty", "betty", "Betty", "betty@example.com");
