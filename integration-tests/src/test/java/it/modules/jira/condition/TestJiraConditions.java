@@ -1,7 +1,5 @@
 package it.modules.jira.condition;
 
-import com.atlassian.jira.testkit.client.Backdoor;
-import com.atlassian.jira.tests.FuncTestHelper;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -9,7 +7,6 @@ import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectConfigurationPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
@@ -47,15 +44,11 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     private static final String BETTY_AND_BARNEY_WEBITEM = "betty-and-barney";
     private static final String ADMIN_RIGHTS_WEBITEM = "admin-rights";
     private static final String CONTEXT_PARAMETERIZED_WEBITEM = "context-parameterized";
-    private static final String PERMISSION_TO_ISSUE = "permission-to-issue";
-    private static final String PERMISSION_TO_PROJECT = "permission-to-project";
 
     private static final String ONLY_BETTY_CONDITION_URL = "/onlyBettyCondition";
     private static final String ONLY_BARNEY_CONDITION_URL = "/onlyBarneyCondition";
 
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
-
-    private static Backdoor backdoor = new FuncTestHelper().backdoor;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -111,28 +104,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
                             newSingleConditionBean().withCondition(PARAMETER_CAPTURE_URL +
                                     "?issueId={issue.id}&projectKey={project.key}").build()
                         )
-                        .build(),
-                    newWebItemBean()
-                        .withName(new I18nProperty("Permission to issue", PERMISSION_TO_ISSUE))
-                        .withKey(PERMISSION_TO_ISSUE)
-                        .withLocation("operations-operations")
-                        .withWeight(1)
-                        .withUrl("http://www.google.com")
-                        .withConditions(
-                                newSingleConditionBean().withCondition("has_issue_permission").withParam("permission", "delete").build()
-                        )
-                        .build(),
-                    newWebItemBean()
-                            .withName(new I18nProperty("Permission to project", PERMISSION_TO_PROJECT))
-                            .withKey(PERMISSION_TO_PROJECT)
-                            .withLocation("system.view.project.operations")
-                            .withWeight(1)
-                            .withUrl("http://www.google.com")
-                            .withConditions(
-                                    newSingleConditionBean().withCondition("has_project_permission").withParam("permission", "delete").build()
-                            )
-                            .build()
-                )
+                        .build())
                 .addRoute(ONLY_BARNEY_CONDITION_URL, new CheckUsernameConditionServlet(TestUser.BARNEY))
                 .addRoute(ONLY_BETTY_CONDITION_URL, new CheckUsernameConditionServlet(TestUser.BETTY))
                 .addRoute(PARAMETER_CAPTURE_URL, PARAMETER_CAPTURING_SERVLET)
@@ -168,7 +140,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
         JiraViewProjectPage viewProjectPage = loginAndVisit(TestUser.BARNEY, JiraViewProjectPage.class, project.getKey());
         assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(ONLY_BETTY_WEBITEM)));
     }
-
+    
     @Test
     public void adminCannotSeeBettyWebItem()
     {
@@ -269,45 +241,9 @@ public class TestJiraConditions extends JiraWebDriverTestBase
         assertThat(version, isVersionNumber());
     }
 
-    @Test
-    public void barneyCannotSeeItemWithIssueDeletePermission() throws Exception
-    {
-        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Nought but a test.");
-        JiraViewIssuePage viewIssuePage = loginAndVisit(TestUser.BARNEY, JiraViewIssuePage.class, issue.getKey());
-
-        assertTrue("Web item should NOT be found", viewIssuePage.webItemDoesNotExist(getModuleKey(PERMISSION_TO_ISSUE)));
-    }
-
-    @Test
-    public void bettyCanSeeItemWithIssueDeletePermission() throws Exception
-    {
-        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Nought but a test.");
-        JiraViewIssuePage viewIssuePage = loginAndVisit(TestUser.BETTY, JiraViewIssuePage.class, issue.getKey());
-        RemoteWebItem webItem = viewIssuePage.findWebItem(getModuleKey(PERMISSION_TO_ISSUE), Optional.<String>absent());
-
-        assertNotNull("Web item should be found", webItem);
-    }
-
-    @Test
-    public void barneyCannotSeeItemWithProjectDeletePermission() throws  Exception
-    {
-        JiraViewProjectConfigurationPage viewProjectPage = loginAndVisit(TestUser.BARNEY, JiraViewProjectConfigurationPage.class, project.getKey());
-
-        assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(PERMISSION_TO_PROJECT)));
-    }
-
-    @Test
-    public void bettyCanSeeItemWithProjectDeletePermission() throws  Exception
-    {
-        JiraViewProjectConfigurationPage viewProjectPage = loginAndVisit(TestUser.BETTY, JiraViewProjectConfigurationPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(PERMISSION_TO_PROJECT), Optional.<String>absent());
-
-        assertNotNull("Web item should be found", webItem);
-    }
-
     private String getModuleKey(String module)
     {
         return addonAndModuleKey(runner.getAddon().getKey(), module);
-    }
+    }    
 
 }
