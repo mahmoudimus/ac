@@ -78,6 +78,11 @@
     {
       "filename": "cloud-development.html",
       "title": "Cloud development"
+    },
+    {
+      "filename": "hosted-data-storage.html",
+      "title": "Hosted Data Storage",
+      "new": true
     }
   ],
   "modules": [
