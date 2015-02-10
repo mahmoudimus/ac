@@ -1,4 +1,4 @@
-package at.com.atlassian.plugin.connect;
+package at.common;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -42,7 +42,7 @@ public class ConnectIsLoadedTest
     @BeforeClass
     public static void setUp()
     {
-        TestedProduct<?> confluenceProduct = TestedProductFactory.create(FixedConfluenceTestedProduct.class.getName());
+        TestedProduct<?> confluenceProduct = TestedProductFactory.create(FixedConfluenceTestedProduct.class);
         confluenceUrl = confluenceProduct.getProductInstance().getBaseUrl();
         jiraUrl = new LocalTestEnvironmentData().getBaseUrl().toString();
     }

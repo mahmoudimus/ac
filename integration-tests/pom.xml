@@ -497,6 +497,7 @@
                             <excludes>
                                 <exclude>it/jira/**/*.java</exclude>
                                 <exclude>it/*/jira/**/*.java</exclude>
+                                <exclude>at/*</exclude>
                             </excludes>
                         </testGroup>
                         <testGroup>
@@ -512,6 +513,7 @@
                             <excludes>
                                 <exclude>it/confluence/**/*.java</exclude>
                                 <exclude>it/*/confluence/**/*.java</exclude>
+                                <exclude>at/*</exclude>
                             </excludes>
                         </testGroup>
                     </testGroups>
