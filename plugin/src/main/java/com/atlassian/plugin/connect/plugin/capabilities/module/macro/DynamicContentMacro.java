@@ -1,6 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.module.macro;
 
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
+import com.atlassian.confluence.content.render.xhtml.macro.annotation.Format;
+import com.atlassian.confluence.content.render.xhtml.macro.annotation.RequiresFormat;
 import com.atlassian.confluence.macro.MacroExecutionException;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
 
@@ -27,6 +29,7 @@ public final class DynamicContentMacro extends AbstractMacro
     }
 
     @Override
+    @RequiresFormat(Format.Storage)
     public String execute(Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext)
             throws MacroExecutionException
     {
