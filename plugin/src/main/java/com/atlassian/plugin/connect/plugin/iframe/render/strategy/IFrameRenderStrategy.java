@@ -12,9 +12,9 @@ import java.util.Map;
  */
 public interface IFrameRenderStrategy
 {
-    boolean shouldShow(Map<String, ?> conditionContext);
+    boolean shouldShow(Map<String, ? extends Object> conditionContext);
 
-    void shouldShowOrThrow(Map<String, ?> conditionContext);
+    void shouldShowOrThrow(Map<String, Object> conditionContext);
 
     void render(ModuleContextParameters moduleContextParameters, Writer writer, Option<String> uiParameters) throws IOException;
 
