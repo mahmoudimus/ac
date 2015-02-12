@@ -1,4 +1,4 @@
-(function(define, $){
+(function($, define){
     "use strict";
     define("ac/jira/events", ['connect-host'], function(_AP){
         return {
@@ -12,4 +12,4 @@
         };
     });
 
-})(define, AJS.$);
+})(AJS.$, define);

@@ -1,6 +1,6 @@
 (function(require, $){
     "use strict";
-    require(["connect-host", "ac/jira/events"], function(_AP, jiraEvents){
+    require(["ac/jira/events", "connect-host"], function(jiraEvents, _AP){
         _AP.extend(function () {
             return {
                 internals: {
@@ -12,4 +12,4 @@
         });
     });
 
-})(require, AJS.$);
+})(AJS.$, require);
