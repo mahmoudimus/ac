@@ -36,27 +36,18 @@ public class ConnectIsLoadedTest
     private final static String PASSWORD = "admin";
     private final static String CONNECT_PLUGIN_KEY = "com.atlassian.plugins.atlassian-connect-plugin";
     private final static String KEY_PROPERTY = "key";
-    private static String jiraUrl;
-    private static String confluenceUrl;
-
-    @BeforeClass
-    public static void setUp()
-    {
-        TestedProduct<?> confluenceProduct = TestedProductFactory.create(FixedConfluenceTestedProduct.class);
-        confluenceUrl = confluenceProduct.getProductInstance().getBaseUrl();
-        jiraUrl = new LocalTestEnvironmentData().getBaseUrl().toString();
-    }
 
     @Test
     public void connectShouldBeLoadedInJira() throws IOException
     {
-        connectShouldBeLoaded(jiraUrl);
+        connectShouldBeLoaded(new LocalTestEnvironmentData().getBaseUrl().toString());
     }
 
     @Test
     public void connectShouldBeLoadedInConfluence() throws IOException
     {
-        connectShouldBeLoaded(confluenceUrl);
+        TestedProduct<?> confluenceProduct = TestedProductFactory.create(FixedConfluenceTestedProduct.class);
+        connectShouldBeLoaded(confluenceProduct.getProductInstance().getBaseUrl());
     }
 
     private void connectShouldBeLoaded(String productBaseUrl) throws IOException
