@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # whitelists "master" or branches of the form "1.1", "1.x", "1.1.x" etc
-branch_whitelist="(\d+\.?)+$|develop|master$"
+branch_whitelist="(\d+\.?)+$|develop|master|deploy\/.*$"
 
 current_branch=$(git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')
 if [ "$current_branch" != "develop" ]; then

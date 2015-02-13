@@ -40,7 +40,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.Matchers.both;
+import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertThat;
 
 public class TestStaticContentMacro extends AbstractContentMacroTest
@@ -228,7 +228,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
 
         String version = maybeVersion.get().replaceFirst("cv:", "").trim();
         assertThat(version, isVersionNumber());
-        assertThat(commentBody.getText(), both(startsWith("Hello world!!")).and(containsString("xdm_c: channel-" + SIMPLE_MACRO_KEY)));
+        assertThat(commentBody.getText(), allOf(startsWith("Hello world!!"), containsString("xdm_c: channel-" + SIMPLE_MACRO_KEY)));
     }
 
     @Test

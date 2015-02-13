@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.1.22-SNAPSHOT</version>
+    <version>1.1.23-SNAPSHOT</version>
     <organization>
         <name>Atlassian</name>
         <url>http://atlassian.com/</url>
@@ -185,22 +185,6 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>2.4</version>
                 <!-- !versions 2.5 and 2.5.1 broke tree filtering -->
-            </plugin>
-            <plugin>
-                <groupId>external.atlassian.jgitflow</groupId>
-                <artifactId>jgitflow-maven-plugin</artifactId>
-                <version>${jgitflow.version}</version>
-                <configuration>
-                    <allowSnapshots>true</allowSnapshots>
-                    <enableFeatureVersions>false</enableFeatureVersions>
-                    <pushFeatures>true</pushFeatures>
-                    <pushReleases>true</pushReleases>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <releaseBranchVersionSuffix>RC</releaseBranchVersionSuffix>
-                    <pullMaster>true</pullMaster>
-                    <pullDevelop>true</pullDevelop>
-                    <defaultOriginUrl>ssh://git@stash.atlassian.com:7997/ac/atlassian-connect.git</defaultOriginUrl>
-                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -666,36 +650,12 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <!-- REMOVE WHEN JGITFLOW IS FINAL -->
-    <pluginRepositories>
-        <!-- REMOVE WHEN JGITFLOW IS FINAL -->
-        <pluginRepository>
-            <id>snapshots-repo</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>mulesoft-releases</id>
-            <name>MuleSoft Repository</name>
-            <url>https://repository.mulesoft.org/releases</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>maven-central</id>
-            <url>http://repo1.maven.org/maven2</url>
-        </pluginRepository>
-    </pluginRepositories>
     <properties>
         <!-- VERSIONS -->
         <amps.version>5.0.4</amps.version>
         <atlassian.analytics.version>3.38</atlassian.analytics.version>
         <atlassian.applinks.version>4.2.4</atlassian.applinks.version>
-        <atlassian.confluence.version>5.6-OD-38-048</atlassian.confluence.version>
+        <atlassian.confluence.version>5.7-OD-42-045</atlassian.confluence.version>
         <atlassian.crowd.version>2.8.0-OD-4</atlassian.crowd.version>
         <atlassian.fugue.version>1.1</atlassian.fugue.version>
         <atlassian.healthcheck.version>2.0.4</atlassian.healthcheck.version>
@@ -711,7 +671,7 @@
         <atlassian.json.schema.validator.version>1.0.4</atlassian.json.schema.validator.version>
         <atlassian.plugins.version>3.0.7</atlassian.plugins.version>
         <atlassian.plugins.api.version>2.10</atlassian.plugins.api.version>
-        <atlassian.rest.version>2.3.0</atlassian.rest.version>
+        <atlassian.rest.version>2.9.13</atlassian.rest.version>
         <atlassian.sal.version>2.10.0</atlassian.sal.version>
         <atlassian.selenium.version>2.2-rc3</atlassian.selenium.version>
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>
@@ -751,7 +711,6 @@
 
         <!-- BUILD STUFF -->
         <apache-commons-version>3.1</apache-commons-version>
-        <jgitflow.version>1.0-m4.3</jgitflow.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
         <atlassian.upm.on.demand>false</atlassian.upm.on.demand>

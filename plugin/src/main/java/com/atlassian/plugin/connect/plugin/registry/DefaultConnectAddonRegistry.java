@@ -2,12 +2,14 @@ package com.atlassian.plugin.connect.plugin.registry;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -20,6 +22,9 @@ import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
+
+import static com.atlassian.fugue.Option.none;
+import static com.atlassian.fugue.Option.some;
 
 @Named
 @ExportAsDevService
@@ -59,7 +64,7 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
             return new HashSet<String>();
         }
 
-        return new HashSet<String>(keyList);
+        return new LinkedHashSet<String>(keyList);
     }
 
     @Override
@@ -197,15 +202,10 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
         ImmutableList.Builder<ConnectAddonBean> addons = ImmutableList.builder();
         for (String addonKey : getAddonKeySet(settings))
         {
-            String json = (String) settings.get(addonStorageKey(addonKey));
-
-            if (!Strings.isNullOrEmpty(json))
+            AddonSettings addonSettings = this.getAddonSettings(addonKey, settings, gson);
+            for (ConnectAddonBean addonBean : this.getAddonBeanFromSettings(addonSettings))
             {
-                AddonSettings addonSettings = gson.fromJson(json, AddonSettings.class);
-                if (has(addonSettings.getDescriptor()))
-                {
-                    addons.add(connectAddonBeanFactory.fromJsonSkipValidation(addonSettings.getDescriptor()));
-                }
+                addons.add(addonBean);
             }
         }
 
@@ -276,27 +276,50 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
 
         PluginSettings settings = settings();
         settings.put(addonStorageKey(pluginKey), settingsToStore);
-        
+
         Set<String> addonSet = getAddonKeySet(settings);
         addonSet.add(pluginKey);
-        
-        settings.put(ADDON_LIST_KEY,new ArrayList<String>(addonSet));
-        
+
+        settings.put(ADDON_LIST_KEY, new ArrayList<String>(addonSet));
+
     }
 
     @Override
     public AddonSettings getAddonSettings(String pluginKey)
     {
-        AddonSettings addonsettings = new AddonSettings();
-
-        String json = (String) settings().get(addonStorageKey(pluginKey));
-
-        if (!Strings.isNullOrEmpty(json))
-        {
-            addonsettings = new Gson().fromJson(json, AddonSettings.class);
-        }
-
-        return addonsettings;
+        return getAddonSettings(pluginKey, settings(), new Gson());
     }
 
+    @Override
+    public Option<ConnectAddonBean> getAddonBean(String pluginKey)
+    {
+        AddonSettings addonSettings = getAddonSettings(pluginKey);
+        return getAddonBeanFromSettings(addonSettings);
+    }
+
+    private AddonSettings getAddonSettings(String pluginKey, PluginSettings settings, Gson gson)
+    {
+        AddonSettings addonSettings = new AddonSettings();
+        String json = (String) settings.get(addonStorageKey(pluginKey));
+        if (!Strings.isNullOrEmpty(json))
+        {
+            addonSettings = gson.fromJson(json, AddonSettings.class);
+        }
+        return addonSettings;
+    }
+
+    private Option<ConnectAddonBean> getAddonBeanFromSettings(AddonSettings addonSettings)
+    {
+        Option<ConnectAddonBean> beanOption;
+        String descriptor = addonSettings.getDescriptor();
+        if (!Strings.isNullOrEmpty(descriptor))
+        {
+            beanOption = some(connectAddonBeanFactory.fromJsonSkipValidation(addonSettings.getDescriptor()));
+        }
+        else
+        {
+            beanOption = none(ConnectAddonBean.class);
+        }
+        return beanOption;
+    }
 }
