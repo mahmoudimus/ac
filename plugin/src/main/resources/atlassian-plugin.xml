@@ -166,4 +166,5 @@
     </applinks-application-type>
 
     <analytics-whitelist key="analyticsWhitelist" resource="whitelist/connect_whitelist.json"/>
+
 </atlassian-plugin>

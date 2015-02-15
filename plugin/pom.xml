@@ -203,6 +203,14 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.crowd</groupId>
+            <artifactId>crowd-integration-client-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.crowd</groupId>
+            <artifactId>crowd-integration-client-rest</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.crowd</groupId>
             <artifactId>embedded-crowd-api</artifactId>
         </dependency>
 
