@@ -1,6 +1,6 @@
 (function($, define){
     "use strict";
-    define("ac/jira/events", ['connect-host'], function(_AP){
+    define("ac/jira/events", function(){
         return {
             refreshIssuePage: function(){
                 try {

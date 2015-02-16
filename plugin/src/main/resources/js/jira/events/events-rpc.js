@@ -1,4 +1,4 @@
-(function(require, $){
+(function($, require){
     "use strict";
     require(["ac/jira/events", "connect-host"], function(jiraEvents, _AP){
         _AP.extend(function () {
