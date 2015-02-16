@@ -23,8 +23,7 @@
             ok(window.JIRA.trigger.calledOnce);
         });
 
-
-        test("refreshIssuePage passes a REFERSH_ISSUE_PAGE event", function() {
+        test("refreshIssuePage passes a REFRESH_ISSUE_PAGE event", function() {
             jiraEvent.refreshIssuePage();
             deepEqual(window.JIRA.trigger.args[0][0], window.JIRA.Events.REFRESH_ISSUE_PAGE);
         });
