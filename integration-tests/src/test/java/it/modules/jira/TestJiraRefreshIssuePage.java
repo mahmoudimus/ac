@@ -1,7 +1,6 @@
 package it.modules.jira;
 
 import com.atlassian.jira.pageobjects.pages.viewissue.ViewIssuePage;
-import com.atlassian.jira.pageobjects.util.TraceContext;
 import com.atlassian.jira.pageobjects.util.Tracer;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -16,7 +15,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.inject.Inject;
 import java.rmi.RemoteException;
 import java.util.Collections;
 
@@ -32,9 +30,6 @@ public class TestJiraRefreshIssuePage extends JiraWebDriverTestBase
     private static WebPanelModuleBean refreshIssuePageWebPanelModuleBean;
 
     private RemoteIssue issue;
-
-    @Inject
-    private TraceContext traceContext;
 
     @BeforeClass
     public static void startAddon() throws Exception
@@ -76,8 +71,7 @@ public class TestJiraRefreshIssuePage extends JiraWebDriverTestBase
 
         jiraOps.updateIssue(issue.getKey(), Collections.singletonMap("summary", "foo"));
 
-        Tracer tracer = traceContext.checkpoint();
-        refreshIssuePageWebPanel.refreshIssuePage();
+        Tracer tracer = refreshIssuePageWebPanel.refreshIssuePage();
         viewIssuePage.waitForAjaxRefresh(tracer);
     }
 
