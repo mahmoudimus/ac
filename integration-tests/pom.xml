@@ -368,6 +368,11 @@
                                     <version>${functest.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
+                                    <groupId>com.atlassian.jira</groupId>
+                                    <artifactId>jira-func-test-plugin</artifactId>
+                                    <version>${atlassian.jira.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
                                     <groupId>com.atlassian.jira.tests</groupId>
                                     <artifactId>jira-testkit-plugin</artifactId>
                                     <version>${testkit.version}</version>
