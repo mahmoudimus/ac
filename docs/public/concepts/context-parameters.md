@@ -43,12 +43,13 @@ of "com.atlassian.confluence.plugins.confluence-questions:question". As a genera
 will only be present if `content.type` is equal to "custom".
 
 URL variables are available to any of the page modules, including web panels, web items, general pages and dialog pages,
-except for Confluence macros. To add a variable to a URL, enclose the variable name in curly brackets, as follows: `{variable.name}`
+except for Confluence macros. To add a variable to a URL, enclose the variable name in curly brackets, as follows: `{variable.name}`.
+The context variable must be either a path component or the `value` in a query string parameter formatted as `name=value`.
 
 For example, the following URL includes variables that are bound to the JIRA project id and current issue key at runtime:
 ```
 {
-    "url": "/myPage?issueKey={issue.key}&projectId={project.id}"
+    "url": "/myPage/projects/{project.id}?issueKey={issue.key}"
 }
 ```
 If the application isn't able to bind a value to the variable at runtime for any reason, it passes an empty value instead.
