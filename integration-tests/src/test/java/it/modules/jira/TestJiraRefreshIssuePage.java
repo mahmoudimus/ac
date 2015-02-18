@@ -69,8 +69,6 @@ public class TestJiraRefreshIssuePage extends JiraWebDriverTestBase
         RemoteRefreshIssuePageWebPanel refreshIssuePageWebPanel = findRefreshIssuePageWebPanel();
         refreshIssuePageWebPanel.waitUntilRefreshIssuePageActionLoaded();
 
-        jiraOps.updateIssue(issue.getKey(), Collections.singletonMap("summary", "foo"));
-
         Tracer tracer = refreshIssuePageWebPanel.refreshIssuePage();
         viewIssuePage.waitForAjaxRefresh(tracer);
     }
