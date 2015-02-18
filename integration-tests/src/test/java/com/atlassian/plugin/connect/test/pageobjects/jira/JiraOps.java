@@ -47,7 +47,7 @@ public class JiraOps
         String key = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
         return soap.createProject(token, key, "Test project " + key,
                 "This is a test project " + key,
-                null, "admin", soap.getPermissionSchemes(token)[0], null, null);
+                null, "admin", null, null, null);
 
     }
 
