@@ -55,6 +55,11 @@ public class ConnectPageOperations
         return pageBinder.bind(RemoteWebPanel.class, id);
     }
 
+    public <T extends RemoteWebPanel> T findWebPanel(String id, Class<T> panelClass)
+    {
+        return pageBinder.bind(panelClass, id);
+    }
+
     public RemoteWebItem findWebItem(String webItemId, Optional<String> dropDownLinkId)
     {
         return pageBinder.bind(RemoteWebItem.class, webItemId, dropDownLinkId);

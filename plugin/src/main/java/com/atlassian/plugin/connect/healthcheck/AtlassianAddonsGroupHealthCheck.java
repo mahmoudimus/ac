@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.healthcheck;
 
-import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
@@ -13,16 +12,17 @@ import com.atlassian.crowd.search.query.membership.MembershipQuery;
 import com.atlassian.healthcheck.core.DefaultHealthStatus;
 import com.atlassian.healthcheck.core.HealthCheck;
 import com.atlassian.healthcheck.core.HealthStatus;
-import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.Constants;
 import com.google.common.collect.Sets;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Set;
+
+import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.validAddOnEmailAddress;
+import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.validAddOnUsername;
 
 public class AtlassianAddonsGroupHealthCheck implements HealthCheck
 {
@@ -35,15 +35,13 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
     private final ApplicationManager applicationManager;
     private final ApplicationService applicationService;
     private final ConnectAddOnUserGroupProvisioningService groupProvisioningService;
-    private final JwtApplinkFinder jwtApplinkFinder;
 
     public AtlassianAddonsGroupHealthCheck(ApplicationManager applicationManager, ApplicationService applicationService,
-            ConnectAddOnUserGroupProvisioningService groupProvisioningService, JwtApplinkFinder jwtApplinkFinder)
+            ConnectAddOnUserGroupProvisioningService groupProvisioningService)
     {
         this.applicationManager = applicationManager;
         this.applicationService = applicationService;
         this.groupProvisioningService = groupProvisioningService;
-        this.jwtApplinkFinder = jwtApplinkFinder;
     }
 
     @Override
@@ -61,13 +59,13 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
 
             for (User user : users)
             {
-                if (!Constants.ADDON_USER_EMAIL_ADDRESS.equals(user.getEmailAddress()))
+                if (!validAddOnEmailAddress(user))
                 {
                     log.warn("Add-on user '" + user.getName() + "' has incorrect email '" + user.getEmailAddress() + "'");
                     usersWithIncorrectEmails.add(user);
                 }
-                String name = user.getName();
-                if (name == null || !name.startsWith(Constants.ADDON_USERNAME_PREFIX))
+
+                if (!validAddOnUsername(user))
                 {
                     log.warn("Add-on user '" + user.getName() + "' has incorrect prefix");
                     usersWithIncorrectPrefix.add(user);
@@ -100,15 +98,15 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
 
                 if (!usersWithIncorrectEmails.isEmpty())
                 {
-                    reason.append(failurePrefix(usersWithIncorrectEmails.size()) + " unexpected email values. ");
+                    reason.append(failurePrefix(usersWithIncorrectEmails.size())).append(" unexpected email values. ");
                 }
                 if (!usersWithIncorrectPrefix.isEmpty())
                 {
-                    reason.append(failurePrefix(usersWithIncorrectPrefix.size()) + " unexpected username values. ");
+                    reason.append(failurePrefix(usersWithIncorrectPrefix.size())).append(" unexpected username values. ");
                 }
                 if (!usersIncorrectlyActive.isEmpty())
                 {
-                    reason.append(failurePrefix(usersIncorrectlyActive.size()) + " no applink association. ");
+                    reason.append(failurePrefix(usersIncorrectlyActive.size())).append(" no applink association. ");
                 }
 
                 reason.append("This may indicate a customer license workaround.");

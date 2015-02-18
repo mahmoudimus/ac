@@ -1,6 +1,7 @@
 package it.servlet;
 
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
+import com.atlassian.plugin.connect.test.pageobjects.jira.RemoteRefreshIssuePageWebPanel;
 import it.servlet.condition.ParameterCapturingServlet;
 import it.servlet.iframe.CustomMessageServlet;
 import it.servlet.iframe.MustacheServlet;
@@ -65,6 +66,14 @@ public class ConnectAppServlets
     public static HttpServlet historyServlet()
     {
         return wrapContextAwareServlet(new MustacheServlet("iframe-history.mu"));
+    }
+
+    /**
+     * @return a servlet that provides a button to trigger refreshing a JIRA issue page
+     */
+    public static HttpServlet refreshIssuePageButtonServlet()
+    {
+        return wrapContextAwareServlet(new MustacheServlet(RemoteRefreshIssuePageWebPanel.TEMPLATE_PATH));
     }
 
     /**

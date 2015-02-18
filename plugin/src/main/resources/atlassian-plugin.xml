@@ -159,5 +159,5 @@
         <description>Datastore for add-on properties.</description>
         <entity>com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO</entity>
     </ao>
-
+    
 </atlassian-plugin>
