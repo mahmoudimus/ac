@@ -29,9 +29,6 @@ import static com.atlassian.plugin.connect.plugin.property.AddOnPropertyStore.MA
 import static com.atlassian.plugin.connect.plugin.property.AddOnPropertyStore.PutResult;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-/**
- * @since TODO: fill in the proper version before merge
- */
 @Component
 public class AddOnPropertyServiceImpl implements AddOnPropertyService
 {

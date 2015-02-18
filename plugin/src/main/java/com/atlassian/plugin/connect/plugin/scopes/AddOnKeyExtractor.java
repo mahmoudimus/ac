@@ -12,8 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Class allowing for extracting of plugin key from http requests.
- *
- * @since TODO: fill in the proper version before merge
  */
 @Component
 public class AddOnKeyExtractor
@@ -87,8 +85,6 @@ public class AddOnKeyExtractor
      * Set the id of a Connect add-on in the request attributes.
      *
      * @param req the context {@link HttpServletRequest}
-     * @return the unique add-on id, synonymous with OAuth client key and JWT issuer, or {@code null} if 2LO authentication failed or was not
-     *         attempted
      */
     public static void setClientKey(@Nonnull HttpServletRequest req, @Nonnull String clientKey)
     {

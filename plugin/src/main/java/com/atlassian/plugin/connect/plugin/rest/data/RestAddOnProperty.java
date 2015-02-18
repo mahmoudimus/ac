@@ -7,8 +7,6 @@ import javax.annotation.concurrent.Immutable;
 
 /**
  * This class represents an add-on property
- *
- * @since TODO: fill in the proper version before merge
  */
 @Immutable
 public class RestAddOnProperty

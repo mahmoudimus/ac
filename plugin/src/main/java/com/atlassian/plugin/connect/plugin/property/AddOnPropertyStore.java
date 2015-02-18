@@ -21,8 +21,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * This class allows for persisting add-on properties.
  * @see com.atlassian.plugin.connect.plugin.property.AddOnPropertyServiceImpl
- *
- * @since TODO: fill in the proper version before merge
  */
 @Component
 public class AddOnPropertyStore

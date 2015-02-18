@@ -10,8 +10,6 @@ import static com.google.common.collect.ImmutableList.copyOf;
 
 /**
  * Beans used in listing of properties for add-ons.
- *
- * @since TODO: fill in the proper version before merge
  */
 public class RestAddOnPropertiesBean
 {

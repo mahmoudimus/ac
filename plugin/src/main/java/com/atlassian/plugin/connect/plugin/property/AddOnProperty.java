@@ -12,8 +12,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * This class represents an add-on property consisting of a key and a value.
- *
- * @since TODO: fill in the proper version before merge
  */
 @Immutable
 public final class AddOnProperty

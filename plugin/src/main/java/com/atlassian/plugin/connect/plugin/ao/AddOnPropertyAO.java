@@ -10,8 +10,6 @@ import net.java.ao.schema.Unique;
 /**
  * Active object representation of an add-on property.
  * @see com.atlassian.plugin.connect.plugin.property.AddOnProperty
- *
- * @since TODO: fill in the proper version before merge
  */
 public interface AddOnPropertyAO extends Entity
 {

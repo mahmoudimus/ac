@@ -33,7 +33,6 @@ import java.nio.charset.Charset;
 
 /**
  * REST endpoint for add-on properties
- * @since TODO: fill in the proper version before merge
  */
 @Path (AddOnPropertiesResource.REST_PATH)
 @Produces ("application/json")

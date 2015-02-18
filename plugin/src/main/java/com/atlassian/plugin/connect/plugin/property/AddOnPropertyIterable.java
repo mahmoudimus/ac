@@ -9,9 +9,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import java.util.Iterator;
 
 /**
- * This class represents an add-on property list which consist of a key and a value.
- *
- * @since TODO: fill in the proper version before merge
+ * This class represents an add-on property iterable which consist of a key and a value.
  */
 public class AddOnPropertyIterable implements Iterable<AddOnProperty>
 {

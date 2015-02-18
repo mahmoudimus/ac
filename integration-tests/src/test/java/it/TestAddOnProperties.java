@@ -32,8 +32,6 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * Functional test for add-on properties
- *
- * @since TODO: fill in the proper version before merge
  */
 public class TestAddOnProperties extends AbstractBrowserlessTest
 {

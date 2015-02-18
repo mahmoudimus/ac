@@ -13,8 +13,6 @@ import javax.annotation.concurrent.Immutable;
 /**
  * This service is used to add, remove, list and update add-on properties.
  * Checks permissions and constraints on input before executing an action.
- *
- * @since TODO: fill in the proper version before merge
  */
 public interface AddOnPropertyService
 {
