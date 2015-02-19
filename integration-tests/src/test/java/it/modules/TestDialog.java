@@ -4,7 +4,11 @@ import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.core.reader.JwtIssuerSharedSecretService;
 import com.atlassian.jwt.core.reader.JwtIssuerValidator;
 import com.atlassian.jwt.core.reader.NimbusJwtReaderFactory;
-import com.atlassian.jwt.exception.*;
+import com.atlassian.jwt.exception.JwtInvalidClaimException;
+import com.atlassian.jwt.exception.JwtIssuerLacksSharedSecretException;
+import com.atlassian.jwt.exception.JwtParseException;
+import com.atlassian.jwt.exception.JwtUnknownIssuerException;
+import com.atlassian.jwt.exception.JwtVerificationException;
 import com.atlassian.jwt.reader.JwtClaimVerifier;
 import com.atlassian.jwt.reader.JwtReader;
 import com.atlassian.jwt.reader.JwtReaderFactory;
@@ -14,16 +18,19 @@ import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.*;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
+import com.atlassian.plugin.connect.test.pageobjects.RemoteCloseDialogPage;
+import com.atlassian.plugin.connect.test.pageobjects.RemoteDialogOpeningPage;
+import com.atlassian.plugin.connect.test.pageobjects.RemotePluginAwarePage;
+import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-
 import it.ConnectWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
 import it.servlet.condition.ParameterCapturingConditionServlet;
 import it.servlet.condition.ParameterCapturingServlet;
 import it.util.TestUser;
-
 import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -31,7 +38,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.annotation.Nonnull;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +48,10 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWe
 import static it.modules.ConnectAsserts.verifyIframeURLHasVersionNumber;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class TestDialog extends ConnectWebDriverTestBase
 {
@@ -303,23 +312,22 @@ public class TestDialog extends ConnectWebDriverTestBase
         clickAndVerifyIssuedAtTime(jwtReaderFactory, page, isInlineDialog); // clicking multiple times should result in a new JWT on subsequent clicks
     }
 
-    private void sleepForAtLeast1Second()
+    private void sleepForAtLeast5Seconds()
     {
-        sleepUntil(System.currentTimeMillis() + 3000);
+        sleepUntil(System.currentTimeMillis() + 5000);
     }
 
     private void sleepUntil(final long wakeTimeMillis)
     {
-        try
+        final long millisToSleep = wakeTimeMillis - System.currentTimeMillis();
+
+        if (millisToSleep > 0)
         {
-            if (wakeTimeMillis > System.currentTimeMillis())
+            try
             {
-                Thread.sleep(wakeTimeMillis - System.currentTimeMillis());
+                Thread.sleep(millisToSleep);
             }
-        }
-        catch (InterruptedException e)
-        {
-            if (System.currentTimeMillis() < wakeTimeMillis)
+            catch (InterruptedException e)
             {
                 sleepUntil(wakeTimeMillis);
             }
@@ -329,7 +337,7 @@ public class TestDialog extends ConnectWebDriverTestBase
     private void clickAndVerifyIssuedAtTime(JwtReaderFactory jwtReaderFactory, RemotePluginAwarePage page, final boolean isInlineDialog) throws JwtUnknownIssuerException, JwtParseException, JwtIssuerLacksSharedSecretException, JwtVerificationException
     {
         final long timeBeforeClick = System.currentTimeMillis();
-        sleepForAtLeast1Second(); // because the JWT "iat" claim is specified in seconds there is no way to differentiate between "now" and "now + a few milliseconds"
+        sleepForAtLeast5Seconds(); // because the JWT "iat" claim is specified in seconds there is no way to differentiate between "now" and "now + a few milliseconds"
         openAndCloseDialog(page, isInlineDialog);
         verifyIssuedAtTime(jwtReaderFactory, timeBeforeClick);
     }

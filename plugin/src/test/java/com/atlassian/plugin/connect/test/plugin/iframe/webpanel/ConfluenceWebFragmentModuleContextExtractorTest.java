@@ -28,6 +28,7 @@ public class ConfluenceWebFragmentModuleContextExtractorTest
 {
     @Mock
     private UserManager userManager;
+
     @InjectMocks
     private ConfluenceWebFragmentModuleContextExtractor extractor;
 

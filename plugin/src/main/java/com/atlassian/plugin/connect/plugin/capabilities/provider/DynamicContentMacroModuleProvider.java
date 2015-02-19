@@ -15,6 +15,7 @@ import com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonI18nM
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @ConfluenceComponent
 public class DynamicContentMacroModuleProvider extends AbstractContentMacroModuleProvider<DynamicContentMacroModuleBean>
@@ -26,7 +27,7 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
     @Autowired
     public DynamicContentMacroModuleProvider(DynamicContentMacroModuleDescriptorFactory macroModuleDescriptorFactory,
                                              WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                                             HostContainer hostContainer,
+                                             @Qualifier("hostContainer") HostContainer hostContainer,
                                              AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
                                              IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
                                              IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,

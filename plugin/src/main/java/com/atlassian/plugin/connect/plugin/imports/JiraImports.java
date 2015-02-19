@@ -4,11 +4,13 @@ import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.jira.bc.issue.attachment.AttachmentService;
 import com.atlassian.jira.bc.issue.worklog.WorklogService;
+import com.atlassian.jira.bc.license.JiraLicenseService;
 import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.bc.project.component.ProjectComponentManager;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
 import com.atlassian.jira.bc.subtask.conversion.IssueToSubTaskConversionService;
 import com.atlassian.jira.bc.subtask.conversion.SubTaskToIssueConversionService;
+import com.atlassian.jira.config.FeatureManager;
 import com.atlassian.jira.config.SubTaskManager;
 import com.atlassian.jira.config.properties.ApplicationProperties;
 import com.atlassian.jira.issue.IssueManager;
@@ -62,6 +64,7 @@ public class JiraImports
             @JiraImport IssueToSubTaskConversionService issueToSubTaskConversionService,
             @JiraImport JiraAuthenticationContext jiraAuthenticationContext,
             @JiraImport JiraBaseUrls jiraBaseUrls,
+            @JiraImport JiraLicenseService licenseService,
             @JiraImport ("jiraPermissionManager") PermissionManager jiraPermissionManager,
             @JiraImport PermissionSchemeManager permissionSchemeManager,
             @JiraImport ProjectComponentManager projectComponentManager,
@@ -87,7 +90,8 @@ public class JiraImports
             @JiraImport ApplicationService applicationService,
             @JiraImport ApplicationManager applicationManager,
             @JiraImport GlobalPermissionManager globalPermissionManager,
-            @JiraImport ("beanBuilderFactory") BeanBuilderFactory beanBuilderFactory)
+            @JiraImport ("beanBuilderFactory") BeanBuilderFactory beanBuilderFactory,
+            @JiraImport FeatureManager featureManager)
     {
     }
 }

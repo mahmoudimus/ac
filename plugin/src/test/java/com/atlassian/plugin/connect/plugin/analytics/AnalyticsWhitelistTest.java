@@ -34,7 +34,9 @@ public class AnalyticsWhitelistTest
 {
     private static boolean isBrowserEvent(String eventName) throws IOException
     {
-        return eventName.startsWith("connect.addon.iframe") || eventName.startsWith("connect.addon.bridge");
+        return eventName.startsWith("connect.addon.iframe")
+         || eventName.startsWith("connect.addon.bridge")
+         || eventName.startsWith("connect.addon.dialog");
     }
 
     private static String loadResource(String path) throws IOException

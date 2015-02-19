@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.1.18-SNAPSHOT</version>
+    <version>1.1.24-SNAPSHOT</version>
     <organization>
         <name>Atlassian</name>
         <url>http://atlassian.com/</url>
@@ -25,6 +25,8 @@
 
     <modules>
         <module>api-parent</module>
+        <module>reference-plugin-jira</module>
+        <module>reference-plugin-confluence</module>
         <module>modules</module>
         <module>test-support-plugin</module>
         <module>plugin</module>
@@ -194,22 +196,6 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>2.4</version>
                 <!-- !versions 2.5 and 2.5.1 broke tree filtering -->
-            </plugin>
-            <plugin>
-                <groupId>external.atlassian.jgitflow</groupId>
-                <artifactId>jgitflow-maven-plugin</artifactId>
-                <version>${jgitflow.version}</version>
-                <configuration>
-                    <allowSnapshots>true</allowSnapshots>
-                    <enableFeatureVersions>false</enableFeatureVersions>
-                    <pushFeatures>true</pushFeatures>
-                    <pushReleases>true</pushReleases>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <releaseBranchVersionSuffix>RC</releaseBranchVersionSuffix>
-                    <pullMaster>true</pullMaster>
-                    <pullDevelop>true</pullDevelop>
-                    <defaultOriginUrl>ssh://git@stash.atlassian.com:7997/ac/atlassian-connect.git</defaultOriginUrl>
-                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -486,11 +472,6 @@
                 <version>${atlassian.webhooks.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.atlassian.webhooks</groupId>
-                <artifactId>atlassian-webhooks-spi</artifactId>
-                <version>${atlassian.webhooks.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.atlassian.jira</groupId>
                 <artifactId>jira-core</artifactId>
                 <version>${atlassian.jira.version}</version>
@@ -567,6 +548,18 @@
             <dependency>
                 <groupId>com.atlassian.crowd</groupId>
                 <artifactId>embedded-crowd-api</artifactId>
+                <version>${atlassian.crowd.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.crowd</groupId>
+                <artifactId>crowd-integration-client-rest</artifactId>
+                <version>${atlassian.crowd.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.crowd</groupId>
+                <artifactId>crowd-integration-client-common</artifactId>
                 <version>${atlassian.crowd.version}</version>
                 <scope>provided</scope>
             </dependency>
@@ -668,42 +661,18 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <!-- REMOVE WHEN JGITFLOW IS FINAL -->
-    <pluginRepositories>
-        <!-- REMOVE WHEN JGITFLOW IS FINAL -->
-        <pluginRepository>
-            <id>snapshots-repo</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>mulesoft-releases</id>
-            <name>MuleSoft Repository</name>
-            <url>https://repository.mulesoft.org/releases</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>maven-central</id>
-            <url>http://repo1.maven.org/maven2</url>
-        </pluginRepository>
-    </pluginRepositories>
     <properties>
         <!-- VERSIONS -->
         <amps.version>5.0.4</amps.version>
         <atlassian.analytics.version>3.38</atlassian.analytics.version>
         <atlassian.applinks.version>4.2.4</atlassian.applinks.version>
-        <atlassian.confluence.version>5.6-OD-37-042</atlassian.confluence.version>
+        <atlassian.confluence.version>5.7-OD-42-045</atlassian.confluence.version>
         <atlassian.crowd.version>2.8.0-OD-4</atlassian.crowd.version>
         <atlassian.fugue.version>1.1</atlassian.fugue.version>
         <atlassian.healthcheck.version>2.0.4</atlassian.healthcheck.version>
         <atlassian.httpclient.version>0.20.1</atlassian.httpclient.version>
         <atlassian.httpclient.api.version>0.17</atlassian.httpclient.api.version>
-        <atlassian.jira.version>6.4-OD-12-025</atlassian.jira.version>
+        <atlassian.jira.version>6.4-OD-14-082</atlassian.jira.version>
         <atlassian.jira.projects.version>1.0.32</atlassian.jira.projects.version>
         <atlassian.jira.rest.version>${atlassian.jira.version}</atlassian.jira.rest.version>
         <atlassian.jira.testkit.version>6.2.21</atlassian.jira.testkit.version>
@@ -713,10 +682,12 @@
         <atlassian.json.schema.validator.version>1.0.4</atlassian.json.schema.validator.version>
         <atlassian.plugins.version>3.0.7</atlassian.plugins.version>
         <atlassian.plugins.api.version>2.10</atlassian.plugins.api.version>
-        <atlassian.rest.version>2.3.0</atlassian.rest.version>
+        <atlassian.rest.version>2.9.13</atlassian.rest.version>
         <atlassian.sal.version>2.10.0</atlassian.sal.version>
         <atlassian.selenium.version>2.2-rc3</atlassian.selenium.version>
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>
+        <atlassian.connect-js.version>2.0.0</atlassian.connect-js.version>
+        <atlassian.connect-js.path>git+ssh://git@stash.atlassian.com:7997/ac/atlassian-connect-js.git#${atlassian.connect-js.version}</atlassian.connect-js.path>
         <atlassian.jira.projects.plugin.version>1.4.0-D20140829T122309</atlassian.jira.projects.plugin.version>
 
         <atlassian.upm.version>2.17.4</atlassian.upm.version>
@@ -724,7 +695,7 @@
         <atlassian.uri.version>0.1</atlassian.uri.version>
         <atlassian-util-concurrent.version>2.4.0</atlassian-util-concurrent.version>
 
-        <atlassian.webhooks.version>1.0.6</atlassian.webhooks.version>
+        <atlassian.webhooks.version>2.0.0</atlassian.webhooks.version>
         <atlassian.webhooks.api.version>1.0.6</atlassian.webhooks.api.version>
         <atlassian.jira.webhooks.version>1.2.5</atlassian.jira.webhooks.version>
 
@@ -751,7 +722,6 @@
 
         <!-- BUILD STUFF -->
         <apache-commons-version>3.1</apache-commons-version>
-        <jgitflow.version>1.0-m4.3</jgitflow.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
         <atlassian.upm.on.demand>false</atlassian.upm.on.demand>

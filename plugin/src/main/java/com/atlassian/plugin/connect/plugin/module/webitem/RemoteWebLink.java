@@ -5,7 +5,7 @@ import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
-import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor;
+import com.atlassian.plugin.connect.plugin.iframe.webpanel.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.descriptors.WebFragmentModuleDescriptor;
@@ -25,7 +25,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
 {
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
-    private final WebFragmentModuleContextExtractor webFragmentModuleContextExtractor;
+    private final PluggableParametersExtractor webFragmentModuleContextExtractor;
     private final ModuleContextFilter moduleContextFilter;
     private final String url;
     private final String pluginKey;
@@ -35,9 +35,9 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
     private final boolean isDialog;
 
     public RemoteWebLink(WebFragmentModuleDescriptor webFragmentModuleDescriptor, WebFragmentHelper webFragmentHelper,
-                         IFrameUriBuilderFactory iFrameUriBuilderFactory, UrlVariableSubstitutor urlVariableSubstitutor,
-                         WebFragmentModuleContextExtractor webFragmentModuleContextExtractor, ModuleContextFilter moduleContextFilter,
-                         String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog)
+            IFrameUriBuilderFactory iFrameUriBuilderFactory, UrlVariableSubstitutor urlVariableSubstitutor,
+            PluggableParametersExtractor webFragmentModuleContextExtractor, ModuleContextFilter moduleContextFilter,
+            String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog)
     {
         super(webFragmentHelper, null, webFragmentModuleDescriptor);
         this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
@@ -59,13 +59,13 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
         moduleParams = moduleContextFilter.filter(moduleParams);
 
         return iFrameUriBuilderFactory.builder()
-                                      .addOn(pluginKey)
-                                      .namespace(moduleKey)
-                                      .urlTemplate(url)
-                                      .context(moduleParams)
-                                      .sign(false)
-                                      .includeStandardParams(false) // don't sign or pass non-explicitly requested parameters to absolute URLs
-                                      .build();
+                .addOn(pluginKey)
+                .namespace(moduleKey)
+                .urlTemplate(url)
+                .context(moduleParams)
+                .sign(false)
+                .includeStandardParams(false) // don't sign or pass non-explicitly requested parameters to absolute URLs
+                .build();
     }
 
     @Override
@@ -85,12 +85,12 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
                 return isDialog
                         ? urlVariableSubstitutor.append(ConnectIFrameServlet.iFrameServletPath(pluginKey, moduleKey), moduleContext)
                         : iFrameUriBuilderFactory.builder()
-                            .addOn(pluginKey)
-                            .namespace(moduleKey)
-                            .urlTemplate(url)
-                            .context(moduleContext)
-                            .dialog(isDialog)
-                            .build();
+                                .addOn(pluginKey)
+                                .namespace(moduleKey)
+                                .urlTemplate(url)
+                                .context(moduleContext)
+                                .dialog(isDialog)
+                                .build();
             }
             else if (addOnUrlContext == page)
             {

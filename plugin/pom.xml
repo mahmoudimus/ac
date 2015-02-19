@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.18-SNAPSHOT</version>
+        <version>1.1.24-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -20,6 +20,13 @@
     </licenses>
 
     <dependencies>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.8.1</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>external.atlassian.json</groupId>
             <artifactId>json-schemagen-core</artifactId>
@@ -196,6 +203,14 @@
         </dependency>
         <dependency>
             <groupId>com.atlassian.crowd</groupId>
+            <artifactId>crowd-integration-client-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.crowd</groupId>
+            <artifactId>crowd-integration-client-rest</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.crowd</groupId>
             <artifactId>embedded-crowd-api</artifactId>
         </dependency>
 
@@ -284,11 +299,6 @@
         <dependency>
             <groupId>com.atlassian.webhooks</groupId>
             <artifactId>atlassian-webhooks-provider-spi</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.webhooks</groupId>
-            <artifactId>atlassian-webhooks-spi</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -458,7 +468,7 @@
                 <artifactId>maven-amps-plugin</artifactId>
                 <configuration>
                     <enableDevToolbox>true</enableDevToolbox>
-                    <enableFastdev>false</enableFastdev>
+                    <enableFastdev>true</enableFastdev>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <versionOverridesPath>${basedir}/../bin/amps-overrides.properties</versionOverridesPath>
@@ -550,7 +560,6 @@
                             <systemPropertyVariables>
                                 <product>jira</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
-                                <fastdev.mvn.command>${mvnCommand}</fastdev.mvn.command>
                                 <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
@@ -606,17 +615,14 @@
                                     <artifactId>jira-projects-plugin</artifactId>
                                     <version>${atlassian.jira.projects.plugin.version}</version>
                                 </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.plugins</groupId>
+                                    <artifactId>connect-reference-plugin-jira</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
                             </pluginArtifacts>
 
                             <bundledArtifacts>
-
-                                <!-- IMPORTANT: we need to forcefully bundle the same version of UPM that we compile with so we can do fastdev reloads -->
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.upm</groupId>
-                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
-                                    <version>${atlassian.upm.version}</version>
-                                </bundledArtifact>
-
                                 <bundledArtifact>
                                     <groupId>com.atlassian.analytics</groupId>
                                     <artifactId>analytics-client</artifactId>
@@ -633,7 +639,6 @@
                             <systemPropertyVariables>
                                 <product>confluence</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
-                                <fastdev.mvn.command>${mvnCommand}</fastdev.mvn.command>
                                 <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
@@ -679,6 +684,11 @@
                                     <artifactId>confluence-create-content-plugin</artifactId>
                                     <version>${blueprints.version}</version>
                                 </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.plugins</groupId>
+                                    <artifactId>connect-reference-plugin-confluence</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
                             </pluginArtifacts>
 
                             <bundledArtifacts>
@@ -686,18 +696,6 @@
                                     <groupId>com.atlassian.devrel</groupId>
                                     <artifactId>developer-toolbox-plugin</artifactId>
                                     <version>${toolbox.version}</version>
-                                </bundledArtifact>
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.labs</groupId>
-                                    <artifactId>fastdev-plugin</artifactId>
-                                    <version>${fastdev.version}</version>
-                                </bundledArtifact>
-
-                                <!-- IMPORTANT: we need to forcefully bundle the same version of UPM that we compile with so we can do fastdev reloads -->
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.upm</groupId>
-                                    <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
-                                    <version>${atlassian.upm.version}</version>
                                 </bundledArtifact>
 
                                 <bundledArtifact>
@@ -759,6 +757,30 @@
                             <nodeVersion>${node.version}</nodeVersion>
                             <npmVersion>${npm.version}</npmVersion>
                         </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm connect-js plugin install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <workingDirectory>../plugin</workingDirectory>
+                            <arguments>install ${atlassian.connect-js.path}</arguments>
+                            <skip>${skipNpm}</skip>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install connect npm</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                         <configuration>
+                            <workingDirectory>../plugin</workingDirectory>
+                            <arguments>install</arguments>
+                            <skip>${skipNpm}</skip>
+                         </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -1246,10 +1268,21 @@
                                 <goals>
                                     <goal>install-node-and-npm</goal>
                                 </goals>
-                                <phase>prepare-package</phase>
+                                <phase>generate-resources</phase>
                                 <configuration>
                                     <nodeVersion>${node.version}</nodeVersion>
                                     <npmVersion>${npm.version}</npmVersion>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>npm connect-js install</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <workingDirectory>../docs</workingDirectory>
+                                    <arguments>install ${atlassian.connect-js.path}</arguments>
                                 </configuration>
                             </execution>
                             <execution>

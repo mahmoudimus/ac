@@ -12,7 +12,7 @@ import static com.atlassian.upm.api.util.Option.some;
  *
  * Remove this once UPM supports this rest resource
  */
-class Strings
+public class Strings
 {
     /**
      * Returns the first non-empty {@link String} in the {@link Iterable}, or {@code none()} if none exist.

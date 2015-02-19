@@ -11,6 +11,9 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.util.TestUser;
 import org.apache.commons.lang.RandomStringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -22,8 +25,6 @@ import com.atlassian.pageobjects.binder.PageBindingWaitException;
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static it.servlet.ConnectAppServlets.echoQueryParametersServlet;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.endsWith;
 import static org.junit.Assert.assertEquals;
 
 public class TestCompatibility extends AbstractConfluenceWebDriverTest
@@ -107,7 +108,10 @@ public class TestCompatibility extends AbstractConfluenceWebDriverTest
             }
 
             String content = rpc.getPageContent(page.getPageId());
-            assertThat(content, endsWith("<p><ac:structured-macro ac:name=\"something-else\" /></p>"));
+            Document doc = Jsoup.parse(content);
+            Elements elements = doc.select("ac|structured-macro");
+            assertEquals("only one macro found", 1, elements.size());
+            assertEquals("name set correct (not alias)", "something-else", elements.get(0).attr("ac:name"));
         }
         finally
         {

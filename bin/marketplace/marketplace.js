@@ -17,11 +17,11 @@ var downloadQueue = async.queue(function (task, callback) {
 }, 3);
 
 downloadQueue.drain = function () {
-}
+};
 
 var includePrivateAddons = function(opts) {
     return _.contains(opts.status, 'private');
-}
+};
 
 var getAddonPage = function(opts, uri, callback) {
     if (opts.debug) {
@@ -61,9 +61,9 @@ var getAddonPage = function(opts, uri, callback) {
                     status = addon.approval.status.toLowerCase(),
                     statusColor = status === 'public' ? 'blue' : 'red',
                     url = opts.baseUrl + _.find(addon.links, {
-                        'rel': opts.auth ? 'tiny-url' : 'alternate' // no tiny-url for unauthenticated requests?
+                        'rel': 'self'
                     }).href;
-
+                
                 if (opts.status && !_.contains(opts.status, status)) {
                     return;
                 }

@@ -1,14 +1,17 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities;
 
-import com.opensymphony.util.FileUtils;
-import org.springframework.core.io.DefaultResourceLoader;
-
+import org.apache.commons.io.IOUtils;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
 public class TestFileReader
 {
     public static String readAddonTestFile(String fileName) throws IOException
     {
-        return FileUtils.readFile(new DefaultResourceLoader().getResource("classpath:/testfiles/capabilities/" + fileName).getFile());
+        // old version of io utils in the products require us to use this form of toString
+        return IOUtils.toString(
+                new InputStreamReader(TestFileReader.class.getClassLoader().getResourceAsStream("testfiles/capabilities/" + fileName),
+                        Charset.forName("UTF-8")));
     }
 }

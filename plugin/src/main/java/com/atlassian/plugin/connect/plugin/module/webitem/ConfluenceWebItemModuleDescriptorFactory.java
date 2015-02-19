@@ -5,7 +5,7 @@ import com.atlassian.confluence.plugin.descriptor.web.model.ConfluenceWebLink;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor;
+import com.atlassian.plugin.connect.plugin.iframe.webpanel.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.web.WebFragmentHelper;
@@ -22,7 +22,7 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
 {
     private final WebFragmentHelper webFragmentHelper;
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
-    private final WebFragmentModuleContextExtractor webFragmentModuleContextExtractor;
+    private final PluggableParametersExtractor webFragmentModuleContextExtractor;
     private final ModuleContextFilter moduleContextFilter;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
 
@@ -30,7 +30,7 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
     public ConfluenceWebItemModuleDescriptorFactory(
             WebFragmentHelper webFragmentHelper,
             IFrameUriBuilderFactory iFrameUriBuilderFactory,
-            WebFragmentModuleContextExtractor webFragmentModuleContextExtractor,
+            PluggableParametersExtractor webFragmentModuleContextExtractor,
             ModuleContextFilter moduleContextFilter,
             UrlVariableSubstitutor urlVariableSubstitutor)
     {
@@ -58,12 +58,11 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
                 , isDialog);
     }
 
-
     private static final class RemoteConfluenceWebItemModuleDescriptor extends ConfluenceWebItemModuleDescriptor
     {
         private final WebFragmentHelper webFragmentHelper;
         private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
-        private final WebFragmentModuleContextExtractor webFragmentModuleContextExtractor;
+        private final PluggableParametersExtractor webFragmentModuleContextExtractor;
         private final ModuleContextFilter moduleContextFilter;
         private final String url;
         private final UrlVariableSubstitutor urlVariableSubstitutor;
@@ -76,7 +75,7 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
         private RemoteConfluenceWebItemModuleDescriptor(
                 WebFragmentHelper webFragmentHelper,
                 IFrameUriBuilderFactory iFrameUriBuilderFactory,
-                WebFragmentModuleContextExtractor webFragmentModuleContextExtractor, ModuleContextFilter moduleContextFilter,
+                PluggableParametersExtractor webFragmentModuleContextExtractor, ModuleContextFilter moduleContextFilter,
                 UrlVariableSubstitutor urlVariableSubstitutor, String url, String pluginKey, String moduleKey, boolean absolute,
                 AddOnUrlContext addOnUrlContext, boolean isDialog)
         {

@@ -2,16 +2,19 @@ package it.matcher;
 
 import org.hamcrest.Matcher;
 
+import java.util.TimeZone;
+
 import static it.matcher.MatchesPattern.matchesPattern;
+import static org.hamcrest.Matchers.isIn;
 
 /**
  * Matchers for parameters passed to Connect add-ons.
  */
-public class ParamMatchers
-{
+public class ParamMatchers {
+
     public static Matcher<String> isTimeZone()
     {
-        return matchesPattern("[A-Za-z0-9_\\-]+/[A-Za-z0-9_\\-]+");
+        return isIn(TimeZone.getAvailableIDs());
     }
 
     public static Matcher<String> isLocale()
@@ -21,8 +24,6 @@ public class ParamMatchers
 
     public static Matcher<String> isVersionNumber()
     {
-        // jgitflow creates versions like x.y.z-SNAPSHOT-RC, so we'll just check
-        // the beginning of the string looks like a version number
         return matchesPattern("(\\d)*\\.(\\d)*\\.(\\d)*.*");
     }
 }

@@ -14,30 +14,21 @@ requirejs.config({
   paths: {
     // dependencies
     'jquery': '../target/qunit/dependencies/js/external/jquery/jquery',
-    'core-host': '../src/main/resources/js/core/host-debug',
     'aui-soy': '//aui-cdn.atlassian.com/aui-adg/5.4.3/js/aui-soy',
     // host side
-    'confluence/macro/editor': '../src/main/resources/js/confluence/macro/editor',
-    'jira/events': '../src/main/resources/js/jira/events',
-    'jira/workflow-post-function': '../src/main/resources/js/jira/workflow-post-function/workflow-post-function',
-    'iframe/host/main': '../src/main/resources/js/iframe/host/main'
+    'connect-host': 'main/resources/js/core/connect-host',
+    'ac/confluence/macro/editor': '../src/main/resources/js/confluence/macro/editor',
+    'ac/jira/events': '../src/main/resources/js/jira/events/events',
+    'ac/jira/workflow-post-function': '../src/main/resources/js/jira/workflow-post-function/workflow-post-function'
   },
 
   shim: {
     /////////////////
     //  HOST SIDE  //
     /////////////////
-    'confluence/macro/editor': {
-      deps: ['core-host']
-    },
     ///////////////////
     //  SHARED SIDE  //
     ///////////////////
-    'iframe-plugin-confluence': {
-        deps:[
-        'iframe/host/main'
-        ]
-    }
   },
 
   // ask Require.js to load these files (all our tests)

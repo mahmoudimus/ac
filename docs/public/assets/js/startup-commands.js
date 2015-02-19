@@ -14,7 +14,7 @@ var startupCommands = (function() {
         var errorMsgVersion = 'There was an error retrieving the version information';
         $.ajax({
             type: "GET",
-            url: '//developer.atlassian.com/static/connect-versions.jsonp',
+            url: '//developer.atlassian.com/static/connect/commands/connect-versions.jsonp',
             dataType: 'jsonp',
             jsonpCallback: "evalCommands"
         }).error(function (data) {
