@@ -1060,6 +1060,7 @@
                                 <configuration>
                                     <workingDirectory>../plugin</workingDirectory>
                                     <arguments>install</arguments>
+                                    <skip>${skipNpm}</skip>
                                 </configuration>
                             </execution>
                         </executions>
@@ -1259,6 +1260,7 @@
                                 <phase>prepare-package</phase>
                                 <configuration>
                                     <arguments>install</arguments>
+                                    <skip>${skipNpm}</skip>
                                 </configuration>
                             </execution>
                             <execution>
@@ -1269,6 +1271,7 @@
                                 <phase>prepare-package</phase>
                                 <configuration>
                                     <arguments>run-script build</arguments>
+                                    <skip>${skipNpm}</skip>
                                 </configuration>
                             </execution>
                         </executions>
@@ -1316,6 +1319,7 @@
             use-maven,3
             include-artifact,com.atlassian.plugins:atlassian-connect-cloud-acceptance-tests
         </od.testing.configuration>
-        <frontend.plugin.version>0.0.19</frontend.plugin.version>
+        <frontend.plugin.version>0.0.22</frontend.plugin.version>
+        <skipNpm>false</skipNpm>
     </properties>
 </project>
