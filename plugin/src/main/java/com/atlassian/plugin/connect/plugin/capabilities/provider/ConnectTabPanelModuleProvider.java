@@ -10,9 +10,7 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.iframe.tabpanel.issue.ConnectIFrameIssueTabPanel;
 import com.atlassian.plugin.connect.plugin.iframe.tabpanel.profile.ConnectIFrameProfileTabPanel;
-import com.atlassian.plugin.connect.plugin.iframe.tabpanel.project.ConnectIFrameComponentTabPanel;
 import com.atlassian.plugin.connect.plugin.iframe.tabpanel.project.ConnectIFrameProjectTabPanel;
-import com.atlassian.plugin.connect.plugin.iframe.tabpanel.project.ConnectIFrameVersionTabPanel;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -28,10 +26,8 @@ public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<Conn
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
-    public static final String COMPONENT_TAB_PANELS = "jiraComponentTabPanels";
     public static final String ISSUE_TAB_PANELS = "jiraIssueTabPanels";
     public static final String PROJECT_TAB_PANELS = "jiraProjectTabPanels";
-    public static final String VERSION_TAB_PANELS = "jiraVersionTabPanels";
     public static final String PROFILE_TAB_PANELS = "jiraProfileTabPanels";
 
     public static final Map<String, TabPanelDescriptorHints> FIELD_TO_HINTS =
@@ -40,10 +36,6 @@ public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<Conn
                             ConnectIssueTabPanelModuleDescriptor.class, ConnectIFrameIssueTabPanel.class))
                     .put(PROJECT_TAB_PANELS, new TabPanelDescriptorHints("project-tab-page",
                             ConnectProjectTabPanelModuleDescriptor.class, ConnectIFrameProjectTabPanel.class))
-                    .put(COMPONENT_TAB_PANELS, new TabPanelDescriptorHints("component-tab-page",
-                            ConnectComponentTabPanelModuleDescriptor.class, ConnectIFrameComponentTabPanel.class))
-                    .put(VERSION_TAB_PANELS, new TabPanelDescriptorHints("version-tab-page",
-                            ConnectVersionTabPanelModuleDescriptor.class, ConnectIFrameVersionTabPanel.class))
                     .put(PROFILE_TAB_PANELS, new TabPanelDescriptorHints("profile-tab-page",
                             ConnectViewProfilePanelModuleDescriptor.class, ConnectIFrameProfileTabPanel.class))
                     .build();
@@ -52,8 +44,6 @@ public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<Conn
             new ImmutableMap.Builder<Class<? extends ModuleDescriptor>, String>()
                     .put(ConnectIssueTabPanelModuleDescriptor.class, ISSUE_TAB_PANELS)
                     .put(ConnectProjectTabPanelModuleDescriptor.class, PROJECT_TAB_PANELS)
-                    .put(ConnectComponentTabPanelModuleDescriptor.class, COMPONENT_TAB_PANELS)
-                    .put(ConnectVersionTabPanelModuleDescriptor.class, VERSION_TAB_PANELS)
                     .put(ConnectViewProfilePanelModuleDescriptor.class, PROFILE_TAB_PANELS)
                     .build();
 
