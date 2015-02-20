@@ -1,5 +1,7 @@
 <application key="jira">
 
+    <resource type="i18n" name="jira-addon-i18n" location="com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonResourceBundle"/>
+
     <rest key="rest" path="/atlassian-connect" version="1">
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
@@ -7,6 +9,11 @@
     </rest>
 
     <!-- JIRA specific javascript modules -->
+    <web-resource key="ap-core">
+        <resource type="download" name="core-host.js" location="/js/core/connect-host.js" />
+        <dependency>jira.webresources:almond</dependency>
+    </web-resource>
+
     <web-resource key="workflow-post-function">
         <resource type="download" name="workflow-post-function.js" location="js/jira/workflow-post-function/workflow-post-function.js" />
         <resource type="download" name="workflow-post-function-rpc.js" location="js/jira/workflow-post-function/workflow-post-function-rpc.js" />

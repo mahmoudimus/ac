@@ -6,8 +6,6 @@
     </plugin-info>
 
     <resource type="i18n" name="i18n" location="com.atlassian.connect.i18n"/>
-    <resource type="i18n" name="jira-addon-i18n" location="com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonResourceBundle"/>
-    <resource type="i18n" name="confluence-addon-i18n" location="connect-addons"/>
 
     <health-check key="addonsGroupHealthCheck" name="Add-on Group Health Check" class="com.atlassian.plugin.connect.healthcheck.AtlassianAddonsGroupHealthCheck" />
 
@@ -75,8 +73,6 @@
         <url-pattern>/plugins/servlet/atlassian-connect/*</url-pattern>
     </servlet-filter>
 
-
-
     <servlet key="addon-iframe-servlet"
              class="com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet">
         <url-pattern>/ac/*</url-pattern>
@@ -87,12 +83,6 @@
     <!-- docs are built and copied into target/classes/docs during the prepare-package phase -->
     <web-resource key="docs">
         <resource type="download" name="docs/" location="docs" />
-    </web-resource>
-
-    <web-resource key="ap-core">
-        <resource type="download" name="core-host.js" location="/js/core/connect-host.js" />
-        <dependency>jira.webresources:almond</dependency>
-        <dependency>confluence.web.resources:almond</dependency>
     </web-resource>
 
     <web-resource key="ap-user">

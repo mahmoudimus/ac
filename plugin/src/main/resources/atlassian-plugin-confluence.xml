@@ -1,5 +1,7 @@
 <application key="confluence">
 
+    <resource type="i18n" name="confluence-addon-i18n" location="connect-addons"/>
+
     <web-section key="admin.pages" name="Remotable Plugins" location="system.admin" weight="100">
         <label>Remote Plugins</label>
     </web-section>
@@ -14,6 +16,11 @@
     </rest>
 
     <!-- Confluence specific javascript modules -->
+    <web-resource key="ap-core">
+        <resource type="download" name="core-host.js" location="/js/core/connect-host.js" />
+        <dependency>confluence.web.resources:almond</dependency>
+    </web-resource>
+
     <web-resource key="macro">
         <resource type="download" name="editor.js" location="js/confluence/macro/editor.js" />
         <resource type="download" name="editor-rpc.js" location="js/confluence/macro/editor-rpc.js" />
