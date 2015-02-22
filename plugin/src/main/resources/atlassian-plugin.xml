@@ -85,29 +85,11 @@
         <resource type="download" name="docs/" location="docs" />
     </web-resource>
 
-    <web-resource key="ap-user">
-        <resource type="download" name="user.js" location="/js/iframe/host/user.js" />
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-core</dependency>
-    </web-resource>
-
-    <web-resource key="iframe-host-js">
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-core</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-user</dependency>
-        <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
-        <resource type="download" name="content-resolver.js" location="/js/iframe/host/content-resolver.js" />
-        <dependency>com.atlassian.auiplugin:dialog2</dependency>
-    </web-resource>
-
     <web-resource key="iframe-host-css">
         <resource type="download" name="core-host.css" location="/css/core/host-css.css" />
         <resource type="download" name="host.css" location="/css/iframe/host.css" />
         <resource type="download" name="admin.css" location="/css/iframe/admin.css" />
         <resource type="download" name="messages-main.css" location="css/messages/main.css" />
-    </web-resource>
-
-    <web-resource key="remote-condition">
-        <resource type="download" name="remote.js" location="js/condition/remote.js" />
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-core</dependency>
     </web-resource>
 
     <web-resource key="images">
@@ -120,17 +102,6 @@
 
     <web-resource key="schema-xsl">
         <resource type="download" content-type="application/xml" name="xs3p.xsl" location="/xsd/xs3p.xsl"/>
-    </web-resource>
-
-    <web-resource key="atlassian-connect-resources" name="Connect resources for inclusion on every page.">
-        <context>atl.admin</context>
-        <context>atl.general</context>
-        <!-- workaround for AC-703, the 'preview' view does not include atl.general resources (CONF-30617) -->
-        <context>preview</context>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:dialog-page-resource</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:remote-condition</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-css</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-js</dependency>
     </web-resource>
 
     <applinks-application-type name="Remote Plugin Container" key="remote-plugin-container-type"
