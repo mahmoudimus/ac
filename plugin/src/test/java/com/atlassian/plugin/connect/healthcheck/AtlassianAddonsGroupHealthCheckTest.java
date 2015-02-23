@@ -25,6 +25,7 @@ import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -40,9 +41,7 @@ public class AtlassianAddonsGroupHealthCheckTest
     @Mock
     private Application application;
     @Mock
-    private UserWithAttributes uwa;
-
-    private HashSet<String> mockUserAttributes;
+    private UserWithAttributes userWithAttributes;
 
     private String mockApplicationName = "MockApplicationClass";
 
@@ -55,13 +54,13 @@ public class AtlassianAddonsGroupHealthCheckTest
             e.printStackTrace();
         }
         try {
-            when(applicationService.findUserWithAttributesByName(any(Application.class), any(String.class))).thenReturn(uwa);
+            when(applicationService.findUserWithAttributesByName(any(Application.class), any(String.class))).thenReturn(userWithAttributes);
         } catch (UserNotFoundException e) {
             e.printStackTrace();
         }
         when(application.getName()).thenReturn(mockApplicationName);
 
-        when(uwa.getValues(any(String.class))).thenReturn(Collections.singleton("true"));
+        when(userWithAttributes.getValues(any(String.class))).thenReturn(Collections.singleton("true"));
     }
 
     @Test
@@ -179,15 +178,63 @@ public class AtlassianAddonsGroupHealthCheckTest
     @Test
     public void testUnhealthyIfAddonUserAttributesAreWrong() {
         HashSet<User> users = Sets.newHashSet();
-        users.add(createUser("addon_someone-above-likes-tv-gameshows", Constants.ADDON_USER_EMAIL_ADDRESS));
+        User addonUser = createUser("addon_someone-above-likes-tv-gameshows", Constants.ADDON_USER_EMAIL_ADDRESS);
+        users.add(addonUser);
 
-        when(uwa.getValues(any(String.class))).thenReturn(null);
+        linkSpecificAttribute(addonUser, Collections.singleton("false"));
 
         AtlassianAddonsGroupHealthCheck healthCheck = createHealthCheckWithUsers(users);
         HealthStatus check = healthCheck.check();
         assertFalse(check.isHealthy());
+    }
 
-        when(uwa.getValues(any(String.class))).thenReturn(Collections.singleton("true"));
+    @Test
+    public void testUnhealthyIfAddonUserAttributesAreMissing() {
+        HashSet<User> users = Sets.newHashSet();
+        User addonUser = createUser("addon_check-null-attributes", Constants.ADDON_USER_EMAIL_ADDRESS);
+        users.add(addonUser);
+
+        linkSpecificAttribute(addonUser, null);
+
+        AtlassianAddonsGroupHealthCheck healthCheck = createHealthCheckWithUsers(users);
+        HealthStatus check = healthCheck.check();
+        assertFalse(check.isHealthy());
+    }
+
+    @Test
+    public void testUnhealthyIfUserAttributesObjectIsntFound() {
+        HashSet<User> users = Sets.newHashSet();
+        User addonUser = createUser("addon_check-missing-user-attributes-object", Constants.ADDON_USER_EMAIL_ADDRESS);
+        users.add(addonUser);
+        //String userName = addonUser.getName();
+        try {
+            when(applicationService.findUserWithAttributesByName(any(Application.class), eq("addon_check-missing-user-attributes-object")))
+                    .thenReturn(null);
+        } catch (UserNotFoundException e) {
+            assertFalse("Failed to setup test", true);
+            // What if I failed? Can I fail?
+        }
+
+        AtlassianAddonsGroupHealthCheck healthCheck = createHealthCheckWithUsers(users);
+        HealthStatus check = healthCheck.check();
+        assertFalse(check.isHealthy());
+    }
+
+    @Test
+    public void testUnhealthyIfAddonUserHaveIncorrectUsernameOrEmailOrAttributes() {
+        HashSet<User> users = Sets.newHashSet();
+        users.add(createUser("addon_my-addon", Constants.ADDON_USER_EMAIL_ADDRESS));
+        users.add(createUser("addon_price-is-right", "larry@thepriceisright.com"));
+        users.add(createUser("larry", Constants.ADDON_USER_EMAIL_ADDRESS));
+        User addonUser = createUser("addon_attributes-incorrect", Constants.ADDON_USER_EMAIL_ADDRESS);
+        users.add(addonUser);
+
+        linkSpecificAttribute(addonUser, Collections.singleton("notTrue"));
+
+        AtlassianAddonsGroupHealthCheck healthCheck = createHealthCheckWithUsers(users);
+        HealthStatus check = healthCheck.check();
+        assertFalse(check.isHealthy());
+        assertThat(check.failureReason(), allOf(containsString("unexpected username"), containsString("unexpected email")));
     }
 
     @Ignore("TODO: assert that we can find users that were never associated with an add-on (e.g. by setting attributes on users)")
@@ -215,6 +262,18 @@ public class AtlassianAddonsGroupHealthCheckTest
         when(u.getEmailAddress()).thenReturn(email);
         when(u.isActive()).thenReturn(isActive);
         return u;
+    }
+
+    private void linkSpecificAttribute(User addonUser, Set<String> collection) {
+        UserWithAttributes addonAttributes = mock(UserWithAttributes.class);
+        when(addonAttributes.getValues(any(String.class))).thenReturn(collection);
+        String userName = addonUser.getName();
+        try {
+            when(applicationService.findUserWithAttributesByName(any(Application.class), eq(userName)))
+                    .thenReturn(addonAttributes);
+        } catch (UserNotFoundException e) {
+            // What if I failed? Can I fail?
+        }
     }
 
     private AtlassianAddonsGroupHealthCheck createHealthCheckWithUsers(Collection<User> users)
