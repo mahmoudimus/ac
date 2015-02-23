@@ -146,8 +146,8 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
     private boolean validAddonUserAttributes(User user)  throws ApplicationNotFoundException {
         try {
             Application application = applicationManager.findByName(groupProvisioningService.getCrowdApplicationName());
-            UserWithAttributes uwa = applicationService.findUserWithAttributesByName(application, user.getName());
-            return validAddonAttribute(uwa, application.getName());
+            UserWithAttributes userWithAttributes = applicationService.findUserWithAttributesByName(application, user.getName());
+            return validAddonAttribute(userWithAttributes, application.getName());
         } catch (UserNotFoundException e) {
             log.error("Add-on userwithattributes '" + user.getName() + "' not found"); //Logging twice?
         }
