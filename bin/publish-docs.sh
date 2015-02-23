@@ -23,7 +23,12 @@ npm run-script build
 
 #SET THE DESTINATION PATH ON THE NEXT FILE SYSTEM
 DESTINATION="uploads@developer-app.internal.atlassian.com:/opt/j2ee/domains/atlassian.com/developer-prod/static-content/static/connect/docs/"
+#DESTINATION="$HOME/atlassian-connect/test/ac-docs/"
 
-rsync -avz --delete -e 'ssh' target/www/* "$DESTINATION/$NEW_VERSION"
+ln -sfn ./$NEW_VERSION latest
+
+
+rsync -avz -e 'ssh' latest "$DESTINATION"
+rsync -avz --delete -e 'ssh' target/gensrc/www/* "$DESTINATION/$NEW_VERSION"
 
 echo "Done!"
