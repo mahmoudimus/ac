@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.usermanagement;
 
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.model.user.User;
+import com.atlassian.crowd.model.user.UserWithAttributes;
 import com.atlassian.crowd.service.client.ClientProperties;
 import com.atlassian.crowd.service.client.ClientPropertiesImpl;
 import com.atlassian.crowd.service.client.ClientResourceLocator;
@@ -61,6 +62,20 @@ public class ConnectAddOnUserUtil
     public static boolean validAddOnEmailAddress(User user)
     {
         return Constants.ADDON_USER_EMAIL_ADDRESS.equals(user.getEmailAddress());
+    }
+
+    /**
+     * Will validate that an addon User attributes adhere to the correct format
+     * @param userWithAttributes user to validate
+     * @param applicationName application name used in attribute
+     * @return true if attribute is valid
+     */
+    public static boolean validAddonAttribute(UserWithAttributes userWithAttributes, String applicationName) {
+        Set<String> attr = userWithAttributes.getValues(buildAttributeConnectAddOnAttributeName(applicationName));
+        if (attr != null) {
+            return attr.equals(Collections.singleton("true"));
+        }
+        return false;
     }
 
     /**
