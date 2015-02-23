@@ -10,6 +10,7 @@ import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.security.SpacePermissionManager;
 import com.atlassian.confluence.security.administrators.PermissionsAdministratorBuilder;
 import com.atlassian.confluence.security.websudo.WebSudoManager;
+import com.atlassian.confluence.setup.settings.CoreFeaturesManager;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.confluence.status.service.SystemInformationService;
@@ -51,8 +52,8 @@ public class ConfluenceImports
             @ConfluenceImport SystemInformationService systemInformationService,
             @ConfluenceImport UserAccessor userAccessor,
             @ConfluenceImport WebSudoManager webSudoManager,
-            @ConfluenceImport XhtmlContent xhtmlContent
-
+            @ConfluenceImport XhtmlContent xhtmlContent,
+            @ConfluenceImport CoreFeaturesManager coreFeaturesManager
     )
     {
     }

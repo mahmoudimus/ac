@@ -6,16 +6,12 @@ import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParser;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleUiParamParser;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.plugin.iframe.servlet.context.JiraContextFactory;
-import com.atlassian.plugin.connect.plugin.iframe.servlet.context.ProductSpecificContextFactory;
-import com.google.common.collect.ImmutableMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,17 +32,14 @@ public class ConnectIFrameServlet extends HttpServlet
     private final IFrameRenderStrategyRegistry IFrameRenderStrategyRegistry;
     private final ModuleContextParser moduleContextParser;
     private final ModuleUiParamParser moduleUiParamParser;
-    private final ProductSpecificContextFactory productSpecificContextFactory;
 
     public ConnectIFrameServlet(IFrameRenderStrategyRegistry IFrameRenderStrategyRegistry,
             ModuleContextParser moduleContextParser,
-            ModuleUiParamParser moduleUiParamParser,
-            ProductSpecificContextFactory productSpecificContextFactory)
+            ModuleUiParamParser moduleUiParamParser)
     {
         this.IFrameRenderStrategyRegistry = IFrameRenderStrategyRegistry;
         this.moduleContextParser = moduleContextParser;
         this.moduleUiParamParser = moduleUiParamParser;
-        this.productSpecificContextFactory = productSpecificContextFactory;
     }
 
     @Override
@@ -64,15 +57,9 @@ public class ConnectIFrameServlet extends HttpServlet
             if (renderStrategy != null)
             {
                 resp.setContentType(renderStrategy.getContentType());
-
                 ModuleContextParameters moduleContextParameters = moduleContextParser.parseContextParameters(req);
-                final Map<String, Object> productContextParameters = productSpecificContextFactory.createProductSpecificContext(moduleContextParameters);
-                final Map<String, Object> contextParameters = new ImmutableMap.Builder<String, Object>()
-                        .putAll(moduleContextParameters)
-                        .putAll(productContextParameters)
-                        .build();
 
-                if (renderStrategy.shouldShow(contextParameters))
+                if (renderStrategy.shouldShow(moduleContextParameters))
                 {
                     Option<String> moduleUiParameters = moduleUiParamParser.parseUiParameters(req);
                     renderStrategy.render(moduleContextParameters, resp.getWriter(), moduleUiParameters);
