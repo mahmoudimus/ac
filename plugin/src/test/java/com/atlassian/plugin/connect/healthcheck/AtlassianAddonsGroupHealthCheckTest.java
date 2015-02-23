@@ -1,8 +1,11 @@
 package com.atlassian.plugin.connect.healthcheck;
 
+import com.atlassian.crowd.model.user.UserWithAttributes;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
+import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
+import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.healthcheck.core.HealthStatus;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningService;
@@ -12,10 +15,13 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.junit.Before;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -31,6 +37,32 @@ public class AtlassianAddonsGroupHealthCheckTest
     private ApplicationService applicationService;
     @Mock
     private ConnectAddOnUserGroupProvisioningService groupProvisioningService;
+    @Mock
+    private Application application;
+    @Mock
+    private UserWithAttributes uwa;
+
+    private HashSet<String> mockUserAttributes;
+
+    private String mockApplicationName = "MockApplicationClass";
+
+
+    @Before
+    public void setup() {
+        try {
+            when(applicationManager.findByName(any(String.class))).thenReturn(application);
+        } catch(ApplicationNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            when(applicationService.findUserWithAttributesByName(any(Application.class), any(String.class))).thenReturn(uwa);
+        } catch (UserNotFoundException e) {
+            e.printStackTrace();
+        }
+        when(application.getName()).thenReturn(mockApplicationName);
+
+        when(uwa.getValues(any(String.class))).thenReturn(Collections.singleton("true"));
+    }
 
     @Test
     public void testHealthyIfNoAddonUsers() throws Exception
@@ -142,6 +174,20 @@ public class AtlassianAddonsGroupHealthCheckTest
         assertFalse(check.isHealthy());
         // TODO: assert that we can find users that were never associated with an add-on (e.g. by setting attributes on users)
         assertThat(check.failureReason(), allOf(containsString("unexpected username"), containsString("unexpected email")));
+    }
+
+    @Test
+    public void testUnhealthyIfAddonUserAttributesAreWrong() {
+        HashSet<User> users = Sets.newHashSet();
+        users.add(createUser("addon_someone-above-likes-tv-gameshows", Constants.ADDON_USER_EMAIL_ADDRESS));
+
+        when(uwa.getValues(any(String.class))).thenReturn(null);
+
+        AtlassianAddonsGroupHealthCheck healthCheck = createHealthCheckWithUsers(users);
+        HealthStatus check = healthCheck.check();
+        assertFalse(check.isHealthy());
+
+        when(uwa.getValues(any(String.class))).thenReturn(Collections.singleton("true"));
     }
 
     @Ignore("TODO: assert that we can find users that were never associated with an add-on (e.g. by setting attributes on users)")
