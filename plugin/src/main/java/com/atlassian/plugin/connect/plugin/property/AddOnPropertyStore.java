@@ -66,7 +66,7 @@ public class AddOnPropertyStore
 
             AddOnPropertyAO addOnProperty = createAddOnProperty(addOnKey, propertyKey, value);
             addOnProperty.save();
-            return new PutResultWithOptionalProperty(PutResult.PROPERTY_UPDATED, Option.some(AddOnProperty.fromAO(propertyAO)));
+            return new PutResultWithOptionalProperty(PutResult.PROPERTY_UPDATED, Option.some(AddOnProperty.fromAO(addOnProperty)));
         }
         else
         {
