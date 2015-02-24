@@ -30,6 +30,7 @@ import static org.mockito.Mockito.when;
 public abstract class AbstractContentMacroUrlTemplateTest<B extends BaseContentMacroModuleBean, M extends AbstractMacro, T extends BaseContentMacroModuleBeanBuilder<T, B>>
 {
     public static final String BODY = "some macro content";
+    public static final String MACRO_ID = "some-macro-id";
     public static final String HASH = DigestUtils.md5Hex(BODY);
     public static final String PAGE_TYPE = "page";
     public static final String PAGE_ID = "56789";
@@ -45,6 +46,7 @@ public abstract class AbstractContentMacroUrlTemplateTest<B extends BaseContentM
     public static Collection<Object[]> testData()
     {
         return Arrays.asList(new Object[][]{
+                {"macro.id", MACRO_ID},
                 {"macro.hash", HASH},
                 {"macro.body", BODY},
                 {"macro.truncated", "false"},
