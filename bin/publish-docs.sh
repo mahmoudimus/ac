@@ -16,16 +16,17 @@ npm i
 npm run-script build
 
 #SET THE DESTINATION PATH ON THE NEXT FILE SYSTEM
-DESTINATION="uploads@developer-app.internal.atlassian.com:/opt/j2ee/domains/atlassian.com/developer-prod/static-content/static/connect/docs/"
-#DESTINATION="$HOME/atlassian-connect/test/ac-docs/"
+#DESTINATIONHOST="uploads@developer-app.internal.atlassian.com"
+#DESTINATIONPATH="/opt/j2ee/domains/atlassian.com/developer-prod/static-content/static/connect/docs/"
+DESTINATIONHOST="jfurler@localhost"
+DESTINATIONPATH="$HOME/atlassian-connect/test/ac-docs/"
 
 
-rsync -avz --delete -e 'ssh' target/gensrc/www/* "$DESTINATION/$NEW_VERSION"
+rsync -avz --delete -e 'ssh' target/gensrc/www/* "$DESTINATIONHOST:$DESTINATIONPATH/$NEW_VERSION"
 
 
 if [ "$1" == "updateSymlink" ]; then
-    ln -sfn ./$NEW_VERSION latest
-    rsync -avz -e 'ssh' latest "$DESTINATION"
+	ssh "$DESTINATIONHOST" "cd $DESTINATIONPATH; ln -sfn ./$NEW_VERSION latest"
 fi
 
 echo "Done!"
