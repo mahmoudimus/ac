@@ -9,7 +9,7 @@ Description
         <h5>Deprecated in</h5>
     </div>
     <div class="aui-item">
-        <span class="aui-lozenge">1.1.20</span>
+        <span class="aui-lozenge">1.1.21</span>
     </div>
 </div>
 <div class="aui-group">
@@ -274,3 +274,4 @@ The `page.id`, `page.version`, `page.type` context variables available in Conflu
     </div>
 </div>
 </div>
+
