@@ -106,6 +106,7 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         element.setAttribute("i18n-name-key", bean.getName().getValue());
         element.setAttribute("class", PageMacro.class.getName());
         element.setAttribute("state", "enabled");
+
         if (bean.getDescription() != null)
         {
             element.addElement("description").addCDATA(StringEscapeUtils.escapeHtml(bean.getDescription().getValue()));
@@ -123,6 +124,7 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
             element.setAttribute("hidden", "true");
         }
 
+        handleAutoConvert(bean, element);
         handleParameters(bean, element);
         handleCategories(bean, element);
         handleAliases(bean, element);
@@ -130,8 +132,20 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         if (log.isDebugEnabled())
         {
             log.debug("Created macro: " + printNode(element));
+            log.debug("autoConvertMappings contains:" + bean.getAutoConvertMappings());
         }
         return element;
+    }
+
+    private void handleAutoConvert(B bean, DOMElement element)
+    {
+        if (bean.usesAutoConvert())
+        {
+            // ugly string-ified placeholder. Need to store the list of patterns in the XML
+            String autoConvertPlaceHolder = "/docs/google.com/document/d/{fileId}/edit, /docs/google.com/spreadsheet/d/{fileId}/edit";
+
+            element.setAttribute("autoconvert", autoConvertPlaceHolder);
+        }
     }
 
     private void handleAliases(B bean, DOMElement element)

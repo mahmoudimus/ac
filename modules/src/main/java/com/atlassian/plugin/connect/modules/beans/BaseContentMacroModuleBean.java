@@ -164,9 +164,15 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
     private List<MacroParameterBean> parameters;
 
     /**
+     * Text patterns to be recognised and acted upon on paste into the editor.
+     */
+    private List<String> autoConvertMappings;
+
+    /**
      * The configuration of a custom macro editor. This is useful if the parameter input field types are
      * not sufficient to configure the macro.
      */
+
     private MacroEditorBean editor;
 
     /**
@@ -213,6 +219,9 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
         {
             parameters = newArrayList();
         }
+        if (null == autoConvertMappings) {
+            autoConvertMappings = newArrayList();
+        }
     }
 
     public String getUrl()
@@ -253,6 +262,11 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
     public Set<String> getAliases()
     {
         return aliases;
+    }
+
+    public List<String> getAutoConvertMappings()
+    {
+        return autoConvertMappings;
     }
 
     public Boolean isFeatured()
@@ -298,5 +312,10 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
     public boolean hasImagePlaceholder()
     {
         return imagePlaceholder != null;
+    }
+
+    public boolean usesAutoConvert()
+    {
+        return (null != autoConvertMappings) && (!autoConvertMappings.isEmpty());
     }
 }
