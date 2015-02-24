@@ -132,7 +132,7 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         if (log.isDebugEnabled())
         {
             log.debug("Created macro: " + printNode(element));
-            log.debug("autoConvertMappings contains:" + bean.getAutoConvertMappings());
+            log.debug("autoConvertMappings contains:" + bean.getAutoConvert());
         }
         return element;
     }
