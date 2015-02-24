@@ -10,6 +10,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.isParameterizedListWithType;
@@ -330,6 +331,7 @@ public class ModuleList extends BaseModuleBean
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
         this.webSections = newArrayList();
+        this.confluenceContentProperties = newArrayList();
     }
 
     public ModuleList(BaseModuleBeanBuilder builder)
@@ -419,6 +421,10 @@ public class ModuleList extends BaseModuleBean
         if (null == jiraReports)
         {
             this.jiraReports = newArrayList();
+        }
+        if (null == confluenceContentProperties)
+        {
+            this.confluenceContentProperties = newArrayList();
         }
     }
 
@@ -528,6 +534,11 @@ public class ModuleList extends BaseModuleBean
 
     public List<BlueprintModuleBean> getBlueprints() {
         return blueprints;
+    }
+
+    public List<ContentPropertyIndexSchemaModuleBean> getConfluenceContentProperties()
+    {
+        return confluenceContentProperties;
     }
 
     // don't call super because BaseCapabilityBean has no data
