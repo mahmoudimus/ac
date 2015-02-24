@@ -116,7 +116,8 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
                 {
                     reason.append(failurePrefix(usersIncorrectlyActive.size())).append(" no applink association. ");
                 }
-                if (!usersWithIncorrectAttributes.isEmpty()) {
+                if (!usersWithIncorrectAttributes.isEmpty())
+                {
                     reason.append(failurePrefix(usersWithIncorrectAttributes.size())).append(" invalid attributes. ");
                 }
 
@@ -143,13 +144,19 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
         return size + (size == 1 ? " member has" : " members have");
     }
 
-    private boolean validAddonUserAttributes(User user)  throws ApplicationNotFoundException {
-        try {
+    private boolean validAddonUserAttributes(User user)  throws ApplicationNotFoundException
+    {
+        try
+        {
             Application application = applicationManager.findByName(groupProvisioningService.getCrowdApplicationName());
             UserWithAttributes userWithAttributes = applicationService.findUserWithAttributesByName(application, user.getName());
             return validAddonAttribute(userWithAttributes, application.getName());
-        } catch (UserNotFoundException e) {
-            log.error("Add-on userwithattributes '" + user.getName() + "' not found"); //Logging twice?
+        }
+        catch (UserNotFoundException e)
+        {
+            log.error("Add-on userwithattributes '" + user.getName() + "' not found");
+            log.error(e.getMessage());
+
         }
         return false;
     }

@@ -70,10 +70,14 @@ public class ConnectAddOnUserUtil
      * @param applicationName application name used in attribute
      * @return true if attribute is valid
      */
-    public static boolean validAddonAttribute(UserWithAttributes userWithAttributes, String applicationName) {
-        if (userWithAttributes != null) {
+    public static boolean validAddonAttribute(UserWithAttributes userWithAttributes, String applicationName)
+
+    {
+        if (userWithAttributes != null)
+        {
             Set<String> attr = userWithAttributes.getValues(buildAttributeConnectAddOnAttributeName(applicationName));
-            if (attr != null) {
+            if (attr != null)
+            {
                 return attr.equals(Collections.singleton("true"));
             }
         }
