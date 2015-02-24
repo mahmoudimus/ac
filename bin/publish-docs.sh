@@ -16,10 +16,8 @@ npm i
 npm run-script build
 
 #SET THE DESTINATION PATH ON THE NEXT FILE SYSTEM
-#DESTINATIONHOST="uploads@developer-app.internal.atlassian.com"
-#DESTINATIONPATH="/opt/j2ee/domains/atlassian.com/developer-prod/static-content/static/connect/docs/"
-DESTINATIONHOST="jfurler@localhost"
-DESTINATIONPATH="$HOME/atlassian-connect/test/ac-docs/"
+DESTINATIONHOST="uploads@developer-app.internal.atlassian.com"
+DESTINATIONPATH="/opt/j2ee/domains/atlassian.com/developer-prod/static-content/static/connect/docs/"
 
 
 rsync -avz --delete -e 'ssh' target/gensrc/www/* "$DESTINATIONHOST:$DESTINATIONPATH/$NEW_VERSION"
