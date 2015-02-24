@@ -1,6 +1,6 @@
 (function($, define){
 
-    define("ac/confluence/macro/editor", ["connect-host", 'ac/dialog'], function(_AP, dialog) {
+    define("ac/confluence/macro/editor", ["connect-host"], function(_AP) {
 
         // When openCustomEditor is invoked, it will assign a function for saving the macro
         // being edited to this field. This simplifies the client's job of saving the macro
@@ -113,7 +113,7 @@
                     height: opts.height || null
                 };
 
-                dialog.create(dialogOpts, false);
+                _AP.Dialog.create(dialogOpts, false);
 
                 getIframeHtmlForMacro(opts.url).done(function(data){
                     var dialogHtml = $(data);
