@@ -2,15 +2,14 @@ package com.atlassian.plugin.connect.plugin.rest.addons;
 
 import com.atlassian.fugue.Either;
 import com.atlassian.fugue.Option;
-import com.atlassian.fugue.Suppliers;
 import com.atlassian.plugin.connect.plugin.property.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.property.AddOnPropertyIterable;
+import com.atlassian.plugin.connect.plugin.property.AddOnPropertyService;
+import com.atlassian.plugin.connect.plugin.property.AddOnPropertyServiceImpl;
 import com.atlassian.plugin.connect.plugin.rest.RestResult;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddOnPropertiesBean;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddOnProperty;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnKeyExtractor;
-import com.atlassian.plugin.connect.plugin.property.AddOnPropertyService;
-import com.atlassian.plugin.connect.plugin.property.AddOnPropertyServiceImpl;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.message.I18nResolver;
@@ -27,7 +26,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
@@ -43,7 +45,6 @@ public class AddOnPropertiesResource
     public static final String REST_PATH = "addons/{addonKey}/properties";
 
     private static final Logger log = LoggerFactory.getLogger(AddOnPropertiesResource.class);
-    private static final HashFunction HASH_FUNCTION = Hashing.md5();
 
     private final ApplicationProperties applicationProperties;
     private final AddOnPropertyService addOnPropertyService;
@@ -94,16 +95,9 @@ public class AddOnPropertiesResource
                     @Override
                     public Response apply(final AddOnPropertyIterable propertyIterable)
                     {
-                        Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(getEntityTagForPropertyIterable(propertyIterable));
-
-                        if (responseBuilder == null) //the properties have changed
-                        {
-                            String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties";
-                            responseBuilder = Response.ok().entity(RestAddOnPropertiesBean.valueOf(propertyIterable.getPropertyKeys(), baseURL));
-                        }
-                        return responseBuilder
-                                .tag((String)null) //remove the previous tag as we are using a custom one
-                                .header("entity-tag", getEntityTagForPropertyIterable(propertyIterable))
+                        String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties";
+                        return Response.ok()
+                                .entity(RestAddOnPropertiesBean.valueOf(propertyIterable.getPropertyKeys(), baseURL))
                                 .cacheControl(never())
                                 .build();
                     }
@@ -148,16 +142,9 @@ public class AddOnPropertiesResource
             @Override
             public Response apply(final AddOnProperty property)
             {
-                Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(getEntityTagForProperty(property));
-                if (responseBuilder == null)
-                {
-                    String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties";
-                    responseBuilder = Response.ok()
-                            .entity(RestAddOnProperty.valueOf(property, baseURL));
-                }
-                return responseBuilder
-                        .tag((String)null) //remove the previous tag as we are using a custom one
-                        .header("entity-tag", getEntityTagForProperty(property))
+                String baseURL = getRestPathForAddOnKey(addOnKey) + "/properties";
+                return Response.ok()
+                        .entity(RestAddOnProperty.valueOf(property, baseURL))
                         .cacheControl(never())
                         .build();
             }
@@ -247,28 +234,6 @@ public class AddOnPropertiesResource
         return applicationProperties.getBaseUrl(UrlMode.CANONICAL) + "/rest/atlassian-connect/1/addons" + "/" + key;
     }
 
-    private EntityTag getEntityTagForPropertyIterable(final AddOnPropertyIterable propertyIterable)
-    {
-        return new EntityTag(HASH_FUNCTION.hashLong(propertyIterable.hashCode()).toString(), false);
-    }
-
-    private EntityTag getEntityTagForProperty(final AddOnProperty property)
-    {
-        return new EntityTag(HASH_FUNCTION.hashLong(property.hashCode()).toString());
-    }
-
-    private EntityTag getEntityTagForPropertyOption(final Option<AddOnProperty> propertyOption)
-    {
-        return propertyOption.fold(Suppliers.ofInstance(new EntityTag("")), new Function<AddOnProperty, EntityTag>()
-        {
-            @Override
-            public EntityTag apply(final AddOnProperty property)
-            {
-                return getEntityTagForProperty(property);
-            }
-        });
-    }
-
     private Function<Option<AddOnProperty>, AddOnPropertyService.ServiceConditionResult<Response.ResponseBuilder>> eTagValidationFunction(final Request request)
     {
         return new Function<Option<AddOnProperty>, AddOnPropertyService.ServiceConditionResult<Response.ResponseBuilder>>()
@@ -276,12 +241,7 @@ public class AddOnPropertiesResource
             @Override
             public AddOnPropertyService.ServiceConditionResult<Response.ResponseBuilder> apply(final Option<AddOnProperty> propertyOption)
             {
-                Response.ResponseBuilder responseBuilder = request.evaluatePreconditions(getEntityTagForPropertyOption(propertyOption));
-                if (responseBuilder == null)
-                {
-                    return AddOnPropertyService.ServiceConditionResult.SUCCESS();
-                }
-                return AddOnPropertyService.ServiceConditionResult.FAILURE_WITH_OBJECT(responseBuilder);
+                return AddOnPropertyService.ServiceConditionResult.SUCCESS();
             }
         };
     }
@@ -307,8 +267,6 @@ public class AddOnPropertiesResource
             public Response apply(final AddOnPropertyService.PutOperationStatus operationStatus)
             {
                 return getResponseBuilderFromOperationStatus(operationStatus)
-                        .tag((String) null) //remove the previous tag as we are using a custom one
-                        .header("entity-tag", getEntityTagForProperty(operationStatus.getProperty()))
                         .build();
             }
         };

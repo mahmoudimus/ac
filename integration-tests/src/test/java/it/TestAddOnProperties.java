@@ -199,57 +199,6 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
     }
 
     @Test
-    public void testGetNotModifiedForSameETag() throws Exception
-    {
-        String propertyKey = RandomStringUtils.randomAlphanumeric(15);
-
-        RequestResponse putResponse = executePutRequest(propertyKey, "0");
-        HttpURLConnection connection = executeGetRequestWithETag(propertyKey, putResponse.eTag.get());
-        assertEquals(Response.SC_NOT_MODIFIED, connection.getResponseCode());
-
-        int responseCode3 = executeDeleteRequest(propertyKey);
-        assertEquals(Response.SC_NO_CONTENT, responseCode3);
-    }
-
-    @Test
-    public void testSetNotModifiedForDifferentETag() throws Exception
-    {
-        String propertyKey = RandomStringUtils.randomAlphanumeric(15);
-
-        executePutRequest(propertyKey, "0");
-        RequestResponse putResponse = executePutRequest(propertyKey, "1", Option.some("\"a\""));
-        assertEquals(Response.SC_PRECONDITION_FAILED, putResponse.httpStatusCode);
-
-        int responseCode3 = executeDeleteRequest(propertyKey);
-        assertEquals(Response.SC_NO_CONTENT, responseCode3);
-    }
-
-    @Test
-    public void testSetModifiedForEmptyETag() throws Exception
-    {
-        String propertyKey = RandomStringUtils.randomAlphanumeric(15);
-
-        RequestResponse putResponse = executePutRequest(propertyKey, "1", Option.some("\"\""));
-        assertEquals(Response.SC_CREATED, putResponse.httpStatusCode);
-
-        int responseCode3 = executeDeleteRequest(propertyKey);
-        assertEquals(Response.SC_NO_CONTENT, responseCode3);
-    }
-
-    @Test
-    public void testSetNotModifiedForDifferentEmptyETag() throws Exception
-    {
-        String propertyKey = RandomStringUtils.randomAlphanumeric(15);
-
-        executePutRequest(propertyKey, "0");
-        RequestResponse putResponse = executePutRequest(propertyKey, "1", Option.some("\"\""));
-        assertEquals(Response.SC_PRECONDITION_FAILED, putResponse.httpStatusCode);
-
-        int responseCode3 = executeDeleteRequest(propertyKey);
-        assertEquals(Response.SC_NO_CONTENT, responseCode3);
-    }
-
-    @Test
     public void testMaximumPropertiesNotReached() throws Exception
     {
         String propertyKeyPrefix = RandomStringUtils.randomAlphanumeric(15);
@@ -350,14 +299,6 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
         {
             signedRequestHandler.get().sign(url.toURI(), "GET", null, connection);
         }
-        return connection;
-    }
-
-    private HttpURLConnection executeGetRequestWithETag(final String propertyKey, final String eTag)
-            throws IOException, URISyntaxException
-    {
-        HttpURLConnection connection = executeGetRequest(propertyKey, Option.option(runner.getSignedRequestHandler()));
-        connection.setRequestProperty("If-None-Match", eTag);
         return connection;
     }
 
