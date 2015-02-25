@@ -128,7 +128,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     }
 
     private String generateAutoConvertScript(T bean) {
-        List<String> patterns = bean.getAutoConvert();
+        List<String> patterns = bean.getAutoconvert();
 
         // TODO: generate concrete version of the script based on the patterns
 
