@@ -102,7 +102,8 @@ public class AddOnPropertiesResource
                             responseBuilder = Response.ok().entity(RestAddOnPropertiesBean.valueOf(propertyIterable.getPropertyKeys(), baseURL));
                         }
                         return responseBuilder
-                                .tag(getEntityTagForPropertyIterable(propertyIterable))
+                                .tag((String)null) //remove the previous tag as we are using a custom one
+                                .header("entity-tag", getEntityTagForPropertyIterable(propertyIterable))
                                 .cacheControl(never())
                                 .build();
                     }
@@ -155,7 +156,8 @@ public class AddOnPropertiesResource
                             .entity(RestAddOnProperty.valueOf(property, baseURL));
                 }
                 return responseBuilder
-                        .tag(getEntityTagForProperty(property))
+                        .tag((String)null) //remove the previous tag as we are using a custom one
+                        .header("entity-tag", getEntityTagForProperty(property))
                         .cacheControl(never())
                         .build();
             }
@@ -305,7 +307,8 @@ public class AddOnPropertiesResource
             public Response apply(final AddOnPropertyService.PutOperationStatus operationStatus)
             {
                 return getResponseBuilderFromOperationStatus(operationStatus)
-                        .tag(getEntityTagForProperty(operationStatus.getProperty()))
+                        .tag((String) null) //remove the previous tag as we are using a custom one
+                        .header("entity-tag", getEntityTagForProperty(operationStatus.getProperty()))
                         .build();
             }
         };
