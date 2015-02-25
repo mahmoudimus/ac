@@ -65,17 +65,17 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
             {
                 if (!validAddOnEmailAddress(user))
                 {
-                    log.warn("Add-on user '" + user.getName() + "' has incorrect email '" + user.getEmailAddress() + "'");
+                    log.warn("Add-on user '{}' has incorrect email '{}'", user.getName(), user.getEmailAddress());
                     usersWithIncorrectEmails.add(user);
                 }
 
                 if (!validAddOnUsername(user))
                 {
-                    log.warn("Add-on user '" + user.getName() + "' has incorrect prefix");
+                    log.warn("Add-on user '{}' has incorrect prefix", user.getName());
                     usersWithIncorrectPrefix.add(user);
                 }
                 if(!validAddonUserAttributes(user)) {
-                    log.warn("Add-on user '" + user.getName() + "' has missing or incorrect attributes");
+                    log.warn("Add-on user '{}' has missing or incorrect attributes", user.getName());
                     usersWithIncorrectAttributes.add(user);
                 }
 
@@ -154,9 +154,7 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
         }
         catch (UserNotFoundException e)
         {
-            log.error("Add-on userwithattributes '" + user.getName() + "' not found");
-            log.error(e.getMessage());
-
+            log.error("Add-on userwithattributes '{}' not found", user.getName(), e);
         }
         return false;
     }
