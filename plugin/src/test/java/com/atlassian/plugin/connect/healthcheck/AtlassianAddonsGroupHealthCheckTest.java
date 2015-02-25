@@ -205,7 +205,6 @@ public class AtlassianAddonsGroupHealthCheckTest
         HashSet<User> users = Sets.newHashSet();
         User addonUser = createUser("addon_check-missing-user-attributes-object", Constants.ADDON_USER_EMAIL_ADDRESS);
         users.add(addonUser);
-        //String userName = addonUser.getName();
 
         when(applicationService.findUserWithAttributesByName(any(Application.class), eq("addon_check-missing-user-attributes-object")))
                 .thenReturn(null);
