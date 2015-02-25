@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
@@ -28,11 +27,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.printNode;
 
 public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMacroModuleBean>
         implements ConnectModuleProvider<T>
@@ -110,7 +109,13 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
             {
                 descriptors.add(createFeaturedIconWebResource(addon, theConnectPlugin, macroBean));
             }
+
         }
+
+//            if (macroBean.hasAutoConvert()) {
+        String pathToAutoConvertScript = generateAutoConvertScript(macroBean);
+        descriptors.add(createAutoConvertWebResource(theConnectPlugin, macroBean));
+//            }
 
         if (macroBean.hasEditor())
         {
@@ -121,6 +126,39 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         return ImmutableList.copyOf(descriptors);
     }
 
+    private String generateAutoConvertScript(T bean) {
+        List<String> patterns = bean.getAutoConvert();
+
+        // TODO: generate concrete version of the script based on the patterns
+
+        // TODO: return the path to the generated script
+        return "";
+    }
+
+    private ModuleDescriptor createAutoConvertWebResource(Plugin theConnectPlugin, T bean)
+    {
+        String macroKey = bean.getRawKey();
+        String scriptName = "thisiswherethegeneratedJSgoes.js";
+        String scriptLocation = "js/thisiswherethegeneratedJSgoes.js";
+
+        Element webResource = new DOMElement("web-resource").addAttribute("key", macroKey + "-featured-macro-resources");
+
+        webResource.addElement("resource")
+                .addAttribute("type", "download")
+                .addAttribute("name", scriptName)
+                .addAttribute("location", scriptLocation)
+                .addAttribute("dependency", "com.atlassian.confluence.plugins.confluence-paste:autoconvert-core");
+
+        webResource.addElement("context")
+                .setText("editor");
+
+        ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(hostContainer);
+        jsDescriptor.init(theConnectPlugin, webResource);
+
+        log.debug("Created autoconvert web resource: " + printNode(webResource));
+
+        return jsDescriptor;
+    }
 
     private WebItemModuleBean createFeaturedWebItem(ConnectAddonBean addon, T bean)
     {
