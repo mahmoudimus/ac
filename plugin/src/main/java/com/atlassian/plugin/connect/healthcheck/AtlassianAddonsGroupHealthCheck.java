@@ -74,7 +74,8 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
                     log.warn("Add-on user '{}' has incorrect prefix", user.getName());
                     usersWithIncorrectPrefix.add(user);
                 }
-                if(!validAddonUserAttributes(user)) {
+                if(!validAddonUserAttributes(user))
+                {
                     log.warn("Add-on user '{}' has missing or incorrect attributes", user.getName());
                     usersWithIncorrectAttributes.add(user);
                 }
