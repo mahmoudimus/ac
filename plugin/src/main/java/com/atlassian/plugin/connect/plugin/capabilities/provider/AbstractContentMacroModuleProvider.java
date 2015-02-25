@@ -18,6 +18,7 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.hostcontainer.HostContainer;
+import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang.StringUtils;
@@ -152,7 +153,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         webResource.addElement("context")
                 .setText("editor");
 
-        ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(hostContainer);
+        ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(ModuleFactory.LEGACY_MODULE_FACTORY, hostContainer);
         jsDescriptor.init(theConnectPlugin, webResource);
 
         log.debug("Created autoconvert web resource: " + printNode(webResource));
@@ -209,7 +210,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .addAttribute("name", "ICON_URL")
                 .addAttribute("value", absoluteAddOnUrlConverter.getAbsoluteUrl(addon, bean.getIcon().getUrl()));
 
-        ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(hostContainer);
+        ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(ModuleFactory.LEGACY_MODULE_FACTORY, hostContainer);
         jsDescriptor.init(theConnectPlugin, webResource);
 
         return jsDescriptor;
@@ -275,7 +276,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         createInsertTitle(macroBean, transformer);
         createEditTitle(macroBean, transformer);
 
-        ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(hostContainer);
+        ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(ModuleFactory.LEGACY_MODULE_FACTORY, hostContainer);
         jsDescriptor.init(theConnectPlugin, webResource);
 
         return jsDescriptor;
