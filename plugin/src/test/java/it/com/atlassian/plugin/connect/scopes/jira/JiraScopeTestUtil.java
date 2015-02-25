@@ -17,6 +17,7 @@ import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 
@@ -33,6 +34,7 @@ public class JiraScopeTestUtil
     private final CommentPropertyService commentPropertyService;
     private final IssueService issueService;
 
+    @Autowired
     public JiraScopeTestUtil(final UserManager userManager,
             final ProjectService projectService,
             final CommentService commentService,
