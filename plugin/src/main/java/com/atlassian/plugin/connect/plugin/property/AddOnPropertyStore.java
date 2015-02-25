@@ -61,12 +61,12 @@ public class AddOnPropertyStore
         }
         if (existsProperty(addOnKey, propertyKey))
         {
-            AddOnPropertyAO propertyAO = getAddOnPropertyForKey(addOnKey, propertyKey);
-            ao.delete(propertyAO); //delete and create to get a new auto-incremented version for property
+            AddOnPropertyAO previousPropertyAO = getAddOnPropertyForKey(addOnKey, propertyKey);
+            ao.delete(previousPropertyAO); //delete and create to get a new auto-incremented version for property
 
-            AddOnPropertyAO addOnProperty = createAddOnProperty(addOnKey, propertyKey, value);
-            addOnProperty.save();
-            return new PutResultWithOptionalProperty(PutResult.PROPERTY_UPDATED, Option.some(AddOnProperty.fromAO(addOnProperty)));
+            AddOnPropertyAO newPropertyAO = createAddOnProperty(addOnKey, propertyKey, value);
+            newPropertyAO.save();
+            return new PutResultWithOptionalProperty(PutResult.PROPERTY_UPDATED, Option.some(AddOnProperty.fromAO(newPropertyAO)));
         }
         else
         {

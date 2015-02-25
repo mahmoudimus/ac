@@ -75,10 +75,11 @@ public class AddOnPropertyStoreTest
     {
         store.setPropertyValue(ADD_ON_KEY, PROPERTY_KEY, VALUE);
         AddOnProperty property2 = new AddOnProperty(PROPERTY_KEY, VALUE + "1", 0);
-        PutResult putResult = store.setPropertyValue(ADD_ON_KEY, property2.getKey(), property2.getValue()).getResult();
-        assertEquals(PutResult.PROPERTY_UPDATED, putResult);
 
-        Option<AddOnProperty> propertyValue = store.getPropertyValue(ADD_ON_KEY, PROPERTY_KEY);
+        AddOnPropertyStore.PutResultWithOptionalProperty putResult = store.setPropertyValue(ADD_ON_KEY, property2.getKey(), property2.getValue());
+        assertEquals(PutResult.PROPERTY_UPDATED, putResult.getResult());
+
+        Option<AddOnProperty> propertyValue = putResult.getProperty();
         assertThat(propertyValue.get(), isSameProperty(property2));
     }
 
@@ -180,7 +181,7 @@ public class AddOnPropertyStoreTest
             {
                 return new EqualsBuilder()
                         .append(property.getKey(), item.getKey())
-                        .append(property.getValue(), property.getValue())
+                        .append(property.getValue(), item.getValue())
                         .isEquals();
             }
 
