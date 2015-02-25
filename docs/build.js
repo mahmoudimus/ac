@@ -11,6 +11,7 @@ var chokidar = require("chokidar");
 var jsonPath = require("JSONPath").eval;
 var program = require("commander");
 var dereferencer = require("./de-ref");
+var harp = require("harp")
 
 var buildDir = "./target";
 var genSrcPrefix = buildDir + "/gensrc";
@@ -522,8 +523,8 @@ function startHarpServerAndWatchSrcFiles() {
 /**
  * Statically compile the documentation into build /www directory.
  */
-function compileHarpSources() {
-    fork('./node_modules/harp/bin/harp', ["-o", "../www", "compile"], {'cwd': genSrcPrefix});
+function compileHarpSources(callback) {
+    harp.compile(genSrcPrefix, "www", callback);
 }
 
 function mergeFiles(toFile, filesToMerge){
@@ -559,5 +560,12 @@ rebuildHarpSite();
 if (program.serve) {
     startHarpServerAndWatchSrcFiles()
 } else {
-    compileHarpSources();
+    compileHarpSources(function(error, config) {
+        if (error) {
+            console.log(JSON.stringify(error, null, 2));
+            process.exit(1);
+        } else {
+            console.log(JSON.stringify(config, null, 2));
+        }
+    });
 }

@@ -32,6 +32,13 @@ or Confluence Cloud with Atlassian Connect as follows:
 <div id="runproduct-vagrant" class="aui-expander-content">
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
+## [1.1.23](../release-notes/1-1-0.html#1.1.23)
+ * JIRA: Fixed broken JavaScript API method - jira.refreshIssuePage() [ACDEV-1508](https://ecosystem.atlassian.net/browse/AC-1508)
+
+## [1.1.22](../release-notes/1-1-0.html#1.1.22)
+* Fixed error which prevented web-items with remote conditions from loading [AC-1503](https://ecosystem.atlassian.net/browse/AC-1503)
+* Confluence: Fixed error which prevented retrieving a macro body by its hash [AC-1505](https://ecosystem.atlassian.net/browse/AC-1505)
+
 ## [1.1.21](../release-notes/1-1-0.html#1.1.21)
 * Confluence: Added support for render modes for Dynamic Content Macros [CE-66](https://ecosystem.atlassian.net/browse/CE-66)
 * JIRA: Added support for aliases in Entity Properties [ACJIRA-250](https://ecosystem.atlassian.net/browse/ACJIRA-250)

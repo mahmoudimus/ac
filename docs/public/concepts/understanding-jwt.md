@@ -78,10 +78,12 @@ The JWT claims object contains security information about the message. For examp
         <td>`iss` (mandatory)</td>
         <td>String</td>
         <td>the issuer of the claim. Connect uses it to identify the application making the call. for example:
-
- * If the Atlassian product is the calling application: contains the unique identifier of the tenant.
- This is the `clientKey` that you receive in the `installed` callback. You should reject unrecognised issuers.
- * If the add-on is the calling application: the add-on key specified in the add-on descriptor</td>
+            <ul>
+                <li>If the Atlassian product is the calling application: contains the unique identifier of the tenant.
+             This is the `clientKey` that you receive in the `installed` callback. You should reject unrecognised issuers.
+                <li>If the add-on is the calling application: the add-on key specified in the add-on descriptor
+            </ul>
+        </td>
     </tr>
     <tr>
         <td>`iat` (mandatory)</td>
@@ -104,9 +106,8 @@ The JWT claims object contains security information about the message. For examp
     <tr>
         <td>`sub` (optional)</td>
         <td>String</td>
-        <td>The subject of this token. In atlassian-connect pre 1.0 we use this to identify the user key
-            of the user that the add-on wishes to impersonate with this call; from 1.0 onwards this claim
-            will be ignored, as user impersonation will not be possible.</td>
+        <td>The subject of this token. This is the user associated with the relevant action, and may not be 
+            present if there is no logged in user.</td>
     </tr>
     <tr>
         <td>`aud` (optional)</td>
