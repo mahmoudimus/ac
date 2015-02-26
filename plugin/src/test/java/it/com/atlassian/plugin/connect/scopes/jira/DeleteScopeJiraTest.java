@@ -32,7 +32,7 @@ public class DeleteScopeJiraTest extends ScopeTestBase
             ApplicationProperties applicationProperties,
             JiraScopeTestUtil scopeTestUtil)
     {
-        super(ScopeName.WRITE, testPluginInstaller, testAuthenticator, jwtWriterFactory, connectAddonRegistry, applicationProperties);
+        super(ScopeName.DELETE, testPluginInstaller, testAuthenticator, jwtWriterFactory, connectAddonRegistry, applicationProperties);
         this.scopeTestUtil = scopeTestUtil;
     }
 
