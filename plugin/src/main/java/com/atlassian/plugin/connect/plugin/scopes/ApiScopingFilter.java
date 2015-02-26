@@ -149,7 +149,7 @@ public class ApiScopingFilter implements Filter
             eventPublisher.publish(new ScopedRequestDeniedEvent(req, addonKey));
             return;
         }
-        log.info("Authorized add-on '{}' to access API at URL '{} {}' for user '{}'",
+        log.debug("Authorized add-on '{}' to access API at URL '{} {}' for user '{}'",
                 new Object[]{addonKey, req.getMethod(), req.getRequestURI(), user});
 
         try {
