@@ -1,12 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
-import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
+import com.atlassian.plugin.connect.modules.beans.nested.*;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.test.plugin.capabilities.TestFileReader;
 import com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs;
@@ -28,11 +23,9 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
-public class DynamicContentMacroModuleBeanTest
-{
+public class DynamicContentMacroModuleBeanTest {
     @Test
-    public void producesCorrectJSON() throws Exception
-    {
+    public void producesCorrectJSON() throws Exception {
         ConnectAddonBean bean = createBean();
         Gson gson = ConnectModulesGsonFactory.getGson();
         String json = gson.toJson(bean, ConnectAddonBean.class);
@@ -42,8 +35,7 @@ public class DynamicContentMacroModuleBeanTest
     }
 
     @Test
-    public void producesCorrectBean() throws Exception
-    {
+    public void producesCorrectBean() throws Exception {
         String json = readTestFile();
         Gson gson = ConnectModulesGsonFactory.getGson();
         ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
@@ -53,8 +45,7 @@ public class DynamicContentMacroModuleBeanTest
     }
 
     @Test
-    public void roundTrippingIsPreserving()
-    {
+    public void roundTrippingIsPreserving() {
         ConnectAddonBean originalBean = createBean();
         Gson gson = ConnectModulesGsonFactory.getGson();
         String json = gson.toJson(originalBean, ConnectAddonBean.class);
@@ -63,8 +54,7 @@ public class DynamicContentMacroModuleBeanTest
         assertThat(deserializedBean, SameDeepPropertyValuesAs.sameDeepPropertyValuesAs(originalBean));
     }
 
-    private static ConnectAddonBean createBean()
-    {
+    private static ConnectAddonBean createBean() {
         return newConnectAddonBean()
                 .withName("My Add-On")
                 .withKey("my-add-on")
@@ -127,13 +117,15 @@ public class DynamicContentMacroModuleBeanTest
                                                         .withUrl("/render-map-pdf")
                                                         .build())
                                         .build())
+                                .withAutoconvert(AutoconvertBean.newAutoconvertBean()
+                                        .withPattern("/docs/google.com/document/d/{fileId}/edit") // TODO put pattert in here
+                                        .build())
                                 .build()
                 )
                 .build();
     }
 
-    private static String readTestFile() throws IOException
-    {
+    private static String readTestFile() throws IOException {
         return TestFileReader.readAddonTestFile("dynamicContentMacroAddon.json");
     }
 
