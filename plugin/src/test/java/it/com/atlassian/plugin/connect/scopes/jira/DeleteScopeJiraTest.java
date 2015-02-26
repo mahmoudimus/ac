@@ -1,5 +1,6 @@
 package it.com.atlassian.plugin.connect.scopes.jira;
 
+import com.atlassian.httpclient.api.HttpStatus;
 import com.atlassian.jira.entity.property.EntityProperty;
 import com.atlassian.jira.issue.comments.Comment;
 import com.atlassian.jira.util.json.JSONException;
@@ -42,6 +43,6 @@ public class DeleteScopeJiraTest extends ScopeTestBase
         Comment comment = scopeTestUtil.createComment();
         EntityProperty property = scopeTestUtil.createCommentProperty(comment);
 
-        assertValidRequest(HttpMethod.DELETE, "/rest/api/2/comment/" + comment.getId() + "/properties/" + property.getKey());
+        assertResponseCodeForRequest(HttpMethod.DELETE, "/rest/api/2/comment/" + comment.getId() + "/properties/" + property.getKey(), HttpStatus.NO_CONTENT);
     }
 }
