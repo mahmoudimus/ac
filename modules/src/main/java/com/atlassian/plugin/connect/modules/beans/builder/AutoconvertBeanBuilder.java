@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
-import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
 
 public class AutoconvertBeanBuilder<T extends AutoconvertBeanBuilder, B extends AutoconvertBean> extends BaseModuleBeanBuilder<T, B> {
@@ -9,6 +8,10 @@ public class AutoconvertBeanBuilder<T extends AutoconvertBeanBuilder, B extends 
 
     public AutoconvertBeanBuilder()
     {
+    }
+
+    public AutoconvertBeanBuilder(AutoconvertBean defaultBean) {
+        this.pattern = defaultBean.getPattern();
     }
 
     public T withPattern(String pattern)

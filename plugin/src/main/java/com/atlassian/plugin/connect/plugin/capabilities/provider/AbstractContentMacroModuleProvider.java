@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.WebItemModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
@@ -128,7 +129,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     }
 
     private String generateAutoConvertScript(T bean) {
-        List<String> patterns = bean.getAutoconvert();
+        List<AutoconvertBean> patterns = bean.getAutoconvert();
 
         // TODO: generate concrete version of the script based on the patterns
 
@@ -139,8 +140,8 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     private ModuleDescriptor createAutoConvertWebResource(Plugin theConnectPlugin, T bean)
     {
         String macroKey = bean.getRawKey();
-        String scriptName = "thisiswherethegeneratedJSgoes.js";
-        String scriptLocation = "js/thisiswherethegeneratedJSgoes.js";
+        String scriptName = "autoconvert.js";
+        String scriptLocation = "js/confluence/macro/autoconvert.js";
 
         Element webResource = new DOMElement("web-resource").addAttribute("key", macroKey + "-featured-macro-resources");
 

@@ -24,6 +24,7 @@ public class BaseContentMacroModuleBeanBuilder<T extends BaseContentMacroModuleB
     private List<MacroParameterBean> parameters;
     private MacroEditorBean editor;
     private ImagePlaceholderBean imagePlaceholder;
+    private List<AutoconvertBean> autoconvert;
 
     public BaseContentMacroModuleBeanBuilder()
     {
@@ -44,6 +45,7 @@ public class BaseContentMacroModuleBeanBuilder<T extends BaseContentMacroModuleB
         this.parameters = defaultBean.getParameters();
         this.editor = defaultBean.getEditor();
         this.imagePlaceholder = defaultBean.getImagePlaceholder();
+        this.autoconvert = defaultBean.getAutoconvert();
     }
 
     public T withUrl(String url)
@@ -129,4 +131,17 @@ public class BaseContentMacroModuleBeanBuilder<T extends BaseContentMacroModuleB
         this.imagePlaceholder = imagePlaceholder;
         return (T) this;
     }
+
+    public T withAutoconvert(Collection<? extends AutoconvertBean> autoconvert)
+    {
+        this.autoconvert = ImmutableList.copyOf(autoconvert);
+        return (T) this;
+    }
+
+    public T withAutoconvert(AutoconvertBean... autoconvert)
+    {
+        this.autoconvert = ImmutableList.copyOf(autoconvert);
+        return (T) this;
+    }
+
 }
