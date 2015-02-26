@@ -103,7 +103,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     private static final String IMAGE_PLACEHOLDER_MACRO_NAME = "Image Placeholder Macro";
     private static final String IMAGE_PLACEHOLDER_MACRO_KEY = "image-placeholder-macro";
 
-    protected static final String EDITOR_MACRO_NAME = "Editor Macro";
+    public static final String EDITOR_MACRO_NAME = "Editor Macro";
     protected static final String EDITOR_MACRO_KEY = "editor-macro";
     protected static final String CUSTOM_TITLE_EDITOR_MACRO_NAME = "Custom Title Macro";
     protected static final String CUSTOM_TITLE_EDITOR_MACRO_KEY = "custom-title-macro";
@@ -302,7 +302,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
                 .build();
     }
 
-    protected static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createEditorMacro(T builder)
+    public static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createEditorMacro(T builder)
     {
         return builder
                 .withKey(EDITOR_MACRO_KEY)
