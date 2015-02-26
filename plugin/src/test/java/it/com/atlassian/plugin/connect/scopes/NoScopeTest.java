@@ -17,17 +17,13 @@ import org.junit.runner.RunWith;
 @RunWith(AtlassianPluginsTestRunner.class)
 public class NoScopeTest extends ScopeTestBase
 {
-    private final JiraScopeTestUtil scopeTestUtil;
-
     public NoScopeTest(TestPluginInstaller testPluginInstaller,
                        TestAuthenticator testAuthenticator,
                        JwtWriterFactory jwtWriterFactory,
                        ConnectAddonRegistry connectAddonRegistry,
-                       ApplicationProperties applicationProperties,
-                       JiraScopeTestUtil scopeTestUtil)
+                       ApplicationProperties applicationProperties)
     {
         super(null, testPluginInstaller, testAuthenticator, jwtWriterFactory, connectAddonRegistry, applicationProperties);
-        this.scopeTestUtil = scopeTestUtil;
     }
 
     @Test
