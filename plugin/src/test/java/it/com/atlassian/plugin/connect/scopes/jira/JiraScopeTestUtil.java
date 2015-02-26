@@ -14,16 +14,13 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
-import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 
 import static org.junit.Assert.assertTrue;
 
-@JiraComponent
 public class JiraScopeTestUtil
 {
     public static final String ADMIN_USERNAME = "admin";
@@ -34,7 +31,6 @@ public class JiraScopeTestUtil
     private final CommentPropertyService commentPropertyService;
     private final IssueService issueService;
 
-    @Autowired
     public JiraScopeTestUtil(final UserManager userManager,
             final ProjectService projectService,
             final CommentService commentService,

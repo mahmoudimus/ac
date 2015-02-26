@@ -1,27 +1,15 @@
 package it.com.atlassian.plugin.connect.scopes;
 
-import com.atlassian.jira.entity.property.EntityProperty;
-import com.atlassian.jira.entity.property.EntityPropertyService;
-import com.atlassian.jira.issue.comments.Comment;
-import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.jira.util.json.JSONException;
-import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.jwt.writer.JwtWriterFactory;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
-import com.google.common.collect.ImmutableMap;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import it.com.atlassian.plugin.connect.scopes.jira.JiraScopeTestUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-
-import static org.junit.Assert.assertTrue;
 
 /**
  * These tests are not exhaustive. They are samples across the cross-product endpoints.
