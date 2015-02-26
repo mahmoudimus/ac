@@ -116,10 +116,10 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
 
     protected CreatePage editorPage = null;
 
-    // clean up so that we don't get "org.openqa.selenium.UnhandledAlertException: unexpected alert open" in tests
-    @Before
-    @After
-    public void cleanUpAroundEachTest()
+    /**
+     * Clean up so that we don't get "org.openqa.selenium.UnhandledAlertException: unexpected alert open" in tests
+     */
+    public static void resetEditorState(CreatePage editorPage, ViewPage savedPage)
     {
         // dismiss any alerts, because they would stop us from clicking on anything else on the screen
         connectPageOperations.dismissAnyAlerts();
@@ -132,7 +132,6 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
             try
             {
                 editorPage.cancel();
-                editorPage = null;
             }
             catch (Throwable t)
             {
@@ -146,13 +145,21 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
             try
             {
                 rpc.removePage(savedPage.getPageId());
-                savedPage = null;
             }
             catch (Exception e)
             {
                 logger.error(e.getMessage());
             }
         }
+    }
+
+    @Before
+    @After
+    public void cleanUpAroundEachTest()
+    {
+        resetEditorState(editorPage, savedPage);
+        editorPage = null;
+        savedPage = null;
     }
 
     protected static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createImagePlaceholderMacro(T builder)
