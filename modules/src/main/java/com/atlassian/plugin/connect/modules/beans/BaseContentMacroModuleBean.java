@@ -314,9 +314,8 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
         return imagePlaceholder != null;
     }
 
-    // TODO: provide new implementation for this to make it work
-//    public boolean hasAutoConvert()
-//    {
-//        return (null != autoconvert) && (!autoconvert.isEmpty());
-//    }
+    public boolean hasAutoConvert()
+    {
+        return (null != autoconvert) && (!autoconvert.isEmpty());
+    }
 }

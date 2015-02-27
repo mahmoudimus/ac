@@ -114,10 +114,10 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
 
         }
 
-//            if (macroBean.hasAutoConvert()) {
-        String pathToAutoConvertScript = generateAutoConvertScript(macroBean);
-        descriptors.add(createAutoConvertWebResource(theConnectPlugin, macroBean));
-//            }
+        if (macroBean.hasAutoConvert()) {
+            String pathToAutoConvertScript = generateAutoConvertScript(macroBean);
+            descriptors.add(createAutoConvertWebResource(theConnectPlugin, macroBean));
+        }
 
         if (macroBean.hasEditor())
         {
