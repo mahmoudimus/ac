@@ -18,6 +18,7 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonI18nManager;
+import com.atlassian.plugin.connect.plugin.product.confluence.AutoconvertModuleDescriptor;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
@@ -33,7 +34,6 @@ import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.google.common.collect.Lists.newArrayList;
-import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.printNode;
 
 public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMacroModuleBean>
         implements ConnectModuleProvider<T>
@@ -115,8 +115,15 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         }
 
         if (macroBean.hasAutoConvert()) {
-            String pathToAutoConvertScript = generateAutoConvertScript(macroBean);
-            descriptors.add(createAutoConvertWebResource(theConnectPlugin, macroBean));
+            int index = 1;
+            for (AutoconvertBean autoconvertBean : macroBean.getAutoconvert())
+            {
+                String macroKey = macroBean.getRawKey();
+                AutoconvertModuleDescriptor descriptor = new AutoconvertModuleDescriptor(ModuleFactory.LEGACY_MODULE_FACTORY, macroBean.getDisplayName(), autoconvertBean);
+                descriptor.init(theConnectPlugin, new DOMElement("autoconvert").addAttribute("key", macroKey + "-autoconvert-"+index));
+                descriptors.add(descriptor);
+                index++;
+            }
         }
 
         if (macroBean.hasEditor())
@@ -126,40 +133,6 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         }
 
         return ImmutableList.copyOf(descriptors);
-    }
-
-    private String generateAutoConvertScript(T bean) {
-        List<AutoconvertBean> patterns = bean.getAutoconvert();
-
-        // TODO: generate concrete version of the script based on the patterns
-
-        // TODO: return the path to the generated script
-        return "";
-    }
-
-    private ModuleDescriptor createAutoConvertWebResource(Plugin theConnectPlugin, T bean)
-    {
-        String macroKey = bean.getRawKey();
-        String scriptName = "autoconvert.js";
-        String scriptLocation = "js/confluence/macro/autoconvert.js";
-
-        Element webResource = new DOMElement("web-resource").addAttribute("key", macroKey + "-featured-macro-resources");
-
-        webResource.addElement("resource")
-                .addAttribute("type", "download")
-                .addAttribute("name", scriptName)
-                .addAttribute("location", scriptLocation)
-                .addAttribute("dependency", "com.atlassian.confluence.plugins.confluence-paste:autoconvert-core");
-
-        webResource.addElement("context")
-                .setText("editor");
-
-        ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(ModuleFactory.LEGACY_MODULE_FACTORY, hostContainer);
-        jsDescriptor.init(theConnectPlugin, webResource);
-
-        log.debug("Created autoconvert web resource: " + printNode(webResource));
-
-        return jsDescriptor;
     }
 
     private WebItemModuleBean createFeaturedWebItem(ConnectAddonBean addon, T bean)

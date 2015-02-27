@@ -37,6 +37,7 @@
         <resource type="download" name="autoconvert.js" location="/js/confluence/macro/autoconvert.js" />
         <data key="connect-autoconvert-data" class="com.atlassian.plugin.connect.plugin.product.confluence.AutoconvertWebResourceDataProvider" />
     </web-resource>
+    <module-type key="autoconvert" class="com.atlassian.plugin.connect.plugin.product.confluence.AutoconvertModuleDescriptor" />
 
     <!-- JavaScript API Core -->
 
