@@ -1075,60 +1075,6 @@
 
     <profiles>
         <profile>
-            <id>node_modules clean</id>
-            <activation>
-                <file>
-                    <exists>node_modules</exists>
-                </file>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-clean-plugin</artifactId>
-                        <version>2.6.1</version>
-                        <configuration>
-                            <filesets>
-                                <fileset>
-                                    <directory>node_modules</directory>
-                                </fileset>
-                            </filesets>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>npm install</id>
-            <activation>
-                <file>
-                    <missing>node_modules</missing>
-                </file>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.github.eirslett</groupId>
-                        <artifactId>frontend-maven-plugin</artifactId>
-                        <version>${frontend.plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>install connect npm</id>
-                                <goals>
-                                    <goal>npm</goal>
-                                </goals>
-                                <phase>generate-resources</phase>
-                                <configuration>
-                                    <workingDirectory>../plugin</workingDirectory>
-                                    <arguments>install</arguments>
-                                    <skip>${skipNpm}</skip>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
             <id>karma-tests</id>
             <activation>
                 <property>
