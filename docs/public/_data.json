@@ -37,13 +37,11 @@
     },
     {
       "filename": "operations.html",
-      "title": "Operations guide",
-      "new": true
+      "title": "Operations guide"
     },
     {
       "filename": "upgrades.html",
-      "title": "Upgrading your add-on",
-      "new": true
+      "title": "Upgrading your add-on"
     }
   ],
   "concepts": [
@@ -139,18 +137,15 @@
   "resources": [
     {
       "url": "https://developer.atlassian.com/display/MARKET/Atlassian+Connect+Status",
-      "title": "Atlassian Connect status",
-      "new": true
+      "title": "Atlassian Connect status"
     },
     {
       "filename": "release-notes.html",
-      "title": "Release notes",
-      "new": true
+      "title": "Release notes"
     },
     {
       "filename": "deprecations.html",
-      "title": "Deprecation notices",
-      "new": true
+      "title": "Deprecation notices"
     },
     {
       "filename": "samples.html",
