@@ -2,7 +2,10 @@ package com.atlassian.plugin.connect.plugin.rest;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class RestError
+import javax.annotation.concurrent.Immutable;
+
+@Immutable
+public class RestResult
 {
     @JsonProperty("status-code")
     private final int statusCode;
@@ -10,8 +13,8 @@ public class RestError
     @JsonProperty("message")
     private final String message;
 
-    public RestError(@JsonProperty("status-code") final int statusCode,
-            @JsonProperty("message") final String message)
+    public RestResult(@JsonProperty ("status-code") final int statusCode,
+            @JsonProperty ("message") final String message)
     {
         this.statusCode = statusCode;
         this.message = message;

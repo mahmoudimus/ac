@@ -13,7 +13,7 @@ import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.license.LicenseStatus;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.rest.AddonOrSysadminOnlyResourceFilter;
-import com.atlassian.plugin.connect.plugin.rest.RestError;
+import com.atlassian.plugin.connect.plugin.rest.RestResult;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddon;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddonLicense;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddons;
@@ -307,7 +307,7 @@ public class AddonsResource
 
     private Response getErrorResponse(final String message, final Response.Status status)
     {
-        RestError error = new RestError(status.getStatusCode(), message);
+        RestResult error = new RestResult(status.getStatusCode(), message);
         return Response.status(status)
                 .entity(error)
                 .build();

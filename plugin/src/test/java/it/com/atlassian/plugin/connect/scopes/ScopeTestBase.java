@@ -137,7 +137,7 @@ public abstract class ScopeTestBase
         assertResponseCodeForRequest(method, path, HttpStatus.FORBIDDEN);
     }
 
-    private void assertResponseCodeForRequest(HttpMethod httpMethod, String uriSuffix, HttpStatus status)
+    protected void assertResponseCodeForRequest(HttpMethod httpMethod, String uriSuffix, HttpStatus status)
             throws IOException, NoSuchAlgorithmException
     {
         URI uri = constructUri(httpMethod, uriSuffix);
