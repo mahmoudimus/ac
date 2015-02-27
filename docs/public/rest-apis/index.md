@@ -14,9 +14,9 @@ Atlassian Connect provides a set of REST APIs specifically designed for use by a
 
 ### Index
 
-* `/atlassian-connect/1/addons/{addonKey}` `[`[`GET`](#get-addons-addonkey)`]`
-* `/atlassian-connect/1/addons/{addonKey}/properties` `[`[`GET`](#get-addons-addonkey-properties)`]`
-* `/atlassian-connect/1/addons/{addonKey}/properties/{propertyKey}` `[`[`GET`](#get-addons-addonkey-properties-propertykey), [`PUT`](#put-addons-addonkey-properties-propertykey), [`DELETE`](#delete-addons-addonkey-properties-propertykey)`]`
+* `/rest/atlassian-connect/1/addons/{addonKey}` `[`[`GET`](#get-addons-addonkey)`]`
+* `/rest/atlassian-connect/1/addons/{addonKey}/properties` `[`[`GET`](#get-addons-addonkey-properties)`]`
+* `/rest/atlassian-connect/1/addons/{addonKey}/properties/{propertyKey}` `[`[`GET`](#get-addons-addonkey-properties-propertykey), [`PUT`](#put-addons-addonkey-properties-propertykey), [`DELETE`](#delete-addons-addonkey-properties-propertykey)`]`
 
 ### Resources
 
