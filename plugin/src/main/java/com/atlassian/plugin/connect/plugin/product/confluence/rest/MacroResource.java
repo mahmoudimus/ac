@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.product.confluence.rest;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.module.confluence.MacroContentManager;
-import com.atlassian.plugin.connect.plugin.scopes.ApiScopingFilter;
+import com.atlassian.plugin.connect.plugin.scopes.AddOnKeyExtractor;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.google.common.base.Function;
 import com.google.common.base.Suppliers;
@@ -73,6 +73,6 @@ public class MacroResource
 
     private Option<String> getConsumerKeyFromRequest(HttpServletRequest request)
     {
-        return option(ApiScopingFilter.extractClientKey(request));
+        return option(AddOnKeyExtractor.extractClientKey(request));
     }
 }

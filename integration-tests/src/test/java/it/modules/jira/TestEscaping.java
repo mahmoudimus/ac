@@ -54,12 +54,10 @@ public class TestEscaping extends TestBase
     private static final String GENERAL_PAGE_KEY = "general-page";
     private static final String WEB_ITEM_KEY = "web-item";
     private static final String ADMIN_PAGE_KEY = "admin-page";
-    private static final String COMPONENT_TAB_PANEL_KEY = "component-tab-panel";
     private static final String ISSUE_TAB_PANEL_KEY = "issue-tab-panel";
     private static final String PROFILE_TAB_PANEL_KEY = "profile-tab-panel";
     private static final String PROJECT_ADMIN_TAB_PANEL_KEY = "project-admin-tab-panel";
     private static final String PROJECT_TAB_PANEL_KEY = "project-tab-panel";
-    private static final String VERSION_TAB_PANEL_KEY = "version-tab-panel";
     private static final String SEARCH_REQUEST_VIEW_KEY = "search-request-view";
     private static final String WEB_PANEL_KEY = "web-panel";
     private static final String WORKFLOW_POST_FUNCTION_KEY = "workflow-post-function";
@@ -106,13 +104,6 @@ public class TestEscaping extends TestBase
                                 .withUrl(MODULE_URL)
                                 .build()
                 )
-                .addModule("jiraComponentTabPanels",
-                        newTabPanelBean()
-                                .withName(new I18nProperty(MODULE_NAME, null))
-                                .withKey(COMPONENT_TAB_PANEL_KEY)
-                                .withUrl(MODULE_URL)
-                                .build()
-                )
                 .addModule("jiraIssueTabPanels",
                         newTabPanelBean()
                                 .withName(new I18nProperty(MODULE_NAME, null))
@@ -139,13 +130,6 @@ public class TestEscaping extends TestBase
                         newTabPanelBean()
                                 .withName(new I18nProperty(MODULE_NAME, null))
                                 .withKey(PROJECT_TAB_PANEL_KEY)
-                                .withUrl(MODULE_URL)
-                                .build()
-                )
-                .addModule("jiraVersionTabPanels",
-                        newTabPanelBean()
-                                .withName(new I18nProperty(MODULE_NAME, null))
-                                .withKey(VERSION_TAB_PANEL_KEY)
                                 .withUrl(MODULE_URL)
                                 .build()
                 )
@@ -230,20 +214,6 @@ public class TestEscaping extends TestBase
     }
 
     @Test
-    public void testComponentTabPanel() throws Exception
-    {
-        ComponentClient componentClient = new ComponentClient(jira().environmentData());
-        Component component = componentClient.create(new Component()
-                .name("Component Tab Panel Test")
-                .project(PROJECT_KEY));
-
-        JiraComponentTabPanel componentTabPage = jira().quickLoginAsAdmin(JiraComponentTabPanel.class, PROJECT_KEY,
-                component.id.toString(), ConnectPluginInfo.getPluginKey(), getModuleKey(COMPONENT_TAB_PANEL_KEY));
-
-        assertIsEscaped(componentTabPage.findAddOnTab().getText());
-    }
-
-    @Test
     public void testIssueTabPanel() throws Exception
     {
         IssueCreateResponse issue = jira().backdoor().issues().createIssue(PROJECT_KEY, "test issue tab panel");
@@ -285,20 +255,6 @@ public class TestEscaping extends TestBase
         String moduleKey = ConnectPluginInfo.getPluginKey() + ":" + getModuleKey(PROJECT_TAB_PANEL_KEY) + "-panel";
         LinkedRemoteContent tabPanel = connectPageOperations.findTabPanel(moduleKey, Option.<String>none(), moduleKey);
         assertIsEscaped(tabPanel.getWebItem().getLinkText());
-    }
-
-    @Test
-    public void testVersionTabPanel() throws Exception
-    {
-        VersionClient versionClient = new VersionClient(jira().environmentData());
-        Version version = versionClient.create(new Version()
-                .name("Test Version Tab Panel")
-                .project(PROJECT_KEY));
-
-        JiraVersionTabPage versionTabPage = jira().quickLoginAsAdmin(JiraVersionTabPage.class, PROJECT_KEY,
-                version.id.toString(), ConnectPluginInfo.getPluginKey(), getModuleKey(VERSION_TAB_PANEL_KEY));
-
-        assertIsEscaped(versionTabPage.findAddOnTab().getText());
     }
 
     @Test

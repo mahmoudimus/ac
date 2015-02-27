@@ -1,8 +1,7 @@
 var mockSimpleDialog;
 var mockConfluence = {};
 
-define(['ac/confluence/macro/editor', 'connect-host'], function(confluenceMacroEditor, _AP) {
-
+require(['ac/confluence/macro/editor', 'connect-host', 'ac/dialog'], function(confluenceMacroEditor, _AP) {
     module("Confluence Macro Editor", {
       setup: function() {
         this.dialogSpy = {
@@ -31,7 +30,18 @@ define(['ac/confluence/macro/editor', 'connect-host'], function(confluenceMacroE
         };
         this.server = sinon.fakeServer.create();
 
+        this.store = {
+            dialog2: AJS.dialog2,
+            layer: AJS.layer
+        };
+
         AJS.dialog2 = sinon.stub().returns(this.dialogSpy);
+        this.layerSpy = {
+            changeSize: sinon.spy()
+        };
+        AJS.layer = sinon.stub().returns(this.layerSpy);
+
+
         //mock main Confluence object
         window.Confluence = {
             Editor: {
@@ -46,10 +56,6 @@ define(['ac/confluence/macro/editor', 'connect-host'], function(confluenceMacroE
                 }
             }
         };
-        this.layerSpy = {
-            changeSize: sinon.spy()
-        };
-        AJS.layer = sinon.stub().returns(this.layerSpy);
 
       },
       teardown: function() {
@@ -62,8 +68,8 @@ define(['ac/confluence/macro/editor', 'connect-host'], function(confluenceMacroE
         MacroData = null;
         MacroEditorOpts = null;
         this.dialogSpy = null;
-        AJS.layer = null;
-        AJS.dialog2 = null;
+        AJS.layer = this.store.layer;
+        AJS.dialog2 = this.store.dialog2;
       }
     });
 
