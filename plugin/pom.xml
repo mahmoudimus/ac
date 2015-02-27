@@ -1075,6 +1075,29 @@
 
     <profiles>
         <profile>
+            <id>node_modules clean</id>
+            <activation>
+                <file>
+                    <exists>node_modules</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <version>2.6.1</version>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>node_modules</directory>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>npm install</id>
             <activation>
                 <file>
@@ -1264,9 +1287,9 @@
             <id>docs</id>
             <!-- Build the docs - these goals MUST run after schema generation -->
             <activation>
-                <file>
-                    <missing>../docs/node_modules</missing>
-                </file>
+                <property>
+                    <name>!skipDocs</name>
+                </property>
             </activation>
             <build>
                 <plugins>
