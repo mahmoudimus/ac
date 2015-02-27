@@ -1267,6 +1267,7 @@
                                 <configuration>
                                     <workingDirectory>../docs</workingDirectory>
                                     <arguments>install ${atlassian.connect-js.path}</arguments>
+                                    <skip>${skipNpm}</skip>
                                 </configuration>
                             </execution>
                             <execution>
