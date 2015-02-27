@@ -50,6 +50,11 @@ public class ConnectPageOperations
         this.driver = driver;
     }
 
+    public <T extends AbstractConnectIFrameComponent> T findIFrameComponent(String id, Class<T> componentClass)
+    {
+        return pageBinder.bind(componentClass, id);
+    }
+
     public RemoteWebPanel findWebPanel(String id)
     {
         return pageBinder.bind(RemoteWebPanel.class, id);

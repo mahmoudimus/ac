@@ -13,8 +13,9 @@
       <option name="Rugby Union">Rugby Union</option>
       <option name="Rugby League">Rugby League</option>
     </select>
+    <button class="aui-button" id="macro-editor-close-button">Close</button>
     <script type="text/javascript">
-      AP.require(["confluence", "dialog"], function (confluence, dialog) {
+      AP.require(["_dollar", "confluence", "dialog"], function ($, confluence, dialog) {
         dialog.getButton("submit").bind(function() {
           var footy = document.getElementById("footy");
           var selectedValue = footy.options[footy.selectedIndex].value;
@@ -22,6 +23,10 @@
             footy: selectedValue
           });
           return true;
+        });
+
+        $("#macro-editor-close-button").bind("click", function() {
+          confluence.closeMacroEditor();
         });
       });
     </script>

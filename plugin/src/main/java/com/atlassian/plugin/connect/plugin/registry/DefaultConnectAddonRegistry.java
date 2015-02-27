@@ -322,4 +322,10 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
         }
         return beanOption;
     }
+    @Override
+    public boolean hasAddonWithKey(final String pluginKey)
+    {
+        return getAddonKeySet(settings()).contains(pluginKey);
+    }
+
 }
