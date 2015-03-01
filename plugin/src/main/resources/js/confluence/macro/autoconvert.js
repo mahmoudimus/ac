@@ -1,42 +1,41 @@
 (function () {
     AJS.bind("init.rte", function () {
-        function connectPasteHandler(uri, node, done) {
-            // the contents of autoConvertMappings will be generated
-            var macroName = "google-drive";
-            var autoConvertMappings = [
-                {
-                    "pattern": /docs.google.com\/.*\/document\/d\/(.*?)\/edit.*/,
-                    "parameters": ["fileId"]
-                },
-                {
-                    "pattern": /docs.google.com\/.*\/spreadsheets\/d\/(.*?)\/edit.*/,
-                    "parameters": ["fileId"]
-                },
-                {
-                    "pattern": /docs.google.com\/.*\/presentation\/d\/(.*?)\/edit.*/,
-                    "parameters": ["fileId"]
-                }
-            ];
+        var data = WRM.data.claim("com.atlassian.plugins.atlassian-connect-plugin:confluence-atlassian-connect-autoconvert-resources.connect-autoconvert-data");
+        var arrayLength = data.length;
 
-            for (var i = 0; i < autoConvertMappings.length; i++) {
-                var matches = uri.source.match(autoConvertMappings[i]["pattern"]);
+        console.log("found [ "+arrayLength+" ] autoconvert definitions");
 
-                if (matches) {
-                    var params = {};
-                    for (var j = 0; j < autoConvertMappings[i].parameters.length; j++) {
-                        params[autoConvertMappings[i].parameters[j]] = matches[j+1];
+        if (arrayLength>0) {
+            for (var i = 0; i < arrayLength; i++) {
+                var macroName = data[i].macroName;
+                // TODO convert pattern to regex
+                var pattern = data[i].autoconvert.pattern;
+
+                console.log("registering autoconvert handler for [ " + macroName + " ] and pattern [ " + pattern + " ]");
+
+                tinymce.plugins.Autoconvert.autoConvert.addHandler(function (uri, node, done) {
+                    var matches = uri.source.match(pattern);
+                    if (matches) {
+                        console.log("matched autoconvert pattern [ " + pattern + " ] with uri [ " + uri + " ]");
+                        var params = {};
+                        // TODO generate macro parameters from matched groups
+//                    for (var j = 0; j < autoConvertMappings[i].parameters.length; j++) {
+//                        params[autoConvertMappings[i].parameters[j]] = matches[j + 1];
+//                    }
+                        var macro = {
+                            name: macroName,
+                            params: params
+                        };
+                        tinymce.plugins.Autoconvert.convertMacroToDom(macro, done, done);
+                    } else {
+                        console.log("did not match autoconvert pattern [ " + pattern + " ] with uri [ " + uri + " ]");
+                        done();
                     }
-                    var macro = {
-                        name: macroName,
-                        params: params
-                    };
-                    tinymce.plugins.Autoconvert.convertMacroToDom(macro, done, done);
-                    return;
-                }
+
+                });
             }
-            done();
+
         }
 
-        tinymce.plugins.Autoconvert.autoConvert.addHandler(connectPasteHandler);
     });
 })();

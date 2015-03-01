@@ -481,7 +481,7 @@
                 <artifactId>maven-amps-plugin</artifactId>
                 <configuration>
                     <enableDevToolbox>true</enableDevToolbox>
-                    <enableFastdev>true</enableFastdev>
+                    <enableFastdev>false</enableFastdev>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <versionOverridesPath>${basedir}/../bin/amps-overrides.properties</versionOverridesPath>

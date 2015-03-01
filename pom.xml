@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <artifactId>atlassian-public-pom</artifactId>
+        <artifactId>public-pom</artifactId>
         <groupId>com.atlassian.pom</groupId>
-        <version>42</version>
+        <version>3.0.88</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
@@ -651,7 +651,7 @@
     </dependencyManagement>
     <properties>
         <!-- VERSIONS -->
-        <amps.version>5.0.15</amps.version>
+        <amps.version>4.2.22</amps.version>
         <atlassian.analytics.version>3.38</atlassian.analytics.version>
         <atlassian.applinks.version>4.2.4</atlassian.applinks.version>
         <atlassian.confluence.version>5.7-OD-44-026</atlassian.confluence.version>

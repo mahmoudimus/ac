@@ -119,7 +119,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
             for (AutoconvertBean autoconvertBean : macroBean.getAutoconvert())
             {
                 String macroKey = macroBean.getRawKey();
-                AutoconvertModuleDescriptor descriptor = new AutoconvertModuleDescriptor(ModuleFactory.LEGACY_MODULE_FACTORY, macroBean.getDisplayName(), autoconvertBean);
+                AutoconvertModuleDescriptor descriptor = new AutoconvertModuleDescriptor(ModuleFactory.LEGACY_MODULE_FACTORY, macroBean.getRawKey(), autoconvertBean);
                 descriptor.init(theConnectPlugin, new DOMElement("autoconvert").addAttribute("key", macroKey + "-autoconvert-"+index));
                 descriptors.add(descriptor);
                 index++;
