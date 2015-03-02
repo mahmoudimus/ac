@@ -1,11 +1,14 @@
 package com.atlassian.plugin.connect.spi.util;
 
+import com.atlassian.security.xml.SecureXmlParserFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.stream.XMLInputFactory;
 
 import org.dom4j.io.SAXReader;
 import org.xml.sax.EntityResolver;
@@ -38,11 +41,13 @@ public final class XmlUtils
         XMLReader xmlReader;
         try
         {
+            xmlReader = SecureXmlParserFactory.newXmlReader();
+
             SAXParserFactory spf = SAXParserFactory.newInstance();
             spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd",
                     false);
             spf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            xmlReader = spf.newSAXParser().getXMLReader();
+            //xmlReader = spf.newSAXParser().getXMLReader();
             xmlReader.setEntityResolver(EMPTY_ENTITY_RESOLVER);
         }
         catch (ParserConfigurationException e)
