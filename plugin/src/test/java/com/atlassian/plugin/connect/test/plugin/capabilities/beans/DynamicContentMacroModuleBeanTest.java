@@ -118,7 +118,8 @@ public class DynamicContentMacroModuleBeanTest {
                                                         .build())
                                         .build())
                                 .withAutoconvert(AutoconvertBean.newAutoconvertBean()
-                                        .withPattern("/docs/google.com/document/d/{fileId}/edit") // TODO put pattert in here
+                                        .withPattern("/docs/google.com/document/d/{fileId}/edit")
+                                        .withUrlParameter("url")
                                         .build())
                                 .build()
                 )

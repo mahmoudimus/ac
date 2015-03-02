@@ -10,9 +10,11 @@ public class AutoconvertBean extends BaseModuleBean {
 
     @Required
     private String pattern;
+    private String urlParameter;
 
     public AutoconvertBean() {
         this.pattern = "";
+        this.urlParameter = "";
     }
 
     public AutoconvertBean(AutoconvertBeanBuilder builder) {
@@ -21,6 +23,11 @@ public class AutoconvertBean extends BaseModuleBean {
         if (null == pattern)
         {
             this.pattern = "";
+        }
+
+        if (null == urlParameter)
+        {
+            this.urlParameter = "";
         }
     }
 
@@ -36,5 +43,10 @@ public class AutoconvertBean extends BaseModuleBean {
 
     public String getPattern() {
         return pattern;
+    }
+
+    public String getUrlParameter()
+    {
+        return urlParameter;
     }
 }
