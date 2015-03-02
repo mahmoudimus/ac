@@ -31,7 +31,7 @@
              * before closing the editor.
              */
             close: function() {
-                dialog.close();
+                _AP.Dialog.close();
             },
 
             /**
