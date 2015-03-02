@@ -5,6 +5,7 @@ import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
 import com.atlassian.jira.projects.pageobjects.page.BrowseProjectPage;
+import com.atlassian.jira.projects.pageobjects.webdriver.page.sidebar.Sidebar;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.jira.testkit.client.restclient.Component;
 import com.atlassian.jira.testkit.client.restclient.ComponentClient;
@@ -16,6 +17,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
@@ -48,6 +50,8 @@ import static org.junit.Assert.assertTrue;
 
 public class TestEscaping extends TestBase
 {
+    private static final String ADDON_KEY = AddonTestUtils.randomAddOnKey();
+
     private static final String MODULE_NAME = "<b>${user}</b>";
     private static final String MODULE_NAME_JIRA_ESCAPED = "<b>\\${user}</b>";
 
@@ -76,7 +80,7 @@ public class TestEscaping extends TestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        runner = new ConnectRunner(jira().getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        runner = new ConnectRunner(jira().getProductInstance().getBaseUrl(), ADDON_KEY)
                 .setAuthenticationToNone()
                 .addModule("generalPages",
                         newPageBean()
@@ -251,10 +255,12 @@ public class TestEscaping extends TestBase
     @Test
     public void testProjectTabPanel() throws Exception
     {
-        jira().quickLoginAsAdmin(BrowseProjectPage.class, PROJECT_KEY);
-        String moduleKey = ConnectPluginInfo.getPluginKey() + ":" + getModuleKey(PROJECT_TAB_PANEL_KEY) + "-panel";
-        LinkedRemoteContent tabPanel = connectPageOperations.findTabPanel(moduleKey, Option.<String>none(), moduleKey);
-        assertIsEscaped(tabPanel.getWebItem().getLinkText());
+        JiraProjectSummaryPageWithAddonTab summaryPage
+                = jira().visit(JiraProjectSummaryPageWithAddonTab.class, PROJECT_KEY, ADDON_KEY, PROJECT_TAB_PANEL_KEY);
+        summaryPage = summaryPage.expandAddonsList();
+        summaryPage.getSidebar().getLinkByName(MODULE_NAME);
+
+        // TODO Visit page and verify title
     }
 
     @Test
