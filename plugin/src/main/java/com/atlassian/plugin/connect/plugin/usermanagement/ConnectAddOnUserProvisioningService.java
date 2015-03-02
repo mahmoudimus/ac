@@ -18,4 +18,6 @@ public interface ConnectAddOnUserProvisioningService
      * @return {@link java.util.Set} of group keys (for example ["confluence-users"]).
      */
     public Set<String> getDefaultProductGroups();
+    public Set<String> getDefiniteDefaultProductGroups();
+    public Set<String> getPossibleDefaultProductGroups();
 }

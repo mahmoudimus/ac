@@ -179,7 +179,9 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         User user = ensureUserExists(username, addOnDisplayName);
         connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), Constants.ADDON_USER_GROUP_KEY);
 
-        for (String group : connectAddOnUserProvisioningService.getDefaultProductGroups())
+
+        
+        for (String group : connectAddOnUserProvisioningService.getDefiniteDefaultProductGroups())
         {
             try
             {
@@ -191,6 +193,26 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
                 log.error(String.format("Could not make user '%s' a member of group '%s' because that group does not exist!", username, group));
                 // TODO ACDEV-938: propagate this error
             }
+        }
+        
+        int numPossibleDefaultGroupsAddedTo = 0;
+        String errorMessage = String.format("Could not make user '%s' a member of one of groups ", username);
+        for (String group : connectAddOnUserProvisioningService.getPossibleDefaultProductGroups()) 
+        {
+            try 
+            {
+                connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), group);
+                numPossibleDefaultGroupsAddedTo++;
+            } 
+            catch (GroupNotFoundException e) 
+            {
+                errorMessage += String.format("%s, ", group);
+            }
+            
+        }
+        if (numPossibleDefaultGroupsAddedTo == 0 && connectAddOnUserProvisioningService.getPossibleDefaultProductGroups().size() > 0)
+        {
+            log.error(errorMessage + "because those groups do not exist!");
         }
 
         return user.getName();
