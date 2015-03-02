@@ -14,7 +14,12 @@ import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.google.gson.Gson;
 import it.com.atlassian.plugin.connect.TestConstants;
-import net.oauth.*;
+import net.oauth.OAuth;
+import net.oauth.OAuthAccessor;
+import net.oauth.OAuthConsumer;
+import net.oauth.OAuthException;
+import net.oauth.OAuthMessage;
+import net.oauth.OAuthServiceProvider;
 import net.oauth.signature.OAuthSignatureMethod;
 import net.oauth.signature.RSA_SHA1;
 import org.apache.commons.codec.binary.Base64;
@@ -25,10 +30,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.ws.rs.core.Response.Status;
 
 public class RequestUtil
 {
@@ -126,7 +136,8 @@ public class RequestUtil
             Map<String, List<String>> headerFields = connection.getHeaderFields();
             StringBuilder output = new StringBuilder();
 
-            InputStream response = responseCode == 200 ? connection.getInputStream() : connection.getErrorStream();
+
+            InputStream response = isResponseSuccessful(responseCode) ? connection.getInputStream() : connection.getErrorStream();
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(response, "UTF-8"));
             try
@@ -147,6 +158,11 @@ public class RequestUtil
         {
             connection.disconnect();
         }
+    }
+
+    private boolean isResponseSuccessful(final int responseCode)
+    {
+        return Status.fromStatusCode(responseCode).getFamily() == Status.Family.SUCCESSFUL;
     }
 
     public static class Request

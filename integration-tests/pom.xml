@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.24-SNAPSHOT</version>
+        <version>1.1.25-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -335,6 +335,7 @@
                             </productDataPath>
                             <systemPropertyVariables>
                                 <product>jira</product>
+                                <com.atlassian.plugin.connect.add_on_properties.max_properties>${addonconfig.maxpropertiesperplugin}</com.atlassian.plugin.connect.add_on_properties.max_properties>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -417,6 +418,7 @@
                             </productDataPath>
                             <systemPropertyVariables>
                                 <product>confluence</product>
+                                <com.atlassian.plugin.connect.add_on_properties.max_properties>${addonconfig.maxpropertiesperplugin}</com.atlassian.plugin.connect.add_on_properties.max_properties>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -521,5 +523,6 @@
         <jetty.version>8.1.7.v20120910</jetty.version>
         <functest.version>0.7.1</functest.version>
         <functestbasics.version>1.9.7</functestbasics.version>
+        <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
     </properties>
 </project>
