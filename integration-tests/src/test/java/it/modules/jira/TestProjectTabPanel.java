@@ -1,16 +1,14 @@
 package it.modules.jira;
 
-import com.atlassian.jira.projects.pageobjects.page.BrowseProjectPage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.AbstractRemotablePluginProjectTab;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectSummaryPageWithAddonTab;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.ParameterCapturingConditionServlet;
-import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -18,14 +16,12 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static it.servlet.condition.ParameterCapturingConditionServlet.PARAMETER_CAPTURE_URL;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -34,30 +30,31 @@ import static org.junit.Assert.assertThat;
  */
 public class TestProjectTabPanel extends JiraWebDriverTestBase
 {
-    private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
-    private static final String MODULE_KEY = "ac-play-project-tab";
+    private static final String ADDON_KEY = AddonTestUtils.randomAddOnKey();
+    private static final String MODULE_KEY = "ac-test-project-tab";
+    private static final String MODULE_TITLE = "AC Test Project Tab";
 
-    private static ConnectRunner remotePlugin;
+    private static ConnectRunner addon;
 
     @Rule
-    public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
+    public TestRule resetToggleableCondition = addon.resetToggleableConditionRule();
 
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
+        addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), ADDON_KEY)
                 .setAuthenticationToNone()
                 .addModule(ConnectTabPanelModuleProvider.PROJECT_TAB_PANELS, newTabPanelBean()
-                        .withName(new I18nProperty("AC Play Project Tab", null))
+                        .withName(new I18nProperty(MODULE_TITLE, null))
                         .withKey(MODULE_KEY)
                         .withUrl("/ptp")
                         .withWeight(1234)
                         .withConditions(
-                            toggleableConditionBean(),
-                            newSingleConditionBean().withCondition(PARAMETER_CAPTURE_URL +
-                                    "?issueId={issue.id}&projectKey={project.key}&projectId={project.id}").build()
+                                toggleableConditionBean(),
+                                newSingleConditionBean().withCondition(PARAMETER_CAPTURE_URL +
+                                        "?issueId={issue.id}&projectKey={project.key}&projectId={project.id}").build()
                         )
                         .build()
                 )
@@ -69,62 +66,29 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
     @AfterClass
     public static void stopConnectAddOn() throws Exception
     {
-        if (remotePlugin != null)
+        if (addon != null)
         {
-            remotePlugin.stopAndUninstall();
+            addon.stopAndUninstall();
         }
     }
 
     @Test
-    public void testProjectTab() throws Exception
+    public void projectTabShouldBePresentForAnonymous() throws Exception
     {
-        testLoggedInAndAnonymous(new Callable()
-        {
-            @Override
-            public Object call() throws Exception
-            {
-                AppProjectTabPage.defaultProjectKey = project.getKey();
-                ConnectAddOnEmbeddedTestPage page = product.visit(BrowseProjectPage.class, project.getKey())
-                                                           .openTab(AppProjectTabPage.class)
-                                                           .getEmbeddedPage();
-                assertEquals("Success", page.getMessage());
+        JiraProjectSummaryPageWithAddonTab summaryPage = visitProjectSummaryPage();
+        summaryPage = summaryPage.expandAddonsList();
+        ConnectAddOnEmbeddedTestPage embeddedAddonTestPage = summaryPage.goToEmbeddedTestPageAddon();
+        assertEquals("Success", embeddedAddonTestPage.getMessage());
 
-                Map<String,String> conditionRequestParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
-                assertThat(conditionRequestParams, hasEntry("projectKey", project.getKey()));
-                assertThat(conditionRequestParams, hasEntry("projectId", project.getId()));
-
-                return null;
-            }
-        });
+        Map<String, String> conditionRequestParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
+        assertThat(conditionRequestParams, hasEntry("projectKey", project.getKey()));
+        assertThat(conditionRequestParams, hasEntry("projectId", project.getId()));
     }
 
-    @Test
-    public void tabIsNotAccessibleWithFalseCondition() throws Exception
+    // TODO Verify tab not shown if condition fails
+
+    private JiraProjectSummaryPageWithAddonTab visitProjectSummaryPage()
     {
-        AppProjectTabPage.defaultProjectKey = project.getKey();
-        BrowseProjectPage browseProjectPage = loginAndVisit(TestUser.ADMIN, BrowseProjectPage.class, project.getKey());
-        assertThat("AddOn project tab should be present", browseProjectPage.hasTab(AppProjectTabPage.class), is(true));
-        remotePlugin.setToggleableConditionShouldDisplay(false);
-        browseProjectPage = product.visit(BrowseProjectPage.class, project.getKey());
-        assertThat("AddOn project tab should NOT be present", browseProjectPage.hasTab(AppProjectTabPage.class), is(false));
-    }
-
-    public static final class AppProjectTabPage extends AbstractRemotablePluginProjectTab
-    {
-        /**
-         * this hack means AppProjectTabPage can have a no-arg constructor (which BrowseProjectPage.hasTab() seems to require)
-         */
-        private static String defaultProjectKey = null;
-
-        // TabSupport.hasTab() requires a default constructor
-        public AppProjectTabPage()
-        {
-            this(defaultProjectKey);
-        }
-
-        public AppProjectTabPage(final String projectKey)
-        {
-            super(projectKey, PLUGIN_KEY, MODULE_KEY);
-        }
+        return product.visit(JiraProjectSummaryPageWithAddonTab.class, project.getKey(), ADDON_KEY, MODULE_KEY);
     }
 }
