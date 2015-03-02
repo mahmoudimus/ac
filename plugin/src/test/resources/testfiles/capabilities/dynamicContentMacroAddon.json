@@ -86,7 +86,8 @@
           "default": { "url": "/render-map-default"}
         },
         "autoconvert": [
-          {"pattern":"/docs/google.com/document/d/{fileId}/edit" }
+          {"pattern":"/docs/google.com/document/d/{fileId}/edit",
+            "urlParameter": "url"}
           ]
       }
     ]
