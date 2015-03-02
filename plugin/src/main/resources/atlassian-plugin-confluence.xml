@@ -31,7 +31,7 @@
 
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-macro</dependency>
 
-        <condition class2="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <!-- JavaScript API Core -->
