@@ -258,9 +258,8 @@ public class TestEscaping extends TestBase
         JiraProjectSummaryPageWithAddonTab summaryPage
                 = jira().visit(JiraProjectSummaryPageWithAddonTab.class, PROJECT_KEY, ADDON_KEY, PROJECT_TAB_PANEL_KEY);
         summaryPage = summaryPage.expandAddonsList();
-        summaryPage.getSidebar().getLinkByName(MODULE_NAME);
-
-        // TODO Visit page and verify title
+        Sidebar.SidebarLink addonLink = summaryPage.getSidebar().getLinkByName(MODULE_NAME_JIRA_ESCAPED);
+        assertTrue(addonLink.isVisible().byDefaultTimeout());
     }
 
     @Test

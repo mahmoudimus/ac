@@ -85,8 +85,6 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
         assertThat(conditionRequestParams, hasEntry("projectId", project.getId()));
     }
 
-    // TODO Verify tab not shown if condition fails
-
     private JiraProjectSummaryPageWithAddonTab visitProjectSummaryPage()
     {
         return product.visit(JiraProjectSummaryPageWithAddonTab.class, project.getKey(), ADDON_KEY, MODULE_KEY);
