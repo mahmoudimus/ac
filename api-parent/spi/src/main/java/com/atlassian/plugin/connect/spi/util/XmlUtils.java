@@ -5,11 +5,6 @@ import com.atlassian.security.xml.SecureXmlParserFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import javax.xml.XMLConstants;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.stream.XMLInputFactory;
-
 import org.dom4j.io.SAXReader;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -39,25 +34,9 @@ public final class XmlUtils
     private static SAXReader createReader(boolean validating)
     {
         XMLReader xmlReader;
-        try
-        {
-            xmlReader = SecureXmlParserFactory.newXmlReader();
+        xmlReader = SecureXmlParserFactory.newXmlReader();
+        xmlReader.setEntityResolver(EMPTY_ENTITY_RESOLVER);
 
-            SAXParserFactory spf = SAXParserFactory.newInstance();
-            spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd",
-                    false);
-            spf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            //xmlReader = spf.newSAXParser().getXMLReader();
-            xmlReader.setEntityResolver(EMPTY_ENTITY_RESOLVER);
-        }
-        catch (ParserConfigurationException e)
-        {
-            throw new RuntimeException("XML Parser configured incorrectly", e);
-        }
-        catch (SAXException e)
-        {
-            throw new RuntimeException("Unable to configure XML parser", e);
-        }
         return new SAXReader(xmlReader, validating);
     }
 
