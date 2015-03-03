@@ -1,26 +1,23 @@
 (function () {
     AJS.bind("init.rte", function () {
-        var data = WRM.data.claim("com.atlassian.plugins.atlassian-connect-plugin:confluence-atlassian-connect-autoconvert-resources.connect-autoconvert-data");
-        var arrayLength = data.length;
+        var autoconvertDefs = WRM.data.claim("com.atlassian.plugins.atlassian-connect-plugin:confluence-atlassian-connect-autoconvert-resources.connect-autoconvert-data");
+        var numAutoconvertDefs = autoconvertDefs.length;
+        console.log("found [ " + numAutoconvertDefs + " ] autoconvert definitions");
 
-        console.log("found [ " + arrayLength + " ] autoconvert definitions");
-
-        if (arrayLength > 0) {
-            for (var i = 0; i < arrayLength; i++) {
+        if (numAutoconvertDefs > 0) {
+            for (var i = 0; i < numAutoconvertDefs; i++) {
                 var handler = function (i) {
-                    var macroName = data[i].macroName;
-                    var urlParameter = data[i].autoconvert.urlParameter;
-                    var pattern = data[i].autoconvert.pattern;
+                    var macroName = autoconvertDefs[i].macroName;
+                    var urlParameter = autoconvertDefs[i].autoconvert.urlParameter;
+                    var pattern = autoconvertDefs[i].autoconvert.pattern;
 
-                    // build the regex from the pattern
+                    // build a regex from the defined autoconvert pattern
                     pattern = escapePattern(pattern);
                     pattern = pattern.replace('{}', '.*?');
-                    console.log("pattern is: "+ pattern);
                     console.log("registering autoconvert handler for [ " + macroName + " ] and pattern [ " + pattern + " ]");
 
                     return function (uri, node, done) {
                         var matches = uri.source.match(pattern);
-                        console.log("matches: "+matches);
 
                         if (matches) {
                             console.log("matched autoconvert pattern [ " + pattern + " ] with uri [ " + uri + " ]");
