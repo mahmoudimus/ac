@@ -33,7 +33,7 @@ public class TestReport extends JiraWebDriverTestBase
             return project.getKey();
         }
     };
-    private static final TestReportInfo secondTestReport = new TestReportInfo("Other Test report", "some description", "other-test-report", "projectId", ReportCategory.OTHER)
+    private static final TestReportInfo secondTestReport = new TestReportInfo("Other Test Report", "some description", "other-test-report", "projectId", ReportCategory.OTHER)
     {
         @Override
         public String getExpectedContextParamValue(final RemoteProject project)
@@ -55,8 +55,8 @@ public class TestReport extends JiraWebDriverTestBase
                         ReportModuleBean.newBuilder()
                                 .withWeight(100)
                                 .withUrl("/report?projectKey={project.key}")
-                                .withDescription(new I18nProperty(firstTestReport.description, "description i18n"))
-                                .withName(new I18nProperty(firstTestReport.title, "report i18n"))
+                                .withDescription(new I18nProperty(firstTestReport.description, null))
+                                .withName(new I18nProperty(firstTestReport.title, null))
                                 .withKey(firstTestReport.key)
                                 .withReportCategory(firstTestReport.reportCategory)
                                 .withThumbnailUrl("http://localhost:2990/jira/images/64jira.png")
@@ -64,8 +64,8 @@ public class TestReport extends JiraWebDriverTestBase
                         ReportModuleBean.newBuilder()
                                 .withWeight(101)
                                 .withUrl("/report?projectId={project.id}")
-                                .withDescription(new I18nProperty(secondTestReport.description, "second description i18n"))
-                                .withName(new I18nProperty(secondTestReport.title, "report i18n"))
+                                .withDescription(new I18nProperty(secondTestReport.description, null))
+                                .withName(new I18nProperty(secondTestReport.title, null))
                                 .withKey(secondTestReport.key)
                                 .build())
                 .addRoute("/report", ConnectAppServlets.apRequestServlet())
