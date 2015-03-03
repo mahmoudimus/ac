@@ -1,10 +1,10 @@
 
 package it.com.atlassian.plugin.connect.scopes.jira;
 
-import com.atlassian.jira.bc.project.ProjectService;
+import com.atlassian.jira.entity.property.EntityProperty;
+import com.atlassian.jira.issue.comments.Comment;
 import com.atlassian.jira.project.Project;
-import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.jira.user.util.UserManager;
+import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jwt.writer.JwtWriterFactory;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
@@ -15,33 +15,28 @@ import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import it.com.atlassian.plugin.connect.scopes.ScopeTestBase;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 @Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)
 public class ReadScopeJiraTest extends ScopeTestBase
 {
-    private static final String ADMIN_USERNAME = "admin";
-
-    private final UserManager userManager;
-    private final ProjectService projectService;
+    private final JiraScopeTestUtil scopeTestUtil;
 
     public ReadScopeJiraTest(TestPluginInstaller testPluginInstaller,
                              TestAuthenticator testAuthenticator,
                              JwtWriterFactory jwtWriterFactory,
                              ConnectAddonRegistry connectAddonRegistry,
                              ApplicationProperties applicationProperties,
-                             UserManager userManager,
-                             ProjectService projectService)
+                             JiraScopeTestUtil scopeTestUtil)
     {
         super(ScopeName.READ, testPluginInstaller, testAuthenticator, jwtWriterFactory, connectAddonRegistry,
                 applicationProperties);
-        this.userManager = userManager;
-        this.projectService = projectService;
+        this.scopeTestUtil = scopeTestUtil;
     }
 
     @Test
@@ -59,7 +54,7 @@ public class ReadScopeJiraTest extends ScopeTestBase
     @Test
     public void shouldAllowGetSecureProjectAvatar() throws Exception
     {
-        Project project = createProject();
+        Project project = scopeTestUtil.createProject();
 
         assertValidRequest(HttpMethod.GET, "/secure/projectavatar?pid=" + project.getId());
     }
@@ -67,16 +62,24 @@ public class ReadScopeJiraTest extends ScopeTestBase
     @Test
     public void shouldAllowGetSecureUserAvatar() throws Exception
     {
-        assertValidRequest(HttpMethod.GET, "/secure/useravatar?ownerId=" + ADMIN_USERNAME);
+        assertValidRequest(HttpMethod.GET, "/secure/useravatar?ownerId=" + JiraScopeTestUtil.ADMIN_USERNAME);
     }
 
-    private Project createProject() throws IOException
+    @Test
+    public void shouldAllowToReadCommentProperty() throws IOException, NoSuchAlgorithmException, JSONException
     {
-        int keyLength = 6;
-        String key = RandomStringUtils.randomAlphabetic(keyLength).toUpperCase();
-        ApplicationUser user = userManager.getUserByKey(ADMIN_USERNAME);
-        ProjectService.CreateProjectValidationResult result = projectService.validateCreateProject(
-                user.getDirectoryUser(), key, key, null, ADMIN_USERNAME, null, null);
-        return projectService.createProject(result);
+        Comment comment = scopeTestUtil.createComment();
+        EntityProperty property = scopeTestUtil.createCommentProperty(comment);
+
+        assertValidRequest(HttpMethod.GET, "/rest/api/2/comment/" + comment.getId() + "/properties/" + property.getKey());
     }
+
+    @Test
+    public void shouldAllowToReadCommentProperties() throws IOException, NoSuchAlgorithmException, JSONException
+    {
+        Comment comment = scopeTestUtil.createComment();
+
+        assertValidRequest(HttpMethod.GET, "/rest/api/2/comment/" + comment.getId() + "/properties/");
+    }
+
 }
