@@ -90,6 +90,9 @@
         <resource type="download" name="host.css" location="/css/iframe/host.css" />
         <resource type="download" name="admin.css" location="/css/iframe/admin.css" />
         <resource type="download" name="messages-main.css" location="css/messages/main.css" />
+
+        <!-- We only want these resources when a Connect add-on is actually installed, otherwise it's just baggage -->
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <web-resource key="images">
