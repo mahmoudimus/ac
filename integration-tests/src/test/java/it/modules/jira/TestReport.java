@@ -128,6 +128,7 @@ public class TestReport extends JiraWebDriverTestBase
     private ConnectAddOnEmbeddedTestPage goToEmbeddedReportPage(TestReportInfo reportInfo)
     {
         ReportsPage reportsPage = goToProjectReportPage();
+        connectPageOperations.dismissAnyAuiDialog();
         ReportsPage.Report report = getReportFromReportsPage(reportsPage, reportInfo);
         return report.visit(ConnectAddOnEmbeddedTestPage.class, ADDON_KEY, reportInfo.key, true);
     }
