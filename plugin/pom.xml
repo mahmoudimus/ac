@@ -199,6 +199,17 @@
             <artifactId>embedded-crowd-api</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.atlassian.jira.plugins</groupId>
+            <artifactId>jira-development-status-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jira.plugins</groupId>
+            <artifactId>jira-development-integration-plugin</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
         <!-- the upm is here just for debugging -->
         <dependency>
             <groupId>com.atlassian.upm</groupId>

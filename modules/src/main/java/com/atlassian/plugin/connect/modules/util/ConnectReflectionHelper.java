@@ -44,7 +44,7 @@ public class ConnectReflectionHelper
                         if (sourceField.getType().equals(destField.getType()) && sourceField.get(source) != null)
                         {
                             Object something = sourceField.get(source);
-                            destField.set(dest, sourceField.get(source));
+                            destField.set(dest, something);
                             alreadySet.add(sourceField.getName());
                         }
                     }
@@ -60,7 +60,6 @@ public class ConnectReflectionHelper
     public static List<Field> getAllFieldsInObjectChain(Class someClass)
     {
         List<Field> fieldList = new ArrayList<Field>();
-
 
         for (Class myClass = someClass; myClass != Object.class; myClass = myClass.getSuperclass())
         {

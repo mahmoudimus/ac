@@ -636,6 +636,17 @@
                 <version>1.9</version>
                 <scope>test</scope>
             </dependency>
+
+            <dependency>
+                <groupId>com.atlassian.jira.plugins</groupId>
+                <artifactId>jira-development-status-api</artifactId>
+                <version>${jira.devstatus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.jira.plugins</groupId>
+                <artifactId>jira-development-integration-plugin</artifactId>
+                <version>${jira.devstatus.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <properties>
@@ -681,6 +692,8 @@
         <atlassian.html.encoder.version>1.4</atlassian.html.encoder.version>
         <quickreload.version>1.3</quickreload.version>
 
+        <jira.devstatus.version>2.3.6-D20150202T002105</jira.devstatus.version>
+        
         <!-- TEST STUFF -->
         <atlassian.test.categories.version>0.5</atlassian.test.categories.version>
         <aui.version>5.2</aui.version>

@@ -86,5 +86,4 @@ public class ConnectProjectAdminTabPanelModuleProvider
 
         return builder.build();
     }
-
 }
