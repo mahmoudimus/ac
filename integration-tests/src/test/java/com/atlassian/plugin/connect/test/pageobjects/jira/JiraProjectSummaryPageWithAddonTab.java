@@ -7,6 +7,7 @@ import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.utils.WebItemUtils;
 import it.modules.jira.TestProjectTabPanel;
 
 /**
@@ -46,8 +47,7 @@ public class JiraProjectSummaryPageWithAddonTab extends SummaryPage
 
     private Sidebar.SidebarLink getAddonLink()
     {
-        String linkId = String.format("%s:%s", ConnectPluginInfo.getPluginKey(),
-                ModuleKeyUtils.addonAndModuleKey(addonKey, moduleKey));
+        String linkId = WebItemUtils.linkId(ModuleKeyUtils.addonAndModuleKey(addonKey, moduleKey));
         return getSidebar().getLinkById(linkId);
     }
 }
