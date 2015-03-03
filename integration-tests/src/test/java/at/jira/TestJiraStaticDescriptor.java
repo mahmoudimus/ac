@@ -15,19 +15,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import at.util.ExternalAddonInstaller;
-
 import static com.google.common.collect.Iterables.any;
 import static it.util.TestUser.ADMIN;
-import static it.util.TestUser.SYSADMIN;
 
 @Category (OnDemandAcceptanceTest.class)
 public class TestJiraStaticDescriptor extends JiraAcceptanceTestBase
 {
     private static final String PROJECT_KEY = "ACTEST";
     private static final String PROJECT_NAME = "Atlassian Connect Test";
-    private static final ExternalAddonInstaller installer = new ExternalAddonInstaller(
-                product.getProductInstance().getBaseUrl(), SYSADMIN);
     private static final String WEB_ITEM_ID = "com.atlassian.connect.acceptance.test__opsbar-test-web-item";
 
     @BeforeClass
