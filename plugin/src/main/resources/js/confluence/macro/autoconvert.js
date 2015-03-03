@@ -13,8 +13,8 @@
                     var pattern = data[i].autoconvert.pattern;
 
                     // build the regex from the pattern
-                    bracketLocation = pattern.indexOf('{}');
-                    pattern = pattern.substring(0, bracketLocation) + '.*?' + pattern.substring(bracketLocation + 2, pattern.length);
+                    pattern = escapePattern(pattern);
+                    pattern = pattern.replace('{}', '.*?');
                     console.log("pattern is: "+ pattern);
                     console.log("registering autoconvert handler for [ " + macroName + " ] and pattern [ " + pattern + " ]");
 
@@ -46,4 +46,6 @@
             }
         }
     });
+    // escape everything that could interfere with the regex, except curly braces
+    function escapePattern(str) { return str.replace(/[\-\[\]\/\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"); }
 })();
