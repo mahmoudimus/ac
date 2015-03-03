@@ -26,7 +26,7 @@ import java.io.IOException;
 
 public abstract class ConnectWebDriverTestBase
 {
-    protected static TestedProduct<WebDriverTester> product = OwnerOfTestedProduct.INSTANCE;
+    protected static TestedProduct<WebDriverTester> product = OwnerOfTestedProduct.INSTANCE.get();
 
     protected static String currentUsername = null;
 

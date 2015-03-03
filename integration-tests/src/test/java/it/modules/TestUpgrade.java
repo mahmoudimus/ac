@@ -4,6 +4,7 @@ import cc.plural.jsonij.JSON;
 import cc.plural.jsonij.Value;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.collect.Lists;
 import it.AbstractBrowserlessTest;
@@ -35,7 +36,7 @@ public class TestUpgrade extends AbstractBrowserlessTest
     public void testPluginModulesDoNotRiseFromTheDead() throws Exception
     {
         // install then uninstall a plugin
-        plugin0 = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
+        plugin0 = new ConnectRunner(OwnerOfTestedProduct.INSTANCE.get().getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
                 .addModule(
                         "generalPages",
@@ -50,7 +51,7 @@ public class TestUpgrade extends AbstractBrowserlessTest
         plugin0 = null;
 
         // install another plugin with the same key, but different modules
-        plugin1 = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
+        plugin1 = new ConnectRunner(OwnerOfTestedProduct.INSTANCE.get().getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
                 .addModule(
                         "generalPages",
