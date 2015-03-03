@@ -9,17 +9,27 @@
             for (var i = 0; i < arrayLength; i++) {
                 var handler = function (i) {
                     var macroName = data[i].macroName;
-
-                    // TODO convert pattern to regex
-
+                    var urlParameter = data[i].autoconvert.urlParameter;
                     var pattern = data[i].autoconvert.pattern;
+
+                    // build the regex from the pattern
+                    bracketLocation = pattern.indexOf('{}');
+                    pattern = pattern.substring(0, bracketLocation) + '.*?' + pattern.substring(bracketLocation + 2, pattern.length);
+                    console.log("pattern is: "+ pattern);
                     console.log("registering autoconvert handler for [ " + macroName + " ] and pattern [ " + pattern + " ]");
 
                     return function (uri, node, done) {
                         var matches = uri.source.match(pattern);
+                        console.log("matches: "+matches);
+
                         if (matches) {
                             console.log("matched autoconvert pattern [ " + pattern + " ] with uri [ " + uri + " ]");
                             var params = {};
+
+                            if (urlParameter != null) {
+                                params[urlParameter] = "" + matches;
+                            }
+
                             var macro = {
                                 name: macroName,
                                 params: params
@@ -32,16 +42,8 @@
 
                     }
                 }(i);
-
                 tinymce.plugins.Autoconvert.autoConvert.addHandler(handler);
             }
-
         }
-
     });
 })();
-
-// TODO generate macro parameters from matched groups
-//                    for (var j = 0; j < autoConvertMappings[i].parameters.length; j++) {
-//                        params[autoConvertMappings[i].parameters[j]] = matches[j + 1];
-//                    }
