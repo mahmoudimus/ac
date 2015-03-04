@@ -299,7 +299,8 @@ public class DetailedConfluenceSpaceAdminScopeTest
     private ConfluenceUser getAddonUserRemovedFromGroups(String addonKey)
     {
         final ConfluenceUser addonUser = getAddonUser(addonKey);
-        final Set<String> groups = connectAddOnUserProvisioningService.getDefaultProductGroups();
+        final Set<String> groups = connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected();
+        groups.addAll(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected());
         for (String group : groups)
         {
             removeUserFromGroup(addonUser.getName(), group);

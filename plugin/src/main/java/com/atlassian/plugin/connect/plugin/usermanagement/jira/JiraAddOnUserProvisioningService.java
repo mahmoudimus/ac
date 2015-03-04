@@ -58,8 +58,8 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
      */
     private static final String ADDON_ADMIN_USER_GROUP_KEY = "atlassian-addons-admin";
 
-    private static final ImmutableSet<String> DEFINITE_DEFAULT_GROUPS = ImmutableSet.of();
-    private static final ImmutableSet<String> POSSIBLE_DEFAULT_GROUPS = ImmutableSet.of("jira-users", "users");
+    private static final ImmutableSet<String> DEFAULT_GROUPS_ALWAYS_EXPECTED = ImmutableSet.of();
+    private static final ImmutableSet<String> DEFAULT_GROUPS_ONE_OR_MORE_EXPECTED = ImmutableSet.of("jira-users", "users");
     
     private static final int ADMIN_PERMISSION = Permissions.ADMINISTER;
 
@@ -94,22 +94,24 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         this.transactionTemplate = transactionTemplate;
     }
 
+//    @Override
+//    public Set<String> getDefaultProductGroups()
+//    {
+//        Set<String> union = new HashSet<String>(DEFAULT_GROUPS_ALWAYS_EXPECTED);
+//        union.addAll(DEFAULT_GROUPS_ONE_OR_MORE_EXPECTED);
+//        return union;
+//    }
+
     @Override
-    public Set<String> getDefaultProductGroups()
+    public Set<String> getDefaultProductGroupsAlwaysExpected()
     {
-        Set<String> union = new HashSet<String>(DEFINITE_DEFAULT_GROUPS);
-        union.addAll(POSSIBLE_DEFAULT_GROUPS);
-        return union;
+        return DEFAULT_GROUPS_ALWAYS_EXPECTED;
     }
 
-    public Set<String> getDefiniteDefaultProductGroups()
+    @Override
+    public Set<String> getDefaultProductGroupsOneOrMoreExpected()
     {
-        return DEFINITE_DEFAULT_GROUPS;
-    }
-
-    public Set<String> getPossibleDefaultProductGroups()
-    {
-        return POSSIBLE_DEFAULT_GROUPS;
+        return DEFAULT_GROUPS_ONE_OR_MORE_EXPECTED;
     }
 
     @Override

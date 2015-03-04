@@ -181,7 +181,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
 
 
         
-        for (String group : connectAddOnUserProvisioningService.getDefiniteDefaultProductGroups())
+        for (String group : connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected())
         {
             try
             {
@@ -190,14 +190,16 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             catch (GroupNotFoundException e)
             {
                 // carry on if the group does not exist so that an admin deleting a group will not kill all add-on installations
-                log.error(String.format("Could not make user '%s' a member of group '%s' because that group does not exist!", username, group));
+                log.error(String.format("Could not make user '%s' a member of group '%s' because that group does not exist! " +
+                        "The user needs to be a member of this group, otherwise the add-on will not function correctly. " +
+                        "Please check with an instance administrator that this group exists and that it is not read-only.", username, group));
                 // TODO ACDEV-938: propagate this error
             }
         }
         
         int numPossibleDefaultGroupsAddedTo = 0;
         String errorMessage = String.format("Could not make user '%s' a member of one of groups ", username);
-        for (String group : connectAddOnUserProvisioningService.getPossibleDefaultProductGroups()) 
+        for (String group : connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected())
         {
             try 
             {
@@ -210,9 +212,12 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             }
             
         }
-        if (numPossibleDefaultGroupsAddedTo == 0 && connectAddOnUserProvisioningService.getPossibleDefaultProductGroups().size() > 0)
+        if (numPossibleDefaultGroupsAddedTo == 0 && connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected().size() > 0)
         {
-            log.error(errorMessage + "because those groups do not exist!");
+            log.error(errorMessage + "because none of those groups exist!" + 
+                    "We expect at least one of these groups to exist - exactly which one should exist depends on the version of the instance." +
+                    "The user needs to be a member of one of these groups for basic access, otherwise the add-on will not function correctly." +
+                    "Please check with an instance administrator that at least one of these groups exists and that it is not read-only.");
         }
 
         return user.getName();

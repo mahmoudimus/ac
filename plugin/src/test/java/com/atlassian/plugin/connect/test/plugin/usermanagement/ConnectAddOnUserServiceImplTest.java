@@ -146,23 +146,33 @@ public class ConnectAddOnUserServiceImplTest
     }
 
     @Test
-    public void userIsCreatedWithDefiniteDefaultProductGroups() throws ConnectAddOnUserInitException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, MembershipAlreadyExistsException
+    public void userIsCreatedWithDefaultProductGroupsAlwaysExpected() throws ConnectAddOnUserInitException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, MembershipAlreadyExistsException
     {
-        when(connectAddOnUserProvisioningService.getDefiniteDefaultProductGroups()).thenReturn(ImmutableSet.of("product group"));
-        when(connectAddOnUserProvisioningService.getPossibleDefaultProductGroups()).thenReturn(Collections.<String>emptySet());
+        when(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(ImmutableSet.of("product group"));
+        when(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(Collections.<String>emptySet());
         connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService, times(2)).addUserToGroup(eq(application), eq(USER_KEY), captor.capture());
         assertThat(captor.getAllValues(), containsInAnyOrder(GROUP_KEY, "product group"));
     }
 
     @Test
-    public void userIsCreatedWithPossibleDefaultProductGroups() throws ConnectAddOnUserInitException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, MembershipAlreadyExistsException
+    public void userIsCreatedWithDefaultProductGroupsOneOrMoreExpected() throws ConnectAddOnUserInitException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, MembershipAlreadyExistsException
     {
-        when(connectAddOnUserProvisioningService.getDefiniteDefaultProductGroups()).thenReturn(Collections.<String>emptySet());
-        when(connectAddOnUserProvisioningService.getPossibleDefaultProductGroups()).thenReturn(ImmutableSet.of("product group"));
+        when(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(Collections.<String>emptySet());
+        when(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(ImmutableSet.of("product group"));
         connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService, times(2)).addUserToGroup(eq(application), eq(USER_KEY), captor.capture());
         assertThat(captor.getAllValues(), containsInAnyOrder(GROUP_KEY, "product group"));
+    }
+
+    @Test
+    public void userIsCreatedWithDefaultProductGroupsOneOrMoreExpectedAndAlwaysExpected() throws ConnectAddOnUserInitException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, MembershipAlreadyExistsException
+    {
+        when(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(ImmutableSet.of("product group 1"));
+        when(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(ImmutableSet.of("product group 2"));
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+        verify(applicationService, times(3)).addUserToGroup(eq(application), eq(USER_KEY), captor.capture());
+        assertThat(captor.getAllValues(), containsInAnyOrder(GROUP_KEY, "product group 1", "product group 2"));
     }
 
 
@@ -197,8 +207,8 @@ public class ConnectAddOnUserServiceImplTest
     public void userIsAddedToDefiniteDefaultProductGroupsIfItExistedAndWasNotAMember() throws UserNotFoundException, InvalidUserException, InvalidCredentialException, ApplicationPermissionException, OperationFailedException, ConnectAddOnUserInitException, GroupNotFoundException, MembershipAlreadyExistsException
     {
         theUserExists();
-        when(connectAddOnUserProvisioningService.getDefiniteDefaultProductGroups()).thenReturn(ImmutableSet.of("product group"));
-        when(connectAddOnUserProvisioningService.getPossibleDefaultProductGroups()).thenReturn(Collections.<String>emptySet());
+        when(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(ImmutableSet.of("product group"));
+        when(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(Collections.<String>emptySet());
         connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService, times(2)).addUserToGroup(eq(application), eq(USER_KEY), captor.capture());
         assertThat(captor.getAllValues(), containsInAnyOrder(GROUP_KEY, "product group"));
@@ -208,8 +218,8 @@ public class ConnectAddOnUserServiceImplTest
     public void userIsAddedToPossibleDefaultProductGroupsIfItExistedAndWasNotAMember() throws UserNotFoundException, InvalidUserException, InvalidCredentialException, ApplicationPermissionException, OperationFailedException, ConnectAddOnUserInitException, GroupNotFoundException, MembershipAlreadyExistsException
     {
         theUserExists();
-        when(connectAddOnUserProvisioningService.getDefiniteDefaultProductGroups()).thenReturn(Collections.<String>emptySet());
-        when(connectAddOnUserProvisioningService.getPossibleDefaultProductGroups()).thenReturn(ImmutableSet.of("product group"));
+        when(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(Collections.<String>emptySet());
+        when(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(ImmutableSet.of("product group"));
         connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService, times(2)).addUserToGroup(eq(application), eq(USER_KEY), captor.capture());
         assertThat(captor.getAllValues(), containsInAnyOrder(GROUP_KEY, "product group"));
@@ -219,8 +229,8 @@ public class ConnectAddOnUserServiceImplTest
     public void userIsNotAddedToDefiniteDefaultProductGroupsIfItWasAlreadyAMember() throws UserNotFoundException, InvalidUserException, InvalidCredentialException, ApplicationPermissionException, OperationFailedException, ConnectAddOnUserInitException, GroupNotFoundException, MembershipAlreadyExistsException
     {
         theUserExists();
-        when(connectAddOnUserProvisioningService.getDefiniteDefaultProductGroups()).thenReturn(ImmutableSet.of("product group"));
-        when(connectAddOnUserProvisioningService.getPossibleDefaultProductGroups()).thenReturn(Collections.<String>emptySet());
+        when(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(ImmutableSet.of("product group"));
+        when(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(Collections.<String>emptySet());
         when(applicationService.isUserDirectGroupMember(eq(application), eq(USER_KEY), eq("product group"))).thenReturn(true);
         connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService, never()).addUserToGroup(eq(application), eq(USER_KEY), eq("product group"));
@@ -230,8 +240,8 @@ public class ConnectAddOnUserServiceImplTest
     public void userIsNotAddedToPossibleDefaultProductGroupsIfItWasAlreadyAMember() throws UserNotFoundException, InvalidUserException, InvalidCredentialException, ApplicationPermissionException, OperationFailedException, ConnectAddOnUserInitException, GroupNotFoundException, MembershipAlreadyExistsException
     {
         theUserExists();
-        when(connectAddOnUserProvisioningService.getDefiniteDefaultProductGroups()).thenReturn(Collections.<String>emptySet());
-        when(connectAddOnUserProvisioningService.getPossibleDefaultProductGroups()).thenReturn(ImmutableSet.of("product group"));
+        when(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(Collections.<String>emptySet());
+        when(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(ImmutableSet.of("product group"));
         when(applicationService.isUserDirectGroupMember(eq(application), eq(USER_KEY), eq("product group"))).thenReturn(true);
         connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService, never()).addUserToGroup(eq(application), eq(USER_KEY), eq("product group"));
@@ -284,8 +294,8 @@ public class ConnectAddOnUserServiceImplTest
         when(application.getName()).thenReturn(APPLICATION_NAME);
         when(applicationService.addUser(eq(application), eq(new UserTemplate(USER_KEY)), eq(PasswordCredential.NONE))).thenReturn(user);
         when(user.getName()).thenReturn(USER_KEY);
-        when(connectAddOnUserProvisioningService.getDefiniteDefaultProductGroups()).thenReturn(Collections.<String>emptySet());
-        when(connectAddOnUserProvisioningService.getPossibleDefaultProductGroups()).thenReturn(Collections.<String>emptySet());
+        when(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(Collections.<String>emptySet());
+        when(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(Collections.<String>emptySet());
         when(crowdClientFactory.newInstance(any(ClientProperties.class))).thenReturn(crowdClient);
         when(featureManager.isOnDemand()).thenReturn(true);
         ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService = new ConnectAddOnUserGroupProvisioningServiceImpl(applicationService, applicationManager);

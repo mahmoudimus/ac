@@ -56,8 +56,8 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
 
     // As reported by Sam Day, without the "confluence-users" group the add-on user can't
     // even get the page summary of a page that is open to anonymous access.
-    private static final ImmutableSet<String> DEFINITE_DEFAULT_GROUPS = ImmutableSet.of("_licensed-confluence");
-    private static final ImmutableSet<String> POSSIBLE_DEFAULT_GROUPS = ImmutableSet.of("confluence-users", "users");
+    private static final ImmutableSet<String> DEFAULT_GROUPS_ALWAYS_EXPECTED = ImmutableSet.of("_licensed-confluence");
+    private static final ImmutableSet<String> DEFAULT_GROUPS_ONE_OR_MORE_EXPECTED = ImmutableSet.of("confluence-users", "users");
 
 
     private static final ImmutableSet<String> SPACE_ADMIN_PERMISSIONS = ImmutableSet.of(
@@ -185,22 +185,24 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
         }
     }
 
-    @Override
-    public Set<String> getDefaultProductGroups()
-    {
-        Set<String> union = new HashSet<String>(DEFINITE_DEFAULT_GROUPS);
-        union.addAll(POSSIBLE_DEFAULT_GROUPS);
-        return union;
-    }
+//    @Override
+//    public Set<String> getDefaultProductGroups()
+//    {
+//        Set<String> union = new HashSet<String>(DEFAULT_GROUPS_ALWAYS_EXPECTED);
+//        union.addAll(DEFAULT_GROUPS_ONE_OR_MORE_EXPECTED);
+//        return union;
+//    }
     
-    public Set<String> getDefiniteDefaultProductGroups()
+    @Override
+    public Set<String> getDefaultProductGroupsAlwaysExpected()
     {
-        return DEFINITE_DEFAULT_GROUPS;        
+        return DEFAULT_GROUPS_ALWAYS_EXPECTED;
     }
 
-    public Set<String> getPossibleDefaultProductGroups()
+    @Override
+    public Set<String> getDefaultProductGroupsOneOrMoreExpected()
     {
-        return POSSIBLE_DEFAULT_GROUPS;
+        return DEFAULT_GROUPS_ONE_OR_MORE_EXPECTED;
     }
 
     private ConfluenceUser getConfluenceUser(String username)
