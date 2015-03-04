@@ -12,14 +12,6 @@ public interface ConnectAddOnUserProvisioningService
     void provisionAddonUserForScopes(String username, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddOnUserInitException;
 
     /**
-     * The keys of product groups of which add-on users should by default be members. Don't create these groups if they
-     * don't exist, because they are managed by the products.
-     *
-     * @return {@link java.util.Set} of group keys (for example ["confluence-users"]).
-     */
-    //public Set<String> getDefaultProductGroups();
-    
-    /**
      * The keys of product groups of which add-on users should by default be members, and all of which are expected to exist
      * Don't create these groups if they don't exist, because they are managed by the products.
      *
@@ -32,7 +24,7 @@ public interface ConnectAddOnUserProvisioningService
      * Some of these groups might not exist in an instance but we expect at least one to.
      * Don't create these groups if they don't exist, because they are managed by the products.
      *
-     * @return {@link java.util.Set} of group keys (for example ["_licensed-confluence"]).
+     * @return {@link java.util.Set} of group keys (for example ["confluence-users"]).
      */
     public Set<String> getDefaultProductGroupsOneOrMoreExpected();
 }

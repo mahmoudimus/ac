@@ -94,14 +94,6 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         this.transactionTemplate = transactionTemplate;
     }
 
-//    @Override
-//    public Set<String> getDefaultProductGroups()
-//    {
-//        Set<String> union = new HashSet<String>(DEFAULT_GROUPS_ALWAYS_EXPECTED);
-//        union.addAll(DEFAULT_GROUPS_ONE_OR_MORE_EXPECTED);
-//        return union;
-//    }
-
     @Override
     public Set<String> getDefaultProductGroupsAlwaysExpected()
     {
