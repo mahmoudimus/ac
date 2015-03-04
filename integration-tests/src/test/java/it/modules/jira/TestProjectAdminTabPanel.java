@@ -71,7 +71,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
                 .addRoute(PARAMETER_CAPTURE_URL, PARAMETER_CAPTURING_SERVLET)
                 .start();
 
-        new JiraHelpTipApiClient(getProduct(), TestUser.ADMIN).dismissProjectAdminHipChatHelpTip();
+        new JiraHelpTipApiClient(getProduct(), TestUser.ADMIN).dismissConfigureProjectTips();
     }
 
     @AfterClass

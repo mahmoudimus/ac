@@ -41,7 +41,14 @@ public class JiraHelpTipApiClient
         this.userRequestSender = new UserRequestSender(baseUrl);
     }
 
-    public void dismissProjectAdminHipChatHelpTip() throws Exception
+    public void dismissBrowseProjectHelpTips() throws Exception
+    {
+        dismissHelpTip("sidebar-chaperone-collapse-tip");
+        dismissHelpTip("sidebar-chaperone-disable-tip");
+        dismissHelpTip("sidebar-chaperone-general-overview-tip");
+    }
+
+    public void dismissConfigureProjectTips() throws Exception
     {
         dismissHelpTip("hipchat.feature.discovery.tip");
     }
