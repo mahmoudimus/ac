@@ -5,6 +5,7 @@ import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.JiraHelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrationTab;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
@@ -83,6 +84,8 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
     @Test
     public void testViewProjectAdminTab() throws Exception
     {
+        new JiraHelpTipApiClient(getProduct(), TestUser.ADMIN).dismissProjectAdminHipChatHelpTip();
+
         final ProjectSummaryPageTab page = loginAndVisit(TestUser.ADMIN, ProjectSummaryPageTab.class, project.getKey());
 
         assertThat(page.getTabs().getTabs(), IsCollectionContaining.<ProjectConfigTabs.Tab>hasItem(projectConfigTabMatcher(PROJECT_CONFIG_TAB_NAME)));
@@ -135,5 +138,4 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
             }
         };
     }
-
 }
