@@ -70,6 +70,8 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
                 .addRoute("/pct", ConnectAppServlets.apRequestServlet())
                 .addRoute(PARAMETER_CAPTURE_URL, PARAMETER_CAPTURING_SERVLET)
                 .start();
+
+        new JiraHelpTipApiClient(getProduct(), TestUser.ADMIN).dismissProjectAdminHipChatHelpTip();
     }
 
     @AfterClass
@@ -84,8 +86,6 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
     @Test
     public void testViewProjectAdminTab() throws Exception
     {
-        new JiraHelpTipApiClient(getProduct(), TestUser.ADMIN).dismissProjectAdminHipChatHelpTip();
-
         final ProjectSummaryPageTab page = loginAndVisit(TestUser.ADMIN, ProjectSummaryPageTab.class, project.getKey());
 
         assertThat(page.getTabs().getTabs(), IsCollectionContaining.<ProjectConfigTabs.Tab>hasItem(projectConfigTabMatcher(PROJECT_CONFIG_TAB_NAME)));
