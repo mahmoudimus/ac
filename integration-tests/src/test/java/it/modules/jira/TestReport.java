@@ -47,8 +47,10 @@ public class TestReport extends JiraWebDriverTestBase
     private static ConnectRunner addon;
 
     @BeforeClass
-    public static void setUpClassTest() throws Exception
+    public static void setUpClass() throws Exception
     {
+        product.getTester().getDriver().manage().deleteAllCookies();
+
         addon = new ConnectRunner(product, ADDON_KEY)
                 .setAuthenticationToNone()
                 .addModules("jiraReports",
