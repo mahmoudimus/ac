@@ -50,7 +50,6 @@ public class JiraHelpTipApiClient
     {
         HttpPost request = new HttpPost(baseUrl + "/rest/helptips/1.0/tips");
         request.setEntity(new StringEntity(new JSONObject(ImmutableMap.<String, Object>of("id", tipId)).toString(), ContentType.APPLICATION_JSON));
-        String response = userRequestSender.sendRequestAsUser(request, new BasicResponseHandler(), defaultUsername, defaultPassword);
-        System.out.println(response);
+        userRequestSender.sendRequestAsUser(request, new BasicResponseHandler(), defaultUsername, defaultPassword);
     }
 }
