@@ -3,12 +3,14 @@ package it.modules.jira;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.helptips.JiraHelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectSummaryPageWithAddonTab;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.ParameterCapturingConditionServlet;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -16,6 +18,7 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
@@ -34,6 +37,8 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
     private static final String MODULE_KEY = "ac-test-project-tab";
     private static final String MODULE_TITLE = "AC Test Project Tab";
 
+    private static final TestUser USER = TestUser.BARNEY;
+
     private static ConnectRunner addon;
 
     @Rule
@@ -42,8 +47,11 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
 
     @BeforeClass
-    public static void startConnectAddOn() throws Exception
+    public static void setUpClass() throws Exception
     {
+        logout();
+        new JiraHelpTipApiClient(getProduct(), USER).dismissAllHelpTips();
+
         addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), ADDON_KEY)
                 .setAuthenticationToNone()
                 .addModule(ConnectTabPanelModuleProvider.PROJECT_TAB_PANELS, newTabPanelBean()
@@ -73,7 +81,26 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
     }
 
     @Test
-    public void projectTabShouldBePresentForAnonymous() throws Exception
+    public void projectTabShouldBePresentAndReceiveContextParametersForAnonymous() throws Exception
+    {
+        visitAndVerifyRemoteProjectTabPanelFromSummaryPage();
+    }
+
+    @Test
+    public void projectTabShouldBePresentAndReceiveContextParameters() throws Exception
+    {
+        loginAndRun(USER, new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception
+            {
+                visitAndVerifyRemoteProjectTabPanelFromSummaryPage();
+                return null;
+            }
+        });
+    }
+
+    private void visitAndVerifyRemoteProjectTabPanelFromSummaryPage() throws Exception
     {
         JiraProjectSummaryPageWithAddonTab summaryPage = visitProjectSummaryPage();
         summaryPage = summaryPage.expandAddonsList();
