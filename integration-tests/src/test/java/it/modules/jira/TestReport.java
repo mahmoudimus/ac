@@ -5,11 +5,13 @@ import com.atlassian.plugin.connect.modules.beans.ReportCategory;
 import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.helptips.JiraHelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import hudson.plugins.jira.soap.RemoteProject;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -24,6 +26,8 @@ import static org.junit.Assert.assertThat;
 public class TestReport extends JiraWebDriverTestBase
 {
     private static final String ADDON_KEY = AddonTestUtils.randomAddOnKey();
+
+    private static final TestUser USER = TestUser.BARNEY;
 
     private static final TestReportInfo firstTestReport = new TestReportInfo("Agile Test Report", "description", "agile-test-report", "projectKey", ReportCategory.AGILE)
     {
@@ -49,7 +53,8 @@ public class TestReport extends JiraWebDriverTestBase
     @BeforeClass
     public static void setUpClass() throws Exception
     {
-        product.getTester().getDriver().manage().deleteAllCookies();
+        logout();
+        new JiraHelpTipApiClient(getProduct(), USER).dismissAllHelpTips();
 
         addon = new ConnectRunner(product, ADDON_KEY)
                 .setAuthenticationToNone()
@@ -119,7 +124,7 @@ public class TestReport extends JiraWebDriverTestBase
 
     private ReportsPage goToProjectReportPage()
     {
-        return product.visit(ReportsPage.class, project.getKey());
+        return loginAndVisit(USER, ReportsPage.class, project.getKey());
     }
 
     private ReportsPage.Report getReportFromReportsPage(ReportsPage reportsPage, TestReportInfo reportInfo)
@@ -130,7 +135,6 @@ public class TestReport extends JiraWebDriverTestBase
     private ConnectAddOnEmbeddedTestPage goToEmbeddedReportPage(TestReportInfo reportInfo)
     {
         ReportsPage reportsPage = goToProjectReportPage();
-        connectPageOperations.dismissAnyAuiDialog();
         ReportsPage.Report report = getReportFromReportsPage(reportsPage, reportInfo);
         return report.visit(ConnectAddOnEmbeddedTestPage.class, ADDON_KEY, reportInfo.key, true);
     }
