@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
@@ -18,6 +20,36 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+
+    <profiles>
+        <profile>
+            <id>freezer-release-profile</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <properties>
+                                <skipTests>true</skipTests>
+                            </properties>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.atlassian.maven.plugins</groupId>
+                        <artifactId>maven-amps-plugin</artifactId>
+                        <configuration>
+                            <skipTests>true</skipTests>
+                            <skipITs>true</skipITs>
+                            <skipManifestValidation>true</skipManifestValidation>
+                            <skipRestDocGeneration>true</skipRestDocGeneration>
+                            <noWebapp>true</noWebapp>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
@@ -329,6 +361,7 @@
                 <version>2.4</version>
                 <executions>
                     <execution>
+                        <id>test-jar</id>
                         <goals>
                             <goal>test-jar</goal>
                         </goals>
@@ -368,7 +401,6 @@
                     </systemPropertyVariables>
 
                     <functionalTestPattern>it/**/Test*.java</functionalTestPattern>
-                    <functionalTestPattern>at/**</functionalTestPattern>
 
                     <products>
                         <product>
