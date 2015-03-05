@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.test;
+package com.atlassian.plugin.connect.test.helptips;
 
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.pageobjects.TestedProduct;
@@ -41,6 +41,13 @@ public class JiraHelpTipApiClient
         this.userRequestSender = new UserRequestSender(baseUrl);
     }
 
+    public void dismissAllHelpTips() throws Exception
+    {
+        dismissBrowseProjectHelpTips();
+        dismissConfigureProjectTips();
+        dismissMiscellaneousHelpTips();
+    }
+
     public void dismissBrowseProjectHelpTips() throws Exception
     {
         dismissHelpTip("sidebar-chaperone-collapse-tip");
@@ -51,6 +58,15 @@ public class JiraHelpTipApiClient
     public void dismissConfigureProjectTips() throws Exception
     {
         dismissHelpTip("hipchat.feature.discovery.tip");
+    }
+
+    public void dismissMiscellaneousHelpTips() throws Exception
+    {
+        dismissHelpTip("automaticTransitionDevSummaryTooltip");
+        dismissHelpTip("devstatus.cta.createbranch.tooltip");
+        dismissHelpTip("permission-helper-helptip");
+        dismissHelpTip("split-view-intro");
+        dismissHelpTip("view.all.issues");
     }
 
     private void dismissHelpTip(String tipId) throws Exception
