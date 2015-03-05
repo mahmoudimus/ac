@@ -357,6 +357,7 @@
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <installPlugin>false</installPlugin>
+                    <skipRestDocGeneration>true</skipRestDocGeneration>
 
                     <systemPropertyVariables>
                         <xvfb.enable>${xvfb.enable}</xvfb.enable>
@@ -367,6 +368,7 @@
                     </systemPropertyVariables>
 
                     <functionalTestPattern>it/**/Test*.java</functionalTestPattern>
+                    <functionalTestPattern>at/**</functionalTestPattern>
 
                     <products>
                         <product>
@@ -524,7 +526,7 @@
                             <excludes>
                                 <exclude>it/jira/**/*.java</exclude>
                                 <exclude>it/*/jira/**/*.java</exclude>
-                                <exclude>at/*</exclude>
+                                <exclude>at/**</exclude>
                             </excludes>
                         </testGroup>
                         <testGroup>
@@ -540,7 +542,7 @@
                             <excludes>
                                 <exclude>it/confluence/**/*.java</exclude>
                                 <exclude>it/*/confluence/**/*.java</exclude>
-                                <exclude>at/*</exclude>
+                                <exclude>at/**</exclude>
                             </excludes>
                         </testGroup>
                     </testGroups>
