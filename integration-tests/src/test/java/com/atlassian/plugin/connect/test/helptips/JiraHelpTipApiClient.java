@@ -23,22 +23,14 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 /**
- * A client for the Help Tip REST API.
+ * A client for the JIRA Help Tip REST API.
  */
-public class JiraHelpTipApiClient
+public class JiraHelpTipApiClient extends HelpTipApiClient
 {
-
-    private final String baseUrl;
-    private final String defaultUsername;
-    private final String defaultPassword;
-    private final UserRequestSender userRequestSender;
 
     public JiraHelpTipApiClient(JiraTestedProduct product, TestUser user)
     {
-        this.baseUrl = product.getProductInstance().getBaseUrl();
-        this.defaultUsername = user.getUsername();
-        this.defaultPassword = user.getPassword();
-        this.userRequestSender = new UserRequestSender(baseUrl);
+        super(product, user);
     }
 
     public void dismissAllHelpTips() throws Exception
@@ -67,12 +59,5 @@ public class JiraHelpTipApiClient
         dismissHelpTip("permission-helper-helptip");
         dismissHelpTip("split-view-intro");
         dismissHelpTip("view.all.issues");
-    }
-
-    private void dismissHelpTip(String tipId) throws Exception
-    {
-        HttpPost request = new HttpPost(baseUrl + "/rest/helptips/1.0/tips");
-        request.setEntity(new StringEntity(new JSONObject(ImmutableMap.<String, Object>of("id", tipId)).toString(), ContentType.APPLICATION_JSON));
-        userRequestSender.sendRequestAsUser(request, new BasicResponseHandler(), defaultUsername, defaultPassword);
     }
 }
