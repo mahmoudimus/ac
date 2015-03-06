@@ -82,9 +82,6 @@ public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
         }
     };
 
-    protected ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
-            product.getTester().getDriver());
-
     protected static ConfluenceTestedProduct getProduct()
     {
         return (ConfluenceTestedProduct) product;

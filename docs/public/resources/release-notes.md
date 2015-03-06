@@ -32,6 +32,12 @@ or Confluence Cloud with Atlassian Connect as follows:
 <div id="runproduct-vagrant" class="aui-expander-content">
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
+
+## [1.1.25](../release-notes/1-1-0.html#1.1.25)
+* Add REST API for storing and accessing add-on properties [ACJIRA-28](https://ecosystem.atlassian.net/browse/ACJIRA-28)
+* JIRA: Whitelist REST API methods for comment properties [ACJIRA-306](https://ecosystem.atlassian.net/browse/ACJIRA-306)
+* Confluence: confluence.closeMacroEditor() stopped working [AC-1525](https://ecosystem.atlassian.net/browse/AC-1525)
+
 ## [1.1.23](../release-notes/1-1-0.html#1.1.23)
  * JIRA: Fixed broken JavaScript API method - jira.refreshIssuePage() [ACDEV-1508](https://ecosystem.atlassian.net/browse/AC-1508)
 

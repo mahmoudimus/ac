@@ -62,11 +62,13 @@ public class ConnectAddonBean extends BaseModuleBean
 
     public static final int DEFAULT_WEIGHT = 100;
 
+    public static final int MAX_KEY_LENGTH = 80;
+
     /**
      * A unique key to identify the add-on.
      * This key must be <= 80 characters.
      */
-    @StringSchemaAttributes(maxLength = 80, pattern = "^[a-zA-Z0-9-._]+$")
+    @StringSchemaAttributes(maxLength = MAX_KEY_LENGTH, pattern = "^[a-zA-Z0-9-._]+$")
     @Required
     private String key;
 
