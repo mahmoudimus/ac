@@ -70,7 +70,6 @@
                         <artifactId>maven-amps-plugin</artifactId>
                         <configuration>
                             <functionalTestPattern>at/**/*.java</functionalTestPattern>
-
                             <testGroups>
                                 <testGroup>
                                     <id>jira</id>
@@ -78,14 +77,10 @@
                                         <productId>jira</productId>
                                     </productIds>
                                     <excludes>
-                                        <exclude>it/jira/**/*.java</exclude>
-                                        <exclude>it/*/jira/**/*.java</exclude>
-                                        <exclude>it/confluence/**/*.java</exclude>
-                                        <exclude>it/*/confluence/**/*.java</exclude>
+                                        <exclude>it/**</exclude>
                                     </excludes>
                                 </testGroup>
                             </testGroups>
-
                         </configuration>
                     </plugin>
                 </plugins>
