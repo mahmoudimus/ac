@@ -32,7 +32,7 @@ public class TestConfluenceStaticDescriptor extends ConfluenceAcceptanceTestBase
     @Test
     public void testAcDashboardWebItemIsPresent()
     {
-        loginAndVisit(TestUser.BARNEY, DashboardPage.class);
+        loginAndVisit(TestUser.ADMIN, DashboardPage.class);
         connectPageOperations.findWebItem(WEB_ITEM_ID, Optional.<String>absent());
     }
 }

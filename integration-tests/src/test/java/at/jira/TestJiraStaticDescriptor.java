@@ -2,7 +2,6 @@ package at.jira;
 
 import java.util.List;
 
-import com.atlassian.jira.pageobjects.config.LoginAs;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.jira.testkit.client.restclient.Project;
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
@@ -38,14 +37,15 @@ public class TestJiraStaticDescriptor extends JiraAcceptanceTestBase
     }
 
     @Test
-    @LoginAs(admin = true)
     public void testAcActionWebItemIsPresent()
     {
         createConnectProject();
         IssueCreateResponse response = product.backdoor().issues()
                 .createIssue(PROJECT_KEY, "Atlassian Connect Web Panel Test Issue");
 
+        product.quickLogin(ADMIN.getUsername(), ADMIN.getPassword());
         product.goToViewIssue(response.key());
+
         connectPageOperations.findWebItem(WEB_ITEM_ID, Optional.<String>absent());
     }
 

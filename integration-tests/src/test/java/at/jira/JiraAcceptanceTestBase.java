@@ -5,8 +5,7 @@ import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 
 import at.util.ExternalAddonInstaller;
-
-import static it.util.TestUser.SYSADMIN;
+import it.util.TestUser;
 
 public class JiraAcceptanceTestBase
 {
@@ -14,5 +13,5 @@ public class JiraAcceptanceTestBase
     protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
             product.getTester().getDriver());
     protected static final ExternalAddonInstaller installer = new ExternalAddonInstaller(
-            product.getProductInstance().getBaseUrl(), SYSADMIN);
+            product.getProductInstance().getBaseUrl(), TestUser.ADMIN);
 }
