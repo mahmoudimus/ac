@@ -10,7 +10,7 @@ public class AcceptanceTestMarketplaceException extends RuntimeException
     public AcceptanceTestMarketplaceException(String message, CloseableHttpResponse response)
             throws IOException
     {
-        super(message + "\n" + response.getStatusLine() + entity(response));
+        super(message + ": " + "\n" + response.getStatusLine() + entity(response));
     }
 
     private static String entity(CloseableHttpResponse response)

@@ -20,6 +20,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cc.plural.jsonij.JPath;
 import cc.plural.jsonij.JSON;
@@ -38,6 +40,7 @@ public class ExternalAddonInstaller
     public static final int RANDOM_VENDOR_SUFFIX_LENGTH = 20;
     public static final String TOKENS_REST_PATH = "/rest/1.0/plugins/" + ADDON_KEY + "/tokens";
 
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final AtlassianConnectRestClient connectClient;
     private String vendorId;
     private String descriptorUrl;
@@ -71,10 +74,8 @@ public class ExternalAddonInstaller
             deleteAddonFromMarketplace();
             deleteVendor();
         }
-        catch (Exception e)
-        {
-            throw new RuntimeException(e);
-        }
+        catch (Exception ignored)
+        { /* Push on if possible */ }
     }
 
     private void registerAddonOnMarketplace()
@@ -82,6 +83,7 @@ public class ExternalAddonInstaller
     {
         HttpPost addonPost = new HttpPost(MarketplaceSettings.baseUrl() + ADDONS_REST_PATH);
         addonPost.setEntity(addonDetails());
+        log.warn("Registering our test addon \"{}\" on the marketplace...", ADDON_KEY);
         makeRequest(addonPost, new HashSet<Integer>(asList(200, 204)), "Could not register add-on on the marketplace");
 
         HttpPost tokenPost = new HttpPost(MarketplaceSettings.baseUrl() + TOKENS_REST_PATH);
@@ -109,19 +111,22 @@ public class ExternalAddonInstaller
     {
         if (noAddonWithKeyFound())
         {
+            log.warn("Couldn't find our test addon to delete");
             return;
         }
 
         HttpDelete delete = new HttpDelete(MarketplaceSettings.baseUrl() + ADDONS_REST_PATH + ADDON_KEY);
-        makeRequest(delete, new HashSet<Integer>(asList(200, 204, 404, 410)), "Could not delete add-on from the marketplace");
+        log.warn("Deleting our test addon \"{}\"...", ADDON_KEY);
+        makeRequest(delete, new HashSet<Integer>(asList(200, 204, 404)), "Could not delete add-on from the marketplace");
     }
 
     private boolean noAddonWithKeyFound() throws IOException
     {
         HttpGet get = new HttpGet(MarketplaceSettings.baseUrl() + ADDONS_REST_PATH + ADDON_KEY);
         get.addHeader("Authorization", BasicScheme.authenticate(MarketplaceSettings.credentials(), "UTF-8"));
+        log.warn("Checking whether the test add-on already exists on the marketplace");
 
-        return transformResponse(
+        Boolean addonFound = transformResponse(
                 get,
                 new HashSet<Integer>(asList(200, 404)),
                 "Error checking for existence of add-on",
@@ -130,15 +135,18 @@ public class ExternalAddonInstaller
                     @Override
                     public Boolean apply(CloseableHttpResponse response)
                     {
-                        return response.getStatusLine().getStatusCode() == 404;
+                        return response.getStatusLine().getStatusCode() != 404;
                     }
                 });
+        log.warn(addonFound ? "Found an existing instance of the add-on" : "Didn't find an existing instance of the add-on");
+        return !addonFound;
     }
 
     private void createVendor() throws IOException
     {
         HttpPost post = new HttpPost(MarketplaceSettings.baseUrl() + VENDORS_REST_PATH);
         post.setHeader("Content-Type", "application/json");
+        log.warn("Creating a vendor on the marketplace...");
         post.setEntity(vendorDetails());
 
         vendorId = transformResponse(
@@ -157,6 +165,7 @@ public class ExternalAddonInstaller
 
     private void deleteVendor() throws IOException
     {
+        log.warn("Cleaning up the created vendor...");
         HttpDelete delete = new HttpDelete(MarketplaceSettings.baseUrl() + VENDORS_REST_PATH + vendorId);
         makeRequest(delete, new HashSet<Integer>(asList(200, 204, 404, 410)), "Unable to delete vendor from the marketplace");
     }
@@ -164,18 +173,7 @@ public class ExternalAddonInstaller
     private void makeRequest(HttpUriRequest request, Set<Integer> acceptableCodes, String errorMessage)
             throws IOException
     {
-        CloseableHttpResponse response = null;
-        try
-        {
-            response = transformResponse(request, acceptableCodes, errorMessage, null);
-        }
-        finally
-        {
-            if (response != null)
-            {
-                response.close();
-            }
-        }
+        transformResponse(request, acceptableCodes, errorMessage, null);
     }
 
     private <T> T transformResponse(HttpUriRequest request, Set<Integer> acceptableCodes,
@@ -195,7 +193,7 @@ public class ExternalAddonInstaller
             if (!acceptableCodes.contains(response.getStatusLine().getStatusCode()))
             {
                 throw new AcceptanceTestMarketplaceException(
-                        errorMessage + ": ",
+                        errorMessage,
                         response);
             }
             if (transformer != null)
@@ -224,6 +222,7 @@ public class ExternalAddonInstaller
     {
         String vendorTemplate = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("marketplace/vendor.json"));
         String vendorName = "Acceptance test-generated vendor " + RandomStringUtils.random(RANDOM_VENDOR_SUFFIX_LENGTH, true, false);
+        log.warn("Vendor name: \"{}\"", vendorName);
         return new StringEntity(replace(vendorTemplate, "<%=vendor name goes here=>", vendorName));
     }
 }
