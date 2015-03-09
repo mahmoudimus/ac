@@ -15,7 +15,7 @@ import static com.atlassian.plugin.connect.plugin.module.jira.JiraTabConditionCo
 
 /**
  * Common part of tab panel for all JIRA tab panels
- * @param <D> module descriptor class for local tab like VersionTabPanelModuleDescriptor
+ * @param <D> module descriptor class for local tab
  * @param <C> jira-core context given locally to renderer like BrowseVersionContext>
  */
 public abstract class AbstractIFrameTab<D, C extends BrowseContext>

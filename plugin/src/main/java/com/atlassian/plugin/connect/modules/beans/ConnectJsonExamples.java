@@ -60,7 +60,6 @@ public class ConnectJsonExamples
     public static final String ADDON_COMPLETE_EXAMPLE = createAddonCompleteExample();
     public static final String ADDON_EXAMPLE = createAddonExample();
     public static final String AUTHENTICATION_EXAMPLE = createAuthenticationExample();
-    public static final String COMPONENT_TAB_PANEL_EXAMPLE = createComponentTabPanelExample();
     public static final String COMPOSITE_CONDITION_EXAMPLE = createCompositeConditionExample();
     public static final String DYNAMIC_MACRO_EXAMPLE = createDynamicMacroExample();
     public static final String ENTITY_PROPERTY_EXAMPLE = createEntityPropertyExample();
@@ -199,11 +198,9 @@ public class ConnectJsonExamples
                 .withModules("adminPages", ConnectPageModuleBean.newPageBean().withName(i18nProperty("Admin Page")).withUrl("my-admin-page").build())
                 .withModules("configurePage", ConnectPageModuleBean.newPageBean().withName(i18nProperty("Config Page")).withUrl("my-configure-page").build())
                 .withModules("webhooks", WebHookModuleBean.newWebHookBean().withEvent("jira:issue_created").withUrl("/issue-created").build())
-                .withModules("jiraComponentTabPanels", ConnectTabPanelModuleBean.newTabPanelBean().withName(i18nProperty("Component Tab")).withUrl("my-component-tab-panel").build())
                 .withModules("jiraIssueTabPanels", ConnectTabPanelModuleBean.newTabPanelBean().withName(i18nProperty("Issue Tab")).withUrl("my-issue-tab-panel").build())
                 .withModules("jiraProjectAdminTabPanels", ConnectTabPanelModuleBean.newTabPanelBean().withUrl("my-admin-tab-panel").build())
                 .withModules("jiraProjectTabPanels", ConnectTabPanelModuleBean.newTabPanelBean().withName(i18nProperty("Project Tab")).withUrl("my-project-tab-panel").build())
-                .withModules("jiraVersionTabPanels", ConnectTabPanelModuleBean.newTabPanelBean().withName(i18nProperty("Version Tab")).withUrl("my-version-tab-panel").build())
                 .withModules("jiraProfileTabPanels", ConnectTabPanelModuleBean.newTabPanelBean().withName(i18nProperty("Profile Tab")).withUrl("my-profile-tab-panel").build())
                 .withModules("jiraWorkflowPostFunctions", WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean().withName(i18nProperty("Workflow Function")).withCreate(new UrlBean("/create")).build())
                 .withModules("jiraSearchRequestViews", SearchRequestViewModuleBean.newSearchRequestViewModuleBean().withName(i18nProperty("Search View")).withUrl("/searchRequest").build())
@@ -349,18 +346,6 @@ public class ConnectJsonExamples
         return BlueprintTemplateBean.newBlueprintTemplateBeanBuilder()
                 .withUrl("/blueprints/blueprint.xml")
                 .build();
-    }
-
-    public static String createComponentTabPanelExample()
-    {
-        ConnectTabPanelModuleBean bean = ConnectTabPanelModuleBean.newTabPanelBean()
-                .withName(new I18nProperty("My Component Tab Page", ""))
-                .withKey("my-component-tab")
-                .withUrl("/my-component-tab")
-                .withWeight(100)
-                .build();
-
-        return gson.toJson(createModuleArray("jiraComponentTabPanels", bean));
     }
 
     private static String createScopesExample()

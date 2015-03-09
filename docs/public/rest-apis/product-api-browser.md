@@ -10,9 +10,3 @@ If the REST APIs use the prescribed Javadoc annotations, you will also see inlin
 If you are developing a Connect add-on and have [launched your host product](../developing/developing-locally.html) via the Atlassian SDK, you can find the REST API browser in your running product:
 
 * `https://HOSTNAME:PORT/CONTEXT_PATH/plugins/servlet/restbrowser#/`
-
-### Browsable online
-You can explore our APIs even if you're not running a local copy of our products. We host the REST API Browser on a public service for each JIRA and Confluence:
-
-* __JIRA__: [https://bunjil.jira-dev.com/plugins/servlet/restbrowser#/](https://bunjil.jira-dev.com/plugins/servlet/restbrowser#/)
-* __Confluence__: [https://bunjil.jira-dev.com/wiki/plugins/servlet/restbrowser#/](https://bunjil.jira-dev.com/wiki/plugins/servlet/restbrowser#/)

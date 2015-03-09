@@ -18,7 +18,7 @@ requirejs.config({
     // host side
     'connect-host': 'main/resources/js/core/connect-host',
     'ac/confluence/macro/editor': '../src/main/resources/js/confluence/macro/editor',
-    'ac/jira/events': '../src/main/resources/js/jira/events',
+    'ac/jira/events': '../src/main/resources/js/jira/events/events',
     'ac/jira/workflow-post-function': '../src/main/resources/js/jira/workflow-post-function/workflow-post-function'
   },
 

@@ -1,30 +1,31 @@
 package com.atlassian.plugin.connect.healthcheck;
 
-import com.atlassian.applinks.api.ApplicationLink;
+import com.atlassian.crowd.model.user.UserWithAttributes;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
+import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
+import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.healthcheck.core.HealthStatus;
-import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.Constants;
 import com.google.common.collect.Sets;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.junit.Before;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 @RunWith (MockitoJUnitRunner.class)
@@ -36,18 +37,24 @@ public class AtlassianAddonsGroupHealthCheckTest
     private ApplicationService applicationService;
     @Mock
     private ConnectAddOnUserGroupProvisioningService groupProvisioningService;
-    private JwtApplinkFinder jwtApplinkFinder;
+    @Mock
+    private Application application;
+    @Mock
+    private UserWithAttributes userWithAttributes;
+
+    private String mockApplicationName = "MockApplicationClass";
+
 
     @Before
-    public void setup()
+    public void setup() throws Exception
     {
-        jwtApplinkFinder = mock(JwtApplinkFinder.class);
-    }
+        when(applicationManager.findByName(any(String.class))).thenReturn(application);
 
-    @After
-    public void after()
-    {
-        reset(jwtApplinkFinder);
+        when(applicationService.findUserWithAttributesByName(any(Application.class), anyString())).thenReturn(userWithAttributes);
+
+        when(application.getName()).thenReturn(mockApplicationName);
+
+        when(userWithAttributes.getValues(any(String.class))).thenReturn(Collections.singleton("true"));
     }
 
     @Test
@@ -63,8 +70,6 @@ public class AtlassianAddonsGroupHealthCheckTest
         HashSet<User> users = Sets.newHashSet();
         users.add(createUser("addon_my-addon", Constants.ADDON_USER_EMAIL_ADDRESS));
         users.add(createUser("addon_my-another-addon", Constants.ADDON_USER_EMAIL_ADDRESS));
-
-        when(jwtApplinkFinder.find(anyString())).thenReturn(mock(ApplicationLink.class));
 
         AtlassianAddonsGroupHealthCheck healthCheck = createHealthCheckWithUsers(users);
         HealthStatus check = healthCheck.check();
@@ -157,15 +162,75 @@ public class AtlassianAddonsGroupHealthCheckTest
         users.add(createUser("larry", Constants.ADDON_USER_EMAIL_ADDRESS));
         users.add(createUser("addon_family-fued", Constants.ADDON_USER_EMAIL_ADDRESS));
 
-        when(jwtApplinkFinder.find("my-addon")).thenReturn(mock(ApplicationLink.class));
-        when(jwtApplinkFinder.find("price-is-right")).thenReturn(mock(ApplicationLink.class));
-        when(jwtApplinkFinder.find("family-fued")).thenReturn(null);
-
         AtlassianAddonsGroupHealthCheck healthCheck = createHealthCheckWithUsers(users);
         HealthStatus check = healthCheck.check();
         assertFalse(check.isHealthy());
         // TODO: assert that we can find users that were never associated with an add-on (e.g. by setting attributes on users)
         assertThat(check.failureReason(), allOf(containsString("unexpected username"), containsString("unexpected email")));
+    }
+
+    @Test
+    public void testUnhealthyIfAddonUserAttributesAreWrong() throws Exception
+    {
+        HashSet<User> users = Sets.newHashSet();
+        User addonUser = createUser("addon_someone-above-likes-tv-gameshows", Constants.ADDON_USER_EMAIL_ADDRESS);
+        users.add(addonUser);
+
+        linkSpecificAttribute(addonUser, Collections.singleton("false"));
+
+        AtlassianAddonsGroupHealthCheck healthCheck = createHealthCheckWithUsers(users);
+        HealthStatus check = healthCheck.check();
+        assertFalse(check.isHealthy());
+        assertThat(check.failureReason(), containsString("invalid attributes"));
+    }
+
+    @Test
+    public void testUnhealthyIfAddonUserAttributesAreMissing() throws Exception
+    {
+        HashSet<User> users = Sets.newHashSet();
+        User addonUser = createUser("addon_check-null-attributes", Constants.ADDON_USER_EMAIL_ADDRESS);
+        users.add(addonUser);
+
+        linkSpecificAttribute(addonUser, null);
+
+        AtlassianAddonsGroupHealthCheck healthCheck = createHealthCheckWithUsers(users);
+        HealthStatus check = healthCheck.check();
+        assertFalse(check.isHealthy());
+        assertThat(check.failureReason(), containsString("invalid attributes"));
+    }
+
+    @Test
+    public void testUnhealthyIfUserAttributesObjectIsntFound() throws Exception
+    {
+        HashSet<User> users = Sets.newHashSet();
+        User addonUser = createUser("addon_check-missing-user-attributes-object", Constants.ADDON_USER_EMAIL_ADDRESS);
+        users.add(addonUser);
+
+        when(applicationService.findUserWithAttributesByName(any(Application.class), eq("addon_check-missing-user-attributes-object")))
+                .thenReturn(null);
+
+        AtlassianAddonsGroupHealthCheck healthCheck = createHealthCheckWithUsers(users);
+        HealthStatus check = healthCheck.check();
+        assertFalse(check.isHealthy());
+        assertThat(check.failureReason(), containsString("invalid attributes"));
+    }
+
+    @Test
+    public void testUnhealthyIfAddonUserHaveIncorrectUsernameOrEmailOrAttributes() throws Exception
+    {
+        HashSet<User> users = Sets.newHashSet();
+        users.add(createUser("addon_my-addon", Constants.ADDON_USER_EMAIL_ADDRESS));
+        users.add(createUser("addon_price-is-right", "larry@thepriceisright.com"));
+        users.add(createUser("larry", Constants.ADDON_USER_EMAIL_ADDRESS));
+        User addonUser = createUser("addon_attributes-incorrect", Constants.ADDON_USER_EMAIL_ADDRESS);
+        users.add(addonUser);
+
+        linkSpecificAttribute(addonUser, Collections.singleton("notTrue"));
+
+        AtlassianAddonsGroupHealthCheck healthCheck = createHealthCheckWithUsers(users);
+        HealthStatus check = healthCheck.check();
+        assertFalse(check.isHealthy());
+        assertThat(check.failureReason(), allOf(containsString("unexpected username"), containsString("unexpected email"), containsString("invalid attributes")));
     }
 
     @Ignore("TODO: assert that we can find users that were never associated with an add-on (e.g. by setting attributes on users)")
@@ -174,8 +239,6 @@ public class AtlassianAddonsGroupHealthCheckTest
     {
         HashSet<User> users = Sets.newHashSet();
         users.add(createUser("addon_my-addon", Constants.ADDON_USER_EMAIL_ADDRESS, true));
-
-        when(jwtApplinkFinder.find("my-addon")).thenReturn(null);
 
         AtlassianAddonsGroupHealthCheck healthCheck = createHealthCheckWithUsers(users);
         HealthStatus check = healthCheck.check();
@@ -197,9 +260,19 @@ public class AtlassianAddonsGroupHealthCheckTest
         return u;
     }
 
+    private void linkSpecificAttribute(User addonUser, Set<String> collection) throws Exception
+    {
+        UserWithAttributes addonAttributes = mock(UserWithAttributes.class);
+        when(addonAttributes.getValues(any(String.class))).thenReturn(collection);
+        String userName = addonUser.getName();
+
+        when(applicationService.findUserWithAttributesByName(any(Application.class), eq(userName)))
+                .thenReturn(addonAttributes);
+    }
+
     private AtlassianAddonsGroupHealthCheck createHealthCheckWithUsers(Collection<User> users)
     {
-        return new TestHealthCheck(users, applicationManager, applicationService, groupProvisioningService, jwtApplinkFinder);
+        return new TestHealthCheck(users, applicationManager, applicationService, groupProvisioningService);
     }
 
     private static class TestHealthCheck extends AtlassianAddonsGroupHealthCheck
@@ -207,9 +280,9 @@ public class AtlassianAddonsGroupHealthCheckTest
         private final Collection<User> users;
 
         TestHealthCheck(final Collection<User> users, ApplicationManager applicationManager, ApplicationService applicationService,
-                ConnectAddOnUserGroupProvisioningService groupProvisioningService, JwtApplinkFinder jwtApplinkFinder)
+                ConnectAddOnUserGroupProvisioningService groupProvisioningService)
         {
-            super(applicationManager, applicationService, groupProvisioningService, jwtApplinkFinder);
+            super(applicationManager, applicationService, groupProvisioningService);
             this.users = users;
         }
 

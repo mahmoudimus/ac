@@ -61,9 +61,9 @@ var getAddonPage = function(opts, uri, callback) {
                     status = addon.approval.status.toLowerCase(),
                     statusColor = status === 'public' ? 'blue' : 'red',
                     url = opts.baseUrl + _.find(addon.links, {
-                        'rel': opts.auth ? 'tiny-url' : 'alternate' // no tiny-url for unauthenticated requests?
+                        'rel': 'self'
                     }).href;
-
+                
                 if (opts.status && !_.contains(opts.status, status)) {
                     return;
                 }

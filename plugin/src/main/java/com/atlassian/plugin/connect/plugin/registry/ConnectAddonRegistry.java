@@ -72,5 +72,7 @@ public interface ConnectAddonRegistry
 
     AddonSettings getAddonSettings(String pluginKey);
 
+    boolean hasAddonWithKey(String pluginKey);
+
     Option<ConnectAddonBean> getAddonBean(String pluginKey);
 }

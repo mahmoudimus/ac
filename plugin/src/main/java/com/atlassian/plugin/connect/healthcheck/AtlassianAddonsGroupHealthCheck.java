@@ -1,11 +1,12 @@
 package com.atlassian.plugin.connect.healthcheck;
 
-import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
+import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.User;
+import com.atlassian.crowd.model.user.UserWithAttributes;
 import com.atlassian.crowd.search.EntityDescriptor;
 import com.atlassian.crowd.search.builder.QueryBuilder;
 import com.atlassian.crowd.search.query.entity.EntityQuery;
@@ -13,16 +14,18 @@ import com.atlassian.crowd.search.query.membership.MembershipQuery;
 import com.atlassian.healthcheck.core.DefaultHealthStatus;
 import com.atlassian.healthcheck.core.HealthCheck;
 import com.atlassian.healthcheck.core.HealthStatus;
-import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.Constants;
 import com.google.common.collect.Sets;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Set;
+
+import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.validAddOnEmailAddress;
+import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.validAddOnUsername;
+import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.validAddonAttribute;
 
 public class AtlassianAddonsGroupHealthCheck implements HealthCheck
 {
@@ -35,15 +38,13 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
     private final ApplicationManager applicationManager;
     private final ApplicationService applicationService;
     private final ConnectAddOnUserGroupProvisioningService groupProvisioningService;
-    private final JwtApplinkFinder jwtApplinkFinder;
 
     public AtlassianAddonsGroupHealthCheck(ApplicationManager applicationManager, ApplicationService applicationService,
-            ConnectAddOnUserGroupProvisioningService groupProvisioningService, JwtApplinkFinder jwtApplinkFinder)
+            ConnectAddOnUserGroupProvisioningService groupProvisioningService)
     {
         this.applicationManager = applicationManager;
         this.applicationService = applicationService;
         this.groupProvisioningService = groupProvisioningService;
-        this.jwtApplinkFinder = jwtApplinkFinder;
     }
 
     @Override
@@ -58,19 +59,25 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
             Set<User> usersWithIncorrectEmails = Sets.newHashSet();
             Set<User> usersWithIncorrectPrefix = Sets.newHashSet();
             Set<User> usersIncorrectlyActive = Sets.newHashSet();
+            Set<User> usersWithIncorrectAttributes = Sets.newHashSet();
 
             for (User user : users)
             {
-                if (!Constants.ADDON_USER_EMAIL_ADDRESS.equals(user.getEmailAddress()))
+                if (!validAddOnEmailAddress(user))
                 {
-                    log.warn("Add-on user '" + user.getName() + "' has incorrect email '" + user.getEmailAddress() + "'");
+                    log.warn("Add-on user '{}' has incorrect email '{}'", user.getName(), user.getEmailAddress());
                     usersWithIncorrectEmails.add(user);
                 }
-                String name = user.getName();
-                if (name == null || !name.startsWith(Constants.ADDON_USERNAME_PREFIX))
+
+                if (!validAddOnUsername(user))
                 {
-                    log.warn("Add-on user '" + user.getName() + "' has incorrect prefix");
+                    log.warn("Add-on user '{}' has incorrect prefix", user.getName());
                     usersWithIncorrectPrefix.add(user);
+                }
+                if(!validAddonUserAttributes(user))
+                {
+                    log.warn("Add-on user '{}' has missing or incorrect attributes", user.getName());
+                    usersWithIncorrectAttributes.add(user);
                 }
 
 // An add-on which is installed in either JIRA or Confluence will create a _SHARED_ user. This check will
@@ -90,7 +97,7 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
 //                }
             }
 
-            boolean isHealthy = usersWithIncorrectEmails.isEmpty() && usersWithIncorrectPrefix.isEmpty() && usersIncorrectlyActive.isEmpty();
+            boolean isHealthy = usersWithIncorrectEmails.isEmpty() && usersWithIncorrectPrefix.isEmpty() && usersIncorrectlyActive.isEmpty() && usersWithIncorrectAttributes.isEmpty();
 
             StringBuilder reason = new StringBuilder();
 
@@ -100,15 +107,19 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
 
                 if (!usersWithIncorrectEmails.isEmpty())
                 {
-                    reason.append(failurePrefix(usersWithIncorrectEmails.size()) + " unexpected email values. ");
+                    reason.append(failurePrefix(usersWithIncorrectEmails.size())).append(" unexpected email values. ");
                 }
                 if (!usersWithIncorrectPrefix.isEmpty())
                 {
-                    reason.append(failurePrefix(usersWithIncorrectPrefix.size()) + " unexpected username values. ");
+                    reason.append(failurePrefix(usersWithIncorrectPrefix.size())).append(" unexpected username values. ");
                 }
                 if (!usersIncorrectlyActive.isEmpty())
                 {
-                    reason.append(failurePrefix(usersIncorrectlyActive.size()) + " no applink association. ");
+                    reason.append(failurePrefix(usersIncorrectlyActive.size())).append(" no applink association. ");
+                }
+                if (!usersWithIncorrectAttributes.isEmpty())
+                {
+                    reason.append(failurePrefix(usersWithIncorrectAttributes.size())).append(" invalid attributes. ");
                 }
 
                 reason.append("This may indicate a customer license workaround.");
@@ -132,6 +143,21 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
     private String failurePrefix(final int size)
     {
         return size + (size == 1 ? " member has" : " members have");
+    }
+
+    private boolean validAddonUserAttributes(User user)  throws ApplicationNotFoundException
+    {
+        try
+        {
+            Application application = applicationManager.findByName(groupProvisioningService.getCrowdApplicationName());
+            UserWithAttributes userWithAttributes = applicationService.findUserWithAttributesByName(application, user.getName());
+            return validAddonAttribute(userWithAttributes, application.getName());
+        }
+        catch (UserNotFoundException e)
+        {
+            log.error("Add-on userwithattributes '{}' not found", user.getName(), e);
+        }
+        return false;
     }
 
     protected Collection<User> getAddonUsers() throws ApplicationNotFoundException

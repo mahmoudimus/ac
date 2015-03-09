@@ -7,9 +7,14 @@ import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.UserTemplate;
+import com.atlassian.crowd.service.client.CrowdClient;
+import com.atlassian.crowd.service.factory.CrowdClientFactory;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.util.FeatureManager;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.annotations.VisibleForTesting;
+
+import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +24,8 @@ import org.springframework.stereotype.Component;
 import java.util.Set;
 
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.Constants;
+import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
+import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.getClientProperties;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @ExportAsDevService
@@ -29,19 +36,22 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     private final ApplicationManager applicationManager;
     private final ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService;
     private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
-
+    private final FeatureManager featureManager;
+    private final CrowdClientFactory crowdClientFactory;
     private static final Logger log = LoggerFactory.getLogger(ConnectAddOnUserServiceImpl.class);
 
     @Autowired
     public ConnectAddOnUserServiceImpl(ApplicationService applicationService,
-                                       ApplicationManager applicationManager,
-                                       ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService,
-                                       ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService)
+            ApplicationManager applicationManager,
+            ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService,
+            ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService, CrowdClientFactory crowdClientFactory, FeatureManager featureManager)
     {
+        this.crowdClientFactory = checkNotNull(crowdClientFactory);
         this.applicationService = checkNotNull(applicationService);
         this.applicationManager= checkNotNull(applicationManager);
         this.connectAddOnUserProvisioningService = checkNotNull(connectAddOnUserProvisioningService);
         this.connectAddOnUserGroupProvisioningService = checkNotNull(connectAddOnUserGroupProvisioningService);
+        this.featureManager = checkNotNull(featureManager);
     }
 
     @Override
@@ -85,6 +95,10 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             throw new ConnectAddOnUserInitException(e);
         }
         catch (ApplicationNotFoundException e)
+        {
+            throw new ConnectAddOnUserInitException(e);
+        }
+        catch (InvalidAuthenticationException e)
         {
             throw new ConnectAddOnUserInitException(e);
         }
@@ -158,13 +172,16 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return username;
     }
 
-    private String createOrEnableAddOnUser(String username, String addOnDisplayName) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException, ApplicationNotFoundException, ConnectAddOnUserInitException
+    private String createOrEnableAddOnUser(String username, String addOnDisplayName)
+            throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException, ApplicationNotFoundException, ConnectAddOnUserInitException, InvalidAuthenticationException
     {
         connectAddOnUserGroupProvisioningService.ensureGroupExists(Constants.ADDON_USER_GROUP_KEY);
         User user = ensureUserExists(username, addOnDisplayName);
         connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), Constants.ADDON_USER_GROUP_KEY);
 
-        for (String group : connectAddOnUserProvisioningService.getDefaultProductGroups())
+
+        
+        for (String group : connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected())
         {
             try
             {
@@ -173,15 +190,41 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             catch (GroupNotFoundException e)
             {
                 // carry on if the group does not exist so that an admin deleting a group will not kill all add-on installations
-                log.error(String.format("Could not make user '%s' a member of group '%s' because that group does not exist!", username, group));
+                log.error(String.format("Could not make user '%s' a member of group '%s' because that group does not exist! " +
+                        "The user needs to be a member of this group, otherwise the add-on will not function correctly. " +
+                        "Please check with an instance administrator that this group exists and that it is not read-only.", username, group));
                 // TODO ACDEV-938: propagate this error
             }
+        }
+        
+        int numPossibleDefaultGroupsAddedTo = 0;
+        String errorMessage = String.format("Could not make user '%s' a member of one of groups ", username);
+        for (String group : connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected())
+        {
+            try 
+            {
+                connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), group);
+                numPossibleDefaultGroupsAddedTo++;
+            } 
+            catch (GroupNotFoundException e) 
+            {
+                errorMessage += String.format("%s, ", group);
+            }
+            
+        }
+        if (numPossibleDefaultGroupsAddedTo == 0 && connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected().size() > 0)
+        {
+            log.error(errorMessage + "because none of those groups exist!" + 
+                    "We expect at least one of these groups to exist - exactly which one should exist depends on the version of the instance." +
+                    "The user needs to be a member of one of these groups for basic access, otherwise the add-on will not function correctly." +
+                    "Please check with an instance administrator that at least one of these groups exists and that it is not read-only.");
         }
 
         return user.getName();
     }
 
-    private User ensureUserExists(String username, String addOnDisplayName) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, UserNotFoundException, InvalidUserException, ApplicationNotFoundException, ConnectAddOnUserInitException
+    private User ensureUserExists(String username, String addOnDisplayName)
+            throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, UserNotFoundException, InvalidUserException, ApplicationNotFoundException, ConnectAddOnUserInitException, InvalidAuthenticationException
     {
         User user = findUserByUsername(username);
 
@@ -209,7 +252,8 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return user;
     }
 
-    private User createUser(String username, String addOnDisplayName) throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, ApplicationNotFoundException, ConnectAddOnUserInitException
+    private User createUser(String username, String addOnDisplayName)
+            throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, ApplicationNotFoundException, ConnectAddOnUserInitException, UserNotFoundException, InvalidAuthenticationException
     {
         User user;
         try
@@ -251,6 +295,19 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             // see https://ecosystem.atlassian.net/browse/ACDEV-1499
             // --> handle the race condition of something else creating this user at around the same time (as unlikely as that should be)
             user = findUserWithFastFailure(username, e);
+        }
+
+        // Set connect attributes on user -- at this point we are confident we have a user
+        ImmutableMap<String, Set<String>> connectAddOnUserAttribute = buildConnectAddOnUserAttribute(getApplication().getName());
+        applicationService.storeUserAttributes(getApplication(), user.getName(), connectAddOnUserAttribute);
+
+        if (featureManager.isOnDemand())
+        {
+            // Sets the connect attribute on the Remote Crowd Server if running in OD
+            // This is currently required due to the fact that the DbCachingRemoteDirectory implementation used by JIRA and Confluence doesn't currently
+            // write attributes back to the Crowd Server. This can be removed completely with Crowd 2.9 since addUser can take a UserWithAttributes in this version
+            CrowdClient crowdClient = crowdClientFactory.newInstance(getClientProperties());
+            crowdClient.storeUserAttributes(user.getName(), connectAddOnUserAttribute);
         }
 
         return user;

@@ -23,6 +23,7 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
 public abstract class ConnectWebDriverTestBase
 {
@@ -119,6 +120,19 @@ public abstract class ConnectWebDriverTestBase
         else
         {
             throw new UnsupportedOperationException("Sorry, I don't know how to log into " + product.getClass().getCanonicalName());
+        }
+    }
+
+    protected <T> T loginAndRun(TestUser user, Callable<T> test) throws Exception
+    {
+        logout();
+        login(user);
+        try {
+            return test.call();
+        }
+        finally
+        {
+            logout();
         }
     }
 

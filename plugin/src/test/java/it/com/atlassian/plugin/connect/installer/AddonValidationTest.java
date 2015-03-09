@@ -159,7 +159,7 @@ public class AddonValidationTest
     @Test
     public void testJwtAuthenticationWithNoTls() throws Exception
     {
-        ConnectAddonBean bean = testBeanBuilderWithJwt()
+        ConnectAddonBean bean = testBeanBuilderWithJwtAndInstalledCallback()
                 .withBaseurl("http://example.com/no-tls")
                 .build();
 
@@ -260,7 +260,10 @@ public class AddonValidationTest
     @Test
     public void testJwtAuthenticationWithSchemelessBaseUrl() throws Exception
     {
-        installExpectingUpmErrorCode(testBeanBuilderWithJwt().withBaseurl("example.com").build(), "connect.install.error.base_url.no_scheme");
+        ConnectAddonBean bean = testBeanBuilderWithJwtAndInstalledCallback()
+                .withBaseurl("example.com")
+                .build();
+        installExpectingUpmErrorCode(bean, "connect.install.error.base_url.no_scheme");
     }
 
     @Test

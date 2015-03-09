@@ -65,6 +65,9 @@
                class="it.com.atlassian.plugin.connect.workflow.jira.DefaultWorkflowImporter"
                interface="it.com.atlassian.plugin.connect.workflow.jira.WorkflowImporter"
                application="jira" />
+    <component key="jiraScopeTestUtil"
+               class="it.com.atlassian.plugin.connect.scopes.jira.JiraScopeTestUtil"
+               application="jira" />
 
     <!-- MOCK REST RESOURCES -->
     <rest key="agile-rest-mock" path="/greenhopper" version="1.0">
