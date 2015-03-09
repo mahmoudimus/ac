@@ -2,7 +2,7 @@
   "scopes": [
     {
       "key": "READ",
-      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "worklog", "customFieldOption", "issueLink", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "comment", "user", "filter", "myself", "userPicker", "groupsPicker", "auditing", "jql", "configuration"],
+      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "worklog", "customFieldOption", "issueLink", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "comment", "user", "filter", "myself", "userPicker", "groupsPicker", "auditing", "jql", "configuration", "commentProperties"],
       "pathKeys": ["download attachments", "project avatars", "user avatars", "thumbnails"],
       "methods": ["GET"]
     },
@@ -15,7 +15,7 @@
     },
     {
       "key": "WRITE",
-      "restPathKeys": ["issue", "comment", "worklog", "filter", "auditing"],
+      "restPathKeys": ["issue", "comment", "worklog", "filter", "auditing", "commentProperties"],
       "methods": ["POST", "PUT"]
     },
     {
@@ -27,7 +27,7 @@
     },
     {
       "key": "DELETE",
-      "restPathKeys": ["issue", "issueLink", "attachment", "comment", "worklog", "filter"],
+      "restPathKeys": ["issue", "issueLink", "attachment", "comment", "worklog", "filter", "commentProperties"],
       "methods": ["DELETE"]
     },
     {
@@ -199,6 +199,13 @@
       "basePaths": ["/issue/.+/comment($|/.*)"],
       "versions": ["2", "latest", "2.0.alpha1"],
       "public": true
+    },
+    {
+        "key": "commentProperties",
+        "name": "api",
+        "basePaths": ["/comment/.+/properties($|/.*)"],
+        "versions": ["2", "latest", "2.0.alpha1"],
+        "public": true
     },
     {
       "key": "field",
