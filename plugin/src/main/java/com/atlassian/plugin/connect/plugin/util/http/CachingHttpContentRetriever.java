@@ -85,7 +85,7 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
     {
         checkState(METHOD_MAPPING.keySet().contains(method), "The only valid methods are: %s", METHOD_MAPPING.keySet());
 
-        log.info("{}ing content from '{}'", method, url);
+        log.debug("{}ing content from '{}'", method, url);
 
         Request.Builder request = httpClient.newRequest(getFullUrl(method, url, parameters));
         request = request.setAttributes(getAttributes(addOnKey));
