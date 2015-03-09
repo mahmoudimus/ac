@@ -82,4 +82,10 @@ public class ReadScopeJiraTest extends ScopeTestBase
         assertValidRequest(HttpMethod.GET, "/rest/api/2/comment/" + comment.getId() + "/properties/");
     }
 
+    @Test
+    public void shouldAllowUsageOfAutoCompleteSuggestions() throws IOException, NoSuchAlgorithmException
+    {
+        assertValidRequest(HttpMethod.GET, "/rest/api/2/jql/autocompletedata/suggestions?fieldName=issuetype&fieldValue=");
+    }
+
 }
