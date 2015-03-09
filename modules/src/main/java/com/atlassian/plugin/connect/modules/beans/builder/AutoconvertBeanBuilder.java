@@ -1,24 +1,27 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
 import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
+import com.atlassian.plugin.connect.modules.beans.nested.MatcherBean;
+
+import java.util.List;
 
 public class AutoconvertBeanBuilder<T extends AutoconvertBeanBuilder, B extends AutoconvertBean> extends BaseModuleBeanBuilder<T, B> {
 
-    private String pattern;
     private String urlParameter;
+    private List<MatcherBean> matchers;
 
     public AutoconvertBeanBuilder()
     {
     }
 
     public AutoconvertBeanBuilder(AutoconvertBean defaultBean) {
-        this.pattern = defaultBean.getPattern();
+        this.matchers = defaultBean.getMatchers();
         this.urlParameter = defaultBean.getUrlParameter();
     }
 
-    public T withPattern(String pattern)
+    public T withMatchers(List<MatcherBean> matchers)
     {
-        this.pattern = pattern;
+        this.matchers = matchers;
         return (T) this;
     }
 
