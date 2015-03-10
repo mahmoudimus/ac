@@ -942,6 +942,7 @@
                 </executions>
                 <configuration>
                     <commands>
+                        <pa>com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies com.atlassian.maven.plugins:maven-amps-plugin:compress-resources org.apache.maven.plugins:maven-resources-plugin:resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor org.codehaus.mojo:xml-maven-plugin:transform compile com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:validate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar org.apache.maven.plugins:maven-install-plugin:install</pa>
                         <pi>com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies com.atlassian.maven.plugins:maven-amps-plugin:compress-resources org.apache.maven.plugins:maven-resources-plugin:resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor org.codehaus.mojo:xml-maven-plugin:transform compile com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:validate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar org.apache.maven.plugins:maven-install-plugin:install com.atlassian.maven.plugins:maven-amps-plugin:install</pi>
                     </commands>
                 </configuration>
