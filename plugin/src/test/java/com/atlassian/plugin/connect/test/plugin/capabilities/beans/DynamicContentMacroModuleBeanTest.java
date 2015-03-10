@@ -18,6 +18,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIcon
 import static com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean.newImagePlaceholderBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean.newMacroEditorBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.MatcherBean.newMatcherBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -118,8 +119,11 @@ public class DynamicContentMacroModuleBeanTest {
                                                         .build())
                                         .build())
                                 .withAutoconvert(AutoconvertBean.newAutoconvertBean()
-                                        .withPattern("/docs/google.com/document/d/{fileId}/edit")
                                         .withUrlParameter("url")
+                                        .withMatchers(
+                                                MatcherBean.newMatcherBean()
+                                                        .withPattern("/docs/google.com/document/d/{fileId}/edit")
+                                                        .build())
                                         .build())
                                 .build()
                 )

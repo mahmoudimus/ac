@@ -166,7 +166,7 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
     /**
      * Text patterns to be recognised and acted upon on paste into the editor.
      */
-    private List<AutoconvertBean> autoconvert;
+    private AutoconvertBean autoconvert;
 
     /**
      * The configuration of a custom macro editor. This is useful if the parameter input field types are
@@ -219,9 +219,6 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
         {
             parameters = newArrayList();
         }
-        if (null == autoconvert) {
-            autoconvert = newArrayList();
-        }
     }
 
     public String getUrl()
@@ -264,7 +261,7 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
         return aliases;
     }
 
-    public List<AutoconvertBean> getAutoconvert()
+    public AutoconvertBean getAutoconvert()
     {
         return autoconvert;
     }
@@ -316,6 +313,6 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
 
     public boolean hasAutoConvert()
     {
-        return (null != autoconvert) && (!autoconvert.isEmpty());
+        return (null != autoconvert);
     }
 }

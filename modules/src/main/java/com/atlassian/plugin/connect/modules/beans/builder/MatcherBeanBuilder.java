@@ -1,6 +1,6 @@
-package com.atlassian.plugin.connect.modules.beans.nested;
+package com.atlassian.plugin.connect.modules.beans.builder;
 
-import com.atlassian.plugin.connect.modules.beans.builder.BaseModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.MatcherBean;
 
 public class MatcherBeanBuilder<T extends MatcherBeanBuilder, B extends MatcherBean> extends BaseModuleBeanBuilder<T, B> {
 

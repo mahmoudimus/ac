@@ -85,10 +85,12 @@
           "pdf": { "url": "/render-map-pdf"},
           "default": { "url": "/render-map-default"}
         },
-        "autoconvert": [
-          {"pattern":"/docs/google.com/document/d/{fileId}/edit",
-            "urlParameter": "url"}
-          ]
+        "autoconvert": {
+            "urlParameter": "url",
+            "matchers": [
+              { "pattern":"/docs/google.com/document/d/{fileId}/edit" }
+            ]
+          }
       }
     ]
   },

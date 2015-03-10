@@ -9,7 +9,7 @@
                 var handler = function (i) {
                     var macroName = autoconvertDefs[i].macroName;
                     var urlParameter = autoconvertDefs[i].autoconvert.urlParameter;
-                    var pattern = autoconvertDefs[i].autoconvert.pattern;
+                    var pattern = autoconvertDefs[i].matcherBean.pattern;
 
                     // build a regex from the defined autoconvert pattern
                     pattern = escapePattern(pattern);

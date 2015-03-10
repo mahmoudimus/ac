@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.modules.beans.builder;
 
 import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MatcherBean;
+import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
@@ -19,9 +20,9 @@ public class AutoconvertBeanBuilder<T extends AutoconvertBeanBuilder, B extends 
         this.urlParameter = defaultBean.getUrlParameter();
     }
 
-    public T withMatchers(List<MatcherBean> matchers)
+    public T withMatchers(MatcherBean... matchers)
     {
-        this.matchers = matchers;
+        this.matchers = ImmutableList.copyOf(matchers);
         return (T) this;
     }
 

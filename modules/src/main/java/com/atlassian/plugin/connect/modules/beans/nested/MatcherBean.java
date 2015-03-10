@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.modules.beans.nested;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.MatcherBeanBuilder;
 
 @SchemaDefinition("matchers")
 public class MatcherBean extends BaseModuleBean {

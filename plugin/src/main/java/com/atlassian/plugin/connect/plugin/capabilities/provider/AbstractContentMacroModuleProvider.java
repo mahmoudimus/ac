@@ -6,10 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.WebItemModuleBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
-import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
+import com.atlassian.plugin.connect.modules.beans.nested.*;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
@@ -116,10 +113,12 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
 
         if (macroBean.hasAutoConvert()) {
             int index = 1;
-            for (AutoconvertBean autoconvertBean : macroBean.getAutoconvert())
+            AutoconvertBean autoconvertBean = macroBean.getAutoconvert();
+
+            for (MatcherBean matcherBean: autoconvertBean.getMatchers())
             {
                 String macroKey = macroBean.getRawKey();
-                AutoconvertModuleDescriptor descriptor = new AutoconvertModuleDescriptor(ModuleFactory.LEGACY_MODULE_FACTORY, macroBean.getRawKey(), autoconvertBean);
+                AutoconvertModuleDescriptor descriptor = new AutoconvertModuleDescriptor(ModuleFactory.LEGACY_MODULE_FACTORY, macroBean.getRawKey(), autoconvertBean, matcherBean);
                 descriptor.init(theConnectPlugin, new DOMElement("autoconvert").addAttribute("key", macroKey + "-autoconvert-"+index));
                 descriptors.add(descriptor);
                 index++;
