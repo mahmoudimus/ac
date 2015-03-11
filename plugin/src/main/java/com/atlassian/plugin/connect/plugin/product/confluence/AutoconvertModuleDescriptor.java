@@ -22,7 +22,6 @@ public class AutoconvertModuleDescriptor extends AbstractModuleDescriptor<Autoco
         this.matcherBean = matcherBean;
     }
 
-
     @Override
     public AutoconvertBean getModule()
     {
@@ -32,5 +31,9 @@ public class AutoconvertModuleDescriptor extends AbstractModuleDescriptor<Autoco
     public String getMacroName()
     {
         return macroName;
+    }
+
+    public MatcherBean getMatcherBean() {
+        return matcherBean;
     }
 }

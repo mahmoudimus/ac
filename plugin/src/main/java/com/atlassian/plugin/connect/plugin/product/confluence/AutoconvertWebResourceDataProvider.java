@@ -40,6 +40,7 @@ public class AutoconvertWebResourceDataProvider implements WebResourceDataProvid
                     Map<String,Object> item = new HashMap<String,Object>();
                     item.put("macroName",descriptor.getMacroName());
                     item.put("autoconvert",descriptor.getModule());
+                    item.put("matcherBean", descriptor.getMatcherBean());
                     resultList.add(item);
                 }
                 Gson gson = ConnectModulesGsonFactory.getGson();
