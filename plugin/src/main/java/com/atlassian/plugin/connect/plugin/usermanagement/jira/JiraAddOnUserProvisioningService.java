@@ -40,10 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.atlassian.plugin.connect.plugin.usermanagement.jira.SubvertedPermissionsTransactionTemplate.subvertPermissions;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -61,7 +58,9 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
      */
     private static final String ADDON_ADMIN_USER_GROUP_KEY = "atlassian-addons-admin";
 
-    private static final ImmutableSet<String> GROUPS = ImmutableSet.of("jira-users", "users");
+    private static final ImmutableSet<String> DEFAULT_GROUPS_ALWAYS_EXPECTED = ImmutableSet.of();
+    private static final ImmutableSet<String> DEFAULT_GROUPS_ONE_OR_MORE_EXPECTED = ImmutableSet.of("jira-users", "users");
+    
     private static final int ADMIN_PERMISSION = Permissions.ADMINISTER;
 
     private static final Logger log = LoggerFactory.getLogger(JiraAddOnUserProvisioningService.class);
@@ -96,10 +95,15 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     }
 
     @Override
-    public Set<String> getDefaultProductGroups()
+    public Set<String> getDefaultProductGroupsAlwaysExpected()
     {
-        // jira-hipchat-discussions revealed that users can't modify issues if not in this group
-        return GROUPS;
+        return DEFAULT_GROUPS_ALWAYS_EXPECTED;
+    }
+
+    @Override
+    public Set<String> getDefaultProductGroupsOneOrMoreExpected()
+    {
+        return DEFAULT_GROUPS_ONE_OR_MORE_EXPECTED;
     }
 
     @Override
