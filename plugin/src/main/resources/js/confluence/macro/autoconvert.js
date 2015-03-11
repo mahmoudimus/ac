@@ -13,7 +13,8 @@
 
                     // build a regex from the defined autoconvert pattern
                     pattern = escapePattern(pattern);
-                    pattern = pattern.replace('{}', '.*?');
+                    pattern = replaceAll('{}', '.*?', pattern);
+
                     console.log("registering autoconvert handler for [ " + macroName + " ] and pattern [ " + pattern + " ]");
 
                     return function (uri, node, done) {
@@ -45,4 +46,8 @@
     });
     // escape everything that could interfere with the regex, except curly braces
     function escapePattern(str) { return str.replace(/[\-\[\]\/\(\)\*\+\?\.\\\^\$\|]/g, "\\$&"); }
+
+    function replaceAll(find, replace, str) {
+        return str.replace(new RegExp(find, 'g'), replace);
+    }
 })();
