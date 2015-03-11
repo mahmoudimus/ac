@@ -13,7 +13,6 @@ wiki
 smoke-tests/repository
 tags
 *.releaseBackup
-release.properties
 pom.release.xml
 *debuglog.txt
 debuglog.txt
