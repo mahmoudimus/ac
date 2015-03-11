@@ -53,6 +53,14 @@ The JWT Header declares that the encoded object is a JSON Web Token (JWT) and th
     </tr>
 </table>
 
+<div class="aui-message warning">
+    <p class="title">
+        <span class="aui-icon icon-warning"></span>
+        <strong>Important</strong>
+    </p>
+    Your JWT library or implementation should discard any tokens which specify `alg: none` as this can provide a bypass of the token verification.
+</div>
+
 <a name='claims'></a>
 ### Claims
 
@@ -318,13 +326,13 @@ To create a query string hash, follow the detailed instructions below:
 ## Advanced: Creating a JWT Token Manually
 
 <div class="aui-message warning">
-        <p class="title">
-            <span class="aui-icon icon-warning"></span>
-            <strong>Disclaimer</strong>
-        </p>
-        You should only need to read this section if you are planning to create JWT tokens manually,
-        i.e. if you are not using one of the libraries listed in the previous section
-    </div>
+    <p class="title">
+        <span class="aui-icon icon-warning"></span>
+        <strong>Disclaimer</strong>
+    </p>
+    You should only need to read this section if you are planning to create JWT tokens manually,
+    i.e. if you are not using one of the libraries listed in the previous section
+</div>
 
 ### More details on JWT Tokens
 
@@ -343,10 +351,10 @@ The format of a JWT token is simple: ```<base64-encoded header>.<base64-encoded 
  the indicated algorithm and a previously established secret.
  * An attacker tampering with the header or claims will cause signature verification to fail.
  * An attacker signing with a different secret will cause signature verification to fail.
- * There are various algorithm choices legal in the JWT spec. In atlassian-connect version 1.0 we support HMAC SHA-256.
+ * There are various algorithm choices legal in the JWT spec. In atlassian-connect version 1.0 we support HMAC SHA-256. **Important:** your implementation should discard any JWT tokens which specify `alg: none` as these are not subject to signature verification.
 
 
- ### Steps to Follow
+### Steps to Follow
 
  1. Create a header JSON object
  * Convert the header JSON object to a UTF-8 encoded string and base-64 encode it. That gives you encodedHeader.
@@ -357,7 +365,7 @@ The format of a JWT token is simple: ```<base64-encoded header>.<base64-encoded 
  * concatenate the signing input, another period character and the signature, which gives you the JWT token. jwtToken = signingInput + "." + encodedSignature
 
 
- ### Example
+### Example
 
  Here is an example in Java using gson, commons-codec, and the Java security and crypto libraries:
 
