@@ -301,7 +301,7 @@ public class ModuleList extends BaseModuleBean
      * documents stored as a content property values, and write them to a search index. Once stored,
      * they can participate in a content search using CQL.
      *
-     * @schemaTitle Content property index schema
+     * @schemaTitle Content Property index schema
      * @see <a href="https://developer.atlassian.com/display/CONFDEV/Content+Properties+in+the+REST+API">
      *     developer.atlassian.com</a> for more details
      */
