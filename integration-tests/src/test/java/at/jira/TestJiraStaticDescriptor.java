@@ -29,7 +29,7 @@ public class TestJiraStaticDescriptor extends JiraAcceptanceTestBase
     @Test
     public void testAcActionWebItemIsPresent()
     {
-        log.warn("Installing addon in preparation for running " + TestJiraStaticDescriptor.class.getName());
+        log.info("Installing addon in preparation for running " + TestJiraStaticDescriptor.class.getName());
         installer.install();
         createConnectProject();
         IssueCreateResponse response = product.backdoor().issues().loginAs("admin")
@@ -39,7 +39,7 @@ public class TestJiraStaticDescriptor extends JiraAcceptanceTestBase
         product.goToViewIssue(response.key());
 
         connectPageOperations.findWebItem(WEB_ITEM_ID, Optional.<String>absent());
-        log.warn("Cleaning up after " + TestJiraStaticDescriptor.class.getName());
+        log.info("Cleaning up after " + TestJiraStaticDescriptor.class.getName());
         installer.uninstall();
     }
 

@@ -21,11 +21,11 @@ public class TestConfluenceStaticDescriptor extends ConfluenceAcceptanceTestBase
     @Test
     public void testAcDashboardWebItemIsPresent()
     {
-        log.warn("Installing addon in preparation for running " + TestConfluenceStaticDescriptor.class.getName());
+        log.info("Installing addon in preparation for running " + TestConfluenceStaticDescriptor.class.getName());
         externalAddonInstaller.install();
         loginAndVisit(TestUser.ADMIN, DashboardPage.class);
         connectPageOperations.findWebItem(WEB_ITEM_ID, Optional.<String>absent());
-        log.warn("Cleaning up after " + TestConfluenceStaticDescriptor.class.getName());
+        log.info("Cleaning up after " + TestConfluenceStaticDescriptor.class.getName());
         externalAddonInstaller.uninstall();
     }
 }
