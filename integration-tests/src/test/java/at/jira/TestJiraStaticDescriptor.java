@@ -24,13 +24,13 @@ public class TestJiraStaticDescriptor extends JiraAcceptanceTestBase
     private static final String PROJECT_NAME = "Atlassian Connect Test";
     private static final String WEB_ITEM_ID = "com.atlassian.connect.acceptance.test__opsbar-test-web-item";
 
-    private final Logger log = LoggerFactory.getLogger(TestJiraStaticDescriptor.class);
+    private static final Logger log = LoggerFactory.getLogger(TestJiraStaticDescriptor.class);
 
     @Test
     public void testAcActionWebItemIsPresent()
     {
-        log.info("Installing addon in preparation for running " + TestJiraStaticDescriptor.class.getName());
-        installer.install();
+        log.info("Installing add-on in preparation for running " + TestJiraStaticDescriptor.class.getName());
+        externalAddonInstaller.install();
         createConnectProject();
         IssueCreateResponse response = product.backdoor().issues().loginAs("admin")
                 .createIssue(PROJECT_KEY, "Atlassian Connect Web Panel Test Issue");
@@ -40,7 +40,7 @@ public class TestJiraStaticDescriptor extends JiraAcceptanceTestBase
 
         connectPageOperations.findWebItem(WEB_ITEM_ID, Optional.<String>absent());
         log.info("Cleaning up after " + TestJiraStaticDescriptor.class.getName());
-        installer.uninstall();
+        externalAddonInstaller.uninstall();
     }
 
     private void createConnectProject()

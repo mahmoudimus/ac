@@ -1,8 +1,12 @@
 package at.util;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
 
@@ -11,6 +15,7 @@ import com.google.common.base.Function;
 import org.apache.commons.httpclient.auth.BasicScheme;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -24,11 +29,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cc.plural.jsonij.JPath;
-import cc.plural.jsonij.JSON;
+import cc.plural.jsonij.Value;
 import cc.plural.jsonij.parser.ParserException;
 import it.util.TestUser;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptySet;
 import static org.apache.commons.lang3.StringUtils.replace;
 import static org.apache.commons.lang3.StringUtils.substringAfter;
 
@@ -38,17 +44,21 @@ public class ExternalAddonInstaller
     public static final String ADDONS_REST_PATH = "/rest/2.0-beta/addons/";
     public static final String VENDORS_REST_PATH = "/rest/2.0-beta/vendors/";
     public static final int RANDOM_VENDOR_SUFFIX_LENGTH = 20;
-    public static final String TOKENS_REST_PATH = "/rest/1.0/plugins/" + ADDON_KEY + "/tokens";
+    public static final String TOKENS_REST_PATH = ADDONS_REST_PATH + ADDON_KEY + "/tokens/";
+    public static final int MARKETPLACE_MAX_TOKENS = 50;
+    public static final int TIMEOUT_MS = 30 * 1000;
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final AtlassianConnectRestClient connectClient;
     private String vendorId;
     private String descriptorUrl;
+    private final URL mpacUrl;
 
     public ExternalAddonInstaller(String baseUrl, TestUser user)
     {
         connectClient = new AtlassianConnectRestClient(
                 baseUrl, user.getUsername(), user.getPassword());
+        mpacUrl = MarketplaceSettings.baseUrl();
     }
 
     public void install()
@@ -81,12 +91,12 @@ public class ExternalAddonInstaller
     private void registerAddonOnMarketplace()
             throws IOException, ParserException
     {
-        HttpPost addonPost = new HttpPost(MarketplaceSettings.baseUrl() + ADDONS_REST_PATH);
+        HttpPost addonPost = new HttpPost(mpacUrl + ADDONS_REST_PATH);
         addonPost.setEntity(addonDetails());
-        log.warn("Registering our test addon \"{}\" on the marketplace...", ADDON_KEY);
+        log.info("Registering our test add-on \"{}\" on the marketplace...", ADDON_KEY);
         makeRequest(addonPost, new HashSet<Integer>(asList(200, 204)), "Could not register add-on on the marketplace");
 
-        HttpPost tokenPost = new HttpPost(MarketplaceSettings.baseUrl() + TOKENS_REST_PATH);
+        HttpPost tokenPost = new HttpPost(mpacUrl + TOKENS_REST_PATH);
         descriptorUrl = transformResponse(tokenPost, new HashSet<Integer>(asList(200)),
                 "Could not get a private token for the add-on",
                 new Function<CloseableHttpResponse, String>()
@@ -94,12 +104,20 @@ public class ExternalAddonInstaller
                     @Override
                     public String apply(CloseableHttpResponse response)
                     {
+                        String entity = "";
                         try
                         {
-                            JSON json = JSON.parse(EntityUtils.toString(response.getEntity()));
-                            return JPath.evaluate(json, "versions[0]/links[0]/href").getString();
+                            entity = EntityUtils.toString(response.getEntity());
+                            return JPath.evaluate(entity, "versions[0]/links[0]/href").getString();
                         }
-                        catch (Exception e)
+                        catch (ParserException e)
+                        {
+                            // Bug workaround: sometimes we get a Scala toString instead of JSON - https://ecosystem.atlassian.net/browse/AMKT-12127
+                            Matcher tokenMatcher = Pattern.compile("https?://[^\\(^\\)^,^ ]+atlassian-connect\\.json\\?access-token=([a-z0-9]+)").matcher(entity);
+                            tokenMatcher.find();
+                            return tokenMatcher.group(0);
+                        }
+                        catch (IOException e)
                         {
                             throw new RuntimeException(e);
                         }
@@ -109,22 +127,74 @@ public class ExternalAddonInstaller
 
     private void deleteAddonFromMarketplace() throws IOException
     {
-        if (noAddonWithKeyFound())
+        if (!addonExists())
         {
-            log.warn("Couldn't find our test addon to delete");
+            log.info("Couldn't find our test addon to delete");
             return;
         }
 
-        HttpDelete delete = new HttpDelete(MarketplaceSettings.baseUrl() + ADDONS_REST_PATH + ADDON_KEY);
-        log.warn("Deleting our test addon \"{}\"...", ADDON_KEY);
-        makeRequest(delete, new HashSet<Integer>(asList(200, 204, 404)), "Could not delete add-on from the marketplace");
+        deleteTokens();
+        HttpDelete addonDelete = new HttpDelete(mpacUrl + ADDONS_REST_PATH + ADDON_KEY);
+        log.info("Deleting our test add-on \"{}\"...", ADDON_KEY);
+        makeRequest(addonDelete, new HashSet<Integer>(), "Could not delete add-on from the marketplace");
     }
 
-    private boolean noAddonWithKeyFound() throws IOException
+    private void deleteTokens() throws IOException
     {
-        HttpGet get = new HttpGet(MarketplaceSettings.baseUrl() + ADDONS_REST_PATH + ADDON_KEY);
+        for (String token : getTokens())
+        {
+            log.info("Deleting token " + token + " ...");
+            HttpDelete delete = new HttpDelete(mpacUrl + TOKENS_REST_PATH + token);
+
+            // 404 is fine; it means the token's actually gone and we just hit a stale cache
+            makeRequest(delete, new HashSet<Integer>(asList(204, 404)), "Could not delete token");
+        }
+    }
+
+    private Collection<String> getTokens() throws IOException
+    {
+        HttpGet get = new HttpGet(mpacUrl + TOKENS_REST_PATH);
         get.addHeader("Authorization", BasicScheme.authenticate(MarketplaceSettings.credentials(), "UTF-8"));
-        log.warn("Checking whether the test add-on already exists on the marketplace");
+
+        log.info("Getting the tokens...");
+
+        // 404 is fine; it means the add-on is actually gone and we just hit a stale cache
+        return transformResponse(get, new HashSet<Integer>(asList(200, 404)), "Could not get add-on tokens",
+                new Function<CloseableHttpResponse, Collection<String>>()
+                {
+                    @Override
+                    public Collection<String> apply(CloseableHttpResponse response)
+                    {
+                        final Set<String> tokens = new HashSet<String>(MARKETPLACE_MAX_TOKENS);
+                        try
+                        {
+                            if (response.getStatusLine().getStatusCode() == 404)
+                            {
+                                return emptySet();
+                            }
+                            String entity = EntityUtils.toString(response.getEntity());
+                            Value tokensArray = JPath.evaluate(entity, "_embedded/tokens");
+                            int tokensCount = tokensArray.size();
+
+                            for (int i = 0; i < tokensCount; i++)
+                            {
+                                tokens.add(JPath.evaluate(tokensArray.get(i), "token").getString());
+                            }
+                            return tokens;
+                        }
+                        catch (Exception e)
+                        {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+    }
+
+    private boolean addonExists() throws IOException
+    {
+        HttpGet get = new HttpGet(mpacUrl + ADDONS_REST_PATH + ADDON_KEY);
+        get.addHeader("Authorization", BasicScheme.authenticate(MarketplaceSettings.credentials(), "UTF-8"));
+        log.info("Checking whether the test add-on already exists on the marketplace");
 
         Boolean addonFound = transformResponse(
                 get,
@@ -135,18 +205,18 @@ public class ExternalAddonInstaller
                     @Override
                     public Boolean apply(CloseableHttpResponse response)
                     {
-                        return response.getStatusLine().getStatusCode() != 404;
+                        return response.getStatusLine().getStatusCode() == 200;
                     }
                 });
-        log.warn(addonFound ? "Found an existing instance of the add-on" : "Didn't find an existing instance of the add-on");
-        return !addonFound;
+        log.info(addonFound ? "Found an existing instance of the add-on" : "Didn't find an existing instance of the add-on");
+        return addonFound;
     }
 
     private void createVendor() throws IOException
     {
-        HttpPost post = new HttpPost(MarketplaceSettings.baseUrl() + VENDORS_REST_PATH);
+        HttpPost post = new HttpPost(mpacUrl + VENDORS_REST_PATH);
         post.setHeader("Content-Type", "application/json");
-        log.warn("Creating a vendor on the marketplace...");
+        log.info("Creating a vendor on the marketplace...");
         post.setEntity(vendorDetails());
 
         vendorId = transformResponse(
@@ -165,8 +235,8 @@ public class ExternalAddonInstaller
 
     private void deleteVendor() throws IOException
     {
-        log.warn("Cleaning up the created vendor...");
-        HttpDelete delete = new HttpDelete(MarketplaceSettings.baseUrl() + VENDORS_REST_PATH + vendorId);
+        log.info("Cleaning up the created vendor...");
+        HttpDelete delete = new HttpDelete(mpacUrl + VENDORS_REST_PATH + vendorId);
         makeRequest(delete, new HashSet<Integer>(asList(200, 204, 404, 410)), "Unable to delete vendor from the marketplace");
     }
 
@@ -182,6 +252,11 @@ public class ExternalAddonInstaller
     {
         CloseableHttpClient client = HttpClients.custom()
                 .setDefaultCredentialsProvider(MarketplaceSettings.credentialsProvider())
+                .setDefaultRequestConfig(RequestConfig.custom()
+                        .setSocketTimeout(TIMEOUT_MS)
+                        .setConnectTimeout(TIMEOUT_MS)
+                        .setConnectionRequestTimeout(TIMEOUT_MS)
+                        .build())
                 .build();
 
         CloseableHttpResponse response = null;
@@ -189,8 +264,9 @@ public class ExternalAddonInstaller
         try
         {
             request.addHeader("content-type", "application/json");
+            request.addHeader("Cache-Control", "no-cache");
             response = client.execute(request);
-            if (!acceptableCodes.contains(response.getStatusLine().getStatusCode()))
+            if (!acceptableCodes.isEmpty() && !acceptableCodes.contains(response.getStatusLine().getStatusCode()))
             {
                 throw new AcceptanceTestMarketplaceException(
                         errorMessage,
@@ -222,7 +298,7 @@ public class ExternalAddonInstaller
     {
         String vendorTemplate = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("marketplace/vendor.json"));
         String vendorName = "Acceptance test-generated vendor " + RandomStringUtils.random(RANDOM_VENDOR_SUFFIX_LENGTH, true, false);
-        log.warn("Vendor name: \"{}\"", vendorName);
+        log.info("Vendor name: \"{}\"", vendorName);
         return new StringEntity(replace(vendorTemplate, "<%=vendor name goes here=>", vendorName));
     }
 }

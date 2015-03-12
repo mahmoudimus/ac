@@ -12,6 +12,6 @@ public class JiraAcceptanceTestBase
     protected static final JiraTestedProduct product = TestedProductFactory.create(JiraTestedProduct.class);
     protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
             product.getTester().getDriver());
-    protected static final ExternalAddonInstaller installer = new ExternalAddonInstaller(
+    protected static final ExternalAddonInstaller externalAddonInstaller = new ExternalAddonInstaller(
             product.getProductInstance().getBaseUrl(), TestUser.ADMIN);
 }
