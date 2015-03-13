@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.imports;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
 import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.applinks.spi.util.TypeAccessor;
@@ -82,7 +83,8 @@ public class CommonImports
             @ComponentImport JwtApplinkFinder jwtApplinkFinder,
             @ComponentImport ServiceProviderTokenStore serviceProviderTokenStore,
             @ComponentImport CrowdService crowdService,
-            @ComponentImport DarkFeatureManager darkFeatureManager)
+            @ComponentImport DarkFeatureManager darkFeatureManager,
+            @ComponentImport ActiveObjects activeObjects)
     {
     }
 }

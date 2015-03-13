@@ -1,5 +1,7 @@
 <application key="confluence">
 
+    <resource type="i18n" key="addon-18n" name="confluence-addon-i18n" location="connect-addons"/>
+
     <web-section key="admin.pages" name="Remotable Plugins" location="system.admin" weight="100">
         <label>Remote Plugins</label>
     </web-section>
@@ -13,20 +15,62 @@
         <package>com.atlassian.plugin.connect.plugin.product.confluence.rest</package>
     </rest>
 
-    <!-- Confluence specific javascript modules -->
-    <web-resource key="macro">
-        <resource type="download" name="editor.js" location="js/confluence/macro/editor.js" />
-        <resource type="download" name="editor-rpc.js" location="js/confluence/macro/editor-rpc.js" />
-        <dependency>com.atlassian.auiplugin:ajs</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:ap-core</dependency>
-    </web-resource>
+    <!-- JavaScript and CSS resource inclusions for relevant contexts -->
 
     <web-resource key="atlassian-connect-resources" name="Connect resources for inclusion on every page.">
         <context>atl.admin</context>
         <context>atl.general</context>
+
         <!-- workaround for AC-703, the 'preview' view does not include atl.general resources (CONF-30617) -->
         <context>preview</context>
+
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:dialog-page-resource</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-remote-condition</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-css</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-iframe-host-js</dependency>
+
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-macro</dependency>
+
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
-    
+
+    <!-- JavaScript API Core -->
+
+    <web-resource key="ap-core">
+        <resource type="download" name="core-host.js" location="/js/core/connect-host.js" />
+        <dependency>confluence.web.resources:almond</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
+    <web-resource key="ap-user">
+        <resource type="download" name="user.js" location="/js/iframe/host/user.js" />
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-core</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
+    <web-resource key="iframe-host-js">
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-core</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-user</dependency>
+        <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
+        <resource type="download" name="content-resolver.js" location="/js/iframe/host/content-resolver.js" />
+        <dependency>com.atlassian.auiplugin:dialog2</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
+    <web-resource key="remote-condition">
+        <resource type="download" name="remote.js" location="js/condition/remote.js" />
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-core</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
+    <!-- Confluence specific javascript modules -->
+
+    <web-resource key="macro">
+        <resource type="download" name="editor.js" location="js/confluence/macro/editor.js" />
+        <resource type="download" name="editor-rpc.js" location="js/confluence/macro/editor-rpc.js" />
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-core</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
 </application>

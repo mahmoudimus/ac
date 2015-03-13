@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.23-SNAPSHOT</version>
+        <version>1.1.27-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -270,6 +270,13 @@
             <artifactId>jwt-plugin</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!-- Active objects -->
+        <dependency>
+            <groupId>com.atlassian.activeobjects</groupId>
+            <artifactId>activeobjects-plugin</artifactId>
+            <version>${ao.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>com.atlassian.plugins.rest</groupId>
             <artifactId>atlassian-rest-common</artifactId>
@@ -465,6 +472,12 @@
             <artifactId>confluence-create-content-plugin</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.activeobjects</groupId>
+            <artifactId>activeobjects-test</artifactId>
+            <version>${ao.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -569,6 +582,7 @@
                                 <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
+                                <com.atlassian.plugin.connect.add_on_properties.max_properties>${addonconfig.maxpropertiesperplugin}</com.atlassian.plugin.connect.add_on_properties.max_properties>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -648,6 +662,7 @@
                                 <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
                                 <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                                 <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
+                                <com.atlassian.plugin.connect.add_on_properties.max_properties>${addonconfig.maxpropertiesperplugin}</com.atlassian.plugin.connect.add_on_properties.max_properties>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -750,7 +765,7 @@
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
-                <version>0.0.11</version>
+                <version>${frontend.plugin.version}</version>
                 <executions>
                     <execution>
                         <id>install node and npm for plugin</id>
@@ -773,6 +788,7 @@
                         <configuration>
                             <workingDirectory>../plugin</workingDirectory>
                             <arguments>install ${atlassian.connect-js.path}</arguments>
+                            <skip>${skipNpm}</skip>
                         </configuration>
                     </execution>
                     <execution>
@@ -784,7 +800,8 @@
                          <configuration>
                             <workingDirectory>../plugin</workingDirectory>
                             <arguments>install</arguments>
-                        </configuration>
+                            <skip>${skipNpm}</skip>
+                         </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -1231,7 +1248,7 @@
                     <plugin>
                         <groupId>com.github.eirslett</groupId>
                         <artifactId>frontend-maven-plugin</artifactId>
-                        <version>0.0.11</version>
+                        <version>${frontend.plugin.version}</version>
                         <configuration>
                             <workingDirectory>../docs</workingDirectory>
                         </configuration>
@@ -1256,6 +1273,7 @@
                                 <configuration>
                                     <workingDirectory>../docs</workingDirectory>
                                     <arguments>install ${atlassian.connect-js.path}</arguments>
+                                    <skip>${skipNpm}</skip>
                                 </configuration>
                             </execution>
                             <execution>
@@ -1266,6 +1284,7 @@
                                 <phase>prepare-package</phase>
                                 <configuration>
                                     <arguments>install</arguments>
+                                    <skip>${skipNpm}</skip>
                                 </configuration>
                             </execution>
                             <execution>
@@ -1276,6 +1295,7 @@
                                 <phase>prepare-package</phase>
                                 <configuration>
                                     <arguments>run-script build</arguments>
+                                    <skip>${skipNpm}</skip>
                                 </configuration>
                             </execution>
                         </executions>
@@ -1323,5 +1343,8 @@
             use-maven,3
             include-artifact,com.atlassian.plugins:atlassian-connect-cloud-acceptance-tests
         </od.testing.configuration>
+        <frontend.plugin.version>0.0.22</frontend.plugin.version>
+        <skipNpm>false</skipNpm>
+        <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
     </properties>
 </project>

@@ -5,17 +5,22 @@ import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
 import com.atlassian.plugin.connect.spi.scope.ApiScope;
+import com.atlassian.plugin.connect.spi.scope.RestApiScopeHelper;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.any;
@@ -26,6 +31,7 @@ public final class AddOnScopeManagerImpl implements AddOnScopeManager
     private final Collection<AddOnScope> allScopes;
     private final ConnectAddonRegistry connectAddonRegistry;
     private final ConnectAddonBeanFactory connectAddonBeanFactory;
+    private final AddOnScope addOnPropertyScope;
 
     @Autowired
     @VisibleForTesting
@@ -37,6 +43,17 @@ public final class AddOnScopeManagerImpl implements AddOnScopeManager
         this.allScopes = scopeService.build();
         this.connectAddonRegistry = checkNotNull(connectAddonRegistry);
         this.connectAddonBeanFactory = checkNotNull(connectAddonBeanFactory);
+        this.addOnPropertyScope = createAddOnPropertyScope();
+    }
+
+    private AddOnScope createAddOnPropertyScope()
+    {
+        RestApiScopeHelper.RestScope restScope = new RestApiScopeHelper.RestScope("atlassian-connect", Arrays.asList("1", "latest"), "/addons($|/.*)", Arrays.asList("GET", "POST", "PUT", "DELETE"), true);
+
+        ArrayList<AddOnScopeApiPath> paths = new ArrayList<AddOnScopeApiPath>();
+        paths.add(new AddOnScopeApiPath.RestApiPath(Collections.singleton(restScope)));
+
+        return new AddOnScope("ADD_ON_PROPERTIES", paths);
     }
 
     @Override
@@ -47,7 +64,7 @@ public final class AddOnScopeManagerImpl implements AddOnScopeManager
 
     private Iterable<? extends ApiScope> getApiScopesForPlugin(String pluginKey)
     {
-        return StaticAddOnScopes.dereference(allScopes, getScopeReferences(pluginKey));
+        return Iterables.concat(StaticAddOnScopes.dereference(allScopes, getScopeReferences(pluginKey)), Collections.singleton(addOnPropertyScope));
     }
 
     private Set<ScopeName> getScopeReferences(String pluginKey)

@@ -60,6 +60,8 @@ public interface ConnectAddonRegistry
     
     Iterable<String> getAllAddonKeys();
 
+    boolean hasAddons();
+
     Iterable<ConnectAddonBean> getAllAddonBeans();
 
     void storeRestartState(String pluginKey, PluginState state);
@@ -71,6 +73,8 @@ public interface ConnectAddonRegistry
     Iterable<String> getAddonKeysToEnableOnRestart();
 
     AddonSettings getAddonSettings(String pluginKey);
+
+    boolean hasAddonWithKey(String pluginKey);
 
     Option<ConnectAddonBean> getAddonBean(String pluginKey);
 }

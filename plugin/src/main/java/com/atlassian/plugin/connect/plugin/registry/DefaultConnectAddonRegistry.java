@@ -194,6 +194,18 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     }
 
     @Override
+    public boolean hasAddons()
+    {
+        List<String> keyList = (List<String>) settings().get(ADDON_LIST_KEY);
+        if (null == keyList)
+        {
+            return false;
+        }
+
+        return !keyList.isEmpty();
+    }
+
+    @Override
     public Iterable<ConnectAddonBean> getAllAddonBeans()
     {
         PluginSettings settings = settings();
@@ -322,4 +334,10 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
         }
         return beanOption;
     }
+    @Override
+    public boolean hasAddonWithKey(final String pluginKey)
+    {
+        return getAddonKeySet(settings()).contains(pluginKey);
+    }
+
 }

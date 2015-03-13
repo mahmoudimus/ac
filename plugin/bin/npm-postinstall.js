@@ -9,7 +9,7 @@ helper.chain([
     ],
     [
         'cp',
-        ['-a', helper.npmNormalize(atlassianConnectJsPath + '/dist/'), 'src/main/resources/js/core']
+        ['-a', helper.npmNormalize(atlassianConnectJsPath + '/dist') + '/.', 'src/main/resources/js/core']
     ],
     [
         'mkdir',

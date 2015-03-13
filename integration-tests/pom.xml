@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.23-SNAPSHOT</version>
+        <version>1.1.27-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -182,6 +182,11 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-func-test-plugin</artifactId>
+            <version>${atlassian.jira.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.jira.tests</groupId>
             <artifactId>jira-testkit-client</artifactId>
             <version>${atlassian.jira.testkit.version}</version>
@@ -330,6 +335,7 @@
                             </productDataPath>
                             <systemPropertyVariables>
                                 <product>jira</product>
+                                <com.atlassian.plugin.connect.add_on_properties.max_properties>${addonconfig.maxpropertiesperplugin}</com.atlassian.plugin.connect.add_on_properties.max_properties>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -368,6 +374,11 @@
                                     <version>${functest.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
+                                    <groupId>com.atlassian.jira</groupId>
+                                    <artifactId>jira-func-test-plugin</artifactId>
+                                    <version>${atlassian.jira.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
                                     <groupId>com.atlassian.jira.tests</groupId>
                                     <artifactId>jira-testkit-plugin</artifactId>
                                     <version>${testkit.version}</version>
@@ -381,11 +392,6 @@
                                     <groupId>com.atlassian.bundles</groupId>
                                     <artifactId>json-schema-validator-atlassian-bundle</artifactId>
                                     <version>${atlassian.json.schema.validator.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>com.atlassian.jira</groupId>
-                                    <artifactId>jira-projects-plugin</artifactId>
-                                    <version>${atlassian.jira.projects.plugin.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
 
@@ -407,6 +413,7 @@
                             </productDataPath>
                             <systemPropertyVariables>
                                 <product>confluence</product>
+                                <com.atlassian.plugin.connect.add_on_properties.max_properties>${addonconfig.maxpropertiesperplugin}</com.atlassian.plugin.connect.add_on_properties.max_properties>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -511,5 +518,6 @@
         <jetty.version>8.1.7.v20120910</jetty.version>
         <functest.version>0.7.1</functest.version>
         <functestbasics.version>1.9.7</functestbasics.version>
+        <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
     </properties>
 </project>

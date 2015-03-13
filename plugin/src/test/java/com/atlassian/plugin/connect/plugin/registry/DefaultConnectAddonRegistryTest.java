@@ -23,6 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
 
 import org.mockito.Mock;
@@ -61,6 +62,7 @@ public class DefaultConnectAddonRegistryTest
         List<String> keys = Collections.emptyList();
         when(this.pluginSettings.get(any(String.class))).thenReturn(keys);
         assertThat(this.registry.getAllAddonKeys(), emptyIterable());
+        assertThat(this.registry.hasAddons(), is(false));
     }
 
     @Test
@@ -70,6 +72,7 @@ public class DefaultConnectAddonRegistryTest
         List<String> keyList = Arrays.asList(keys);
         when(this.pluginSettings.get(any(String.class))).thenReturn(keyList);
         assertThat(this.registry.getAllAddonKeys(), containsInAnyOrder(keys));
+        assertThat(this.registry.hasAddons(), is(true));
     }
 
     @Test
