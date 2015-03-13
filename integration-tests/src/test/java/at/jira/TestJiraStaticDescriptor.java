@@ -9,6 +9,8 @@ import com.atlassian.test.categories.OnDemandAcceptanceTest;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
@@ -26,11 +28,16 @@ public class TestJiraStaticDescriptor extends JiraAcceptanceTestBase
 
     private static final Logger log = LoggerFactory.getLogger(TestJiraStaticDescriptor.class);
 
+    @Before
+    public void installAddon() throws Exception
+    {
+        log.info("Installing add-on in preparation for running " + getClass().getName());
+        externalAddonInstaller.install();
+    }
+
     @Test
     public void testAcActionWebItemIsPresent()
     {
-        log.info("Installing add-on in preparation for running " + TestJiraStaticDescriptor.class.getName());
-        externalAddonInstaller.install();
         createConnectProject();
         IssueCreateResponse response = product.backdoor().issues().loginAs("admin")
                 .createIssue(PROJECT_KEY, "Atlassian Connect Web Panel Test Issue");
@@ -39,7 +46,12 @@ public class TestJiraStaticDescriptor extends JiraAcceptanceTestBase
         product.goToViewIssue(response.key());
 
         connectPageOperations.findWebItem(WEB_ITEM_ID, Optional.<String>absent());
-        log.info("Cleaning up after " + TestJiraStaticDescriptor.class.getName());
+    }
+
+    @After
+    public void uninstallAddon() throws Exception
+    {
+        log.info("Cleaning up after " + getClass().getName());
         externalAddonInstaller.uninstall();
     }
 
