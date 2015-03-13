@@ -81,20 +81,34 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
     }
 
     @Test
-    public void testDynamicMacroWithAutoconvertOnCreate() throws Exception
+    public void testAutoconvertOnCreate() throws Exception
     {
         EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
-        pasteLink(editorPage, "https://google.com");
+        pasteLinkAndMatch(editorPage, "https://google.com");
     }
 
     @Test
-    public void testDynamicMacroWithAutoconvertWithTokenOnCreate() throws Exception
+    public void testAutoconvertWithTokenOnCreate() throws Exception
     {
         EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
-        pasteLink(editorPage, "https://google.com/variable");
+        pasteLinkAndMatch(editorPage, "https://google.com/variable");
     }
 
-    private void pasteLink(EditorPage editorPage, String link)
+    @Test
+    public void testAutoconverPrefixNoMatch() throws Exception
+    {
+        EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
+        pasteLinkAndNoMatch(editorPage, "WontMatchhttps://google.com");
+    }
+
+    @Test
+    public void testAutoconverSuffixNoMatch() throws Exception
+    {
+        EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
+        pasteLinkAndNoMatch(editorPage, "https://google.comwontmatch");
+    }
+
+    private String pasteLinkAndSave(EditorPage editorPage, String link)
     {
         EditorContent editorContent = editorPage.getEditor().getContent();
         editorContent.focus();
@@ -108,9 +122,7 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
 
         // using select-all here doesnt appear to work, i think its because it selects the <p> tags too
         for (int i = 0; i < link.length(); i++)
-        {
             editorContent.sendKeys(Keys.chord(Keys.SHIFT.toString(), Keys.ARROW_RIGHT.toString()));
-        }
 
         editorContent.sendKeys(Keys.chord(OS_CTRL_KEY, "x")); // cut
         editorContent.sendKeys(Keys.chord(OS_CTRL_KEY, "v")); // paste
@@ -119,9 +131,13 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
 
         ViewPage viewPage = editorPage.save();
         long pageId = viewPage.getPageId();
-        String pageContent = rpc.getPageContent(pageId);
-        Document doc = Jsoup.parse(pageContent, "", Parser.xmlParser());
+        return rpc.getPageContent(pageId);
+    }
 
+    private void pasteLinkAndMatch(EditorPage editorPage, String link)
+    {
+        String pageContent = pasteLinkAndSave(editorPage, link);
+        Document doc = Jsoup.parse(pageContent, "", Parser.xmlParser());
         // check that the macro was created correctly
         Elements elements = doc.select("ac|structured-macro");
         assertEquals(1, elements.size());
@@ -133,5 +149,13 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
         assertEquals(link, urlParameter.text());
     }
 
+    private void pasteLinkAndNoMatch(EditorPage editorPage, String link)
+    {
+        String pageContent = pasteLinkAndSave(editorPage, link);
+        Document doc = Jsoup.parse(pageContent, "", Parser.xmlParser());
+        // check that the macro was created correctly
+        Elements elements = doc.select("ac|structured-macro");
+        assertEquals(0, elements.size());
+    }
 
 }

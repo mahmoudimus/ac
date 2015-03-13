@@ -14,6 +14,7 @@
                     // build a regex from the defined autoconvert pattern
                     pattern = escapePattern(pattern);
                     pattern = replaceAll('{}', '.*?', pattern);
+                    pattern = "^"+pattern+"$";
 
                     console.log("registering autoconvert handler for [ " + macroName + " ] and pattern [ " + pattern + " ]");
 
@@ -25,7 +26,7 @@
                             var params = {};
 
                             if (urlParameter != null) {
-                                params[urlParameter] = "" + matches;
+                                params[urlParameter] = uri.source;
                             }
 
                             var macro = {
