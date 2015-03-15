@@ -3,6 +3,13 @@
 Atlassian products have a rich set of REST APIs for you to use.
 These APIs are the way that you interact with the Atlassian application's features and data.
 
+## API Structure
+
+Atlassian's REST APIs follow [an established structure](https://developer.atlassian.com/docs/atlassian-platform-common-components/rest-api-development/rest-plugin-module#RESTPluginModule-MappingtheURLtoaResource).
+Note that the `context-path` element is not always used.
+
+    https://myhost.com:port/context-path/rest/api-name/api-version/resource-name
+
 ## Product APIs
 
 [Atlassian REST API Browser](product-api-browser.html) provides an interactive interface to help you get acquainted with the available APIs.
@@ -10,7 +17,7 @@ Additionally, there is static REST API documentation available for [JIRA](https:
 
 ## Atlassian Connect
 
-Atlassian Connect provides a set of REST APIs specifically designed for use by add-ons.
+Atlassian Connect provides a set of REST APIs specifically designed for use by add-ons. The `api-name` used is `atlassian-connect`.
 
 ### Index
 
