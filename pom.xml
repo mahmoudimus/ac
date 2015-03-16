@@ -652,7 +652,7 @@
     </dependencyManagement>
     <properties>
         <!-- VERSIONS -->
-        <amps.version>5.0.4</amps.version>
+        <amps.version>4.2.22</amps.version>
         <atlassian.analytics.version>3.38</atlassian.analytics.version>
         <atlassian.applinks.version>4.2.4</atlassian.applinks.version>
         <atlassian.confluence.version>5.7-OD-44-026</atlassian.confluence.version>
