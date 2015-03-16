@@ -69,6 +69,110 @@ Atlassian Connect provides a set of REST APIs specifically designed for use by a
                     </tr>
                 </tbody>
             </table>
+            <h4>Response fields:</h4>
+            <p>
+                The fields `key` and `version` correspond to fields with the same name in the [the add-on descriptor](../modules/#properties).
+            </p>
+            <table class="params table table-striped aui">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th class="last">Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="name">
+                            <code>state</code>
+                        </td>
+                        <td class="type">
+                            <code>string</code>
+                        </td>
+                        <td class="description last">
+                            <p>The state of the add-on, `ENABLED` or `DISABLED`.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="name">
+                            <code>host.product</code>
+                        </td>
+                        <td class="type">
+                            <code>string</code>
+                        </td>
+                        <td class="description last">
+                            <p>The display name of the host product, `JIRA` or `Confluence`.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="name">
+                            <code>host.contacts.name</code>
+                        </td>
+                        <td class="type">
+                            <code>string</code>
+                        </td>
+                        <td class="description last">
+                            <p>The name of a contact person for the host instance.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="name">
+                            <code>host.contacts.email</code>
+                        </td>
+                        <td class="type">
+                            <code>string</code>
+                        </td>
+                        <td class="description last">
+                            <p>The e-mail of a contact person for the host instance.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="name">
+                            <code>license.active</code>
+                        </td>
+                        <td class="type">
+                            <code>boolean</code>
+                        </td>
+                        <td class="description last">
+                            <p>The state of the license, `true` for active subscriptions and evaluations, `false` for terminated subscriptions and expired evaluations.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="name">
+                            <code>license.type</code>
+                        </td>
+                        <td class="type">
+                            <code>string</code>
+                        </td>
+                        <td class="description last">
+                            <p>The license type, see [FAQ](https://www.atlassian.com/licensing/purchase-licensing#licensing).
+                            Possible values include, but are not limited to `COMMERCIAL`, `COMMUNITY`, `ACADEMIC` and `DEVELOPER`.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="name">
+                            <code>license.evaluation</code>
+                        </td>
+                        <td class="type">
+                            <code>boolean</code>
+                        </td>
+                        <td class="description last">
+                            <p>A flag indicating whether the add-on is being used under an evaluation license.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="name">
+                            <code>license.supportEntitlementNumber</code>
+                        </td>
+                        <td class="type">
+                            <code>string</code>
+                        </td>
+                        <td class="description last">
+                            <p>The [Support Entitlement Number](https://confluence.atlassian.com/display/Support/Finding+Your+Support+Entitlement+Number) (SEN) associated with the license.</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
             <h4>Response representations:</h4>
                 <h5><code>200</code> - application/json</h5>
                 <p>Request issued by enabled, licensed add-on.</p>
