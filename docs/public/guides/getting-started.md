@@ -54,6 +54,7 @@ Your `atlassian-connect.json` file will use a [`generalPages` module](../modules
         }
     }
 ```
+    __Note:__ "baseUrl" attribute must be unique to each add-on
 4. Save and close the descriptor file.  
 
 __Note:__ You can validate your descriptor using this [handy tool](https://atlassian-connect-validator.herokuapp.com/validate).
