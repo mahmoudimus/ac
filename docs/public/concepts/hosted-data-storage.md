@@ -16,7 +16,7 @@ The data is limited to 100 properties, with a single property up to 32KB in size
 The properties have to be in a valid JSON format.
 Requests via [`AP.request`](../javascript/module-request.html) to store and receive properties can only be made with a logged-in user.
 
-**Warning:** Add-on properties can be manipulated by a malicious user triggering REST calls from within a connect iframe (e.g. using the developer console). For this reason:
+**Warning:** Add-on properties can be manipulated by a malicious authenticated user (e.g. by making REST calls through the developer console). For this reason:
 
  * Don't store user-specific data in add-on properties (particularly sensitive data).
  * Be defensive when retrieving add-on properties, and don't assume data consistency (arbitrary keys may be modified or deleted by users).
