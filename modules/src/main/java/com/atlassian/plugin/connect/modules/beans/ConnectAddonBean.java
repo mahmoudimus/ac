@@ -134,7 +134,7 @@ public class ConnectAddonBean extends BaseModuleBean
      * The base url of the remote add on.
      * Only add-ons with a baseUrl starting with ``https://`` can be [installed in cloud instances](../developing/cloud-installation.html)
      * servers. ``http://`` may still be used for testing locally.  
-     * Note: This attribute must be unique to each attribute.
+     * Note: each add-on should have a unique baseUrl.
      */
     @Required
     @StringSchemaAttributes(format = "uri")
