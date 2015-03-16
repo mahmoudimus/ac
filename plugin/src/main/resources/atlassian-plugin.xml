@@ -90,6 +90,8 @@
         <resource type="download" name="host.css" location="/css/iframe/host.css" />
         <resource type="download" name="admin.css" location="/css/iframe/admin.css" />
         <resource type="download" name="messages-main.css" location="css/messages/main.css" />
+
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <web-resource key="images">
