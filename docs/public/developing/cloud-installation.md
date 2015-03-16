@@ -20,7 +20,7 @@ applications only accept add-ons installed through the Marketplace.
 
 ## <a name="prereqs"></a>Before starting
 
-There are a few prerequisites before you create your Markeptlace listing:
+There are a few prerequisites before you create your Marketplace listing:
 
 - **Create or get access to a cloud-hosted product instance**  
     You can create an environment for testing simply by [trialing](https://www.atlassian.com/try)
