@@ -8,13 +8,15 @@ machine.
 To do this, you'll need to list your add-on in the [Atlassian Marketplace](https://marketplace.atlassian.com/). This is necessary whether you want to make your add-on available privately or publicly, since cloud 
 applications only accept add-ons installed through the Marketplace. 
 
-What's here: 
+**Table of contents**
 
-* [Prerequisites](#prereqs)  
-* [Creating your Marketplace listing](#listing)  
-* [Creating access tokens for your add-on](#tokens)  
-* [Installing your add-on with access tokens](#installing-tokens)  
-
+* [Before starting](#prereqs)
+* [Creating the Marketplace listing](#listing)
+* [Access tokens](#access-tokens)
+  * [Access token restrictions](#token-restrictions)
+  * [Creating tokens](#tokens)
+  * [Installing add-ons with access tokens](#installing-tokens)
+  * [Applying a token from the administration console](#applying-tokens)
 
 ## <a name="prereqs"></a>Before starting
 
@@ -39,7 +41,7 @@ There are a few prerequisites before you create your Markeptlace listing:
     associated with it. To get an account associated with the Marketplace, [sign up here](https://id.atlassian.com/profile/signUp.action?application=mpac&continue=https://marketplace.atlassian.com/). 
 
 
-## <a name="listing"></a>Create the listing
+## <a name="listing"></a>Creating the Marketplace listing
 With your Marketplace account set up and add-on descriptor on hand, create the Atlassian Connect
 listing as follows:
 
@@ -49,7 +51,7 @@ Now, you can generate test license tokens for your add-on and install it in clou
 either through MyAtlassian for live instances, or through the descriptor link of the
 listing view for locally-running instances. The next section provides more detail on how to do this.  
 
-## Access tokens
+## <a name="access-tokens"></a>Access tokens
 
 If you created a **private** listing in the Marketplace, you can create and use access tokens. 
 Access tokens are like licenses that you can generate and manage without going through 
@@ -60,7 +62,7 @@ only intend your add-on for internal use.
 If your add-on is paid, after you install your add-on and apply a token, you can test your 
 add-on against various [license states](../concepts/licensing.html) like valid, expired, and unlicensed.
 
-### Access token restrictions
+### <a name="token-restrictions"></a>Access token restrictions
 While access tokens are _like_ licenses, a few restrictions apply. 
 
 - **50-token limit**
@@ -127,7 +129,7 @@ state you'd like to test – active trial, subscription, inactive subscription, 
 The usual options for managing the subscription for your add-on will be disabled in the user 
 interface, since the token is the mechanism that serves this function for now.  
 
-### Applying a token from the administration console
+### <a name="applying-tokens"></a> Applying a token from the administration console
 You can also generate a token directly from a listing directly in the product like JIRA or Confluence. 
 You can do this from the **Manage add-ons** page in the administration console:
 
