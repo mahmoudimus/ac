@@ -299,13 +299,14 @@ To create a query string hash, follow the detailed instructions below:
     <br><br>
 4. Append the character `'&'`<br><br>
 5. Compute canonical query string
-  *  Sort the query parameters primarily by their percent-encoded names and secondarily by their percent-encoded values
+  *  The query string will use [percent-encoding](http://en.wikipedia.org/wiki/Percent-encoding).
+  *  Sort the query parameters primarily by their percent-encoded names and secondarily by their percent-encoded values.
   *  Sorting is by codepoint: `sort(["a", "A", "b", "B"]) => ["A", "B", "a", "b"]`
   *  For each parameter append its percent-encoded name, the `'='` character and then its percent-encoded value.
   *  In the case of repeated parameters append the `','` character and subsequent percent-encoded values.
   *  Ignore the `jwt` parameter, if present.
   *  Some particular values to be aware of:
-    *  A whitespace character is encoded as "%20",
+    *  A whitespace character is encoded as `"%20"`,
     *  `"+"` as `"%2B"`,
     *  `"*"` as `"%2A"` and
     *  `"~"` as `"~"`.<br>
