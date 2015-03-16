@@ -57,7 +57,6 @@ public class ConnectJsonExamples
 {
     private static final Gson gson = ConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create();
 
-    public static final String ADDON_COMPLETE_EXAMPLE = createAddonCompleteExample();
     public static final String ADDON_EXAMPLE = createAddonExample();
     public static final String AUTHENTICATION_EXAMPLE = createAuthenticationExample();
     public static final String COMPOSITE_CONDITION_EXAMPLE = createCompositeConditionExample();
@@ -78,6 +77,7 @@ public class ConnectJsonExamples
     public static final String PARAMS_EXAMPLE = createParamsExample();
     public static final String POST_FUNCTION_EXAMPLE = createPostFunctionExample();
     public static final String PRJ_ADMIN_PAGE_EXAMPLE = createProjectAdminPageExample();
+    public static final String REPORT_EXAMPLE = createReportExample();
     public static final String SCOPES_EXAMPLE = createScopesExample();
     public static final String SEARCH_VIEW_EXAMPLE = createSearchViewExample();
     public static final String SINGLE_CONDITION_EXAMPLE = createSingleConditionExample();
@@ -179,40 +179,6 @@ public class ConnectJsonExamples
         return gson.toJson(addonBean);
     }
 
-    private static String createAddonCompleteExample()
-    {
-        ConnectAddonBean addonBean = newConnectAddonBean()
-                .withKey("my-addon-key")
-                .withName("My Connect Addon")
-                .withDescription("A connect addon that does something")
-                .withVendor(newVendorBean().withName("My Company").withUrl("http://www.example.com").build())
-                .withBaseurl("http://www.example.com/connect/jira")
-                .withLinks(ImmutableMap.builder().put("self", "http://www.example.com/connect/jira").build())
-                .withAuthentication(newAuthenticationBean().build())
-                .withLicensing(true)
-                .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").withUninstalled("/uninstalled").build())
-                .withScopes(Sets.newHashSet(ScopeName.READ, ScopeName.WRITE))
-                .withModules("webItems", WebItemModuleBean.newWebItemBean().withName(i18nProperty("Web Item")).withUrl("/my-web-item").withLocation("system.preset.filters").build())
-                .withModules("webPanels", WebPanelModuleBean.newWebPanelBean().withName(i18nProperty("Web Panel")).withLocation("com.atlassian.jira.plugin.headernav.left.context").withUrl("/my-web-panel").build())
-                .withModules("generalPages", ConnectPageModuleBean.newPageBean().withName(i18nProperty("General Page")).withUrl("my-general-page").build())
-                .withModules("adminPages", ConnectPageModuleBean.newPageBean().withName(i18nProperty("Admin Page")).withUrl("my-admin-page").build())
-                .withModules("configurePage", ConnectPageModuleBean.newPageBean().withName(i18nProperty("Config Page")).withUrl("my-configure-page").build())
-                .withModules("webhooks", WebHookModuleBean.newWebHookBean().withEvent("jira:issue_created").withUrl("/issue-created").build())
-                .withModules("jiraIssueTabPanels", ConnectTabPanelModuleBean.newTabPanelBean().withName(i18nProperty("Issue Tab")).withUrl("my-issue-tab-panel").build())
-                .withModules("jiraProjectAdminTabPanels", ConnectTabPanelModuleBean.newTabPanelBean().withUrl("my-admin-tab-panel").build())
-                .withModules("jiraProjectTabPanels", ConnectTabPanelModuleBean.newTabPanelBean().withName(i18nProperty("Project Tab")).withUrl("my-project-tab-panel").build())
-                .withModules("jiraProfileTabPanels", ConnectTabPanelModuleBean.newTabPanelBean().withName(i18nProperty("Profile Tab")).withUrl("my-profile-tab-panel").build())
-                .withModules("jiraWorkflowPostFunctions", WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean().withName(i18nProperty("Workflow Function")).withCreate(new UrlBean("/create")).build())
-                .withModules("jiraSearchRequestViews", SearchRequestViewModuleBean.newSearchRequestViewModuleBean().withName(i18nProperty("Search View")).withUrl("/searchRequest").build())
-                .withModules("profilePages", ConnectPageModuleBean.newPageBean().withName(i18nProperty("Profile Page")).withUrl("my-confluence-profile-page").build())
-                .withModules("dynamicContentMacros", DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean().withName(i18nProperty("Dynamic Macro")).withUrl("/dynamic-macro").build())
-                .withModules("staticContentMacros", StaticContentMacroModuleBean.newStaticContentMacroModuleBean().withName(i18nProperty("Static Macro")).withUrl("/static-macro").build())
-                .withModules("spaceToolsTabs", SpaceToolsTabModuleBean.newSpaceToolsTabBean().withName(i18nProperty("Space Tools Tab")).withUrl("/space-tools").build())
-                .build();
-
-        return gson.toJson(addonBean);
-    }
-
     private static I18nProperty i18nProperty(String name)
     {
         return new I18nProperty(name, null);
@@ -281,6 +247,20 @@ public class ConnectJsonExamples
                 .build();
 
         return gson.toJson(createModuleArray("webItems", webItemModuleBean));
+    }
+
+    private static String createReportExample()
+    {
+        ReportModuleBean reportModuleBean = ReportModuleBean.newBuilder()
+                .withKey("report-example")
+                .withUrl("/report?projectKey={project.key}")
+                .withName(new I18nProperty("Example Report", "report.example.name"))
+                .withDescription(new I18nProperty("This is an example report", "report.example.desc"))
+                .withReportCategory(ReportCategory.AGILE)
+                .withWeight(100)
+                .withThumbnailUrl("http://example.com/images/report-example-thumbnail.png")
+                .build();
+        return gson.toJson(createModuleArray("jiraReports", reportModuleBean));
     }
 
     private static String createPostFunctionExample()
