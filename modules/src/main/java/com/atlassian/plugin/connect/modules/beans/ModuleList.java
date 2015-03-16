@@ -184,7 +184,7 @@ public class ModuleList extends BaseModuleBean
     /**
      * The Project Admin Tab Panel module allows you to add new panels to the 'Project Admin' page.
      *
-     * @schemaTitle Issue Tab Panel
+     * @schemaTitle Project Admin Tab Panel
      */
     @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider", products = {ProductFilter.JIRA})
     private List<ConnectProjectAdminTabPanelModuleBean> jiraProjectAdminTabPanels;
