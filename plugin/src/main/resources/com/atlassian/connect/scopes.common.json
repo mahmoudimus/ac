@@ -50,7 +50,7 @@
     {
       "key": "addons",
       "name": "atlassian-connect",
-      "basePaths": ["/addons/.*"],
+      "basePaths": ["/addons(/.*)"],
       "versions": ["1", "latest"],
       "public": true
     },
