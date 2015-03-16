@@ -305,7 +305,8 @@ To create a query string hash, follow the detailed instructions below:
   *  In the case of repeated parameters append the `','` character and subsequent percent-encoded values.
   *  Ignore the `jwt` parameter, if present.
   *  Some particular values to be aware of:
-    *  `"+"` is encoded as `"%20"`,
+    *  A whitespace character is encoded as "%20",
+    *  `"+"` as `"%2B"`,
     *  `"*"` as `"%2A"` and
     *  `"~"` as `"~"`.<br>
     (These values used for consistency with OAuth1.)
