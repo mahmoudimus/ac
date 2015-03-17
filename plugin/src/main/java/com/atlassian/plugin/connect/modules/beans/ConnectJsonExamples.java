@@ -202,14 +202,35 @@ public class ConnectJsonExamples
 
     private static String createPageExample()
     {
-        ConnectPageModuleBean pageModuleBean = ConnectPageModuleBean.newPageBean()
-                .withName(new I18nProperty("General Page", ""))
-                .withKey("page-key")
-                .withUrl("/hello-world")
+        ConnectPageModuleBean generalPageModuleBean = ConnectPageModuleBean.newPageBean()
+                .withName(new I18nProperty("My General Page", "mygeneralpage.name"))
+                .withKey("my-general-page")
+                .withUrl("/my-general-page")
                 .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(80).withWidth(80).build())
                 .build();
+        ConnectPageModuleBean adminPageModuleBean = ConnectPageModuleBean.newPageBean()
+                .withName(new I18nProperty("My Admin Page", "myadminpage.name"))
+                .withKey("my-admin-page")
+                .withUrl("/my-admin-page")
+                .build();
+        ConnectPageModuleBean configurePageModuleBean = ConnectPageModuleBean.newPageBean()
+                .withName(new I18nProperty("My Configure Page", "myconfigpage.name"))
+                .withKey("my-config-page")
+                .withUrl("/my-config-page")
+                .build();
+        ConnectPageModuleBean userProfilePageModuleBean = ConnectPageModuleBean.newPageBean()
+                .withName(new I18nProperty("My Confluence User Profile Page", "myprofilepage.name"))
+                .withKey("my-confluence-user-profile-page")
+                .withUrl("/my-confluence-user-profile-page")
+                .build();
 
-        return gson.toJson(createModuleArray("generalPages", pageModuleBean));
+        JsonObject object = createModuleArray(ImmutableMap.of(
+                "generalPages", generalPageModuleBean,
+                "adminPages", adminPageModuleBean,
+                "configurePage", configurePageModuleBean,
+                "profilePages", userProfilePageModuleBean
+        ));
+        return gson.toJson(object);
     }
 
     private static String createProjectAdminPageExample()
