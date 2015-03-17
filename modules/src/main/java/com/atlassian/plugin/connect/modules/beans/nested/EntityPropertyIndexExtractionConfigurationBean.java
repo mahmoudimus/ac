@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
  * Defines an entity property to be indexed by JIRA. An entity property is a reference to a JSON object, which also defines it's type.
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.plugin.capabilities.beans.ConnectJsonExamples#ENTITY_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE}
+ * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ENTITY_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE}
  * @schemaTitle Property Index
  * @since 1.0
  */

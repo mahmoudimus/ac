@@ -15,6 +15,19 @@ import com.atlassian.plugin.connect.modules.beans.builder.ConnectProjectAdminTab
 public class ConnectProjectAdminTabPanelModuleBean extends ConnectTabPanelModuleBean
 {
     private static final String PROJECT_CONFIG_TAB_LOCATION_PREFIX = "atl.jira.proj.config/";
+
+    /**
+     * The name of the group of tabs in the project configuration where the tab panel should appear.
+     * The following are accepted values.
+     *
+     * * `projectgroup1`
+     * * `projectgroup2`
+     * * `projectgroup3`
+     * * `projectgroup4`
+     *
+     *See [Project Configuration Locations](https://developer.atlassian.com/jiradev/jira-architecture/web-fragments/project-configuration-locations#ProjectConfigurationLocations-AddingNewItemstoExistingWebSections) for details.
+     */
+
     private String location;
 
     public ConnectProjectAdminTabPanelModuleBean() {}

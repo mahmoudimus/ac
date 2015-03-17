@@ -2,7 +2,7 @@
   "scopes": [
     {
       "key": "READ",
-      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "worklog", "customFieldOption", "issueLink", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "comment", "user", "filter", "myself", "userPicker", "groupsPicker", "auditing", "jql", "configuration", "commentProperties"],
+      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "customFieldOption", "issueLink", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "user", "filter", "myself", "userPicker", "groupsPicker", "auditing", "jql", "configuration", "commentProperties"],
       "pathKeys": ["download attachments", "project avatars", "user avatars", "thumbnails"],
       "methods": ["GET"]
     },
@@ -15,7 +15,7 @@
     },
     {
       "key": "WRITE",
-      "restPathKeys": ["issue", "comment", "worklog", "filter", "auditing", "commentProperties"],
+      "restPathKeys": ["issue", "filter", "auditing", "commentProperties"],
       "methods": ["POST", "PUT"]
     },
     {
@@ -27,7 +27,7 @@
     },
     {
       "key": "DELETE",
-      "restPathKeys": ["issue", "issueLink", "attachment", "comment", "worklog", "filter", "commentProperties"],
+      "restPathKeys": ["issue", "issueLink", "attachment", "filter", "commentProperties"],
       "methods": ["DELETE"]
     },
     {
@@ -63,7 +63,7 @@
     {
       "key": "screens",
       "name": "api",
-      "basePaths": ["/screens/.*"],
+      "basePaths": ["/screens(/.*)"],
       "versions": ["2", "2.0.alpha1", "latest"],
       "public": true
     },
@@ -173,13 +173,6 @@
       "public": true
     },
     {
-      "key": "worklog",
-      "name": "api",
-      "basePaths": ["/issue/.+/worklog($|/.*)"],
-      "versions": ["2", "latest", "2.0.alpha1"],
-      "public": true
-    },
-    {
       "key": "customFieldOption",
       "name": "api",
       "basePaths": ["/customFieldOption($|/.*)"],
@@ -190,13 +183,6 @@
       "key": "attachment",
       "name": "api",
       "basePaths": ["/attachment($|/.*)"],
-      "versions": ["2", "latest", "2.0.alpha1"],
-      "public": true
-    },
-    {
-      "key": "comment",
-      "name": "api",
-      "basePaths": ["/issue/.+/comment($|/.*)"],
       "versions": ["2", "latest", "2.0.alpha1"],
       "public": true
     },
