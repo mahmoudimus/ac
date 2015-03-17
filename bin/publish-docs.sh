@@ -1,12 +1,16 @@
 #!/bin/bash
 
+#SET THE DESTINATION PATH ON THE NEXT FILE SYSTEM
 DESTINATIONHOST="uploads@developer-app.internal.atlassian.com"
 DESTINATIONPATH="/opt/j2ee/domains/atlassian.com/developer-prod/static-content/static/connect/docs/"
-NEW_VERSION="1.1.26"
+NEWVERSION="1.1.26"
+#DESTINATIONHOST="jfurler@localhost"
+#DESTINATIONPATH="$HOME/atlassian-connect/test/ac-docs/"
 
-#ssh "$DESTINATIONHOST" "cd $DESTINATIONPATH; ln -sfn ./$NEW_VERSION latest; ls -l"
+echo "$DESTINATIONHOST:$DESTINATIONPATH/$NEW_VERSION"
 
-ln -sfn ./$NEW_VERSION latest
-rsync -avz -e 'ssh' latest "$DESTINATIONHOST:$DESTINATIONPATH"
 
+ssh "$DESTINATIONHOST" "cd $DESTINATIONPATH; ln -sfn ./$NEW_VERSION test"
 echo "'latest' symlink updated."
+
+echo "Docs published to https://developer.atlassian.com/static/connect/docs"
