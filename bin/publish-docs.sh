@@ -9,8 +9,11 @@ NEWVERSION="lkfjasdlfkjasdlkfj"
 
 echo "$DESTINATIONHOST:$DESTINATIONPATH/$NEW_VERSION"
 
+ln -sfn ./$NEW_VERSION test
+rsync -avz -e 'ssh' test "$DESTINATIONHOST:$DESTINATIONPATH"
 
-ssh "$DESTINATIONHOST" "cd $DESTINATIONPATH; rm -f test; ln -sfn ./$NEW_VERSION test"
+
+#ssh "$DESTINATIONHOST" "cd $DESTINATIONPATH; rm -f test; ln -sfn ./$NEW_VERSION test"
 echo "'latest' symlink updated."
 
 echo "Docs published to https://developer.atlassian.com/static/connect/docs"
