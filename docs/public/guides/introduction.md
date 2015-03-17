@@ -14,7 +14,7 @@ Fundamentally, Atlassian Connect add-ons have three major capabilities:
 
 1. Insert content in [certain defined places](../modules/jira/index.html) in the Atlassian application's UI.
 2. Make calls to the Atlassian application's [REST API](../rest-apis/index.html).
-3. Listen and respond to [WebHooks](../modules/jira/webhook.html) fired by the Atlassian application.
+3. Listen and respond to [WebHooks](../modules/common/webhook.html) fired by the Atlassian application.
 
 
 ## What does an Atlassian Connect add-on do?
@@ -25,8 +25,8 @@ which modules it intends to use, and which scopes it will need.
 - **Extend the Atlassian application UI with modules.** 
 The features that an add-on can use within the Atlassian application are
 called modules. 
-There are modules for [general pages](../modules/jira/general-page.html) in the application 
-or more specific locations, like [panels](../modules/jira/web-panel.html) in JIRA issues 
+There are modules for [general pages](../modules/common/general-page.html) in the application
+or more specific locations, like [panels](../modules/common/web-panel.html) in JIRA issues
 or [macros](../modules/confluence/dynamic-content-macro.html) in Confluence pages. 
 Refer to the full module lists for [JIRA](../modules/jira/index.html) 
 and [Confluence](../modules/confluence/index.html).
@@ -42,7 +42,7 @@ respect necessary permissions and make other decisions based on the user's ident
 data or push information to the Atlassian host application 
 (for example, to build reports and create issues). 
 - **Respond to the Atlassian application's webhooks.** Your add-on can receive notifications
-when certain events occur with [webhooks](../modules/jira/webhook.html),
+when certain events occur with [webhooks](../modules/common/webhook.html),
 like when a JIRA issue changes status. 
 The webhook payload contains information about the
 event, allowing your add-on to respond appropriately.
