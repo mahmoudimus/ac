@@ -175,8 +175,6 @@ public class ModuleList extends BaseModuleBean
 
     /**
      * The Issue Tab Panel module allows you to add new tabs to the 'Browse Component' page.
-     *
-     * @schemaTitle Issue Tab Panel
      */
     @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider", products = {ProductFilter.JIRA})
     private List<ConnectTabPanelModuleBean> jiraIssueTabPanels;
@@ -191,16 +189,12 @@ public class ModuleList extends BaseModuleBean
 
     /**
      * The Project Tab Panel module allows you to add new panels to the 'Project' page.
-     *
-     * @schemaTitle Project Tab Panel
      */
     @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider", products = {ProductFilter.JIRA})
     private List<ConnectTabPanelModuleBean> jiraProjectTabPanels;
 
     /**
      * The User Profile Tab Panel module allows you to add new tabs to the 'Browse Component' page.
-     *
-     * @schemaTitle User Profile Tab Panel
      */
     @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider", products = {ProductFilter.JIRA})
     private List<ConnectTabPanelModuleBean> jiraProfileTabPanels;

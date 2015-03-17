@@ -8,14 +8,20 @@ import com.atlassian.plugin.connect.modules.beans.builder.ConnectTabPanelModuleB
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Tab panel modules allow add-ons to insert new tabs into various parts of the host applications user interface.
- * <p/>
- * The tab panel module takes care of integrating the add-on content into the application for you. The add-on content
+ * Tab panel modules allow add-ons to insert new elements into the following tabbed sections of the host application's
+ * user interface.
+ *
+ * * Issue page _Activity_ section
+ * * Project page sidebar
+ * * User profile page sidebar
+ *
+ *The tab panel module takes care of integrating the add-on content into the application for you. The add-on content
  * automatically gets the tab panel styles and decorators from the host application.
- * <p/>
+ *
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#COMPONENT_TAB_PANEL_EXAMPLE}
+ * @schemaTitle Tab Panel
+ * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#TAB_PANEL_EXAMPLE}
  * @since 1.0
  */
 @SchemaDefinition("tabPanel")
