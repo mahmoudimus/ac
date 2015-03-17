@@ -14,7 +14,7 @@ There are a few limitations applicable to iframes:
 
 However, Atlassian Connect makes use of a technique called [cross-domain messaging](http://easyxdm.net/wp/).
 This technique provides a string-based transport stack that allows communication between the iframe and its parent
-using one of several available techniques. The most efficient technique is based on the browser's capabilities.
+using one of several available techniques. The most efficient technique available is used (this will depend on the browser's capabilities).
 
 Atlassian Connect transparently enables cross-domain messaging in its page modules. One benefit you'll see from this
 is that your add-on's page modules are automatically resized based on its content when loaded on the page.
@@ -77,14 +77,14 @@ the product host in order for the cross-domain messaging bridge to be establishe
 
 ### Options
 
-The JavaScript client library has some configuration options that allow to customize its behavior. The options are passed
+The JavaScript client library has some configuration options for customizing its behavior. The options are passed
 using the `data-options` attribute.
 
 ```
 <script src="https://{HOSTNAME}:{PORT}/{CONTEXT}/atlassian-connect/all.js" data-options="option1:value;option2:value"></script>
 ```
 
-If you are using requirejs or other dynamic script loader. Use an element with an id of `ac-iframe-options` in place of a script tag.
+If you are using requirejs or other dynamic script loader, use an element with an id of `ac-iframe-options` in place of a script tag.
 ```
 <div id="ac-iframe-options" data-options="option1:value;option2:value"></div>
 ```
