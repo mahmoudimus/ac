@@ -27,7 +27,11 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * words, the Atlassian application will send an HTTP POST to this resource in response to an application event. The
  * add-on code that handles the POST should process any information passed in the body of the message, as appropriate.
  * Each webhook POST sent to the add-on will also include the authentication headers that allow the add-on to validate
- * the authenticity of that request.
+ * the authenticity of that request. Specifically, the JWT token can be found in the "Authorization" HTTP header.
+ *
+ *Note that if using Apache and mod_wsgi to serve files to a Django application, the Authentication header is stripped
+ * out by default. [Extra configuration](http://www.django-rest-framework.org/api-guide/authentication/#apache-mod_wsgi-specific-configuration)
+ * is required to ensure the Authentication header is visible.
  *
  *### Variable Substitution
  *
