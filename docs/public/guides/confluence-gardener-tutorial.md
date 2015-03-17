@@ -298,7 +298,7 @@ and make sure it actually works.
 
 First, you'll declare the dialog in your `atlassian-connect.json` descriptor file. These dialogs are full-fledged AUI dialogs 
 that exist in the parent frame (not in the same iframe Gardener uses). We'll provide the HTML source for the dialog, you'll 
-register a new [`webItem`](../modules/jira/web-item.html) that loads inside the
+register a new [`webItem`](../modules/common/web-item.html) that loads inside the
 full-screen dialog.
 
 1. Open `atlassian-connect.json` in your editor.  
