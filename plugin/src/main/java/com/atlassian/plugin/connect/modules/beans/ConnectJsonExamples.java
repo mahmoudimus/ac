@@ -46,7 +46,7 @@ import com.google.gson.JsonObject;
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
-import static com.atlassian.plugin.connect.modules.beans.ContentPropertyIndexSchemaModuleBean.newContentPropertyIndexSchemaModuleBean;
+import static com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean.newContentPropertyModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean.newEntityPropertyModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
@@ -98,7 +98,7 @@ public class ConnectJsonExamples
     public static final String WEBSECTION_EXAMPLE = createWebSectionExample();
     public static final String BLUEPRINT_EXAMPLE = createBlueprintExample();
     public static final String BLUEPRINT_TEMPLATE_EXAMPLE = createBlueprintTemplateExample();
-    public static final String CONTENT_PROPERTY_EXAMPLE = createContentPropertyIndexSchemaExample();
+    public static final String CONTENT_PROPERTY_EXAMPLE = createContentPropertyExample();
     public static final String MACRO_RENDER_MODES_EXAMPLE = createDynamicMacroExampleForRenderModes();
 
     public static final String LIFECYCLE_PAYLOAD_EXAMPLE = createLifecyclePayloadExample();
@@ -713,7 +713,7 @@ public class ConnectJsonExamples
         return gson.toJson(issueAttachmentIndexConfiguration);
     }
 
-    private static String createContentPropertyIndexSchemaExample()
+    private static String createContentPropertyExample()
     {
         List<ContentPropertyIndexExtractionConfigurationBean> extractionConfiguration = Lists.newArrayList(
                 new ContentPropertyIndexExtractionConfigurationBean("attachment.size", ContentPropertyIndexFieldType.number),
@@ -724,13 +724,13 @@ public class ConnectJsonExamples
         ContentPropertyIndexKeyConfigurationBean indexConfiguration =
                 new ContentPropertyIndexKeyConfigurationBean("attachment", extractionConfiguration);
 
-        ContentPropertyIndexSchemaModuleBean contentPropertyIndexSchemaModuleBean =
-                newContentPropertyIndexSchemaModuleBean()
+        ContentPropertyModuleBean contentPropertyModuleBean =
+                newContentPropertyModuleBean()
                         .withName(new I18nProperty("Attachment Index Document", ""))
                         .withKeyConfiguration(indexConfiguration)
                         .build();
 
-        return gson.toJson(createJsonArray("confluenceContentProperties", contentPropertyIndexSchemaModuleBean));
+        return gson.toJson(createJsonArray("confluenceContentProperties", contentPropertyModuleBean));
     }
 
     private static JsonObject createJsonArray(String name, ModuleBean bean)

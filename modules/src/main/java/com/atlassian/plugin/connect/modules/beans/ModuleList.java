@@ -10,7 +10,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.isParameterizedListWithType;
@@ -289,8 +288,8 @@ public class ModuleList extends BaseModuleBean
      * @see <a href="https://developer.atlassian.com/display/CONFDEV/Content+Properties+in+the+REST+API">
      *     developer.atlassian.com</a> for more details
      */
-    @ConnectModule (value = "com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultContentPropertyIndexSchemaModuleProvider", products = { ProductFilter.CONFLUENCE })
-    private List<ContentPropertyIndexSchemaModuleBean> confluenceContentProperties;
+    @ConnectModule (value = "com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultContentPropertyModuleProvider", products = { ProductFilter.CONFLUENCE })
+    private List<ContentPropertyModuleBean> confluenceContentProperties;
 
     public ModuleList()
     {
@@ -500,7 +499,7 @@ public class ModuleList extends BaseModuleBean
         return blueprints;
     }
 
-    public List<ContentPropertyIndexSchemaModuleBean> getConfluenceContentProperties()
+    public List<ContentPropertyModuleBean> getConfluenceContentProperties()
     {
         return confluenceContentProperties;
     }

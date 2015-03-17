@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 import com.atlassian.confluence.plugins.contentproperty.index.config.ContentPropertyIndexSchemaModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.ContentPropertyIndexSchemaModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @ConfluenceComponent
 public class ContentPropertyIndexSchemaModuleDescriptorFactory implements
-        ConnectModuleDescriptorFactory<ContentPropertyIndexSchemaModuleBean, ContentPropertyIndexSchemaModuleDescriptor>
+        ConnectModuleDescriptorFactory<ContentPropertyModuleBean, ContentPropertyIndexSchemaModuleDescriptor>
 {
     private final ConnectContainerUtil connectContainerUtil;
 
@@ -29,7 +29,7 @@ public class ContentPropertyIndexSchemaModuleDescriptorFactory implements
     @Override
     public ContentPropertyIndexSchemaModuleDescriptor createModuleDescriptor(
             ConnectModuleProviderContext moduleProviderContext, Plugin plugin,
-            ContentPropertyIndexSchemaModuleBean bean)
+            ContentPropertyModuleBean bean)
     {
         ContentPropertyIndexSchemaModuleDescriptor descriptor = connectContainerUtil.createBean
                 (ContentPropertyIndexSchemaModuleDescriptor.class);
@@ -38,7 +38,7 @@ public class ContentPropertyIndexSchemaModuleDescriptorFactory implements
     }
 
     private Element createXmlConfig(ConnectModuleProviderContext moduleProviderContext,
-            ContentPropertyIndexSchemaModuleBean bean)
+            ContentPropertyModuleBean bean)
     {
         ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         Element indexSchema = new DOMElement("content-property-index-schema");

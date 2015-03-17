@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 import com.atlassian.confluence.plugins.contentproperty.index.config.ContentPropertyIndexSchemaModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.modules.beans.ContentPropertyIndexSchemaModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ContentPropertyIndexSchemaModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 
@@ -20,12 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Representation of a group of extractions specified by an add-on.
  */
 @ConfluenceComponent
-public class DefaultContentPropertyIndexSchemaModuleProvider implements ContentPropertyIndexSchemaModuleProvider
+public class DefaultContentPropertyModuleProvider implements ContentPropertyModuleProvider
 {
     private final ContentPropertyIndexSchemaModuleDescriptorFactory factory;
 
     @Autowired
-    public DefaultContentPropertyIndexSchemaModuleProvider(
+    public DefaultContentPropertyModuleProvider(
             ContentPropertyIndexSchemaModuleDescriptorFactory factory)
     {
         this.factory = factory;
@@ -33,13 +33,13 @@ public class DefaultContentPropertyIndexSchemaModuleProvider implements ContentP
 
     @Override
     public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin plugin,
-            String jsonFieldName, List<ContentPropertyIndexSchemaModuleBean> beans)
+            String jsonFieldName, List<ContentPropertyModuleBean> beans)
     {
-        return Lists.transform(beans, new Function<ContentPropertyIndexSchemaModuleBean, ModuleDescriptor>()
+        return Lists.transform(beans, new Function<ContentPropertyModuleBean, ModuleDescriptor>()
         {
             @Override
             public ContentPropertyIndexSchemaModuleDescriptor apply(
-                    @Nullable ContentPropertyIndexSchemaModuleBean input)
+                    @Nullable ContentPropertyModuleBean input)
             {
                 return factory.createModuleDescriptor(moduleProviderContext, plugin, input);
             }

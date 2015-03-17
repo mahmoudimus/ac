@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.modules.beans;
 
 import java.util.List;
 
-import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexSchemaModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
 
 import com.google.common.collect.Lists;
@@ -19,20 +19,20 @@ import com.google.common.collect.Lists;
  * @schemaTitle Content Property
  * @since 1.0
  */
-public class ContentPropertyIndexSchemaModuleBean extends RequiredKeyBean
+public class ContentPropertyModuleBean extends RequiredKeyBean
 {
     /**
      * List of properties from which selected values are indexed.
      */
     private final List<ContentPropertyIndexKeyConfigurationBean> keyConfigurations = Lists.newArrayList();
 
-    public ContentPropertyIndexSchemaModuleBean()
+    public ContentPropertyModuleBean()
     {
     }
 
-    public ContentPropertyIndexSchemaModuleBean(ContentPropertyIndexSchemaModuleBeanBuilder contentPropertyIndexSchemaModuleBeanBuilder)
+    public ContentPropertyModuleBean(ContentPropertyModuleBeanBuilder contentPropertyModuleBeanBuilder)
     {
-        super(contentPropertyIndexSchemaModuleBeanBuilder);
+        super(contentPropertyModuleBeanBuilder);
     }
 
     public List<ContentPropertyIndexKeyConfigurationBean> getKeyConfigurations()
@@ -40,8 +40,8 @@ public class ContentPropertyIndexSchemaModuleBean extends RequiredKeyBean
         return keyConfigurations;
     }
 
-    public static ContentPropertyIndexSchemaModuleBeanBuilder newContentPropertyIndexSchemaModuleBean()
+    public static ContentPropertyModuleBeanBuilder newContentPropertyModuleBean()
     {
-        return new ContentPropertyIndexSchemaModuleBeanBuilder();
+        return new ContentPropertyModuleBeanBuilder();
     }
 }
