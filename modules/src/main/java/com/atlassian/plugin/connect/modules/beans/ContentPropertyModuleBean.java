@@ -24,7 +24,7 @@ public class ContentPropertyModuleBean extends RequiredKeyBean
     /**
      * List of properties from which selected values are indexed.
      */
-    private final List<ContentPropertyIndexKeyConfigurationBean> keyConfigurations = Lists.newArrayList();
+    private List<ContentPropertyIndexKeyConfigurationBean> keyConfigurations;
 
     public ContentPropertyModuleBean()
     {
@@ -33,6 +33,10 @@ public class ContentPropertyModuleBean extends RequiredKeyBean
     public ContentPropertyModuleBean(ContentPropertyModuleBeanBuilder contentPropertyModuleBeanBuilder)
     {
         super(contentPropertyModuleBeanBuilder);
+
+        // set by the magic of ConnectReflectionHelper.copyFieldsByNameAndType
+        if (keyConfigurations == null)
+            keyConfigurations = Lists.newArrayList();
     }
 
     public List<ContentPropertyIndexKeyConfigurationBean> getKeyConfigurations()
