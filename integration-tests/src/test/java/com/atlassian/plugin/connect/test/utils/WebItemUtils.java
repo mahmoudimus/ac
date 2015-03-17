@@ -1,9 +1,12 @@
 package com.atlassian.plugin.connect.test.utils;
 
+import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
+
 public class WebItemUtils
 {
-    public static String linkId(String pluginKey, String moduleKey)
+
+    public static String linkId(String moduleKey)
     {
-        return pluginKey + ":" + moduleKey;
+        return String.format("%s:%s", ConnectPluginInfo.getPluginKey(),  moduleKey);
     }
 }

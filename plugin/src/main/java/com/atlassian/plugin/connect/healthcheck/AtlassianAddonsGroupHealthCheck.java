@@ -1,12 +1,10 @@
 package com.atlassian.plugin.connect.healthcheck;
 
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
-import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.User;
-import com.atlassian.crowd.model.user.UserWithAttributes;
 import com.atlassian.crowd.search.EntityDescriptor;
 import com.atlassian.crowd.search.builder.QueryBuilder;
 import com.atlassian.crowd.search.query.entity.EntityQuery;
@@ -25,7 +23,6 @@ import java.util.Set;
 
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.validAddOnEmailAddress;
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.validAddOnUsername;
-import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.validAddonAttribute;
 
 public class AtlassianAddonsGroupHealthCheck implements HealthCheck
 {
@@ -59,25 +56,19 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
             Set<User> usersWithIncorrectEmails = Sets.newHashSet();
             Set<User> usersWithIncorrectPrefix = Sets.newHashSet();
             Set<User> usersIncorrectlyActive = Sets.newHashSet();
-            Set<User> usersWithIncorrectAttributes = Sets.newHashSet();
 
             for (User user : users)
             {
                 if (!validAddOnEmailAddress(user))
                 {
-                    log.warn("Add-on user '{}' has incorrect email '{}'", user.getName(), user.getEmailAddress());
+                    log.warn("Add-on user '" + user.getName() + "' has incorrect email '" + user.getEmailAddress() + "'");
                     usersWithIncorrectEmails.add(user);
                 }
 
                 if (!validAddOnUsername(user))
                 {
-                    log.warn("Add-on user '{}' has incorrect prefix", user.getName());
+                    log.warn("Add-on user '" + user.getName() + "' has incorrect prefix");
                     usersWithIncorrectPrefix.add(user);
-                }
-                if(!validAddonUserAttributes(user))
-                {
-                    log.warn("Add-on user '{}' has missing or incorrect attributes", user.getName());
-                    usersWithIncorrectAttributes.add(user);
                 }
 
 // An add-on which is installed in either JIRA or Confluence will create a _SHARED_ user. This check will
@@ -97,7 +88,7 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
 //                }
             }
 
-            boolean isHealthy = usersWithIncorrectEmails.isEmpty() && usersWithIncorrectPrefix.isEmpty() && usersIncorrectlyActive.isEmpty() && usersWithIncorrectAttributes.isEmpty();
+            boolean isHealthy = usersWithIncorrectEmails.isEmpty() && usersWithIncorrectPrefix.isEmpty() && usersIncorrectlyActive.isEmpty();
 
             StringBuilder reason = new StringBuilder();
 
@@ -116,10 +107,6 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
                 if (!usersIncorrectlyActive.isEmpty())
                 {
                     reason.append(failurePrefix(usersIncorrectlyActive.size())).append(" no applink association. ");
-                }
-                if (!usersWithIncorrectAttributes.isEmpty())
-                {
-                    reason.append(failurePrefix(usersWithIncorrectAttributes.size())).append(" invalid attributes. ");
                 }
 
                 reason.append("This may indicate a customer license workaround.");
@@ -143,21 +130,6 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
     private String failurePrefix(final int size)
     {
         return size + (size == 1 ? " member has" : " members have");
-    }
-
-    private boolean validAddonUserAttributes(User user)  throws ApplicationNotFoundException
-    {
-        try
-        {
-            Application application = applicationManager.findByName(groupProvisioningService.getCrowdApplicationName());
-            UserWithAttributes userWithAttributes = applicationService.findUserWithAttributesByName(application, user.getName());
-            return validAddonAttribute(userWithAttributes, application.getName());
-        }
-        catch (UserNotFoundException e)
-        {
-            log.error("Add-on userwithattributes '{}' not found", user.getName(), e);
-        }
-        return false;
     }
 
     protected Collection<User> getAddonUsers() throws ApplicationNotFoundException

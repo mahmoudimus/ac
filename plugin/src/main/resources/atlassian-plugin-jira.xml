@@ -21,6 +21,8 @@
 
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-workflow-post-function</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-events</dependency>
+
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <!-- JavaScript API Core -->
@@ -28,11 +30,13 @@
     <web-resource key="ap-core">
         <resource type="download" name="core-host.js" location="/js/core/connect-host.js" />
         <dependency>jira.webresources:almond</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <web-resource key="ap-user">
         <resource type="download" name="user.js" location="/js/iframe/host/user.js" />
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <web-resource key="iframe-host-js">
@@ -41,11 +45,13 @@
         <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
         <resource type="download" name="content-resolver.js" location="/js/iframe/host/content-resolver.js" />
         <dependency>com.atlassian.auiplugin:dialog2</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <web-resource key="remote-condition">
         <resource type="download" name="remote.js" location="js/condition/remote.js" />
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <!-- JIRA specific javascript modules -->
@@ -55,6 +61,7 @@
         <resource type="download" name="workflow-post-function-rpc.js" location="js/jira/workflow-post-function/workflow-post-function-rpc.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <web-resource key="events">
@@ -62,6 +69,7 @@
         <resource type="download" name="jira-events-rpc.js" location="/js/jira/events/events-rpc.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <url-reading-web-resource-transformer key="connect-report-transformer" name="Connect report transformer"
@@ -74,6 +82,7 @@
         <transformation extension="css">
             <transformer key="jira-connect-report-transformer"/>
         </transformation>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
 </application>
