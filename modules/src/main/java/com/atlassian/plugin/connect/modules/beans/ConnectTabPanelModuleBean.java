@@ -11,7 +11,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Tab panel modules allow add-ons to insert new elements into the following tabbed sections of the host application's
  * user interface.
  *
- * * Issue page Activity section
+ * * Issue page _Activity_ section
  * * Project page sidebar
  * * User profile page sidebar
  *
