@@ -17,7 +17,7 @@ public class ConnectProjectAdminTabPanelModuleBean extends ConnectTabPanelModule
     private static final String PROJECT_CONFIG_TAB_LOCATION_PREFIX = "atl.jira.proj.config/";
 
     /**
-     * The name of the group of tabs in the project configuration where the tab panel should should appear.
+     * The name of the group of tabs in the project configuration where the tab panel should appear.
      * The following are accepted values.
      *
      * * `projectgroup1`
