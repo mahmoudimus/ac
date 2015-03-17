@@ -83,6 +83,7 @@ public class ConnectJsonExamples
     public static final String SINGLE_CONDITION_EXAMPLE = createSingleConditionExample();
     public static final String SPACE_TOOLS_TAB_EXAMPLE = createSpaceToolsTabExample();
     public static final String STATIC_MACRO_EXAMPLE = createStaticMacroExample();
+    public static final String TAB_PANEL_EXAMPLE = createTabPanelExample();
     public static final String URL_EXAMPLE = createUrlExample();
     public static final String VENDOR_EXAMPLE = createVendorExample();
     public static final String WEBHOOK_EXAMPLE = createWebhookExample();
@@ -247,6 +248,35 @@ public class ConnectJsonExamples
                 .build();
 
         return gson.toJson(createModuleArray("webItems", webItemModuleBean));
+    }
+
+    private static String createTabPanelExample()
+    {
+        ConnectTabPanelModuleBean issueTabPanelBean = ConnectTabPanelModuleBean.newTabPanelBean()
+                .withName(new I18nProperty("My Issue Tab Panel", "myissuetab.name"))
+                .withKey("my-issue-tab")
+                .withUrl("/my-issue-tab")
+                .withWeight(100)
+                .build();
+        ConnectTabPanelModuleBean projectTabPanelBean = ConnectTabPanelModuleBean.newTabPanelBean()
+                .withName(new I18nProperty("My Project Tab Panel", "myprojecttab.name"))
+                .withKey("my-project-tab")
+                .withUrl("/my-project-tab")
+                .withWeight(100)
+                .build();
+        ConnectTabPanelModuleBean userProfileTabPanelBean = ConnectTabPanelModuleBean.newTabPanelBean()
+                .withName(new I18nProperty("My Profile Tab Panel", "myprofiletab.name"))
+                .withKey("my-profile-tab")
+                .withUrl("/my-profile-tab")
+                .withWeight(100)
+                .build();
+        JsonObject object = createModuleArray(ImmutableMap.of(
+                "jiraIssueTabPanels", issueTabPanelBean,
+                "jiraProjectTabPanels", projectTabPanelBean,
+                "jiraProfileTabPanels", userProfileTabPanelBean
+        ));
+        return gson.toJson(object);
+
     }
 
     private static String createReportExample()
@@ -708,5 +738,17 @@ public class ConnectJsonExamples
         JsonObject modules = new JsonObject();
         modules.add("modules", createJsonArray(name, bean));
         return modules;
+    }
+
+    private static JsonObject createModuleArray(ImmutableMap<String, ? extends ModuleBean> modules)
+    {
+        JsonObject modulesObject = new JsonObject();
+        for (Map.Entry<String, ? extends ModuleBean> module : modules.entrySet())
+        {
+            modulesObject.add(module.getKey(), gson.toJsonTree(module.getValue()));
+        }
+        JsonObject obj = new JsonObject();
+        obj.add("modules", modulesObject);
+        return obj;
     }
 }
