@@ -6,9 +6,11 @@ NEW_VERSION=`echo ${VERSION} | sed "s/-SNAPSHOT//"`
 
 cd docs
 
+echo "${NEW_VERSION}"
+
 if [ -z "${NEW_VERSION}" ]; then
     # Control will enter here if $VERSION not specified.
-    echo "VERSION not specified!"
+    echo "Could not determine version from pom.xml"
     exit 1
 fi
 
@@ -16,16 +18,17 @@ npm i
 npm run-script build
 
 #SET THE DESTINATION PATH ON THE NEXT FILE SYSTEM
-DESTINATION="uploads@developer-app.internal.atlassian.com:/opt/j2ee/domains/atlassian.com/developer-prod/static-content/static/connect/docs/"
-#DESTINATION="$HOME/atlassian-connect/test/ac-docs/"
+DESTINATIONHOST="uploads@developer-app.internal.atlassian.com"
+DESTINATIONPATH="/opt/j2ee/domains/atlassian.com/developer-prod/static-content/static/connect/docs/"
 
+echo "$DESTINATIONHOST:$DESTINATIONPATH/$NEW_VERSION"
 
-rsync -avz --delete -e 'ssh' target/gensrc/www/* "$DESTINATION/$NEW_VERSION"
+rsync -avz --delete -e 'ssh' target/gensrc/www/* "$DESTINATIONHOST:$DESTINATIONPATH/$NEW_VERSION"
 
 
 if [ "$1" == "updateSymlink" ]; then
-    ln -sfn ./$NEW_VERSION latest
-    rsync -avz -e 'ssh' latest "$DESTINATION"
+	ssh "$DESTINATIONHOST" "cd $DESTINATIONPATH; ln -sfn ./$NEW_VERSION latest"
+	echo "'latest' symlink now points to $NEW_VERSION."
 fi
 
-echo "Done!"
+echo "Docs published to https://developer.atlassian.com/static/connect/docs/$NEW_VERSION"
