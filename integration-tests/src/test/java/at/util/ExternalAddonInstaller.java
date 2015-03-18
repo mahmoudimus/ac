@@ -86,8 +86,7 @@ public class ExternalAddonInstaller
         { /* Push on if possible */ }
     }
 
-    private void registerAddonOnMarketplace()
-            throws IOException, ParserException
+    private void registerAddonOnMarketplace() throws IOException
     {
         HttpPost addonPost = new HttpPost(mpacUrl + ADDONS_REST_PATH);
         addonPost.setEntity(addonDetails());
