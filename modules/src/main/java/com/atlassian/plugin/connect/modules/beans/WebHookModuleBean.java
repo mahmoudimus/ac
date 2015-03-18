@@ -153,7 +153,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *    POST /jira-issue_created?user_id=admin&user_key=admin HTTP/1.1
  *    Authorization: JWT ...
  *    Atlassian-Connect-Version: x.x
- *    Content-Type':'application/json
+ *    Content-Type: application/json
  *
  *    {
  *      timestamp: 1426661049725,
