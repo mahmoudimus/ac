@@ -237,7 +237,7 @@ public class ModuleList extends BaseModuleBean
     private List<DynamicContentMacroModuleBean> dynamicContentMacros;
 
     /**
-     * @schemaTitle User Profile Page
+     * A User Profile Page module is used to add new elements to Confluence user profiles.
      */
     @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ProfilePageModuleProvider", products = {ProductFilter.CONFLUENCE}) // Note: Jira uses jiraProfileTabPanels instead
     private List<ConnectPageModuleBean> profilePages;
