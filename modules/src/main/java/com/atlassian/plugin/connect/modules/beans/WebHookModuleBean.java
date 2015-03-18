@@ -148,6 +148,19 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * * `user_reactivated`
  * * `user_removed`
  *
+ *### Example Request
+ *
+ *    POST /jira-issue_created?user_id=admin&user_key=admin HTTP/1.1
+ *    Authorization: JWT ...
+ *    Atlassian-Connect-Version: x.x
+ *    Content-Type':'application/json
+ *
+ *    {
+ *      timestamp: 1426661049725,
+ *      webhookEvent: 'jira:issue_created',
+ *      ...
+ *    }
+ *
  *### Inspecting webhook contents
  *
  * Each type of webhook event includes information specific to that event in the body content of the POST message. The
@@ -159,6 +172,11 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * that you can install in your development environment to inspect the content of event messages. The Webhook Inspector
  * subscribes and generates each webhook event type available on the running instance of the Atlassian application,
  * and prints the body posted by the instance to the console screen.
+ *
+ *### References
+ *
+ * * [JIRA Webhooks: What will the format of the webhook callback message be?](https://developer.atlassian.com/jiradev/jira-architecture/webhooks#Webhooks-Whatwilltheformatofthewebhookcallbackmessagebe%3F)
+ * * [JIRA Webhooks: Sample Webhook POST](https://developer.atlassian.com/jiradev/jira-architecture/webhooks#Webhooks-SampleWebhookPOST)
  *
  *#### Example
  *
