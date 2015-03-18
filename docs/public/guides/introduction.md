@@ -25,7 +25,7 @@ which modules it intends to use, and which scopes it will need.
 - **Extend the Atlassian application UI with modules.** 
 The features that an add-on can use within the Atlassian application are
 called modules. 
-There are modules for [general pages](../modules/common/general-page.html) in the application
+There are modules for [general pages](../modules/common/page.html) in the application
 or more specific locations, like [panels](../modules/common/web-panel.html) in JIRA issues
 or [macros](../modules/confluence/dynamic-content-macro.html) in Confluence pages. 
 Refer to the full module lists for [JIRA](../modules/jira/index.html) 
