@@ -20,7 +20,7 @@ __Note__: This is a beginner tutorial. You can build this add-on even if you've 
 
 In this step you'll create a JSON descriptor file. This file describes your add-on to the Atlassian application, which in this case is JIRA Cloud. Your descriptor specifies your add-on's key, name, permissions needed to operate, and the different modules it uses for integration.
 
-Your `atlassian-connect.json` file will use a [`generalPages` module](../modules/jira/general-page.html), and add a link to JIRA's top navigation element titled "Greeting".
+Your `atlassian-connect.json` file will use a [`generalPages` module](../modules/common/general-page.html), and add a link to JIRA's top navigation element titled "Greeting".
 
 1. Create a project directory for your add-on source files.  
     You'll work in this directory for the duration of this tutorial.

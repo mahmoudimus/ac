@@ -173,7 +173,7 @@ Read the [1.0-m30 release notes](../release-notes/1-0-m30.html).
 ## [1.0-m29](../release-notes/1-0-m29.html)
 * Tabs can now be added to Confluence Space Tools section. Check out [Space Tools Tab](../modules/confluence/space-tools-tab.html)
 documentation for more information
-* Support for [web sections](../modules/jira/web-section.html)
+* Support for [web sections](../modules/common/web-section.html)
 * Support for full screen dialogs
 * AC Play support for JSON descriptor and JWT. Read the [upgrade guide](../guides/upgrade-play.html)
 
