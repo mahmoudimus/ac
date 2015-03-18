@@ -74,6 +74,7 @@ library to build your add-on, this will automatically be inserted into your page
 #### Note:
 Don't download the all.js file and serve it up from your add-on server directly. The all.js file must be served up by
 the product host in order for the cross-domain messaging bridge to be established.
+For determining the host's url in a static add-on, see [this recipe from the Connect cookbook](../guides/connect-cookbook.html#all.js).
 
 ### Options
 
