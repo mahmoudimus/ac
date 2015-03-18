@@ -5,8 +5,6 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
 
@@ -104,18 +102,14 @@ public class ExternalAddonInstaller
                     @Override
                     public String apply(CloseableHttpResponse response)
                     {
-                        String entity = "";
                         try
                         {
-                            entity = EntityUtils.toString(response.getEntity());
-                            return JPath.evaluate(entity, "versions[0]/links[0]/href").getString();
+                            String entity = EntityUtils.toString(response.getEntity());
+                            return JPath.evaluate(entity, "_links/descriptor/href").getString();
                         }
                         catch (ParserException e)
                         {
-                            // Bug workaround: sometimes we get a Scala toString instead of JSON - https://ecosystem.atlassian.net/browse/AMKT-12127
-                            Matcher tokenMatcher = Pattern.compile("https?://[^\\(^\\)^,^ ]+atlassian-connect\\.json\\?access-token=([a-z0-9]+)").matcher(entity);
-                            tokenMatcher.find();
-                            return tokenMatcher.group(0);
+                            throw new RuntimeException(e);
                         }
                         catch (IOException e)
                         {
@@ -129,7 +123,6 @@ public class ExternalAddonInstaller
     {
         if (!addonExists())
         {
-            log.info("Couldn't find our test addon to delete");
             return;
         }
 
