@@ -13,7 +13,7 @@ AP.define("user", ["_dollar", "_rpc"], function ($, rpc) {
                 * @param {Function} callback  function (user) {...}
                 * @example
                 * AP.getUser(function(user){
-                *   alert(user);
+                *   alert("id: " + user.id + "\nkey: " + user.key);
                 * });
                 */
                 getUser: function (callback) {
