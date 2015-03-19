@@ -111,7 +111,7 @@ function collapseArrayAndObjectProperties(properties, required, parent) {
  * Transform a schema entity root into a model object, suitable for rendering.
  */
 function entityToModel(schemaEntity) {
-    var name = schemaEntity.title || schemaEntity.id;
+    var name = schemaEntity.title || schemaEntity.fieldTitle || schemaEntity.id;
     var description = renderMarkdown(schemaEntity.description || name);
 
     var model = {
@@ -241,7 +241,23 @@ function findProductModules(schemas, productId, productDisplayName) {
     moduleList.title = productDisplayName + " Module List";
     // make the module list the first entry
     productModules.unshift(moduleList);
-    return entitiesToModel(productModules);
+    return productModules;
+}
+
+function moduleArraysIntersection(modules1, modules2) {
+    return _.filter(modules1, function(module1) {
+        return _.any(modules2, function(module2) {
+            return module1.id === module2.id && module1.title === module2.title;
+        });
+    });
+}
+
+function moduleArraysDifference(modules1, modules2) {
+    return _.reject(modules1, function(module1) {
+        return _.any(modules2, function(module2) {
+            return module1.id === module2.id && module1.title === module2.title;
+        });
+    });
 }
 
 /**
@@ -422,10 +438,17 @@ function rebuildHarpSite() {
         confluence: fs.readJsonSync(confluenceSchemaPath)
     };
 
+    var jiraModules = findProductModules(schemas, "jira", "JIRA");
+    var confluenceModules = findProductModules(schemas, "confluence", "Confluence");
+    var commonModules = moduleArraysIntersection(jiraModules, confluenceModules);
+    jiraModules = moduleArraysDifference(jiraModules, commonModules);
+    confluenceModules = moduleArraysDifference(confluenceModules, commonModules);
+
     var entities = {
         root: findRootEntities(schemas),
-        jira: findProductModules(schemas, "jira", "JIRA"),
-        confluence: findProductModules(schemas, "confluence", "Confluence"),
+        common: entitiesToModel(commonModules),
+        jira: entitiesToModel(jiraModules),
+        confluence: entitiesToModel(confluenceModules),
         fragment: findFragmentEntities(schemas)
     };
 
@@ -455,6 +478,7 @@ function rebuildHarpSite() {
 
     var entityLinks = writeEntitiesToDisk(entities, {
         root: "modules",
+        common: "modules/common",
         jira: "modules/jira",
         confluence: "modules/confluence",
         fragment: "modules/fragment"

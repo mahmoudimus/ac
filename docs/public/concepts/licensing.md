@@ -21,6 +21,7 @@ In a nutshell, to implement licensing for Atlassian Connect, you need to:
  * use the Atlassian Connect REST resource `/addons/{addonKey}`
    to get additional license information for each application
  * implement the logic appropriate for the add-on based on the license status
+ * use a private listing with access tokens to test all license statuses in a Cloud instance
 
 #### Note:
 The result of a license check by the Atlassian application is cached for 5 minutes.
@@ -73,3 +74,6 @@ extent. But there's no way to replicate the interaction with the UPM and Atlassi
 local environment alone. In the production environment, the Atlassian Marketplace serves licenses
 for new subscribers, and the application interacts with the Marketplace to get the license state.
 
+[Installing your add-on in a cloud instance](../developing/cloud-installation.html) using an access token allows
+instance administrators to modify the license status of the add-on. This enables you to ensure that your add-on functions
+properly in all license statuses.

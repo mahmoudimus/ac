@@ -37,8 +37,10 @@ specifies whether to show or hide the module feature.
 The add-on can pass parameters to the remote condition as URL query parameters. Remote condition has request
 authentication information passed through as a header, rather than as a query string parameter.
 
-Remote conditions are URLs and must start with either 'http' or '/'.
+Remote conditions are URLs and must start with either 'http' or '/', and return a 200 HTTP response code with a JSON body containing the boolean ```shouldDisplay``` field.
 
+If there is an error communicating with the remote resource (for example, the request timeout period of 10 seconds elapses with no response),
+then the failure will be logged and the condition will be evaluated as `false`.
 
 ## Static conditions
 
