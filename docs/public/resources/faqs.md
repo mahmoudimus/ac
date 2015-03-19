@@ -44,11 +44,11 @@ the Atlassian Connect JIRA project:
 
 [https://ecosystem.atlassian.net/browse/AC](https://ecosystem.atlassian.net/browse/AC)
 
-### Can an Atlassian cloud customer use Atlassian Connect for custom development?
-Yes. Every cloud customer has access to the Atlassian Connect platform. This means
+### Can an Atlassian Cloud customer use Atlassian Connect for custom development?
+Yes. Every Atlassian Cloud customer has access to the Atlassian Connect platform. This means
 that internal developers can create and deploy Atlassian Connect add-ons for their own use
-within their organization. For example, a developer might integrate JIRA Cloud with an internal
-system, or to integrate Confluence Cloud with another SaaS service's API.
+within their organization. For example, a developer could integrate JIRA Cloud with an internal
+system, or integrate Confluence Cloud with another SaaS service's API.
 
 Note that add-ons in cloud instances must be installed through the Atlassian Marketplace. Thus, to
 install an add-on for internal use, you must create a listing for it on the Marketplace. The
@@ -62,7 +62,7 @@ Connect descriptor file. That descriptor includes authentication settings and de
 capabilities. Capabilities take the form of modules. A module specifies an HTTP
 resource exposed by the add-on and the place where that resource interacts with the Atlassian app.
 
-### What languages, frameworks, & hosts will be supported
+### What languages, frameworks, & hosts will be supported?
 Because your remote add-on is decoupled from the Atlassian application, using only HTTP and
 REST to communicate, you are free to build in any language, use any framework, and deploy in any
 manner you wish.
@@ -97,7 +97,7 @@ from the Marketplace if problems cannot be resolved.
 There are currently no service-level agreements enforced for add-ons in the Atlassian Marketplace.
 However, in cloud products, the service level is very important to customers. We intend to measure each
 add-on's current status and uptime and make that information available to customers, similar to the
-way that [cloud products do](https://www.atlassian.com/software/ondemand/status). We encourage
+way that [cloud products do](https://www.atlassian.com/cloud/status). We encourage
 add-on providers to strive for 99.9% uptime.
 
 ### What policies must add-ons observe about customer data?

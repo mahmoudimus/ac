@@ -535,7 +535,7 @@
   "paths": [
     {
       "key": "download",
-      "paths": ["/download/temp/.*", "/download/attachments/.*"],
+      "paths": ["/download/temp(/.*)", "/download/attachments(/.*)"],
       "public": true
     }
   ]

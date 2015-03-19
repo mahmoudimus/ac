@@ -36,6 +36,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * <p/>
  *#### Example
  *
+ * @schemaTitle Page
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#PAGE_EXAMPLE}
  * @since 1.0
  */
