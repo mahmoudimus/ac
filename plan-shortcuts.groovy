@@ -58,8 +58,8 @@ runTestsStage() {
     stage(
             name: 'Run Tests'
     ) {
-        testJobsForConfluence(mavenProductParameters: '')
-        testJobsForJira(mavenProductParameters: '')
+        testJobsForConfluence()
+        testJobsForJira()
         job(
                 key: 'UTJ7',
                 name: 'Unit Tests'
@@ -150,12 +150,12 @@ runTestsStage() {
     }
 }
 
-testJobsForConfluence(['mavenProductParameters']) {
+testJobsForConfluence() {
     testJobs(
             prefix: 'C',
             product: 'Confluence',
             testGroup: 'confluence',
-            mavenProductParameters: '#mavenProductParameters'
+            mavenProductParameters: ''
     )
 }
 
@@ -164,7 +164,7 @@ testJobsForJira() {
             prefix: 'J',
             product: 'JIRA',
             testGroup: 'jira',
-            mavenProductParameters: '#mavenProductParameters'
+            mavenProductParameters: ''
     )
 }
 
