@@ -39,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -55,7 +56,9 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
 
     // As reported by Sam Day, without the "confluence-users" group the add-on user can't
     // even get the page summary of a page that is open to anonymous access.
-    private static final ImmutableSet<String> GROUPS = ImmutableSet.of("confluence-users", "users", "_licensed-confluence");
+    private static final ImmutableSet<String> DEFAULT_GROUPS_ALWAYS_EXPECTED = ImmutableSet.of("_licensed-confluence");
+    private static final ImmutableSet<String> DEFAULT_GROUPS_ONE_OR_MORE_EXPECTED = ImmutableSet.of("confluence-users", "users");
+
 
     private static final ImmutableSet<String> SPACE_ADMIN_PERMISSIONS = ImmutableSet.of(
         // WRITE
@@ -181,11 +184,17 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
             grantAddonUserSpaceAdmin(confluenceAddonUser);
         }
     }
+    
+    @Override
+    public Set<String> getDefaultProductGroupsAlwaysExpected()
+    {
+        return DEFAULT_GROUPS_ALWAYS_EXPECTED;
+    }
 
     @Override
-    public Set<String> getDefaultProductGroups()
+    public Set<String> getDefaultProductGroupsOneOrMoreExpected()
     {
-        return GROUPS;
+        return DEFAULT_GROUPS_ONE_OR_MORE_EXPECTED;
     }
 
     private ConfluenceUser getConfluenceUser(String username)

@@ -12,8 +12,8 @@ AP.define("user", ["_dollar", "_rpc"], function ($, rpc) {
                 * get a user object containing the user's id and full name
                 * @param {Function} callback  function (user) {...}
                 * @example
-                * AP.getUser(function(user){ 
-                *   console.log(user);
+                * AP.getUser(function(user){
+                *   alert("id: " + user.id + "\nkey: " + user.key);
                 * });
                 */
                 getUser: function (callback) {
@@ -25,7 +25,7 @@ AP.define("user", ["_dollar", "_rpc"], function ($, rpc) {
                 * @param {Function} callback  function (user) {...}
                 * @example
                 * AP.getTimeZone(function(timezone){
-                *   console.log(timezone);
+                *   alert(timezone);
                 * });
                 */
                 getTimeZone: function (callback) {
