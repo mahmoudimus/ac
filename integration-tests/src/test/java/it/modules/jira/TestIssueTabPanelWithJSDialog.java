@@ -6,12 +6,14 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.helptips.JiraHelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteCloseDialogPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteDialogOpeningPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
 import org.junit.*;
 
 import java.rmi.RemoteException;
@@ -28,6 +30,8 @@ import static org.junit.Assert.assertEquals;
  */
 public class TestIssueTabPanelWithJSDialog extends TestBase
 {
+    private static final TestUser USER = TestUser.BARNEY;
+
     private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
     private static final String ISSUE_TAB_PANEL_W_DIALOG = "issue-tab-panel-w-dialog";
     private static JiraOps jiraOps = new JiraOps(jira().getProductInstance());
@@ -41,6 +45,9 @@ public class TestIssueTabPanelWithJSDialog extends TestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
+        jira().logout();
+        new JiraHelpTipApiClient(jira(), USER).dismissAllHelpTips();
+
         remotePlugin = new ConnectRunner(jira().getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
                 .addModules(ConnectTabPanelModuleProvider.ISSUE_TAB_PANELS,
@@ -91,7 +98,7 @@ public class TestIssueTabPanelWithJSDialog extends TestBase
     @Test
     public void testIssueTabPanelWithJSDialog() throws RemoteException
     {
-        jira().gotoLoginPage().loginAsSysadminAndGoToHome();
+        jira().quickLogin(USER.getUsername(), USER.getPassword());
         JiraViewIssuePageWithRemotePluginIssueTab page = jira().visit(
                 JiraViewIssuePageWithRemotePluginIssueTab.class, ISSUE_TAB_PANEL_W_DIALOG, issueKey, PLUGIN_KEY);
 
