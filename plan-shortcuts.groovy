@@ -284,7 +284,7 @@ mavenTaskImpl(['description', 'goal', 'environmentVariables', 'hasTests', 'testD
             type: 'maven3',
             description: '#description',
             goal: '#goal -B -nsu -e',
-            buildJdk: 'JDK 1.7',
+            buildJdk: 'JDK 1.8',
             mavenExecutable: 'Maven 3.0',
             environmentVariables: '#environmentVariables',
             hasTests: '#hasTests',
