@@ -26,6 +26,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
 import org.openqa.selenium.By;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,6 +45,8 @@ import static junit.framework.TestCase.assertEquals;
  */
 public class TestMacroBody extends AbstractConfluenceWebDriverTest
 {
+    private static final Logger logger = LoggerFactory.getLogger(TestMacroBody.class);
+
     @Rule public WebDriverScreenshotRule webDriverScreenshotRule = new WebDriverScreenshotRule();
     @Rule public Timeout globalTimeout = new Timeout(23000);
 
@@ -151,7 +155,19 @@ public class TestMacroBody extends AbstractConfluenceWebDriverTest
         String pageId = rpc.content.createPage(page, ContentRepresentation.STORAGE).getIdAsString();
         ViewPage viewPage = getProduct().login(TestUser.ADMIN.confUser(), ViewPage.class, pageId);
 
-        waitUntilTrue(viewPage.getMainContent().find(By.tagName("iframe")).timed().isPresent());
+        for (int i = 0; i < 20; i++)
+        {
+            try
+            {
+                waitUntilTrue(viewPage.getMainContent().find(By.tagName("iframe")).timed().isPresent());
+                logger.error("attempt number: "+(i)+": SUCCESS");
+            }
+            catch (Exception e)
+            {
+                logger.error("attempt number: "+(i)+": FAILED");
+                e.printStackTrace();
+            }
+        }
 
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(macroKey);
         String bodyFromPage = renderedMacro.getIFrameElement("body");
