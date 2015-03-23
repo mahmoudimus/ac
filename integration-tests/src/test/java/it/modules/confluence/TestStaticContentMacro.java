@@ -176,25 +176,6 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     }
 
     @Test
-    public void testBodyHashInclusion() throws Exception
-    {
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-        editorPage.setTitle(randomName("Long Body Macro"));
-
-        selectMacroAndSave(editorPage, LONG_BODY_MACRO_NAME);
-
-        String body = StringUtils.repeat("x ", 200);
-        ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
-        editorContent.setPlainTextMacroBody(body);
-
-        savedPage = save(editorPage);
-        editorPage = null;
-
-        String hash = parameterServlet.waitForQueryParameters().any("hash").getValue();
-        assertThat(hash, is(DigestUtils.md5Hex(body)));
-    }
-
-    @Test
     public void testParameterInclusion() throws Exception
     {
         editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);

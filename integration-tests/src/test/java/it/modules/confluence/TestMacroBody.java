@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.HttpUtils;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import com.google.common.collect.Maps;
 import it.servlet.HttpContextServlet;
 import it.servlet.InstallHandlerServlet;
@@ -21,7 +22,9 @@ import it.servlet.macro.MacroBodyServlet;
 import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 import org.openqa.selenium.By;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +42,9 @@ import static junit.framework.TestCase.assertEquals;
  */
 public class TestMacroBody extends AbstractConfluenceWebDriverTest
 {
+    @Rule public WebDriverScreenshotRule webDriverScreenshotRule = new WebDriverScreenshotRule();
+    @Rule public Timeout globalTimeout = new Timeout(23000);
+
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
