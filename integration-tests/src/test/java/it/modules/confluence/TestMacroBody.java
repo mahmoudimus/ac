@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
+import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 import static junit.framework.TestCase.assertEquals;
@@ -148,8 +149,11 @@ public class TestMacroBody extends AbstractConfluenceWebDriverTest
         String body = "<h1>Test Dynamic Macro: " + macroKey + "</h1>";
         Page page = createPage(macroKey, body);
         String pageId = rpc.content.createPage(page, ContentRepresentation.STORAGE).getIdAsString();
-        getProduct().login(TestUser.ADMIN.confUser(), ViewPage.class, pageId);
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(macroKey, 0);
+        ViewPage viewPage = getProduct().login(TestUser.ADMIN.confUser(), ViewPage.class, pageId);
+
+        waitUntilTrue(viewPage.getMainContent().find(By.tagName("iframe")).timed().isPresent());
+
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(macroKey);
         String bodyFromPage = renderedMacro.getIFrameElement("body");
         assertEquals(body, bodyFromPage);
     }
