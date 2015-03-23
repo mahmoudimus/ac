@@ -1,8 +1,8 @@
 productSnapshotPlan(['prefix', 'shortName', 'product', 'testGroup', 'mavenProductParameters']) {
     plan(
             projectKey: 'CONNECT',
-            key: 'C#prefixMPT',
-            name: 'Cloud Plugin - SNAPSHOT #shortName (Templatized)',
+            key: 'C#prefixM',
+            name: 'Cloud Plugin - SNAPSHOT #shortName',
             description: 'Tests the develop branch of atlassian-connect-plugin against the latest #product SNAPSHOT version'
     ) {
         commonPlanConfiguration()

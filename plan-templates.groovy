@@ -1,7 +1,7 @@
 plan(
         projectKey: 'CONNECT',
-        key: 'CPDMPT',
-        name: 'Cloud Plugin - develop (Templatized)',
+        key: 'ACD',
+        name: 'Cloud Plugin - develop',
         description: 'Tests atlassian-connect-plugin'
 ) {
     commonPlanConfiguration()
@@ -32,8 +32,8 @@ plan(
 
 plan(
         projectKey: 'CONNECT',
-        key: 'CFPT',
-        name: 'Cloud Plugin - Feature branches (Templatized)',
+        key: 'CF',
+        name: 'Cloud Plugin - Feature branches',
         description: 'Tests feature branches of atlassian-connect-plugin'
 ) {
     commonPlanConfiguration()
