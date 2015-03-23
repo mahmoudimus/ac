@@ -162,7 +162,7 @@ public class TestMacroBody extends AbstractConfluenceWebDriverTest
                 waitUntilTrue(viewPage.getMainContent().find(By.tagName("iframe")).timed().isPresent());
                 logger.error("attempt number: "+(i)+": SUCCESS");
             }
-            catch (Exception e)
+            catch (Error e)
             {
                 logger.error("attempt number: "+(i)+": FAILED");
                 e.printStackTrace();
