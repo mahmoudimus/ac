@@ -14,6 +14,10 @@ import java.util.List;
  * URL. You define a set of 'matchers' for what the URLs to act on will look like, and these are registered in the
  * editor when your add-on is installed.
  *
+ * When the macro is created in the editor, the URL string that triggered the autoconvert will be captured and inserted
+ * as a parameter on the macro body. You must define the name of this parameter by providing a string value for 'urlParameter'.
+ * This allows you access to the captured URL that caused the macro creation.
+ *
  *#### Example
  *
  * The following example would insert a macro into the editor when a user pastes in certain simple Facebook links.

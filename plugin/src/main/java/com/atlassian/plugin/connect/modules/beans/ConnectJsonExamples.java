@@ -40,6 +40,7 @@ public class ConnectJsonExamples
     public static final String ADDON_EXAMPLE = createAddonExample();
     public static final String AUTHENTICATION_EXAMPLE = createAuthenticationExample();
     public static final String AUTOCONVERT_EXAMPLE = createAutoconvertExample();
+    public static final String AUTOCONVERT_MATCHER_EXAMPLE = createMatcherExample();
     public static final String COMPOSITE_CONDITION_EXAMPLE = createCompositeConditionExample();
     public static final String DYNAMIC_MACRO_EXAMPLE = createDynamicMacroExample();
     public static final String ENTITY_PROPERTY_EXAMPLE = createEntityPropertyExample();
@@ -745,6 +746,15 @@ public class ConnectJsonExamples
                 .build();
 
         return gson.toJson(dynamicMacroWithAutoconvert);
+    }
+
+    private static String createMatcherExample() {
+
+        MatcherBean matcher = MatcherBean.newMatcherBean()
+                .withPattern("https://www.facebook.com/{}/about")
+                .build();
+
+        return gson.toJson(matcher);
     }
 
     private static JsonObject createJsonArray(String name, ModuleBean bean)
