@@ -571,7 +571,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
 
     protected ViewPage save(EditorPage editorPage)
     {
-        return editorPage.saveWithKeyboardShortcut();
+        return editorPage.save();
     }
 
     private String pageWithMacro(String macroName)
