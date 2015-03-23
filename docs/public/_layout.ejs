@@ -37,6 +37,15 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/mode/clike/clike.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.4/sequence-diagram-min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
+    <script type="text/javascript">
+        // The context path is the first n - (current document depth) segments of the path
+        window.contextPath = window.contextPath || _.once(function() {
+            var depth = <%= current.path.length %>;
+            // Get rid of double slashes
+            var pathname = window.location.pathname.replace(/\/+/g,'/');
+            return '/' + _(pathname.split('/')).compact().initial(depth - pathname.endsWith('/')).join('/');
+        });
+    </script>
 </head>
 
 <body id="ac" class="aui-layout aui-theme-default aui-page-hybrid" data-baseurl="<%= relDocRoot %>">
@@ -167,7 +176,7 @@
         $('pre code').each(function(){
             cmIfyPreCodeBlocks(this)
         });
-        
+
         $(".expandNextPre").each(
             function(index)
             {
