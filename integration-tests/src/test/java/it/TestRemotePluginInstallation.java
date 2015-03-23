@@ -1,5 +1,7 @@
 package it;
 
+import java.io.IOException;
+
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
@@ -29,6 +31,7 @@ public class TestRemotePluginInstallation extends ConnectWebDriverTestBase
         {
             product.visit(HomePage.class);
             product.getPageBinder().bind(GeneralPage.class, "changedPage", "Changed Page", addOn.getAddon().getKey()).clickAddOnLink(); // will throw if it fails to load
+            throw new IOException("Testing Screenshot on Fail");
         }
         finally
         {
