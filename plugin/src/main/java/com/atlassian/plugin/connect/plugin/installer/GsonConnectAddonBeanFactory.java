@@ -75,8 +75,7 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
         {
             String exceptionMessage = "Invalid connect descriptor: " + result.getMessageReport();
             log.error(exceptionMessage);
-            String i18nMessage = i18nResolver.getText("connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
-            throw new InvalidDescriptorException(exceptionMessage, i18nMessage);
+            throw new InvalidDescriptorException(exceptionMessage, "connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
         }
 
         ConnectAddonBean addOn = fromJsonSkipValidation(jsonDescriptor,i18nCollector);
