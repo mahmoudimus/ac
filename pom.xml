@@ -705,7 +705,7 @@
         <oauth.core.version>20090531</oauth.core.version>
         <slf4j.version>1.6.4</slf4j.version>
         <spring.version>2.5.6</spring.version>
-        <webdriver.browser>chrome</webdriver.browser>
+        <webdriver.browser>firefox</webdriver.browser>
         <plugin.testrunner.version>1.2.0</plugin.testrunner.version>
         <atlassian.jira.projects.version>1.20.0-D20150217T051447</atlassian.jira.projects.version>
 
