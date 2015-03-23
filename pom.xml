@@ -718,6 +718,7 @@
         <atlassian.spring.scanner.version>1.2.2</atlassian.spring.scanner.version>
         <ao.long.timeout>180000</ao.long.timeout>
         <ao.short.timeout>30000</ao.short.timeout>
+        <skipTests>false</skipTests>
         <skipUnits>${skipTests}</skipUnits>
         <schema.generator.version>1.0.0-m4</schema.generator.version>
         <json.schema.validator.version>2.2.5</json.schema.validator.version>
