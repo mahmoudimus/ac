@@ -8,7 +8,7 @@ productSnapshotPlan(['prefix', 'shortName', 'product', 'testGroup', 'mavenProduc
         commonPlanConfiguration()
         repository(name: 'Atlassian Connect (develop)')
         variable(key:'bamboo.jira_version',value:'6.5-SNAPSHOT')
-        trigger(type: 'cron', cronExpression: '0 30 7 ? * 2,3,4,5,6')
+        trigger(type: 'cron', cronExpression: '0 30 20 ? * 2,3,4,5,6')
         hipChatNotification()
         stage(
                 name: 'Run Tests'
@@ -37,12 +37,14 @@ commonPlanConfiguration() {
     )
 }
 
-pollingTrigger() {
+pollingTrigger(['repositoryName']) {
     trigger(
             type: 'polling',
             strategy: 'periodically',
             frequency: '60'
-    )
+    ) {
+        repository(name:'#repositoryName')
+    }
 }
 
 hipChatNotification() {
@@ -195,6 +197,12 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'mavenProductParameters']) {
             key: '#key',
             name: '#product - Lifecycle Tests'
     ) {
+        artifactDefinition(
+                name: 'Plugin JAR File',
+                location: 'plugin/target',
+                pattern: 'atlassian-connect-plugin.jar',
+                shared: 'false'
+        )
         checkoutDefaultRepositoryTask()
         mavenTestTask(
                 description: 'Run Wired Lifecycle Tests for #product',

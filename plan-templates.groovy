@@ -6,7 +6,7 @@ plan(
 ) {
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (develop)')
-    pollingTrigger()
+    pollingTrigger(repositoryName: 'Atlassian Connect (develop)')
     hipChatNotification()
     runTestsStage()
     stage(
@@ -38,7 +38,7 @@ plan(
 ) {
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (branch builds)')
-    pollingTrigger()
+    pollingTrigger(repositoryName: 'Atlassian Connect (branch builds)')
     notification(
             type: 'All Builds Completed',
             recipient: 'committers'
