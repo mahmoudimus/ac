@@ -82,11 +82,11 @@ public class JiraAddonLifecycleTest
         }
         catch (PluginInstallException e)
         {
-            assertPluginInstallExceptionProperties("connect.install.error.addon.admin.permission", e, testBean.getName());
+            assertPluginInstallExceptionProperties(e, "connect.install.error.addon.admin.permission", testBean.getName());
         }
     }
 
-    private void assertPluginInstallExceptionProperties(String errorCode, PluginInstallException e, Serializable... params)
+    private void assertPluginInstallExceptionProperties(PluginInstallException e, String errorCode, Serializable... params)
     {
         Pair<String, Serializable[]> i18nMessageProperties = e.getI18nMessageProperties().get();
         assertThat(i18nMessageProperties.first(), equalTo(errorCode));
