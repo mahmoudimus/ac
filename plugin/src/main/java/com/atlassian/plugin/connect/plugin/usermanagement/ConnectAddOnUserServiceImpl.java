@@ -244,9 +244,6 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
                 userTemplate.setDisplayName(addOnDisplayName);
                 applicationService.updateUser(getApplication(), userTemplate);
             }
-
-            // Justin Koke says that NONE password prevents logging in
-            applicationService.updateUserCredential(getApplication(), user.getName(), PasswordCredential.NONE);
         }
 
         return user;
