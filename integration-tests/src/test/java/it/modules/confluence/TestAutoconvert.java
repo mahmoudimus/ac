@@ -116,9 +116,11 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
 
     private String pasteLinkAndSave(EditorPage editorPage, Option<String> macroName, String link)
     {
-        EditorContent editorContent = editorPage.getEditor().getContent();
         StringSelection selection = new StringSelection(link);
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
+
+        EditorContent editorContent = editorPage.getEditor().getContent();
+        editorContent.focus();
         editorContent.sendKeys(Keys.chord(OS_CTRL_KEY, "v")); // paste
         editorPage.setTitle("TestAutoconvert-" + System.currentTimeMillis());
 
