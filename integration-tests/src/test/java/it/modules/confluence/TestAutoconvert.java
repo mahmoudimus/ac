@@ -129,7 +129,7 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
 
         editorPage.setTitle("TestAutoconvert-" + System.currentTimeMillis());
 
-        ViewPage viewPage = editorPage.save();
+        ViewPage viewPage = editorPage.saveWithKeyboardShortcut();
         long pageId = viewPage.getPageId();
         return rpc.getPageContent(pageId);
     }
