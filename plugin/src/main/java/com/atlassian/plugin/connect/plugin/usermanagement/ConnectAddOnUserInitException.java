@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.plugin.usermanagement;
 
-/**
- * todo: write javadoc
- */
 public class ConnectAddOnUserInitException extends RuntimeException
 {
     private String i18nkey;
