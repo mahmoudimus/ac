@@ -7,8 +7,16 @@ import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
 import com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectSchemaLocator;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidatorService;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
+import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.message.I18nResolver;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.github.fge.jsonschema.core.report.ProcessingMessage;
+import com.github.fge.msgsimple.provider.LoadingMessageSourceProvider;
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -17,9 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Map;
-
-import com.github.fge.msgsimple.provider.LoadingMessageSourceProvider;
 
 /**
  *
@@ -34,17 +42,20 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
     private final ApplicationProperties applicationProperties;
     private final I18nResolver i18nResolver;
     private final AddOnBeanValidatorService addOnBeanValidatorService;
+    private final IsDevModeService isDevModeService;
 
     @Autowired
     public GsonConnectAddonBeanFactory(final JsonDescriptorValidator jsonDescriptorValidator,
             final AddOnBeanValidatorService addOnBeanValidatorService, final ConnectSchemaLocator connectSchemaLocator,
-            final ApplicationProperties applicationProperties, I18nResolver i18nResolver)
+            final ApplicationProperties applicationProperties, I18nResolver i18nResolver,
+            IsDevModeService isDevModeService)
     {
         this.jsonDescriptorValidator = jsonDescriptorValidator;
         this.addOnBeanValidatorService = addOnBeanValidatorService;
         this.connectSchemaLocator = connectSchemaLocator;
         this.applicationProperties = applicationProperties;
         this.i18nResolver = i18nResolver;
+        this.isDevModeService = isDevModeService;
     }
 
     @Override
@@ -69,13 +80,27 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
         DescriptorValidationResult result = jsonDescriptorValidator.validate(jsonDescriptor, schema);
         if (!result.isWellformed())
         {
-            throw new InvalidDescriptorException("Malformed connect descriptor: " + result.getMessageReport(), "connect.invalid.descriptor.malformed.json");
+            throw new InvalidDescriptorException("Malformed connect descriptor: " + result.getReportAsString(), "connect.invalid.descriptor.malformed.json");
         }
         if (!result.isValid())
         {
-            String exceptionMessage = "Invalid connect descriptor: " + result.getMessageReport();
+            String exceptionMessage = "Invalid connect descriptor: " + result.getReportAsString();
             log.error(exceptionMessage);
-            throw new InvalidDescriptorException(exceptionMessage, "connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
+
+            String i18nKey;
+            Serializable[] params;
+            if (isDevModeService.isDevMode())
+            {
+                i18nKey = "connect.install.error.remote.descriptor.validation.dev";
+                String validationMessage = buildErrorMessage(result);
+                params = new Serializable[] {validationMessage};
+            }
+            else
+            {
+                i18nKey = "connect.install.error.remote.descriptor.validation";
+                params = new Serializable[] {applicationProperties.getDisplayName()};
+            }
+            throw new InvalidDescriptorException(exceptionMessage, i18nKey, params);
         }
 
         ConnectAddonBean addOn = fromJsonSkipValidation(jsonDescriptor,i18nCollector);
@@ -116,5 +141,17 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
     public void afterPropertiesSet() throws Exception
     {
         LoadingMessageSourceProvider.restartIfNeeded();
+    }
+
+    private String buildErrorMessage(DescriptorValidationResult result)
+    {
+        StringBuilder messageBuilder = new StringBuilder("<ul>");
+        for (String message : result.getReportMessages())
+        {
+            messageBuilder.append("<li>");
+            messageBuilder.append(message);
+        }
+        messageBuilder.append("</ul>");
+        return messageBuilder.toString();
     }
 }
