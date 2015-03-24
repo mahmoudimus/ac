@@ -26,8 +26,8 @@ import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newA
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.fail;
 
 @Application("jira")
@@ -80,14 +80,17 @@ public class JiraAddonLifecycleTest
 
             fail("Addon installation should have failed");
         }
-        catch (Exception e)
+        catch (PluginInstallException e)
         {
-            assertTrue((e instanceof PluginInstallException));
-            PluginInstallException pie = (PluginInstallException) e;
-            Pair<String,Serializable[]> messageProps = pie.getI18nMessageProperties().get();
-            String expectedMessage = i18nResolver.getText("connect.install.error.addon.admin.permission", testBean.getName());
-            assertEquals(expectedMessage, messageProps.first());
+            assertPluginInstallExceptionProperties("connect.install.error.addon.admin.permission", e, testBean.getName());
         }
+    }
+
+    private void assertPluginInstallExceptionProperties(String errorCode, PluginInstallException e, Serializable... params)
+    {
+        Pair<String, Serializable[]> i18nMessageProperties = e.getI18nMessageProperties().get();
+        assertThat(i18nMessageProperties.first(), equalTo(errorCode));
+        assertThat(i18nMessageProperties.second(), equalTo(params));
     }
 
     @After

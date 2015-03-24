@@ -120,7 +120,7 @@ public class AddonValidationTest
         }
         catch (PluginInstallException e)
         {
-            assertPluginInstallExceptionProperties(errorCode, e, params);
+            assertPluginInstallExceptionProperties(e, errorCode, params);
         }
     }
 
@@ -133,11 +133,11 @@ public class AddonValidationTest
         }
         catch (PluginInstallException e)
         {
-            assertPluginInstallExceptionProperties(errorCode, e, params);
+            assertPluginInstallExceptionProperties(e, errorCode, params);
         }
     }
 
-    private void assertPluginInstallExceptionProperties(String errorCode, PluginInstallException e, Serializable[] params)
+    private void assertPluginInstallExceptionProperties(PluginInstallException e, String errorCode, Serializable... params)
     {
         Pair<String, Serializable[]> i18nMessageProperties = e.getI18nMessageProperties().get();
         assertThat(i18nMessageProperties.first(), equalTo(errorCode));
