@@ -1,5 +1,6 @@
 package it.modules.confluence;
 
+import com.atlassian.confluence.api.model.content.ContentRepresentation;
 import com.atlassian.confluence.it.Page;
 import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
@@ -582,24 +583,29 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     protected ViewPage getMacroContent(User user, String macroName, String title) throws Exception
     {
         // create the page with the macro
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+//        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
 
         try
         {
-            editorPage.dismissEditorNotifications();
-            editorPage.setTitle(randomName(title));
-            selectMacroAndSave(editorPage, macroName);
-            savedPage = save(editorPage);
-            editorPage = null;
-            final long pageId = savedPage.getPageId(); // need to get it here because it parses the page, so if we log out it throws!
+            String content = "<ac:structured-macro ac:name=\""+macroName+"\" />";
+            Page page = new Page(TestSpace.DEMO, randomName(title), content);
 
-            // view the page as the specified user
-            if (TestUser.ADMIN.confUser().equals(user))
-            {
-                return savedPage;
-            }
-            else
-            {
+//            editorPage.dismissEditorNotifications();
+//            editorPage.setTitle(randomName(title));
+//            selectMacroAndSave(editorPage, macroName);
+//            savedPage = save(editorPage);
+//            editorPage = null;
+//            final long pageId = savedPage.getPageId(); // need to get it here because it parses the page, so if we log out it throws!
+
+            final long pageId = rpc.content.createPage(page, ContentRepresentation.RAW).getId();
+
+//            view the page as the specified user
+//            if (TestUser.ADMIN.confUser().equals(user))
+//            {
+//                return savedPage;
+//            }
+//            else
+//            {
                 getProduct().logOutFast();
 
                 if (null == user)
@@ -610,7 +616,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
                 {
                     return getProduct().loginAndView(user, new Page(pageId));
                 }
-            }
+//            }
         }
         catch (Exception e)
         {
