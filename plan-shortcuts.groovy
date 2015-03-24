@@ -194,6 +194,12 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'mavenProductParameters']) {
             key: '#key',
             name: '#product - Lifecycle Tests'
     ) {
+        artifactDefinition(
+                name: 'Plugin JAR File',
+                location: 'plugin/target',
+                pattern: 'atlassian-connect-plugin.jar',
+                shared: 'false'
+        )
         checkoutDefaultRepositoryTask()
         mavenTestTask(
                 description: 'Run Wired Lifecycle Tests for #product',
