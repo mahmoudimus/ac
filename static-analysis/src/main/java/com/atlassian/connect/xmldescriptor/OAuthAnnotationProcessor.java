@@ -13,7 +13,7 @@ import javax.lang.model.element.Element;
  * `target/classes/OAuth_annotations.txt`.
  */
 @SupportedAnnotationTypes("com.atlassian.plugin.connect.api.OAuth")
-@SupportedSourceVersion(SourceVersion.RELEASE_6)
+@SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class OAuthAnnotationProcessor extends CollectingAnnotationProcessor
 {
     public OAuthAnnotationProcessor()
