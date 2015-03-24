@@ -164,7 +164,8 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
     private List<MacroParameterBean> parameters;
 
     /**
-     * Text patterns to be recognised and acted upon on paste into the editor.
+     *  URL patterns associated with this macro. If a URL matching a defined pattern is pasted into the editor, this macro
+     *  will be created and will dynamically replace the URL string.
      */
     private AutoconvertBean autoconvert;
 

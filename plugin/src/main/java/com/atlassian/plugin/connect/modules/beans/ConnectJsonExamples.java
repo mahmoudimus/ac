@@ -1,28 +1,7 @@
 package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
-import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
-import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
-import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
-import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
-import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
-import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
-import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexType;
-import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyType;
-import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
-import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
-import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
-import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
-import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
-import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
-import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
+import com.atlassian.plugin.connect.modules.beans.nested.*;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
@@ -42,6 +21,7 @@ import java.util.Map;
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
+import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean.newEntityPropertyModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
@@ -59,6 +39,8 @@ public class ConnectJsonExamples
 
     public static final String ADDON_EXAMPLE = createAddonExample();
     public static final String AUTHENTICATION_EXAMPLE = createAuthenticationExample();
+    public static final String AUTOCONVERT_EXAMPLE = createAutoconvertExample();
+    public static final String AUTOCONVERT_MATCHER_EXAMPLE = createMatcherExample();
     public static final String COMPOSITE_CONDITION_EXAMPLE = createCompositeConditionExample();
     public static final String DYNAMIC_MACRO_EXAMPLE = createDynamicMacroExample();
     public static final String ENTITY_PROPERTY_EXAMPLE = createEntityPropertyExample();
@@ -736,6 +718,43 @@ public class ConnectJsonExamples
                 new EntityPropertyIndexKeyConfigurationBean(Lists.newArrayList(extractionConfiguration), "attachment");
 
         return gson.toJson(issueAttachmentIndexConfiguration);
+    }
+
+    private static String createAutoconvertExample() {
+        DynamicContentMacroModuleBean dynamicMacroWithAutoconvert = newDynamicContentMacroModuleBean()
+                .withUrl("/dynamic-macro")
+                .withKey("dynamic-macro-with-autoconvert")
+                .withName(new I18nProperty("Dynamic Macro With Autoconvert", null))
+                .withParameters(
+                        newMacroParameterBean()
+                                .withIdentifier("url")
+                                .withName(new I18nProperty("URL", ""))
+                                .withType("string")
+                                .build())
+                .withAutoconvert(AutoconvertBean.newAutoconvertBean()
+                        .withUrlParameter("url")
+                        .withMatchers(MatcherBean.newMatcherBean()
+                                        .withPattern("https://www.facebook.com/{}/about")
+                                        .build(),
+                                MatcherBean.newMatcherBean()
+                                        .withPattern("https://www.facebook.com/{}/music")
+                                        .build(),
+                                MatcherBean.newMatcherBean()
+                                        .withPattern("https://www.facebook.com/{}/movies/{}")
+                                        .build())
+                        .build())
+                .build();
+
+        return gson.toJson(dynamicMacroWithAutoconvert);
+    }
+
+    private static String createMatcherExample() {
+
+        MatcherBean matcher = MatcherBean.newMatcherBean()
+                .withPattern("https://www.facebook.com/{}/about")
+                .build();
+
+        return gson.toJson(matcher);
     }
 
     private static JsonObject createJsonArray(String name, ModuleBean bean)
