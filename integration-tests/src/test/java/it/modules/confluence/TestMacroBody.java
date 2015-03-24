@@ -48,7 +48,7 @@ public class TestMacroBody extends AbstractConfluenceWebDriverTest
     private static final Logger logger = LoggerFactory.getLogger(TestMacroBody.class);
 
     @Rule public WebDriverScreenshotRule webDriverScreenshotRule = new WebDriverScreenshotRule();
-    @Rule public Timeout globalTimeout = new Timeout(23000);
+    //@Rule public Timeout globalTimeout = new Timeout(120000);
 
     private static ConnectRunner remotePlugin;
 
