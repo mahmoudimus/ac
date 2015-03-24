@@ -67,5 +67,5 @@ productSnapshotPlan(
         shortName: 'JIRA',
         product: 'JIRA',
         testGroup: 'jira',
-        mavenProductParameters: '-Datlassian.jira.version=6.5-SNAPSHOT'
+        mavenProductParameters: '-Datlassian.jira.version=${bamboo_jira_version}'
 )
