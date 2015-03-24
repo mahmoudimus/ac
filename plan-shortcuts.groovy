@@ -7,7 +7,7 @@ productSnapshotPlan(['prefix', 'shortName', 'product', 'testGroup', 'mavenProduc
     ) {
         commonPlanConfiguration()
         repository(name: 'Atlassian Connect (develop)')
-        trigger(type: 'cron', cronExpression: '0 30 7 ? * 2,3,4,5,6')
+        trigger(type: 'cron', cronExpression: '0 30 20 ? * 2,3,4,5,6')
         hipChatNotification()
         stage(
                 name: 'Run Tests'
@@ -36,12 +36,14 @@ commonPlanConfiguration() {
     )
 }
 
-pollingTrigger() {
+pollingTrigger(['repositoryName']) {
     trigger(
             type: 'polling',
             strategy: 'periodically',
             frequency: '60'
-    )
+    ) {
+        repository(name:'#repositoryName')
+    }
 }
 
 hipChatNotification() {
