@@ -116,13 +116,25 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
 
     private String pasteLinkAndSave(EditorPage editorPage, Option<String> macroName, String link)
     {
-        StringSelection selection = new StringSelection(link);
-        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
+        editorPage.setTitle("TestAutoconvert-" + System.currentTimeMillis());
 
         EditorContent editorContent = editorPage.getEditor().getContent();
         editorContent.focus();
+
+        // type the link in to the editor
+        boolean normalizeSpaces = false;
+        editorContent.setContentViaJs(editorContent.normalizeHtml(link, false));
+        Poller.waitUntilTrue("editor content should contain " + link,
+                editorContent.normalizedHtmlContains(editorContent.normalizeHtml(link, normalizeSpaces), normalizeSpaces));
+        editorContent.placeCursorAtStart("p");
+
+        // select the link one character at a time
+        for (int i = 0; i < link.length(); i++)
+            editorContent.sendKeys(Keys.chord(Keys.SHIFT.toString(), Keys.ARROW_RIGHT.toString()));
+
+        // cut and paste the link to trigger autoconvert
+        editorContent.sendKeys(Keys.chord(OS_CTRL_KEY, "x")); // cut
         editorContent.sendKeys(Keys.chord(OS_CTRL_KEY, "v")); // paste
-        editorPage.setTitle("TestAutoconvert-" + System.currentTimeMillis());
 
         // if the macro name is specified we need to wait for the autoconvert to complete
         if (macroName.isDefined())
