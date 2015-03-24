@@ -3,7 +3,9 @@ package it.modules.confluence;
 import com.atlassian.confluence.pageobjects.component.editor.EditorContent;
 import com.atlassian.confluence.pageobjects.page.content.EditorPage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
+import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.elements.query.Poller;
+import com.atlassian.pageobjects.elements.query.TimedQuery;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -21,6 +23,7 @@ import org.jsoup.select.Elements;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 
 import java.awt.*;
@@ -87,14 +90,14 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
     public void testAutoconvertOnCreate() throws Exception
     {
         EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
-        pasteLinkAndMatch(editorPage, "https://google.com");
+        pasteLinkAndMatch(editorPage, "dynamic-macro-with-autoconvert", "https://google.com");
     }
 
     @Test
     public void testAutoconvertWithTokenOnCreate() throws Exception
     {
         EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
-        pasteLinkAndMatch(editorPage, "https://google.com/variable");
+        pasteLinkAndMatch(editorPage, "dynamic-macro-with-autoconvert", "https://google.com/variable");
     }
 
     @Test
@@ -111,21 +114,29 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
         pasteLinkAndNoMatch(editorPage, "https://google.comwontmatch");
     }
 
-    private String pasteLinkAndSave(EditorPage editorPage, String link)
+    private String pasteLinkAndSave(EditorPage editorPage, Option<String> macroName, String link)
     {
         EditorContent editorContent = editorPage.getEditor().getContent();
         StringSelection selection = new StringSelection(link);
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
         editorContent.sendKeys(Keys.chord(OS_CTRL_KEY, "v")); // paste
         editorPage.setTitle("TestAutoconvert-" + System.currentTimeMillis());
+
+        // if the macro name is specified we need to wait for the autoconvert to complete
+        if (macroName.isDefined())
+        {
+            TimedQuery<Boolean> query = editorContent.isElementPresentInEditorContentTimed(By.cssSelector("img[data-macro-name='" + macroName.get() + "']"));
+            Poller.waitUntilTrue(query);
+        }
+
         ViewPage viewPage = editorPage.saveWithKeyboardShortcut();
         long pageId = viewPage.getPageId();
         return rpc.getPageContent(pageId);
     }
 
-    private void pasteLinkAndMatch(EditorPage editorPage, String link)
+    private void pasteLinkAndMatch(EditorPage editorPage, String macroName, String link)
     {
-        String pageContent = pasteLinkAndSave(editorPage, link);
+        String pageContent = pasteLinkAndSave(editorPage, Option.some(macroName), link);
         Document doc = Jsoup.parse(pageContent, "", Parser.xmlParser());
         // check that the macro was created correctly
         Elements elements = doc.select("ac|structured-macro");
@@ -140,7 +151,7 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
 
     private void pasteLinkAndNoMatch(EditorPage editorPage, String link)
     {
-        String pageContent = pasteLinkAndSave(editorPage, link);
+        String pageContent = pasteLinkAndSave(editorPage, Option.<String>none(), link);
         Document doc = Jsoup.parse(pageContent, "", Parser.xmlParser());
         // check that the macro was created correctly
         Elements elements = doc.select("ac|structured-macro");
