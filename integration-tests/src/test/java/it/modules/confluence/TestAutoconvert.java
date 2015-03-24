@@ -23,6 +23,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.Keys;
 
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static org.junit.Assert.assertEquals;
@@ -111,24 +114,10 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
     private String pasteLinkAndSave(EditorPage editorPage, String link)
     {
         EditorContent editorContent = editorPage.getEditor().getContent();
-        editorContent.focus();
-
-        boolean normalizeSpaces = false;
-        editorContent.setContentViaJs(editorContent.normalizeHtml(link, false));
-        Poller.waitUntilTrue("editor content should contain " + link,
-                editorContent.normalizedHtmlContains(editorContent.normalizeHtml(link, normalizeSpaces), normalizeSpaces));
-
-        editorContent.placeCursorAtStart("p");
-
-        // using select-all here doesnt appear to work, i think its because it selects the <p> tags too
-        for (int i = 0; i < link.length(); i++)
-            editorContent.sendKeys(Keys.chord(Keys.SHIFT.toString(), Keys.ARROW_RIGHT.toString()));
-
-        editorContent.sendKeys(Keys.chord(OS_CTRL_KEY, "x")); // cut
+        StringSelection selection = new StringSelection(link);
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
         editorContent.sendKeys(Keys.chord(OS_CTRL_KEY, "v")); // paste
-
         editorPage.setTitle("TestAutoconvert-" + System.currentTimeMillis());
-
         ViewPage viewPage = editorPage.saveWithKeyboardShortcut();
         long pageId = viewPage.getPageId();
         return rpc.getPageContent(pageId);
