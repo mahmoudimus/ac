@@ -575,7 +575,6 @@
 
                         <!-- Tests of Confluence-specific functionality -->
 
-
                         <testGroup>
                             <id>confluence-misc</id>
                             <productIds>
@@ -607,7 +606,7 @@
                                 </testedProductClass>
                             </systemProperties>
                             <includes>
-                                <include>it/common/iframe/*.java</include>
+                                <include>it/confluence/iframe/*.java</include>
                             </includes>
                         </testGroup>
                         <testGroup>
@@ -621,7 +620,7 @@
                                 </testedProductClass>
                             </systemProperties>
                             <includes>
-                                <include>it/common/item/*.java</include>
+                                <include>it/confluence/item/*.java</include>
                             </includes>
                         </testGroup>
                         <testGroup>
@@ -635,7 +634,7 @@
                                 </testedProductClass>
                             </systemProperties>
                             <includes>
-                                <include>it/common/jsapi/*.java</include>
+                                <include>it/confluence/jsapi/*.java</include>
                             </includes>
                         </testGroup>
                         <testGroup>
@@ -649,7 +648,7 @@
                                 </testedProductClass>
                             </systemProperties>
                             <includes>
-                                <include>it/common/macro/*.java</include>
+                                <include>it/confluence/macro/*.java</include>
                             </includes>
                         </testGroup>
 
@@ -734,7 +733,6 @@
 
                         <!-- Tests of JIRA-specific functionality -->
 
-
                         <testGroup>
                             <id>jira-misc</id>
                             <productIds>
@@ -752,7 +750,6 @@
                                 <exclude>it/jira/iframe/*.java</exclude>
                                 <exclude>it/jira/item/*.java</exclude>
                                 <exclude>it/jira/jsapi/*.java</exclude>
-                                <exclude>it/jira/macro/*.java</exclude>
                             </excludes>
                         </testGroup>
                         <testGroup>
@@ -766,7 +763,7 @@
                                 </testedProductClass>
                             </systemProperties>
                             <includes>
-                                <include>it/common/iframe/*.java</include>
+                                <include>it/jira/iframe/*.java</include>
                             </includes>
                         </testGroup>
                         <testGroup>
@@ -780,7 +777,7 @@
                                 </testedProductClass>
                             </systemProperties>
                             <includes>
-                                <include>it/common/item/*.java</include>
+                                <include>it/jira/item/*.java</include>
                             </includes>
                         </testGroup>
                         <testGroup>
@@ -794,7 +791,7 @@
                                 </testedProductClass>
                             </systemProperties>
                             <includes>
-                                <include>it/common/jsapi/*.java</include>
+                                <include>it/jira/jsapi/*.java</include>
                             </includes>
                         </testGroup>
 
