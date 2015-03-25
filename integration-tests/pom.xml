@@ -464,6 +464,7 @@
                     </products>
 
                     <testGroups>
+
                         <testGroup>
                             <id>confluence</id>
                             <productIds>
@@ -476,7 +477,6 @@
                             </systemProperties>
                             <excludes>
                                 <exclude>it/jira/**/*.java</exclude>
-                                <exclude>it/*/jira/**/*.java</exclude>
                             </excludes>
                         </testGroup>
                         <testGroup>
@@ -491,9 +491,313 @@
                             </systemProperties>
                             <excludes>
                                 <exclude>it/confluence/**/*.java</exclude>
-                                <exclude>it/*/confluence/**/*.java</exclude>
                             </excludes>
                         </testGroup>
+
+                        <!-- Tests of cross-product functionality on Confluence -->
+
+                        <testGroup>
+                            <id>confluence-common-misc</id>
+                            <productIds>
+                                <productId>confluence</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProductClass>
+                                    com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct
+                                </testedProductClass>
+                            </systemProperties>
+                            <includes>
+                                <include>it/common/**/*.java</include>
+                            </includes>
+                            <excludes>
+                                <exclude>it/common/iframe/*.java</exclude>
+                                <exclude>it/common/jsapi/*.java</exclude>
+                                <exclude>it/common/lifecycle/*.java</exclude>
+                                <exclude>it/common/rest/*.java</exclude>
+                            </excludes>
+                        </testGroup>
+                        <testGroup>
+                            <id>confluence-common-iframe</id>
+                            <productIds>
+                                <productId>confluence</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProductClass>
+                                    com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct
+                                </testedProductClass>
+                            </systemProperties>
+                            <includes>
+                                <include>it/common/iframe/*.java</include>
+                            </includes>
+                        </testGroup>
+                        <testGroup>
+                            <id>confluence-common-jsapi</id>
+                            <productIds>
+                                <productId>confluence</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProductClass>
+                                    com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct
+                                </testedProductClass>
+                            </systemProperties>
+                            <includes>
+                                <include>it/common/jsapi/*.java</include>
+                            </includes>
+                        </testGroup>
+                        <testGroup>
+                            <id>confluence-common-lifecycle</id>
+                            <productIds>
+                                <productId>confluence</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProductClass>
+                                    com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct
+                                </testedProductClass>
+                            </systemProperties>
+                            <includes>
+                                <include>it/common/lifecycle/*.java</include>
+                            </includes>
+                        </testGroup>
+                        <testGroup>
+                            <id>confluence-common-rest</id>
+                            <productIds>
+                                <productId>confluence</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProductClass>
+                                    com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct
+                                </testedProductClass>
+                            </systemProperties>
+                            <includes>
+                                <include>it/common/rest/*.java</include>
+                            </includes>
+                        </testGroup>
+
+                        <!-- Tests of Confluence-specific functionality -->
+
+
+                        <testGroup>
+                            <id>confluence-misc</id>
+                            <productIds>
+                                <productId>confluence</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProductClass>
+                                    com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct
+                                </testedProductClass>
+                            </systemProperties>
+                            <includes>
+                                <include>it/confluence/**/*.java</include>
+                            </includes>
+                            <excludes>
+                                <exclude>it/confluence/iframe/*.java</exclude>
+                                <exclude>it/confluence/item/*.java</exclude>
+                                <exclude>it/confluence/jsapi/*.java</exclude>
+                                <exclude>it/confluence/macro/*.java</exclude>
+                            </excludes>
+                        </testGroup>
+                        <testGroup>
+                            <id>confluence-iframe</id>
+                            <productIds>
+                                <productId>confluence</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProductClass>
+                                    com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct
+                                </testedProductClass>
+                            </systemProperties>
+                            <includes>
+                                <include>it/common/iframe/*.java</include>
+                            </includes>
+                        </testGroup>
+                        <testGroup>
+                            <id>confluence-item</id>
+                            <productIds>
+                                <productId>confluence</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProductClass>
+                                    com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct
+                                </testedProductClass>
+                            </systemProperties>
+                            <includes>
+                                <include>it/common/item/*.java</include>
+                            </includes>
+                        </testGroup>
+                        <testGroup>
+                            <id>confluence-jsapi</id>
+                            <productIds>
+                                <productId>confluence</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProductClass>
+                                    com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct
+                                </testedProductClass>
+                            </systemProperties>
+                            <includes>
+                                <include>it/common/jsapi/*.java</include>
+                            </includes>
+                        </testGroup>
+                        <testGroup>
+                            <id>confluence-macro</id>
+                            <productIds>
+                                <productId>confluence</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProductClass>
+                                    com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct
+                                </testedProductClass>
+                            </systemProperties>
+                            <includes>
+                                <include>it/common/macro/*.java</include>
+                            </includes>
+                        </testGroup>
+
+                        <!-- Tests of cross-product functionality on JIRA -->
+
+                        <testGroup>
+                            <id>jira-common-misc</id>
+                            <productIds>
+                                <productId>jira</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProductClass>
+                                    com.atlassian.jira.pageobjects.JiraTestedProduct
+                                </testedProductClass>
+                            </systemProperties>
+                            <includes>
+                                <include>it/common/**/*.java</include>
+                            </includes>
+                            <excludes>
+                                <exclude>it/common/iframe/*.java</exclude>
+                                <exclude>it/common/jsapi/*.java</exclude>
+                                <exclude>it/common/lifecycle/*.java</exclude>
+                                <exclude>it/common/rest/*.java</exclude>
+                            </excludes>
+                        </testGroup>
+                        <testGroup>
+                            <id>jira-common-iframe</id>
+                            <productIds>
+                                <productId>jira</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProductClass>
+                                    com.atlassian.jira.pageobjects.JiraTestedProduct
+                                </testedProductClass>
+                            </systemProperties>
+                            <includes>
+                                <include>it/common/iframe/*.java</include>
+                            </includes>
+                        </testGroup>
+                        <testGroup>
+                            <id>jira-common-jsapi</id>
+                            <productIds>
+                                <productId>jira</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProductClass>
+                                    com.atlassian.jira.pageobjects.JiraTestedProduct
+                                </testedProductClass>
+                            </systemProperties>
+                            <includes>
+                                <include>it/common/jsapi/*.java</include>
+                            </includes>
+                        </testGroup>
+                        <testGroup>
+                            <id>jira-common-lifecycle</id>
+                            <productIds>
+                                <productId>jira</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProductClass>
+                                    com.atlassian.jira.pageobjects.JiraTestedProduct
+                                </testedProductClass>
+                            </systemProperties>
+                            <includes>
+                                <include>it/common/lifecycle/*.java</include>
+                            </includes>
+                        </testGroup>
+                        <testGroup>
+                            <id>jira-common-rest</id>
+                            <productIds>
+                                <productId>jira</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProductClass>
+                                    com.atlassian.jira.pageobjects.JiraTestedProduct
+                                </testedProductClass>
+                            </systemProperties>
+                            <includes>
+                                <include>it/common/rest/*.java</include>
+                            </includes>
+                        </testGroup>
+
+                        <!-- Tests of JIRA-specific functionality -->
+
+
+                        <testGroup>
+                            <id>jira-misc</id>
+                            <productIds>
+                                <productId>jira</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProductClass>
+                                    com.atlassian.jira.pageobjects.JiraTestedProduct
+                                </testedProductClass>
+                            </systemProperties>
+                            <includes>
+                                <include>it/jira/**/*.java</include>
+                            </includes>
+                            <excludes>
+                                <exclude>it/jira/iframe/*.java</exclude>
+                                <exclude>it/jira/item/*.java</exclude>
+                                <exclude>it/jira/jsapi/*.java</exclude>
+                                <exclude>it/jira/macro/*.java</exclude>
+                            </excludes>
+                        </testGroup>
+                        <testGroup>
+                            <id>jira-iframe</id>
+                            <productIds>
+                                <productId>jira</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProductClass>
+                                    com.atlassian.jira.pageobjects.JiraTestedProduct
+                                </testedProductClass>
+                            </systemProperties>
+                            <includes>
+                                <include>it/common/iframe/*.java</include>
+                            </includes>
+                        </testGroup>
+                        <testGroup>
+                            <id>jira-item</id>
+                            <productIds>
+                                <productId>jira</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProductClass>
+                                    com.atlassian.jira.pageobjects.JiraTestedProduct
+                                </testedProductClass>
+                            </systemProperties>
+                            <includes>
+                                <include>it/common/item/*.java</include>
+                            </includes>
+                        </testGroup>
+                        <testGroup>
+                            <id>jira-jsapi</id>
+                            <productIds>
+                                <productId>jira</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProductClass>
+                                    com.atlassian.jira.pageobjects.JiraTestedProduct
+                                </testedProductClass>
+                            </systemProperties>
+                            <includes>
+                                <include>it/common/jsapi/*.java</include>
+                            </includes>
+                        </testGroup>
+
                     </testGroups>
                 </configuration>
                 <dependencies>

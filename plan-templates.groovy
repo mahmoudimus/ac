@@ -1,13 +1,13 @@
 plan(
         projectKey: 'CONNECT',
-        key: 'ACD',
-        name: 'Cloud Plugin - develop',
+        key: 'ACDX',
+        name: 'Cloud Plugin - develop X',
         description: 'Tests atlassian-connect-plugin'
 ) {
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (develop)')
-    pollingTrigger(repositoryName: 'Atlassian Connect (develop)')
-    hipChatNotification()
+    /* pollingTrigger(repositoryName: 'Atlassian Connect (develop)')
+    hipChatNotification() */
     runTestsStage()
     stage(
             name: 'Start Release',
@@ -32,17 +32,17 @@ plan(
 
 plan(
         projectKey: 'CONNECT',
-        key: 'CF',
-        name: 'Cloud Plugin - Feature branches',
+        key: 'CFX',
+        name: 'Cloud Plugin - Feature branches X',
         description: 'Tests feature branches of atlassian-connect-plugin'
 ) {
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (branch builds)')
-    pollingTrigger(repositoryName: 'Atlassian Connect (branch builds)')
+    /* pollingTrigger(repositoryName: 'Atlassian Connect (branch builds)')
     notification(
             type: 'All Builds Completed',
             recipient: 'committers'
-    )
+    ) */
     branchMonitoring(
             enabled: 'true',
             matchingPattern: '(feature|issue)/.*',
@@ -54,20 +54,38 @@ plan(
     runTestsStage()
 }
 
-productSnapshotPlan(
-        prefix: 'C',
-        shortName: 'CONF',
-        product: 'Confluence',
-        testGroup: 'confluence',
-        applicationVersion: '5.8-SNAPSHOT',
-        mavenProductParameters: '-Datlassian.confluence.version=${bamboo_product_version}'
-)
+plan(
+        projectKey: 'CONNECT',
+        key: 'CCMX',
+        name: 'Cloud Plugin - SNAPSHOT CONF X',
+        description: 'Tests the develop branch of atlassian-connect-plugin against the latest Confluence SNAPSHOT version'
+) {
+    productSnapshotPlanConfiguration(
+            applicationVersion: '5.8-SNAPSHOT',
+    )
+    stage(
+            name: 'Run Tests'
+    ) {
+        testJobsForConfluence(
+                mavenProductParameters: '-Datlassian.confluence.version=${bamboo_product_version}'
+        )
+    }
+}
 
-productSnapshotPlan(
-        prefix: 'J',
-        shortName: 'JIRA',
-        product: 'JIRA',
-        testGroup: 'jira',
-        applicationVersion: '6.5-SNAPSHOT',
-        mavenProductParameters: '-Datlassian.jira.version=${bamboo_product_version}'
-)
+plan(
+        projectKey: 'CONNECT',
+        key: 'CJMX',
+        name: 'Cloud Plugin - SNAPSHOT JIRA X',
+        description: 'Tests the develop branch of atlassian-connect-plugin against the latest JIRA SNAPSHOT version'
+) {
+    productSnapshotPlanConfiguration(
+            applicationVersion: '6.5-SNAPSHOT',
+    )
+    stage(
+            name: 'Run Tests'
+    ) {
+        testJobsForJIRA(
+                mavenProductParameters: '-Datlassian.jira.version=${bamboo_product_version}'
+        )
+    }
+}
