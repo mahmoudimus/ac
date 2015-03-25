@@ -26,9 +26,6 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
-
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static org.junit.Assert.assertEquals;
@@ -119,7 +116,6 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
         editorPage.setTitle("TestAutoconvert-" + System.currentTimeMillis());
 
         EditorContent editorContent = editorPage.getEditor().getContent();
-        editorContent.focus();
 
         // type the link in to the editor
         boolean normalizeSpaces = false;
@@ -134,6 +130,7 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
 
         // cut and paste the link to trigger autoconvert
         editorContent.sendKeys(Keys.chord(OS_CTRL_KEY, "x")); // cut
+        editorContent.focus();
         editorContent.sendKeys(Keys.chord(OS_CTRL_KEY, "v")); // paste
 
         // if the macro name is specified we need to wait for the autoconvert to complete
