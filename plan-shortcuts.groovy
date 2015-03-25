@@ -60,6 +60,7 @@ runTestsStage() {
                 key: 'UTJ7',
                 name: 'Unit Tests'
         ) {
+            commonRequirements()
             checkoutDefaultRepositoryTask()
             mavenTestTask(
                     description: 'Run Unit Tests',
@@ -71,7 +72,7 @@ runTestsStage() {
                 key: 'QUNIT',
                 name: 'QUnit Tests'
         ) {
-            bashRequirement()
+            commonRequirements()
             checkoutDefaultRepositoryTask()
             mavenTestTask(
                     description: 'Run QUnit Tests using Karma',
@@ -90,7 +91,7 @@ runTestsStage() {
                 name: 'Descriptor Validation',
                 description: 'Validates that all public add-ons in the marketplace validate against the latest schema version'
         ) {
-            bashRequirement()
+            commonRequirements()
             checkoutDefaultRepositoryTask()
             mavenTask(
                     description: 'Build Developer Documentation',
@@ -127,6 +128,7 @@ runTestsStage() {
                 key: 'DOCS',
                 name: 'Developer Docs'
         ) {
+            commonRequirements()
             requirement(
                     key: 'system.builder.node.Node.js 0.10',
                     condition: 'exists'
@@ -329,6 +331,7 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'mavenProductParameters']) {
                 pattern: 'atlassian-connect-plugin.jar',
                 shared: 'false'
         )
+        commonRequirements()
         checkoutDefaultRepositoryTask()
         mavenTestTask(
                 description: 'Run Wired Lifecycle Tests for #product',
@@ -343,6 +346,7 @@ wiredTestJob(['key', 'product', 'testGroup', 'mavenProductParameters']) {
             key: '#key',
             name: '#product - Wired Tests'
     ) {
+        commonRequirements()
         checkoutDefaultRepositoryTask()
         mavenTestTask(
                 description: 'Run Wired Tests for #product',
@@ -357,7 +361,7 @@ integrationTestJob(['key', 'product', 'testGroup', 'groupName', 'mavenProductPar
             key: '#key',
             name: '#product - ITs #groupName'
     ) {
-        bashRequirement()
+        commonRequirements()
         checkoutDefaultRepositoryTask()
         setupVncTask()
         mavenTestTask(
@@ -369,7 +373,12 @@ integrationTestJob(['key', 'product', 'testGroup', 'groupName', 'mavenProductPar
     }
 }
 
-bashRequirement() {
+commonRequirements() {
+    requirement(
+            key: 'os',
+            condition: 'equals',
+            value: 'Linux'
+    )
     requirement(
             key: 'system.builder.command.Bash',
             condition: 'exists'
