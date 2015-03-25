@@ -59,7 +59,7 @@ productSnapshotPlan(
         shortName: 'CONF',
         product: 'Confluence',
         testGroup: 'confluence',
-        productVersion: '5.8-SNAPSHOT',
+        applicationVersion: '5.8-SNAPSHOT',
         mavenProductParameters: '-Datlassian.confluence.version=${bamboo_product_version}'
 )
 
@@ -68,6 +68,6 @@ productSnapshotPlan(
         shortName: 'JIRA',
         product: 'JIRA',
         testGroup: 'jira',
-        productVersion: '6.5-SNAPSHOT',
+        applicationVersion: '6.5-SNAPSHOT',
         mavenProductParameters: '-Datlassian.jira.version=${bamboo_product_version}'
 )

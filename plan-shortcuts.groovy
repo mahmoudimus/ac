@@ -1,4 +1,4 @@
-productSnapshotPlan(['prefix', 'shortName', 'product', 'testGroup', 'mavenProductParameters']) {
+productSnapshotPlan(['prefix', 'shortName', 'product', 'testGroup', 'applicationVersion', 'mavenProductParameters']) {
     plan(
             projectKey: 'CONNECT',
             key: 'C#prefixM',
@@ -9,7 +9,7 @@ productSnapshotPlan(['prefix', 'shortName', 'product', 'testGroup', 'mavenProduc
         repository(name: 'Atlassian Connect (develop)')
         variable(
                 key:'bamboo.product.version',
-                value:'#productVersion'
+                value:'#applicationVersion'
         )
         trigger(
                 type: 'cron',
