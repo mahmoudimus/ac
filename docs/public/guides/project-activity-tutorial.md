@@ -107,7 +107,7 @@ In this step, you'll prune some of the stub code, and install your add-on in JIR
 		},
 	````
 	This names your add-on in in your JIRA instance, and essentially makes it yours. 
-1. Replace the content of `modules` with a [`generalPages` module](../modules/jira/general-page.html):  
+1. Replace the content of `modules` with a [`generalPages` module](../modules/common/page.html):
 	````
      "generalPages": [
  

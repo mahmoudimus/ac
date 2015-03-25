@@ -49,9 +49,7 @@ public class PageConditionsValidator implements AddOnBeanValidator
             {
                 String exceptionMessage = String.format("The add-on (%s) includes a Page Module with an unsupported condition (%s)", addonBean.getKey(),conditionString);
 
-                String i18nMessage = i18nResolver.getText("connect.install.error.page.with.invalid.condition", addonBean.getKey(),conditionString);
-                
-                throw new InvalidDescriptorException(exceptionMessage, i18nMessage);
+                throw new InvalidDescriptorException(exceptionMessage, "connect.install.error.page.with.invalid.condition", addonBean.getKey(),conditionString);
             }
         }
     }
