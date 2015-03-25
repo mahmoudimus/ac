@@ -7,7 +7,7 @@ productSnapshotPlan(['prefix', 'shortName', 'product', 'testGroup', 'mavenProduc
     ) {
         commonPlanConfiguration()
         repository(name: 'Atlassian Connect (develop)')
-        variable(key:'bamboo.jira_version',value:'6.5-SNAPSHOT')
+        variable(key:'bamboo.product_version',value:'#productVersion')
         trigger(type: 'cron', cronExpression: '0 30 20 ? * 2,3,4,5,6')
         hipChatNotification()
         stage(
