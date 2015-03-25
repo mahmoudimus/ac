@@ -85,7 +85,7 @@ public class JsonDescriptorValidator implements ConnectDescriptorValidator
                 JsonNode schemaNode = JsonLoader.fromString(schema);
                 JsonSchema jsonSchema = factory.getJsonSchema(schemaNode);
                 ListProcessingReport report = (ListProcessingReport) jsonSchema.validate(descriptorNode);
-                result = new DescriptorValidationResult(true, report.isSuccess(), report.asJson().toString(), report.toString());
+                result = new DescriptorValidationResult(report);
             }
             catch (ProcessingException e)
             {
