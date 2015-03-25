@@ -181,7 +181,7 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
         if (macroName.isDefined())
         {
             TimedQuery<Boolean> query = editorContent.isElementPresentInEditorContentTimed(By.cssSelector("img[data-macro-name='" + macroName.get() + "']"));
-            Poller.waitUntilTrue(query);
+            Poller.waitUntilTrue("autocomplete round trip failed: "+editorContent.getTimedHtml().byDefaultTimeout(), query);
             logger.error("found image - content: " + editorContent.getTimedHtml().byDefaultTimeout());
         }
 
