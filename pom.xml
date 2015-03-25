@@ -30,7 +30,6 @@
         <module>modules</module>
         <module>test-support-plugin</module>
         <module>plugin</module>
-        <module>static-analysis</module>
         <module>cloud-acceptance-tests</module>
     </modules>
 
