@@ -7,6 +7,7 @@ import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.pageobjects.elements.query.TimedQuery;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MatcherBean;
@@ -25,8 +26,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
+import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static org.junit.Assert.assertEquals;
 
@@ -34,8 +38,11 @@ import static org.junit.Assert.assertEquals;
  */
 public class TestAutoconvert extends AbstractConfluenceWebDriverTest
 {
+    private static final Logger logger = LoggerFactory.getLogger(TestAutoconvert.class);
+
     protected static final String OS_CTRL_KEY = "Mac OS X".equals(System.getProperty("os.name")) ? Keys.COMMAND.toString() : Keys.CONTROL.toString();
     private static final String DYNAMIC_MACRO_WITH_AUTOCONVERT = "Dynamic Macro With Autoconvert";
+    private static final String STATIC_MACRO_WITH_AUTOCONVERT = "Static Macro With Autoconvert";
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
@@ -55,10 +62,32 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
                         .withUrlParameter("url")
                         .withMatchers(
                                 MatcherBean.newMatcherBean()
-                                        .withPattern("https://google.com")
+                                        .withPattern("https://google.com/dynamic")
                                         .build(),
                                 MatcherBean.newMatcherBean()
-                                        .withPattern("https://google.com/{}")
+                                        .withPattern("https://google.com/dynamic/{}")
+                                        .build())
+                        .build())
+                .build();
+
+        StaticContentMacroModuleBean staticMacroWithAutoconvert = newStaticContentMacroModuleBean()
+                .withUrl("/static-macro")
+                .withKey("static-macro-with-autoconvert")
+                .withName(new I18nProperty(STATIC_MACRO_WITH_AUTOCONVERT, null))
+                .withParameters(
+                        newMacroParameterBean()
+                                .withIdentifier("url")
+                                .withName(new I18nProperty("URL", ""))
+                                .withType("string")
+                                .build())
+                .withAutoconvert(AutoconvertBean.newAutoconvertBean()
+                        .withUrlParameter("url")
+                        .withMatchers(
+                                MatcherBean.newMatcherBean()
+                                        .withPattern("https://google.com/static")
+                                        .build(),
+                                MatcherBean.newMatcherBean()
+                                        .withPattern("https://google.com/static/{}")
                                         .build())
                         .build())
                 .build();
@@ -66,11 +95,10 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
         remotePlugin = new ConnectRunner(getProduct().getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .setAuthenticationToNone()
                 .addScope(ScopeName.ADMIN) // for using ap.request
-                .addModules("dynamicContentMacros",
-                        dynamicMacroWithAutoconvert
-                )
+                .addModules("dynamicContentMacros", dynamicMacroWithAutoconvert)
+                .addModules("staticContentMacros", staticMacroWithAutoconvert)
                 .addRoute("/dynamic-macro", ConnectAppServlets.helloWorldServlet())
-                .addRoute("/dynamic-macro-static", ConnectAppServlets.dynamicMacroStaticServlet())
+                .addRoute("/static-macro", ConnectAppServlets.dynamicMacroStaticServlet())
                 .start();
     }
 
@@ -84,17 +112,31 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
     }
 
     @Test
-    public void testAutoconvertOnCreate() throws Exception
+    public void testAutoconvertDynamicMacroOnCreate() throws Exception
     {
         EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
-        pasteLinkAndMatch(editorPage, "dynamic-macro-with-autoconvert", "https://google.com");
+        pasteLinkAndMatch(editorPage, "dynamic-macro-with-autoconvert", "https://google.com/dynamic");
     }
 
     @Test
-    public void testAutoconvertWithTokenOnCreate() throws Exception
+    public void testAutoconvertDynamicMacroWithTokenOnCreate() throws Exception
     {
         EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
-        pasteLinkAndMatch(editorPage, "dynamic-macro-with-autoconvert", "https://google.com/variable");
+        pasteLinkAndMatch(editorPage, "dynamic-macro-with-autoconvert", "https://google.com/dynamic/variable");
+    }
+
+    @Test
+    public void testAutoconvertStaticMacroOnCreate() throws Exception
+    {
+        EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
+        pasteLinkAndMatch(editorPage, "static-macro-with-autoconvert", "https://google.com/static");
+    }
+
+    @Test
+    public void testAutoconvertStaticMacroWithTokenOnCreate() throws Exception
+    {
+        EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
+        pasteLinkAndMatch(editorPage, "static-macro-with-autoconvert", "https://google.com/static/variable");
     }
 
     @Test
@@ -113,31 +155,34 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
 
     private String pasteLinkAndSave(EditorPage editorPage, Option<String> macroName, String link)
     {
-        editorPage.setTitle("TestAutoconvert-" + System.currentTimeMillis());
-
         EditorContent editorContent = editorPage.getEditor().getContent();
+        editorContent.focus();
 
-        // type the link in to the editor
-        boolean normalizeSpaces = false;
         editorContent.setContentViaJs(editorContent.normalizeHtml(link, false));
         Poller.waitUntilTrue("editor content should contain " + link,
-                editorContent.normalizedHtmlContains(editorContent.normalizeHtml(link, normalizeSpaces), normalizeSpaces));
+                editorContent.normalizedHtmlContains(editorContent.normalizeHtml(link, false), false));
+
+        logger.error("typed link - content: " + editorContent.getTimedHtml().byDefaultTimeout());
+
         editorContent.placeCursorAtStart("p");
 
-        // select the link one character at a time
+        // using select-all here doesnt appear to work, i think its because it selects the <p> tags too
         for (int i = 0; i < link.length(); i++)
             editorContent.sendKeys(Keys.chord(Keys.SHIFT.toString(), Keys.ARROW_RIGHT.toString()));
 
-        // cut and paste the link to trigger autoconvert
+        logger.error("selection made - content: " + editorContent.getTimedHtml().byDefaultTimeout());
+
         editorContent.sendKeys(Keys.chord(OS_CTRL_KEY, "x")); // cut
-        editorContent.focus();
         editorContent.sendKeys(Keys.chord(OS_CTRL_KEY, "v")); // paste
+
+        editorPage.setTitle("TestAutoconvert-" + System.currentTimeMillis());
 
         // if the macro name is specified we need to wait for the autoconvert to complete
         if (macroName.isDefined())
         {
             TimedQuery<Boolean> query = editorContent.isElementPresentInEditorContentTimed(By.cssSelector("img[data-macro-name='" + macroName.get() + "']"));
             Poller.waitUntilTrue(query);
+            logger.error("found image - content: " + editorContent.getTimedHtml().byDefaultTimeout());
         }
 
         ViewPage viewPage = editorPage.saveWithKeyboardShortcut();
@@ -153,7 +198,7 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
         Elements elements = doc.select("ac|structured-macro");
         assertEquals(1, elements.size());
         Element macroElement = elements.get(0);
-        assertEquals("dynamic-macro-with-autoconvert", macroElement.attr("ac:name"));
+        assertEquals(macroName, macroElement.attr("ac:name"));
         Elements parameterElements = macroElement.select("ac|parameter");
         assertEquals(1, parameterElements.size());
         Element urlParameter = parameterElements.get(0);
