@@ -513,7 +513,6 @@
                                 <exclude>it/common/iframe/*.java</exclude>
                                 <exclude>it/common/jsapi/*.java</exclude>
                                 <exclude>it/common/lifecycle/*.java</exclude>
-                                <exclude>it/common/rest/*.java</exclude>
                             </excludes>
                         </testGroup>
                         <testGroup>
@@ -556,20 +555,6 @@
                             </systemProperties>
                             <includes>
                                 <include>it/common/lifecycle/*.java</include>
-                            </includes>
-                        </testGroup>
-                        <testGroup>
-                            <id>confluence-common-rest</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProductClass>
-                                    com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct
-                                </testedProductClass>
-                            </systemProperties>
-                            <includes>
-                                <include>it/common/rest/*.java</include>
                             </includes>
                         </testGroup>
 
@@ -671,7 +656,6 @@
                                 <exclude>it/common/iframe/*.java</exclude>
                                 <exclude>it/common/jsapi/*.java</exclude>
                                 <exclude>it/common/lifecycle/*.java</exclude>
-                                <exclude>it/common/rest/*.java</exclude>
                             </excludes>
                         </testGroup>
                         <testGroup>
@@ -714,20 +698,6 @@
                             </systemProperties>
                             <includes>
                                 <include>it/common/lifecycle/*.java</include>
-                            </includes>
-                        </testGroup>
-                        <testGroup>
-                            <id>jira-common-rest</id>
-                            <productIds>
-                                <productId>jira</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProductClass>
-                                    com.atlassian.jira.pageobjects.JiraTestedProduct
-                                </testedProductClass>
-                            </systemProperties>
-                            <includes>
-                                <include>it/common/rest/*.java</include>
                             </includes>
                         </testGroup>
 
