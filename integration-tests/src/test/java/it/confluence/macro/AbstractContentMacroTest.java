@@ -22,6 +22,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsert
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroBrowserDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWithRemoteMacro;
 import it.confluence.AbstractConfluenceWebDriverTest;
+import it.confluence.ConfluenceRestClient;
 import it.util.TestUser;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.junit.After;
@@ -111,6 +112,8 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
 
     protected static final String HIDDEN_MACRO_NAME = "Hidden Macro";
     protected static final String HIDDEN_MACRO_KEY = "hidden-macro";
+
+    protected ConfluenceRestClient restClient = new ConfluenceRestClient(getProduct());
 
     protected ViewPage savedPage;
 

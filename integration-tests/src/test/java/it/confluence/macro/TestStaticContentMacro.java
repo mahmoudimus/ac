@@ -1,5 +1,8 @@
 package it.confluence.macro;
 
+import com.atlassian.confluence.api.model.content.Content;
+import com.atlassian.confluence.api.model.content.ContentRepresentation;
+import com.atlassian.confluence.api.model.content.ContentType;
 import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.fugue.Iterables;
@@ -146,14 +149,12 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroHttpMethod() throws Exception
     {
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-        editorPage.setTitle(randomName("HTTP GET Macro"));
-
-        selectMacroAndSave(editorPage, GET_MACRO_NAME);
-
-        savedPage = save(editorPage);
-        editorPage = null;
-
+        Content page = restClient.content().create(Content.builder(ContentType.PAGE)
+                .space(TestSpace.DEMO.getKey())
+                .title(randomName("HTTP GET Macro"))
+                .body(String.format("<ac:structured-macro ac:name=\"%s\"/>", GET_MACRO_KEY), ContentRepresentation.STORAGE)
+                .build()).claim();
+        getProduct().viewPage(String.valueOf(page.getId().asLong()));
         assertThat(String.valueOf(contextServlet.waitForContext().get("req_method")), is("GET"));
     }
 
