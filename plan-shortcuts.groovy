@@ -176,24 +176,10 @@ testJobsForConfluence(['mavenProductParameters']) {
             mavenProductParameters: '#mavenProductParameters'
     )
     integrationTestJob(
-            key: 'CITCJ',
-            product: 'Confluence',
-            testGroup: 'confluence-common-jsapi',
-            groupName: 'Common JS API',
-            mavenProductParameters: '#mavenProductParameters'
-    )
-    integrationTestJob(
             key: 'CITCL',
             product: 'Confluence',
             testGroup: 'confluence-common-lifecycle',
             groupName: 'Common Lifecycle',
-            mavenProductParameters: '#mavenProductParameters'
-    )
-    integrationTestJob(
-            key: 'CITCR',
-            product: 'Confluence',
-            testGroup: 'confluence-common-rest',
-            groupName: 'Common REST',
             mavenProductParameters: '#mavenProductParameters'
     )
     integrationTestJob(
@@ -261,24 +247,10 @@ testJobsForJIRA(['mavenProductParameters']) {
             mavenProductParameters: '#mavenProductParameters'
     )
     integrationTestJob(
-            key: 'JITCJ',
-            product: 'JIRA',
-            testGroup: 'jira-common-jsapi',
-            groupName: 'Common JS API',
-            mavenProductParameters: '#mavenProductParameters'
-    )
-    integrationTestJob(
             key: 'JITCL',
             product: 'JIRA',
             testGroup: 'jira-common-lifecycle',
             groupName: 'Common Lifecycle',
-            mavenProductParameters: '#mavenProductParameters'
-    )
-    integrationTestJob(
-            key: 'JITCR',
-            product: 'JIRA',
-            testGroup: 'jira-common-rest',
-            groupName: 'Common REST',
             mavenProductParameters: '#mavenProductParameters'
     )
     integrationTestJob(
