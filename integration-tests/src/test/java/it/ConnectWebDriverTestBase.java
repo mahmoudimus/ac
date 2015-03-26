@@ -23,8 +23,6 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Callable;
 
 public abstract class ConnectWebDriverTestBase
@@ -42,26 +40,11 @@ public abstract class ConnectWebDriverTestBase
     protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
             product.getTester().getDriver());
 
-    private static List<Exception> setupError = new ArrayList<Exception>();
-
     @BeforeClass
     public static void disableLicenseBanner() throws IOException, AuthenticationException
     {
-        try
-        {
-            // disable license banner
-            LicenseStatusBannerHelper.instance().execute(product);
-        }
-        catch (Exception ex)
-        {
-            setupError.add(ex);
-        }
-    }
-    @Before
-    public void checkSetupError() throws Exception
-    {
-        if (!setupError.isEmpty())
-            throw setupError.get(0);
+        // disable license banner
+        LicenseStatusBannerHelper.instance().execute(product);
     }
 
     @Before
