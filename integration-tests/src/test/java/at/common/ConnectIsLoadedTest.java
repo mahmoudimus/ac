@@ -1,20 +1,26 @@
-package at.com.atlassian.plugin.connect;
-
-import com.atlassian.test.categories.OnDemandAcceptanceTest;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+package at.common;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import com.atlassian.jira.webtests.util.LocalTestEnvironmentData;
+import com.atlassian.pageobjects.TestedProduct;
+import com.atlassian.pageobjects.TestedProductFactory;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct;
+import com.atlassian.test.categories.OnDemandAcceptanceTest;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
@@ -33,15 +39,14 @@ public class ConnectIsLoadedTest
     @Test
     public void connectShouldBeLoadedInJira() throws IOException
     {
-        System.out.println("Running ConnectIsLoadedTest.connectShouldBeLoadedInJira()!");
-        connectShouldBeLoaded(System.getProperty("baseurl.jira"));
+        connectShouldBeLoaded(new LocalTestEnvironmentData().getBaseUrl().toString());
     }
 
     @Test
     public void connectShouldBeLoadedInConfluence() throws IOException
     {
-        System.out.println("Running ConnectIsLoadedTest.connectShouldBeLoadedInConfluence()!");
-        connectShouldBeLoaded(System.getProperty("baseurl.confluence"));
+        TestedProduct<?> confluenceProduct = TestedProductFactory.create(FixedConfluenceTestedProduct.class);
+        connectShouldBeLoaded(confluenceProduct.getProductInstance().getBaseUrl());
     }
 
     private void connectShouldBeLoaded(String productBaseUrl) throws IOException
