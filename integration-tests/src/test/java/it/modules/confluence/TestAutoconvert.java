@@ -158,22 +158,24 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
         EditorContent editorContent = editorPage.getEditor().getContent();
         editorContent.focus();
 
-        editorContent.setContentViaJs(editorContent.normalizeHtml(link, false));
-        Poller.waitUntilTrue("editor content should contain " + link,
-                editorContent.normalizedHtmlContains(editorContent.normalizeHtml(link, false), false));
+//        editorContent.setContentViaJs(editorContent.normalizeHtml(link, false));
+//        Poller.waitUntilTrue("editor content should contain " + link,
+//                editorContent.normalizedHtmlContains(editorContent.normalizeHtml(link, false), false));
+//
+//        logger.error("typed link - content: " + editorContent.getTimedHtml().byDefaultTimeout());
+//
+//        editorContent.placeCursorAtStart("p");
+//
+//        // using select-all here doesnt appear to work, i think its because it selects the <p> tags too
+//        for (int i = 0; i < link.length(); i++)
+//            editorContent.sendKeys(Keys.chord(Keys.SHIFT.toString(), Keys.ARROW_RIGHT.toString()));
+//
+//        logger.error("selection made - content: " + editorContent.getTimedHtml().byDefaultTimeout());
+//
+//        editorContent.sendKeys(Keys.chord(OS_CTRL_KEY, "x")); // cut
+//        editorContent.sendKeys(Keys.chord(OS_CTRL_KEY, "v")); // paste
 
-        logger.error("typed link - content: " + editorContent.getTimedHtml().byDefaultTimeout());
-
-        editorContent.placeCursorAtStart("p");
-
-        // using select-all here doesnt appear to work, i think its because it selects the <p> tags too
-        for (int i = 0; i < link.length(); i++)
-            editorContent.sendKeys(Keys.chord(Keys.SHIFT.toString(), Keys.ARROW_RIGHT.toString()));
-
-        logger.error("selection made - content: " + editorContent.getTimedHtml().byDefaultTimeout());
-
-        editorContent.sendKeys(Keys.chord(OS_CTRL_KEY, "x")); // cut
-        editorContent.sendKeys(Keys.chord(OS_CTRL_KEY, "v")); // paste
+        editorContent.pasteContent(link);
 
         editorPage.setTitle("TestAutoconvert-" + System.currentTimeMillis());
 
