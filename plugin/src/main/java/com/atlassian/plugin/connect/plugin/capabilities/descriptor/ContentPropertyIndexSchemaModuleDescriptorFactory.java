@@ -12,12 +12,19 @@ import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceCompon
 
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.IOException;
+import java.io.StringWriter;
 
 @ConfluenceComponent
 public class ContentPropertyIndexSchemaModuleDescriptorFactory implements
         ConnectModuleDescriptorFactory<ContentPropertyModuleBean, ContentPropertyIndexSchemaModuleDescriptor>
 {
+    private static final Logger log = LoggerFactory.getLogger(ContentPropertyIndexSchemaModuleDescriptorFactory.class);
+
     private final ConnectContainerUtil connectContainerUtil;
 
     @Autowired
@@ -57,6 +64,24 @@ public class ContentPropertyIndexSchemaModuleDescriptorFactory implements
             }
         }
 
+        logSchema(indexSchema);
         return indexSchema;
+    }
+
+    private void logSchema(Element indexSchema)
+    {
+        if (log.isDebugEnabled())
+        {
+            try
+            {
+                StringWriter writer = new StringWriter();
+                indexSchema.write(writer);
+                log.debug(writer.toString());
+            }
+            catch (IOException ex)
+            {
+                log.warn("Error attempting to log schema ", ex);
+            }
+        }
     }
 }

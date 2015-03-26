@@ -23,4 +23,9 @@ public class ContentPropertyModuleBeanBuilder
         this.keyConfigurations.add(keyConfiguration);
         return this;
     }
+
+    public List<ContentPropertyIndexKeyConfigurationBean> getKeyConfigurations()
+    {
+        return keyConfigurations;
+    }
 }

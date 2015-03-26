@@ -10,11 +10,15 @@ import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
 import it.util.TestUser;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import redstone.xmlrpc.XmlRpcFault;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean.newBlueprintModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean.newBlueprintTemplateBeanBuilder;
@@ -28,27 +32,44 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
     private static ConnectRunner runner;
     private static String completeKey;
 
+    private static List<Exception> setupFailure = new ArrayList<Exception>();
+
     @BeforeClass
     public static void setupConfluenceAndStartConnectAddOn() throws Exception
     {
-        String key = AddonTestUtils.randomAddOnKey();
-        String moduleKey = "my-blueprint";
-        completeKey = "com.atlassian.plugins.atlassian-connect-plugin:" + ModuleKeyUtils.addonAndModuleKey(key, moduleKey) + "-web-item";
-        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(),
-                key)
-                .addInstallLifecycle()
-                .addRoute(ConnectRunner.INSTALLED_PATH, new InstallHandlerServlet())
-                .addModule("blueprints",
-                        newBlueprintModuleBean()
-                                .withName(new I18nProperty("My Blueprint", null))
-                                .withKey(moduleKey)
-                                .withTemplate(newBlueprintTemplateBeanBuilder()
-                                        .withUrl("/template.xml")
-                                        .build())
-                                .build())
-                .addRoute("/template.xml", ConnectAppServlets.blueprintTemplateServlet())
-                .addScope(ScopeName.READ)
-                .start();
+        try
+        {
+            String key = AddonTestUtils.randomAddOnKey();
+            String moduleKey = "my-blueprint";
+            completeKey = "com.atlassian.plugins.atlassian-connect-plugin:" + ModuleKeyUtils.addonAndModuleKey(key, moduleKey) + "-web-item";
+            runner = new ConnectRunner(product.getProductInstance().getBaseUrl(),
+                    key)
+                    .addInstallLifecycle()
+                    .addRoute(ConnectRunner.INSTALLED_PATH, new InstallHandlerServlet())
+                    .addModule("blueprints",
+                            newBlueprintModuleBean()
+                                    .withName(new I18nProperty("My Blueprint", null))
+                                    .withKey(moduleKey)
+                                    .withTemplate(newBlueprintTemplateBeanBuilder()
+                                            .withUrl("/template.xml")
+                                            .build())
+                                    .build())
+                    .addRoute("/template.xml", ConnectAppServlets.blueprintTemplateServlet())
+                    .addScope(ScopeName.READ)
+                    .start();
+        }
+        catch(Exception ex)
+        {
+            setupFailure.add(ex);
+        }
+    }
+
+    @Before
+    public void checkSetupError() throws Exception
+    {
+        // lets actually see the error, rather than the NoClassDef when failing in static setup
+        if (!setupFailure.isEmpty())
+            throw setupFailure.get(0);
     }
 
     @AfterClass
