@@ -7,6 +7,7 @@
     "karma-qunit": "0.1.4",
     "karma-junit-reporter": "0.2.2",
     "karma-coffee-preprocessor": "0.2",
+    "karma-requirejs": "~0.2.2",
     "npm-watch": "0.0.0"
   },
   "watch": {
