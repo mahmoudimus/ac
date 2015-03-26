@@ -42,6 +42,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Test for the Confluence ContentProperty module, utilizes the confluence rest client
@@ -223,7 +224,7 @@ public class TestConfluenceContentProperties extends AbstractBrowserlessTest
             Thread.sleep(50); // wait for the space deletion to finish
             longTaskStatus = longTaskService.get(task.get().getId()).get();
             if (i > 100)
-                Assert.fail("Delete space long task has not yet completed after "+waitTime * retry);
+                fail("Delete space long task has not yet completed after " + waitTime * retry);
         }
     }
 
@@ -276,6 +277,23 @@ public class TestConfluenceContentProperties extends AbstractBrowserlessTest
     private PageResponse<Content> executeCql(String cql) throws Exception
     {
         log.debug(cql);
-        return cqlSearchService.searchContent(cql).get();
+        try
+        {
+            // confluence's index queue flushes every 5 secs (see config of IndexQueueFlusher), we don't have a rest client method to wait on this indexing
+            for (int i = 0; i < 60; i++)
+            {
+                PageResponse<Content> result = cqlSearchService.searchContent(cql).get();
+                if (result.size() >= 1)
+                    return result;
+
+                Thread.sleep(100);
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new RuntimeException("Could not execute :"+cql,ex);
+        }
+        fail("Did not find any results after 6 secs for query string : " + cql);
+        return null;
     }
 }
