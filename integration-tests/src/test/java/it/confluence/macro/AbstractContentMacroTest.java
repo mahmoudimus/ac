@@ -28,6 +28,7 @@ import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
+import org.slf4j.LoggerFactory;
 import redstone.xmlrpc.XmlRpcFault;
 
 import java.net.MalformedURLException;
@@ -88,6 +89,12 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     public static void logoutBeforeClass()
     {
         getProduct().logOutFast();
+    }
+
+    @After
+    public void dismissConfluenceDiscardDraftsPrompt()
+    {
+        dismissConfluenceDiscardDraftsPrompt();
     }
 
     @After
@@ -289,7 +296,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         finally
         {
             macroBrowserAndEditor.browserDialog.clickCancel();
-            editorPage.cancel();
+            cancelEditor(editorPage);
         }
     }
 
@@ -313,7 +320,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         finally
         {
             macroBrowserAndEditor.browserDialog.clickCancel();
-            editorPage.cancel();
+            cancelEditor(editorPage);
         }
     }
 
@@ -334,7 +341,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         finally
         {
             macroBrowserAndEditor.browserDialog.clickCancel();
-            editorPage.cancel();
+            cancelEditor(editorPage);
         }
     }
 
@@ -351,7 +358,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         }
         finally
         {
-            editorPage.cancel();
+            cancelEditor(editorPage);
         }
     }
 
@@ -369,7 +376,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         }
         finally
         {
-            editorPage.cancel();
+            cancelEditor(editorPage);
         }
     }
 
@@ -400,7 +407,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
                 }
             }
         });
-        editorPage.cancel();
+        cancelEditor(editorPage);
     }
 
     @Test
@@ -408,7 +415,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         selectMacro(editorPage, EDITOR_MACRO_NAME, macroDialogCanceller(EDITOR_MACRO_KEY));
-        editorPage.cancel();
+        cancelEditor(editorPage);
     }
 
     @Test
@@ -434,7 +441,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
                     {
                         dialog.cancel();
                     }
-                    editorPage.cancel();
+                    cancelEditor(editorPage);
                 }
             }
         });
@@ -463,7 +470,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
                     {
                         dialog.cancel();
                     }
-                    editorPage.cancel();
+                    cancelEditor(editorPage);
                 }
             }
         });
@@ -479,7 +486,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         }
         finally
         {
-            editorPage.cancel();
+            cancelEditor(editorPage);
         }
     }
 
@@ -496,7 +503,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         finally
         {
             macroBrowserAndEditor.browserDialog.clickCancel();
-            editorPage.cancel();
+            cancelEditor(editorPage);
         }
     }
 
@@ -521,5 +528,17 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     {
         String body = format("<div class=\"%1$s\"><ac:macro ac:name=\"%1$s\" /></div>", SIMPLE_MACRO_KEY);
         confluenceOps.addComment(some(TestUser.ADMIN), pageId, body);
+    }
+
+    protected void cancelEditor(EditorPage editorPage)
+    {
+        try
+        {
+            editorPage.cancel();
+        }
+        catch (Exception e)
+        {
+            LoggerFactory.getLogger(AbstractContentMacroTest.class).warn(e.getMessage());
+        }
     }
 }

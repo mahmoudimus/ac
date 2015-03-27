@@ -4,6 +4,7 @@ import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.it.Page;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.EditContentPage;
+import com.atlassian.confluence.pageobjects.page.content.EditorPage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
@@ -330,7 +331,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         {
             // necessary to prevent Confluence from showing a navigate away alert
             selectMacro(macroInBrowser);
-            editorPage.cancel();
+            cancelEditor(editorPage);
         }
     }
 
@@ -351,7 +352,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
             macroInBrowser.macro.select();
             RemotePluginDialog dialog = connectPageOperations.findDialog(CLIENT_SIDE_BODY_MACRO_KEY);
             dialog.submit();
-            editorPage.cancel();
+            cancelEditor(editorPage);
         }
     }
 
@@ -419,7 +420,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     {
         String macroBody = "cat pictures go here";
         String body = new MacroStorageFormatBuilder(CLIENT_SIDE_BODY_MACRO_KEY).richTextBody(macroBody).build();
-        EditContentPage editorPage = createAndEditPage(CLIENT_SIDE_BODY_MACRO_NAME, body);
+        EditorPage editorPage = createAndEditPage(CLIENT_SIDE_BODY_MACRO_NAME, body);
 
         RemotePluginDialog dialog = connectPageOperations.editMacro(CLIENT_SIDE_BODY_MACRO_KEY);
         try
@@ -430,7 +431,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         finally
         {
             dialog.cancel();
-            editorPage.cancel();
+            cancelEditor(editorPage);
         }
     }
 
