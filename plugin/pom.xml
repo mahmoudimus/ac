@@ -282,6 +282,12 @@
             <version>${atlassian.confluence.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.confluence.plugins</groupId>
+            <artifactId>confluence-content-property-storage</artifactId>
+            <version>${atlassian.confluence.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>com.atlassian.uri</groupId>
