@@ -1,6 +1,11 @@
 package it.modules.confluence;
 
+import com.atlassian.confluence.it.Page;
+import com.atlassian.confluence.it.Space;
+import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.pageobjects.component.editor.EditorContent;
+import com.atlassian.confluence.pageobjects.page.content.EditContentPage;
+import com.atlassian.confluence.pageobjects.page.content.Editor;
 import com.atlassian.confluence.pageobjects.page.content.EditorPage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.fugue.Option;
@@ -28,6 +33,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Random;
 
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
@@ -111,6 +118,10 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
         }
     }
 
+    /*
+        Create page matching tests
+     */
+
     @Test
     public void testAutoconvertDynamicMacroOnCreate() throws Exception
     {
@@ -139,6 +150,42 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
         pasteLinkAndMatch(editorPage, "static-macro-with-autoconvert", "https://google.com/static/variable");
     }
 
+    /*
+        Edit page matching tests
+     */
+
+    @Test
+    public void testAutoconvertDynamicMacroOnEdit() throws Exception
+    {
+        EditorPage editorPage = getNewSavedPageForEditing(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
+        pasteLinkAndMatch(editorPage, "dynamic-macro-with-autoconvert", "https://google.com/dynamic");
+    }
+
+    @Test
+    public void testAutoconvertDynamicMacroWithTokenOnEdit() throws Exception
+    {
+        EditorPage editorPage = getNewSavedPageForEditing(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
+        pasteLinkAndMatch(editorPage, "dynamic-macro-with-autoconvert", "https://google.com/dynamic/variable");
+    }
+
+    @Test
+    public void testAutoconvertStaticMacroOnEdit() throws Exception
+    {
+        EditorPage editorPage = getNewSavedPageForEditing(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
+        pasteLinkAndMatch(editorPage, "static-macro-with-autoconvert", "https://google.com/static");
+    }
+
+    @Test
+    public void testAutoconvertStaticMacroWithTokenOnEdit() throws Exception
+    {
+        EditorPage editorPage = getNewSavedPageForEditing(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
+        pasteLinkAndMatch(editorPage, "static-macro-with-autoconvert", "https://google.com/static/variable");
+    }
+
+    /*
+        Non-matching tests
+     */
+
     @Test
     public void testAutoconverPrefixNoMatch() throws Exception
     {
@@ -153,30 +200,25 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
         pasteLinkAndNoMatch(editorPage, "https://google.comwontmatch");
     }
 
+    /*
+        Testing helper methods
+     */
+
+    public EditorPage getNewSavedPageForEditing(User user, Space space)
+    {
+        EditorPage editorPage = getProduct().loginAndCreatePage(user, space);
+        editorPage.setTitle("This is the title of the created page");
+        editorPage.getEditor().getContent().setContent("This is the body");
+        ViewPage page = editorPage.save();
+        editorPage = page.edit();
+        return editorPage;
+    }
+
     private String pasteLinkAndSave(EditorPage editorPage, Option<String> macroName, String link)
     {
         EditorContent editorContent = editorPage.getEditor().getContent();
         editorContent.focus();
-
-//        editorContent.setContentViaJs(editorContent.normalizeHtml(link, false));
-//        Poller.waitUntilTrue("editor content should contain " + link,
-//                editorContent.normalizedHtmlContains(editorContent.normalizeHtml(link, false), false));
-//
-//        logger.error("typed link - content: " + editorContent.getTimedHtml().byDefaultTimeout());
-//
-//        editorContent.placeCursorAtStart("p");
-//
-//        // using select-all here doesnt appear to work, i think its because it selects the <p> tags too
-//        for (int i = 0; i < link.length(); i++)
-//            editorContent.sendKeys(Keys.chord(Keys.SHIFT.toString(), Keys.ARROW_RIGHT.toString()));
-//
-//        logger.error("selection made - content: " + editorContent.getTimedHtml().byDefaultTimeout());
-//
-//        editorContent.sendKeys(Keys.chord(OS_CTRL_KEY, "x")); // cut
-//        editorContent.sendKeys(Keys.chord(OS_CTRL_KEY, "v")); // paste
-
         editorContent.pasteContent(link);
-
         editorPage.setTitle("TestAutoconvert-" + System.currentTimeMillis());
 
         // if the macro name is specified we need to wait for the autoconvert to complete
