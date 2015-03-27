@@ -1,0 +1,11 @@
+{
+    "_links": {},
+    "address": null,
+    "description": "",
+    "email": "noreply@atlassian.com",
+    "name": "<%=vendor name goes here=>",
+    "otherContactDetails": "",
+    "phone": "",
+    "supportDetails": {},
+    "vendorLinks": {}
+}

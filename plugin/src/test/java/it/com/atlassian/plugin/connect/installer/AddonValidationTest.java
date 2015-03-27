@@ -12,7 +12,7 @@ import com.atlassian.plugin.connect.test.plugin.capabilities.TestFileReader;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.message.I18nResolver;
+import com.atlassian.upm.api.util.Pair;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.google.common.collect.Sets;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
@@ -27,10 +27,12 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.fail;
 
 /**
@@ -47,7 +49,6 @@ public class AddonValidationTest
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
     private final ApplicationProperties applicationProperties;
-    private final I18nResolver i18nResolver;
 
     @Rule
     public final DisableDevMode disableDevMode = new DisableDevMode(); // TLS validation is disabled in dev mode
@@ -55,12 +56,11 @@ public class AddonValidationTest
     private final AtomicReference<Plugin> installedPlugin = new AtomicReference<Plugin>();
 
     public AddonValidationTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,
-            ApplicationProperties applicationProperties, I18nResolver i18nResolver)
+            ApplicationProperties applicationProperties)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
         this.applicationProperties = applicationProperties;
-        this.i18nResolver = i18nResolver;
     }
 
     @BeforeClass
@@ -111,7 +111,7 @@ public class AddonValidationTest
         installedPlugin.set(testPluginInstaller.installAddon(jsonDescriptor));
     }
 
-    private void installExpectingUpmErrorCode(ConnectAddonBean addonBean, String errorCode) throws Exception
+    private void installExpectingUpmErrorCode(ConnectAddonBean addonBean, String errorCode, Serializable... params) throws Exception
     {
         try
         {
@@ -120,13 +120,11 @@ public class AddonValidationTest
         }
         catch (PluginInstallException e)
         {
-            String actualCode = (e.getCode().isDefined()) ? e.getCode().get() : e.getMessage();
-            
-            assertEquals(errorCode, actualCode);
+            assertPluginInstallExceptionProperties(e, errorCode, params);
         }
     }
 
-    private void installExpectingUpmErrorCode(String jsonDescriptor, String errorCode) throws Exception
+    private void installExpectingUpmErrorCode(String jsonDescriptor, String errorCode, Serializable... params) throws Exception
     {
         try
         {
@@ -135,10 +133,15 @@ public class AddonValidationTest
         }
         catch (PluginInstallException e)
         {
-            String actualCode = (e.getCode().isDefined()) ? e.getCode().get() : e.getMessage();
-            
-            assertEquals(errorCode, actualCode);
+            assertPluginInstallExceptionProperties(e, errorCode, params);
         }
+    }
+
+    private void assertPluginInstallExceptionProperties(PluginInstallException e, String errorCode, Serializable... params)
+    {
+        Pair<String, Serializable[]> i18nMessageProperties = e.getI18nMessageProperties().get();
+        assertThat(i18nMessageProperties.first(), equalTo(errorCode));
+        assertThat(i18nMessageProperties.second(), equalTo(params));
     }
 
     @Test
@@ -196,7 +199,7 @@ public class AddonValidationTest
                         .build())
                 .build();
 
-        installExpectingUpmErrorCode(bean, missingScopeErrorMessage(ScopeName.READ));
+        installExpectingUpmErrorCode(bean, "connect.install.error.missing.scope", ScopeName.READ);
     }
 
     @Test
@@ -239,7 +242,7 @@ public class AddonValidationTest
                         .build())
                 .build();
 
-        installExpectingUpmErrorCode(bean, missingScopeErrorMessage(ScopeName.ADMIN));
+        installExpectingUpmErrorCode(bean, "connect.install.error.missing.scope", ScopeName.ADMIN);
     }
 
     @Test
@@ -281,19 +284,22 @@ public class AddonValidationTest
     @Test
     public void testJwtAuthenticationWithMissingBaseUrl() throws Exception
     {
-        installExpectingUpmErrorCode(testBeanBuilderWithJwt().withBaseurl(null).build(), schemaValidationErrorMessage());
+        installExpectingUpmErrorCode(testBeanBuilderWithJwt().withBaseurl(null).build(),
+                "connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
     }
 
     @Test
     public void testJwtAuthenticationWithEmptyStringBaseUrl() throws Exception
     {
-        installExpectingUpmErrorCode(testBeanBuilderWithJwt().withBaseurl("").build(), schemaValidationErrorMessage());
+        installExpectingUpmErrorCode(testBeanBuilderWithJwt().withBaseurl("").build(),
+        "connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
     }
 
     @Test
     public void testJwtAuthenticationWithNonUriBaseUrl() throws Exception
     {
-        installExpectingUpmErrorCode(testBeanBuilderWithJwt().withBaseurl("this is not a URI").build(), schemaValidationErrorMessage());
+        installExpectingUpmErrorCode(testBeanBuilderWithJwt().withBaseurl("this is not a URI").build(),
+                "connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
     }
 
     @Test
@@ -324,7 +330,7 @@ public class AddonValidationTest
     public void aNonExistentDomainNameInInstalledCallbackResultsInCorrespondingErrorCode() throws Exception
     {
         installExpectingUpmErrorCode(testBeanBuilderWithJwtAndInstalledCallback().withBaseurl("https://does.not.exist").build(),
-                i18nResolver.getText("connect.install.error.remote.host.bad.domain", "does.not.exist"));
+                "connect.install.error.remote.host.bad.domain", "does.not.exist");
     }
 
     @Test
@@ -336,13 +342,14 @@ public class AddonValidationTest
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(builder.getKey()))
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/timeout/60").build())
                 .build();
-        installExpectingUpmErrorCode(bean, i18nResolver.getText("connect.install.error.remote.host.timeout", bean.getBaseUrl() + bean.getLifecycle().getInstalled()));
+        installExpectingUpmErrorCode(bean, "connect.install.error.remote.host.timeout", bean.getBaseUrl() + bean.getLifecycle().getInstalled());
     }
 
     @Test
     public void installedMalformedJSONDescriptorResultsInCorrespondingErrorCode() throws Exception
     {
-        installExpectingUpmErrorCode(TestFileReader.readAddonTestFile("malformedDescriptor.json"), invalidDescriptorErrorMessage());
+        installExpectingUpmErrorCode(TestFileReader.readAddonTestFile("malformedDescriptor.json"),
+                "connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
     }
 
     private ConnectAddonBeanBuilder testBeanBuilderWithJwtAndInstalledCallback()
@@ -354,21 +361,5 @@ public class AddonValidationTest
     private ConnectAddonBeanBuilder testBeanBuilderWithJwt()
     {
         return testBeanBuilderWithAuth(AuthenticationType.JWT);
-    }
-
-    private String missingScopeErrorMessage(final ScopeName scope)
-    {
-        return i18nResolver.getText("connect.install.error.missing.scope", scope);
-    }
-
-    private String schemaValidationErrorMessage()
-    {
-        return i18nResolver.getText("connect.install.error.remote.descriptor.validation",
-                applicationProperties.getDisplayName());
-    }
-    
-    private String invalidDescriptorErrorMessage()
-    {
-        return i18nResolver.getText("connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
     }
 }

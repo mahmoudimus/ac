@@ -6,7 +6,7 @@ plan(
 ) {
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (develop)')
-    pollingTrigger()
+    pollingTrigger(repositoryName: 'Atlassian Connect (develop)')
     hipChatNotification()
     runTestsStage()
     stage(
@@ -38,7 +38,7 @@ plan(
 ) {
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (branch builds)')
-    pollingTrigger()
+    pollingTrigger(repositoryName: 'Atlassian Connect (branch builds)')
     notification(
             type: 'All Builds Completed',
             recipient: 'committers'
@@ -54,18 +54,38 @@ plan(
     runTestsStage()
 }
 
-productSnapshotPlan(
-        prefix: 'C',
-        shortName: 'CONF',
-        product: 'Confluence',
-        testGroup: 'confluence',
-        mavenProductParameters: '-Datlassian.confluence.version=5.8-SNAPSHOT'
-)
+plan(
+        projectKey: 'CONNECT',
+        key: 'CCM',
+        name: 'Cloud Plugin - SNAPSHOT CONF',
+        description: 'Tests the develop branch of atlassian-connect-plugin against the latest Confluence SNAPSHOT version'
+) {
+    productSnapshotPlanConfiguration(
+            applicationVersion: '5.8-SNAPSHOT',
+    )
+    stage(
+            name: 'Run Tests'
+    ) {
+        testJobsForConfluence(
+                mavenProductParameters: '-Datlassian.confluence.version=${bamboo_product_version}'
+        )
+    }
+}
 
-productSnapshotPlan(
-        prefix: 'J',
-        shortName: 'JIRA',
-        product: 'JIRA',
-        testGroup: 'jira',
-        mavenProductParameters: '-Datlassian.jira.version=6.5-SNAPSHOT'
-)
+plan(
+        projectKey: 'CONNECT',
+        key: 'CJM',
+        name: 'Cloud Plugin - SNAPSHOT JIRA',
+        description: 'Tests the develop branch of atlassian-connect-plugin against the latest JIRA SNAPSHOT version'
+) {
+    productSnapshotPlanConfiguration(
+            applicationVersion: '6.5-SNAPSHOT',
+    )
+    stage(
+            name: 'Run Tests'
+    ) {
+        testJobsForJIRA(
+                mavenProductParameters: '-Datlassian.jira.version=${bamboo_product_version}'
+        )
+    }
+}
