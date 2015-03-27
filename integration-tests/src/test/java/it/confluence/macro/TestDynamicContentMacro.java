@@ -437,7 +437,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroEditorCanWriteBody() throws Exception
     {
-        String body = new MacroStorageFormatBuilder(CLIENT_SIDE_BODY_MACRO_KEY).richTextBody("").build();
+        String body = new MacroStorageFormatBuilder(CLIENT_SIDE_BODY_MACRO_KEY).build();
         EditContentPage editorPage = createAndEditPage(CLIENT_SIDE_BODY_MACRO_NAME, body);
 
         RemotePluginDialog dialog = connectPageOperations.editMacro(CLIENT_SIDE_BODY_MACRO_KEY);
@@ -455,7 +455,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         String body = new MacroStorageFormatBuilder(CLIENT_SIDE_BODY_MACRO_SCRIPT_KEY).build();
         EditContentPage editorPage = createAndEditPage(CLIENT_SIDE_BODY_MACRO_SCRIPT_NAME, body);
 
-        RemotePluginDialog dialog = connectPageOperations.editMacro(CLIENT_SIDE_BODY_MACRO_KEY);
+        RemotePluginDialog dialog = connectPageOperations.editMacro(CLIENT_SIDE_BODY_MACRO_SCRIPT_KEY);
         dialog.submit();
         save(editorPage);
 
