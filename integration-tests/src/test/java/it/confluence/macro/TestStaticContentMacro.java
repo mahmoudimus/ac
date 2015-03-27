@@ -159,7 +159,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testBodyInclusion() throws Exception
     {
-        String macroBody = "<p>a short body</p>";
+        String macroBody = "a short body";
         String body = new MacroStorageFormatBuilder(SHORT_BODY_MACRO_KEY).richTextBody(macroBody).build();
         Content page = createPage(randomName(SHORT_BODY_MACRO_KEY), body);
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
@@ -186,6 +186,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         String title = randomName("The macro is in the comment!");
         Content page = createPage(title, "The macro is in the comment!");
         addCommentWithMacro(String.valueOf(page.getId().asLong()));
+        getProduct().viewPage(String.valueOf(page.getId().asLong()));
         final WebElement commentBody = connectPageOperations.findElementByClass("comment-content");
         String commentText = commentBody.getText();
         String[] lines = StringUtils.split(commentText, "\n");
