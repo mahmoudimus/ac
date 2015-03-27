@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.test.helptips;
 
+import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
+import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.plugin.connect.test.client.UserRequestSender;
 import com.google.common.collect.ImmutableMap;
@@ -36,5 +38,26 @@ public abstract class HelpTipApiClient
         HttpPost request = new HttpPost(baseUrl + "/rest/helptips/1.0/tips");
         request.setEntity(new StringEntity(new JSONObject(ImmutableMap.<String, Object>of("id", tipId)).toString(), ContentType.APPLICATION_JSON));
         userRequestSender.sendRequestAsUser(request, new BasicResponseHandler(), defaultUsername, defaultPassword);
+    }
+
+    public static void dismissHelpTipsForAllUsers(TestedProduct product) {
+        try
+        {
+            getSpecificHelpTipApiClient(product, TestUser.ADMIN).dismissAllHelpTips();
+            getSpecificHelpTipApiClient(product, TestUser.BETTY).dismissAllHelpTips();
+            getSpecificHelpTipApiClient(product, TestUser.BARNEY).dismissAllHelpTips();
+        } catch (Exception e)
+        {
+
+        }
+    }
+
+    private static HelpTipApiClient getSpecificHelpTipApiClient(TestedProduct product, TestUser user)
+    {
+        if (product instanceof JiraTestedProduct)
+        {
+            return new JiraHelpTipApiClient( (JiraTestedProduct) product, user);
+        }
+        return new ConfluenceHelpTipApiClient( (ConfluenceTestedProduct) product, user);
     }
 }

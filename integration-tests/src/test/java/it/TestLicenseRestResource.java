@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.rest.license.LicenseDetailsRepresentation;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.LicenseUtils;
+import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.gson.Gson;
 import it.servlet.ConnectAppServlets;
@@ -67,7 +68,7 @@ public class TestLicenseRestResource extends ConnectWebDriverTestBase
         {
             try
             {
-                connectPageOperations.dismissAnyAlerts();
+                HelpTipApiClient.dismissHelpTipsForAllUsers(product);
 
                 //NOTE: the timebomb license disables the ability to delete plugins!
                 LicenseUtils.resetLicenses(product);

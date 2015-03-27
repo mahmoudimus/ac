@@ -3,6 +3,7 @@ package at.confluence;
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.TestedProductFactory;
+import com.atlassian.plugin.connect.test.helptips.ConfluenceHelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct;
 
@@ -25,7 +26,14 @@ public class ConfluenceAcceptanceTestBase
     {
         if (currentUser.isDefined() && currentUser.get().getUsername().equals(user))
         {
-            connectPageOperations.dismissAnyAlerts();
+            try
+            {
+                new ConfluenceHelpTipApiClient(product, user).dismissAllHelpTips();
+            }
+            catch (Exception e)
+            {
+                //e.printStackTrace();
+            }
             return product.visit(page, args);
         }
 
@@ -33,4 +41,6 @@ public class ConfluenceAcceptanceTestBase
         product.getTester().getDriver().manage().deleteAllCookies();
         return product.login(user.confUser(), page, args);
     }
+
+
 }

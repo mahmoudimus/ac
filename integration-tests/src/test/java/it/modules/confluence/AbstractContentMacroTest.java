@@ -16,6 +16,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
+import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
@@ -122,10 +123,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     public static void resetEditorState(CreatePage editorPage, ViewPage savedPage)
     {
         // dismiss any alerts, because they would stop us from clicking on anything else on the screen
-        connectPageOperations.dismissAnyAlerts();
-        connectPageOperations.dismissAnyAuiDialog();
-        connectPageOperations.dismissClosableAuiMessage();
-        connectPageOperations.dismissConfluenceDiscardDraftsPrompt();
+        HelpTipApiClient.dismissHelpTipsForAllUsers(product);
 
         if (null != editorPage)
         {

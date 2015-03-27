@@ -194,71 +194,71 @@ public class ConnectPageOperations
         return findElement(By.className(className));
     }
 
-    public void dismissAnyAlerts()
-    {
-        try
-        {
-            driver.switchTo().alert().dismiss();
-            logger.debug("Dismissed an alert.");
-        }
-        catch (Exception e)
-        {
-            logger.debug("No alerts to dismiss, or failed to dismiss an alert.");
-        }
-    }
+//    public void dismissAnyAlerts()
+//    {
+//        try
+//        {
+//            //driver.switchTo().alert().dismiss();
+//            logger.debug("Dismissed an alert.");
+//        }
+//        catch (Exception e)
+//        {
+//            logger.debug("No alerts to dismiss, or failed to dismiss an alert.");
+//        }
+//    }
 
-    public void dismissConfluenceDiscardDraftsPrompt()
-    {
-        // dismiss a "you have an unsaved draft" message, if any, because it actually blocks the cancel and other buttons
-        try
-        {
-            final WebElement closeLink = findElement(By.cssSelector("#draft-messages .icon-close"));
+//    public void dismissConfluenceDiscardDraftsPrompt()
+//    {
+//        // dismiss a "you have an unsaved draft" message, if any, because it actually blocks the cancel and other buttons
+//        try
+//        {
+////            final WebElement closeLink = findElement(By.cssSelector("#draft-messages .icon-close"));
+////
+////            if (null != closeLink)
+////            {
+////                closeLink.click();
+////            }
+//        }
+//        catch (NoSuchElementException e)
+//        {
+//            // don't care
+//        }
+//    }
 
-            if (null != closeLink)
-            {
-                closeLink.click();
-            }
-        }
-        catch (NoSuchElementException e)
-        {
-            // don't care
-        }
-    }
+//    public void dismissClosableAuiMessage()
+//    {
+//        try
+//        {
+////            final WebElement message = findElementByClass("aui-message");
+////
+////            if (null != message && message.isDisplayed())
+////            {
+////                final WebElement closeButton = message.findElement(By.className("icon-close"));
+////
+////                if (null != closeButton)
+////                {
+////                    closeButton.click();
+////                }
+////            }
+//        }
+//        catch (NoSuchElementException e)
+//        {
+//            // don't care
+//        }
+//        catch (StaleElementReferenceException sex)
+//        {
+//            // don't care - the page may have been navigated away
+//        }
+//    }
 
-    public void dismissClosableAuiMessage()
-    {
-        try
-        {
-            final WebElement message = findElementByClass("aui-message");
-
-            if (null != message && message.isDisplayed())
-            {
-                final WebElement closeButton = message.findElement(By.className("icon-close"));
-
-                if (null != closeButton)
-                {
-                    closeButton.click();
-                }
-            }
-        }
-        catch (NoSuchElementException e)
-        {
-            // don't care
-        }
-        catch (StaleElementReferenceException sex)
-        {
-            // don't care - the page may have been navigated away
-        }
-    }
-
-    public void dismissAnyAuiDialog()
-    {
-        // raising an aui dialog also displays a <div class="aui-blanket"> underneath the dialog and over everything else;
-        // pressing the escape key dismisses aui dialogs
-        Actions action = new Actions(driver);
-        action.sendKeys(Keys.ESCAPE).build().perform();
-        waitForDialogToClear();
-    }
+//    public void dismissAnyAuiDialog()
+//    {
+//        // raising an aui dialog also displays a <div class="aui-blanket"> underneath the dialog and over everything else;
+//        // pressing the escape key dismisses aui dialogs
+//        //Actions action = new Actions(driver);
+//        //action.sendKeys(Keys.ESCAPE).build().perform();
+//        //waitForDialogToClear();
+//    }
 
    private void waitForDialogToClear()
    {
