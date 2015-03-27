@@ -1,34 +1,3 @@
-productSnapshotPlan(['prefix', 'shortName', 'product', 'testGroup', 'applicationVersion', 'mavenProductParameters']) {
-    plan(
-            projectKey: 'CONNECT',
-            key: 'C#prefixM',
-            name: 'Cloud Plugin - SNAPSHOT #shortName',
-            description: 'Tests the develop branch of atlassian-connect-plugin against the latest #product SNAPSHOT version'
-    ) {
-        commonPlanConfiguration()
-        repository(name: 'Atlassian Connect (develop)')
-        variable(
-                key:'bamboo.product.version',
-                value:'#applicationVersion'
-        )
-        trigger(
-                type: 'cron',
-                cronExpression: '0 30 20 ? * 2,3,4,5,6'
-        )
-        hipChatNotification()
-        stage(
-                name: 'Run Tests'
-        ) {
-            testJobs(
-                    prefix: '#prefix',
-                    product: '#product',
-                    testGroup: '#testGroup',
-                    mavenProductParameters: '#mavenProductParameters'
-            )
-        }
-    }
-}
-
 commonPlanConfiguration() {
     permissions() {
         loggedInUser(permissions: 'read')
@@ -43,13 +12,27 @@ commonPlanConfiguration() {
     )
 }
 
+productSnapshotPlanConfiguration(['applicationVersion']) {
+    commonPlanConfiguration()
+    repository(name: 'Atlassian Connect (develop)')
+    variable(
+            key: 'bamboo.product.version',
+            value: '#applicationVersion'
+    )
+    trigger(
+            type: 'cron',
+            cronExpression: '0 30 20 ? * 2,3,4,5,6'
+    )
+    hipChatNotification()
+}
+
 pollingTrigger(['repositoryName']) {
     trigger(
             type: 'polling',
             strategy: 'periodically',
             frequency: '60'
     ) {
-        repository(name:'#repositoryName')
+        repository(name: '#repositoryName')
     }
 }
 
@@ -67,12 +50,17 @@ runTestsStage() {
     stage(
             name: 'Run Tests'
     ) {
-        testJobsForConfluence()
-        testJobsForJira()
+        testJobsForConfluence(
+                mavenProductParameters: ''
+        )
+        testJobsForJIRA(
+                mavenProductParameters: ''
+        )
         job(
                 key: 'UTJ7',
                 name: 'Unit Tests'
         ) {
+            commonRequirements()
             checkoutDefaultRepositoryTask()
             mavenTestTask(
                     description: 'Run Unit Tests',
@@ -84,7 +72,7 @@ runTestsStage() {
                 key: 'QUNIT',
                 name: 'QUnit Tests'
         ) {
-            bashRequirement()
+            commonRequirements()
             checkoutDefaultRepositoryTask()
             mavenTestTask(
                     description: 'Run QUnit Tests using Karma',
@@ -103,7 +91,7 @@ runTestsStage() {
                 name: 'Descriptor Validation',
                 description: 'Validates that all public add-ons in the marketplace validate against the latest schema version'
         ) {
-            bashRequirement()
+            commonRequirements()
             checkoutDefaultRepositoryTask()
             mavenTask(
                     description: 'Build Developer Documentation',
@@ -140,6 +128,7 @@ runTestsStage() {
                 key: 'DOCS',
                 name: 'Developer Docs'
         ) {
+            commonRequirements()
             requirement(
                     key: 'system.builder.node.Node.js 0.10',
                     condition: 'exists'
@@ -159,40 +148,145 @@ runTestsStage() {
     }
 }
 
-testJobsForConfluence() {
-    testJobs(
-            prefix: 'C',
+testJobsForConfluence(['mavenProductParameters']) {
+    lifecycleTestJob(
+            key: 'CLT',
             product: 'Confluence',
             testGroup: 'confluence',
-            mavenProductParameters: ''
-    )
-}
-
-testJobsForJira() {
-    testJobs(
-            prefix: 'J',
-            product: 'JIRA',
-            testGroup: 'jira',
-            mavenProductParameters: ''
-    )
-}
-
-testJobs(['prefix', 'product', 'testGroup', 'mavenProductParameters']) {
-    lifecycleTestJob(
-            key: '#prefixLT',
-            product: '#product',
-            testGroup: '#testGroup',
             mavenProductParameters: '#mavenProductParameters'
     )
     wiredTestJob(
-            key: '#prefixWT',
-            product: '#product',
-            testGroup: '#testGroup',
+            key: 'CWT',
+            product: 'Confluence',
+            testGroup: 'confluence',
             mavenProductParameters: '#mavenProductParameters'
     )
     integrationTestJob(
-            key: '#prefixIT',
-            product: '#product',
+            key: 'CITCM',
+            product: 'Confluence',
+            testGroup: 'confluence-common-misc',
+            groupName: 'Common Misc',
+            mavenProductParameters: '#mavenProductParameters'
+    )
+    integrationTestJob(
+            key: 'CITCI',
+            product: 'Confluence',
+            testGroup: 'confluence-common-iframe',
+            groupName: 'Common iframe',
+            mavenProductParameters: '#mavenProductParameters'
+    )
+    integrationTestJob(
+            key: 'CITCL',
+            product: 'Confluence',
+            testGroup: 'confluence-common-lifecycle',
+            groupName: 'Common Lifecycle',
+            mavenProductParameters: '#mavenProductParameters'
+    )
+    integrationTestJob(
+            key: 'CITM',
+            product: 'Confluence',
+            testGroup: 'confluence-misc',
+            groupName: 'Misc',
+            mavenProductParameters: '#mavenProductParameters'
+    )
+    integrationTestJob(
+            key: 'CITI',
+            product: 'Confluence',
+            testGroup: 'confluence-iframe',
+            groupName: 'iframe',
+            mavenProductParameters: '#mavenProductParameters'
+    )
+    integrationTestJob(
+            key: 'CITT',
+            product: 'Confluence',
+            testGroup: 'confluence-item',
+            groupName: 'Item',
+            mavenProductParameters: '#mavenProductParameters'
+    )
+    integrationTestJob(
+            key: 'CITJ',
+            product: 'Confluence',
+            testGroup: 'confluence-jsapi',
+            groupName: 'JS API',
+            mavenProductParameters: '#mavenProductParameters'
+    )
+    integrationTestJob(
+            key: 'CITA',
+            product: 'Confluence',
+            testGroup: 'confluence-macro',
+            groupName: 'Macro',
+            mavenProductParameters: '#mavenProductParameters'
+    )
+}
+
+testJobsForJIRA(['mavenProductParameters']) {
+    lifecycleTestJob(
+            key: 'JLT',
+            product: 'JIRA',
+            testGroup: 'jira',
+            mavenProductParameters: '#mavenProductParameters'
+    )
+    wiredTestJob(
+            key: 'JWT',
+            product: 'JIRA',
+            testGroup: 'jira',
+            mavenProductParameters: '#mavenProductParameters'
+    )
+    integrationTestJob(
+            key: 'JITCM',
+            product: 'JIRA',
+            testGroup: 'jira-common-misc',
+            groupName: 'Common Misc',
+            mavenProductParameters: '#mavenProductParameters'
+    )
+    integrationTestJob(
+            key: 'JITCI',
+            product: 'JIRA',
+            testGroup: 'jira-common-iframe',
+            groupName: 'Common iframe',
+            mavenProductParameters: '#mavenProductParameters'
+    )
+    integrationTestJob(
+            key: 'JITCL',
+            product: 'JIRA',
+            testGroup: 'jira-common-lifecycle',
+            groupName: 'Common Lifecycle',
+            mavenProductParameters: '#mavenProductParameters'
+    )
+    integrationTestJob(
+            key: 'JITM',
+            product: 'JIRA',
+            testGroup: 'jira-misc',
+            groupName: 'Misc',
+            mavenProductParameters: '#mavenProductParameters'
+    )
+    integrationTestJob(
+            key: 'JITI',
+            product: 'JIRA',
+            testGroup: 'jira-iframe',
+            groupName: 'iframe',
+            mavenProductParameters: '#mavenProductParameters'
+    )
+    integrationTestJob(
+            key: 'JITT',
+            product: 'JIRA',
+            testGroup: 'jira-item',
+            groupName: 'Item',
+            mavenProductParameters: '#mavenProductParameters'
+    )
+    integrationTestJob(
+            key: 'JITJ',
+            product: 'JIRA',
+            testGroup: 'jira-jsapi',
+            groupName: 'JS API',
+            mavenProductParameters: '#mavenProductParameters'
+    )
+}
+
+integrationTestJobForJIRA(['suffix', 'testGroup', 'mavenProductParameters']) {
+    integrationTestJob(
+            key: 'JIT#suffix',
+            product: 'JIRA - ITs ',
             testGroup: '#testGroup',
             mavenProductParameters: '#mavenProductParameters'
     )
@@ -209,6 +303,7 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'mavenProductParameters']) {
                 pattern: 'atlassian-connect-plugin.jar',
                 shared: 'false'
         )
+        commonRequirements()
         checkoutDefaultRepositoryTask()
         mavenTestTask(
                 description: 'Run Wired Lifecycle Tests for #product',
@@ -223,6 +318,7 @@ wiredTestJob(['key', 'product', 'testGroup', 'mavenProductParameters']) {
             key: '#key',
             name: '#product - Wired Tests'
     ) {
+        commonRequirements()
         checkoutDefaultRepositoryTask()
         mavenTestTask(
                 description: 'Run Wired Tests for #product',
@@ -232,16 +328,16 @@ wiredTestJob(['key', 'product', 'testGroup', 'mavenProductParameters']) {
     }
 }
 
-integrationTestJob(['key', 'product', 'testGroup', 'mavenProductParameters']) {
+integrationTestJob(['key', 'product', 'testGroup', 'groupName', 'mavenProductParameters']) {
     job(
             key: '#key',
-            name: '#product - IT Tests'
+            name: '#product - ITs #groupName'
     ) {
-        bashRequirement()
+        commonRequirements()
         checkoutDefaultRepositoryTask()
         setupVncTask()
         mavenTestTask(
-                description: 'Run Integration Tests for #product',
+                description: 'Run Integration Tests for #product #groupName',
                 goal: 'verify -Pit -DtestGroups=#testGroup -DskipUnits -DskipDocs #mavenProductParameters',
                 environmentVariables: 'DISPLAY=":20" MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m" CHROME_BIN=/usr/bin/google-chrome',
         )
@@ -249,7 +345,12 @@ integrationTestJob(['key', 'product', 'testGroup', 'mavenProductParameters']) {
     }
 }
 
-bashRequirement() {
+commonRequirements() {
+    requirement(
+            key: 'os',
+            condition: 'equals',
+            value: 'Linux'
+    )
     requirement(
             key: 'system.builder.command.Bash',
             condition: 'exists'
