@@ -10,17 +10,16 @@ import java.util.List;
 
 
 /**
- * Autoconvert allows the dynamic insertion of your macro into the editor, triggered by the user pasting a recognised
- * URL. You define a set of 'matchers' for what the URLs to act on will look like, and these are registered in the
- * editor when your add-on is installed.
+ * Autoconvert allows your macro to be dynamically inserted into the editor when a recognised URL is pasted in by the user.
+ * You define recognised URL patterns using 'matchers' which are registered in the editor when your add-on is installed.
  *
  * When the macro is created in the editor, the URL string that triggered the autoconvert will be captured and inserted
  * as a parameter on the macro body. You must define the name of this parameter by providing a string value for 'urlParameter'.
- * This allows you access to the captured URL that caused the macro creation.
+ * This allows you to access the URL that triggered the autoconvert.
  *
  *#### Example
  *
- * The following example would insert a macro into the editor when a user pastes in certain simple Facebook links.
+ * This example inserts a macro into the editor when a user pastes in certain simple Facebook links.
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#AUTOCONVERT_EXAMPLE}
  * @schemaTitle Autoconvert

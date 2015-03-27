@@ -12,8 +12,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.MatcherBeanBuilder;
  * Wildcards (parts of the url that should always match, such as as a unique ID) can be defined using a single open and close
  * curly bracket such as '{}'. Use a new brace pair for each separate wildcard.
  *
- * Keep in mind that to match the same link string but using different internet protocols (such as http vs. https), you will need to
- * explicitly define a new matcher for each one.
+ * Keep in mind that you'll need to define a separate matcher for each relevant internet protocol (such as http vs https).
  *
  *#### Example
  *
