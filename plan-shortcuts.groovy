@@ -19,11 +19,11 @@ productSnapshotPlanConfiguration(['applicationVersion']) {
             key: 'bamboo.product.version',
             value: '#applicationVersion'
     )
-    /* trigger(
+    trigger(
             type: 'cron',
             cronExpression: '0 30 20 ? * 2,3,4,5,6'
     )
-    hipChatNotification() */
+    hipChatNotification()
 }
 
 pollingTrigger(['repositoryName']) {
