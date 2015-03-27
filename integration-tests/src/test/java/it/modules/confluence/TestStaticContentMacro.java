@@ -1,9 +1,6 @@
 package it.modules.confluence;
 
 import com.atlassian.confluence.api.model.content.Content;
-import com.atlassian.confluence.api.model.content.ContentRepresentation;
-import com.atlassian.confluence.api.model.content.ContentType;
-import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
@@ -11,16 +8,15 @@ import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.BaseUrlLocator;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWithRemoteMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
+import it.confluence.MacroStorageFormatBuilder;
 import it.servlet.ConnectAppServlets;
 import it.servlet.EchoContextServlet;
 import it.servlet.EchoQueryParametersServlet;
 import it.util.TestUser;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -137,76 +133,48 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroIsRendered() throws Exception
     {
-        testMacroIsRendered(TestUser.ADMIN.confUser());
+        ViewPage viewPage = getProduct().login(TestUser.ADMIN.confUser(), ViewPage.class, createPageWithStorageFormatMacro());
+        String content = viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
+        assertThat(content, endsWith("Storage Format Content"));
     }
 
     @Test
     public void testMacroIsRenderedForAnonymous() throws Exception
     {
-        testMacroIsRendered(null);
+        ViewPage viewPage = getProduct().viewPage(createPageWithStorageFormatMacro());
+        String content = viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
+        assertThat(content, endsWith("Storage Format Content"));
     }
 
     @Test
     public void testMacroHttpMethod() throws Exception
     {
-        Content page = restClient.content().create(Content.builder(ContentType.PAGE)
-                .space(TestSpace.DEMO.getKey())
-                .title(randomName("HTTP GET Macro"))
-                .body(String.format("<ac:structured-macro ac:name=\"%s\"/>", GET_MACRO_KEY), ContentRepresentation.STORAGE)
-                .build()).claim();
+        String body = new MacroStorageFormatBuilder(GET_MACRO_KEY).build();
+        Content page = createPage(randomName(GET_MACRO_KEY), body);
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
+
         assertThat(String.valueOf(contextServlet.waitForContext().get("req_method")), is("GET"));
     }
 
     @Test
     public void testBodyInclusion() throws Exception
     {
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-        editorPage.setTitle(randomName("Short Body Macro"));
+        String macroBody = "<p>a short body</p>";
+        String body = new MacroStorageFormatBuilder(SHORT_BODY_MACRO_KEY).richTextBody(macroBody).build();
+        Content page = createPage(randomName(SHORT_BODY_MACRO_KEY), body);
+        getProduct().viewPage(String.valueOf(page.getId().asLong()));
 
-        selectMacroAndSave(editorPage, SHORT_BODY_MACRO_NAME);
-
-        ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
-        editorContent.setRichTextMacroBody("a short body");
-
-        savedPage = save(editorPage);
-        editorPage = null;
-
-        String body = parameterServlet.waitForQueryParameters().any("body").getValue();
-        assertThat(body, is("<p>a short body</p>"));
-    }
-
-    @Test
-    public void testBodyHashInclusion() throws Exception
-    {
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-        editorPage.setTitle(randomName("Long Body Macro"));
-
-        selectMacroAndSave(editorPage, LONG_BODY_MACRO_NAME);
-
-        String body = StringUtils.repeat("x ", 200);
-        ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
-        editorContent.setPlainTextMacroBody(body);
-
-        savedPage = save(editorPage);
-        editorPage = null;
-
-        String hash = parameterServlet.waitForQueryParameters().any("hash").getValue();
-        assertThat(hash, is(DigestUtils.md5Hex(body)));
+        String bodyParameter = parameterServlet.waitForQueryParameters().any("body").getValue();
+        assertThat(bodyParameter, is(macroBody));
     }
 
     @Test
     public void testParameterInclusion() throws Exception
     {
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-        editorPage.setTitle(randomName("Parameter Page"));
-        final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, PARAMETER_MACRO_NAME);
-
-        macroBrowserAndEditor.macroForm.getAutocompleteField("param1").setValue("param value");
-        macroBrowserAndEditor.browserDialog.clickSave();
-
-        savedPage = save(editorPage);
-        editorPage = null;
+        String parameterValue = "param value";
+        String body = new MacroStorageFormatBuilder(PARAMETER_MACRO_KEY).parameter(SINGLE_PARAM_ID, parameterValue).build();
+        Content page = createPage(randomName(PARAMETER_MACRO_KEY), body);
+        getProduct().viewPage(String.valueOf(page.getId().asLong()));
 
         String value = parameterServlet.waitForQueryParameters().any("param1").getValue();
         assertThat(value, is("param value"));
@@ -215,7 +183,9 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroInComment() throws Exception
     {
-        addSimpleMacroToComment();
+        String title = randomName("The macro is in the comment!");
+        Content page = createPage(title, "The macro is in the comment!");
+        addCommentWithMacro(String.valueOf(page.getId().asLong()));
         final WebElement commentBody = connectPageOperations.findElementByClass("comment-content");
         String commentText = commentBody.getText();
         String[] lines = StringUtils.split(commentText, "\n");
@@ -235,24 +205,21 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroCacheFlushes() throws Exception
     {
-        final String title = randomName("Counter Page");
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-        editorPage.setTitle(title);
-        selectMacroAndSave(editorPage, COUNTER_MACRO_NAME);
-        save(editorPage);
-        editorPage = null;
-
-        ConfluencePageWithRemoteMacro page = product.visit(ConfluencePageWithRemoteMacro.class, title, COUNTER_MACRO_NAME);
-        assertThat(getCounter(page), is(0));
+        String body = new MacroStorageFormatBuilder(COUNTER_MACRO_KEY).build();
+        String title = randomName(COUNTER_MACRO_KEY);
+        Content page = createPage(title, body);
+        String pageId = String.valueOf(page.getId().asLong());
+        ConfluencePageWithRemoteMacro pageWithRemoteMacro = product.visit(ConfluencePageWithRemoteMacro.class, title, COUNTER_MACRO_NAME);
+        assertThat(getCounter(pageWithRemoteMacro), is(0));
 
         // stays the same on a new visit
-        page = product.visit(ConfluencePageWithRemoteMacro.class, title, COUNTER_MACRO_NAME);
-        assertThat(getCounter(page), is(0));
+        pageWithRemoteMacro = product.visit(ConfluencePageWithRemoteMacro.class, title, COUNTER_MACRO_NAME);
+        assertThat(getCounter(pageWithRemoteMacro), is(0));
 
         clearCaches();
 
-        page = product.visit(ConfluencePageWithRemoteMacro.class, title, COUNTER_MACRO_NAME);
-        assertThat(getCounter(page), is(1));
+        pageWithRemoteMacro = product.visit(ConfluencePageWithRemoteMacro.class, title, COUNTER_MACRO_NAME);
+        assertThat(getCounter(pageWithRemoteMacro), is(1));
     }
 
     private static void clearCaches() throws Exception
@@ -277,11 +244,11 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         return remotePlugin.getAddon().getBaseUrl();
     }
 
-    private void testMacroIsRendered(User user) throws Exception
+    private String createPageWithStorageFormatMacro()
     {
-        ViewPage page = getMacroContent(user, STORAGE_FORMAT_MACRO_NAME, "Storage format macro");
-        String content = page.getRenderedContent().getTextTimed().byDefaultTimeout();
-        assertThat(content, endsWith("Storage Format Content"));
+        String body = new MacroStorageFormatBuilder(STORAGE_FORMAT_MACRO_KEY).build();
+        Content page = createPage(randomName(STORAGE_FORMAT_MACRO_KEY), body);
+        return String.valueOf(page.getId().asLong());
     }
 
     private int getCounter(ConfluencePageWithRemoteMacro page)

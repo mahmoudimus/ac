@@ -1,18 +1,16 @@
 package it.modules.confluence;
 
-import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
-import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RemoteMacroEditor;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-import static com.atlassian.pageobjects.elements.query.Poller.waitUntilEquals;
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
-import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
 
 /**
  * Integration tests for the JavaScript API method confluence.closeMacroEditor().
@@ -48,15 +46,6 @@ public class TestConfluenceCloseMacroEditor extends AbstractConfluenceWebDriverT
         }
     }
 
-    // clean up so that we don't get "org.openqa.selenium.UnhandledAlertException: unexpected alert open" in tests
-    @Before
-    @After
-    public void cleanUpAroundEachTest()
-    {
-        AbstractContentMacroTest.resetEditorState(createPage, null);
-        createPage = null;
-    }
-
     @Test
     public void shouldCloseMacroEditorWhenInsertingMacroOnNewPage()
     {
@@ -71,6 +60,7 @@ public class TestConfluenceCloseMacroEditor extends AbstractConfluenceWebDriverT
                 remoteMacroEditor.closeMacroEditor();
             }
         });
+        createPage.cancel();
     }
 
     private RemoteMacroEditor findRemoteMacroEditor()
