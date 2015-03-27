@@ -1,11 +1,17 @@
 package com.atlassian.plugin.connect.modules.beans;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.*;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -13,15 +19,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
+import static com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean.newContentPropertyModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean.newEntityPropertyModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
@@ -32,7 +34,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBe
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 
-@SuppressWarnings("UnusedDeclaration")
+@SuppressWarnings ("UnusedDeclaration")
 public class ConnectJsonExamples
 {
     private static final Gson gson = ConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create();
@@ -76,6 +78,9 @@ public class ConnectJsonExamples
     public static final String WEBSECTION_EXAMPLE = createWebSectionExample();
     public static final String BLUEPRINT_EXAMPLE = createBlueprintExample();
     public static final String BLUEPRINT_TEMPLATE_EXAMPLE = createBlueprintTemplateExample();
+    public static final String CONTENT_PROPERTY_EXAMPLE = createContentPropertyExample();
+    public static final String CONTENT_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE = createEntityPropertyIndexExtractionConfigurationExample();
+    public static final String CONTENT_PROPERTY_INDEX_KEY_CONFIGURATION_EXAMPLE = createEntityPropertyIndexKeyConfigurationExample();
     public static final String MACRO_RENDER_MODES_EXAMPLE = createDynamicMacroExampleForRenderModes();
 
     public static final String LIFECYCLE_PAYLOAD_EXAMPLE = createLifecyclePayloadExample();
@@ -643,16 +648,16 @@ public class ConnectJsonExamples
         ConnectAddonEventDataBuilder dataBuilder = newConnectAddonEventData();
 
         dataBuilder.withBaseUrl("http://example.atlassian.net")
-                    .withPluginKey("installed-addon-key")
-                    .withClientKey("unique-client-identifier")
-                    .withPublicKey("MIGf....ZRWzwIDAQAB")
-                    .withSharedSecret("a-secret-key-not-to-be-lost")
-                    .withPluginsVersion("version-of-connect")
-                    .withServerVersion("server-version")
-                    .withServiceEntitlementNumber("SEN-number")
-                    .withProductType("jira")
-                    .withDescription("Atlassian JIRA at https://example.atlassian.net")
-                    .withEventType(ConnectAddonManager.SyncHandler.INSTALLED.name().toLowerCase());
+                .withPluginKey("installed-addon-key")
+                .withClientKey("unique-client-identifier")
+                .withPublicKey("MIGf....ZRWzwIDAQAB")
+                .withSharedSecret("a-secret-key-not-to-be-lost")
+                .withPluginsVersion("version-of-connect")
+                .withServerVersion("server-version")
+                .withServiceEntitlementNumber("SEN-number")
+                .withProductType("jira")
+                .withDescription("Atlassian JIRA at https://example.atlassian.net")
+                .withEventType(ConnectAddonManager.SyncHandler.INSTALLED.name().toLowerCase());
 
         ConnectAddonEventData data = dataBuilder.build();
 
@@ -755,6 +760,43 @@ public class ConnectJsonExamples
                 .build();
 
         return gson.toJson(matcher);
+    }
+
+    private static String createContentPropertyIndexExtractionConfigurationExample()
+    {
+        return gson.toJson(new ContentPropertyIndexExtractionConfigurationBean("attachment.size", ContentPropertyIndexFieldType.number));
+    }
+
+    private static String createContentPropertyIndexKeyConfigurationExample()
+    {
+        List<ContentPropertyIndexExtractionConfigurationBean> extractionConfiguration = Lists.newArrayList(
+                new ContentPropertyIndexExtractionConfigurationBean("attachment.size", ContentPropertyIndexFieldType.number),
+                new ContentPropertyIndexExtractionConfigurationBean("attachment.extension", ContentPropertyIndexFieldType.string),
+                new ContentPropertyIndexExtractionConfigurationBean("attachment.updated", ContentPropertyIndexFieldType.date),
+                new ContentPropertyIndexExtractionConfigurationBean("attachment.author", ContentPropertyIndexFieldType.text)
+        );
+
+        return gson.toJson(new ContentPropertyIndexKeyConfigurationBean("attachment", extractionConfiguration));
+    }
+
+    private static String createContentPropertyExample()
+    {
+        List<ContentPropertyIndexExtractionConfigurationBean> extractionConfiguration = Lists.newArrayList(
+                new ContentPropertyIndexExtractionConfigurationBean("attachment.size", ContentPropertyIndexFieldType.number),
+                new ContentPropertyIndexExtractionConfigurationBean("attachment.extension", ContentPropertyIndexFieldType.string),
+                new ContentPropertyIndexExtractionConfigurationBean("attachment.updated", ContentPropertyIndexFieldType.date),
+                new ContentPropertyIndexExtractionConfigurationBean("attachment.author", ContentPropertyIndexFieldType.text)
+        );
+        ContentPropertyIndexKeyConfigurationBean indexConfiguration =
+                new ContentPropertyIndexKeyConfigurationBean("attachment", extractionConfiguration);
+
+        ContentPropertyModuleBean contentPropertyModuleBean =
+                newContentPropertyModuleBean()
+                        .withName(new I18nProperty("Attachment Index Document", ""))
+                        .withKeyConfiguration(indexConfiguration)
+                        .build();
+
+        return gson.toJson(createJsonArray("confluenceContentProperties", contentPropertyModuleBean));
     }
 
     private static JsonObject createJsonArray(String name, ModuleBean bean)

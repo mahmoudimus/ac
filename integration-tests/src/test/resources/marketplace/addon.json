@@ -1,0 +1,61 @@
+{
+    "_embedded": {
+        "version": {
+            "_embedded": {
+                "highlights": [],
+                "screenshots": []
+            },
+            "_links": {
+                "agreement": {
+                    "href": "http://www.atlassian.com/licensing/marketplace/publisheragreement"
+                },
+                "artifact": {
+                    "href": "https://bitbucket.org/atlassianlabs/ac-acceptance-test-addon/raw/master/atlassian-connect.json"
+                }
+            },
+            "compatibilities": [
+                {
+                    "application": "jira",
+                    "minBuild": 6328
+                },
+                {
+                    "application": "confluence",
+                    "minBuild": 5780
+                }
+            ],
+            "media": {},
+            "name": "1.0",
+            "paymentModel": "free",
+            "release": {
+                "beta": false,
+                "date": "2015-02-19",
+                "license": {
+                    "id": "asl"
+                },
+                "supported": false
+            },
+            "status": "private",
+            "text": {
+                "moreDetails": "",
+                "releaseSummary": "The first and only version"
+            },
+            "vendorLinks": {}
+        }
+    },
+    "_links": {
+        "categories": [],
+        "logo": {
+            "href": "https://bitbucket.org/atlassianlabs/ac-acceptance-test-addon/raw/master/simple-logo.png"
+        },
+        "vendor": {
+            "href": "/rest/2.0-beta/vendors/<%=vendor id goes here=>"
+        }
+    },
+    "enableAtlassianAnswers": false,
+    "key": "com.atlassian.connect.acceptance.test",
+    "name": "Atlassian Connect acceptance test add-on",
+    "status": "private",
+    "summary": "I wanna be the very test that no test ever was.",
+    "tagLine": "Regressions: gotta catch them all",
+    "vendorLinks": {}
+}

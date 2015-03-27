@@ -1,14 +1,10 @@
 package com.atlassian.plugin.connect.test.pageobjects.jira;
 
 import com.atlassian.jira.projects.pageobjects.webdriver.page.SummaryPage;
-import com.atlassian.jira.projects.pageobjects.webdriver.page.sidebar.Chaperone;
 import com.atlassian.jira.projects.pageobjects.webdriver.page.sidebar.Sidebar;
-import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.utils.WebItemUtils;
-import it.modules.jira.TestProjectTabPanel;
 
 /**
  * A page object for the JIRA project summary page with a project tab panel provided by a Connect add-on.
