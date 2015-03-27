@@ -47,6 +47,12 @@ public class DynamicContentMacroModuleBean extends BaseContentMacroModuleBean
      */
     private String height;
 
+
+    /**
+     * Whenever macro is allowed to run in full screen or not.
+     */
+    private boolean allowfullscreen;
+
     /**
      * Since Dynamic Content Macros are rendered in an iframe, you are able to include your own style sheets and javascript.
      * When your macro is exported to a static format such as PDF or Word, you can use the `renderModes` property to
@@ -81,6 +87,12 @@ public class DynamicContentMacroModuleBean extends BaseContentMacroModuleBean
     public String getHeight()
     {
         return height;
+    }
+
+
+    public boolean isAllowfullscreen()
+    {
+        return allowfullscreen;
     }
 
     public static DynamicContentMacroModuleBeanBuilder newDynamicContentMacroModuleBean()

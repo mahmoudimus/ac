@@ -7,6 +7,7 @@ public class DynamicContentMacroModuleBeanBuilder extends BaseContentMacroModule
 {
     private String width;
     private String height;
+    private boolean allowfullscreen;
     private MacroRenderModesBean renderModes;
 
     public DynamicContentMacroModuleBeanBuilder()
@@ -22,6 +23,12 @@ public class DynamicContentMacroModuleBeanBuilder extends BaseContentMacroModule
     public DynamicContentMacroModuleBeanBuilder withHeight(String height)
     {
         this.height = height;
+        return this;
+    }
+
+    public DynamicContentMacroModuleBeanBuilder withAllowfullscreen(boolean allowfullscreen1)
+    {
+        this.allowfullscreen = allowfullscreen;
         return this;
     }
 

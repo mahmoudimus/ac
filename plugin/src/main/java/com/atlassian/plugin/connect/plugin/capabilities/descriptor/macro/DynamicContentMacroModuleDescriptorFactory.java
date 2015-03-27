@@ -40,6 +40,8 @@ public class DynamicContentMacroModuleDescriptorFactory extends AbstractContentM
             element.setAttribute("height", bean.getHeight());
         }
 
+        element.setAttribute("allowfullscreen", Boolean.toString(bean.isAllowfullscreen()));
+
         return element;
     }
 
