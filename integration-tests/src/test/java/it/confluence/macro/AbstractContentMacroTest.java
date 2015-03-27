@@ -94,7 +94,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     @After
     public void dismissConfluenceDiscardDraftsPrompt()
     {
-        dismissConfluenceDiscardDraftsPrompt();
+        connectPageOperations.dismissConfluenceDiscardDraftsPrompt();
     }
 
     @After
