@@ -1,4 +1,4 @@
-package it.modules.confluence;
+package it.confluence.macro;
 
 import com.atlassian.confluence.api.model.content.ContentRepresentation;
 import com.atlassian.confluence.it.Page;
@@ -15,6 +15,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import com.google.common.collect.Maps;
+import it.confluence.AbstractConfluenceWebDriverTest;
 import it.servlet.HttpContextServlet;
 import it.servlet.InstallHandlerServlet;
 import it.servlet.macro.BodyHandler;
@@ -24,7 +25,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.Timeout;
 import org.openqa.selenium.By;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
