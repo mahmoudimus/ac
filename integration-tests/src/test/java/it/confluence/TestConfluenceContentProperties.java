@@ -1,4 +1,4 @@
-package it.modules.confluence;
+package it.confluence;
 
 import com.atlassian.confluence.api.model.JsonString;
 import com.atlassian.confluence.api.model.content.*;
@@ -24,7 +24,6 @@ import com.google.common.util.concurrent.MoreExecutors;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import it.AbstractBrowserlessTest;
-import it.confluence.ConfluenceRestClientFactory;
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 import org.junit.*;
