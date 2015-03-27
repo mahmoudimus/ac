@@ -299,7 +299,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
 
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SHORT_BODY_MACRO_KEY, 0);
-        assertThat(renderedMacro.getFromQueryString("body"), is("<p>a short body</p>"));
+        assertThat(renderedMacro.getFromQueryString("body"), is("a short body"));
     }
 
     @Test
@@ -468,19 +468,9 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     {
         String body = new MacroStorageFormatBuilder(SLOW_MACRO_KEY).build();
         String title = randomName(SLOW_MACRO_KEY);
-        Content page = createPage(title, body);
+        createPage(title, body);
         ConfluencePageWithRemoteMacro pageWithRemoteMacro = product.visit(ConfluencePageWithRemoteMacro.class, title, SLOW_MACRO_KEY);
         assertThat(pageWithRemoteMacro.macroHasTimedOut(), is(true));
-    }
-
-    @Test
-    public void fastMacroShouldNotTimeOut() throws Exception
-    {
-        String body = new MacroStorageFormatBuilder(SIMPLE_MACRO_KEY).build();
-        String title = randomName(SIMPLE_MACRO_KEY);
-        Content page = createPage(title, body);
-        ConfluencePageWithRemoteMacro pageWithRemoteMacro = product.visit(ConfluencePageWithRemoteMacro.class, title, SIMPLE_MACRO_KEY);
-        assertThat(pageWithRemoteMacro.macroHasTimedOut(), is(false));
     }
 
     @Test
