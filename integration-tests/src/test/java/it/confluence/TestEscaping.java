@@ -1,5 +1,8 @@
 package it.confluence;
 
+import java.net.MalformedURLException;
+import java.util.NoSuchElementException;
+
 import com.atlassian.confluence.pageobjects.page.admin.ConfluenceAdminHomePage;
 import com.atlassian.confluence.pageobjects.page.admin.templates.SpaceTemplatesPage;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
@@ -17,9 +20,9 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceUserPr
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectConfluenceAdminHomePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+
 import com.google.common.base.Optional;
-import it.servlet.ConnectAppServlets;
-import it.util.TestUser;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -29,10 +32,10 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import redstone.xmlrpc.XmlRpcFault;
 
-import java.net.MalformedURLException;
-import java.util.NoSuchElementException;
+import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
+import redstone.xmlrpc.XmlRpcFault;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
@@ -325,7 +328,7 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
 
     private String getModuleKey(String module)
     {
-        return getModuleKey(runner.getAddon().getKey(), module);
+        return ModuleKeyUtils.addonAndModuleKey(runner.getAddon().getKey(), module);
     }
 
     private String getServletPath(String module)

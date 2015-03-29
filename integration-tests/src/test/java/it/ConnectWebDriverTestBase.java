@@ -1,20 +1,21 @@
 package it;
 
+import java.io.IOException;
+import java.util.concurrent.Callable;
+
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.LicenseStatusBannerHelper;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
-import it.util.TestUser;
+
 import org.apache.http.auth.AuthenticationException;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -22,8 +23,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
-import java.io.IOException;
-import java.util.concurrent.Callable;
+import it.util.TestUser;
 
 public abstract class ConnectWebDriverTestBase
 {
@@ -134,15 +134,5 @@ public abstract class ConnectWebDriverTestBase
         {
             logout();
         }
-    }
-
-    protected String getModuleKey(ConnectRunner runner, String module)
-    {
-        return ModuleKeyUtils.addonAndModuleKey(runner.getAddon().getKey(), module);
-    }
-
-    protected String getModuleKey(String addonKey, String module)
-    {
-        return ModuleKeyUtils.addonAndModuleKey(addonKey, module);
     }
 }
