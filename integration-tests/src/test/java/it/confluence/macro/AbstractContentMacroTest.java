@@ -536,9 +536,9 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         {
             editorPage.cancel();
         }
-        catch (Exception e)
+        catch (Throwable t)
         {
-            LoggerFactory.getLogger(AbstractContentMacroTest.class).warn(e.getMessage());
+            LoggerFactory.getLogger(AbstractContentMacroTest.class).warn(t.getMessage());
         }
     }
 }
