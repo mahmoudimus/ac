@@ -54,20 +54,38 @@ plan(
     runTestsStage()
 }
 
-productSnapshotPlan(
-        prefix: 'C',
-        shortName: 'CONF',
-        product: 'Confluence',
-        testGroup: 'confluence',
-        applicationVersion: '5.8-SNAPSHOT',
-        mavenProductParameters: '-Datlassian.confluence.version=${bamboo_product_version}'
-)
+plan(
+        projectKey: 'CONNECT',
+        key: 'CCM',
+        name: 'Cloud Plugin - SNAPSHOT CONF',
+        description: 'Tests the develop branch of atlassian-connect-plugin against the latest Confluence SNAPSHOT version'
+) {
+    productSnapshotPlanConfiguration(
+            applicationVersion: '5.8-SNAPSHOT',
+    )
+    stage(
+            name: 'Run Tests'
+    ) {
+        testJobsForConfluence(
+                mavenProductParameters: '-Datlassian.confluence.version=${bamboo_product_version}'
+        )
+    }
+}
 
-productSnapshotPlan(
-        prefix: 'J',
-        shortName: 'JIRA',
-        product: 'JIRA',
-        testGroup: 'jira',
-        applicationVersion: '6.5-SNAPSHOT',
-        mavenProductParameters: '-Datlassian.jira.version=${bamboo_product_version}'
-)
+plan(
+        projectKey: 'CONNECT',
+        key: 'CJM',
+        name: 'Cloud Plugin - SNAPSHOT JIRA',
+        description: 'Tests the develop branch of atlassian-connect-plugin against the latest JIRA SNAPSHOT version'
+) {
+    productSnapshotPlanConfiguration(
+            applicationVersion: '6.5-SNAPSHOT',
+    )
+    stage(
+            name: 'Run Tests'
+    ) {
+        testJobsForJIRA(
+                mavenProductParameters: '-Datlassian.jira.version=${bamboo_product_version}'
+        )
+    }
+}
