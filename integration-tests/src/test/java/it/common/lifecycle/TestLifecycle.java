@@ -3,12 +3,13 @@ package it.common.lifecycle;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.BaseUrlLocator;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTestServlet;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
-import it.AbstractBrowserlessTest;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,16 +18,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @ConvertToWiredTest
-public class TestLifecycle extends AbstractBrowserlessTest
+public class TestLifecycle
 {
+    private final String baseUrl = BaseUrlLocator.getBaseUrl();
     private String pluginKey;
-    
+
     @Before
     public void setup()
     {
         this.pluginKey = AddonTestUtils.randomAddOnKey();
     }
-    
+
     @Test
     public void testPluginInstalledFired() throws Exception
     {
@@ -40,7 +42,7 @@ public class TestLifecycle extends AbstractBrowserlessTest
             }
         });
     }
-    
+
     @Test
     public void testPluginEnabledFired() throws Exception
     {

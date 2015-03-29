@@ -1,36 +1,38 @@
 package it.jira;
 
-import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.BaseUrlLocator;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
-import com.google.common.collect.ImmutableMap;
 
-import hudson.plugins.jira.soap.RemoteIssue;
-import hudson.plugins.jira.soap.RemoteNamedObject;
-import hudson.plugins.jira.soap.RemoteProject;
-import it.AbstractBrowserlessTest;
+import com.google.common.collect.ImmutableMap;
 
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
+import hudson.plugins.jira.soap.RemoteIssue;
+import hudson.plugins.jira.soap.RemoteNamedObject;
+import hudson.plugins.jira.soap.RemoteProject;
+
 import static com.atlassian.plugin.connect.test.webhook.WebHookTestServlet.runInJsonRunner;
-import static org.junit.Assert.*;
 import static it.matcher.ParamMatchers.isVersionNumber;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 /**
  * Though jira-webhooks-plugin is a separate component the following test executes a quick smoke test
  * which verifies if jira webhooks are available for AC plugins.
  */
-public class TestJiraWebHooks extends AbstractBrowserlessTest
+public class TestJiraWebHooks
 {
+    private final String baseUrl = BaseUrlLocator.getBaseUrl();
     private final JiraOps jiraOps;
 
     public TestJiraWebHooks()
     {
-        super(JiraTestedProduct.class);
         this.jiraOps = new JiraOps(baseUrl);
     }
 

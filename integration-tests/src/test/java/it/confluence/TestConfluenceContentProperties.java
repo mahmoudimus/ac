@@ -1,11 +1,27 @@
 package it.confluence;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executors;
+
 import com.atlassian.confluence.api.model.JsonString;
-import com.atlassian.confluence.api.model.content.*;
+import com.atlassian.confluence.api.model.content.Content;
+import com.atlassian.confluence.api.model.content.ContentRepresentation;
+import com.atlassian.confluence.api.model.content.ContentType;
+import com.atlassian.confluence.api.model.content.JsonContentProperty;
+import com.atlassian.confluence.api.model.content.Space;
 import com.atlassian.confluence.api.model.longtasks.LongTaskStatus;
 import com.atlassian.confluence.api.model.longtasks.LongTaskSubmission;
 import com.atlassian.confluence.api.model.pagination.PageResponse;
-import com.atlassian.confluence.rest.client.*;
+import com.atlassian.confluence.rest.client.RemoteCQLSearchService;
+import com.atlassian.confluence.rest.client.RemoteCQLSearchServiceImpl;
+import com.atlassian.confluence.rest.client.RemoteContentPropertyService;
+import com.atlassian.confluence.rest.client.RemoteContentPropertyServiceImpl;
+import com.atlassian.confluence.rest.client.RemoteContentService;
+import com.atlassian.confluence.rest.client.RemoteContentServiceImpl;
+import com.atlassian.confluence.rest.client.RemoteLongTaskService;
+import com.atlassian.confluence.rest.client.RemoteSpaceService;
+import com.atlassian.confluence.rest.client.RemoteSpaceServiceImpl;
 import com.atlassian.confluence.rest.client.authentication.AuthenticatedWebResourceProvider;
 import com.atlassian.confluence.rest.client.impl.RemoteLongTaskServiceImpl;
 import com.atlassian.fugue.Iterables;
@@ -16,23 +32,25 @@ import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFie
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.BaseUrlLocator;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.util.concurrent.Promise;
 import com.atlassian.util.concurrent.Promises;
+
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import it.AbstractBrowserlessTest;
+
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executors;
 
 import static com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean.newContentPropertyModuleBean;
 import static com.google.common.collect.Lists.newArrayList;
@@ -48,7 +66,7 @@ import static org.junit.Assert.fail;
  *
  * Must be run with -DtestedProduct=confluence
  */
-public class TestConfluenceContentProperties extends AbstractBrowserlessTest
+public class TestConfluenceContentProperties
 {
     private static final Logger log = LoggerFactory.getLogger(TestConfluenceContentProperties.class);
 
@@ -86,25 +104,25 @@ public class TestConfluenceContentProperties extends AbstractBrowserlessTest
     {
         try
         {
-            baseUrl = product.getProductInstance().getBaseUrl();
+            baseUrl = BaseUrlLocator.getBaseUrl();
             assertTrue("Should be running with confluence (set -DtestedProduct=confluence), instead found baseUrl " + baseUrl,
                     baseUrl.contains("confluence"));
 
             ContentPropertyModuleBean moduleBean = newContentPropertyModuleBean()
-                .withKey("content-prop-module-key")
-                .withName(new I18nProperty("My Content Property Indexing module", "my.18n.name"))
-                .withKeyConfiguration(
-                        new ContentPropertyIndexKeyConfigurationBean(PROPERTY_KEY,
-                                newArrayList(
-                                        new ContentPropertyIndexExtractionConfigurationBean(TEXT_FIELD_OBJECT_KEY, ContentPropertyIndexFieldType.text),
-                                        new ContentPropertyIndexExtractionConfigurationBean(NUMERIC_FIELD_OBJECT_KEY, ContentPropertyIndexFieldType.number),
-                                        new ContentPropertyIndexExtractionConfigurationBean(DATE_FIELD_OBJECT_KEY, ContentPropertyIndexFieldType.date),
-                                        new ContentPropertyIndexExtractionConfigurationBean(STRING_FIELD_OBJECT_KEY, ContentPropertyIndexFieldType.string))))
+                    .withKey("content-prop-module-key")
+                    .withName(new I18nProperty("My Content Property Indexing module", "my.18n.name"))
+                    .withKeyConfiguration(
+                            new ContentPropertyIndexKeyConfigurationBean(PROPERTY_KEY,
+                                    newArrayList(
+                                            new ContentPropertyIndexExtractionConfigurationBean(TEXT_FIELD_OBJECT_KEY, ContentPropertyIndexFieldType.text),
+                                            new ContentPropertyIndexExtractionConfigurationBean(NUMERIC_FIELD_OBJECT_KEY, ContentPropertyIndexFieldType.number),
+                                            new ContentPropertyIndexExtractionConfigurationBean(DATE_FIELD_OBJECT_KEY, ContentPropertyIndexFieldType.date),
+                                            new ContentPropertyIndexExtractionConfigurationBean(STRING_FIELD_OBJECT_KEY, ContentPropertyIndexFieldType.string))))
                     .build();
 
             assertFalse("Key configurations should not be empty", moduleBean.getKeyConfigurations().isEmpty());
 
-            System.out.println("Installing connect module to : "+baseUrl);
+            System.out.println("Installing connect module to : " + baseUrl);
 
             new ConnectRunner(baseUrl, AddonTestUtils.randomAddOnKey())
                     .setAuthenticationToNone()
