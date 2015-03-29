@@ -24,19 +24,6 @@ public class ConfluenceAcceptanceTestBase
 
     protected <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args)
     {
-        if (currentUser.isDefined() && currentUser.get().getUsername().equals(user))
-        {
-            try
-            {
-                new ConfluenceHelpTipApiClient(product, user).dismissAllHelpTips();
-            }
-            catch (Exception e)
-            {
-                //e.printStackTrace();
-            }
-            return product.visit(page, args);
-        }
-
         currentUser = Option.some(user);
         product.getTester().getDriver().manage().deleteAllCookies();
         return product.login(user.confUser(), page, args);

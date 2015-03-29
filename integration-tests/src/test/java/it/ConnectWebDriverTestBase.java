@@ -51,7 +51,7 @@ public abstract class ConnectWebDriverTestBase
     }
 
     @BeforeClass
-    public void dismissPrompts()
+    public static void dismissPrompts()
     {
         HelpTipApiClient.dismissHelpTipsForAllUsers(product);
     }

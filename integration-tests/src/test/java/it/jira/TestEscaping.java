@@ -178,10 +178,8 @@ public class TestEscaping extends TestBase
     }
 
     @BeforeClass
-    public void beforeTests()
+    public static void beforeTests()
     {
-        // we've seen an AUI message unfortunately sit over other buttons on the page, causing errors like:
-        // org.openqa.selenium.WebDriverException: unknown error: Element is not clickable at point (863, 132). Other element would receive the click
         HelpTipApiClient.dismissHelpTipsForAllUsers(TestedProductFactory.create(JiraTestedProduct.class));
     }
 
