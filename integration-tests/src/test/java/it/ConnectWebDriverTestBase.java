@@ -50,6 +50,7 @@ public abstract class ConnectWebDriverTestBase
     {
         // disable license banner
         LicenseStatusBannerHelper.instance().execute(product);
+        HelpTipApiClient.dismissHelpTipsForAllUsers(product);
     }
 
     @Before
