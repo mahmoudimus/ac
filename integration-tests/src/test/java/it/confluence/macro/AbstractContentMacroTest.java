@@ -125,8 +125,6 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
      */
     public static void resetEditorState(CreatePage editorPage, ViewPage savedPage)
     {
-        // dismiss any alerts, because they would stop us from clicking on anything else on the screen
-        HelpTipApiClient.dismissHelpTipsForAllUsers(product);
 
         if (null != editorPage)
         {

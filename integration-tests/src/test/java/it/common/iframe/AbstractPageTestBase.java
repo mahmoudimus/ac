@@ -15,6 +15,7 @@ import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
 
@@ -91,7 +92,6 @@ public class AbstractPageTestBase extends ConnectWebDriverTestBase
             throws MalformedURLException, URISyntaxException
     {
         login(TestUser.ADMIN);
-        HelpTipApiClient.dismissHelpTipsForAllUsers(product);
 
         T page = product.visit(pageClass);
         revealLinkIfNecessary(page);

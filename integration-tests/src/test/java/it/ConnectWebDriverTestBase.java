@@ -34,8 +34,6 @@ public abstract class ConnectWebDriverTestBase
 
     protected static String currentUsername = null;
 
-    private HelpTipApiClient helpTipApiClient;
-
     @Rule
     public WebDriverScreenshotRule screenshotRule = new WebDriverScreenshotRule();
 
@@ -50,22 +48,11 @@ public abstract class ConnectWebDriverTestBase
     {
         // disable license banner
         LicenseStatusBannerHelper.instance().execute(product);
-        HelpTipApiClient.dismissHelpTipsForAllUsers(product);
     }
 
-    @Before
-    @After
+    @BeforeClass
     public void dismissPrompts()
     {
-        // dismiss any alerts, because they would stop the logout
-//        connectPageOperations.dismissAnyAlerts();
-//        connectPageOperations.dismissAnyAuiDialog();
-//        connectPageOperations.dismissClosableAuiMessage();
-//
-//        if (product instanceof ConfluenceTestedProduct)
-//        {
-//            connectPageOperations.dismissConfluenceDiscardDraftsPrompt();
-//        }
         HelpTipApiClient.dismissHelpTipsForAllUsers(product);
     }
 
@@ -79,13 +66,10 @@ public abstract class ConnectWebDriverTestBase
 
     protected void login(TestUser user)
     {
-        helpTipApiClient = getHelpTipClient(product, user);
         if (!isAlreadyLoggedIn(user))
         {
             logout();
             currentUsername = user.getUsername();
-            //connectPageOperations.dismissAnyAlerts(); // we've seen an alert pop up after the @Before has run
-            dismissAnyAlerts(helpTipApiClient);
             if (product instanceof JiraTestedProduct)
             {
                 JiraTestedProduct jiraTestedProduct = (JiraTestedProduct) product;
@@ -105,16 +89,13 @@ public abstract class ConnectWebDriverTestBase
 
     protected <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args)
     {
-        helpTipApiClient = getHelpTipClient(product, user);
         if (isAlreadyLoggedIn(user))
         {
-            dismissAnyAlerts(helpTipApiClient);
             return product.visit(page, args);
         }
 
         logout();
         currentUsername = user.getUsername();
-        dismissAnyAlerts(helpTipApiClient); // we've seen an alert at this point
 
         if (product instanceof JiraTestedProduct)
         {
@@ -155,24 +136,4 @@ public abstract class ConnectWebDriverTestBase
         return ModuleKeyUtils.addonAndModuleKey(addonKey, module);
     }
 
-    protected static HelpTipApiClient getHelpTipClient(TestedProduct product, TestUser user) {
-        if (product instanceof JiraTestedProduct)
-        {
-            return new JiraHelpTipApiClient( (JiraTestedProduct) product, user);
-        } else
-        {
-            return new ConfluenceHelpTipApiClient( (ConfluenceTestedProduct) product, user);
-        }
-    }
-
-    protected static void dismissAnyAlerts(HelpTipApiClient helpTipApiClient) {
-        try
-        {
-            helpTipApiClient.dismissAllHelpTips();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
 }

@@ -69,8 +69,6 @@ public class TestLicenseRestResource extends ConnectWebDriverTestBase
         {
             try
             {
-                HelpTipApiClient.dismissHelpTipsForAllUsers(product);
-
                 //NOTE: the timebomb license disables the ability to delete plugins!
                 LicenseUtils.resetLicenses(product);
             }
