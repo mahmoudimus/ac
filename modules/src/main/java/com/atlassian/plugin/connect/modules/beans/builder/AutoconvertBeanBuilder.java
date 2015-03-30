@@ -6,7 +6,8 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
-public class AutoconvertBeanBuilder<T extends AutoconvertBeanBuilder, B extends AutoconvertBean> extends BaseModuleBeanBuilder<T, B> {
+public class AutoconvertBeanBuilder<T extends AutoconvertBeanBuilder, B extends AutoconvertBean> extends BaseModuleBeanBuilder<T, B>
+{
 
     private String urlParameter;
     private List<MatcherBean> matchers;
@@ -15,7 +16,8 @@ public class AutoconvertBeanBuilder<T extends AutoconvertBeanBuilder, B extends 
     {
     }
 
-    public AutoconvertBeanBuilder(AutoconvertBean defaultBean) {
+    public AutoconvertBeanBuilder(AutoconvertBean defaultBean)
+    {
         this.matchers = defaultBean.getMatchers();
         this.urlParameter = defaultBean.getUrlParameter();
     }

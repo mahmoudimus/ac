@@ -10,7 +10,7 @@ import java.util.List;
 
 
 /**
- * Autoconvert allows your macro to be dynamically inserted into the editor when a recognised URL is pasted in by the user.
+ * Autoconvert allows your macro to be inserted into the editor when a recognised URL is pasted in by the user.
  * You define recognised URL patterns using 'matchers' which are registered in the editor when your add-on is installed.
  *
  * When the macro is created in the editor, the URL string that triggered the autoconvert will be captured and inserted
@@ -26,7 +26,8 @@ import java.util.List;
  * @since 1.1
  */
 @SchemaDefinition("autoconvert")
-public class AutoconvertBean extends BaseModuleBean {
+public class AutoconvertBean extends BaseModuleBean
+{
 
     /**
      * The name of the macro parameter the matched url will be inserted into.
@@ -39,12 +40,14 @@ public class AutoconvertBean extends BaseModuleBean {
      */
     private List<MatcherBean> matchers;
 
-    public AutoconvertBean() {
+    public AutoconvertBean()
+    {
         this.matchers = ImmutableList.of();
         this.urlParameter = "";
     }
 
-    public AutoconvertBean(AutoconvertBeanBuilder builder) {
+    public AutoconvertBean(AutoconvertBeanBuilder builder)
+    {
         super(builder);
 
         if (null == matchers)
@@ -68,7 +71,8 @@ public class AutoconvertBean extends BaseModuleBean {
         return new AutoconvertBeanBuilder(defaultBean);
     }
 
-    public List<MatcherBean> getMatchers() {
+    public List<MatcherBean> getMatchers()
+    {
         return matchers;
     }
 

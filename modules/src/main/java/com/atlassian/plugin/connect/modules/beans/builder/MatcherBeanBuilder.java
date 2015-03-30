@@ -2,7 +2,8 @@ package com.atlassian.plugin.connect.modules.beans.builder;
 
 import com.atlassian.plugin.connect.modules.beans.nested.MatcherBean;
 
-public class MatcherBeanBuilder<T extends MatcherBeanBuilder, B extends MatcherBean> extends BaseModuleBeanBuilder<T, B> {
+public class MatcherBeanBuilder<T extends MatcherBeanBuilder, B extends MatcherBean> extends BaseModuleBeanBuilder<T, B>
+{
 
     private String pattern;
 
@@ -10,7 +11,8 @@ public class MatcherBeanBuilder<T extends MatcherBeanBuilder, B extends MatcherB
     {
     }
 
-    public MatcherBeanBuilder(MatcherBean defaultBean) {
+    public MatcherBeanBuilder(MatcherBean defaultBean)
+    {
         this.pattern = defaultBean.getPattern();
     }
 
