@@ -15,6 +15,8 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -33,13 +35,14 @@ public class ConnectPluginLifecycleTest
     public static final String SINGLE_MODULE_ADDON = "single-module.json";
     public static final String DOUBLE_MODULE_ADDON = "double-module.json";
 
+    private static final Logger log = LoggerFactory.getLogger(ConnectPluginLifecycleTest.class);
+
     private final LifecyclePluginInstaller testPluginInstaller;
     private final LifecycleTestAuthenticator testAuthenticator;
     private final PluginController pluginController;
     private final PluginAccessor pluginAccessor;
 
     private Plugin theConnectPlugin;
-    private Plugin theOLDConnectPlugin;
     private Plugin singleModuleAddon;
     private Plugin doubleModuleAddon;
 
@@ -67,11 +70,13 @@ public class ConnectPluginLifecycleTest
             try
             {
                 testPluginInstaller.uninstallPlugin(singleModuleAddon);
-                singleModuleAddon = null;
             }
             catch (Exception e)
             {
-                e.printStackTrace();
+                log.warn("Failed to uninstall add-on", e);
+            }
+            finally
+            {
                 singleModuleAddon = null;
             }
         }
@@ -81,11 +86,13 @@ public class ConnectPluginLifecycleTest
             try
             {
                 testPluginInstaller.uninstallPlugin(doubleModuleAddon);
-                doubleModuleAddon = null;
             }
             catch (Exception e)
             {
-                e.printStackTrace();
+                log.warn("Failed to uninstall add-on", e);
+            }
+            finally
+            {
                 doubleModuleAddon = null;
             }
         }
@@ -95,26 +102,14 @@ public class ConnectPluginLifecycleTest
             try
             {
                 testPluginInstaller.uninstallPlugin(theConnectPlugin);
-                theConnectPlugin = null;
             }
             catch (Exception e)
             {
-                e.printStackTrace();
+                log.warn("Failed to uninstall plugin", e);
+            }
+            finally
+            {
                 theConnectPlugin = null;
-            }
-        }
-
-        if (null != theOLDConnectPlugin)
-        {
-            try
-            {
-                testPluginInstaller.uninstallPlugin(theOLDConnectPlugin);
-                theOLDConnectPlugin = null;
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-                theOLDConnectPlugin = null;
             }
         }
     }
