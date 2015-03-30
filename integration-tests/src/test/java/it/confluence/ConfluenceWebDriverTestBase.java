@@ -19,6 +19,7 @@ import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.component.editor.toolbars.InsertDropdownMenu;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
+import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
@@ -39,6 +40,8 @@ import org.junit.rules.TestName;
 
 import it.util.TestUser;
 
+import static com.atlassian.fugue.Option.none;
+import static com.atlassian.fugue.Option.some;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -54,8 +57,7 @@ public class ConfluenceWebDriverTestBase
     protected static final ConfluenceTestedProduct product = TestedProductProvider.getConfluenceTestedProduct();
     protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
             product.getTester().getDriver());
-
-    private static String currentUsername = null;
+    private static Option<TestUser> currentUser = none();
 
     private boolean hasBeenFocused;
 
@@ -284,7 +286,7 @@ public class ConfluenceWebDriverTestBase
     @AfterClass
     public static void logout()
     {
-        currentUsername = null;
+        currentUser = Option.<TestUser>none();
         product.getTester().getDriver().manage().deleteAllCookies();
     }
 
@@ -293,7 +295,7 @@ public class ConfluenceWebDriverTestBase
         if (!isAlreadyLoggedIn(user))
         {
             logout();
-            currentUsername = user.getUsername();
+            currentUser = some(user);
             connectPageOperations.dismissAnyAlerts(); // we've seen an alert pop up after the @Before has run
 
             product.visit(LoginPage.class).login(user.getUsername(), user.getPassword(), HomePage.class);
@@ -302,7 +304,7 @@ public class ConfluenceWebDriverTestBase
 
     private boolean isAlreadyLoggedIn(final TestUser user)
     {
-        return user != null && user.getUsername().equals(currentUsername);
+        return user != null && currentUser.isDefined() && currentUser.get().getUsername().equals(user.getUsername());
     }
 
     protected <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args)
@@ -314,7 +316,7 @@ public class ConfluenceWebDriverTestBase
         }
 
         logout();
-        currentUsername = user.getUsername();
+        currentUser = some(user);
         connectPageOperations.dismissAnyAlerts(); // we've seen an alert at this point
 
         return product.login(user.confUser(), page, args);

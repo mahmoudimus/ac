@@ -4,6 +4,7 @@ package it.jira;
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
@@ -16,15 +17,18 @@ import org.junit.BeforeClass;
 import hudson.plugins.jira.soap.RemoteProject;
 import it.util.TestUser;
 
+import static com.atlassian.fugue.Option.none;
+import static com.atlassian.fugue.Option.some;
+
 public class JiraWebDriverTestBase
 {
     protected static JiraOps jiraOps;
     protected static RemoteProject project;
     protected static JiraTestedProduct product = TestedProductProvider.getJiraTestedProduct();
-    protected static String currentUsername = null;
 
     protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
             product.getTester().getDriver());
+    private static Option<TestUser> currentUser = none();
 
     @BeforeClass
     public static void beforeClass() throws RemoteException
@@ -51,7 +55,7 @@ public class JiraWebDriverTestBase
     @AfterClass
     public static void logout()
     {
-        currentUsername = null;
+        currentUser = Option.<TestUser>none();
         product.getTester().getDriver().manage().deleteAllCookies();
     }
 
@@ -63,7 +67,7 @@ public class JiraWebDriverTestBase
         }
 
         logout();
-        currentUsername = user.getUsername();
+        currentUser = some(user);
         connectPageOperations.dismissAnyAlerts(); // we've seen an alert pop up after the @Before has run
 
         product.quickLogin(user.getUsername(), user.getPassword());
@@ -71,7 +75,7 @@ public class JiraWebDriverTestBase
 
     private boolean isAlreadyLoggedIn(final TestUser user)
     {
-        return user != null && user.getUsername().equals(currentUsername);
+        return user != null && currentUser.isDefined() && currentUser.get().getUsername().equals(user.getUsername());
     }
 
     protected <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args)
@@ -83,7 +87,7 @@ public class JiraWebDriverTestBase
         }
 
         logout();
-        currentUsername = user.getUsername();
+        currentUser = some(user);
         connectPageOperations.dismissAnyAlerts(); // we've seen an alert at this point
 
         return product.quickLogin(user.getUsername(), user.getPassword(), page, args);
