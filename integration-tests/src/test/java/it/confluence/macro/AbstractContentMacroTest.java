@@ -295,7 +295,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         }
         finally
         {
-            macroBrowserAndEditor.browserDialog.clickCancel();
+            macroBrowserAndEditor.browserDialog.clickCancelAndWaitUntilClosed();
             cancelEditor(editorPage);
         }
     }
@@ -319,7 +319,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         }
         finally
         {
-            macroBrowserAndEditor.browserDialog.clickCancel();
+            macroBrowserAndEditor.browserDialog.clickCancelAndWaitUntilClosed();
             cancelEditor(editorPage);
         }
     }
@@ -340,7 +340,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         }
         finally
         {
-            macroBrowserAndEditor.browserDialog.clickCancel();
+            macroBrowserAndEditor.browserDialog.clickCancelAndWaitUntilClosed();
             cancelEditor(editorPage);
         }
     }
@@ -502,7 +502,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         }
         finally
         {
-            macroBrowserAndEditor.browserDialog.clickCancel();
+            macroBrowserAndEditor.browserDialog.clickCancelAndWaitUntilClosed();
             cancelEditor(editorPage);
         }
     }
@@ -534,7 +534,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     {
         try
         {
-            product.getPageBinder().bind(editorPage.getClass()).getEditor().clickCancel();
+            product.getPageBinder().bind(editorPage.getClass()).cancel();
         }
         catch (Throwable t)
         {
