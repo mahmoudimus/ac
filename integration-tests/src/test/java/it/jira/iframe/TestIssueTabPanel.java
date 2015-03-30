@@ -1,7 +1,9 @@
 package it.jira.iframe;
 
+import java.rmi.RemoteException;
+import java.util.Map;
+
 import com.atlassian.jira.functest.framework.FunctTestConstants;
-import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
@@ -10,14 +12,19 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import hudson.plugins.jira.soap.RemoteIssue;
-import it.servlet.ConnectAppServlets;
-import it.servlet.condition.ParameterCapturingConditionServlet;
-import org.junit.*;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.TestRule;
 
-import java.rmi.RemoteException;
-import java.util.Map;
+import hudson.plugins.jira.soap.RemoteIssue;
+import it.jira.JiraWebDriverTestBase;
+import it.servlet.ConnectAppServlets;
+import it.servlet.condition.ParameterCapturingConditionServlet;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
@@ -31,11 +38,11 @@ import static org.hamcrest.core.Is.is;
 /**
  * Test of remote issue tab panel in JIRA
  */
-public class TestIssueTabPanel extends TestBase
+public class TestIssueTabPanel extends JiraWebDriverTestBase
 {
     private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
     private static final String MODULE_KEY = "issue-tab-panel";
-    private static JiraOps jiraOps = new JiraOps(jira().getProductInstance());
+    private static JiraOps jiraOps = new JiraOps(getProduct().getProductInstance());
     private static ConnectRunner remotePlugin;
     private static final String PROJECT_KEY = FunctTestConstants.PROJECT_HOMOSAP_KEY;
 
@@ -50,7 +57,7 @@ public class TestIssueTabPanel extends TestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectRunner(jira().getProductInstance().getBaseUrl(), PLUGIN_KEY)
+        remotePlugin = new ConnectRunner(getProduct().getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
                 .addModule(ConnectTabPanelModuleProvider.ISSUE_TAB_PANELS, newTabPanelBean()
                         .withName(new I18nProperty("Issue Tab Panel", null))
@@ -81,7 +88,7 @@ public class TestIssueTabPanel extends TestBase
     @Before
     public void setUpTest() throws Exception
     {
-        projectId = backdoor().project().addProject(PROJECT_KEY, PROJECT_KEY, "admin");
+        projectId = getProduct().backdoor().project().addProject(PROJECT_KEY, PROJECT_KEY, "admin");
 
         issue = jiraOps.createIssue(PROJECT_KEY, "Test issue for tab");
     }
@@ -89,14 +96,14 @@ public class TestIssueTabPanel extends TestBase
     @After
     public void cleanUpTest()
     {
-        backdoor().project().deleteProject(PROJECT_KEY);
+        getProduct().backdoor().project().deleteProject(PROJECT_KEY);
     }
 
     @Test
     public void testIssueTabPanel() throws RemoteException
     {
-        jira().gotoLoginPage().loginAsSysadminAndGoToHome();
-        JiraViewIssuePageWithRemotePluginIssueTab page = jira().visit(
+        getProduct().gotoLoginPage().loginAsSysadminAndGoToHome();
+        JiraViewIssuePageWithRemotePluginIssueTab page = getProduct().visit(
                 JiraViewIssuePageWithRemotePluginIssueTab.class, "issue-tab-panel", issue.getKey(), PLUGIN_KEY);
         assertThat(page.getMessage(), is("Success"));
 
@@ -111,16 +118,16 @@ public class TestIssueTabPanel extends TestBase
     public void tabIsNotAccessibleWithFalseCondition() throws RemoteException
     {
         String completeKey = addonAndModuleKey(PLUGIN_KEY,MODULE_KEY);
-        
-        jira().gotoLoginPage().loginAsSysadminAndGoToHome();
+
+        getProduct().gotoLoginPage().loginAsSysadminAndGoToHome();
 
         // tab panel should be present
-        JiraViewIssuePage page = jira().visit(JiraViewIssuePage.class, issue.getKey());
+        JiraViewIssuePage page = getProduct().visit(JiraViewIssuePage.class, issue.getKey());
         assertThat(page.isTabPanelPresent(completeKey), is(true));
 
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
-        page = jira().visit(JiraViewIssuePage.class, issue.getKey());
+        page = getProduct().visit(JiraViewIssuePage.class, issue.getKey());
         assertThat(page.isTabPanelPresent(completeKey), is(false));
     }
 }

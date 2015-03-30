@@ -1,18 +1,18 @@
 package it.jira;
 
+import javax.annotation.Nullable;
+
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
 import com.atlassian.jira.projects.pageobjects.webdriver.page.sidebar.Sidebar;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
-import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.jira.IssueNavigatorViewsMenu;
@@ -27,10 +27,11 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.Section;
 import com.atlassian.plugin.connect.test.pageobjects.jira.WorkflowPostFunctionEntry;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-import it.servlet.ConnectAppServlets;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -38,7 +39,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.annotation.Nullable;
+import it.servlet.ConnectAppServlets;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean.newProjectAdminTabPanelBean;
@@ -53,7 +54,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class TestEscaping extends TestBase
+public class TestEscaping extends JiraWebDriverTestBase
 {
     private static final String ADDON_KEY = AddonTestUtils.randomAddOnKey();
 
@@ -79,13 +80,11 @@ public class TestEscaping extends TestBase
     private static final String WORKFLOW_TRANSITION = "5";
 
     private static ConnectRunner runner;
-    private static ConnectPageOperations connectPageOperations = new ConnectPageOperations(jira().getPageBinder(),
-            jira().getTester().getDriver());
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        runner = new ConnectRunner(jira().getProductInstance().getBaseUrl(), ADDON_KEY)
+        runner = new ConnectRunner(getProduct().getProductInstance().getBaseUrl(), ADDON_KEY)
                 .setAuthenticationToNone()
                 .addModule("generalPages",
                         newPageBean()
@@ -169,7 +168,7 @@ public class TestEscaping extends TestBase
                 .addRoute(MODULE_URL, ConnectAppServlets.helloWorldServlet())
                 .start();
 
-        backdoor().project().addProject(PROJECT_KEY, PROJECT_KEY, "admin");
+        getProduct().backdoor().project().addProject(PROJECT_KEY, PROJECT_KEY, "admin");
     }
 
     @Before
@@ -181,9 +180,9 @@ public class TestEscaping extends TestBase
     }
 
     @After
-    public void logout()
+    public void logOutCurrentUser()
     {
-        jira().getTester().getDriver().manage().deleteAllCookies();
+        logout();
     }
 
     @AfterClass
@@ -193,7 +192,7 @@ public class TestEscaping extends TestBase
         {
             runner.stopAndUninstall();
         }
-        backdoor().project().deleteProject(PROJECT_KEY);
+        getProduct().backdoor().project().deleteProject(PROJECT_KEY);
     }
 
     @Test
@@ -220,16 +219,16 @@ public class TestEscaping extends TestBase
     @Test
     public void testAdminPage() throws Exception
     {
-        jira().quickLoginAsAdmin(JiraAdministrationHomePage.class);
-        JiraAdminPage adminPage = jira().getPageBinder().bind(JiraAdminPage.class, runner.getAddon().getKey(), ADMIN_PAGE_KEY);
+        getProduct().quickLoginAsAdmin(JiraAdministrationHomePage.class);
+        JiraAdminPage adminPage = getProduct().getPageBinder().bind(JiraAdminPage.class, runner.getAddon().getKey(), ADMIN_PAGE_KEY);
         assertIsEscaped(adminPage.getRemotePluginLinkText());
     }
 
     @Test
     public void testIssueTabPanel() throws Exception
     {
-        IssueCreateResponse issue = jira().backdoor().issues().createIssue(PROJECT_KEY, "test issue tab panel");
-        JiraViewIssuePageWithRemotePluginIssueTab page = jira().visit(JiraViewIssuePageWithRemotePluginIssueTab.class,
+        IssueCreateResponse issue = getProduct().backdoor().issues().createIssue(PROJECT_KEY, "test issue tab panel");
+        JiraViewIssuePageWithRemotePluginIssueTab page = getProduct().visit(JiraViewIssuePageWithRemotePluginIssueTab.class,
                 ISSUE_TAB_PANEL_KEY, issue.key(), runner.getAddon().getKey());
         assertIsEscaped(page.getTabName());
     }
@@ -237,7 +236,7 @@ public class TestEscaping extends TestBase
     @Test
     public void testProfileTabPanel() throws Exception
     {
-        jira().quickLoginAsAdmin(ViewProfilePage.class);
+        getProduct().quickLoginAsAdmin(ViewProfilePage.class);
         String moduleKey = getModuleKey(PROFILE_TAB_PANEL_KEY);
         LinkedRemoteContent tabPanel = connectPageOperations.findTabPanel("up_" + moduleKey + "_a",
                 Option.<String>none(), moduleKey);
@@ -248,7 +247,7 @@ public class TestEscaping extends TestBase
     public void testProjectAdminTabPanel() throws Exception
     {
         final String moduleKey = getModuleKey(PROJECT_ADMIN_TAB_PANEL_KEY);
-        ProjectSummaryPageTab page = jira().quickLoginAsAdmin(ProjectSummaryPageTab.class, PROJECT_KEY);
+        ProjectSummaryPageTab page = getProduct().quickLoginAsAdmin(ProjectSummaryPageTab.class, PROJECT_KEY);
         ProjectConfigTabs.Tab tab = Iterables.find(page.getTabs().getTabs(), new Predicate<ProjectConfigTabs.Tab>()
         {
             @Override
@@ -264,7 +263,7 @@ public class TestEscaping extends TestBase
     public void testProjectTabPanel() throws Exception
     {
         JiraProjectSummaryPageWithAddonTab summaryPage
-                = jira().visit(JiraProjectSummaryPageWithAddonTab.class, PROJECT_KEY, ADDON_KEY, PROJECT_TAB_PANEL_KEY);
+                = getProduct().visit(JiraProjectSummaryPageWithAddonTab.class, PROJECT_KEY, ADDON_KEY, PROJECT_TAB_PANEL_KEY);
         summaryPage = summaryPage.expandAddonsList();
         Sidebar.SidebarLink addonLink = summaryPage.getSidebar().getLinkByName(MODULE_NAME_JIRA_ESCAPED);
         assertTrue(addonLink.isVisible().byDefaultTimeout());
@@ -273,7 +272,7 @@ public class TestEscaping extends TestBase
     @Test
     public void testSearchRequestView() throws Exception
     {
-        JiraAdvancedSearchPage searchPage = jira().visit(JiraAdvancedSearchPage.class);
+        JiraAdvancedSearchPage searchPage = getProduct().visit(JiraAdvancedSearchPage.class);
         searchPage.enterQuery("project = " + PROJECT_KEY).submit();
         IssueNavigatorViewsMenu viewsMenu = searchPage.viewsMenu().open();
         IssueNavigatorViewsMenu.ViewEntry entry = viewsMenu.entryWithLabel(MODULE_NAME_JIRA_ESCAPED);
@@ -283,8 +282,8 @@ public class TestEscaping extends TestBase
     @Test
     public void testWebPanel() throws Exception
     {
-        IssueCreateResponse issue = jira().backdoor().issues().createIssue(PROJECT_KEY, "test web panel");
-        JiraViewIssuePage page = jira().visit(JiraViewIssuePage.class, issue.key());
+        IssueCreateResponse issue = getProduct().backdoor().issues().createIssue(PROJECT_KEY, "test web panel");
+        JiraViewIssuePage page = getProduct().visit(JiraViewIssuePage.class, issue.key());
         Section section = page.getSection(getModuleKey(WEB_PANEL_KEY));
         assertIsEscaped(section.getTitle());
     }
@@ -294,7 +293,7 @@ public class TestEscaping extends TestBase
     {
         final String id = ConnectPluginInfo.getPluginKey() + ":" + getModuleKey(WORKFLOW_POST_FUNCTION_KEY);
 
-        JiraAddWorkflowTransitionPostFunctionPage workflowTransitionPage = jira().quickLoginAsAdmin(
+        JiraAddWorkflowTransitionPostFunctionPage workflowTransitionPage = getProduct().quickLoginAsAdmin(
                 JiraAddWorkflowTransitionPostFunctionPage.class, "live", WORKFLOW_NAME, WORKFLOW_STEP, WORKFLOW_TRANSITION);
         WorkflowPostFunctionEntry entry = Iterables.find(workflowTransitionPage.getPostFunctions(), new Predicate<WorkflowPostFunctionEntry>()
         {
@@ -318,7 +317,7 @@ public class TestEscaping extends TestBase
 
     private RemoteWebItem findWebItem(String moduleKey)
     {
-        jira().visit(JiraViewProjectPage.class, PROJECT_KEY);
+        getProduct().visit(JiraViewProjectPage.class, PROJECT_KEY);
         return connectPageOperations.findWebItem(getModuleKey(moduleKey), Optional.<String>absent());
     }
 

@@ -1,7 +1,8 @@
 package it.jira.iframe;
 
+import java.rmi.RemoteException;
+
 import com.atlassian.jira.functest.framework.FunctTestConstants;
-import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
@@ -12,11 +13,16 @@ import com.atlassian.plugin.connect.test.pageobjects.RemoteDialogOpeningPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
-import org.junit.*;
-
-import java.rmi.RemoteException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
@@ -28,13 +34,13 @@ import static org.junit.Assert.assertEquals;
 /**
  * Test of remote issue tab panel in JIRA
  */
-public class TestIssueTabPanelWithJSDialog extends TestBase
+public class TestIssueTabPanelWithJSDialog extends JiraWebDriverTestBase
 {
     private static final TestUser USER = TestUser.BARNEY;
 
     private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
     private static final String ISSUE_TAB_PANEL_W_DIALOG = "issue-tab-panel-w-dialog";
-    private static JiraOps jiraOps = new JiraOps(jira().getProductInstance());
+    private static JiraOps jiraOps = new JiraOps(getProduct().getProductInstance());
 
     private static ConnectRunner remotePlugin;
     private static final String PROJECT_KEY = FunctTestConstants.PROJECT_HOMOSAP_KEY;
@@ -45,10 +51,10 @@ public class TestIssueTabPanelWithJSDialog extends TestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        jira().logout();
-        new JiraHelpTipApiClient(jira(), USER).dismissAllHelpTips();
+        getProduct().logout();
+        new JiraHelpTipApiClient(getProduct(), USER).dismissAllHelpTips();
 
-        remotePlugin = new ConnectRunner(jira().getProductInstance().getBaseUrl(), PLUGIN_KEY)
+        remotePlugin = new ConnectRunner(getProduct().getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
                 .addModules(ConnectTabPanelModuleProvider.ISSUE_TAB_PANELS,
                         newTabPanelBean()
@@ -84,7 +90,7 @@ public class TestIssueTabPanelWithJSDialog extends TestBase
     @Before
     public void setUpTest() throws Exception
     {
-        backdoor().project().addProject(PROJECT_KEY, PROJECT_KEY, "admin");
+        getProduct().backdoor().project().addProject(PROJECT_KEY, PROJECT_KEY, "admin");
 
         issueKey = jiraOps.createIssue(PROJECT_KEY, "Test issue for tab").getKey();
     }
@@ -92,17 +98,17 @@ public class TestIssueTabPanelWithJSDialog extends TestBase
     @After
     public void cleanUpTest()
     {
-        backdoor().project().deleteProject(PROJECT_KEY);
+        getProduct().backdoor().project().deleteProject(PROJECT_KEY);
     }
 
     @Test
     public void testIssueTabPanelWithJSDialog() throws RemoteException
     {
-        jira().quickLogin(USER.getUsername(), USER.getPassword());
-        JiraViewIssuePageWithRemotePluginIssueTab page = jira().visit(
+        getProduct().quickLogin(USER.getUsername(), USER.getPassword());
+        JiraViewIssuePageWithRemotePluginIssueTab page = getProduct().visit(
                 JiraViewIssuePageWithRemotePluginIssueTab.class, ISSUE_TAB_PANEL_W_DIALOG, issueKey, PLUGIN_KEY);
 
-        RemoteDialogOpeningPage dialogOpeningPage = jira().getPageBinder().bind(RemoteDialogOpeningPage.class, addonAndModuleKey(PLUGIN_KEY,ISSUE_TAB_PANEL_W_DIALOG));
+        RemoteDialogOpeningPage dialogOpeningPage = getProduct().getPageBinder().bind(RemoteDialogOpeningPage.class, addonAndModuleKey(PLUGIN_KEY,ISSUE_TAB_PANEL_W_DIALOG));
         RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey(addonAndModuleKey(PLUGIN_KEY,ADDON_DIALOG));
 
         assertThat(closeDialogPage.getFromQueryString("myproject_key"), is(PROJECT_KEY));
