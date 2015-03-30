@@ -4,22 +4,24 @@ import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RemoteMacroEditor;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.confluence.AbstractConfluenceWebDriverTest;
-import it.confluence.macro.AbstractContentMacroTest;
-import it.servlet.ConnectAppServlets;
-import it.util.TestUser;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import it.confluence.ConfluenceWebDriverTestBase;
+import it.confluence.macro.AbstractContentMacroTest;
+import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
+
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 
 /**
  * Integration tests for the JavaScript API method confluence.closeMacroEditor().
  */
-public class TestConfluenceCloseMacroEditor extends AbstractConfluenceWebDriverTest
+public class TestConfluenceCloseMacroEditor extends ConfluenceWebDriverTestBase
 {
     private static final String MACRO_NAME = AbstractContentMacroTest.EDITOR_MACRO_NAME;
 

@@ -21,9 +21,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditor
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroBrowserDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWithRemoteMacro;
-import it.confluence.AbstractConfluenceWebDriverTest;
-import it.confluence.ConfluenceRestClient;
-import it.util.TestUser;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -32,6 +30,10 @@ import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import it.confluence.ConfluenceRestClient;
+import it.confluence.ConfluenceWebDriverTestBase;
+import it.util.TestUser;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
@@ -45,7 +47,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriverTest
+public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBase
 {
     public class RichTextBodyMacro
     {

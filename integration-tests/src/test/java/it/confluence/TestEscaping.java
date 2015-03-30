@@ -49,7 +49,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class TestEscaping extends AbstractConfluenceWebDriverTest
+public class TestEscaping extends ConfluenceWebDriverTestBase
 {
     private static final String MODULE_NAME = "F1ND M3 <b>${user}</b>";
     private static final String MODULE_NAME_CONF_ESCAPED = "F1ND M3 <b>\\${user}</b>";

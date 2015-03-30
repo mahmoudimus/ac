@@ -1,20 +1,22 @@
 package it.confluence;
 
+import java.io.IOException;
+
 import com.atlassian.confluence.pageobjects.page.DashboardPage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.servlet.ConnectAppServlets;
-import it.servlet.InstallHandlerServlet;
-import it.util.TestUser;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import redstone.xmlrpc.XmlRpcFault;
 
-import java.io.IOException;
+import it.servlet.ConnectAppServlets;
+import it.servlet.InstallHandlerServlet;
+import it.util.TestUser;
+import redstone.xmlrpc.XmlRpcFault;
 
 import static com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean.newBlueprintModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean.newBlueprintTemplateBeanBuilder;
