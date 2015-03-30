@@ -30,7 +30,6 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.Section;
 import com.atlassian.plugin.connect.test.pageobjects.jira.WorkflowPostFunctionEntry;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import com.atlassian.webdriver.pageobjects.WebDriverTester;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
@@ -39,7 +38,6 @@ import it.servlet.ConnectAppServlets;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

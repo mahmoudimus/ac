@@ -1,16 +1,12 @@
 package at.confluence;
 
-import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.TestedProductFactory;
-import com.atlassian.plugin.connect.test.helptips.ConfluenceHelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct;
 
 import at.util.ExternalAddonInstaller;
 import it.util.TestUser;
-
-import static com.atlassian.fugue.Option.none;
 
 public class ConfluenceAcceptanceTestBase
 {
@@ -20,14 +16,10 @@ public class ConfluenceAcceptanceTestBase
     protected static final ExternalAddonInstaller externalAddonInstaller =
             new ExternalAddonInstaller(product.getProductInstance().getBaseUrl(), TestUser.ADMIN);
 
-    private Option<TestUser> currentUser = none();
 
     protected <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args)
     {
-        currentUser = Option.some(user);
         product.getTester().getDriver().manage().deleteAllCookies();
         return product.login(user.confUser(), page, args);
     }
-
-
 }

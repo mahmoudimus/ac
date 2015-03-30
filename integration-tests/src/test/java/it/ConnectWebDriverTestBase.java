@@ -8,9 +8,7 @@ import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.LicenseStatusBannerHelper;
-import com.atlassian.plugin.connect.test.helptips.ConfluenceHelpTipApiClient;
 import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
-import com.atlassian.plugin.connect.test.helptips.JiraHelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -19,9 +17,7 @@ import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import it.util.TestUser;
 import org.apache.http.auth.AuthenticationException;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
@@ -135,5 +131,4 @@ public abstract class ConnectWebDriverTestBase
     {
         return ModuleKeyUtils.addonAndModuleKey(addonKey, module);
     }
-
 }
