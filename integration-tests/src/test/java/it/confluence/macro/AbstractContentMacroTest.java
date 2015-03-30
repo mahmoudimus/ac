@@ -16,7 +16,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
-import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
@@ -159,11 +158,6 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
         resetEditorState(editorPage, savedPage);
         editorPage = null;
         savedPage = null;
-    }
-
-    @Before
-    public void dismissPopups() {
-        HelpTipApiClient.dismissHelpTipsForAllUsers(product);
     }
 
     protected static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createImagePlaceholderMacro(T builder)
