@@ -8,6 +8,7 @@ import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.LicenseStatusBannerHelper;
+import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -16,9 +17,7 @@ import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import it.util.TestUser;
 import org.apache.http.auth.AuthenticationException;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
@@ -47,19 +46,10 @@ public abstract class ConnectWebDriverTestBase
         LicenseStatusBannerHelper.instance().execute(product);
     }
 
-    @Before
-    @After
-    public void dismissPrompts()
+    @BeforeClass
+    public static void dismissPrompts()
     {
-        // dismiss any alerts, because they would stop the logout
-        connectPageOperations.dismissAnyAlerts();
-        connectPageOperations.dismissAnyAuiDialog();
-        connectPageOperations.dismissClosableAuiMessage();
-
-        if (product instanceof ConfluenceTestedProduct)
-        {
-            connectPageOperations.dismissConfluenceDiscardDraftsPrompt();
-        }
+        HelpTipApiClient.dismissHelpTipsForAllUsers(product);
     }
 
     @BeforeClass
@@ -76,8 +66,6 @@ public abstract class ConnectWebDriverTestBase
         {
             logout();
             currentUsername = user.getUsername();
-            connectPageOperations.dismissAnyAlerts(); // we've seen an alert pop up after the @Before has run
-
             if (product instanceof JiraTestedProduct)
             {
                 JiraTestedProduct jiraTestedProduct = (JiraTestedProduct) product;
@@ -99,13 +87,11 @@ public abstract class ConnectWebDriverTestBase
     {
         if (isAlreadyLoggedIn(user))
         {
-            connectPageOperations.dismissAnyAlerts();
             return product.visit(page, args);
         }
 
         logout();
         currentUsername = user.getUsername();
-        connectPageOperations.dismissAnyAlerts(); // we've seen an alert at this point
 
         if (product instanceof JiraTestedProduct)
         {

@@ -68,8 +68,6 @@ public class TestLicenseRestResource extends ConnectWebDriverTestBase
         {
             try
             {
-                connectPageOperations.dismissAnyAlerts();
-
                 //NOTE: the timebomb license disables the ability to delete plugins!
                 LicenseUtils.resetLicenses(product);
             }
