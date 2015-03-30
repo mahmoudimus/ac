@@ -534,7 +534,7 @@ public abstract class AbstractContentMacroTest extends AbstractConfluenceWebDriv
     {
         try
         {
-            editorPage.cancel();
+            product.getPageBinder().bind(editorPage.getClass()).getEditor().clickCancel();
         }
         catch (Throwable t)
         {

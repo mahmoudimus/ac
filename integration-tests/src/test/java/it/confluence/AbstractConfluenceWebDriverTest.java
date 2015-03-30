@@ -4,7 +4,11 @@ import com.atlassian.confluence.it.Space;
 import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.it.maven.MavenDependencyHelper;
 import com.atlassian.confluence.it.maven.MavenUploadablePlugin;
-import com.atlassian.confluence.it.plugin.*;
+import com.atlassian.confluence.it.plugin.Plugin;
+import com.atlassian.confluence.it.plugin.PluginHelper;
+import com.atlassian.confluence.it.plugin.SimplePlugin;
+import com.atlassian.confluence.it.plugin.UploadablePlugin;
+import com.atlassian.confluence.it.plugin.WebTestPluginHelper;
 import com.atlassian.confluence.it.rpc.ConfluenceRpc;
 import com.atlassian.confluence.it.rpc.StartOfTestLogger;
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
@@ -13,10 +17,10 @@ import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.component.editor.toolbars.InsertDropdownMenu;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectMacroBrowserDialog;
 import com.atlassian.util.concurrent.LazyReference;
+import com.sun.jersey.api.client.UniformInterfaceException;
 import it.ConnectWebDriverTestBase;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -25,8 +29,6 @@ import org.junit.Rule;
 import org.junit.rules.TestName;
 
 import javax.annotation.Nullable;
-
-import com.sun.jersey.api.client.UniformInterfaceException;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -194,13 +196,6 @@ public class AbstractConfluenceWebDriverTest extends ConnectWebDriverTestBase
 
             return new MacroBrowserAndEditor(browserAndEditor.browserDialog, browserAndEditor.macro, macroForm);
         }
-    }
-
-    protected void selectMacro(MacroBrowserAndEditor macroBrowserAndEditor)
-    {
-        MacroForm macroForm = macroBrowserAndEditor.macro.select();
-        macroForm.waitUntilVisible();
-        macroBrowserAndEditor.browserDialog.clickSave();
     }
 
     protected MacroBrowserAndEditor findMacroInBrowser(CreatePage editorPage, String macroName)
