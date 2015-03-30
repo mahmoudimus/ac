@@ -16,15 +16,22 @@ import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.util.ExternalAddonInstaller;
+import it.jira.JiraWebDriverTestBase;
+import it.util.TestUser;
+
 import static com.google.common.collect.Iterables.any;
 import static it.util.TestUser.ADMIN;
 
 @Category (OnDemandAcceptanceTest.class)
-public class TestJiraStaticDescriptor extends JiraAcceptanceTestBase
+public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
 {
     private static final String PROJECT_KEY = "ACTEST";
     private static final String PROJECT_NAME = "Atlassian Connect Test";
     private static final String WEB_ITEM_ID = "com.atlassian.connect.acceptance.test__opsbar-test-web-item";
+
+    protected static final ExternalAddonInstaller externalAddonInstaller = new ExternalAddonInstaller(
+            product.getProductInstance().getBaseUrl(), TestUser.ADMIN);
 
     private static final Logger log = LoggerFactory.getLogger(TestJiraStaticDescriptor.class);
 
