@@ -1,6 +1,5 @@
 package it;
 
-import java.io.IOException;
 import java.util.concurrent.Callable;
 
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
@@ -9,14 +8,12 @@ import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.connect.test.LicenseStatusBannerHelper;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 
-import org.apache.http.auth.AuthenticationException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -39,13 +36,6 @@ public abstract class ConnectWebDriverTestBase
 
     protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
             product.getTester().getDriver());
-
-    @BeforeClass
-    public static void disableLicenseBanner() throws IOException, AuthenticationException
-    {
-        // disable license banner
-        LicenseStatusBannerHelper.instance().execute(product);
-    }
 
     @Before
     @After
