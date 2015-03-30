@@ -1,7 +1,5 @@
 package it;
 
-import java.util.concurrent.Callable;
-
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.pageobjects.Page;
@@ -101,19 +99,6 @@ public abstract class ConnectWebDriverTestBase
         else
         {
             throw new UnsupportedOperationException("Sorry, I don't know how to log into " + product.getClass().getCanonicalName());
-        }
-    }
-
-    protected <T> T loginAndRun(TestUser user, Callable<T> test) throws Exception
-    {
-        logout();
-        login(user);
-        try {
-            return test.call();
-        }
-        finally
-        {
-            logout();
         }
     }
 }

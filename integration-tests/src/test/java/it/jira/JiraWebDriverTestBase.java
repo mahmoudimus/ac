@@ -73,6 +73,19 @@ public class JiraWebDriverTestBase
         product.quickLogin(user.getUsername(), user.getPassword());
     }
 
+    protected <T> T loginAndRun(TestUser user, Callable<T> test) throws Exception
+    {
+        logout();
+        login(user);
+        try {
+            return test.call();
+        }
+        finally
+        {
+            logout();
+        }
+    }
+
     private boolean isAlreadyLoggedIn(final TestUser user)
     {
         return user != null && currentUser.isDefined() && currentUser.get().getUsername().equals(user.getUsername());
