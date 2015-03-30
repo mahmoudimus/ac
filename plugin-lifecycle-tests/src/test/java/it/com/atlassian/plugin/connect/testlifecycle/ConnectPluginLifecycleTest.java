@@ -162,18 +162,6 @@ public class ConnectPluginLifecycleTest
         assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "third check");
     }
 
-    @Test
-    public void disablingConnectDisablesAddon() throws Exception
-    {
-        theConnectPlugin = installConnectPlugin();
-        singleModuleAddon = installAndEnableAddon(SINGLE_MODULE_ADDON);
-        assertEquals("enabled check failed", PluginState.ENABLED, singleModuleAddon.getPluginState());
-
-        pluginController.disablePlugin(theConnectPlugin.getKey());
-        assertEquals(PluginState.DISABLED, theConnectPlugin.getPluginState());
-        assertEquals(0, getEnabledModules(theConnectPlugin).size());
-    }
-
     private Collection<ModuleDescriptor<?>> getEnabledModules(Plugin theConnectPlugin)
     {
         return Collections2.filter(theConnectPlugin.getModuleDescriptors(), new Predicate<ModuleDescriptor<?>>()
@@ -224,20 +212,6 @@ public class ConnectPluginLifecycleTest
 
         theConnectPlugin = installConnectPlugin();
         assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "second check");
-    }
-
-    @Test
-    public void disablingConnectDisablesMultipleAddons() throws Exception
-    {
-        theConnectPlugin = installConnectPlugin();
-        singleModuleAddon = installAndEnableAddon(SINGLE_MODULE_ADDON);
-        doubleModuleAddon = installAndEnableAddon(DOUBLE_MODULE_ADDON);
-        assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "first check");
-        assertStateAndModuleCount(doubleModuleAddon, PluginState.ENABLED, 2, "first check");
-
-        pluginController.disablePlugin(theConnectPlugin.getKey());
-        assertEquals(PluginState.DISABLED, theConnectPlugin.getPluginState());
-        assertEquals(0, getEnabledModules(theConnectPlugin).size());
     }
 
     @Test
