@@ -6,9 +6,6 @@ import com.atlassian.pageobjects.TestedProduct;
 
 import it.util.TestUser;
 
-/**
- * Created by dhaden on 30/03/2015.
- */
 public class HelpTipApiClientFactory
 {
     public static HelpTipApiClient getHelpTipApiClient(TestedProduct product, TestUser user)
