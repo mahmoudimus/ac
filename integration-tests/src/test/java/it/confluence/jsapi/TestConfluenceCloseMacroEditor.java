@@ -8,9 +8,7 @@ import it.confluence.AbstractConfluenceWebDriverTest;
 import it.confluence.macro.AbstractContentMacroTest;
 import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -50,15 +48,6 @@ public class TestConfluenceCloseMacroEditor extends AbstractConfluenceWebDriverT
         }
     }
 
-    // clean up so that we don't get "org.openqa.selenium.UnhandledAlertException: unexpected alert open" in tests
-    @Before
-    @After
-    public void cleanUpAroundEachTest()
-    {
-        AbstractContentMacroTest.resetEditorState(createPage, null);
-        createPage = null;
-    }
-
     @Test
     public void shouldCloseMacroEditorWhenInsertingMacroOnNewPage()
     {
@@ -73,6 +62,7 @@ public class TestConfluenceCloseMacroEditor extends AbstractConfluenceWebDriverT
                 remoteMacroEditor.closeMacroEditor();
             }
         });
+        createPage.cancel();
     }
 
     private RemoteMacroEditor findRemoteMacroEditor()
