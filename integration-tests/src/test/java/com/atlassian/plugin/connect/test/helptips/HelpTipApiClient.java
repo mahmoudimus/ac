@@ -43,21 +43,13 @@ public abstract class HelpTipApiClient
     public static void dismissHelpTipsForAllUsers(TestedProduct product) {
         try
         {
-            getSpecificHelpTipApiClient(product, TestUser.ADMIN).dismissAllHelpTips();
-            getSpecificHelpTipApiClient(product, TestUser.BETTY).dismissAllHelpTips();
-            getSpecificHelpTipApiClient(product, TestUser.BARNEY).dismissAllHelpTips();
-        } catch (Exception e)
+            HelpTipApiClientFactory.getHelpTipApiClient(product, TestUser.ADMIN).dismissAllHelpTips();
+            HelpTipApiClientFactory.getHelpTipApiClient(product, TestUser.BETTY).dismissAllHelpTips();
+            HelpTipApiClientFactory.getHelpTipApiClient(product, TestUser.BARNEY).dismissAllHelpTips();
+        }
+        catch (Exception e)
         {
 
         }
-    }
-
-    private static HelpTipApiClient getSpecificHelpTipApiClient(TestedProduct product, TestUser user)
-    {
-        if (product instanceof JiraTestedProduct)
-        {
-            return new JiraHelpTipApiClient( (JiraTestedProduct) product, user);
-        }
-        return new ConfluenceHelpTipApiClient( (ConfluenceTestedProduct) product, user);
     }
 }
