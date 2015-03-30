@@ -11,14 +11,11 @@ import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
-import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
-import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 
 import it.util.TestUser;
 
@@ -27,12 +24,6 @@ public abstract class ConnectWebDriverTestBase
     protected static TestedProduct<WebDriverTester> product = OwnerOfTestedProduct.INSTANCE;
 
     protected static String currentUsername = null;
-
-    @Rule
-    public WebDriverScreenshotRule screenshotRule = new WebDriverScreenshotRule();
-
-    @Rule
-    public LogPageSourceRule pageSourceRule = new LogPageSourceRule();
 
     protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
             product.getTester().getDriver());
