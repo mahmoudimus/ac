@@ -84,7 +84,7 @@ public class TestEscaping extends JiraWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        runner = new ConnectRunner(getProduct().getProductInstance().getBaseUrl(), ADDON_KEY)
+        runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), ADDON_KEY)
                 .setAuthenticationToNone()
                 .addModule("generalPages",
                         newPageBean()
@@ -168,7 +168,7 @@ public class TestEscaping extends JiraWebDriverTestBase
                 .addRoute(MODULE_URL, ConnectAppServlets.helloWorldServlet())
                 .start();
 
-        getProduct().backdoor().project().addProject(PROJECT_KEY, PROJECT_KEY, "admin");
+        product.backdoor().project().addProject(PROJECT_KEY, PROJECT_KEY, "admin");
     }
 
     @Before
@@ -192,7 +192,7 @@ public class TestEscaping extends JiraWebDriverTestBase
         {
             runner.stopAndUninstall();
         }
-        getProduct().backdoor().project().deleteProject(PROJECT_KEY);
+        product.backdoor().project().deleteProject(PROJECT_KEY);
     }
 
     @Test
@@ -219,16 +219,16 @@ public class TestEscaping extends JiraWebDriverTestBase
     @Test
     public void testAdminPage() throws Exception
     {
-        getProduct().quickLoginAsAdmin(JiraAdministrationHomePage.class);
-        JiraAdminPage adminPage = getProduct().getPageBinder().bind(JiraAdminPage.class, runner.getAddon().getKey(), ADMIN_PAGE_KEY);
+        product.quickLoginAsAdmin(JiraAdministrationHomePage.class);
+        JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, runner.getAddon().getKey(), ADMIN_PAGE_KEY);
         assertIsEscaped(adminPage.getRemotePluginLinkText());
     }
 
     @Test
     public void testIssueTabPanel() throws Exception
     {
-        IssueCreateResponse issue = getProduct().backdoor().issues().createIssue(PROJECT_KEY, "test issue tab panel");
-        JiraViewIssuePageWithRemotePluginIssueTab page = getProduct().visit(JiraViewIssuePageWithRemotePluginIssueTab.class,
+        IssueCreateResponse issue = product.backdoor().issues().createIssue(PROJECT_KEY, "test issue tab panel");
+        JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(JiraViewIssuePageWithRemotePluginIssueTab.class,
                 ISSUE_TAB_PANEL_KEY, issue.key(), runner.getAddon().getKey());
         assertIsEscaped(page.getTabName());
     }
@@ -236,7 +236,7 @@ public class TestEscaping extends JiraWebDriverTestBase
     @Test
     public void testProfileTabPanel() throws Exception
     {
-        getProduct().quickLoginAsAdmin(ViewProfilePage.class);
+        product.quickLoginAsAdmin(ViewProfilePage.class);
         String moduleKey = getModuleKey(PROFILE_TAB_PANEL_KEY);
         LinkedRemoteContent tabPanel = connectPageOperations.findTabPanel("up_" + moduleKey + "_a",
                 Option.<String>none(), moduleKey);
@@ -247,7 +247,7 @@ public class TestEscaping extends JiraWebDriverTestBase
     public void testProjectAdminTabPanel() throws Exception
     {
         final String moduleKey = getModuleKey(PROJECT_ADMIN_TAB_PANEL_KEY);
-        ProjectSummaryPageTab page = getProduct().quickLoginAsAdmin(ProjectSummaryPageTab.class, PROJECT_KEY);
+        ProjectSummaryPageTab page = product.quickLoginAsAdmin(ProjectSummaryPageTab.class, PROJECT_KEY);
         ProjectConfigTabs.Tab tab = Iterables.find(page.getTabs().getTabs(), new Predicate<ProjectConfigTabs.Tab>()
         {
             @Override
@@ -263,7 +263,7 @@ public class TestEscaping extends JiraWebDriverTestBase
     public void testProjectTabPanel() throws Exception
     {
         JiraProjectSummaryPageWithAddonTab summaryPage
-                = getProduct().visit(JiraProjectSummaryPageWithAddonTab.class, PROJECT_KEY, ADDON_KEY, PROJECT_TAB_PANEL_KEY);
+                = product.visit(JiraProjectSummaryPageWithAddonTab.class, PROJECT_KEY, ADDON_KEY, PROJECT_TAB_PANEL_KEY);
         summaryPage = summaryPage.expandAddonsList();
         Sidebar.SidebarLink addonLink = summaryPage.getSidebar().getLinkByName(MODULE_NAME_JIRA_ESCAPED);
         assertTrue(addonLink.isVisible().byDefaultTimeout());
@@ -272,7 +272,7 @@ public class TestEscaping extends JiraWebDriverTestBase
     @Test
     public void testSearchRequestView() throws Exception
     {
-        JiraAdvancedSearchPage searchPage = getProduct().visit(JiraAdvancedSearchPage.class);
+        JiraAdvancedSearchPage searchPage = product.visit(JiraAdvancedSearchPage.class);
         searchPage.enterQuery("project = " + PROJECT_KEY).submit();
         IssueNavigatorViewsMenu viewsMenu = searchPage.viewsMenu().open();
         IssueNavigatorViewsMenu.ViewEntry entry = viewsMenu.entryWithLabel(MODULE_NAME_JIRA_ESCAPED);
@@ -282,8 +282,8 @@ public class TestEscaping extends JiraWebDriverTestBase
     @Test
     public void testWebPanel() throws Exception
     {
-        IssueCreateResponse issue = getProduct().backdoor().issues().createIssue(PROJECT_KEY, "test web panel");
-        JiraViewIssuePage page = getProduct().visit(JiraViewIssuePage.class, issue.key());
+        IssueCreateResponse issue = product.backdoor().issues().createIssue(PROJECT_KEY, "test web panel");
+        JiraViewIssuePage page = product.visit(JiraViewIssuePage.class, issue.key());
         Section section = page.getSection(getModuleKey(WEB_PANEL_KEY));
         assertIsEscaped(section.getTitle());
     }
@@ -293,7 +293,7 @@ public class TestEscaping extends JiraWebDriverTestBase
     {
         final String id = ConnectPluginInfo.getPluginKey() + ":" + getModuleKey(WORKFLOW_POST_FUNCTION_KEY);
 
-        JiraAddWorkflowTransitionPostFunctionPage workflowTransitionPage = getProduct().quickLoginAsAdmin(
+        JiraAddWorkflowTransitionPostFunctionPage workflowTransitionPage = product.quickLoginAsAdmin(
                 JiraAddWorkflowTransitionPostFunctionPage.class, "live", WORKFLOW_NAME, WORKFLOW_STEP, WORKFLOW_TRANSITION);
         WorkflowPostFunctionEntry entry = Iterables.find(workflowTransitionPage.getPostFunctions(), new Predicate<WorkflowPostFunctionEntry>()
         {
@@ -317,7 +317,7 @@ public class TestEscaping extends JiraWebDriverTestBase
 
     private RemoteWebItem findWebItem(String moduleKey)
     {
-        getProduct().visit(JiraViewProjectPage.class, PROJECT_KEY);
+        product.visit(JiraViewProjectPage.class, PROJECT_KEY);
         return connectPageOperations.findWebItem(getModuleKey(moduleKey), Optional.<String>absent());
     }
 

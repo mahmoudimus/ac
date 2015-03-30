@@ -1,22 +1,14 @@
 package com.atlassian.plugin.connect.test;
 
 import com.atlassian.pageobjects.TestedProduct;
-import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
-import com.atlassian.webdriver.pageobjects.WebDriverTester;
+import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 
 public class BaseUrlLocator
 {
-    protected final static TestedProduct<WebDriverTester> product = OwnerOfTestedProduct.INSTANCE;
+    protected final static TestedProduct product = TestedProductProvider.getTestedProduct();
 
     public static String getBaseUrl()
     {
-        return getBaseUrl(product.getClass());
-    }
-
-    public static String getBaseUrl(Class<? extends TestedProduct> testedProductClass)
-    {
-        String baseUrl = OwnerOfTestedProduct.INSTANCE.getProductInstance().getBaseUrl();
-
-        return baseUrl;
+        return product.getProductInstance().getBaseUrl();
     }
 }

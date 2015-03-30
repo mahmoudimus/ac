@@ -576,9 +576,7 @@
                                 <productId>confluence</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>
-                                    com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct
-                                </testedProductClass>
+                                <testedProduct>confluence</testedProduct>
                             </systemProperties>
                             <excludes>
                                 <exclude>it/jira/**/*.java</exclude>
@@ -591,9 +589,7 @@
                                 <productId>jira</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>
-                                    com.atlassian.jira.pageobjects.JiraTestedProduct
-                                </testedProductClass>
+                                <testedProduct>jira</testedProduct>
                             </systemProperties>
                             <excludes>
                                 <exclude>it/confluence/**/*.java</exclude>
@@ -609,9 +605,7 @@
                                 <productId>confluence</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>
-                                    com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct
-                                </testedProductClass>
+                                <testedProduct>confluence</testedProduct>
                             </systemProperties>
                             <includes>
                                 <include>it/common/**/*.java</include>
@@ -628,9 +622,7 @@
                                 <productId>confluence</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>
-                                    com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct
-                                </testedProductClass>
+                                <testedProduct>confluence</testedProduct>
                             </systemProperties>
                             <includes>
                                 <include>it/common/iframe/*.java</include>
@@ -642,9 +634,7 @@
                                 <productId>confluence</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>
-                                    com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct
-                                </testedProductClass>
+                                <testedProduct>confluence</testedProduct>
                             </systemProperties>
                             <includes>
                                 <include>it/common/lifecycle/*.java</include>
@@ -659,9 +649,7 @@
                                 <productId>confluence</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>
-                                    com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct
-                                </testedProductClass>
+                                <testedProduct>confluence</testedProduct>
                             </systemProperties>
                             <includes>
                                 <include>it/confluence/**/*.java</include>
@@ -679,9 +667,7 @@
                                 <productId>confluence</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>
-                                    com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct
-                                </testedProductClass>
+                                <testedProduct>confluence</testedProduct>
                             </systemProperties>
                             <includes>
                                 <include>it/confluence/iframe/*.java</include>
@@ -693,9 +679,7 @@
                                 <productId>confluence</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>
-                                    com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct
-                                </testedProductClass>
+                                <testedProduct>confluence</testedProduct>
                             </systemProperties>
                             <includes>
                                 <include>it/confluence/item/*.java</include>
@@ -707,9 +691,7 @@
                                 <productId>confluence</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>
-                                    com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct
-                                </testedProductClass>
+                                <testedProduct>confluence</testedProduct>
                             </systemProperties>
                             <includes>
                                 <include>it/common/jsapi/*.java</include>
@@ -722,9 +704,7 @@
                                 <productId>confluence</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>
-                                    com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct
-                                </testedProductClass>
+                                <testedProduct>confluence</testedProduct>
                             </systemProperties>
                             <includes>
                                 <include>it/confluence/macro/*.java</include>
@@ -739,9 +719,7 @@
                                 <productId>jira</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>
-                                    com.atlassian.jira.pageobjects.JiraTestedProduct
-                                </testedProductClass>
+                                <testedProduct>jira</testedProduct>
                             </systemProperties>
                             <includes>
                                 <include>it/common/**/*.java</include>
@@ -758,9 +736,7 @@
                                 <productId>jira</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>
-                                    com.atlassian.jira.pageobjects.JiraTestedProduct
-                                </testedProductClass>
+                                <testedProduct>jira</testedProduct>
                             </systemProperties>
                             <includes>
                                 <include>it/common/iframe/*.java</include>
@@ -772,9 +748,7 @@
                                 <productId>jira</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>
-                                    com.atlassian.jira.pageobjects.JiraTestedProduct
-                                </testedProductClass>
+                                <testedProduct>jira</testedProduct>
                             </systemProperties>
                             <includes>
                                 <include>it/common/lifecycle/*.java</include>
@@ -789,9 +763,7 @@
                                 <productId>jira</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>
-                                    com.atlassian.jira.pageobjects.JiraTestedProduct
-                                </testedProductClass>
+                                <testedProduct>jira</testedProduct>
                             </systemProperties>
                             <includes>
                                 <include>it/jira/**/*.java</include>
@@ -808,9 +780,7 @@
                                 <productId>jira</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>
-                                    com.atlassian.jira.pageobjects.JiraTestedProduct
-                                </testedProductClass>
+                                <testedProduct>jira</testedProduct>
                             </systemProperties>
                             <includes>
                                 <include>it/jira/iframe/*.java</include>
@@ -822,9 +792,7 @@
                                 <productId>jira</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>
-                                    com.atlassian.jira.pageobjects.JiraTestedProduct
-                                </testedProductClass>
+                                <testedProduct>jira</testedProduct>
                             </systemProperties>
                             <includes>
                                 <include>it/jira/item/*.java</include>
@@ -836,9 +804,7 @@
                                 <productId>jira</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>
-                                    com.atlassian.jira.pageobjects.JiraTestedProduct
-                                </testedProductClass>
+                                <testedProduct>jira</testedProduct>
                             </systemProperties>
                             <includes>
                                 <include>it/common/jsapi/*.java</include>

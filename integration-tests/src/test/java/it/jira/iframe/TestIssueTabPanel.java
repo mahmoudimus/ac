@@ -42,7 +42,7 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
 {
     private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
     private static final String MODULE_KEY = "issue-tab-panel";
-    private static JiraOps jiraOps = new JiraOps(getProduct().getProductInstance());
+    private static JiraOps jiraOps = new JiraOps(product.getProductInstance());
     private static ConnectRunner remotePlugin;
     private static final String PROJECT_KEY = FunctTestConstants.PROJECT_HOMOSAP_KEY;
 
@@ -57,7 +57,7 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectRunner(getProduct().getProductInstance().getBaseUrl(), PLUGIN_KEY)
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
                 .addModule(ConnectTabPanelModuleProvider.ISSUE_TAB_PANELS, newTabPanelBean()
                         .withName(new I18nProperty("Issue Tab Panel", null))
@@ -88,7 +88,7 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
     @Before
     public void setUpTest() throws Exception
     {
-        projectId = getProduct().backdoor().project().addProject(PROJECT_KEY, PROJECT_KEY, "admin");
+        projectId = product.backdoor().project().addProject(PROJECT_KEY, PROJECT_KEY, "admin");
 
         issue = jiraOps.createIssue(PROJECT_KEY, "Test issue for tab");
     }
@@ -96,14 +96,14 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
     @After
     public void cleanUpTest()
     {
-        getProduct().backdoor().project().deleteProject(PROJECT_KEY);
+        product.backdoor().project().deleteProject(PROJECT_KEY);
     }
 
     @Test
     public void testIssueTabPanel() throws RemoteException
     {
-        getProduct().gotoLoginPage().loginAsSysadminAndGoToHome();
-        JiraViewIssuePageWithRemotePluginIssueTab page = getProduct().visit(
+        product.gotoLoginPage().loginAsSysadminAndGoToHome();
+        JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(
                 JiraViewIssuePageWithRemotePluginIssueTab.class, "issue-tab-panel", issue.getKey(), PLUGIN_KEY);
         assertThat(page.getMessage(), is("Success"));
 
@@ -119,15 +119,15 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
     {
         String completeKey = addonAndModuleKey(PLUGIN_KEY,MODULE_KEY);
 
-        getProduct().gotoLoginPage().loginAsSysadminAndGoToHome();
+        product.gotoLoginPage().loginAsSysadminAndGoToHome();
 
         // tab panel should be present
-        JiraViewIssuePage page = getProduct().visit(JiraViewIssuePage.class, issue.getKey());
+        JiraViewIssuePage page = product.visit(JiraViewIssuePage.class, issue.getKey());
         assertThat(page.isTabPanelPresent(completeKey), is(true));
 
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
-        page = getProduct().visit(JiraViewIssuePage.class, issue.getKey());
+        page = product.visit(JiraViewIssuePage.class, issue.getKey());
         assertThat(page.isTabPanelPresent(completeKey), is(false));
     }
 }

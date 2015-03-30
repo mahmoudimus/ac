@@ -49,7 +49,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
 
     @Rule
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
-    
+
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
@@ -71,7 +71,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
                 .addRoute(PARAMETER_CAPTURE_URL, PARAMETER_CAPTURING_SERVLET)
                 .start();
 
-        new JiraHelpTipApiClient(getProduct(), TestUser.ADMIN).dismissConfigureProjectTips();
+        new JiraHelpTipApiClient(product, TestUser.ADMIN).dismissConfigureProjectTips();
     }
 
     @AfterClass

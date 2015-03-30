@@ -9,7 +9,7 @@ import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
-import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
+import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 
 import org.junit.After;
@@ -21,7 +21,7 @@ import it.util.TestUser;
 
 public abstract class ConnectWebDriverTestBase
 {
-    protected static TestedProduct<WebDriverTester> product = OwnerOfTestedProduct.INSTANCE;
+    protected static TestedProduct<WebDriverTester> product = TestedProductProvider.getTestedProduct();
 
     protected static String currentUsername = null;
 

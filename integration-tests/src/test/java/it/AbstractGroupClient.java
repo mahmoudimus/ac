@@ -10,7 +10,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
 import com.atlassian.functest.rest.TestResults;
-import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
+import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 
 import org.junit.Test;
 
@@ -24,8 +24,8 @@ public abstract class AbstractGroupClient
 
     public AbstractGroupClient(String group)
     {
-        this(group, OwnerOfTestedProduct.INSTANCE.getProductInstance().getHttpPort(),
-                OwnerOfTestedProduct.INSTANCE.getProductInstance().getContextPath());
+        this(group, TestedProductProvider.getTestedProduct().getProductInstance().getHttpPort(),
+                TestedProductProvider.getTestedProduct().getProductInstance().getContextPath());
     }
 
     public AbstractGroupClient(String group, int port, String contextPath)

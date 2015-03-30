@@ -51,7 +51,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        getProduct().quickLoginAsAdmin();
+        product.quickLoginAsAdmin();
 
         runner = new ConnectRunner(product)
                 .setAuthenticationToNone()

@@ -19,30 +19,44 @@ import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
 import com.atlassian.confluence.pageobjects.component.editor.toolbars.InsertDropdownMenu;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
+import com.atlassian.pageobjects.Page;
+import com.atlassian.pageobjects.page.HomePage;
+import com.atlassian.pageobjects.page.LoginPage;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
+import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectMacroBrowserDialog;
 import com.atlassian.util.concurrent.LazyReference;
 
 import com.sun.jersey.api.client.UniformInterfaceException;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 
-import it.ConnectWebDriverTestBase;
+import it.util.TestUser;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
- * This is an adapted version of com.atlassian.confluence.webdriver.AbstractWebDriverTest. It works with the AC test DB
- * and default host/port. Installing the 'scripts finished' plugin makes all of Confluence's page objects available to
- * tests, without forcing us to create "Fixed" versions of them that simply override a wait condition.
+ * This is an adapted version of com.atlassian.confluence.webdriver.AbstractWebDriverTest.
+ * It works with the AC test DB and default host/port. Installing the 'scripts
+ * finished' plugin makes all of Confluence's page objects available to tests,
+ * without forcing us to create "Fixed" versions of them that simply override a
+ * wait condition.
  */
-public class ConfluenceWebDriverTestBase extends ConnectWebDriverTestBase
+public class ConfluenceWebDriverTestBase
 {
+    protected static final ConfluenceTestedProduct product = TestedProductProvider.getConfluenceTestedProduct();
+    protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
+            product.getTester().getDriver());
+
+    private static String currentUsername = null;
+
     private boolean hasBeenFocused;
 
     public static class TestSpace
@@ -89,7 +103,7 @@ public class ConfluenceWebDriverTestBase extends ConnectWebDriverTestBase
 
     protected static ConfluenceTestedProduct getProduct()
     {
-        return (ConfluenceTestedProduct) product;
+        return product;
     }
 
     protected ConfluenceOps confluenceOps = new ConfluenceOps(product.getProductInstance().getBaseUrl());
@@ -252,5 +266,57 @@ public class ConfluenceWebDriverTestBase extends ConnectWebDriverTestBase
                 assertThat(connectPageOperations.findDialog(moduleKey).cancel(), is(true));
             }
         };
+    }
+
+    @Before
+    @After
+    public void dismissPrompts()
+    {
+        // dismiss any alerts, because they would stop the logout
+        connectPageOperations.dismissAnyAlerts();
+        connectPageOperations.dismissAnyAuiDialog();
+        connectPageOperations.dismissClosableAuiMessage();
+
+        connectPageOperations.dismissConfluenceDiscardDraftsPrompt();
+    }
+
+    @BeforeClass
+    @AfterClass
+    public static void logout()
+    {
+        currentUsername = null;
+        product.getTester().getDriver().manage().deleteAllCookies();
+    }
+
+    protected void login(TestUser user)
+    {
+        if (!isAlreadyLoggedIn(user))
+        {
+            logout();
+            currentUsername = user.getUsername();
+            connectPageOperations.dismissAnyAlerts(); // we've seen an alert pop up after the @Before has run
+
+            product.visit(LoginPage.class).login(user.getUsername(), user.getPassword(), HomePage.class);
+        }
+    }
+
+    private boolean isAlreadyLoggedIn(final TestUser user)
+    {
+        return user != null && user.getUsername().equals(currentUsername);
+    }
+
+    protected <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args)
+    {
+        if (isAlreadyLoggedIn(user))
+        {
+            connectPageOperations.dismissAnyAlerts();
+            return product.visit(page, args);
+        }
+
+        logout();
+        currentUsername = user.getUsername();
+        connectPageOperations.dismissAnyAlerts(); // we've seen an alert at this point
+
+        return product.login(user.confUser(), page, args);
     }
 }

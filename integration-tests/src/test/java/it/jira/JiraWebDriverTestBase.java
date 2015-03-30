@@ -1,19 +1,30 @@
 package it.jira;
 
-import com.atlassian.jira.pageobjects.JiraTestedProduct;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
-import hudson.plugins.jira.soap.RemoteProject;
-import it.ConnectWebDriverTestBase;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 
 import java.rmi.RemoteException;
 import java.util.concurrent.Callable;
 
-public class JiraWebDriverTestBase extends ConnectWebDriverTestBase
+import com.atlassian.jira.pageobjects.JiraTestedProduct;
+import com.atlassian.pageobjects.Page;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
+import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+
+import hudson.plugins.jira.soap.RemoteProject;
+import it.util.TestUser;
+
+public class JiraWebDriverTestBase
 {
     protected static JiraOps jiraOps;
     protected static RemoteProject project;
+    protected static JiraTestedProduct product = TestedProductProvider.getJiraTestedProduct();
+    protected static String currentUsername = null;
+
+    protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
+            product.getTester().getDriver());
 
     @BeforeClass
     public static void beforeClass() throws RemoteException
@@ -30,15 +41,51 @@ public class JiraWebDriverTestBase extends ConnectWebDriverTestBase
 
     protected void testLoggedInAndAnonymous(Callable runnable) throws Exception
     {
-        getProduct().quickLoginAsAdmin();
+        product.quickLoginAsAdmin();
         runnable.call();
         logout();
         runnable.call();
     }
 
-    protected static JiraTestedProduct getProduct()
+    @BeforeClass
+    @AfterClass
+    public static void logout()
     {
-        return (JiraTestedProduct) product;
+        currentUsername = null;
+        product.getTester().getDriver().manage().deleteAllCookies();
     }
 
+    protected void login(TestUser user)
+    {
+        if (isAlreadyLoggedIn(user))
+        {
+            return;
+        }
+
+        logout();
+        currentUsername = user.getUsername();
+        connectPageOperations.dismissAnyAlerts(); // we've seen an alert pop up after the @Before has run
+
+        product.quickLogin(user.getUsername(), user.getPassword());
+    }
+
+    private boolean isAlreadyLoggedIn(final TestUser user)
+    {
+        return user != null && user.getUsername().equals(currentUsername);
+    }
+
+    protected <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args)
+    {
+        if (isAlreadyLoggedIn(user))
+        {
+            connectPageOperations.dismissAnyAlerts();
+            return product.visit(page, args);
+        }
+
+        logout();
+        currentUsername = user.getUsername();
+        connectPageOperations.dismissAnyAlerts(); // we've seen an alert at this point
+
+        return product.quickLogin(user.getUsername(), user.getPassword(), page, args);
+    }
 }
