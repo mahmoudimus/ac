@@ -41,12 +41,11 @@ import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBe
 import static org.junit.Assert.assertEquals;
 
 /**
+ * Integration tests that create a Connect Addon that uses the autoconvert feature and exercise its usage in Confluence pages.
  */
 public class TestAutoconvert extends AbstractConfluenceWebDriverTest
 {
     private static final Logger logger = LoggerFactory.getLogger(TestAutoconvert.class);
-
-    protected static final String OS_CTRL_KEY = "Mac OS X".equals(System.getProperty("os.name")) ? Keys.COMMAND.toString() : Keys.CONTROL.toString();
     private static final String DYNAMIC_MACRO_WITH_AUTOCONVERT = "Dynamic Macro With Autoconvert";
     private static final String STATIC_MACRO_WITH_AUTOCONVERT = "Static Macro With Autoconvert";
     private static ConnectRunner remotePlugin;
