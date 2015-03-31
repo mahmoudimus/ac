@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,8 +51,9 @@ public class ParameterCapturingConditionServlet extends HttpServlet
         paramsFromLastRequest = req.getParameterMap();
         Map<String,String> headers = new HashMap<String,String>();
 
-        for (String name: Collections.list(req.getHeaderNames()))
+        for (Enumeration<String> e = req.getHeaderNames(); e.hasMoreElements();)
         {
+            String name = e.nextElement();
             headers.put(name, req.getHeader(name));
         }
         headersFromLastRequest = headers;
