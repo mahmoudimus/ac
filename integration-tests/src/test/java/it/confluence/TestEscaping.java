@@ -25,14 +25,12 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redstone.xmlrpc.XmlRpcFault;
 
 import java.net.MalformedURLException;
-import java.util.NoSuchElementException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
@@ -83,7 +81,8 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
                                 .withKey(WEB_ITEM_KEY)
                                 .withUrl(MODULE_URL)
                                 .withContext(AddOnUrlContext.addon)
-                                .withLocation("system.header/left")
+                                .withLocation("system.content.action")
+                                .withWeight(1)
                                 .withTooltip(new I18nProperty(MODULE_NAME, null))
                                 .build()
                 )
@@ -170,16 +169,11 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
     public void testWebItem() throws Exception
     {
         login(TestUser.ADMIN);
-        RemoteWebItem webItem = findViewPageWebItem(getModuleKey(WEB_ITEM_KEY));
-        assertIsEscaped(webItem.getLinkText());
-    }
-
-    @Test
-    public void testWebItemTooltip() throws Exception
-    {
-        login(TestUser.ADMIN);
-        RemoteWebItem webItem = findViewPageWebItem(getModuleKey(WEB_ITEM_KEY));
+        createAndVisitViewPage();
+        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(WEB_ITEM_KEY), Optional.of("action-menu-link"));
+        webItem.hover();
         assertIsEscaped(webItem.getTitle());
+        assertIsEscaped(webItem.getLinkText());
     }
 
     @Test
@@ -262,35 +256,7 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
         LinkedRemoteContent addonPage = connectPageOperations.findTabPanel(
                 getModuleKey(SPACE_TOOLS_TAB_KEY) + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX,
                 Option.<String>none(), getModuleKey(SPACE_TOOLS_TAB_KEY));
-
         assertIsEscaped(addonPage.getWebItem().getLinkText());
-    }
-
-    @Test
-    public void testSpaceToolsTab() throws Exception
-    {
-        loginAndVisit(TestUser.ADMIN, SpaceTemplatesPage.class, "ts");
-        final String dropDownLinkId = "aui-responsive-header-dropdown-trigger-0";
-        Optional<String> maybeDropDownLinkId = Optional.<String>absent();
-
-        try
-        {
-            WebElement dropDown = connectPageOperations.findElement(By.id(dropDownLinkId));
-
-            if (null != dropDown && dropDown.isDisplayed())
-            {
-                maybeDropDownLinkId = Optional.of(dropDownLinkId);
-            }
-        }
-        catch (NoSuchElementException e)
-        {
-            // do nothing
-        }
-
-        RemoteWebItem webItem = connectPageOperations.findWebItem(RemoteWebItem.ItemMatchingMode.ID,
-                ModuleKeyUtils.addonAndModuleKey(runner.getAddon().getKey(), WEB_ITEM_KEY), maybeDropDownLinkId);
-        webItem.hover();
-        assertIsEscaped(webItem.getLinkText());
     }
 
     private void assertIsEscaped(String text)
@@ -299,12 +265,6 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
         // Note that we're checking against the original name, not an escaped version, as getText() returns the
         // unescaped text. If markup was interpreted, the tags would be missing in the text.
         assertThat(text, anyOf(is(MODULE_NAME), is(MODULE_NAME_CONF_ESCAPED)));
-    }
-
-    private RemoteWebItem findViewPageWebItem(String webItemId) throws Exception
-    {
-        createAndVisitViewPage();
-        return connectPageOperations.findWebItem(webItemId, Optional.<String>absent());
     }
 
     private ConfluenceViewPage createAndVisitViewPage() throws Exception
