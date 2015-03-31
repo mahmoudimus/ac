@@ -18,11 +18,13 @@ import static org.junit.Assert.assertEquals;
 public class TestWorkflowPostFunction extends JiraWebDriverTestBase
 {
     private static ConnectRunner runner;
+    private static final String WORKFLOW_POST_FUNCTION_NAME = "My Connect Post Function";
     private static final String WORKFLOW_POST_FUNCTION_PAGE = "ac-workflow-post-function";
+    private static final String WORKFLOW_POST_FUNCTION_INVALID_NAME = "My Invalid Connect Post Function";
     private static final String WORKFLOW_POST_FUNCTION_INVALID_PAGE = "ac-workflow-invalid-post-function";
     private static final String WORKFLOW_NAME = "classic default workflow";
-    private static final Integer WORKFLOW_STEP = 1;
-    private static final Integer WORKFLOW_TRANSITION = 5;
+    private static final String WORKFLOW_STEP = "1";
+    private static final String WORKFLOW_TRANSITION = "5";
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -32,7 +34,7 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
                 .addRoute(ConnectRunner.INSTALLED_PATH, ConnectAppServlets.helloWorldServlet())
                 .addModules("jiraWorkflowPostFunctions",
                         newWorkflowPostFunctionBean()
-                            .withName(new I18nProperty("My function", null))
+                            .withName(new I18nProperty(WORKFLOW_POST_FUNCTION_NAME, null))
                             .withKey(WORKFLOW_POST_FUNCTION_PAGE)
                             .withView(new UrlBean("/wpf-view?config={postFunction.config}"))
                             .withEdit(new UrlBean("/wpf-edit?config={postFunction.config}"))
@@ -41,7 +43,7 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
                             .withDescription(new I18nProperty("workflow post function description", null))
                             .build(),
                         newWorkflowPostFunctionBean()
-                                .withName(new I18nProperty("My invalid function", null))
+                                .withName(new I18nProperty(WORKFLOW_POST_FUNCTION_INVALID_NAME, null))
                                 .withKey(WORKFLOW_POST_FUNCTION_INVALID_PAGE)
                                 .withView(new UrlBean("/wpf-view"))
                                 .withEdit(new UrlBean("/wpf-edit"))
@@ -71,11 +73,14 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
     @Test
     public void testCreateWorkflowPostFunction()
     {
-        JiraWorkflowTransitionPage workflowTransitionPage = loginAndVisit(TestUser.ADMIN, JiraWorkflowTransitionPage.class, "live", WORKFLOW_NAME, WORKFLOW_STEP, WORKFLOW_TRANSITION).createOrEditDraft();
-        JiraAddWorkflowTransitionFunctionParamsPage addonPage = workflowTransitionPage.addPostFunction("my-plugin", WORKFLOW_POST_FUNCTION_PAGE);
+        JiraWorkflowTransitionPage workflowTransitionPage = loginAndVisit(TestUser.ADMIN,
+                JiraWorkflowTransitionPage.class, "live", WORKFLOW_NAME, WORKFLOW_STEP, WORKFLOW_TRANSITION).createOrEditDraft();
+        JiraAddWorkflowTransitionFunctionParamsPage addonPage = workflowTransitionPage.addPostFunction(
+                "my-plugin", WORKFLOW_POST_FUNCTION_PAGE, WORKFLOW_POST_FUNCTION_NAME);
         addonPage.submitWorkflowParams();
 
-        JiraAddWorkflowTransitionFunctionParamsPage postFunction = workflowTransitionPage.updatePostFunction("my-plugin", WORKFLOW_POST_FUNCTION_PAGE);
+        JiraAddWorkflowTransitionFunctionParamsPage postFunction = workflowTransitionPage.updatePostFunction(
+                "my-plugin", WORKFLOW_POST_FUNCTION_PAGE);
         String workflowConfiguration = postFunction.getIframeQueryParams().get("config");
         assertEquals("workflow configuration text", workflowConfiguration);
     }
@@ -83,8 +88,10 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
     @Test
     public void testCreateInvalidWorkflowPostFunction()
     {
-        JiraWorkflowTransitionPage workflowTransitionPage = loginAndVisit(TestUser.ADMIN, JiraWorkflowTransitionPage.class, "live", WORKFLOW_NAME, WORKFLOW_STEP, WORKFLOW_TRANSITION).createOrEditDraft();
-        JiraAddWorkflowTransitionFunctionParamsPage addonPage = workflowTransitionPage.addPostFunction("my-plugin", WORKFLOW_POST_FUNCTION_INVALID_PAGE);
+        JiraWorkflowTransitionPage workflowTransitionPage = loginAndVisit(TestUser.ADMIN,
+                JiraWorkflowTransitionPage.class, "live", WORKFLOW_NAME, WORKFLOW_STEP, WORKFLOW_TRANSITION).createOrEditDraft();
+        JiraAddWorkflowTransitionFunctionParamsPage addonPage = workflowTransitionPage.addPostFunction(
+                "my-plugin", WORKFLOW_POST_FUNCTION_INVALID_PAGE, WORKFLOW_POST_FUNCTION_INVALID_NAME);
 
         String url = product.getTester().getDriver().getCurrentUrl();
         addonPage.submitWorkflowParams();
