@@ -5,3 +5,11 @@
 define('connect-host', function(){
     return _AP;
 });
+
+require('ac/history');
+require('ac/cookie');
+require('ac/env');
+require('ac/inline-dialog');
+require('ac/dialog');
+require('ac/messages');
+require('ac/request');
