@@ -35,8 +35,19 @@
     <!-- JavaScript API Core -->
 
     <web-resource key="ap-core">
-        <resource type="download" name="core-host.js" location="/js/core/connect-host.js" />
+        <resource type="download" name="core-host.js" location="/js/core/connect-host-amd.js" />
         <dependency>confluence.web.resources:almond</dependency>
+    </web-resource>
+
+    <web-resource key="ap-extensions">
+        <resource type="download" name="connect-cookie.js" location="/js/core/connect-host-cookie.js" />
+        <resource type="download" name="connect-env.js" location="/js/core/connect-host-env.js" />
+        <resource type="download" name="connect-messages.js" location="/js/core/connect-host-messages.js" />
+        <resource type="download" name="connect-request.js" location="/js/core/connect-host-request.js" />
+        <resource type="download" name="connect-history.js" location="/js/core/connect-host-history.js" />
+        <resource type="download" name="connect-dialog.js" location="/js/core/connect-host-dialog.js" />
+        <resource type="download" name="connect-inline-dialog.js" location="/js/core/connect-host-inline-dialog.js" />
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-core</dependency>
     </web-resource>
 
     <web-resource key="ap-user">
@@ -46,6 +57,7 @@
 
     <web-resource key="iframe-host-js">
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-core</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-extensions</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-user</dependency>
         <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
         <resource type="download" name="content-resolver.js" location="/js/iframe/host/content-resolver.js" />
