@@ -1,7 +1,8 @@
 package it.confluence.macro;
 
-import com.atlassian.confluence.it.Page;
-import com.atlassian.confluence.it.User;
+import com.atlassian.confluence.api.model.content.Content;
+import com.atlassian.confluence.api.model.content.ContentRepresentation;
+import com.atlassian.confluence.api.model.content.ContentType;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
 import com.atlassian.confluence.pageobjects.component.editor.EditorContent;
@@ -20,20 +21,19 @@ import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroBrowserDialog;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWithRemoteMacro;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.confluence.ConfluenceRestClient;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.util.TestUser;
+import redstone.xmlrpc.XmlRpcFault;
+
+import java.net.MalformedURLException;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
@@ -49,36 +49,6 @@ import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBase
 {
-    public class RichTextBodyMacro
-    {
-        private String macroKey;
-        private String body;
-
-        public RichTextBodyMacro(String macroKey, String body)
-        {
-            this.macroKey = macroKey;
-            this.body = body;
-        }
-
-        public String getBody()
-        {
-            return body;
-        }
-
-        public String getMacroKey()
-        {
-            return macroKey;
-        }
-
-        public String getStorageFormat()
-        {
-            return "<ac:structured-macro ac:name=\"" + macroKey + "\"><ac:rich-text-body>"
-                    + StringEscapeUtils.escapeXml(body)
-                    + "</ac:rich-text-body></ac:structured-macro>";
-        }
-    }
-
-    private static final Logger logger = LoggerFactory.getLogger(AbstractContentMacroTest.class);
 
     protected static final String DEFAULT_MACRO_URL = "/render-macro";
 
@@ -117,54 +87,16 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
 
     protected ConfluenceRestClient restClient = new ConfluenceRestClient(getProduct());
 
-    protected ViewPage savedPage;
-
-    protected CreatePage editorPage = null;
-
-    /**
-     * Clean up so that we don't get "org.openqa.selenium.UnhandledAlertException: unexpected alert open" in tests
-     */
-    public static void resetEditorState(CreatePage editorPage, ViewPage savedPage)
+    @BeforeClass
+    public static void logoutBeforeClass()
     {
-        // dismiss any alerts, because they would stop us from clicking on anything else on the screen
-        connectPageOperations.dismissAnyAlerts();
-        connectPageOperations.dismissAnyAuiDialog();
-        connectPageOperations.dismissClosableAuiMessage();
-        connectPageOperations.dismissConfluenceDiscardDraftsPrompt();
-
-        if (null != editorPage)
-        {
-            try
-            {
-                editorPage.cancel();
-            }
-            catch (Throwable t)
-            {
-                logger.error("Failed to cancel editor page due to the following Throwable. This will most likely result in 'unexpected alert open' exceptions in subsequent tests.", t);
-            }
-        }
-
-        if (null != savedPage)
-        {
-            // Don't fail a test because cleanup failed
-            try
-            {
-                rpc.removePage(savedPage.getPageId());
-            }
-            catch (Exception e)
-            {
-                logger.error(e.getMessage());
-            }
-        }
+        getProduct().logOutFast();
     }
 
-    @Before
     @After
-    public void cleanUpAroundEachTest()
+    public void logoutAfter()
     {
-        resetEditorState(editorPage, savedPage);
-        editorPage = null;
-        savedPage = null;
+        logoutBeforeClass();
     }
 
     protected static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createImagePlaceholderMacro(T builder)
@@ -350,7 +282,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     @Test
     public void testMacroIsListed() throws Exception
     {
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, SIMPLE_MACRO_NAME);
 
         try
@@ -359,14 +291,15 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
         }
         finally
         {
-            macroBrowserAndEditor.browserDialog.clickCancel();
+            macroBrowserAndEditor.browserDialog.clickCancelAndWaitUntilClosed();
+            cancelEditor(editorPage);
         }
     }
 
     @Test
     public void testParameterTypes() throws Exception
     {
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, ALL_PARAMETER_TYPES_MACRO_NAME);
 
         try
@@ -382,14 +315,15 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
         }
         finally
         {
-            macroBrowserAndEditor.browserDialog.clickCancel();
+            macroBrowserAndEditor.browserDialog.clickCancelAndWaitUntilClosed();
+            cancelEditor(editorPage);
         }
     }
 
     @Test
     public void testParameterLabel() throws Exception
     {
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Parameter Page"));
         final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, PARAMETER_MACRO_NAME);
 
@@ -402,36 +336,50 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
         }
         finally
         {
-            macroBrowserAndEditor.browserDialog.clickCancel();
+            macroBrowserAndEditor.browserDialog.clickCancelAndWaitUntilClosed();
+            cancelEditor(editorPage);
         }
     }
 
     @Test
     public void testFeaturedMacro() throws Exception
     {
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         final Editor editor = editorPage.getEditor();
         enableMacrosDropdown(editorPage);
         ConfluenceInsertMenu insertMenu = (ConfluenceInsertMenu) editor.openInsertMenu();
-        assertThat(insertMenu.hasEntryWithKey(FEATURED_MACRO_KEY), is(true));
+        try
+        {
+            assertThat(insertMenu.hasEntryWithKey(FEATURED_MACRO_KEY), is(true));
+        }
+        finally
+        {
+            cancelEditor(editorPage);
+        }
     }
 
     @Test
     public void testImagePlaceholder() throws Exception
     {
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Image Placeholder Macro"));
         selectMacroAndSave(editorPage, IMAGE_PLACEHOLDER_MACRO_NAME);
         ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
         String url = editorContent.getImagePlaceholderUrl();
-
-        assertThat(url, is(getAddonBaseUrl() + "/images/placeholder.png"));
+        try
+        {
+            assertThat(url, is(getAddonBaseUrl() + "/images/placeholder.png"));
+        }
+        finally
+        {
+            cancelEditor(editorPage);
+        }
     }
 
     @Test
     public void testMacroEditorShowsAddOnContent() throws Exception
     {
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
 
         selectMacro(editorPage, EDITOR_MACRO_NAME, new Runnable()
         {
@@ -455,19 +403,21 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
                 }
             }
         });
+        cancelEditor(editorPage);
     }
 
     @Test
     public void testMacroEditorCancels() throws Exception
     {
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         selectMacro(editorPage, EDITOR_MACRO_NAME, macroDialogCanceller(EDITOR_MACRO_KEY));
+        cancelEditor(editorPage);
     }
 
     @Test
     public void testMacroEditorCustomTitle() throws Exception
     {
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        final CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
 
         selectMacro(editorPage, CUSTOM_TITLE_EDITOR_MACRO_NAME, new Runnable()
         {
@@ -487,6 +437,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
                     {
                         dialog.cancel();
                     }
+                    cancelEditor(editorPage);
                 }
             }
         });
@@ -495,7 +446,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     @Test
     public void testMacroEditorDefaultTitle() throws Exception
     {
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        final CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
 
         selectMacro(editorPage, EDITOR_MACRO_NAME, new Runnable()
         {
@@ -515,6 +466,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
                     {
                         dialog.cancel();
                     }
+                    cancelEditor(editorPage);
                 }
             }
         });
@@ -523,14 +475,21 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     @Test
     public void testMacroEditorSubmits() throws Exception
     {
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-        selectMacro(editorPage, EDITOR_MACRO_NAME, macroDialogSubmitter(EDITOR_MACRO_KEY));
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        try
+        {
+            selectMacro(editorPage, EDITOR_MACRO_NAME, macroDialogSubmitter(EDITOR_MACRO_KEY));
+        }
+        finally
+        {
+            cancelEditor(editorPage);
+        }
     }
 
     @Test
     public void testHiddenMacro() throws Exception
     {
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, HIDDEN_MACRO_NAME);
 
         try
@@ -539,39 +498,21 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
         }
         finally
         {
-            macroBrowserAndEditor.browserDialog.clickCancel();
+            macroBrowserAndEditor.browserDialog.clickCancelAndWaitUntilClosed();
+            cancelEditor(editorPage);
         }
     }
 
-    protected void addSimpleMacroToComment() throws Exception
+    protected abstract String getAddonBaseUrl();
+
+    protected Content createPage(String title, String body)
     {
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-
-        try
-        {
-            editorPage.setTitle(randomName("The macro is in the comment!"));
-            savedPage = save(editorPage);
-            editorPage = null;
-
-            confluenceOps.addComment(some(TestUser.ADMIN), String.valueOf(savedPage.getPageId()), pageWithMacro(SIMPLE_MACRO_KEY));
-            product.visit(ConfluencePageWithRemoteMacro.class, savedPage.getTitle(), SIMPLE_MACRO_KEY);
-        }
-        catch (Exception e)
-        {
-            try
-            {
-                if (null != editorPage)
-                {
-                    editorPage.cancel();
-                }
-            }
-            catch (Throwable t)
-            {
-                // don't care
-            }
-
-            throw e;
-        }
+        Content content = Content.builder(ContentType.PAGE)
+                .space(TestSpace.DEMO.getKey())
+                .title(title)
+                .body(body, ContentRepresentation.STORAGE)
+                .build();
+        return restClient.content().create(content).claim();
     }
 
     protected ViewPage save(EditorPage editorPage)
@@ -579,61 +520,21 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
         return editorPage.saveWithKeyboardShortcut();
     }
 
-    private String pageWithMacro(String macroName)
+    protected void addCommentWithMacro(String pageId) throws MalformedURLException, XmlRpcFault
     {
-        return format("<div class=\"%1$s\"><ac:macro ac:name=\"%1$s\" /></div>", macroName);
+        String body = format("<div class=\"%1$s\"><ac:macro ac:name=\"%1$s\" /></div>", SIMPLE_MACRO_KEY);
+        confluenceOps.addComment(some(TestUser.ADMIN), pageId, body);
     }
 
-    protected ViewPage getMacroContent(User user, String macroName, String title) throws Exception
+    protected void cancelEditor(EditorPage editorPage)
     {
-        // create the page with the macro
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-
         try
         {
-            editorPage.dismissEditorNotifications();
-            editorPage.setTitle(randomName(title));
-            selectMacroAndSave(editorPage, macroName);
-            savedPage = save(editorPage);
-            editorPage = null;
-            final long pageId = savedPage.getPageId(); // need to get it here because it parses the page, so if we log out it throws!
-
-            // view the page as the specified user
-            if (TestUser.ADMIN.confUser().equals(user))
-            {
-                return savedPage;
-            }
-            else
-            {
-                getProduct().logOutFast();
-
-                if (null == user)
-                {
-                    return getProduct().viewPage(String.valueOf(pageId));
-                }
-                else
-                {
-                    return getProduct().loginAndView(user, new Page(pageId));
-                }
-            }
+            product.getPageBinder().bind(editorPage.getClass()).cancel();
         }
-        catch (Exception e)
+        catch (Throwable t)
         {
-            try
-            {
-                if (null != editorPage)
-                {
-                    editorPage.cancel();
-                }
-            }
-            catch (Throwable t)
-            {
-                // don't care
-            }
-
-            throw e;
+            LoggerFactory.getLogger(AbstractContentMacroTest.class).warn(t.getMessage());
         }
     }
-
-    protected abstract String getAddonBaseUrl();
 }

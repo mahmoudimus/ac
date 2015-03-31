@@ -5,9 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RemoteMacroEditor;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -27,8 +25,6 @@ public class TestConfluenceCloseMacroEditor extends ConfluenceWebDriverTestBase
 
     private static ConnectRunner addon;
     private static StaticContentMacroModuleBean editorMacroModuleBean;
-
-    private CreatePage createPage;
 
     @BeforeClass
     public static void startAddon() throws Exception
@@ -52,19 +48,10 @@ public class TestConfluenceCloseMacroEditor extends ConfluenceWebDriverTestBase
         }
     }
 
-    // clean up so that we don't get "org.openqa.selenium.UnhandledAlertException: unexpected alert open" in tests
-    @Before
-    @After
-    public void cleanUpAroundEachTest()
-    {
-        AbstractContentMacroTest.resetEditorState(createPage, null);
-        createPage = null;
-    }
-
     @Test
     public void shouldCloseMacroEditorWhenInsertingMacroOnNewPage()
     {
-        createPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        CreatePage createPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         selectMacro(createPage, MACRO_NAME, new Runnable()
         {
 
@@ -75,6 +62,7 @@ public class TestConfluenceCloseMacroEditor extends ConfluenceWebDriverTestBase
                 remoteMacroEditor.closeMacroEditor();
             }
         });
+        createPage.cancel();
     }
 
     private RemoteMacroEditor findRemoteMacroEditor()

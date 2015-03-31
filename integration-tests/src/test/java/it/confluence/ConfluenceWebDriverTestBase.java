@@ -23,6 +23,7 @@ import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
+import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
@@ -33,7 +34,6 @@ import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 
 import com.sun.jersey.api.client.UniformInterfaceException;
 
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -278,16 +278,10 @@ public class ConfluenceWebDriverTestBase
         };
     }
 
-    @Before
-    @After
-    public void dismissPrompts()
+    @BeforeClass
+    public static void dismissPrompts()
     {
-        // dismiss any alerts, because they would stop the logout
-        connectPageOperations.dismissAnyAlerts();
-        connectPageOperations.dismissAnyAuiDialog();
-        connectPageOperations.dismissClosableAuiMessage();
-
-        connectPageOperations.dismissConfluenceDiscardDraftsPrompt();
+        HelpTipApiClient.dismissHelpTipsForAllUsers(product);
     }
 
     @BeforeClass
@@ -304,7 +298,6 @@ public class ConfluenceWebDriverTestBase
         {
             logout();
             currentUser = some(user);
-            connectPageOperations.dismissAnyAlerts(); // we've seen an alert pop up after the @Before has run
 
             product.visit(LoginPage.class).login(user.getUsername(), user.getPassword(), HomePage.class);
         }
@@ -319,13 +312,11 @@ public class ConfluenceWebDriverTestBase
     {
         if (isAlreadyLoggedIn(user))
         {
-            connectPageOperations.dismissAnyAlerts();
             return product.visit(page, args);
         }
 
         logout();
         currentUser = some(user);
-        connectPageOperations.dismissAnyAlerts(); // we've seen an alert at this point
 
         return product.login(user.confUser(), page, args);
     }

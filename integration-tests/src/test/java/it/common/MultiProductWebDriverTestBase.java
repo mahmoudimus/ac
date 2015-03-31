@@ -6,15 +6,14 @@ import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
+import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
@@ -26,28 +25,19 @@ public abstract class MultiProductWebDriverTestBase
 
     protected static String currentUsername = null;
 
-    protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
-            product.getTester().getDriver());
-
     @Rule
     public WebDriverScreenshotRule screenshotRule = new WebDriverScreenshotRule();
 
     @Rule
     public LogPageSourceRule pageSourceRule = new LogPageSourceRule();
 
-    @Before
-    @After
-    public void dismissPrompts()
-    {
-        // dismiss any alerts, because they would stop the logout
-        connectPageOperations.dismissAnyAlerts();
-        connectPageOperations.dismissAnyAuiDialog();
-        connectPageOperations.dismissClosableAuiMessage();
+    protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
+            product.getTester().getDriver());
 
-        if (product instanceof ConfluenceTestedProduct)
-        {
-            connectPageOperations.dismissConfluenceDiscardDraftsPrompt();
-        }
+    @BeforeClass
+    public static void dismissPrompts()
+    {
+        HelpTipApiClient.dismissHelpTipsForAllUsers(product);
     }
 
     @BeforeClass
@@ -64,8 +54,6 @@ public abstract class MultiProductWebDriverTestBase
         {
             logout();
             currentUsername = user.getUsername();
-            connectPageOperations.dismissAnyAlerts(); // we've seen an alert pop up after the @Before has run
-
             if (product instanceof JiraTestedProduct)
             {
                 JiraTestedProduct jiraTestedProduct = (JiraTestedProduct) product;
@@ -87,13 +75,11 @@ public abstract class MultiProductWebDriverTestBase
     {
         if (isAlreadyLoggedIn(user))
         {
-            connectPageOperations.dismissAnyAlerts();
             return product.visit(page, args);
         }
 
         logout();
         currentUsername = user.getUsername();
-        connectPageOperations.dismissAnyAlerts(); // we've seen an alert at this point
 
         if (product instanceof JiraTestedProduct)
         {

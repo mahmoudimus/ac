@@ -3,16 +3,19 @@ package it.jira;
 import javax.annotation.Nullable;
 
 import com.atlassian.fugue.Option;
+import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
 import com.atlassian.jira.projects.pageobjects.webdriver.page.sidebar.Sidebar;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
+import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.jira.IssueNavigatorViewsMenu;
@@ -35,7 +38,6 @@ import com.google.common.collect.Iterables;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -171,12 +173,10 @@ public class TestEscaping extends JiraWebDriverTestBase
         product.backdoor().project().addProject(PROJECT_KEY, PROJECT_KEY, "admin");
     }
 
-    @Before
-    public void beforeEachTest()
+    @BeforeClass
+    public static void beforeTests()
     {
-        // we've seen an AUI message unfortunately sit over other buttons on the page, causing errors like:
-        // org.openqa.selenium.WebDriverException: unknown error: Element is not clickable at point (863, 132). Other element would receive the click
-        connectPageOperations.dismissClosableAuiMessage();
+        HelpTipApiClient.dismissHelpTipsForAllUsers(TestedProductFactory.create(JiraTestedProduct.class));
     }
 
     @After

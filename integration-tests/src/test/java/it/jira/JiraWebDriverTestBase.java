@@ -7,6 +7,7 @@ import java.util.concurrent.Callable;
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.pageobjects.Page;
+import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
@@ -38,6 +39,12 @@ public class JiraWebDriverTestBase
 
     @Rule
     public LogPageSourceRule pageSourceRule = new LogPageSourceRule();
+
+    @BeforeClass
+    public static void dismissPrompts()
+    {
+        HelpTipApiClient.dismissHelpTipsForAllUsers(product);
+    }
 
     @BeforeClass
     public static void beforeClass() throws RemoteException
@@ -77,7 +84,6 @@ public class JiraWebDriverTestBase
 
         logout();
         currentUser = some(user);
-        connectPageOperations.dismissAnyAlerts(); // we've seen an alert pop up after the @Before has run
 
         product.quickLogin(user.getUsername(), user.getPassword());
     }
@@ -104,13 +110,11 @@ public class JiraWebDriverTestBase
     {
         if (isAlreadyLoggedIn(user))
         {
-            connectPageOperations.dismissAnyAlerts();
             return product.visit(page, args);
         }
 
         logout();
         currentUser = some(user);
-        connectPageOperations.dismissAnyAlerts(); // we've seen an alert at this point
 
         return product.quickLogin(user.getUsername(), user.getPassword(), page, args);
     }

@@ -8,12 +8,14 @@ import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
 
@@ -92,7 +94,6 @@ public class AbstractPageTestBase extends MultiProductWebDriverTestBase
             throws MalformedURLException, URISyntaxException
     {
         login(TestUser.ADMIN);
-        connectPageOperations.dismissAnyAlerts();
 
         T page = product.visit(pageClass);
         revealLinkIfNecessary(page);
