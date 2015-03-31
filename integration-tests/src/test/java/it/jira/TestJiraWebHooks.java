@@ -1,7 +1,6 @@
 package it.jira;
 
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.BaseUrlLocator;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
@@ -16,6 +15,7 @@ import hudson.plugins.jira.soap.RemoteIssue;
 import hudson.plugins.jira.soap.RemoteNamedObject;
 import hudson.plugins.jira.soap.RemoteProject;
 
+import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider.getJiraTestedProduct;
 import static com.atlassian.plugin.connect.test.webhook.WebHookTestServlet.runInJsonRunner;
 import static it.matcher.ParamMatchers.isVersionNumber;
 import static org.junit.Assert.assertEquals;
@@ -28,7 +28,7 @@ import static org.junit.Assert.assertThat;
  */
 public class TestJiraWebHooks
 {
-    private final String baseUrl = BaseUrlLocator.getBaseUrl();
+    private final String baseUrl = getJiraTestedProduct().getProductInstance().getBaseUrl();
     private final JiraOps jiraOps;
 
     public TestJiraWebHooks()

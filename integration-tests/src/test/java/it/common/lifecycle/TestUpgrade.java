@@ -2,7 +2,6 @@ package it.common.lifecycle;
 
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.BaseUrlLocator;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
 import com.google.common.collect.Lists;
@@ -17,6 +16,7 @@ import it.servlet.ConnectAppServlets;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
+import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider.getTestedProduct;
 import static it.matcher.ValueMatchers.hasProperty;
 import static it.matcher.ValueMatchers.isArrayMatching;
 import static org.hamcrest.Matchers.hasItem;
@@ -24,7 +24,7 @@ import static org.junit.Assert.assertThat;
 
 public class TestUpgrade
 {
-    private final String baseUrl = BaseUrlLocator.getBaseUrl();
+    private final String baseUrl = getTestedProduct().getProductInstance().getBaseUrl();
 
     private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
     public static final String KEY_PAGE_ONE = "page-one";

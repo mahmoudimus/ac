@@ -3,7 +3,6 @@ package it.common.lifecycle;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.BaseUrlLocator;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTestServlet;
@@ -14,13 +13,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.test.AddonTestUtils.randomWebItemBean;
+import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider.getTestedProduct;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @ConvertToWiredTest
 public class TestLifecycle
 {
-    private final String baseUrl = BaseUrlLocator.getBaseUrl();
+    private final String baseUrl = getTestedProduct().getProductInstance().getBaseUrl();
     private String pluginKey;
 
     @Before

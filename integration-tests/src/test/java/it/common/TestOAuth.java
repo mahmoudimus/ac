@@ -8,17 +8,17 @@ import java.net.URL;
 import com.atlassian.plugin.connect.api.OAuth;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.BaseUrlLocator;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
 import org.junit.Test;
 
+import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider.getTestedProduct;
 import static org.junit.Assert.assertEquals;
 
 @OAuth
 public class TestOAuth
 {
-    private final String baseUrl = BaseUrlLocator.getBaseUrl();
+    private final String baseUrl = getTestedProduct().getProductInstance().getBaseUrl();
 
     @Test
     public void testAuthorizeRequestWorksWithJsonDescriptor() throws Exception

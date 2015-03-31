@@ -11,7 +11,6 @@ import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.BaseUrlLocator;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
 import com.google.common.base.Function;
@@ -30,6 +29,7 @@ import org.junit.Test;
 
 import it.servlet.InstallHandlerServlet;
 
+import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider.getTestedProduct;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.junit.Assert.assertEquals;
 
@@ -42,7 +42,7 @@ public class TestAddOnProperties
     private final static Gson gson = new Gson();
 
     private final String addOnKey = "testAddOnPropertyAddOnKey";
-    private final String baseUrl = BaseUrlLocator.getBaseUrl();
+    private final String baseUrl = getTestedProduct().getProductInstance().getBaseUrl();
     private final String restPath = baseUrl + "/rest/atlassian-connect/1/addons/" + addOnKey;
 
     private ConnectRunner runner = null;
@@ -73,7 +73,7 @@ public class TestAddOnProperties
         URL url = new URL(restPath + "/properties/" + propertyKey);
 
         String sharedSecret = checkNotNull(installHandlerServlet.getInstallPayload().getSharedSecret());
-        String jwt = AddonTestUtils.generateJwtSignature(HttpMethod.PUT, url.toURI(), addOnKey, sharedSecret, BaseUrlLocator.getBaseUrl(), null);
+        String jwt = AddonTestUtils.generateJwtSignature(HttpMethod.PUT, url.toURI(), addOnKey, sharedSecret, baseUrl, null);
 
         URL longerUrl = new URL(restPath + "/properties/" + propertyKey + "?jwt=" + jwt);
         HttpURLConnection connection = (HttpURLConnection) longerUrl.openConnection();

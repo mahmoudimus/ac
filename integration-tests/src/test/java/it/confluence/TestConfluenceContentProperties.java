@@ -32,7 +32,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFie
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.BaseUrlLocator;
+import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.util.concurrent.Promise;
 import com.atlassian.util.concurrent.Promises;
@@ -58,7 +58,6 @@ import static junit.framework.TestCase.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
@@ -104,9 +103,7 @@ public class TestConfluenceContentProperties
     {
         try
         {
-            baseUrl = BaseUrlLocator.getBaseUrl();
-            assertTrue("Should be running with confluence (set -DtestedProduct=confluence), instead found baseUrl " + baseUrl,
-                    baseUrl.contains("confluence"));
+            baseUrl = TestedProductProvider.getConfluenceTestedProduct().getProductInstance().getBaseUrl();
 
             ContentPropertyModuleBean moduleBean = newContentPropertyModuleBean()
                     .withKey("content-prop-module-key")

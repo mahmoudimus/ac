@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.BaseUrlLocator;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
 import org.apache.commons.io.IOUtils;
@@ -20,11 +19,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
+import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider.getTestedProduct;
 import static org.junit.Assert.assertEquals;
 
 public class TestRedirects
 {
-    private final String baseUrl = BaseUrlLocator.getBaseUrl();
+    private final String baseUrl = getTestedProduct().getProductInstance().getBaseUrl();
 
     @BeforeClass
     public static void setupUrlHandlers()
