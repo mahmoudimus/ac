@@ -3,7 +3,7 @@ package it.common.iframe;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.ConnectWebDriverTestBase;
+import it.common.MultiProductWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import org.apache.http.HttpStatus;
 import org.junit.AfterClass;
@@ -16,7 +16,7 @@ import java.net.URL;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static org.junit.Assert.assertEquals;
 
-public class TestLegacyRedirect extends ConnectWebDriverTestBase
+public class TestLegacyRedirect extends MultiProductWebDriverTestBase
 {
     private static final String ADDON_GENERALPAGE = "ac-general-page";
     private static final String ADDON_GENERALPAGE_NAME = "AC General Page";
@@ -63,7 +63,7 @@ public class TestLegacyRedirect extends ConnectWebDriverTestBase
     {
         URL url = new URL(product.getProductInstance().getBaseUrl() + "/plugins/servlet/atlassian-connect/" +
                 remotePlugin.getAddon().getKey() + "/" + ADDON_GENERALPAGE + "?" + SOME_QUERY_PARAMS);
-        
+
         HttpURLConnection yc = (HttpURLConnection) url.openConnection();
         assertEquals(HttpStatus.SC_MOVED_PERMANENTLY, yc.getResponseCode());
 
@@ -71,7 +71,7 @@ public class TestLegacyRedirect extends ConnectWebDriverTestBase
         String redirectUrlStr = yc.getHeaderField("Location");
         HttpURLConnection conn = (HttpURLConnection) new URL(redirectUrlStr).openConnection();
         assertEquals(HttpStatus.SC_OK, conn.getResponseCode());
-        
+
         URL redirectUrl = new URL(redirectUrlStr);
         assertEquals(redirectUrl.getQuery(), SOME_QUERY_PARAMS);
     }
@@ -115,7 +115,7 @@ public class TestLegacyRedirect extends ConnectWebDriverTestBase
     /*
      * Note: fragments are not sent to the server so nothing to test there
      */
-    
+
     @Test
     public void testCanAccessDirectly() throws Exception
     {

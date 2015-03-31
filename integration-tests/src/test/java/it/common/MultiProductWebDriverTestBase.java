@@ -1,4 +1,4 @@
-package it;
+package it.common;
 
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
@@ -17,7 +17,7 @@ import org.junit.BeforeClass;
 
 import it.util.TestUser;
 
-public abstract class ConnectWebDriverTestBase
+public abstract class MultiProductWebDriverTestBase
 {
     protected static TestedProduct<WebDriverTester> product = TestedProductProvider.getTestedProduct();
 
