@@ -3,6 +3,13 @@
 Atlassian products have a rich set of REST APIs for you to use.
 These APIs are the way that you interact with the Atlassian application's features and data.
 
+## API Structure
+
+Atlassian's REST APIs follow [an established structure](https://developer.atlassian.com/docs/atlassian-platform-common-components/rest-api-development/rest-plugin-module#RESTPluginModule-MappingtheURLtoaResource).
+Note that the `context-path` element is not always used.
+
+    https://myhost.com:port/context-path/rest/api-name/api-version/resource-name
+
 ## Product APIs
 
 [Atlassian REST API Browser](product-api-browser.html) provides an interactive interface to help you get acquainted with the available APIs.
@@ -10,7 +17,7 @@ Additionally, there is static REST API documentation available for [JIRA](https:
 
 ## Atlassian Connect
 
-Atlassian Connect provides a set of REST APIs specifically designed for use by add-ons.
+Atlassian Connect provides a set of REST APIs specifically designed for use by add-ons. The `api-name` used is `atlassian-connect`.
 
 ### Index
 
@@ -58,6 +65,110 @@ Atlassian Connect provides a set of REST APIs specifically designed for use by a
                         </td>
                         <td class="description last">
                             <p>The key of the add-on, as defined in its descriptor</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <h4>Response fields:</h4>
+            <p>
+                The fields `key` and `version` correspond to fields with the same name in the [the add-on descriptor](../modules/#properties).
+            </p>
+            <table class="params table table-striped aui">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th class="last">Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="name">
+                            <code>state</code>
+                        </td>
+                        <td class="type">
+                            <code>string</code>
+                        </td>
+                        <td class="description last">
+                            <p>The state of the add-on, `ENABLED` or `DISABLED`.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="name">
+                            <code>host.product</code>
+                        </td>
+                        <td class="type">
+                            <code>string</code>
+                        </td>
+                        <td class="description last">
+                            <p>The display name of the host product, `JIRA` or `Confluence`.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="name">
+                            <code>host.contacts.name</code>
+                        </td>
+                        <td class="type">
+                            <code>string</code>
+                        </td>
+                        <td class="description last">
+                            <p>The name of a contact person for the host instance.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="name">
+                            <code>host.contacts.email</code>
+                        </td>
+                        <td class="type">
+                            <code>string</code>
+                        </td>
+                        <td class="description last">
+                            <p>The e-mail of a contact person for the host instance.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="name">
+                            <code>license.active</code>
+                        </td>
+                        <td class="type">
+                            <code>boolean</code>
+                        </td>
+                        <td class="description last">
+                            <p>The state of the license, `true` for active subscriptions and evaluations, `false` for terminated subscriptions and expired evaluations.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="name">
+                            <code>license.type</code>
+                        </td>
+                        <td class="type">
+                            <code>string</code>
+                        </td>
+                        <td class="description last">
+                            <p>The license type, see [FAQ](https://www.atlassian.com/licensing/purchase-licensing#licensing).
+                            Possible values include, but are not limited to `COMMERCIAL`, `COMMUNITY`, `ACADEMIC` and `DEVELOPER`.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="name">
+                            <code>license.evaluation</code>
+                        </td>
+                        <td class="type">
+                            <code>boolean</code>
+                        </td>
+                        <td class="description last">
+                            <p>A flag indicating whether the add-on is being used under an evaluation license.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="name">
+                            <code>license.supportEntitlementNumber</code>
+                        </td>
+                        <td class="type">
+                            <code>string</code>
+                        </td>
+                        <td class="description last">
+                            <p>The [Support Entitlement Number](https://confluence.atlassian.com/display/Support/Finding+Your+Support+Entitlement+Number) (SEN) associated with the license.</p>
                         </td>
                     </tr>
                 </tbody>

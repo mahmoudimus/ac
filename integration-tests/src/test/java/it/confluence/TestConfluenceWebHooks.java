@@ -3,31 +3,30 @@ package it.confluence;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
 
-import it.AbstractBrowserlessTest;
-import it.util.TestUser;
-
 import org.junit.Assert;
 import org.junit.Test;
 
+import it.util.TestUser;
+
 import static com.atlassian.fugue.Option.some;
+import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider.getConfluenceTestedProduct;
 import static com.atlassian.plugin.connect.test.webhook.WebHookTestServlet.runInRunner;
 import static it.matcher.ParamMatchers.isVersionNumber;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 @ConvertToWiredTest
-public class TestConfluenceWebHooks extends AbstractBrowserlessTest
+public class TestConfluenceWebHooks
 {
+    private final String baseUrl = getConfluenceTestedProduct().getProductInstance().getBaseUrl();
     private ConfluenceOps confluenceOps;
 
     public TestConfluenceWebHooks()
     {
-        super(FixedConfluenceTestedProduct.class);
         confluenceOps = new ConfluenceOps(baseUrl);
     }
 
@@ -35,7 +34,7 @@ public class TestConfluenceWebHooks extends AbstractBrowserlessTest
     public void testSearchPerformedWebHookFired() throws Exception
     {
         final String pluginKey = AddonTestUtils.randomAddOnKey();
-        
+
         runInRunner(baseUrl, "search_performed", pluginKey, new WebHookTester()
         {
             @Override
@@ -56,7 +55,7 @@ public class TestConfluenceWebHooks extends AbstractBrowserlessTest
     public void testPageCreatedWebHookFired() throws Exception
     {
         final String pluginKey = AddonTestUtils.randomAddOnKey();
-        
+
         runInRunner(baseUrl, "page_created", pluginKey, new WebHookTester()
         {
             @Override

@@ -27,7 +27,11 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * words, the Atlassian application will send an HTTP POST to this resource in response to an application event. The
  * add-on code that handles the POST should process any information passed in the body of the message, as appropriate.
  * Each webhook POST sent to the add-on will also include the authentication headers that allow the add-on to validate
- * the authenticity of that request.
+ * the authenticity of that request. Specifically, the JWT token can be found in the "Authorization" HTTP header.
+ *
+ *Note that if using Apache and mod_wsgi to serve files to a Django application, the Authentication header is stripped
+ * out by default. [Extra configuration](http://www.django-rest-framework.org/api-guide/authentication/#apache-mod_wsgi-specific-configuration)
+ * is required to ensure the Authentication header is visible.
  *
  *### Variable Substitution
  *
@@ -144,6 +148,19 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * * `user_reactivated`
  * * `user_removed`
  *
+ *### Example Request
+ *
+ *    POST /jira-issue_created?user_id=admin&user_key=admin HTTP/1.1
+ *    Authorization: JWT ...
+ *    Atlassian-Connect-Version: x.x
+ *    Content-Type: application/json
+ *
+ *    {
+ *      timestamp: 1426661049725,
+ *      webhookEvent: 'jira:issue_created',
+ *      ...
+ *    }
+ *
  *### Inspecting webhook contents
  *
  * Each type of webhook event includes information specific to that event in the body content of the POST message. The
@@ -155,6 +172,11 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * that you can install in your development environment to inspect the content of event messages. The Webhook Inspector
  * subscribes and generates each webhook event type available on the running instance of the Atlassian application,
  * and prints the body posted by the instance to the console screen.
+ *
+ *### References
+ *
+ * * [JIRA Webhooks: What will the format of the webhook callback message be?](https://developer.atlassian.com/jiradev/jira-architecture/webhooks#Webhooks-Whatwilltheformatofthewebhookcallbackmessagebe%3F)
+ * * [JIRA Webhooks: Sample Webhook POST](https://developer.atlassian.com/jiradev/jira-architecture/webhooks#Webhooks-SampleWebhookPOST)
  *
  *#### Example
  *
