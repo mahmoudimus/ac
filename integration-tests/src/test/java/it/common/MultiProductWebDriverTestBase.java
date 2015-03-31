@@ -9,11 +9,13 @@ import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
+import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 
 import it.util.TestUser;
 
@@ -25,6 +27,9 @@ public abstract class MultiProductWebDriverTestBase
 
     protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
             product.getTester().getDriver());
+
+    @Rule
+    public WebDriverScreenshotRule screenshotRule = new WebDriverScreenshotRule();
 
     @Before
     @After

@@ -10,9 +10,11 @@ import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
+import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 
 import hudson.plugins.jira.soap.RemoteProject;
 import it.util.TestUser;
@@ -29,6 +31,9 @@ public class JiraWebDriverTestBase
     protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
             product.getTester().getDriver());
     private static Option<TestUser> currentUser = none();
+
+    @Rule
+    public WebDriverScreenshotRule screenshotRule = new WebDriverScreenshotRule();
 
     @BeforeClass
     public static void beforeClass() throws RemoteException
