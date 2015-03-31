@@ -153,69 +153,76 @@ testJobsForConfluence(['mavenProductParameters']) {
             key: 'CLT',
             product: 'Confluence',
             testGroup: 'confluence',
-            mavenProductParameters: '#mavenProductParameters'
+            additionalMavenParameters: '#mavenProductParameters'
     )
     wiredTestJob(
             key: 'CWT',
             product: 'Confluence',
             testGroup: 'confluence',
-            mavenProductParameters: '#mavenProductParameters'
+            additionalMavenParameters: '#mavenProductParameters'
     )
     integrationTestJob(
             key: 'CITCM',
             product: 'Confluence',
             testGroup: 'confluence-common-misc',
             groupName: 'Common Misc',
-            mavenProductParameters: '#mavenProductParameters'
+            additionalMavenParameters: '#mavenProductParameters'
     )
     integrationTestJob(
             key: 'CITCI',
             product: 'Confluence',
             testGroup: 'confluence-common-iframe',
             groupName: 'Common iframe',
-            mavenProductParameters: '#mavenProductParameters'
+            additionalMavenParameters: '#mavenProductParameters'
     )
     integrationTestJob(
             key: 'CITCL',
             product: 'Confluence',
             testGroup: 'confluence-common-lifecycle',
             groupName: 'Common Lifecycle',
-            mavenProductParameters: '#mavenProductParameters'
+            additionalMavenParameters: '#mavenProductParameters'
     )
     integrationTestJob(
             key: 'CITM',
             product: 'Confluence',
             testGroup: 'confluence-misc',
             groupName: 'Misc',
-            mavenProductParameters: '#mavenProductParameters'
+            additionalMavenParameters: '#mavenProductParameters'
     )
     integrationTestJob(
             key: 'CITI',
             product: 'Confluence',
             testGroup: 'confluence-iframe',
             groupName: 'iframe',
-            mavenProductParameters: '#mavenProductParameters'
+            additionalMavenParameters: '#mavenProductParameters'
     )
     integrationTestJob(
             key: 'CITT',
             product: 'Confluence',
             testGroup: 'confluence-item',
             groupName: 'Item',
-            mavenProductParameters: '#mavenProductParameters'
+            additionalMavenParameters: '#mavenProductParameters'
     )
     integrationTestJob(
             key: 'CITJ',
             product: 'Confluence',
             testGroup: 'confluence-jsapi',
-            groupName: 'JS API',
-            mavenProductParameters: '#mavenProductParameters'
+            groupName: 'JS API FF',
+            additionalMavenParameters: '#mavenProductParameters'
+    )
+    integrationTestJob(
+            key: 'CITJC',
+            product: 'Confluence',
+            testGroup: 'confluence-jsapi',
+            groupName: 'JS API Chrome',
+            additionalMavenParameters: '#mavenProductParameters -Dwebdriver.browser=chrome'
     )
     integrationTestJob(
             key: 'CITA',
             product: 'Confluence',
             testGroup: 'confluence-macro',
             groupName: 'Macro',
-            mavenProductParameters: '#mavenProductParameters'
+            additionalMavenParameters: '#mavenProductParameters'
     )
 }
 
@@ -224,75 +231,73 @@ testJobsForJIRA(['mavenProductParameters']) {
             key: 'JLT',
             product: 'JIRA',
             testGroup: 'jira',
-            mavenProductParameters: '#mavenProductParameters'
+            additionalMavenParameters: '#mavenProductParameters'
     )
     wiredTestJob(
             key: 'JWT',
             product: 'JIRA',
             testGroup: 'jira',
-            mavenProductParameters: '#mavenProductParameters'
+            additionalMavenParameters: '#mavenProductParameters'
     )
     integrationTestJob(
             key: 'JITCM',
             product: 'JIRA',
             testGroup: 'jira-common-misc',
             groupName: 'Common Misc',
-            mavenProductParameters: '#mavenProductParameters'
+            additionalMavenParameters: '#mavenProductParameters'
     )
     integrationTestJob(
             key: 'JITCI',
             product: 'JIRA',
             testGroup: 'jira-common-iframe',
             groupName: 'Common iframe',
-            mavenProductParameters: '#mavenProductParameters'
+            additionalMavenParameters: '#mavenProductParameters'
     )
     integrationTestJob(
             key: 'JITCL',
             product: 'JIRA',
             testGroup: 'jira-common-lifecycle',
             groupName: 'Common Lifecycle',
-            mavenProductParameters: '#mavenProductParameters'
+            additionalMavenParameters: '#mavenProductParameters'
     )
     integrationTestJob(
             key: 'JITM',
             product: 'JIRA',
             testGroup: 'jira-misc',
             groupName: 'Misc',
-            mavenProductParameters: '#mavenProductParameters'
+            additionalMavenParameters: '#mavenProductParameters'
     )
     integrationTestJob(
             key: 'JITI',
             product: 'JIRA',
             testGroup: 'jira-iframe',
             groupName: 'iframe',
-            mavenProductParameters: '#mavenProductParameters'
+            additionalMavenParameters: '#mavenProductParameters'
     )
     integrationTestJob(
             key: 'JITT',
             product: 'JIRA',
             testGroup: 'jira-item',
             groupName: 'Item',
-            mavenProductParameters: '#mavenProductParameters'
+            additionalMavenParameters: '#mavenProductParameters'
     )
     integrationTestJob(
             key: 'JITJ',
             product: 'JIRA',
             testGroup: 'jira-jsapi',
-            groupName: 'JS API',
-            mavenProductParameters: '#mavenProductParameters'
+            groupName: 'JS API FF',
+            additionalMavenParameters: '#mavenProductParameters'
     )
-}
-
-integrationTestJobForJIRA(['suffix', 'testGroup', 'mavenProductParameters']) {
     integrationTestJob(
-            key: 'JIT#suffix',
-            product: 'JIRA - ITs ',
-            testGroup: '#testGroup',
-            mavenProductParameters: '#mavenProductParameters'
+            key: 'JITJC',
+            product: 'JIRA',
+            testGroup: 'jira-jsapi',
+            groupName: 'JS API Chrome',
+            additionalMavenParameters: '#mavenProductParameters -Dwebdriver.browser=chrome'
     )
 }
 
-lifecycleTestJob(['key', 'product', 'testGroup', 'mavenProductParameters']) {
+lifecycleTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
     job(
             key: '#key',
             name: '#product - Lifecycle Tests'
@@ -307,13 +312,13 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'mavenProductParameters']) {
         checkoutDefaultRepositoryTask()
         mavenTestTask(
                 description: 'Run Wired Lifecycle Tests for #product',
-                goal: 'verify -PpluginLifecycle -DtestGroups=#testGroup -DskipUnits -DskipDocs #mavenProductParameters',
+                goal: 'verify -PpluginLifecycle -DtestGroups=#testGroup -DskipUnits -DskipDocs #additionalMavenParameters',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
         )
     }
 }
 
-wiredTestJob(['key', 'product', 'testGroup', 'mavenProductParameters']) {
+wiredTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
     job(
             key: '#key',
             name: '#product - Wired Tests'
@@ -322,23 +327,23 @@ wiredTestJob(['key', 'product', 'testGroup', 'mavenProductParameters']) {
         checkoutDefaultRepositoryTask()
         mavenTestTask(
                 description: 'Run Wired Tests for #product',
-                goal: 'verify -Pwired -DtestGroups=#testGroup -DskipUnits -DskipDocs #mavenProductParameters',
+                goal: 'verify -Pwired -DtestGroups=#testGroup -DskipUnits -DskipDocs #additionalMavenParameters',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
         )
     }
 }
 
-integrationTestJob(['key', 'product', 'testGroup', 'groupName', 'mavenProductParameters']) {
+integrationTestJob(['key', 'product', 'testGroup', 'groupName', 'additionalMavenParameters']) {
     job(
             key: '#key',
-            name: '#product - ITs #groupName'
+            name: '#product - IT #groupName'
     ) {
         commonRequirements()
         checkoutDefaultRepositoryTask()
         setupVncTask()
         mavenTestTask(
                 description: 'Run Integration Tests for #product #groupName',
-                goal: 'verify -Pit -DtestGroups=#testGroup -DskipUnits -DskipDocs #mavenProductParameters',
+                goal: 'verify -Pit -DtestGroups=#testGroup -DskipUnits -DskipDocs #additionalMavenParameters',
                 environmentVariables: 'DISPLAY=":20" MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m" CHROME_BIN=/usr/bin/google-chrome',
         )
         defineWebDriverOutputArtefact()
