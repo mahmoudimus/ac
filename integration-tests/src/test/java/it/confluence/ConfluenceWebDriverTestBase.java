@@ -28,6 +28,7 @@ import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectMacroBrowserDialog;
 import com.atlassian.util.concurrent.LazyReference;
+import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 
 import com.sun.jersey.api.client.UniformInterfaceException;
@@ -84,9 +85,6 @@ public class ConfluenceWebDriverTestBase
     @Rule
     public TestName name = new TestName();
 
-    @Rule
-    public WebDriverScreenshotRule screenshotRule = new WebDriverScreenshotRule();
-
     protected static final ConfluenceRpc rpc = ConfluenceRpc.newInstance(product.getProductInstance().getBaseUrl(), ConfluenceRpc.Version.V2_WITH_WIKI_MARKUP);
 
     private static final LazyReference<UploadablePlugin> FUNCTEST_RPC_PLUGIN_HOLDER = new LazyReference<UploadablePlugin>()
@@ -113,6 +111,12 @@ public class ConfluenceWebDriverTestBase
     }
 
     protected ConfluenceOps confluenceOps = new ConfluenceOps(product.getProductInstance().getBaseUrl());
+
+    @Rule
+    public WebDriverScreenshotRule screenshotRule = new WebDriverScreenshotRule();
+
+    @Rule
+    public LogPageSourceRule pageSourceRule = new LogPageSourceRule();
 
     @BeforeClass
     public static void confluenceTestSetup() throws Exception

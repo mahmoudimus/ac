@@ -9,6 +9,7 @@ import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
+import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 
 import org.junit.After;
@@ -30,6 +31,9 @@ public abstract class MultiProductWebDriverTestBase
 
     @Rule
     public WebDriverScreenshotRule screenshotRule = new WebDriverScreenshotRule();
+
+    @Rule
+    public LogPageSourceRule pageSourceRule = new LogPageSourceRule();
 
     @Before
     @After

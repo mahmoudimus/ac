@@ -10,6 +10,7 @@ import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
+import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 
 import org.junit.AfterClass;
@@ -34,6 +35,9 @@ public class JiraWebDriverTestBase
 
     @Rule
     public WebDriverScreenshotRule screenshotRule = new WebDriverScreenshotRule();
+
+    @Rule
+    public LogPageSourceRule pageSourceRule = new LogPageSourceRule();
 
     @BeforeClass
     public static void beforeClass() throws RemoteException
