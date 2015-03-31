@@ -1,10 +1,13 @@
 package it.confluence.macro;
 
+import com.atlassian.confluence.it.Page;
 import com.atlassian.confluence.it.Space;
 import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.pageobjects.component.editor.EditorContent;
+import com.atlassian.confluence.pageobjects.page.content.Editor;
 import com.atlassian.confluence.pageobjects.page.content.EditorPage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
+import com.atlassian.confluence.pageobjects.page.content.ViewPageAddComment;
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.pageobjects.elements.query.TimedQuery;
@@ -183,14 +186,14 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
      */
 
     @Test
-    public void testAutoconverPrefixNoMatch() throws Exception
+    public void testAutoconvertPrefixNoMatch() throws Exception
     {
         EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
         pasteLinkAndNoMatch(editorPage, "WontMatchhttps://google.com");
     }
 
     @Test
-    public void testAutoconverSuffixNoMatch() throws Exception
+    public void testAutoconvertSuffixNoMatch() throws Exception
     {
         EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
         pasteLinkAndNoMatch(editorPage, "https://google.comwontmatch");
@@ -202,11 +205,11 @@ public class TestAutoconvert extends AbstractConfluenceWebDriverTest
 
     public EditorPage getNewSavedPageForEditing(User user, Space space)
     {
-        EditorPage editorPage = getProduct().loginAndCreatePage(user, space);
-        editorPage.setTitle("This is the title of the created page");
-        editorPage.getEditor().getContent().setContent("This is the body");
-        ViewPage page = editorPage.save();
-        editorPage = page.edit();
+        String title = "Test page " + System.currentTimeMillis();
+        Page page = new Page(space, title, "I'm some testing content!");
+        rpc.createPage(page);
+        ViewPage viewPage = getProduct().loginAndView(user, page);
+        EditorPage editorPage = viewPage.edit();
         return editorPage;
     }
 
