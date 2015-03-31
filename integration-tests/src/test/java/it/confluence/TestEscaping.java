@@ -25,14 +25,12 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redstone.xmlrpc.XmlRpcFault;
 
 import java.net.MalformedURLException;
-import java.util.NoSuchElementException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
@@ -258,35 +256,7 @@ public class TestEscaping extends AbstractConfluenceWebDriverTest
         LinkedRemoteContent addonPage = connectPageOperations.findTabPanel(
                 getModuleKey(SPACE_TOOLS_TAB_KEY) + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX,
                 Option.<String>none(), getModuleKey(SPACE_TOOLS_TAB_KEY));
-
         assertIsEscaped(addonPage.getWebItem().getLinkText());
-    }
-
-    @Test
-    public void testSpaceToolsTab() throws Exception
-    {
-        loginAndVisit(TestUser.ADMIN, SpaceTemplatesPage.class, "ts");
-        final String dropDownLinkId = "aui-responsive-header-dropdown-trigger-0";
-        Optional<String> maybeDropDownLinkId = Optional.<String>absent();
-
-        try
-        {
-            WebElement dropDown = connectPageOperations.findElement(By.id(dropDownLinkId));
-
-            if (null != dropDown && dropDown.isDisplayed())
-            {
-                maybeDropDownLinkId = Optional.of(dropDownLinkId);
-            }
-        }
-        catch (NoSuchElementException e)
-        {
-            // do nothing
-        }
-
-        RemoteWebItem webItem = connectPageOperations.findWebItem(RemoteWebItem.ItemMatchingMode.ID,
-                ModuleKeyUtils.addonAndModuleKey(runner.getAddon().getKey(), WEB_ITEM_KEY), maybeDropDownLinkId);
-        webItem.hover();
-        assertIsEscaped(webItem.getLinkText());
     }
 
     private void assertIsEscaped(String text)
