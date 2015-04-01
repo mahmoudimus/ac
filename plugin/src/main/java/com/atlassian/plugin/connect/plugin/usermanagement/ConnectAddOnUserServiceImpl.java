@@ -2,18 +2,23 @@ package com.atlassian.plugin.connect.plugin.usermanagement;
 
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.crowd.exception.*;
+import com.atlassian.crowd.exception.ApplicationNotFoundException;
+import com.atlassian.crowd.exception.ApplicationPermissionException;
+import com.atlassian.crowd.exception.GroupNotFoundException;
+import com.atlassian.crowd.exception.InvalidAuthenticationException;
+import com.atlassian.crowd.exception.InvalidCredentialException;
+import com.atlassian.crowd.exception.InvalidGroupException;
+import com.atlassian.crowd.exception.InvalidUserException;
+import com.atlassian.crowd.exception.MembershipAlreadyExistsException;
+import com.atlassian.crowd.exception.OperationFailedException;
+import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.UserTemplate;
-import com.atlassian.crowd.service.client.CrowdClient;
-import com.atlassian.crowd.service.factory.CrowdClientFactory;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.util.FeatureManager;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.annotations.VisibleForTesting;
-
 import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +30,6 @@ import java.util.Set;
 
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.Constants;
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
-import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.getClientProperties;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @ExportAsDevService
@@ -36,22 +40,18 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     private final ApplicationManager applicationManager;
     private final ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService;
     private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
-    private final FeatureManager featureManager;
-    private final CrowdClientFactory crowdClientFactory;
     private static final Logger log = LoggerFactory.getLogger(ConnectAddOnUserServiceImpl.class);
 
     @Autowired
     public ConnectAddOnUserServiceImpl(ApplicationService applicationService,
             ApplicationManager applicationManager,
             ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService,
-            ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService, CrowdClientFactory crowdClientFactory, FeatureManager featureManager)
+            ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService)
     {
-        this.crowdClientFactory = checkNotNull(crowdClientFactory);
         this.applicationService = checkNotNull(applicationService);
         this.applicationManager= checkNotNull(applicationManager);
         this.connectAddOnUserProvisioningService = checkNotNull(connectAddOnUserProvisioningService);
         this.connectAddOnUserGroupProvisioningService = checkNotNull(connectAddOnUserGroupProvisioningService);
-        this.featureManager = checkNotNull(featureManager);
     }
 
     @Override
@@ -180,7 +180,6 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), Constants.ADDON_USER_GROUP_KEY);
 
 
-        
         for (String group : connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected())
         {
             try
@@ -196,25 +195,25 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
                 // TODO ACDEV-938: propagate this error
             }
         }
-        
+
         int numPossibleDefaultGroupsAddedTo = 0;
         String errorMessage = String.format("Could not make user '%s' a member of one of groups ", username);
         for (String group : connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected())
         {
-            try 
+            try
             {
                 connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), group);
                 numPossibleDefaultGroupsAddedTo++;
-            } 
-            catch (GroupNotFoundException e) 
+            }
+            catch (GroupNotFoundException e)
             {
                 errorMessage += String.format("%s, ", group);
             }
-            
+
         }
         if (numPossibleDefaultGroupsAddedTo == 0 && connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected().size() > 0)
         {
-            log.error(errorMessage + "because none of those groups exist!" + 
+            log.error(errorMessage + "because none of those groups exist!" +
                     "We expect at least one of these groups to exist - exactly which one should exist depends on the version of the instance." +
                     "The user needs to be a member of one of these groups for basic access, otherwise the add-on will not function correctly." +
                     "Please check with an instance administrator that at least one of these groups exists and that it is not read-only.");
@@ -297,15 +296,6 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         // Set connect attributes on user -- at this point we are confident we have a user
         ImmutableMap<String, Set<String>> connectAddOnUserAttribute = buildConnectAddOnUserAttribute(getApplication().getName());
         applicationService.storeUserAttributes(getApplication(), user.getName(), connectAddOnUserAttribute);
-
-        if (featureManager.isOnDemand())
-        {
-            // Sets the connect attribute on the Remote Crowd Server if running in OD
-            // This is currently required due to the fact that the DbCachingRemoteDirectory implementation used by JIRA and Confluence doesn't currently
-            // write attributes back to the Crowd Server. This can be removed completely with Crowd 2.9 since addUser can take a UserWithAttributes in this version
-            CrowdClient crowdClient = crowdClientFactory.newInstance(getClientProperties());
-            crowdClient.storeUserAttributes(user.getName(), connectAddOnUserAttribute);
-        }
 
         return user;
     }

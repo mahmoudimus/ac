@@ -110,7 +110,7 @@ public class TestIFrameRenderer
         Map<String, Object> ctx = getActualTemplateRendererContext();
         // Need to en-encode as this is wrapped for inclusion in js
         String jsJson = (String) ctx.get("productContextHtml");
-        jsJson = jsJson.replace("\\\"", "\"");
+        jsJson = jsJson.replace("\\u0022", "\"");
         Map<String, Object> parsedJson = (Map<String, Object>) new JSONParser().parse(jsJson);
         assertEquals(productContext, parsedJson);
     }
