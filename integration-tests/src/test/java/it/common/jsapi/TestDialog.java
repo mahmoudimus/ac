@@ -30,10 +30,7 @@ import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
 import it.servlet.condition.ParameterCapturingConditionServlet;
 import it.servlet.condition.ParameterCapturingServlet;
-import it.util.TestUser;
-import org.hamcrest.Matchers;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -49,9 +46,9 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWe
 import static it.modules.ConnectAsserts.verifyIframeURLHasVersionNumber;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.endsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class TestDialog extends MultiProductWebDriverTestBase
@@ -83,6 +80,8 @@ public class TestDialog extends MultiProductWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
+        logout();
+
         final String productContextPath = product.getProductInstance().getContextPath().toLowerCase();
         String globallyVisibleLocation = productContextPath.contains("jira")
                 ? "system.top.navigation.bar"
@@ -212,7 +211,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
 
     private void testOpenAndClose(String pageKey, String pageName, String moduleKey)
     {
-        loginAndVisit(TestUser.ADMIN, HomePage.class);
+        HomePage homePage = product.visit(HomePage.class);
         GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, pageKey, pageName, runner.getAddon().getKey());
         remotePage.clickAddOnLink();
 
@@ -246,21 +245,18 @@ public class TestDialog extends MultiProductWebDriverTestBase
         assertThat(closeDialogPage.getIFrameSize().getWidth(), is(231));
         assertThat(closeDialogPage.getIFrameSize().getHeight(), is(356));
         assertTrue(closeDialogPage.getFromQueryString("ui-params").length() > 0);
-        assertThat(closeDialogPage.getFromQueryString("user_id"), is("admin"));
         verifyIframeURLHasVersionNumber(closeDialogPage);
     }
 
     @Test
     public void testLoadGeneralDialog()
     {
-        loginAndVisit(TestUser.BETTY, HomePage.class);
+        HomePage homePage = product.visit(HomePage.class);
 
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginDialog", "Remotable Plugin app1 Dialog", runner.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
-
-        assertNotNull(remotePluginTest.getFullName());
-        Assert.assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString(TestUser.BETTY.getUsername()));
+        assertThat(remotePluginTest.getLocation(), endsWith(homePage.getUrl()));
 
         // Exercise the dialog's submit button.
         RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, remotePluginTest);
@@ -274,7 +270,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
     @Test
     public void testSizeToParentDoesNotWorkInDialog()
     {
-        loginAndVisit(TestUser.BETTY, HomePage.class);
+        product.visit(HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParentDialog", "Size to parent dialog page", runner.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
@@ -335,7 +331,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
 
     private RemotePluginAwarePage goToPageWithLink(String dashedModuleKey, String moduleName)
     {
-        loginAndVisit(TestUser.ADMIN, HomePage.class);
+        product.visit(HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, dashedModuleKey, moduleName, runner.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
 

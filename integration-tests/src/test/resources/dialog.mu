@@ -7,15 +7,15 @@
   </head>
   <body>
     <div>
-      Current user: <span id="user"></span>
+      Location: <span id="location"></span>
     </div>
     <div>
       Was Submitted: <span id="submitted">false</span>
     </div>
     <script type="text/javascript">
     (function (AP) {
-      AP.getUser(function(result) {
-        document.getElementById("user").innerHTML = result.fullName;
+      AP.getLocation(function(location) {
+        document.getElementById("location").innerHTML = location;
       });
       AP.Dialog.onDialogMessage("submit", function() {
         var $submitted = document.getElementById("submitted");
