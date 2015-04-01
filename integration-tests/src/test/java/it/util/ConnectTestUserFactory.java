@@ -112,7 +112,7 @@ public class ConnectTestUserFactory
 
     enum AuthLevel
     {
-        SYSADMIN("sysadmin"), ADMIN("admin"), BASIC_USER("user");
+        SYSADMIN("test-sysadmin"), ADMIN("test-admin"), BASIC_USER("test-user");
 
         private String prefix;
 

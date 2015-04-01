@@ -253,14 +253,15 @@ public class TestDialog extends MultiProductWebDriverTestBase
     @Test
     public void testLoadGeneralDialog()
     {
-        loginAndVisit(TestUser.BETTY, HomePage.class);
+        TestUser user = ConnectTestUserFactory.admin(product);
+        loginAndVisit(user, HomePage.class);
 
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginDialog", "Remotable Plugin app1 Dialog", runner.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
 
         assertNotNull(remotePluginTest.getFullName());
-        Assert.assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString(TestUser.BETTY.getUsername()));
+        Assert.assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString(user.getUsername()));
 
         // Exercise the dialog's submit button.
         RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, remotePluginTest);
@@ -274,7 +275,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
     @Test
     public void testSizeToParentDoesNotWorkInDialog()
     {
-        loginAndVisit(TestUser.BETTY, HomePage.class);
+        loginAndVisit(ConnectTestUserFactory.admin(product), HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParentDialog", "Size to parent dialog page", runner.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
