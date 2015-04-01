@@ -12,8 +12,10 @@ import com.atlassian.confluence.it.plugin.WebTestPluginHelper;
 import com.atlassian.confluence.it.rpc.ConfluenceRpc;
 import com.atlassian.confluence.it.rpc.StartOfTestLogger;
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
+import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroItem;
+import com.atlassian.confluence.pageobjects.component.editor.EditorContent;
 import com.atlassian.confluence.pageobjects.component.editor.toolbars.InsertDropdownMenu;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
@@ -25,8 +27,10 @@ import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroBrowserDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectMacroBrowserDialog;
 import com.atlassian.util.concurrent.LazyReference;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
@@ -66,11 +70,11 @@ public class ConfluenceWebDriverTestBase
 
     public static class MacroBrowserAndEditor
     {
-        public final ConnectMacroBrowserDialog browserDialog;
+        public final MacroBrowserDialog browserDialog;
         public final MacroItem macro;
         public final MacroForm macroForm;
 
-        public MacroBrowserAndEditor(ConnectMacroBrowserDialog browserDialog, MacroItem macro, MacroForm macroForm)
+        public MacroBrowserAndEditor(MacroBrowserDialog browserDialog, MacroItem macro, MacroForm macroForm)
         {
             this.browserDialog = browserDialog;
             this.macroForm = macroForm;
@@ -129,6 +133,10 @@ public class ConfluenceWebDriverTestBase
         {
             // Missing or already disabled. Carry on.
         }
+
+        product.getPageBinder().override(MacroBrowserDialog.class, ConfluenceMacroBrowserDialog.class);
+        product.getPageBinder().override(EditorContent.class, ConfluenceEditorContent.class);
+        product.getPageBinder().override(InsertDropdownMenu.class, ConfluenceInsertMenu.class);
 
         rpc.getDarkFeaturesHelper().enableSiteFeature("webdriver.test.mode");
 
@@ -233,11 +241,9 @@ public class ConfluenceWebDriverTestBase
         final Editor editor = editorPage.getEditor();
         enableMacrosDropdown(editorPage);
         final InsertDropdownMenu insertDropdownMenu = editor.openInsertMenu();
-        insertDropdownMenu.click(InsertDropdownMenu.InsertItem.MACRO);
-        ConnectMacroBrowserDialog browserDialog = connectPageOperations.findConnectMacroBrowserDialog();
-        MacroItem macro = browserDialog.searchForFirst(macroName);
-
-        return new MacroBrowserAndEditor(browserDialog, macro, null);
+        MacroBrowserDialog macroBrowserDialog = insertDropdownMenu.clickInsertMacro();
+        MacroItem macro = macroBrowserDialog.searchForFirst(macroName);
+        return new MacroBrowserAndEditor(macroBrowserDialog, macro, null);
     }
 
     protected void enableMacrosDropdown(CreatePage editorPage)

@@ -3,14 +3,10 @@ package it.confluence.macro;
 import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.api.model.content.ContentRepresentation;
 import com.atlassian.confluence.api.model.content.ContentType;
-import com.atlassian.confluence.pageobjects.component.dialog.MacroBrowserDialog;
 import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
-import com.atlassian.confluence.pageobjects.component.editor.EditorContent;
-import com.atlassian.confluence.pageobjects.component.editor.toolbars.InsertDropdownMenu;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
 import com.atlassian.confluence.pageobjects.page.content.EditorPage;
-import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -20,17 +16,14 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroBrowserDialog;
-
+import it.confluence.ConfluenceRestClient;
+import it.confluence.ConfluenceWebDriverTestBase;
+import it.util.TestUser;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import org.slf4j.LoggerFactory;
-
-import it.confluence.ConfluenceRestClient;
-import it.confluence.ConfluenceWebDriverTestBase;
-import it.util.TestUser;
 import redstone.xmlrpc.XmlRpcFault;
 
 import java.net.MalformedURLException;
@@ -271,14 +264,6 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
                 .build();
     }
 
-    @BeforeClass
-    public static void overridePageObjects()
-    {
-        product.getPageBinder().override(MacroBrowserDialog.class, ConfluenceMacroBrowserDialog.class);
-        product.getPageBinder().override(EditorContent.class, ConfluenceEditorContent.class);
-        product.getPageBinder().override(InsertDropdownMenu.class, ConfluenceInsertMenu.class);
-    }
-
     @Test
     public void testMacroIsListed() throws Exception
     {
@@ -513,11 +498,6 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
                 .body(body, ContentRepresentation.STORAGE)
                 .build();
         return restClient.content().create(content).claim();
-    }
-
-    protected ViewPage save(EditorPage editorPage)
-    {
-        return editorPage.saveWithKeyboardShortcut();
     }
 
     protected void addCommentWithMacro(String pageId) throws MalformedURLException, XmlRpcFault
