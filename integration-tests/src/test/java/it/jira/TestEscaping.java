@@ -173,12 +173,6 @@ public class TestEscaping extends JiraWebDriverTestBase
         product.backdoor().project().addProject(PROJECT_KEY, PROJECT_KEY, "admin");
     }
 
-    @BeforeClass
-    public static void beforeTests()
-    {
-        HelpTipApiClient.dismissHelpTipsForAllUsers(TestedProductFactory.create(JiraTestedProduct.class));
-    }
-
     @After
     public void logOutCurrentUser()
     {

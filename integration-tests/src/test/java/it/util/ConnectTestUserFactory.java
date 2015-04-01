@@ -8,13 +8,12 @@ import com.atlassian.confluence.test.rpc.RpcBaseResolver;
 import com.atlassian.confluence.test.rpc.VersionedRpcBaseResolver;
 import com.atlassian.confluence.test.rpc.api.ConfluenceRpcClient;
 import com.atlassian.confluence.test.usermanagement.DefaultDirectoryConfiguration;
-import com.atlassian.confluence.test.usermanagement.TestUserFactory;
 import com.atlassian.confluence.test.usermanagement.DefaultUserManager;
-
 
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.pageobjects.TestedProduct;
+import com.atlassian.plugin.connect.test.helptips.HelpTipApiClientFactory;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -57,7 +56,7 @@ public class ConnectTestUserFactory
     {
         String username = authLevel.getPrefix() + "-" + incrementCounter();
         TestUser testUser = new TestUser(username);
-        if(product instanceof JiraTestedProduct)
+        if (product instanceof JiraTestedProduct)
         {
             TestBase.funcTestHelper.backdoor.usersAndGroups().addUser(username);
             addJiraPermissionsForTestUser(testUser, authLevel);
@@ -67,6 +66,9 @@ public class ConnectTestUserFactory
             userManager.createUser(new UserWithDetails(null, username, username, username, username + "@example.com"));
             addConfluencePermissionsForTestUser(testUser, authLevel);
         }
+
+        disableHelpTips(product, testUser);
+
         return testUser;
     }
 
@@ -95,6 +97,17 @@ public class ConnectTestUserFactory
                 userManager.addUserToGroup(testUser.getUsername(), "confluence-administrators");
             case BASIC_USER:
                 userManager.addUserToGroup(testUser.getUsername(), "confluence-users");
+        }
+    }
+
+    private static void disableHelpTips(TestedProduct product, TestUser testUser) {
+        try
+        {
+            HelpTipApiClientFactory.getHelpTipApiClient(product, testUser).dismissAllHelpTips();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
     }
 

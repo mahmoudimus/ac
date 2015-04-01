@@ -42,12 +42,6 @@ public class JiraWebDriverTestBase
     public LogPageSourceRule pageSourceRule = new LogPageSourceRule();
 
     @BeforeClass
-    public static void dismissPrompts()
-    {
-        HelpTipApiClient.dismissHelpTipsForAllUsers(product);
-    }
-
-    @BeforeClass
     public static void beforeClass() throws RemoteException
     {
         jiraOps = new JiraOps(product.getProductInstance());

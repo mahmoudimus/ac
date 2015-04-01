@@ -35,12 +35,6 @@ public abstract class MultiProductWebDriverTestBase
             product.getTester().getDriver());
 
     @BeforeClass
-    public static void dismissPrompts()
-    {
-        HelpTipApiClient.dismissHelpTipsForAllUsers(product);
-    }
-
-    @BeforeClass
     @AfterClass
     public static void logout()
     {
