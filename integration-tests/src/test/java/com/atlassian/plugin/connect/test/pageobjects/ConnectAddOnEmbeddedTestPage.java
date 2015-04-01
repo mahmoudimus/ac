@@ -42,6 +42,11 @@ public class ConnectAddOnEmbeddedTestPage extends ConnectAddOnPage
         return getValue("message");
     }
 
+    public String getLocation()
+    {
+        return getValue("location");
+    }
+
     @OAuth
     public String getConsumerKey()
     {

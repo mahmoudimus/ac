@@ -349,7 +349,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
             // necessary to prevent Confluence from showing a navigate away alert
             macroInBrowser.macro.select();
             RemotePluginDialog dialog = connectPageOperations.findDialog(CLIENT_SIDE_BODY_MACRO_KEY);
-            dialog.submit();
+            dialog.submitAndWaitUntilHidden();
             cancelEditor(editorPage);
         }
     }
@@ -428,7 +428,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         }
         finally
         {
-            dialog.cancel();
+            dialog.cancelAndWaitUntilHidden();
             cancelEditor(editorPage);
         }
     }
@@ -440,7 +440,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         Content page = createPage(randomName(CLIENT_SIDE_BODY_MACRO_KEY), body);
         EditContentPage editorPage = getProduct().loginAndEdit(TestUser.ADMIN.confUser(), new Page(page.getId().asLong()));
         RemotePluginDialog dialog = connectPageOperations.editMacro(CLIENT_SIDE_BODY_MACRO_KEY);
-        dialog.submit();
+        dialog.submitAndWaitUntilHidden();
         editorPage.save();
 
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(CLIENT_SIDE_BODY_MACRO_KEY);
@@ -456,7 +456,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         EditContentPage editorPage = getProduct().loginAndEdit(TestUser.ADMIN.confUser(), new Page(page.getId().asLong()));
 
         RemotePluginDialog dialog = connectPageOperations.editMacro(CLIENT_SIDE_BODY_MACRO_SCRIPT_KEY);
-        dialog.submit();
+        dialog.submitAndWaitUntilHidden();
         editorPage.save();
 
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(CLIENT_SIDE_BODY_MACRO_SCRIPT_KEY);
