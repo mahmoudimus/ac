@@ -238,7 +238,7 @@ function findProductModules(schemas, productId, productDisplayName) {
     var moduleList = schemas[productId].properties.modules;
     // the module list serves as our landing page for each product's modules
     moduleList.pageName = "index";
-    moduleList.title = productDisplayName + " Module List";
+    moduleList.title = productDisplayName + " Modules";
     // make the module list the first entry
     productModules.unshift(moduleList);
     return productModules;

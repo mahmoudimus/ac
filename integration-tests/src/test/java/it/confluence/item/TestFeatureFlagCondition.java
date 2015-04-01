@@ -6,12 +6,14 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.confluence.ConfluenceWebDriverTestBase;
-import it.util.TestUser;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import it.confluence.ConfluenceWebDriverTestBase;
+import it.util.TestUser;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;

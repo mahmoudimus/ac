@@ -19,7 +19,7 @@ import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.upm.pageobjects.PluginManager;
 import com.google.common.collect.ImmutableMap;
-import it.ConnectWebDriverTestBase;
+import it.common.MultiProductWebDriverTestBase;
 import it.modules.ConnectAsserts;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
@@ -48,7 +48,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Tests that we clean up properly on plugin install failure, to avoid recurrence of AC-1187
  */
-public class TestInstallFailure extends ConnectWebDriverTestBase
+public class TestInstallFailure extends MultiProductWebDriverTestBase
 {
 
     protected static final String MY_AWESOME_PAGE = "My Awesome Page";
@@ -73,7 +73,7 @@ public class TestInstallFailure extends ConnectWebDriverTestBase
                 .withKey(MY_AWESOME_PAGE_KEY)
                 .withUrl(URL)
                 .withWeight(1234);
-        
+
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
         .addUninstallLifecycle()
         .addModule("configurePage", pageBeanBuilder.build())

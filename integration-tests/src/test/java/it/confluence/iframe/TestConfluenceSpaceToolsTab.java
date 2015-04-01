@@ -10,12 +10,14 @@ import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPag
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.confluence.ConfluenceWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
-import it.util.TestUser;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import it.confluence.ConfluenceWebDriverTestBase;
+import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
 
 import static com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean.newSpaceToolsTabBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
@@ -60,7 +62,7 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
     public void spaceAdminShowsConnectTab()
     {
         // Demo space uses doctheme. Templates page is in Space Admin (not to be confused with Space Operations).
-        SpaceTemplatesPage page = loginAndVisit(TestUser.ADMIN, SpaceTemplatesPage.class, "ds");
+        loginAndVisit(TestUser.ADMIN, SpaceTemplatesPage.class, "ds");
 
         String pageKey = ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY);
         String webItemId = pageKey + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX;

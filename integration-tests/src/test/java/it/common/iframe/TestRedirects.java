@@ -1,27 +1,31 @@
 package it.common.iframe;
 
-import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.AbstractBrowserlessTest;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpStatus;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpStatus;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
+import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider.getTestedProduct;
 import static org.junit.Assert.assertEquals;
 
-public class TestRedirects extends AbstractBrowserlessTest
+public class TestRedirects
 {
+    private final String baseUrl = getTestedProduct().getProductInstance().getBaseUrl();
+
     @BeforeClass
     public static void setupUrlHandlers()
     {

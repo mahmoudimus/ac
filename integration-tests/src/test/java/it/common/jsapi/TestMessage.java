@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteMessageGeneralPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.ConnectWebDriverTestBase;
+import it.common.MultiProductWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
 import org.junit.AfterClass;
@@ -17,7 +17,7 @@ import org.junit.Test;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static org.junit.Assert.assertEquals;
 
-public class TestMessage extends ConnectWebDriverTestBase
+public class TestMessage extends MultiProductWebDriverTestBase
 {
     private static final String ADDON_GENERALPAGE = "ac-message-general-page";
     private static final String ADDON_GENERALPAGE_NAME = "AC Message Page";

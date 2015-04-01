@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.*;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.ConnectWebDriverTestBase;
+import it.common.MultiProductWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
 import it.util.TestUser;
@@ -31,7 +31,7 @@ import static java.lang.String.valueOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
-public class TestGeneralPageCrossProduct extends ConnectWebDriverTestBase
+public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
 {
     private static ConnectRunner remotePlugin;
 

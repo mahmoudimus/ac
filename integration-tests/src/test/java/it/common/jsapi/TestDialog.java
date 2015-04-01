@@ -25,7 +25,7 @@ import com.atlassian.plugin.connect.test.pageobjects.RemoteDialogOpeningPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginAwarePage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.ConnectWebDriverTestBase;
+import it.common.MultiProductWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
 import it.servlet.condition.ParameterCapturingConditionServlet;
@@ -53,7 +53,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class TestDialog extends ConnectWebDriverTestBase
+public class TestDialog extends MultiProductWebDriverTestBase
 {
     private static final String ADDON_GENERALPAGE = "ac-general-page";
     private static final String ADDON_GENERALPAGE_NAME = "AC General Page";

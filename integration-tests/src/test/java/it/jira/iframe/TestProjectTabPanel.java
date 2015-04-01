@@ -50,7 +50,7 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
     public static void setUpClass() throws Exception
     {
         logout();
-        new JiraHelpTipApiClient(getProduct(), USER).dismissAllHelpTips();
+        new JiraHelpTipApiClient(product, USER).dismissAllHelpTips();
 
         addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), ADDON_KEY)
                 .setAuthenticationToNone()
