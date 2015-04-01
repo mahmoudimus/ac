@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.InsufficientPermission
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProfilePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
+import it.util.ConnectTestUserFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -83,7 +84,7 @@ public class TestProfileTabPanel extends JiraWebDriverTestBase
     public void testProfileTabPanel() throws RemoteException
     {
         String moduleKey = addonAndModuleKey(remotePlugin.getAddon().getKey(),RAW_MODULE_KEY);
-        loginAndVisit(TestUser.ADMIN, ViewProfilePage.class);
+        loginAndVisit(ConnectTestUserFactory.sysadmin(product), ViewProfilePage.class);
         LinkedRemoteContent tabPanel = connectPageOperations.findTabPanel("up_" + moduleKey + "_a",
                 Option.<String>none(),moduleKey);
         ConnectAddOnEmbeddedTestPage remotePage = tabPanel.click();
@@ -97,7 +98,7 @@ public class TestProfileTabPanel extends JiraWebDriverTestBase
     @Test
     public void tabIsNotAccessibleWithFalseCondition() throws RemoteException
     {
-        login(TestUser.ADMIN);
+        login(ConnectTestUserFactory.sysadmin(product));
 
         remotePlugin.setToggleableConditionShouldDisplay(false);
         JiraViewProfilePage profilePage = product.visit(JiraViewProfilePage.class);

@@ -30,6 +30,7 @@ import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
 import it.servlet.condition.ParameterCapturingConditionServlet;
 import it.servlet.condition.ParameterCapturingServlet;
+import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 import org.hamcrest.Matchers;
 import org.junit.AfterClass;
@@ -210,7 +211,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
 
     private void testOpenAndClose(String pageKey, String pageName, String moduleKey)
     {
-        loginAndVisit(TestUser.ADMIN, HomePage.class);
+        loginAndVisit(ConnectTestUserFactory.sysadmin(product), HomePage.class);
         GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, pageKey, pageName, runner.getAddon().getKey());
         remotePage.clickAddOnLink();
 
@@ -355,7 +356,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
 
     private RemotePluginAwarePage goToPageWithLink(String dashedModuleKey, String moduleName)
     {
-        loginAndVisit(TestUser.ADMIN, HomePage.class);
+        loginAndVisit(ConnectTestUserFactory.sysadmin(product), HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, dashedModuleKey, moduleName, runner.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
 

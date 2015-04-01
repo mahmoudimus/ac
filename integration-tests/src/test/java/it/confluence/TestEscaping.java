@@ -134,8 +134,6 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @After
     public void afterEachTest()
     {
-        super.dismissPrompts();
-
         if (null != editorPage)
         {
             try

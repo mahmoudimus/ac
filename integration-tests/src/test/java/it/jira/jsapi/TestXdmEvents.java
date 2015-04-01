@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import hudson.plugins.jira.soap.RemoteIssue;
 import it.jira.JiraWebDriverTestBase;
+import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -67,7 +68,7 @@ public class TestXdmEvents extends JiraWebDriverTestBase
     @Test
     public void testXdmEvents() throws Exception
     {
-        login(TestUser.ADMIN);
+        login(ConnectTestUserFactory.sysadmin(product));
 
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
         JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey());

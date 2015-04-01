@@ -4,7 +4,7 @@ import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.upm.pageobjects.PluginManager;
-import it.util.TestUser;
+import it.util.ConnectTestUserFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -43,7 +43,7 @@ public class TestConfigurePage extends AbstractPageTestBase
     {
         runner.setToggleableConditionShouldDisplay(false);
 
-        login(TestUser.ADMIN);
+        login(ConnectTestUserFactory.sysadmin(product));
 
         // note we don't check that the configure link isn't displayed due to AC-973
 

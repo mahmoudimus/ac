@@ -15,16 +15,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ConnectTestUserFactory
 {
 
-    private static final DefaultUserManagementHelper userManager;
+//    private static final DefaultUserManagementHelper userManager;
 
     private static final AtomicInteger userNameCounter = new AtomicInteger();
 
     static
     {
-        ConfluenceBaseUrlSelector confluenceBaseUrlSelector = new ConfluenceBaseUrlSelector();
-        ConfluenceRpc confluenceRpc = ConfluenceRpc.newInstance(confluenceBaseUrlSelector.getBaseUrl());
-        DefaultDirectoryConfiguration defaultDirectoryConfiguration = new DefaultDirectoryConfiguration();
-        userManager = new DefaultUserManagementHelper(confluenceRpc, defaultDirectoryConfiguration);
+//        ConfluenceBaseUrlSelector confluenceBaseUrlSelector = new ConfluenceBaseUrlSelector();
+//        ConfluenceRpc confluenceRpc = ConfluenceRpc.newInstance(confluenceBaseUrlSelector.getBaseUrl());
+//        DefaultDirectoryConfiguration defaultDirectoryConfiguration = new DefaultDirectoryConfiguration();
+//        userManager = new DefaultUserManagementHelper(confluenceRpc, defaultDirectoryConfiguration);
     }
 
     public static TestUser sysadmin(TestedProduct product)
@@ -58,8 +58,8 @@ public class ConnectTestUserFactory
         }
         else
         {
-            userManager.createUser(new User(username, username, username, username + "@example.com"));
-            addConfluencePermissionsForTestUser(testUser, authLevel);
+//            userManager.createUser(new User(username, username, username, username + "@example.com"));
+//            addConfluencePermissionsForTestUser(testUser, authLevel);
         }
 
         disableHelpTips(product, testUser);
@@ -83,19 +83,20 @@ public class ConnectTestUserFactory
 
     private static void addConfluencePermissionsForTestUser(TestUser testUser, AuthLevel authLevel)
     {
-        switch (authLevel)
-        {
-            case SYSADMIN:
-                userManager.addUserToGroup(testUser.getUsername(), "confluence-developers");      // ??????
-                userManager.addUserToGroup(testUser.getUsername(), "confluence-sysadmin");        // ??????
-            case ADMIN:
-                userManager.addUserToGroup(testUser.getUsername(), "confluence-administrators");
-            case BASIC_USER:
-                userManager.addUserToGroup(testUser.getUsername(), "confluence-users");
-        }
+//        switch (authLevel)
+//        {
+//            case SYSADMIN:
+//                userManager.addUserToGroup(testUser.getUsername(), "confluence-developers");      // ??????
+//                userManager.addUserToGroup(testUser.getUsername(), "confluence-sysadmin");        // ??????
+//            case ADMIN:
+//                userManager.addUserToGroup(testUser.getUsername(), "confluence-administrators");
+//            case BASIC_USER:
+//                userManager.addUserToGroup(testUser.getUsername(), "confluence-users");
+//        }
     }
 
-    private static void disableHelpTips(TestedProduct product, TestUser testUser) {
+    private static void disableHelpTips(TestedProduct product, TestUser testUser)
+    {
         try
         {
             HelpTipApiClientFactory.getHelpTipApiClient(product, testUser).dismissAllHelpTips();

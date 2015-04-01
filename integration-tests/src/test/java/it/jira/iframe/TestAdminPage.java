@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdministrationHome
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
+import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -72,7 +73,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
-        loginAndVisit(TestUser.ADMIN, JiraAdministrationHomePage.class);
+        loginAndVisit(ConnectTestUserFactory.sysadmin(product), JiraAdministrationHomePage.class);
 
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, PLUGIN_KEY, PAGE_KEY);
 
@@ -88,7 +89,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     @Test
     public void addonPageIsFullSize() throws MalformedURLException, URISyntaxException
     {
-        loginAndVisit(TestUser.ADMIN, JiraAdministrationHomePage.class);
+        loginAndVisit(ConnectTestUserFactory.sysadmin(product), JiraAdministrationHomePage.class);
 
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, PLUGIN_KEY, PAGE_KEY);
 
@@ -111,7 +112,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     {
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
-        login(TestUser.ADMIN);
+        login(ConnectTestUserFactory.sysadmin(product));
 
         // web item should not be displayed
         product.visit(JiraAdminHomePage.class);

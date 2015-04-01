@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.common.MultiProductWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
+import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 import org.junit.Test;
 
@@ -16,7 +17,7 @@ public class TestRemotePluginInstallation extends MultiProductWebDriverTestBase
     @Test
     public void testChangedKey() throws Exception
     {
-        login(TestUser.ADMIN);
+        login(ConnectTestUserFactory.sysadmin(product));
         ConnectRunner pluginFirst = createAddOn("pluginFirst");
         assertThatWeCanVisitThePage(pluginFirst);
 

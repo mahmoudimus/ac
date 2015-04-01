@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraWorkflowTransition
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
+import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -73,7 +74,7 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
     @Test
     public void testCreateWorkflowPostFunction()
     {
-        JiraWorkflowTransitionPage workflowTransitionPage = loginAndVisit(TestUser.ADMIN,
+        JiraWorkflowTransitionPage workflowTransitionPage = loginAndVisit(ConnectTestUserFactory.sysadmin(product),
                 JiraWorkflowTransitionPage.class, "live", WORKFLOW_NAME, WORKFLOW_STEP, WORKFLOW_TRANSITION).createOrEditDraft();
         JiraAddWorkflowTransitionFunctionParamsPage addonPage = workflowTransitionPage.addPostFunction(
                 "my-plugin", WORKFLOW_POST_FUNCTION_PAGE, WORKFLOW_POST_FUNCTION_NAME);
@@ -88,7 +89,7 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
     @Test
     public void testCreateInvalidWorkflowPostFunction()
     {
-        JiraWorkflowTransitionPage workflowTransitionPage = loginAndVisit(TestUser.ADMIN,
+        JiraWorkflowTransitionPage workflowTransitionPage = loginAndVisit(ConnectTestUserFactory.sysadmin(product),
                 JiraWorkflowTransitionPage.class, "live", WORKFLOW_NAME, WORKFLOW_STEP, WORKFLOW_TRANSITION).createOrEditDraft();
         JiraAddWorkflowTransitionFunctionParamsPage addonPage = workflowTransitionPage.addPostFunction(
                 "my-plugin", WORKFLOW_POST_FUNCTION_INVALID_PAGE, WORKFLOW_POST_FUNCTION_INVALID_NAME);
