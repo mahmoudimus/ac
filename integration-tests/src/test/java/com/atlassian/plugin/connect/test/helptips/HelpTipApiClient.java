@@ -2,13 +2,16 @@ package com.atlassian.plugin.connect.test.helptips;
 
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.plugin.connect.test.client.UserRequestSender;
+
 import com.google.common.collect.ImmutableMap;
-import it.util.TestUser;
+
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.json.JSONObject;
+
+import it.util.TestUser;
 
 /**
  * A client for the Help Tip REST API.
