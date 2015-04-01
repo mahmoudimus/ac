@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RemoteMacroEditor;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
+import it.util.ConnectTestUserFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -51,7 +52,7 @@ public class TestConfluenceCloseMacroEditor extends ConfluenceWebDriverTestBase
     @Test
     public void shouldCloseMacroEditorWhenInsertingMacroOnNewPage()
     {
-        CreatePage createPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        CreatePage createPage = getProduct().loginAndCreatePage(ConnectTestUserFactory.sysadmin(product).confUser(), TestSpace.DEMO);
         selectMacro(createPage, MACRO_NAME, new Runnable()
         {
 

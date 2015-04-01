@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
 
+import it.util.ConnectTestUserFactory;
 import org.junit.Assert;
 import org.junit.Test;
 

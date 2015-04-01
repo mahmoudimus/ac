@@ -22,6 +22,7 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
 import com.google.common.base.Optional;
 
+import it.util.ConnectTestUserFactory;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -160,7 +161,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @Test
     public void testGeneralPage() throws Exception
     {
-        ConnectConfluenceAdminHomePage adminHomePage = loginAndVisit(TestUser.ADMIN, ConnectConfluenceAdminHomePage.class);
+        ConnectConfluenceAdminHomePage adminHomePage = loginAndVisit(ConnectTestUserFactory.sysadmin(product), ConnectConfluenceAdminHomePage.class);
         adminHomePage.openHelpMenu();
         RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(GENERAL_PAGE_KEY), Optional.<String>absent());
         assertIsEscaped(webItem.getLinkText());
@@ -169,7 +170,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @Test
     public void testWebItem() throws Exception
     {
-        login(TestUser.ADMIN);
+        login(ConnectTestUserFactory.sysadmin(product));
         createAndVisitViewPage();
         RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(WEB_ITEM_KEY), Optional.of("action-menu-link"));
         webItem.hover();
@@ -180,7 +181,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @Test
     public void testAdminPage() throws Exception
     {
-        loginAndVisit(TestUser.ADMIN, ConfluenceAdminHomePage.class);
+        loginAndVisit(ConnectTestUserFactory.sysadmin(product), ConfluenceAdminHomePage.class);
         ConfluenceAdminPage adminPage = product.getPageBinder().bind(ConfluenceAdminPage.class, runner.getAddon().getKey(), ADMIN_PAGE_KEY);
         assertIsEscaped(adminPage.getRemotePluginLinkText());
     }
@@ -188,7 +189,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @Test
     public void testMacroTitle() throws Exception
     {
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(ConnectTestUserFactory.sysadmin(product).confUser(), TestSpace.DEMO);
 
         final MacroBrowserAndEditor macroBrowserAndEditor = findMacroInBrowser(editorPage, "F1ND M3");
 
@@ -206,7 +207,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @Test
     public void testMacroEditorTitle() throws Exception
     {
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(ConnectTestUserFactory.sysadmin(product).confUser(), TestSpace.DEMO);
 
         final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, "F1ND M3");
 
@@ -224,7 +225,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @Test
     public void testMacroParameter() throws Exception
     {
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(ConnectTestUserFactory.sysadmin(product).confUser(), TestSpace.DEMO);
 
         final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, "F1ND M3");
 
@@ -244,7 +245,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @Test
     public void testProfilePage() throws Exception
     {
-        loginAndVisit(TestUser.ADMIN, ConfluenceUserProfilePage.class);
+        loginAndVisit(ConnectTestUserFactory.sysadmin(product), ConfluenceUserProfilePage.class);
         RemoteWebItem webItem = connectPageOperations.findWebItem(RemoteWebItem.ItemMatchingMode.JQUERY,
                 "a[href*='" + getServletPath(PROFILE_PAGE_KEY) + "']", Optional.<String>absent());
         assertIsEscaped(webItem.getLinkText());
@@ -253,7 +254,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @Test
     public void testSpaceAdminTab() throws Exception
     {
-        loginAndVisit(TestUser.ADMIN, SpaceTemplatesPage.class, "ds");
+        loginAndVisit(ConnectTestUserFactory.sysadmin(product), SpaceTemplatesPage.class, "ds");
         LinkedRemoteContent addonPage = connectPageOperations.findTabPanel(
                 getModuleKey(SPACE_TOOLS_TAB_KEY) + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX,
                 Option.<String>none(), getModuleKey(SPACE_TOOLS_TAB_KEY));

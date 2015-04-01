@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
+import it.util.ConnectTestUserFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -62,7 +63,7 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
     public void spaceAdminShowsConnectTab()
     {
         // Demo space uses doctheme. Templates page is in Space Admin (not to be confused with Space Operations).
-        loginAndVisit(TestUser.ADMIN, SpaceTemplatesPage.class, "ds");
+        loginAndVisit(ConnectTestUserFactory.sysadmin(product), SpaceTemplatesPage.class, "ds");
 
         String pageKey = ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY);
         String webItemId = pageKey + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX;
@@ -76,7 +77,7 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
     @Test
     public void spaceToolsShowsConnectTab()
     {
-        SpaceTemplatesPage page = loginAndVisit(TestUser.ADMIN, SpaceTemplatesPage.class, "ts");
+        SpaceTemplatesPage page = loginAndVisit(ConnectTestUserFactory.sysadmin(product), SpaceTemplatesPage.class, "ts");
 
         LinkedRemoteContent addonPage = connectPageOperations.findRemoteLinkedContent(RemoteWebItem.ItemMatchingMode.LINK_TEXT, "AC Space Tab", Option.<String>none(), addonAndModuleKey(remotePlugin.getAddon().getKey(),TAB_MODULE_KEY));
 

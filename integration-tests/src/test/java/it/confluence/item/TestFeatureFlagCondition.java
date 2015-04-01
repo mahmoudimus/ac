@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
+import it.util.ConnectTestUserFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -67,7 +68,7 @@ public class TestFeatureFlagCondition extends ConfluenceWebDriverTestBase
     @Test
     public void cannotSeeWithFeatureFlagUnset() throws Exception
     {
-        login(TestUser.ADMIN);
+        login(ConnectTestUserFactory.sysadmin(product));
 
         assertFalse("Web item should not be visible without feature flag set", connectPageOperations.existsWebItem(getModuleKey(FEATURE_FLAG)));
     }
@@ -75,7 +76,7 @@ public class TestFeatureFlagCondition extends ConfluenceWebDriverTestBase
     @Test
     public void canSeeWithFeatureFlagSet() throws Exception
     {
-        login(TestUser.ADMIN);
+        login(ConnectTestUserFactory.sysadmin(product));
 
         rpc.logIn(User.ADMIN);
         rpc.getDarkFeaturesHelper().enableSiteFeature(FEATURE_FLAG_KEY);
@@ -86,7 +87,7 @@ public class TestFeatureFlagCondition extends ConfluenceWebDriverTestBase
     @Test
     public void cannotSeeWithFeatureFlagDisabled() throws Exception
     {
-        login(TestUser.ADMIN);
+        login(ConnectTestUserFactory.sysadmin(product));
 
         rpc.logIn(User.ADMIN);
         rpc.getDarkFeaturesHelper().enableSiteFeature(FEATURE_FLAG_KEY);

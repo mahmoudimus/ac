@@ -23,6 +23,7 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
+import it.util.ConnectTestUserFactory;
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -136,7 +137,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroIsRendered() throws Exception
     {
-        ViewPage viewPage = getProduct().login(TestUser.ADMIN.confUser(), ViewPage.class, createPageWithStorageFormatMacro());
+        ViewPage viewPage = getProduct().login(ConnectTestUserFactory.sysadmin(product).confUser(), ViewPage.class, createPageWithStorageFormatMacro());
         String content = viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
         assertThat(content, endsWith("Storage Format Content"));
     }
