@@ -3,17 +3,17 @@ WRM.data = {};
 WRM.data.claim = function() {
     return {};
 };
-tinymce = {};
-tinymce.plugins = {};
-tinymce.plugins.Autoconvert = {};
-tinymce.plugins.Autoconvert.autoConvert = {};
-tinymce.plugins.Autoconvert.autoConvert.addHandler = function() {};
 
 define(['ac/confluence/macro/autoconvert'], function(Autoconvert) {
 
    module("Autoconvert tests", {
        setup: function() {
-
+           tinymce = {};
+           tinymce.plugins = {};
+           tinymce.plugins.Autoconvert = {};
+           tinymce.plugins.Autoconvert.autoConvert = {};
+           tinymce.plugins.Autoconvert.autoConvert.addHandler = function() {};
+           tinymce.plugins.Autoconvert.convertMacroToDom = function() {};
        },
        teardown: function() {
 
@@ -36,63 +36,50 @@ define(['ac/confluence/macro/autoconvert'], function(Autoconvert) {
         Autoconvert.factory.restore();
     });
 
-    test("Wildcard placement", function() {
+    test("factory test", function() {
+
+        // set up the autoconvert defs to test
         WRM.data.claim = function() {
-            autoconvertdef = {
-                "macroName": "",
+            a1 = {
+                "macroName": "macro a",
                 "autoconvert": {
                     "urlParameter": "url"
                 },
-                "matcherBean": {
-                    "pattern": "http:/{}/example.com/",
-                    "pattern": "http://example.com/{}{}{}/",
-                    "pattern": "http://example.com/{}{}",
-                    "pattern": "http://example.com/{}/{}/{}/{}/{}/{}"
-                }
-            }
-            return autoconvertdef;
+                "matcherBean":
+                    { "pattern": "http:/{}/example.com/" }
+            };
+
+            a2 = {
+                "macroName": "macro b",
+                "autoconvert": {
+                    "urlParameter": "url"
+                },
+                "matcherBean":
+                { "pattern": "http://example.com/{}{}{}/" }
+            };
+            return [ a1, a2 ] ;
         };
 
-        sinon.stub(WRM.data, "claim").returns([{}, {}]);
-        sinon.stub(Autoconvert, "factory").returns(function() {});
+        // test the defined autoconverts
         var spy = sinon.spy(tinymce.plugins.Autoconvert.autoConvert, "addHandler");
         Autoconvert.registerAutoconvertHandlers();
         ok(spy.calledTwice);
-        WRM.data.claim.restore();
-        Autoconvert.factory.restore();
-    })
-
-
+    });
 });
 
-// Super greedy ones
-WRM.data.claim = function() {
-    autoconvertdef = {
-        "macroName": "",
-        "autoconvert": {
-            "urlParameter": "url"
-        },
-        "matcherBean": {
-            "pattern": "http://{}",
-            "pattern": "{}"
-        }
-    }
-    return autoconvertdef;
-};
 
-// Dangerous security ones
-WRM.data.claim = function() {
-    autoconvertdef = {
-        "macroName": "",
-        "autoconvert": {
-            "urlParameter": "url"
-        },
-        "matcherBean": {
-            "pattern": "alert('hi there')",
-            "pattern": "'",
-            "pattern": "(.*)",
-            "pattern": "^(\w+\d+)+a$"
-        }
-    }
-    return autoconvertdef;
-};
+// To test: wildcard combinations
+// "http:/{}/example.com/"
+// "http://example.com/{}{}{}/"
+// "http://example.com/{}{}"
+// "http://example.com/{}/{}/{}/{}/{}/{}"
+
+// To test: dangerous looking security ones
+// "alert('hi there')"
+// "'"
+// "(.*)"
+// "^(\w+\d+)+a$"
+
+// To test: super greedy ones
+// "http://{}"
+// "{}"
