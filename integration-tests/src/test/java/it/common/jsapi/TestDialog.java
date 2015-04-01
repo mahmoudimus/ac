@@ -261,10 +261,8 @@ public class TestDialog extends MultiProductWebDriverTestBase
         // Exercise the dialog's submit button.
         RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, remotePluginTest);
         assertFalse(dialog.wasSubmitted());
-        assertEquals(false, dialog.submit());
-
-        assertTrue(dialog.wasSubmitted());
-        assertEquals(true, dialog.submit());
+        dialog.submitAndWaitUntilSubmitted();
+        dialog.submitAndWaitUntilHidden();
     }
 
     @Test
@@ -392,7 +390,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
 
         if (dialog.hasChrome())
         {
-            dialog.cancel();
+            dialog.cancelAndWaitUntilHidden();
         }
     }
 }

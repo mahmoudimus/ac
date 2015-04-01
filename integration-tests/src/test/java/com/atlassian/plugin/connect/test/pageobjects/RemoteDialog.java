@@ -1,13 +1,17 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
+import com.atlassian.confluence.pageobjects.component.dialog.AbstractDialog;
 import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.pageobjects.elements.ElementBy;
+import com.atlassian.pageobjects.elements.PageElement;
+import com.atlassian.pageobjects.elements.query.Poller;
+import com.atlassian.pageobjects.elements.timeout.Timeouts;
 import com.atlassian.webdriver.AtlassianWebDriver;
-import com.atlassian.webdriver.utils.Check;
+import com.atlassian.webdriver.utils.element.ElementConditions;
+import com.atlassian.webdriver.utils.element.WebDriverPoller;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,14 +30,23 @@ public class RemoteDialog extends AbstractConnectIFrameComponent<RemoteDialog>
     @Inject
     protected PageBinder pageBinder;
 
-    @FindBy(className = "ap-dialog-submit")
-    protected WebElement submitButton;
+    @ElementBy(className = "aui-blanket")
+    protected PageElement auiBlanket;
 
-    @FindBy(className = "ap-dialog-cancel")
-    protected WebElement cancelButton;
+    @ElementBy(className = "ap-dialog-submit")
+    protected PageElement submitButton;
 
-    @FindBy(className = "aui-dialog2-header-main")
-    protected WebElement titleElement;
+    @ElementBy(className = "ap-dialog-cancel")
+    protected PageElement cancelButton;
+
+    @ElementBy(className = "aui-dialog2-header-main")
+    protected PageElement titleElement;
+
+    @Inject
+    protected WebDriverPoller poller;
+
+    @Inject
+    protected Timeouts timeouts;
 
     private static final String DIALOG_CONTAINER = "ap-dialog-container";
     private static final String INLINE_DIALOG_CONTAINER = "ap-container";
@@ -71,32 +84,23 @@ public class RemoteDialog extends AbstractConnectIFrameComponent<RemoteDialog>
         return elementFinder.find(By.cssSelector("." + cssClass + " iframe")).getAttribute("id");
     }
 
-    /**
-     * Hits the "Submit" button on the dialog. Returns true if the dialog was dismissed. Returns false if the dialog is still
-     * visible (this may be a valid scenario, if the embedded iframe in the dialog has forcefully cancelled the user's
-     * attempt to close the dialog).
-     */
-    public boolean submit()
+    public void submitAndWaitUntilHidden()
     {
         submitButton.click();
-        return isDialogClosed();
+        waitUntilHidden();
     }
 
-    /**
-     * Hits the "Cancel" button on the dialog. Returns true if the dialog was dismissed. Returns false if the dialog is still
-     * visible.
-     */
-    public boolean cancel()
+    public void cancelAndWaitUntilHidden()
     {
         cancelButton.click();
-        return isDialogClosed();
+        waitUntilHidden();
     }
 
     public boolean hasChrome()
     {
     	try 
     	{
-    		return submitButton != null && submitButton.isDisplayed();
+    		return submitButton != null && submitButton.isVisible();
     	}
     	catch (NoSuchElementException e)
     	{
@@ -108,24 +112,21 @@ public class RemoteDialog extends AbstractConnectIFrameComponent<RemoteDialog>
         return titleElement.getText();
     }
 
-    private boolean isDialogClosed()
-    {
-        final By dialogContentLocator = By.className(DIALOG_CONTAINER);
-        try
-        {
-            return !Check.elementIsVisible(dialogContentLocator, driver);
-        }
-        catch (StaleElementReferenceException e)
-        {
-            if (!Check.elementExists(dialogContentLocator, driver))
-            {
-                return true;
-            }
-            else
-            {
-                logger.debug("We got a 'StaleElementReferenceException' and yet the element still appears to be existing, not sure what's going on here. Rethrowing.");
-                throw e;
-            }
+    public void waitUntilHidden() {
+        poller.waitUntil(ElementConditions.isNotPresent(By.className(DIALOG_CONTAINER)), 10);
+        this.waitUntilAUIBlanketHidden();
+    }
+
+    /**
+     * @see AbstractDialog#waitUntilAUIBlanketHidden()
+     */
+    protected void waitUntilAUIBlanketHidden() {
+        Poller.waitUntilFalse("Blanket should be hidden after closing the dialog", this.auiBlanket.timed().isVisible());
+
+        try {
+            Thread.sleep(300L);
+        } catch (InterruptedException var2) {
+            var2.printStackTrace();
         }
     }
 }

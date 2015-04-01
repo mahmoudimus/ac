@@ -1,7 +1,5 @@
 package it.confluence;
 
-import javax.annotation.Nullable;
-
 import com.atlassian.confluence.it.Space;
 import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.it.maven.MavenDependencyHelper;
@@ -25,27 +23,25 @@ import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
+import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectMacroBrowserDialog;
 import com.atlassian.util.concurrent.LazyReference;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
-
 import com.sun.jersey.api.client.UniformInterfaceException;
-
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 
-import it.util.TestUser;
+import javax.annotation.Nullable;
 
 import static com.atlassian.fugue.Option.none;
 import static com.atlassian.fugue.Option.some;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * This is an adapted version of com.atlassian.confluence.webdriver.AbstractWebDriverTest.
@@ -261,7 +257,8 @@ public class ConfluenceWebDriverTestBase
             @Override
             public void run()
             {
-                assertThat(connectPageOperations.findDialog(moduleKey).submit(), is(true));
+                RemotePluginDialog dialog = connectPageOperations.findDialog(moduleKey);
+                dialog.submitAndWaitUntilHidden();
             }
         };
     }
@@ -273,7 +270,8 @@ public class ConfluenceWebDriverTestBase
             @Override
             public void run()
             {
-                assertThat(connectPageOperations.findDialog(moduleKey).cancel(), is(true));
+                RemotePluginDialog dialog = connectPageOperations.findDialog(moduleKey);
+                dialog.cancelAndWaitUntilHidden();
             }
         };
     }

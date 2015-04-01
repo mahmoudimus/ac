@@ -398,7 +398,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
                 {
                     if (dialog != null)
                     {
-                        dialog.cancel();
+                        dialog.cancelAndWaitUntilHidden();
                     }
                 }
             }
@@ -435,7 +435,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
                 {
                     if (dialog != null)
                     {
-                        dialog.cancel();
+                        dialog.cancelAndWaitUntilHidden();
                     }
                     cancelEditor(editorPage);
                 }
@@ -464,7 +464,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
                 {
                     if (dialog != null)
                     {
-                        dialog.cancel();
+                        dialog.cancelAndWaitUntilHidden();
                     }
                     cancelEditor(editorPage);
                 }
