@@ -4,6 +4,7 @@ import com.atlassian.pageobjects.binder.WaitUntil;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.pageobjects.elements.WebDriverElement;
+import com.atlassian.pageobjects.elements.timeout.TimeoutType;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.google.common.base.Function;
@@ -62,7 +63,7 @@ public class ConnectAddOnPage
 
         try
         {
-            waitUntilTrue(containerDivElement.timed().hasClass(IFRAME_INIT));
+            waitUntilTrue(containerDivElement.withTimeout(TimeoutType.PAGE_LOAD).timed().hasClass(IFRAME_INIT));
         }
         catch (AssertionError e)
         {
