@@ -4,10 +4,8 @@ import com.atlassian.confluence.it.Page;
 import com.atlassian.confluence.it.Space;
 import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.pageobjects.component.editor.EditorContent;
-import com.atlassian.confluence.pageobjects.page.content.Editor;
 import com.atlassian.confluence.pageobjects.page.content.EditorPage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
-import com.atlassian.confluence.pageobjects.page.content.ViewPageAddComment;
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.pageobjects.elements.query.TimedQuery;
@@ -19,7 +17,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.MatcherBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.confluence.AbstractConfluenceWebDriverTest;
+import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
 import org.jsoup.Jsoup;
@@ -31,7 +29,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +40,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Integration tests that create a Connect Addon that uses the autoconvert feature and exercise its usage in Confluence pages.
  */
-public class TestAutoconvert extends AbstractConfluenceWebDriverTest
+public class TestAutoconvert extends ConfluenceWebDriverTestBase
 {
     private static final Logger logger = LoggerFactory.getLogger(TestAutoconvert.class);
     private static final String DYNAMIC_MACRO_WITH_AUTOCONVERT = "Dynamic Macro With Autoconvert";
