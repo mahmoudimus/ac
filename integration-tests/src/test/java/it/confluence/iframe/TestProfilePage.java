@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPag
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceUserProfilePage;
 import it.common.iframe.AbstractPageTestBase;
+import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,7 +45,7 @@ public class TestProfilePage extends AbstractPageTestBase
         runner.setToggleableConditionShouldDisplay(false);
 
         // web item should not be displayed
-        loginAndVisit(TestUser.ADMIN, ConfluenceUserProfilePage.class);
+        loginAndVisit(ConnectTestUserFactory.sysadmin(product), ConfluenceUserProfilePage.class);
         assertThat("Expected web-item for page to NOT be present", connectPageOperations
                 .existsWebItem(MY_AWESOME_PAGE_KEY), is(false));
 

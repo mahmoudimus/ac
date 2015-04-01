@@ -91,8 +91,6 @@ public class ConnectTestUserFactory
         switch (authLevel)
         {
             case SYSADMIN:
-                userManager.addUserToGroup(testUser.getUsername(), "confluence-developers");      // ??????
-                userManager.addUserToGroup(testUser.getUsername(), "confluence-sysadmin");        // ??????
             case ADMIN:
                 userManager.addUserToGroup(testUser.getUsername(), "confluence-administrators");
             case BASIC_USER:
