@@ -10,6 +10,7 @@ import com.google.common.collect.Maps;
 
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
+import it.util.ConnectTestUserFactory;
 import it.util.JwtAuthorizationGenerator;
 import it.util.TestUser;
 import org.junit.AfterClass;
@@ -63,7 +64,7 @@ public class TestSessionIntegrity extends MultiProductWebDriverTestBase
     @Test
     public void addOnUserDoesNotInheritTheSession() throws Exception
     {
-        login(TestUser.ADMIN);
+        login(ConnectTestUserFactory.sysadmin(product));
 
         InstallHandlerServlet.InstallPayload installPayload = installHandler.getInstallPayload();
 

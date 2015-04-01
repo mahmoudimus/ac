@@ -5,6 +5,7 @@ import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.it.usermanagement.DefaultDirectoryConfiguration;
 import com.atlassian.confluence.it.usermanagement.DefaultUserManagementHelper;
 import com.atlassian.confluence.it.rpc.ConfluenceRpc;
+import com.atlassian.confluence.it.usermanagement.UserManagementHelper;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.pageobjects.TestedProduct;
@@ -15,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ConnectTestUserFactory
 {
 
-//    private static final DefaultUserManagementHelper userManager;
+    //private static final DefaultUserManagementHelper userManager;
 
     private static final AtomicInteger userNameCounter = new AtomicInteger();
 
@@ -58,8 +59,12 @@ public class ConnectTestUserFactory
         }
         else
         {
-//            userManager.createUser(new User(username, username, username, username + "@example.com"));
-//            addConfluencePermissionsForTestUser(testUser, authLevel);
+            ConfluenceBaseUrlSelector confluenceBaseUrlSelector = new ConfluenceBaseUrlSelector();
+            ConfluenceRpc confluenceRpc = ConfluenceRpc.newInstance(confluenceBaseUrlSelector.getBaseUrl());
+            DefaultDirectoryConfiguration defaultDirectoryConfiguration = new DefaultDirectoryConfiguration();
+            DefaultUserManagementHelper userManager = new DefaultUserManagementHelper(confluenceRpc, defaultDirectoryConfiguration);
+            userManager.createUser(new User(username, username, username, username + "@example.com"));
+            addConfluencePermissionsForTestUser(testUser, authLevel, userManager);
         }
 
         disableHelpTips(product, testUser);
@@ -81,18 +86,18 @@ public class ConnectTestUserFactory
         }
     }
 
-    private static void addConfluencePermissionsForTestUser(TestUser testUser, AuthLevel authLevel)
+    private static void addConfluencePermissionsForTestUser(TestUser testUser, AuthLevel authLevel, UserManagementHelper userManager)
     {
-//        switch (authLevel)
-//        {
-//            case SYSADMIN:
-//                userManager.addUserToGroup(testUser.getUsername(), "confluence-developers");      // ??????
-//                userManager.addUserToGroup(testUser.getUsername(), "confluence-sysadmin");        // ??????
-//            case ADMIN:
-//                userManager.addUserToGroup(testUser.getUsername(), "confluence-administrators");
-//            case BASIC_USER:
-//                userManager.addUserToGroup(testUser.getUsername(), "confluence-users");
-//        }
+        switch (authLevel)
+        {
+            case SYSADMIN:
+                userManager.addUserToGroup(testUser.getUsername(), "confluence-developers");      // ??????
+                userManager.addUserToGroup(testUser.getUsername(), "confluence-sysadmin");        // ??????
+            case ADMIN:
+                userManager.addUserToGroup(testUser.getUsername(), "confluence-administrators");
+            case BASIC_USER:
+                userManager.addUserToGroup(testUser.getUsername(), "confluence-users");
+        }
     }
 
     private static void disableHelpTips(TestedProduct product, TestUser testUser)

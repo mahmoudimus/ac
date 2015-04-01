@@ -211,14 +211,15 @@ public class TestDialog extends MultiProductWebDriverTestBase
 
     private void testOpenAndClose(String pageKey, String pageName, String moduleKey)
     {
-        loginAndVisit(ConnectTestUserFactory.sysadmin(product), HomePage.class);
+        TestUser user = ConnectTestUserFactory.sysadmin(product);
+        loginAndVisit(user, HomePage.class);
         GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, pageKey, pageName, runner.getAddon().getKey());
         remotePage.clickAddOnLink();
 
         RemoteDialogOpeningPage dialogOpeningPage = bindDialogOpeningPage(ModuleKeyUtils.addonAndModuleKey(runner.getAddon().getKey(), pageKey));
         RemoteCloseDialogPage closeDialogPage = bindCloseDialogPage(dialogOpeningPage, moduleKey);
 
-        assertThatTheDialogHasTheCorrectProperties(closeDialogPage);
+        assertThatTheDialogHasTheCorrectProperties(closeDialogPage, user);
         assertEquals("test dialog close data", closeTheDialog(dialogOpeningPage, closeDialogPage));
     }
 
@@ -239,13 +240,13 @@ public class TestDialog extends MultiProductWebDriverTestBase
         return dialogOpeningPage.waitForValue("dialog-close-data");
     }
 
-    private void assertThatTheDialogHasTheCorrectProperties(RemoteCloseDialogPage closeDialogPage)
+    private void assertThatTheDialogHasTheCorrectProperties(RemoteCloseDialogPage closeDialogPage, TestUser user)
     {
         // check the dimensions are the same as those in the js (mustache file)
         assertThat(closeDialogPage.getIFrameSize().getWidth(), is(231));
         assertThat(closeDialogPage.getIFrameSize().getHeight(), is(356));
         assertTrue(closeDialogPage.getFromQueryString("ui-params").length() > 0);
-        assertThat(closeDialogPage.getFromQueryString("user_id"), is("admin"));
+        assertThat(closeDialogPage.getFromQueryString("user_id"), is(user.getUsername()));
         verifyIframeURLHasVersionNumber(closeDialogPage);
     }
 
