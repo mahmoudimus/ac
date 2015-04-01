@@ -41,6 +41,7 @@ import javax.annotation.Nonnull;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -77,6 +78,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
 
     private static ConnectRunner runner;
 
+    private long lastIssuedAtTime;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -302,55 +304,33 @@ public class TestDialog extends MultiProductWebDriverTestBase
         verifyIframeURLHasVersionNumber(dialog);
     }
 
+    /**
+     * Open the dialog twice and verify that the value of the iat claim, specified with second precision, is as expected.
+     */
     private void verifyJwtIssuedAtTimeForDialog(String moduleKey, String moduleName, final boolean isInlineDialog) throws JwtUnknownIssuerException, JwtParseException, JwtIssuerLacksSharedSecretException, JwtVerificationException
     {
         final JwtReaderFactory jwtReaderFactory = getJwtReaderFactory();
 
         RemotePluginAwarePage page = goToPageWithLink(moduleKey, moduleName);
 
-        clickAndVerifyIssuedAtTime(jwtReaderFactory, page, isInlineDialog);
-        clickAndVerifyIssuedAtTime(jwtReaderFactory, page, isInlineDialog); // clicking multiple times should result in a new JWT on subsequent clicks
-    }
-
-    private void sleepForAtLeast5Seconds()
-    {
-        sleepUntil(System.currentTimeMillis() + 5000);
-    }
-
-    private void sleepUntil(final long wakeTimeMillis)
-    {
-        final long millisToSleep = wakeTimeMillis - System.currentTimeMillis();
-
-        if (millisToSleep > 0)
-        {
-            try
-            {
-                Thread.sleep(millisToSleep);
-            }
-            catch (InterruptedException e)
-            {
-                sleepUntil(wakeTimeMillis);
-            }
-        }
-    }
-
-    private void clickAndVerifyIssuedAtTime(JwtReaderFactory jwtReaderFactory, RemotePluginAwarePage page, final boolean isInlineDialog) throws JwtUnknownIssuerException, JwtParseException, JwtIssuerLacksSharedSecretException, JwtVerificationException
-    {
-        final long timeBeforeClick = System.currentTimeMillis();
-        sleepForAtLeast5Seconds(); // because the JWT "iat" claim is specified in seconds there is no way to differentiate between "now" and "now + a few milliseconds"
+        // Checking the system time across two JVM's seems unreliable, so allow a considerable discrepancy
+        final long timeBeforeClick = System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(JwtConstants.TIME_CLAIM_LEEWAY_SECONDS);
         openAndCloseDialog(page, isInlineDialog);
-        verifyIssuedAtTime(jwtReaderFactory, timeBeforeClick);
+        verifyIssuedAtTime(jwtReaderFactory, newIssuedAtTimeClaimVerifier(timeBeforeClick));
+
+        openAndCloseDialog(page, isInlineDialog);
+        verifyIssuedAtTime(jwtReaderFactory, newIssuedAtTimeClaimVerifier(lastIssuedAtTime));
     }
 
-    private void verifyIssuedAtTime(JwtReaderFactory jwtReaderFactory, long timeBeforeClick) throws JwtUnknownIssuerException, JwtParseException, JwtIssuerLacksSharedSecretException, JwtVerificationException
+    private void verifyIssuedAtTime(JwtReaderFactory jwtReaderFactory, JwtClaimVerifier issuedAtTimeClaimVerifier) throws JwtUnknownIssuerException, JwtParseException, JwtIssuerLacksSharedSecretException, JwtVerificationException
     {
         final Map<String,String> params = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
         assertTrue("A JWT parameter should have been included in the request for dialog content", params.containsKey(JwtConstants.JWT_PARAM_NAME));
         final String jwt = params.get(JwtConstants.JWT_PARAM_NAME);
         final JwtReader jwtReader = jwtReaderFactory.getReader(jwt);
-        Map<String, JwtClaimVerifier> verifiers = new HashMap<String, JwtClaimVerifier>(1);
-        verifiers.put("iat", newIssuedAtTimeClaimVerifier(timeBeforeClick));
-        jwtReader.read(jwt, verifiers); // will throw if the issued-at-time fails verification
+        Map<String, JwtClaimVerifier> verifiers = new HashMap<>(1);
+        verifiers.put("iat", issuedAtTimeClaimVerifier);
+        jwtReader.readAndVerify(jwt, verifiers); // will throw if the issued-at-time fails verification
     }
 
     private RemotePluginAwarePage goToPageWithLink(String dashedModuleKey, String moduleName)
@@ -395,10 +375,10 @@ public class TestDialog extends MultiProductWebDriverTestBase
                 if (claim instanceof Date)
                 {
                     Date claimDate = (Date) claim;
-
-                    if (claimDate.getTime() < minimumIssueTime)
+                    lastIssuedAtTime = claimDate.getTime();
+                    if (lastIssuedAtTime < minimumIssueTime)
                     {
-                        throw new JwtInvalidClaimException(String.format("Expecting the issued-at claim to have a value greater than or equal to [%d] but it was [%d]", minimumIssueTime, claimDate.getTime()));
+                        throw new JwtInvalidClaimException(String.format("Expecting the issued-at claim to have a value greater than or equal to [%d] but it was [%d]", minimumIssueTime, lastIssuedAtTime));
                     }
                 }
                 else
