@@ -1,9 +1,3 @@
-WRM = {};
-WRM.data = {};
-WRM.data.claim = function() {
-    return {};
-};
-
 define(['ac/confluence/macro/autoconvert'], function(Autoconvert) {
 
    module("Autoconvert tests", {
@@ -14,13 +8,19 @@ define(['ac/confluence/macro/autoconvert'], function(Autoconvert) {
            tinymce.plugins.Autoconvert.autoConvert = {};
            tinymce.plugins.Autoconvert.autoConvert.addHandler = function() {};
            tinymce.plugins.Autoconvert.convertMacroToDom = function() {};
+
+           WRM = {};
+           WRM.data = {};
+           WRM.data.claim = function() {
+               return {};
+           };
        },
        teardown: function() {
 
        }
    });
 
-    test("Replace all", function() {
+    test("Replace all test", function() {
         var s = "aaaaabbb";
         var replaced = Autoconvert.replaceAll("a", "b", s);
         strictEqual(replaced, "bbbbbbbb", "Replace all should replace all a's with b's");
@@ -36,7 +36,7 @@ define(['ac/confluence/macro/autoconvert'], function(Autoconvert) {
         Autoconvert.factory.restore();
     });
 
-    test("factory test", function() {
+    test("wildcard combinations test", function() {
 
         // set up the autoconvert defs to test
         WRM.data.claim = function() {
@@ -46,7 +46,7 @@ define(['ac/confluence/macro/autoconvert'], function(Autoconvert) {
                     "urlParameter": "url"
                 },
                 "matcherBean":
-                    { "pattern": "http:/{}/example.com/" }
+                    { "pattern": "http://example.com/{}/{}/{}/{}/{}/{}" }
             };
 
             a2 = {
@@ -60,10 +60,90 @@ define(['ac/confluence/macro/autoconvert'], function(Autoconvert) {
             return [ a1, a2 ] ;
         };
 
-        // test the defined autoconverts
-        var spy = sinon.spy(tinymce.plugins.Autoconvert.autoConvert, "addHandler");
+        var handlerSpy = sinon.spy(tinymce.plugins.Autoconvert.autoConvert, "addHandler");
+        // var buildMacroSpy = sinon.spy(Autoconvert, "buildMacro");
         Autoconvert.registerAutoconvertHandlers();
-        ok(spy.calledTwice);
+        ok(handlerSpy.calledTwice);
+
+        // fire the internal paste?
+        // ok(buildMacroSpy.calledWith());
+
+    });
+
+    test("security tests", function() {
+
+        // set up the autoconvert defs to test
+        WRM.data.claim = function() {
+            a1 = {
+                "macroName": "macro a",
+                "autoconvert": {
+                    "urlParameter": "url"
+                },
+                "matcherBean":
+                { "pattern": "http://example.com/<script>alert('hi there')</script>" }
+            };
+
+            a2 = {
+                "macroName": "macro b",
+                "autoconvert": {
+                    "urlParameter": "url"
+                },
+                "matcherBean":
+                { "pattern": "http://(.*)" }
+            };
+
+            a3 = {
+                "macroName": "macro b",
+                "autoconvert": {
+                    "urlParameter": "url"
+                },
+                "matcherBean":
+                { "pattern": "http://^(\w+\d+)+a$" }
+            };
+            return [ a1, a2, a3 ] ;
+        };
+
+        var handlerSpy = sinon.spy(tinymce.plugins.Autoconvert.autoConvert, "addHandler");
+        // var buildMacroSpy = sinon.spy(Autoconvert, "buildMacro");
+        Autoconvert.registerAutoconvertHandlers();
+        ok(handlerSpy.calledThrice);
+
+        // fire the internal paste?
+        // ok(buildMacroSpy.calledWith());
+    });
+
+    test("greedy tests", function() {
+
+        // set up the autoconvert defs to test
+        WRM.data.claim = function() {
+            a1 = {
+                "macroName": "macro a",
+                "autoconvert": {
+                    "urlParameter": "url"
+                },
+                "matcherBean":
+                { "pattern": "http://{}" }
+            };
+
+            a2 = {
+                "macroName": "macro b",
+                "autoconvert": {
+                    "urlParameter": "url"
+                },
+                "matcherBean":
+                { "pattern": "{}" }
+            };
+
+            return [ a1, a2 ] ;
+        };
+
+        var handlerSpy = sinon.spy(tinymce.plugins.Autoconvert.autoConvert, "addHandler");
+        // var buildMacroSpy = sinon.spy(Autoconvert, "buildMacro");
+        Autoconvert.registerAutoconvertHandlers();
+        ok(handlerSpy.calledTwice);
+
+        // fire the internal paste?
+        // ok(buildMacroSpy.calledWith());
     });
 });
 
@@ -72,14 +152,3 @@ define(['ac/confluence/macro/autoconvert'], function(Autoconvert) {
 // "http:/{}/example.com/"
 // "http://example.com/{}{}{}/"
 // "http://example.com/{}{}"
-// "http://example.com/{}/{}/{}/{}/{}/{}"
-
-// To test: dangerous looking security ones
-// "alert('hi there')"
-// "'"
-// "(.*)"
-// "^(\w+\d+)+a$"
-
-// To test: super greedy ones
-// "http://{}"
-// "{}"
