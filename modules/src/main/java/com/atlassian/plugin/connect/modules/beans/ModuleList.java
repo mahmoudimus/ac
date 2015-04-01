@@ -267,6 +267,17 @@ public class ModuleList extends BaseModuleBean
     @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultBlueprintModuleProvider", products = {ProductFilter.CONFLUENCE})
     private List<BlueprintModuleBean> blueprints;
 
+    /**
+     * Definition of a content property index schema for an add-on. It allows extracting specific parts of the JSON
+     * documents stored as a content property values, and write them to a search index. Once stored,
+     * they can participate in a content search using CQL.
+     *
+     * @see <a href="https://developer.atlassian.com/display/CONFDEV/Content+Properties+in+the+REST+API">
+     *     developer.atlassian.com</a> for more details
+     */
+    @ConnectModule (value = "com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultContentPropertyModuleProvider", products = { ProductFilter.CONFLUENCE })
+    private List<ContentPropertyModuleBean> confluenceContentProperties;
+
     public ModuleList()
     {
         this.adminPages = newArrayList();
@@ -288,6 +299,7 @@ public class ModuleList extends BaseModuleBean
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
         this.webSections = newArrayList();
+        this.confluenceContentProperties = newArrayList();
     }
 
     public ModuleList(BaseModuleBeanBuilder builder)
@@ -369,6 +381,10 @@ public class ModuleList extends BaseModuleBean
         if (null == jiraReports)
         {
             this.jiraReports = newArrayList();
+        }
+        if (null == confluenceContentProperties)
+        {
+            this.confluenceContentProperties = newArrayList();
         }
     }
 
@@ -468,6 +484,11 @@ public class ModuleList extends BaseModuleBean
 
     public List<BlueprintModuleBean> getBlueprints() {
         return blueprints;
+    }
+
+    public List<ContentPropertyModuleBean> getConfluenceContentProperties()
+    {
+        return confluenceContentProperties;
     }
 
     // don't call super because BaseCapabilityBean has no data

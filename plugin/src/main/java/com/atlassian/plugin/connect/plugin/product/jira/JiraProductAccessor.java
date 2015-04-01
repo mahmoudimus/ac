@@ -1,8 +1,9 @@
 package com.atlassian.plugin.connect.plugin.product.jira;
 
+import java.util.Map;
+
 import com.atlassian.extras.api.Product;
 import com.atlassian.extras.api.ProductLicense;
-import com.atlassian.extras.api.jira.JiraLicense;
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.bc.license.JiraLicenseService;
 import com.atlassian.jira.license.LicenseDetails;
@@ -10,10 +11,10 @@ import com.atlassian.plugin.connect.modules.beans.JiraConditions;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.web.Condition;
-import com.google.common.collect.ImmutableMap;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Map;
+import com.google.common.collect.ImmutableMap;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
 public final class JiraProductAccessor implements ProductAccessor
