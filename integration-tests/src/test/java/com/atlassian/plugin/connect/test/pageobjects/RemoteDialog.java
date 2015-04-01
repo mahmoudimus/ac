@@ -125,8 +125,8 @@ public class RemoteDialog extends AbstractConnectIFrameComponent<RemoteDialog>
 
         try {
             Thread.sleep(300L);
-        } catch (InterruptedException var2) {
-            var2.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }
