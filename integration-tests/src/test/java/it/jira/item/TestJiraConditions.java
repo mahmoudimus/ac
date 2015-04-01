@@ -15,6 +15,7 @@ import hudson.plugins.jira.soap.RemoteIssue;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.condition.CheckUsernameConditionServlet;
 import it.servlet.condition.ParameterCapturingConditionServlet;
+import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 
 import org.junit.After;
@@ -40,19 +41,32 @@ public class TestJiraConditions extends JiraWebDriverTestBase
 {
     private static ConnectRunner runner;
 
-    private static final String ONLY_BETTY_WEBITEM = "only-betty";
-    private static final String BETTY_AND_BARNEY_WEBITEM = "betty-and-barney";
+    private static String ONLY_BETTY_WEBITEM = "only-betty";
+    private static String BETTY_AND_BARNEY_WEBITEM = "betty-and-barney";
     private static final String ADMIN_RIGHTS_WEBITEM = "admin-rights";
     private static final String CONTEXT_PARAMETERIZED_WEBITEM = "context-parameterized";
 
-    private static final String ONLY_BETTY_CONDITION_URL = "/onlyBettyCondition";
-    private static final String ONLY_BARNEY_CONDITION_URL = "/onlyBarneyCondition";
+    private static String ONLY_BETTY_CONDITION_URL = "/onlyBettyCondition";
+    private static String ONLY_BARNEY_CONDITION_URL = "/onlyBarneyCondition";
 
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
+
+    private static TestUser admin;
+    private static TestUser betty;
+    private static TestUser barney;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
+        admin = ConnectTestUserFactory.sysadmin(product);
+        betty = ConnectTestUserFactory.admin(product);
+        barney = ConnectTestUserFactory.basicUser(product);
+
+        ONLY_BETTY_WEBITEM = "only-" + betty.getDisplayName();
+        BETTY_AND_BARNEY_WEBITEM = betty.getDisplayName() + "-and-" + barney.getDisplayName();
+        ONLY_BETTY_CONDITION_URL = "/only" + betty.getDisplayName() + "Condition";
+        ONLY_BARNEY_CONDITION_URL = "/only" + barney.getDisplayName() + "Condition";
+
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .setAuthenticationToNone()
                 .addModules("webItems",
@@ -105,8 +119,8 @@ public class TestJiraConditions extends JiraWebDriverTestBase
                                     "?issueId={issue.id}&projectKey={project.key}").build()
                         )
                         .build())
-                .addRoute(ONLY_BARNEY_CONDITION_URL, new CheckUsernameConditionServlet(TestUser.BARNEY))
-                .addRoute(ONLY_BETTY_CONDITION_URL, new CheckUsernameConditionServlet(TestUser.BETTY))
+                .addRoute(ONLY_BARNEY_CONDITION_URL, new CheckUsernameConditionServlet(barney))
+                .addRoute(ONLY_BETTY_CONDITION_URL, new CheckUsernameConditionServlet(betty))
                 .addRoute(PARAMETER_CAPTURE_URL, PARAMETER_CAPTURING_SERVLET)
                 .start();
     }
@@ -129,7 +143,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void bettyCanSeeBettyWebItem()
     {
-        JiraViewProjectPage viewProjectPage = loginAndVisit(TestUser.BETTY, JiraViewProjectPage.class, project.getKey());
+        JiraViewProjectPage viewProjectPage = loginAndVisit(betty, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ONLY_BETTY_WEBITEM), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
     }
@@ -137,21 +151,21 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void barneyCannotSeeBettyWebItem()
     {
-        JiraViewProjectPage viewProjectPage = loginAndVisit(TestUser.BARNEY, JiraViewProjectPage.class, project.getKey());
+        JiraViewProjectPage viewProjectPage = loginAndVisit(barney, JiraViewProjectPage.class, project.getKey());
         assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(ONLY_BETTY_WEBITEM)));
     }
     
     @Test
     public void adminCannotSeeBettyWebItem()
     {
-        JiraViewProjectPage viewProjectPage = loginAndVisit(TestUser.ADMIN, JiraViewProjectPage.class, project.getKey());
+        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(ONLY_BETTY_WEBITEM)));
     }
 
     @Test
     public void bettyCanSeeBettyAndBarneyWebItem()
     {
-        JiraViewProjectPage viewProjectPage = loginAndVisit(TestUser.BETTY, JiraViewProjectPage.class, project.getKey());
+        JiraViewProjectPage viewProjectPage = loginAndVisit(betty, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(BETTY_AND_BARNEY_WEBITEM), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
     }
@@ -159,7 +173,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void barneyCanSeeBettyAndBarneyWebItem()
     {
-        JiraViewProjectPage viewProjectPage = loginAndVisit(TestUser.BARNEY, JiraViewProjectPage.class, project.getKey());
+        JiraViewProjectPage viewProjectPage = loginAndVisit(barney, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(BETTY_AND_BARNEY_WEBITEM), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
     }
@@ -167,14 +181,14 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void adminCannotSeeBettyAndBarneyWebItem()
     {
-        JiraViewProjectPage viewProjectPage = loginAndVisit(TestUser.ADMIN, JiraViewProjectPage.class, project.getKey());
+        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(BETTY_AND_BARNEY_WEBITEM)));
     }
 
     @Test
     public void bettyCanSeeAdminRightsWebItem()
     {
-        JiraViewProjectPage viewProjectPage = loginAndVisit(TestUser.BETTY, JiraViewProjectPage.class, project.getKey());
+        JiraViewProjectPage viewProjectPage = loginAndVisit(betty, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
     }
@@ -182,21 +196,21 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void barneyCannotSeeAdminRightsWebItem()
     {
-        JiraViewProjectPage viewProjectPage = loginAndVisit(TestUser.BARNEY, JiraViewProjectPage.class, project.getKey());
+        JiraViewProjectPage viewProjectPage = loginAndVisit(barney, JiraViewProjectPage.class, project.getKey());
         assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(ADMIN_RIGHTS_WEBITEM)));
     }
 
     @Test
     public void adminCanSeeAdminRightsWebItem()
     {
-        JiraViewProjectPage viewProjectPage = loginAndVisit(TestUser.ADMIN, JiraViewProjectPage.class, project.getKey());
+        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
     }
 
     private RemoteIssue navigateToJiraIssuePageAndVerifyParameterCapturingWebItem() throws Exception
     {
-        login(TestUser.ADMIN);
+        login(admin);
 
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Nought but a test.");
         JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey());
@@ -217,7 +231,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
         assertThat(conditionParams, hasEntry(equalTo("cp"), equalTo("/jira")));
         assertThat(conditionParams, hasEntry(equalTo("tz"), isTimeZone()));
         assertThat(conditionParams, hasEntry(equalTo("loc"), isLocale()));
-        assertThat(conditionParams, hasEntry(equalTo("user_id"), equalTo("admin")));
+        assertThat(conditionParams, hasEntry(equalTo("user_id"), equalTo(admin.getDisplayName())));
     }
 
     @Test
