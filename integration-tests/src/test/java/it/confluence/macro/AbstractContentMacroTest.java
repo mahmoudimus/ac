@@ -10,7 +10,6 @@ import com.atlassian.confluence.pageobjects.component.editor.toolbars.InsertDrop
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
 import com.atlassian.confluence.pageobjects.page.content.EditorPage;
-import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -21,16 +20,14 @@ import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroBrowserDialog;
-
+import it.confluence.ConfluenceRestClient;
+import it.confluence.ConfluenceWebDriverTestBase;
+import it.util.TestUser;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import org.slf4j.LoggerFactory;
-
-import it.confluence.ConfluenceRestClient;
-import it.confluence.ConfluenceWebDriverTestBase;
-import it.util.TestUser;
 import redstone.xmlrpc.XmlRpcFault;
 
 import java.net.MalformedURLException;
@@ -513,11 +510,6 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
                 .body(body, ContentRepresentation.STORAGE)
                 .build();
         return restClient.content().create(content).claim();
-    }
-
-    protected ViewPage save(EditorPage editorPage)
-    {
-        return editorPage.saveWithKeyboardShortcut();
     }
 
     protected void addCommentWithMacro(String pageId) throws MalformedURLException, XmlRpcFault
