@@ -1,17 +1,10 @@
 package it.util;
 
-
-
-import com.atlassian.confluence.test.ConfluenceBaseUrlSelector;
-import com.atlassian.confluence.test.api.model.person.UserWithDetails;
-import com.atlassian.confluence.test.rpc.RpcBaseResolver;
-import com.atlassian.confluence.test.rpc.VersionedRpcBaseResolver;
-import com.atlassian.confluence.test.rpc.api.ConfluenceRpcClient;
-import com.atlassian.confluence.test.usermanagement.DefaultDirectoryConfiguration;
-import com.atlassian.confluence.test.usermanagement.TestUserFactory;
-import com.atlassian.confluence.test.usermanagement.DefaultUserManager;
-
-
+import com.atlassian.confluence.it.ConfluenceBaseUrlSelector;
+import com.atlassian.confluence.it.User;
+import com.atlassian.confluence.it.usermanagement.DefaultDirectoryConfiguration;
+import com.atlassian.confluence.it.usermanagement.DefaultUserManagementHelper;
+import com.atlassian.confluence.it.rpc.ConfluenceRpc;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.pageobjects.TestedProduct;
@@ -20,21 +13,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ConnectTestUserFactory
 {
-    private static final TestUserFactory testUserFactory;
-    private static final DefaultUserManager userManager;
+    private static final DefaultUserManagementHelper userManager;
     
     private static final AtomicInteger userNameCounter = new AtomicInteger();
 
     static
     {
         ConfluenceBaseUrlSelector confluenceBaseUrlSelector = new ConfluenceBaseUrlSelector();
-        RpcBaseResolver versionedRpcBaseResolver = VersionedRpcBaseResolver.V1;
-        ConfluenceRpcClient confluenceRpcClient = new ConfluenceRpcClient(confluenceBaseUrlSelector, versionedRpcBaseResolver);
-        DefaultDirectoryConfiguration defaultDirectoryConfiguration = new DefaultDirectoryConfiguration(confluenceRpcClient);
-        userManager = new DefaultUserManager(confluenceRpcClient, defaultDirectoryConfiguration);
-        testUserFactory = new TestUserFactory(userManager);
+        ConfluenceRpc confluenceRpc = ConfluenceRpc.newInstance(confluenceBaseUrlSelector.getBaseUrl());
+        DefaultDirectoryConfiguration defaultDirectoryConfiguration = new DefaultDirectoryConfiguration();
+        userManager = new DefaultUserManagementHelper(confluenceRpc, defaultDirectoryConfiguration);
     }
-    
+
     public static TestUser sysadmin(TestedProduct product)
     {
         String username = "sysadmin-" + incrementCounter();
@@ -49,7 +39,7 @@ public class ConnectTestUserFactory
         }
         else
         {
-            userManager.createUser(new UserWithDetails(null, username, username, username, username + "@example.com"));
+            userManager.createUser(new User(username, username, username, username + "@example.com"));
             userManager.addUserToGroup(username, "confluence-users");
             userManager.addUserToGroup(username, "confluence-administrators");
             userManager.addUserToGroup(username, "confluence-developers");      // ??????
@@ -71,7 +61,7 @@ public class ConnectTestUserFactory
         }
         else
         {
-            userManager.createUser(new UserWithDetails(null, username, username, username, username + "@example.com"));
+            userManager.createUser(new User(username, username, username, username + "@example.com"));
             userManager.addUserToGroup(username, "confluence-users");
             userManager.addUserToGroup(username, "confluence-administrators");
         }
@@ -88,7 +78,7 @@ public class ConnectTestUserFactory
         }
         else 
         {
-            userManager.createUser(new UserWithDetails(null, username, username, username, username + "@example.com"));
+            userManager.createUser(new User(username, username, username, username + "@example.com"));
             userManager.addUserToGroup(username, "confluence-users");
         }
         return new TestUser(username);

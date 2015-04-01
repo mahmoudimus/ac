@@ -1,9 +1,11 @@
 package it.jira;
 
+import com.atlassian.confluence.it.TestUserFactory;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteHistoryGeneralPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
+import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -57,7 +59,7 @@ public class TestHistory extends JiraWebDriverTestBase
     @Test
     public void testHistoryPushState() throws MalformedURLException, URISyntaxException
     {
-        RemoteHistoryGeneralPage addonHistoryGeneralPage = loginAndVisit(TestUser.ADMIN, RemoteHistoryGeneralPage.class, PLUGIN_KEY, GENERAL_PAGE_KEY);
+        RemoteHistoryGeneralPage addonHistoryGeneralPage = loginAndVisit(ConnectTestUserFactory.sysadmin(product), RemoteHistoryGeneralPage.class, PLUGIN_KEY, GENERAL_PAGE_KEY);
 
         URI url = new URI(addonHistoryGeneralPage.hostUrl());
         assertThat(url.getPath(), is("/jira/plugins/servlet/ac/" + PLUGIN_KEY + "/" + GENERAL_PAGE_KEY));
@@ -71,7 +73,7 @@ public class TestHistory extends JiraWebDriverTestBase
     @Test
     public void testHistoryPopState() throws MalformedURLException, URISyntaxException
     {
-        RemoteHistoryGeneralPage addonHistoryGeneralPage = loginAndVisit(TestUser.ADMIN, RemoteHistoryGeneralPage.class, PLUGIN_KEY, GENERAL_PAGE_KEY);
+        RemoteHistoryGeneralPage addonHistoryGeneralPage = loginAndVisit(ConnectTestUserFactory.sysadmin(product), RemoteHistoryGeneralPage.class, PLUGIN_KEY, GENERAL_PAGE_KEY);
 
         addonHistoryGeneralPage.javascriptPushState();
         URI newUrl = new URI(addonHistoryGeneralPage.hostUrl());
@@ -85,7 +87,7 @@ public class TestHistory extends JiraWebDriverTestBase
     @Test
     public void testHistoryPopStateDoesNotRunOnPushState() throws MalformedURLException, URISyntaxException
     {
-        RemoteHistoryGeneralPage addonHistoryGeneralPage = loginAndVisit(TestUser.ADMIN, RemoteHistoryGeneralPage.class, PLUGIN_KEY, GENERAL_PAGE_KEY);
+        RemoteHistoryGeneralPage addonHistoryGeneralPage = loginAndVisit(ConnectTestUserFactory.sysadmin(product), RemoteHistoryGeneralPage.class, PLUGIN_KEY, GENERAL_PAGE_KEY);
 
         addonHistoryGeneralPage.javascriptPushState();
         addonHistoryGeneralPage.clearLog();
@@ -96,7 +98,7 @@ public class TestHistory extends JiraWebDriverTestBase
     @Test
     public void testHistoryPushForward() throws MalformedURLException, URISyntaxException
     {
-        RemoteHistoryGeneralPage addonHistoryGeneralPage = loginAndVisit(TestUser.ADMIN, RemoteHistoryGeneralPage.class, PLUGIN_KEY, GENERAL_PAGE_KEY);
+        RemoteHistoryGeneralPage addonHistoryGeneralPage = loginAndVisit(ConnectTestUserFactory.sysadmin(product), RemoteHistoryGeneralPage.class, PLUGIN_KEY, GENERAL_PAGE_KEY);
 
         addonHistoryGeneralPage.javascriptPushState();
         addonHistoryGeneralPage.javascriptPushState();
