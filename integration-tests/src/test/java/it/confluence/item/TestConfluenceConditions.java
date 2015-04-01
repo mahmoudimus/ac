@@ -1,5 +1,7 @@
 package it.confluence.item;
 
+import java.util.Map;
+
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -10,18 +12,17 @@ import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import com.google.common.base.Optional;
 
-import it.confluence.AbstractConfluenceWebDriverTest;
-import it.servlet.condition.CheckUsernameConditionServlet;
-import it.servlet.condition.ParameterCapturingConditionServlet;
-import it.util.TestUser;
+import com.google.common.base.Optional;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.Map;
+import it.confluence.ConfluenceWebDriverTestBase;
+import it.servlet.condition.CheckUsernameConditionServlet;
+import it.servlet.condition.ParameterCapturingConditionServlet;
+import it.util.TestUser;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -32,12 +33,16 @@ import static it.matcher.IsLong.isLong;
 import static it.matcher.ParamMatchers.isLocale;
 import static it.matcher.ParamMatchers.isTimeZone;
 import static it.matcher.ParamMatchers.isVersionNumber;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.both;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
-public class TestConfluenceConditions extends AbstractConfluenceWebDriverTest
+public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
 {
     private static ConnectRunner remotePlugin;
 

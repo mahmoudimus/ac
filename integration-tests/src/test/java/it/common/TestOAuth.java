@@ -1,22 +1,25 @@
 package it.common;
 
-import com.atlassian.plugin.connect.api.OAuth;
-import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.AbstractBrowserlessTest;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import com.atlassian.plugin.connect.api.OAuth;
+import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.server.ConnectRunner;
+
+import org.junit.Test;
+
+import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider.getTestedProduct;
 import static org.junit.Assert.assertEquals;
 
 @OAuth
-public class TestOAuth extends AbstractBrowserlessTest
+public class TestOAuth
 {
+    private final String baseUrl = getTestedProduct().getProductInstance().getBaseUrl();
+
     @Test
     public void testAuthorizeRequestWorksWithJsonDescriptor() throws Exception
     {

@@ -1,32 +1,36 @@
 
 package it.jira.iframe;
 
+import java.rmi.RemoteException;
+
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrationPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProfilePage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import hudson.plugins.jira.soap.RemoteIssue;
-import it.jira.JiraWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
-import it.util.TestUser;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.rmi.RemoteException;
+import hudson.plugins.jira.soap.RemoteIssue;
+import it.jira.JiraWebDriverTestBase;
+import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
 
 import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
+import static it.modules.ConnectAsserts.verifyIframeURLHasVersionNumber;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static it.util.TestUser.ADMIN;
 import static it.util.TestUser.BARNEY;
-import static it.modules.ConnectAsserts.verifyIframeURLHasVersionNumber;
-
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 /**
  * Test of remote web panels in JIRA.
@@ -47,7 +51,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        getProduct().quickLoginAsAdmin();
+        product.quickLoginAsAdmin();
 
         runner = new ConnectRunner(product)
                 .setAuthenticationToNone()
@@ -229,6 +233,11 @@ public final class TestWebPanel extends JiraWebDriverTestBase
         product.visit(JiraViewProjectPage.class, project.getKey());
 
         assertThat("AddOn web panel should NOT be present", connectPageOperations.existsWebPanel(getModuleKey(runner, WEB_PANEL_WITH_CONDITION_KEY)), is(false));
+    }
+
+    private String getModuleKey(ConnectRunner runner, String module)
+    {
+        return ModuleKeyUtils.addonAndModuleKey(runner.getAddon().getKey(), module);
     }
 }
 

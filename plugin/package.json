@@ -2,11 +2,16 @@
   "name": "atlassian-connect-plugin",
   "version": "1.0.0",
   "devDependencies": {
-    "karma": "0.10.2",
-    "karma-sinon": "0.0.1",
-    "karma-qunit": "0.1.1",
-    "karma-junit-reporter": "0.1.0",
-    "karma-coffee-preprocessor": "0.1",
+    "karma": "0.12.31",
+    "karma-chrome-launcher": "^0.1.7",
+    "karma-firefox-launcher": "^0.1.4",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "karma-sinon": "1.0.4",
+    "karma-qunit": "0.1.4",
+    "karma-junit-reporter": "0.2.2",
+    "karma-coffee-preprocessor": "0.2",
+    "karma-html2js-preprocessor": "~0.1",
+    "karma-requirejs": "~0.2.2",
     "npm-watch": "0.0.0"
   },
   "watch": {

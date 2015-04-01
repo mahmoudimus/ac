@@ -1,24 +1,28 @@
 package it.common.iframe;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.ConnectWebDriverTestBase;
-import it.modules.ConnectAsserts;
-import it.servlet.ConnectAppServlets;
-import it.util.TestUser;
+
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
+import it.common.MultiProductWebDriverTestBase;
+import it.modules.ConnectAsserts;
+import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
@@ -27,7 +31,7 @@ import static it.servlet.condition.ToggleableConditionServlet.toggleableConditio
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class AbstractPageTestBase extends ConnectWebDriverTestBase
+public class AbstractPageTestBase extends MultiProductWebDriverTestBase
 {
     protected static final String MY_AWESOME_PAGE = "My Awesome Page";
     protected static final String MY_AWESOME_PAGE_KEY = "my-awesome-page";
@@ -90,7 +94,6 @@ public class AbstractPageTestBase extends ConnectWebDriverTestBase
             throws MalformedURLException, URISyntaxException
     {
         login(TestUser.ADMIN);
-        connectPageOperations.dismissAnyAlerts();
 
         T page = product.visit(pageClass);
         revealLinkIfNecessary(page);

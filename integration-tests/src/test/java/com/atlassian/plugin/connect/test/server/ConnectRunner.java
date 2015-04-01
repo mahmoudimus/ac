@@ -1,5 +1,23 @@
 package com.atlassian.plugin.connect.test.server;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
+
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.plugin.connect.api.OAuth;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
@@ -13,18 +31,13 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.BaseUrlLocator;
 import com.atlassian.plugin.connect.test.Environment;
 import com.atlassian.plugin.connect.test.HttpUtils;
 import com.atlassian.plugin.connect.test.Utils;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
+
 import com.google.common.collect.ImmutableMap;
-import it.servlet.ConnectAppServlets;
-import it.servlet.ContextServlet;
-import it.servlet.HttpContextServlet;
-import it.servlet.InstallHandlerServlet;
-import it.servlet.condition.ToggleableConditionServlet;
-import net.oauth.signature.RSA_SHA1;
+
 import org.apache.commons.lang.NotImplementedException;
 import org.bouncycastle.openssl.PEMWriter;
 import org.eclipse.jetty.server.Server;
@@ -33,22 +46,12 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.junit.rules.TestRule;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.MediaType;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import it.servlet.ConnectAppServlets;
+import it.servlet.ContextServlet;
+import it.servlet.HttpContextServlet;
+import it.servlet.InstallHandlerServlet;
+import it.servlet.condition.ToggleableConditionServlet;
+import net.oauth.signature.RSA_SHA1;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
@@ -307,7 +310,7 @@ public class ConnectRunner
                 try
                 {
                     final String sharedSecret = checkNotNull(installHandlerServlet.getInstallPayload().getSharedSecret());
-                    final String jwt = AddonTestUtils.generateJwtSignature(HttpMethod.valueOf(method), uri, addonBuilder.getKey(), sharedSecret, BaseUrlLocator.getBaseUrl(), null);
+                    final String jwt = AddonTestUtils.generateJwtSignature(HttpMethod.valueOf(method), uri, addonBuilder.getKey(), sharedSecret, productBaseUrl, null);
                     connection.setRequestProperty("Authorization", "JWT " + jwt);
                 }
                 catch (UnsupportedEncodingException e)

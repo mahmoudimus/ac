@@ -1,5 +1,7 @@
 package it.confluence.macro;
 
+import java.net.MalformedURLException;
+
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.pageobjects.binder.PageBindingWaitException;
@@ -10,8 +12,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.confluence.AbstractConfluenceWebDriverTest;
-import it.util.TestUser;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,16 +20,17 @@ import org.jsoup.select.Elements;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import redstone.xmlrpc.XmlRpcFault;
 
-import java.net.MalformedURLException;
+import it.confluence.ConfluenceWebDriverTestBase;
+import it.util.TestUser;
+import redstone.xmlrpc.XmlRpcFault;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static it.servlet.ConnectAppServlets.echoQueryParametersServlet;
 import static org.junit.Assert.assertEquals;
 
-public class TestCompatibility extends AbstractConfluenceWebDriverTest
+public class TestCompatibility extends ConfluenceWebDriverTestBase
 {
     private static final String STORAGE_FORMAT = "<p>\n" +
             "<ac:structured-macro ac:name=\"map\"><ac:parameter ac:name=\"data\">macro data</ac:parameter></ac:structured-macro>\n" +
@@ -88,7 +90,7 @@ public class TestCompatibility extends AbstractConfluenceWebDriverTest
     @Test
     public void testAliasIsNotPersisted() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), ConfluenceWebDriverTestBase.TestSpace.DEMO);
         editorPage.setTitle(RandomStringUtils.randomAlphanumeric(8));
 
         try

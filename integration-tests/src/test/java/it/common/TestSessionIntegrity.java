@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
-import it.ConnectWebDriverTestBase;
+
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
 import it.util.JwtAuthorizationGenerator;
@@ -26,7 +26,7 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.n
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TestSessionIntegrity extends ConnectWebDriverTestBase
+public class TestSessionIntegrity extends MultiProductWebDriverTestBase
 {
     private static final String HTTP_GET = "GET";
 

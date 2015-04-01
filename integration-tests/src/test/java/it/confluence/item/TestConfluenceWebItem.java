@@ -1,5 +1,8 @@
 package it.confluence.item;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import com.atlassian.fugue.Pair;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
@@ -11,18 +14,18 @@ import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+
 import com.google.common.base.Optional;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.CheckUsernameConditionServlet;
 import it.util.TestUser;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import redstone.xmlrpc.XmlRpcFault;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -30,8 +33,14 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWe
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static it.matcher.IsInteger.isInteger;
 import static it.modules.ConnectAsserts.verifyStandardAddOnRelativeQueryParameters;
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 
 /**

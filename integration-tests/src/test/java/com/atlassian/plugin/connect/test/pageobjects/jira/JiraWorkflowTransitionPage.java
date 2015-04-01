@@ -1,6 +1,8 @@
 package com.atlassian.plugin.connect.test.pageobjects.jira;
 
-import com.atlassian.jira.pageobjects.pages.AbstractJiraPage;
+import com.atlassian.jira.pageobjects.pages.admin.workflow.AddWorkflowTransitionFunctionParamsPage;
+import com.atlassian.jira.pageobjects.pages.admin.workflow.AddWorkflowTransitionPostFunctionPage;
+import com.atlassian.jira.pageobjects.pages.admin.workflow.ViewWorkflowTransitionPage;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.ProductInstance;
 import com.atlassian.pageobjects.elements.query.TimedCondition;
@@ -15,12 +17,13 @@ import java.net.URLEncoder;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static com.atlassian.webdriver.utils.element.ElementConditions.isPresent;
 
-public class JiraWorkflowTransitionPage extends AbstractJiraPage {
+public class JiraWorkflowTransitionPage extends ViewWorkflowTransitionPage
+{
+
     private String workflowMode;
     private String workflowName;
-    private Integer workflowStep;
-    private Integer workflowTransition;
-
+    private String workflowStep;
+    private String workflowTransition;
 
     @Inject
     private com.atlassian.webdriver.AtlassianWebDriver driver;
@@ -31,16 +34,19 @@ public class JiraWorkflowTransitionPage extends AbstractJiraPage {
     @Inject
     private PageBinder pageBinder;
 
-    @Inject private WebDriverPoller poller;
+    @Inject
+    private WebDriverPoller poller;
 
-    public JiraWorkflowTransitionPage(String workflowMode, String workflowName, Integer workflowStep, Integer workflowTransition)
+    public JiraWorkflowTransitionPage(String workflowMode, String workflowName, String workflowStep, String workflowTransition)
     {
+        super(workflowMode, workflowName, workflowStep, workflowTransition);
+
         this.workflowMode = workflowMode;
         this.workflowName = workflowName;
         this.workflowStep = workflowStep;
         this.workflowTransition = workflowTransition;
-
     }
+
     @Override
     public TimedCondition isAt()
     {
@@ -49,10 +55,12 @@ public class JiraWorkflowTransitionPage extends AbstractJiraPage {
 
     public JiraWorkflowTransitionPage createOrEditDraft()
     {
-        if(Check.elementExists(By.id("create_draft_workflow"), driver))
+        if (Check.elementExists(By.id("create_draft_workflow"), driver))
         {
             driver.findElement(By.id("create_draft_workflow")).click();
-        } else {
+        }
+        else
+        {
             driver.findElement(By.id("view_draft_workflow")).click();
         }
         this.workflowMode = "draft";
@@ -64,27 +72,24 @@ public class JiraWorkflowTransitionPage extends AbstractJiraPage {
     public String getUrl()
     {
         String url = "";
-        try {
+        try
+        {
             url = "/secure/admin/workflows/ViewWorkflowTransition.jspa?workflowMode=" + workflowMode + "&workflowName=" + URLEncoder.encode(workflowName, "UTF-8") + "&workflowStep=" + workflowStep + "&workflowTransition=" + workflowTransition;
-        } catch (UnsupportedEncodingException e) {
+        }
+        catch (UnsupportedEncodingException e)
+        {
             e.printStackTrace();
         }
         return url;
-    };
+    }
 
-
-    public JiraAddWorkflowTransitionFunctionParamsPage addPostFunction(String addonKey, String moduleKey)
+    public JiraAddWorkflowTransitionFunctionParamsPage addPostFunction(String addonKey, String moduleKey, String postFunctionName)
     {
-
-        poller.waitUntil(isPresent(By.id("view_post_functions")), 5);
-        driver.findElement(By.id("view_post_functions")).click();
-
-        poller.waitUntil(isPresent(By.className("criteria-post-function-add")), 5);
-        driver.findElement(By.className("criteria-post-function-add")).click();
+        goToAddPostFunction();
 
         // Select post function and submit.
-        By radioButton  = By.id("com.atlassian.plugins.atlassian-connect-plugin:" + addonAndModuleKey(addonKey, moduleKey));
-        poller.waitUntil(isPresent(radioButton), 5);
+        By radioButton = By.id("com.atlassian.plugins.atlassian-connect-plugin:" + addonAndModuleKey(addonKey, moduleKey));
+        poller.waitUntil(isPresent(radioButton), 10);
         driver.findElement(radioButton).click();
         driver.findElement(By.id("add_submit")).click();
 
@@ -96,7 +101,7 @@ public class JiraWorkflowTransitionPage extends AbstractJiraPage {
     {
         poller.waitUntil(isPresent(By.id("view_post_functions")), 20);
         driver.findElement(By.id("view_post_functions")).click();
-        poller.waitUntil(isPresent(By.className("criteria-post-function-edit")), 5);
+        poller.waitUntil(isPresent(By.className("criteria-post-function-edit")), 10);
         driver.findElement(By.className("criteria-post-function-edit")).click();
         return pageBinder.bind(JiraAddWorkflowTransitionFunctionParamsPage.class, addonKey, moduleKey);
 

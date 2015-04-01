@@ -18,7 +18,7 @@ public class JiraAddWorkflowTransitionFunctionParamsPage extends ConnectAddOnEmb
 
     public void submitWorkflowParams()
     {
-        poller.waitUntil(ElementConditions.isPresent(By.id("add_submit")), 5);
+        poller.waitUntil(ElementConditions.isPresent(By.id("add_submit")), 10);
         driver.findElement(By.id("add_submit")).click();
     }
 }

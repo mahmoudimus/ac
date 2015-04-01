@@ -1,5 +1,7 @@
 package it.confluence.item;
 
+import java.net.MalformedURLException;
+
 import com.atlassian.confluence.pageobjects.component.menu.ConfluenceMenuItem;
 import com.atlassian.confluence.pageobjects.component.menu.ToolsMenu;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
@@ -7,14 +9,14 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.confluence.ConfluenceWebDriverTestBase;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import redstone.xmlrpc.XmlRpcFault;
 
-import java.net.MalformedURLException;
+import it.confluence.ConfluenceWebDriverTestBase;
+import redstone.xmlrpc.XmlRpcFault;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -80,7 +82,7 @@ public class TestWebSection extends ConfluenceWebDriverTestBase
     {
         final ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(ADMIN), "ds", "Page with web section", "some page content");
         final String pageId = pageData.getId();
-        
+
         ViewPage viewPage = loginAndVisit(ADMIN, ViewPage.class, pageId);
 
         ToolsMenu toolsMenu = viewPage.openToolsMenu();

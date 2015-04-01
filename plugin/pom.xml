@@ -729,9 +729,7 @@
                                 <productId>confluence</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>
-                                    com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct
-                                </testedProductClass>
+                                <testedProduct>confluence</testedProduct>
                             </systemProperties>
                             <excludes>
                                 <exclude>it/jira/*.java</exclude>
@@ -744,9 +742,7 @@
                                 <productId>jira</productId>
                             </productIds>
                             <systemProperties>
-                                <testedProductClass>
-                                    com.atlassian.jira.pageobjects.JiraTestedProduct
-                                </testedProductClass>
+                                <testedProduct>jira</testedProduct>
                             </systemProperties>
                             <excludes>
                                 <exclude>it/confluence/*.java</exclude>

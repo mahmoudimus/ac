@@ -5,11 +5,12 @@ import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
-import it.confluence.ConfluenceWebDriverTestBase;
-import it.util.TestUser;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import it.util.TestUser;
 
 import static com.atlassian.plugin.connect.test.webhook.WebHookTestServlet.runInJsonRunner;
 import static org.junit.Assert.assertNotNull;

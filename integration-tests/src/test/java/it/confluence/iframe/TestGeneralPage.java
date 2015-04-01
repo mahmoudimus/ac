@@ -1,5 +1,8 @@
 package it.confluence.iframe;
 
+import java.net.URI;
+import java.util.Map;
+
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
@@ -7,15 +10,18 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceGenera
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TestRule;
+
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.ParameterCapturingConditionServlet;
 import it.util.TestUser;
-import org.junit.*;
-import org.junit.rules.TestRule;
-
-import java.net.URI;
-import java.util.Map;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
@@ -24,8 +30,9 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndM
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
 import static it.modules.ConnectAsserts.verifyContainsStandardAddOnQueryParamters;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -133,29 +140,6 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
         assertThat(insufficientPermissionsPage.getErrorMessage(), containsString("My Awesome Page"));
     }
 
-    @Ignore("need tims fixes")
-    @Test
-    public void remoteConditionWithParamsIsCorrect() throws Exception
-    {
-        login(TestUser.ADMIN);
-
-        ConfluenceViewPage page = createAndVisitViewPage();
-        ConfluenceGeneralPage generalPage = product.getPageBinder().bind(ConfluenceGeneralPage.class, KEY_MY_CONTEXT_PAGE, CONTEXT_PAGE_NAME, true);
-
-        assertThat(generalPage.isRemotePluginLinkPresent(), is(true));
-
-        URI url = new URI(generalPage.getRemotePluginLinkHref());
-        assertThat(url.getPath(), is("/confluence/plugins/servlet/ac/my-plugin/" + KEY_MY_CONTEXT_PAGE));
-
-        ConnectAddOnEmbeddedTestPage addonContentsPage = generalPage.clickAddOnLink();
-
-        assertThat(addonContentsPage.isFullSize(), is(true));
-
-        Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
-
-        assertThat(conditionParams, hasEntry(equalTo("page_id"), equalTo(page.getPageId())));
-    }
-    
     private ConfluenceViewPage createAndVisitViewPage() throws Exception
     {
         ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(TestUser.ADMIN), SPACE, "A test page", "some page content");

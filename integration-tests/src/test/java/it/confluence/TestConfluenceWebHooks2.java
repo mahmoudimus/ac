@@ -1,26 +1,27 @@
 package it.confluence;
 
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
-import it.AbstractBrowserlessTest;
-import it.util.TestUser;
+
 import org.junit.Assert;
 import org.junit.Test;
 
+import it.util.TestUser;
+
 import static com.atlassian.fugue.Option.some;
+import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider.getConfluenceTestedProduct;
 import static com.atlassian.plugin.connect.test.webhook.WebHookTestServlet.runInJsonRunner;
 import static org.junit.Assert.assertNotNull;
 
-public class TestConfluenceWebHooks2 extends AbstractBrowserlessTest
+public class TestConfluenceWebHooks2
 {
+    private final String baseUrl = getConfluenceTestedProduct().getProductInstance().getBaseUrl();
     private ConfluenceOps confluenceOps;
 
     public TestConfluenceWebHooks2()
     {
-        super(FixedConfluenceTestedProduct.class);
         confluenceOps = new ConfluenceOps(baseUrl);
     }
 
