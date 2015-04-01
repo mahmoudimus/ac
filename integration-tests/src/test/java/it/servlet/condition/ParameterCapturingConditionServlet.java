@@ -51,11 +51,11 @@ public class ParameterCapturingConditionServlet extends HttpServlet
         paramsFromLastRequest = req.getParameterMap();
         Map<String,String> headers = new HashMap<String,String>();
 
-        for (Enumeration<String> e = req.getHeaderNames(); e.hasMoreElements();)
+        for (String name: Collections.list((Enumeration<String>)req.getHeaderNames()))
         {
-            String name = e.nextElement();
             headers.put(name, req.getHeader(name));
         }
+        
         headersFromLastRequest = headers;
 
         resp.setContentType("application/json");
