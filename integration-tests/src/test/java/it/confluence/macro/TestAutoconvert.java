@@ -120,28 +120,28 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
     @Test
     public void testAutoconvertDynamicMacroOnCreate() throws Exception
     {
-        EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
+        EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         pasteLinkAndMatch(editorPage, "dynamic-macro-with-autoconvert", "https://google.com/dynamic");
     }
 
     @Test
     public void testAutoconvertDynamicMacroWithTokenOnCreate() throws Exception
     {
-        EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
+        EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         pasteLinkAndMatch(editorPage, "dynamic-macro-with-autoconvert", "https://google.com/dynamic/variable");
     }
 
     @Test
     public void testAutoconvertStaticMacroOnCreate() throws Exception
     {
-        EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
+        EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         pasteLinkAndMatch(editorPage, "static-macro-with-autoconvert", "https://google.com/static");
     }
 
     @Test
     public void testAutoconvertStaticMacroWithTokenOnCreate() throws Exception
     {
-        EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
+        EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         pasteLinkAndMatch(editorPage, "static-macro-with-autoconvert", "https://google.com/static/variable");
     }
 
@@ -152,28 +152,28 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
     @Test
     public void testAutoconvertDynamicMacroOnEdit() throws Exception
     {
-        EditorPage editorPage = getNewSavedPageForEditing(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
+        EditorPage editorPage = getNewSavedPageForEditing(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         pasteLinkAndMatch(editorPage, "dynamic-macro-with-autoconvert", "https://google.com/dynamic");
     }
 
     @Test
     public void testAutoconvertDynamicMacroWithTokenOnEdit() throws Exception
     {
-        EditorPage editorPage = getNewSavedPageForEditing(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
+        EditorPage editorPage = getNewSavedPageForEditing(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         pasteLinkAndMatch(editorPage, "dynamic-macro-with-autoconvert", "https://google.com/dynamic/variable");
     }
 
     @Test
     public void testAutoconvertStaticMacroOnEdit() throws Exception
     {
-        EditorPage editorPage = getNewSavedPageForEditing(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
+        EditorPage editorPage = getNewSavedPageForEditing(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         pasteLinkAndMatch(editorPage, "static-macro-with-autoconvert", "https://google.com/static");
     }
 
     @Test
     public void testAutoconvertStaticMacroWithTokenOnEdit() throws Exception
     {
-        EditorPage editorPage = getNewSavedPageForEditing(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
+        EditorPage editorPage = getNewSavedPageForEditing(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         pasteLinkAndMatch(editorPage, "static-macro-with-autoconvert", "https://google.com/static/variable");
     }
 
@@ -184,14 +184,14 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
     @Test
     public void testAutoconvertPrefixNoMatch() throws Exception
     {
-        EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
+        EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         pasteLinkAndNoMatch(editorPage, "WontMatchhttps://google.com");
     }
 
     @Test
     public void testAutoconvertSuffixNoMatch() throws Exception
     {
-        EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
+        EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
         pasteLinkAndNoMatch(editorPage, "https://google.comwontmatch");
     }
 
