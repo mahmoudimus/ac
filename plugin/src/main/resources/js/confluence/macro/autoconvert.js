@@ -22,7 +22,7 @@
             return str.replace(new RegExp(find, 'g'), replace);
         };
 
-        var factory = function (autoconvertDef) {
+        var factory = function (autoconvertDef, callback) {
                 var macroName = autoconvertDef.macroName;
                 var urlParameter = autoconvertDef.autoconvert.urlParameter;
                 var pattern = autoconvertDef.matcherBean.pattern;
@@ -46,10 +46,7 @@
                             name: macroName,
                             params: params
                         };
-                        tinymce.plugins.Autoconvert.convertMacroToDom(macro, done, function(jqXGR, textStatus, errorThrown) {
-                            console.log("error converting macro [ "+macro.name+" ] to dom elements [ "+errorThrown+" ]");
-                            done()
-                        });
+                        callback(macro, done);
                     } else {
                         done();
                     }
@@ -63,10 +60,14 @@
             registerAutoconvertHandlers: function (autoconvertDefs,tinymce) {
                 if (autoconvertDefs) {
                     var numAutoconvertDefs = autoconvertDefs.length;
-                    console.log("found [ " + numAutoconvertDefs + " ] autoconvert definitions");
                     if (numAutoconvertDefs > 0) {
                         for (var i = 0; i < numAutoconvertDefs; i++) {
-                            tinymce.plugins.Autoconvert.autoConvert.addHandler(factory(autoconvertDefs[i]));
+                            tinymce.plugins.Autoconvert.autoConvert.addHandler(factory(autoconvertDefs[i], function(macro, done) {
+                                tinymce.plugins.Autoconvert.convertMacroToDom(macro, done, function(jqXHR, textStatus, errorThrown) {
+                                    console.log("error converting macro [ "+macro.name+" ] to dom elements [ "+errorThrown+" ]");
+                                    done()
+                                });
+                            }));
                         }
                     }
                 }
