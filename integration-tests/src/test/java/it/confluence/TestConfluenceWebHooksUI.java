@@ -21,11 +21,14 @@ public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase
     public static final String SEARCH_TERMS = "connect";
 
     private SearchResultPage searchResultPage;
+    
+    private TestUser user;
 
     @Before
     public void setupSearchPage() throws Exception
     {
-        searchResultPage = loginAndVisit(ConnectTestUserFactory.sysadmin(product), SearchResultPage.class);
+        user = ConnectTestUserFactory.sysadmin(product);
+        searchResultPage = loginAndVisit(user, SearchResultPage.class);
     }
 
     private void search(String terms) throws Exception
@@ -89,7 +92,7 @@ public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase
             {
                 search(SEARCH_TERMS);
                 final WebHookBody body = waiter.waitForHook();
-                Assert.assertEquals("admin", body.find("user"));
+                Assert.assertEquals(user.getUsername(), body.find("user"));
             }
         });
     }
