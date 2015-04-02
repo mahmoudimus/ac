@@ -51,7 +51,7 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         DynamicContentMacroModuleBean dynamicMacroWithAutoconvert = newDynamicContentMacroModuleBean()
-                .withUrl("/dynamic-macro")
+                .withUrl("/dynamic-macro?url={url}")
                 .withKey("dynamic-macro-with-autoconvert")
                 .withName(new I18nProperty(DYNAMIC_MACRO_WITH_AUTOCONVERT, null))
                 .withParameters(
