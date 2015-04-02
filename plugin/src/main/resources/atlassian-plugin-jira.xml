@@ -18,7 +18,8 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-remote-condition</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-css</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-iframe-host-js</dependency>
-
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-extensions</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-user</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-workflow-post-function</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-events</dependency>
 
@@ -42,6 +43,8 @@
         <resource type="download" name="connect-dialog.js" location="/js/core/connect-host-dialog.js" />
         <resource type="download" name="connect-inline-dialog.js" location="/js/core/connect-host-inline-dialog.js" />
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-iframe-host-js</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <web-resource key="ap-user">
@@ -52,8 +55,6 @@
 
     <web-resource key="iframe-host-js">
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-extensions</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-user</dependency>
         <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
         <resource type="download" name="content-resolver.js" location="/js/iframe/host/content-resolver.js" />
         <dependency>com.atlassian.auiplugin:dialog2</dependency>
