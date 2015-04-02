@@ -51,14 +51,12 @@ public class TestJiraConditions extends JiraWebDriverTestBase
 
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
 
-    private static TestUser admin;
     private static TestUser betty;
     private static TestUser barney;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        admin = ConnectTestUserFactory.sysadmin(product);
         betty = ConnectTestUserFactory.admin(product);
         barney = ConnectTestUserFactory.basicUser(product);
 
@@ -158,6 +156,8 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void adminCannotSeeBettyWebItem()
     {
+        TestUser admin = ConnectTestUserFactory.admin(product);
+
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(ONLY_BETTY_WEBITEM)));
     }
@@ -181,6 +181,8 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void adminCannotSeeBettyAndBarneyWebItem()
     {
+        TestUser admin = ConnectTestUserFactory.admin(product);
+
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(BETTY_AND_BARNEY_WEBITEM)));
     }
@@ -203,14 +205,16 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void adminCanSeeAdminRightsWebItem()
     {
+        TestUser admin = ConnectTestUserFactory.admin(product);
+
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
     }
 
-    private RemoteIssue navigateToJiraIssuePageAndVerifyParameterCapturingWebItem() throws Exception
+    private RemoteIssue navigateToJiraIssuePageAndVerifyParameterCapturingWebItem(TestUser user) throws Exception
     {
-        login(admin);
+        login(user);
 
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Nought but a test.");
         JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey());
@@ -223,7 +227,8 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void standardParametersArePassedToConditions() throws Exception
     {
-        navigateToJiraIssuePageAndVerifyParameterCapturingWebItem();
+        TestUser user = ConnectTestUserFactory.admin(product);
+        navigateToJiraIssuePageAndVerifyParameterCapturingWebItem(user);
 
         Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
 
@@ -231,13 +236,14 @@ public class TestJiraConditions extends JiraWebDriverTestBase
         assertThat(conditionParams, hasEntry(equalTo("cp"), equalTo("/jira")));
         assertThat(conditionParams, hasEntry(equalTo("tz"), isTimeZone()));
         assertThat(conditionParams, hasEntry(equalTo("loc"), isLocale()));
-        assertThat(conditionParams, hasEntry(equalTo("user_id"), equalTo(admin.getDisplayName())));
+        assertThat(conditionParams, hasEntry(equalTo("user_id"), equalTo(user.getDisplayName())));
     }
 
     @Test
     public void contextParametersArePassedToConditions() throws Exception
     {
-        RemoteIssue issue = navigateToJiraIssuePageAndVerifyParameterCapturingWebItem();
+        TestUser user = ConnectTestUserFactory.admin(product);
+        RemoteIssue issue = navigateToJiraIssuePageAndVerifyParameterCapturingWebItem(user);
 
         Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
 
@@ -248,7 +254,8 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void versionNumberIsIncluded() throws Exception
     {
-        navigateToJiraIssuePageAndVerifyParameterCapturingWebItem();
+        TestUser user = ConnectTestUserFactory.admin(product);
+        navigateToJiraIssuePageAndVerifyParameterCapturingWebItem(user);
 
         String version = PARAMETER_CAPTURING_SERVLET.getHttpHeaderFromLastRequest(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION).get();
 
