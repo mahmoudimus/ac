@@ -1,11 +1,8 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
-import java.util.concurrent.TimeUnit;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectMacroBrowserDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
@@ -16,12 +13,8 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.inject.Inject;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,11 +138,6 @@ public class ConnectPageOperations
         return pageBinder.bind(LinkedRemoteContent.class, mode, webItemId, dropDownMenuId, pageKey);
     }
 
-    public ConnectMacroBrowserDialog findConnectMacroBrowserDialog()
-    {
-        return pageBinder.bind(ConnectMacroBrowserDialog.class);
-    }
-
     private LinkedRemoteContent findRemoteLinkedContent(String webItemId, Option<String> dropDownMenuId, String pageKey)
     {
         return findRemoteLinkedContent(ID, webItemId, dropDownMenuId, pageKey);
@@ -157,8 +145,13 @@ public class ConnectPageOperations
 
     public RemotePluginDialog findDialog(String moduleKey)
     {
+        return findDialog(moduleKey, RemotePluginDialog.class);
+    }
+
+    public <T extends RemotePluginDialog> T findDialog(String moduleKey, Class<T> dialogClass)
+    {
         ConnectAddOnEmbeddedTestPage dialogContent = pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, null, moduleKey, true);
-        return pageBinder.bind(RemotePluginDialog.class, dialogContent);
+        return pageBinder.bind(dialogClass, dialogContent);
     }
 
     public WebElement findLabel(String key)
@@ -193,17 +186,4 @@ public class ConnectPageOperations
     {
         return findElement(By.className(className));
     }
-
-   private void waitForDialogToClear()
-   {
-       new WebDriverPoller(driver, 5L, TimeUnit.SECONDS).waitUntil(new Function<WebDriver, Boolean>()
-       {
-           @Override
-           public Boolean apply(WebDriver webDriver)
-           {
-               return webDriver.findElements(By.className("aui-blanket")).size() == 0 ||
-                       !webDriver.findElement(By.className("aui-blanket")).isDisplayed();
-           }
-       });
-   }
 }

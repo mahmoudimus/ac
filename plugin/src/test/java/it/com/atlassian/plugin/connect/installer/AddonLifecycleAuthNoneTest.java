@@ -12,7 +12,7 @@ import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.atlassian.sal.api.user.UserManager;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
@@ -40,7 +40,7 @@ public class AddonLifecycleAuthNoneTest extends AbstractAddonLifecycleTest
         return false;
     }
 
-    @BeforeClass
+    @Before
     public void setup() throws Exception
     {
         testAuthenticator.authenticateUser("admin");
