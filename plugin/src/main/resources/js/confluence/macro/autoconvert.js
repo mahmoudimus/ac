@@ -29,7 +29,7 @@
 
                 // build a regex from the defined autoconvert pattern
                 pattern = escapePattern(pattern);
-                pattern = replaceAll('{}', '.*?', pattern);
+                pattern = replaceAll('{}', '[^/]*?', pattern);
                 pattern = "^" + pattern + "$";
 
                 return function (uri, node, done) {
