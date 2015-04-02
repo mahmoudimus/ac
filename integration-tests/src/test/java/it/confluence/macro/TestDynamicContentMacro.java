@@ -350,7 +350,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
             // necessary to prevent Confluence from showing a navigate away alert
             macroInBrowser.macro.select();
             RemotePluginDialog dialog = connectPageOperations.findDialog(CLIENT_SIDE_BODY_MACRO_KEY);
-            dialog.submit();
+            dialog.submitAndWaitUntilHidden();
             cancelEditor(editorPage);
         }
     }
@@ -390,7 +390,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         editorPage.setTitle(randomName("Macro Editor"));
         selectMacro(editorPage, EDITOR_MACRO_NAME, macroDialogSubmitter(EDITOR_MACRO_KEY));
 
-        save(editorPage);
+        editorPage.save();
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(EDITOR_MACRO_KEY);
         String content = renderedMacro.getIFrameElementText("footy");
 
@@ -429,7 +429,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         }
         finally
         {
-            dialog.cancel();
+            dialog.cancelAndWaitUntilHidden();
             cancelEditor(editorPage);
         }
     }
@@ -441,8 +441,8 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         Content page = createPage(randomName(CLIENT_SIDE_BODY_MACRO_KEY), body);
         EditContentPage editorPage = getProduct().loginAndEdit(ConnectTestUserFactory.sysadmin(product).confUser(), new Page(page.getId().asLong()));
         RemotePluginDialog dialog = connectPageOperations.editMacro(CLIENT_SIDE_BODY_MACRO_KEY);
-        dialog.submit();
-        save(editorPage);
+        dialog.submitAndWaitUntilHidden();
+        editorPage.save();
 
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(CLIENT_SIDE_BODY_MACRO_KEY);
         assertThat(renderedMacro.getIFrameElementText("body"), is("body: " + EDITED_MACRO_BODY));
@@ -457,8 +457,8 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         EditContentPage editorPage = getProduct().loginAndEdit(ConnectTestUserFactory.sysadmin(product).confUser(), new Page(page.getId().asLong()));
 
         RemotePluginDialog dialog = connectPageOperations.editMacro(CLIENT_SIDE_BODY_MACRO_SCRIPT_KEY);
-        dialog.submit();
-        save(editorPage);
+        dialog.submitAndWaitUntilHidden();
+        editorPage.save();
 
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(CLIENT_SIDE_BODY_MACRO_SCRIPT_KEY);
         assertThat(renderedMacro.getIFrameElementText("body"), is("body: <strong>must</strong> be removed:"));

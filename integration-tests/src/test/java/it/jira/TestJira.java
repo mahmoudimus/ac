@@ -106,9 +106,8 @@ public class TestJira extends JiraWebDriverTestBase
         RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, page);
 
         assertFalse(dialog.wasSubmitted());
-        assertEquals(false, dialog.submit());
-        assertTrue(dialog.wasSubmitted());
-        assertEquals(true, dialog.submit());
+        dialog.submitAndWaitUntilSubmitted();
+        dialog.submitAndWaitUntilHidden();
     }
 
     @Test
