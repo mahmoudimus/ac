@@ -94,8 +94,7 @@ Webhooks are available in the new JSON format by adding a `webhooks` json object
 
 To read more about webhooks:
 
- * [JIRA webhook module documentation](../modules/jira/webhook.html)
- * [Confluence webhook module documentation](../modules/confluence/webhook.html)
+ * [Webhook module documentation](../modules/common/webhook.html)
 
 ## Conditions
 
@@ -137,12 +136,12 @@ Not all modules have been directly mapped in the new descriptor. This means you 
 module configuration from this documentation and apply it to your own configuration. The
 [Getting Started guide](./getting-started.html) provides a good example of a `general-page` json descriptor.
 
-See the [Confluence Module List](../modules/confluence/index.html) and [JIRA Module List](../modules/jira/index.html)
+See [Confluence Modules](../modules/confluence/index.html) and [JIRA Modules](../modules/jira/index.html)
 for a full list of all supported modules.
 
 ### Dialog Page
 
-* The `dialog-page` module has been removed. It is replaced by the [`webItem`](../modules/jira/web-item.html) module with
+* The `dialog-page` module has been removed. It is replaced by the [`webItem`](../modules/common/web-item.html) module with
 the [`target`](../modules/fragment/web-item-target.html) attribute set to `dialog`.
 
 ### Confluence Macros
@@ -154,12 +153,12 @@ the [`target`](../modules/fragment/web-item-target.html) attribute set to `dialo
 ### Project Config Tabs and Panels
 
 * The `<project-config-tab>` XML element has been replaced by the [`jiraProjectAdminTabPanels`](../modules/jira/project-admin-tab-panel.html) module.
-* The `<project-config-panel>` XML element no longer exists. Instead, use a [`webPanels`](../modules/jira/web-panel.html)
+* The `<project-config-panel>` XML element no longer exists. Instead, use a [`webPanels`](../modules/common/web-panel.html)
 module with the `location` attribute set to `webpanels.admin.summary.left-panels` or `webpanels.admin.summary.right-panels`.
 
 ### Issue Panel Page
 
-* The `<issue-panel-page>` XML element no longer exists. Instead, use a [`webPanels`](../modules/jira/web-panel.html)
+* The `<issue-panel-page>` XML element no longer exists. Instead, use a [`webPanels`](../modules/common/web-panel.html)
 module with the `location` attribute set to `atl.jira.view.issue.right.context`.
 
 ### Documentation Links

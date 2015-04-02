@@ -19,7 +19,7 @@
   }
 
   function createConnectIframe(appendTo, clientCode){
-      var addonDomain = window.location.origin,
+      var baseUrl = window.location.origin + contextPath();
       addonKey = 'addon-key' + makeid(),
       moduleKey = 'module-key' + makeid(),
       container = $('<div />').attr('id', 'embedded-' + addonKey + '__' + moduleKey).addClass('iframecontainer');
@@ -33,7 +33,7 @@
           ukey: 'someuserkey',
           w: '',
           h: '',
-          src: addonDomain + '/assets/js/blank.html?xdm_e=' + encodeURIComponent(addonDomain) + '&xdm_c=channel-' + addonKey + '__' + moduleKey + '&cp=&lic=none',
+          src: baseUrl + '/assets/js/blank.html?xdm_e=' + encodeURIComponent(window.location.origin) + '&xdm_c=channel-' + addonKey + '__' + moduleKey + '&cp=&lic=none',
           productCtx: '{}',
           data: {},
           "timeZone":"Europe/London"
@@ -71,24 +71,24 @@
   context._AP.contentResolver = {
     resolveByParameters: function(options){
       var promise = jQuery.Deferred(function(defer){
-          var addonDomain = window.location.origin,
-          url = addonDomain + '/assets/js/blank.html?xdm_e=' + encodeURIComponent(addonDomain) + '&xdm_c=channel-' + options.addonKey + '__' + options.moduleKey + '&cp=&lic=none',
-          html = '<div id="embedded-' + options.addonKey + '__' + options.moduleKey + '" class="iframecontainer dialog-iframe-container">' + 
-          "<script>" + 
+          var baseUrl = window.location.origin + contextPath();
+          url = baseUrl + '/assets/js/blank.html?xdm_e=' + encodeURIComponent(window.location.origin) + '&xdm_c=channel-' + options.addonKey + '__' + options.moduleKey + '&cp=&lic=none',
+          html = '<div id="embedded-' + options.addonKey + '__' + options.moduleKey + '" class="iframecontainer dialog-iframe-container">' +
+          "<script>" +
           "_AP.create(" +
-          "{" + 
-              "ns: '" + options.addonKey + '__' + options.moduleKey + "'," + 
-              'key: "' + options.addonKey + '",' + 
-              'cp: "",' + 
-              "uid: 'someUserId'," + 
-              "ukey: 'someuserkey'," + 
-              "w: '100%'," + 
-              "h: '100%'," + 
-              "src: '" + url + "'," + 
-              "productCtx: '{}'," + 
+          "{" +
+              "ns: '" + options.addonKey + '__' + options.moduleKey + "'," +
+              'key: "' + options.addonKey + '",' +
+              'cp: "",' +
+              "uid: 'someUserId'," +
+              "ukey: 'someuserkey'," +
+              "w: '100%'," +
+              "h: '100%'," +
+              "src: '" + url + "'," +
+              "productCtx: '{}'," +
               "data: {}," +
               "uiParams: " + (JSON.stringify(options.uiParams) || "{}") +
-          '});' + 
+          '});' +
         "</script></div>";
       defer.resolve(html);
       }).promise();
