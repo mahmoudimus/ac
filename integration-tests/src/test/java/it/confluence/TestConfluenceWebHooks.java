@@ -84,7 +84,7 @@ public class TestConfluenceWebHooks extends ConfluenceWebDriverTestBase
             public void test(WebHookWaiter waiter) throws Exception
             {
                 String content = "<h1>I'm a test page</h1>";
-                confluenceOps.setPage(some(TestUser.ADMIN), "ds", "testxmlWebhooks", content);
+                confluenceOps.setPage(some(ConnectTestUserFactory.sysadmin(product)), "ds", "testxmlWebhooks", content);
                 final WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
                 assertThat(body.getConnectVersion(),isVersionNumber());

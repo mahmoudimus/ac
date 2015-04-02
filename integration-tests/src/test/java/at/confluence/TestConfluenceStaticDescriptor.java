@@ -35,7 +35,7 @@ public class TestConfluenceStaticDescriptor extends ConfluenceWebDriverTestBase
     @Test
     public void testAcDashboardWebItemIsPresent()
     {
-        loginAndVisit(TestUser.ADMIN, DashboardPage.class);
+        loginAndVisit(ConnectTestUserFactory.sysadmin(product), DashboardPage.class);
         connectPageOperations.findWebItem(WEB_ITEM_ID, Optional.<String>absent());
     }
 

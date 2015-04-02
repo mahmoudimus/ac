@@ -65,14 +65,14 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
     @Test
     public void testRemoteSimpleBlueprintVisibleInDialog() throws XmlRpcFault, IOException
     {
-        loginAndVisit(TestUser.BARNEY, DashboardPage.class).createDialog.click();
+        product.visit(DashboardPage.class).createDialog.click();
         product.getPageBinder().bind(CreateContentDialog.class).waitForBlueprint(completeKey);
     }
 
     @Test
     public void testRemoteSimpleBlueprintCanCreatePage() throws XmlRpcFault, IOException
     {
-        loginAndVisit(TestUser.BARNEY, DashboardPage.class).createDialog.click();
+        product.visit(DashboardPage.class).createDialog.click();
         assertTrue("new page includes blueprint content",
                 product.getPageBinder()
                         .bind(CreateContentDialog.class)

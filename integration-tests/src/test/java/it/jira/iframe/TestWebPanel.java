@@ -26,8 +26,6 @@ import it.util.TestUser;
 import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
 import static it.modules.ConnectAsserts.verifyIframeURLHasVersionNumber;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
-import static it.util.TestUser.ADMIN;
-import static it.util.TestUser.BARNEY;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
