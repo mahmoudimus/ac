@@ -179,9 +179,9 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testAbsoluteWebItem()
+    public void testBettyCanSeeAbsoluteWebItem()
     {
-        JiraViewProjectPage viewProjectPage = loginAndVisit(TestUser.ADMIN, JiraViewProjectPage.class, project.getKey());
+        JiraViewProjectPage viewProjectPage = loginAndVisit(betty, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ABSOLUTE_WEBITEM), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
 
