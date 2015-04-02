@@ -26,7 +26,7 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.google.gson.JsonParser;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -68,7 +68,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
         return true;
     }
 
-    @BeforeClass
+    @Before
     public void setup() throws Exception
     {
         testAuthenticator.authenticateUser("admin");

@@ -20,7 +20,7 @@ import com.google.gson.JsonParser;
 import it.com.atlassian.plugin.connect.TestAuthenticator;
 import it.com.atlassian.plugin.connect.TestConstants;
 import it.com.atlassian.plugin.connect.util.RequestUtil;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -50,7 +50,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
         requestUtil = new RequestUtil(applicationProperties);
     }
 
-    @BeforeClass
+    @Before
     public void setup() throws Exception
     {
         testAuthenticator.authenticateUser("admin");
