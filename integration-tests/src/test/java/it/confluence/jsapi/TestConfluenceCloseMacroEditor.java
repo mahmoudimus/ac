@@ -2,17 +2,15 @@ package it.confluence.jsapi;
 
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.RemoteMacroEditor;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.RemoteMacroEditorDialog;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.confluence.macro.AbstractContentMacroTest;
 import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 
@@ -58,16 +56,11 @@ public class TestConfluenceCloseMacroEditor extends ConfluenceWebDriverTestBase
             @Override
             public void run()
             {
-                RemoteMacroEditor remoteMacroEditor = findRemoteMacroEditor();
-                remoteMacroEditor.closeMacroEditor();
+                RemoteMacroEditorDialog remoteMacroEditor = connectPageOperations.findDialog(
+                        AbstractContentMacroTest.EDITOR_MACRO_KEY, RemoteMacroEditorDialog.class);
+                remoteMacroEditor.closeMacroEditorAndWaitUntilHidden();
             }
         });
         createPage.cancel();
-    }
-
-    private RemoteMacroEditor findRemoteMacroEditor()
-    {
-        String id = editorMacroModuleBean.getRawKey();
-        return connectPageOperations.findIFrameComponent(id, RemoteMacroEditor.class);
     }
 }

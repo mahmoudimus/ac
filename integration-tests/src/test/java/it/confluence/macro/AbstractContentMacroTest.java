@@ -7,7 +7,6 @@ import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
 import com.atlassian.confluence.pageobjects.page.content.EditorPage;
-import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -71,7 +70,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     private static final String IMAGE_PLACEHOLDER_MACRO_KEY = "image-placeholder-macro";
 
     public static final String EDITOR_MACRO_NAME = "Editor Macro";
-    protected static final String EDITOR_MACRO_KEY = "editor-macro";
+    public static final String EDITOR_MACRO_KEY = "editor-macro";
     protected static final String CUSTOM_TITLE_EDITOR_MACRO_NAME = "Custom Title Macro";
     protected static final String CUSTOM_TITLE_EDITOR_MACRO_KEY = "custom-title-macro";
     private static final String CUSTOM_TITLE = "Custom Title";
@@ -384,7 +383,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
                 {
                     if (dialog != null)
                     {
-                        dialog.cancel();
+                        dialog.cancelAndWaitUntilHidden();
                     }
                 }
             }
@@ -421,7 +420,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
                 {
                     if (dialog != null)
                     {
-                        dialog.cancel();
+                        dialog.cancelAndWaitUntilHidden();
                     }
                     cancelEditor(editorPage);
                 }
@@ -450,7 +449,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
                 {
                     if (dialog != null)
                     {
-                        dialog.cancel();
+                        dialog.cancelAndWaitUntilHidden();
                     }
                     cancelEditor(editorPage);
                 }
@@ -499,11 +498,6 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
                 .body(body, ContentRepresentation.STORAGE)
                 .build();
         return restClient.content().create(content).claim();
-    }
-
-    protected ViewPage save(EditorPage editorPage)
-    {
-        return editorPage.saveWithKeyboardShortcut();
     }
 
     protected void addCommentWithMacro(String pageId) throws MalformedURLException, XmlRpcFault

@@ -145,8 +145,13 @@ public class ConnectPageOperations
 
     public RemotePluginDialog findDialog(String moduleKey)
     {
+        return findDialog(moduleKey, RemotePluginDialog.class);
+    }
+
+    public <T extends RemotePluginDialog> T findDialog(String moduleKey, Class<T> dialogClass)
+    {
         ConnectAddOnEmbeddedTestPage dialogContent = pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, null, moduleKey, true);
-        return pageBinder.bind(RemotePluginDialog.class, dialogContent);
+        return pageBinder.bind(dialogClass, dialogContent);
     }
 
     public WebElement findLabel(String key)
