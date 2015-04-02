@@ -73,8 +73,8 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
                 .build();
 
         StaticContentMacroModuleBean staticMacroWithAutoconvert = newStaticContentMacroModuleBean()
-                .withUrl("/static-macro")
-                .withKey("static-macro-with-autoconvert?url={url}")
+                .withUrl("/static-macro?url={url}")
+                .withKey("static-macro-with-autoconvert")
                 .withName(new I18nProperty(STATIC_MACRO_WITH_AUTOCONVERT, null))
                 .withParameters(
                         newMacroParameterBean()
