@@ -46,7 +46,10 @@
                             name: macroName,
                             params: params
                         };
-                        tinymce.plugins.Autoconvert.convertMacroToDom(macro, done, done);
+                        tinymce.plugins.Autoconvert.convertMacroToDom(macro, done, function(jqXGR, textStatus, errorThrown) {
+                            console.log("error converting macro [ "+macro.name+" ] to dom elements [ "+errorThrown+" ]");
+                            done()
+                        });
                     } else {
                         done();
                     }
