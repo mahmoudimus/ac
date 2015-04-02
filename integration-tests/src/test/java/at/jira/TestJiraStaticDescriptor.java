@@ -5,6 +5,7 @@ import com.atlassian.test.categories.OnDemandAcceptanceTest;
 
 import com.google.common.base.Optional;
 
+import it.util.ConnectTestUserFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,15 +17,13 @@ import at.util.ExternalAddonInstaller;
 import it.jira.JiraWebDriverTestBase;
 import it.util.TestUser;
 
-import static it.util.TestUser.ADMIN;
-
 @Category (OnDemandAcceptanceTest.class)
 public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
 {
     private static final String WEB_ITEM_ID = "com.atlassian.connect.acceptance.test__opsbar-test-web-item";
 
     protected static final ExternalAddonInstaller externalAddonInstaller = new ExternalAddonInstaller(
-            product.getProductInstance().getBaseUrl(), TestUser.ADMIN);
+            product.getProductInstance().getBaseUrl(), ConnectTestUserFactory.sysadmin(product));
 
     private static final Logger log = LoggerFactory.getLogger(TestJiraStaticDescriptor.class);
 
@@ -38,10 +37,11 @@ public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
     @Test
     public void testAcActionWebItemIsPresent()
     {
-        IssueCreateResponse response = product.backdoor().issues().loginAs("admin")
+        TestUser user = ConnectTestUserFactory.sysadmin(product);
+        IssueCreateResponse response = product.backdoor().issues().loginAs(user.getUsername())
                 .createIssue(project.getKey(), "Atlassian Connect Web Panel Test Issue");
 
-        product.quickLogin(ADMIN.getUsername(), ADMIN.getPassword());
+        product.quickLogin(user.getUsername(), user.getPassword());
         product.goToViewIssue(response.key());
 
         connectPageOperations.findWebItem(WEB_ITEM_ID, Optional.<String>absent());

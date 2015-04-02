@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
 
+import it.util.ConnectTestUserFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,7 +16,7 @@ import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvide
 import static com.atlassian.plugin.connect.test.webhook.WebHookTestServlet.runInJsonRunner;
 import static org.junit.Assert.assertNotNull;
 
-public class TestConfluenceWebHooks2
+public class TestConfluenceWebHooks2 extends ConfluenceWebDriverTestBase
 {
     private final String baseUrl = getConfluenceTestedProduct().getProductInstance().getBaseUrl();
     private ConfluenceOps confluenceOps;
@@ -35,7 +36,7 @@ public class TestConfluenceWebHooks2
             {
                 final String testQuery = "test";
                 String results = String.valueOf(
-                        confluenceOps.search(some(TestUser.ADMIN), testQuery));
+                        confluenceOps.search(some(ConnectTestUserFactory.sysadmin(product)), testQuery));
                 final WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
                 Assert.assertEquals(testQuery, body.find("query"));
@@ -53,7 +54,7 @@ public class TestConfluenceWebHooks2
             public void test(WebHookWaiter waiter) throws Exception
             {
                 String content = "<h1>Love me</h1>";
-                ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(TestUser.ADMIN), "ds", "testWebhook", content);
+                ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(ConnectTestUserFactory.sysadmin(product)), "ds", "testWebhook", content);
                 final WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
                 Assert.assertEquals(pageData.getId(), body.find("page/id"));

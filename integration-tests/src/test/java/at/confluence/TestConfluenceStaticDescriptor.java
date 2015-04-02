@@ -5,6 +5,7 @@ import com.atlassian.test.categories.OnDemandAcceptanceTest;
 
 import com.google.common.base.Optional;
 
+import it.util.ConnectTestUserFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +23,7 @@ public class TestConfluenceStaticDescriptor extends ConfluenceWebDriverTestBase
     public static final String WEB_ITEM_ID = "com.atlassian.connect.acceptance.test__browse-test-web-item";
     private static final Logger log = LoggerFactory.getLogger(TestConfluenceStaticDescriptor.class);
     private static final ExternalAddonInstaller externalAddonInstaller =
-            new ExternalAddonInstaller(product.getProductInstance().getBaseUrl(), TestUser.ADMIN);
+            new ExternalAddonInstaller(product.getProductInstance().getBaseUrl(), ConnectTestUserFactory.sysadmin(product));
 
     @Before
     public void installAddon() throws Exception
