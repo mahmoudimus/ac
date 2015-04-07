@@ -28,32 +28,6 @@ define(['ac/confluence/macro/autoconvert'], function (Autoconvert) {
         strictEqual(replaced, "bbbbbbbb", "Replace all should replace all a's with b's");
     });
 
-    test("wildcard combinations test", function () {
-
-        // set up the autoconvert defs to test
-        var autoconvertDefs = [
-            {
-                "macroName": "macro a",
-                "autoconvert": {
-                    "urlParameter": "url"
-                },
-                "matcherBean": {"pattern": "http://example.com/{}/{}/{}/{}/{}/{}"}
-            },
-            {
-                "macroName": "macro b",
-                "autoconvert": {
-                    "urlParameter": "url"
-                },
-                "matcherBean": {"pattern": "http://example.com/{}{}{}/"}
-            }
-        ];
-
-        var handlerSpy = sinon.spy(tinymce.plugins.Autoconvert.autoConvert, "addHandler");
-        Autoconvert.registerAutoconvertHandlers(autoconvertDefs, tinymce);
-        ok(handlerSpy.calledTwice);
-
-    });
-
     // Helper method to check the round trip and matching of a pattern and a link
     // pattern - the url pattern to define in the definition
     // link - the link that is being pasted
@@ -77,7 +51,7 @@ define(['ac/confluence/macro/autoconvert'], function (Autoconvert) {
     // "http://example.com/{}{}{}/"
     // "http://example.com/{}{}"
 
-    test("round trip tests", function () {
+    test("wildcard combination tests", function () {
         quickRoundTripCheck("http://example.com/{}", "http://example.com/12345", true);
         quickRoundTripCheck("http://example.com/", "http://example.com/12345", false);
         quickRoundTripCheck("http://{}/example.com", "http://example.com", false);
@@ -87,7 +61,30 @@ define(['ac/confluence/macro/autoconvert'], function (Autoconvert) {
         quickRoundTripCheck("http://example.com/{}{}", "http://example.com/12345", true);
     });
 
-    test("security tests", function () {
+    test("handlers registered test", function () {
+        // set up the autoconvert defs to test
+        var autoconvertDefs = [
+            {
+                "macroName": "macro a",
+                "autoconvert": {
+                    "urlParameter": "url"
+                },
+                "matcherBean": {"pattern": "http://example.com/{}/{}/{}/{}/{}/{}"}
+            },
+            {
+                "macroName": "macro b",
+                "autoconvert": {
+                    "urlParameter": "url"
+                },
+                "matcherBean": {"pattern": "http://example.com/{}{}{}/"}
+            }
+        ];
+        var handlerSpy = sinon.spy(tinymce.plugins.Autoconvert.autoConvert, "addHandler");
+        Autoconvert.registerAutoconvertHandlers(autoconvertDefs, tinymce);
+        ok(handlerSpy.calledTwice);
+    });
+
+    test("security test", function () {
         // set up the autoconvert defs to test
         var autoconvertDefs = [
             {
@@ -96,17 +93,13 @@ define(['ac/confluence/macro/autoconvert'], function (Autoconvert) {
                     "urlParameter": "url"
                 },
                 "matcherBean": {"pattern": "http://example.com/<script>alert('hi there')</script>"}
-            },
-            {
-                "macroName": "macro b",
-                "autoconvert": {
-                    "urlParameter": "url"
-                },
-                "matcherBean": {"pattern": "http://^(\w+\d+)+a$"}
-            }];
+            }
+        ];
 
         var handlerSpy = sinon.spy(tinymce.plugins.Autoconvert.autoConvert, "addHandler");
         Autoconvert.registerAutoconvertHandlers(autoconvertDefs, tinymce);
-        ok(handlerSpy.calledThrice);
+        ok(handlerSpy.calledOnce);
+
+        quickRoundTripCheck("http://example.com/<script>alert('hi there')</script>", "http://example.com/<script>alert('hi there')</script>", true);
     });
 });
