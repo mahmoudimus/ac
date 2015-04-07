@@ -54,7 +54,7 @@ define(['ac/confluence/macro/autoconvert'], function (Autoconvert) {
 
     });
 
-    // Helper method to theck the round trip and matching of a pattern and a link
+    // Helper method to check the round trip and matching of a pattern and a link
     // pattern - the url pattern to define in the definition
     // link - the link that is being pasted
     // shouldMatch - true: the link should have matched, or false: if the link should not have matched
@@ -96,13 +96,8 @@ define(['ac/confluence/macro/autoconvert'], function (Autoconvert) {
                     "urlParameter": "url"
                 },
                 "matcherBean": {"pattern": "http://example.com/<script>alert('hi there')</script>"}
-            }, {
-                "macroName": "macro b",
-                "autoconvert": {
-                    "urlParameter": "url"
-                },
-                "matcherBean": {"pattern": "http://(.*)"}
-            }, {
+            },
+            {
                 "macroName": "macro b",
                 "autoconvert": {
                     "urlParameter": "url"
@@ -113,27 +108,5 @@ define(['ac/confluence/macro/autoconvert'], function (Autoconvert) {
         var handlerSpy = sinon.spy(tinymce.plugins.Autoconvert.autoConvert, "addHandler");
         Autoconvert.registerAutoconvertHandlers(autoconvertDefs, tinymce);
         ok(handlerSpy.calledThrice);
-    });
-
-    test("greedy tests", function () {
-        // set up the autoconvert defs to test
-        var autoconvertDefs = [
-            {
-                "macroName": "macro a",
-                "autoconvert": {
-                    "urlParameter": "url"
-                },
-                "matcherBean": {"pattern": "http://{}"}
-            }, {
-                "macroName": "macro b",
-                "autoconvert": {
-                    "urlParameter": "url"
-                },
-                "matcherBean": {"pattern": "{}"}
-            }];
-
-        var handlerSpy = sinon.spy(tinymce.plugins.Autoconvert.autoConvert, "addHandler");
-        Autoconvert.registerAutoconvertHandlers(autoconvertDefs, tinymce);
-        ok(handlerSpy.calledTwice);
     });
 });
