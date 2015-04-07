@@ -33,9 +33,11 @@ public class TestProfilePage extends AbstractPageTestBase
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
-        ConnectAddOnEmbeddedTestPage page = runCanClickOnPageLinkAndSeeAddonContents(ConfluenceUserProfilePage.class, Option.<String>none());
+        TestUser user = ConnectTestUserFactory.sysadmin(product);
+        login(user);
+        ConnectAddOnEmbeddedTestPage page = runCanClickOnPageLinkAndSeeAddonContents(ConfluenceUserProfilePage.class, Option.<String>none(), user);
         Map<String,String> queryParams = page.getIframeQueryParams();
-        assertThat(queryParams.get("profile_user"), is("admin"));
+        assertThat(queryParams.get("profile_user"), is(user.getUsername()));
         assertThat(queryParams.get("profile_key"), isNotBlank());
     }
 

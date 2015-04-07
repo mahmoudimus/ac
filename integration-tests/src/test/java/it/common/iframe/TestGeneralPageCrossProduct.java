@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.common.MultiProductWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
+import it.servlet.condition.CheckUsernameConditionServlet;
 import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 import org.hamcrest.Matchers;
@@ -35,10 +36,13 @@ import static org.junit.Assert.*;
 public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
 {
     private static ConnectRunner remotePlugin;
+    
+    private static TestUser betty;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
+        betty = ConnectTestUserFactory.admin(product);
         final String productContextPath = product.getProductInstance().getContextPath().toLowerCase();
         String globallyVisibleLocation = productContextPath.contains("jira")
             ? "system.top.navigation.bar"
@@ -74,7 +78,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
                                                 .withCondition("user_is_logged_in")
                                                 .build(),
                                         newSingleConditionBean()
-                                                .withCondition("/onlyBettyCondition")
+                                                .withCondition("/only" + betty.getDisplayName() + "Condition")
                                                 .build())
                                 .build(),
                         newPageBean()
@@ -92,7 +96,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
                 .addRoute("/rpg", ConnectAppServlets.apRequestServlet())
                 .addRoute("/amdTest", ConnectAppServlets.amdTestServlet())
                 .addRoute("/ob", ConnectAppServlets.apRequestServlet())
-                .addRoute("/onlyBettyCondition", new OnlyBettyConditionServlet())
+                .addRoute("/only" + betty.getDisplayName() + "Condition", new CheckUsernameConditionServlet(betty))
                 .addRoute("/my", ConnectAppServlets.helloWorldServlet())
                 .addRoute("/fsg", ConnectAppServlets.sizeToParentServlet())
                 .addScope(ScopeName.READ)
@@ -111,8 +115,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
     @Test
     public void testMyGeneralLoaded()
     {
-        TestUser user = ConnectTestUserFactory.admin(product);
-        login(user);
+        loginAndVisit(betty, HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneral", "Remotable Plugin app1 General", remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
@@ -120,8 +123,8 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
         assertEquals("Success", remotePluginTest.getMessage());
         assertTrue(remotePluginTest.getIframeQueryParams().containsKey("cp"));
         assertNotNull(remotePluginTest.getFullName());
-        assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString(user.getUsername()));
-        assertEquals(user.getUsername(), remotePluginTest.getUserId());
+        assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString(betty.getUsername()));
+        assertEquals(betty.getUsername(), remotePluginTest.getUserId());
         assertTrue(remotePluginTest.getLocale().startsWith("en-"));
 
         // timezone should be the same as the default one
@@ -133,12 +136,12 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
         assertTrue("OK".equals(statusText) || "success".equals(statusText));
         String contentType = remotePluginTest.getClientHttpContentType();
         assertTrue(contentType != null && contentType.startsWith("text/plain"));
-        assertEquals(user.getUsername(), remotePluginTest.getClientHttpData());
-        assertEquals(user.getUsername(), remotePluginTest.getClientHttpResponseText());
+        assertEquals(betty.getUsername(), remotePluginTest.getClientHttpData());
+        assertEquals(betty.getUsername(), remotePluginTest.getClientHttpResponseText());
 
         // media type tests of the RA.request API
-        assertEquals("{\"name\": \"" + user.getUsername() + "\"}", remotePluginTest.getClientHttpDataJson());
-        assertEquals("<user><name>" + user.getUsername() + "</name></user>", remotePluginTest.getClientHttpDataXml());
+        assertEquals("{\"name\": \"" + betty.getUsername() + "\"}", remotePluginTest.getClientHttpDataJson());
+        assertEquals("<user><name>" + betty.getUsername() + "</name></user>", remotePluginTest.getClientHttpDataXml());
     }
 
     @Test
@@ -152,8 +155,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
     @Test
     public void testRemoteConditionSucceeds()
     {
-        login(TestUser.BETTY);
-
+        loginAndVisit(betty, HomePage.class);
         GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty", "Only Betty", remotePlugin.getAddon().getKey());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
 
@@ -228,42 +230,5 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
 
         assertTrue(remotePluginTest.isFullSize());
-    }
-
-    public static final class OnlyBettyConditionServlet extends HttpServlet
-    {
-        private static final String BETTY = "betty";
-
-        private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-        @Override
-        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
-        {
-            final String loggedInUser = req.getParameter("user_id");
-            final boolean isBetty = isBetty(loggedInUser);
-
-            logger.debug("The logged in user is {}betty, their user key is '{}'", isBetty ? "" : "NOT ", loggedInUser);
-
-            final String json = getJson(isBetty);
-            logger.debug("Responding with the following json: {}", json);
-            sendJson(resp, json);
-        }
-
-        private void sendJson(HttpServletResponse resp, String json) throws IOException
-        {
-            resp.setContentType("application/json");
-            resp.getWriter().write(json);
-            resp.getWriter().close();
-        }
-
-        private String getJson(boolean shouldDisplay)
-        {
-            return "{\"shouldDisplay\" : " + valueOf(shouldDisplay) + "}";
-        }
-
-        private boolean isBetty(String loggedInUser)
-        {
-            return BETTY.equals(loggedInUser);
-        }
     }
 }

@@ -302,7 +302,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
 
     private ConfluenceEditPage visitEditPage() throws Exception
     {
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(TestUser.ADMIN), "ds", "Page with webpanel", "some page content");
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(ConnectTestUserFactory.basicUser(product)), "ds", "Page with webpanel", "some page content");
 
         return product.visit(ConfluenceEditPage.class, pageData.getId());
     }

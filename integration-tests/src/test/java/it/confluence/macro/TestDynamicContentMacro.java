@@ -205,7 +205,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroIsRendered() throws Exception
     {
-        ViewPage viewPage = getProduct().login(TestUser.ADMIN.confUser(), ViewPage.class, createPageWithStorageFormatMacro());
+        ViewPage viewPage = getProduct().login(ConnectTestUserFactory.basicUser(product).confUser(), ViewPage.class, createPageWithStorageFormatMacro());
         viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
         assertThat(renderedMacro.getIFrameElementText("hello-world-message"), is("Hello world"));
@@ -386,7 +386,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroEditorSavesParameters() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(ConnectTestUserFactory.basicUser(product).confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Macro Editor"));
         selectMacro(editorPage, EDITOR_MACRO_NAME, macroDialogSubmitter(EDITOR_MACRO_KEY));
 

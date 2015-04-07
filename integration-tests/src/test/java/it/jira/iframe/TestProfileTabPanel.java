@@ -3,6 +3,7 @@ package it.jira.iframe;
 import java.rmi.RemoteException;
 import java.util.Map;
 
+import com.atlassian.confluence.it.TestUserFactory;
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -83,6 +84,7 @@ public class TestProfileTabPanel extends JiraWebDriverTestBase
     @Test
     public void testProfileTabPanel() throws RemoteException
     {
+        TestUser user = ConnectTestUserFactory.sysadmin(product);
         String moduleKey = addonAndModuleKey(remotePlugin.getAddon().getKey(),RAW_MODULE_KEY);
         loginAndVisit(ConnectTestUserFactory.sysadmin(product), ViewProfilePage.class);
         LinkedRemoteContent tabPanel = connectPageOperations.findTabPanel("up_" + moduleKey + "_a",
@@ -91,7 +93,7 @@ public class TestProfileTabPanel extends JiraWebDriverTestBase
         assertThat(remotePage.getMessage(), equalTo("Success"));
 
         Map<String,String> conditionRequestParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
-        assertThat(conditionRequestParams, hasEntry("pUserName", "admin"));
+        assertThat(conditionRequestParams, hasEntry("pUserName", user.getUsername()));
         assertThat(conditionRequestParams, hasEntry(is("pUserKey"), isNotBlank()));
     }
 

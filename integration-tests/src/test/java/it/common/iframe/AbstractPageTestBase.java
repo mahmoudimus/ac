@@ -91,10 +91,10 @@ public class AbstractPageTestBase extends MultiProductWebDriverTestBase
         this.awesomePageModuleKey = addonAndModuleKey(pluginKey, MY_AWESOME_PAGE_KEY);
     }
 
-    protected <T extends Page> ConnectAddOnEmbeddedTestPage runCanClickOnPageLinkAndSeeAddonContents(Class<T> pageClass, Option<String> linkText)
+    protected <T extends Page> ConnectAddOnEmbeddedTestPage runCanClickOnPageLinkAndSeeAddonContents(Class<T> pageClass, Option<String> linkText, TestUser user)
             throws MalformedURLException, URISyntaxException
     {
-        login(ConnectTestUserFactory.sysadmin(product));
+        login(user);
 
         T page = product.visit(pageClass);
         revealLinkIfNecessary(page);
