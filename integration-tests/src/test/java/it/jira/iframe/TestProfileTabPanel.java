@@ -85,8 +85,8 @@ public class TestProfileTabPanel extends JiraWebDriverTestBase
     public void testProfileTabPanel() throws RemoteException
     {
         TestUser user = ConnectTestUserFactory.sysadmin(product);
+        loginAndVisit(user, ViewProfilePage.class);
         String moduleKey = addonAndModuleKey(remotePlugin.getAddon().getKey(),RAW_MODULE_KEY);
-        loginAndVisit(ConnectTestUserFactory.sysadmin(product), ViewProfilePage.class);
         LinkedRemoteContent tabPanel = connectPageOperations.findTabPanel("up_" + moduleKey + "_a",
                 Option.<String>none(),moduleKey);
         ConnectAddOnEmbeddedTestPage remotePage = tabPanel.click();

@@ -28,7 +28,7 @@ public class TestConfigurePage extends AbstractPageTestBase
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
-        runCanClickOnPageLinkAndSeeAddonContents(PluginManager.class, Option.some("Configure"), ConnectTestUserFactory.basicUser(product));
+        runCanClickOnPageLinkAndSeeAddonContents(PluginManager.class, Option.some("Configure"), ConnectTestUserFactory.admin(product));
     }
 
     @Override
