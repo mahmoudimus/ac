@@ -451,6 +451,15 @@ public class ConnectJsonExamples
                         .withPdf(createEmbeddedStaticMacroBean("/render-map-pdf"))
                         .withDefaultfallback(createEmbeddedStaticMacroBeanStatic())
                         .build())
+                .withAutoconvert(AutoconvertBean.newAutoconvertBean()
+                        .withUrlParameter("url")
+                        .withMatchers(MatcherBean.newMatcherBean()
+                                        .withPattern("https://www.example.com/maps/{}/{}")
+                                        .build(),
+                                MatcherBean.newMatcherBean()
+                                        .withPattern("https://www.example.com/map-editor/{}")
+                                        .build())
+                        .build())
                 .build();
 
         return gson.toJson(createModuleArray("dynamicContentMacros", macroModuleBean));
@@ -505,7 +514,15 @@ public class ConnectJsonExamples
                                 .withInsertTitle(new I18nProperty("Insert Map", ""))
                                 .withEditTitle(new I18nProperty("Edit Map", ""))
                                 .build()
-                )
+                ).withAutoconvert(AutoconvertBean.newAutoconvertBean()
+                        .withUrlParameter("url")
+                        .withMatchers(MatcherBean.newMatcherBean()
+                                        .withPattern("https://www.example.com/maps/{}/{}")
+                                        .build(),
+                                MatcherBean.newMatcherBean()
+                                        .withPattern("https://www.example.com/map-editor/{}")
+                                        .build())
+                        .build())
                 .build();
 
         return gson.toJson(createModuleArray("staticContentMacros", macroModuleBean));
