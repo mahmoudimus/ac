@@ -195,7 +195,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     @Test
     public void testWebPanelInProjectHeader()
     {
-        TestUser user = ConnectTestUserFactory.basicUser(product);
+        TestUser user = ConnectTestUserFactory.admin(product);
         login(user);
         JiraProjectAdministrationPage projectAdministrationPage = product.visit(JiraProjectAdministrationPage.class, project.getKey());
         RemoteWebPanel panel = projectAdministrationPage.findWebPanel(getModuleKey(runner, PROJECT_CONFIG_HEADER_KEY)).waitUntilContentLoaded();

@@ -74,7 +74,7 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
     @Test
     public void testCreateWorkflowPostFunction()
     {
-        JiraWorkflowTransitionPage workflowTransitionPage = loginAndVisit(ConnectTestUserFactory.basicUser(product),
+        JiraWorkflowTransitionPage workflowTransitionPage = loginAndVisit(ConnectTestUserFactory.admin(product),
                 JiraWorkflowTransitionPage.class, "live", WORKFLOW_NAME, WORKFLOW_STEP, WORKFLOW_TRANSITION).createOrEditDraft();
         JiraAddWorkflowTransitionFunctionParamsPage addonPage = workflowTransitionPage.addPostFunction(
                 "my-plugin", WORKFLOW_POST_FUNCTION_PAGE, WORKFLOW_POST_FUNCTION_NAME);
@@ -89,7 +89,7 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
     @Test
     public void testCreateInvalidWorkflowPostFunction()
     {
-        JiraWorkflowTransitionPage workflowTransitionPage = loginAndVisit(ConnectTestUserFactory.basicUser(product),
+        JiraWorkflowTransitionPage workflowTransitionPage = loginAndVisit(ConnectTestUserFactory.admin(product),
                 JiraWorkflowTransitionPage.class, "live", WORKFLOW_NAME, WORKFLOW_STEP, WORKFLOW_TRANSITION).createOrEditDraft();
         JiraAddWorkflowTransitionFunctionParamsPage addonPage = workflowTransitionPage.addPostFunction(
                 "my-plugin", WORKFLOW_POST_FUNCTION_INVALID_PAGE, WORKFLOW_POST_FUNCTION_INVALID_NAME);

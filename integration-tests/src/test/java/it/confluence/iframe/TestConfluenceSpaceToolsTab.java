@@ -77,7 +77,7 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
     @Test
     public void spaceToolsShowsConnectTab()
     {
-        SpaceTemplatesPage page = loginAndVisit(ConnectTestUserFactory.basicUser(product), SpaceTemplatesPage.class, "ts");
+        SpaceTemplatesPage page = loginAndVisit(ConnectTestUserFactory.admin(product), SpaceTemplatesPage.class, "ts");
 
         LinkedRemoteContent addonPage = connectPageOperations.findRemoteLinkedContent(RemoteWebItem.ItemMatchingMode.LINK_TEXT, "AC Space Tab", Option.<String>none(), addonAndModuleKey(remotePlugin.getAddon().getKey(),TAB_MODULE_KEY));
 

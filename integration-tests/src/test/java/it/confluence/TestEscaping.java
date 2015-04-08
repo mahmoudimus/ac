@@ -161,7 +161,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @Test
     public void testGeneralPage() throws Exception
     {
-        ConnectConfluenceAdminHomePage adminHomePage = loginAndVisit(ConnectTestUserFactory.basicUser(product), ConnectConfluenceAdminHomePage.class);
+        ConnectConfluenceAdminHomePage adminHomePage = loginAndVisit(ConnectTestUserFactory.admin(product), ConnectConfluenceAdminHomePage.class);
         adminHomePage.openHelpMenu();
         RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(GENERAL_PAGE_KEY), Optional.<String>absent());
         assertIsEscaped(webItem.getLinkText());
@@ -181,7 +181,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @Test
     public void testAdminPage() throws Exception
     {
-        loginAndVisit(ConnectTestUserFactory.basicUser(product), ConfluenceAdminHomePage.class);
+        loginAndVisit(ConnectTestUserFactory.admin(product), ConfluenceAdminHomePage.class);
         ConfluenceAdminPage adminPage = product.getPageBinder().bind(ConfluenceAdminPage.class, runner.getAddon().getKey(), ADMIN_PAGE_KEY);
         assertIsEscaped(adminPage.getRemotePluginLinkText());
     }
@@ -254,7 +254,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @Test
     public void testSpaceAdminTab() throws Exception
     {
-        loginAndVisit(ConnectTestUserFactory.basicUser(product), SpaceTemplatesPage.class, "ds");
+        loginAndVisit(ConnectTestUserFactory.admin(product), SpaceTemplatesPage.class, "ds");
         LinkedRemoteContent addonPage = connectPageOperations.findTabPanel(
                 getModuleKey(SPACE_TOOLS_TAB_KEY) + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX,
                 Option.<String>none(), getModuleKey(SPACE_TOOLS_TAB_KEY));

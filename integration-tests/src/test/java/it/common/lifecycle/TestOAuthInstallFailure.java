@@ -58,7 +58,7 @@ public class TestOAuthInstallFailure extends TestInstallFailure
     @Override
     public void assertPageLinkWorks() throws MalformedURLException, URISyntaxException, JwtVerificationException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtParseException
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(ConnectTestUserFactory.admin(product));
 
         PluginManager page = product.visit(PluginManager.class);
         revealLinkIfNecessary(page);
