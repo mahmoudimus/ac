@@ -72,7 +72,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     private static final String IMAGE_PLACEHOLDER_MACRO_KEY = "image-placeholder-macro";
 
     public static final String EDITOR_MACRO_NAME = "Editor Macro";
-    protected static final String EDITOR_MACRO_KEY = "editor-macro";
+    public static final String EDITOR_MACRO_KEY = "editor-macro";
     protected static final String CUSTOM_TITLE_EDITOR_MACRO_NAME = "Custom Title Macro";
     protected static final String CUSTOM_TITLE_EDITOR_MACRO_KEY = "custom-title-macro";
     private static final String CUSTOM_TITLE = "Custom Title";

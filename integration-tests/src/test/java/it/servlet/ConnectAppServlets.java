@@ -1,7 +1,7 @@
 package it.servlet;
 
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.RemoteMacroEditor;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.RemoteMacroEditorDialog;
 import com.atlassian.plugin.connect.test.pageobjects.jira.RemoteRefreshIssuePageWebPanel;
 import it.servlet.condition.ParameterCapturingServlet;
 import it.servlet.iframe.CustomMessageServlet;
@@ -186,7 +186,7 @@ public class ConnectAppServlets
 
     public static HttpServlet macroEditor()
     {
-        return wrapContextAwareServlet(new MustacheServlet(RemoteMacroEditor.TEMPLATE_PATH));
+        return wrapContextAwareServlet(new MustacheServlet(RemoteMacroEditorDialog.TEMPLATE_PATH));
     }
 
     public static HttpServlet blueprintTemplateServlet()

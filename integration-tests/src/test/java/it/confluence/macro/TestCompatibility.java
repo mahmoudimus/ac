@@ -1,10 +1,7 @@
 package it.confluence.macro;
 
-import java.net.MalformedURLException;
-
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
-import com.atlassian.pageobjects.binder.PageBindingWaitException;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
@@ -12,8 +9,8 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-
 import it.util.ConnectTestUserFactory;
+import it.confluence.ConfluenceWebDriverTestBase;
 import org.apache.commons.lang.RandomStringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -21,10 +18,9 @@ import org.jsoup.select.Elements;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import it.confluence.ConfluenceWebDriverTestBase;
-import it.util.TestUser;
 import redstone.xmlrpc.XmlRpcFault;
+
+import java.net.MalformedURLException;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
@@ -93,42 +89,14 @@ public class TestCompatibility extends ConfluenceWebDriverTestBase
     {
         CreatePage editorPage = getProduct().loginAndCreatePage(ConnectTestUserFactory.sysadmin(product).confUser(), ConfluenceWebDriverTestBase.TestSpace.DEMO);
         editorPage.setTitle(RandomStringUtils.randomAlphanumeric(8));
+        selectMacroAndSave(editorPage, MACRO_NAME_2);
+        ViewPage page = editorPage.save();
 
-        try
-        {
-            selectMacroAndSave(editorPage, MACRO_NAME_2);
-
-            ViewPage page;
-
-            try
-            {
-                // since Confluence 5.6-OD-37-042 this line has been quite flaky, passing and failing seemingly randomly
-                page = editorPage.saveWithKeyboardShortcut();
-            }
-            catch (PageBindingWaitException e)
-            {
-                // try again - it will probably work the second time around
-                page = editorPage.saveWithKeyboardShortcut();
-            }
-
-            String content = rpc.getPageContent(page.getPageId());
-            Document doc = Jsoup.parse(content);
-            Elements elements = doc.select("ac|structured-macro");
-            assertEquals("only one macro found", 1, elements.size());
-            assertEquals("name set correct (not alias)", "something-else", elements.get(0).attr("ac:name"));
-        }
-        finally
-        {
-            // clean up so that we don't get "org.openqa.selenium.UnhandledAlertException: unexpected alert open" in subsequent tests
-            try
-            {
-                editorPage.cancel();
-            }
-            catch (Throwable e)
-            {
-                // don't care
-            }
-        }
+        String content = rpc.getPageContent(page.getPageId());
+        Document doc = Jsoup.parse(content);
+        Elements elements = doc.select("ac|structured-macro");
+        assertEquals("only one macro found", 1, elements.size());
+        assertEquals("name set correct (not alias)", MACRO_KEY_2, elements.get(0).attr("ac:name"));
     }
 
     private void createAndVisitPage(String pageContent) throws MalformedURLException, XmlRpcFault
@@ -137,5 +105,4 @@ public class TestCompatibility extends ConfluenceWebDriverTestBase
                 TestSpace.DEMO.getKey(), "macro page", pageContent);
         product.visit(ConfluenceViewPage.class, pageData.getId());
     }
-
 }

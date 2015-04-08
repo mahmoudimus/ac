@@ -12,7 +12,6 @@ import com.google.common.collect.Collections2;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -197,7 +196,6 @@ public class ConnectPluginLifecycleTest
         assertStateAndModuleCount(singleModuleAddon, PluginState.ENABLED, 1, "third check");
     }
 
-    @Ignore("Re-enable when CONFDEV-31285 is fixed")
     @Test
     public void upgradingConnectEnablesAddon() throws Exception
     {
@@ -242,7 +240,6 @@ public class ConnectPluginLifecycleTest
         assertStateAndModuleCount(doubleModuleAddon, PluginState.ENABLED, 2, "third check");
     }
 
-    @Ignore("Re-enable when CONFDEV-31285 is fixed")
     @Test
     public void upgradingConnectEnablesMultipleAddons() throws Exception
     {
