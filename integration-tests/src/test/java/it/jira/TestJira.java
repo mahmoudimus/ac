@@ -93,7 +93,7 @@ public class TestJira extends JiraWebDriverTestBase
     @Test
     public void testLoadDialogFromIssueNavigatorActionCog() throws RemoteException
     {
-        TestUser user = ConnectTestUserFactory.sysadmin(product);
+        TestUser user = ConnectTestUserFactory.basicUser(product);
         login(user);
         // ensure one issue
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for dialog action cog test");
@@ -152,7 +152,7 @@ public class TestJira extends JiraWebDriverTestBase
     @Test
     public void testAdminPageInJiraSpecificLocation() throws Exception
     {
-        TestUser user = ConnectTestUserFactory.sysadmin(product);
+        TestUser user = ConnectTestUserFactory.admin(product);
         String addonKey = runner.getAddon().getKey();
         loginAndVisit(user, ViewGeneralConfigurationPage.class);
 
@@ -167,7 +167,7 @@ public class TestJira extends JiraWebDriverTestBase
     @Test
     public void testGeneralAdminPage() throws Exception
     {
-        TestUser user = ConnectTestUserFactory.sysadmin(product);
+        TestUser user = ConnectTestUserFactory.admin(product);
         String addonKey = runner.getAddon().getKey();
         loginAndVisit(user, ViewGeneralConfigurationPage.class);
 

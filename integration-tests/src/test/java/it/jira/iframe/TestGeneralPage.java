@@ -100,7 +100,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
-        loginAndVisit(ConnectTestUserFactory.sysadmin(product), JiraViewProjectPage.class, project.getKey());
+        loginAndVisit(ConnectTestUserFactory.basicUser(product), JiraViewProjectPage.class, project.getKey());
 
         JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, KEY_MY_AWESOME_PAGE, PAGE_NAME, addonKey);
 
@@ -122,7 +122,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
     @Test
     public void pageIsNotAccessibleWithFalseCondition()
     {
-        loginAndVisit(ConnectTestUserFactory.sysadmin(product), HomePage.class);
+        loginAndVisit(ConnectTestUserFactory.basicUser(product), HomePage.class);
 
         // web item should be displayed
         assertThat("Expected web-item for page to be present", connectPageOperations.existsWebItem(awesomePageModuleKey), is(true));
@@ -143,7 +143,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
     @Test
     public void remoteConditionWithParamsIsCorrect() throws Exception
     {
-        loginAndVisit(ConnectTestUserFactory.sysadmin(product), HomePage.class);
+        loginAndVisit(ConnectTestUserFactory.basicUser(product), HomePage.class);
 
         remotePlugin.setToggleableConditionShouldDisplay(false);
         

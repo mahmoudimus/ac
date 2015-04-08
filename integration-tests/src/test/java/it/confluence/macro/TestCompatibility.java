@@ -77,7 +77,7 @@ public class TestCompatibility extends ConfluenceWebDriverTestBase
     @Test
     public void macroIsRendered() throws Exception
     {
-        login(ConnectTestUserFactory.sysadmin(product));
+        login(ConnectTestUserFactory.basicUser(product));
         createAndVisitPage(STORAGE_FORMAT);
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(MACRO_KEY);
         String macroParameter = renderedMacro.getIFrameElementText("data");
@@ -87,7 +87,7 @@ public class TestCompatibility extends ConfluenceWebDriverTestBase
     @Test
     public void testAliasIsNotPersisted() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(ConnectTestUserFactory.sysadmin(product).confUser(), ConfluenceWebDriverTestBase.TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(ConnectTestUserFactory.basicUser(product).confUser(), ConfluenceWebDriverTestBase.TestSpace.DEMO);
         editorPage.setTitle(RandomStringUtils.randomAlphanumeric(8));
         selectMacroAndSave(editorPage, MACRO_NAME_2);
         ViewPage page = editorPage.save();
@@ -101,7 +101,7 @@ public class TestCompatibility extends ConfluenceWebDriverTestBase
 
     private void createAndVisitPage(String pageContent) throws MalformedURLException, XmlRpcFault
     {
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(ConnectTestUserFactory.sysadmin(product)),
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(ConnectTestUserFactory.basicUser(product)),
                 TestSpace.DEMO.getKey(), "macro page", pageContent);
         product.visit(ConfluenceViewPage.class, pageData.getId());
     }

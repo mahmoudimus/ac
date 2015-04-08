@@ -89,7 +89,7 @@ public class TestWebSection extends JiraWebDriverTestBase
     @Test
     public void testWebItemFoundWithinWebSection()
     {
-        loginAndVisit(ConnectTestUserFactory.sysadmin(product), JiraViewProjectPage.class, project.getKey());
+        loginAndVisit(ConnectTestUserFactory.basicUser(product), JiraViewProjectPage.class, project.getKey());
 
         AddonDropdownMenu dropdown = connectPageOperations.getPageBinder().bind(AddonDropdownMenu.class, By.id(addonAndModuleKey(PLUGIN_KEY, HEADER_WEB_ITEM_ID)), By.id(addonAndModuleKey(PLUGIN_KEY, DROPDOWN_CONTENT_ID)));
 

@@ -23,7 +23,7 @@ public class TestConfluenceStaticDescriptor extends ConfluenceWebDriverTestBase
     public static final String WEB_ITEM_ID = "com.atlassian.connect.acceptance.test__browse-test-web-item";
     private static final Logger log = LoggerFactory.getLogger(TestConfluenceStaticDescriptor.class);
     private static final ExternalAddonInstaller externalAddonInstaller =
-            new ExternalAddonInstaller(product.getProductInstance().getBaseUrl(), ConnectTestUserFactory.sysadmin(product));
+            new ExternalAddonInstaller(product.getProductInstance().getBaseUrl(), ConnectTestUserFactory.admin(product));
 
     @Before
     public void installAddon() throws Exception
@@ -35,7 +35,7 @@ public class TestConfluenceStaticDescriptor extends ConfluenceWebDriverTestBase
     @Test
     public void testAcDashboardWebItemIsPresent()
     {
-        loginAndVisit(ConnectTestUserFactory.sysadmin(product), DashboardPage.class);
+        loginAndVisit(ConnectTestUserFactory.basicUser(product), DashboardPage.class);
         connectPageOperations.findWebItem(WEB_ITEM_ID, Optional.<String>absent());
     }
 

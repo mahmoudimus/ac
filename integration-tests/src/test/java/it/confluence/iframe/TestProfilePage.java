@@ -33,7 +33,7 @@ public class TestProfilePage extends AbstractPageTestBase
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
-        TestUser user = ConnectTestUserFactory.sysadmin(product);
+        TestUser user = ConnectTestUserFactory.basicUser(product);
         login(user);
         ConnectAddOnEmbeddedTestPage page = runCanClickOnPageLinkAndSeeAddonContents(ConfluenceUserProfilePage.class, Option.<String>none(), user);
         Map<String,String> queryParams = page.getIframeQueryParams();
@@ -47,7 +47,7 @@ public class TestProfilePage extends AbstractPageTestBase
         runner.setToggleableConditionShouldDisplay(false);
 
         // web item should not be displayed
-        loginAndVisit(ConnectTestUserFactory.sysadmin(product), ConfluenceUserProfilePage.class);
+        loginAndVisit(ConnectTestUserFactory.basicUser(product), ConfluenceUserProfilePage.class);
         assertThat("Expected web-item for page to NOT be present", connectPageOperations
                 .existsWebItem(MY_AWESOME_PAGE_KEY), is(false));
 

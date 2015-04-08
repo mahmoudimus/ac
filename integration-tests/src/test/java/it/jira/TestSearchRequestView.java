@@ -71,7 +71,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     @Test
     public void verifyEntryIsPresentWhenLoggedIn() throws Exception
     {
-        login(ConnectTestUserFactory.sysadmin(product));
+        login(ConnectTestUserFactory.basicUser(product));
         IssueNavigatorViewsMenu.ViewEntry entry = findSearchRequestViewEntry();
 
         assertThat(entry.isPresent(), is(true));
@@ -88,7 +88,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     @Test
     public void verifyEntryIsNotPresentWhenAddOnConditionIsFalse() throws Exception
     {
-        login(ConnectTestUserFactory.sysadmin(product));
+        login(ConnectTestUserFactory.basicUser(product));
 
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
@@ -99,7 +99,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     @Test
     public void verifyIssueKeyIsPartOfUrl() throws Exception
     {
-        login(ConnectTestUserFactory.sysadmin(product));
+        login(ConnectTestUserFactory.basicUser(product));
         RemoteIssue issue = createIssue();
         findSearchRequestViewEntry().click();
         NameValuePairs queryParameters = searchRequestViewServlet.waitForQueryParameters();
@@ -133,7 +133,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
 
     private NameValuePairs logInAndGetSearchRequestViewQueryParameters() throws Exception
     {
-        login(ConnectTestUserFactory.sysadmin(product));
+        login(ConnectTestUserFactory.basicUser(product));
         createIssue();
         findSearchRequestViewEntry().click();
         NameValuePairs queryParameters = searchRequestViewServlet.waitForQueryParameters();

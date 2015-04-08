@@ -137,7 +137,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroIsRendered() throws Exception
     {
-        ViewPage viewPage = getProduct().login(ConnectTestUserFactory.sysadmin(product).confUser(), ViewPage.class, createPageWithStorageFormatMacro());
+        ViewPage viewPage = getProduct().login(ConnectTestUserFactory.basicUser(product).confUser(), ViewPage.class, createPageWithStorageFormatMacro());
         String content = viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
         assertThat(content, endsWith("Storage Format Content"));
     }

@@ -84,7 +84,7 @@ public class TestProfileTabPanel extends JiraWebDriverTestBase
     @Test
     public void testProfileTabPanel() throws RemoteException
     {
-        TestUser user = ConnectTestUserFactory.sysadmin(product);
+        TestUser user = ConnectTestUserFactory.basicUser(product);
         loginAndVisit(user, ViewProfilePage.class);
         String moduleKey = addonAndModuleKey(remotePlugin.getAddon().getKey(),RAW_MODULE_KEY);
         LinkedRemoteContent tabPanel = connectPageOperations.findTabPanel("up_" + moduleKey + "_a",
@@ -100,7 +100,7 @@ public class TestProfileTabPanel extends JiraWebDriverTestBase
     @Test
     public void tabIsNotAccessibleWithFalseCondition() throws RemoteException
     {
-        login(ConnectTestUserFactory.sysadmin(product));
+        login(ConnectTestUserFactory.basicUser(product));
 
         remotePlugin.setToggleableConditionShouldDisplay(false);
         JiraViewProfilePage profilePage = product.visit(JiraViewProfilePage.class);

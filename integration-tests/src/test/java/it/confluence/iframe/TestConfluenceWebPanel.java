@@ -117,7 +117,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     @Before
     public void beforeEachTest()
     {
-        login(ConnectTestUserFactory.sysadmin(product));
+        login(ConnectTestUserFactory.basicUser(product));
     }
 
     @Test
@@ -279,7 +279,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
 
     private ConfluenceOps.ConfluencePageData createPage() throws MalformedURLException, XmlRpcFault
     {
-        return confluenceOps.setPage(some(ConnectTestUserFactory.sysadmin(product)), SPACE, "Page with webpanel", "some page content");
+        return confluenceOps.setPage(some(ConnectTestUserFactory.basicUser(product)), SPACE, "Page with webpanel", "some page content");
     }
 
     private static String px(int px)

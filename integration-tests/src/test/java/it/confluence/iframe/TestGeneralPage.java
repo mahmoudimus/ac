@@ -102,7 +102,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws Exception
     {
-        login(ConnectTestUserFactory.sysadmin(product));
+        login(ConnectTestUserFactory.basicUser(product));
 
         ConfluenceViewPage createdPage = createAndVisitViewPage();
         ConfluenceGeneralPage generalPage = product.getPageBinder().bind(ConfluenceGeneralPage.class, KEY_MY_AWESOME_PAGE, "My Awesome Page", true, addonKey);
@@ -129,7 +129,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
     {
         runner.setToggleableConditionShouldDisplay(false);
 
-        login(ConnectTestUserFactory.sysadmin(product));
+        login(ConnectTestUserFactory.basicUser(product));
 
         // web item should not be displayed
         createAndVisitViewPage();
@@ -143,7 +143,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
 
     private ConfluenceViewPage createAndVisitViewPage() throws Exception
     {
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(ConnectTestUserFactory.sysadmin(product)), SPACE, "A test page", "some page content");
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(ConnectTestUserFactory.basicUser(product)), SPACE, "A test page", "some page content");
         return product.visit(ConfluenceViewPage.class, pageData.getId());
     }
 

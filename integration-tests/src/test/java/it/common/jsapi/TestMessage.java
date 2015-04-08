@@ -58,7 +58,7 @@ public class TestMessage extends MultiProductWebDriverTestBase
     @Test
     public void testCreateInfoMessage() throws Exception
     {
-        loginAndVisit(ConnectTestUserFactory.sysadmin(product), HomePage.class);
+        loginAndVisit(ConnectTestUserFactory.basicUser(product), HomePage.class);
         GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, ADDON_GENERALPAGE, ADDON_GENERALPAGE_NAME, remotePlugin.getAddon().getKey());
         remotePage.clickAddOnLink();
         RemoteMessageGeneralPage remoteMessagePage = product.getPageBinder().bind(RemoteMessageGeneralPage.class, ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), ADDON_GENERALPAGE));

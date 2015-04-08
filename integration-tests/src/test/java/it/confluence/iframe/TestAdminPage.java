@@ -74,7 +74,7 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws Exception
     {
-        loginAndVisit(ConnectTestUserFactory.sysadmin(product), ConfluenceAdminHomePage.class);
+        loginAndVisit(ConnectTestUserFactory.admin(product), ConfluenceAdminHomePage.class);
 
         ConfluenceAdminPage adminPage = product.getPageBinder().bind(ConfluenceAdminPage.class, PLUGIN_KEY, PAGE_KEY);
 
@@ -104,7 +104,7 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
         // web item should not be displayed
-        ConnectConfluenceAdminHomePage adminPage = loginAndVisit(ConnectTestUserFactory.sysadmin(product), ConnectConfluenceAdminHomePage.class);
+        ConnectConfluenceAdminHomePage adminPage = loginAndVisit(ConnectTestUserFactory.admin(product), ConnectConfluenceAdminHomePage.class);
         assertThat("Expected web-item for page to NOT be present", adminPage.getWebItem(PAGE_KEY).isPresent(), is(false));
 
         // directly retrieving page should result in access denied

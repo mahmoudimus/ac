@@ -36,7 +36,7 @@ public class TestConfluenceWebHooks2 extends ConfluenceWebDriverTestBase
             {
                 final String testQuery = "test";
                 String results = String.valueOf(
-                        confluenceOps.search(some(ConnectTestUserFactory.sysadmin(product)), testQuery));
+                        confluenceOps.search(some(ConnectTestUserFactory.basicUser(product)), testQuery));
                 final WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
                 Assert.assertEquals(testQuery, body.find("query"));
@@ -54,7 +54,7 @@ public class TestConfluenceWebHooks2 extends ConfluenceWebDriverTestBase
             public void test(WebHookWaiter waiter) throws Exception
             {
                 String content = "<h1>Love me</h1>";
-                ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(ConnectTestUserFactory.sysadmin(product)), "ds", "testWebhook", content);
+                ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(ConnectTestUserFactory.basicUser(product)), "ds", "testWebhook", content);
                 final WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
                 Assert.assertEquals(pageData.getId(), body.find("page/id"));

@@ -11,22 +11,13 @@ import com.atlassian.jira.tests.TestBase;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.plugin.connect.test.helptips.HelpTipApiClientFactory;
 
+import java.rmi.RemoteException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ConnectTestUserFactory
 {
 
-    //private static final DefaultUserManagementHelper userManager;
-
     private static final AtomicInteger userNameCounter = new AtomicInteger();
-
-    static
-    {
-//        ConfluenceBaseUrlSelector confluenceBaseUrlSelector = new ConfluenceBaseUrlSelector();
-//        ConfluenceRpc confluenceRpc = ConfluenceRpc.newInstance(confluenceBaseUrlSelector.getBaseUrl());
-//        DefaultDirectoryConfiguration defaultDirectoryConfiguration = new DefaultDirectoryConfiguration();
-//        userManager = new DefaultUserManagementHelper(confluenceRpc, defaultDirectoryConfiguration);
-    }
 
     public static TestUser sysadmin(TestedProduct product)
     {
@@ -43,17 +34,24 @@ public class ConnectTestUserFactory
         return createTestUser(product, AuthLevel.BASIC_USER);
     }
     
-    private static String incrementCounter()
+    private static String incrementCounter(TestedProduct product)
     {
+        userNameCounter.compareAndSet(20, 0);
         return String.valueOf(userNameCounter.incrementAndGet());
     }
 
     private static TestUser createTestUser(TestedProduct product, AuthLevel authLevel)
     {
-        String username = authLevel.getPrefix() + "-" + incrementCounter();
+        String username = authLevel.getPrefix() + "-" + incrementCounter(product);
         TestUser testUser = new TestUser(username);
         if (product instanceof JiraTestedProduct)
         {
+            if (TestBase.funcTestHelper.backdoor.usersAndGroups().userExists(username))
+            {
+                System.out.println("DELETING USER " + username);
+                TestBase.funcTestHelper.backdoor.usersAndGroups().deleteUser(username);
+            }
+            System.out.println("CREATING USER " + username);
             TestBase.funcTestHelper.backdoor.usersAndGroups().addUser(username);
             addJiraPermissionsForTestUser(testUser, authLevel);
         }
@@ -63,6 +61,10 @@ public class ConnectTestUserFactory
             ConfluenceRpc confluenceRpc = ConfluenceRpc.newInstance(confluenceBaseUrlSelector.getBaseUrl());
             DefaultDirectoryConfiguration defaultDirectoryConfiguration = new DefaultDirectoryConfiguration();
             DefaultUserManagementHelper userManager = new DefaultUserManagementHelper(confluenceRpc, defaultDirectoryConfiguration);
+            if(confluenceRpc.hasUser(username))
+            {
+                userManager.removeUser(username);
+            }
             userManager.createUser(new User(username, username, username, username + "@example.com"));
             addConfluencePermissionsForTestUser(testUser, authLevel, userManager);
         }

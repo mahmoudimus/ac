@@ -43,7 +43,7 @@ public class TestConfigurePage extends AbstractPageTestBase
     {
         runner.setToggleableConditionShouldDisplay(false);
 
-        login(ConnectTestUserFactory.sysadmin(product));
+        login(ConnectTestUserFactory.basicUser(product));
 
         // note we don't check that the configure link isn't displayed due to AC-973
 

@@ -58,7 +58,7 @@ public class TestCookie extends MultiProductWebDriverTestBase
     @Test
     public void testCreateCookie() throws Exception
     {
-        loginAndVisit(ConnectTestUserFactory.sysadmin(product), HomePage.class);
+        loginAndVisit(ConnectTestUserFactory.basicUser(product), HomePage.class);
         GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, ADDON_GENERALPAGE, ADDON_GENERALPAGE_NAME, remotePlugin.getAddon().getKey());
         remotePage.clickAddOnLink();
         RemoteCookieGeneralPage remoteCookiePage = product.getPageBinder().bind(RemoteCookieGeneralPage.class, ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), ADDON_GENERALPAGE));
@@ -76,7 +76,7 @@ public class TestCookie extends MultiProductWebDriverTestBase
     @Test
     public void testEraseCookie() throws Exception
     {
-        loginAndVisit(ConnectTestUserFactory.sysadmin(product), HomePage.class);
+        loginAndVisit(ConnectTestUserFactory.basicUser(product), HomePage.class);
         GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, ADDON_GENERALPAGE, ADDON_GENERALPAGE_NAME, remotePlugin.getAddon().getKey());
         remotePage.clickAddOnLink();
         RemoteCookieGeneralPage remoteCookiePage = product.getPageBinder().bind(RemoteCookieGeneralPage.class, ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), ADDON_GENERALPAGE));

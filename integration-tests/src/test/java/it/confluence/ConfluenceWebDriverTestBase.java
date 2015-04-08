@@ -122,7 +122,7 @@ public class ConfluenceWebDriverTestBase
     @BeforeClass
     public static void confluenceTestSetup() throws Exception
     {
-        rpc.logIn(ConnectTestUserFactory.sysadmin(product).confUser());
+        rpc.logIn(ConnectTestUserFactory.admin(product).confUser());
         installTestPlugins(rpc);
 
         // Hangs the Chrome WebDriver tests, so it's disabled for now.
@@ -147,7 +147,7 @@ public class ConfluenceWebDriverTestBase
     @AfterClass
     public static void confluenceTestTeardown() throws Exception
     {
-        rpc.logIn(ConnectTestUserFactory.sysadmin(product).confUser());
+        rpc.logIn(ConnectTestUserFactory.admin(product).confUser());
         rpc.getDarkFeaturesHelper().disableSiteFeature("webdriver.test.mode");
     }
 
@@ -171,7 +171,7 @@ public class ConfluenceWebDriverTestBase
         PluginHelper pluginHelper = rpc.getPluginHelper();
         if (!pluginHelper.isPluginEnabled(FUNCTEST_RPC_PLUGIN_HOLDER.get()))
         {
-            new WebTestPluginHelper(rpc.getBaseUrl(), ConnectTestUserFactory.sysadmin(product).confUser()).installPlugin(FUNCTEST_RPC_PLUGIN_HOLDER.get());
+            new WebTestPluginHelper(rpc.getBaseUrl(), ConnectTestUserFactory.admin(product).confUser()).installPlugin(FUNCTEST_RPC_PLUGIN_HOLDER.get());
         }
 
         if (!pluginHelper.isPluginEnabled(SCRIPTS_FINISHED_PLUGIN_HOLDER.get()))

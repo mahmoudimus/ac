@@ -73,7 +73,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
-        loginAndVisit(ConnectTestUserFactory.sysadmin(product), JiraAdministrationHomePage.class);
+        loginAndVisit(ConnectTestUserFactory.basicUser(product), JiraAdministrationHomePage.class);
 
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, PLUGIN_KEY, PAGE_KEY);
 
@@ -89,7 +89,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     @Test
     public void addonPageIsFullSize() throws MalformedURLException, URISyntaxException
     {
-        loginAndVisit(ConnectTestUserFactory.sysadmin(product), JiraAdministrationHomePage.class);
+        loginAndVisit(ConnectTestUserFactory.basicUser(product), JiraAdministrationHomePage.class);
 
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, PLUGIN_KEY, PAGE_KEY);
 
@@ -112,7 +112,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     {
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
-        login(ConnectTestUserFactory.sysadmin(product));
+        login(ConnectTestUserFactory.basicUser(product));
 
         // web item should not be displayed
         product.visit(JiraAdminHomePage.class);

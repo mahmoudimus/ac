@@ -43,7 +43,7 @@ public class TestConfluenceWebHooks extends ConfluenceWebDriverTestBase
             {
                 final String testQuery = "test";
                 String results = String.valueOf(
-                        confluenceOps.search(some(ConnectTestUserFactory.sysadmin(product)), testQuery));
+                        confluenceOps.search(some(ConnectTestUserFactory.basicUser(product)), testQuery));
                 final WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
                 Assert.assertEquals(testQuery, body.find("query"));
@@ -64,7 +64,7 @@ public class TestConfluenceWebHooks extends ConfluenceWebDriverTestBase
             public void test(WebHookWaiter waiter) throws Exception
             {
                 String content = "<h1>Love me</h1>";
-                ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(ConnectTestUserFactory.sysadmin(product)), "ds", "testxmlWebhooks", content);
+                ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(ConnectTestUserFactory.basicUser(product)), "ds", "testxmlWebhooks", content);
                 final WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
                 Assert.assertEquals(pageData.getId(), body.find("page/id"));
@@ -84,7 +84,7 @@ public class TestConfluenceWebHooks extends ConfluenceWebDriverTestBase
             public void test(WebHookWaiter waiter) throws Exception
             {
                 String content = "<h1>I'm a test page</h1>";
-                confluenceOps.setPage(some(ConnectTestUserFactory.sysadmin(product)), "ds", "testxmlWebhooks", content);
+                confluenceOps.setPage(some(ConnectTestUserFactory.basicUser(product)), "ds", "testxmlWebhooks", content);
                 final WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
                 assertThat(body.getConnectVersion(),isVersionNumber());
@@ -96,7 +96,7 @@ public class TestConfluenceWebHooks extends ConfluenceWebDriverTestBase
     public void testContentPermissionsUpdatedWebHookFired() throws Exception
     {
         final String pluginKey = AddonTestUtils.randomAddOnKey();
-        final TestUser user = ConnectTestUserFactory.sysadmin(product);
+        final TestUser user = ConnectTestUserFactory.basicUser(product);
 
         runInRunner(baseUrl, "content_permissions_updated", pluginKey, new WebHookTester()
         {

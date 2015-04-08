@@ -23,7 +23,7 @@ public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
     private static final String WEB_ITEM_ID = "com.atlassian.connect.acceptance.test__opsbar-test-web-item";
 
     protected static final ExternalAddonInstaller externalAddonInstaller = new ExternalAddonInstaller(
-            product.getProductInstance().getBaseUrl(), ConnectTestUserFactory.sysadmin(product));
+            product.getProductInstance().getBaseUrl(), ConnectTestUserFactory.admin(product));
 
     private static final Logger log = LoggerFactory.getLogger(TestJiraStaticDescriptor.class);
 
@@ -37,7 +37,7 @@ public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
     @Test
     public void testAcActionWebItemIsPresent()
     {
-        TestUser user = ConnectTestUserFactory.sysadmin(product);
+        TestUser user = ConnectTestUserFactory.basicUser(product);
         IssueCreateResponse response = product.backdoor().issues().loginAs(user.getUsername())
                 .createIssue(project.getKey(), "Atlassian Connect Web Panel Test Issue");
 

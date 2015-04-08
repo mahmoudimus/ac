@@ -68,7 +68,7 @@ public class TestFeatureFlagCondition extends ConfluenceWebDriverTestBase
     @Test
     public void cannotSeeWithFeatureFlagUnset() throws Exception
     {
-        login(ConnectTestUserFactory.sysadmin(product));
+        login(ConnectTestUserFactory.basicUser(product));
 
         assertFalse("Web item should not be visible without feature flag set", connectPageOperations.existsWebItem(getModuleKey(FEATURE_FLAG)));
     }
@@ -76,10 +76,10 @@ public class TestFeatureFlagCondition extends ConfluenceWebDriverTestBase
     @Test
     public void canSeeWithFeatureFlagSet() throws Exception
     {
-        TestUser sysadmin = ConnectTestUserFactory.sysadmin(product);
-        login(sysadmin);
+        TestUser user = ConnectTestUserFactory.basicUser(product);
+        login(user);
 
-        rpc.logIn(sysadmin.confUser());
+        rpc.logIn(user.confUser());
         rpc.getDarkFeaturesHelper().enableSiteFeature(FEATURE_FLAG_KEY);
 
         assertFalse("Web item should be visible with feature flag enabled", connectPageOperations.existsWebItem(getModuleKey(FEATURE_FLAG)));
@@ -88,10 +88,10 @@ public class TestFeatureFlagCondition extends ConfluenceWebDriverTestBase
     @Test
     public void cannotSeeWithFeatureFlagDisabled() throws Exception
     {
-        TestUser sysadmin = ConnectTestUserFactory.sysadmin(product);
-        login(sysadmin);
+        TestUser user = ConnectTestUserFactory.basicUser(product);
+        login(user);
 
-        rpc.logIn(sysadmin.confUser());
+        rpc.logIn(user.confUser());
         rpc.getDarkFeaturesHelper().enableSiteFeature(FEATURE_FLAG_KEY);
         rpc.getDarkFeaturesHelper().disableSiteFeature(FEATURE_FLAG_KEY);
 
