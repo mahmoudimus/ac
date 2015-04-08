@@ -251,7 +251,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
     @Test
     public void standardParametersArePassedToConditions() throws Exception
     {
-        TestUser user = ConnectTestUserFactory.admin(getProduct());
+        TestUser user = ConnectTestUserFactory.basicUser(getProduct());
         navigateToEditPageAndVerifyParameterCapturingWebItem(user);
 
         Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
@@ -266,7 +266,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
     @Test
     public void contextParametersArePassedToConditions() throws Exception
     {
-        ConfluenceEditPage editPage = navigateToEditPageAndVerifyParameterCapturingWebItem(ConnectTestUserFactory.admin(getProduct()));
+        ConfluenceEditPage editPage = navigateToEditPageAndVerifyParameterCapturingWebItem(ConnectTestUserFactory.basicUser(getProduct()));
 
         Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
 
@@ -277,7 +277,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
     @Test
     public void spaceContextParametersArePassedToConditions() throws Exception
     {
-        login(ConnectTestUserFactory.admin(getProduct()));
+        login(ConnectTestUserFactory.basicUser(getProduct()));
         ConfluenceEditPage editPage = visitEditPage();
         // NOTE: we don't actually need the web panel to test its condition invocation
 
@@ -292,7 +292,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
     @Test
     public void versionIsIncluded() throws Exception
     {
-        navigateToEditPageAndVerifyParameterCapturingWebItem(ConnectTestUserFactory.admin(getProduct()));
+        navigateToEditPageAndVerifyParameterCapturingWebItem(ConnectTestUserFactory.basicUser(getProduct()));
 
         String version = PARAMETER_CAPTURING_SERVLET.getHttpHeaderFromLastRequest(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION).get();
 
