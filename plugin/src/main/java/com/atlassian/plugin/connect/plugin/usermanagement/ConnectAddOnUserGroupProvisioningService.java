@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.usermanagement;
 
 import com.atlassian.crowd.exception.*;
+import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.group.Group;
 
 /**
@@ -55,8 +56,17 @@ public interface ConnectAddOnUserGroupProvisioningService
     public Group findGroupByKey(String groupKey) throws ApplicationNotFoundException;
 
     /**
-     * We need to know the name of the {@link com.atlassian.crowd.model.application.Application} in Crowd so that we can find it.
-     * @return the {@link String} unique name of the {@link com.atlassian.crowd.model.application.Application} in which we perform user management
+     * We need to know the name of the {@link Application} in Crowd so that we can find it.
+     * @return the {@link String} unique name of the {@link Application} in which we perform user management
      */
     String getCrowdApplicationName();
+
+    /**
+     * @return the {@link Application} in which we perform user management
+     *
+     * <strong>Do not cache</strong> the returned Application; it is immutable
+     * and replaced every time a change is made
+     */
+    Application getCrowdApplication() throws ApplicationNotFoundException;
+
 }

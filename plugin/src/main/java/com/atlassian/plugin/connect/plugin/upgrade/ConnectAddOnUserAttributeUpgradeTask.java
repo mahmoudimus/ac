@@ -17,11 +17,9 @@ import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.plugin.util.FeatureManager;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
-import com.atlassian.plugin.spring.scanner.annotation.imports.JiraImport;
 import com.atlassian.sal.api.message.Message;
 import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
 
-import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +34,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A {@link com.atlassian.sal.api.upgrade.PluginUpgradeTask} that will iterate over all Connect AddOn Users and add a new attribute to them
- * <em>synch.APPLICATION_NAME.atlassian-connect-user</em>
+ * <em>synch.crowd-embedded.atlassian-connect-user</em>
+ * This is superseded by {@link com.atlassian.plugin.connect.plugin.upgrade.ConnectAddOnUserAppSpecificAttributeUpgradeTask},
+ * which uses the actual application name (<tt>"jira"</tt> / <tt>"confluence"</tt>) in place of <tt>"crowd-embedded"</tt>
  */
 @ExportAsService
 @Component
@@ -71,7 +71,7 @@ public class ConnectAddOnUserAttributeUpgradeTask implements PluginUpgradeTask
     @Override
     public String getShortDescription()
     {
-        return "Upgrade task to iterate over all Connect AddOn Users and add a new attribute to them synch.APPLICATION_NAME.atlassian-connect-user";
+        return "Upgrade task to iterate over all Connect AddOn Users and add a new attribute to them: \"synch.crowd-embedded.atlassian-connect-user\"";
     }
 
     @Override

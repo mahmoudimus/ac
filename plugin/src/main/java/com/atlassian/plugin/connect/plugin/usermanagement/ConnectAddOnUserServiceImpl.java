@@ -1,8 +1,19 @@
 package com.atlassian.plugin.connect.plugin.usermanagement;
 
+import java.util.Set;
+
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.crowd.exception.*;
+import com.atlassian.crowd.exception.ApplicationNotFoundException;
+import com.atlassian.crowd.exception.ApplicationPermissionException;
+import com.atlassian.crowd.exception.GroupNotFoundException;
+import com.atlassian.crowd.exception.InvalidAuthenticationException;
+import com.atlassian.crowd.exception.InvalidCredentialException;
+import com.atlassian.crowd.exception.InvalidGroupException;
+import com.atlassian.crowd.exception.InvalidUserException;
+import com.atlassian.crowd.exception.MembershipAlreadyExistsException;
+import com.atlassian.crowd.exception.OperationFailedException;
+import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
@@ -12,16 +23,15 @@ import com.atlassian.crowd.service.factory.CrowdClientFactory;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.util.FeatureManager;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-import com.google.common.annotations.VisibleForTesting;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
-
-import java.util.Set;
 
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.Constants;
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
@@ -57,48 +67,20 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     @Override
     public String getOrCreateUserKey(String addOnKey, String addOnDisplayName) throws ConnectAddOnUserInitException
     {
-        // Oh how I long for Java 7's conciser catch semantics.
         try
         {
             return createOrEnableAddOnUser(ConnectAddOnUserUtil.usernameForAddon(checkNotNull(addOnKey)), checkNotNull(addOnDisplayName));
         }
-        catch (InvalidCredentialException e)
-        {
-            throw new ConnectAddOnUserInitException(e);
-        }
-        catch (InvalidUserException e)
-        {
-            throw new ConnectAddOnUserInitException(e);
-        }
-        catch (ApplicationPermissionException e)
-        {
-            throw new ConnectAddOnUserInitException(e);
-        }
-        catch (OperationFailedException e)
-        {
-            throw new ConnectAddOnUserInitException(e);
-        }
-        catch (MembershipAlreadyExistsException e)
-        {
-            throw new ConnectAddOnUserInitException(e);
-        }
-        catch (InvalidGroupException e)
-        {
-            throw new ConnectAddOnUserInitException(e);
-        }
-        catch (GroupNotFoundException e)
-        {
-            throw new ConnectAddOnUserInitException(e);
-        }
-        catch (UserNotFoundException e)
-        {
-            throw new ConnectAddOnUserInitException(e);
-        }
-        catch (ApplicationNotFoundException e)
-        {
-            throw new ConnectAddOnUserInitException(e);
-        }
-        catch (InvalidAuthenticationException e)
+        catch (InvalidCredentialException
+                | InvalidUserException
+                | ApplicationPermissionException
+                | MembershipAlreadyExistsException
+                | InvalidGroupException
+                | GroupNotFoundException
+                | UserNotFoundException
+                | ApplicationNotFoundException
+                | InvalidAuthenticationException
+                | OperationFailedException e)
         {
             throw new ConnectAddOnUserInitException(e);
         }
@@ -121,19 +103,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
                 {
                     applicationService.updateUser(getApplication(), userTemplate);
                 }
-                catch (InvalidUserException e)
-                {
-                    throw new ConnectAddOnUserDisableException(e);
-                }
-                catch (OperationFailedException e)
-                {
-                    throw new ConnectAddOnUserDisableException(e);
-                }
-                catch (ApplicationPermissionException e)
-                {
-                    throw new ConnectAddOnUserDisableException(e);
-                }
-                catch (UserNotFoundException e)
+                catch (InvalidUserException | OperationFailedException | ApplicationPermissionException | UserNotFoundException e)
                 {
                     throw new ConnectAddOnUserDisableException(e);
                 }
@@ -180,7 +150,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), Constants.ADDON_USER_GROUP_KEY);
 
 
-        
+
         for (String group : connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected())
         {
             try
@@ -196,25 +166,25 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
                 // TODO ACDEV-938: propagate this error
             }
         }
-        
+
         int numPossibleDefaultGroupsAddedTo = 0;
         String errorMessage = String.format("Could not make user '%s' a member of one of groups ", username);
         for (String group : connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected())
         {
-            try 
+            try
             {
                 connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), group);
                 numPossibleDefaultGroupsAddedTo++;
-            } 
-            catch (GroupNotFoundException e) 
+            }
+            catch (GroupNotFoundException e)
             {
                 errorMessage += String.format("%s, ", group);
             }
-            
+
         }
         if (numPossibleDefaultGroupsAddedTo == 0 && connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected().size() > 0)
         {
-            log.error(errorMessage + "because none of those groups exist!" + 
+            log.error(errorMessage + "because none of those groups exist!" +
                     "We expect at least one of these groups to exist - exactly which one should exist depends on the version of the instance." +
                     "The user needs to be a member of one of these groups for basic access, otherwise the add-on will not function correctly." +
                     "Please check with an instance administrator that at least one of these groups exists and that it is not read-only.");
@@ -274,24 +244,11 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
                 log.info("Created user '{}'", user.getName());
             }
         }
-        catch (InvalidUserException iue)
+        catch (InvalidUserException | OperationFailedException | DataIntegrityViolationException iue)
         {
             // the javadoc says that addUser() throws an InvalidUserException if the user already exists
             // --> handle the race condition of something else creating this user at around the same time (as unlikely as that should be)
             user = findUserWithFastFailure(username, iue);
-        }
-        catch (OperationFailedException e)
-        {
-            // during Connect 1.0 blitz testing we observed this exception emanating from the bowels of Crowd, claiming that the user already exists
-            // --> handle the race condition of something else creating this user at around the same time (as unlikely as that should be)
-            user = findUserWithFastFailure(username, e);
-        }
-        catch (DataIntegrityViolationException e)
-        {
-            // our analytics revealed 57 of these in 1 week and prod instance logs suggest that this is another user creation race condition
-            // see https://ecosystem.atlassian.net/browse/ACDEV-1499
-            // --> handle the race condition of something else creating this user at around the same time (as unlikely as that should be)
-            user = findUserWithFastFailure(username, e);
         }
 
         // Set connect attributes on user -- at this point we are confident we have a user
