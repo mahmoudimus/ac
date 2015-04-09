@@ -59,6 +59,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.UnknownHostException;
@@ -493,8 +494,8 @@ public class ConnectAddonManager
         }
         catch (LifecycleCallbackException e)
         {
-            final com.atlassian.upm.api.util.Option<String> i18nKey = e.getI18nKey().isDefined() ? com.atlassian.upm.api.util.Option.some(e.getI18nKey().get()) : com.atlassian.upm.api.util.Option.<String>none();
-            throw new PluginInstallException(e.getMessage(), i18nKey);
+            Serializable[] params = e.getParams() != null ? e.getParams() : new Serializable[] {};
+            throw new PluginInstallException(e.getMessage(), e.getI18nKey(), params);
         }
     }
 
@@ -536,7 +537,7 @@ public class ConnectAddonManager
         if (!isDevModeService.isDevMode() && addOnUsesJwtAuthentication && !callbackUri.getScheme().toLowerCase().startsWith("https"))
         {
             String message = String.format("Cannot issue callback except via HTTPS. Current URL = '%s'", callbackUri);
-            throw new LifecycleCallbackException(message, Option.some("connect.remote.upm.install.exception"));
+            throw new LifecycleCallbackException(message, "connect.remote.upm.install.exception");
         }
 
         Response response = getSyncHandlerResponse(addOnKey, callbackUri, jsonEventData, authHeader);
@@ -595,16 +596,14 @@ public class ConnectAddonManager
 
             if (e.getCause() instanceof UnknownHostException)
             {
-                String badDomainMessage = i18nResolver.getText("connect.install.error.remote.host.bad.domain", callbackUri.getHost());
-                throw new LifecycleCallbackException(message, Option.some(badDomainMessage));
+                throw new LifecycleCallbackException(message, "connect.install.error.remote.host.bad.domain", callbackUri.getHost());
             }
             else if (e.getCause() instanceof SocketTimeoutException)
             {
-                String i18nMessage = i18nResolver.getText("connect.install.error.remote.host.timeout", removeQuery(callbackUri));
-                throw new LifecycleCallbackException(message, Option.some(i18nMessage));
+                throw new LifecycleCallbackException(message, "connect.install.error.remote.host.timeout", removeQuery(callbackUri));
             }
 
-            throw new LifecycleCallbackException(message, Option.some("connect.remote.upm.install.exception"));
+            throw new LifecycleCallbackException(message, "connect.remote.upm.install.exception");
         }
     }
 
@@ -615,7 +614,7 @@ public class ConnectAddonManager
         return trimmed.endsWith("?") ? trimmed.substring(0, trimmed.length()-1) : trimmed;
     }
 
-    private Option<String> findI18nKeyForHttpErrorCode(final int responseCode)
+    private String findI18nKeyForHttpErrorCode(final int responseCode)
     {
         String i18nKey = HTTP_ERROR_I18N_KEY_PREFIX + responseCode;
         final String i18nText = i18nResolver.getRawText(i18nKey);
@@ -628,7 +627,7 @@ public class ConnectAddonManager
             i18nKey = "connect.remote.upm.install.exception";
         }
 
-        return Option.some(i18nKey);
+        return i18nKey;
     }
 
     private URI getURI(String addOnBaseUrl, String endpointRelativePath)
@@ -746,12 +745,9 @@ public class ConnectAddonManager
         }
         catch (ConnectAddOnUserInitException e)
         {
-
-            String i18nMessage = i18nResolver.getText(e.getI18nKey(), addOn.getName());
-            // This is a hack; throwing with 18nkey and parameters does not work,
-            // when we throw an exception with a key that is not in the i18nproperties file
-            // UPM displays the 'key' (which is really our error message)
-            throw new PluginInstallException(e.getMessage(), com.atlassian.upm.api.util.Option.some(i18nMessage), e, true);
+            PluginInstallException exception = new PluginInstallException(e.getMessage(), e.getI18nKey(), addOn.getName());
+            exception.initCause(e);
+            throw exception;
         }
 
     }

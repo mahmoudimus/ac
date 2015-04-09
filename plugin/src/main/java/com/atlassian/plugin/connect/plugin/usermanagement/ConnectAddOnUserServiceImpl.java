@@ -179,7 +179,9 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         User user = ensureUserExists(username, addOnDisplayName);
         connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), Constants.ADDON_USER_GROUP_KEY);
 
-        for (String group : connectAddOnUserProvisioningService.getDefaultProductGroups())
+
+        
+        for (String group : connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected())
         {
             try
             {
@@ -188,9 +190,34 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             catch (GroupNotFoundException e)
             {
                 // carry on if the group does not exist so that an admin deleting a group will not kill all add-on installations
-                log.error(String.format("Could not make user '%s' a member of group '%s' because that group does not exist!", username, group));
+                log.error(String.format("Could not make user '%s' a member of group '%s' because that group does not exist! " +
+                        "The user needs to be a member of this group, otherwise the add-on will not function correctly. " +
+                        "Please check with an instance administrator that this group exists and that it is not read-only.", username, group));
                 // TODO ACDEV-938: propagate this error
             }
+        }
+        
+        int numPossibleDefaultGroupsAddedTo = 0;
+        String errorMessage = String.format("Could not make user '%s' a member of one of groups ", username);
+        for (String group : connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected())
+        {
+            try 
+            {
+                connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), group);
+                numPossibleDefaultGroupsAddedTo++;
+            } 
+            catch (GroupNotFoundException e) 
+            {
+                errorMessage += String.format("%s, ", group);
+            }
+            
+        }
+        if (numPossibleDefaultGroupsAddedTo == 0 && connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected().size() > 0)
+        {
+            log.error(errorMessage + "because none of those groups exist!" + 
+                    "We expect at least one of these groups to exist - exactly which one should exist depends on the version of the instance." +
+                    "The user needs to be a member of one of these groups for basic access, otherwise the add-on will not function correctly." +
+                    "Please check with an instance administrator that at least one of these groups exists and that it is not read-only.");
         }
 
         return user.getName();
@@ -217,9 +244,6 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
                 userTemplate.setDisplayName(addOnDisplayName);
                 applicationService.updateUser(getApplication(), userTemplate);
             }
-
-            // Justin Koke says that NONE password prevents logging in
-            applicationService.updateUserCredential(getApplication(), user.getName(), PasswordCredential.NONE);
         }
 
         return user;

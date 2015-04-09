@@ -30,9 +30,14 @@
             </div>
             <%- partial('_sidebar_list.ejs', { category: 'modules' }) %>
 
-            <%- partial('_module_list.ejs', { title: "JIRA Modules", modules: entities.jira, relDocRoot: relDocRoot }) %>
+            <div class="aui-nav-heading">
+                <strong>Common Modules</strong>
+            </div>
+            <%- partial('_module_list.ejs', {modules: entities.common, relDocRoot: relDocRoot }) %>
 
-            <%- partial('_module_list.ejs', { title: "Confluence Modules", modules: entities.confluence, relDocRoot: relDocRoot }) %>
+            <%- partial('_module_list.ejs', {modules: entities.jira, relDocRoot: relDocRoot }) %>
+
+            <%- partial('_module_list.ejs', {modules: entities.confluence, relDocRoot: relDocRoot }) %>
 
             <div class="aui-nav-heading">
                 <a href="<%= relDocRoot %>concepts/javascript-api.html">Javascript API</a>
@@ -40,12 +45,12 @@
             <%- partial('_module_list.ejs', { title: "Javascript API", modules: public.javascript._data, relDocRoot: relDocRoot }) %>
 
             <div class="aui-nav-heading">
-                <a href="<%= relDocRoot %>rest-apis/index.html">REST APIs</a>
+                <a href="<%= relDocRoot %>rest-apis/index.html">REST APIs</a> <span class="aui-lozenge aui-lozenge-success">new!</span>
             </div>
             <%- partial('_sidebar_list.ejs', { category: 'rest-apis' }) %>
 
             <div class="aui-nav-heading">
-                <a href="<%= relDocRoot %>scopes/scopes.html">Product API Scopes</a> <span class="aui-lozenge aui-lozenge-success">new!</span>
+                <a href="<%= relDocRoot %>scopes/scopes.html">Product API Scopes</a>
             </div>
             <%- partial('_sidebar_list.ejs', { category: 'scopes' }) %>
 

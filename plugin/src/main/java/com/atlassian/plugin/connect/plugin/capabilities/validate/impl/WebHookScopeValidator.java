@@ -44,8 +44,7 @@ public class WebHookScopeValidator implements AddOnBeanValidator
                 String exceptionMessage = String.format("Add-on '%s' requests web hook '%s' but not the '%s' scope "
                         + "required to receive it. Please request this scope in your descriptor.", addon.getKey(),
                         webHookModuleBean.getEvent(), requiredScope);
-                String i18nMessage = i18nResolver.getText("connect.install.error.missing.scope", requiredScope);
-                throw new InvalidDescriptorException(exceptionMessage, i18nMessage);
+                throw new InvalidDescriptorException(exceptionMessage, "connect.install.error.missing.scope", requiredScope);
             }
         }
     }

@@ -53,9 +53,11 @@ To run a single test/method, do something like:
 
     mvn clean verify -P it -DtestGroups=jira -Dit.test=TestPageModules#testMyGeneralLoaded
 
-To run an integration test against a particular product in IDEA. (Note only applies to tests that can run against more than one product)
+To run an integration test against a particular product in IDEA (only applies to tests that can run against more than one product):
     Edit configurations -> VM Options = -DtestedProduct=<product>
 
+There may be an issue running with Chrome on a MAC, (see ACDEV-1842)
+To run tests with Chrome on a MAC, use -Dwebdriver.browser=chrome:<path to your own Chrome binary> -Dwebdriver.chrome.driver=<path to your own chromedriver>
 
 ### Wired Tests
 

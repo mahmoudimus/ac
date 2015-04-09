@@ -145,16 +145,12 @@ public class ModuleList extends BaseModuleBean
 
     /**
      * A general page module is used to provide a generic chrome for add-on content in the product.
-     *
-     * @schemaTitle General Page
      */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.GeneralPageModuleProvider")
     private List<ConnectPageModuleBean> generalPages;
 
     /**
      * An admin page module is used to provide an administration chrome for add-on content.
-     *
-     * @schemaTitle Admin Page
      */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.AdminPageModuleProvider")
     private List<ConnectPageModuleBean> adminPages;
@@ -162,8 +158,6 @@ public class ModuleList extends BaseModuleBean
     /**
      * A configure page module is a page module used to configure the addon itself.
      * It's link will appear in the add-ons entry in 'Manage Add-ons'.
-     *
-     * @schemaTitle Configure Page
      */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.ConfigurePageModuleProvider")
     private ConnectPageModuleBean configurePage;
@@ -175,8 +169,6 @@ public class ModuleList extends BaseModuleBean
 
     /**
      * The Issue Tab Panel module allows you to add new tabs to the 'Browse Component' page.
-     *
-     * @schemaTitle Issue Tab Panel
      */
     @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider", products = {ProductFilter.JIRA})
     private List<ConnectTabPanelModuleBean> jiraIssueTabPanels;
@@ -184,23 +176,19 @@ public class ModuleList extends BaseModuleBean
     /**
      * The Project Admin Tab Panel module allows you to add new panels to the 'Project Admin' page.
      *
-     * @schemaTitle Issue Tab Panel
+     * @schemaTitle Project Admin Tab Panel
      */
     @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider", products = {ProductFilter.JIRA})
     private List<ConnectProjectAdminTabPanelModuleBean> jiraProjectAdminTabPanels;
 
     /**
      * The Project Tab Panel module allows you to add new panels to the 'Project' page.
-     *
-     * @schemaTitle Project Tab Panel
      */
     @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider", products = {ProductFilter.JIRA})
     private List<ConnectTabPanelModuleBean> jiraProjectTabPanels;
 
     /**
      * The User Profile Tab Panel module allows you to add new tabs to the 'Browse Component' page.
-     *
-     * @schemaTitle User Profile Tab Panel
      */
     @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider", products = {ProductFilter.JIRA})
     private List<ConnectTabPanelModuleBean> jiraProfileTabPanels;
@@ -249,7 +237,7 @@ public class ModuleList extends BaseModuleBean
     private List<DynamicContentMacroModuleBean> dynamicContentMacros;
 
     /**
-     * @schemaTitle User Profile Page
+     * A User Profile Page module is used to add new elements to Confluence user profiles.
      */
     @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ProfilePageModuleProvider", products = {ProductFilter.CONFLUENCE}) // Note: Jira uses jiraProfileTabPanels instead
     private List<ConnectPageModuleBean> profilePages;
@@ -279,6 +267,17 @@ public class ModuleList extends BaseModuleBean
     @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultBlueprintModuleProvider", products = {ProductFilter.CONFLUENCE})
     private List<BlueprintModuleBean> blueprints;
 
+    /**
+     * Definition of a content property index schema for an add-on. It allows extracting specific parts of the JSON
+     * documents stored as a content property values, and write them to a search index. Once stored,
+     * they can participate in a content search using CQL.
+     *
+     * @see <a href="https://developer.atlassian.com/display/CONFDEV/Content+Properties+in+the+REST+API">
+     *     developer.atlassian.com</a> for more details
+     */
+    @ConnectModule (value = "com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultContentPropertyModuleProvider", products = { ProductFilter.CONFLUENCE })
+    private List<ContentPropertyModuleBean> confluenceContentProperties;
+
     public ModuleList()
     {
         this.adminPages = newArrayList();
@@ -300,6 +299,7 @@ public class ModuleList extends BaseModuleBean
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
         this.webSections = newArrayList();
+        this.confluenceContentProperties = newArrayList();
     }
 
     public ModuleList(BaseModuleBeanBuilder builder)
@@ -381,6 +381,10 @@ public class ModuleList extends BaseModuleBean
         if (null == jiraReports)
         {
             this.jiraReports = newArrayList();
+        }
+        if (null == confluenceContentProperties)
+        {
+            this.confluenceContentProperties = newArrayList();
         }
     }
 
@@ -480,6 +484,11 @@ public class ModuleList extends BaseModuleBean
 
     public List<BlueprintModuleBean> getBlueprints() {
         return blueprints;
+    }
+
+    public List<ContentPropertyModuleBean> getConfluenceContentProperties()
+    {
+        return confluenceContentProperties;
     }
 
     // don't call super because BaseCapabilityBean has no data

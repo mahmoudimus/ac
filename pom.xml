@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.1.26-SNAPSHOT</version>
+    <version>1.1.27-SNAPSHOT</version>
     <organization>
         <name>Atlassian</name>
         <url>http://atlassian.com/</url>
@@ -30,8 +30,6 @@
         <module>modules</module>
         <module>test-support-plugin</module>
         <module>plugin</module>
-        <module>static-analysis</module>
-        <module>cloud-acceptance-tests</module>
     </modules>
 
     <profiles>
@@ -45,6 +43,12 @@
             <id>pluginLifecycle</id>
             <modules>
                 <module>plugin-lifecycle-tests</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>freezer-release-profile</id>
+            <modules>
+                <module>integration-tests</module>
             </modules>
         </profile>
     </profiles>
@@ -87,8 +91,8 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
@@ -100,6 +104,7 @@
                     <excludes>
                         <exclude>**/*$*</exclude>
                         <exclude>it/**</exclude>
+                        <exclude>at/**</exclude>
                     </excludes>
                     <argLine>-Xmx1024m</argLine>
                 </configuration>
@@ -652,17 +657,16 @@
     </dependencyManagement>
     <properties>
         <!-- VERSIONS -->
-        <amps.version>5.0.4</amps.version>
+        <amps.version>4.2.22</amps.version>
         <atlassian.analytics.version>3.38</atlassian.analytics.version>
         <atlassian.applinks.version>4.2.4</atlassian.applinks.version>
-        <atlassian.confluence.version>5.7-OD-44-026</atlassian.confluence.version>
+        <atlassian.confluence.version>5.7-OD-47-038</atlassian.confluence.version>
         <atlassian.crowd.version>2.8.0-OD-4</atlassian.crowd.version>
         <atlassian.fugue.version>1.1</atlassian.fugue.version>
         <atlassian.healthcheck.version>2.0.4</atlassian.healthcheck.version>
         <atlassian.httpclient.version>0.20.1</atlassian.httpclient.version>
         <atlassian.httpclient.api.version>0.17</atlassian.httpclient.api.version>
-        <atlassian.jira.version>6.4-OD-14-082</atlassian.jira.version>
-        <atlassian.jira.projects.version>1.0.32</atlassian.jira.projects.version>
+        <atlassian.jira.version>6.4-OD-15-055</atlassian.jira.version>
         <atlassian.jira.rest.version>${atlassian.jira.version}</atlassian.jira.rest.version>
         <atlassian.jira.testkit.version>6.2.21</atlassian.jira.testkit.version>
         <atlassian.mail.version>2.5.4</atlassian.mail.version>
@@ -677,7 +681,7 @@
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>
         <atlassian.connect-js.version>feature/ACDEV-1946-fix-multi-dialog-block</atlassian.connect-js.version>
         <atlassian.connect-js.path>git+ssh://git@stash.atlassian.com:7997/ac/atlassian-connect-js.git#${atlassian.connect-js.version}</atlassian.connect-js.path>
-        <atlassian.jira.projects.plugin.version>1.4.0-D20140829T122309</atlassian.jira.projects.plugin.version>
+        <atlassian.jira.projects.plugin.version>1.20.0-D20150217T051447</atlassian.jira.projects.plugin.version>
 
         <atlassian.upm.version>2.17.4</atlassian.upm.version>
 
@@ -706,8 +710,9 @@
         <oauth.core.version>20090531</oauth.core.version>
         <slf4j.version>1.6.4</slf4j.version>
         <spring.version>2.5.6</spring.version>
-        <webdriver.browser>chrome</webdriver.browser>
+        <webdriver.browser>firefox</webdriver.browser>
         <plugin.testrunner.version>1.2.0</plugin.testrunner.version>
+        <atlassian.jira.projects.version>1.20.0-D20150217T051447</atlassian.jira.projects.version>
 
         <!-- BUILD STUFF -->
         <apache-commons-version>3.1</apache-commons-version>
@@ -718,6 +723,7 @@
         <atlassian.spring.scanner.version>1.2.2</atlassian.spring.scanner.version>
         <ao.long.timeout>180000</ao.long.timeout>
         <ao.short.timeout>30000</ao.short.timeout>
+        <skipTests>false</skipTests>
         <skipUnits>${skipTests}</skipUnits>
         <schema.generator.version>1.0.0-m4</schema.generator.version>
         <json.schema.validator.version>2.2.5</json.schema.validator.version>

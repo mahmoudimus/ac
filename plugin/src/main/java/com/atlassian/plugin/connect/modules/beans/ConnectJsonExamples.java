@@ -1,9 +1,17 @@
 package com.atlassian.plugin.connect.modules.beans;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
+import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFieldType;
+import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
@@ -27,6 +35,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -34,14 +43,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
+import static com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean.newContentPropertyModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean.newEntityPropertyModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
@@ -52,12 +57,11 @@ import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBe
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 
-@SuppressWarnings("UnusedDeclaration")
+@SuppressWarnings ("UnusedDeclaration")
 public class ConnectJsonExamples
 {
     private static final Gson gson = ConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create();
 
-    public static final String ADDON_COMPLETE_EXAMPLE = createAddonCompleteExample();
     public static final String ADDON_EXAMPLE = createAddonExample();
     public static final String AUTHENTICATION_EXAMPLE = createAuthenticationExample();
     public static final String COMPOSITE_CONDITION_EXAMPLE = createCompositeConditionExample();
@@ -78,11 +82,13 @@ public class ConnectJsonExamples
     public static final String PARAMS_EXAMPLE = createParamsExample();
     public static final String POST_FUNCTION_EXAMPLE = createPostFunctionExample();
     public static final String PRJ_ADMIN_PAGE_EXAMPLE = createProjectAdminPageExample();
+    public static final String REPORT_EXAMPLE = createReportExample();
     public static final String SCOPES_EXAMPLE = createScopesExample();
     public static final String SEARCH_VIEW_EXAMPLE = createSearchViewExample();
     public static final String SINGLE_CONDITION_EXAMPLE = createSingleConditionExample();
     public static final String SPACE_TOOLS_TAB_EXAMPLE = createSpaceToolsTabExample();
     public static final String STATIC_MACRO_EXAMPLE = createStaticMacroExample();
+    public static final String TAB_PANEL_EXAMPLE = createTabPanelExample();
     public static final String URL_EXAMPLE = createUrlExample();
     public static final String VENDOR_EXAMPLE = createVendorExample();
     public static final String WEBHOOK_EXAMPLE = createWebhookExample();
@@ -93,6 +99,9 @@ public class ConnectJsonExamples
     public static final String WEBSECTION_EXAMPLE = createWebSectionExample();
     public static final String BLUEPRINT_EXAMPLE = createBlueprintExample();
     public static final String BLUEPRINT_TEMPLATE_EXAMPLE = createBlueprintTemplateExample();
+    public static final String CONTENT_PROPERTY_EXAMPLE = createContentPropertyExample();
+    public static final String CONTENT_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE = createEntityPropertyIndexExtractionConfigurationExample();
+    public static final String CONTENT_PROPERTY_INDEX_KEY_CONFIGURATION_EXAMPLE = createEntityPropertyIndexKeyConfigurationExample();
     public static final String MACRO_RENDER_MODES_EXAMPLE = createDynamicMacroExampleForRenderModes();
 
     public static final String LIFECYCLE_PAYLOAD_EXAMPLE = createLifecyclePayloadExample();
@@ -179,40 +188,6 @@ public class ConnectJsonExamples
         return gson.toJson(addonBean);
     }
 
-    private static String createAddonCompleteExample()
-    {
-        ConnectAddonBean addonBean = newConnectAddonBean()
-                .withKey("my-addon-key")
-                .withName("My Connect Addon")
-                .withDescription("A connect addon that does something")
-                .withVendor(newVendorBean().withName("My Company").withUrl("http://www.example.com").build())
-                .withBaseurl("http://www.example.com/connect/jira")
-                .withLinks(ImmutableMap.builder().put("self", "http://www.example.com/connect/jira").build())
-                .withAuthentication(newAuthenticationBean().build())
-                .withLicensing(true)
-                .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").withUninstalled("/uninstalled").build())
-                .withScopes(Sets.newHashSet(ScopeName.READ, ScopeName.WRITE))
-                .withModules("webItems", WebItemModuleBean.newWebItemBean().withName(i18nProperty("Web Item")).withUrl("/my-web-item").withLocation("system.preset.filters").build())
-                .withModules("webPanels", WebPanelModuleBean.newWebPanelBean().withName(i18nProperty("Web Panel")).withLocation("com.atlassian.jira.plugin.headernav.left.context").withUrl("/my-web-panel").build())
-                .withModules("generalPages", ConnectPageModuleBean.newPageBean().withName(i18nProperty("General Page")).withUrl("my-general-page").build())
-                .withModules("adminPages", ConnectPageModuleBean.newPageBean().withName(i18nProperty("Admin Page")).withUrl("my-admin-page").build())
-                .withModules("configurePage", ConnectPageModuleBean.newPageBean().withName(i18nProperty("Config Page")).withUrl("my-configure-page").build())
-                .withModules("webhooks", WebHookModuleBean.newWebHookBean().withEvent("jira:issue_created").withUrl("/issue-created").build())
-                .withModules("jiraIssueTabPanels", ConnectTabPanelModuleBean.newTabPanelBean().withName(i18nProperty("Issue Tab")).withUrl("my-issue-tab-panel").build())
-                .withModules("jiraProjectAdminTabPanels", ConnectTabPanelModuleBean.newTabPanelBean().withUrl("my-admin-tab-panel").build())
-                .withModules("jiraProjectTabPanels", ConnectTabPanelModuleBean.newTabPanelBean().withName(i18nProperty("Project Tab")).withUrl("my-project-tab-panel").build())
-                .withModules("jiraProfileTabPanels", ConnectTabPanelModuleBean.newTabPanelBean().withName(i18nProperty("Profile Tab")).withUrl("my-profile-tab-panel").build())
-                .withModules("jiraWorkflowPostFunctions", WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean().withName(i18nProperty("Workflow Function")).withCreate(new UrlBean("/create")).build())
-                .withModules("jiraSearchRequestViews", SearchRequestViewModuleBean.newSearchRequestViewModuleBean().withName(i18nProperty("Search View")).withUrl("/searchRequest").build())
-                .withModules("profilePages", ConnectPageModuleBean.newPageBean().withName(i18nProperty("Profile Page")).withUrl("my-confluence-profile-page").build())
-                .withModules("dynamicContentMacros", DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean().withName(i18nProperty("Dynamic Macro")).withUrl("/dynamic-macro").build())
-                .withModules("staticContentMacros", StaticContentMacroModuleBean.newStaticContentMacroModuleBean().withName(i18nProperty("Static Macro")).withUrl("/static-macro").build())
-                .withModules("spaceToolsTabs", SpaceToolsTabModuleBean.newSpaceToolsTabBean().withName(i18nProperty("Space Tools Tab")).withUrl("/space-tools").build())
-                .build();
-
-        return gson.toJson(addonBean);
-    }
-
     private static I18nProperty i18nProperty(String name)
     {
         return new I18nProperty(name, null);
@@ -235,14 +210,35 @@ public class ConnectJsonExamples
 
     private static String createPageExample()
     {
-        ConnectPageModuleBean pageModuleBean = ConnectPageModuleBean.newPageBean()
-                .withName(new I18nProperty("General Page", ""))
-                .withKey("page-key")
-                .withUrl("/hello-world")
+        ConnectPageModuleBean generalPageModuleBean = ConnectPageModuleBean.newPageBean()
+                .withName(new I18nProperty("My General Page", "mygeneralpage.name"))
+                .withKey("my-general-page")
+                .withUrl("/my-general-page")
                 .withIcon(newIconBean().withUrl("/maps/icon.png").withHeight(80).withWidth(80).build())
                 .build();
+        ConnectPageModuleBean adminPageModuleBean = ConnectPageModuleBean.newPageBean()
+                .withName(new I18nProperty("My Admin Page", "myadminpage.name"))
+                .withKey("my-admin-page")
+                .withUrl("/my-admin-page")
+                .build();
+        ConnectPageModuleBean configurePageModuleBean = ConnectPageModuleBean.newPageBean()
+                .withName(new I18nProperty("My Configure Page", "myconfigpage.name"))
+                .withKey("my-config-page")
+                .withUrl("/my-config-page")
+                .build();
+        ConnectPageModuleBean userProfilePageModuleBean = ConnectPageModuleBean.newPageBean()
+                .withName(new I18nProperty("My Confluence User Profile Page", "myprofilepage.name"))
+                .withKey("my-confluence-user-profile-page")
+                .withUrl("/my-confluence-user-profile-page")
+                .build();
 
-        return gson.toJson(createModuleArray("generalPages", pageModuleBean));
+        JsonObject object = createModuleArray(ImmutableMap.of(
+                "generalPages", generalPageModuleBean,
+                "adminPages", adminPageModuleBean,
+                "configurePage", configurePageModuleBean,
+                "profilePages", userProfilePageModuleBean
+        ));
+        return gson.toJson(object);
     }
 
     private static String createProjectAdminPageExample()
@@ -281,6 +277,49 @@ public class ConnectJsonExamples
                 .build();
 
         return gson.toJson(createModuleArray("webItems", webItemModuleBean));
+    }
+
+    private static String createTabPanelExample()
+    {
+        ConnectTabPanelModuleBean issueTabPanelBean = ConnectTabPanelModuleBean.newTabPanelBean()
+                .withName(new I18nProperty("My Issue Tab Panel", "myissuetab.name"))
+                .withKey("my-issue-tab")
+                .withUrl("/my-issue-tab")
+                .withWeight(100)
+                .build();
+        ConnectTabPanelModuleBean projectTabPanelBean = ConnectTabPanelModuleBean.newTabPanelBean()
+                .withName(new I18nProperty("My Project Tab Panel", "myprojecttab.name"))
+                .withKey("my-project-tab")
+                .withUrl("/my-project-tab")
+                .withWeight(100)
+                .build();
+        ConnectTabPanelModuleBean userProfileTabPanelBean = ConnectTabPanelModuleBean.newTabPanelBean()
+                .withName(new I18nProperty("My Profile Tab Panel", "myprofiletab.name"))
+                .withKey("my-profile-tab")
+                .withUrl("/my-profile-tab")
+                .withWeight(100)
+                .build();
+        JsonObject object = createModuleArray(ImmutableMap.of(
+                "jiraIssueTabPanels", issueTabPanelBean,
+                "jiraProjectTabPanels", projectTabPanelBean,
+                "jiraProfileTabPanels", userProfileTabPanelBean
+        ));
+        return gson.toJson(object);
+
+    }
+
+    private static String createReportExample()
+    {
+        ReportModuleBean reportModuleBean = ReportModuleBean.newBuilder()
+                .withKey("report-example")
+                .withUrl("/report?projectKey={project.key}")
+                .withName(new I18nProperty("Example Report", "report.example.name"))
+                .withDescription(new I18nProperty("This is an example report", "report.example.desc"))
+                .withReportCategory(ReportCategory.AGILE)
+                .withWeight(100)
+                .withThumbnailUrl("http://example.com/images/report-example-thumbnail.png")
+                .build();
+        return gson.toJson(createModuleArray("jiraReports", reportModuleBean));
     }
 
     private static String createPostFunctionExample()
@@ -630,16 +669,16 @@ public class ConnectJsonExamples
         ConnectAddonEventDataBuilder dataBuilder = newConnectAddonEventData();
 
         dataBuilder.withBaseUrl("http://example.atlassian.net")
-                    .withPluginKey("installed-addon-key")
-                    .withClientKey("unique-client-identifier")
-                    .withPublicKey("MIGf....ZRWzwIDAQAB")
-                    .withSharedSecret("a-secret-key-not-to-be-lost")
-                    .withPluginsVersion("version-of-connect")
-                    .withServerVersion("server-version")
-                    .withServiceEntitlementNumber("SEN-number")
-                    .withProductType("jira")
-                    .withDescription("Atlassian JIRA at https://example.atlassian.net")
-                    .withEventType(ConnectAddonManager.SyncHandler.INSTALLED.name().toLowerCase());
+                .withPluginKey("installed-addon-key")
+                .withClientKey("unique-client-identifier")
+                .withPublicKey("MIGf....ZRWzwIDAQAB")
+                .withSharedSecret("a-secret-key-not-to-be-lost")
+                .withPluginsVersion("version-of-connect")
+                .withServerVersion("server-version")
+                .withServiceEntitlementNumber("SEN-number")
+                .withProductType("jira")
+                .withDescription("Atlassian JIRA at https://example.atlassian.net")
+                .withEventType(ConnectAddonManager.SyncHandler.INSTALLED.name().toLowerCase());
 
         ConnectAddonEventData data = dataBuilder.build();
 
@@ -707,6 +746,43 @@ public class ConnectJsonExamples
         return gson.toJson(issueAttachmentIndexConfiguration);
     }
 
+    private static String createContentPropertyIndexExtractionConfigurationExample()
+    {
+        return gson.toJson(new ContentPropertyIndexExtractionConfigurationBean("attachment.size", ContentPropertyIndexFieldType.number));
+    }
+
+    private static String createContentPropertyIndexKeyConfigurationExample()
+    {
+        List<ContentPropertyIndexExtractionConfigurationBean> extractionConfiguration = Lists.newArrayList(
+                new ContentPropertyIndexExtractionConfigurationBean("attachment.size", ContentPropertyIndexFieldType.number),
+                new ContentPropertyIndexExtractionConfigurationBean("attachment.extension", ContentPropertyIndexFieldType.string),
+                new ContentPropertyIndexExtractionConfigurationBean("attachment.updated", ContentPropertyIndexFieldType.date),
+                new ContentPropertyIndexExtractionConfigurationBean("attachment.author", ContentPropertyIndexFieldType.text)
+        );
+
+        return gson.toJson(new ContentPropertyIndexKeyConfigurationBean("attachment", extractionConfiguration));
+    }
+
+    private static String createContentPropertyExample()
+    {
+        List<ContentPropertyIndexExtractionConfigurationBean> extractionConfiguration = Lists.newArrayList(
+                new ContentPropertyIndexExtractionConfigurationBean("attachment.size", ContentPropertyIndexFieldType.number),
+                new ContentPropertyIndexExtractionConfigurationBean("attachment.extension", ContentPropertyIndexFieldType.string),
+                new ContentPropertyIndexExtractionConfigurationBean("attachment.updated", ContentPropertyIndexFieldType.date),
+                new ContentPropertyIndexExtractionConfigurationBean("attachment.author", ContentPropertyIndexFieldType.text)
+        );
+        ContentPropertyIndexKeyConfigurationBean indexConfiguration =
+                new ContentPropertyIndexKeyConfigurationBean("attachment", extractionConfiguration);
+
+        ContentPropertyModuleBean contentPropertyModuleBean =
+                newContentPropertyModuleBean()
+                        .withName(new I18nProperty("Attachment Index Document", ""))
+                        .withKeyConfiguration(indexConfiguration)
+                        .build();
+
+        return gson.toJson(createJsonArray("confluenceContentProperties", contentPropertyModuleBean));
+    }
+
     private static JsonObject createJsonArray(String name, ModuleBean bean)
     {
         JsonObject obj = new JsonObject();
@@ -728,5 +804,17 @@ public class ConnectJsonExamples
         JsonObject modules = new JsonObject();
         modules.add("modules", createJsonArray(name, bean));
         return modules;
+    }
+
+    private static JsonObject createModuleArray(ImmutableMap<String, ? extends ModuleBean> modules)
+    {
+        JsonObject modulesObject = new JsonObject();
+        for (Map.Entry<String, ? extends ModuleBean> module : modules.entrySet())
+        {
+            modulesObject.add(module.getKey(), gson.toJsonTree(module.getValue()));
+        }
+        JsonObject obj = new JsonObject();
+        obj.add("modules", modulesObject);
+        return obj;
     }
 }

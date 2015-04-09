@@ -6,7 +6,20 @@ The claims in a JWT are encoded as a JavaScript Object Notation (JSON) object th
 JSON Web Signature (JWS) structure or as the plaintext of a JSON Web Encryption (JWE) structure, enabling the claims to
 be digitally signed or MACed and/or encrypted.
 
-## Structure of a JWT Token
+## Table of contents
+
+* [Structure of a JWT token](#token-structure)
+  * [Header](#token-structure-header)
+  * [Claims](#token-structure-claims)
+* [JWT libraries](#libraries)
+* [Creating a JWT token](#creating-token)
+* [Decoding and verifying a JWT token](#decoding-and-verifying-token)
+  * [Decoding a JWT token](#decoding-token)
+  * [Verifying a JWT token](#verifying-token)
+  * [Creating a query string hash](#qsh)
+* [Advanced: Creating a JWT token manually](#creating-token-manually)
+
+## <a name="token-structure"></a>Structure of a JWT token
 
 A JWT token looks like this:
 
@@ -26,7 +39,7 @@ In other words:
 You shouldn't actually have to do this manually, as there are libraries available in most languages, as we describe in the [JWT libraries](#jwtlib) section.
 However it is important you understand the fields in the JSON header and claims objects described in the next sections:
 
-### Header
+### <a name="token-structure-header"></a>Header
 
 The JWT Header declares that the encoded object is a JSON Web Token (JWT) and the JWT is a JWS that is MACed using the HMAC SHA-256 algorithm. For example:
 
@@ -53,8 +66,16 @@ The JWT Header declares that the encoded object is a JSON Web Token (JWT) and th
     </tr>
 </table>
 
+<div class="aui-message warning">
+    <p class="title">
+        <span class="aui-icon icon-warning"></span>
+        <strong>Important</strong>
+    </p>
+    Your JWT library or implementation should discard any tokens which specify `alg: none` as this can provide a bypass of the token verification.
+</div>
+
 <a name='claims'></a>
-### Claims
+### <a name="token-structure-claims"></a>Claims
 
 The JWT claims object contains security information about the message. For example:
 
@@ -101,7 +122,7 @@ The JWT claims object contains security information about the message. For examp
     <tr>
         <td>`qsh` (mandatory)</td>
         <td>String</td>
-        <td>query hash. A custom Atlassian claim that prevents URL tampering.</td>
+        <td>query string hash. A custom Atlassian claim that prevents URL tampering.</td>
     </tr>
     <tr>
         <td>`sub` (optional)</td>
@@ -126,7 +147,7 @@ This can be useful when all or part of a page is refreshed or when it is valid f
 repeatedly perform identical actions (e.g. clicking the same button).
 
 <a name="jwtlib"></a>
-## JWT Libraries
+## <a name="libraries"></a>JWT libraries
 
 Most modern languages have JWT libraries available. We recommend you use one of these libraries
 (or other JWT-compatible libraries) before trying to hand-craft the JWT token.
@@ -150,7 +171,7 @@ Most modern languages have JWT libraries available. We recommend you use one of 
 The [JWT decoder](http://jwt-decoder.herokuapp.com/jwt/decode) is a handy web based decoder for Atlassian Connect JWT tokens.
 
 <a name='create'></a>
-## Creating a JWT Token
+## <a name="creating-token"></a>Creating a JWT token
 
 Here is an example of creating a JWT token, in Java, using atlassian-jwt and nimbus-jwt:
 
@@ -198,9 +219,45 @@ public class JWTSample {
 }</code></pre>
 
 <a name='decode'></a>
-## Decoding and Verifying a JWT Token
+## <a name="decoding-and-verifying-token"></a>Decoding and verifying a JWT token
 
-### Decoding a JWT Token
+Here is a minimal example of decoding and verifying a JWT token, in Java, using atlassian-jwt and nimbus-jwt.
+**NOTE:** This example does not include any error handling.
+See [`AbstractJwtAuthenticator`](https://bitbucket.org/atlassian/atlassian-jwt/src/master/core/src/main/java/com/atlassian/jwt/core/http/auth/AbstractJwtAuthenticator.java)
+from atlassian-jwt for recommendations of how to handle the different error cases.
+
+<pre><code data-lang="java">
+import com.atlassian.jwt.*;
+import com.atlassian.jwt.core.http.JavaxJwtRequestExtractor;
+import com.atlassian.jwt.core.reader.*;
+import com.atlassian.jwt.exception.*;
+import com.atlassian.jwt.reader.*;
+import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Map;
+
+public class JWTVerificationSample {
+
+    public Jwt verifyRequest(HttpServletRequest request,
+                             JwtIssuerValidator issuerValidator,
+                             JwtIssuerSharedSecretService issuerSharedSecretService)
+            throws UnsupportedEncodingException, NoSuchAlgorithmException,
+                   JwtVerificationException, JwtIssuerLacksSharedSecretException,
+                   JwtUnknownIssuerException, JwtParseException {
+        JwtReaderFactory jwtReaderFactory = new NimbusJwtReaderFactory(
+                issuerValidator, issuerSharedSecretService);
+        JavaxJwtRequestExtractor jwtRequestExtractor = new JavaxJwtRequestExtractor();
+        CanonicalHttpRequest canonicalHttpRequest
+                = jwtRequestExtractor.getCanonicalHttpRequest(request);
+        Map<String, ? extends JwtClaimVerifier> requiredClaims = JwtClaimVerifiersBuilder.build(canonicalHttpRequest);
+        String jwt = jwtRequestExtractor.extractJwt(request);
+        return jwtReaderFactory.getReader(jwt).readAndVerify(jwt, requiredClaims);
+    }
+}
+</code></pre>
+
+### <a name="decoding-token"></a>Decoding a JWT token
 
 Decoding the JWT token reverses the steps followed during the creation of the token,
 to extract the header, claims and signature. Here is an example in Java:
@@ -238,7 +295,7 @@ Signature:
     uKqU9dTB6gKwG6jQCuXYAiMNdfNRw98Hw_IWuA5MaMo
 
 <a name='verify'></a>
-### Verifying a JWT token
+### <a name="verifying-token"></a>Verifying a JWT token
 
 JWT libraries typically provide methods to be able to verify a received JWT token.
 Here is an example using nimbus-jose-jwt and json-smart:
@@ -264,7 +321,7 @@ public JWTClaimsSet read(String jwt, JWSVerifier verifier) throws ParseException
 </code></pre>
 
 <a name='qsh'></a>
-## Creating a Query Hash
+### <a name="qsh"></a>Creating a query string hash
 
 A query string hash is a signed canonical request for the URI of the API you want to call.
 
@@ -299,13 +356,15 @@ To create a query string hash, follow the detailed instructions below:
     <br><br>
 4. Append the character `'&'`<br><br>
 5. Compute canonical query string
-  *  Sort the query parameters primarily by their percent-encoded names and secondarily by their percent-encoded values
+  *  The query string will use [percent-encoding](http://en.wikipedia.org/wiki/Percent-encoding).
+  *  Sort the query parameters primarily by their percent-encoded names and secondarily by their percent-encoded values.
   *  Sorting is by codepoint: `sort(["a", "A", "b", "B"]) => ["A", "B", "a", "b"]`
   *  For each parameter append its percent-encoded name, the `'='` character and then its percent-encoded value.
   *  In the case of repeated parameters append the `','` character and subsequent percent-encoded values.
   *  Ignore the `jwt` parameter, if present.
   *  Some particular values to be aware of:
-    *  `"+"` is encoded as `"%20"`,
+    *  A whitespace character is encoded as `"%20"`,
+    *  `"+"` as `"%2B"`,
     *  `"*"` as `"%2A"` and
     *  `"~"` as `"~"`.<br>
     (These values used for consistency with OAuth1.)
@@ -315,18 +374,18 @@ To create a query string hash, follow the detailed instructions below:
 7. Hash the canonical request bytes using the `SHA-256` algorithm
    * e.g. The `SHA-256` hash of `"foo"` is `"2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae
 
-## Advanced: Creating a JWT Token Manually
+##<a name="creating-token-manually"></a> Advanced: Creating a JWT token manually
 
 <div class="aui-message warning">
-        <p class="title">
-            <span class="aui-icon icon-warning"></span>
-            <strong>Disclaimer</strong>
-        </p>
-        You should only need to read this section if you are planning to create JWT tokens manually,
-        i.e. if you are not using one of the libraries listed in the previous section
-    </div>
+    <p class="title">
+        <span class="aui-icon icon-warning"></span>
+        <strong>Disclaimer</strong>
+    </p>
+    You should only need to read this section if you are planning to create JWT tokens manually,
+    i.e. if you are not using one of the libraries listed in the previous section
+</div>
 
-### More details on JWT Tokens
+### <a name="more-details"></a>More details on JWT tokens
 
 The format of a JWT token is simple: ```<base64-encoded header>.<base64-encoded claims>.<signature>```.
 
@@ -343,10 +402,10 @@ The format of a JWT token is simple: ```<base64-encoded header>.<base64-encoded 
  the indicated algorithm and a previously established secret.
  * An attacker tampering with the header or claims will cause signature verification to fail.
  * An attacker signing with a different secret will cause signature verification to fail.
- * There are various algorithm choices legal in the JWT spec. In atlassian-connect version 1.0 we support HMAC SHA-256.
+ * There are various algorithm choices legal in the JWT spec. In atlassian-connect version 1.0 we support HMAC SHA-256. **Important:** your implementation should discard any JWT tokens which specify `alg: none` as these are not subject to signature verification.
 
 
- ### Steps to Follow
+### Steps to Follow
 
  1. Create a header JSON object
  * Convert the header JSON object to a UTF-8 encoded string and base-64 encode it. That gives you encodedHeader.
@@ -357,7 +416,7 @@ The format of a JWT token is simple: ```<base64-encoded header>.<base64-encoded 
  * concatenate the signing input, another period character and the signature, which gives you the JWT token. jwtToken = signingInput + "." + encodedSignature
 
 
- ### Example
+### Example
 
  Here is an example in Java using gson, commons-codec, and the Java security and crypto libraries:
 
