@@ -30,9 +30,6 @@ import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
 import it.servlet.condition.ParameterCapturingConditionServlet;
 import it.servlet.condition.ParameterCapturingServlet;
-import it.util.ConnectTestUserFactory;
-import it.util.TestUser;
-import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -221,6 +218,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
         RemoteDialogOpeningPage dialogOpeningPage = bindDialogOpeningPage(ModuleKeyUtils.addonAndModuleKey(runner.getAddon().getKey(), pageKey));
         RemoteCloseDialogPage closeDialogPage = bindCloseDialogPage(dialogOpeningPage, moduleKey);
 
+        assertThatTheDialogHasTheCorrectProperties(closeDialogPage);
         assertEquals("test dialog close data", closeTheDialog(dialogOpeningPage, closeDialogPage));
     }
 
@@ -241,7 +239,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
         return dialogOpeningPage.waitForValue("dialog-close-data");
     }
 
-    private void assertThatTheDialogHasTheCorrectProperties(RemoteCloseDialogPage closeDialogPage, TestUser user)
+    private void assertThatTheDialogHasTheCorrectProperties(RemoteCloseDialogPage closeDialogPage)
     {
         // check the dimensions are the same as those in the js (mustache file)
         assertThat(closeDialogPage.getIFrameSize().getWidth(), is(231));

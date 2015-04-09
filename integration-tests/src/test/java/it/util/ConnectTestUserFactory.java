@@ -44,7 +44,6 @@ public class ConnectTestUserFactory
         TestUser testUser = new TestUser(username);
         if (product instanceof JiraTestedProduct)
         {
-            TestBase.funcTestHelper.backdoor.usersAndGroups().deleteUser(username);
             TestBase.funcTestHelper.backdoor.usersAndGroups().addUser(username);
             addJiraPermissionsForTestUser(testUser, authLevel);
         }

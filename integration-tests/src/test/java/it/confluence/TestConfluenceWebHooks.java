@@ -1,7 +1,9 @@
 package it.confluence;
 
+import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
@@ -21,8 +23,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 @ConvertToWiredTest
-public class TestConfluenceWebHooks extends ConfluenceWebDriverTestBase
+public class TestConfluenceWebHooks
 {
+    protected static final ConfluenceTestedProduct product = TestedProductProvider.getConfluenceTestedProduct();
     private final String baseUrl = getConfluenceTestedProduct().getProductInstance().getBaseUrl();
     private ConfluenceOps confluenceOps;
 
