@@ -87,6 +87,18 @@ runTestsStage() {
             )
         }
         job(
+                key:'JDOC',
+                name:'Javadoc',
+                description: 'Generates Javadoc'
+        ) {
+            commonRequirements()
+            checkoutDefaultRepositoryTask()
+            mavenTask(
+                    description: 'Generate Javadoc',
+                    goal: 'javadoc:javadoc',
+            )
+        }
+        job(
                 key: 'VALIDATE',
                 name: 'Descriptor Validation',
                 description: 'Validates that all public add-ons in the marketplace validate against the latest schema version'
