@@ -94,8 +94,8 @@ runTestsStage() {
             commonRequirements()
             checkoutDefaultRepositoryTask()
             mavenTask(
-                    description: 'Generate Javadoc',
-                    goal: 'javadoc:javadoc',
+                    description: 'Build Plugin and Generate Javadoc',
+                    goal: 'install -DskipDocs -DskipTests javadoc:javadoc',
             )
         }
         job(
@@ -106,7 +106,7 @@ runTestsStage() {
             commonRequirements()
             checkoutDefaultRepositoryTask()
             mavenTask(
-                    description: 'Build Developer Documentation',
+                    description: 'Build Plugin',
                     goal: 'install -DskipDocs -DskipTests',
             )
             task(
