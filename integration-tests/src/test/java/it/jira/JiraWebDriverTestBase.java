@@ -33,7 +33,6 @@ public class JiraWebDriverTestBase
 
     protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
             product.getTester().getDriver());
-    private static Option<TestUser> currentUser = none();
 
     @Rule
     public WebDriverScreenshotRule screenshotRule = new WebDriverScreenshotRule();
@@ -66,20 +65,12 @@ public class JiraWebDriverTestBase
     @AfterClass
     public static void logout()
     {
-        currentUser = Option.<TestUser>none();
         product.getTester().getDriver().manage().deleteAllCookies();
     }
 
     protected void login(TestUser user)
     {
-        if (isAlreadyLoggedIn(user))
-        {
-            return;
-        }
-
         logout();
-        currentUser = some(user);
-
         product.quickLogin(user.getUsername(), user.getPassword());
     }
 
@@ -96,21 +87,9 @@ public class JiraWebDriverTestBase
         }
     }
 
-    private boolean isAlreadyLoggedIn(final TestUser user)
-    {
-        return user != null && currentUser.isDefined() && currentUser.get().getUsername().equals(user.getUsername());
-    }
-
     protected <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args)
     {
-        if (isAlreadyLoggedIn(user))
-        {
-            return product.visit(page, args);
-        }
-
         logout();
-        currentUser = some(user);
-
         return product.quickLogin(user.getUsername(), user.getPassword(), page, args);
     }
 }
