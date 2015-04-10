@@ -33,6 +33,12 @@ or Confluence Cloud with Atlassian Connect as follows:
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
 
+## [1.1.27](../release-notes/1-1-0.html#1.1.27)
+* Confluence: Allow index schema configuration for content properties [CE-77](https://ecosystem.atlassian.net/browse/CE-77)
+* Confluence: Support for extending autoconvert for macros [CE-33](https://ecosystem.atlassian.net/browse/CE-33)
+* JIRA: Whitelist REST API methods for JQL auto-complete suggestions [ACJIRA-367](https://ecosystem.atlassian.net/browse/ACJIRA-367)
+* Improve feedback for failed add-on installations through UPM [AC-1547](https://ecosystem.atlassian.net/browse/AC-1547)
+
 ## [1.1.25](../release-notes/1-1-0.html#1.1.25)
 * Add REST API for storing and accessing add-on properties [ACJIRA-28](https://ecosystem.atlassian.net/browse/ACJIRA-28)
 * JIRA: Whitelist REST API methods for comment properties [ACJIRA-306](https://ecosystem.atlassian.net/browse/ACJIRA-306)
