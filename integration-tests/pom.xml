@@ -68,6 +68,7 @@
                         <groupId>com.atlassian.maven.plugins</groupId>
                         <artifactId>maven-amps-plugin</artifactId>
                         <configuration>
+                            <skipRestDocGeneration>true</skipRestDocGeneration>
                             <systemPropertyVariables>
                                 <mpac.username>${env.bamboo_mpac_staging_username}</mpac.username>
                                 <mpac.password>${env.bamboo_mpac_staging_password}</mpac.password>
