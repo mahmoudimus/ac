@@ -18,8 +18,6 @@ public class DashboardItemModuleBean extends BeanWithKeyAndParamsAndConditions
     @Required
     @StringSchemaAttributes (format = "uri-template")
     private String url;
-    @Required
-    private IconBean iconBean;
     @CommonSchemaAttributes (defaultValue = "false")
     private Boolean configurable;
     private IconBean icon;
@@ -39,7 +37,7 @@ public class DashboardItemModuleBean extends BeanWithKeyAndParamsAndConditions
         super(builder);
     }
 
-    public DashboardItemModuleBeanBuilder newDashboardItemModuleBean()
+    public static DashboardItemModuleBeanBuilder newDashboardItemModuleBean()
     {
         return new DashboardItemModuleBeanBuilder();
     }
@@ -59,7 +57,7 @@ public class DashboardItemModuleBean extends BeanWithKeyAndParamsAndConditions
         return url;
     }
 
-    public Boolean getConfigurable()
+    public Boolean isConfigurable()
     {
         return configurable;
     }

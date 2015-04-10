@@ -10,6 +10,7 @@ public class DashboardItemModuleBeanBuilder extends BeanWithKeyParamsAndConditio
     private I18nProperty description;
     private String url;
     private IconBean icon;
+    private Boolean configurable;
 
     public DashboardItemModuleBeanBuilder()
     {
@@ -48,6 +49,12 @@ public class DashboardItemModuleBeanBuilder extends BeanWithKeyParamsAndConditio
     public DashboardItemModuleBeanBuilder withIcon(IconBean icon)
     {
         this.icon = icon;
+        return this;
+    }
+
+    public DashboardItemModuleBeanBuilder configurable(Boolean configurable)
+    {
+        this.configurable = configurable;
         return this;
     }
 

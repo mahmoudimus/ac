@@ -224,6 +224,13 @@ public class ModuleList extends BaseModuleBean
     @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ReportModuleProvider", products = {ProductFilter.JIRA})
     private List<ReportModuleBean> jiraReports;
 
+    /**
+     * Add new dashboard item to JIRA.
+     * @schemaTitle Dashboard Item
+     */
+    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.DashboardItemModuleProvider", products = {ProductFilter.JIRA})
+    private List<DashboardItemModuleBean> jiraDashboardItems;
+
     /////////////////////////////////////////////////////
     ///////    CONFLUENCE MODULES
     /////////////////////////////////////////////////////
@@ -291,6 +298,7 @@ public class ModuleList extends BaseModuleBean
         this.jiraWorkflowPostFunctions = newArrayList();
         this.jiraEntityProperties = newArrayList();
         this.jiraReports = newArrayList();
+        this.jiraDashboardItems = newArrayList();
         this.profilePages = newArrayList();
         this.spaceToolsTabs = newArrayList();
         this.staticContentMacros = newArrayList();
@@ -385,6 +393,10 @@ public class ModuleList extends BaseModuleBean
         if (null == confluenceContentProperties)
         {
             this.confluenceContentProperties = newArrayList();
+        }
+        if (null == jiraDashboardItems)
+        {
+            this.jiraDashboardItems = newArrayList();
         }
     }
 
@@ -491,6 +503,11 @@ public class ModuleList extends BaseModuleBean
         return confluenceContentProperties;
     }
 
+    public List<DashboardItemModuleBean> getJiraDashboardItems()
+    {
+        return jiraDashboardItems;
+    }
+
     // don't call super because BaseCapabilityBean has no data
     @Override
     public boolean equals(Object otherObj)
@@ -528,6 +545,7 @@ public class ModuleList extends BaseModuleBean
                 .append(webPanels, other.webPanels)
                 .append(webSections, other.webSections)
                 .append(jiraReports, other.jiraReports)
+                .append(jiraDashboardItems, other.jiraDashboardItems)
                 .build();
     }
 
@@ -556,6 +574,7 @@ public class ModuleList extends BaseModuleBean
                 .append(webPanels)
                 .append(webSections)
                 .append(jiraReports)
+                .append(jiraDashboardItems)
                 .build();
     }
     

@@ -2,19 +2,23 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.gadgets.directory.Category;
-import com.atlassian.gadgets.plugins.DashboardItemModule;
 import com.atlassian.gadgets.plugins.DashboardItemModule.Author;
 import com.atlassian.gadgets.plugins.DashboardItemModule.DirectoryDefinition;
 import com.atlassian.gadgets.plugins.DashboardItemModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.DashboardItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
+import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.plugin.iframe.webpanel.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.plugin.module.jira.dashboard.ConnectDashboardItemModuleDescriptor;
+import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.google.common.collect.Sets;
 import org.dom4j.Element;
@@ -28,24 +32,27 @@ import java.util.Set;
 @Component
 public class DashboardItemModuleBeanFactory implements ConnectModuleDescriptorFactory<DashboardItemModuleBean, DashboardItemModuleDescriptor>
 {
-    private final ConnectContainerUtil containerUtil;
     private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
-    private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final ModuleFactory moduleFactory;
+    private final PluggableParametersExtractor parametersExtractor;
+    private final ModuleContextFilter moduleContextFilter;
+    private final RemotablePluginAccessorFactory pluginAccessorFactory;
 
     @Autowired
-    public DashboardItemModuleBeanFactory(final ConnectContainerUtil containerUtil,
-            final ConditionModuleFragmentFactory conditionModuleFragmentFactory,
-            final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+    public DashboardItemModuleBeanFactory(final ConditionModuleFragmentFactory conditionModuleFragmentFactory,
             final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            final ModuleFactory moduleFactory)
+            final ModuleFactory moduleFactory,
+            final PluggableParametersExtractor parametersExtractor,
+            final ModuleContextFilter moduleContextFilter,
+            final RemotablePluginAccessorFactory pluginAccessorFactory)
     {
-        this.containerUtil = containerUtil;
         this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
-        this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.moduleFactory = moduleFactory;
+        this.parametersExtractor = parametersExtractor;
+        this.moduleContextFilter = moduleContextFilter;
+        this.pluginAccessorFactory = pluginAccessorFactory;
     }
 
     @Override
@@ -56,22 +63,49 @@ public class DashboardItemModuleBeanFactory implements ConnectModuleDescriptorFa
         ConnectAddonBean addonBean = moduleProviderContext.getConnectAddonBean();
         VendorBean vendor = addonBean.getVendor();
 
-        DirectoryDefinition directoryDefinition = createDirectoryDefinition(bean, vendor);
+        DirectoryDefinition directoryDefinition = createDirectoryDefinition(plugin, bean, vendor);
 
-        ConnectDashboardItemModuleDescriptor moduleDescriptor = new ConnectDashboardItemModuleDescriptor(moduleFactory, directoryDefinition);
+        String moduleKey = bean.getKey(addonBean);
+
+        // register an iframe rendering strategy
+        IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
+                .addOn(addonBean.getKey())
+                .module(moduleKey)
+                .genericBodyTemplate()
+                .urlTemplate(bean.getUrl())
+                .conditions(bean.getConditions())
+                .build();
+
+        ConnectDashboardItemModuleDescriptor moduleDescriptor = new ConnectDashboardItemModuleDescriptor(moduleFactory, directoryDefinition, renderStrategy, moduleContextFilter, parametersExtractor);
+
         Element dashboardItemModule = new DOMElement("dashboard-item");
+        dashboardItemModule.addAttribute("key", moduleKey);
         moduleDescriptor.init(plugin, dashboardItemModule);
 
         return moduleDescriptor;
     }
 
-    private DirectoryDefinition createDirectoryDefinition(final DashboardItemModuleBean moduleBean, final VendorBean vendor)
+    private DirectoryDefinition createDirectoryDefinition(final Plugin plugin,
+            final DashboardItemModuleBean moduleBean,
+            final VendorBean vendor)
     {
         return new ConnectDashboardItemDirectoryDefintion(moduleBean.getTitle().getRawValue(),
                 moduleBean.getTitle().getI18n(),
                 author(vendor),
-                Sets.<Category>newHashSet(),
-                Option.option(URI.create(moduleBean.getIcon().getUrl())));
+                iconUri(plugin, moduleBean.getIcon()));
+    }
+
+    private URI iconUri(final Plugin plugin, final IconBean icon)
+    {
+        URI iconUri = URI.create(icon.getUrl());
+        if (iconUri.isAbsolute())
+        {
+            return iconUri;
+        }
+        else
+        {
+            return pluginAccessorFactory.get(plugin.getKey()).getTargetUrl(iconUri);
+        }
     }
 
     private Author author(VendorBean vendorBean)
@@ -84,19 +118,16 @@ public class DashboardItemModuleBeanFactory implements ConnectModuleDescriptorFa
         private final String title;
         private final String titleI18nKey;
         private final Author author;
-        private final Set<Category> categories;
-        private final Option<URI> thumbnail;
+        private final URI thumbnail;
 
         private ConnectDashboardItemDirectoryDefintion(final String title,
                 final String titleI18nKey,
                 final Author author,
-                final Set<Category> categories,
-                final Option<URI> thumbnail)
+                final URI thumbnail)
         {
             this.title = title;
             this.titleI18nKey = titleI18nKey;
             this.author = author;
-            this.categories = categories;
             this.thumbnail = thumbnail;
         }
 
@@ -121,13 +152,13 @@ public class DashboardItemModuleBeanFactory implements ConnectModuleDescriptorFa
         @Override
         public Set<Category> getCategories()
         {
-            throw new UnsupportedOperationException("Not implemented");
+            return Sets.newHashSet(Category.JIRA);
         }
 
         @Override
         public Option<URI> getThumbnail()
         {
-            throw new UnsupportedOperationException("Not implemented");
+            return Option.some(thumbnail);
         }
     }
 
