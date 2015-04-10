@@ -67,7 +67,7 @@ public class MacroRenderModesBean extends BaseModuleBean
 
     /**
      * Return the {@link com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean} for the
-     * output type specified by a {@link com.atlassian.confluence.content.render.xhtml.ConversionContext#getOutputType}
+     * output type specified by a com.atlassian.confluence.content.render.xhtml.ConversionContext#getOutputType
      * during a macro execution.
      *
      * @param outputType the output type to find the render mode for

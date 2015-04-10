@@ -10,7 +10,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * Allows an add-on to register callbacks for plugin lifecycle events. Each property in this object is a url that can be
  * absolute or relative to the add-on's baseUrl. When a lifecycle event is fired, it will POST to the appropriate url
  * registered for the event.
- * <p/>
+ *
  *#### Lifecycle Attribute Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#LIFECYCLE_EXAMPLE}
@@ -21,7 +21,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#LIFECYCLE_PAYLOAD_EXAMPLE}
  *
- *<table class='aui'>
+ *<table summary="Lifecycle payload attributes" class='aui'>
  *    <thead>
  *        <tr>
  *            <th>Attribute</th>
@@ -29,7 +29,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *        </tr>
  *    </thead>
  *    <tr>
- *        <td><code>key</td>
+ *        <td><code>key</code></td>
  *        <td>Add-on key that was installed into the Atlassian Product, as it appears in your add-on's descriptor.</td>
  *    </tr>
  *    <tr>

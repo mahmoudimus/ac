@@ -8,10 +8,10 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- *Page modules allow add-ons to insert new pages into atlassian products. These can be automatically resized to the width
- * and height of your add-on's content. The location attribute defines where links to the new page appear.
+ * <p>Page modules allow add-ons to insert new pages into atlassian products. These can be automatically resized to the width
+ * and height of your add-on's content. The location attribute defines where links to the new page appear.</p>
  *
- *Each type of page displays differently:
+ * </p>Each type of page displays differently:
  *
  * * `generalPages` - have no extra styling and by default a link to the page is displayed in the main navigation menu.
  * * `adminPages` - display in the administration area. Appropriate menus and other styling appear around your content.
@@ -21,19 +21,19 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  * <!-- ## Seamless iframes -->
  *
- *The content for a page module is injected into the Atlassian application in the form of a "seamless" iframe.
- * Seamless iframes are regular HTML iframes but with the following characteristics:
+ * <p>The content for a page module is injected into the Atlassian application in the form of a "seamless" iframe.
+ * Seamless iframes are regular HTML iframes but with the following characteristics:</p>
  *
  * * Their size is based on the page height and width inside the iframe (i.e., no scrollbars)
  * * They are dynamically resized based on the inner content or relative browser window sizing
  * * They appear without borders, making them look like a non-iframed fragment of the page
  * * For general-pages, you can also opt to size your iframe to take up all of the browser window's space (instead of resizing to its internal content). To do this, add the data-option attribute "sizeToParent:true" in the script tag for all.js. For example, using ACE:
  *
- *      `<script src="{{hostScriptUrl}}" type="text/javascript" data-options="sizeToParent:true"></script>`
+ *      <pre>{@literal <script src="{{hostScriptUrl}}" type="text/javascript" data-options="sizeToParent:true"></script>}</pre>
  *
- *As implied here, for most page content modules, you do not need to be concerned with iframe sizing. It's all handled
- * for you. However, an exception exists for inline macros.
- * <p/>
+ * <p>As implied here, for most page content modules, you do not need to be concerned with iframe sizing. It's all handled
+ * for you. However, an exception exists for inline macros.</p>
+ *
  *#### Example
  *
  * @schemaTitle Page
@@ -93,7 +93,9 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
     }
 
     /**
-     *  Specifies the URL targeted by the page. The URL is relative to the add-on's base URL.
+     * Specifies the URL targeted by the page. The URL is relative to the add-on's base URL.
+     *
+     * @return the URL of the page
      */
     public String getUrl()
     {
@@ -109,6 +111,8 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
      * Built-in web items have weights that are incremented by numbers that leave room for additional
      * items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears
      * in a sensible order given existing items.
+     *
+     * @return the weight of the page
      */
     public Integer getWeight()
     {
@@ -119,6 +123,8 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
      *  An optional icon to display with the link text or as the link, specified by URL to its hosted location.
      *  You can specify a particular width and height for the icon. Most link icons in Atlassian applications
      *  are 16 by 16 pixels.
+     *
+     * @return the icon associated with the link to the page
      */
     public IconBean getIcon()
     {
@@ -138,6 +144,8 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
      * 
      * * [JIRA locations](https://developer.atlassian.com/display/JIRADEV/Web+Fragments)
      * * [Confluence locations](https://developer.atlassian.com/display/CONFDEV/Web+UI+Modules)
+     *
+     * @return the location of the link to the page
      */ 
     public String getLocation()
     {

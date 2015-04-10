@@ -32,7 +32,7 @@ public class WebPanelModuleBean extends BeanWithKeyAndParamsAndConditions
 
     /**
      * Location in the application interface for this panel.
-     * <p/>
+     * <br><br>
      * Product location documentation:
      *
      * * [JIRA locations](https://developer.atlassian.com/display/JIRADEV/Web+Fragments)

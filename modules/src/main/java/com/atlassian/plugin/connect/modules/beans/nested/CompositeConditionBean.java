@@ -11,11 +11,11 @@ import java.util.List;
 
 /**
  * Composite Conditions are composed of a collection of Single Condition/Composite Conditions and a type attribute.
- * <p/>
+ * <br><br>
  * The type attribute defines what logical operator is used to evaluate its collection of condition elements.
- * <p/>
+ * <br><br>
  * The type can be one of "and" or "or"
- * <p/>
+ * <br><br>
  *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#COMPOSITE_CONDITION_EXAMPLE}

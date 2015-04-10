@@ -8,7 +8,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 /**
  * Defines the authentication type to use when signing requests between the host application and the connect add on.
  * The authentication type can be either jwt or oauth. If the type is not supplied it will default to jwt.
- * <p/>
+ *
  *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#AUTHENTICATION_EXAMPLE}

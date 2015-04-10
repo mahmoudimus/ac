@@ -12,7 +12,7 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
 
 /**
  * Defines an icon to display
- * <p/>
+ * <br><br>
  *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ICON_EXAMPLE}

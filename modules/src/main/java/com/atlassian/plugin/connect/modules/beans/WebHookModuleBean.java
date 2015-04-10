@@ -150,7 +150,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  *### Example Request
  *
- *    POST /jira-issue_created?user_id=admin&user_key=admin HTTP/1.1
+ *    POST /jira-issue_created?user_id=admin&amp;user_key=admin HTTP/1.1
  *    Authorization: JWT ...
  *    Atlassian-Connect-Version: x.x
  *    Content-Type: application/json

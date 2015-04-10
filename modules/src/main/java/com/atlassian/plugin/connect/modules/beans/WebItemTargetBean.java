@@ -3,8 +3,6 @@ package com.atlassian.plugin.connect.modules.beans;
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.WebItemTargetBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
-import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.WebItemTargetOptions;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -30,7 +28,7 @@ public class WebItemTargetBean extends BaseModuleBean
     // TODO: The table with descriptions is needed until we fix ACDEV-1381
     /**
      * An object containing options which vary based on the type of web item target you are implementing. 
-     * <p/>
+     * <br><br>
      * <div id="inlineDialog" class="aui-expander-content reveal-collapsible">
      * <code>Inline Dialog Options</code>
      * <table class="props table table-striped aui">

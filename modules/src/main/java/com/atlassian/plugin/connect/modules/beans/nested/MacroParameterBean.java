@@ -18,7 +18,7 @@ import java.util.List;
  *
  *     "dynamicContentMacros": [{
  *         ...
- *         "url": "/render-map?pageTitle={page.title}&viewChoice={view}",
+ *         "url": "/render-map?pageTitle={page.title}&amp;viewChoice={view}",
  *         ...
  *     }]
  *

@@ -23,16 +23,16 @@ import com.google.common.base.Objects;
  *
  *#### CONFLUENCE
  * {@see com.atlassian.plugin.connect.modules.beans.ConfluenceConditions#CONDITION_LIST}
- *<br/>
- *<br/>
+ *<br>
+ *<br>
  *### JIRA
  * {@see com.atlassian.plugin.connect.modules.beans.JiraConditions#CONDITION_LIST}
  *
  * 
  *#### JIRA condition parameter mappings
  * The following table shows the condition parameters available for `has_issue_permission` and `has_project_permission` in Atlassian Connect module declarations and how they map to the permissions described in the [Permissions](https://docs.atlassian.com/jira/latest/com/atlassian/jira/security/Permissions.html) class documentation.
- * <p/>
- * <table>
+ * <br><br>
+ * <table summary="JIRA condition parameter mappings">
  * <thead>
  * <tr><th>JIRA condition parameters</th><th>Atlassian Connect equivalent</th></tr>
  * </thead>
@@ -78,8 +78,8 @@ import com.google.common.base.Objects;
  * <tr><td>VIEW\_WORKFLOW\_READONLY</td><td>viewworkflowreadonly</td></tr>
  * </tbody>
  * </table>
- *<br />
- *<br />
+ *<br>
+ *<br>
  *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#SINGLE_CONDITION_EXAMPLE}

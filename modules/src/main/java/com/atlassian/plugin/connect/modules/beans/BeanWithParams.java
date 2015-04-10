@@ -12,7 +12,7 @@ public class BeanWithParams extends BaseModuleBean
 {
     /**
      * This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.
-     * <p/>
+     *
      *#### Example
      *
      * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#PARAMS_EXAMPLE}

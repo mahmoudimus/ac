@@ -8,7 +8,7 @@ import com.google.common.base.Objects;
 
 /**
  * Gives basic information about the plugin vendor
- * <p/>
+ * <br><br>
  *#### Example
  *
  * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#VENDOR_EXAMPLE}
