@@ -34,7 +34,7 @@ public class ConnectTestUserFactory
 
     private static TestUser createTestUser(TestedProduct product, AuthLevel authLevel)
     {
-        String username = authLevel.getPrefix() + "-" + RandomStringUtils.randomAlphanumeric(20);
+        String username = authLevel.getPrefix() + "-" + RandomStringUtils.randomAlphanumeric(20).toLowerCase();
         TestUser testUser = new TestUser(username);
         if (product instanceof JiraTestedProduct)
         {
