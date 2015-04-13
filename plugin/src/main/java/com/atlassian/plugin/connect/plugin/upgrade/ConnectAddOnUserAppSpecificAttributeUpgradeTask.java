@@ -19,6 +19,7 @@ import static com.atlassian.crowd.search.EntityDescriptor.user;
 import static com.atlassian.crowd.search.builder.QueryBuilder.queryFor;
 import static com.atlassian.crowd.search.query.entity.EntityQuery.ALL_RESULTS;
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.Constants.ADDON_USER_GROUP_KEY;
+import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.validAddOnEmailAddress;
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.validAddOnUsername;
 
@@ -74,13 +75,13 @@ public class ConnectAddOnUserAppSpecificAttributeUpgradeTask implements PluginUp
                 throw new Exception(String.format("Failed to complete Upgrade Task. User had an invalid email: \"%s\"", user.getName()));
             }
 
-            applicationService.storeUserAttributes(application, user.getName(), null);
+            applicationService.storeUserAttributes(application, user.getName(), buildConnectAddOnUserAttribute(crowdClientFacade.getClientApplicationName()));
             if (featureManager.isOnDemand())
             {
                 // Sets the connect attribute on the Remote Crowd Server if running in OD
                 // This is currently required due to the fact that the DbCachingRemoteDirectory implementation used by JIRA and Confluence doesn't currently
                 // write attributes back to the Crowd Server. https://ecosystem.atlassian.net/browse/EMBCWD-975 has been raised to look at re-implementing this feature!
-                crowdClientFacade.getCrowdClient().storeUserAttributes(user.getName(), null);
+                crowdClientFacade.getCrowdClient().storeUserAttributes(user.getName(), buildConnectAddOnUserAttribute(crowdClientFacade.getClientApplicationName()));
             }
         }
         return Collections.emptyList();

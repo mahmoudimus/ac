@@ -249,7 +249,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         }
 
         // Set connect attributes on user -- at this point we are confident we have a user
-        ImmutableMap<String, Set<String>> connectAddOnUserAttribute = buildConnectAddOnUserAttribute(getApplication().getName());
+        ImmutableMap<String, Set<String>> connectAddOnUserAttribute = buildConnectAddOnUserAttribute(crowdClientFacade.getClientApplicationName());
         applicationService.storeUserAttributes(getApplication(), user.getName(), connectAddOnUserAttribute);
 
         if (featureManager.isOnDemand())

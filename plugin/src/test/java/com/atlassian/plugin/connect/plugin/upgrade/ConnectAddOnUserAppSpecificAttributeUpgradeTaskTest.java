@@ -1,6 +1,9 @@
 package com.atlassian.plugin.connect.plugin.upgrade;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
@@ -21,10 +24,12 @@ import static com.atlassian.crowd.search.query.entity.EntityQuery.ALL_RESULTS;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -34,6 +39,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 public class ConnectAddOnUserAppSpecificAttributeUpgradeTaskTest
 {
+    public static final Set<String> EXPECTED_ATTRIBUTE_VALUE = new HashSet<>(singletonList("true"));
     private ConnectAddOnUserAppSpecificAttributeUpgradeTask upgradeTask;
 
     @Mock
@@ -42,6 +48,7 @@ public class ConnectAddOnUserAppSpecificAttributeUpgradeTaskTest
     private CrowdClientFacade crowdClientFacade;
     @Mock
     private CrowdClient crowdClient;
+
     @Mock
     private ApplicationService applicationService;
     @Mock
@@ -96,7 +103,7 @@ public class ConnectAddOnUserAppSpecificAttributeUpgradeTaskTest
 
     private void setupMockAddonUsers(String... names)
     {
-        String userNames[] = (names.length > 0) ? names : new String[] { "addon_fugitive" };
+        String userNames[] = (names.length > 0) ? names : new String[] { "addon_default" };
         List<User> users = newArrayList();
 
         for (String name : userNames)
@@ -156,4 +163,21 @@ public class ConnectAddOnUserAppSpecificAttributeUpgradeTaskTest
         verify(crowdClient, never()).storeUserAttributes(anyString(), anyMap());
     }
 
+    @Test
+    public void namesAttributeBasedOnHostApplication() throws Exception
+    {
+        setupMockAddonUsers();
+        when(crowdClientFacade.getClientApplicationName()).thenReturn("the-app-name");
+
+        upgradeTask.doUpgrade();
+
+        verify(applicationService).storeUserAttributes(any(Application.class), anyString(), attributeCalled("synch.the-app-name.atlassian-connect-user"));
+        verify(crowdClient).storeUserAttributes(anyString(), attributeCalled("synch.the-app-name.atlassian-connect-user"));
+    }
+
+    @SuppressWarnings ("unchecked")
+    private static Map<String, Set<String>> attributeCalled(String attributeName)
+    {
+        return (Map<String, Set<String>>) argThat(hasEntry(attributeName, EXPECTED_ATTRIBUTE_VALUE));
+    }
 }
