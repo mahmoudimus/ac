@@ -18,7 +18,7 @@ import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newA
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
- * <p>The add-on descriptor is a JSON file (<pre>{@literal atlassian-connect.json}</pre>) that describes the add-on to the Atlassian application.
+ * <p>The add-on descriptor is a JSON file (<code>atlassian-connect.json</code>) that describes the add-on to the Atlassian application.
  * The descriptor includes general information for the add-on, as well as the modules that the add-on wants to use or
  * extend.</p>
  *

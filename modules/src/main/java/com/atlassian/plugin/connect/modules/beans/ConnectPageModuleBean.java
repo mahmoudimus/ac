@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * <p>Page modules allow add-ons to insert new pages into atlassian products. These can be automatically resized to the width
  * and height of your add-on's content. The location attribute defines where links to the new page appear.</p>
  *
- * </p>Each type of page displays differently:
+ * <p>Each type of page displays differently:
  *
  * * `generalPages` - have no extra styling and by default a link to the page is displayed in the main navigation menu.
  * * `adminPages` - display in the administration area. Appropriate menus and other styling appear around your content.
