@@ -48,8 +48,8 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
 {
     private static ConnectRunner remotePlugin;
 
-    private static String ONLY_BETTY_WEBITEM = "only-";
-    private static String BETTY_AND_BARNEY_WEBITEM = "-and-";
+    private static String onlyBettyWebItem;
+    private static String bettyAndBarneyWebItem;
     private static final String ADMIN_RIGHTS_WEBITEM = "admin-rights";
     private static final String CONTEXT_PARAMETERIZED_WEBITEM = "context-parameterized";
     public static final String SPACE_CONTEXT_PARAMETERIZED_WEB_PANEL = CONTEXT_PARAMETERIZED_WEBITEM + "-space";
@@ -70,8 +70,8 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
         betty = ConnectTestUserFactory.admin(getProduct());
         barney = ConnectTestUserFactory.basicUser(getProduct());
 
-        ONLY_BETTY_WEBITEM = "only-" + betty.getDisplayName();
-        BETTY_AND_BARNEY_WEBITEM = betty.getDisplayName() + "-and-" + barney.getDisplayName();
+        onlyBettyWebItem = "only-" + betty.getDisplayName();
+        bettyAndBarneyWebItem = betty.getDisplayName() + "-and-" + barney.getDisplayName();
         ONLY_BETTY_CONDITION_URL = "/only" + betty.getDisplayName() + "Condition";
         ONLY_BARNEY_CONDITION_URL = "/only" + barney.getDisplayName() + "Condition";
 
@@ -79,8 +79,8 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
                 .setAuthenticationToNone()
                 .addModules("webItems",
                         newWebItemBean()
-                                .withName(new I18nProperty("Only Betty", ONLY_BETTY_WEBITEM))
-                                .withKey(ONLY_BETTY_WEBITEM)
+                                .withName(new I18nProperty("Only Betty", onlyBettyWebItem))
+                                .withKey(onlyBettyWebItem)
                                 .withLocation("system.browse")
                                 .withWeight(1)
                                 .withUrl("http://www.google.com")
@@ -90,8 +90,8 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
                                 )
                                 .build(),
                         newWebItemBean()
-                                .withName(new I18nProperty("Betty And Barney", BETTY_AND_BARNEY_WEBITEM))
-                                .withKey(BETTY_AND_BARNEY_WEBITEM)
+                                .withName(new I18nProperty("Betty And Barney", bettyAndBarneyWebItem))
+                                .withKey(bettyAndBarneyWebItem)
                                 .withLocation("system.browse")
                                 .withWeight(1)
                                 .withUrl("http://www.google.com")
@@ -159,7 +159,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
         login(betty);
 
         visitEditPage();
-        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(ONLY_BETTY_WEBITEM), Optional.of("help-menu-link"));
+        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(onlyBettyWebItem), Optional.of("help-menu-link"));
         assertNotNull("Web item should be found", webItem);
     }
 
@@ -169,7 +169,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
         login(barney);
 
         visitEditPage();
-        assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(ONLY_BETTY_WEBITEM)));
+        assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(onlyBettyWebItem)));
     }
 
     @Test
@@ -178,7 +178,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
         login(ConnectTestUserFactory.admin(getProduct()));
 
         visitEditPage();
-        assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(ONLY_BETTY_WEBITEM)));
+        assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(onlyBettyWebItem)));
     }
 
     @Test
@@ -187,7 +187,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
         login(betty);
 
         visitEditPage();
-        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(BETTY_AND_BARNEY_WEBITEM), Optional.of("help-menu-link"));
+        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(bettyAndBarneyWebItem), Optional.of("help-menu-link"));
         assertNotNull("Web item should be found", webItem);
     }
 
@@ -197,7 +197,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
         login(barney);
 
         visitEditPage();
-        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(BETTY_AND_BARNEY_WEBITEM), Optional.of("help-menu-link"));
+        RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(bettyAndBarneyWebItem), Optional.of("help-menu-link"));
         assertNotNull("Web item should be found", webItem);
     }
 
@@ -207,7 +207,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
         login(ConnectTestUserFactory.admin(getProduct()));
 
         visitEditPage();
-        assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(BETTY_AND_BARNEY_WEBITEM)));
+        assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(bettyAndBarneyWebItem)));
     }
 
     @Test

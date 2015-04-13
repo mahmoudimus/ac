@@ -18,7 +18,7 @@ import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvide
 import static com.atlassian.plugin.connect.test.webhook.WebHookTestServlet.runInJsonRunner;
 import static org.junit.Assert.assertNotNull;
 
-public class TestConfluenceWebHooks2 extends ConfluenceWebDriverTestBase
+public class TestConfluenceWebHooks2
 {
     protected static final ConfluenceTestedProduct product = TestedProductProvider.getConfluenceTestedProduct();
     private final String baseUrl = getConfluenceTestedProduct().getProductInstance().getBaseUrl();
