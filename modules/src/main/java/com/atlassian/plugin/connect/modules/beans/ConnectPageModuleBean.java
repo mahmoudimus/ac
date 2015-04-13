@@ -22,17 +22,23 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * <!-- ## Seamless iframes -->
  *
  * <p>The content for a page module is injected into the Atlassian application in the form of a "seamless" iframe.
- * Seamless iframes are regular HTML iframes but with the following characteristics:</p>
+ * Seamless iframes are regular HTML iframes but with the characteristics described below.</p>
+ *
+ * <p>As implied here, for most page content modules, you do not need to be concerned with iframe sizing.
+ * It's all handled for you. However, an exception exists for inline macros.</p>
  *
  * * Their size is based on the page height and width inside the iframe (i.e., no scrollbars)
  * * They are dynamically resized based on the inner content or relative browser window sizing
  * * They appear without borders, making them look like a non-iframed fragment of the page
- * * For general-pages, you can also opt to size your iframe to take up all of the browser window's space (instead of resizing to its internal content). To do this, add the data-option attribute "sizeToParent:true" in the script tag for all.js. For example, using ACE:
+ * * For general-pages, you can also opt to size your iframe to take up all of the browser window's space (instead of resizing to its internal content).
+ *   To do this, add the data-option attribute "sizeToParent:true" in the script tag for all.js. For example, using ACE:
  *
- *      <pre>{@literal <script src="{{hostScriptUrl}}" type="text/javascript" data-options="sizeToParent:true"></script>}</pre>
- *
- * <p>As implied here, for most page content modules, you do not need to be concerned with iframe sizing. It's all handled
- * for you. However, an exception exists for inline macros.</p>
+ *   <pre><code>
+ *&lt;script src=&quot;{{hostScriptUrl}}&quot;
+ *       type=&quot;text/javascript&quot;
+ *       data-options=&quot;sizeToParent:true&quot;&gt;
+ *&lt;/script&gt;
+ *   </code></pre>
  *
  *#### Example
  *

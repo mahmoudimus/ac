@@ -9,8 +9,8 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
 
 
 /**
- * Represents a link, its optional title and alternative text
- * <br><br>
+ * Represents a link, its optional title and alternative text.
+ *
  *#### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#LINK_EXAMPLE}

@@ -41,14 +41,14 @@ public class WebSectionModuleBean extends BeanWithKeyAndParamsAndConditions
     private I18nProperty tooltip;
 
     /**
-     * Determines the order in which the web section appears in the menu or list.
-     * <br><br>
-     * The "lightest" weight (i.e., lowest number) appears first, rising relative to other items, while the "heaviest"
-     * weights sink to the bottom of the menu or list.
-     * <br><br>
-     * Built-in web sections have weights that are incremented by numbers that leave room for additional sections, such
+     * <p>Determines the order in which the web section appears in the menu or list.</p>
+     *
+     * <p>The "lightest" weight (i.e., lowest number) appears first, rising relative to other items, while the "heaviest"
+     * weights sink to the bottom of the menu or list.</p>
+     *
+     * <p>Built-in web sections have weights that are incremented by numbers that leave room for additional sections, such
      * as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears in a sensible order given
-     * existing items.
+     * existing items.</p>
      */
     @CommonSchemaAttributes (defaultValue = "100")
     private Integer weight;

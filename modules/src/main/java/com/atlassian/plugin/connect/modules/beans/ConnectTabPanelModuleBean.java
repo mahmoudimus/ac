@@ -69,14 +69,14 @@ public class ConnectTabPanelModuleBean extends BeanWithKeyAndParamsAndConditions
     }
 
     /**
-     * Determines the order in which the tab panel's link appears in the menu or list.
-     * <br><br>
-     * The "lightest" weight (i.e., lowest number) appears first, rising relative to other items,
-     * while the "heaviest" weights sink to the bottom of the menu or list.
-     * <br><br>
-     * Built-in web items have weights that are incremented by numbers that leave room for additional
+     * <p>Determines the order in which the tab panel's link appears in the menu or list.</p>
+     *
+     * <p>The "lightest" weight (i.e., lowest number) appears first, rising relative to other items,
+     * while the "heaviest" weights sink to the bottom of the menu or list.</p>
+     *
+     * <p>Built-in web items have weights that are incremented by numbers that leave room for additional
      * items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears
-     * in a sensible order given existing items.
+     * in a sensible order given existing items.</p>
      *
      * @return the weight of the tab panel
      */

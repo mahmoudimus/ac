@@ -12,8 +12,8 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
 
 
 /**
- * Defines a macro image placeholder to display in the Confluence editor
- * <br><br>
+ * Defines a macro image placeholder to display in the Confluence editor.
+ *
  *#### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#IMAGE_PLACEHOLDER_EXAMPLE}

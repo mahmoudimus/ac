@@ -13,14 +13,16 @@ import java.util.List;
 /**
  * Describes a parameter input field for a macro.
  *
- * Any declared parameters must also be included in the URL value of the macro in order to serialise this value. For
+ * Any declared parameters must also be included in the URL value of the macro in order to serialise this value, for
  * example, for a macro with a parameter `view` it should be added to the macro url as follows:
  *
- *     "dynamicContentMacros": [{
- *         ...
- *         "url": "/render-map?pageTitle={page.title}&amp;viewChoice={view}",
- *         ...
- *     }]
+ * <pre><code>
+ *"dynamicContentMacros": [{
+ *   ...
+ *   "url": "/render-map?pageTitle={page.title}&amp;viewChoice={view}",
+ *   ...
+ *}]
+ * </code></pre>
  *
  *#### Example
  *

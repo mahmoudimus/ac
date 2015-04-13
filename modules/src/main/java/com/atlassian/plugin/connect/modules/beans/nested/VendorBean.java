@@ -7,8 +7,8 @@ import com.atlassian.plugin.connect.modules.beans.builder.VendorBeanBuilder;
 import com.google.common.base.Objects;
 
 /**
- * Gives basic information about the plugin vendor
- * <br><br>
+ * Gives basic information about the plugin vendor.
+ *
  *#### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#VENDOR_EXAMPLE}

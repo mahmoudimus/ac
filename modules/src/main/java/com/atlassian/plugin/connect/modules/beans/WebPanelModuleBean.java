@@ -31,9 +31,9 @@ public class WebPanelModuleBean extends BeanWithKeyAndParamsAndConditions
     private String url;
 
     /**
-     * Location in the application interface for this panel.
-     * <br><br>
-     * Product location documentation:
+     * <p>Location in the application interface for this panel.</p>
+     *
+     * <p>Product location documentation:</p>
      *
      * * [JIRA locations](https://developer.atlassian.com/display/JIRADEV/Web+Fragments)
      * * [Confluence locations](https://developer.atlassian.com/display/CONFDEV/Web+UI+Modules)

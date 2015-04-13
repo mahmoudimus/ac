@@ -27,8 +27,8 @@ public class WebItemTargetBean extends BaseModuleBean
 
     // TODO: The table with descriptions is needed until we fix ACDEV-1381
     /**
-     * An object containing options which vary based on the type of web item target you are implementing. 
-     * <br><br>
+     * <p>An object containing options which vary based on the type of web item target you are implementing.</p>
+     *
      * <div id="inlineDialog" class="aui-expander-content reveal-collapsible">
      * <code>Inline Dialog Options</code>
      * <table class="props table table-striped aui">

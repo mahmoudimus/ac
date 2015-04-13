@@ -52,10 +52,10 @@ public class ReportModuleBean extends RequiredKeyBean
     }
 
     /**
-     * Determines the order in which the report's link appears in the list.
-     * <br><br>
-     * The "lightest" weight (i.e., lowest number) appears first, rising relative to other items,
-     * while the "heaviest" weights sink to the bottom of the list.
+     * <p>Determines the order in which the report's link appears in the list.</p>
+     *
+     * <p>The "lightest" weight (i.e., lowest number) appears first, rising relative to other items,
+     * while the "heaviest" weights sink to the bottom of the list.</p>
      *
      * @return the weight of the report
      */
