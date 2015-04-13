@@ -1,5 +1,6 @@
 (function($, define){
     "use strict";
+    var gadgetEditTrigger;
 
     require(['connect-host'], function(_AP) {
 
@@ -7,30 +8,22 @@
             return {
                 init: function (state, xdm) {
                     // register handle for the edit button in jira (if needed)
-                    $("my-button").click(function(){
+                    gadgetEditTrigger = function(){
+                        alert('i was triggered');
                         xdm.setGadgetEdit();
-                    });
-
+                    };
                 },
                 stubs: ["setGadgetEdit"]
             };
         });
     });
 
-
-
-
-//    define("ac/jira/dashboard-item", [], function() {
-        var Gadget = function(API) {
-            this.API = API;
+    define('ac/gadget/trigger', function(){
+        return {
+            renderEdit: gadgetEditTrigger
         };
+    });
 
-        Gadget.prototype.renderEdit = function(element, preferences) {
-            // send the event to the dashboard-item
-
-        };
-        return Gadget;
-//    });
 
     $(document).ready(function() {
 
