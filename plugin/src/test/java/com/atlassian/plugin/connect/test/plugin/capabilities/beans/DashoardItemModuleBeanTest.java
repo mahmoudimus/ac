@@ -32,7 +32,7 @@ public class DashoardItemModuleBeanTest
     @Test
     public void titleParsed() throws Exception
     {
-        assertThat(expectedBean.getTitle(), is(actualBean.getTitle()));
+        assertThat(expectedBean.getName(), is(actualBean.getName()));
     }
 
     @Test
@@ -44,7 +44,7 @@ public class DashoardItemModuleBeanTest
     @Test
     public void iconParsed()
     {
-        assertThat(expectedBean.getIcon(), is(actualBean.getIcon()));
+        assertThat(expectedBean.getThumbnailUrl(), is(actualBean.getThumbnailUrl()));
     }
 
     @Test
@@ -70,16 +70,12 @@ public class DashoardItemModuleBeanTest
         return DashboardItemModuleBean.newDashboardItemModuleBean()
                 .withTitle(new I18nProperty("Title", "title.key"))
                 .withDescription(new I18nProperty("Description", "description.key"))
-                .withIcon(IconBean.newIconBean()
-                        .withHeight(64)
-                        .withWidth(64)
-                        .withUrl("some-url")
-                        .build())
+                .withThumbnailUrl("/thumbnail.jpg")
                 .withUrl("some-iframe-url")
                 .configurable(true)
                 .withConditions(SingleConditionBean.newSingleConditionBean()
-                    .withCondition("some_condition")
-                    .build())
+                        .withCondition("some_condition")
+                        .build())
                 .build();
     }
 

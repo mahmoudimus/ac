@@ -21,6 +21,14 @@
 
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-workflow-post-function</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-events</dependency>
+
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
+    <web-resource key="atlassian-connect-dashboard-item-resources" name="Connect resources for dashboard page.">
+        <context>atl.dashboard</context>
+
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-atlassian-connect-resources</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-dashboard-item</dependency>
 
         <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>

@@ -1,16 +1,32 @@
 (function($, define){
     "use strict";
+
+    define("atlassian-connect/connect-dashboard-item", [], function() {
+        var Gadget = function(API) {
+            this.API = API;
+        };
+
+        Gadget.prototype.renderEdit = function(element, preferences) {
+            // send the event to the dashboard-item
+        };
+        return Gadget;
+    });
+
     $(document).ready(function() {
 
         $("body").on("resized",".ap-container", function(e, dimensions) {
-            //AG.DashboardManager.getLayout().refresh();
-            var gadget = new AG.InlineGadgetAPI(AJS.$(e.target).parents(".gadget-inline")[0]);
-            var gadgetId = AJS.$(e.target).parents(".gadget-inline").first().attr("id");
-            var gadgets = AG.DashboardManager.getLayout().getGadgets();
-            var result = gadgets.filter(function(g) {
+            var inlineGadgetContainer = AJS.$(e.target).parents(".gadget-inline").first();
+            var gadgetId = inlineGadgetContainer.attr("id");
+            var gadget = new AG.InlineGadgetAPI(inlineGadgetContainer);
+            var layout = AG.DashboardManager.getLayout();
+            var result = layout.getGadgets().filter(function(g) {
                 return "gadget-".concat(g.getId()) == gadgetId;
             });
             result[0].resize();
+            layout.refresh();
         });
+
     });
+
+
 })(AJS.$, define);

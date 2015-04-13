@@ -2,30 +2,29 @@ package com.atlassian.plugin.connect.modules.beans.builder;
 
 import com.atlassian.plugin.connect.modules.beans.DashboardItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 
 public class DashboardItemModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBuilder<DashboardItemModuleBeanBuilder, DashboardItemModuleBean>
 {
+    private Boolean configurable;
     private I18nProperty title;
     private I18nProperty description;
     private String url;
-    private IconBean icon;
-    private Boolean configurable;
+    private String thumbnailUrl;
 
     public DashboardItemModuleBeanBuilder()
     {
         this.title = I18nProperty.empty();
         this.description = I18nProperty.empty();
-        this.icon = null;
+        this.thumbnailUrl = null;
     }
 
     public DashboardItemModuleBeanBuilder(DashboardItemModuleBean dashboardItemModuleBean)
     {
         super(dashboardItemModuleBean);
-        this.title = dashboardItemModuleBean.getTitle();
+        this.title = dashboardItemModuleBean.getName();
         this.description = dashboardItemModuleBean.getDescription();
         this.url = dashboardItemModuleBean.getUrl();
-        this.icon = dashboardItemModuleBean.getIcon();
+        this.thumbnailUrl = dashboardItemModuleBean.getThumbnailUrl();
     }
 
     public DashboardItemModuleBeanBuilder withTitle(I18nProperty title)
@@ -46,9 +45,9 @@ public class DashboardItemModuleBeanBuilder extends BeanWithKeyParamsAndConditio
         return this;
     }
 
-    public DashboardItemModuleBeanBuilder withIcon(IconBean icon)
+    public DashboardItemModuleBeanBuilder withThumbnailUrl(String thumbnailUrl)
     {
-        this.icon = icon;
+        this.thumbnailUrl = thumbnailUrl;
         return this;
     }
 

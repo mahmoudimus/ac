@@ -9,11 +9,7 @@
     "i18n" : "description.key"
   },
   "configurable" : true,
-  "icon": {
-    "height": 64,
-    "width": 64,
-    "url": "some-url"
-  },
+  "thumbnailUrl" : "/thumbnail.jpg",
   "conditions" : [{
     "condition":"/some_condition"
   }]

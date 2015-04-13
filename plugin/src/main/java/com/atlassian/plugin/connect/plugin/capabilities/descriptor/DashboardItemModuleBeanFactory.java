@@ -8,14 +8,11 @@ import com.atlassian.gadgets.plugins.DashboardItemModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.DashboardItemModuleBean;
-import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
-import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.iframe.webpanel.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.plugin.module.jira.dashboard.ConnectDashboardItemModuleDescriptor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
@@ -74,9 +71,11 @@ public class DashboardItemModuleBeanFactory implements ConnectModuleDescriptorFa
                 .genericBodyTemplate()
                 .urlTemplate(bean.getUrl())
                 .conditions(bean.getConditions())
+                .ensureUniqueNamespace(true)
                 .build();
 
-        ConnectDashboardItemModuleDescriptor moduleDescriptor = new ConnectDashboardItemModuleDescriptor(moduleFactory, directoryDefinition, renderStrategy, moduleContextFilter, parametersExtractor);
+        ConnectDashboardItemModuleDescriptor moduleDescriptor =
+                new ConnectDashboardItemModuleDescriptor(moduleFactory, directoryDefinition, renderStrategy, moduleContextFilter, parametersExtractor);
 
         Element dashboardItemModule = new DOMElement("dashboard-item");
         dashboardItemModule.addAttribute("key", moduleKey);
@@ -89,15 +88,15 @@ public class DashboardItemModuleBeanFactory implements ConnectModuleDescriptorFa
             final DashboardItemModuleBean moduleBean,
             final VendorBean vendor)
     {
-        return new ConnectDashboardItemDirectoryDefintion(moduleBean.getTitle().getRawValue(),
-                moduleBean.getTitle().getI18n(),
+        return new ConnectDashboardItemDirectoryDefintion(moduleBean.getName().getRawValue(),
+                moduleBean.getName().getI18n(),
                 author(vendor),
-                iconUri(plugin, moduleBean.getIcon()));
+                iconUri(plugin, moduleBean.getThumbnailUrl()));
     }
 
-    private URI iconUri(final Plugin plugin, final IconBean icon)
+    private URI iconUri(final Plugin plugin, final String thumbnailUrl)
     {
-        URI iconUri = URI.create(icon.getUrl());
+        URI iconUri = URI.create(thumbnailUrl);
         if (iconUri.isAbsolute())
         {
             return iconUri;

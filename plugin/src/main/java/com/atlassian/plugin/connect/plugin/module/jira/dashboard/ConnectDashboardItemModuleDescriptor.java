@@ -92,7 +92,7 @@ public class ConnectDashboardItemModuleDescriptor extends AbstractModuleDescript
         @Override
         public Option<String> getAMDModule()
         {
-            return Option.none();
+            return Option.some("atlassian-connect/connect-dashboard-item");
         }
 
         @Override
