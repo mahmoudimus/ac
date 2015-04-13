@@ -13,7 +13,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * and value in multiple places if you like, but identical keys must have identical values.
  *
  *#### Example
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#I18N_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#I18N_EXAMPLE}
  * @schemaTitle i18n Property
  * @since 1.0
  */

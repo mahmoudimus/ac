@@ -21,7 +21,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *#### Example
  *
  * @schemaTitle Tab Panel
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#TAB_PANEL_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#TAB_PANEL_EXAMPLE}
  * @since 1.0
  */
 @SchemaDefinition("tabPanel")

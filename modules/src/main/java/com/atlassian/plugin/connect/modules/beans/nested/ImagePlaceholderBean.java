@@ -16,7 +16,7 @@ import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.
  * <br><br>
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#IMAGE_PLACEHOLDER_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#IMAGE_PLACEHOLDER_EXAMPLE}
  * @schemaTitle Image Placeholder
  * @since 1.0
  */

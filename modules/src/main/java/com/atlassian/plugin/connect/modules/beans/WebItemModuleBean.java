@@ -34,7 +34,7 @@ import java.util.List;
  *
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBITEM_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBITEM_EXAMPLE}
  * @schemaTitle Web Item
  * @since 1.0
  */
@@ -96,7 +96,7 @@ public class WebItemModuleBean extends BeanWithKeyAndParamsAndConditions
      * Defines the way the url is opened in the browser, such as in a modal or inline dialog.
      * If omitted, the url behaves as a regular hyperlink.
      *
-     * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBITEM_TARGET_EXAMPLE}
+     * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBITEM_TARGET_EXAMPLE}
      */
     private WebItemTargetBean target;
 

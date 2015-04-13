@@ -15,7 +15,7 @@ public class BeanWithParams extends BaseModuleBean
      *
      *#### Example
      *
-     * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#PARAMS_EXAMPLE}
+     * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#PARAMS_EXAMPLE}
      * @schemaTitle Object
      */
     private Map<String, String> params;

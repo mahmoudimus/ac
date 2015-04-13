@@ -82,7 +82,7 @@ import com.google.common.base.Objects;
  *<br>
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#SINGLE_CONDITION_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#SINGLE_CONDITION_EXAMPLE}
  * @schemaTitle Single Condition
  * @since 1.0
  */

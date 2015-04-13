@@ -11,7 +11,7 @@ import com.google.common.base.Objects;
  * <br><br>
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#VENDOR_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#VENDOR_EXAMPLE}
  * @schemaTitle Plugin Vendor
  * @since 1.0
  */

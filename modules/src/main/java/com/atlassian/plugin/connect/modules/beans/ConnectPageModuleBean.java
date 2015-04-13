@@ -37,7 +37,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *#### Example
  *
  * @schemaTitle Page
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#PAGE_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#PAGE_EXAMPLE}
  * @since 1.0
  */
 @ObjectSchemaAttributes(maxProperties = 10000, docOverrides = {@FieldDocOverride
@@ -46,7 +46,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
                 description = 
                         "Conditions can be added to display only when all the given conditions are true." +
                         "\n\nThe only supported conditions for pages are:" +
-                        "\n{@see com.atlassian.plugin.connect.modules.beans.PageConditions#CONDITION_LIST_MD}"
+                        "\n{@link com.atlassian.plugin.connect.modules.beans.PageConditions#CONDITION_LIST_MD}"
             )
     }
 )

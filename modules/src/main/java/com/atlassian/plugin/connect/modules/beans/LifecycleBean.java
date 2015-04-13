@@ -13,13 +13,13 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  *#### Lifecycle Attribute Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#LIFECYCLE_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#LIFECYCLE_EXAMPLE}
  *
  *#### Lifecycle Payload
  *Lifecycle callbacks contain a JSON data payload with important tenant information that you will need to store in your
  *  add-on in order to sign and verify future requests. The payload contains the following attributes:
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#LIFECYCLE_PAYLOAD_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#LIFECYCLE_PAYLOAD_EXAMPLE}
  *
  *<table summary="Lifecycle payload attributes" class='aui'>
  *    <thead>

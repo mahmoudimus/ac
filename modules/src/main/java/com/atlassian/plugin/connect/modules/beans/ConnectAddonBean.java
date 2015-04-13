@@ -51,7 +51,7 @@ import static com.google.common.collect.Maps.newHashMap;
  *
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ADDON_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ADDON_EXAMPLE}
  * @schemaTitle Addon Descriptor
  * @since 1.0
  */

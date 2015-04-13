@@ -7,7 +7,7 @@ import com.atlassian.json.schema.annotation.Required;
  * please see the [Confluence documentation on content properties](https://developer.atlassian.com/display/CONFDEV/Content+Properties+in+the+REST+API).
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE}
  * @schemaTitle Content Property Index Extraction Configuration
  */
 public class ContentPropertyIndexExtractionConfigurationBean

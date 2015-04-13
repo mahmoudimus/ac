@@ -41,7 +41,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.MacroEditorBeanBuilder
  *
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#MACRO_EDITOR_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#MACRO_EDITOR_EXAMPLE}
  * @schemaTitle Macro Editor
  * @since 1.0
  */
