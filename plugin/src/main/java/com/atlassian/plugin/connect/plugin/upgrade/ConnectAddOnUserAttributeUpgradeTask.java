@@ -11,10 +11,9 @@ import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.search.EntityDescriptor;
 import com.atlassian.crowd.search.query.membership.MembershipQuery;
-import com.atlassian.crowd.service.client.CrowdClient;
-import com.atlassian.crowd.service.factory.CrowdClientFactory;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningService;
+import com.atlassian.plugin.connect.plugin.usermanagement.CrowdClientFacade;
 import com.atlassian.plugin.connect.plugin.util.FeatureManager;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.message.Message;
@@ -27,7 +26,6 @@ import static com.atlassian.crowd.search.builder.QueryBuilder.queryFor;
 import static com.atlassian.crowd.search.query.entity.EntityQuery.ALL_RESULTS;
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.Constants.ADDON_USER_GROUP_KEY;
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
-import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.getClientProperties;
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.validAddOnEmailAddress;
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.validAddOnUsername;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -45,20 +43,20 @@ public class ConnectAddOnUserAttributeUpgradeTask implements PluginUpgradeTask
     private final ApplicationService applicationService;
     private final ApplicationManager applicationManager;
     private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
-    private final CrowdClientFactory crowdClientFactory;
     private final FeatureManager featureManager;
+    private final CrowdClientFacade crowdClientFacade;
 
     @Autowired
     public ConnectAddOnUserAttributeUpgradeTask(
             ApplicationService applicationService,
             ApplicationManager applicationManager,
             ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService,
-            CrowdClientFactory crowdClientFactory, FeatureManager featureManager)
+            FeatureManager featureManager, CrowdClientFacade crowdClientFacade)
     {
         this.featureManager = featureManager;
+        this.crowdClientFacade = crowdClientFacade;
         this.applicationService = checkNotNull(applicationService);
         this.applicationManager = checkNotNull(applicationManager);
-        this.crowdClientFactory = checkNotNull(crowdClientFactory);
         this.connectAddOnUserGroupProvisioningService = checkNotNull(connectAddOnUserGroupProvisioningService);
     }
 
@@ -98,8 +96,7 @@ public class ConnectAddOnUserAttributeUpgradeTask implements PluginUpgradeTask
                 // This is currently required due to the fact that the DbCachingRemoteDirectory implementation used by JIRA and Confluence doesn't currently
                 // write attributes back to the Crowd Server. https://ecosystem.atlassian.net/browse/EMBCWD-975 has been raised to look at re-implementing this
                 // feature!
-                CrowdClient crowdClient = crowdClientFactory.newInstance(getClientProperties());
-                crowdClient.storeUserAttributes(user.getName(), buildConnectAddOnUserAttribute(application.getName()));
+                crowdClientFacade.getCrowdClient().storeUserAttributes(user.getName(), buildConnectAddOnUserAttribute(application.getName()));
             }
         }
 

@@ -7,10 +7,9 @@ import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.search.EntityDescriptor;
 import com.atlassian.crowd.search.query.membership.MembershipQuery;
-import com.atlassian.crowd.service.client.ClientProperties;
 import com.atlassian.crowd.service.client.CrowdClient;
-import com.atlassian.crowd.service.factory.CrowdClientFactory;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningService;
+import com.atlassian.plugin.connect.plugin.usermanagement.CrowdClientFacade;
 import com.atlassian.plugin.connect.plugin.util.FeatureManager;
 
 import org.junit.Before;
@@ -40,10 +39,9 @@ public class ConnectAddOnUserAppSpecificAttributeUpgradeTaskTest
     @Mock
     private FeatureManager featureManager;
     @Mock
-    private CrowdClientFactory crowdClientFactory;
+    private CrowdClientFacade crowdClientFacade;
     @Mock
     private CrowdClient crowdClient;
-
     @Mock
     private ApplicationService applicationService;
     @Mock
@@ -58,8 +56,8 @@ public class ConnectAddOnUserAppSpecificAttributeUpgradeTaskTest
         initMocks(this);
         when(addOnUserGroupProvisioningService.getCrowdApplication()).thenReturn(application);
         when(featureManager.isOnDemand()).thenReturn(true);
-        when(crowdClientFactory.newInstance(any(ClientProperties.class))).thenReturn(crowdClient);
-        upgradeTask = new ConnectAddOnUserAppSpecificAttributeUpgradeTask(applicationService, addOnUserGroupProvisioningService, crowdClientFactory, featureManager);
+        when(crowdClientFacade.getCrowdClient()).thenReturn(crowdClient);
+        upgradeTask = new ConnectAddOnUserAppSpecificAttributeUpgradeTask(applicationService, addOnUserGroupProvisioningService, crowdClientFacade, featureManager);
     }
 
     @Test

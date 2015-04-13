@@ -8,12 +8,11 @@ import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.crowd.search.query.membership.MembershipQuery;
-import com.atlassian.crowd.service.client.ClientProperties;
 import com.atlassian.crowd.service.client.CrowdClient;
-import com.atlassian.crowd.service.factory.CrowdClientFactory;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningService;
-
+import com.atlassian.plugin.connect.plugin.usermanagement.CrowdClientFacade;
 import com.atlassian.plugin.connect.plugin.util.FeatureManager;
+
 import com.google.common.collect.ImmutableList;
 
 import org.junit.Before;
@@ -32,8 +31,8 @@ import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUse
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -56,9 +55,9 @@ public class ConnectAddOnUserAttributeUpgradeTaskTest
     @Mock
     private Application application;
     @Mock
-    private CrowdClientFactory crowdClientFactory;
-    @Mock
     private CrowdClient crowdClient;
+    @Mock
+    private CrowdClientFacade crowdClientFacade;
     @Mock
     private FeatureManager featureManager;
     @Captor
@@ -71,7 +70,7 @@ public class ConnectAddOnUserAttributeUpgradeTaskTest
     @Before
     public void setup()
     {
-        upgradeTask = new ConnectAddOnUserAttributeUpgradeTask(applicationService, applicationManager, connectAddOnUserGroupProvisioningService, crowdClientFactory, featureManager);
+        upgradeTask = new ConnectAddOnUserAttributeUpgradeTask(applicationService, applicationManager, connectAddOnUserGroupProvisioningService, featureManager, crowdClientFacade);
     }
 
     @Test
@@ -84,7 +83,7 @@ public class ConnectAddOnUserAttributeUpgradeTaskTest
         when(connectAddOnUserGroupProvisioningService.getCrowdApplicationName()).thenReturn(APPLICATION_NAME);
         when(applicationManager.findByName(APPLICATION_NAME)).thenReturn(application);
         when(applicationService.searchDirectGroupRelationships(eq(application), any(MembershipQuery.class))).thenReturn(ImmutableList.of(userTemplate));
-        when(crowdClientFactory.newInstance(any(ClientProperties.class))).thenReturn(crowdClient);
+        when(crowdClientFacade.getCrowdClient()).thenReturn(crowdClient);
         when(featureManager.isOnDemand()).thenReturn(true);
 
         upgradeTask.doUpgrade();
@@ -106,8 +105,8 @@ public class ConnectAddOnUserAttributeUpgradeTaskTest
         when(connectAddOnUserGroupProvisioningService.getCrowdApplicationName()).thenReturn(APPLICATION_NAME);
         when(applicationManager.findByName(APPLICATION_NAME)).thenReturn(application);
         when(applicationService.searchDirectGroupRelationships(eq(application), any(MembershipQuery.class))).thenReturn(ImmutableList.of(userTemplate));
-        when(crowdClientFactory.newInstance(any(ClientProperties.class))).thenReturn(crowdClient);
         when(featureManager.isOnDemand()).thenReturn(false);
+        when(crowdClientFacade.getCrowdClient()).thenReturn(crowdClient);
 
         upgradeTask.doUpgrade();
 
