@@ -1,7 +1,8 @@
 AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
     "use strict";
     var workflowListener,
-        validationListener;
+        validationListener,
+        gadgetEditListener,
     /**
     * @class WorkflowConfiguration
     */
@@ -48,6 +49,17 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
             };
         }
     };
+    var Gadget = {
+        onGadgetEdit: function(listener){
+            gadgetEditListener = listener;
+        },
+        trigger: function(){
+            if($.isFunction(gadgetEditListener)){
+                gadgetEditListener.call();
+            }
+        }
+    };
+
     var apis = rpc.extend(function (remote) {
         return {
 
@@ -83,6 +95,9 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
 
                 setWorkflowConfigurationMessage: function () {
                     return WorkflowConfiguration.trigger();
+                },
+                setGadgetEdit: function () {
+                    return Gadget.trigger();
                 }
 
             },
@@ -93,7 +108,8 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
     });
 
     return $.extend(apis, {
-        WorkflowConfiguration: WorkflowConfiguration
+        WorkflowConfiguration: WorkflowConfiguration,
+        Gadget: Gadget
     });
 
 });
