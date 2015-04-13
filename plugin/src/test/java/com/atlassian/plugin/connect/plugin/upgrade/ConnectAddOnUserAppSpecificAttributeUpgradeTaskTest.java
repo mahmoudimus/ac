@@ -64,6 +64,7 @@ public class ConnectAddOnUserAppSpecificAttributeUpgradeTaskTest
         when(addOnUserGroupProvisioningService.getCrowdApplication()).thenReturn(application);
         when(featureManager.isOnDemand()).thenReturn(true);
         when(crowdClientFacade.getCrowdClient()).thenReturn(crowdClient);
+        when(crowdClientFacade.getClientApplicationName()).thenReturn("the-app-name");
         upgradeTask = new ConnectAddOnUserAppSpecificAttributeUpgradeTask(applicationService, addOnUserGroupProvisioningService, crowdClientFacade, featureManager);
     }
 
@@ -167,12 +168,22 @@ public class ConnectAddOnUserAppSpecificAttributeUpgradeTaskTest
     public void namesAttributeBasedOnHostApplication() throws Exception
     {
         setupMockAddonUsers();
-        when(crowdClientFacade.getClientApplicationName()).thenReturn("the-app-name");
 
         upgradeTask.doUpgrade();
 
         verify(applicationService).storeUserAttributes(any(Application.class), anyString(), attributeCalled("synch.the-app-name.atlassian-connect-user"));
         verify(crowdClient).storeUserAttributes(anyString(), attributeCalled("synch.the-app-name.atlassian-connect-user"));
+    }
+
+    @Test
+    public void deletesOldAttribute() throws Exception
+    {
+        setupMockAddonUsers("addon_mind");
+
+        upgradeTask.doUpgrade();
+
+        verify(applicationService).removeUserAttributes(application, "addon_mind", "synch.crowd-embedded.atlassian-connect-user");
+        verify(crowdClient).removeUserAttributes("addon_mind", "synch.crowd-embedded.atlassian-connect-user");
     }
 
     @SuppressWarnings ("unchecked")
