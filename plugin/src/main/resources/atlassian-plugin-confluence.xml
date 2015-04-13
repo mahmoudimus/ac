@@ -36,6 +36,15 @@
         <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
+    <web-resource key="atlassian-connect-autoconvert-resources" name="Connect resources for autoconvert">
+        <resource type="download" name="autoconvert.js" location="/js/confluence/macro/autoconvert.js" />
+        <resource type="download" name="autoconvert-init.js" location="/js/confluence/macro/autoconvert-init.js" />
+        <data key="connect-autoconvert-data" class="com.atlassian.plugin.connect.plugin.product.confluence.AutoconvertWebResourceDataProvider" />
+        <context>editor</context>
+        <context>viewcontent</context>
+    </web-resource>
+    <module-type key="autoconvert" class="com.atlassian.plugin.connect.plugin.product.confluence.AutoconvertModuleDescriptor" />
+
     <!-- JavaScript API Core -->
 
     <web-resource key="ap-core">

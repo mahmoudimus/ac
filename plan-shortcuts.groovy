@@ -87,6 +87,18 @@ runTestsStage() {
             )
         }
         job(
+                key:'JDOC',
+                name:'Javadoc',
+                description: 'Generates Javadoc'
+        ) {
+            commonRequirements()
+            checkoutDefaultRepositoryTask()
+            mavenTask(
+                    description: 'Build Plugin and Generate Javadoc',
+                    goal: 'install -DskipDocs -DskipTests javadoc:javadoc',
+            )
+        }
+        job(
                 key: 'VALIDATE',
                 name: 'Descriptor Validation',
                 description: 'Validates that all public add-ons in the marketplace validate against the latest schema version'
@@ -94,7 +106,7 @@ runTestsStage() {
             commonRequirements()
             checkoutDefaultRepositoryTask()
             mavenTask(
-                    description: 'Build Developer Documentation',
+                    description: 'Build Plugin',
                     goal: 'install -DskipDocs -DskipTests',
             )
             task(

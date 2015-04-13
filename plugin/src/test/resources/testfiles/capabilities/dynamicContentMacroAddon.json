@@ -84,7 +84,13 @@
         "renderModes": {
           "pdf": { "url": "/render-map-pdf"},
           "default": { "url": "/render-map-default"}
-        }
+        },
+        "autoconvert": {
+            "urlParameter": "url",
+            "matchers": [
+              { "pattern":"/docs/google.com/document/d/{fileId}/edit" }
+            ]
+          }
       }
     ]
   },
