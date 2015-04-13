@@ -87,7 +87,7 @@ public class TestCompatibility extends ConfluenceWebDriverTestBase
     @Test
     public void testAliasIsNotPersisted() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(ConnectTestUserFactory.admin(product).confUser(), ConfluenceWebDriverTestBase.TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(ConnectTestUserFactory.basicUser(product).confUser(), ConfluenceWebDriverTestBase.TestSpace.DEMO);
         editorPage.setTitle(RandomStringUtils.randomAlphanumeric(8));
         selectMacroAndSave(editorPage, MACRO_NAME_2);
         ViewPage page = editorPage.save();
