@@ -31,6 +31,7 @@ public interface IFrameUriBuilder
         /**
          * @param uri a <a href="http://en.wikipedia.org/wiki/URL_Template">templated url</a>, containing template
          * variables that will be substituted for context parameters.
+         * @return
          */
         TemplatedBuilder urlTemplate(String uri);
     }
@@ -41,6 +42,7 @@ public interface IFrameUriBuilder
          * @param context the {@link ModuleContextParameters} containing the context issue, project, space, etc. This
          * builder does not do any permission checking, so it is up to the caller to apply the {@link ModuleContextFilter}
          * if necessary.
+         * @return the builder
          */
         InitializedBuilder context(ModuleContextParameters context);
     }
@@ -49,20 +51,36 @@ public interface IFrameUriBuilder
     {
         /**
          * Adds an additional query parameter to the url.
+         *
+         * @param key
+         * @param value
+         * @return the builder
          */
         InitializedBuilder param(String key, String value);
+
         /**
          * Adds query parameters to the url that mark it as a dialog.
+         *
+         * @param isDialog
+         * @return the builder
          */
         InitializedBuilder dialog(boolean isDialog);
+
         /**
          * Toggles whether to sign this url using the signature mechanism configured for the specified add-on.
          * Signature generation defaults to {@code true}, so you only need call this method if you wish to disable it.
+         *
+         * @param sign
+         * @return the builder
          */
         InitializedBuilder sign(boolean sign);
+
         /**
          * Toggles whether to include the standard xdm, user, licensing and l10n parameters in the url. Standard
          * parameter generation defaults to {@code true}, so you only need call this method if you wish to disable it.
+         *
+         * @param includeStandardParams
+         * @return the builder
          */
         InitializedBuilder includeStandardParams(boolean includeStandardParams);
 
@@ -71,6 +89,9 @@ public interface IFrameUriBuilder
          * return it as part of the signed iFrame url. As it has it's own query parameter "ui-params" the contents should not
          * be confused with the resource keys (e.g. issue.key) so we don't need to validate them even though they end up
          * in the signed url
+         *
+         * @param uiParameters
+         * @return the builder
          */
         InitializedBuilder uiParams(Option<String> uiParameters);
 

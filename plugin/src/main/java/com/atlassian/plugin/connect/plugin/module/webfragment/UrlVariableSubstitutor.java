@@ -81,6 +81,9 @@ public class UrlVariableSubstitutor
 
     /**
      * Appends (rather than substitutes) a map of parameters to the end of the url.
+     *
+     * @param source the original URL
+     * @param parameters the parameters to append
      * @return the URL, with the supplied parameters appended
      */
     public String append(String source, Map<String, String> parameters)
