@@ -33,7 +33,7 @@ public class ConfluenceRestClient
     {
         AuthenticatedWebResourceProvider authenticatedWebResourceProvider = new AuthenticatedWebResourceProvider(
                 ConfluenceRestClientFactory.newClient(),product.getProductInstance().getBaseUrl(), "");
-        TestUser user = ConnectTestUserFactory.admin(product);
+        TestUser user = ConnectTestUserFactory.basicUser(product);
         authenticatedWebResourceProvider.setAuthContext(
                 user.getUsername(), user.getPassword().toCharArray());
         contentService = new RemoteContentServiceImpl(authenticatedWebResourceProvider, executor);

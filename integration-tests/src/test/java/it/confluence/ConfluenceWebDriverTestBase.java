@@ -60,8 +60,6 @@ public class ConfluenceWebDriverTestBase
     protected static final ConfluenceTestedProduct product = TestedProductProvider.getConfluenceTestedProduct();
     protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
             product.getTester().getDriver());
-    private static Option<TestUser> currentUser = none();
-
     private boolean hasBeenFocused;
 
     public static class TestSpace
@@ -287,36 +285,18 @@ public class ConfluenceWebDriverTestBase
     @AfterClass
     public static void logout()
     {
-        currentUser = Option.<TestUser>none();
         product.getTester().getDriver().manage().deleteAllCookies();
     }
 
     protected void login(TestUser user)
     {
-        if (!isAlreadyLoggedIn(user))
-        {
-            logout();
-            currentUser = some(user);
-
-            product.visit(LoginPage.class).login(user.getUsername(), user.getPassword(), HomePage.class);
-        }
-    }
-
-    private boolean isAlreadyLoggedIn(final TestUser user)
-    {
-        return user != null && currentUser.isDefined() && currentUser.get().getUsername().equals(user.getUsername());
+        logout();
+        product.visit(LoginPage.class).login(user.getUsername(), user.getPassword(), HomePage.class);
     }
 
     protected <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args)
     {
-        if (isAlreadyLoggedIn(user))
-        {
-            return product.visit(page, args);
-        }
-
         logout();
-        currentUser = some(user);
-
         return product.login(user.confUser(), page, args);
     }
 }

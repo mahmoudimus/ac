@@ -227,7 +227,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void standardParametersArePassedToConditions() throws Exception
     {
-        TestUser user = ConnectTestUserFactory.admin(product);
+        TestUser user = ConnectTestUserFactory.basicUser(product);
         navigateToJiraIssuePageAndVerifyParameterCapturingWebItem(user);
 
         Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
@@ -242,7 +242,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void contextParametersArePassedToConditions() throws Exception
     {
-        TestUser user = ConnectTestUserFactory.admin(product);
+        TestUser user = ConnectTestUserFactory.basicUser(product);
         RemoteIssue issue = navigateToJiraIssuePageAndVerifyParameterCapturingWebItem(user);
 
         Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
@@ -254,7 +254,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void versionNumberIsIncluded() throws Exception
     {
-        TestUser user = ConnectTestUserFactory.admin(product);
+        TestUser user = ConnectTestUserFactory.basicUser(product);
         navigateToJiraIssuePageAndVerifyParameterCapturingWebItem(user);
 
         String version = PARAMETER_CAPTURING_SERVLET.getHttpHeaderFromLastRequest(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION).get();

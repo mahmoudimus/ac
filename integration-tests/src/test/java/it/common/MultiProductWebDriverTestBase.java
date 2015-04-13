@@ -23,8 +23,6 @@ public abstract class MultiProductWebDriverTestBase
 {
     protected static TestedProduct<WebDriverTester> product = TestedProductProvider.getTestedProduct();
 
-    protected static String currentUsername = null;
-
     @Rule
     public WebDriverScreenshotRule screenshotRule = new WebDriverScreenshotRule();
 
@@ -38,42 +36,26 @@ public abstract class MultiProductWebDriverTestBase
     @AfterClass
     public static void logout()
     {
-        currentUsername = null;
         product.getTester().getDriver().manage().deleteAllCookies();
     }
 
     protected void login(TestUser user)
     {
-        if (!isAlreadyLoggedIn(user))
+        logout();
+        if (product instanceof JiraTestedProduct)
         {
-            logout();
-            currentUsername = user.getUsername();
-            if (product instanceof JiraTestedProduct)
-            {
-                JiraTestedProduct jiraTestedProduct = (JiraTestedProduct) product;
-                jiraTestedProduct.quickLogin(user.getUsername(), user.getPassword());
-            }
-            else
-            {
-                product.visit(LoginPage.class).login(user.getUsername(), user.getPassword(), HomePage.class);
-            }
+            JiraTestedProduct jiraTestedProduct = (JiraTestedProduct) product;
+            jiraTestedProduct.quickLogin(user.getUsername(), user.getPassword());
         }
-    }
-
-    private boolean isAlreadyLoggedIn(final TestUser user)
-    {
-        return user != null && user.getUsername().equals(currentUsername);
+        else
+        {
+            product.visit(LoginPage.class).login(user.getUsername(), user.getPassword(), HomePage.class);
+        }
     }
 
     protected <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args)
     {
-        if (isAlreadyLoggedIn(user))
-        {
-            return product.visit(page, args);
-        }
-
         logout();
-        currentUsername = user.getUsername();
 
         if (product instanceof JiraTestedProduct)
         {
