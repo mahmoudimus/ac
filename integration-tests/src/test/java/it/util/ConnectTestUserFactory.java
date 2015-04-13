@@ -10,6 +10,7 @@ import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.plugin.connect.test.helptips.HelpTipApiClientFactory;
+import org.apache.commons.lang.RandomStringUtils;
 
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -30,32 +31,10 @@ public class ConnectTestUserFactory
     {
         return createTestUser(product, AuthLevel.BASIC_USER);
     }
-    
-    private static Random random = new Random();
-
-    private static final char[] ALPHANUMERICS = new char[]
-    {
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
-            'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
-            'u', 'v', 'w', 'x', 'y', 'z',
-    };
-    
-    private static String randomString(int length)
-    {
-        char[] buffer = new char[length];
-
-        for (int i = 0; i < length; i++)
-        {
-            buffer[i] = ALPHANUMERICS[random.nextInt(ALPHANUMERICS.length)];
-        }
-
-        return new String(buffer);
-    }
 
     private static TestUser createTestUser(TestedProduct product, AuthLevel authLevel)
     {
-        String username = authLevel.getPrefix() + "-" + randomString(20);
+        String username = authLevel.getPrefix() + "-" + RandomStringUtils.randomAlphanumeric(20);
         TestUser testUser = new TestUser(username);
         if (product instanceof JiraTestedProduct)
         {
