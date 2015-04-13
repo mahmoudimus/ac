@@ -106,6 +106,7 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
         element.setAttribute("i18n-name-key", bean.getName().getValue());
         element.setAttribute("class", PageMacro.class.getName());
         element.setAttribute("state", "enabled");
+
         if (bean.getDescription() != null)
         {
             element.addElement("description").addCDATA(StringEscapeUtils.escapeHtml(bean.getDescription().getValue()));

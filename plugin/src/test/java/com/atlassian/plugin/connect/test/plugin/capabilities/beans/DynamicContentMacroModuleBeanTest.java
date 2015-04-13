@@ -1,12 +1,14 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
+import com.atlassian.plugin.connect.modules.beans.nested.MatcherBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.test.plugin.capabilities.TestFileReader;
 import com.atlassian.plugin.connect.test.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs;
@@ -125,6 +127,13 @@ public class DynamicContentMacroModuleBeanTest
                                         .withPdf(
                                                 EmbeddedStaticContentMacroBean.newEmbeddedStaticContentMacroModuleBean()
                                                         .withUrl("/render-map-pdf")
+                                                        .build())
+                                        .build())
+                                .withAutoconvert(AutoconvertBean.newAutoconvertBean()
+                                        .withUrlParameter("url")
+                                        .withMatchers(
+                                                MatcherBean.newMatcherBean()
+                                                        .withPattern("/docs/google.com/document/d/{fileId}/edit")
                                                         .build())
                                         .build())
                                 .build()
