@@ -11,8 +11,12 @@ import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.plugin.usermanagement.CrowdClientFacade;
 import com.atlassian.plugin.connect.plugin.util.FeatureManager;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.message.Message;
 import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.buildAttributeConnectAddOnAttributeName;
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
@@ -23,6 +27,8 @@ import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUse
  * A {@link com.atlassian.sal.api.upgrade.PluginUpgradeTask} that will iterate over all Connect AddOn Users and add a new attribute to them
  * <em>synch.APPLICATION_NAME.atlassian-connect-user</em>
  */
+@ExportAsService
+@Component
 public class ConnectAddOnUserAppSpecificAttributeUpgradeTask implements PluginUpgradeTask
 {
     public static final String OLD_ATTRIBUTE_APPLICATION_NAME = "crowd-embedded";
@@ -32,6 +38,7 @@ public class ConnectAddOnUserAppSpecificAttributeUpgradeTask implements PluginUp
     private final CrowdClientFacade crowdClientFacade;
     private FeatureManager featureManager;
 
+    @Autowired
     public ConnectAddOnUserAppSpecificAttributeUpgradeTask(
             ApplicationService applicationService,
             ConnectAddOnUsers connectAddOnUsers,
