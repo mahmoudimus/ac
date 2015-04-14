@@ -17,6 +17,7 @@ import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 
+import it.util.ConnectTestUserFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -79,7 +80,7 @@ public class JiraWebDriverTestBase
 
     protected void testLoggedInAndAnonymous(Callable runnable) throws Exception
     {
-        product.quickLoginAsAdmin();
+        login(ConnectTestUserFactory.basicUser(product));
         runnable.call();
         logout();
         runnable.call();

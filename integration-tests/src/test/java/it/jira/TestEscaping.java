@@ -35,6 +35,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
+import it.util.ConnectTestUserFactory;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -221,6 +222,7 @@ public class TestEscaping extends JiraWebDriverTestBase
     @Test
     public void testIssueTabPanel() throws Exception
     {
+        login(ConnectTestUserFactory.basicUser(product));
         IssueCreateResponse issue = product.backdoor().issues().createIssue(PROJECT_KEY, "test issue tab panel");
         JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(JiraViewIssuePageWithRemotePluginIssueTab.class,
                 ISSUE_TAB_PANEL_KEY, issue.key(), runner.getAddon().getKey());
@@ -256,6 +258,7 @@ public class TestEscaping extends JiraWebDriverTestBase
     @Test
     public void testProjectTabPanel() throws Exception
     {
+        login(ConnectTestUserFactory.basicUser(product));
         JiraProjectSummaryPageWithAddonTab summaryPage
                 = product.visit(JiraProjectSummaryPageWithAddonTab.class, PROJECT_KEY, ADDON_KEY, PROJECT_TAB_PANEL_KEY);
         summaryPage = summaryPage.expandAddonsList();
@@ -276,6 +279,7 @@ public class TestEscaping extends JiraWebDriverTestBase
     @Test
     public void testWebPanel() throws Exception
     {
+        login(ConnectTestUserFactory.basicUser(product));
         IssueCreateResponse issue = product.backdoor().issues().createIssue(PROJECT_KEY, "test web panel");
         JiraViewIssuePage page = product.visit(JiraViewIssuePage.class, issue.key());
         Section section = page.getSection(getModuleKey(WEB_PANEL_KEY));
