@@ -222,6 +222,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testDynamicMacroWithPdfFallback() throws Exception
     {
+        login(ConnectTestUserFactory.basicUser(product));
         String body = new MacroStorageFormatBuilder(DYNAMIC_MACRO_KEY).build();
         Content page = createPage(randomName(DYNAMIC_MACRO_KEY), body);
         ViewPage viewPage = getProduct().viewPage(String.valueOf(page.getId().asLong()));
@@ -234,6 +235,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testDynamicMacroWithWordFallback() throws Exception
     {
+        login(ConnectTestUserFactory.basicUser(product));
         String body = new MacroStorageFormatBuilder(DYNAMIC_MACRO_KEY).build();
         Content page = createPage(randomName(DYNAMIC_MACRO_KEY), body);
         ViewPage viewPage = getProduct().viewPage(String.valueOf(page.getId().asLong()));
@@ -292,6 +294,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testBodyInclusion() throws Exception
     {
+        login(ConnectTestUserFactory.basicUser(product));
         String macroBody = "a short body";
         String body = new MacroStorageFormatBuilder(SHORT_BODY_MACRO_KEY).richTextBody(macroBody).build();
         Content page = createPage(randomName(SHORT_BODY_MACRO_KEY), body);
@@ -304,6 +307,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testParameterInclusion() throws Exception
     {
+        login(ConnectTestUserFactory.basicUser(product));
         String parameterValue = "param value";
         String body = new MacroStorageFormatBuilder(PARAMETER_MACRO_KEY).parameter(SINGLE_PARAM_ID, parameterValue).build();
         Content page = createPage(randomName(PARAMETER_MACRO_KEY), body);
@@ -357,6 +361,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMultipleMacrosOnPage() throws Exception
     {
+        login(ConnectTestUserFactory.basicUser(product));
         String body = new MacroStorageFormatBuilder(SIMPLE_MACRO_KEY).build();
         Content page = createPage(randomName(SIMPLE_MACRO_KEY), body + body);
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
@@ -375,6 +380,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroDimensions() throws Exception
     {
+        login(ConnectTestUserFactory.basicUser(product));
         String body = new MacroStorageFormatBuilder(SMALL_INLINE_MACRO_KEY).build();
         Content page = createPage(randomName(SMALL_INLINE_MACRO_KEY), body + body);
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
@@ -399,6 +405,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroInOrderedTable() throws Exception
     {
+        login(ConnectTestUserFactory.basicUser(product));
         Content page = createPage(randomName(TABLE_MACRO_NAME), loadResourceAsString("confluence/test-page-table-macro.xhtml"));
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
 
@@ -466,6 +473,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testSlowMacro() throws Exception
     {
+        login(ConnectTestUserFactory.basicUser(product));
         String body = new MacroStorageFormatBuilder(SLOW_MACRO_KEY).build();
         String title = randomName(SLOW_MACRO_KEY);
         createPage(title, body);
@@ -476,6 +484,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroInComment() throws Exception
     {
+        login(ConnectTestUserFactory.basicUser(product));
         String title = randomName("The macro is in the comment!");
         Content page = createPage(title, "The macro is in the comment!");
         addCommentWithMacro(String.valueOf(page.getId().asLong()));

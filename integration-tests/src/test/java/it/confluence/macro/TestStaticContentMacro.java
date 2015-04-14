@@ -153,6 +153,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroHttpMethod() throws Exception
     {
+        login(ConnectTestUserFactory.basicUser(product));
         String body = new MacroStorageFormatBuilder(GET_MACRO_KEY).build();
         Content page = createPage(randomName(GET_MACRO_KEY), body);
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
@@ -163,6 +164,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testBodyInclusion() throws Exception
     {
+        login(ConnectTestUserFactory.basicUser(product));
         String macroBody = "a short body";
         String body = new MacroStorageFormatBuilder(SHORT_BODY_MACRO_KEY).richTextBody(macroBody).build();
         Content page = createPage(randomName(SHORT_BODY_MACRO_KEY), body);
@@ -175,6 +177,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testParameterInclusion() throws Exception
     {
+        login(ConnectTestUserFactory.basicUser(product));
         String parameterValue = "param value";
         String body = new MacroStorageFormatBuilder(PARAMETER_MACRO_KEY).parameter(SINGLE_PARAM_ID, parameterValue).build();
         Content page = createPage(randomName(PARAMETER_MACRO_KEY), body);
@@ -187,6 +190,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroInComment() throws Exception
     {
+        login(ConnectTestUserFactory.basicUser(product));
         String title = randomName("The macro is in the comment!");
         Content page = createPage(title, "The macro is in the comment!");
         addCommentWithMacro(String.valueOf(page.getId().asLong()));
@@ -210,6 +214,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroCacheFlushes() throws Exception
     {
+        login(ConnectTestUserFactory.basicUser(product));
         String body = new MacroStorageFormatBuilder(COUNTER_MACRO_KEY).build();
         String title = randomName(COUNTER_MACRO_KEY);
         Content page = createPage(title, body);
