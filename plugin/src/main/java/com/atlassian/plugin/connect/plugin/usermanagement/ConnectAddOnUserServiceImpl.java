@@ -213,6 +213,8 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             }
         }
 
+        addConnectUserAttribute(user);
+
         return user;
     }
 
@@ -248,6 +250,12 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             user = findUserWithFastFailure(username, iue);
         }
 
+        return user;
+    }
+
+    private void addConnectUserAttribute(User user)
+            throws ApplicationNotFoundException, OperationFailedException, ApplicationPermissionException, UserNotFoundException, InvalidAuthenticationException
+    {
         // Set connect attributes on user -- at this point we are confident we have a user
         ImmutableMap<String, Set<String>> connectAddOnUserAttribute = buildConnectAddOnUserAttribute(crowdClientFacade.getClientApplicationName());
         applicationService.storeUserAttributes(getApplication(), user.getName(), connectAddOnUserAttribute);
@@ -259,8 +267,6 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             // write attributes back to the Crowd Server. This can be removed completely with Crowd 2.9 since addUser can take a UserWithAttributes in this version
             crowdClientFacade.getCrowdClient().storeUserAttributes(user.getName(), connectAddOnUserAttribute);
         }
-
-        return user;
     }
 
     private User findUserWithFastFailure(String username, Exception userAlreadyExistsException) throws ApplicationNotFoundException

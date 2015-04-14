@@ -196,6 +196,29 @@ public class ConnectAddOnUserServiceImplTest
         assertThat(captor.getAllValues(), containsInAnyOrder(GROUP_KEY, "product group 1", "product group 2"));
     }
 
+    @Test
+    public void userIsEnabledWithAtlassianConnectUserAttribute()
+            throws Exception
+    {
+        when(applicationService.findUserByName(application, USER_KEY)).thenReturn(user);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+
+        verify(applicationService).storeUserAttributes(eq(application), eq(USER_KEY), attributeCalled(buildAttributeConnectAddOnAttributeName("app-name")));
+        verify(crowdClient).storeUserAttributes(eq(USER_KEY), attributeCalled(buildAttributeConnectAddOnAttributeName("app-name")));
+    }
+
+    @Test
+    public void userIsEnabledWithAtlassianConnectUserAttributeWhenNotInOnDemand()
+            throws Exception
+    {
+        when(featureManager.isOnDemand()).thenReturn(false);
+        when(applicationService.findUserByName(application, USER_KEY)).thenReturn(user);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+
+        verify(applicationService).storeUserAttributes(eq(application), eq(USER_KEY), attributeCalled(buildAttributeConnectAddOnAttributeName("app-name")));
+        verify(crowdClient, never()).storeUserAttributes(anyString(), anyMap());
+    }
+
 
     @Test
     public void userIsCreatedWithAtlassianConnectUserAttribute()
