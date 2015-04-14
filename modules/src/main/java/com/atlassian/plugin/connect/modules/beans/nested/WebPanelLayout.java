@@ -5,7 +5,7 @@ import com.atlassian.json.schema.annotation.SchemaDefinition;
 /**
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#PANEL_LAYOUT_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#PANEL_LAYOUT_EXAMPLE}
  * @schemaTitle Web Panel Layout
  * @since 1.0
  */

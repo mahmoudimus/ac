@@ -33,7 +33,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.StaticContentMacroModu
  *
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#STATIC_MACRO_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#STATIC_MACRO_EXAMPLE}
  * @schemaTitle Static Content Macro
  * @since 1.0
  */

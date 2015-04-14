@@ -12,8 +12,6 @@ import java.util.Map;
 @JiraComponent
 public class JiraConditions extends PageConditions
 {
-    @SuppressWarnings ("UnusedDeclaration")
-    public static final String CONDITION_LIST = getConditionListAsMarkdown(getConditionMap());
 
     public static final String CAN_ATTACH_FILE_TO_ISSUE = "can_attach_file_to_issue";
     public static final String CAN_MANAGE_ATTACHMENTS = "can_manage_attachments";
