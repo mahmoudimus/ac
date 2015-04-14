@@ -527,7 +527,6 @@
                     <enableDevToolbox>false</enableDevToolbox>
                     <enableFastdev>false</enableFastdev>
                     <skipManifestValidation>true</skipManifestValidation>
-                    <skipRestDocGeneration>true</skipRestDocGeneration>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <versionOverridesPath>${basedir}/../bin/amps-overrides.properties</versionOverridesPath>
                     <buildTestPlugin>${build.test.plugin}</buildTestPlugin>
