@@ -14,6 +14,7 @@ public interface IFrameUriBuilder
 {
     /**
      * @param key the addon key
+     * @return the builder
      */
     AddOnUriBuilder addOn(String key);
 
@@ -21,6 +22,7 @@ public interface IFrameUriBuilder
     {
         /**
          * @param namespace the namespace, used for the context iframe (if there is a context iframe). The usual pattern
+         * @return the builder
          * is to pass the module key in here.
          */
         NamespacedUriBuilder namespace(String namespace);
@@ -31,7 +33,7 @@ public interface IFrameUriBuilder
         /**
          * @param uri a <a href="http://en.wikipedia.org/wiki/URL_Template">templated url</a>, containing template
          * variables that will be substituted for context parameters.
-         * @return
+         * @return the builder
          */
         TemplatedBuilder urlTemplate(String uri);
     }
@@ -52,8 +54,8 @@ public interface IFrameUriBuilder
         /**
          * Adds an additional query parameter to the url.
          *
-         * @param key
-         * @param value
+         * @param key the key of the parameter
+         * @param value the value of the parameter
          * @return the builder
          */
         InitializedBuilder param(String key, String value);
@@ -61,7 +63,7 @@ public interface IFrameUriBuilder
         /**
          * Adds query parameters to the url that mark it as a dialog.
          *
-         * @param isDialog
+         * @param isDialog the value of the flag
          * @return the builder
          */
         InitializedBuilder dialog(boolean isDialog);
@@ -70,7 +72,7 @@ public interface IFrameUriBuilder
          * Toggles whether to sign this url using the signature mechanism configured for the specified add-on.
          * Signature generation defaults to {@code true}, so you only need call this method if you wish to disable it.
          *
-         * @param sign
+         * @param sign the value of the flag
          * @return the builder
          */
         InitializedBuilder sign(boolean sign);
@@ -79,7 +81,7 @@ public interface IFrameUriBuilder
          * Toggles whether to include the standard xdm, user, licensing and l10n parameters in the url. Standard
          * parameter generation defaults to {@code true}, so you only need call this method if you wish to disable it.
          *
-         * @param includeStandardParams
+         * @param includeStandardParams the value of the flag
          * @return the builder
          */
         InitializedBuilder includeStandardParams(boolean includeStandardParams);
@@ -90,7 +92,7 @@ public interface IFrameUriBuilder
          * be confused with the resource keys (e.g. issue.key) so we don't need to validate them even though they end up
          * in the signed url
          *
-         * @param uiParameters
+         * @param uiParameters the parameters to include
          * @return the builder
          */
         InitializedBuilder uiParams(Option<String> uiParameters);

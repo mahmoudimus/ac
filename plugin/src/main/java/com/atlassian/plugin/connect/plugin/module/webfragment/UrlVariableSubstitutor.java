@@ -104,7 +104,7 @@ public class UrlVariableSubstitutor
     /**
      * Parses from the given URL a {@link Map} of name-in-source to context-variable-name.
      * @param source string containing variables (e.g. "http://server:80/path?my_page_id={page.id}" or "my_page_id={page.id}")
-     * @return {@link Map} of name-in-source to context-variable-name (e.g. "my_page_id" => "page.id")
+     * @return {@link Map} of name-in-source to context-variable-name (e.g. "my_page_id" to "page.id")
      */
     public Map<String, String> getContextVariableMap(final String source)
     {

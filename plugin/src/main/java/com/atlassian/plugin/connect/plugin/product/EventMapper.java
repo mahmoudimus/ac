@@ -24,6 +24,9 @@ public interface EventMapper<T>
      * </ul>
      *
      * The {@link Object#toString()} will be used on standard java objects (in packages java. and javax.).
+     *
+     * @param e the event
+     * @return a map of event properties
      */
     public Map<String, Object> toMap(T e);
 }

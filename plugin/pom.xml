@@ -475,6 +475,50 @@
     </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <configuration>
+                        <tags>
+                            <tag>
+                                <name>response.representation.200.doc</name>
+                                <placement>f</placement>
+                            </tag>
+                            <tag>
+                                <name>response.representation.200.mediaType</name>
+                                <placement>f</placement>
+                            </tag>
+                            <tag>
+                                <name>response.representation.201.doc</name>
+                                <placement>f</placement>
+                            </tag>
+                            <tag>
+                                <name>response.representation.201.mediaType</name>
+                                <placement>f</placement>
+                            </tag>
+                            <tag>
+                                <name>response.representation.204.doc</name>
+                                <placement>f</placement>
+                            </tag>
+                            <tag>
+                                <name>response.representation.400.doc</name>
+                                <placement>f</placement>
+                            </tag>
+                            <tag>
+                                <name>response.representation.401.doc</name>
+                                <placement>f</placement>
+                            </tag>
+                            <tag>
+                                <name>response.representation.404.doc</name>
+                                <placement>f</placement>
+                            </tag>
+                        </tags>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
