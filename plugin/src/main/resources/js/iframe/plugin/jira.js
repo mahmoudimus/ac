@@ -2,7 +2,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
     "use strict";
     var workflowListener,
         validationListener,
-        gadgetEditListener,
+        gadgetEditListener;
     /**
     * @class WorkflowConfiguration
     */
