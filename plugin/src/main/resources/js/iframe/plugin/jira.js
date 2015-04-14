@@ -96,7 +96,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                 setWorkflowConfigurationMessage: function () {
                     return WorkflowConfiguration.trigger();
                 },
-                setGadgetEdit: function () {
+                triggerGadgetEdit: function () {
                     return Gadget.trigger();
                 }
 

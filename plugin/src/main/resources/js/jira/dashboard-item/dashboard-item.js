@@ -1,6 +1,5 @@
 (function($, define){
     "use strict";
-    var gadgetEditTrigger;
 
     require(['connect-host'], function(_AP) {
 
@@ -8,19 +7,22 @@
             return {
                 init: function (state, xdm) {
                     // register handle for the edit button in jira (if needed)
-                    gadgetEditTrigger = function(){
-                        alert('i was triggered');
-                        xdm.setGadgetEdit();
-                    };
+                    $(xdm.iframe).on('gadgetEdit', function(){
+                        xdm.triggerGadgetEdit();
+                    });
                 },
-                stubs: ["setGadgetEdit"]
+                stubs: ["triggerGadgetEdit"]
             };
         });
     });
 
-    define('ac/gadget/trigger', function(){
-        return {
-            renderEdit: gadgetEditTrigger
+    define('atlassian-connect/connect-dashboard-item', function(){
+        return function(){
+            return {
+                renderEdit: function($element){
+                    $element.find('iframe').trigger('gadgetEdit');
+                }
+            };
         };
     });
 
