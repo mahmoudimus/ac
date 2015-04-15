@@ -1,10 +1,10 @@
 package it.confluence.iframe;
 
-import com.atlassian.confluence.pageobjects.page.admin.templates.SpaceTemplatesPage;
+import com.atlassian.confluence.it.Space;
+import com.atlassian.confluence.it.SpacePermission;
+import com.atlassian.confluence.pageobjects.page.space.ViewSpaceSummaryPage;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.SpaceToolsTabModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
@@ -18,7 +18,6 @@ import org.junit.Test;
 
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
-import it.util.TestUser;
 
 import static com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean.newSpaceToolsTabBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
@@ -41,7 +40,7 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
                 .addModules("spaceToolsTabs", newSpaceToolsTabBean()
                         .withName(new I18nProperty("AC Space Tab", null))
                         .withKey(TAB_MODULE_KEY)
-                        .withLocation("contenttools")
+                        .withLocation("overview")
                         .withWeight(1)
                         .withUrl("/pg")
                         .build()
@@ -62,24 +61,36 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
     @Test
     public void spaceAdminShowsConnectTab()
     {
+        Space space = makeSpace("IBTS", "I Cant Believe Its Another Test Space");
         // Demo space uses doctheme. Templates page is in Space Admin (not to be confused with Space Operations).
-        loginAndVisit(ConnectTestUserFactory.admin(product), SpaceTemplatesPage.class, "ds");
+        loginAndVisit(ConnectTestUserFactory.admin(product), ViewSpaceSummaryPage.class, space);
         LinkedRemoteContent addonPage = connectPageOperations.findRemoteLinkedContent(RemoteWebItem.ItemMatchingMode.LINK_TEXT, "AC Space Tab", Option.<String>none(), addonAndModuleKey(remotePlugin.getAddon().getKey(),TAB_MODULE_KEY));
         ConnectAddOnEmbeddedTestPage addonContentsPage = addonPage.click();
 
-        assertEquals("Hello world", addonContentsPage.getValueBySelector("#hello-world-message"));
+        assertEquals("Hello world", addonContentsPage.waitForValue("#hello-world-message"));
     }
 
     @Test
     public void spaceToolsShowsConnectTab()
     {
-        loginAndVisit(ConnectTestUserFactory.admin(product), SpaceTemplatesPage.class, "ts");
+        Space space = makeSpace("ABNT", "Another Brand New Test");
+
+        loginAndVisit(ConnectTestUserFactory.admin(product), ViewSpaceSummaryPage.class, space);
 
         LinkedRemoteContent addonPage = connectPageOperations.findRemoteLinkedContent(RemoteWebItem.ItemMatchingMode.LINK_TEXT, "AC Space Tab", Option.<String>none(), addonAndModuleKey(remotePlugin.getAddon().getKey(),TAB_MODULE_KEY));
 
         ConnectAddOnEmbeddedTestPage addonContentsPage = addonPage.click();
 
-        assertEquals("Hello world", addonContentsPage.getValueBySelector("#hello-world-message"));
+        assertEquals("Hello world", addonContentsPage.waitForValue("#hello-world-message"));
 
+    }
+
+    public Space makeSpace(String key, String name)
+    {
+        Space space = new Space(key, name);
+        rpc.createSpace(space);
+        rpc.grantAnonymousPermission(SpacePermission.VIEW, space);
+        rpc.flushIndexQueue();
+        return space;
     }
 }
