@@ -1375,6 +1375,7 @@
         <debugSchemaGen>false</debugSchemaGen>
         <ao.version>0.25.2</ao.version>
         <od.testing.configuration>
+            use-java,8
             use-maven,3
             include-artifact,com.atlassian.plugins:atlassian-connect-integration-tests
         </od.testing.configuration>
