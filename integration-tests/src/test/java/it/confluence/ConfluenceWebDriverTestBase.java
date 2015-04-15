@@ -21,6 +21,7 @@ import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
+import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
 import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
@@ -29,7 +30,6 @@ import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroBrowserDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.util.concurrent.LazyReference;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
@@ -134,7 +134,6 @@ public class ConfluenceWebDriverTestBase
             // Missing or already disabled. Carry on.
         }
 
-        product.getPageBinder().override(MacroBrowserDialog.class, ConfluenceMacroBrowserDialog.class);
         product.getPageBinder().override(EditorContent.class, ConfluenceEditorContent.class);
         product.getPageBinder().override(InsertDropdownMenu.class, ConfluenceInsertMenu.class);
 
@@ -193,11 +192,6 @@ public class ConfluenceWebDriverTestBase
                 MavenDependencyHelper.resolve("com.atlassian.confluence.plugins", "confluence-scriptsfinished-plugin"));
     }
 
-    protected void selectMacroAndSave(CreatePage editorPage, String macroName)
-    {
-        selectMacro(editorPage, macroName).browserDialog.clickSave();
-    }
-
     protected MacroBrowserAndEditor selectMacro(CreatePage editorPage, String macroName)
     {
         return selectMacro(editorPage, macroName, null);
@@ -229,11 +223,24 @@ public class ConfluenceWebDriverTestBase
         }
     }
 
-    protected void selectMacro(MacroBrowserAndEditor macroBrowserAndEditor)
+    protected void selectMacroAndSave(CreatePage editorPage, String macroName)
+    {
+        MacroBrowserDialog browserDialog = selectMacro(editorPage, macroName).browserDialog;
+        saveSelectedMacro(browserDialog);
+    }
+
+    protected void selectMacroAndSave(MacroBrowserAndEditor macroBrowserAndEditor)
     {
         MacroForm macroForm = macroBrowserAndEditor.macro.select();
         macroForm.waitUntilVisible();
-        macroBrowserAndEditor.browserDialog.clickSave();
+        saveSelectedMacro(macroBrowserAndEditor.browserDialog);
+    }
+
+    private void saveSelectedMacro(MacroBrowserDialog browserDialog)
+    {
+        Poller.waitUntilTrue(browserDialog.isSaveButtonEnabled());
+        browserDialog.clickSave();
+        browserDialog.waitUntilHidden();
     }
 
     protected MacroBrowserAndEditor findMacroInBrowser(CreatePage editorPage, String macroName)
