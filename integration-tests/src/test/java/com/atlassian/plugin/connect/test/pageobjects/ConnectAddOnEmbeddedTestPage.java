@@ -88,19 +88,6 @@ public class ConnectAddOnEmbeddedTestPage extends ConnectAddOnPage
         return waitForValue("client-http-data-xml");
     }
 
-    @Override
-    public String waitForValue(final String selector) {
-        return runInFrame(new Callable<String>()
-        {
-            @Override
-            public String call() throws Exception
-            {
-                driver.waitUntilElementIsVisible(By.cssSelector(selector));
-                return driver.findElement(By.cssSelector(selector)).getText();
-            }
-        });
-    }
-
     public String getValueBySelector(final String selector)
     {
         return runInFrame(new Callable<String>()
