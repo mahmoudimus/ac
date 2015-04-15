@@ -138,8 +138,6 @@ public class ConfluenceWebDriverTestBase
         product.getPageBinder().override(InsertDropdownMenu.class, ConfluenceInsertMenu.class);
 
         rpc.getDarkFeaturesHelper().enableSiteFeature("webdriver.test.mode");
-
-        disableFeatureDiscovery();
     }
 
     @AfterClass
@@ -153,12 +151,6 @@ public class ConfluenceWebDriverTestBase
     public void setupTest() throws Exception
     {
         StartOfTestLogger.instance().logTestStart(rpc, getClass(), name.getMethodName());
-    }
-
-    private static void disableFeatureDiscovery()
-    {
-        Plugin helpTipsPlugin = new SimplePlugin("com.atlassian.plugins.atlassian-help-tips", "Atlassian Help Tips");
-        rpc.getPluginHelper().disablePlugin(helpTipsPlugin);
     }
 
     // The three methods below are copied from com.atlassian.confluence.webdriver.WebDriverSetupTest,
