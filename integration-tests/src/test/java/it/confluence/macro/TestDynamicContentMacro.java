@@ -222,9 +222,9 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testDynamicMacroWithPdfFallback() throws Exception
     {
-        login(ConnectTestUserFactory.basicUser(product));
         String body = new MacroStorageFormatBuilder(DYNAMIC_MACRO_KEY).build();
         Content page = createPage(randomName(DYNAMIC_MACRO_KEY), body);
+        login(ConnectTestUserFactory.basicUser(product));
         ViewPage viewPage = getProduct().viewPage(String.valueOf(page.getId().asLong()));
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(DYNAMIC_MACRO_KEY, 0);
         String content = renderedMacro.getIFrameElementText("hello-world-message");
@@ -235,9 +235,9 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testDynamicMacroWithWordFallback() throws Exception
     {
-        login(ConnectTestUserFactory.basicUser(product));
         String body = new MacroStorageFormatBuilder(DYNAMIC_MACRO_KEY).build();
         Content page = createPage(randomName(DYNAMIC_MACRO_KEY), body);
+        login(ConnectTestUserFactory.basicUser(product));
         ViewPage viewPage = getProduct().viewPage(String.valueOf(page.getId().asLong()));
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(DYNAMIC_MACRO_KEY, 0);
         String content = renderedMacro.getIFrameElementText("hello-world-message");
