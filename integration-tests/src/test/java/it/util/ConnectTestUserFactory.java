@@ -17,11 +17,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ConnectTestUserFactory
 {
-    public static TestUser sysadmin(TestedProduct product)
-    {
-        return createTestUser(product, AuthLevel.SYSADMIN);
-    }
-
     public static TestUser admin(TestedProduct product)
     {
         return createTestUser(product, AuthLevel.ADMIN);
@@ -60,8 +55,6 @@ public class ConnectTestUserFactory
     {
         switch (authLevel)
         {
-            case SYSADMIN:
-                TestBase.funcTestHelper.backdoor.usersAndGroups().addUserToGroup(testUser.getUsername(), "jira-sysadmin");
             case ADMIN:
                 TestBase.funcTestHelper.backdoor.usersAndGroups().addUserToGroup(testUser.getUsername(), "jira-administrators");
             case BASIC_USER:
@@ -74,7 +67,6 @@ public class ConnectTestUserFactory
     {
         switch (authLevel)
         {
-            case SYSADMIN:
             case ADMIN:
                 userManager.addUserToGroup(testUser.getUsername(), "confluence-administrators");
             case BASIC_USER:
@@ -96,7 +88,8 @@ public class ConnectTestUserFactory
 
     enum AuthLevel
     {
-        SYSADMIN("test-sysadmin"), ADMIN("test-admin"), BASIC_USER("test-user");
+        ADMIN("test-admin"),
+        BASIC_USER("test-user");
 
         private String prefix;
 
@@ -109,8 +102,5 @@ public class ConnectTestUserFactory
         {
             return prefix;
         }
-
     }
-
 }
-

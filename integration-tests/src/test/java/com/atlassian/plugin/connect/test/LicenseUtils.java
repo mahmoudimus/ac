@@ -19,7 +19,7 @@ public abstract class LicenseUtils
     public static void addPluginLicenses(TestedProduct<WebDriverTester> product)
     {
         logout(product);
-        TestUser admin = ConnectTestUserFactory.sysadmin(product);
+        TestUser admin = ConnectTestUserFactory.admin(product);
         product.visit(LoginPage.class).login(admin.getUsername(), admin.getPassword(), HomePage.class);
 
         if("jira".equalsIgnoreCase(product.getProductInstance().getInstanceId()))
@@ -41,7 +41,7 @@ public abstract class LicenseUtils
     public static void resetLicenses(TestedProduct<WebDriverTester> product)
     {
         logout(product);
-        TestUser admin = ConnectTestUserFactory.sysadmin(product);
+        TestUser admin = ConnectTestUserFactory.admin(product);
         product.visit(LoginPage.class).login(admin.getUsername(), admin.getPassword(), HomePage.class);
 
         if("jira".equalsIgnoreCase(product.getProductInstance().getInstanceId()))
