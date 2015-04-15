@@ -1,6 +1,7 @@
 package at.jira;
 
-import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
+import java.rmi.RemoteException;
+
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
 
 import com.google.common.base.Optional;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.util.ExternalAddonInstaller;
+import hudson.plugins.jira.soap.RemoteIssue;
 import it.jira.JiraWebDriverTestBase;
 import it.util.TestUser;
 
@@ -31,18 +33,17 @@ public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
     @Before
     public void installAddon() throws Exception
     {
-        log.info("Installing add-on in preparation for running " + getClass().getName());
+        log.info("Installing add-on in preparation for running a test in " + getClass().getName());
         externalAddonInstaller.install();
     }
 
     @Test
-    public void testAcActionWebItemIsPresent()
+    public void testAcActionWebItemIsPresent() throws RemoteException
     {
-        IssueCreateResponse response = product.backdoor().issues().loginAs("admin")
-                .createIssue(project.getKey(), "Atlassian Connect Web Panel Test Issue");
+        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Atlassian Connect Web Panel Test Issue");
 
         product.quickLogin(ADMIN.getUsername(), ADMIN.getPassword());
-        product.goToViewIssue(response.key());
+        product.goToViewIssue(issue.getKey());
 
         connectPageOperations.findWebItem(WEB_ITEM_ID, Optional.<String>absent());
     }
@@ -50,7 +51,7 @@ public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
     @After
     public void uninstallAddon() throws Exception
     {
-        log.info("Cleaning up after " + getClass().getName());
+        log.info("Cleaning up after running a test in " + getClass().getName());
         externalAddonInstaller.uninstall();
     }
 }
