@@ -37,7 +37,7 @@ public class MacroStorageFormatBuilder
         if (richTextBody != null)
         {
             builder.append("<ac:rich-text-body>");
-            builder.append(StringEscapeUtils.escapeXml(richTextBody));
+            builder.append(richTextBody);
             builder.append("</ac:rich-text-body>");
         }
         builder.append("</ac:structured-macro>");

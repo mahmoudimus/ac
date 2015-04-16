@@ -1,7 +1,8 @@
 package it.confluence.macro;
 
+import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.api.model.content.ContentRepresentation;
-import com.atlassian.confluence.it.Page;
+import com.atlassian.confluence.api.model.content.ContentType;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
@@ -15,12 +16,13 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import com.google.common.collect.Maps;
+import it.confluence.ConfluenceRestClient;
 import it.confluence.ConfluenceWebDriverTestBase;
+import it.confluence.MacroStorageFormatBuilder;
 import it.servlet.HttpContextServlet;
 import it.servlet.InstallHandlerServlet;
 import it.servlet.macro.BodyHandler;
 import it.servlet.macro.MacroBodyServlet;
-import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -34,10 +36,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
-import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 import static junit.framework.TestCase.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 /**
  * This test case will collect the macro body from confluence in all the different ways possible.  It will check
@@ -48,8 +51,8 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
     private static final Logger logger = LoggerFactory.getLogger(TestMacroBody.class);
 
     @Rule public WebDriverScreenshotRule webDriverScreenshotRule = new WebDriverScreenshotRule();
-    //@Rule public Timeout globalTimeout = new Timeout(120000);
 
+    protected ConfluenceRestClient restClient = new ConfluenceRestClient(getProduct());
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
@@ -150,28 +153,13 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
 
     private void testDynamicMacro(String macroKey)
     {
-        String body = "<h1>Test Dynamic Macro: " + macroKey + "</h1>";
-        Page page = createPage(macroKey, body);
-        String pageId = rpc.content.createPage(page, ContentRepresentation.STORAGE).getIdAsString();
-        ViewPage viewPage = getProduct().login(TestUser.ADMIN.confUser(), ViewPage.class, pageId);
+        Content page = createPage(macroKey, "Hello world");
+        getProduct().viewPage(String.valueOf(page.getId().asLong()));
+        connectPageOperations.waitUntilNConnectIFramesPresent(1);
 
-        for (int i = 0; i < 20; i++)
-        {
-            try
-            {
-                waitUntilTrue(viewPage.getMainContent().find(By.tagName("iframe")).timed().isPresent());
-                logger.error("attempt number: "+(i)+": SUCCESS");
-            }
-            catch (Error e)
-            {
-                logger.error("attempt number: "+(i)+": FAILED");
-                e.printStackTrace();
-            }
-        }
-
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(macroKey);
-        String bodyFromPage = renderedMacro.getIFrameElement("body");
-        assertEquals(body, bodyFromPage);
+        RenderedMacro renderedMacro1 = connectPageOperations.findMacroWithIdPrefix(macroKey, 0);
+        String content1 = renderedMacro1.getIFrameElement("body");
+        assertThat(content1, is("Hello world"));
     }
 
     @Test
@@ -189,21 +177,26 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
     private void testStaticMacro(String macroKey)
     {
         String headingText = "Test Static Macro " + macroKey + "";
-        Page page = createPage(macroKey, "<h1>" + headingText + "</h1>");
-        String pageId = rpc.content.createPage(page, ContentRepresentation.STORAGE).getIdAsString();
-        ViewPage viewPage = getProduct().login(TestUser.ADMIN.confUser(), ViewPage.class, pageId);
-
-        // we can't assert on the html here because confluence will have transformed it
-        // so we assert on the contents of the h1 and look for the string we put in to the body
+        Content page = createPage(macroKey, "<h1>" + headingText + "</h1>");
+        ViewPage viewPage = getProduct().viewPage(String.valueOf(page.getId().asLong()));
         String headingTextFromPage = viewPage.getMainContent().find(By.tagName("h1")).getText();
         assertEquals(headingText, headingTextFromPage);
     }
 
-    private Page createPage(String macroKey, String body)
+    protected Content createContent(String title, String body)
+    {
+        Content content = Content.builder(ContentType.PAGE)
+                .space(TestSpace.DEMO.getKey())
+                .title(title)
+                .body(body, ContentRepresentation.STORAGE)
+                .build();
+        return restClient.content().create(content).claim();
+    }
+
+    private Content createPage(String macroKey, String macroBody)
     {
         long tag = System.currentTimeMillis();
-        String bodyWrapper = "<ac:rich-text-body>" + body + "</ac:rich-text-body>";
-        String storageFormat = "<ac:structured-macro ac:name=\"" + macroKey + "\">" + bodyWrapper + "</ac:structured-macro>";
-        return new Page(TestSpace.DEMO, "test page - " + tag, storageFormat);
+        String contentBody = new MacroStorageFormatBuilder(macroKey).richTextBody(macroBody).build();
+        return createContent("test page - " + tag, contentBody);
     }
 }
