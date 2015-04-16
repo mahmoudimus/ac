@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.test;
 
 import java.io.StringReader;
 
-import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
+import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
@@ -24,7 +24,7 @@ public class OAuthUtils
         DefaultHttpClient httpclient = new DefaultHttpClient();
         try
         {
-            String baseurl = OwnerOfTestedProduct.INSTANCE.getProductInstance().getBaseUrl();
+            String baseurl = TestedProductProvider.getTestedProduct().getProductInstance().getBaseUrl();
             HttpGet get = new HttpGet(baseurl + "/plugins/servlet/oauth/consumer-info");
             ResponseHandler<String> responseHandler = new BasicResponseHandler();
             String responseBody = httpclient.execute(get, responseHandler);

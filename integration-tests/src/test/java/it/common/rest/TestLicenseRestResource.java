@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.LicenseUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.gson.Gson;
-import it.ConnectWebDriverTestBase;
+import it.common.MultiProductWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
 import org.apache.commons.io.IOUtils;
@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @since 1.0
  */
-public class TestLicenseRestResource extends ConnectWebDriverTestBase
+public class TestLicenseRestResource extends MultiProductWebDriverTestBase
 {
     @Test
     public void anonymousReturnsLicense() throws Exception
@@ -68,8 +68,6 @@ public class TestLicenseRestResource extends ConnectWebDriverTestBase
         {
             try
             {
-                connectPageOperations.dismissAnyAlerts();
-
                 //NOTE: the timebomb license disables the ability to delete plugins!
                 LicenseUtils.resetLicenses(product);
             }

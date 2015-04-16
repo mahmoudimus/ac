@@ -136,7 +136,7 @@ Not all modules have been directly mapped in the new descriptor. This means you 
 module configuration from this documentation and apply it to your own configuration. The
 [Getting Started guide](./getting-started.html) provides a good example of a `general-page` json descriptor.
 
-See the [Confluence Module List](../modules/confluence/index.html) and [JIRA Module List](../modules/jira/index.html)
+See [Confluence Modules](../modules/confluence/index.html) and [JIRA Modules](../modules/jira/index.html)
 for a full list of all supported modules.
 
 ### Dialog Page

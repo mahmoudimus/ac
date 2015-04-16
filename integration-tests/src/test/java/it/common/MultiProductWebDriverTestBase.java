@@ -1,4 +1,4 @@
-package it;
+package it.common;
 
 import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
@@ -6,28 +6,22 @@ import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.test.LicenseStatusBannerHelper;
+import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
-import com.atlassian.plugin.connect.test.pageobjects.OwnerOfTestedProduct;
-import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
-import it.util.TestUser;
-import org.apache.http.auth.AuthenticationException;
-import org.junit.After;
+
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
-import java.io.IOException;
-import java.util.concurrent.Callable;
+import it.util.TestUser;
 
-public abstract class ConnectWebDriverTestBase
+public abstract class MultiProductWebDriverTestBase
 {
-    protected static TestedProduct<WebDriverTester> product = OwnerOfTestedProduct.INSTANCE;
+    protected static TestedProduct<WebDriverTester> product = TestedProductProvider.getTestedProduct();
 
     protected static String currentUsername = null;
 
@@ -41,25 +35,9 @@ public abstract class ConnectWebDriverTestBase
             product.getTester().getDriver());
 
     @BeforeClass
-    public static void disableLicenseBanner() throws IOException, AuthenticationException
+    public static void dismissPrompts()
     {
-        // disable license banner
-        LicenseStatusBannerHelper.instance().execute(product);
-    }
-
-    @Before
-    @After
-    public void dismissPrompts()
-    {
-        // dismiss any alerts, because they would stop the logout
-        connectPageOperations.dismissAnyAlerts();
-        connectPageOperations.dismissAnyAuiDialog();
-        connectPageOperations.dismissClosableAuiMessage();
-
-        if (product instanceof ConfluenceTestedProduct)
-        {
-            connectPageOperations.dismissConfluenceDiscardDraftsPrompt();
-        }
+        HelpTipApiClient.dismissHelpTipsForAllUsers(product);
     }
 
     @BeforeClass
@@ -76,8 +54,6 @@ public abstract class ConnectWebDriverTestBase
         {
             logout();
             currentUsername = user.getUsername();
-            connectPageOperations.dismissAnyAlerts(); // we've seen an alert pop up after the @Before has run
-
             if (product instanceof JiraTestedProduct)
             {
                 JiraTestedProduct jiraTestedProduct = (JiraTestedProduct) product;
@@ -99,13 +75,11 @@ public abstract class ConnectWebDriverTestBase
     {
         if (isAlreadyLoggedIn(user))
         {
-            connectPageOperations.dismissAnyAlerts();
             return product.visit(page, args);
         }
 
         logout();
         currentUsername = user.getUsername();
-        connectPageOperations.dismissAnyAlerts(); // we've seen an alert at this point
 
         if (product instanceof JiraTestedProduct)
         {
@@ -121,28 +95,5 @@ public abstract class ConnectWebDriverTestBase
         {
             throw new UnsupportedOperationException("Sorry, I don't know how to log into " + product.getClass().getCanonicalName());
         }
-    }
-
-    protected <T> T loginAndRun(TestUser user, Callable<T> test) throws Exception
-    {
-        logout();
-        login(user);
-        try {
-            return test.call();
-        }
-        finally
-        {
-            logout();
-        }
-    }
-
-    protected String getModuleKey(ConnectRunner runner, String module)
-    {
-        return ModuleKeyUtils.addonAndModuleKey(runner.getAddon().getKey(), module);
-    }
-
-    protected String getModuleKey(String addonKey, String module)
-    {
-        return ModuleKeyUtils.addonAndModuleKey(addonKey, module);
     }
 }

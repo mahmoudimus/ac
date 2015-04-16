@@ -41,10 +41,10 @@ public class ConnectConditionFactoryImpl implements ConnectConditionFactory
 
     @Override
     public Condition createCondition(final String addOnKey, final List<ConditionalBean> conditionalBeans,
-            final Class<? extends Condition> additionalConditions)
+            final Class<? extends Condition> additionalCondition)
     {
         List<Class<? extends Condition>> conditionList = Lists.newArrayList();
-        conditionList.add(additionalConditions);
+        conditionList.add(additionalCondition);
         return createCondition(addOnKey, conditionalBeans, conditionList);
     }
 

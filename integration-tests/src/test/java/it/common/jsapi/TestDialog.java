@@ -25,15 +25,12 @@ import com.atlassian.plugin.connect.test.pageobjects.RemoteDialogOpeningPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginAwarePage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.ConnectWebDriverTestBase;
+import it.common.MultiProductWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
 import it.servlet.condition.ParameterCapturingConditionServlet;
 import it.servlet.condition.ParameterCapturingServlet;
-import it.util.TestUser;
-import org.hamcrest.Matchers;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -41,6 +38,7 @@ import javax.annotation.Nonnull;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -48,12 +46,12 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWe
 import static it.modules.ConnectAsserts.verifyIframeURLHasVersionNumber;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.endsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class TestDialog extends ConnectWebDriverTestBase
+public class TestDialog extends MultiProductWebDriverTestBase
 {
     private static final String ADDON_GENERALPAGE = "ac-general-page";
     private static final String ADDON_GENERALPAGE_NAME = "AC General Page";
@@ -77,10 +75,13 @@ public class TestDialog extends ConnectWebDriverTestBase
 
     private static ConnectRunner runner;
 
+    private long lastIssuedAtTime;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
+        logout();
+
         final String productContextPath = product.getProductInstance().getContextPath().toLowerCase();
         String globallyVisibleLocation = productContextPath.contains("jira")
                 ? "system.top.navigation.bar"
@@ -210,7 +211,7 @@ public class TestDialog extends ConnectWebDriverTestBase
 
     private void testOpenAndClose(String pageKey, String pageName, String moduleKey)
     {
-        loginAndVisit(TestUser.ADMIN, HomePage.class);
+        HomePage homePage = product.visit(HomePage.class);
         GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, pageKey, pageName, runner.getAddon().getKey());
         remotePage.clickAddOnLink();
 
@@ -244,35 +245,30 @@ public class TestDialog extends ConnectWebDriverTestBase
         assertThat(closeDialogPage.getIFrameSize().getWidth(), is(231));
         assertThat(closeDialogPage.getIFrameSize().getHeight(), is(356));
         assertTrue(closeDialogPage.getFromQueryString("ui-params").length() > 0);
-        assertThat(closeDialogPage.getFromQueryString("user_id"), is("admin"));
         verifyIframeURLHasVersionNumber(closeDialogPage);
     }
 
     @Test
     public void testLoadGeneralDialog()
     {
-        loginAndVisit(TestUser.BETTY, HomePage.class);
+        HomePage homePage = product.visit(HomePage.class);
 
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginDialog", "Remotable Plugin app1 Dialog", runner.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
-
-        assertNotNull(remotePluginTest.getFullName());
-        Assert.assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString(TestUser.BETTY.getUsername()));
+        assertThat(remotePluginTest.getLocation(), endsWith(homePage.getUrl()));
 
         // Exercise the dialog's submit button.
         RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, remotePluginTest);
         assertFalse(dialog.wasSubmitted());
-        assertEquals(false, dialog.submit());
-
-        assertTrue(dialog.wasSubmitted());
-        assertEquals(true, dialog.submit());
+        dialog.submitAndWaitUntilSubmitted();
+        dialog.submitAndWaitUntilHidden();
     }
 
     @Test
     public void testSizeToParentDoesNotWorkInDialog()
     {
-        loginAndVisit(TestUser.BETTY, HomePage.class);
+        product.visit(HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParentDialog", "Size to parent dialog page", runner.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
@@ -302,60 +298,38 @@ public class TestDialog extends ConnectWebDriverTestBase
         verifyIframeURLHasVersionNumber(dialog);
     }
 
+    /**
+     * Open the dialog twice and verify that the value of the iat claim, specified with second precision, is as expected.
+     */
     private void verifyJwtIssuedAtTimeForDialog(String moduleKey, String moduleName, final boolean isInlineDialog) throws JwtUnknownIssuerException, JwtParseException, JwtIssuerLacksSharedSecretException, JwtVerificationException
     {
         final JwtReaderFactory jwtReaderFactory = getJwtReaderFactory();
 
         RemotePluginAwarePage page = goToPageWithLink(moduleKey, moduleName);
 
-        clickAndVerifyIssuedAtTime(jwtReaderFactory, page, isInlineDialog);
-        clickAndVerifyIssuedAtTime(jwtReaderFactory, page, isInlineDialog); // clicking multiple times should result in a new JWT on subsequent clicks
-    }
-
-    private void sleepForAtLeast5Seconds()
-    {
-        sleepUntil(System.currentTimeMillis() + 5000);
-    }
-
-    private void sleepUntil(final long wakeTimeMillis)
-    {
-        final long millisToSleep = wakeTimeMillis - System.currentTimeMillis();
-
-        if (millisToSleep > 0)
-        {
-            try
-            {
-                Thread.sleep(millisToSleep);
-            }
-            catch (InterruptedException e)
-            {
-                sleepUntil(wakeTimeMillis);
-            }
-        }
-    }
-
-    private void clickAndVerifyIssuedAtTime(JwtReaderFactory jwtReaderFactory, RemotePluginAwarePage page, final boolean isInlineDialog) throws JwtUnknownIssuerException, JwtParseException, JwtIssuerLacksSharedSecretException, JwtVerificationException
-    {
-        final long timeBeforeClick = System.currentTimeMillis();
-        sleepForAtLeast5Seconds(); // because the JWT "iat" claim is specified in seconds there is no way to differentiate between "now" and "now + a few milliseconds"
+        // Checking the system time across two JVM's seems unreliable, so allow a considerable discrepancy
+        final long timeBeforeClick = System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(JwtConstants.TIME_CLAIM_LEEWAY_SECONDS);
         openAndCloseDialog(page, isInlineDialog);
-        verifyIssuedAtTime(jwtReaderFactory, timeBeforeClick);
+        verifyIssuedAtTime(jwtReaderFactory, newIssuedAtTimeClaimVerifier(timeBeforeClick));
+
+        openAndCloseDialog(page, isInlineDialog);
+        verifyIssuedAtTime(jwtReaderFactory, newIssuedAtTimeClaimVerifier(lastIssuedAtTime));
     }
 
-    private void verifyIssuedAtTime(JwtReaderFactory jwtReaderFactory, long timeBeforeClick) throws JwtUnknownIssuerException, JwtParseException, JwtIssuerLacksSharedSecretException, JwtVerificationException
+    private void verifyIssuedAtTime(JwtReaderFactory jwtReaderFactory, JwtClaimVerifier issuedAtTimeClaimVerifier) throws JwtUnknownIssuerException, JwtParseException, JwtIssuerLacksSharedSecretException, JwtVerificationException
     {
         final Map<String,String> params = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
         assertTrue("A JWT parameter should have been included in the request for dialog content", params.containsKey(JwtConstants.JWT_PARAM_NAME));
         final String jwt = params.get(JwtConstants.JWT_PARAM_NAME);
         final JwtReader jwtReader = jwtReaderFactory.getReader(jwt);
-        Map<String, JwtClaimVerifier> verifiers = new HashMap<String, JwtClaimVerifier>(1);
-        verifiers.put("iat", newIssuedAtTimeClaimVerifier(timeBeforeClick));
-        jwtReader.read(jwt, verifiers); // will throw if the issued-at-time fails verification
+        Map<String, JwtClaimVerifier> verifiers = new HashMap<>(1);
+        verifiers.put("iat", issuedAtTimeClaimVerifier);
+        jwtReader.readAndVerify(jwt, verifiers); // will throw if the issued-at-time fails verification
     }
 
     private RemotePluginAwarePage goToPageWithLink(String dashedModuleKey, String moduleName)
     {
-        loginAndVisit(TestUser.ADMIN, HomePage.class);
+        product.visit(HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, dashedModuleKey, moduleName, runner.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
 
@@ -395,10 +369,10 @@ public class TestDialog extends ConnectWebDriverTestBase
                 if (claim instanceof Date)
                 {
                     Date claimDate = (Date) claim;
-
-                    if (claimDate.getTime() < minimumIssueTime)
+                    lastIssuedAtTime = claimDate.getTime();
+                    if (lastIssuedAtTime < minimumIssueTime)
                     {
-                        throw new JwtInvalidClaimException(String.format("Expecting the issued-at claim to have a value greater than or equal to [%d] but it was [%d]", minimumIssueTime, claimDate.getTime()));
+                        throw new JwtInvalidClaimException(String.format("Expecting the issued-at claim to have a value greater than or equal to [%d] but it was [%d]", minimumIssueTime, lastIssuedAtTime));
                     }
                 }
                 else
@@ -416,7 +390,7 @@ public class TestDialog extends ConnectWebDriverTestBase
 
         if (dialog.hasChrome())
         {
-            dialog.cancel();
+            dialog.cancelAndWaitUntilHidden();
         }
     }
 }

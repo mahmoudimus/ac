@@ -4,14 +4,14 @@ import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.ConnectWebDriverTestBase;
+import it.common.MultiProductWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 
-public class TestRemotePluginInstallation extends ConnectWebDriverTestBase
+public class TestRemotePluginInstallation extends MultiProductWebDriverTestBase
 {
     @Test
     public void testChangedKey() throws Exception

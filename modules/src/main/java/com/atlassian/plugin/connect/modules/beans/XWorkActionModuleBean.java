@@ -67,6 +67,8 @@ public class XWorkActionModuleBean extends RequiredKeyBean
 
     /**
      * Builds a context-relative URL to the action modelled by this bean.
+     *
+     * @return the URL of the action
      */
     public String getUrl()
     {

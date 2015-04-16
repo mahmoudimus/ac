@@ -2,7 +2,6 @@ package it.confluence.macro;
 
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
-import com.atlassian.pageobjects.binder.PageBindingWaitException;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
@@ -10,7 +9,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.confluence.AbstractConfluenceWebDriverTest;
+import it.confluence.ConfluenceWebDriverTestBase;
 import it.util.TestUser;
 import org.apache.commons.lang.RandomStringUtils;
 import org.jsoup.Jsoup;
@@ -28,7 +27,7 @@ import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModu
 import static it.servlet.ConnectAppServlets.echoQueryParametersServlet;
 import static org.junit.Assert.assertEquals;
 
-public class TestCompatibility extends AbstractConfluenceWebDriverTest
+public class TestCompatibility extends ConfluenceWebDriverTestBase
 {
     private static final String STORAGE_FORMAT = "<p>\n" +
             "<ac:structured-macro ac:name=\"map\"><ac:parameter ac:name=\"data\">macro data</ac:parameter></ac:structured-macro>\n" +
@@ -88,44 +87,16 @@ public class TestCompatibility extends AbstractConfluenceWebDriverTest
     @Test
     public void testAliasIsNotPersisted() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), AbstractConfluenceWebDriverTest.TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), ConfluenceWebDriverTestBase.TestSpace.DEMO);
         editorPage.setTitle(RandomStringUtils.randomAlphanumeric(8));
+        selectMacroAndSave(editorPage, MACRO_NAME_2);
+        ViewPage page = editorPage.save();
 
-        try
-        {
-            selectMacroAndSave(editorPage, MACRO_NAME_2);
-
-            ViewPage page;
-
-            try
-            {
-                // since Confluence 5.6-OD-37-042 this line has been quite flaky, passing and failing seemingly randomly
-                page = editorPage.saveWithKeyboardShortcut();
-            }
-            catch (PageBindingWaitException e)
-            {
-                // try again - it will probably work the second time around
-                page = editorPage.saveWithKeyboardShortcut();
-            }
-
-            String content = rpc.getPageContent(page.getPageId());
-            Document doc = Jsoup.parse(content);
-            Elements elements = doc.select("ac|structured-macro");
-            assertEquals("only one macro found", 1, elements.size());
-            assertEquals("name set correct (not alias)", "something-else", elements.get(0).attr("ac:name"));
-        }
-        finally
-        {
-            // clean up so that we don't get "org.openqa.selenium.UnhandledAlertException: unexpected alert open" in subsequent tests
-            try
-            {
-                editorPage.cancel();
-            }
-            catch (Throwable e)
-            {
-                // don't care
-            }
-        }
+        String content = rpc.getPageContent(page.getPageId());
+        Document doc = Jsoup.parse(content);
+        Elements elements = doc.select("ac|structured-macro");
+        assertEquals("only one macro found", 1, elements.size());
+        assertEquals("name set correct (not alias)", MACRO_KEY_2, elements.get(0).attr("ac:name"));
     }
 
     private void createAndVisitPage(String pageContent) throws MalformedURLException, XmlRpcFault
@@ -134,5 +105,4 @@ public class TestCompatibility extends AbstractConfluenceWebDriverTest
                 TestSpace.DEMO.getKey(), "macro page", pageContent);
         product.visit(ConfluenceViewPage.class, pageData.getId());
     }
-
 }

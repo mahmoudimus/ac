@@ -1,15 +1,21 @@
 package it.common.rest;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.BaseUrlLocator;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+
 import com.google.common.base.Function;
 import com.google.gson.Gson;
-import it.AbstractBrowserlessTest;
-import it.servlet.InstallHandlerServlet;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
@@ -21,25 +27,22 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
+import it.servlet.InstallHandlerServlet;
 
+import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider.getTestedProduct;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.junit.Assert.assertEquals;
 
 /**
  * Functional test for add-on properties
  */
-public class TestAddOnProperties extends AbstractBrowserlessTest
+public class TestAddOnProperties
 {
     public static final int MAX_VALUE_SIZE = 1024 * 32;
     private final static Gson gson = new Gson();
 
     private final String addOnKey = "testAddOnPropertyAddOnKey";
+    private final String baseUrl = getTestedProduct().getProductInstance().getBaseUrl();
     private final String restPath = baseUrl + "/rest/atlassian-connect/1/addons/" + addOnKey;
 
     private ConnectRunner runner = null;
@@ -70,7 +73,7 @@ public class TestAddOnProperties extends AbstractBrowserlessTest
         URL url = new URL(restPath + "/properties/" + propertyKey);
 
         String sharedSecret = checkNotNull(installHandlerServlet.getInstallPayload().getSharedSecret());
-        String jwt = AddonTestUtils.generateJwtSignature(HttpMethod.PUT, url.toURI(), addOnKey, sharedSecret, BaseUrlLocator.getBaseUrl(), null);
+        String jwt = AddonTestUtils.generateJwtSignature(HttpMethod.PUT, url.toURI(), addOnKey, sharedSecret, baseUrl, null);
 
         URL longerUrl = new URL(restPath + "/properties/" + propertyKey + "?jwt=" + jwt);
         HttpURLConnection connection = (HttpURLConnection) longerUrl.openConnection();

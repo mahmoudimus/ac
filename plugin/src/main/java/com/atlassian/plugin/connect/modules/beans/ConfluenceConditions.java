@@ -12,8 +12,6 @@ import java.util.Map;
 @ConfluenceComponent
 public class ConfluenceConditions extends PageConditions
 {
-    @SuppressWarnings ("UnusedDeclaration")
-    public static final String CONDITION_LIST = getConditionListAsMarkdown(getConditionMap());
 
     public static final String ACTIVE_THEME = "active_theme";
     public static final String CAN_EDIT_SPACE_STYLES = "can_edit_space_styles";

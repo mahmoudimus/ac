@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 /**
  * Blueprints allow your connect add on to provide content creation templates.
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#BLUEPRINT_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#BLUEPRINT_EXAMPLE}
  * @schemaTitle Blueprints
  * @since 1.1.9
  */

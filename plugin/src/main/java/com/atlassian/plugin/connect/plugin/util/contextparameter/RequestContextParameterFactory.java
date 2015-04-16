@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.plugin.util.contextparameter;
 
-import com.atlassian.sal.api.user.UserProfile;
-
 import java.util.Map;
 import java.util.Set;
 
@@ -26,6 +24,11 @@ public class RequestContextParameterFactory
      * Creates a context-aware instance of {@link RequestContextParameters}.  To create the instance,
      * the passed entity-related context parameters are combined with global context parameters such
      * as user_id
+     *
+     * @param userId the user ID to include in the context
+     * @param userKey the user key to include in the context
+     * @param entityContextParameters parameters related to the entity of the current context
+     * @return the request context parameters
      */
     public RequestContextParameters create(String userId, String userKey, Map<String, String> entityContextParameters)
     {

@@ -1,14 +1,11 @@
 package com.atlassian.plugin.connect.plugin.usermanagement;
 
-import com.atlassian.crowd.exception.ApplicationNotFoundException;
-import com.atlassian.crowd.model.user.User;
-import com.atlassian.crowd.service.client.ClientProperties;
-import com.atlassian.crowd.service.client.ClientPropertiesImpl;
-import com.atlassian.crowd.service.client.ClientResourceLocator;
-import com.google.common.collect.ImmutableMap;
-
 import java.util.Collections;
 import java.util.Set;
+
+import com.atlassian.crowd.model.user.User;
+
+import com.google.common.collect.ImmutableMap;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -25,9 +22,8 @@ public class ConnectAddOnUserUtil
      * Crowd attribute (shared attribute across all Crowd connected applications) when this is finally enabled in Crowd.
      * @param applicationName the name of the application the attribute was created from. This is mostly for an audit trail.
      * @return An ImmutableMap allowing the marking of a user as a Connect AddOn user
-     * @throws com.atlassian.crowd.exception.ApplicationNotFoundException
      */
-    public static ImmutableMap<String, Set<String>> buildConnectAddOnUserAttribute(String applicationName) throws ApplicationNotFoundException
+    public static ImmutableMap<String, Set<String>> buildConnectAddOnUserAttribute(String applicationName)
     {
         return ImmutableMap.of(buildAttributeConnectAddOnAttributeName(applicationName), Collections.singleton("true"));
     }
@@ -61,16 +57,6 @@ public class ConnectAddOnUserUtil
     public static boolean validAddOnEmailAddress(User user)
     {
         return Constants.ADDON_USER_EMAIL_ADDRESS.equals(user.getEmailAddress());
-    }
-
-    /**
-     * Will return the required configuration to communicate with the configured RemoteCrowd Server
-     * @return authentication and configuration properties for the RemoteCrowd Server
-     */
-    public static ClientProperties getClientProperties()
-    {
-        ClientResourceLocator resourceLocator = new ClientResourceLocator(com.atlassian.crowd.integration.Constants.PROPERTIES_FILE);
-        return ClientPropertiesImpl.newInstanceFromResourceLocator(resourceLocator);
     }
 
     public static class Constants

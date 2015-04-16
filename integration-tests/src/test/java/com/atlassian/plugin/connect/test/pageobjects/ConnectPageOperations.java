@@ -1,11 +1,8 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
-import java.util.concurrent.TimeUnit;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectMacroBrowserDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
@@ -16,12 +13,8 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.inject.Inject;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,11 +138,6 @@ public class ConnectPageOperations
         return pageBinder.bind(LinkedRemoteContent.class, mode, webItemId, dropDownMenuId, pageKey);
     }
 
-    public ConnectMacroBrowserDialog findConnectMacroBrowserDialog()
-    {
-        return pageBinder.bind(ConnectMacroBrowserDialog.class);
-    }
-
     private LinkedRemoteContent findRemoteLinkedContent(String webItemId, Option<String> dropDownMenuId, String pageKey)
     {
         return findRemoteLinkedContent(ID, webItemId, dropDownMenuId, pageKey);
@@ -157,8 +145,13 @@ public class ConnectPageOperations
 
     public RemotePluginDialog findDialog(String moduleKey)
     {
+        return findDialog(moduleKey, RemotePluginDialog.class);
+    }
+
+    public <T extends RemotePluginDialog> T findDialog(String moduleKey, Class<T> dialogClass)
+    {
         ConnectAddOnEmbeddedTestPage dialogContent = pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, null, moduleKey, true);
-        return pageBinder.bind(RemotePluginDialog.class, dialogContent);
+        return pageBinder.bind(dialogClass, dialogContent);
     }
 
     public WebElement findLabel(String key)
@@ -193,83 +186,4 @@ public class ConnectPageOperations
     {
         return findElement(By.className(className));
     }
-
-    public void dismissAnyAlerts()
-    {
-        try
-        {
-            driver.switchTo().alert().dismiss();
-            logger.debug("Dismissed an alert.");
-        }
-        catch (Exception e)
-        {
-            logger.debug("No alerts to dismiss, or failed to dismiss an alert.");
-        }
-    }
-
-    public void dismissConfluenceDiscardDraftsPrompt()
-    {
-        // dismiss a "you have an unsaved draft" message, if any, because it actually blocks the cancel and other buttons
-        try
-        {
-            final WebElement closeLink = findElement(By.cssSelector("#draft-messages .icon-close"));
-
-            if (null != closeLink)
-            {
-                closeLink.click();
-            }
-        }
-        catch (NoSuchElementException e)
-        {
-            // don't care
-        }
-    }
-
-    public void dismissClosableAuiMessage()
-    {
-        try
-        {
-            final WebElement message = findElementByClass("aui-message");
-
-            if (null != message && message.isDisplayed())
-            {
-                final WebElement closeButton = message.findElement(By.className("icon-close"));
-
-                if (null != closeButton)
-                {
-                    closeButton.click();
-                }
-            }
-        }
-        catch (NoSuchElementException e)
-        {
-            // don't care
-        }
-        catch (StaleElementReferenceException sex)
-        {
-            // don't care - the page may have been navigated away
-        }
-    }
-
-    public void dismissAnyAuiDialog()
-    {
-        // raising an aui dialog also displays a <div class="aui-blanket"> underneath the dialog and over everything else;
-        // pressing the escape key dismisses aui dialogs
-        Actions action = new Actions(driver);
-        action.sendKeys(Keys.ESCAPE).build().perform();
-        waitForDialogToClear();
-    }
-
-   private void waitForDialogToClear()
-   {
-       new WebDriverPoller(driver, 5L, TimeUnit.SECONDS).waitUntil(new Function<WebDriver, Boolean>()
-       {
-           @Override
-           public Boolean apply(WebDriver webDriver)
-           {
-               return webDriver.findElements(By.className("aui-blanket")).size() == 0 ||
-                       !webDriver.findElement(By.className("aui-blanket")).isDisplayed();
-           }
-       });
-   }
 }

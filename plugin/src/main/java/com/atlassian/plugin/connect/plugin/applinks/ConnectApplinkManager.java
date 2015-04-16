@@ -62,8 +62,8 @@ public interface ConnectApplinkManager
      * Reads the JWT shared secret or the OAuth consumer public key from an
      * applink
      *
-     * @param applink
-     * @return
+     * @param applink the application link for the add-on
+     * @return the JWT shared secret or the OAuth consumer public key
      */
     Option<String> getSharedSecretOrPublicKey(ApplicationLink applink);
 
