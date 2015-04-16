@@ -15,7 +15,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import com.google.common.collect.Maps;
-import it.confluence.AbstractConfluenceWebDriverTest;
+import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.HttpContextServlet;
 import it.servlet.InstallHandlerServlet;
 import it.servlet.macro.BodyHandler;
@@ -43,7 +43,7 @@ import static junit.framework.TestCase.assertEquals;
  * This test case will collect the macro body from confluence in all the different ways possible.  It will check
  * both static and dynamic macros being collected by hash or id.
  */
-public class TestMacroBody extends AbstractConfluenceWebDriverTest
+public class TestMacroBody extends ConfluenceWebDriverTestBase
 {
     private static final Logger logger = LoggerFactory.getLogger(TestMacroBody.class);
 
