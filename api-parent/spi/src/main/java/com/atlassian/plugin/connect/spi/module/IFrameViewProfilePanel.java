@@ -1,14 +1,15 @@
 package com.atlassian.plugin.connect.spi.module;
 
-import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.jira.plugin.profile.ViewProfilePanel;
-import com.atlassian.jira.plugin.profile.ViewProfilePanelModuleDescriptor;
-import com.atlassian.plugin.connect.spi.PermissionDeniedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.StringWriter;
+
+import com.atlassian.jira.plugin.profile.ViewProfilePanel;
+import com.atlassian.jira.plugin.profile.ViewProfilePanelModuleDescriptor;
+import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.plugin.connect.spi.PermissionDeniedException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -34,13 +35,12 @@ public class IFrameViewProfilePanel implements ViewProfilePanel
     }
 
     @Override
-    public String getHtml(User user)
+    public String getHtml(ApplicationUser profileUser)
     {
-
         StringWriter writer = new StringWriter();
         try
         {
-            String remoteUsername = user != null ? user.getName() : null;
+            String remoteUsername = profileUser != null ? profileUser.getName() : null;
             writer.write(iFrameRenderer.render(iFrameContext, remoteUsername));
         }
         catch (PermissionDeniedException ex)
