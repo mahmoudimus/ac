@@ -297,13 +297,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
 
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SHORT_BODY_MACRO_KEY, 0);
-<<<<<<< HEAD
-        String body = renderedMacro.getFromQueryString("body");
-
-        assertThat(body, is("<p>a short body</p>"));
-=======
         assertThat(renderedMacro.getFromQueryString("body"), is("a short body"));
->>>>>>> develop
     }
 
     @Test

@@ -162,21 +162,6 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testBodyInclusion() throws Exception
     {
-<<<<<<< HEAD
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
-        editorPage.setTitle(randomName("Short Body Macro"));
-
-        selectMacroAndSave(editorPage, SHORT_BODY_MACRO_NAME);
-
-        ConfluenceEditorContent editorContent = (ConfluenceEditorContent) editorPage.getEditor().getContent();
-        editorContent.setRichTextMacroBody("a short body");
-
-        savedPage = save(editorPage);
-        editorPage = null;
-
-        String body = parameterServlet.waitForQueryParameters().any("body").getValue();
-        assertThat(body, is("<p>a short body</p>"));
-=======
         String macroBody = "a short body";
         String body = new MacroStorageFormatBuilder(SHORT_BODY_MACRO_KEY).richTextBody(macroBody).build();
         Content page = createPage(randomName(SHORT_BODY_MACRO_KEY), body);
@@ -184,7 +169,6 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
 
         String bodyParameter = parameterServlet.waitForQueryParameters().any("body").getValue();
         assertThat(bodyParameter, is(macroBody));
->>>>>>> develop
     }
 
     @Test
