@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.27-SNAPSHOT</version>
+        <version>1.1.28-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -475,13 +475,57 @@
     </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <configuration>
+                        <tags>
+                            <tag>
+                                <name>response.representation.200.doc</name>
+                                <placement>f</placement>
+                            </tag>
+                            <tag>
+                                <name>response.representation.200.mediaType</name>
+                                <placement>f</placement>
+                            </tag>
+                            <tag>
+                                <name>response.representation.201.doc</name>
+                                <placement>f</placement>
+                            </tag>
+                            <tag>
+                                <name>response.representation.201.mediaType</name>
+                                <placement>f</placement>
+                            </tag>
+                            <tag>
+                                <name>response.representation.204.doc</name>
+                                <placement>f</placement>
+                            </tag>
+                            <tag>
+                                <name>response.representation.400.doc</name>
+                                <placement>f</placement>
+                            </tag>
+                            <tag>
+                                <name>response.representation.401.doc</name>
+                                <placement>f</placement>
+                            </tag>
+                            <tag>
+                                <name>response.representation.404.doc</name>
+                                <placement>f</placement>
+                            </tag>
+                        </tags>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
                 <configuration>
-                    <enableDevToolbox>true</enableDevToolbox>
-                    <enableFastdev>true</enableFastdev>
+                    <enableDevToolbox>false</enableDevToolbox>
+                    <enableFastdev>false</enableFastdev>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <versionOverridesPath>${basedir}/../bin/amps-overrides.properties</versionOverridesPath>
@@ -938,6 +982,7 @@
                 </executions>
                 <configuration>
                     <commands>
+                        <pa>com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies com.atlassian.maven.plugins:maven-amps-plugin:compress-resources org.apache.maven.plugins:maven-resources-plugin:resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor org.codehaus.mojo:xml-maven-plugin:transform compile com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:validate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar org.apache.maven.plugins:maven-install-plugin:install</pa>
                         <pi>com.atlassian.maven.plugins:maven-amps-plugin:copy-bundled-dependencies com.atlassian.maven.plugins:maven-amps-plugin:compress-resources org.apache.maven.plugins:maven-resources-plugin:resources com.atlassian.maven.plugins:maven-amps-plugin:filter-plugin-descriptor org.codehaus.mojo:xml-maven-plugin:transform compile com.atlassian.maven.plugins:maven-amps-plugin:generate-manifest com.atlassian.maven.plugins:maven-amps-plugin:validate-manifest com.atlassian.maven.plugins:maven-amps-plugin:jar org.apache.maven.plugins:maven-install-plugin:install com.atlassian.maven.plugins:maven-amps-plugin:install</pi>
                     </commands>
                 </configuration>
@@ -1330,6 +1375,7 @@
         <debugSchemaGen>false</debugSchemaGen>
         <ao.version>0.25.2</ao.version>
         <od.testing.configuration>
+            use-java,8
             use-maven,3
             include-artifact,com.atlassian.plugins:atlassian-connect-integration-tests
         </od.testing.configuration>

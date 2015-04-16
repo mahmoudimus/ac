@@ -2,7 +2,6 @@ package it.confluence.macro;
 
 import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.it.Page;
-import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.EditContentPage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
@@ -332,7 +331,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         finally
         {
             // necessary to prevent Confluence from showing a navigate away alert
-            selectMacro(macroInBrowser);
+            selectMacroAndSave(macroInBrowser);
             cancelEditor(editorPage);
         }
     }
@@ -507,14 +506,6 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         String body = new MacroStorageFormatBuilder(SIMPLE_MACRO_KEY).build();
         Content page = createPage(randomName(SIMPLE_MACRO_KEY), body);
         return String.valueOf(page.getId().asLong());
-    }
-
-    protected void selectMacro(MacroBrowserAndEditor macroBrowserAndEditor)
-    {
-        MacroForm macroForm = macroBrowserAndEditor.macro.select();
-        macroForm.waitUntilVisible();
-        macroBrowserAndEditor.browserDialog.clickSave();
-        macroBrowserAndEditor.browserDialog.waitUntilHidden();
     }
 
     private static final class SlowMacroServlet extends HttpServlet

@@ -30,7 +30,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
  * The following macro example is an adaptation from the [Google Maps](https://marketplace.atlassian.com/plugins/atlassian-connect-gmaps)
  * add-on. The source is hosted on [Bitbucket](https://bitbucket.org/atlassianlabs/ac-gmaps).
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#DYNAMIC_MACRO_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#DYNAMIC_MACRO_EXAMPLE}
  * @schemaTitle Dynamic Content Macro
  * @since 1.0
  */

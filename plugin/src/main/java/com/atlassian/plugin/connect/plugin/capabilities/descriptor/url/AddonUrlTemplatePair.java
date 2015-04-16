@@ -28,7 +28,7 @@ public class AddonUrlTemplatePair
 
 
     /**
-     * The URLTemplate for the addons content
+     * @return the URLTemplate for the addons content
      */
     public UrlTemplate getAddonUrlTemplate()
     {
@@ -36,7 +36,7 @@ public class AddonUrlTemplatePair
     }
 
     /**
-     * The URLTemplate and servlet paths for the signing service on the host application
+     * @return the URLTemplate and servlet paths for the signing service on the host application
      */
     public HostUrlPaths getHostUrlPaths()
     {
@@ -80,7 +80,7 @@ public class AddonUrlTemplatePair
         }
 
         /**
-         * The URLTemplate for the host signing servlet
+         * @return the URLTemplate for the host signing servlet
          */
         public UrlTemplate getHostUrlTemplate()
         {
@@ -88,7 +88,7 @@ public class AddonUrlTemplatePair
         }
 
         /**
-         * Servlet paths to register
+         * @return the servlet paths to register
          */
         public Iterable<String> getServletRegistrationPaths()
         {
