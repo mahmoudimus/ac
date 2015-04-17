@@ -1,31 +1,25 @@
 package it.jira;
 
-
-import java.rmi.RemoteException;
-import java.util.concurrent.Callable;
-
-import com.atlassian.fugue.Option;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
+import com.atlassian.jira.pageobjects.pages.admin.workflow.ViewWorkflowTransitionPage;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.jira.webtests.LicenseKeys;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
-import hudson.plugins.jira.soap.RemoteProject;
 import com.atlassian.pageobjects.Page;
-import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
+import com.atlassian.plugin.connect.test.pageobjects.jira.workflow.ExtendedViewWorkflowTransitionPage;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
-
+import hudson.plugins.jira.soap.RemoteProject;
 import it.util.ConnectTestUserFactory;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
-import it.util.TestUser;
-
-import static com.atlassian.fugue.Option.none;
-import static com.atlassian.fugue.Option.some;
+import java.rmi.RemoteException;
+import java.util.concurrent.Callable;
 
 public class JiraWebDriverTestBase
 {
@@ -45,6 +39,8 @@ public class JiraWebDriverTestBase
     @BeforeClass
     public static void beforeClass() throws RemoteException
     {
+        product.getPageBinder().override(ViewWorkflowTransitionPage.class, ExtendedViewWorkflowTransitionPage.class);
+
         TestBase.funcTestHelper.administration.switchToLicense(new LicenseKeys.License("AAAEyg0ODAoPeNqtWFtvq0YQfvevsNSX9oEVvpwm50iWmjiumipOoiTta7XAAFvDLmd3sY/z67tgn\n" +
                 "OBlwJDmwZKNh5lvZr657P70EufjPykfu9Px5OLbl6/fvszHy+eX8dSdzEdLwTX19T1NYbGmuRTj3\n" +
                 "0FyygN4HV/TgLGRL1JCdUKVYpQTGgSCE19wDr4m/zJJaa7Fjmo/JtcsSRiPHkEyESzc8k3zoQnVY\n" +

@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.test.pageobjects.jira;
+package com.atlassian.plugin.connect.test.pageobjects.jira.workflow;
 
 import com.atlassian.pageobjects.elements.PageElement;
 import org.openqa.selenium.By;
