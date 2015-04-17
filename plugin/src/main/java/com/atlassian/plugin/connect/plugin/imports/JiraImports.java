@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.imports;
 
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
+import com.atlassian.gadgets.dashboard.spi.DashboardPermissionService;
 import com.atlassian.jira.bc.issue.attachment.AttachmentService;
 import com.atlassian.jira.bc.issue.worklog.WorklogService;
 import com.atlassian.jira.bc.license.JiraLicenseService;
@@ -91,7 +92,8 @@ public class JiraImports
             @JiraImport ApplicationManager applicationManager,
             @JiraImport GlobalPermissionManager globalPermissionManager,
             @JiraImport ("beanBuilderFactory") BeanBuilderFactory beanBuilderFactory,
-            @JiraImport FeatureManager featureManager)
+            @JiraImport FeatureManager featureManager,
+            @JiraImport DashboardPermissionService dashboardPermissionService)
     {
     }
 }

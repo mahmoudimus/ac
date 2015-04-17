@@ -7,20 +7,32 @@
             return {
                 init: function (state, xdm) {
                     // register handle for the edit button in jira (if needed)
-                    $(xdm.iframe).on('gadgetEdit', function(){
-                        xdm.triggerGadgetEdit();
+                    $(xdm.iframe).on('dashboardItemEdit', function(){
+                        xdm.triggerDashboardItemEdit();
                     });
                 },
-                stubs: ["triggerGadgetEdit"]
+                internals: {
+                    closeDashboardItemEdit: function () {
+                        var that = this;
+                        new AG.InlineGadgetAPI(AJS.$(that.iframe).parents(".gadget-inline")).closeEdit();
+                    },
+                    setDashboardItemTitle: function(title) {
+                        var that = this;
+                        // TODO this should be replaced with a valid gadget API
+                        var p = AJS.$(AJS.$(that.iframe).parents('.gadget-container').find('h3.dashboard-item-title')[0]);
+                        p.text(title);
+                    }
+                },
+                stubs: ["triggerDashboardItemEdit"]
             };
         });
     });
 
-    define('atlassian-connect/connect-dashboard-item', function(){
+    define('atlassian-connect/connect-dashboard-item', function() {
         return function(){
             return {
                 renderEdit: function($element){
-                    $element.find('iframe').trigger('gadgetEdit');
+                    $element.find('iframe').trigger('dashboardItemEdit');
                 }
             };
         };

@@ -2,7 +2,8 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
     "use strict";
     var workflowListener,
         validationListener,
-        gadgetEditListener;
+        dashboardItemEditListener;
+
     /**
     * @class WorkflowConfiguration
     */
@@ -49,13 +50,13 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
             };
         }
     };
-    var Gadget = {
-        onGadgetEdit: function(listener){
-            gadgetEditListener = listener;
+    var DashboardItem = {
+        onDashboardItemEdit: function (listener){
+            dashboardItemEditListener = listener;
         },
-        trigger: function(){
-            if($.isFunction(gadgetEditListener)){
-                gadgetEditListener.call();
+        triggerEdit: function (){
+            if($.isFunction(dashboardItemEditListener)){
+                dashboardItemEditListener.call();
             }
         }
     };
@@ -77,6 +78,19 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                 getWorkflowConfiguration: function (callback) {
                     remote.getWorkflowConfiguration(callback);
                 },
+
+                /**
+                 * close an edit view of dashboard item
+                 */
+                closeDashboardItemEdit: function() {
+                    remote.closeDashboardItemEdit();
+                },
+
+                setDashboardItemTitle: function(title) {
+                    remote.setDashboardItemTitle(title);
+                },
+
+
                 /**
                 * Refresh an issue page without reloading the browser.
                 * This is helpful when your add-on updates information about an issue in the background.
@@ -96,10 +110,9 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                 setWorkflowConfigurationMessage: function () {
                     return WorkflowConfiguration.trigger();
                 },
-                triggerGadgetEdit: function () {
-                    return Gadget.trigger();
+                triggerDashboardItemEdit: function () {
+                    return DashboardItem.triggerEdit();
                 }
-
             },
             stubs: ["triggerJiraEvent"]
 
@@ -109,7 +122,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
 
     return $.extend(apis, {
         WorkflowConfiguration: WorkflowConfiguration,
-        Gadget: Gadget
+        DashboardItem: DashboardItem
     });
 
 });
