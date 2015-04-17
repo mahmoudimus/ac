@@ -16,6 +16,7 @@ import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Objects;
 import com.google.common.base.Supplier;
 import net.minidev.json.JSONObject;
@@ -47,13 +48,17 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @ConvertToWiredTest
-@RunWith(MockitoJUnitRunner.class)
+@RunWith (MockitoJUnitRunner.class)
 public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotablePluginAccessorTest
 {
     protected static final String MOCK_JWT = "just.an.example";
     private static final String CONSUMER_KEY = "12345-abcde-09876-zyxwv";
+
     private static final String USER_KEY = "MrFreeze";
-    private static final Map<String, String[]> GET_PARAMS_STRING_ARRAY = Collections.singletonMap("param", new String[]{"param value"});
+    private static final String USER_NAME = "vfries";
+    private static final String USER_DISPLAY_NAME = "Dr. Victor Fries";
+
+    private static final Map<String, String[]> GET_PARAMS_STRING_ARRAY = Collections.singletonMap("param", new String[] { "param value" });
     private static final URI FULL_PATH_URI = URI.create(FULL_PATH_URL);
     private static final URI GET_PATH = URI.create("/path");
     private static final URI UNEXPECTED_ABSOLUTE_URI = URI.create("http://www.example.com/path");
@@ -79,7 +84,8 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
     }
 
     @Test
-    public void createdRemotePluginAccessorCorrectlyCallsTheHttpContentRetriever() throws ExecutionException, InterruptedException
+    public void createdRemotePluginAccessorCorrectlyCallsTheHttpContentRetriever()
+            throws ExecutionException, InterruptedException
     {
         assertThat(createRemotePluginAccessor().executeAsync(HttpMethod.GET, GET_PATH, GET_PARAMS_STRING_ARRAY, UNAUTHED_GET_HEADERS).get(), is(EXPECTED_GET_RESPONSE));
     }
@@ -102,14 +108,16 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
         assertThat(createRemotePluginAccessor().createGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY), is(OUTGOING_FULL_GET_URL));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void createdRemotePluginAccessorThrowsIAEWhenGetUrlIsIncorrectlyAbsolute() throws ExecutionException, InterruptedException
+    @Test (expected = IllegalArgumentException.class)
+    public void createdRemotePluginAccessorThrowsIAEWhenGetUrlIsIncorrectlyAbsolute()
+            throws ExecutionException, InterruptedException
     {
         assertThat(createRemotePluginAccessor().createGetUrl(UNEXPECTED_ABSOLUTE_URI, GET_PARAMS_STRING_ARRAY), is(OUTGOING_FULL_GET_URL));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void createdRemotePluginAccessorThrowsIAEWhenGetUrlIsAbsoluteToAddon() throws ExecutionException, InterruptedException
+    @Test (expected = IllegalArgumentException.class)
+    public void createdRemotePluginAccessorThrowsIAEWhenGetUrlIsAbsoluteToAddon()
+            throws ExecutionException, InterruptedException
     {
         assertThat(createRemotePluginAccessor().createGetUrl(FULL_PATH_URI, GET_PARAMS_STRING_ARRAY), is(OUTGOING_FULL_GET_URL));
     }
@@ -195,24 +203,63 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
     }
 
     @Test
+    public void customContextUserObjectPresent()
+    {
+        createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
+        verify(jwtService).issueJwt(argThat(hasContextKey("user")), eq(SECRET));
+    }
+
+    @Test
+    public void customContextUserKeyIsCorrect()
+    {
+        createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
+        verify(jwtService).issueJwt(argThat(hasContextKeyWithValue("user.userKey", USER_KEY)), eq(SECRET));
+    }
+
+    @Test
+    public void customContextUsernameIsCorrect()
+    {
+        createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
+        verify(jwtService).issueJwt(argThat(hasContextKeyWithValue("user.username", USER_NAME)), eq(SECRET));
+    }
+
+    @Test
+    public void customContextDisplayNameIsCorrect()
+    {
+        createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
+        verify(jwtService).issueJwt(argThat(hasContextKeyWithValue("user.displayName", USER_DISPLAY_NAME)), eq(SECRET));
+    }
+
+    @Test
+    public void customContextUserNotPresentIfAnonymous()
+    {
+        UserManager userManager = mock(UserManager.class);
+        when(userManager.getRemoteUser()).thenReturn(null);
+
+        createRemotePluginAccessor(userManager).signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
+
+        verify(jwtService).issueJwt(argThat(not(hasContextKey("user"))), eq(SECRET));
+    }
+
+    @Test
     public void thereAreNoUnexpectedClaims()
     {
         createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
-        verify(jwtService).issueJwt(argThat(hasExactlyTheseClaims("iss", "sub", "iat", "exp", JwtConstants.Claims.QUERY_HASH)), eq(SECRET));
+        verify(jwtService).issueJwt(argThat(hasExactlyTheseClaims("iss", "sub", "iat", "exp", "context", JwtConstants.Claims.QUERY_HASH)), eq(SECRET));
     }
 
     @Test
     public void slashesAreNormalizedOnConcatenation() throws Exception
     {
         RemotablePluginAccessor accessor = createRemotePluginAccessor("https://example.com/addon/");
-        assertThat(accessor.createGetUrl(URI.create("/handler"), Collections.<String,String[]>emptyMap()), is("https://example.com/addon/handler"));
+        assertThat(accessor.createGetUrl(URI.create("/handler"), Collections.<String, String[]>emptyMap()), is("https://example.com/addon/handler"));
     }
 
     @Test
     public void trailingSlashesAreLeftIntact() throws Exception
     {
         RemotablePluginAccessor accessor = createRemotePluginAccessor("https://example.com/addon");
-        assertThat(accessor.createGetUrl(URI.create("/handler/"), Collections.<String,String[]>emptyMap()), is("https://example.com/addon/handler/"));
+        assertThat(accessor.createGetUrl(URI.create("/handler/"), Collections.<String, String[]>emptyMap()), is("https://example.com/addon/handler/"));
     }
 
     @Override
@@ -226,6 +273,16 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
     private ArgumentMatcher<String> hasExactlyTheseClaims(String... claimNames)
     {
         return new ClaimNamesMatcher(claimNames);
+    }
+
+    private ArgumentMatcher<String> hasContextKeyWithValue(String key, String value)
+    {
+        return new ContextClaimMatcher(key, value);
+    }
+
+    private ArgumentMatcher<String> hasContextKey(String key)
+    {
+        return new ContextClaimMatcher(key);
     }
 
     private ArgumentMatcher<String> hasAnyIssuedAtTime()
@@ -410,12 +467,82 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
         }
     }
 
+    private static class ContextClaimMatcher extends ArgumentMatcher<String>
+    {
+        private final String key;
+        private final String expectedValue;
+
+        private ContextClaimMatcher(String key, String expectedValue)
+        {
+            this.key = key;
+            this.expectedValue = expectedValue;
+        }
+
+        private ContextClaimMatcher(String key)
+        {
+            this.key = key;
+            this.expectedValue = null;
+        }
+
+        @Override
+        public boolean matches(Object argument)
+        {
+            assertThat(argument, is(instanceOf(String.class)));
+            try
+            {
+                JSONObject jsonObject = (JSONObject) new JSONParser(JSONParser.MODE_JSON_SIMPLE).parse((String) argument);
+                boolean hasClaim = jsonObject.containsKey("context");
+                if (hasClaim)
+                {
+                    JSONObject contextClaim = (JSONObject) jsonObject.get("context");
+                    // Nested searching of json keys. eg, "foo.bar" does: object.get('foo').get('bar')
+                    // Doesn't currently handle keys which have literal . characters in the value, eg object.get('foo.bar') (meh)
+                    String[] keys = key.split("\\.");
+                    Object value = contextClaim;
+                    for (String key : keys)
+                    {
+                        if (value instanceof JSONObject)
+                        {
+                            value = ((JSONObject) value).get(key);
+                        } else if (value == null) {
+                            return false;
+                        } else {
+                            throw new RuntimeException(value.toString() + " is not a JSONObject and could not be deserialised");
+                        }
+                    }
+                    return expectedValue == null ? value != null : Objects.equal(expectedValue, value);
+                }
+                return false;
+            }
+            catch (ParseException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Override
+        public void describeTo(Description description)
+        {
+            description.appendText("Expected context of " + key + " to be " + expectedValue);
+        }
+    }
+
     private RemotablePluginAccessor createRemotePluginAccessor()
     {
-        return createRemotePluginAccessor(BASE_URL);
+        return createRemotePluginAccessor(BASE_URL, null);
     }
 
     private RemotablePluginAccessor createRemotePluginAccessor(final String baseUrl)
+    {
+        return createRemotePluginAccessor(baseUrl, null);
+    }
+
+    private RemotablePluginAccessor createRemotePluginAccessor(UserManager userManager)
+    {
+        return createRemotePluginAccessor(BASE_URL, userManager);
+    }
+
+    private RemotablePluginAccessor createRemotePluginAccessor(final String baseUrl, UserManager userManager)
     {
         when(jwtService.issueJwt(any(String.class), eq(SECRET))).thenReturn(MOCK_JWT);
         ConnectApplinkManager connectApplinkManager = mock(DefaultConnectApplinkManager.class);
@@ -437,9 +564,18 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
                 .build();
         when(consumerService.getConsumer()).thenReturn(consumer);
 
-        UserKey mockRemoteUserKey = new UserKey(USER_KEY);
-        UserManager userManager = mock(UserManager.class);
-        when(userManager.getRemoteUserKey()).thenReturn(mockRemoteUserKey);
+        if (userManager == null)
+        {
+            UserKey mockRemoteUserKey = new UserKey(USER_KEY);
+
+            UserProfile mockRemoteUser = mock(UserProfile.class);
+            when(mockRemoteUser.getUsername()).thenReturn(USER_NAME);
+            when(mockRemoteUser.getFullName()).thenReturn(USER_DISPLAY_NAME);
+            when(mockRemoteUser.getUserKey()).thenReturn(mockRemoteUserKey);
+
+            userManager = mock(UserManager.class);
+            when(userManager.getRemoteUser()).thenReturn(mockRemoteUser);
+        }
 
         ConnectAddonBean addon = ConnectAddonBean.newConnectAddonBean()
                 .withKey(PLUGIN_KEY)
