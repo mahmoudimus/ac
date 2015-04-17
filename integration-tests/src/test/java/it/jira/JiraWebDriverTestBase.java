@@ -1,32 +1,26 @@
 package it.jira;
 
-
-import java.rmi.RemoteException;
-import java.util.concurrent.Callable;
-
-import com.atlassian.fugue.Option;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.jira.pageobjects.pages.AddPermissionPage;
+import com.atlassian.jira.pageobjects.pages.admin.workflow.ViewWorkflowTransitionPage;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.jira.webtests.LicenseKeys;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
-import hudson.plugins.jira.soap.RemoteProject;
 import com.atlassian.pageobjects.Page;
-import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
+import com.atlassian.plugin.connect.test.pageobjects.jira.workflow.ExtendedViewWorkflowTransitionPage;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
-
+import hudson.plugins.jira.soap.RemoteProject;
 import it.util.ConnectTestUserFactory;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
-import it.util.TestUser;
-
-import static com.atlassian.fugue.Option.none;
-import static com.atlassian.fugue.Option.some;
+import java.rmi.RemoteException;
+import java.util.concurrent.Callable;
 
 public class JiraWebDriverTestBase
 {
@@ -56,7 +50,9 @@ public class JiraWebDriverTestBase
                 DEFAULT_PERMISSION_SCHEMA, JIRA_PERMISSION_BROWSE_PROJECTS);
         addPermissionPage.setGroup(JIRA_GROUP_ANYONE);
         addPermissionPage.add();
-        
+
+        product.getPageBinder().override(ViewWorkflowTransitionPage.class, ExtendedViewWorkflowTransitionPage.class);
+
         jiraOps = new JiraOps(product.getProductInstance());
         project = jiraOps.createProject();
     }

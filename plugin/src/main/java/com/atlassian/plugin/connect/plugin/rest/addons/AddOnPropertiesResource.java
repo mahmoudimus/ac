@@ -16,8 +16,6 @@ import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
 import com.google.common.io.LimitInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -25,7 +23,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Request;
@@ -65,6 +69,7 @@ public class AddOnPropertiesResource
      * Lists all properties of a plugin with the given plugin key.
      *
      * @param addOnKey the add-on key of the plugin to fetch the property from
+     * @param servletRequest the HTTP servlet request
      * @return a Response containing a list of properties or an error code with message.
      *
      * @response.representation.200.mediaType application/json
@@ -76,7 +81,7 @@ public class AddOnPropertiesResource
      *      Request issued by a user with insufficient credentials, e.g. for an add-on's data by anyone but the add-on itself, or for a plugin that does not exist.
      */
     @GET
-    public Response getAddOnProperties(@PathParam ("addonKey") final String addOnKey, @Context final Request request, @Context HttpServletRequest servletRequest)
+    public Response getAddOnProperties(@PathParam ("addonKey") final String addOnKey, @Context HttpServletRequest servletRequest)
     {
         UserProfile user = userManager.getRemoteUser(servletRequest);
         String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(servletRequest);
@@ -109,6 +114,7 @@ public class AddOnPropertiesResource
      *
      * @param addOnKey the add-on key of the plugin to fetch the property from
      * @param propertyKey the key of the property
+     * @param servletRequest the HTTP servlet request
      * @return a Response containing a list of properties or an error code with message.
      *
      * @response.representation.200.mediaType application/json
@@ -125,7 +131,7 @@ public class AddOnPropertiesResource
      */
     @GET
     @Path ("{propertyKey}")
-    public Response getAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam ("propertyKey") String propertyKey, @Context final Request request, @Context final HttpServletRequest servletRequest)
+    public Response getAddOnProperty(@PathParam ("addonKey") final String addOnKey, @PathParam ("propertyKey") String propertyKey, @Context final HttpServletRequest servletRequest)
     {
         UserProfile user = userManager.getRemoteUser(servletRequest);
         String sourcePluginKey = addOnKeyExtractor.getAddOnKeyFromHttpRequest(servletRequest);
@@ -155,6 +161,8 @@ public class AddOnPropertiesResource
      *
      * @param addOnKey the add-on key of the plugin to fetch the property from
      * @param propertyKey the key of the property
+     * @param request the HTTP request
+     * @param servletRequest the HTTP servlet request
      * @return a Response containing a list of properties or an error code with message.
      *
      * @response.representation.200.mediaType application/json
@@ -204,6 +212,8 @@ public class AddOnPropertiesResource
      *
      * @param addOnKey the add-on key of the plugin to fetch the property from
      * @param propertyKey the key of the property
+     * @param request the HTTP request
+     * @param servletRequest the HTTP servlet request
      * @return a Response containing a list of properties or an error code with message.
      *
      * @response.representation.204.doc

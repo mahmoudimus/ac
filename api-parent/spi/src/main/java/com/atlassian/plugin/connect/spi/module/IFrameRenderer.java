@@ -9,6 +9,12 @@ public interface IFrameRenderer
 
     /**
      * @deprecated use {@link #render(IFrameContext, String, java.util.Map, String, java.util.Map)}
+     * @param iframeContext
+     * @param extraPath
+     * @param queryParams
+     * @param remoteUser
+     * @return the rendered template
+     * @throws IOException
      */
     @Deprecated
     String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUser) throws IOException;

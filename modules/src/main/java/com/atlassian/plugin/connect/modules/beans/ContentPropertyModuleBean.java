@@ -15,7 +15,7 @@ import com.google.common.collect.Lists;
  *
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_EXAMPLE}
  * @schemaTitle Content Property
  * @since 1.0
  */

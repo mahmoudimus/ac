@@ -1,25 +1,19 @@
 package it.jira;
 
-import javax.annotation.Nullable;
-
 import com.atlassian.fugue.Option;
-import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
 import com.atlassian.jira.projects.pageobjects.webdriver.page.sidebar.Sidebar;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
-import com.atlassian.pageobjects.TestedProductFactory;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.jira.IssueNavigatorViewsMenu;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAddWorkflowTransitionPostFunctionPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdminPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdministrationHomePage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdvancedSearchPage;
@@ -28,13 +22,13 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.Section;
-import com.atlassian.plugin.connect.test.pageobjects.jira.WorkflowPostFunctionEntry;
+import com.atlassian.plugin.connect.test.pageobjects.jira.workflow.JiraAddWorkflowTransitionPostFunctionPage;
+import com.atlassian.plugin.connect.test.pageobjects.jira.workflow.WorkflowPostFunctionEntry;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-
+import it.servlet.ConnectAppServlets;
 import it.util.ConnectTestUserFactory;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
@@ -42,7 +36,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.servlet.ConnectAppServlets;
+import javax.annotation.Nullable;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean.newProjectAdminTabPanelBean;

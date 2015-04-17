@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 /**
  * A dummy subclass to allow access to the CrowdClientFactory, which JIRA and Confluence don't provide directly.
  *
- * Used by {@link com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserServiceImpl and
+ * Used by {@link com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserServiceImpl} and
  * {@link com.atlassian.plugin.connect.plugin.upgrade.ConnectAddOnUserAttributeUpgradeTask} to work around
  * a crowd bug (https://ecosystem.atlassian.net/browse/EMBCWD-975)
  */
