@@ -4,14 +4,21 @@ import com.atlassian.confluence.it.Space;
 import com.atlassian.confluence.it.SpacePermission;
 import com.atlassian.confluence.pageobjects.page.space.ViewSpaceSummaryPage;
 import com.atlassian.fugue.Option;
+import com.atlassian.pageobjects.elements.query.Queries;
+import com.atlassian.pageobjects.elements.timeout.DefaultTimeouts;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
+import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
+import com.google.common.base.Supplier;
+
 import it.util.ConnectTestUserFactory;
+
+import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,9 +26,10 @@ import org.junit.Test;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 
+import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 import static com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean.newSpaceToolsTabBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests for Space Tools Tab module. Note that when we refer to "Space Tools" we're referring to the post-5.0
@@ -61,28 +69,48 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
     @Test
     public void spaceAdminShowsConnectTab()
     {
-        Space space = makeSpace("IBTS", "I Cant Believe Its Another Test Space");
+        Space space = makeSpace(RandomStringUtils.randomAlphanumeric(4).toLowerCase(), "spaceAdminShowsConnectTab");
         // Demo space uses doctheme. Templates page is in Space Admin (not to be confused with Space Operations).
         loginAndVisit(ConnectTestUserFactory.admin(product), ViewSpaceSummaryPage.class, space);
         LinkedRemoteContent addonPage = connectPageOperations.findRemoteLinkedContent(RemoteWebItem.ItemMatchingMode.LINK_TEXT, "AC Space Tab", Option.<String>none(), addonAndModuleKey(remotePlugin.getAddon().getKey(),TAB_MODULE_KEY));
-        ConnectAddOnEmbeddedTestPage addonContentsPage = addonPage.click();
 
-        assertEquals("Hello world", addonContentsPage.waitForValue("#hello-world-message"));
+        final RemoteWebPanel addonContentsPage = addonPage.click(
+                    RemoteWebPanel.class,
+                    ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY)
+        );
+
+        waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), new Supplier<Boolean>()
+        {
+            @Override
+            public Boolean get()
+            {
+                return addonContentsPage.containsHelloWorld();
+            }
+        }));
     }
 
     @Test
     public void spaceToolsShowsConnectTab()
     {
-        Space space = makeSpace("ABNT", "Another Brand New Test");
+        Space space = makeSpace(RandomStringUtils.randomAlphanumeric(4).toLowerCase(), "spaceToolsShowsConnectTab");
 
         loginAndVisit(ConnectTestUserFactory.admin(product), ViewSpaceSummaryPage.class, space);
 
         LinkedRemoteContent addonPage = connectPageOperations.findRemoteLinkedContent(RemoteWebItem.ItemMatchingMode.LINK_TEXT, "AC Space Tab", Option.<String>none(), addonAndModuleKey(remotePlugin.getAddon().getKey(),TAB_MODULE_KEY));
 
-        ConnectAddOnEmbeddedTestPage addonContentsPage = addonPage.click();
+        final RemoteWebPanel addonContentsPage = addonPage.click(
+                RemoteWebPanel.class,
+                ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY)
+        );
 
-        assertEquals("Hello world", addonContentsPage.waitForValue("#hello-world-message"));
-
+        waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), new Supplier<Boolean>()
+        {
+            @Override
+            public Boolean get()
+            {
+                return addonContentsPage.containsHelloWorld();
+            }
+        }));
     }
 
     public Space makeSpace(String key, String name)
