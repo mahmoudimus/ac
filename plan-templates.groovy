@@ -23,8 +23,7 @@ plan(
             task(
                     type: 'script',
                     description: 'Merge to Master and Update Development Version',
-                    script: 'advance_versions_and_tag.sh',
-                    workingSubDirectory: 'bin'
+                    script: 'bin/advance_versions_and_tag.sh'
             )
         }
     }

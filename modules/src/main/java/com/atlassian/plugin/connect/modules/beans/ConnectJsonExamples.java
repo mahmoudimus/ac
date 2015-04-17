@@ -1,11 +1,7 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
@@ -26,6 +22,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
+import com.atlassian.plugin.connect.modules.beans.nested.MatcherBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
@@ -34,8 +31,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -43,10 +38,16 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
 import static com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean.newContentPropertyModuleBean;
+import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean.newEntityPropertyModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
@@ -64,6 +65,8 @@ public class ConnectJsonExamples
 
     public static final String ADDON_EXAMPLE = createAddonExample();
     public static final String AUTHENTICATION_EXAMPLE = createAuthenticationExample();
+    public static final String AUTOCONVERT_EXAMPLE = createAutoconvertExample();
+    public static final String AUTOCONVERT_MATCHER_EXAMPLE = createMatcherExample();
     public static final String COMPOSITE_CONDITION_EXAMPLE = createCompositeConditionExample();
     public static final String DYNAMIC_MACRO_EXAMPLE = createDynamicMacroExample();
     public static final String ENTITY_PROPERTY_EXAMPLE = createEntityPropertyExample();
@@ -446,6 +449,15 @@ public class ConnectJsonExamples
                         .withPdf(createEmbeddedStaticMacroBean("/render-map-pdf"))
                         .withDefaultfallback(createEmbeddedStaticMacroBeanStatic())
                         .build())
+                .withAutoconvert(AutoconvertBean.newAutoconvertBean()
+                        .withUrlParameter("url")
+                        .withMatchers(MatcherBean.newMatcherBean()
+                                        .withPattern("https://www.example.com/maps/{}/{}")
+                                        .build(),
+                                MatcherBean.newMatcherBean()
+                                        .withPattern("https://www.example.com/map-editor/{}")
+                                        .build())
+                        .build())
                 .build();
 
         return gson.toJson(createModuleArray("dynamicContentMacros", macroModuleBean));
@@ -500,7 +512,15 @@ public class ConnectJsonExamples
                                 .withInsertTitle(new I18nProperty("Insert Map", ""))
                                 .withEditTitle(new I18nProperty("Edit Map", ""))
                                 .build()
-                )
+                ).withAutoconvert(AutoconvertBean.newAutoconvertBean()
+                        .withUrlParameter("url")
+                        .withMatchers(MatcherBean.newMatcherBean()
+                                        .withPattern("https://www.example.com/maps/{}/{}")
+                                        .build(),
+                                MatcherBean.newMatcherBean()
+                                        .withPattern("https://www.example.com/map-editor/{}")
+                                        .build())
+                        .build())
                 .build();
 
         return gson.toJson(createModuleArray("staticContentMacros", macroModuleBean));
@@ -595,10 +615,10 @@ public class ConnectJsonExamples
                         newCompositeConditionBean()
                                 .withType(CompositeConditionType.OR)
                                 .withConditions(
-                                        newSingleConditionBean().withCondition(JiraConditions.CAN_ATTACH_FILE_TO_ISSUE).build(),
-                                        newSingleConditionBean().withCondition(JiraConditions.IS_ISSUE_ASSIGNED_TO_CURRENT_USER).build()
+                                        newSingleConditionBean().withCondition("can_attach_file_to_issue").build(),
+                                        newSingleConditionBean().withCondition("is_issue_assigned_to_current_user").build()
                                 ).build()
-                        , newSingleConditionBean().withCondition(JiraConditions.USER_IS_LOGGED_IN).build()
+                        , newSingleConditionBean().withCondition("user_is_logged_in").build()
                 ).build();
 
         return gson.toJson(createJsonObject("conditions", bean));
@@ -678,7 +698,7 @@ public class ConnectJsonExamples
                 .withServiceEntitlementNumber("SEN-number")
                 .withProductType("jira")
                 .withDescription("Atlassian JIRA at https://example.atlassian.net")
-                .withEventType(ConnectAddonManager.SyncHandler.INSTALLED.name().toLowerCase());
+                .withEventType("installed");
 
         ConnectAddonEventData data = dataBuilder.build();
 
@@ -744,6 +764,43 @@ public class ConnectJsonExamples
                 new EntityPropertyIndexKeyConfigurationBean(Lists.newArrayList(extractionConfiguration), "attachment");
 
         return gson.toJson(issueAttachmentIndexConfiguration);
+    }
+
+    private static String createAutoconvertExample() {
+        DynamicContentMacroModuleBean dynamicMacroWithAutoconvert = newDynamicContentMacroModuleBean()
+                .withUrl("/dynamic-macro?url={url}")
+                .withKey("dynamic-macro-with-autoconvert")
+                .withName(new I18nProperty("Dynamic Macro With Autoconvert", null))
+                .withParameters(
+                        newMacroParameterBean()
+                                .withIdentifier("url")
+                                .withName(new I18nProperty("URL", ""))
+                                .withType("string")
+                                .build())
+                .withAutoconvert(AutoconvertBean.newAutoconvertBean()
+                        .withUrlParameter("url")
+                        .withMatchers(MatcherBean.newMatcherBean()
+                                        .withPattern("https://www.facebook.com/{}/about")
+                                        .build(),
+                                MatcherBean.newMatcherBean()
+                                        .withPattern("https://www.facebook.com/{}/music")
+                                        .build(),
+                                MatcherBean.newMatcherBean()
+                                        .withPattern("https://www.facebook.com/{}/movies/{}")
+                                        .build())
+                        .build())
+                .build();
+
+        return gson.toJson(dynamicMacroWithAutoconvert);
+    }
+
+    private static String createMatcherExample() {
+
+        MatcherBean matcher = MatcherBean.newMatcherBean()
+                .withPattern("https://www.facebook.com/{}/about")
+                .build();
+
+        return gson.toJson(matcher);
     }
 
     private static String createContentPropertyIndexExtractionConfigurationExample()

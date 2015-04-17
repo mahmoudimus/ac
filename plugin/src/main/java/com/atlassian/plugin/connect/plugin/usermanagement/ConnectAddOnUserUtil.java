@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.usermanagement;
 
-import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.service.client.ClientProperties;
 import com.atlassian.crowd.service.client.ClientPropertiesImpl;
@@ -25,9 +24,8 @@ public class ConnectAddOnUserUtil
      * Crowd attribute (shared attribute across all Crowd connected applications) when this is finally enabled in Crowd.
      * @param applicationName the name of the application the attribute was created from. This is mostly for an audit trail.
      * @return An ImmutableMap allowing the marking of a user as a Connect AddOn user
-     * @throws com.atlassian.crowd.exception.ApplicationNotFoundException
      */
-    public static ImmutableMap<String, Set<String>> buildConnectAddOnUserAttribute(String applicationName) throws ApplicationNotFoundException
+    public static ImmutableMap<String, Set<String>> buildConnectAddOnUserAttribute(String applicationName)
     {
         return ImmutableMap.of(buildAttributeConnectAddOnAttributeName(applicationName), Collections.singleton("true"));
     }

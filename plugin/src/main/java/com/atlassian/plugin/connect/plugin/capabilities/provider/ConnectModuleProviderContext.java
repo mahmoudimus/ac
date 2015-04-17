@@ -12,11 +12,15 @@ public interface ConnectModuleProviderContext
 {
     /**
      * The connect addon that owns the module being processed
+     *
+     * @return the add-on bean
      */
     ConnectAddonBean getConnectAddonBean();
 
     /**
      * A helper for qualifying location names so they match the qualified names of module keys
+     *
+     * @return the location qualifier
      */
     ModuleLocationQualifier getLocationQualifier();
 }

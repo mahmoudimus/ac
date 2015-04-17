@@ -21,7 +21,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *#### Example
  *
  * @schemaTitle Tab Panel
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#TAB_PANEL_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#TAB_PANEL_EXAMPLE}
  * @since 1.0
  */
 @SchemaDefinition("tabPanel")
@@ -60,6 +60,8 @@ public class ConnectTabPanelModuleBean extends BeanWithKeyAndParamsAndConditions
 
     /**
      * Specifies the URL targeted by the tab panel. The URL is relative to the add-on's base URL.
+     *
+     * @return the URL of the tab panel
      */
     public String getUrl()
     {
@@ -67,14 +69,16 @@ public class ConnectTabPanelModuleBean extends BeanWithKeyAndParamsAndConditions
     }
 
     /**
-     * Determines the order in which the tab panel's link appears in the menu or list.
-     * <p/>
-     * The "lightest" weight (i.e., lowest number) appears first, rising relative to other items,
-     * while the "heaviest" weights sink to the bottom of the menu or list.
-     * <p/>
-     * Built-in web items have weights that are incremented by numbers that leave room for additional
+     * <p>Determines the order in which the tab panel's link appears in the menu or list.</p>
+     *
+     * <p>The "lightest" weight (i.e., lowest number) appears first, rising relative to other items,
+     * while the "heaviest" weights sink to the bottom of the menu or list.</p>
+     *
+     * <p>Built-in web items have weights that are incremented by numbers that leave room for additional
      * items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears
-     * in a sensible order given existing items.
+     * in a sensible order given existing items.</p>
+     *
+     * @return the weight of the tab panel
      */
     public int getWeight()
     {

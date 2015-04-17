@@ -14,7 +14,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#REPORT_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#REPORT_EXAMPLE}
  * @since 1.2
  */
 @SchemaDefinition("report")
@@ -43,6 +43,8 @@ public class ReportModuleBean extends RequiredKeyBean
 
     /**
      * Specifies the URL targeted by the report. The URL is relative to the add-on's base URL.
+     *
+     * @return the URL of the report
      */
     public String getUrl()
     {
@@ -50,10 +52,12 @@ public class ReportModuleBean extends RequiredKeyBean
     }
 
     /**
-     * Determines the order in which the report's link appears in the list.
-     * <p/>
-     * The "lightest" weight (i.e., lowest number) appears first, rising relative to other items,
-     * while the "heaviest" weights sink to the bottom of the list.
+     * <p>Determines the order in which the report's link appears in the list.</p>
+     *
+     * <p>The "lightest" weight (i.e., lowest number) appears first, rising relative to other items,
+     * while the "heaviest" weights sink to the bottom of the list.</p>
+     *
+     * @return the weight of the report
      */
     public Integer getWeight()
     {
@@ -62,6 +66,8 @@ public class ReportModuleBean extends RequiredKeyBean
 
     /**
      * A human-readable description of this report module. This description is displayed on the reports list.
+     *
+     * @return the description of the report
      */
     public I18nProperty getDescription()
     {
@@ -70,6 +76,8 @@ public class ReportModuleBean extends RequiredKeyBean
 
     /**
      * The category of the report. The default category is other.
+     *
+     * @return the category of the report
      */
     public ReportCategory getReportCategory() {
         return (reportCategory != null) ? reportCategory : ReportCategory.OTHER;
@@ -77,6 +85,8 @@ public class ReportModuleBean extends RequiredKeyBean
 
     /**
      * Specifies the URL of the report thumbnail. The URL is relative to the add-on's base URL.
+     *
+     * @return the URL of the report thumbnail
      */
     public String getThumbnailUrl()
     {

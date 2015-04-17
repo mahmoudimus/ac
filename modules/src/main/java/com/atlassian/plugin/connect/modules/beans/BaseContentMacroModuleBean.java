@@ -164,9 +164,16 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
     private List<MacroParameterBean> parameters;
 
     /**
+     *  URL patterns associated with this macro. If a URL matching a defined pattern is pasted into the editor, this macro
+     *  will be created and will replace the URL string.
+     */
+    private AutoconvertBean autoconvert;
+
+    /**
      * The configuration of a custom macro editor. This is useful if the parameter input field types are
      * not sufficient to configure the macro.
      */
+
     private MacroEditorBean editor;
 
     /**
@@ -255,6 +262,11 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
         return aliases;
     }
 
+    public AutoconvertBean getAutoconvert()
+    {
+        return autoconvert;
+    }
+
     public Boolean isFeatured()
     {
         return (null != featured) && featured;
@@ -298,5 +310,10 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
     public boolean hasImagePlaceholder()
     {
         return imagePlaceholder != null;
+    }
+
+    public boolean hasAutoConvert()
+    {
+        return (null != autoconvert);
     }
 }
