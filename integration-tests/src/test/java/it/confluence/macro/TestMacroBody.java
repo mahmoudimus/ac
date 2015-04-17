@@ -23,6 +23,7 @@ import it.servlet.HttpContextServlet;
 import it.servlet.InstallHandlerServlet;
 import it.servlet.macro.BodyHandler;
 import it.servlet.macro.MacroBodyServlet;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -50,7 +51,7 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
 {
     private static final Logger logger = LoggerFactory.getLogger(TestMacroBody.class);
 
-    @Rule public WebDriverScreenshotRule webDriverScreenshotRule = new WebDriverScreenshotRule();
+//    @Rule public WebDriverScreenshotRule webDriverScreenshotRule = new WebDriverScreenshotRule();
 
     protected ConfluenceRestClient restClient = new ConfluenceRestClient(getProduct());
     private static ConnectRunner remotePlugin;
@@ -130,6 +131,18 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
                 .start();
     }
 
+    @BeforeClass
+    public static void logoutBeforeClass()
+    {
+        getProduct().logOutFast();
+    }
+
+    @After
+    public void logoutAfter()
+    {
+        logoutBeforeClass();
+    }
+
     @AfterClass
     public static void stopConnectAddOn() throws Exception
     {
@@ -153,13 +166,13 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
 
     private void testDynamicMacro(String macroKey)
     {
-        Content page = createPage(macroKey, "Hello world");
+        Content page = createPage(macroKey, "<h1>Hello world</h1>");
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
         connectPageOperations.waitUntilNConnectIFramesPresent(1);
 
         RenderedMacro renderedMacro1 = connectPageOperations.findMacroWithIdPrefix(macroKey, 0);
         String content1 = renderedMacro1.getIFrameElement("body");
-        assertThat(content1, is("Hello world"));
+        assertThat(content1, is("<h1>Hello world</h1>"));
     }
 
     @Test
