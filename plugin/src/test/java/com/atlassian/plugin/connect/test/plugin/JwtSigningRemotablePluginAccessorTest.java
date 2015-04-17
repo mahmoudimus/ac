@@ -203,6 +203,13 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
     }
 
     @Test
+    public void customContextClaimPresent()
+    {
+        createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
+        verify(jwtService).issueJwt(argThat(hasContextClaim()), eq(SECRET));
+    }
+
+    @Test
     public void customContextUserObjectPresent()
     {
         createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
@@ -228,6 +235,17 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
     {
         createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
         verify(jwtService).issueJwt(argThat(hasContextKeyWithValue("user.displayName", USER_DISPLAY_NAME)), eq(SECRET));
+    }
+
+    @Test
+    public void hasContextClaimWhenAnonymous()
+    {
+        UserManager userManager = mock(UserManager.class);
+        when(userManager.getRemoteUser()).thenReturn(null);
+
+        createRemotePluginAccessor(userManager).signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
+
+        verify(jwtService).issueJwt(argThat(hasContextClaim()), eq(SECRET));
     }
 
     @Test
@@ -273,6 +291,11 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
     private ArgumentMatcher<String> hasExactlyTheseClaims(String... claimNames)
     {
         return new ClaimNamesMatcher(claimNames);
+    }
+
+    private ArgumentMatcher<String> hasContextClaim()
+    {
+        return new StringClaimMatcher("context");
     }
 
     private ArgumentMatcher<String> hasContextKeyWithValue(String key, String value)
