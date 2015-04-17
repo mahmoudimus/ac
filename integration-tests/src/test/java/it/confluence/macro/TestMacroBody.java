@@ -102,6 +102,7 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
         {
             public void processBody(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context, String body) throws IOException
             {
+                System.out.println("dynamicMacroBodyHandler: dynamic macro found body [ "+body+" ]");
                 Map<String, Object> data = Maps.newHashMap(context);
                 data.put("body", body);
                 HttpUtils.renderHtml(resp, "confluence/macro/dynamic-macro-body.mu", data);

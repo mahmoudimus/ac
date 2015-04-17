@@ -66,10 +66,12 @@ public class MacroBodyServlet extends ContextServlet
                 case BY_ID:
                     String macroId = req.getParameter("macroId");
                     url = URI.create(baseUrl + "/rest/api/content/" + pageId + "/history/" + pageVersion + "/macro/id/" + macroId).toURL();
+                    log("get macro body by id from url [ " + url.toString() + " ]");
                     break;
                 case BY_HASH:
                     String macroHash = req.getParameter("macroHash");
                     url = URI.create(baseUrl + "/rest/api/content/" + pageId + "/history/" + pageVersion + "/macro/hash/" + macroHash).toURL();
+                    log("get macro body by hash from url [ " + url.toString() + " ]");
                     break;
             }
 
@@ -84,10 +86,13 @@ public class MacroBodyServlet extends ContextServlet
             URL authenticatedUrl = new URL(url + "?jwt=" + jwt);
             HttpURLConnection connection = (HttpURLConnection) authenticatedUrl.openConnection();
             connection.setRequestMethod("GET");
+            log("response [ " + connection.getResponseCode() + " ]");
             String json = IOUtils.toString(connection.getInputStream());
 
             JSONObject o = (JSONObject) JSONValue.parse(json);
             String body = o.get("body").toString();
+
+            log("found macro body [ " + body + " ]");
 
             bodyHandler.processBody(req, resp, context, body);
         }
@@ -97,6 +102,11 @@ public class MacroBodyServlet extends ContextServlet
             // this should cause the test to fail
             throw new RuntimeException(e);
         }
+    }
+
+    private void log(String s)
+    {
+        System.out.println("MacroBodyServlet: "+s);
     }
 
 }
