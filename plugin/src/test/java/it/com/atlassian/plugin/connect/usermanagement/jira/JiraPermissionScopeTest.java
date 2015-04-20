@@ -1,5 +1,8 @@
 package it.com.atlassian.plugin.connect.usermanagement.jira;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
 import com.atlassian.jira.permission.Permission;
@@ -7,7 +10,7 @@ import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.security.roles.ProjectRole;
-import com.atlassian.jira.security.roles.actor.UserRoleActorFactory;
+import com.atlassian.jira.security.roles.ProjectRoleActor;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.util.SimpleErrorCollection;
@@ -16,13 +19,12 @@ import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserServic
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-import it.com.atlassian.plugin.connect.TestAuthenticator;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Collections;
-import java.util.List;
+import it.com.atlassian.plugin.connect.TestAuthenticator;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -76,7 +78,7 @@ public class JiraPermissionScopeTest extends AbstractJiraPermissionScopeTest
                     Collections.singleton(addonUser.getKey()),
                     projectRole,
                     project,
-                    UserRoleActorFactory.TYPE,
+                    ProjectRoleActor.USER_ROLE_ACTOR_TYPE,
                     errorCollection);
 
             boolean addonCannotAdministerProject = getPermissionManager().hasPermission(Permissions.PROJECT_ADMIN, project, addonUser, false);

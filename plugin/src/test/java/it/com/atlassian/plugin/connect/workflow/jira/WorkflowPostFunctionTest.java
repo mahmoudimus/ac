@@ -1,5 +1,9 @@
 package it.com.atlassian.plugin.connect.workflow.jira;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.exception.CreateException;
 import com.atlassian.jira.issue.Issue;
@@ -23,8 +27,7 @@ import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-import it.com.atlassian.plugin.connect.HeaderUtil;
-import it.com.atlassian.plugin.connect.TestAuthenticator;
+
 import org.apache.http.HttpHeaders;
 import org.json.JSONObject;
 import org.junit.AfterClass;
@@ -33,9 +36,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import it.com.atlassian.plugin.connect.HeaderUtil;
+import it.com.atlassian.plugin.connect.TestAuthenticator;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
@@ -222,6 +224,6 @@ public class WorkflowPostFunctionTest
         Map params = new HashMap();
         params.put("issue", issueObject);
 
-        return issueManager.createIssueObject(authenticationContext.getUser().getDirectoryUser(), params);
+        return issueManager.createIssueObject(authenticationContext.getLoggedInUser(), params);
     }
 }
