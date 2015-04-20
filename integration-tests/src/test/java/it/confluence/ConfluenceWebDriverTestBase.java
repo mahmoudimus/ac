@@ -17,6 +17,7 @@ import com.atlassian.confluence.pageobjects.component.editor.EditorContent;
 import com.atlassian.confluence.pageobjects.component.editor.toolbars.InsertDropdownMenu;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
+import com.atlassian.confluence.pageobjects.page.space.ViewSpaceSummaryPage;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.pageobjects.page.HomePage;
@@ -27,6 +28,7 @@ import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ExtendedViewSpaceSummaryPage;
 import com.atlassian.util.concurrent.LazyReference;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
@@ -134,6 +136,7 @@ public class ConfluenceWebDriverTestBase
 
         product.getPageBinder().override(EditorContent.class, ConfluenceEditorContent.class);
         product.getPageBinder().override(InsertDropdownMenu.class, ConfluenceInsertMenu.class);
+        product.getPageBinder().override(ViewSpaceSummaryPage.class, ExtendedViewSpaceSummaryPage.class);
 
         rpc.getDarkFeaturesHelper().enableSiteFeature("webdriver.test.mode");
     }
