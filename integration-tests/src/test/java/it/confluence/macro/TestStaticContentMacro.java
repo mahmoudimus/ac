@@ -1,15 +1,5 @@
 package it.confluence.macro;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.fugue.Iterables;
@@ -19,10 +9,12 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWithRemoteMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
-
+import it.confluence.MacroStorageFormatBuilder;
+import it.servlet.ConnectAppServlets;
+import it.servlet.EchoContextServlet;
+import it.servlet.EchoQueryParametersServlet;
 import it.util.ConnectTestUserFactory;
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
@@ -30,11 +22,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
-import it.confluence.MacroStorageFormatBuilder;
-import it.servlet.ConnectAppServlets;
-import it.servlet.EchoContextServlet;
-import it.servlet.EchoQueryParametersServlet;
-import it.util.TestUser;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
@@ -145,9 +140,16 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroIsRenderedForAnonymous() throws Exception
     {
-        ViewPage viewPage = getProduct().viewPage(createPageWithStorageFormatMacro());
-        String content = viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
-        assertThat(content, endsWith("Storage Format Content"));
+        runWithAnonymousUsePermission(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                ViewPage viewPage = getProduct().viewPage(createPageWithStorageFormatMacro());
+                String content = viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
+                assertThat(content, endsWith("Storage Format Content"));
+            }
+        });
     }
 
     @Test
@@ -199,12 +201,14 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         String commentText = commentBody.getText();
         String[] lines = StringUtils.split(commentText, "\n");
 
-        Option<String> maybeVersion = Iterables.findFirst(Lists.newArrayList(lines), new Predicate<String>(){
+        Option<String> maybeVersion = Iterables.findFirst(Lists.newArrayList(lines), new Predicate<String>()
+        {
             @Override
             public boolean apply(String line)
             {
                 return line.startsWith("cv:");
-            }});
+            }
+        });
 
         String version = maybeVersion.get().replaceFirst("cv:", "").trim();
         assertThat(version, isVersionNumber());

@@ -16,11 +16,9 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
-
-import it.util.ConnectTestUserFactory;
 import it.confluence.ConfluenceRestClient;
 import it.confluence.ConfluenceWebDriverTestBase;
-
+import it.util.ConnectTestUserFactory;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -83,7 +81,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     protected ConfluenceRestClient restClient = new ConfluenceRestClient(getProduct());
 
     @BeforeClass
-    public static void logoutBeforeClass()
+    public static void setUpClass()
     {
         getProduct().logOutFast();
     }
@@ -91,7 +89,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
     @After
     public void logoutAfter()
     {
-        logoutBeforeClass();
+        getProduct().logOutFast();
     }
 
     protected static <T extends BaseContentMacroModuleBeanBuilder<T, B>, B extends BaseContentMacroModuleBean> B createImagePlaceholderMacro(T builder)

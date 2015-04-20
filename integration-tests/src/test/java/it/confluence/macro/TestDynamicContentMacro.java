@@ -212,10 +212,17 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroIsRenderedForAnonymous() throws Exception
     {
-        ViewPage viewPage = getProduct().viewPage(createPageWithStorageFormatMacro());
-        viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
-        assertThat(renderedMacro.getIFrameElementText("hello-world-message"), is("Hello world"));
+        runWithAnonymousUsePermission(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                ViewPage viewPage = getProduct().viewPage(createPageWithStorageFormatMacro());
+                viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
+                RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
+                assertThat(renderedMacro.getIFrameElementText("hello-world-message"), is("Hello world"));
+            }
+        });
     }
 
     @Test

@@ -1,10 +1,9 @@
 package it.confluence;
 
 import com.atlassian.confluence.it.Space;
-import com.atlassian.confluence.it.User;
+import com.atlassian.confluence.it.SpacePermission;
 import com.atlassian.confluence.it.maven.MavenDependencyHelper;
 import com.atlassian.confluence.it.maven.MavenUploadablePlugin;
-import com.atlassian.confluence.it.plugin.Plugin;
 import com.atlassian.confluence.it.plugin.PluginHelper;
 import com.atlassian.confluence.it.plugin.SimplePlugin;
 import com.atlassian.confluence.it.plugin.UploadablePlugin;
@@ -19,12 +18,10 @@ import com.atlassian.confluence.pageobjects.component.editor.EditorContent;
 import com.atlassian.confluence.pageobjects.component.editor.toolbars.InsertDropdownMenu;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
-import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
@@ -44,9 +41,6 @@ import org.junit.Rule;
 import org.junit.rules.TestName;
 
 import javax.annotation.Nullable;
-
-import static com.atlassian.fugue.Option.none;
-import static com.atlassian.fugue.Option.some;
 
 /**
  * This is an adapted version of com.atlassian.confluence.webdriver.AbstractWebDriverTest.
@@ -297,5 +291,19 @@ public class ConfluenceWebDriverTestBase
     {
         logout();
         return product.login(user.confUser(), page, args);
+    }
+
+    public static void runWithAnonymousUsePermission(Runnable test)
+    {
+        rpc.grantAnonymousUsePermission();
+        try
+        {
+            test.run();
+        }
+        finally
+        {
+            rpc.revokeAnonymousUsePermission();
+        }
+
     }
 }
