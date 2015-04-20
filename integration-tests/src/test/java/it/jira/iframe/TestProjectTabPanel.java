@@ -81,7 +81,16 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
     @Test
     public void projectTabShouldBePresentAndReceiveContextParametersForAnonymous() throws Exception
     {
-        visitAndVerifyRemoteProjectTabPanelFromSummaryPage();
+        runWithAnonymousUsePermission(new Callable<Void>()
+        {
+            @Override
+            public Void call() throws Exception
+            {
+                logout();
+                visitAndVerifyRemoteProjectTabPanelFromSummaryPage();
+                return null;
+            }
+        });
     }
 
     @Test

@@ -89,12 +89,20 @@ public class JiraWebDriverTestBase
         jiraOps.deleteProject(project.getKey());
     }
 
-    protected void testLoggedInAndAnonymous(Callable runnable) throws Exception
+    protected void testLoggedInAndAnonymous(final Callable runnable) throws Exception
     {
         login(testUserFactory.basicUser());
         runnable.call();
         logout();
-        runnable.call();
+        runWithAnonymousUsePermission(new Callable<Void>()
+        {
+            @Override
+            public Void call() throws Exception
+            {
+                runnable.call();
+                return null;
+            }
+        });
     }
 
     @BeforeClass
@@ -114,10 +122,10 @@ public class JiraWebDriverTestBase
     {
         logout();
         login(user);
-        try {
+        try
+        {
             return test.call();
-        }
-        finally
+        } finally
         {
             logout();
         }
@@ -129,7 +137,7 @@ public class JiraWebDriverTestBase
         return product.quickLogin(user.getUsername(), user.getPassword(), page, args);
     }
 
-    public static void runWithAnonymousUsePermission(Runnable test)
+    public static <T> T runWithAnonymousUsePermission(Callable<T> test) throws Exception
     {
         final AddPermissionPage addPermissionPage = product.quickLoginAsAdmin(AddPermissionPage.class,
                 DEFAULT_PERMISSION_SCHEMA, JIRA_PERMISSION_BROWSE_PROJECTS);
@@ -137,9 +145,8 @@ public class JiraWebDriverTestBase
         addPermissionPage.add();
         try
         {
-            test.run();
-        }
-        finally
+            return test.call();
+        } finally
         {
             EditPermissionsPage editPermissionsPage = product.quickLoginAsAdmin(EditPermissionsPage.class, DEFAULT_PERMISSION_SCHEMA);
             editPermissionsPage.deleteForGroup("Browse Projects", JIRA_GROUP_ANYONE);
