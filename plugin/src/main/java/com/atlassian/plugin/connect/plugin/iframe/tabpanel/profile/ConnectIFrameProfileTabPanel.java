@@ -1,8 +1,11 @@
 package com.atlassian.plugin.connect.plugin.iframe.tabpanel.profile;
 
+import java.util.Map;
+
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.plugin.profile.ViewProfilePanel;
 import com.atlassian.jira.plugin.profile.ViewProfilePanelModuleDescriptor;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.jira.JiraModuleContextParameters;
@@ -10,10 +13,10 @@ import com.atlassian.plugin.connect.plugin.iframe.context.jira.JiraModuleContext
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+
 import com.google.common.collect.ImmutableMap;
 
-import java.util.Map;
-
+import static com.atlassian.jira.user.ApplicationUsers.toDirectoryUser;
 import static com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyUtil.renderAccessDeniedToString;
 import static com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyUtil.renderToString;
 import static com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor.MODULE_CONTEXT_KEY;
@@ -41,10 +44,9 @@ public class ConnectIFrameProfileTabPanel implements ViewProfilePanel
     {
     }
 
-    @Override
-    public String getHtml(final User profileUser)
+    public String getHtml(final User user)
     {
-        ModuleContextParameters unfilteredContext = createUnfilteredContext(profileUser);
+        ModuleContextParameters unfilteredContext = createUnfilteredContext(user);
         Map<String, ModuleContextParameters> conditionContext = ImmutableMap.of(MODULE_CONTEXT_KEY, unfilteredContext);
 
         if (iFrameRenderStrategy.shouldShow(conditionContext))
@@ -55,6 +57,11 @@ public class ConnectIFrameProfileTabPanel implements ViewProfilePanel
         {
             return renderAccessDeniedToString(iFrameRenderStrategy);
         }
+    }
+
+    public String getHtml(ApplicationUser profileUser)
+    {
+        return getHtml(toDirectoryUser(profileUser));
     }
 
     private ModuleContextParameters createUnfilteredContext(final User profileUser)

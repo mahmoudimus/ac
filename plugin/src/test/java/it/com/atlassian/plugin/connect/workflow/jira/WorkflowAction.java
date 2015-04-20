@@ -1,5 +1,7 @@
 package it.com.atlassian.plugin.connect.workflow.jira;
 
+import java.util.Map;
+
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.project.Project;
@@ -7,9 +9,10 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.jira.util.SimpleErrorCollection;
 import com.atlassian.jira.workflow.WorkflowProgressAware;
+
 import com.google.common.collect.Maps;
 
-import java.util.Map;
+import static com.atlassian.jira.user.ApplicationUsers.toDirectoryUser;
 
 public class WorkflowAction implements WorkflowProgressAware
 {
@@ -28,10 +31,9 @@ public class WorkflowAction implements WorkflowProgressAware
         this.additionalInputs = Maps.newHashMap();
     }
 
-    @Override
     public User getRemoteUser()
     {
-        return applicationUser.getDirectoryUser();
+        return toDirectoryUser(applicationUser);
     }
 
     @Override

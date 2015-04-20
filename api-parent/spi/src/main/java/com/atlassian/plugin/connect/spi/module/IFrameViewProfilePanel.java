@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.spi.module;
 import java.io.IOException;
 import java.io.StringWriter;
 
+import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.plugin.profile.ViewProfilePanel;
 import com.atlassian.jira.plugin.profile.ViewProfilePanelModuleDescriptor;
 import com.atlassian.jira.user.ApplicationUser;
@@ -34,13 +35,12 @@ public class IFrameViewProfilePanel implements ViewProfilePanel
     {
     }
 
-    @Override
-    public String getHtml(ApplicationUser profileUser)
+    public String getHtml(User user)
     {
         StringWriter writer = new StringWriter();
         try
         {
-            String remoteUsername = profileUser != null ? profileUser.getName() : null;
+            String remoteUsername = user != null ? user.getName() : null;
             writer.write(iFrameRenderer.render(iFrameContext, remoteUsername));
         }
         catch (PermissionDeniedException ex)
@@ -54,5 +54,11 @@ public class IFrameViewProfilePanel implements ViewProfilePanel
             log.error("Error rendering panel", e);
         }
         return writer.toString();
+    }
+
+    public String getHtml(ApplicationUser profileUser)
+    {
+        User user = profileUser == null ? null : profileUser.getDirectoryUser();
+        return getHtml(user);
     }
 }
