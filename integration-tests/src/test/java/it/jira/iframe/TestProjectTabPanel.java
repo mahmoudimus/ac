@@ -86,6 +86,7 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
             @Override
             public Void call() throws Exception
             {
+                logout();
                 visitAndVerifyRemoteProjectTabPanelFromSummaryPage();
                 return null;
             }
