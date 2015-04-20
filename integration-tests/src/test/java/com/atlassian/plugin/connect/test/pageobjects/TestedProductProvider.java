@@ -27,7 +27,7 @@ public class TestedProductProvider
 
     public static TestedProduct getTestedProduct()
     {
-        switch (System.getProperty("testedProduct"))
+        switch (System.getProperty("testedProduct", ""))
         {
             case "jira":
                 return getJiraTestedProduct();

@@ -2,7 +2,7 @@ package at.jira;
 
 import at.util.ExternalAddonInstaller;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
-import com.atlassian.test.categories.OnDemandAcceptanceTest;
+import java.rmi.RemoteException;
 import com.google.common.base.Optional;
 import it.jira.JiraWebDriverTestBase;
 import it.util.TestUser;
@@ -12,6 +12,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import hudson.plugins.jira.soap.RemoteIssue;
 
 @Category (OnDemandAcceptanceTest.class)
 public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
@@ -26,12 +28,12 @@ public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
     @Before
     public void installAddon() throws Exception
     {
-        log.info("Installing add-on in preparation for running " + getClass().getName());
+        log.info("Installing add-on in preparation for running a test in " + getClass().getName());
         externalAddonInstaller.install();
     }
 
     @Test
-    public void testAcActionWebItemIsPresent()
+    public void testAcActionWebItemIsPresent() throws RemoteException
     {
         TestUser user = testUserFactory.basicUser();
         IssueCreateResponse response = product.backdoor().issues().loginAs(user.getUsername())
@@ -46,7 +48,7 @@ public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
     @After
     public void uninstallAddon() throws Exception
     {
-        log.info("Cleaning up after " + getClass().getName());
+        log.info("Cleaning up after running a test in " + getClass().getName());
         externalAddonInstaller.uninstall();
     }
 }

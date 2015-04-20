@@ -23,7 +23,7 @@ public class TestConfluenceStaticDescriptor extends ConfluenceWebDriverTestBase
     @Before
     public void installAddon() throws Exception
     {
-        log.info("Installing add-on in preparation for running " + getClass().getName());
+        log.info("Installing add-on in preparation for running a test in " + getClass().getName());
         externalAddonInstaller.install();
     }
 
@@ -37,7 +37,7 @@ public class TestConfluenceStaticDescriptor extends ConfluenceWebDriverTestBase
     @After
     public void uninstallAddon() throws Exception
     {
-        log.info("Cleaning up after " + getClass().getName());
+        log.info("Cleaning up after running a test in " + getClass().getName());
         externalAddonInstaller.uninstall();
     }
 }
