@@ -6,22 +6,24 @@ import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.webdriver.pageobjects.WebDriverTester;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
-
+import it.util.ConfluenceTestUserFactory;
+import it.util.ConnectTestUserFactory;
+import it.util.JiraTestUserFactory;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
-import it.util.TestUser;
-
 public abstract class MultiProductWebDriverTestBase
 {
     protected static TestedProduct<WebDriverTester> product = TestedProductProvider.getTestedProduct();
+
+    protected static ConnectTestUserFactory testUserFactory;
 
     @Rule
     public WebDriverScreenshotRule screenshotRule = new WebDriverScreenshotRule();
@@ -31,6 +33,23 @@ public abstract class MultiProductWebDriverTestBase
 
     protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
             product.getTester().getDriver());
+
+    @BeforeClass
+    public static void createTestUserFactory()
+    {
+        if (product instanceof JiraTestedProduct)
+        {
+            testUserFactory = new JiraTestUserFactory((JiraTestedProduct)product);
+        }
+        else if (product instanceof ConfluenceTestedProduct)
+        {
+            testUserFactory = new ConfluenceTestUserFactory((ConfluenceTestedProduct)product);
+        }
+        else
+        {
+            throw new UnsupportedOperationException("Sorry, I don't know how to log into " + product.getClass().getCanonicalName());
+        }
+    }
 
     @BeforeClass
     @AfterClass
@@ -47,9 +66,13 @@ public abstract class MultiProductWebDriverTestBase
             JiraTestedProduct jiraTestedProduct = (JiraTestedProduct) product;
             jiraTestedProduct.quickLogin(user.getUsername(), user.getPassword());
         }
-        else
+        else if (product instanceof ConfluenceTestedProduct)
         {
             product.visit(LoginPage.class).login(user.getUsername(), user.getPassword(), HomePage.class);
+        }
+        else
+        {
+            throw new UnsupportedOperationException("Sorry, I don't know how to log into " + product.getClass().getCanonicalName());
         }
     }
 

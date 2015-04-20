@@ -1,113 +1,37 @@
 package it.util;
 
-import com.atlassian.confluence.it.ConfluenceBaseUrlSelector;
-import com.atlassian.confluence.it.User;
-import com.atlassian.confluence.it.usermanagement.DefaultDirectoryConfiguration;
-import com.atlassian.confluence.it.usermanagement.DefaultUserManagementHelper;
-import com.atlassian.confluence.it.rpc.ConfluenceRpc;
-import com.atlassian.confluence.it.usermanagement.UserManagementHelper;
-import com.atlassian.jira.pageobjects.JiraTestedProduct;
-import com.atlassian.jira.tests.TestBase;
-import com.atlassian.pageobjects.TestedProduct;
-import com.atlassian.plugin.connect.test.helptips.HelpTipApiClientFactory;
+import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
+import org.apache.commons.lang.RandomStringUtils;
 
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
-
-public class ConnectTestUserFactory
+public abstract class ConnectTestUserFactory
 {
-    public static TestUser sysadmin(TestedProduct product)
+    public TestUser admin()
     {
-        return createTestUser(product, AuthLevel.SYSADMIN);
+        return createAndInitializeTestUser(AuthLevel.ADMIN);
     }
 
-    public static TestUser admin(TestedProduct product)
+    public TestUser basicUser()
     {
-        return createTestUser(product, AuthLevel.ADMIN);
+        return createAndInitializeTestUser(AuthLevel.BASIC_USER);
     }
 
-    public static TestUser basicUser(TestedProduct product)
+    protected abstract TestUser createTestUser(AuthLevel authLevel, String username);
+
+    protected abstract HelpTipApiClient getHelpTipApiClient(TestUser testUser);
+
+    private TestUser createAndInitializeTestUser(AuthLevel authLevel)
     {
-        return createTestUser(product, AuthLevel.BASIC_USER);
-    }
-    
-    private static Random random = new Random();
-
-    private static final char[] ALPHANUMERICS = new char[]
-    {
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
-            'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
-            'u', 'v', 'w', 'x', 'y', 'z',
-    };
-    
-    private static String randomString(int length)
-    {
-        char[] buffer = new char[length];
-
-        for (int i = 0; i < length; i++)
-        {
-            buffer[i] = ALPHANUMERICS[random.nextInt(ALPHANUMERICS.length)];
-        }
-
-        return new String(buffer);
-    }
-
-    private static TestUser createTestUser(TestedProduct product, AuthLevel authLevel)
-    {
-        String username = authLevel.getPrefix() + "-" + randomString(20);
-        TestUser testUser = new TestUser(username);
-        if (product instanceof JiraTestedProduct)
-        {
-            TestBase.funcTestHelper.backdoor.usersAndGroups().addUser(username);
-            addJiraPermissionsForTestUser(testUser, authLevel);
-        }
-        else
-        {
-            ConfluenceBaseUrlSelector confluenceBaseUrlSelector = new ConfluenceBaseUrlSelector();
-            ConfluenceRpc confluenceRpc = ConfluenceRpc.newInstance(confluenceBaseUrlSelector.getBaseUrl());
-            DefaultDirectoryConfiguration defaultDirectoryConfiguration = new DefaultDirectoryConfiguration();
-            DefaultUserManagementHelper userManager = new DefaultUserManagementHelper(confluenceRpc, defaultDirectoryConfiguration);
-            userManager.createUser(new User(username, username, username, username + "@example.com"));
-            addConfluencePermissionsForTestUser(testUser, authLevel, userManager);
-        }
-
-        disableHelpTips(product, testUser);
-
+        String username = authLevel.getPrefix() + "-" + RandomStringUtils.randomAlphanumeric(20).toLowerCase();
+        TestUser testUser = createTestUser(authLevel, username);
+        disableHelpTips(testUser);
         return testUser;
     }
 
-    private static void addJiraPermissionsForTestUser(TestUser testUser, AuthLevel authLevel)
-    {
-        switch (authLevel)
-        {
-            case SYSADMIN:
-                TestBase.funcTestHelper.backdoor.usersAndGroups().addUserToGroup(testUser.getUsername(), "jira-sysadmin");
-            case ADMIN:
-                TestBase.funcTestHelper.backdoor.usersAndGroups().addUserToGroup(testUser.getUsername(), "jira-administrators");
-            case BASIC_USER:
-                TestBase.funcTestHelper.backdoor.usersAndGroups().addUserToGroup(testUser.getUsername(), "jira-users");
-                TestBase.funcTestHelper.backdoor.usersAndGroups().addUserToGroup(testUser.getUsername(), "jira-developers");
-        }
-    }
-
-    private static void addConfluencePermissionsForTestUser(TestUser testUser, AuthLevel authLevel, UserManagementHelper userManager)
-    {
-        switch (authLevel)
-        {
-            case SYSADMIN:
-            case ADMIN:
-                userManager.addUserToGroup(testUser.getUsername(), "confluence-administrators");
-            case BASIC_USER:
-                userManager.addUserToGroup(testUser.getUsername(), "confluence-users");
-        }
-    }
-
-    private static void disableHelpTips(TestedProduct product, TestUser testUser)
+    private void disableHelpTips(TestUser testUser)
     {
         try
         {
-            HelpTipApiClientFactory.getHelpTipApiClient(product, testUser).dismissAllHelpTips();
+            getHelpTipApiClient(testUser).dismissAllHelpTips();
         }
         catch (Exception e)
         {
@@ -115,9 +39,10 @@ public class ConnectTestUserFactory
         }
     }
 
-    enum AuthLevel
+    protected enum AuthLevel
     {
-        SYSADMIN("test-sysadmin"), ADMIN("test-admin"), BASIC_USER("test-user");
+        ADMIN("test-admin"),
+        BASIC_USER("test-user");
 
         private String prefix;
 
@@ -130,8 +55,5 @@ public class ConnectTestUserFactory
         {
             return prefix;
         }
-
     }
-
 }
-

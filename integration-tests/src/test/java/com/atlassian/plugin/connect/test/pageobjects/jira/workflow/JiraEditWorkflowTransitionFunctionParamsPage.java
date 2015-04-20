@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.test.pageobjects.jira;
+package com.atlassian.plugin.connect.test.pageobjects.jira.workflow;
 
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.webdriver.utils.element.ElementConditions;
@@ -7,16 +7,16 @@ import org.openqa.selenium.By;
 
 import javax.inject.Inject;
 
-public class JiraAddWorkflowTransitionFunctionParamsPage extends ConnectAddOnEmbeddedTestPage
+public class JiraEditWorkflowTransitionFunctionParamsPage extends ConnectAddOnEmbeddedTestPage
 {
     @Inject private WebDriverPoller poller;
 
-    public JiraAddWorkflowTransitionFunctionParamsPage(String addonKey, String moduleKey)
+    public JiraEditWorkflowTransitionFunctionParamsPage(String addonKey, String moduleKey)
     {
         super(addonKey, moduleKey, true);
     }
 
-    public void submitWorkflowParams()
+    public void submit()
     {
         poller.waitUntil(ElementConditions.isPresent(By.id("add_submit")), 10);
         driver.findElement(By.id("add_submit")).click();

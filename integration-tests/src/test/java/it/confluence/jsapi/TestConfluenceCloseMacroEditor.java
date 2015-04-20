@@ -49,7 +49,7 @@ public class TestConfluenceCloseMacroEditor extends ConfluenceWebDriverTestBase
     @Test
     public void shouldCloseMacroEditorWhenInsertingMacroOnNewPage()
     {
-        CreatePage createPage = getProduct().loginAndCreatePage(ConnectTestUserFactory.basicUser(product).confUser(), TestSpace.DEMO);
+        CreatePage createPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
         selectMacro(createPage, MACRO_NAME, new Runnable()
         {
 

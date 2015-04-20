@@ -73,7 +73,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
-        loginAndVisit(ConnectTestUserFactory.admin(product), JiraAdministrationHomePage.class);
+        loginAndVisit(testUserFactory.admin(), JiraAdministrationHomePage.class);
 
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, PLUGIN_KEY, PAGE_KEY);
 
@@ -89,7 +89,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     @Test
     public void addonPageIsFullSize() throws MalformedURLException, URISyntaxException
     {
-        loginAndVisit(ConnectTestUserFactory.admin(product), JiraAdministrationHomePage.class);
+        loginAndVisit(testUserFactory.admin(), JiraAdministrationHomePage.class);
 
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, PLUGIN_KEY, PAGE_KEY);
 
@@ -102,7 +102,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     @Test
     public void nonAdminCanNotSeePage()
     {
-        InsufficientPermissionsPage page = loginAndVisit(ConnectTestUserFactory.basicUser(product), InsufficientPermissionsPage.class, PLUGIN_KEY, PAGE_KEY);
+        InsufficientPermissionsPage page = loginAndVisit(testUserFactory.basicUser(), InsufficientPermissionsPage.class, PLUGIN_KEY, PAGE_KEY);
         assertThat(page.getErrorMessage(), containsString("You do not have the correct permissions"));
         assertThat(page.getErrorMessage(), containsString("My Admin Page"));
     }
@@ -112,7 +112,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
     {
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
-        login(ConnectTestUserFactory.admin(product));
+        login(testUserFactory.admin());
 
         // web item should not be displayed
         product.visit(JiraAdminHomePage.class);

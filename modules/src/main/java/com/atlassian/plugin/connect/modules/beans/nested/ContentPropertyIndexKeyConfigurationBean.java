@@ -11,7 +11,7 @@ import com.atlassian.json.schema.annotation.Required;
  *
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_INDEX_KEY_CONFIGURATION_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_INDEX_KEY_CONFIGURATION_EXAMPLE}
  * @schemaTitle Content Property Index Key Configuration
  */
 public class ContentPropertyIndexKeyConfigurationBean

@@ -57,8 +57,8 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        betty = ConnectTestUserFactory.admin(product);
-        barney = ConnectTestUserFactory.basicUser(product);
+        betty = testUserFactory.admin();
+        barney = testUserFactory.basicUser();
 
         ONLY_BETTY_WEBITEM = "only-" + betty.getDisplayName();
         BETTY_AND_BARNEY_WEBITEM = betty.getDisplayName() + "-and-" + barney.getDisplayName();
@@ -156,7 +156,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void adminCannotSeeBettyWebItem()
     {
-        TestUser admin = ConnectTestUserFactory.admin(product);
+        TestUser admin = testUserFactory.admin();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(ONLY_BETTY_WEBITEM)));
@@ -181,7 +181,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void adminCannotSeeBettyAndBarneyWebItem()
     {
-        TestUser admin = ConnectTestUserFactory.admin(product);
+        TestUser admin = testUserFactory.admin();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(BETTY_AND_BARNEY_WEBITEM)));
@@ -205,7 +205,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void adminCanSeeAdminRightsWebItem()
     {
-        TestUser admin = ConnectTestUserFactory.admin(product);
+        TestUser admin = testUserFactory.admin();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.<String>absent());
@@ -227,7 +227,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void standardParametersArePassedToConditions() throws Exception
     {
-        TestUser user = ConnectTestUserFactory.basicUser(product);
+        TestUser user = testUserFactory.basicUser();
         navigateToJiraIssuePageAndVerifyParameterCapturingWebItem(user);
 
         Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
@@ -242,7 +242,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void contextParametersArePassedToConditions() throws Exception
     {
-        TestUser user = ConnectTestUserFactory.basicUser(product);
+        TestUser user = testUserFactory.basicUser();
         RemoteIssue issue = navigateToJiraIssuePageAndVerifyParameterCapturingWebItem(user);
 
         Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
@@ -254,7 +254,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     @Test
     public void versionNumberIsIncluded() throws Exception
     {
-        TestUser user = ConnectTestUserFactory.basicUser(product);
+        TestUser user = testUserFactory.basicUser();
         navigateToJiraIssuePageAndVerifyParameterCapturingWebItem(user);
 
         String version = PARAMETER_CAPTURING_SERVLET.getHttpHeaderFromLastRequest(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION).get();

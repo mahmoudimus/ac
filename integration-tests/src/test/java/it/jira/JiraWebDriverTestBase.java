@@ -1,39 +1,46 @@
 package it.jira;
 
-
-import java.rmi.RemoteException;
-import java.util.concurrent.Callable;
-
-import com.atlassian.fugue.Option;
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
+import com.atlassian.jira.pageobjects.pages.AddPermissionPage;
+import com.atlassian.jira.pageobjects.pages.EditPermissionsPage;
+import com.atlassian.jira.pageobjects.pages.admin.workflow.ViewWorkflowTransitionPage;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.jira.webtests.LicenseKeys;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
-import hudson.plugins.jira.soap.RemoteProject;
 import com.atlassian.pageobjects.Page;
-import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
+import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
+import com.atlassian.plugin.connect.test.pageobjects.jira.workflow.ExtendedViewWorkflowTransitionPage;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
-
+import hudson.plugins.jira.soap.RemoteProject;
+import it.util.ConnectTestUserFactory;
+import it.util.JiraTestUserFactory;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
-import it.util.TestUser;
-
-import static com.atlassian.fugue.Option.none;
-import static com.atlassian.fugue.Option.some;
+import java.rmi.RemoteException;
+import java.util.concurrent.Callable;
 
 public class JiraWebDriverTestBase
 {
-    protected static JiraOps jiraOps;
-    protected static RemoteProject project;
+
     protected static JiraTestedProduct product = TestedProductProvider.getJiraTestedProduct();
+
+    protected static JiraOps jiraOps;
+
+    protected static RemoteProject project;
+
+    protected static ConnectTestUserFactory testUserFactory;
 
     protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
             product.getTester().getDriver());
+
+    private static final int DEFAULT_PERMISSION_SCHEMA = 0;
+    private static final int JIRA_PERMISSION_BROWSE_PROJECTS = 10;
+    private static final String JIRA_GROUP_ANYONE = "";
 
     @Rule
     public WebDriverScreenshotRule screenshotRule = new WebDriverScreenshotRule();
@@ -67,6 +74,11 @@ public class JiraWebDriverTestBase
                 "GGb1fk2WsePSkuxCwZabblI6Hskab0aa/MG4Sa2dNef3VGl1yJgIYNgMZldXl64F5Ov89n8cvS8u\n" +
                 "l+YjzNzJ+7819mAMj13ddO1XnxwB/i0noop+g9E03YLMCwCFCKZCUT2Yo0NWE81lHRLtxBroijAA\n" +
                 "hQsO+wfbOOFJztaLbaOljh7nUOCkQ==X021nu", "Atlassian OnDemand (Community)", "mauro-support", "SEN-3010463", 999999999));
+
+        testUserFactory = new JiraTestUserFactory(product);
+        
+        product.getPageBinder().override(ViewWorkflowTransitionPage.class, ExtendedViewWorkflowTransitionPage.class);
+
         jiraOps = new JiraOps(product.getProductInstance());
         project = jiraOps.createProject();
     }
@@ -77,12 +89,20 @@ public class JiraWebDriverTestBase
         jiraOps.deleteProject(project.getKey());
     }
 
-    protected void testLoggedInAndAnonymous(Callable runnable) throws Exception
+    protected void testLoggedInAndAnonymous(final Callable runnable) throws Exception
     {
-        product.quickLoginAsAdmin();
+        login(testUserFactory.basicUser());
         runnable.call();
         logout();
-        runnable.call();
+        runWithAnonymousUsePermission(new Callable<Void>()
+        {
+            @Override
+            public Void call() throws Exception
+            {
+                runnable.call();
+                return null;
+            }
+        });
     }
 
     @BeforeClass
@@ -102,10 +122,10 @@ public class JiraWebDriverTestBase
     {
         logout();
         login(user);
-        try {
+        try
+        {
             return test.call();
-        }
-        finally
+        } finally
         {
             logout();
         }
@@ -115,5 +135,22 @@ public class JiraWebDriverTestBase
     {
         logout();
         return product.quickLogin(user.getUsername(), user.getPassword(), page, args);
+    }
+
+    public static <T> T runWithAnonymousUsePermission(Callable<T> test) throws Exception
+    {
+        final AddPermissionPage addPermissionPage = product.quickLoginAsAdmin(AddPermissionPage.class,
+                DEFAULT_PERMISSION_SCHEMA, JIRA_PERMISSION_BROWSE_PROJECTS);
+        addPermissionPage.setGroup(JIRA_GROUP_ANYONE);
+        addPermissionPage.add();
+        try
+        {
+            return test.call();
+        } finally
+        {
+            EditPermissionsPage editPermissionsPage = product.quickLoginAsAdmin(EditPermissionsPage.class, DEFAULT_PERMISSION_SCHEMA);
+            editPermissionsPage.deleteForGroup("Browse Projects", JIRA_GROUP_ANYONE);
+        }
+
     }
 }

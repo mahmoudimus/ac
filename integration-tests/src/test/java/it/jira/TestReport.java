@@ -121,7 +121,7 @@ public class TestReport extends JiraWebDriverTestBase
 
     private ReportsPage goToProjectReportPage()
     {
-        return loginAndVisit(ConnectTestUserFactory.basicUser(product), ReportsPage.class, project.getKey());
+        return loginAndVisit(testUserFactory.basicUser(), ReportsPage.class, project.getKey());
     }
 
     private ReportsPage.Report getReportFromReportsPage(ReportsPage reportsPage, TestReportInfo reportInfo)

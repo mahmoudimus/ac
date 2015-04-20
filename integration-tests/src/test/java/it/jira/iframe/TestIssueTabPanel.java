@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
+import it.util.ConnectTestUserFactory;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -102,7 +103,7 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
     @Test
     public void testIssueTabPanel() throws RemoteException
     {
-        product.gotoLoginPage().loginAsSysadminAndGoToHome();
+        login(testUserFactory.basicUser());
         JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(
                 JiraViewIssuePageWithRemotePluginIssueTab.class, "issue-tab-panel", issue.getKey(), PLUGIN_KEY);
         assertThat(page.getMessage(), is("Success"));
@@ -119,7 +120,7 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
     {
         String completeKey = addonAndModuleKey(PLUGIN_KEY,MODULE_KEY);
 
-        product.gotoLoginPage().loginAsSysadminAndGoToHome();
+        login(testUserFactory.basicUser());
 
         // tab panel should be present
         JiraViewIssuePage page = product.visit(JiraViewIssuePage.class, issue.getKey());

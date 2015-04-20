@@ -8,12 +8,10 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
-
-import it.util.ConnectTestUserFactory;
+import it.util.ConfluenceTestUserFactory;
+import it.util.TestUser;
 import org.junit.Assert;
 import org.junit.Test;
-
-import it.util.TestUser;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider.getConfluenceTestedProduct;
@@ -26,12 +24,17 @@ import static org.junit.Assert.assertThat;
 public class TestConfluenceWebHooks
 {
     protected static final ConfluenceTestedProduct product = TestedProductProvider.getConfluenceTestedProduct();
+
     private final String baseUrl = getConfluenceTestedProduct().getProductInstance().getBaseUrl();
+
+    private final ConfluenceTestUserFactory testUserFactory;
+
     private ConfluenceOps confluenceOps;
 
     public TestConfluenceWebHooks()
     {
         confluenceOps = new ConfluenceOps(baseUrl);
+        testUserFactory = new ConfluenceTestUserFactory(product);
     }
 
     @Test
@@ -46,7 +49,7 @@ public class TestConfluenceWebHooks
             {
                 final String testQuery = "test";
                 String results = String.valueOf(
-                        confluenceOps.search(some(ConnectTestUserFactory.basicUser(product)), testQuery));
+                        confluenceOps.search(some(testUserFactory.basicUser()), testQuery));
                 final WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
                 Assert.assertEquals(testQuery, body.find("query"));
@@ -67,7 +70,7 @@ public class TestConfluenceWebHooks
             public void test(WebHookWaiter waiter) throws Exception
             {
                 String content = "<h1>Love me</h1>";
-                ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(ConnectTestUserFactory.basicUser(product)), "ds", "testxmlWebhooks", content);
+                ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(testUserFactory.basicUser()), "ds", "testxmlWebhooks", content);
                 final WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
                 Assert.assertEquals(pageData.getId(), body.find("page/id"));
@@ -87,7 +90,7 @@ public class TestConfluenceWebHooks
             public void test(WebHookWaiter waiter) throws Exception
             {
                 String content = "<h1>I'm a test page</h1>";
-                confluenceOps.setPage(some(ConnectTestUserFactory.basicUser(product)), "ds", "testxmlWebhooks", content);
+                confluenceOps.setPage(some(testUserFactory.basicUser()), "ds", "testxmlWebhooks", content);
                 final WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
                 assertThat(body.getConnectVersion(),isVersionNumber());
@@ -99,7 +102,7 @@ public class TestConfluenceWebHooks
     public void testContentPermissionsUpdatedWebHookFired() throws Exception
     {
         final String pluginKey = AddonTestUtils.randomAddOnKey();
-        final TestUser user = ConnectTestUserFactory.basicUser(product);
+        final TestUser user = testUserFactory.basicUser();
 
         runInRunner(baseUrl, "content_permissions_updated", pluginKey, new WebHookTester()
         {

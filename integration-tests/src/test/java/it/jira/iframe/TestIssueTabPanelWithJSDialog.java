@@ -102,7 +102,7 @@ public class TestIssueTabPanelWithJSDialog extends JiraWebDriverTestBase
     @Test
     public void testIssueTabPanelWithJSDialog() throws RemoteException
     {
-        TestUser user = ConnectTestUserFactory.basicUser(product);
+        TestUser user = testUserFactory.basicUser();
         product.quickLogin(user.getUsername(), user.getPassword());
         JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(
                 JiraViewIssuePageWithRemotePluginIssueTab.class, ISSUE_TAB_PANEL_W_DIALOG, issueKey, PLUGIN_KEY);

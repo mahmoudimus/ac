@@ -17,7 +17,7 @@ public class TestRemotePluginInstallation extends MultiProductWebDriverTestBase
     @Test
     public void testChangedKey() throws Exception
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
         ConnectRunner pluginFirst = createAddOn("pluginFirst");
         assertThatWeCanVisitThePage(pluginFirst);
 

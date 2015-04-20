@@ -89,6 +89,8 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
     /**
      * Clear accessor if a new application link is discovered
+     *
+     * @param event the event fired
      */
     @EventListener
     public void onApplicationLinkCreated(ApplicationLinkAddedEvent event)
@@ -103,6 +105,8 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
 
     /**
      * Clear accessor if a application link is deleted
+     *
+     * @param event the event fired
      */
     @EventListener
     public void onApplicationLinkRemoved(ApplicationLinkDeletedEvent event)
@@ -276,7 +280,7 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
     /**
      * Supplies an accessor for remote plugin operations but always creates a new one.  Instances are still only meant
      * to be used for the current operation and should not be cached across operations.
-     * <p/>
+     *
      * This method is useful for when the display url is known but the application link has not yet been created
      *
      * @param addon The addon bean
@@ -323,13 +327,14 @@ public final class DefaultRemotablePluginAccessorFactory implements RemotablePlu
     /**
      * Supplies an accessor for remote plugin operations but always creates a new one.  Instances are still only meant
      * to be used for the current operation and should not be cached across operations.
-     * <p/>
+     *
      * This method is useful for when the display url is known but the application link has not yet been created
      *
+     * @param plugin the plugin to access
      * @param pluginKey The plugin key
      * @param displayUrl The display url
      * @return An accessor for a remote plugin
-     * 
+     *
      * @deprecated use {@code create(ConnectAddonBean addon, Supplier<URI> displayUrl)} instead
      */
     @Deprecated
