@@ -2,6 +2,7 @@ package it.jira;
 
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.jira.pageobjects.pages.AddPermissionPage;
+import com.atlassian.jira.pageobjects.pages.EditPermissionsPage;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.ViewWorkflowTransitionPage;
 import com.atlassian.jira.tests.TestBase;
 import com.atlassian.jira.webtests.LicenseKeys;
@@ -75,12 +76,7 @@ public class JiraWebDriverTestBase
                 "hQsO+wfbOOFJztaLbaOljh7nUOCkQ==X021nu", "Atlassian OnDemand (Community)", "mauro-support", "SEN-3010463", 999999999));
 
         testUserFactory = new JiraTestUserFactory(product);
-
-        final AddPermissionPage addPermissionPage = product.quickLoginAsAdmin(AddPermissionPage.class,
-                DEFAULT_PERMISSION_SCHEMA, JIRA_PERMISSION_BROWSE_PROJECTS);
-        addPermissionPage.setGroup(JIRA_GROUP_ANYONE);
-        addPermissionPage.add();
-
+        
         product.getPageBinder().override(ViewWorkflowTransitionPage.class, ExtendedViewWorkflowTransitionPage.class);
 
         jiraOps = new JiraOps(product.getProductInstance());
@@ -131,5 +127,23 @@ public class JiraWebDriverTestBase
     {
         logout();
         return product.quickLogin(user.getUsername(), user.getPassword(), page, args);
+    }
+
+    public static void runWithAnonymousUsePermission(Runnable test)
+    {
+        final AddPermissionPage addPermissionPage = product.quickLoginAsAdmin(AddPermissionPage.class,
+                DEFAULT_PERMISSION_SCHEMA, JIRA_PERMISSION_BROWSE_PROJECTS);
+        addPermissionPage.setGroup(JIRA_GROUP_ANYONE);
+        addPermissionPage.add();
+        try
+        {
+            test.run();
+        }
+        finally
+        {
+            EditPermissionsPage editPermissionsPage = product.quickLoginAsAdmin(EditPermissionsPage.class, DEFAULT_PERMISSION_SCHEMA);
+            editPermissionsPage.deleteForGroup("Browse Projects", JIRA_GROUP_ANYONE);
+        }
+
     }
 }

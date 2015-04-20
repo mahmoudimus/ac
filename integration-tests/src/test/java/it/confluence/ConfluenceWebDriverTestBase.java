@@ -309,6 +309,5 @@ public class ConfluenceWebDriverTestBase
         {
             rpc.revokeAnonymousUsePermission();
         }
-
     }
 }
