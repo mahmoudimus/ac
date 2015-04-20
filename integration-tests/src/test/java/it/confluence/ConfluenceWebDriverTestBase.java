@@ -118,7 +118,7 @@ public class ConfluenceWebDriverTestBase
     @BeforeClass
     public static void confluenceTestSetup() throws Exception
     {
-        testUserFactory = new ConfluenceTestUserFactory(product);
+        testUserFactory = new ConfluenceTestUserFactory(product, rpc);
         rpc.logIn(testUserFactory.admin().confUser());
         installTestPlugins(rpc);
 
