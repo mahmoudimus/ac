@@ -17,6 +17,7 @@ import com.atlassian.confluence.pageobjects.component.editor.EditorContent;
 import com.atlassian.confluence.pageobjects.component.editor.toolbars.InsertDropdownMenu;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
+import com.atlassian.confluence.pageobjects.page.space.ViewSpaceSummaryPage;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.pageobjects.page.HomePage;
@@ -27,6 +28,7 @@ import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ExtendedViewSpaceSummaryPage;
 import com.atlassian.util.concurrent.LazyReference;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
@@ -41,6 +43,7 @@ import org.junit.Rule;
 import org.junit.rules.TestName;
 
 import javax.annotation.Nullable;
+import java.util.concurrent.Callable;
 
 /**
  * This is an adapted version of com.atlassian.confluence.webdriver.AbstractWebDriverTest.
@@ -134,6 +137,7 @@ public class ConfluenceWebDriverTestBase
 
         product.getPageBinder().override(EditorContent.class, ConfluenceEditorContent.class);
         product.getPageBinder().override(InsertDropdownMenu.class, ConfluenceInsertMenu.class);
+        product.getPageBinder().override(ViewSpaceSummaryPage.class, ExtendedViewSpaceSummaryPage.class);
 
         rpc.getDarkFeaturesHelper().enableSiteFeature("webdriver.test.mode");
     }
@@ -298,12 +302,12 @@ public class ConfluenceWebDriverTestBase
         return product.login(user.confUser(), page, args);
     }
 
-    public static void runWithAnonymousUsePermission(Runnable test)
+    public static <T> T runWithAnonymousUsePermission(Callable<T> test) throws Exception
     {
         rpc.grantAnonymousUsePermission();
         try
         {
-            test.run();
+            return test.call();
         }
         finally
         {

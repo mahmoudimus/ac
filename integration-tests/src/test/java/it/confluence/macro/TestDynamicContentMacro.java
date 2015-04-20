@@ -24,7 +24,6 @@ import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
 import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
 import it.confluence.MacroStorageFormatBuilder;
 import it.servlet.ConnectAppServlets;
-import it.util.ConnectTestUserFactory;
 import org.apache.commons.io.IOUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -38,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.Callable;
 
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
@@ -212,15 +212,16 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroIsRenderedForAnonymous() throws Exception
     {
-        runWithAnonymousUsePermission(new Runnable()
+        runWithAnonymousUsePermission(new Callable<Void>()
         {
             @Override
-            public void run()
+            public Void call() throws Exception
             {
                 ViewPage viewPage = getProduct().viewPage(createPageWithStorageFormatMacro());
                 viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
                 RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
                 assertThat(renderedMacro.getIFrameElementText("hello-world-message"), is("Hello world"));
+                return null;
             }
         });
     }
@@ -231,11 +232,20 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         String body = new MacroStorageFormatBuilder(DYNAMIC_MACRO_KEY).build();
         Content page = createPage(randomName(DYNAMIC_MACRO_KEY), body);
         login(testUserFactory.basicUser());
-        ViewPage viewPage = getProduct().viewPage(String.valueOf(page.getId().asLong()));
+        final ViewPage viewPage = getProduct().viewPage(String.valueOf(page.getId().asLong()));
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(DYNAMIC_MACRO_KEY, 0);
         String content = renderedMacro.getIFrameElementText("hello-world-message");
         assertThat(content, is("Hello world"));
-        assertThat(extractPDFText(viewPage), containsString("Hello world"));
+
+        runWithAnonymousUsePermission(new Callable<Void>()
+        {
+            @Override
+            public Void call() throws Exception
+            {
+                assertThat(extractPDFText(viewPage), containsString("Hello world"));
+                return null;
+            }
+        });
     }
 
     @Test
@@ -244,11 +254,20 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         String body = new MacroStorageFormatBuilder(DYNAMIC_MACRO_KEY).build();
         Content page = createPage(randomName(DYNAMIC_MACRO_KEY), body);
         login(testUserFactory.basicUser());
-        ViewPage viewPage = getProduct().viewPage(String.valueOf(page.getId().asLong()));
+        final ViewPage viewPage = getProduct().viewPage(String.valueOf(page.getId().asLong()));
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(DYNAMIC_MACRO_KEY, 0);
         String content = renderedMacro.getIFrameElementText("hello-world-message");
         assertThat(content, is("Hello world"));
-        assertThat(extractWordText(viewPage), containsString("Hello world"));
+
+        runWithAnonymousUsePermission(new Callable<Void>()
+        {
+            @Override
+            public Void call() throws Exception
+            {
+                assertThat(extractWordText(viewPage), containsString("Hello world"));
+                return null;
+            }
+        });
     }
 
     public String extractPDFText(ViewPage viewPage) throws IOException

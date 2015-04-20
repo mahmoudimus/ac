@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.Callable;
 
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
@@ -139,14 +140,15 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroIsRenderedForAnonymous() throws Exception
     {
-        runWithAnonymousUsePermission(new Runnable()
+        runWithAnonymousUsePermission(new Callable<Void>()
         {
             @Override
-            public void run()
+            public Void call() throws Exception
             {
                 ViewPage viewPage = getProduct().viewPage(createPageWithStorageFormatMacro());
                 String content = viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
                 assertThat(content, endsWith("Storage Format Content"));
+                return null;
             }
         });
     }
