@@ -41,13 +41,13 @@ public class TestJiraConditions extends JiraWebDriverTestBase
 {
     private static ConnectRunner runner;
 
-    private static String ONLY_BETTY_WEBITEM = "only-betty";
-    private static String BETTY_AND_BARNEY_WEBITEM = "betty-and-barney";
+    private static String onlyBettyWebItem;
+    private static String bettyAndBarneyWebitem;
     private static final String ADMIN_RIGHTS_WEBITEM = "admin-rights";
     private static final String CONTEXT_PARAMETERIZED_WEBITEM = "context-parameterized";
 
-    private static String ONLY_BETTY_CONDITION_URL = "/onlyBettyCondition";
-    private static String ONLY_BARNEY_CONDITION_URL = "/onlyBarneyCondition";
+    private static String onlyBettyConditionUrl;
+    private static String onlyBarneyConditionUrl;
 
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
 
@@ -60,28 +60,28 @@ public class TestJiraConditions extends JiraWebDriverTestBase
         betty = testUserFactory.admin();
         barney = testUserFactory.basicUser();
 
-        ONLY_BETTY_WEBITEM = "only-" + betty.getDisplayName();
-        BETTY_AND_BARNEY_WEBITEM = betty.getDisplayName() + "-and-" + barney.getDisplayName();
-        ONLY_BETTY_CONDITION_URL = "/only" + betty.getDisplayName() + "Condition";
-        ONLY_BARNEY_CONDITION_URL = "/only" + barney.getDisplayName() + "Condition";
+        onlyBettyWebItem = "only-" + betty.getDisplayName();
+        bettyAndBarneyWebitem = betty.getDisplayName() + "-and-" + barney.getDisplayName();
+        onlyBettyConditionUrl = "/only" + betty.getDisplayName() + "Condition";
+        onlyBarneyConditionUrl = "/only" + barney.getDisplayName() + "Condition";
 
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .setAuthenticationToNone()
                 .addModules("webItems",
                     newWebItemBean()
-                        .withName(new I18nProperty("Only Betty", ONLY_BETTY_WEBITEM))
-                        .withKey(ONLY_BETTY_WEBITEM)
+                        .withName(new I18nProperty("Only Betty", onlyBettyWebItem))
+                        .withKey(onlyBettyWebItem)
                         .withLocation("system.top.navigation.bar")
                         .withWeight(1)
                         .withUrl("http://www.google.com")
                         .withConditions(
                                 newSingleConditionBean().withCondition("user_is_logged_in").build(),
-                                newSingleConditionBean().withCondition(ONLY_BETTY_CONDITION_URL).build()
+                                newSingleConditionBean().withCondition(onlyBettyConditionUrl).build()
                         )
                         .build(),
                     newWebItemBean()
-                        .withName(new I18nProperty("Betty And Barney", BETTY_AND_BARNEY_WEBITEM))
-                        .withKey(BETTY_AND_BARNEY_WEBITEM)
+                        .withName(new I18nProperty("Betty And Barney", bettyAndBarneyWebitem))
+                        .withKey(bettyAndBarneyWebitem)
                         .withLocation("system.top.navigation.bar")
                         .withWeight(1)
                         .withUrl("http://www.google.com")
@@ -90,8 +90,8 @@ public class TestJiraConditions extends JiraWebDriverTestBase
                                 newCompositeConditionBean()
                                     .withType(CompositeConditionType.OR)
                                     .withConditions(
-                                            newSingleConditionBean().withCondition(ONLY_BETTY_CONDITION_URL).build(),
-                                            newSingleConditionBean().withCondition(ONLY_BARNEY_CONDITION_URL).build()
+                                            newSingleConditionBean().withCondition(onlyBettyConditionUrl).build(),
+                                            newSingleConditionBean().withCondition(onlyBarneyConditionUrl).build()
                                     ).build()
                         )
                         .build(),
@@ -117,8 +117,8 @@ public class TestJiraConditions extends JiraWebDriverTestBase
                                     "?issueId={issue.id}&projectKey={project.key}").build()
                         )
                         .build())
-                .addRoute(ONLY_BARNEY_CONDITION_URL, new CheckUsernameConditionServlet(barney))
-                .addRoute(ONLY_BETTY_CONDITION_URL, new CheckUsernameConditionServlet(betty))
+                .addRoute(onlyBarneyConditionUrl, new CheckUsernameConditionServlet(barney))
+                .addRoute(onlyBettyConditionUrl, new CheckUsernameConditionServlet(betty))
                 .addRoute(PARAMETER_CAPTURE_URL, PARAMETER_CAPTURING_SERVLET)
                 .start();
     }
@@ -142,7 +142,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     public void bettyCanSeeBettyWebItem()
     {
         JiraViewProjectPage viewProjectPage = loginAndVisit(betty, JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ONLY_BETTY_WEBITEM), Optional.<String>absent());
+        RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(onlyBettyWebItem), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
     }
 
@@ -150,7 +150,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     public void barneyCannotSeeBettyWebItem()
     {
         JiraViewProjectPage viewProjectPage = loginAndVisit(barney, JiraViewProjectPage.class, project.getKey());
-        assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(ONLY_BETTY_WEBITEM)));
+        assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(onlyBettyWebItem)));
     }
     
     @Test
@@ -159,14 +159,14 @@ public class TestJiraConditions extends JiraWebDriverTestBase
         TestUser admin = testUserFactory.admin();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
-        assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(ONLY_BETTY_WEBITEM)));
+        assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(onlyBettyWebItem)));
     }
 
     @Test
     public void bettyCanSeeBettyAndBarneyWebItem()
     {
         JiraViewProjectPage viewProjectPage = loginAndVisit(betty, JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(BETTY_AND_BARNEY_WEBITEM), Optional.<String>absent());
+        RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(bettyAndBarneyWebitem), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
     }
 
@@ -174,7 +174,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     public void barneyCanSeeBettyAndBarneyWebItem()
     {
         JiraViewProjectPage viewProjectPage = loginAndVisit(barney, JiraViewProjectPage.class, project.getKey());
-        RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(BETTY_AND_BARNEY_WEBITEM), Optional.<String>absent());
+        RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(bettyAndBarneyWebitem), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
     }
 
@@ -184,7 +184,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
         TestUser admin = testUserFactory.admin();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
-        assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(BETTY_AND_BARNEY_WEBITEM)));
+        assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(bettyAndBarneyWebitem)));
     }
 
     @Test
