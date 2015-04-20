@@ -43,6 +43,7 @@ import org.junit.Rule;
 import org.junit.rules.TestName;
 
 import javax.annotation.Nullable;
+import java.util.concurrent.Callable;
 
 /**
  * This is an adapted version of com.atlassian.confluence.webdriver.AbstractWebDriverTest.
@@ -301,17 +302,16 @@ public class ConfluenceWebDriverTestBase
         return product.login(user.confUser(), page, args);
     }
 
-    public static void runWithAnonymousUsePermission(Runnable test)
+    public static <T> T runWithAnonymousUsePermission(Callable<T> test) throws Exception
     {
         rpc.grantAnonymousUsePermission();
         try
         {
-            test.run();
+            return test.call();
         }
         finally
         {
             rpc.revokeAnonymousUsePermission();
         }
-
     }
 }
