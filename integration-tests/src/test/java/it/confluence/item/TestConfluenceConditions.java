@@ -49,8 +49,8 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
     private static final String CONTEXT_PARAMETERIZED_WEBITEM = "context-parameterized";
     public static final String SPACE_CONTEXT_PARAMETERIZED_WEB_PANEL = CONTEXT_PARAMETERIZED_WEBITEM + "-space";
 
-    private static String ONLY_BETTY_CONDITION_URL = "/onlyBettyCondition";
-    private static String ONLY_BARNEY_CONDITION_URL = "/onlyBarneyCondition";
+    private static String onlyBettyConditionUrl;
+    private static String onlyBarneyConditionUrl;
     private static final String PARAMETER_CAPTURE_CONDITION_URL = "/parameterCapture";
 
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
@@ -67,8 +67,8 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
 
         onlyBettyWebItem = "only-" + betty.getDisplayName();
         bettyAndBarneyWebItem = betty.getDisplayName() + "-and-" + barney.getDisplayName();
-        ONLY_BETTY_CONDITION_URL = "/only" + betty.getDisplayName() + "Condition";
-        ONLY_BARNEY_CONDITION_URL = "/only" + barney.getDisplayName() + "Condition";
+        onlyBettyConditionUrl = "/only" + betty.getDisplayName() + "Condition";
+        onlyBarneyConditionUrl = "/only" + barney.getDisplayName() + "Condition";
 
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .setAuthenticationToNone()
@@ -81,7 +81,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
                                 .withUrl("http://www.google.com")
                                 .withConditions(
                                         newSingleConditionBean().withCondition("user_is_logged_in").build(),
-                                        newSingleConditionBean().withCondition(ONLY_BETTY_CONDITION_URL).build()
+                                        newSingleConditionBean().withCondition(onlyBettyConditionUrl).build()
                                 )
                                 .build(),
                         newWebItemBean()
@@ -95,8 +95,8 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
                                         newCompositeConditionBean()
                                                 .withType(CompositeConditionType.OR)
                                                 .withConditions(
-                                                        newSingleConditionBean().withCondition(ONLY_BETTY_CONDITION_URL).build(),
-                                                        newSingleConditionBean().withCondition(ONLY_BARNEY_CONDITION_URL).build()
+                                                        newSingleConditionBean().withCondition(onlyBettyConditionUrl).build(),
+                                                        newSingleConditionBean().withCondition(onlyBarneyConditionUrl).build()
                                                 ).build()
                                 ).build(),
                         newWebItemBean()
@@ -132,8 +132,8 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
                                                 "?pageId={page.id}&spaceKey={space.key}&spaceId={space.id}").build()
                                 )
                                 .build())
-                .addRoute(ONLY_BARNEY_CONDITION_URL, new CheckUsernameConditionServlet(barney))
-                .addRoute(ONLY_BETTY_CONDITION_URL, new CheckUsernameConditionServlet(betty))
+                .addRoute(onlyBarneyConditionUrl, new CheckUsernameConditionServlet(barney))
+                .addRoute(onlyBettyConditionUrl, new CheckUsernameConditionServlet(betty))
                 .addRoute(PARAMETER_CAPTURE_CONDITION_URL, PARAMETER_CAPTURING_SERVLET)
                 .addRoute(PARAMETER_CAPTURE_CONDITION_URL + "/space", PARAMETER_CAPTURING_SERVLET2)
                 .start();

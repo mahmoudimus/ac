@@ -47,7 +47,7 @@ public class TestReport extends JiraWebDriverTestBase
     private static final TestReportInfo[] reportInfos = new TestReportInfo[] { firstTestReport, secondTestReport };
 
     private static ConnectRunner addon;
-    
+
     @BeforeClass
     public static void setUpClass() throws Exception
     {
