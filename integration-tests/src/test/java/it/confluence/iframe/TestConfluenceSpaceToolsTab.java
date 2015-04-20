@@ -2,12 +2,15 @@ package it.confluence.iframe;
 
 import com.atlassian.confluence.it.Space;
 import com.atlassian.confluence.it.SpacePermission;
+import com.atlassian.confluence.it.admin.BundledTheme;
+import com.atlassian.confluence.pageobjects.page.admin.templates.SpaceTemplatesPage;
 import com.atlassian.confluence.pageobjects.page.space.ViewSpaceSummaryPage;
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.elements.query.Queries;
 import com.atlassian.pageobjects.elements.timeout.DefaultTimeouts;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.SpaceToolsTabModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
@@ -15,8 +18,6 @@ import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
 import com.google.common.base.Supplier;
-
-import it.util.ConnectTestUserFactory;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
@@ -29,7 +30,6 @@ import it.servlet.ConnectAppServlets;
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 import static com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean.newSpaceToolsTabBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Tests for Space Tools Tab module. Note that when we refer to "Space Tools" we're referring to the post-5.0
@@ -69,10 +69,14 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
     @Test
     public void spaceAdminShowsConnectTab()
     {
-        Space space = makeSpace(RandomStringUtils.randomAlphanumeric(4).toLowerCase(), "spaceAdminShowsConnectTab");
+        Space space = makeSpace(RandomStringUtils.randomAlphanumeric(4).toLowerCase(), "spaceAdminShowsConnectTabDocTheme", true);
+
         // Demo space uses doctheme. Templates page is in Space Admin (not to be confused with Space Operations).
-        loginAndVisit(testUserFactory.admin(), ViewSpaceSummaryPage.class, space);
-        LinkedRemoteContent addonPage = connectPageOperations.findRemoteLinkedContent(RemoteWebItem.ItemMatchingMode.LINK_TEXT, "AC Space Tab", Option.<String>none(), addonAndModuleKey(remotePlugin.getAddon().getKey(),TAB_MODULE_KEY));
+        loginAndVisit(testUserFactory.admin(), SpaceTemplatesPage.class, space.getKey());
+
+        String pageKey = ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY);
+        String webItemId = pageKey + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX;
+        LinkedRemoteContent addonPage = connectPageOperations.findTabPanel(webItemId, Option.<String>none(), pageKey);
 
         final RemoteWebPanel addonContentsPage = addonPage.click(
                     RemoteWebPanel.class,
@@ -92,11 +96,11 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
     @Test
     public void spaceToolsShowsConnectTab()
     {
-        Space space = makeSpace(RandomStringUtils.randomAlphanumeric(4).toLowerCase(), "spaceToolsShowsConnectTab");
+        Space space = makeSpace(RandomStringUtils.randomAlphanumeric(4).toLowerCase(), "spaceToolsShowsConnectTab", false);
 
         loginAndVisit(testUserFactory.admin(), ViewSpaceSummaryPage.class, space);
 
-        LinkedRemoteContent addonPage = connectPageOperations.findRemoteLinkedContent(RemoteWebItem.ItemMatchingMode.LINK_TEXT, "AC Space Tab", Option.<String>none(), addonAndModuleKey(remotePlugin.getAddon().getKey(),TAB_MODULE_KEY));
+        LinkedRemoteContent addonPage = connectPageOperations.findRemoteLinkedContent(RemoteWebItem.ItemMatchingMode.LINK_TEXT, "AC Space Tab", Option.<String>none(), addonAndModuleKey(remotePlugin.getAddon().getKey(), TAB_MODULE_KEY));
 
         final RemoteWebPanel addonContentsPage = addonPage.click(
                 RemoteWebPanel.class,
@@ -113,12 +117,19 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
         }));
     }
 
-    public Space makeSpace(String key, String name)
+    public Space makeSpace(String key, String name, boolean docTheme)
     {
         Space space = new Space(key, name);
         rpc.createSpace(space);
         rpc.grantAnonymousPermission(SpacePermission.VIEW, space);
         rpc.flushIndexQueue();
+
+        if (docTheme)
+        {
+            rpc.setThemeForSpace(space, BundledTheme.DOCUMENTATION);
+        }
+
         return space;
     }
+
 }
