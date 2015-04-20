@@ -1,8 +1,5 @@
 package it.confluence.item;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import com.atlassian.fugue.Pair;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
@@ -14,19 +11,18 @@ import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-
 import com.google.common.base.Optional;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.CheckUsernameConditionServlet;
-import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import redstone.xmlrpc.XmlRpcFault;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -64,8 +60,8 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        barney = ConnectTestUserFactory.basicUser(getProduct());
-        betty = ConnectTestUserFactory.admin(getProduct());
+        barney = testUserFactory.basicUser();
+        betty = testUserFactory.admin();
 
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .setAuthenticationToNone()
@@ -147,7 +143,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void testRelativeWebItem() throws Exception
     {
-        login(ConnectTestUserFactory.admin(getProduct()));
+        login(testUserFactory.admin());
 
         Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(getModuleKey(ADDON_WEBITEM));
         RemoteWebItem webItem = pageAndWebItem.right();
@@ -164,7 +160,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void testAddonDirectWebItem() throws Exception
     {
-        login(ConnectTestUserFactory.admin(getProduct()));
+        login(testUserFactory.admin());
 
         Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(getModuleKey(ADDON_DIRECT_WEBITEM));
         RemoteWebItem webItem = pageAndWebItem.right();
@@ -180,7 +176,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void testProductWebItem() throws Exception
     {
-        login(ConnectTestUserFactory.admin(getProduct()));
+        login(testUserFactory.admin());
 
         ConfluenceViewPage viewPage = createAndVisitViewPage();
 
@@ -208,7 +204,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void adminCannotSeeBettyWebItem() throws Exception
     {
-        login(ConnectTestUserFactory.admin(getProduct()));
+        login(testUserFactory.admin());
         createAndVisitViewPage();
         assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(ABSOLUTE_WEBITEM)));
     }
@@ -217,7 +213,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void testAddonWebItemInlineDialog() throws Exception
     {
-        login(ConnectTestUserFactory.admin(getProduct()));
+        login(testUserFactory.admin());
 
         Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(getModuleKey(ADDON_WEBITEM_INLINE_DIALOG));
         RemoteWebItem webItem = pageAndWebItem.right();
@@ -247,7 +243,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
 
     private ConfluenceOps.ConfluencePageData createPage() throws MalformedURLException, XmlRpcFault
     {
-        return confluenceOps.setPage(some(ConnectTestUserFactory.admin(getProduct())), SPACE, "Page with webitem", "some page content");
+        return confluenceOps.setPage(some(testUserFactory.admin()), SPACE, "Page with webitem", "some page content");
     }
 
 

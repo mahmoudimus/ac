@@ -14,6 +14,7 @@ import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import hudson.plugins.jira.soap.RemoteProject;
 import it.util.ConnectTestUserFactory;
+import it.util.JiraTestUserFactory;
 import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -24,9 +25,14 @@ import java.util.concurrent.Callable;
 
 public class JiraWebDriverTestBase
 {
-    protected static JiraOps jiraOps;
-    protected static RemoteProject project;
+
     protected static JiraTestedProduct product = TestedProductProvider.getJiraTestedProduct();
+
+    protected static JiraOps jiraOps;
+
+    protected static RemoteProject project;
+
+    protected static ConnectTestUserFactory testUserFactory;
 
     protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
             product.getTester().getDriver());
@@ -68,6 +74,8 @@ public class JiraWebDriverTestBase
                 "l+YjzNzJ+7819mAMj13ddO1XnxwB/i0noop+g9E03YLMCwCFCKZCUT2Yo0NWE81lHRLtxBroijAA\n" +
                 "hQsO+wfbOOFJztaLbaOljh7nUOCkQ==X021nu", "Atlassian OnDemand (Community)", "mauro-support", "SEN-3010463", 999999999));
 
+        testUserFactory = new JiraTestUserFactory(product);
+
         final AddPermissionPage addPermissionPage = product.quickLoginAsAdmin(AddPermissionPage.class,
                 DEFAULT_PERMISSION_SCHEMA, JIRA_PERMISSION_BROWSE_PROJECTS);
         addPermissionPage.setGroup(JIRA_GROUP_ANYONE);
@@ -87,7 +95,7 @@ public class JiraWebDriverTestBase
 
     protected void testLoggedInAndAnonymous(Callable runnable) throws Exception
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
         runnable.call();
         logout();
         runnable.call();

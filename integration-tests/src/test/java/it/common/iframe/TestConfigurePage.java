@@ -28,7 +28,7 @@ public class TestConfigurePage extends AbstractPageTestBase
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
-        runCanClickOnPageLinkAndSeeAddonContents(PluginManager.class, Option.some("Configure"), ConnectTestUserFactory.admin(product));
+        runCanClickOnPageLinkAndSeeAddonContents(PluginManager.class, Option.some("Configure"), testUserFactory.admin());
     }
 
     @Override
@@ -43,7 +43,7 @@ public class TestConfigurePage extends AbstractPageTestBase
     {
         runner.setToggleableConditionShouldDisplay(false);
 
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
 
         // note we don't check that the configure link isn't displayed due to AC-973
 

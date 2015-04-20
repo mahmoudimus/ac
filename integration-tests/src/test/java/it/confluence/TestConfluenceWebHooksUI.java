@@ -27,7 +27,7 @@ public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase
     @Before
     public void setupSearchPage() throws Exception
     {
-        user = ConnectTestUserFactory.basicUser(product);
+        user = testUserFactory.basicUser();
         searchResultPage = loginAndVisit(user, SearchResultPage.class);
     }
 

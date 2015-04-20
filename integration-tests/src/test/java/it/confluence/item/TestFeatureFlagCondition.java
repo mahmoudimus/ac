@@ -58,14 +58,14 @@ public class TestFeatureFlagCondition extends ConfluenceWebDriverTestBase
             remotePlugin.stopAndUninstall();
         }
 
-        rpc.logIn(ConnectTestUserFactory.admin(product).confUser());
+        rpc.logIn(testUserFactory.admin().confUser());
         rpc.getDarkFeaturesHelper().disableSiteFeature(FEATURE_FLAG_KEY);
     }
 
     @Test
     public void cannotSeeWithFeatureFlagUnset() throws Exception
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
 
         assertFalse("Web item should not be visible without feature flag set", connectPageOperations.existsWebItem(getModuleKey(FEATURE_FLAG)));
     }
@@ -73,7 +73,7 @@ public class TestFeatureFlagCondition extends ConfluenceWebDriverTestBase
     @Test
     public void canSeeWithFeatureFlagSet() throws Exception
     {
-        TestUser user = ConnectTestUserFactory.basicUser(product);
+        TestUser user = testUserFactory.basicUser();
         login(user);
 
         rpc.logIn(user.confUser());
@@ -85,7 +85,7 @@ public class TestFeatureFlagCondition extends ConfluenceWebDriverTestBase
     @Test
     public void cannotSeeWithFeatureFlagDisabled() throws Exception
     {
-        TestUser user = ConnectTestUserFactory.basicUser(product);
+        TestUser user = testUserFactory.basicUser();
         login(user);
 
         rpc.logIn(user.confUser());

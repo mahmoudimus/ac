@@ -86,7 +86,7 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
     public void testCreateWorkflowPostFunction()
     {
         String workflowName = RandomStringUtils.randomAlphanumeric(20);
-        WorkflowsPage workflowsPage = loginAndVisit(ConnectTestUserFactory.admin(product), WorkflowsPage.class);
+        WorkflowsPage workflowsPage = loginAndVisit(testUserFactory.admin(), WorkflowsPage.class);
         ViewWorkflowSteps workflowStepsPage = copyDefaultWorkflow(workflowsPage, workflowName);
         ExtendedViewWorkflowTransitionPage viewWorkflowTransitionPage
                 = (ExtendedViewWorkflowTransitionPage)goToFirstTransition(workflowName, workflowStepsPage);
@@ -105,7 +105,7 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
     public void testCreateInvalidWorkflowPostFunction()
     {
         String workflowName = RandomStringUtils.randomAlphanumeric(20);
-        WorkflowsPage workflowsPage = loginAndVisit(ConnectTestUserFactory.admin(product), WorkflowsPage.class);
+        WorkflowsPage workflowsPage = loginAndVisit(testUserFactory.admin(), WorkflowsPage.class);
         ViewWorkflowSteps workflowStepsPage = copyDefaultWorkflow(workflowsPage, workflowName);
         ExtendedViewWorkflowTransitionPage viewWorkflowTransitionPage
                 = (ExtendedViewWorkflowTransitionPage)goToFirstTransition(workflowName, workflowStepsPage);
@@ -122,7 +122,7 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
     {
         String projectKey = RandomStringUtils.randomAlphabetic(6).toUpperCase();
         product.backdoor().project().addProject(projectKey, projectKey,
-                ConnectTestUserFactory.basicUser(product).getUsername());
+                testUserFactory.basicUser().getUsername());
     }
 
     private ViewWorkflowSteps copyDefaultWorkflow(WorkflowsPage workflowsPage, String workflowName)

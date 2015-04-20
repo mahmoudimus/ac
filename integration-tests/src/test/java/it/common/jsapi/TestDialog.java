@@ -212,7 +212,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
 
     private void testOpenAndClose(String pageKey, String pageName, String moduleKey)
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
         HomePage homePage = product.visit(HomePage.class);
         GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, pageKey, pageName, runner.getAddon().getKey());
         remotePage.clickAddOnLink();
@@ -253,7 +253,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
     @Test
     public void testLoadGeneralDialog()
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
         HomePage homePage = product.visit(HomePage.class);
 
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginDialog", "Remotable Plugin app1 Dialog", runner.getAddon().getKey());
@@ -271,7 +271,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
     @Test
     public void testSizeToParentDoesNotWorkInDialog()
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
         product.visit(HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParentDialog", "Size to parent dialog page", runner.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
@@ -296,7 +296,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
     @Test
     public void verifyInlineDialogHasVersionNumber()
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
         RemotePluginAwarePage page = goToPageWithLink(JWT_EXPIRY_INLINE_DIALOG, JWT_EXPIRY_INLINE_DIALOG_NAME);
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
         RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, remotePluginTest, true);
@@ -310,7 +310,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
     {
         final JwtReaderFactory jwtReaderFactory = getJwtReaderFactory();
         
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
         RemotePluginAwarePage page = goToPageWithLink(moduleKey, moduleName);
 
         // Checking the system time across two JVM's seems unreliable, so allow a considerable discrepancy

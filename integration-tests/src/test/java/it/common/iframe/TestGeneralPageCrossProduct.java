@@ -42,7 +42,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        betty = ConnectTestUserFactory.admin(product);
+        betty = testUserFactory.admin();
         final String productContextPath = product.getProductInstance().getContextPath().toLowerCase();
         String globallyVisibleLocation = productContextPath.contains("jira")
             ? "system.top.navigation.bar"
@@ -147,7 +147,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
     @Test
     public void testNoAdminPageForNonAdmin()
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
         AccessDeniedIFramePage page = product.getPageBinder().bind(AccessDeniedIFramePage.class, "app1", "remotePluginAdmin");
         assertFalse(page.isIframeAvailable());
     }
@@ -180,7 +180,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
 
         try
         {
-            login(ConnectTestUserFactory.admin(product));
+            login(testUserFactory.admin());
             final PluginManagerPage upm = product.visit(PluginManagerPage.class);
 
             upm.clickConfigurePluginButton(anotherPlugin.getAddon().getKey(), "page");
@@ -196,7 +196,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
     public void testEncodedSpaceInPageModuleUrl()
     {
         // Regression test for AC-885 (ensure descriptor query strings are not decoded before parsing)
-        loginAndVisit(ConnectTestUserFactory.admin(product), HomePage.class);
+        loginAndVisit(testUserFactory.admin(), HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "encodedSpaces", "Encoded Spaces", remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
@@ -207,7 +207,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
     @Test
     public void testAmd()
     {
-        loginAndVisit(ConnectTestUserFactory.admin(product), HomePage.class);
+        loginAndVisit(testUserFactory.admin(), HomePage.class);
 
         String LINK_TEXT = "AMD Test app1 General";
 //        RemoteWebItem webItem = connectPageOperations.findWebItem(RemoteWebItem.ItemMatchingMode.LINK_TEXT, LINK_TEXT, Optional.<String>absent());
@@ -224,7 +224,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
     @Test
     public void testSizeToParent()
     {
-        loginAndVisit(ConnectTestUserFactory.admin(product), HomePage.class);
+        loginAndVisit(testUserFactory.admin(), HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParent", "Size to parent general page", remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
