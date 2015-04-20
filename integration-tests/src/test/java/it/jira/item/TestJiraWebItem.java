@@ -69,8 +69,8 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        betty = ConnectTestUserFactory.admin(product);
-        barney = ConnectTestUserFactory.basicUser(product);
+        betty = testUserFactory.admin();
+        barney = testUserFactory.basicUser();
 
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .addScope(ScopeName.READ)
@@ -192,7 +192,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     @Test
     public void testRelativePageWebItem()
     {
-        TestUser admin = ConnectTestUserFactory.basicUser(product);
+        TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(PAGE_CONTEXT_WEBITEM), Optional.<String>absent());
@@ -206,7 +206,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     @Test
     public void testAddonDirectWebItem() throws Exception
     {
-        TestUser admin = ConnectTestUserFactory.basicUser(product);
+        TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ADDON_DIRECT_WEBITEM), Optional.<String>absent());
@@ -221,7 +221,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     @Test
     public void testProductWebItem() throws MalformedURLException
     {
-        TestUser admin = ConnectTestUserFactory.basicUser(product);
+        TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(PRODUCT_WEBITEM), Optional.<String>absent());
@@ -237,7 +237,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     @Test
     public void adminCannotSeeBettyWebItem()
     {
-        TestUser admin = ConnectTestUserFactory.basicUser(product);
+        TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(ABSOLUTE_WEBITEM)));
@@ -248,7 +248,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     @Test
     public void testAbsoluteWebItemInlineDialog() throws Exception
     {
-        TestUser admin = ConnectTestUserFactory.basicUser(product);
+        TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ABSOLUTE_WEBITEM_INLINE_DIALOG), Optional.<String>absent());
@@ -262,7 +262,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     @Test
     public void testAddonWebItemInlineDialog() throws Exception
     {
-        TestUser admin = ConnectTestUserFactory.basicUser(product);
+        TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ADDON_WEBITEM_INLINE_DIALOG), Optional.<String>absent());
@@ -289,7 +289,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
 
     private RemoteInlineDialog testWebItemInlineDialogXdm(String moduleKey) throws Exception
     {
-        TestUser admin = ConnectTestUserFactory.basicUser(product);
+        TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(moduleKey), Optional.<String>absent());
@@ -302,7 +302,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     @Test
     public void testAbsoluteWebItemInlineDialogTargetOptions() throws Exception
     {
-        TestUser admin = ConnectTestUserFactory.basicUser(product);
+        TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ADDON_WEBITEM_INLINE_DIALOG), Optional.<String>absent());
@@ -316,7 +316,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     @Test
     public void testAbsoluteWebItemDialog() throws Exception
     {
-        TestUser admin = ConnectTestUserFactory.basicUser(product);
+        TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ABSOLUTE_WEBITEM_DIALOG), Optional.<String>absent());
@@ -338,7 +338,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     @Test
     public void testAddOnWebItemDialog() throws Exception
     {
-        TestUser admin = ConnectTestUserFactory.basicUser(product);
+        TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ADDON_WEBITEM_DIALOG), Optional.<String>absent());
@@ -370,7 +370,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
 
     private void testWebItemDialogDimensions(String moduleKey) throws Exception
     {
-        TestUser admin = ConnectTestUserFactory.basicUser(product);
+        TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(moduleKey), Optional.<String>absent());
@@ -395,7 +395,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
 
     private void testWebItemDialogXdm(String moduleKey) throws Exception
     {
-        TestUser admin = ConnectTestUserFactory.basicUser(product);
+        TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(moduleKey), Optional.<String>absent());
@@ -445,7 +445,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     private void testWebItemDialogTargetOptions(Boolean chrome, String moduleKey) throws Exception
     {
         String dialogOptionKey = dialogOptionKey(chrome, moduleKey);
-        TestUser admin = ConnectTestUserFactory.basicUser(product);
+        TestUser admin = testUserFactory.basicUser();
 
         JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(dialogOptionKey), Optional.<String>absent());

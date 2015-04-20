@@ -203,7 +203,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroIsRendered() throws Exception
     {
-        ViewPage viewPage = getProduct().login(ConnectTestUserFactory.basicUser(product).confUser(), ViewPage.class, createPageWithStorageFormatMacro());
+        ViewPage viewPage = getProduct().login(testUserFactory.basicUser().confUser(), ViewPage.class, createPageWithStorageFormatMacro());
         viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(SIMPLE_MACRO_KEY, 0);
         assertThat(renderedMacro.getIFrameElementText("hello-world-message"), is("Hello world"));
@@ -230,7 +230,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     {
         String body = new MacroStorageFormatBuilder(DYNAMIC_MACRO_KEY).build();
         Content page = createPage(randomName(DYNAMIC_MACRO_KEY), body);
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
         ViewPage viewPage = getProduct().viewPage(String.valueOf(page.getId().asLong()));
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(DYNAMIC_MACRO_KEY, 0);
         String content = renderedMacro.getIFrameElementText("hello-world-message");
@@ -243,7 +243,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     {
         String body = new MacroStorageFormatBuilder(DYNAMIC_MACRO_KEY).build();
         Content page = createPage(randomName(DYNAMIC_MACRO_KEY), body);
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
         ViewPage viewPage = getProduct().viewPage(String.valueOf(page.getId().asLong()));
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(DYNAMIC_MACRO_KEY, 0);
         String content = renderedMacro.getIFrameElementText("hello-world-message");
@@ -300,7 +300,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testBodyInclusion() throws Exception
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
         String macroBody = "a short body";
         String body = new MacroStorageFormatBuilder(SHORT_BODY_MACRO_KEY).richTextBody(macroBody).build();
         Content page = createPage(randomName(SHORT_BODY_MACRO_KEY), body);
@@ -313,7 +313,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testParameterInclusion() throws Exception
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
         String parameterValue = "param value";
         String body = new MacroStorageFormatBuilder(PARAMETER_MACRO_KEY).parameter(SINGLE_PARAM_ID, parameterValue).build();
         Content page = createPage(randomName(PARAMETER_MACRO_KEY), body);
@@ -326,7 +326,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testDescriptionShowsInMacroBrowser() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(ConnectTestUserFactory.basicUser(product).confUser(), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Parameter Page"));
         MacroBrowserAndEditor macroInBrowser = findMacroInBrowser(editorPage, SMALL_INLINE_MACRO_KEY);
 
@@ -346,7 +346,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testDescriptionDoesNotExposeXss() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(ConnectTestUserFactory.basicUser(product).confUser(), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Parameter Page"));
         MacroBrowserAndEditor macroInBrowser = findMacroInBrowser(editorPage, CLIENT_SIDE_BODY_MACRO_KEY);
         try
@@ -367,7 +367,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMultipleMacrosOnPage() throws Exception
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
         String body = new MacroStorageFormatBuilder(SIMPLE_MACRO_KEY).build();
         Content page = createPage(randomName(SIMPLE_MACRO_KEY), body + body);
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
@@ -386,7 +386,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroDimensions() throws Exception
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
         String body = new MacroStorageFormatBuilder(SMALL_INLINE_MACRO_KEY).build();
         Content page = createPage(randomName(SMALL_INLINE_MACRO_KEY), body + body);
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
@@ -397,7 +397,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroEditorSavesParameters() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(ConnectTestUserFactory.basicUser(product).confUser(), TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
         editorPage.setTitle(randomName("Macro Editor"));
         selectMacro(editorPage, EDITOR_MACRO_NAME, macroDialogSubmitter(EDITOR_MACRO_KEY));
 
@@ -411,7 +411,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroInOrderedTable() throws Exception
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
         Content page = createPage(randomName(TABLE_MACRO_NAME), loadResourceAsString("confluence/test-page-table-macro.xhtml"));
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
 
@@ -431,7 +431,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         String macroBody = "cat pictures go here";
         String body = new MacroStorageFormatBuilder(CLIENT_SIDE_BODY_MACRO_KEY).richTextBody(macroBody).build();
         Content page = createPage(randomName(CLIENT_SIDE_BODY_MACRO_KEY), body);
-        EditContentPage editorPage = getProduct().loginAndEdit(ConnectTestUserFactory.basicUser(product).confUser(), new Page(page.getId().asLong()));
+        EditContentPage editorPage = getProduct().loginAndEdit(testUserFactory.basicUser().confUser(), new Page(page.getId().asLong()));
 
         RemotePluginDialog dialog = connectPageOperations.editMacro(CLIENT_SIDE_BODY_MACRO_KEY);
         try
@@ -451,7 +451,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     {
         String body = new MacroStorageFormatBuilder(CLIENT_SIDE_BODY_MACRO_KEY).build();
         Content page = createPage(randomName(CLIENT_SIDE_BODY_MACRO_KEY), body);
-        EditContentPage editorPage = getProduct().loginAndEdit(ConnectTestUserFactory.basicUser(product).confUser(), new Page(page.getId().asLong()));
+        EditContentPage editorPage = getProduct().loginAndEdit(testUserFactory.basicUser().confUser(), new Page(page.getId().asLong()));
         RemotePluginDialog dialog = connectPageOperations.editMacro(CLIENT_SIDE_BODY_MACRO_KEY);
         dialog.submitAndWaitUntilHidden();
         editorPage.save();
@@ -466,7 +466,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     {
         String body = new MacroStorageFormatBuilder(CLIENT_SIDE_BODY_MACRO_SCRIPT_KEY).build();
         Content page = createPage(randomName(CLIENT_SIDE_BODY_MACRO_SCRIPT_NAME), body);
-        EditContentPage editorPage = getProduct().loginAndEdit(ConnectTestUserFactory.basicUser(product).confUser(), new Page(page.getId().asLong()));
+        EditContentPage editorPage = getProduct().loginAndEdit(testUserFactory.basicUser().confUser(), new Page(page.getId().asLong()));
 
         RemotePluginDialog dialog = connectPageOperations.editMacro(CLIENT_SIDE_BODY_MACRO_SCRIPT_KEY);
         dialog.submitAndWaitUntilHidden();
@@ -479,7 +479,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testSlowMacro() throws Exception
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
         String body = new MacroStorageFormatBuilder(SLOW_MACRO_KEY).build();
         String title = randomName(SLOW_MACRO_KEY);
         createPage(title, body);
@@ -490,7 +490,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroInComment() throws Exception
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
         String title = randomName("The macro is in the comment!");
         Content page = createPage(title, "The macro is in the comment!");
         addCommentWithMacro(String.valueOf(page.getId().asLong()));

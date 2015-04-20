@@ -68,7 +68,7 @@ public class TestXdmEvents extends JiraWebDriverTestBase
     @Test
     public void testXdmEvents() throws Exception
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
 
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
         JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey());

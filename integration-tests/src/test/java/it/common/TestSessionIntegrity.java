@@ -64,7 +64,7 @@ public class TestSessionIntegrity extends MultiProductWebDriverTestBase
     @Test
     public void addOnUserDoesNotInheritTheSession() throws Exception
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
 
         InstallHandlerServlet.InstallPayload installPayload = installHandler.getInstallPayload();
 

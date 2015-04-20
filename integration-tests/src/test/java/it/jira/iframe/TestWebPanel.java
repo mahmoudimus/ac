@@ -140,7 +140,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     @Test
     public void testViewProjectAdminPanel() throws Exception
     {
-        TestUser user = ConnectTestUserFactory.admin(product);
+        TestUser user = testUserFactory.admin();
         login(user);
         JiraProjectAdministrationPage projectAdministrationPage = product.visit(JiraProjectAdministrationPage.class, project.getKey());
         RemoteWebPanel panel = projectAdministrationPage.findWebPanel(getModuleKey(runner, PROJECT_CONFIG_PANEL_KEY)).waitUntilContentLoaded();
@@ -157,7 +157,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     @Test
     public void testLeftWebPanelOnIssuePage() throws RemoteException
     {
-        TestUser user = ConnectTestUserFactory.basicUser(product);
+        TestUser user = testUserFactory.basicUser();
         login(user);
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for left remotable-web-panel panel");
         JiraViewIssuePage page = product.visit(JiraViewIssuePage.class, issue.getKey());
@@ -176,7 +176,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     @Test
     public void testRightWebPanelOnIssuePage() throws RemoteException
     {
-        TestUser user = ConnectTestUserFactory.basicUser(product);
+        TestUser user = testUserFactory.basicUser();
         login(user);
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Another test issue for right remotable-web-panel panel");
         JiraViewIssuePage page = product.visit(JiraViewIssuePage.class, issue.getKey());
@@ -195,7 +195,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     @Test
     public void testWebPanelInProjectHeader()
     {
-        TestUser user = ConnectTestUserFactory.admin(product);
+        TestUser user = testUserFactory.admin();
         login(user);
         JiraProjectAdministrationPage projectAdministrationPage = product.visit(JiraProjectAdministrationPage.class, project.getKey());
         RemoteWebPanel panel = projectAdministrationPage.findWebPanel(getModuleKey(runner, PROJECT_CONFIG_HEADER_KEY)).waitUntilContentLoaded();
@@ -212,9 +212,9 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     @Test
     public void testWebPanelInUserProfile()
     {
-        TestUser user = ConnectTestUserFactory.basicUser(product);
+        TestUser user = testUserFactory.basicUser();
         login(user);
-        final String userProfileName = ConnectTestUserFactory.basicUser(product).getUsername();
+        final String userProfileName = testUserFactory.basicUser().getUsername();
         JiraViewProfilePage jiraViewProfilePage = product.visit(JiraViewProfilePage.class, userProfileName);
         RemoteWebPanel panel = jiraViewProfilePage.findWebPanel(getModuleKey(runner, USER_PROFILE_KEY)).waitUntilContentLoaded();
 

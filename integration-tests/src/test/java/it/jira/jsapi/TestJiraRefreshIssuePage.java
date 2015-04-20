@@ -65,7 +65,7 @@ public class TestJiraRefreshIssuePage extends JiraWebDriverTestBase
     @Test
     public void shouldRefreshIssuePage() throws RemoteException
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
         ViewIssuePage viewIssuePage = product.visit(ViewIssuePage.class, issue.getKey());
         RemoteRefreshIssuePageWebPanel refreshIssuePageWebPanel = findRefreshIssuePageWebPanel();
         refreshIssuePageWebPanel.waitUntilRefreshIssuePageActionLoaded();

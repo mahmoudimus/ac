@@ -1,7 +1,6 @@
 package it.confluence;
 
 import com.atlassian.confluence.it.Space;
-import com.atlassian.confluence.it.SpacePermission;
 import com.atlassian.confluence.it.maven.MavenDependencyHelper;
 import com.atlassian.confluence.it.maven.MavenUploadablePlugin;
 import com.atlassian.confluence.it.plugin.PluginHelper;
@@ -32,6 +31,7 @@ import com.atlassian.util.concurrent.LazyReference;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import com.sun.jersey.api.client.UniformInterfaceException;
+import it.util.ConfluenceTestUserFactory;
 import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 import org.junit.AfterClass;
@@ -52,8 +52,14 @@ import javax.annotation.Nullable;
 public class ConfluenceWebDriverTestBase
 {
     protected static final ConfluenceTestedProduct product = TestedProductProvider.getConfluenceTestedProduct();
-    protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
-            product.getTester().getDriver());
+
+    protected static final ConfluenceRpc rpc = ConfluenceRpc.newInstance(product.getProductInstance().getBaseUrl(), ConfluenceRpc.Version.V2_WITH_WIKI_MARKUP);
+
+    protected static ConnectTestUserFactory testUserFactory;
+
+    protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(
+            product.getPageBinder(), product.getTester().getDriver());
+
     private boolean hasBeenFocused;
 
     public static class TestSpace
@@ -77,8 +83,6 @@ public class ConfluenceWebDriverTestBase
 
     @Rule
     public TestName name = new TestName();
-
-    protected static final ConfluenceRpc rpc = ConfluenceRpc.newInstance(product.getProductInstance().getBaseUrl(), ConfluenceRpc.Version.V2_WITH_WIKI_MARKUP);
 
     private static final LazyReference<UploadablePlugin> FUNCTEST_RPC_PLUGIN_HOLDER = new LazyReference<UploadablePlugin>()
     {
@@ -114,7 +118,8 @@ public class ConfluenceWebDriverTestBase
     @BeforeClass
     public static void confluenceTestSetup() throws Exception
     {
-        rpc.logIn(ConnectTestUserFactory.admin(product).confUser());
+        testUserFactory = new ConfluenceTestUserFactory(product);
+        rpc.logIn(testUserFactory.admin().confUser());
         installTestPlugins(rpc);
 
         // Hangs the Chrome WebDriver tests, so it's disabled for now.
@@ -136,7 +141,7 @@ public class ConfluenceWebDriverTestBase
     @AfterClass
     public static void confluenceTestTeardown() throws Exception
     {
-        rpc.logIn(ConnectTestUserFactory.admin(product).confUser());
+        rpc.logIn(testUserFactory.admin().confUser());
         rpc.getDarkFeaturesHelper().disableSiteFeature("webdriver.test.mode");
     }
 
@@ -154,7 +159,7 @@ public class ConfluenceWebDriverTestBase
         PluginHelper pluginHelper = rpc.getPluginHelper();
         if (!pluginHelper.isPluginEnabled(FUNCTEST_RPC_PLUGIN_HOLDER.get()))
         {
-            new WebTestPluginHelper(rpc.getBaseUrl(), ConnectTestUserFactory.admin(product).confUser()).installPlugin(FUNCTEST_RPC_PLUGIN_HOLDER.get());
+            new WebTestPluginHelper(rpc.getBaseUrl(), testUserFactory.admin().confUser()).installPlugin(FUNCTEST_RPC_PLUGIN_HOLDER.get());
         }
 
         if (!pluginHelper.isPluginEnabled(SCRIPTS_FINISHED_PLUGIN_HOLDER.get()))

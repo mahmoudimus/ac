@@ -87,7 +87,7 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
     @Test
     public void projectTabShouldBePresentAndReceiveContextParameters() throws Exception
     {
-        loginAndRun(ConnectTestUserFactory.basicUser(product), new Callable<Void>() {
+        loginAndRun(testUserFactory.basicUser(), new Callable<Void>() {
 
             @Override
             public Void call() throws Exception

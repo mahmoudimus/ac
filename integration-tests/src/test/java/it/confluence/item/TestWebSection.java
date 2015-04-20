@@ -81,7 +81,7 @@ public class TestWebSection extends ConfluenceWebDriverTestBase
     @Test
     public void testWebItemFoundWithinWebSection() throws MalformedURLException, XmlRpcFault
     {
-        TestUser user = ConnectTestUserFactory.basicUser(product);
+        TestUser user = testUserFactory.basicUser();
         final ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(user), "ds", "Page with web section", "some page content");
         final String pageId = pageData.getId();
 

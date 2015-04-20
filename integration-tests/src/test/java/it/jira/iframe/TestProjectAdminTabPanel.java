@@ -85,7 +85,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
     @Test
     public void testViewProjectAdminTab() throws Exception
     {
-        final ProjectSummaryPageTab page = loginAndVisit(ConnectTestUserFactory.admin(product), ProjectSummaryPageTab.class, project.getKey());
+        final ProjectSummaryPageTab page = loginAndVisit(testUserFactory.admin(), ProjectSummaryPageTab.class, project.getKey());
 
         assertThat(page.getTabs().getTabs(), IsCollectionContaining.<ProjectConfigTabs.Tab>hasItem(projectConfigTabMatcher(PROJECT_CONFIG_TAB_NAME)));
 
@@ -108,7 +108,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
     @Test
     public void tabIsNotAccessibleWithFalseCondition() throws RemoteException
     {
-        ProjectSummaryPageTab page = loginAndVisit(ConnectTestUserFactory.admin(product), ProjectSummaryPageTab.class, project.getKey());
+        ProjectSummaryPageTab page = loginAndVisit(testUserFactory.admin(), ProjectSummaryPageTab.class, project.getKey());
         assertThat("AddOn project config tab should be present", page.getTabs().getTabs(),
                 IsCollectionContaining.<ProjectConfigTabs.Tab>hasItem(projectConfigTabMatcher(PROJECT_CONFIG_TAB_NAME)));
 

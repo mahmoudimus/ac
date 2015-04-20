@@ -14,7 +14,7 @@ import com.atlassian.confluence.rest.client.authentication.AuthenticatedWebResou
 import com.atlassian.confluence.rest.client.impl.RemoteLongTaskServiceImpl;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
-import it.util.ConnectTestUserFactory;
+import it.util.ConfluenceTestUserFactory;
 import it.util.TestUser;
 
 import java.util.concurrent.Executors;
@@ -31,11 +31,14 @@ public class ConfluenceRestClient
 
     public ConfluenceRestClient(ConfluenceTestedProduct product)
     {
+        this(product, new ConfluenceTestUserFactory(product).admin());
+    }
+
+    public ConfluenceRestClient(ConfluenceTestedProduct product, TestUser admin)
+    {
         AuthenticatedWebResourceProvider authenticatedWebResourceProvider = new AuthenticatedWebResourceProvider(
                 ConfluenceRestClientFactory.newClient(),product.getProductInstance().getBaseUrl(), "");
-        TestUser user = ConnectTestUserFactory.admin(product);
-        authenticatedWebResourceProvider.setAuthContext(
-                user.getUsername(), user.getPassword().toCharArray());
+        authenticatedWebResourceProvider.setAuthContext(admin.getUsername(), admin.getPassword().toCharArray());
         contentService = new RemoteContentServiceImpl(authenticatedWebResourceProvider, executor);
         spaceService = new RemoteSpaceServiceImpl(authenticatedWebResourceProvider, executor);
         contentPropertyService = new RemoteContentPropertyServiceImpl(authenticatedWebResourceProvider, executor);

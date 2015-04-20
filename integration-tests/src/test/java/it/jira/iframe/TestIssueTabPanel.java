@@ -103,7 +103,7 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
     @Test
     public void testIssueTabPanel() throws RemoteException
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
         JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(
                 JiraViewIssuePageWithRemotePluginIssueTab.class, "issue-tab-panel", issue.getKey(), PLUGIN_KEY);
         assertThat(page.getMessage(), is("Success"));
@@ -120,7 +120,7 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
     {
         String completeKey = addonAndModuleKey(PLUGIN_KEY,MODULE_KEY);
 
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
 
         // tab panel should be present
         JiraViewIssuePage page = product.visit(JiraViewIssuePage.class, issue.getKey());

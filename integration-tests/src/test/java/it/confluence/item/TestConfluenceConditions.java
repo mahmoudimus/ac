@@ -1,7 +1,5 @@
 package it.confluence.item;
 
-import java.util.Map;
-
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -12,18 +10,16 @@ import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-
 import com.google.common.base.Optional;
-
+import it.confluence.ConfluenceWebDriverTestBase;
+import it.servlet.condition.CheckUsernameConditionServlet;
+import it.servlet.condition.ParameterCapturingConditionServlet;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.confluence.ConfluenceWebDriverTestBase;
-import it.servlet.condition.CheckUsernameConditionServlet;
-import it.servlet.condition.ParameterCapturingConditionServlet;
-import it.util.ConnectTestUserFactory;
-import it.util.TestUser;
+import java.util.Map;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -35,7 +31,6 @@ import static it.matcher.ParamMatchers.isLocale;
 import static it.matcher.ParamMatchers.isTimeZone;
 import static it.matcher.ParamMatchers.isVersionNumber;
 import static org.hamcrest.CoreMatchers.both;
-import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
@@ -67,8 +62,8 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        betty = ConnectTestUserFactory.admin(getProduct());
-        barney = ConnectTestUserFactory.basicUser(getProduct());
+        betty = testUserFactory.admin();
+        barney = testUserFactory.basicUser();
 
         onlyBettyWebItem = "only-" + betty.getDisplayName();
         bettyAndBarneyWebItem = betty.getDisplayName() + "-and-" + barney.getDisplayName();
@@ -175,7 +170,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
     @Test
     public void adminCannotSeeBettyWebItem() throws Exception
     {
-        login(ConnectTestUserFactory.admin(getProduct()));
+        login(testUserFactory.admin());
 
         visitEditPage();
         assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(onlyBettyWebItem)));
@@ -204,7 +199,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
     @Test
     public void adminCannotSeeBettyAndBarneyWebItem() throws Exception
     {
-        login(ConnectTestUserFactory.admin(getProduct()));
+        login(testUserFactory.admin());
 
         visitEditPage();
         assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(bettyAndBarneyWebItem)));
@@ -231,7 +226,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
     @Test
     public void adminCanSeeAdminRightsWebItem() throws Exception
     {
-        login(ConnectTestUserFactory.admin(getProduct()));
+        login(testUserFactory.admin());
 
         visitEditPage();
         RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(ADMIN_RIGHTS_WEBITEM), Optional.of("help-menu-link"));
@@ -251,7 +246,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
     @Test
     public void standardParametersArePassedToConditions() throws Exception
     {
-        TestUser user = ConnectTestUserFactory.basicUser(getProduct());
+        TestUser user = testUserFactory.basicUser();
         navigateToEditPageAndVerifyParameterCapturingWebItem(user);
 
         Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
@@ -266,7 +261,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
     @Test
     public void contextParametersArePassedToConditions() throws Exception
     {
-        ConfluenceEditPage editPage = navigateToEditPageAndVerifyParameterCapturingWebItem(ConnectTestUserFactory.basicUser(getProduct()));
+        ConfluenceEditPage editPage = navigateToEditPageAndVerifyParameterCapturingWebItem(testUserFactory.basicUser());
 
         Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
 
@@ -277,7 +272,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
     @Test
     public void spaceContextParametersArePassedToConditions() throws Exception
     {
-        login(ConnectTestUserFactory.basicUser(getProduct()));
+        login(testUserFactory.basicUser());
         ConfluenceEditPage editPage = visitEditPage();
         // NOTE: we don't actually need the web panel to test its condition invocation
 
@@ -292,7 +287,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
     @Test
     public void versionIsIncluded() throws Exception
     {
-        navigateToEditPageAndVerifyParameterCapturingWebItem(ConnectTestUserFactory.basicUser(getProduct()));
+        navigateToEditPageAndVerifyParameterCapturingWebItem(testUserFactory.basicUser());
 
         String version = PARAMETER_CAPTURING_SERVLET.getHttpHeaderFromLastRequest(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION).get();
 
@@ -302,7 +297,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
 
     private ConfluenceEditPage visitEditPage() throws Exception
     {
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(ConnectTestUserFactory.basicUser(product)), "ds", "Page with webpanel", "some page content");
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(testUserFactory.basicUser()), "ds", "Page with webpanel", "some page content");
 
         return product.visit(ConfluenceEditPage.class, pageData.getId());
     }

@@ -15,7 +15,6 @@ import it.confluence.MacroStorageFormatBuilder;
 import it.servlet.ConnectAppServlets;
 import it.servlet.EchoContextServlet;
 import it.servlet.EchoQueryParametersServlet;
-import it.util.ConnectTestUserFactory;
 import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -132,7 +131,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroIsRendered() throws Exception
     {
-        ViewPage viewPage = getProduct().login(ConnectTestUserFactory.basicUser(product).confUser(), ViewPage.class, createPageWithStorageFormatMacro());
+        ViewPage viewPage = getProduct().login(testUserFactory.basicUser().confUser(), ViewPage.class, createPageWithStorageFormatMacro());
         String content = viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
         assertThat(content, endsWith("Storage Format Content"));
     }
@@ -155,7 +154,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroHttpMethod() throws Exception
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
         String body = new MacroStorageFormatBuilder(GET_MACRO_KEY).build();
         Content page = createPage(randomName(GET_MACRO_KEY), body);
         getProduct().viewPage(String.valueOf(page.getId().asLong()));
@@ -166,7 +165,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testBodyInclusion() throws Exception
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
         String macroBody = "a short body";
         String body = new MacroStorageFormatBuilder(SHORT_BODY_MACRO_KEY).richTextBody(macroBody).build();
         Content page = createPage(randomName(SHORT_BODY_MACRO_KEY), body);
@@ -179,7 +178,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testParameterInclusion() throws Exception
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
         String parameterValue = "param value";
         String body = new MacroStorageFormatBuilder(PARAMETER_MACRO_KEY).parameter(SINGLE_PARAM_ID, parameterValue).build();
         Content page = createPage(randomName(PARAMETER_MACRO_KEY), body);
@@ -192,7 +191,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroInComment() throws Exception
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
         String title = randomName("The macro is in the comment!");
         Content page = createPage(title, "The macro is in the comment!");
         addCommentWithMacro(String.valueOf(page.getId().asLong()));
@@ -218,7 +217,7 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroCacheFlushes() throws Exception
     {
-        login(ConnectTestUserFactory.basicUser(product));
+        login(testUserFactory.basicUser());
         String body = new MacroStorageFormatBuilder(COUNTER_MACRO_KEY).build();
         String title = randomName(COUNTER_MACRO_KEY);
         Content page = createPage(title, body);
