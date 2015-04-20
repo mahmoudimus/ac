@@ -1,23 +1,24 @@
 package it.com.atlassian.plugin.connect.scopes.jira;
 
-import com.atlassian.crowd.embedded.api.User;
+import java.io.IOException;
+
 import com.atlassian.jira.bc.issue.IssueService;
 import com.atlassian.jira.bc.issue.comment.CommentService;
 import com.atlassian.jira.bc.issue.comment.property.CommentPropertyService;
+import com.atlassian.jira.bc.project.ProjectCreationData;
 import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.entity.property.EntityProperty;
 import com.atlassian.jira.entity.property.EntityPropertyService;
 import com.atlassian.jira.issue.comments.Comment;
-import com.atlassian.jira.project.AssigneeTypes;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
-import com.google.common.collect.ImmutableMap;
-import org.apache.commons.lang3.RandomStringUtils;
 
-import java.io.IOException;
+import com.google.common.collect.ImmutableMap;
+
+import org.apache.commons.lang3.RandomStringUtils;
 
 import static org.junit.Assert.assertTrue;
 
@@ -49,8 +50,15 @@ public class JiraScopeTestUtil
         int keyLength = 6;
         String key = RandomStringUtils.randomAlphabetic(keyLength).toUpperCase();
         ApplicationUser user = getAdmin();
-        ProjectService.CreateProjectValidationResult result = projectService.validateCreateProject(
-                user.getDirectoryUser(), key, key, null, ADMIN_USERNAME, null, AssigneeTypes.PROJECT_LEAD);
+
+        ProjectCreationData projectCreationData = new ProjectCreationData.Builder()
+                .withName(key)
+                .withKey(key)
+                .withLead(user)
+                .withDescription(key)
+                .build();
+
+        ProjectService.CreateProjectValidationResult result = projectService.validateCreateProject(user, projectCreationData);
         return projectService.createProject(result);
     }
 
@@ -59,11 +67,10 @@ public class JiraScopeTestUtil
     public Comment createComment() throws JSONException, IOException
     {
         final ApplicationUser admin = getAdmin();
-        final User user = getAdmin().getDirectoryUser();
 
         Project project = createProject();
 
-        IssueService.IssueResult issueResult = issueService.create(user, issueService.validateCreate(user, issueService.newIssueInputParameters()
+        IssueService.IssueResult issueResult = issueService.create(admin, issueService.validateCreate(admin, issueService.newIssueInputParameters()
                 .setIssueTypeId("1")
                 .setAssigneeId(admin.getKey())
                 .setDescription("Description")
