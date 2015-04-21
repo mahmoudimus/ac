@@ -14,6 +14,7 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
+import it.util.ConnectTestUserFactory;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -36,8 +37,6 @@ import static org.junit.Assert.assertEquals;
  */
 public class TestIssueTabPanelWithJSDialog extends JiraWebDriverTestBase
 {
-    private static final TestUser USER = TestUser.BARNEY;
-
     private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
     private static final String ISSUE_TAB_PANEL_W_DIALOG = "issue-tab-panel-w-dialog";
     private static JiraOps jiraOps = new JiraOps(product.getProductInstance());
@@ -52,7 +51,6 @@ public class TestIssueTabPanelWithJSDialog extends JiraWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         product.logout();
-        new JiraHelpTipApiClient(product, USER).dismissAllHelpTips();
 
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
@@ -104,7 +102,8 @@ public class TestIssueTabPanelWithJSDialog extends JiraWebDriverTestBase
     @Test
     public void testIssueTabPanelWithJSDialog() throws RemoteException
     {
-        product.quickLogin(USER.getUsername(), USER.getPassword());
+        TestUser user = testUserFactory.basicUser();
+        product.quickLogin(user.getUsername(), user.getPassword());
         JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(
                 JiraViewIssuePageWithRemotePluginIssueTab.class, ISSUE_TAB_PANEL_W_DIALOG, issueKey, PLUGIN_KEY);
 

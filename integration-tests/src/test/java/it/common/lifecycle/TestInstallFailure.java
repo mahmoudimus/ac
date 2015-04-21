@@ -23,7 +23,7 @@ import it.common.MultiProductWebDriverTestBase;
 import it.modules.ConnectAsserts;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
-import it.util.TestUser;
+import it.util.ConnectTestUserFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -147,14 +147,14 @@ public class TestInstallFailure extends MultiProductWebDriverTestBase
 
     public void assertAddonIsNotInstalled()
     {
-        login(TestUser.ADMIN);
+        login(testUserFactory.admin());
         PluginManager page = product.visit(PluginManager.class);
         assertTrue("Plugin '" + pluginKey + "' should not be installed", !page.contains(pluginKey));
     }
 
     public void assertPageLinkWorks() throws MalformedURLException, URISyntaxException, JwtVerificationException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtParseException
     {
-        login(TestUser.ADMIN);
+        login(testUserFactory.admin());
 
         PluginManager page = product.visit(PluginManager.class);
         revealLinkIfNecessary(page);

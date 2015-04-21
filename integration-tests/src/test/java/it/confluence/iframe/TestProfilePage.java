@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPag
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceUserProfilePage;
 import it.common.iframe.AbstractPageTestBase;
+import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -32,9 +33,11 @@ public class TestProfilePage extends AbstractPageTestBase
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
-        ConnectAddOnEmbeddedTestPage page = runCanClickOnPageLinkAndSeeAddonContents(ConfluenceUserProfilePage.class, Option.<String>none());
+        TestUser user = testUserFactory.basicUser();
+        login(user);
+        ConnectAddOnEmbeddedTestPage page = runCanClickOnPageLinkAndSeeAddonContents(ConfluenceUserProfilePage.class, Option.<String>none(), user);
         Map<String,String> queryParams = page.getIframeQueryParams();
-        assertThat(queryParams.get("profile_user"), is("admin"));
+        assertThat(queryParams.get("profile_user"), is(user.getUsername()));
         assertThat(queryParams.get("profile_key"), isNotBlank());
     }
 
@@ -44,7 +47,7 @@ public class TestProfilePage extends AbstractPageTestBase
         runner.setToggleableConditionShouldDisplay(false);
 
         // web item should not be displayed
-        loginAndVisit(TestUser.ADMIN, ConfluenceUserProfilePage.class);
+        loginAndVisit(testUserFactory.basicUser(), ConfluenceUserProfilePage.class);
         assertThat("Expected web-item for page to NOT be present", connectPageOperations
                 .existsWebItem(MY_AWESOME_PAGE_KEY), is(false));
 

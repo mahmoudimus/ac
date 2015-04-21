@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
+import it.util.ConnectTestUserFactory;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -101,7 +102,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws Exception
     {
-        login(TestUser.ADMIN);
+        login(testUserFactory.basicUser());
 
         ConfluenceViewPage createdPage = createAndVisitViewPage();
         ConfluenceGeneralPage generalPage = product.getPageBinder().bind(ConfluenceGeneralPage.class, KEY_MY_AWESOME_PAGE, "My Awesome Page", true, addonKey);
@@ -128,7 +129,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
     {
         runner.setToggleableConditionShouldDisplay(false);
 
-        login(TestUser.ADMIN);
+        login(testUserFactory.basicUser());
 
         // web item should not be displayed
         createAndVisitViewPage();
@@ -142,7 +143,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
 
     private ConfluenceViewPage createAndVisitViewPage() throws Exception
     {
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(TestUser.ADMIN), SPACE, "A test page", "some page content");
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(testUserFactory.basicUser()), SPACE, "A test page", "some page content");
         return product.visit(ConfluenceViewPage.class, pageData.getId());
     }
 

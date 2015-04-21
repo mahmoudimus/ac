@@ -15,6 +15,7 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.upm.pageobjects.PluginManager;
 import it.modules.ConnectAsserts;
 import it.servlet.ConnectAppServlets;
+import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 import org.junit.Before;
 
@@ -57,7 +58,7 @@ public class TestOAuthInstallFailure extends TestInstallFailure
     @Override
     public void assertPageLinkWorks() throws MalformedURLException, URISyntaxException, JwtVerificationException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtParseException
     {
-        login(TestUser.ADMIN);
+        login(testUserFactory.admin());
 
         PluginManager page = product.visit(PluginManager.class);
         revealLinkIfNecessary(page);

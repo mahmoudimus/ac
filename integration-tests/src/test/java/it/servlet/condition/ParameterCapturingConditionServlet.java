@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,10 +51,11 @@ public class ParameterCapturingConditionServlet extends HttpServlet
         paramsFromLastRequest = req.getParameterMap();
         Map<String,String> headers = new HashMap<String,String>();
 
-        for (String name: Collections.list(req.getHeaderNames()))
+        for (String name: Collections.list((Enumeration<String>)req.getHeaderNames()))
         {
             headers.put(name, req.getHeader(name));
         }
+        
         headersFromLastRequest = headers;
 
         resp.setContentType("application/json");

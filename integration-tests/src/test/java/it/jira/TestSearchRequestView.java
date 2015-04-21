@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.test.utils.NameValuePairs;
 import hudson.plugins.jira.soap.RemoteIssue;
 import it.servlet.ConnectAppServlets;
 import it.servlet.EchoQueryParametersServlet;
+import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -70,7 +71,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     @Test
     public void verifyEntryIsPresentWhenLoggedIn() throws Exception
     {
-        login(TestUser.ADMIN);
+        login(testUserFactory.basicUser());
         IssueNavigatorViewsMenu.ViewEntry entry = findSearchRequestViewEntry();
 
         assertThat(entry.isPresent(), is(true));
@@ -87,7 +88,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     @Test
     public void verifyEntryIsNotPresentWhenAddOnConditionIsFalse() throws Exception
     {
-        login(TestUser.ADMIN);
+        login(testUserFactory.basicUser());
 
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
@@ -98,7 +99,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     @Test
     public void verifyIssueKeyIsPartOfUrl() throws Exception
     {
-        login(TestUser.ADMIN);
+        login(testUserFactory.basicUser());
         RemoteIssue issue = createIssue();
         findSearchRequestViewEntry().click();
         NameValuePairs queryParameters = searchRequestViewServlet.waitForQueryParameters();
@@ -132,7 +133,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
 
     private NameValuePairs logInAndGetSearchRequestViewQueryParameters() throws Exception
     {
-        login(TestUser.ADMIN);
+        login(testUserFactory.basicUser());
         createIssue();
         findSearchRequestViewEntry().click();
         NameValuePairs queryParameters = searchRequestViewServlet.waitForQueryParameters();
