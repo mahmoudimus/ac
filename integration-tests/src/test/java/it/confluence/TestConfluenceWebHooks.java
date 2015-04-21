@@ -1,16 +1,13 @@
 package it.confluence;
 
-import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
-
+import it.util.TestUser;
 import org.junit.Assert;
 import org.junit.Test;
-
-import it.util.TestUser;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider.getConfluenceTestedProduct;
@@ -19,7 +16,6 @@ import static it.matcher.ParamMatchers.isVersionNumber;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-@ConvertToWiredTest
 public class TestConfluenceWebHooks
 {
     private final String baseUrl = getConfluenceTestedProduct().getProductInstance().getBaseUrl();

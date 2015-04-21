@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.test.plugin.module.confluence;
 
-import com.atlassian.plugin.connect.plugin.module.confluence.SpaceToolsContextInterceptor;
-import com.atlassian.plugin.connect.plugin.module.confluence.SpaceToolsIFrameAction;
-import com.atlassian.plugin.connect.plugin.module.page.SpaceToolsTabContext;
+import com.atlassian.plugin.connect.confluence.iframe.context.SpaceToolsContextInterceptor;
+import com.atlassian.plugin.connect.confluence.iframe.SpaceToolsIFrameAction;
+import com.atlassian.plugin.connect.confluence.iframe.SpaceToolsTabContext;
 import com.google.common.collect.ImmutableMap;
 import com.opensymphony.xwork.Action;
 import com.opensymphony.xwork.ActionInvocation;

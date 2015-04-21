@@ -11,7 +11,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.BlueprintTemplateBeanB
 import com.atlassian.plugin.connect.modules.beans.builder.IconBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.BlueprintModuleProvider;
+import com.atlassian.plugin.connect.confluence.capabilities.provider.BlueprintModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;

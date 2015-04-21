@@ -4,7 +4,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.XWorkActionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.module.XWorkPackageCreator;
+import com.atlassian.plugin.connect.confluence.capabilities.provider.XWorkPackageCreator;
 import com.atlassian.xwork.interceptors.XsrfTokenInterceptor;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;

@@ -4,7 +4,7 @@ import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.capabilities.condition.ConnectConditionFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.WorkflowPostFunctionResource;
+import com.atlassian.plugin.connect.jira.capabilities.provider.WorkflowPostFunctionResource;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.context.IFrameRenderContextBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;

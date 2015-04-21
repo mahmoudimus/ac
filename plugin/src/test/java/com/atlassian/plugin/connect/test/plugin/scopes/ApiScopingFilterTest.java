@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.test.plugin.scopes;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jwt.core.Clock;
-import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
+import com.atlassian.plugin.connect.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManager;
 import com.atlassian.plugin.connect.plugin.scopes.ApiScopingFilter;

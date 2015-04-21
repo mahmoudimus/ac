@@ -107,9 +107,9 @@
     </web-resource>
 
     <applinks-application-type name="Remote Plugin Container" key="remote-plugin-container-type"
-                                   class="com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerApplicationTypeImpl"
+                                   class="com.atlassian.plugin.connect.plugin.applinks.RemotePluginContainerApplicationTypeImpl"
                                    interface="com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType">
-            <manifest-producer class="com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerManifestProducer"/>
+            <manifest-producer class="com.atlassian.plugin.connect.plugin.applinks.RemotePluginContainerManifestProducer"/>
     </applinks-application-type>
 
     <analytics-whitelist key="analyticsWhitelist" resource="whitelist/connect_whitelist.json"/>

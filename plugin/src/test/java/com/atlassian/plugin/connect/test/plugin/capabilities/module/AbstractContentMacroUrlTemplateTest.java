@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.test.plugin.capabilities.module;
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.module.macro.AbstractMacro;
+import com.atlassian.plugin.connect.confluence.macro.AbstractMacro;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeServiceImpl;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;

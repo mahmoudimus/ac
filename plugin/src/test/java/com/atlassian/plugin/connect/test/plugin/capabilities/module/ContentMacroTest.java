@@ -5,8 +5,8 @@ import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.macro.MacroExecutionException;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
-import com.atlassian.plugin.connect.plugin.capabilities.module.macro.DynamicContentMacro;
-import com.atlassian.plugin.connect.plugin.capabilities.module.macro.RemoteMacroRenderer;
+import com.atlassian.plugin.connect.confluence.macro.DynamicContentMacro;
+import com.atlassian.plugin.connect.confluence.macro.RemoteMacroRenderer;
 import com.atlassian.plugin.connect.plugin.capabilities.util.MacroEnumMapper;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.ContentEntityForTests;
@@ -21,7 +21,6 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;

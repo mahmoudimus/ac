@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.provider;
 
-import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
+import com.atlassian.plugin.connect.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.AdminPageModuleProvider;
 import org.junit.Ignore;
 import org.junit.Test;
