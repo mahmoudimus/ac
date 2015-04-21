@@ -2,7 +2,7 @@ package at.jira;
 
 import at.util.ExternalAddonInstaller;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
-import java.rmi.RemoteException;
+import com.atlassian.test.categories.OnDemandAcceptanceTest;
 import com.google.common.base.Optional;
 import it.jira.JiraWebDriverTestBase;
 import it.util.TestUser;
@@ -13,7 +13,7 @@ import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import hudson.plugins.jira.soap.RemoteIssue;
+import java.rmi.RemoteException;
 
 @Category (OnDemandAcceptanceTest.class)
 public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
