@@ -664,13 +664,13 @@
         <amps.version>4.2.22</amps.version>
         <atlassian.analytics.version>3.38</atlassian.analytics.version>
         <atlassian.applinks.version>4.2.4</atlassian.applinks.version>
-        <atlassian.confluence.version>5.7-OD-47-038</atlassian.confluence.version>
+        <atlassian.confluence.version>5.7-OD-48-066</atlassian.confluence.version>
         <atlassian.crowd.version>2.8.0-OD-4</atlassian.crowd.version>
         <atlassian.fugue.version>1.1</atlassian.fugue.version>
         <atlassian.healthcheck.version>2.0.4</atlassian.healthcheck.version>
         <atlassian.httpclient.version>0.20.1</atlassian.httpclient.version>
         <atlassian.httpclient.api.version>0.17</atlassian.httpclient.api.version>
-        <atlassian.jira.version>6.4-OD-15-055</atlassian.jira.version>
+        <atlassian.jira.version>6.5-OD-02-089</atlassian.jira.version>
         <atlassian.jira.rest.version>${atlassian.jira.version}</atlassian.jira.rest.version>
         <atlassian.jira.testkit.version>6.2.21</atlassian.jira.testkit.version>
         <atlassian.mail.version>2.5.4</atlassian.mail.version>
