@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.test.pageobjects.jira.workflow;
 
-import com.atlassian.jira.pageobjects.pages.admin.workflow.AddWorkflowTransitionFunctionParamsPage;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.AddWorkflowTransitionPostFunctionPage;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.ViewWorkflowTransitionPage;
 import com.atlassian.pageobjects.PageBinder;
@@ -9,7 +8,7 @@ import org.openqa.selenium.By;
 
 import javax.inject.Inject;
 
-import static com.atlassian.webdriver.utils.element.ElementConditions.isPresent;
+import static com.atlassian.webdriver.utils.element.ElementConditions.isVisible;
 
 public class ExtendedViewWorkflowTransitionPage extends ViewWorkflowTransitionPage
 {
@@ -35,9 +34,9 @@ public class ExtendedViewWorkflowTransitionPage extends ViewWorkflowTransitionPa
 
     public JiraEditWorkflowTransitionFunctionParamsPage updateFirstPostFunction(String addonKey, String moduleKey)
     {
-        poller.waitUntil(isPresent(By.id("view_post_functions")), 20);
+        poller.waitUntil(isVisible(By.id("view_post_functions")), 20);
         driver.findElement(By.id("view_post_functions")).click();
-        poller.waitUntil(isPresent(By.className("criteria-post-function-edit")), 10);
+        poller.waitUntil(isVisible(By.className("criteria-post-function-edit")), 10);
         driver.findElement(By.className("criteria-post-function-edit")).click();
         return pageBinder.bind(JiraEditWorkflowTransitionFunctionParamsPage.class, addonKey, moduleKey);
     }

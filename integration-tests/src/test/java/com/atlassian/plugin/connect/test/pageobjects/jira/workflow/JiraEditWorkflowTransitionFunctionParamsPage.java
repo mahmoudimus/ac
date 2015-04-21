@@ -7,6 +7,8 @@ import org.openqa.selenium.By;
 
 import javax.inject.Inject;
 
+import static com.atlassian.webdriver.utils.element.ElementConditions.isVisible;
+
 public class JiraEditWorkflowTransitionFunctionParamsPage extends ConnectAddOnEmbeddedTestPage
 {
     @Inject private WebDriverPoller poller;
@@ -18,7 +20,8 @@ public class JiraEditWorkflowTransitionFunctionParamsPage extends ConnectAddOnEm
 
     public void submit()
     {
-        poller.waitUntil(ElementConditions.isPresent(By.id("add_submit")), 10);
-        driver.findElement(By.id("add_submit")).click();
+        By submitButtonLocator = By.id("add_submit");
+        poller.waitUntil(isVisible(submitButtonLocator), 10);
+        driver.findElement(submitButtonLocator).click();
     }
 }
