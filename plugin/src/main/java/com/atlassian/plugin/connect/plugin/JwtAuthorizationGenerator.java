@@ -12,8 +12,13 @@ import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.plugin.util.ConfigurationUtils;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.http.ReKeyableAuthorizationGenerator;
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicHeaderValueParser;
@@ -78,7 +83,7 @@ public class JwtAuthorizationGenerator implements ReKeyableAuthorizationGenerato
         return JWT_AUTH_HEADER_PREFIX + encodeJwt(httpMethod, url, addOnBaseUrl, parameters, null, consumerService.getConsumer().getKey(), jwtService, secret);
     }
 
-    static String encodeJwt(HttpMethod httpMethod, URI targetPath, URI addOnBaseUrl, Map<String, String[]> params, String userKeyValue, String issuerId, JwtService jwtService, String secret)
+    static String encodeJwt(HttpMethod httpMethod, URI targetPath, URI addOnBaseUrl, Map<String, String[]> params, UserManager userManager, String issuerId, JwtService jwtService, String secret)
     {
         checkArgument(null != httpMethod, "HttpMethod argument cannot be null");
         checkArgument(null != targetPath, "URI argument cannot be null");
@@ -90,10 +95,26 @@ public class JwtAuthorizationGenerator implements ReKeyableAuthorizationGenerato
                 .expirationTime(TimeUtil.currentTimePlusNSeconds(JWT_EXPIRY_WINDOW_SECONDS))
                 .issuer(issuerId);
 
-        if (null != userKeyValue)
+        UserProfile remoteUser = userManager == null ? null : userManager.getRemoteUser();
+
+        Map<String, Object> jwtContextClaim = Maps.newHashMap();
+
+        String userKeyValue = "";
+        if (remoteUser != null)
         {
+            userKeyValue = remoteUser.getUserKey().getStringValue();
+
+            Map<String, String> jwtContextUser = ImmutableMap.of(
+                    "userKey", userKeyValue,
+                    "username", remoteUser.getUsername(),
+                    "displayName", remoteUser.getFullName()
+            );
+
+            jwtContextClaim.put("user", jwtContextUser);
             jsonBuilder = jsonBuilder.subject(userKeyValue);
         }
+
+        jsonBuilder = jsonBuilder.claim("context", jwtContextClaim);
 
         Map<String, String[]> completeParams = params;
 
