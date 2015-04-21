@@ -2,6 +2,8 @@ package it.confluence;
 
 import com.atlassian.confluence.pageobjects.page.admin.ConfluenceAdminHomePage;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
+import com.atlassian.confluence.pageobjects.page.space.ViewSpaceSummaryPage;
+import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -13,7 +15,6 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceAdminP
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceUserProfilePage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectConfluenceAdminHomePage;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ExtendedViewSpaceSummaryPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
 import it.servlet.ConnectAppServlets;
@@ -247,10 +248,10 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @Test
     public void testSpaceAdminTab() throws Exception
     {
-        ExtendedViewSpaceSummaryPage viewSpaceSummaryPage
-                = loginAndVisit(testUserFactory.admin(), ExtendedViewSpaceSummaryPage.class, TestSpace.DEMO);
-        LinkedRemoteContent spaceToolsTab = viewSpaceSummaryPage.findSpaceToolsTab(getModuleKey(SPACE_TOOLS_TAB_KEY));
-        assertIsEscaped(spaceToolsTab.getWebItem().getLinkText());
+        loginAndVisit(testUserFactory.admin(), ViewSpaceSummaryPage.class, TestSpace.DEMO);
+        LinkedRemoteContent addonPage = connectPageOperations.findRemoteLinkedContent(
+                RemoteWebItem.ItemMatchingMode.LINK_TEXT, MODULE_NAME, Option.<String>none(), getModuleKey(SPACE_TOOLS_TAB_KEY));
+        assertIsEscaped(addonPage.getWebItem().getLinkText());
     }
 
     private void assertIsEscaped(String text)
