@@ -34,7 +34,7 @@ or Confluence Cloud with Atlassian Connect as follows:
 </div>
 
 ## [1.1.28](../release-notes/1-1-0.html#1.1.28)
-* Username and display name available on the JWT token
+* Username and display name available on the JWT token [AC-1558](https://ecosystem.atlassian.net/browse/AC-1558)
 
 ## [1.1.27](../release-notes/1-1-0.html#1.1.27)
 * Confluence: Allow index schema configuration for content properties [CE-77](https://ecosystem.atlassian.net/browse/CE-77)
