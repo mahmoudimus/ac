@@ -14,8 +14,6 @@
          the macro is inserted into the editor.
          */
 
-        var MAX_PATTERN_LENGTH = 200;
-
         var escapePattern = function (str) {
             return str.replace(/[\-\[\]\/\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
         };
@@ -40,17 +38,6 @@
             // check the url pattern is not banned
             for (i=0; i<patternBlackList.length; i++) {
                 if (pattern == patternBlackList[i]) { return false; }
-            }
-
-            // pattern must be a valid url
-            if (! (pattern.indexOf("http://") === 0 ||
-                   pattern.indexOf("https://") === 0)) {
-                return false;
-            }
-
-            // pattern must be less than x in length
-            if (pattern.length > MAX_PATTERN_LENGTH) {
-                return false;
             }
 
             return autoconvertDef &&
