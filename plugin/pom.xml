@@ -562,6 +562,8 @@
                         <Import-Package>
                             <!--Required for pa / pi to work with the new version of atlassian-plugins-->
                             com.atlassian.plugin.osgi.bridge.external;
+                            org.osgi.util.tracker;
+                            org.osgi.framework;
                             com.github.fge.jsonschema.validator;version="${atlassian.json.schema.validator.version}",
                             com.github.fge.jsonschema.core*;version="1.2.4",
                             com.github.fge.jsonschema.cfg*;version="${json.schema.validator.version}",
