@@ -55,6 +55,11 @@
                 var urlParameter = autoconvertDef.autoconvert.urlParameter;
                 var pattern = autoconvertDef.matcherBean.pattern;
 
+                // Consolidate any double up wildcards
+                while (pattern.indexOf('{}{}') != -1) {
+                    pattern = pattern.replace('{}{}', '{}')
+                }
+
                 // build a regex from the defined autoconvert pattern
                 pattern = escapePattern(pattern);
                 pattern = replaceAll('{}', '[^/]*?', pattern);
