@@ -685,11 +685,6 @@
                             </pluginArtifacts>
 
                             <bundledArtifacts>
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.analytics</groupId>
-                                    <artifactId>analytics-client</artifactId>
-                                    <version>${atlassian.analytics.version}</version>
-                                </bundledArtifact>
                             </bundledArtifacts>
                         </product>
                         <product>
@@ -759,12 +754,6 @@
                                     <groupId>com.atlassian.devrel</groupId>
                                     <artifactId>developer-toolbox-plugin</artifactId>
                                     <version>${toolbox.version}</version>
-                                </bundledArtifact>
-
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.analytics</groupId>
-                                    <artifactId>analytics-client</artifactId>
-                                    <version>${atlassian.analytics.version}</version>
                                 </bundledArtifact>
                             </bundledArtifacts>
                         </product>
