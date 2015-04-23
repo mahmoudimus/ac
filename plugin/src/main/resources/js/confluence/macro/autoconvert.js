@@ -55,16 +55,6 @@
                 var urlParameter = autoconvertDef.autoconvert.urlParameter;
                 var pattern = autoconvertDef.matcherBean.pattern;
 
-                // Consolidate any double up wildcards
-                while (pattern.indexOf('{}{}') != -1) {
-                    pattern = pattern.replace('{}{}', '{}')
-                }
-
-                // build a regex from the defined autoconvert pattern
-                pattern = escapePattern(pattern);
-                pattern = replaceAll('{}', '[^/]*?', pattern);
-                pattern = "^" + pattern + "$";
-
                 var matches = uri.source.match(pattern);
 
                 if (matches) {
@@ -90,6 +80,24 @@
                     if (numAutoconvertDefs > 0) {
                         for (var i = 0; i < numAutoconvertDefs; i++) {
                             if (isValidAutoconvertDef(autoconvertDefs[i])) {
+                                var pattern = autoconvertDefs[i].matcherBean.pattern;
+
+                                console.log("before pattern is: "+ pattern);
+
+                                // Consolidate any double up wildcards
+                                while (pattern.indexOf('{}{}') != -1) {
+                                    pattern = pattern.replace('{}{}', '{}')
+                                }
+
+                                // build a regex from the defined autoconvert pattern
+                                pattern = escapePattern(pattern);
+                                pattern = replaceAll('{}', '[^/]*?', pattern);
+                                pattern = "^" + pattern + "$";
+
+                                autoconvertDefs[i].matcherBean.pattern = pattern;
+
+                                console.log("after pattern is: "+ pattern);
+
                                 tinymce.plugins.Autoconvert.autoConvert.addHandler(factory(autoconvertDefs[i], function (macro, done) {
                                     tinymce.plugins.Autoconvert.convertMacroToDom(macro, done, function (jqXHR, textStatus, errorThrown) {
                                         console.log("error converting macro [ " + macro.name + " ] to dom elements [ " + errorThrown + " ]");
