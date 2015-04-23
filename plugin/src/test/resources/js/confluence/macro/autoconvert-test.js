@@ -33,12 +33,15 @@ define(['ac/confluence/macro/autoconvert'], function (Autoconvert) {
     // link - the link that is being pasted
     // shouldMatch - true: the link should have matched, or false: if the link should not have matched
     function quickRoundTripCheck(pattern, link, shouldMatch) {
-        Autoconvert.factory({
+        var autoconvertDef = {
             "macroName": "macro", "autoconvert": {"urlParameter": "url"},
             "matcherBean": {"pattern": pattern}
-        }, function (macro, done) {
+        };
+        autoconvertDef.matcherBean.pattern = Autoconvert.convertPatternToRegex(pattern);
+
+        Autoconvert.factory(autoconvertDef, function (macro, done) {
             // has matched
-            ok(shouldMatch)
+            ok(shouldMatch);
             strictEqual(macro.params.url, link);
         })({source: link}, undefined, function () {
             // has not matched

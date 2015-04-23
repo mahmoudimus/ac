@@ -22,6 +22,20 @@
             return str.replace(new RegExp(find, 'g'), replace);
         };
 
+        var convertPatternToRegex = function (pattern) {
+            // Consolidate any double up wildcards
+            while (pattern.indexOf('{}{}') != -1) {
+                pattern = pattern.replace('{}{}', '{}')
+            }
+
+            // build a regex from the defined autoconvert pattern
+            pattern = escapePattern(pattern);
+            pattern = replaceAll('{}', '[^/]*?', pattern);
+            pattern = "^" + pattern + "$";
+
+            return pattern;
+        };
+
         var isValidAutoconvertDef = function (autoconvertDef) {
             var pattern = autoconvertDef.matcherBean.pattern;
             var patternBlackList = [
@@ -74,6 +88,7 @@
             escapePattern: escapePattern,
             replaceAll: replaceAll,
             factory: factory,
+            convertPatternToRegex: convertPatternToRegex,
             registerAutoconvertHandlers: function (autoconvertDefs, tinymce) {
                 if (autoconvertDefs) {
                     var numAutoconvertDefs = autoconvertDefs.length;
@@ -81,22 +96,7 @@
                         for (var i = 0; i < numAutoconvertDefs; i++) {
                             if (isValidAutoconvertDef(autoconvertDefs[i])) {
                                 var pattern = autoconvertDefs[i].matcherBean.pattern;
-
-                                console.log("before pattern is: "+ pattern);
-
-                                // Consolidate any double up wildcards
-                                while (pattern.indexOf('{}{}') != -1) {
-                                    pattern = pattern.replace('{}{}', '{}')
-                                }
-
-                                // build a regex from the defined autoconvert pattern
-                                pattern = escapePattern(pattern);
-                                pattern = replaceAll('{}', '[^/]*?', pattern);
-                                pattern = "^" + pattern + "$";
-
-                                autoconvertDefs[i].matcherBean.pattern = pattern;
-
-                                console.log("after pattern is: "+ pattern);
+                                autoconvertDefs[i].matcherBean.pattern = convertPatternToRegex(pattern);
 
                                 tinymce.plugins.Autoconvert.autoConvert.addHandler(factory(autoconvertDefs[i], function (macro, done) {
                                     tinymce.plugins.Autoconvert.convertMacroToDom(macro, done, function (jqXHR, textStatus, errorThrown) {
