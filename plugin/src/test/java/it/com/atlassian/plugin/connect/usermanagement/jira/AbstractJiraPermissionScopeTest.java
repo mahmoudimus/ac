@@ -312,6 +312,7 @@ public abstract class AbstractJiraPermissionScopeTest
         ProjectCreationData projectCreationData = new ProjectCreationData.Builder()
                 .withName("Knights of the Old Republic")
                 .withKey(PROJECT_KEY)
+                .withLead(admin)
                 .withDescription("It's a trap!")
                 .build();
 
