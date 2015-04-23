@@ -3,10 +3,11 @@ package it.com.atlassian.plugin.connect.usermanagement.jira;
 import java.io.IOException;
 import java.util.List;
 
-import com.atlassian.jira.bc.project.ProjectCreationData;
 import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.bc.project.ProjectService.CreateProjectValidationResult;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
+import com.atlassian.jira.compatibility.bridge.project.ProjectCreationData;
+import com.atlassian.jira.compatibility.bridge.project.ProjectServiceBridge;
 import com.atlassian.jira.permission.Permission;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.PermissionManager;
@@ -46,6 +47,7 @@ public abstract class AbstractJiraPermissionScopeTest
     private final ConnectAddOnUserService connectAddOnUserService;
     private final PermissionManager permissionManager;
     private final ProjectService projectService;
+    private final ProjectServiceBridge projectServiceBridge;
     private final ProjectRoleService projectRoleService;
     private final UserManager userManager;
     private final TestPluginInstaller testPluginInstaller;
@@ -58,13 +60,14 @@ public abstract class AbstractJiraPermissionScopeTest
     private ConnectAddonBean readAddOn;
 
     public AbstractJiraPermissionScopeTest(ConnectAddOnUserService connectAddOnUserService,
-                                                  PermissionManager permissionManager, ProjectService projectService,
+                                                  PermissionManager permissionManager, ProjectService projectService, ProjectServiceBridge projectServiceBridge,
                                                   ProjectRoleService projectRoleService, UserManager userManager,
                                                   TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
     {
         this.connectAddOnUserService = connectAddOnUserService;
         this.permissionManager = permissionManager;
         this.projectService = projectService;
+        this.projectServiceBridge = projectServiceBridge;
         this.projectRoleService = projectRoleService;
         this.userManager = userManager;
         this.testPluginInstaller = testPluginInstaller;
@@ -157,11 +160,6 @@ public abstract class AbstractJiraPermissionScopeTest
     public PermissionManager getPermissionManager()
     {
         return permissionManager;
-    }
-
-    public ProjectService getProjectService()
-    {
-        return projectService;
     }
 
     public ProjectRoleService getProjectRoleService()
@@ -317,7 +315,7 @@ public abstract class AbstractJiraPermissionScopeTest
                 .withDescription("It's a trap!")
                 .build();
 
-        CreateProjectValidationResult result = projectService.validateCreateProject(admin, projectCreationData);
+        CreateProjectValidationResult result = projectServiceBridge.validateCreateProject(admin, projectCreationData);
         return projectService.createProject(result);
     }
 

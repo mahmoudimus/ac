@@ -34,6 +34,12 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.atlassian.jira.compat</groupId>
+            <artifactId>jira-cross-compatibility-lib-bridge-factory</artifactId>
+            <version>0.28</version>
+        </dependency>
+
         <!-- TODO: get schema-validator and guava 15.0+ versions into the products so we don't have to bundle them -->
         <dependency>
             <groupId>com.github.fge</groupId>
@@ -784,6 +790,18 @@
                             </excludes>
                         </testGroup>
                     </testGroups>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.atlassian.plugin</groupId>
+                <artifactId>atlassian-spring-scanner-maven-plugin</artifactId>
+                <configuration>
+                    <scannedDependencies>
+                        <dependency>
+                            <groupId>com.atlassian.jira.compat</groupId>
+                            <artifactId>jira-cross-compatibility-lib-bridge-factory</artifactId>
+                        </dependency>
+                    </scannedDependencies>
                 </configuration>
             </plugin>
             <plugin>
