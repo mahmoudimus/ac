@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.integration.plugins;
 
-        import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
-        import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
+import com.atlassian.plugin.module.ModuleFactory;
 
 /**
  *

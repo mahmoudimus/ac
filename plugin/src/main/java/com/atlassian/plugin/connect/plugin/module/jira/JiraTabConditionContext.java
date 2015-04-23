@@ -5,7 +5,6 @@ import java.util.Map;
 import com.atlassian.jira.plugin.issuetabpanel.ShowPanelRequest;
 import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
 import com.atlassian.jira.project.browse.BrowseContext;
-import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.web.ExecutingHttpRequest;
 
 import com.google.common.collect.ImmutableMap;
