@@ -5,7 +5,6 @@ import com.atlassian.jira.pageobjects.pages.admin.workflow.AddWorkflowTransition
 import com.atlassian.jira.pageobjects.pages.admin.workflow.CopyWorkflowDialog;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.ViewWorkflowSteps;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.ViewWorkflowTransitionPage;
-import com.atlassian.jira.pageobjects.pages.admin.workflow.WorkflowDesignerPage;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.WorkflowHeader;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.WorkflowsPage;
 import com.atlassian.jira.workflow.JiraWorkflow;
@@ -17,7 +16,6 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.workflow.JiraEditWorkf
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
-import it.util.ConnectTestUserFactory;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -85,11 +83,10 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
     @Test
     public void testCreateWorkflowPostFunction()
     {
-        String workflowName = RandomStringUtils.randomAlphanumeric(20);
-        WorkflowsPage workflowsPage = loginAndVisit(testUserFactory.admin(), WorkflowsPage.class);
-        ViewWorkflowSteps workflowStepsPage = copyDefaultWorkflow(workflowsPage, workflowName);
-        ExtendedViewWorkflowTransitionPage viewWorkflowTransitionPage
-                = (ExtendedViewWorkflowTransitionPage)goToFirstTransition(workflowName, workflowStepsPage);
+        login(testUserFactory.admin());
+        setTextAsDefaultWorkflowViewMode();
+
+        ExtendedViewWorkflowTransitionPage viewWorkflowTransitionPage = copyOfDefaultWorkflowAndGoToFirstTransition();
         AddWorkflowTransitionPostFunctionPage addTransitionPostFunctionPage = viewWorkflowTransitionPage.goToAddPostFunction();
         AddWorkflowTransitionFunctionParamsPage addTransitionPostFunctionParamsPage
                 = addTransitionPostFunctionPage.selectAndSubmitByName(WORKFLOW_POST_FUNCTION_NAME);
@@ -104,11 +101,10 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
     @Test
     public void testCreateInvalidWorkflowPostFunction()
     {
-        String workflowName = RandomStringUtils.randomAlphanumeric(20);
-        WorkflowsPage workflowsPage = loginAndVisit(testUserFactory.admin(), WorkflowsPage.class);
-        ViewWorkflowSteps workflowStepsPage = copyDefaultWorkflow(workflowsPage, workflowName);
-        ExtendedViewWorkflowTransitionPage viewWorkflowTransitionPage
-                = (ExtendedViewWorkflowTransitionPage)goToFirstTransition(workflowName, workflowStepsPage);
+        login(testUserFactory.admin());
+        setTextAsDefaultWorkflowViewMode();
+
+        ExtendedViewWorkflowTransitionPage viewWorkflowTransitionPage = copyOfDefaultWorkflowAndGoToFirstTransition();
         JiraEditWorkflowTransitionFunctionParamsPage addTransitionPostFunctionPage
                 = viewWorkflowTransitionPage.goToAddAddonPostFunction(
                 WORKFLOW_POST_FUNCTION_INVALID_NAME, addonKey, WORKFLOW_POST_FUNCTION_INVALID_KEY);
@@ -125,12 +121,25 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
                 testUserFactory.basicUser().getUsername());
     }
 
+    private ExtendedViewWorkflowTransitionPage copyOfDefaultWorkflowAndGoToFirstTransition()
+    {
+        String workflowName = RandomStringUtils.randomAlphanumeric(20);
+        WorkflowsPage workflowsPage = product.visit(WorkflowsPage.class);
+        ViewWorkflowSteps workflowStepsPage = copyDefaultWorkflow(workflowsPage, workflowName);
+        return (ExtendedViewWorkflowTransitionPage)goToFirstTransition(workflowName, workflowStepsPage);
+    }
+
+    private void setTextAsDefaultWorkflowViewMode()
+    {
+        ViewWorkflowSteps workflowStepsPage = product.visit(ViewWorkflowSteps.class, JiraWorkflow.DEFAULT_WORKFLOW_NAME);
+        workflowStepsPage.setCurrentViewMode(WorkflowHeader.WorkflowMode.TEXT);
+    }
+
     private ViewWorkflowSteps copyDefaultWorkflow(WorkflowsPage workflowsPage, String workflowName)
     {
         CopyWorkflowDialog copyWorkflowDialog = workflowsPage.openCopyJiraDialog();
         copyWorkflowDialog.setName(workflowName);
-        WorkflowDesignerPage workflowDesignerPage = copyWorkflowDialog.submit(WorkflowHeader.WorkflowMode.DIAGRAM);
-        return workflowDesignerPage.setCurrentEditMode(WorkflowHeader.WorkflowMode.TEXT);
+        return copyWorkflowDialog.submit(WorkflowHeader.WorkflowMode.TEXT);
     }
 
     private ViewWorkflowTransitionPage goToFirstTransition(String workflowName, ViewWorkflowSteps workflowStepsPage)
