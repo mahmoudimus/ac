@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.jira.capabilities.descriptor.ConnectJiraAgileWebPanelElementEnhancer;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -16,7 +17,6 @@ import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 
 @Component
 public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebPanelModuleBean,WebPanelModuleDescriptor>
@@ -80,7 +80,7 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
         webPanelElement.addAttribute("height", bean.getLayout().getHeight());
         webPanelElement.addAttribute("url", bean.getUrl());
 
-        WebPanelElementEnhancer.enhance(bean, webPanelElement);
+        ConnectJiraAgileWebPanelElementEnhancer.enhance(bean, webPanelElement);
 
         return webPanelElement;
     }

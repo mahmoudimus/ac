@@ -1,21 +1,18 @@
 package com.atlassian.plugin.connect.confluence.capabilities.provider;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import com.atlassian.confluence.plugins.contentproperty.index.config.ContentPropertyIndexSchemaModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.confluence.capabilities.descriptor.ContentPropertyIndexSchemaModuleDescriptorFactory;
 import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ContentPropertyIndexSchemaModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * Representation of a group of extractions specified by an add-on.

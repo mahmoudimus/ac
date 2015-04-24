@@ -2,11 +2,11 @@ package com.atlassian.plugin.connect.test.plugin.module.webitem;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.ConvertToWiredTest;
+import com.atlassian.plugin.connect.confluence.capabilities.descriptor.ConfluenceWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.webpanel.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.confluence.ConfluenceWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;

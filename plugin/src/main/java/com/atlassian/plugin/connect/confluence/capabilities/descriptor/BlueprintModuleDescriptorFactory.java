@@ -6,7 +6,6 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.builder.LinkBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectDocumentationBeanFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.util.Dom4jUtils;
@@ -24,8 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * {@link com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor} part of the blueprint
  * mapping.
  *
- * @see com.atlassian.plugin.connect.plugin.capabilities.descriptor.BlueprintModuleDescriptorFactory
- * @see com.atlassian.plugin.connect.plugin.capabilities.descriptor.BlueprintContentTemplateModuleDescriptorFactory
+ * @see com.atlassian.plugin.connect.confluence.capabilities.descriptor.BlueprintContentTemplateModuleDescriptorFactory
  */
 @ConfluenceComponent
 public class BlueprintModuleDescriptorFactory

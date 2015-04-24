@@ -2,12 +2,12 @@ package com.atlassian.plugin.connect.confluence.capabilities.descriptor.macro;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.confluence.capabilities.descriptor.MacroEnumMapper;
+import com.atlassian.plugin.connect.confluence.macro.DynamicContentMacro;
+import com.atlassian.plugin.connect.confluence.macro.RemoteMacroRenderer;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
-import com.atlassian.plugin.connect.confluence.macro.DynamicContentMacro;
-import com.atlassian.plugin.connect.confluence.macro.RemoteMacroRenderer;
-import com.atlassian.plugin.connect.plugin.capabilities.util.MacroEnumMapper;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import org.dom4j.dom.DOMElement;

@@ -71,7 +71,7 @@ public class BeanToModuleRegistrarTest
         
         
         beanToModuleRegistrar = new BeanToModuleRegistrar(dynamicDescriptorRegistration, pluginRetrievalService,
-                productAccessor, applicationProperties);
+                applicationProperties);
     }
 
     @Test

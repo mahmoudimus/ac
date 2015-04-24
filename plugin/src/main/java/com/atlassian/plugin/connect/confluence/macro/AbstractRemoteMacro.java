@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.confluence.macro;
 
 import com.atlassian.confluence.macro.Macro;
-import com.atlassian.plugin.connect.plugin.module.confluence.RemoteMacroInfo;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 
 import java.net.URI;

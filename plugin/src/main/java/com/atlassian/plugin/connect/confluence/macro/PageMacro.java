@@ -2,8 +2,6 @@ package com.atlassian.plugin.connect.confluence.macro;
 
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.macro.MacroExecutionException;
-import com.atlassian.plugin.connect.plugin.module.confluence.MacroInstance;
-import com.atlassian.plugin.connect.plugin.module.confluence.RemoteMacroInfo;
 import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;

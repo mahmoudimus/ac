@@ -1,12 +1,12 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.module;
 
-import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
-import com.atlassian.plugin.connect.modules.beans.builder.DynamicContentMacroModuleBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
+import com.atlassian.plugin.connect.confluence.capabilities.descriptor.MacroEnumMapper;
 import com.atlassian.plugin.connect.confluence.macro.DynamicContentMacro;
 import com.atlassian.plugin.connect.confluence.macro.MacroModuleContextExtractor;
 import com.atlassian.plugin.connect.confluence.macro.RemoteMacroRenderer;
-import com.atlassian.plugin.connect.plugin.capabilities.util.MacroEnumMapper;
+import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.DynamicContentMacroModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
@@ -14,7 +14,6 @@ import org.mockito.Mock;
 import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
-
 
 public class DynamicContentMacroUrlTemplateTest extends AbstractContentMacroUrlTemplateTest<DynamicContentMacroModuleBean, DynamicContentMacro, DynamicContentMacroModuleBeanBuilder>
 {

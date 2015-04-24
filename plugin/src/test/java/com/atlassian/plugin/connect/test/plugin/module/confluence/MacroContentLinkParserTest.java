@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.test.plugin.module.confluence;
 
 import com.atlassian.confluence.setup.settings.SettingsManager;
-import com.atlassian.plugin.connect.plugin.module.confluence.MacroContentLinkParser;
+import com.atlassian.plugin.connect.confluence.macro.MacroContentLinkParser;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Before;

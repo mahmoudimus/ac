@@ -1,8 +1,6 @@
 package com.atlassian.plugin.connect.jira.capabilities.descriptor.report;
 
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.jira.capabilities.descriptor.report.ConnectReportModuleDescriptor;
-import com.atlassian.plugin.connect.jira.capabilities.descriptor.report.ReportModuleCssTransformer;
 import com.atlassian.plugin.servlet.DownloadableResource;
 import com.atlassian.plugin.webresource.transformer.TransformableResource;
 import com.atlassian.plugin.webresource.transformer.TransformerUrlBuilder;
@@ -11,24 +9,15 @@ import com.atlassian.plugin.webresource.url.UrlBuilder;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.not;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith (MockitoJUnitRunner.class)
 public class ReportModuleCssTransformerTest
@@ -81,7 +70,7 @@ public class ReportModuleCssTransformerTest
                 .append(MD3_KEY)
                 .build();
 
-        Mockito.verify(urlBuilder).addToHash(Matchers.anyString(), Matchers.eq(expectedHash));
+        Mockito.verify(urlBuilder).addToHash(org.mockito.Matchers.any(String.class), org.mockito.Matchers.eq(expectedHash));
     }
 
     @Test
