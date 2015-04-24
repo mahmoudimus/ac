@@ -20,7 +20,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#SPACE_TOOLS_TAB_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#SPACE_TOOLS_TAB_EXAMPLE}
  * @since 1.0
  */
 @SchemaDefinition("spaceTools")
@@ -65,7 +65,9 @@ public class SpaceToolsTabModuleBean extends BeanWithKeyAndParamsAndConditions
     }
 
     /**
-     *  Specifies the URL targeted by the page. The URL is relative to the add-on's base URL.
+     * Specifies the URL targeted by the page. The URL is relative to the add-on's base URL.
+     *
+     * @return the URL of the tab panel
      */
     public String getUrl()
     {
@@ -81,6 +83,8 @@ public class SpaceToolsTabModuleBean extends BeanWithKeyAndParamsAndConditions
      * Built-in web items have weights that are incremented by numbers that leave room for additional
      * items, such as by 10 or 100. Be mindful of the weight you choose for your item, so that it appears
      * in a sensible order given existing items.
+     *
+     * @return the weight of the tab panel
      */
     public Integer getWeight()
     {
@@ -105,6 +109,8 @@ public class SpaceToolsTabModuleBean extends BeanWithKeyAndParamsAndConditions
      * sub-sections for Space Tools.
      *
      *Legacy Space Admin section cannot be defined, and is always system.space.admin/spaceops
+     *
+     * @return the location of the tab
      */
     public String getLocation()
     {

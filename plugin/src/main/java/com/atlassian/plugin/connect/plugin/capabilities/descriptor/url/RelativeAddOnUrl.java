@@ -1,11 +1,10 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor.url;
 
-import javax.annotation.Nonnull;
-
 import com.atlassian.uri.Uri;
-
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+
+import javax.annotation.Nonnull;
 
 /**
  * A holder for a URL targeting a local servlet that is registered on behalf of a remote addon.
@@ -26,7 +25,8 @@ public class RelativeAddOnUrl
 
     /**
      * Use this for URIs with variable placeholders to avoid them being url encoded
-     * @param relativeUri
+     *
+     * @param relativeUri the relative URI string
      */
     public RelativeAddOnUrl(@Nonnull String relativeUri)
     {

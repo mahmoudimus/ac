@@ -10,7 +10,7 @@ import java.net.URISyntaxException;
 /**
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#URL_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#URL_EXAMPLE}
  * @schemaTitle URL
  * @since 1.0
  */

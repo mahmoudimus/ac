@@ -17,7 +17,7 @@ import static com.google.common.collect.Maps.newHashMap;
 /**
  * This class loads a plugin called "atlassian-connect.i18n", which solely exists to store and expose generated i18n files
  * from remote descriptors.  Ideally, the products would support generated i18n resources, but currently they expect
- * them to be declared via <resource> tags pointing at physical files in the plugin.  This plugin is a way to get
+ * them to be declared via {@code <resource>} tags pointing at physical files in the plugin.  This plugin is a way to get
  * around that.
  */
 @JiraComponent

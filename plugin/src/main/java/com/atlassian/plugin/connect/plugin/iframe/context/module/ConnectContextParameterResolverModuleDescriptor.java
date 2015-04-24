@@ -22,8 +22,8 @@ import static com.google.common.collect.Iterables.transform;
 /**
  * Descriptor for context parameter extractors and validators.
  *
- * <p>
- *     This descriptor expects XML of the form:
+ * This descriptor expects XML of the form:
+ *
  *     <pre>{@code
  *
  *        <root>
@@ -40,7 +40,6 @@ import static com.google.common.collect.Iterables.transform;
  *        <root>
  *
  *     }</pre>
- * </p>
  *
  * <p>
  *     Extractors need to be of type {@link com.atlassian.plugin.connect.spi.module.ContextParametersExtractor},

@@ -23,8 +23,10 @@ public final class BundleUtil
     /**
      * Returns the version number from the context bundle.
      * Can be used to get the version of the Connect p2 plugin.
+     *
+     * @param bundleContext the bundle context
+     * @return the bundle version
      */
-
     public static String getBundleVersion(BundleContext bundleContext)
     {
         Object bundleVersion = bundleContext.getBundle().getHeaders().get(Constants.BUNDLE_VERSION);

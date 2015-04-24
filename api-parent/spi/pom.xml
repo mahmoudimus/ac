@@ -116,6 +116,13 @@
         </dependency>
 
         <dependency>
+            <groupId>external.atlassian.json</groupId>
+            <artifactId>json-schemagen-core</artifactId>
+            <version>${schema.generator.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
             <scope>test</scope>

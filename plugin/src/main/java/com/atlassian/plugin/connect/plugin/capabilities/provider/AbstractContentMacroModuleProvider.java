@@ -2,14 +2,15 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.WebItemModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
+import com.atlassian.plugin.connect.modules.beans.nested.MatcherBean;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
@@ -18,7 +19,9 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonI18nManager;
+import com.atlassian.plugin.connect.plugin.product.confluence.AutoconvertModuleDescriptor;
 import com.atlassian.plugin.hostcontainer.HostContainer;
+import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang.StringUtils;
@@ -28,7 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -110,6 +112,21 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
             {
                 descriptors.add(createFeaturedIconWebResource(addon, theConnectPlugin, macroBean));
             }
+
+        }
+
+        if (macroBean.hasAutoConvert()) {
+            int index = 1;
+            AutoconvertBean autoconvertBean = macroBean.getAutoconvert();
+
+            for (MatcherBean matcherBean: autoconvertBean.getMatchers())
+            {
+                String macroKey = macroBean.getKey(addon);
+                AutoconvertModuleDescriptor descriptor = new AutoconvertModuleDescriptor(ModuleFactory.LEGACY_MODULE_FACTORY, macroBean.getRawKey(), autoconvertBean, matcherBean);
+                descriptor.init(theConnectPlugin, new DOMElement("autoconvert").addAttribute("key", macroKey + "-autoconvert-"+index));
+                descriptors.add(descriptor);
+                index++;
+            }
         }
 
         if (macroBean.hasEditor())
@@ -120,7 +137,6 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
 
         return ImmutableList.copyOf(descriptors);
     }
-
 
     private WebItemModuleBean createFeaturedWebItem(ConnectAddonBean addon, T bean)
     {
@@ -171,7 +187,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .addAttribute("name", "ICON_URL")
                 .addAttribute("value", absoluteAddOnUrlConverter.getAbsoluteUrl(addon, bean.getIcon().getUrl()));
 
-        ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(hostContainer);
+        ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(ModuleFactory.LEGACY_MODULE_FACTORY, hostContainer);
         jsDescriptor.init(theConnectPlugin, webResource);
 
         return jsDescriptor;
@@ -237,7 +253,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         createInsertTitle(macroBean, transformer);
         createEditTitle(macroBean, transformer);
 
-        ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(hostContainer);
+        ModuleDescriptor jsDescriptor = new WebResourceModuleDescriptor(ModuleFactory.LEGACY_MODULE_FACTORY, hostContainer);
         jsDescriptor.init(theConnectPlugin, webResource);
 
         return jsDescriptor;

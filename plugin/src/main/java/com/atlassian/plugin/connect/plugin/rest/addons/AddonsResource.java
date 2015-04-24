@@ -57,7 +57,7 @@ import static com.atlassian.plugin.connect.plugin.rest.ConnectRestConstants.ADDO
 
 /**
  * REST endpoint which provides a view of Connect add-ons which are installed in the instance.
- * <p/>
+ *
  * NOTE: This resource class exposes some functionality for add-on developers and some for system administrators.
  */
 @Path (AddonsResource.REST_PATH)

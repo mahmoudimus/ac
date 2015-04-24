@@ -134,7 +134,6 @@
                     <!-- disable as much as we can -->
                     <skipAllPrompts>true</skipAllPrompts>
                     <enableDevToolbox>false</enableDevToolbox>
-                    <enableFastdev>false</enableFastdev>
                     <enablePde>false</enablePde>
                     <compressResources>false</compressResources>
                     <systemPropertyVariables>
@@ -204,6 +203,11 @@
     </reporting>
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.jsoup</groupId>
+                <artifactId>jsoup</artifactId>
+                <version>1.8.1</version>
+            </dependency>
             <dependency>
                 <groupId>javax.inject</groupId>
                 <artifactId>javax.inject</artifactId>
@@ -679,7 +683,7 @@
         <atlassian.sal.version>2.10.0</atlassian.sal.version>
         <atlassian.selenium.version>2.2-rc3</atlassian.selenium.version>
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>
-        <atlassian.connect-js.version>2.0.0</atlassian.connect-js.version>
+        <atlassian.connect-js.version>2.0.1</atlassian.connect-js.version>
         <atlassian.connect-js.path>git+ssh://git@stash.atlassian.com:7997/ac/atlassian-connect-js.git#${atlassian.connect-js.version}</atlassian.connect-js.path>
         <atlassian.jira.projects.plugin.version>1.20.0-D20150217T051447</atlassian.jira.projects.plugin.version>
 

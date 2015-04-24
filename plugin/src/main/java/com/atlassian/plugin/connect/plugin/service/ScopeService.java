@@ -9,7 +9,9 @@ public interface ScopeService
 {
     /**
      * Build the scopes for the current product.
+     *
      * @return The scopes for the current product.
+     * @throws IOException if an error occurred during scope loading
      */
     Collection<AddOnScope> build() throws IOException;
 }

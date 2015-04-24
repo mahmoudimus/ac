@@ -23,7 +23,7 @@ public interface RemoteMacroRenderer
      * @param storageFormatBody the body of the macro
      * @param conversionContext the conversion context for this rendering
      * @return the html output
-     * @throws MacroExecutionException
+     * @throws MacroExecutionException if an error occurs during macro execution
      */
     String executeDynamic(String addOnKey, String moduleKey, MacroRenderModesBean renderModes,
                           Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext)
@@ -38,7 +38,7 @@ public interface RemoteMacroRenderer
      * @param storageFormatBody the body of the macro
      * @param conversionContext the conversion context for this rendering
      * @return the static html rendering
-     * @throws MacroExecutionException
+     * @throws MacroExecutionException if an error occurs during macro execution
      */
     String executeStatic(String addOnKey, String moduleKey, String uriTemplate,
                          Map<String, String> parameters, String storageFormatBody, ConversionContext conversionContext)
