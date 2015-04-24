@@ -21,8 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  * {@link com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor} part of the blueprint
  * mapping.
  *
- * @see com.atlassian.plugin.connect.plugin.capabilities.descriptor.BlueprintModuleDescriptorFactory
- * @see com.atlassian.plugin.connect.plugin.capabilities.descriptor.BlueprintContentTemplateModuleDescriptorFactory
+ * @see BlueprintModuleDescriptorFactory
+ * @see BlueprintContentTemplateModuleDescriptorFactory
  */
 @ConfluenceComponent
 public class BlueprintWebItemModuleDescriptorFactory
