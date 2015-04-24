@@ -212,6 +212,34 @@ public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleC
                             moduleContext.put("dashboard.id", (String) id);
                         }
                     }
+                },
+                new ParameterExtractor<Map<Object, Object>>()
+                {
+                    @Override
+                    public String getContextKey()
+                    {
+                        return "view";
+                    }
+
+                    @Override
+                    public Class getExpectedType()
+                    {
+                        return Map.class;
+                    }
+
+                    @Override
+                    public void addToContext(final JiraModuleContextParameters moduleContext, final Map<Object, Object> value)
+                    {
+                        final Object viewType = value.get("viewType");
+                        if (viewType instanceof Map)
+                        {
+                            final Object name = ((Map) viewType).get("name");
+                            if (name instanceof String)
+                            {
+                                moduleContext.put("dashboardItemViewType", (String) name);
+                            }
+                        }
+                    }
                 }
         );
     }

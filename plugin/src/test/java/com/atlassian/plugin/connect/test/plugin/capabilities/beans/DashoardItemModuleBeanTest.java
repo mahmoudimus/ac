@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.test.plugin.capabilities.beans;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.DashboardItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.google.common.collect.Iterables;
@@ -67,7 +66,7 @@ public class DashoardItemModuleBeanTest
 
     private static DashboardItemModuleBean createModuleBean()
     {
-        return DashboardItemModuleBean.newDashboardItemModuleBean()
+        return DashboardItemModuleBean.newBuilder()
                 .withTitle(new I18nProperty("Title", "title.key"))
                 .withDescription(new I18nProperty("Description", "description.key"))
                 .withThumbnailUrl("/thumbnail.jpg")

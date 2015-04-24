@@ -10,6 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Dashboard items allow add-on to display a summary information data on the dashboard. Each dashboard-item can be configured
  * to display information relevant to a particular user.
+ *
+ * Context paramaters (not available in directory view)
  */
 public class DashboardItemModuleBean extends BeanWithKeyAndParamsAndConditions
 {
@@ -24,7 +26,7 @@ public class DashboardItemModuleBean extends BeanWithKeyAndParamsAndConditions
     private String url;
 
     /**
-     * FLag specifying if the dashboard-item is configurable. In order for the dashboard item to be configurable
+     * Specify if the dashboard-item is configurable or not.
      */
     @CommonSchemaAttributes (defaultValue = "false")
     private Boolean configurable;
@@ -48,7 +50,7 @@ public class DashboardItemModuleBean extends BeanWithKeyAndParamsAndConditions
         super(builder);
     }
 
-    public static DashboardItemModuleBeanBuilder newDashboardItemModuleBean()
+    public static DashboardItemModuleBeanBuilder newBuilder()
     {
         return new DashboardItemModuleBeanBuilder();
     }

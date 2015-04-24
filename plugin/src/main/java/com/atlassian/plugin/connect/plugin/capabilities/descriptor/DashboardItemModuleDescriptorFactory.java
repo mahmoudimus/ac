@@ -9,6 +9,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.DashboardItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
+import com.atlassian.plugin.connect.plugin.capabilities.condition.ConnectConditionElementParserFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
@@ -17,6 +18,8 @@ import com.atlassian.plugin.connect.plugin.iframe.webpanel.PluggableParametersEx
 import com.atlassian.plugin.connect.plugin.module.jira.dashboard.ConnectDashboardItemModuleDescriptor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.module.ModuleFactory;
+import com.atlassian.plugin.web.Condition;
+import com.atlassian.plugin.web.descriptors.ConditionElementParser;
 import com.google.common.collect.Sets;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
@@ -27,9 +30,10 @@ import java.net.URI;
 import java.util.Set;
 
 @Component
-public class DashboardItemModuleBeanFactory implements ConnectModuleDescriptorFactory<DashboardItemModuleBean, DashboardItemModuleDescriptor>
+public class DashboardItemModuleDescriptorFactory implements ConnectModuleDescriptorFactory<DashboardItemModuleBean, DashboardItemModuleDescriptor>
 {
     private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
+    private final ConnectConditionElementParserFactory conditionElementParserFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final ModuleFactory moduleFactory;
     private final PluggableParametersExtractor parametersExtractor;
@@ -37,7 +41,8 @@ public class DashboardItemModuleBeanFactory implements ConnectModuleDescriptorFa
     private final RemotablePluginAccessorFactory pluginAccessorFactory;
 
     @Autowired
-    public DashboardItemModuleBeanFactory(final ConditionModuleFragmentFactory conditionModuleFragmentFactory,
+    public DashboardItemModuleDescriptorFactory(final ConditionModuleFragmentFactory conditionModuleFragmentFactory,
+            final ConnectConditionElementParserFactory conditionElementParserFactory,
             final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             final ModuleFactory moduleFactory,
             final PluggableParametersExtractor parametersExtractor,
@@ -45,6 +50,7 @@ public class DashboardItemModuleBeanFactory implements ConnectModuleDescriptorFa
             final RemotablePluginAccessorFactory pluginAccessorFactory)
     {
         this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
+        this.conditionElementParserFactory = conditionElementParserFactory;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.moduleFactory = moduleFactory;
         this.parametersExtractor = parametersExtractor;
@@ -60,7 +66,7 @@ public class DashboardItemModuleBeanFactory implements ConnectModuleDescriptorFa
         ConnectAddonBean addonBean = moduleProviderContext.getConnectAddonBean();
         VendorBean vendor = addonBean.getVendor();
 
-        DirectoryDefinition directoryDefinition = createDirectoryDefinition(plugin, bean, vendor);
+        DirectoryDefinition directoryDefinition = createDirectoryDefinition(addonBean, bean, vendor);
 
         String moduleKey = bean.getKey(addonBean);
 
@@ -74,8 +80,10 @@ public class DashboardItemModuleBeanFactory implements ConnectModuleDescriptorFa
                 .ensureUniqueNamespace(true)
                 .build();
 
+        Condition condition = createCondition(plugin, addonBean, bean);
+
         ConnectDashboardItemModuleDescriptor moduleDescriptor =
-                new ConnectDashboardItemModuleDescriptor(moduleFactory, directoryDefinition, renderStrategy, moduleContextFilter, parametersExtractor);
+                new ConnectDashboardItemModuleDescriptor(moduleFactory, directoryDefinition, renderStrategy, moduleContextFilter, parametersExtractor, bean.isConfigurable(), condition);
 
         Element dashboardItemModule = new DOMElement("dashboard-item");
         dashboardItemModule.addAttribute("key", moduleKey);
@@ -84,17 +92,26 @@ public class DashboardItemModuleBeanFactory implements ConnectModuleDescriptorFa
         return moduleDescriptor;
     }
 
-    private DirectoryDefinition createDirectoryDefinition(final Plugin plugin,
+    private Condition createCondition(final Plugin plugin,
+            final ConnectAddonBean addonBean,
+            final DashboardItemModuleBean bean)
+    {
+        final DOMElement conditionFragment = conditionModuleFragmentFactory.createFragment(addonBean.getKey(), bean.getConditions());
+
+        return conditionElementParserFactory.getConditionElementParser().makeConditions(plugin, conditionFragment, ConditionElementParser.CompositeType.AND);
+    }
+
+    private DirectoryDefinition createDirectoryDefinition(final ConnectAddonBean addOnBean,
             final DashboardItemModuleBean moduleBean,
             final VendorBean vendor)
     {
         return new ConnectDashboardItemDirectoryDefintion(moduleBean.getName().getRawValue(),
                 moduleBean.getName().getI18n(),
                 author(vendor),
-                iconUri(plugin, moduleBean.getThumbnailUrl()));
+                iconUri(addOnBean, moduleBean.getThumbnailUrl()));
     }
 
-    private URI iconUri(final Plugin plugin, final String thumbnailUrl)
+    private URI iconUri(final ConnectAddonBean addonBean, final String thumbnailUrl)
     {
         URI iconUri = URI.create(thumbnailUrl);
         if (iconUri.isAbsolute())
@@ -103,7 +120,7 @@ public class DashboardItemModuleBeanFactory implements ConnectModuleDescriptorFa
         }
         else
         {
-            return pluginAccessorFactory.get(plugin.getKey()).getTargetUrl(iconUri);
+            return pluginAccessorFactory.get(addonBean.getKey()).getTargetUrl(iconUri);
         }
     }
 

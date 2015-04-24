@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.DashboardItemModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.DashboardItemModuleBeanFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.DashboardItemModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -14,12 +14,12 @@ import java.util.List;
 @JiraComponent
 public class DashboardItemModuleProvider implements ConnectModuleProvider<DashboardItemModuleBean>
 {
-    private final DashboardItemModuleBeanFactory dashboardItemModuleBeanFactory;
+    private final DashboardItemModuleDescriptorFactory dashboardItemModuleDescriptorFactory;
 
     @Autowired
-    public DashboardItemModuleProvider(final DashboardItemModuleBeanFactory dashboardItemModuleBeanFactory)
+    public DashboardItemModuleProvider(final DashboardItemModuleDescriptorFactory dashboardItemModuleDescriptorFactory)
     {
-        this.dashboardItemModuleBeanFactory = dashboardItemModuleBeanFactory;
+        this.dashboardItemModuleDescriptorFactory = dashboardItemModuleDescriptorFactory;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class DashboardItemModuleProvider implements ConnectModuleProvider<Dashbo
             @Override
             public ModuleDescriptor apply(final DashboardItemModuleBean bean)
             {
-                return dashboardItemModuleBeanFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
+                return dashboardItemModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, plugin, bean);
             }
         });
     }

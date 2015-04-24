@@ -33,11 +33,13 @@ public class ConnectDashboardItemModuleDescriptor extends AbstractModuleDescript
             final DirectoryDefinition directoryDefinition,
             final IFrameRenderStrategy renderStrategy,
             final ModuleContextFilter moduleContextFilter,
-            final PluggableParametersExtractor parametersExtractor)
+            final PluggableParametersExtractor parametersExtractor,
+            final Boolean configurable,
+            final Condition condition)
     {
         super(moduleFactory);
         this.directoryDefinition = directoryDefinition;
-        this.module = new ConnectDirectoryModule(parametersExtractor, directoryDefinition, renderStrategy, moduleContextFilter);
+        this.module = new ConnectDirectoryModule(parametersExtractor, directoryDefinition, renderStrategy, moduleContextFilter, configurable, condition);
     }
 
     @Override
@@ -61,20 +63,26 @@ public class ConnectDashboardItemModuleDescriptor extends AbstractModuleDescript
 
     private static class ConnectDirectoryModule implements DashboardItemModule
     {
+        private final Boolean configurable;
+        private final Condition condition;
         private final DirectoryDefinition directoryDefinition;
-        private final IFrameRenderStrategy renderStrategy;
         private final ModuleContextFilter moduleContextFilter;
         private final PluggableParametersExtractor moduleContextExtractor;
+        private final IFrameRenderStrategy renderStrategy;
 
         private ConnectDirectoryModule(final PluggableParametersExtractor moduleContextExtractor,
                 final DirectoryDefinition directoryDefinition,
                 final IFrameRenderStrategy renderStrategy,
-                final ModuleContextFilter moduleContextFilter)
+                final ModuleContextFilter moduleContextFilter,
+                final Boolean configurable,
+                final Condition condition)
         {
             this.moduleContextExtractor = moduleContextExtractor;
             this.directoryDefinition = directoryDefinition;
             this.renderStrategy = renderStrategy;
             this.moduleContextFilter = moduleContextFilter;
+            this.configurable = configurable;
+            this.condition = condition;
         }
 
         @Override
@@ -86,7 +94,7 @@ public class ConnectDashboardItemModuleDescriptor extends AbstractModuleDescript
         @Override
         public boolean isConfigurable()
         {
-            return true;
+            return configurable;
         }
 
         @Override
@@ -122,7 +130,7 @@ public class ConnectDashboardItemModuleDescriptor extends AbstractModuleDescript
         @Override
         public Condition getCondition()
         {
-            return ALWAYS_TRUE_CONDITION;
+            return condition;
         }
     }
 

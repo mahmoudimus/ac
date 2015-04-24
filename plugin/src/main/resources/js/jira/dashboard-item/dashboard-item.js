@@ -31,6 +31,8 @@
     define('atlassian-connect/connect-dashboard-item', function() {
         return function(){
             return {
+                render: function(){
+                },
                 renderEdit: function($element){
                     $element.find('iframe').trigger('dashboardItemEdit');
                 }
