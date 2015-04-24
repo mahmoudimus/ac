@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.jira;
+package com.atlassian.plugin.connect.jira.workflow;
 
 import com.atlassian.plugin.connect.jira.workflow.RemoteWorkflowPostFunctionEvent;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;

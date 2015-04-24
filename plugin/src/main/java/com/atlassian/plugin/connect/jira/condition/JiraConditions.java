@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.jira;
+package com.atlassian.plugin.connect.jira.condition;
 
 import com.atlassian.plugin.connect.jira.condition.ViewingOwnProfileCondition;
 import com.atlassian.plugin.connect.plugin.condition.PageConditions;

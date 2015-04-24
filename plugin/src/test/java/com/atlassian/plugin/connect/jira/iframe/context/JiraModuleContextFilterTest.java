@@ -26,6 +26,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Collections;
 import java.util.Map;
 
+import static com.atlassian.plugin.connect.jira.iframe.context.JiraModuleContextFilter.COMPONENT_ID;
+import static com.atlassian.plugin.connect.jira.iframe.context.JiraModuleContextFilter.ISSUE_ID;
+import static com.atlassian.plugin.connect.jira.iframe.context.JiraModuleContextFilter.ISSUE_KEY;
+import static com.atlassian.plugin.connect.jira.iframe.context.JiraModuleContextFilter.POSTFUNCTION_CONFIG;
+import static com.atlassian.plugin.connect.jira.iframe.context.JiraModuleContextFilter.POSTFUNCTION_ID;
+import static com.atlassian.plugin.connect.jira.iframe.context.JiraModuleContextFilter.PROJECT_ID;
+import static com.atlassian.plugin.connect.jira.iframe.context.JiraModuleContextFilter.PROJECT_KEY;
+import static com.atlassian.plugin.connect.jira.iframe.context.JiraModuleContextFilter.VERSION_ID;
 import static com.atlassian.plugin.connect.plugin.iframe.context.AbstractModuleContextFilter.PROFILE_KEY;
 import static com.atlassian.plugin.connect.plugin.iframe.context.AbstractModuleContextFilter.PROFILE_NAME;
 import static org.hamcrest.CoreMatchers.not;
@@ -180,8 +188,8 @@ public class JiraModuleContextFilterTest
     public void testAllowedIssueIdAndKey()
     {
         testFilter(ImmutableMap.of(
-                JiraModuleContextFilter.ISSUE_KEY, ALLOWED_ISSUE_KEY,
-                JiraModuleContextFilter.ISSUE_ID, ALLOWED_ISSUE_ID
+                ISSUE_KEY, ALLOWED_ISSUE_KEY,
+                ISSUE_ID, ALLOWED_ISSUE_ID
         ));
     }
 
@@ -189,10 +197,10 @@ public class JiraModuleContextFilterTest
     public void testAllowedIssueIdButForbiddenKey()
     {
         testFilter(ImmutableMap.of(
-                JiraModuleContextFilter.ISSUE_KEY, FORBIDDEN_ISSUE_KEY,
-                JiraModuleContextFilter.ISSUE_ID, ALLOWED_ISSUE_ID
+                ISSUE_KEY, FORBIDDEN_ISSUE_KEY,
+                ISSUE_ID, ALLOWED_ISSUE_ID
         ), ImmutableMap.of(
-                JiraModuleContextFilter.ISSUE_ID, ALLOWED_ISSUE_ID
+                ISSUE_ID, ALLOWED_ISSUE_ID
         ));
     }
 
@@ -200,8 +208,8 @@ public class JiraModuleContextFilterTest
     public void testForbiddenIssueIdAndKey()
     {
         testFilteredOut(ImmutableMap.of(
-                JiraModuleContextFilter.ISSUE_KEY, FORBIDDEN_ISSUE_KEY,
-                JiraModuleContextFilter.ISSUE_ID, FORBIDDEN_ISSUE_ID
+                ISSUE_KEY, FORBIDDEN_ISSUE_KEY,
+                ISSUE_ID, FORBIDDEN_ISSUE_ID
         ));
     }
 
@@ -209,8 +217,8 @@ public class JiraModuleContextFilterTest
     public void testAllowedProjectIdAndKey()
     {
         testFilter(ImmutableMap.of(
-                JiraModuleContextFilter.PROJECT_KEY, ALLOWED_PROJECT_KEY,
-                JiraModuleContextFilter.PROJECT_ID, ALLOWED_PROJECT_ID
+                PROJECT_KEY, ALLOWED_PROJECT_KEY,
+                PROJECT_ID, ALLOWED_PROJECT_ID
         ));
     }
 
@@ -218,10 +226,10 @@ public class JiraModuleContextFilterTest
     public void testAllowedProjectIdButForbiddenKey()
     {
         testFilter(ImmutableMap.of(
-                JiraModuleContextFilter.PROJECT_KEY, FORBIDDEN_PROJECT_KEY,
-                JiraModuleContextFilter.PROJECT_ID, ALLOWED_PROJECT_ID
+                PROJECT_KEY, FORBIDDEN_PROJECT_KEY,
+                PROJECT_ID, ALLOWED_PROJECT_ID
         ), ImmutableMap.of(
-                JiraModuleContextFilter.PROJECT_ID, ALLOWED_PROJECT_ID
+                PROJECT_ID, ALLOWED_PROJECT_ID
         ));
     }
 
@@ -229,33 +237,33 @@ public class JiraModuleContextFilterTest
     public void testForbiddenProjectIdAndKey()
     {
         testFilteredOut(ImmutableMap.of(
-                JiraModuleContextFilter.PROJECT_KEY, FORBIDDEN_PROJECT_KEY,
-                JiraModuleContextFilter.PROJECT_ID, FORBIDDEN_PROJECT_ID
+                PROJECT_KEY, FORBIDDEN_PROJECT_KEY,
+                PROJECT_ID, FORBIDDEN_PROJECT_ID
         ));
     }
 
     @Test
     public void testAllowedVersion()
     {
-        testFilter(ImmutableMap.of(JiraModuleContextFilter.VERSION_ID, ALLOWED_VERSION_ID));
+        testFilter(ImmutableMap.of(VERSION_ID, ALLOWED_VERSION_ID));
     }
 
     @Test
     public void testForbiddenVersion()
     {
-        testFilteredOut(ImmutableMap.of(JiraModuleContextFilter.VERSION_ID, FORBIDDEN_VERSION_ID));
+        testFilteredOut(ImmutableMap.of(VERSION_ID, FORBIDDEN_VERSION_ID));
     }
 
     @Test
     public void testAllowedComponent()
     {
-        testFilter(ImmutableMap.of(JiraModuleContextFilter.COMPONENT_ID, ALLOWED_COMPONENT_ID));
+        testFilter(ImmutableMap.of(COMPONENT_ID, ALLOWED_COMPONENT_ID));
     }
 
     @Test
     public void testForbiddenComponent()
     {
-        testFilteredOut(ImmutableMap.of(JiraModuleContextFilter.COMPONENT_ID, FORBIDDEN_COMPONENT_ID));
+        testFilteredOut(ImmutableMap.of(COMPONENT_ID, FORBIDDEN_COMPONENT_ID));
     }
 
     @Test
@@ -275,7 +283,7 @@ public class JiraModuleContextFilterTest
     public void testPostFunctionIsAlwaysAllowed()
     {
         when(authenticationContext.getUser()).thenReturn(null);
-        testFilter(ImmutableMap.of(JiraModuleContextFilter.POSTFUNCTION_ID, "ego", JiraModuleContextFilter.POSTFUNCTION_CONFIG, "alter-ego"));
+        testFilter(ImmutableMap.of(POSTFUNCTION_ID, "ego", POSTFUNCTION_CONFIG, "alter-ego"));
     }
 
 }

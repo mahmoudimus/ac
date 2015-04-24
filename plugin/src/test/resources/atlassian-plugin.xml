@@ -5,10 +5,10 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}"/>
         <bundle-instructions>
             <Import-Package>
-                com.atlassian.plugin.connect*,
-                com.atlassian.plugin.connect.*,
+                com.atlassian.plugin.connect.plugin*,
+                com.atlassian.plugin.connect.confluence*,
+                com.atlassian.plugin.connect.jira*,
                 com.atlassian.plugin.connect.modules.beans*,
-                com.atlassian.plugin.connect.modules.beans.*,
                 *;resolution:=optional
             </Import-Package>
         </bundle-instructions>

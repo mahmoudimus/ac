@@ -11,9 +11,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collections;
@@ -21,6 +19,9 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.when;
+
 @Ignore("TODO: tim fix this")
 @RunWith(MockitoJUnitRunner.class)
 public class IsProjectAdminConditionTest
@@ -37,10 +38,10 @@ public class IsProjectAdminConditionTest
     @Test
     public void shouldDisplayWithAValidProjectAndUser()
     {
-        Mockito.when(project.getKey()).thenReturn("key");
-        Mockito.when(jiraAuthenticationContext.getUser()).thenReturn(user);
-        Mockito.when(projectService.getProjectByKeyForAction(Matchers.eq(user), Matchers.eq("key"), Matchers.eq(ProjectAction.EDIT_PROJECT_CONFIG))).thenReturn(getProjectResult);
-        Mockito.when(getProjectResult.isValid()).thenReturn(true);
+        when(project.getKey()).thenReturn("key");
+        when(jiraAuthenticationContext.getUser()).thenReturn(user);
+        when(projectService.getProjectByKeyForAction(eq(user), eq("key"), eq(ProjectAction.EDIT_PROJECT_CONFIG))).thenReturn(getProjectResult);
+        when(getProjectResult.isValid()).thenReturn(true);
         IsProjectAdminCondition condition = new IsProjectAdminCondition(jiraAuthenticationContext, projectService);
         assertThat(condition.shouldDisplay(CONTEXT), is(true));
     }
@@ -48,10 +49,10 @@ public class IsProjectAdminConditionTest
     @Test
     public void shouldNotDisplayWithAnInvalidProjectAndAValidUser()
     {
-        Mockito.when(project.getKey()).thenReturn("key");
-        Mockito.when(jiraAuthenticationContext.getUser()).thenReturn(user);
-        Mockito.when(projectService.getProjectByKeyForAction(Matchers.eq(user), Matchers.eq("key"), Matchers.eq(ProjectAction.EDIT_PROJECT_CONFIG))).thenReturn(getProjectResult);
-        Mockito.when(getProjectResult.isValid()).thenReturn(false);
+        when(project.getKey()).thenReturn("key");
+        when(jiraAuthenticationContext.getUser()).thenReturn(user);
+        when(projectService.getProjectByKeyForAction(eq(user), eq("key"), eq(ProjectAction.EDIT_PROJECT_CONFIG))).thenReturn(getProjectResult);
+        when(getProjectResult.isValid()).thenReturn(false);
         IsProjectAdminCondition condition = new IsProjectAdminCondition(jiraAuthenticationContext, projectService);
         assertThat(condition.shouldDisplay(CONTEXT), is(false));
     }
@@ -59,9 +60,9 @@ public class IsProjectAdminConditionTest
     @Test
     public void shouldNotDisplayWithNoProjectButAValidUser()
     {
-        Mockito.when(jiraAuthenticationContext.getUser()).thenReturn(user);
-        Mockito.when(projectService.getProjectByKeyForAction(Matchers.eq(user), Matchers.eq("key"), Matchers.eq(ProjectAction.EDIT_PROJECT_CONFIG))).thenReturn(getProjectResult);
-        Mockito.when(getProjectResult.isValid()).thenReturn(true);
+        when(jiraAuthenticationContext.getUser()).thenReturn(user);
+        when(projectService.getProjectByKeyForAction(eq(user), eq("key"), eq(ProjectAction.EDIT_PROJECT_CONFIG))).thenReturn(getProjectResult);
+        when(getProjectResult.isValid()).thenReturn(true);
         IsProjectAdminCondition condition = new IsProjectAdminCondition(jiraAuthenticationContext, projectService);
         assertThat(condition.shouldDisplay(CONTEXT), is(false));
     }
@@ -70,9 +71,9 @@ public class IsProjectAdminConditionTest
     @Test
     public void shouldNotDisplayWithANullProjectKeyButAValidUser()
     {
-        Mockito.when(jiraAuthenticationContext.getUser()).thenReturn(user);
-        Mockito.when(projectService.getProjectByKeyForAction(Matchers.eq(user), Matchers.eq("key"), Matchers.eq(ProjectAction.EDIT_PROJECT_CONFIG))).thenReturn(getProjectResult);
-        Mockito.when(getProjectResult.isValid()).thenReturn(true);
+        when(jiraAuthenticationContext.getUser()).thenReturn(user);
+        when(projectService.getProjectByKeyForAction(eq(user), eq("key"), eq(ProjectAction.EDIT_PROJECT_CONFIG))).thenReturn(getProjectResult);
+        when(getProjectResult.isValid()).thenReturn(true);
         IsProjectAdminCondition condition = new IsProjectAdminCondition(jiraAuthenticationContext, projectService);
         assertThat(condition.shouldDisplay(CONTEXT), is(false));
     }
@@ -80,10 +81,10 @@ public class IsProjectAdminConditionTest
     @Test
     public void shouldNotDisplayWithAValidUserWhenTheProjectServiceReturnsNull()
     {
-        Mockito.when(project.getKey()).thenReturn("key");
-        Mockito.when(jiraAuthenticationContext.getUser()).thenReturn(user);
-        Mockito.when(projectService.getProjectByKeyForAction(Matchers.eq(user), Matchers.eq("key"), Matchers.eq(ProjectAction.EDIT_PROJECT_CONFIG))).thenReturn(null);
-        Mockito.when(getProjectResult.isValid()).thenReturn(true);
+        when(project.getKey()).thenReturn("key");
+        when(jiraAuthenticationContext.getUser()).thenReturn(user);
+        when(projectService.getProjectByKeyForAction(eq(user), eq("key"), eq(ProjectAction.EDIT_PROJECT_CONFIG))).thenReturn(null);
+        when(getProjectResult.isValid()).thenReturn(true);
         IsProjectAdminCondition condition = new IsProjectAdminCondition(jiraAuthenticationContext, projectService);
         assertThat(condition.shouldDisplay(CONTEXT), is(false));
     }
@@ -91,9 +92,9 @@ public class IsProjectAdminConditionTest
     @Test
     public void shouldNotDisplayWithAValidProjectButNoUser()
     {
-        Mockito.when(project.getKey()).thenReturn("key");
-        Mockito.when(projectService.getProjectByKeyForAction(Matchers.eq(user), Matchers.eq("key"), Matchers.eq(ProjectAction.EDIT_PROJECT_CONFIG))).thenReturn(getProjectResult);
-        Mockito.when(getProjectResult.isValid()).thenReturn(true);
+        when(project.getKey()).thenReturn("key");
+        when(projectService.getProjectByKeyForAction(eq(user), eq("key"), eq(ProjectAction.EDIT_PROJECT_CONFIG))).thenReturn(getProjectResult);
+        when(getProjectResult.isValid()).thenReturn(true);
         IsProjectAdminCondition condition = new IsProjectAdminCondition(jiraAuthenticationContext, projectService);
         assertThat(condition.shouldDisplay(CONTEXT), is(false));
     }
