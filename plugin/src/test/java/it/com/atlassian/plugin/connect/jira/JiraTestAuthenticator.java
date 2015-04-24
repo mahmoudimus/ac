@@ -3,7 +3,7 @@ package it.com.atlassian.plugin.connect.jira;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
-import it.com.atlassian.plugin.connect.TestAuthenticator;
+import com.atlassian.plugin.connect.util.auth.TestAuthenticator;
 
 
 public class JiraTestAuthenticator implements TestAuthenticator

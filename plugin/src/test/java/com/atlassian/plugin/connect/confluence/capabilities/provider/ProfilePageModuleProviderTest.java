@@ -1,8 +1,7 @@
 package com.atlassian.plugin.connect.confluence.capabilities.provider;
 
-import com.atlassian.plugin.connect.ConvertToWiredTest;
-import com.atlassian.plugin.connect.confluence.capabilities.provider.ProfilePageModuleProvider;
-import com.atlassian.plugin.connect.test.plugin.capabilities.provider.AbstractPageModuleProviderTest;
+import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.AbstractPageModuleProviderTest;
 import org.junit.Ignore;
 import org.junit.Test;
 

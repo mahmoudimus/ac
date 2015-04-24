@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.confluence.capabilities.provider;
 
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.StaticContentMacroModuleBeanBuilder;
-import com.atlassian.plugin.connect.ConvertToWiredTest;
+import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.confluence.capabilities.descriptor.macro.StaticContentMacroModuleDescriptorFactory;
 import com.atlassian.plugin.connect.confluence.macro.RemoteMacroRenderer;
 import org.junit.Ignore;

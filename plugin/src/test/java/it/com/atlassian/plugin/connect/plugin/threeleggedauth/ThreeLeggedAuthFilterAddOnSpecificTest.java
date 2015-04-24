@@ -16,8 +16,8 @@ import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.user.UserManager;
-import it.com.atlassian.plugin.connect.TestAuthenticator;
-import it.com.atlassian.plugin.connect.util.RequestUtil;
+import com.atlassian.plugin.connect.util.auth.TestAuthenticator;
+import it.com.atlassian.plugin.connect.util.request.RequestUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

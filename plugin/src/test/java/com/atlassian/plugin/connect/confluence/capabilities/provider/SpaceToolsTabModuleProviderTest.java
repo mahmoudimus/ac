@@ -1,9 +1,8 @@
 package com.atlassian.plugin.connect.confluence.capabilities.provider;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.ConvertToWiredTest;
+import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.confluence.capabilities.descriptor.XWorkActionDescriptorFactory;
-import com.atlassian.plugin.connect.confluence.capabilities.provider.SpaceToolsTabModuleProvider;
 import com.atlassian.plugin.connect.confluence.iframe.SpaceToolsIFrameAction;
 import com.atlassian.plugin.connect.confluence.iframe.SpaceToolsTabContext;
 import com.atlassian.plugin.connect.confluence.iframe.context.SpaceToolsContextInterceptor;

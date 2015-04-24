@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-import it.com.atlassian.plugin.connect.TestAuthenticator;
+import com.atlassian.plugin.connect.util.auth.TestAuthenticator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

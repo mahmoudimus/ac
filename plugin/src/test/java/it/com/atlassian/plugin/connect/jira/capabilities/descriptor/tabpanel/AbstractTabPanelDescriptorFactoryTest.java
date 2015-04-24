@@ -12,9 +12,9 @@ import com.atlassian.plugin.connect.jira.capabilities.descriptor.tabpanel.Connec
 import com.atlassian.plugin.connect.jira.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.TabPanelDescriptorHints;
-import com.atlassian.plugin.connect.test.util.AddonUtil;
+import com.atlassian.plugin.connect.util.AddonUtil;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
-import it.com.atlassian.plugin.connect.TestAuthenticator;
+import com.atlassian.plugin.connect.util.auth.TestAuthenticator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;

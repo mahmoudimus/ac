@@ -8,8 +8,8 @@ import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-import it.com.atlassian.plugin.connect.TestAuthenticator;
-import it.com.atlassian.plugin.connect.util.AbstractConnectAddonTest;
+import com.atlassian.plugin.connect.util.auth.TestAuthenticator;
+import it.com.atlassian.plugin.connect.plugin.AbstractConnectAddonTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

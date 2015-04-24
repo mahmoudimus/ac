@@ -13,7 +13,7 @@ import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
-import static com.atlassian.plugin.connect.test.plugin.capabilities.TestFileReader.readAddonTestFile;
+import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;

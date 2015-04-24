@@ -2,13 +2,12 @@ package com.atlassian.plugin.connect.jira.capabilities.descriptor;
 
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.ConvertToWiredTest;
+import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.webpanel.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.jira.capabilities.descriptor.JiraWebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.PluginForTests;
+import com.atlassian.plugin.connect.util.fixture.PluginForTests;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;

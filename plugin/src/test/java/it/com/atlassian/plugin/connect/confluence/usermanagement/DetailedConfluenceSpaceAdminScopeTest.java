@@ -29,7 +29,7 @@ import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import it.com.atlassian.plugin.connect.TestAuthenticator;
+import com.atlassian.plugin.connect.util.auth.TestAuthenticator;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -52,7 +52,7 @@ import static com.atlassian.confluence.security.SpacePermission.REMOVE_ATTACHMEN
 import static com.atlassian.confluence.security.SpacePermission.REMOVE_BLOG_PERMISSION;
 import static com.atlassian.confluence.security.SpacePermission.REMOVE_COMMENT_PERMISSION;
 import static com.atlassian.confluence.security.SpacePermission.REMOVE_PAGE_PERMISSION;
-import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
+import static com.atlassian.plugin.connect.util.AddonUtil.randomWebItemBean;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.confluence.capabilities.descriptor.macro;
 
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
-import com.atlassian.plugin.connect.ConvertToWiredTest;
+import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.confluence.macro.MacroContentManager;
 import com.atlassian.plugin.connect.confluence.macro.MacroModuleContextExtractor;
 import com.atlassian.plugin.connect.confluence.macro.RemoteMacroRendererImpl;
@@ -11,7 +11,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteA
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
+import com.atlassian.plugin.connect.util.fixture.RemotablePluginAccessorFactoryForTests;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;

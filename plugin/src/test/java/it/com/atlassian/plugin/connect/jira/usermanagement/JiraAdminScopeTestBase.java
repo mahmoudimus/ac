@@ -6,8 +6,8 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
-import it.com.atlassian.plugin.connect.TestAuthenticator;
-import it.com.atlassian.plugin.connect.usermanagement.AdminScopeTestBase;
+import com.atlassian.plugin.connect.util.auth.TestAuthenticator;
+import it.com.atlassian.plugin.connect.plugin.usermanagement.AdminScopeTestBase;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

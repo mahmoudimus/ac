@@ -7,8 +7,8 @@ import com.atlassian.confluence.user.persistence.dao.compatibility.FindUserHelpe
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.user.UserManager;
-import it.com.atlassian.plugin.connect.TestAuthenticator;
-import it.com.atlassian.plugin.connect.usermanagement.AdminScopeTestBase;
+import com.atlassian.plugin.connect.util.auth.TestAuthenticator;
+import it.com.atlassian.plugin.connect.plugin.usermanagement.AdminScopeTestBase;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

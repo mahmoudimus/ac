@@ -55,11 +55,11 @@
     <!-- OUR OWN LOCAL COMPONENTS -->
     <component key="jiraTestAuthenticator"
                class="it.com.atlassian.plugin.connect.jira.JiraTestAuthenticator"
-               interface="it.com.atlassian.plugin.connect.TestAuthenticator"
+               interface="com.atlassian.plugin.connect.util.auth.TestAuthenticator"
                application="jira" />
     <component key="confluenceTestAuthenticator"
                class="it.com.atlassian.plugin.connect.confluence.ConfluenceTestAuthenticator"
-               interface="it.com.atlassian.plugin.connect.TestAuthenticator"
+               interface="com.atlassian.plugin.connect.util.auth.TestAuthenticator"
                application="confluence" />
     <component key="jiraWorkflowImporter"
                class="it.com.atlassian.plugin.connect.jira.workflow.DefaultWorkflowImporter"

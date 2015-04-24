@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModule
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeServiceImpl;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.test.plugin.capabilities.testobjects.RemotablePluginAccessorFactoryForTests;
+import com.atlassian.plugin.connect.util.fixture.RemotablePluginAccessorFactoryForTests;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;

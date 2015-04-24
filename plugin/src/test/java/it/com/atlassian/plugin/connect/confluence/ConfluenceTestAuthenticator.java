@@ -3,7 +3,7 @@ package it.com.atlassian.plugin.connect.confluence;
 import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.user.persistence.dao.compatibility.FindUserHelper;
-import it.com.atlassian.plugin.connect.TestAuthenticator;
+import com.atlassian.plugin.connect.util.auth.TestAuthenticator;
 
 public class ConfluenceTestAuthenticator implements TestAuthenticator
 {

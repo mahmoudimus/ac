@@ -16,7 +16,7 @@ import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserServic
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import it.com.atlassian.plugin.connect.TestAuthenticator;
+import com.atlassian.plugin.connect.util.auth.TestAuthenticator;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -27,7 +27,7 @@ import java.util.List;
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
-import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
+import static com.atlassian.plugin.connect.util.AddonUtil.randomWebItemBean;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
