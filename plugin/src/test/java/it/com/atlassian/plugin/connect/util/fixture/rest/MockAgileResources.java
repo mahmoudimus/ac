@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.util.fixture.rest;
+package it.com.atlassian.plugin.connect.util.fixture.rest;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
