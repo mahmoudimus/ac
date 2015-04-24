@@ -586,17 +586,11 @@
                         </Import-Package>
                         <Export-Package>
                             com.atlassian.plugin.connect.api*;version="${project.version}",
-                            com.atlassian.plugin.connect.api.*;version="${project.version}",
                             com.atlassian.plugin.connect.spi*;version="${project.version}",
-                            com.atlassian.plugin.connect.spi.*;version="${project.version}",
                             com.atlassian.plugin.connect.plugin*;version="${project.version}",
-                            com.atlassian.plugin.connect.plugin.*;version="${project.version}",
-                            com.atlassian.plugin.connect.plugin.product*;version="${project.version}",
-                            com.atlassian.plugin.connect.plugin.product.*;version="${project.version}",
                             com.atlassian.plugin.connect.modules*,
-                            com.atlassian.plugin.connect.modules.*,
-                            com.atlassian.plugin.connect.modules.beans*,
-                            com.atlassian.plugin.connect.modules.beans.*
+                            com.atlassian.plugin.connect.confluence*;version="${project.version}",
+                            com.atlassian.plugin.connect.jira*;version="${project.version}"
                         </Export-Package>
                         <Spring-Context>*</Spring-Context>
                         <Atlassian-Plugin-Key>${project.groupId}.${project.artifactId}</Atlassian-Plugin-Key>
