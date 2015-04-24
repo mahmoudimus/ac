@@ -19,6 +19,7 @@ import com.atlassian.confluence.pageobjects.component.editor.EditorContent;
 import com.atlassian.confluence.pageobjects.component.editor.toolbars.InsertDropdownMenu;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
+import com.atlassian.confluence.pageobjects.page.content.EditorPage;
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.page.HomePage;
@@ -41,6 +42,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 
@@ -323,5 +325,17 @@ public class ConfluenceWebDriverTestBase
         currentUser = some(user);
 
         return product.login(user.confUser(), page, args);
+    }
+
+    protected void cancelEditor(EditorPage editorPage)
+    {
+        try
+        {
+            product.getPageBinder().bind(editorPage.getClass()).cancel();
+        }
+        catch (Throwable t)
+        {
+            LoggerFactory.getLogger(ConfluenceWebDriverTestBase.class).warn(t.getMessage());
+        }
     }
 }
