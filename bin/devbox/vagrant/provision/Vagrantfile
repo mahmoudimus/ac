@@ -62,6 +62,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #install Java
   config.vm.provision "shell",
     inline: "mkdir -p /etc/puppet/modules;
+            puppet module install puppetlabs/apt --version 1.7.0;
             puppet module install puppetlabs/nodejs;
             puppet module install puppetlabs/apache"
   config.vm.provision :puppet
