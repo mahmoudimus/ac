@@ -1,7 +1,8 @@
-package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
+package com.atlassian.plugin.connect.jira.capabilities.descriptor.report;
 
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.jira.capabilities.descriptor.report.ConnectReportModuleDescriptor;
+import com.atlassian.plugin.connect.jira.capabilities.descriptor.report.ReportModuleCssTransformer;
 import com.atlassian.plugin.servlet.DownloadableResource;
 import com.atlassian.plugin.webresource.transformer.TransformableResource;
 import com.atlassian.plugin.webresource.transformer.TransformerUrlBuilder;
@@ -9,6 +10,7 @@ import com.atlassian.plugin.webresource.transformer.UrlReadingWebResourceTransfo
 import com.atlassian.plugin.webresource.url.UrlBuilder;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,7 +54,7 @@ public class ReportModuleCssTransformerTest
                 createModuleDescriptor(MD3_KEY, null)
         );
 
-        when(pluginAccessor.getEnabledModuleDescriptorsByClass(ConnectReportModuleDescriptor.ModuleDescriptorImpl.class))
+        Mockito.when(pluginAccessor.getEnabledModuleDescriptorsByClass(ConnectReportModuleDescriptor.ModuleDescriptorImpl.class))
                 .thenReturn(moduleDescriptors);
 
         reportModuleCssTransformer = new ReportModuleCssTransformer(pluginAccessor);
@@ -63,13 +65,13 @@ public class ReportModuleCssTransformerTest
     {
         final TransformerUrlBuilder transformerUrlBuilder = reportModuleCssTransformer.makeUrlBuilder(null);
 
-        assertThat(transformerUrlBuilder, instanceOf(ReportModuleCssTransformer.ReportModulesUriBuilder.class));
+        MatcherAssert.assertThat(transformerUrlBuilder, Matchers.instanceOf(ReportModuleCssTransformer.ReportModulesUriBuilder.class));
     }
 
     @Test
     public void testUrlBuilder() throws Exception
     {
-        final UrlBuilder urlBuilder = mock(UrlBuilder.class);
+        final UrlBuilder urlBuilder = Mockito.mock(UrlBuilder.class);
         final TransformerUrlBuilder transformerUrlBuilder = new ReportModuleCssTransformer.ReportModulesUriBuilder(pluginAccessor);
         transformerUrlBuilder.addToUrl(urlBuilder);
 
@@ -79,20 +81,20 @@ public class ReportModuleCssTransformerTest
                 .append(MD3_KEY)
                 .build();
 
-        verify(urlBuilder).addToHash(anyString(), eq(expectedHash));
+        Mockito.verify(urlBuilder).addToHash(Matchers.anyString(), Matchers.eq(expectedHash));
     }
 
     @Test
     public void testMakeResourceTransformer() throws Exception
     {
-        final DownloadableResource downloadableResource = mock(DownloadableResource.class);
-        final TransformableResource transformableResource = mock(TransformableResource.class);
-        doReturn(downloadableResource).when(transformableResource).nextResource();
+        final DownloadableResource downloadableResource = Mockito.mock(DownloadableResource.class);
+        final TransformableResource transformableResource = Mockito.mock(TransformableResource.class);
+        Mockito.doReturn(downloadableResource).when(transformableResource).nextResource();
 
         final UrlReadingWebResourceTransformer urlReadingWebResourceTransformer = reportModuleCssTransformer.makeResourceTransformer(null);
         final DownloadableResource transformer = urlReadingWebResourceTransformer.transform(transformableResource, null);
 
-        assertThat(transformer, instanceOf(ReportModuleCssTransformer.ThumbnailCssClassesGenerator.class));
+        MatcherAssert.assertThat(transformer, Matchers.instanceOf(ReportModuleCssTransformer.ThumbnailCssClassesGenerator.class));
     }
 
     @Test
@@ -100,8 +102,8 @@ public class ReportModuleCssTransformerTest
     {
         final String generatedCss = generateCss();
 
-        assertThat(generatedCss, containsString(MD1_KEY));
-        assertThat(generatedCss, containsString(MD1_THUMBNAIL));
+        MatcherAssert.assertThat(generatedCss, Matchers.containsString(MD1_KEY));
+        MatcherAssert.assertThat(generatedCss, Matchers.containsString(MD1_THUMBNAIL));
     }
 
     @Test
@@ -109,8 +111,8 @@ public class ReportModuleCssTransformerTest
     {
         final String generatedCss = generateCss();
 
-        assertThat(generatedCss, containsString(MD2_KEY));
-        assertThat(generatedCss, containsString(MD2_THUMBNAIL));
+        MatcherAssert.assertThat(generatedCss, Matchers.containsString(MD2_KEY));
+        MatcherAssert.assertThat(generatedCss, Matchers.containsString(MD2_THUMBNAIL));
     }
 
     @Test
@@ -118,7 +120,7 @@ public class ReportModuleCssTransformerTest
     {
         final String generatedCss = generateCss();
 
-        assertThat(generatedCss, not(containsString(MD3_KEY)));
+        MatcherAssert.assertThat(generatedCss, Matchers.not(Matchers.containsString(MD3_KEY)));
     }
 
     private String generateCss() {
@@ -129,9 +131,9 @@ public class ReportModuleCssTransformerTest
 
     private ConnectReportModuleDescriptor.ModuleDescriptorImpl createModuleDescriptor(final String descriptorKey, final String thumbnailUrl)
     {
-        final ConnectReportModuleDescriptor.ModuleDescriptorImpl moduleDescriptor = mock(ConnectReportModuleDescriptor.ModuleDescriptorImpl.class);
-        doReturn(descriptorKey).when(moduleDescriptor).getKey();
-        doReturn(thumbnailUrl).when(moduleDescriptor).getThumbnailUrl();
+        final ConnectReportModuleDescriptor.ModuleDescriptorImpl moduleDescriptor = Mockito.mock(ConnectReportModuleDescriptor.ModuleDescriptorImpl.class);
+        Mockito.doReturn(descriptorKey).when(moduleDescriptor).getKey();
+        Mockito.doReturn(thumbnailUrl).when(moduleDescriptor).getThumbnailUrl();
         return moduleDescriptor;
     }
 }
