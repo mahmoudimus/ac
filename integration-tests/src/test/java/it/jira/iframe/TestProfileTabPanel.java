@@ -3,6 +3,7 @@ package it.jira.iframe;
 import java.rmi.RemoteException;
 import java.util.Map;
 
+import com.atlassian.confluence.it.TestUserFactory;
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -13,6 +14,7 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.InsufficientPermission
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProfilePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
+import it.util.ConnectTestUserFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -82,22 +84,23 @@ public class TestProfileTabPanel extends JiraWebDriverTestBase
     @Test
     public void testProfileTabPanel() throws RemoteException
     {
+        TestUser user = testUserFactory.basicUser();
+        loginAndVisit(user, ViewProfilePage.class);
         String moduleKey = addonAndModuleKey(remotePlugin.getAddon().getKey(),RAW_MODULE_KEY);
-        loginAndVisit(TestUser.ADMIN, ViewProfilePage.class);
         LinkedRemoteContent tabPanel = connectPageOperations.findTabPanel("up_" + moduleKey + "_a",
                 Option.<String>none(),moduleKey);
         ConnectAddOnEmbeddedTestPage remotePage = tabPanel.click();
         assertThat(remotePage.getMessage(), equalTo("Success"));
 
         Map<String,String> conditionRequestParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
-        assertThat(conditionRequestParams, hasEntry("pUserName", "admin"));
+        assertThat(conditionRequestParams, hasEntry("pUserName", user.getUsername()));
         assertThat(conditionRequestParams, hasEntry(is("pUserKey"), isNotBlank()));
     }
 
     @Test
     public void tabIsNotAccessibleWithFalseCondition() throws RemoteException
     {
-        login(TestUser.ADMIN);
+        login(testUserFactory.basicUser());
 
         remotePlugin.setToggleableConditionShouldDisplay(false);
         JiraViewProfilePage profilePage = product.visit(JiraViewProfilePage.class);

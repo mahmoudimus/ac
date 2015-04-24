@@ -19,7 +19,7 @@ import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
-import it.util.TestUser;
+import it.util.ConnectTestUserFactory;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -120,28 +120,28 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
     @Test
     public void testAutoconvertDynamicMacroOnCreate() throws Exception
     {
-        EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        EditorPage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
         pasteLinkAndMatch(editorPage, "dynamic-macro-with-autoconvert", "https://google.com/dynamic");
     }
 
     @Test
     public void testAutoconvertDynamicMacroWithTokenOnCreate() throws Exception
     {
-        EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        EditorPage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
         pasteLinkAndMatch(editorPage, "dynamic-macro-with-autoconvert", "https://google.com/dynamic/variable");
     }
 
     @Test
     public void testAutoconvertStaticMacroOnCreate() throws Exception
     {
-        EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        EditorPage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
         pasteLinkAndMatch(editorPage, "static-macro-with-autoconvert", "https://google.com/static");
     }
 
     @Test
     public void testAutoconvertStaticMacroWithTokenOnCreate() throws Exception
     {
-        EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        EditorPage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
         pasteLinkAndMatch(editorPage, "static-macro-with-autoconvert", "https://google.com/static/variable");
     }
 
@@ -152,28 +152,28 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
     @Test
     public void testAutoconvertDynamicMacroOnEdit() throws Exception
     {
-        EditorPage editorPage = getNewSavedPageForEditing(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        EditorPage editorPage = getNewSavedPageForEditing(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
         pasteLinkAndMatch(editorPage, "dynamic-macro-with-autoconvert", "https://google.com/dynamic");
     }
 
     @Test
     public void testAutoconvertDynamicMacroWithTokenOnEdit() throws Exception
     {
-        EditorPage editorPage = getNewSavedPageForEditing(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        EditorPage editorPage = getNewSavedPageForEditing(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
         pasteLinkAndMatch(editorPage, "dynamic-macro-with-autoconvert", "https://google.com/dynamic/variable");
     }
 
     @Test
     public void testAutoconvertStaticMacroOnEdit() throws Exception
     {
-        EditorPage editorPage = getNewSavedPageForEditing(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        EditorPage editorPage = getNewSavedPageForEditing(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
         pasteLinkAndMatch(editorPage, "static-macro-with-autoconvert", "https://google.com/static");
     }
 
     @Test
     public void testAutoconvertStaticMacroWithTokenOnEdit() throws Exception
     {
-        EditorPage editorPage = getNewSavedPageForEditing(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        EditorPage editorPage = getNewSavedPageForEditing(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
         pasteLinkAndMatch(editorPage, "static-macro-with-autoconvert", "https://google.com/static/variable");
     }
 
@@ -184,14 +184,14 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
     @Test
     public void testAutoconvertPrefixNoMatch() throws Exception
     {
-        EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        EditorPage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
         pasteLinkAndNoMatch(editorPage, "WontMatchhttps://google.com");
     }
 
     @Test
     public void testAutoconvertSuffixNoMatch() throws Exception
     {
-        EditorPage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        EditorPage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
         pasteLinkAndNoMatch(editorPage, "https://google.comwontmatch");
     }
 
@@ -252,5 +252,4 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
         Elements elements = doc.select("ac|structured-macro");
         assertEquals(0, elements.size());
     }
-
 }

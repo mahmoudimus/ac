@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
 
+import it.util.ConnectTestUserFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,11 +21,14 @@ public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase
     public static final String SEARCH_TERMS = "connect";
 
     private SearchResultPage searchResultPage;
+    
+    private TestUser user;
 
     @Before
     public void setupSearchPage() throws Exception
     {
-        searchResultPage = loginAndVisit(TestUser.ADMIN, SearchResultPage.class);
+        user = testUserFactory.basicUser();
+        searchResultPage = loginAndVisit(user, SearchResultPage.class);
     }
 
     private void search(String terms) throws Exception
@@ -88,7 +92,7 @@ public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase
             {
                 search(SEARCH_TERMS);
                 final WebHookBody body = waiter.waitForHook();
-                Assert.assertEquals("admin", body.find("user"));
+                Assert.assertEquals(user.getUsername(), body.find("user"));
             }
         });
     }

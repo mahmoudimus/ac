@@ -1,11 +1,11 @@
 package at.jira;
 
-import java.rmi.RemoteException;
-
+import at.util.ExternalAddonInstaller;
+import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
-
 import com.google.common.base.Optional;
-
+import hudson.plugins.jira.soap.RemoteIssue;
+import it.jira.JiraWebDriverTestBase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,12 +13,7 @@ import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.util.ExternalAddonInstaller;
-import hudson.plugins.jira.soap.RemoteIssue;
-import it.jira.JiraWebDriverTestBase;
-import it.util.TestUser;
-
-import static it.util.TestUser.ADMIN;
+import java.rmi.RemoteException;
 
 @Category (OnDemandAcceptanceTest.class)
 public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
@@ -26,7 +21,7 @@ public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
     private static final String WEB_ITEM_ID = "com.atlassian.connect.acceptance.test__opsbar-test-web-item";
 
     protected static final ExternalAddonInstaller externalAddonInstaller = new ExternalAddonInstaller(
-            product.getProductInstance().getBaseUrl(), TestUser.ADMIN);
+            product.getProductInstance().getBaseUrl(), testUserFactory.admin());
 
     private static final Logger log = LoggerFactory.getLogger(TestJiraStaticDescriptor.class);
 
@@ -42,7 +37,7 @@ public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
     {
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Atlassian Connect Web Panel Test Issue");
 
-        product.quickLogin(ADMIN.getUsername(), ADMIN.getPassword());
+        login(testUserFactory.basicUser());
         product.goToViewIssue(issue.getKey());
 
         connectPageOperations.findWebItem(WEB_ITEM_ID, Optional.<String>absent());

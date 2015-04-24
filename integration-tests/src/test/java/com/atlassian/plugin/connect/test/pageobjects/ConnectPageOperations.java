@@ -15,8 +15,6 @@ import com.google.inject.Inject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode;
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode.ID;
@@ -34,18 +32,11 @@ public class ConnectPageOperations
 
     private AtlassianWebDriver driver;
 
-    private static final Logger logger = LoggerFactory.getLogger(ConnectPageOperations.class);
-
     @Inject
     public ConnectPageOperations(PageBinder pageBinder, AtlassianWebDriver driver)
     {
         this.pageBinder = pageBinder;
         this.driver = driver;
-    }
-
-    public <T extends AbstractConnectIFrameComponent> T findIFrameComponent(String id, Class<T> componentClass)
-    {
-        return pageBinder.bind(componentClass, id);
     }
 
     public RemoteWebPanel findWebPanel(String id)

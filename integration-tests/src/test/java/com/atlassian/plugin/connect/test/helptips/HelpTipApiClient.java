@@ -40,17 +40,4 @@ public abstract class HelpTipApiClient
         request.setEntity(new StringEntity(new JSONObject(ImmutableMap.<String, Object>of("id", tipId)).toString(), ContentType.APPLICATION_JSON));
         userRequestSender.sendRequestAsUser(request, new BasicResponseHandler(), defaultUsername, defaultPassword);
     }
-
-    public static void dismissHelpTipsForAllUsers(TestedProduct product) {
-        try
-        {
-            HelpTipApiClientFactory.getHelpTipApiClient(product, TestUser.ADMIN).dismissAllHelpTips();
-            HelpTipApiClientFactory.getHelpTipApiClient(product, TestUser.BETTY).dismissAllHelpTips();
-            HelpTipApiClientFactory.getHelpTipApiClient(product, TestUser.BARNEY).dismissAllHelpTips();
-        }
-        catch (Exception e)
-        {
-
-        }
-    }
 }

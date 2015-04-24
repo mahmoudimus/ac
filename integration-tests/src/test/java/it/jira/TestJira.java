@@ -1,5 +1,6 @@
 package it.jira;
 
+import com.atlassian.confluence.it.TestUserFactory;
 import com.atlassian.jira.pageobjects.dialogs.ShifterDialog;
 import com.atlassian.jira.pageobjects.navigator.AdvancedSearch;
 import com.atlassian.jira.pageobjects.pages.admin.configuration.ViewGeneralConfigurationPage;
@@ -19,6 +20,7 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
 import hudson.plugins.jira.soap.RemoteIssue;
 import it.servlet.ConnectAppServlets;
+import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 import org.junit.*;
 
@@ -91,7 +93,8 @@ public class TestJira extends JiraWebDriverTestBase
     @Test
     public void testLoadDialogFromIssueNavigatorActionCog() throws RemoteException
     {
-        login(TestUser.ADMIN);
+        TestUser user = testUserFactory.basicUser();
+        login(user);
         // ensure one issue
         RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for dialog action cog test");
 
@@ -149,28 +152,30 @@ public class TestJira extends JiraWebDriverTestBase
     @Test
     public void testAdminPageInJiraSpecificLocation() throws Exception
     {
+        TestUser user = testUserFactory.admin();
         String addonKey = runner.getAddon().getKey();
-        loginAndVisit(TestUser.ADMIN, ViewGeneralConfigurationPage.class);
+        loginAndVisit(user, ViewGeneralConfigurationPage.class);
 
         RemoteWebItem adminPageLink = getAdminPageLink(addonKey, ADVANCED_ADMIN_KEY);
 
         adminPageLink.click();
 
         ConnectAddOnEmbeddedTestPage nextPage = connectPageOperations.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, addonKey, ADVANCED_ADMIN_KEY, true);
-        assertEquals(TestUser.ADMIN.getDisplayName(), nextPage.getFullName());
+        assertEquals(user.getDisplayName(), nextPage.getFullName());
     }
 
     @Test
     public void testGeneralAdminPage() throws Exception
     {
+        TestUser user = testUserFactory.admin();
         String addonKey = runner.getAddon().getKey();
-        loginAndVisit(TestUser.ADMIN, ViewGeneralConfigurationPage.class);
+        loginAndVisit(user, ViewGeneralConfigurationPage.class);
 
         RemoteWebItem adminPageLink = getAdminPageLink(addonKey, ADMIN_KEY);
         adminPageLink.click();
 
         ConnectAddOnEmbeddedTestPage nextPage = connectPageOperations.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, addonKey, ADMIN_KEY, true);
-        assertEquals(TestUser.ADMIN.getDisplayName(), nextPage.getFullName());
+        assertEquals(user.getDisplayName(), nextPage.getFullName());
     }
 
     private RemoteWebItem getAdminPageLink(String addonKey, String adminPageWebItemKey)
