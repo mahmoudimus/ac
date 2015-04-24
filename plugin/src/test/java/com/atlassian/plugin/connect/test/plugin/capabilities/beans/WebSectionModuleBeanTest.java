@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.test.plugin.capabilities.beans;
 
-import com.atlassian.jira.util.collect.MapBuilder;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
@@ -8,6 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilde
 import com.atlassian.plugin.connect.modules.beans.builder.WebSectionModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import org.junit.Test;
 
@@ -69,7 +69,7 @@ public class WebSectionModuleBeanTest
 
     private ConnectAddonBeanBuilder createAddonBeanBuilder(WebSectionModuleBean... webSectionBeans)
     {
-        Map<String, String> links = MapBuilder.build(
+        Map<String, String> links = ImmutableMap.of(
                 "self", "http://www.example.com/capabilities",
                 "homepage", "http://www.example.com"
         );

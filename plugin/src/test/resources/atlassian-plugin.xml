@@ -54,19 +54,19 @@
 
     <!-- OUR OWN LOCAL COMPONENTS -->
     <component key="jiraTestAuthenticator"
-               class="it.com.atlassian.plugin.connect.JiraTestAuthenticator"
+               class="it.com.atlassian.plugin.connect.jira.JiraTestAuthenticator"
                interface="it.com.atlassian.plugin.connect.TestAuthenticator"
                application="jira" />
     <component key="confluenceTestAuthenticator"
-               class="it.com.atlassian.plugin.connect.ConfluenceTestAuthenticator"
+               class="it.com.atlassian.plugin.connect.confluence.ConfluenceTestAuthenticator"
                interface="it.com.atlassian.plugin.connect.TestAuthenticator"
                application="confluence" />
     <component key="jiraWorkflowImporter"
-               class="it.com.atlassian.plugin.connect.workflow.jira.DefaultWorkflowImporter"
-               interface="it.com.atlassian.plugin.connect.workflow.jira.WorkflowImporter"
+               class="it.com.atlassian.plugin.connect.jira.workflow.DefaultWorkflowImporter"
+               interface="it.com.atlassian.plugin.connect.jira.workflow.WorkflowImporter"
                application="jira" />
     <component key="jiraScopeTestUtil"
-               class="it.com.atlassian.plugin.connect.scopes.jira.JiraScopeTestUtil"
+               class="it.com.atlassian.plugin.connect.jira.scopes.JiraScopeTestUtil"
                application="jira" />
 
     <!-- MOCK REST RESOURCES -->
