@@ -1,19 +1,17 @@
 package it.confluence.item;
 
-import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.it.rpc.ConfluenceRpc;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-
+import it.confluence.ConfluenceWebDriverTestBase;
+import it.util.ConnectTestUserFactory;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import it.confluence.ConfluenceWebDriverTestBase;
-import it.util.TestUser;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
@@ -60,14 +58,14 @@ public class TestFeatureFlagCondition extends ConfluenceWebDriverTestBase
             remotePlugin.stopAndUninstall();
         }
 
-        rpc.logIn(User.ADMIN);
+        rpc.logIn(testUserFactory.admin().confUser());
         rpc.getDarkFeaturesHelper().disableSiteFeature(FEATURE_FLAG_KEY);
     }
 
     @Test
     public void cannotSeeWithFeatureFlagUnset() throws Exception
     {
-        login(TestUser.ADMIN);
+        login(testUserFactory.basicUser());
 
         assertFalse("Web item should not be visible without feature flag set", connectPageOperations.existsWebItem(getModuleKey(FEATURE_FLAG)));
     }
@@ -75,9 +73,10 @@ public class TestFeatureFlagCondition extends ConfluenceWebDriverTestBase
     @Test
     public void canSeeWithFeatureFlagSet() throws Exception
     {
-        login(TestUser.ADMIN);
+        TestUser user = testUserFactory.basicUser();
+        login(user);
 
-        rpc.logIn(User.ADMIN);
+        rpc.logIn(user.confUser());
         rpc.getDarkFeaturesHelper().enableSiteFeature(FEATURE_FLAG_KEY);
 
         assertFalse("Web item should be visible with feature flag enabled", connectPageOperations.existsWebItem(getModuleKey(FEATURE_FLAG)));
@@ -86,9 +85,10 @@ public class TestFeatureFlagCondition extends ConfluenceWebDriverTestBase
     @Test
     public void cannotSeeWithFeatureFlagDisabled() throws Exception
     {
-        login(TestUser.ADMIN);
+        TestUser user = testUserFactory.basicUser();
+        login(user);
 
-        rpc.logIn(User.ADMIN);
+        rpc.logIn(user.confUser());
         rpc.getDarkFeaturesHelper().enableSiteFeature(FEATURE_FLAG_KEY);
         rpc.getDarkFeaturesHelper().disableSiteFeature(FEATURE_FLAG_KEY);
 

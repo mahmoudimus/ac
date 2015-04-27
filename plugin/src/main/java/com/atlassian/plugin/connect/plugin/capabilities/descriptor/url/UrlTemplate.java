@@ -6,20 +6,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A template for URLs with one or more variables as parameter values.
- * The parameters to the URL may contain variables in the form paramName={variableName}. For example a URL might look like
  *
- * ```
- * /acmeaddon?pid={project.id}&issueid={issue.id}
- *  ```
+ * The parameters to the URL may contain variables in the form paramName={variableName}.
+ * For example a URL might look like
  *
- * where {project.id} and {issue.id} are variables whose value will be substituted by corresponding variables. e.g.
+ * {@code /acmeaddon?pid={project.id}&issueid={issue.id}}
  *
- * ```
- * /acmeaddon?pid=15&issueid=100
- * ```
+ * where project.id and issue.id are variables whose value will be substituted by corresponding variables. e.g.
  *
- * The form with the variables (/acmeaddon?pid={project.id}&issueid={issue.id}) is a template for actual
- * URL instances (/acmeaddon?pid=15&issueid=100).
+ * {@code /acmeaddon?pid=15&issueid=100}
  */
 public class UrlTemplate
 {
@@ -27,16 +22,13 @@ public class UrlTemplate
 
     /**
      * Creates a URL template from a string form of the url template
+     *
+     * @param urlTemplateStr the string form of a URL template
      */
     public UrlTemplate(String urlTemplateStr)
     {
         this.urlTemplateStr = checkNotNull(urlTemplateStr);
     }
-
-// TODO: Will be implemented in ACDEV-498
-//    public URL createUrl(UrlTemplateContext context)
-//    {
-//    }
 
     @Deprecated // Only exposed until ACDEV-498 implemented. After that createUrl will be used instead
     public String getTemplateString()

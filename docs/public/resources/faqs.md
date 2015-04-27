@@ -111,10 +111,10 @@ are acting as a professional and trustworthy provider of hosted software.
 For reference, here are Atlassian's relevant policies:
 
 * [Atlassian Cloud Product Security Statement](https://www.atlassian.com/hosted/security)
-* [Storage Policy](https://confluence.atlassian.com/x/AAlxFw)
-* [Data Policy](hhttps://confluence.atlassian.com/x/OQIYDw)
+* [Storage Policy](https://confluence.atlassian.com/display/AODM/OnDemand+Storage+Policy)
+* [Data Policy](https://confluence.atlassian.com/display/Cloud/About+Your+Data)
 * [Atlassian's Privacy Policy](https://www.atlassian.com/company/privacy)
-* [Atlassian's Security Advisory Policy](https://confluence.atlassian.com/x/F4spD)
+* [Atlassian's Security Advisory Publishing Policy](https://www.atlassian.com/security/security-advisory-pubpolicy)
 
 Your policy may cover the following areas:
 

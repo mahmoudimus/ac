@@ -38,6 +38,8 @@ public final class LegacyAddonRedirectServlet extends HttpServlet
     }
 
     /**
+     * @param appKey the app key
+     * @param path the request path
      * @return a relative url that doesn't include the context path
      * @deprecated will be removed for 1.0
      */

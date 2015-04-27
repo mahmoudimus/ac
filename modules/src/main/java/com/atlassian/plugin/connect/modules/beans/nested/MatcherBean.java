@@ -16,7 +16,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.MatcherBeanBuilder;
  *
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#AUTOCONVERT_MATCHER_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#AUTOCONVERT_MATCHER_EXAMPLE}
  * @schemaTitle Matcher
  * @since 1.1
  */

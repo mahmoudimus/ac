@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceUserPr
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
+import it.util.ConnectTestUserFactory;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -116,7 +117,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     @Before
     public void beforeEachTest()
     {
-        login(TestUser.ADMIN);
+        login(testUserFactory.basicUser());
     }
 
     @Test
@@ -278,7 +279,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
 
     private ConfluenceOps.ConfluencePageData createPage() throws MalformedURLException, XmlRpcFault
     {
-        return confluenceOps.setPage(some(TestUser.ADMIN), SPACE, "Page with webpanel", "some page content");
+        return confluenceOps.setPage(some(testUserFactory.basicUser()), SPACE, "Page with webpanel", "some page content");
     }
 
     private static String px(int px)

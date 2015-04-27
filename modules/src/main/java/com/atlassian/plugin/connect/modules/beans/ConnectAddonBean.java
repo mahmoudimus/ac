@@ -18,40 +18,43 @@ import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newA
 import static com.google.common.collect.Maps.newHashMap;
 
 /**
- * The add-on descriptor is a JSON file (`atlassian-connect.json`) that describes the add-on to the Atlassian application.
+ * <p>The add-on descriptor is a JSON file (<code>atlassian-connect.json</code>) that describes the add-on to the Atlassian application.
  * The descriptor includes general information for the add-on, as well as the modules that the add-on wants to use or
- * extend.
- * <p/>
- * If you're familiar with Java add-on development with previous versions of the Atlassian Plugin Framework, you may already be
- * familiar with the `atlassian-plugin.xml` descriptors. The `atlassian-connect.json` serves the same function.
- * <p/>
- * The descriptor serves as the glue between the remote add-on and the Atlassian application. When an administrator for a
+ * extend.</p>
+ *
+ * <p>If you're familiar with Java add-on development with previous versions of the Atlassian Plugin Framework, you may already be
+ * familiar with the `atlassian-plugin.xml` descriptors. The `atlassian-connect.json` serves the same function.</p>
+ *
+ * <p>The descriptor serves as the glue between the remote add-on and the Atlassian application. When an administrator for a
  * cloud instance installs an add-on, what they are really doing is installing this descriptor file, which
- * contains pointers to your service. You can see an example below.
- * <p/>
- * For details and application-specific reference information on the descriptor please refer to the "jira modules"
- * and "confluence modules" sections of this documentation. But we'll call out a few highlights from the example here.
- * <p/>
- * The version element identifies the version of the add-on itself. Note that versioning works differently for Atlassian
- * Connect add-ons than it does for traditional, in-process add-ons.
- * <p/>
- * Since Atlassian Connect add-ons are remote and largely independent from the Atlassian application, they can be changed
+ * contains pointers to your service. You can see an example below.</p>
+ *
+ * <p>For details and application-specific reference information on the descriptor please refer to the "jira modules"
+ * and "confluence modules" sections of this documentation. But we'll call out a few highlights from the example here.</p>
+ *
+ * <p>The version element identifies the version of the add-on itself. Note that versioning works differently for Atlassian
+ * Connect add-ons than it does for traditional, in-process add-ons.</p>
+ *
+ * <p>Since Atlassian Connect add-ons are remote and largely independent from the Atlassian application, they can be changed
  * at any time, without having to create a new version or report the change to the Atlassian instance. The changes are
- * reflected in the Atlassian instance immediately (or at least at page reload time).
- * <p/>
- * However, some add-on changes do require a change in the descriptor file itself. For example, say you modify the add-on
+ * reflected in the Atlassian instance immediately (or at least at page reload time).</p>
+ *
+ * <p>However, some add-on changes do require a change in the descriptor file itself. For example, say you modify the add-on
  * to have a new page module. Since this requires a page module declaration in the descriptor, it means making an updated
  * descriptor available, which instances will have to re-register. To propagate this change, you need to create a new version
  * of the add-on in its Marketplace listing. The Marketplace will take care of the rest: informing administrators
- * and automatically installing the available update. See [Upgrades](../developing/upgrades.html) for more details.
- * <p/>
- * <div class="aui-message"><p class="title"><span class="aui-icon icon-info"></span><strong>Validating your descriptor
- * </strong></p><p>You can validate your descriptor using this
- * <a href="https://atlassian-connect-validator.herokuapp.com/validate">handy tool</a>.</p></div>
- * <p/>
+ * and automatically installing the available update. See [Upgrades](../developing/upgrades.html) for more details.</p>
+ *
+ * <div class="aui-message aui-message-info">
+ *     <p class="title">
+ *         <strong>Validating your descriptor</strong>
+ *     </p>
+ *     <p>You can validate your descriptor using this <a href="https://atlassian-connect-validator.herokuapp.com/validate">handy tool</a>.</p>
+ * </div>
+ *
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ADDON_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ADDON_EXAMPLE}
  * @schemaTitle Addon Descriptor
  * @since 1.0
  */

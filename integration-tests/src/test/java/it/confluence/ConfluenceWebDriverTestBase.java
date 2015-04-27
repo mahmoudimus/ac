@@ -1,10 +1,8 @@
 package it.confluence;
 
 import com.atlassian.confluence.it.Space;
-import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.it.maven.MavenDependencyHelper;
 import com.atlassian.confluence.it.maven.MavenUploadablePlugin;
-import com.atlassian.confluence.it.plugin.Plugin;
 import com.atlassian.confluence.it.plugin.PluginHelper;
 import com.atlassian.confluence.it.plugin.SimplePlugin;
 import com.atlassian.confluence.it.plugin.UploadablePlugin;
@@ -22,20 +20,21 @@ import com.atlassian.confluence.pageobjects.page.content.Editor;
 import com.atlassian.confluence.pageobjects.page.content.EditorPage;
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
+import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.pageobjects.page.LoginPage;
-import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditorContent;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceMacroBrowserDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.util.concurrent.LazyReference;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import com.sun.jersey.api.client.UniformInterfaceException;
+import it.util.ConfluenceTestUserFactory;
+import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -45,9 +44,7 @@ import org.junit.rules.TestName;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-
-import static com.atlassian.fugue.Option.none;
-import static com.atlassian.fugue.Option.some;
+import java.util.concurrent.Callable;
 
 /**
  * This is an adapted version of com.atlassian.confluence.webdriver.AbstractWebDriverTest.
@@ -59,9 +56,13 @@ import static com.atlassian.fugue.Option.some;
 public class ConfluenceWebDriverTestBase
 {
     protected static final ConfluenceTestedProduct product = TestedProductProvider.getConfluenceTestedProduct();
-    protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(product.getPageBinder(),
-            product.getTester().getDriver());
-    private static Option<TestUser> currentUser = none();
+
+    protected static final ConfluenceRpc rpc = ConfluenceRpc.newInstance(product.getProductInstance().getBaseUrl(), ConfluenceRpc.Version.V2_WITH_WIKI_MARKUP);
+
+    protected static ConnectTestUserFactory testUserFactory;
+
+    protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(
+            product.getPageBinder(), product.getTester().getDriver());
 
     private boolean hasBeenFocused;
 
@@ -86,8 +87,6 @@ public class ConfluenceWebDriverTestBase
 
     @Rule
     public TestName name = new TestName();
-
-    protected static final ConfluenceRpc rpc = ConfluenceRpc.newInstance(product.getProductInstance().getBaseUrl(), ConfluenceRpc.Version.V2_WITH_WIKI_MARKUP);
 
     private static final LazyReference<UploadablePlugin> FUNCTEST_RPC_PLUGIN_HOLDER = new LazyReference<UploadablePlugin>()
     {
@@ -123,7 +122,8 @@ public class ConfluenceWebDriverTestBase
     @BeforeClass
     public static void confluenceTestSetup() throws Exception
     {
-        rpc.logIn(User.ADMIN);
+        testUserFactory = new ConfluenceTestUserFactory(product, rpc);
+        rpc.logIn(testUserFactory.admin().confUser());
         installTestPlugins(rpc);
 
         // Hangs the Chrome WebDriver tests, so it's disabled for now.
@@ -136,19 +136,16 @@ public class ConfluenceWebDriverTestBase
             // Missing or already disabled. Carry on.
         }
 
-        product.getPageBinder().override(MacroBrowserDialog.class, ConfluenceMacroBrowserDialog.class);
         product.getPageBinder().override(EditorContent.class, ConfluenceEditorContent.class);
         product.getPageBinder().override(InsertDropdownMenu.class, ConfluenceInsertMenu.class);
 
         rpc.getDarkFeaturesHelper().enableSiteFeature("webdriver.test.mode");
-
-        disableFeatureDiscovery();
     }
 
     @AfterClass
     public static void confluenceTestTeardown() throws Exception
     {
-        rpc.logIn(User.ADMIN);
+        rpc.logIn(testUserFactory.admin().confUser());
         rpc.getDarkFeaturesHelper().disableSiteFeature("webdriver.test.mode");
     }
 
@@ -156,12 +153,6 @@ public class ConfluenceWebDriverTestBase
     public void setupTest() throws Exception
     {
         StartOfTestLogger.instance().logTestStart(rpc, getClass(), name.getMethodName());
-    }
-
-    private static void disableFeatureDiscovery()
-    {
-        Plugin helpTipsPlugin = new SimplePlugin("com.atlassian.plugins.atlassian-help-tips", "Atlassian Help Tips");
-        rpc.getPluginHelper().disablePlugin(helpTipsPlugin);
     }
 
     // The three methods below are copied from com.atlassian.confluence.webdriver.WebDriverSetupTest,
@@ -172,7 +163,7 @@ public class ConfluenceWebDriverTestBase
         PluginHelper pluginHelper = rpc.getPluginHelper();
         if (!pluginHelper.isPluginEnabled(FUNCTEST_RPC_PLUGIN_HOLDER.get()))
         {
-            new WebTestPluginHelper(rpc.getBaseUrl(), User.ADMIN).installPlugin(FUNCTEST_RPC_PLUGIN_HOLDER.get());
+            new WebTestPluginHelper(rpc.getBaseUrl(), testUserFactory.admin().confUser()).installPlugin(FUNCTEST_RPC_PLUGIN_HOLDER.get());
         }
 
         if (!pluginHelper.isPluginEnabled(SCRIPTS_FINISHED_PLUGIN_HOLDER.get()))
@@ -193,11 +184,6 @@ public class ConfluenceWebDriverTestBase
         return new MavenUploadablePlugin("com.atlassian.confluence.plugins.confluence-scriptsfinished-plugin",
                 "Confluence Scripts Finished Plugin",
                 MavenDependencyHelper.resolve("com.atlassian.confluence.plugins", "confluence-scriptsfinished-plugin"));
-    }
-
-    protected void selectMacroAndSave(CreatePage editorPage, String macroName)
-    {
-        selectMacro(editorPage, macroName).browserDialog.clickSave();
     }
 
     protected MacroBrowserAndEditor selectMacro(CreatePage editorPage, String macroName)
@@ -231,11 +217,24 @@ public class ConfluenceWebDriverTestBase
         }
     }
 
-    protected void selectMacro(MacroBrowserAndEditor macroBrowserAndEditor)
+    protected void selectMacroAndSave(CreatePage editorPage, String macroName)
+    {
+        MacroBrowserDialog browserDialog = selectMacro(editorPage, macroName).browserDialog;
+        saveSelectedMacro(browserDialog);
+    }
+
+    protected void selectMacroAndSave(MacroBrowserAndEditor macroBrowserAndEditor)
     {
         MacroForm macroForm = macroBrowserAndEditor.macro.select();
         macroForm.waitUntilVisible();
-        macroBrowserAndEditor.browserDialog.clickSave();
+        saveSelectedMacro(macroBrowserAndEditor.browserDialog);
+    }
+
+    private void saveSelectedMacro(MacroBrowserDialog browserDialog)
+    {
+        Poller.waitUntilTrue(browserDialog.isSaveButtonEnabled());
+        browserDialog.clickSave();
+        browserDialog.waitUntilHidden();
     }
 
     protected MacroBrowserAndEditor findMacroInBrowser(CreatePage editorPage, String macroName)
@@ -285,46 +284,35 @@ public class ConfluenceWebDriverTestBase
     }
 
     @BeforeClass
-    public static void dismissPrompts()
-    {
-        HelpTipApiClient.dismissHelpTipsForAllUsers(product);
-    }
-
-    @BeforeClass
     @AfterClass
     public static void logout()
     {
-        currentUser = Option.<TestUser>none();
         product.getTester().getDriver().manage().deleteAllCookies();
     }
 
     protected void login(TestUser user)
     {
-        if (!isAlreadyLoggedIn(user))
-        {
-            logout();
-            currentUser = some(user);
-
-            product.visit(LoginPage.class).login(user.getUsername(), user.getPassword(), HomePage.class);
-        }
-    }
-
-    private boolean isAlreadyLoggedIn(final TestUser user)
-    {
-        return user != null && currentUser.isDefined() && currentUser.get().getUsername().equals(user.getUsername());
+        logout();
+        product.visit(LoginPage.class).login(user.getUsername(), user.getPassword(), HomePage.class);
     }
 
     protected <P extends Page> P loginAndVisit(TestUser user, final Class<P> page, final Object... args)
     {
-        if (isAlreadyLoggedIn(user))
-        {
-            return product.visit(page, args);
-        }
-
         logout();
-        currentUser = some(user);
-
         return product.login(user.confUser(), page, args);
+    }
+
+    public static <T> T runWithAnonymousUsePermission(Callable<T> test) throws Exception
+    {
+        rpc.grantAnonymousUsePermission();
+        try
+        {
+            return test.call();
+        }
+        finally
+        {
+            rpc.revokeAnonymousUsePermission();
+        }
     }
 
     protected void cancelEditor(EditorPage editorPage)

@@ -7,15 +7,12 @@ import org.apache.commons.lang3.StringUtils;
  * This class just takes care of path separators, it doesn't assume or change anything related to URL or Filename encoding.
  * Trailing slashes at the end of the path are preserved.
  *
- * All of the following calls lead to the same result:
+ * All of the following calls lead to the same result, http://example.com/path.
  *
  * new PathBuilder("http://example.com").withPathFragment("/path").build()
  * new PathBuilder("http://example.com/").withPathFragment("/path").build()
  * new PathBuilder("http://example.com/").withPathFragment("path").build()
  * new PathBuilder("http://example.com").withPathFragment("path").build()
- *
- * -> http://example.com/path
- *
  */
 public class PathBuilder
 {

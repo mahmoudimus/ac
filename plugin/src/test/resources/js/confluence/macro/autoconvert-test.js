@@ -22,12 +22,6 @@ define(['ac/confluence/macro/autoconvert'], function (Autoconvert) {
         }
     });
 
-    test("Replace all test", function () {
-        var s = "aaaaabbb";
-        var replaced = Autoconvert.replaceAll("a", "b", s);
-        strictEqual(replaced, "bbbbbbbb", "Replace all should replace all a's with b's");
-    });
-
     // Helper method to check the round trip and matching of a pattern and a link
     // pattern - the url pattern to define in the definition
     // link - the link that is being pasted
@@ -37,6 +31,13 @@ define(['ac/confluence/macro/autoconvert'], function (Autoconvert) {
             "macroName": "macro", "autoconvert": {"urlParameter": "url"},
             "matcherBean": {"pattern": pattern}
         };
+
+        // if the pattern is not a valid pattern, it does not match
+        if (!Autoconvert.isValidAutoconvertDef(autoconvertDef)) {
+            ok(!shouldMatch);
+            return;
+        }
+
         autoconvertDef.matcherBean.pattern = Autoconvert.convertPatternToRegex(pattern);
 
         Autoconvert.factory(autoconvertDef, function (macro, done) {
@@ -45,14 +46,15 @@ define(['ac/confluence/macro/autoconvert'], function (Autoconvert) {
             strictEqual(macro.params.url, link);
         })({source: link}, undefined, function () {
             // has not matched
-            ok(!shouldMatch)
+            ok(!shouldMatch);
         });
     }
 
-    // To test: wildcard combinations
-    // "http:/{}/example.com/"
-    // "http://example.com/{}{}{}/"
-    // "http://example.com/{}{}"
+    test("Replace all test", function () {
+        var s = "aaaaabbb";
+        var replaced = Autoconvert.replaceAll("a", "b", s);
+        strictEqual(replaced, "bbbbbbbb", "Replace all should replace all a's with b's");
+    });
 
     test("wildcard combination tests", function () {
         quickRoundTripCheck("http://example.com/{}", "http://example.com/12345", true);
@@ -62,6 +64,22 @@ define(['ac/confluence/macro/autoconvert'], function (Autoconvert) {
         quickRoundTripCheck("http://example.com/{}/", "http://example.com/12345/6789/", false);
         quickRoundTripCheck("http://example.com/{}/{}/", "http://example.com/12345/6789/", true);
         quickRoundTripCheck("http://example.com/{}{}", "http://example.com/12345", true);
+    });
+
+    test("adjacent wildcard tests", function () {
+        var patternOne = "http://example.com/{}{}/";
+        var patternTwo = "http://example.com/{}/{}{}{}{}{}/";
+
+        var regexPatternOne = Autoconvert.convertPatternToRegex(patternOne);
+        var regexPatternTwo = Autoconvert.convertPatternToRegex(patternTwo);
+
+        strictEqual(regexPatternOne, "^http:\\/\\/example\\.com\\/[^/]*?\\/$");
+        strictEqual(regexPatternTwo, "^http:\\/\\/example\\.com\\/[^/]*?\\/[^/]*?\\/$");
+    });
+
+    test("blacklisted patterns test", function () {
+        quickRoundTripCheck("http://{}", "http://23456", false);
+        quickRoundTripCheck("{}", "http://facebook.com", false);
     });
 
     test("handlers registered test", function () {

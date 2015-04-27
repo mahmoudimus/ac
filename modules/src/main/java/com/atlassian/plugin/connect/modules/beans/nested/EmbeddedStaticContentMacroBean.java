@@ -14,7 +14,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.EmbeddedStaticContentM
  *
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#EMBEDDED_STATIC_MACRO_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#EMBEDDED_STATIC_MACRO_EXAMPLE}
  * @schemaTitle Embedded Static Content Macro
  * @since 1.0
  */

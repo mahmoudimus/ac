@@ -85,6 +85,7 @@ public class AddOnKeyExtractor
      * Set the id of a Connect add-on in the request attributes.
      *
      * @param req the context {@link HttpServletRequest}
+     * @param clientKey the client key of the add-on
      */
     public static void setClientKey(@Nonnull HttpServletRequest req, @Nonnull String clientKey)
     {

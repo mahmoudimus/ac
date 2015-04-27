@@ -30,6 +30,9 @@ public class RequiredKeyBeanBuilder<T extends RequiredKeyBeanBuilder, B extends 
     /**
      * Use only if absolutely needed. This will lock the key to the specified value, and no transformations
      * of the key will be performed.
+     *
+     * @param useKeyAsIs the value to set for the flag
+     * @return the builder
      */
     public T useKeyAsIs(boolean useKeyAsIs)
     {

@@ -19,18 +19,18 @@
         };
 
         var replaceAll = function (find, replace, str) {
-            return str.replace(new RegExp(find, 'g'), replace);
+            return str.replace(new RegExp(find, "g"), replace);
         };
 
         var convertPatternToRegex = function (pattern) {
             // Consolidate any double up wildcards
-            while (pattern.indexOf('{}{}') != -1) {
-                pattern = pattern.replace('{}{}', '{}')
+            while (pattern.indexOf("{}{}") !== -1) {
+                pattern = pattern.replace("{}{}", "{}");
             }
 
             // build a regex from the defined autoconvert pattern
             pattern = escapePattern(pattern);
-            pattern = replaceAll('{}', '[^/]*?', pattern);
+            pattern = replaceAll("{}", "[^/]*?", pattern);
             pattern = "^" + pattern + "$";
 
             return pattern;
@@ -47,11 +47,11 @@
                 "https://{}.{}",
                 "http://{}.{}.{}",
                 "https://{}.{}.{}"
-            ]
+            ];
 
             // check the url pattern is not banned
-            for (i=0; i<patternBlackList.length; i++) {
-                if (pattern == patternBlackList[i]) { return false; }
+            for (var i = 0; i < patternBlackList.length; i++) {
+                if (pattern === patternBlackList[i]) { return false; }
             }
 
             return autoconvertDef &&
@@ -81,7 +81,7 @@
                 } else {
                     done();
                 }
-            }
+            };
         };
 
         return {
@@ -89,6 +89,7 @@
             replaceAll: replaceAll,
             factory: factory,
             convertPatternToRegex: convertPatternToRegex,
+            isValidAutoconvertDef: isValidAutoconvertDef,
             registerAutoconvertHandlers: function (autoconvertDefs, tinymce) {
                 if (autoconvertDefs) {
                     var numAutoconvertDefs = autoconvertDefs.length;
@@ -97,15 +98,14 @@
                             if (isValidAutoconvertDef(autoconvertDefs[i])) {
                                 var pattern = autoconvertDefs[i].matcherBean.pattern;
                                 autoconvertDefs[i].matcherBean.pattern = convertPatternToRegex(pattern);
-
                                 tinymce.plugins.Autoconvert.autoConvert.addHandler(factory(autoconvertDefs[i], function (macro, done) {
                                     tinymce.plugins.Autoconvert.convertMacroToDom(macro, done, function (jqXHR, textStatus, errorThrown) {
-                                        console.log("error converting macro [ " + macro.name + " ] to dom elements [ " + errorThrown + " ]");
-                                        done()
+                                        AJS.log("error converting macro [ " + macro.name + " ] to dom elements [ " + errorThrown + " ]");
+                                        done();
                                     });
                                 }));
                             } else {
-                                console.log("invalid autoconvert definition [ " + JSON.stringify(autoconvertDefs[i]) + " ]");
+                                AJS.log("invalid autoconvert definition [ " + JSON.stringify(autoconvertDefs[i]) + " ]");
                             }
                         }
                     }

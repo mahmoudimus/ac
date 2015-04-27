@@ -11,7 +11,7 @@ import java.util.List;
  *
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ENTITY_PROPERTY_INDEX_KEY_CONFIGURATION_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#ENTITY_PROPERTY_INDEX_KEY_CONFIGURATION_EXAMPLE}
  * @schemaTitle Index Key Configuration
  * @since 1.0
  */

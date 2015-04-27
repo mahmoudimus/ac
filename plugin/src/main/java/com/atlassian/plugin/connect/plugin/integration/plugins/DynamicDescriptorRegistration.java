@@ -49,9 +49,9 @@ public class DynamicDescriptorRegistration
      * these descriptors are not proxies created by the p3 plugin, as it will cause ServiceProxyDestroyed
      * exceptions when the p3 plugin is upgraded.</strong>
      *
-     * @param plugin
-     * @param descriptors
-     * @return
+     * @param plugin the plugin for which to register descriptors
+     * @param descriptors the module descriptors of the plugin
+     * @return a representation of the descriptor registration
      */
     public Registration registerDescriptors(Plugin plugin, DescriptorToRegister... descriptors)
     {
@@ -61,9 +61,9 @@ public class DynamicDescriptorRegistration
     /**
      * Registers descriptors.  
      *
-     * @param plugin
-     * @param descriptors
-     * @return
+     * @param plugin the plugin for which to register descriptors
+     * @param descriptors the module descriptors of the plugin
+     * @return a representation of the descriptor registration
      */
     public Registration registerDescriptors(final Plugin plugin, Iterable<DescriptorToRegister> descriptors)
     {

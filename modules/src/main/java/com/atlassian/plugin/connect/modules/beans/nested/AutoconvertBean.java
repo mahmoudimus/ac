@@ -22,7 +22,7 @@ import java.util.List;
  *
  * This example inserts a macro into the editor when a user pastes in certain simple Facebook links.
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#AUTOCONVERT_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#AUTOCONVERT_EXAMPLE}
  * @schemaTitle Autoconvert
  * @since 1.1
  */
