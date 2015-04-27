@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.capabilities.provider;
+package com.atlassian.plugin.connect.jira.iframe.tabpanel;
 
 import com.atlassian.plugin.ModuleDescriptor;
 

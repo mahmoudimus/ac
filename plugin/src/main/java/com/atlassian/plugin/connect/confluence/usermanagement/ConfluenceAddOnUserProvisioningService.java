@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.confluence.usermanagement;
+package com.atlassian.plugin.connect.confluence.usermanagement;
 
 import com.atlassian.confluence.cache.ThreadLocalCache;
 import com.atlassian.confluence.event.events.space.SpaceCreateEvent;
