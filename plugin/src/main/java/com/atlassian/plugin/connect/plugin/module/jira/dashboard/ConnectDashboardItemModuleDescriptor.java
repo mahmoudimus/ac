@@ -4,6 +4,7 @@ import com.atlassian.fugue.Option;
 import com.atlassian.gadgets.plugins.DashboardItemModule;
 import com.atlassian.gadgets.plugins.DashboardItemModule.DirectoryDefinition;
 import com.atlassian.gadgets.plugins.DashboardItemModuleDescriptor;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
@@ -27,6 +28,7 @@ public class ConnectDashboardItemModuleDescriptor extends AbstractModuleDescript
 {
     private static final Logger log = LoggerFactory.getLogger(ConnectDashboardItemModuleDescriptor.class);
     private final DirectoryDefinition directoryDefinition;
+    private final I18nProperty description;
     private final DashboardItemModule module;
 
     public ConnectDashboardItemModuleDescriptor(final ModuleFactory moduleFactory,
@@ -35,10 +37,12 @@ public class ConnectDashboardItemModuleDescriptor extends AbstractModuleDescript
             final ModuleContextFilter moduleContextFilter,
             final PluggableParametersExtractor parametersExtractor,
             final Boolean configurable,
+            final I18nProperty description,
             final Condition condition)
     {
         super(moduleFactory);
         this.directoryDefinition = directoryDefinition;
+        this.description = description;
         this.module = new ConnectDirectoryModule(parametersExtractor, directoryDefinition, renderStrategy, moduleContextFilter, configurable, condition);
     }
 
@@ -59,6 +63,18 @@ public class ConnectDashboardItemModuleDescriptor extends AbstractModuleDescript
     public DashboardItemModule getModule()
     {
         return module;
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return description.getValue();
+    }
+
+    @Override
+    public String getDescriptionKey()
+    {
+        return description.getI18n();
     }
 
     private static class ConnectDirectoryModule implements DashboardItemModule

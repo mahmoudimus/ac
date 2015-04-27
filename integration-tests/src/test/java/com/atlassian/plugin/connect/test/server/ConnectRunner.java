@@ -28,6 +28,7 @@ import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
@@ -224,6 +225,12 @@ public class ConnectRunner
     public ConnectRunner setAuthenticationToNone()
     {
         addonBuilder.withAuthentication(AuthenticationBean.none());
+        return this;
+    }
+
+    public ConnectRunner setVendor(final VendorBean vendor)
+    {
+        addonBuilder.withVendor(vendor);
         return this;
     }
 

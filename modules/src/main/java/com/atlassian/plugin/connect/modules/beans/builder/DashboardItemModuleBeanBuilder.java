@@ -6,14 +6,12 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 public class DashboardItemModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBuilder<DashboardItemModuleBeanBuilder, DashboardItemModuleBean>
 {
     private Boolean configurable;
-    private I18nProperty title;
     private I18nProperty description;
     private String url;
     private String thumbnailUrl;
 
     public DashboardItemModuleBeanBuilder()
     {
-        this.title = I18nProperty.empty();
         this.description = I18nProperty.empty();
         this.thumbnailUrl = null;
     }
@@ -21,16 +19,9 @@ public class DashboardItemModuleBeanBuilder extends BeanWithKeyParamsAndConditio
     public DashboardItemModuleBeanBuilder(DashboardItemModuleBean dashboardItemModuleBean)
     {
         super(dashboardItemModuleBean);
-        this.title = dashboardItemModuleBean.getName();
         this.description = dashboardItemModuleBean.getDescription();
         this.url = dashboardItemModuleBean.getUrl();
         this.thumbnailUrl = dashboardItemModuleBean.getThumbnailUrl();
-    }
-
-    public DashboardItemModuleBeanBuilder withTitle(I18nProperty title)
-    {
-        this.title = title;
-        return this;
     }
 
     public DashboardItemModuleBeanBuilder withDescription(I18nProperty description)

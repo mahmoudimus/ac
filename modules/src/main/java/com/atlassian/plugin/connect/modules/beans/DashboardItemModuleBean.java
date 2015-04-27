@@ -11,7 +11,11 @@ import org.apache.commons.lang3.StringUtils;
  * Dashboard items allow add-on to display a summary information data on the dashboard. Each dashboard-item can be configured
  * to display information relevant to a particular user.
  *
- * Context paramaters (not available in directory view)
+ * TODO Document dashboard item responsibility for rendering edit or display view
+ * TODO Document context parameters (not available in directory view)
+ * TODO document setting title with JS
+ * TODO document editable callback
+ * TODO provide link to sample add-on on bitbucket
  */
 public class DashboardItemModuleBean extends BeanWithKeyAndParamsAndConditions
 {

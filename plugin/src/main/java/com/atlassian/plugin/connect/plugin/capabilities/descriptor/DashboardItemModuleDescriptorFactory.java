@@ -19,6 +19,7 @@ import com.atlassian.plugin.connect.plugin.module.jira.dashboard.ConnectDashboar
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.web.Condition;
+import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.plugin.web.descriptors.ConditionElementParser;
 import com.google.common.collect.Sets;
 import org.dom4j.Element;
@@ -83,7 +84,8 @@ public class DashboardItemModuleDescriptorFactory implements ConnectModuleDescri
         Condition condition = createCondition(plugin, addonBean, bean);
 
         ConnectDashboardItemModuleDescriptor moduleDescriptor =
-                new ConnectDashboardItemModuleDescriptor(moduleFactory, directoryDefinition, renderStrategy, moduleContextFilter, parametersExtractor, bean.isConfigurable(), condition);
+                new ConnectDashboardItemModuleDescriptor(moduleFactory, directoryDefinition, renderStrategy,
+                        moduleContextFilter, parametersExtractor, bean.isConfigurable(), bean.getDescription(), condition);
 
         Element dashboardItemModule = new DOMElement("dashboard-item");
         dashboardItemModule.addAttribute("key", moduleKey);
@@ -96,9 +98,16 @@ public class DashboardItemModuleDescriptorFactory implements ConnectModuleDescri
             final ConnectAddonBean addonBean,
             final DashboardItemModuleBean bean)
     {
-        final DOMElement conditionFragment = conditionModuleFragmentFactory.createFragment(addonBean.getKey(), bean.getConditions());
+        if (bean.getConditions().isEmpty())
+        {
+            return new AlwaysDisplayCondition();
+        }
+        else
+        {
+            final DOMElement conditionFragment = conditionModuleFragmentFactory.createFragment(addonBean.getKey(), bean.getConditions());
 
-        return conditionElementParserFactory.getConditionElementParser().makeConditions(plugin, conditionFragment, ConditionElementParser.CompositeType.AND);
+            return conditionElementParserFactory.getConditionElementParser().makeConditions(plugin, conditionFragment, ConditionElementParser.CompositeType.AND);
+        }
     }
 
     private DirectoryDefinition createDirectoryDefinition(final ConnectAddonBean addOnBean,
