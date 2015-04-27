@@ -6,17 +6,18 @@ import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.plugin.profile.ViewProfilePanel;
 import com.atlassian.jira.plugin.profile.ViewProfilePanelModuleDescriptor;
 import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.user.ApplicationUsers;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.jira.JiraModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.jira.JiraModuleContextParametersImpl;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
+import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 
 import com.google.common.collect.ImmutableMap;
 
-import static com.atlassian.jira.user.ApplicationUsers.toDirectoryUser;
 import static com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyUtil.renderAccessDeniedToString;
 import static com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyUtil.renderToString;
 import static com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor.MODULE_CONTEXT_KEY;
@@ -46,6 +47,11 @@ public class ConnectIFrameProfileTabPanel implements ViewProfilePanel
 
     public String getHtml(final User user)
     {
+        return getHtml(ApplicationUsers.from(user));
+    }
+
+    public String getHtml(ApplicationUser user)
+    {
         ModuleContextParameters unfilteredContext = createUnfilteredContext(user);
         Map<String, ModuleContextParameters> conditionContext = ImmutableMap.of(MODULE_CONTEXT_KEY, unfilteredContext);
 
@@ -59,14 +65,9 @@ public class ConnectIFrameProfileTabPanel implements ViewProfilePanel
         }
     }
 
-    public String getHtml(ApplicationUser profileUser)
+    private ModuleContextParameters createUnfilteredContext(final ApplicationUser profileUser)
     {
-        return getHtml(toDirectoryUser(profileUser));
-    }
-
-    private ModuleContextParameters createUnfilteredContext(final User profileUser)
-    {
-        UserProfile userProfile = userManager.getUserProfile(profileUser.getName());
+        UserProfile userProfile = userManager.getUserProfile(new UserKey(profileUser.getKey()));
         JiraModuleContextParameters unfilteredContext = new JiraModuleContextParametersImpl();
         unfilteredContext.addProfileUser(userProfile);
         return unfilteredContext;
