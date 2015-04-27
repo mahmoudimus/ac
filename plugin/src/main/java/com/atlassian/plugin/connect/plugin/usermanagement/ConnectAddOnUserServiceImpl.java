@@ -256,7 +256,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         }
         catch (Exception e)
         {
-            if (e.getClass().getSimpleName().equals("DataIntegrityViolationException"))
+            if (e.getClass().getCanonicalName().equals("org.springframework.dao.DataIntegrityViolationException"))
             {
                 // our analytics revealed 57 of these in 1 week and prod instance logs suggest that this is another user creation race condition
                 // see https://ecosystem.atlassian.net/browse/ACDEV-1499
