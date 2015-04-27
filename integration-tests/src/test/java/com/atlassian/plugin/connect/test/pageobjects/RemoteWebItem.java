@@ -51,16 +51,7 @@ public class RemoteWebItem
     {
         webItem = findWebItem();
         waitUntilTrue(webItem.timed().isPresent());
-
-//        if (isPageBackedWebItem())
-//        {
-//            String iframeId = IframeUtils.iframeId("servlet-" + matchValue);
-//            path = elementFinder.find(By.id(iframeId)).getAttribute("src");
-//        }
-//        else
-//        {
         path = webItem.getAttribute("href");
-//        }
     }
 
     private PageElement findWebItem()

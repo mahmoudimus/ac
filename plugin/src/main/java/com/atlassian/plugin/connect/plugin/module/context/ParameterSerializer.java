@@ -10,7 +10,7 @@ public interface ParameterSerializer<T>
     /**
      * Serializes the whitelisted parameters from a context.
      * @param t object to serialize.
-     * @return map containing key under which parameters are stores and their value. For instance: project.id -> 1.
+     * @return map containing key under which parameters are stores and their value. For instance: project.id to 1.
      */
     Map<String, Object> serialize(T t);
 }

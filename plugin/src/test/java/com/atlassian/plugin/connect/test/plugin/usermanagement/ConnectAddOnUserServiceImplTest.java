@@ -1,19 +1,38 @@
 package com.atlassian.plugin.connect.test.plugin.usermanagement;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import com.atlassian.crowd.embedded.api.PasswordCredential;
-import com.atlassian.crowd.exception.*;
+import com.atlassian.crowd.exception.ApplicationNotFoundException;
+import com.atlassian.crowd.exception.ApplicationPermissionException;
+import com.atlassian.crowd.exception.GroupNotFoundException;
+import com.atlassian.crowd.exception.InvalidAuthenticationException;
+import com.atlassian.crowd.exception.InvalidCredentialException;
+import com.atlassian.crowd.exception.InvalidUserException;
+import com.atlassian.crowd.exception.MembershipAlreadyExistsException;
+import com.atlassian.crowd.exception.OperationFailedException;
+import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.model.user.UserTemplate;
-import com.atlassian.crowd.service.client.ClientProperties;
 import com.atlassian.crowd.service.client.CrowdClient;
-import com.atlassian.crowd.service.factory.CrowdClientFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
-import com.atlassian.plugin.connect.plugin.usermanagement.*;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningService;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningServiceImpl;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserProvisioningService;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserServiceImpl;
+import com.atlassian.plugin.connect.plugin.usermanagement.CrowdClientFacade;
 import com.atlassian.plugin.connect.plugin.util.FeatureManager;
+
 import com.google.common.collect.ImmutableSet;
+
 import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,19 +44,22 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.buildAttributeConnectAddOnAttributeName;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyMap;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.argThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
@@ -47,13 +69,14 @@ public class ConnectAddOnUserServiceImplTest
     private static final String ADD_ON_EMAIL_ADDRESS = "noreply@mailer.atlassian.com";
     private static final String ADD_ON_DISPLAY_NAME = "A Cool Test Add-on";
     private static final String APPLICATION_NAME = "crowd-embedded";
+    public static final Set<String> EXPECTED_ATTRIBUTE_VALUE = new HashSet<>(singletonList("true"));
 
     private @Mock ApplicationService applicationService;
     private @Mock ApplicationManager applicationManager;
     private @Mock Application application;
     private @Mock User user;
     private @Mock ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService;
-    private @Mock CrowdClientFactory crowdClientFactory;
+    private @Mock CrowdClientFacade crowdClientFacade;
     private @Mock CrowdClient crowdClient;
     private @Mock FeatureManager featureManager;
 
@@ -61,8 +84,6 @@ public class ConnectAddOnUserServiceImplTest
 
     @SuppressWarnings ("UnusedDeclaration")
     @Captor private ArgumentCaptor<String> captor;
-    @Captor private ArgumentCaptor<Map<String, Set<String>>> localAttributeCaptor;
-    @Captor private ArgumentCaptor<Map<String, Set<String>>> remoteAttributeCaptor;
 
     private static final String ADD_ON_KEY = "my-cool-thingamajig";
     private static final String USER_KEY = "addon_my-cool-thingamajig";
@@ -175,6 +196,29 @@ public class ConnectAddOnUserServiceImplTest
         assertThat(captor.getAllValues(), containsInAnyOrder(GROUP_KEY, "product group 1", "product group 2"));
     }
 
+    @Test
+    public void userIsEnabledWithAtlassianConnectUserAttribute()
+            throws Exception
+    {
+        when(applicationService.findUserByName(application, USER_KEY)).thenReturn(user);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+
+        verify(applicationService).storeUserAttributes(eq(application), eq(USER_KEY), attributeCalled(buildAttributeConnectAddOnAttributeName("app-name")));
+        verify(crowdClient).storeUserAttributes(eq(USER_KEY), attributeCalled(buildAttributeConnectAddOnAttributeName("app-name")));
+    }
+
+    @Test
+    public void userIsEnabledWithAtlassianConnectUserAttributeWhenNotInOnDemand()
+            throws Exception
+    {
+        when(featureManager.isOnDemand()).thenReturn(false);
+        when(applicationService.findUserByName(application, USER_KEY)).thenReturn(user);
+        connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+
+        verify(applicationService).storeUserAttributes(eq(application), eq(USER_KEY), attributeCalled(buildAttributeConnectAddOnAttributeName("app-name")));
+        verify(crowdClient, never()).storeUserAttributes(anyString(), anyMap());
+    }
+
 
     @Test
     public void userIsCreatedWithAtlassianConnectUserAttribute()
@@ -182,11 +226,8 @@ public class ConnectAddOnUserServiceImplTest
     {
         connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService).addUser(eq(application), argThat(hasExpectedEmailAddress()), any(PasswordCredential.class));
-        verify(applicationService).storeUserAttributes(eq(application), eq(USER_KEY), localAttributeCaptor.capture());
-        verify(crowdClient).storeUserAttributes(eq(USER_KEY), remoteAttributeCaptor.capture());
-
-        assertTrue(localAttributeCaptor.getValue().get(buildAttributeConnectAddOnAttributeName(APPLICATION_NAME)).contains("true"));
-        assertTrue(remoteAttributeCaptor.getValue().get(buildAttributeConnectAddOnAttributeName(APPLICATION_NAME)).contains("true"));
+        verify(applicationService).storeUserAttributes(eq(application), eq(USER_KEY), attributeCalled(buildAttributeConnectAddOnAttributeName("app-name")));
+        verify(crowdClient).storeUserAttributes(eq(USER_KEY), attributeCalled(buildAttributeConnectAddOnAttributeName("app-name")));
     }
 
     @Test
@@ -197,10 +238,8 @@ public class ConnectAddOnUserServiceImplTest
 
         connectAddOnUserService.getOrCreateUserKey(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService).addUser(eq(application), argThat(hasExpectedEmailAddress()), any(PasswordCredential.class));
-        verify(applicationService).storeUserAttributes(eq(application), eq(USER_KEY), localAttributeCaptor.capture());
+        verify(applicationService).storeUserAttributes(eq(application), eq(USER_KEY), attributeCalled(buildAttributeConnectAddOnAttributeName("app-name")));
         verify(crowdClient, never()).storeUserAttributes(anyString(), anyMap());
-
-        assertTrue(localAttributeCaptor.getValue().get(buildAttributeConnectAddOnAttributeName(APPLICATION_NAME)).contains("true"));
     }
 
     @Test
@@ -284,13 +323,20 @@ public class ConnectAddOnUserServiceImplTest
     {
         when(applicationManager.findByName(APPLICATION_NAME)).thenReturn(application);
         when(application.getName()).thenReturn(APPLICATION_NAME);
+        when(crowdClientFacade.getClientApplicationName()).thenReturn("app-name");
         when(applicationService.addUser(eq(application), eq(new UserTemplate(USER_KEY)), eq(PasswordCredential.NONE))).thenReturn(user);
         when(user.getName()).thenReturn(USER_KEY);
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(Collections.<String>emptySet());
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(Collections.<String>emptySet());
-        when(crowdClientFactory.newInstance(any(ClientProperties.class))).thenReturn(crowdClient);
+        when(crowdClientFacade.getCrowdClient()).thenReturn(crowdClient);
         when(featureManager.isOnDemand()).thenReturn(true);
         ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService = new ConnectAddOnUserGroupProvisioningServiceImpl(applicationService, applicationManager);
-        connectAddOnUserService = new ConnectAddOnUserServiceImpl(applicationService, applicationManager, connectAddOnUserProvisioningService, connectAddOnUserGroupProvisioningService, crowdClientFactory, featureManager);
+        connectAddOnUserService = new ConnectAddOnUserServiceImpl(applicationService, applicationManager, connectAddOnUserProvisioningService, connectAddOnUserGroupProvisioningService, featureManager, crowdClientFacade);
+    }
+
+    @SuppressWarnings ("unchecked")
+    private static Map<String, Set<String>> attributeCalled(String attributeName)
+    {
+        return (Map<String, Set<String>>) argThat(hasEntry(attributeName, EXPECTED_ATTRIBUTE_VALUE));
     }
 }

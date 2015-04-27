@@ -1,16 +1,13 @@
 package it.confluence;
 
-import java.net.MalformedURLException;
-
 import com.atlassian.confluence.pageobjects.page.admin.ConfluenceAdminHomePage;
-import com.atlassian.confluence.pageobjects.page.admin.templates.SpaceTemplatesPage;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
+import com.atlassian.confluence.pageobjects.page.space.ViewSpaceSummaryPage;
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.SpaceToolsTabModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
@@ -19,9 +16,8 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceUserPr
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectConfluenceAdminHomePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-
 import com.google.common.base.Optional;
-
+import it.servlet.ConnectAppServlets;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -30,10 +26,9 @@ import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import it.servlet.ConnectAppServlets;
-import it.util.TestUser;
 import redstone.xmlrpc.XmlRpcFault;
+
+import java.net.MalformedURLException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
@@ -119,7 +114,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
                 .addModules("spaceToolsTabs", newSpaceToolsTabBean()
                                 .withName(new I18nProperty(MODULE_NAME, null))
                                 .withKey(SPACE_TOOLS_TAB_KEY)
-                                .withLocation("contenttools")
+                                .withLocation("overview")
                                 .withUrl(MODULE_URL)
                                 .build()
                 )
@@ -134,8 +129,6 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @After
     public void afterEachTest()
     {
-        super.dismissPrompts();
-
         if (null != editorPage)
         {
             try
@@ -162,7 +155,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @Test
     public void testGeneralPage() throws Exception
     {
-        ConnectConfluenceAdminHomePage adminHomePage = loginAndVisit(TestUser.ADMIN, ConnectConfluenceAdminHomePage.class);
+        ConnectConfluenceAdminHomePage adminHomePage = loginAndVisit(testUserFactory.admin(), ConnectConfluenceAdminHomePage.class);
         adminHomePage.openHelpMenu();
         RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(GENERAL_PAGE_KEY), Optional.<String>absent());
         assertIsEscaped(webItem.getLinkText());
@@ -171,7 +164,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @Test
     public void testWebItem() throws Exception
     {
-        login(TestUser.ADMIN);
+        login(testUserFactory.basicUser());
         createAndVisitViewPage();
         RemoteWebItem webItem = connectPageOperations.findWebItem(getModuleKey(WEB_ITEM_KEY), Optional.of("action-menu-link"));
         webItem.hover();
@@ -182,7 +175,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @Test
     public void testAdminPage() throws Exception
     {
-        loginAndVisit(TestUser.ADMIN, ConfluenceAdminHomePage.class);
+        loginAndVisit(testUserFactory.admin(), ConfluenceAdminHomePage.class);
         ConfluenceAdminPage adminPage = product.getPageBinder().bind(ConfluenceAdminPage.class, runner.getAddon().getKey(), ADMIN_PAGE_KEY);
         assertIsEscaped(adminPage.getRemotePluginLinkText());
     }
@@ -190,7 +183,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @Test
     public void testMacroTitle() throws Exception
     {
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
 
         final MacroBrowserAndEditor macroBrowserAndEditor = findMacroInBrowser(editorPage, "F1ND M3");
 
@@ -208,7 +201,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @Test
     public void testMacroEditorTitle() throws Exception
     {
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
 
         final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, "F1ND M3");
 
@@ -226,7 +219,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @Test
     public void testMacroParameter() throws Exception
     {
-        editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), TestSpace.DEMO);
+        editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
 
         final MacroBrowserAndEditor macroBrowserAndEditor = selectMacro(editorPage, "F1ND M3");
 
@@ -246,7 +239,7 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @Test
     public void testProfilePage() throws Exception
     {
-        loginAndVisit(TestUser.ADMIN, ConfluenceUserProfilePage.class);
+        loginAndVisit(testUserFactory.basicUser(), ConfluenceUserProfilePage.class);
         RemoteWebItem webItem = connectPageOperations.findWebItem(RemoteWebItem.ItemMatchingMode.JQUERY,
                 "a[href*='" + getServletPath(PROFILE_PAGE_KEY) + "']", Optional.<String>absent());
         assertIsEscaped(webItem.getLinkText());
@@ -255,10 +248,9 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
     @Test
     public void testSpaceAdminTab() throws Exception
     {
-        loginAndVisit(TestUser.ADMIN, SpaceTemplatesPage.class, "ds");
-        LinkedRemoteContent addonPage = connectPageOperations.findTabPanel(
-                getModuleKey(SPACE_TOOLS_TAB_KEY) + SpaceToolsTabModuleProvider.SPACE_ADMIN_KEY_SUFFIX,
-                Option.<String>none(), getModuleKey(SPACE_TOOLS_TAB_KEY));
+        loginAndVisit(testUserFactory.admin(), ViewSpaceSummaryPage.class, TestSpace.DEMO);
+        LinkedRemoteContent addonPage = connectPageOperations.findRemoteLinkedContent(
+                RemoteWebItem.ItemMatchingMode.LINK_TEXT, MODULE_NAME, Option.<String>none(), getModuleKey(SPACE_TOOLS_TAB_KEY));
         assertIsEscaped(addonPage.getWebItem().getLinkText());
     }
 

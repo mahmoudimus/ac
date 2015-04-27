@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.test.pageobjects.jira;
+package com.atlassian.plugin.connect.test.pageobjects.jira.workflow;
 
 import com.atlassian.jira.pageobjects.pages.admin.workflow.AddWorkflowTransitionPostFunctionPage;
 import com.atlassian.pageobjects.elements.ElementBy;

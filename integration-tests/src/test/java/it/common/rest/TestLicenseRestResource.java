@@ -32,7 +32,7 @@ public class TestLicenseRestResource extends MultiProductWebDriverTestBase
         ConnectRunner runner = null;
         try
         {
-            LicenseUtils.addPluginLicenses(product);
+            LicenseUtils.addPluginLicenses(product, testUserFactory.admin());
 
             final InstallHandlerServlet installHandlerServlet = new InstallHandlerServlet();
             final String productBaseUrl = product.getProductInstance().getBaseUrl();
@@ -69,7 +69,7 @@ public class TestLicenseRestResource extends MultiProductWebDriverTestBase
             try
             {
                 //NOTE: the timebomb license disables the ability to delete plugins!
-                LicenseUtils.resetLicenses(product);
+                LicenseUtils.resetLicenses(product, testUserFactory.admin());
             }
             finally
             {

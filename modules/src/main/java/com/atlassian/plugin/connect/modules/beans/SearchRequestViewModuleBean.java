@@ -32,7 +32,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.I18nProperty.emp
  *
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#SEARCH_VIEW_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#SEARCH_VIEW_EXAMPLE}
  * @schemaTitle Search Request View
  * @since 1.0
  */

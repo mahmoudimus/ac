@@ -19,7 +19,7 @@ import com.google.gson.annotations.SerializedName;
  *
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#MACRO_RENDER_MODES_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#MACRO_RENDER_MODES_EXAMPLE}
  * @schemaTitle Macro Render Modes
  * @since 1.1.15
  */
@@ -33,19 +33,19 @@ public class MacroRenderModesBean extends BaseModuleBean
 
     /**
      * This render mode will be used when your macro is being rendered during "export to word".
-     * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#RENDER_MODE_EXAMPLE_WORD}
+     * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#RENDER_MODE_EXAMPLE_WORD}
      */
     private EmbeddedStaticContentMacroBean word;
     /**
      * This render mode will be used when your macro is being rendered during "export to pdf".
-     * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#RENDER_MODE_EXAMPLE_PDF}
+     * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#RENDER_MODE_EXAMPLE_PDF}
      */
     private EmbeddedStaticContentMacroBean pdf;
 
     /**
      * This render mode will be used for any static render mode that is not mapped directly.  This is a catch
      * all mode which allows you to set a default static fallback for all render modes.
-     * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#RENDER_MODE_EXAMPLE_DEFAULT}
+     * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#RENDER_MODE_EXAMPLE_DEFAULT}
      */
     @SerializedName("default")
     private EmbeddedStaticContentMacroBean defaultFallback;
@@ -67,7 +67,7 @@ public class MacroRenderModesBean extends BaseModuleBean
 
     /**
      * Return the {@link com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean} for the
-     * output type specified by a {@link com.atlassian.confluence.content.render.xhtml.ConversionContext#getOutputType}
+     * output type specified by a com.atlassian.confluence.content.render.xhtml.ConversionContext#getOutputType
      * during a macro execution.
      *
      * @param outputType the output type to find the render mode for

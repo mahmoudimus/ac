@@ -16,7 +16,7 @@ import java.util.Map;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
 
 /**
- * Maintains a map of plugin + module key -> iframe rendering strategy.
+ * Maintains a map of plugin + module key to iframe rendering strategy.
  */
 @Component
 @ExportAsDevService

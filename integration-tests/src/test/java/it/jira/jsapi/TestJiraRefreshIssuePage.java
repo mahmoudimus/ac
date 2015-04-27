@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import hudson.plugins.jira.soap.RemoteIssue;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
+import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -64,7 +65,8 @@ public class TestJiraRefreshIssuePage extends JiraWebDriverTestBase
     @Test
     public void shouldRefreshIssuePage() throws RemoteException
     {
-        ViewIssuePage viewIssuePage = loginAndVisit(TestUser.BARNEY, ViewIssuePage.class, issue.getKey());
+        login(testUserFactory.basicUser());
+        ViewIssuePage viewIssuePage = product.visit(ViewIssuePage.class, issue.getKey());
         RemoteRefreshIssuePageWebPanel refreshIssuePageWebPanel = findRefreshIssuePageWebPanel();
         refreshIssuePageWebPanel.waitUntilRefreshIssuePageActionLoaded();
 

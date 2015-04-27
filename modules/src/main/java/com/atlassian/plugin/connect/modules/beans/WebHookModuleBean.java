@@ -150,16 +150,17 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  *### Example Request
  *
- *    POST /jira-issue_created?user_id=admin&user_key=admin HTTP/1.1
- *    Authorization: JWT ...
- *    Atlassian-Connect-Version: x.x
- *    Content-Type: application/json
- *
- *    {
- *      timestamp: 1426661049725,
- *      webhookEvent: 'jira:issue_created',
- *      ...
- *    }
+ * <pre><code>
+ *POST /jira-issue_created?user_id=admin&amp;user_key=admin HTTP/1.1
+ *Authorization: JWT ...
+ *Atlassian-Connect-Version: x.x
+ *Content-Type: application/json
+ *{
+ *  timestamp: 1426661049725,
+ *  webhookEvent: 'jira:issue_created',
+ *  ...
+ *}
+ * </code></pre>
  *
  *### Inspecting webhook contents
  *
@@ -180,7 +181,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBHOOK_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBHOOK_EXAMPLE}
  * @schemaTitle Webhooks
  * @since 1.0
  */

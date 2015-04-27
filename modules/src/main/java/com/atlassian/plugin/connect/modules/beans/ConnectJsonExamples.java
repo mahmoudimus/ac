@@ -1,10 +1,5 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
@@ -36,8 +31,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -45,11 +38,16 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
-import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean.newContentPropertyModuleBean;
+import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean.newEntityPropertyModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean.newCompositeConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
@@ -617,10 +615,10 @@ public class ConnectJsonExamples
                         newCompositeConditionBean()
                                 .withType(CompositeConditionType.OR)
                                 .withConditions(
-                                        newSingleConditionBean().withCondition(JiraConditions.CAN_ATTACH_FILE_TO_ISSUE).build(),
-                                        newSingleConditionBean().withCondition(JiraConditions.IS_ISSUE_ASSIGNED_TO_CURRENT_USER).build()
+                                        newSingleConditionBean().withCondition("can_attach_file_to_issue").build(),
+                                        newSingleConditionBean().withCondition("is_issue_assigned_to_current_user").build()
                                 ).build()
-                        , newSingleConditionBean().withCondition(JiraConditions.USER_IS_LOGGED_IN).build()
+                        , newSingleConditionBean().withCondition("user_is_logged_in").build()
                 ).build();
 
         return gson.toJson(createJsonObject("conditions", bean));
@@ -700,7 +698,7 @@ public class ConnectJsonExamples
                 .withServiceEntitlementNumber("SEN-number")
                 .withProductType("jira")
                 .withDescription("Atlassian JIRA at https://example.atlassian.net")
-                .withEventType(ConnectAddonManager.SyncHandler.INSTALLED.name().toLowerCase());
+                .withEventType("installed");
 
         ConnectAddonEventData data = dataBuilder.build();
 

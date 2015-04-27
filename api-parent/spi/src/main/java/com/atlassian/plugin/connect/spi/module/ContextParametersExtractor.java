@@ -20,26 +20,24 @@ public interface ContextParametersExtractor
     /**
      * Extracts parameters from the rendering context so that they can be used by Connect add-ons.
      *
-     * <p>
-     *     Rendering context may contain arbitrary objects, e.g. a whole Issue. Connect
-     *     add-ons on the other hand expect plain Strings. So an example extractor could
-     *     take a context of the form
+     * Rendering context may contain arbitrary objects, e.g. a whole Issue. Connect
+     * add-ons on the other hand expect plain Strings. So an example extractor could
+     * take a context of the form
      *
-     *     <pre>
-     *         {
-     *             "issue": IssueObject[id = 1, type = "bug", ...]
-     *         }
-     *     </pre>
+     * <pre>
+     *     {
+     *         "issue": IssueObject[id = 1, type = "bug", ...]
+     *     }
+     * </pre>
      *
-     *     and return a Connect add-on friendly map:
+     * and return a Connect add-on friendly map:
      *
-     *     <pre>
-     *         {
-     *             "issue.id": "1",
-     *             "issue.type": "bug"
-     *         }
-     *     </pre>
-     * </p>
+     * <pre>
+     *     {
+     *         "issue.id": "1",
+     *         "issue.type": "bug"
+     *     }
+     * </pre>
      *
      * @param context rendering context
      * @return context for Connect add-ons

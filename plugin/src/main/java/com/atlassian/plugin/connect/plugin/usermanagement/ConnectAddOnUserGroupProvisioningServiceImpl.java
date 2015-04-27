@@ -1,17 +1,25 @@
 package com.atlassian.plugin.connect.plugin.usermanagement;
 
-import com.atlassian.crowd.exception.*;
+import javax.inject.Inject;
+
+import com.atlassian.crowd.exception.ApplicationNotFoundException;
+import com.atlassian.crowd.exception.ApplicationPermissionException;
+import com.atlassian.crowd.exception.GroupNotFoundException;
+import com.atlassian.crowd.exception.InvalidGroupException;
+import com.atlassian.crowd.exception.MembershipAlreadyExistsException;
+import com.atlassian.crowd.exception.MembershipNotFoundException;
+import com.atlassian.crowd.exception.OperationFailedException;
+import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.group.GroupTemplate;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -38,11 +46,11 @@ public class ConnectAddOnUserGroupProvisioningServiceImpl implements ConnectAddO
     {
         LOG.info("Attempting to make user '{}' a member of group '{}' (if not already a member).", userKey, groupKey);
 
-        if (!applicationService.isUserDirectGroupMember(getApplication(), userKey, groupKey))
+        if (!applicationService.isUserDirectGroupMember(getCrowdApplication(), userKey, groupKey))
         {
             try
             {
-                applicationService.addUserToGroup(getApplication(), userKey, groupKey);
+                applicationService.addUserToGroup(getCrowdApplication(), userKey, groupKey);
                 LOG.info("Added user '{}' to group '{}',", userKey, groupKey);
             }
             catch (MembershipAlreadyExistsException e)
@@ -57,7 +65,7 @@ public class ConnectAddOnUserGroupProvisioningServiceImpl implements ConnectAddO
     {
         try
         {
-            applicationService.removeUserFromGroup(getApplication(), userKey, groupKey);
+            applicationService.removeUserFromGroup(getCrowdApplication(), userKey, groupKey);
             LOG.info("Removed user '{}' from group '{}'.", userKey, groupKey);
         }
         catch (MembershipNotFoundException e)
@@ -75,7 +83,7 @@ public class ConnectAddOnUserGroupProvisioningServiceImpl implements ConnectAddO
         {
             try
             {
-                applicationService.addGroup(getApplication(), new GroupTemplate(groupKey));
+                applicationService.addGroup(getCrowdApplication(), new GroupTemplate(groupKey));
                 created = true;
                 LOG.info("Created group '{}'.", groupKey);
             }
@@ -102,7 +110,7 @@ public class ConnectAddOnUserGroupProvisioningServiceImpl implements ConnectAddO
         Group group;
         try
         {
-            group = applicationService.findGroupByName(getApplication(), groupKey);
+            group = applicationService.findGroupByName(getCrowdApplication(), groupKey);
         }
         catch (GroupNotFoundException gnf)
         {
@@ -117,9 +125,8 @@ public class ConnectAddOnUserGroupProvisioningServiceImpl implements ConnectAddO
         return CROWD_APPLICATION_NAME;
     }
 
-    // Richard Atkins says that the Application is immutable and therefore the instance replaced every time changes occur,
-    // and that therefore we should never cache it
-    private Application getApplication() throws ApplicationNotFoundException
+    @Override
+    public Application getCrowdApplication() throws ApplicationNotFoundException
     {
         return applicationManager.findByName(CROWD_APPLICATION_NAME);
     }
