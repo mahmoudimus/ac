@@ -19,10 +19,41 @@
         };
 
         var replaceAll = function (find, replace, str) {
-            return str.replace(new RegExp(find, 'g'), replace);
+            return str.replace(new RegExp(find, "g"), replace);
+        };
+
+        var convertPatternToRegex = function (pattern) {
+            // Consolidate any double up wildcards
+            while (pattern.indexOf("{}{}") !== -1) {
+                pattern = pattern.replace("{}{}", "{}");
+            }
+
+            // build a regex from the defined autoconvert pattern
+            pattern = escapePattern(pattern);
+            pattern = replaceAll("{}", "[^/]*?", pattern);
+            pattern = "^" + pattern + "$";
+
+            return pattern;
         };
 
         var isValidAutoconvertDef = function (autoconvertDef) {
+            var pattern = autoconvertDef.matcherBean.pattern;
+            var patternBlackList = [
+                "http://",
+                "https://",
+                "http://{}",
+                "https://{}",
+                "http://{}.{}",
+                "https://{}.{}",
+                "http://{}.{}.{}",
+                "https://{}.{}.{}"
+            ];
+
+            // check the url pattern is not banned
+            for (var i = 0; i < patternBlackList.length; i++) {
+                if (pattern === patternBlackList[i]) { return false; }
+            }
+
             return autoconvertDef &&
                 autoconvertDef.macroName &&
                 autoconvertDef.autoconvert &&
@@ -38,11 +69,6 @@
                 var urlParameter = autoconvertDef.autoconvert.urlParameter;
                 var pattern = autoconvertDef.matcherBean.pattern;
 
-                // build a regex from the defined autoconvert pattern
-                pattern = escapePattern(pattern);
-                pattern = replaceAll('{}', '[^/]*?', pattern);
-                pattern = "^" + pattern + "$";
-
                 var matches = uri.source.match(pattern);
 
                 if (matches) {
@@ -55,27 +81,31 @@
                 } else {
                     done();
                 }
-            }
+            };
         };
 
         return {
             escapePattern: escapePattern,
             replaceAll: replaceAll,
             factory: factory,
+            convertPatternToRegex: convertPatternToRegex,
+            isValidAutoconvertDef: isValidAutoconvertDef,
             registerAutoconvertHandlers: function (autoconvertDefs, tinymce) {
                 if (autoconvertDefs) {
                     var numAutoconvertDefs = autoconvertDefs.length;
                     if (numAutoconvertDefs > 0) {
                         for (var i = 0; i < numAutoconvertDefs; i++) {
                             if (isValidAutoconvertDef(autoconvertDefs[i])) {
+                                var pattern = autoconvertDefs[i].matcherBean.pattern;
+                                autoconvertDefs[i].matcherBean.pattern = convertPatternToRegex(pattern);
                                 tinymce.plugins.Autoconvert.autoConvert.addHandler(factory(autoconvertDefs[i], function (macro, done) {
                                     tinymce.plugins.Autoconvert.convertMacroToDom(macro, done, function (jqXHR, textStatus, errorThrown) {
-                                        console.log("error converting macro [ " + macro.name + " ] to dom elements [ " + errorThrown + " ]");
-                                        done()
+                                        AJS.log("error converting macro [ " + macro.name + " ] to dom elements [ " + errorThrown + " ]");
+                                        done();
                                     });
                                 }));
                             } else {
-                                console.log("invalid autoconvert definition [ " + JSON.stringify(autoconvertDefs[i]) + " ]");
+                                AJS.log("invalid autoconvert definition [ " + JSON.stringify(autoconvertDefs[i]) + " ]");
                             }
                         }
                     }
