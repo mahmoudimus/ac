@@ -22,7 +22,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collections;
@@ -30,6 +29,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JiraAddOnUserProvisioningServiceTest
@@ -74,11 +74,11 @@ public class JiraAddOnUserProvisioningServiceTest
     public void testMissingAdminPermissionReturnsCorrectErrorCode() throws ApplicationNotFoundException,
         OperationFailedException, ApplicationPermissionException
     {
-        Mockito.when(userManager.getUserByName(USERNAME)).thenReturn(adminUser);
+        when(userManager.getUserByName(USERNAME)).thenReturn(adminUser);
 
-        Mockito.when(connectAddOnUserGroupProvisioningService.ensureGroupExists(ADDONS_ADMIN_GROUP)).thenReturn(false);
+        when(connectAddOnUserGroupProvisioningService.ensureGroupExists(ADDONS_ADMIN_GROUP)).thenReturn(false);
 
-        Mockito.when(jiraPermissionManager.getGroupsWithPermission(Permissions.ADMINISTER)).thenReturn(Collections.EMPTY_LIST);
+        when(jiraPermissionManager.getGroupsWithPermission(Permissions.ADMINISTER)).thenReturn(Collections.EMPTY_LIST);
 
         Set<ScopeName> previousScopes = Sets.newHashSet();
         Set<ScopeName> newScopes = Sets.newHashSet(ScopeName.ADMIN);
