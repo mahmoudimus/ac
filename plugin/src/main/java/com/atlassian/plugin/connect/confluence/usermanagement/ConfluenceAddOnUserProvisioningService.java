@@ -17,7 +17,7 @@ import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeUtil;
-import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;

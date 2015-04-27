@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.registry;
+package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.PluginState;

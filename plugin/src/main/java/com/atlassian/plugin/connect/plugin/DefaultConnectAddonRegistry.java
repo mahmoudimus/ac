@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.registry;
+package com.atlassian.plugin.connect.plugin;
 
 import java.util.ArrayList;
 import java.util.HashSet;
