@@ -770,8 +770,7 @@
                                 <testedProduct>confluence</testedProduct>
                             </systemProperties>
                             <excludes>
-                                <exclude>it/jira/*.java</exclude>
-                                <exclude>it/**/jira/*.java</exclude>
+                                <exclude>it/**/jira/**/*.java</exclude>
                             </excludes>
                         </testGroup>
                         <testGroup>
@@ -783,8 +782,7 @@
                                 <testedProduct>jira</testedProduct>
                             </systemProperties>
                             <excludes>
-                                <exclude>it/confluence/*.java</exclude>
-                                <exclude>it/**/confluence/*.java</exclude>
+                                <exclude>it/**/confluence/**/*.java</exclude>
                             </excludes>
                         </testGroup>
                     </testGroups>
