@@ -19,18 +19,18 @@
         };
 
         var replaceAll = function (find, replace, str) {
-            return str.replace(new RegExp(find, 'g'), replace);
+            return str.replace(new RegExp(find, "g"), replace);
         };
 
         var convertPatternToRegex = function (pattern) {
             // Consolidate any double up wildcards
-            while (pattern.indexOf('{}{}') !== -1) {
-                pattern = pattern.replace('{}{}', '{}');
+            while (pattern.indexOf("{}{}") !== -1) {
+                pattern = pattern.replace("{}{}", "{}");
             }
 
             // build a regex from the defined autoconvert pattern
             pattern = escapePattern(pattern);
-            pattern = replaceAll('{}', '[^/]*?', pattern);
+            pattern = replaceAll("{}", "[^/]*?", pattern);
             pattern = "^" + pattern + "$";
 
             return pattern;
@@ -50,7 +50,7 @@
             ];
 
             // check the url pattern is not banned
-            for (var i=0; i<patternBlackList.length; i++) {
+            for (var i = 0; i < patternBlackList.length; i++) {
                 if (pattern === patternBlackList[i]) { return false; }
             }
 
@@ -89,6 +89,7 @@
             replaceAll: replaceAll,
             factory: factory,
             convertPatternToRegex: convertPatternToRegex,
+            isValidAutoconvertDef: isValidAutoconvertDef,
             registerAutoconvertHandlers: function (autoconvertDefs, tinymce) {
                 if (autoconvertDefs) {
                     var numAutoconvertDefs = autoconvertDefs.length;
