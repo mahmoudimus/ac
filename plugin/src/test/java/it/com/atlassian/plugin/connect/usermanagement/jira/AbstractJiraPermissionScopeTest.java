@@ -1,7 +1,13 @@
 package it.com.atlassian.plugin.connect.usermanagement.jira;
 
+import java.io.IOException;
+import java.util.List;
+
 import com.atlassian.jira.bc.project.ProjectService;
+import com.atlassian.jira.bc.project.ProjectService.CreateProjectValidationResult;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
+import com.atlassian.jira.compatibility.bridge.project.ProjectCreationData;
+import com.atlassian.jira.compatibility.bridge.project.ProjectServiceBridge;
 import com.atlassian.jira.permission.Permission;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.PermissionManager;
@@ -14,15 +20,15 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import it.com.atlassian.plugin.connect.TestAuthenticator;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 
-import java.io.IOException;
-import java.util.List;
+import it.com.atlassian.plugin.connect.TestAuthenticator;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
@@ -41,6 +47,7 @@ public abstract class AbstractJiraPermissionScopeTest
     private final ConnectAddOnUserService connectAddOnUserService;
     private final PermissionManager permissionManager;
     private final ProjectService projectService;
+    private final ProjectServiceBridge projectServiceBridge;
     private final ProjectRoleService projectRoleService;
     private final UserManager userManager;
     private final TestPluginInstaller testPluginInstaller;
@@ -53,13 +60,14 @@ public abstract class AbstractJiraPermissionScopeTest
     private ConnectAddonBean readAddOn;
 
     public AbstractJiraPermissionScopeTest(ConnectAddOnUserService connectAddOnUserService,
-                                                  PermissionManager permissionManager, ProjectService projectService,
+                                                  PermissionManager permissionManager, ProjectService projectService, ProjectServiceBridge projectServiceBridge,
                                                   ProjectRoleService projectRoleService, UserManager userManager,
                                                   TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
     {
         this.connectAddOnUserService = connectAddOnUserService;
         this.permissionManager = permissionManager;
         this.projectService = projectService;
+        this.projectServiceBridge = projectServiceBridge;
         this.projectRoleService = projectRoleService;
         this.userManager = userManager;
         this.testPluginInstaller = testPluginInstaller;
@@ -104,7 +112,7 @@ public abstract class AbstractJiraPermissionScopeTest
 
         testAuthenticator.authenticateUser("admin");
     }
-    
+
     @After
     public void resetBeans()
     {
@@ -152,11 +160,6 @@ public abstract class AbstractJiraPermissionScopeTest
     public PermissionManager getPermissionManager()
     {
         return permissionManager;
-    }
-
-    public ProjectService getProjectService()
-    {
-        return projectService;
     }
 
     public ProjectRoleService getProjectRoleService()
@@ -306,16 +309,22 @@ public abstract class AbstractJiraPermissionScopeTest
     protected Project createJediProject()
     {
         ApplicationUser admin = userManager.getUserByKey(ADMIN);
-        ProjectService.CreateProjectValidationResult result = projectService.validateCreateProject(admin.getDirectoryUser(),
-                "Knights of the Old Republic", PROJECT_KEY, "It's a trap!", "admin", null, null);
+        ProjectCreationData projectCreationData = new ProjectCreationData.Builder()
+                .withName("Knights of the Old Republic")
+                .withKey(PROJECT_KEY)
+                .withLead(admin)
+                .withDescription("It's a trap!")
+                .build();
+
+        CreateProjectValidationResult result = projectServiceBridge.validateCreateProject(admin, projectCreationData);
         return projectService.createProject(result);
     }
 
     protected void deleteJediProject()
     {
         ApplicationUser admin = userManager.getUserByKey(ADMIN);
-        ProjectService.DeleteProjectValidationResult result = projectService.validateDeleteProject(admin.getDirectoryUser(), PROJECT_KEY);
-        
+        ProjectService.DeleteProjectValidationResult result = projectService.validateDeleteProject(admin, PROJECT_KEY);
+
         if(result.isValid())
         {
             projectService.deleteProject(admin, result);
