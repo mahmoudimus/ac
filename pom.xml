@@ -441,12 +441,6 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>com.atlassian.analytics</groupId>
-                <artifactId>analytics-api</artifactId>
-                <version>${atlassian.analytics.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.atlassian.httpclient</groupId>
                 <artifactId>atlassian-httpclient-api</artifactId>
                 <version>${atlassian.httpclient.version}</version>

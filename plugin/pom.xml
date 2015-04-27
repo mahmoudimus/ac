@@ -35,6 +35,13 @@
         </dependency>
 
         <dependency>
+            <groupId>com.atlassian.analytics</groupId>
+            <artifactId>analytics-api</artifactId>
+            <version>${atlassian.analytics.version}</version>
+            <scope>plugin</scope>
+        </dependency>
+
+        <dependency>
             <groupId>com.atlassian.jira.compat</groupId>
             <artifactId>jira-cross-compatibility-lib-bridge-factory</artifactId>
             <version>${atlassian.jira.cross.compat.version}</version>
