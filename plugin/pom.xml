@@ -607,17 +607,11 @@
                         </Import-Package>
                         <Export-Package>
                             com.atlassian.plugin.connect.api*;version="${project.version}",
-                            com.atlassian.plugin.connect.api.*;version="${project.version}",
                             com.atlassian.plugin.connect.spi*;version="${project.version}",
-                            com.atlassian.plugin.connect.spi.*;version="${project.version}",
                             com.atlassian.plugin.connect.plugin*;version="${project.version}",
-                            com.atlassian.plugin.connect.plugin.*;version="${project.version}",
-                            com.atlassian.plugin.connect.plugin.product*;version="${project.version}",
-                            com.atlassian.plugin.connect.plugin.product.*;version="${project.version}",
                             com.atlassian.plugin.connect.modules*,
-                            com.atlassian.plugin.connect.modules.*,
-                            com.atlassian.plugin.connect.modules.beans*,
-                            com.atlassian.plugin.connect.modules.beans.*
+                            com.atlassian.plugin.connect.confluence*;version="${project.version}",
+                            com.atlassian.plugin.connect.jira*;version="${project.version}"
                         </Export-Package>
                         <Spring-Context>*</Spring-Context>
                         <Atlassian-Plugin-Key>${project.groupId}.${project.artifactId}</Atlassian-Plugin-Key>
@@ -783,8 +777,7 @@
                                 <testedProduct>confluence</testedProduct>
                             </systemProperties>
                             <excludes>
-                                <exclude>it/jira/*.java</exclude>
-                                <exclude>it/**/jira/*.java</exclude>
+                                <exclude>it/**/jira/**/*.java</exclude>
                             </excludes>
                         </testGroup>
                         <testGroup>
@@ -796,8 +789,7 @@
                                 <testedProduct>jira</testedProduct>
                             </systemProperties>
                             <excludes>
-                                <exclude>it/confluence/*.java</exclude>
-                                <exclude>it/**/confluence/*.java</exclude>
+                                <exclude>it/**/confluence/**/*.java</exclude>
                             </excludes>
                         </testGroup>
                     </testGroups>
@@ -1047,7 +1039,7 @@
                             <goal>generate-schema</goal>
                         </goals>
                         <configuration>
-                            <generatorProvider>com.atlassian.plugin.connect.schema.JiraSchemaGeneratorProvider</generatorProvider>
+                            <generatorProvider>com.atlassian.plugin.connect.jira.JiraSchemaGeneratorProvider</generatorProvider>
                             <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/jira-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/jira-schema-pretty.json</prettyOutput>
@@ -1061,7 +1053,7 @@
                             <goal>generate-schema</goal>
                         </goals>
                         <configuration>
-                            <generatorProvider>com.atlassian.plugin.connect.schema.ConfluenceSchemaGeneratorProvider</generatorProvider>
+                            <generatorProvider>com.atlassian.plugin.connect.confluence.ConfluenceSchemaGeneratorProvider</generatorProvider>
                             <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/confluence-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/confluence-schema-pretty.json</prettyOutput>

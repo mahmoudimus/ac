@@ -7,7 +7,7 @@
 
     <resource type="i18n" name="i18n" location="com.atlassian.connect.i18n"/>
 
-    <health-check key="addonsGroupHealthCheck" name="Add-on Group Health Check" class="com.atlassian.plugin.connect.healthcheck.AtlassianAddonsGroupHealthCheck" />
+    <health-check key="addonsGroupHealthCheck" name="Add-on Group Health Check" class="com.atlassian.plugin.connect.plugin.AtlassianAddonsGroupHealthCheck" />
 
     <servlet-filter key="iframe-resources" class="com.atlassian.plugin.connect.plugin.iframe.StaticResourcesFilter"
                     location="after-encoding">
@@ -107,9 +107,9 @@
     </web-resource>
 
     <applinks-application-type name="Remote Plugin Container" key="remote-plugin-container-type"
-                                   class="com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerApplicationTypeImpl"
+                                   class="com.atlassian.plugin.connect.plugin.applinks.RemotePluginContainerApplicationTypeImpl"
                                    interface="com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType">
-            <manifest-producer class="com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerManifestProducer"/>
+            <manifest-producer class="com.atlassian.plugin.connect.plugin.applinks.RemotePluginContainerManifestProducer"/>
     </applinks-application-type>
 
     <analytics-whitelist key="analyticsWhitelist" resource="whitelist/connect_whitelist.json"/>
