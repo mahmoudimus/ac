@@ -72,7 +72,7 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
         }
         else
         {
-            String localUrl = ConnectIFrameServlet.iFrameServletPath(connectAddonBean.getKey(),bean.getUrl());
+            String localUrl = getLocalUrl(connectAddonBean, bean);
             WebItemModuleBean newBean = newWebItemBean(bean).withUrl(localUrl).build();
             descriptors.add(webItemFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, newBean));
         }
@@ -97,5 +97,11 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
         }
 
         return descriptors;
+    }
+
+    private String getLocalUrl(ConnectAddonBean connectAddonBean, WebItemModuleBean bean) {
+        String localUrl = ConnectIFrameServlet.iFrameServletPath(connectAddonBean.getKey(), bean.getUrl());
+        localUrl += "?s=" + bean.getKey(connectAddonBean);
+        return localUrl;
     }
 }
