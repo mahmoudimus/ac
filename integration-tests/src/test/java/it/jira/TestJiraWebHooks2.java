@@ -1,20 +1,16 @@
 package it.jira;
 
 
-import com.atlassian.plugin.connect.plugin.capabilities.ConvertToWiredTest;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
-
 import com.google.common.collect.ImmutableMap;
-
-import org.hamcrest.Matchers;
-import org.junit.Test;
-
 import hudson.plugins.jira.soap.RemoteIssue;
 import hudson.plugins.jira.soap.RemoteNamedObject;
 import hudson.plugins.jira.soap.RemoteProject;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider.getJiraTestedProduct;
 import static com.atlassian.plugin.connect.test.webhook.WebHookTestServlet.runInJsonRunner;
@@ -22,7 +18,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-@ConvertToWiredTest
 public class TestJiraWebHooks2
 {
     private final String baseUrl = getJiraTestedProduct().getProductInstance().getBaseUrl();

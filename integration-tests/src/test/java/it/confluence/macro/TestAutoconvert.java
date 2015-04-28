@@ -220,7 +220,7 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
         if (macroName.isDefined())
         {
             TimedQuery<Boolean> query = editorContent.isElementPresentInEditorContentTimed(By.cssSelector("img[data-macro-name='" + macroName.get() + "']"));
-            Poller.waitUntilTrue("autocomplete round trip failed: "+editorContent.getTimedHtml().byDefaultTimeout(), query);
+            Poller.waitUntilTrue("autoconvert round trip failed: "+editorContent.getTimedHtml().byDefaultTimeout(), query);
             logger.error("found image - content: " + editorContent.getTimedHtml().byDefaultTimeout());
         }
 
@@ -231,17 +231,25 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
 
     private void pasteLinkAndMatch(EditorPage editorPage, String macroName, String link)
     {
-        String pageContent = pasteLinkAndSave(editorPage, Option.some(macroName), link);
-        Document doc = Jsoup.parse(pageContent, "", Parser.xmlParser());
-        // check that the macro was created correctly
-        Elements elements = doc.select("ac|structured-macro");
-        assertEquals(1, elements.size());
-        Element macroElement = elements.get(0);
-        assertEquals(macroName, macroElement.attr("ac:name"));
-        Elements parameterElements = macroElement.select("ac|parameter");
-        assertEquals(1, parameterElements.size());
-        Element urlParameter = parameterElements.get(0);
-        assertEquals(link, urlParameter.text());
+        try
+        {
+            String pageContent = pasteLinkAndSave(editorPage, Option.some(macroName), link);
+            Document doc = Jsoup.parse(pageContent, "", Parser.xmlParser());
+            // check that the macro was created correctly
+            Elements elements = doc.select("ac|structured-macro");
+            assertEquals(1, elements.size());
+            Element macroElement = elements.get(0);
+            assertEquals(macroName, macroElement.attr("ac:name"));
+            Elements parameterElements = macroElement.select("ac|parameter");
+            assertEquals(1, parameterElements.size());
+            Element urlParameter = parameterElements.get(0);
+            assertEquals(link, urlParameter.text());
+        }
+        finally
+        {
+            cancelEditor(editorPage);
+        }
+
     }
 
     private void pasteLinkAndNoMatch(EditorPage editorPage, String link)

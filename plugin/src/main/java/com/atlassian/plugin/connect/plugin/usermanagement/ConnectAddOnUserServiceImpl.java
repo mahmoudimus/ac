@@ -28,7 +28,6 @@ import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
 import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.Constants;
@@ -234,22 +233,41 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             if (null == user)
             {
                 throw new ConnectAddOnUserInitException(String.format("Tried to create user '%s' but the %s returned a null user!",
-                                                                      username,
-                                                                      applicationService.getClass().getSimpleName()),
-                                                        ConnectAddOnUserProvisioningService.USER_PROVISIONING_ERROR);
+                        username,
+                        applicationService.getClass().getSimpleName()),
+                        ConnectAddOnUserProvisioningService.USER_PROVISIONING_ERROR);
             }
             else
             {
                 log.info("Created user '{}'", user.getName());
             }
         }
-        catch (InvalidUserException | OperationFailedException | DataIntegrityViolationException iue)
+        catch (InvalidUserException iue)
         {
             // the javadoc says that addUser() throws an InvalidUserException if the user already exists
             // --> handle the race condition of something else creating this user at around the same time (as unlikely as that should be)
             user = findUserWithFastFailure(username, iue);
         }
-
+        catch (OperationFailedException e)
+        {
+            // during Connect 1.0 blitz testing we observed this exception emanating from the bowels of Crowd, claiming that the user already exists
+            // --> handle the race condition of something else creating this user at around the same time (as unlikely as that should be)
+            user = findUserWithFastFailure(username, e);
+        }
+        catch (Exception e)
+        {
+            if (e.getClass().getCanonicalName().equals("org.springframework.dao.DataIntegrityViolationException"))
+            {
+                // our analytics revealed 57 of these in 1 week and prod instance logs suggest that this is another user creation race condition
+                // see https://ecosystem.atlassian.net/browse/ACDEV-1499
+                // --> handle the race condition of something else creating this user at around the same time (as unlikely as that should be)
+                user = findUserWithFastFailure(username, e);
+            }
+            else
+            {
+                throw e;
+            }
+        }
         return user;
     }
 
@@ -304,3 +322,4 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return applicationManager.findByName(connectAddOnUserGroupProvisioningService.getCrowdApplicationName());
     }
 }
+

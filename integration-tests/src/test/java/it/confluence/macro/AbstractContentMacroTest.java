@@ -504,16 +504,4 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
         String body = format("<div class=\"%1$s\"><ac:macro ac:name=\"%1$s\" /></div>", SIMPLE_MACRO_KEY);
         confluenceOps.addComment(some(testUserFactory.basicUser()), pageId, body);
     }
-
-    protected void cancelEditor(EditorPage editorPage)
-    {
-        try
-        {
-            product.getPageBinder().bind(editorPage.getClass()).cancel();
-        }
-        catch (Throwable t)
-        {
-            LoggerFactory.getLogger(AbstractContentMacroTest.class).warn(t.getMessage());
-        }
-    }
 }
