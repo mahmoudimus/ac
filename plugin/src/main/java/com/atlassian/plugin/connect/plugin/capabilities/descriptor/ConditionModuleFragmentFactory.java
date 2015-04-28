@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
+import com.atlassian.plugin.connect.plugin.condition.ConnectCondition;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.plugin.capabilities.module.AddOnCondition;
+import com.atlassian.plugin.connect.plugin.condition.ConnectConditionContext;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
 
@@ -122,6 +124,10 @@ public class ConditionModuleFragmentFactory
             if (null != clazz)
             {
                 className = clazz.getName();
+                if (clazz.isAnnotationPresent(ConnectCondition.class))
+                {
+                    params = ConnectConditionContext.addConnectContext(params, addOnKey);
+                }
             }
         }
 

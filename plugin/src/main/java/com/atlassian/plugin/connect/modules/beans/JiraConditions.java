@@ -58,7 +58,7 @@ public class JiraConditions extends PageConditions
         conditionMap.put(USER_IS_THE_LOGGED_IN_USER, ViewingOwnProfileCondition.class);
         conditionMap.put(VOTING_ENABLED, com.atlassian.jira.plugin.webfragment.conditions.VotingEnabledCondition.class);
         conditionMap.put(WATCHING_ENABLED, com.atlassian.jira.plugin.webfragment.conditions.WatchingEnabledCondition.class);
-        conditionMap.put(ENTITY_PROPERTY_EQUAL_TO, com.atlassian.jira.plugin.webfragment.conditions.EntityPropertyEqualToCondition.class);
+        conditionMap.put(ENTITY_PROPERTY_EQUAL_TO, EntityPropertyEqualToConnectCondition.class);
 
         // issue conditions
         conditionMap.put(CAN_ATTACH_FILE_TO_ISSUE, com.atlassian.jira.plugin.webfragment.conditions.CanAttachFileToIssueCondition.class);
