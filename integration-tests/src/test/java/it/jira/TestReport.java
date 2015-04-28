@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPag
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import hudson.plugins.jira.soap.RemoteProject;
 import it.servlet.ConnectAppServlets;
+import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -25,8 +26,6 @@ import static org.junit.Assert.assertThat;
 public class TestReport extends JiraWebDriverTestBase
 {
     private static final String ADDON_KEY = AddonTestUtils.randomAddOnKey();
-
-    private static final TestUser USER = TestUser.BARNEY;
 
     private static final TestReportInfo firstTestReport = new TestReportInfo("Agile Test Report", "description", "agile-test-report", "projectKey", ReportCategory.AGILE)
     {
@@ -53,7 +52,6 @@ public class TestReport extends JiraWebDriverTestBase
     public static void setUpClass() throws Exception
     {
         logout();
-        new JiraHelpTipApiClient(product, USER).dismissAllHelpTips();
 
         addon = new ConnectRunner(product, ADDON_KEY)
                 .setAuthenticationToNone()
@@ -123,7 +121,7 @@ public class TestReport extends JiraWebDriverTestBase
 
     private ReportsPage goToProjectReportPage()
     {
-        return loginAndVisit(USER, ReportsPage.class, project.getKey());
+        return loginAndVisit(testUserFactory.basicUser(), ReportsPage.class, project.getKey());
     }
 
     private ReportsPage.Report getReportFromReportsPage(ReportsPage reportsPage, TestReportInfo reportInfo)

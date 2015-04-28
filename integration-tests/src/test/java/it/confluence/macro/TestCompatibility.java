@@ -9,8 +9,8 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import it.util.ConnectTestUserFactory;
 import it.confluence.ConfluenceWebDriverTestBase;
-import it.util.TestUser;
 import org.apache.commons.lang.RandomStringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -77,7 +77,7 @@ public class TestCompatibility extends ConfluenceWebDriverTestBase
     @Test
     public void macroIsRendered() throws Exception
     {
-        login(it.util.TestUser.ADMIN);
+        login(testUserFactory.basicUser());
         createAndVisitPage(STORAGE_FORMAT);
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(MACRO_KEY);
         String macroParameter = renderedMacro.getIFrameElementText("data");
@@ -87,7 +87,7 @@ public class TestCompatibility extends ConfluenceWebDriverTestBase
     @Test
     public void testAliasIsNotPersisted() throws Exception
     {
-        CreatePage editorPage = getProduct().loginAndCreatePage(TestUser.ADMIN.confUser(), ConfluenceWebDriverTestBase.TestSpace.DEMO);
+        CreatePage editorPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), ConfluenceWebDriverTestBase.TestSpace.DEMO);
         editorPage.setTitle(RandomStringUtils.randomAlphanumeric(8));
         selectMacroAndSave(editorPage, MACRO_NAME_2);
         ViewPage page = editorPage.save();
@@ -101,7 +101,7 @@ public class TestCompatibility extends ConfluenceWebDriverTestBase
 
     private void createAndVisitPage(String pageContent) throws MalformedURLException, XmlRpcFault
     {
-        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(TestUser.ADMIN),
+        ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(testUserFactory.basicUser()),
                 TestSpace.DEMO.getKey(), "macro page", pageContent);
         product.visit(ConfluenceViewPage.class, pageData.getId());
     }

@@ -38,6 +38,7 @@
         <resource type="download" name="autoconvert.js" location="/js/confluence/macro/autoconvert.js" />
         <resource type="download" name="autoconvert-init.js" location="/js/confluence/macro/autoconvert-init.js" />
         <data key="connect-autoconvert-data" class="com.atlassian.plugin.connect.plugin.product.confluence.AutoconvertWebResourceDataProvider" />
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
         <context>editor</context>
         <context>viewcontent</context>
     </web-resource>

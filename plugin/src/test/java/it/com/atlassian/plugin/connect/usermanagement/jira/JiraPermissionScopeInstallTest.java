@@ -2,6 +2,7 @@ package it.com.atlassian.plugin.connect.usermanagement.jira;
 
 import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
+import com.atlassian.jira.compatibility.bridge.project.ProjectServiceBridge;
 import com.atlassian.jira.permission.Permission;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.user.util.UserManager;
@@ -9,20 +10,22 @@ import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserServic
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-import it.com.atlassian.plugin.connect.TestAuthenticator;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import it.com.atlassian.plugin.connect.TestAuthenticator;
 
 @Application("jira")
 @RunWith(AtlassianPluginsTestRunner.class)
 public class JiraPermissionScopeInstallTest extends AbstractJiraPermissionScopeTest
 {
     public JiraPermissionScopeInstallTest(ConnectAddOnUserService connectAddOnUserService,
-                                          PermissionManager permissionManager, ProjectService projectService,
+                                          PermissionManager permissionManager, ProjectService projectService, ProjectServiceBridge projectServiceBridge,
                                           ProjectRoleService projectRoleService, UserManager userManager,
                                           TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
     {
-       super(connectAddOnUserService, permissionManager, projectService, projectRoleService, userManager, testPluginInstaller, testAuthenticator);
+       super(connectAddOnUserService, permissionManager, projectService, projectServiceBridge, projectRoleService, userManager, testPluginInstaller, testAuthenticator);
     }
 
     @Test

@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPag
 import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
+import it.util.ConnectTestUserFactory;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -90,10 +91,10 @@ public class AbstractPageTestBase extends MultiProductWebDriverTestBase
         this.awesomePageModuleKey = addonAndModuleKey(pluginKey, MY_AWESOME_PAGE_KEY);
     }
 
-    protected <T extends Page> ConnectAddOnEmbeddedTestPage runCanClickOnPageLinkAndSeeAddonContents(Class<T> pageClass, Option<String> linkText)
+    protected <T extends Page> ConnectAddOnEmbeddedTestPage runCanClickOnPageLinkAndSeeAddonContents(Class<T> pageClass, Option<String> linkText, TestUser user)
             throws MalformedURLException, URISyntaxException
     {
-        login(TestUser.ADMIN);
+        login(user);
 
         T page = product.visit(pageClass);
         revealLinkIfNecessary(page);

@@ -20,7 +20,7 @@ import javax.inject.Inject;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 
-public abstract class AbstractConnectIFrameComponent<C>
+public abstract class AbstractConnectIFrameComponent< C extends AbstractConnectIFrameComponent >
 {
     @Inject
     protected AtlassianWebDriver driver;

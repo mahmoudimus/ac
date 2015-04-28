@@ -34,6 +34,20 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.atlassian.analytics</groupId>
+            <artifactId>analytics-api</artifactId>
+            <version>${atlassian.analytics.version}</version>
+            <scope>plugin</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.jira.compat</groupId>
+            <artifactId>jira-cross-compatibility-lib-bridge-factory</artifactId>
+            <version>${atlassian.jira.cross.compat.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- TODO: get schema-validator and guava 15.0+ versions into the products so we don't have to bundle them -->
         <dependency>
             <groupId>com.github.fge</groupId>
@@ -560,6 +574,13 @@
                     </pluginDependencies>
                     <instructions>
                         <Import-Package>
+
+                            <!-- Required for pa / pi to work with the new version of atlassian-plugins -->
+                            com.atlassian.plugin.osgi.bridge.external;
+                            org.osgi.util.tracker;
+                            org.osgi.framework;
+                            <!-- End pa / pi imports -->
+
                             com.github.fge.jsonschema.validator;version="${atlassian.json.schema.validator.version}",
                             com.github.fge.jsonschema.core*;version="1.2.4",
                             com.github.fge.jsonschema.cfg*;version="${json.schema.validator.version}",
@@ -679,14 +700,6 @@
                                     <version>${project.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
-
-                            <bundledArtifacts>
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.analytics</groupId>
-                                    <artifactId>analytics-client</artifactId>
-                                    <version>${atlassian.analytics.version}</version>
-                                </bundledArtifact>
-                            </bundledArtifacts>
                         </product>
                         <product>
                             <id>confluence</id>
@@ -755,12 +768,6 @@
                                     <groupId>com.atlassian.devrel</groupId>
                                     <artifactId>developer-toolbox-plugin</artifactId>
                                     <version>${toolbox.version}</version>
-                                </bundledArtifact>
-
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.analytics</groupId>
-                                    <artifactId>analytics-client</artifactId>
-                                    <version>${atlassian.analytics.version}</version>
                                 </bundledArtifact>
                             </bundledArtifacts>
                         </product>

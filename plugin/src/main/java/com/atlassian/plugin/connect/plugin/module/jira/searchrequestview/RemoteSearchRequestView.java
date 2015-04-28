@@ -1,6 +1,10 @@
 package com.atlassian.plugin.connect.plugin.module.jira.searchrequestview;
 
-import com.atlassian.jira.ComponentManager;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.net.URI;
+
 import com.atlassian.jira.exception.DataAccessException;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.search.SearchException;
@@ -19,13 +23,10 @@ import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFac
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.templaterenderer.TemplateRenderer;
-import com.google.common.collect.ImmutableMap;
-import org.apache.commons.lang.StringUtils;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.URI;
+import com.google.common.collect.ImmutableMap;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * A remote search request review that will do an html redirect to the remote plugin
@@ -41,6 +42,7 @@ public class RemoteSearchRequestView implements SearchRequestView
     private final String moduleKey;
     private final URI createUri;
     private final String displayName;
+    private final JiraAuthenticationContext jiraAuthenticationContext;
 
     public RemoteSearchRequestView(
             ApplicationProperties applicationProperties,
@@ -50,7 +52,7 @@ public class RemoteSearchRequestView implements SearchRequestView
             String pluginKey,
             String moduleKey,
             URI createUri,
-            String displayName)
+            String displayName, JiraAuthenticationContext jiraAuthenticationContext)
     {
         this.applicationProperties = applicationProperties;
         this.searchRequestViewBodyWriterUtil = searchRequestViewBodyWriterUtil;
@@ -60,6 +62,7 @@ public class RemoteSearchRequestView implements SearchRequestView
         this.displayName = displayName;
         this.pluginKey = pluginKey;
         this.moduleKey = moduleKey;
+        this.jiraAuthenticationContext = jiraAuthenticationContext;
     }
 
     @Override
@@ -75,10 +78,9 @@ public class RemoteSearchRequestView implements SearchRequestView
     @Override
     public void writeSearchResults(final SearchRequest searchRequest, final SearchRequestParams searchRequestParams, final Writer writer)
     {
-        JiraAuthenticationContext jiraAuthenticationContext = ComponentManager.getInstance().getJiraAuthenticationContext();
         String baseUrl = applicationProperties.getBaseUrl(UrlMode.CANONICAL);
 
-        String link = SearchRequestViewUtils.getLink(searchRequest, baseUrl, jiraAuthenticationContext.getUser().getDirectoryUser());
+        String link = SearchRequestViewUtils.getLink(searchRequest, baseUrl, jiraAuthenticationContext.getLoggedInUser());
         int startIssue = searchRequestParams.getPagerFilter().getStart();
         long totalIssues = getSearchCount(searchRequest, searchRequestParams);
         long tempMax = searchRequestParams.getPagerFilter().getMax() < 0 ? 0 : searchRequestParams.getPagerFilter().getMax();

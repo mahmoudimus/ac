@@ -1,8 +1,5 @@
 package it.confluence.item;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import com.atlassian.fugue.Pair;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
@@ -14,18 +11,18 @@ import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-
 import com.google.common.base.Optional;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.CheckUsernameConditionServlet;
 import it.util.TestUser;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import redstone.xmlrpc.XmlRpcFault;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -57,9 +54,15 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
 
     private static ConnectRunner remotePlugin;
 
+    private static TestUser betty;
+    private static TestUser barney;
+
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
+        barney = testUserFactory.basicUser();
+        betty = testUserFactory.admin();
+
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .setAuthenticationToNone()
                 .addModules("webItems",
@@ -94,7 +97,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                                 .withUrl("http://www.google.com?myPageId={page.id}&mySpaceKey={space.key}&myContentId={content.id}")
                                 .withConditions(
                                         newSingleConditionBean().withCondition("user_is_logged_in").build(),
-                                        newSingleConditionBean().withCondition("/onlyBettyCondition").build()
+                                        newSingleConditionBean().withCondition("/only" + betty.getDisplayName() + "Condition").build()
                                 ).build(),
                         newWebItemBean()
                                 .withName(new I18nProperty("wikipedia link", "ac.ild"))
@@ -108,8 +111,8 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                                 )
                                 .build())
 
-                .addRoute("/onlyBarneyCondition", new CheckUsernameConditionServlet(TestUser.BARNEY))
-                .addRoute("/onlyBettyCondition", new CheckUsernameConditionServlet(TestUser.BETTY))
+                .addRoute("/only" + barney.getDisplayName() + "Condition", new CheckUsernameConditionServlet(barney))
+                .addRoute("/only" + betty.getDisplayName() + "Condition", new CheckUsernameConditionServlet(betty))
                 .addRoute("/irwi?page_id={page.id}&content_id={content.id}", ConnectAppServlets.helloWorldServlet())
                 .start();
     }
@@ -126,7 +129,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void testAbsoluteWebItem() throws Exception
     {
-        login(TestUser.BETTY);
+        login(betty);
 
         RemoteWebItem webItem = findViewPageWebItem(getModuleKey(ABSOLUTE_WEBITEM)).right();
         assertNotNull("Web item should be found", webItem);
@@ -140,7 +143,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void testRelativeWebItem() throws Exception
     {
-        login(TestUser.ADMIN);
+        login(testUserFactory.admin());
 
         Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(getModuleKey(ADDON_WEBITEM));
         RemoteWebItem webItem = pageAndWebItem.right();
@@ -157,7 +160,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void testAddonDirectWebItem() throws Exception
     {
-        login(TestUser.ADMIN);
+        login(testUserFactory.admin());
 
         Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(getModuleKey(ADDON_DIRECT_WEBITEM));
         RemoteWebItem webItem = pageAndWebItem.right();
@@ -173,7 +176,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void testProductWebItem() throws Exception
     {
-        login(TestUser.ADMIN);
+        login(testUserFactory.admin());
 
         ConfluenceViewPage viewPage = createAndVisitViewPage();
 
@@ -191,7 +194,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void bettyCanSeeWebItem() throws Exception
     {
-        login(TestUser.BETTY);
+        login(betty);
 
         RemoteWebItem webItem = findViewPageWebItem(getModuleKey(ABSOLUTE_WEBITEM)).right();
 
@@ -201,7 +204,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void adminCannotSeeBettyWebItem() throws Exception
     {
-        login(TestUser.ADMIN);
+        login(testUserFactory.admin());
         createAndVisitViewPage();
         assertFalse("Web item should NOT be found", connectPageOperations.existsWebItem(getModuleKey(ABSOLUTE_WEBITEM)));
     }
@@ -210,7 +213,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
     @Test
     public void testAddonWebItemInlineDialog() throws Exception
     {
-        login(TestUser.ADMIN);
+        login(testUserFactory.admin());
 
         Pair<ConfluenceViewPage, RemoteWebItem> pageAndWebItem = findViewPageWebItem(getModuleKey(ADDON_WEBITEM_INLINE_DIALOG));
         RemoteWebItem webItem = pageAndWebItem.right();
@@ -240,7 +243,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
 
     private ConfluenceOps.ConfluencePageData createPage() throws MalformedURLException, XmlRpcFault
     {
-        return confluenceOps.setPage(some(TestUser.ADMIN), SPACE, "Page with webitem", "some page content");
+        return confluenceOps.setPage(some(testUserFactory.admin()), SPACE, "Page with webitem", "some page content");
     }
 
 
