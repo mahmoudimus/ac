@@ -1,6 +1,8 @@
 package it.com.atlassian.plugin.connect.jira.workflow;
 
 import com.atlassian.fugue.Option;
+import com.atlassian.jira.bc.issue.comment.CommentService;
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.CreateException;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueFactory;
@@ -9,6 +11,7 @@ import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.WorkflowManager;
+import com.atlassian.jira.workflow.WorkflowTransitionUtilImpl;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
@@ -20,11 +23,11 @@ import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
+import com.atlassian.plugin.connect.util.auth.TestAuthenticator;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import it.com.atlassian.plugin.connect.util.request.HeaderUtil;
-import com.atlassian.plugin.connect.util.auth.TestAuthenticator;
 import org.apache.http.HttpHeaders;
 import org.json.JSONObject;
 import org.junit.AfterClass;
@@ -183,7 +186,18 @@ public class WorkflowPostFunctionTest
     {
         MutableIssue issue = issueManager.getIssueObject(createIssue("triggerWorkflowTransition").getId());
         workflowManager.migrateIssueToWorkflow(issue, workflow, issue.getStatusObject());
-        workflowManager.doWorkflowAction(new WorkflowAction(authenticationContext.getUser(), issue, RESOLVE_ACTION));
+        WorkflowTransitionUtilImpl workflowTransition = new WorkflowTransitionUtilImpl(
+                authenticationContext,
+                workflowManager,
+                ComponentAccessor.getPermissionManager(),
+                ComponentAccessor.getFieldScreenRendererFactory(),
+                ComponentAccessor.getComponent(CommentService.class),
+                ComponentAccessor.getI18nHelperFactory());
+        workflowTransition.setAction(RESOLVE_ACTION);
+        workflowTransition.setUserkey(authenticationContext.getUser().getKey());
+        workflowTransition.setIssue(issue);
+
+        workflowManager.doWorkflowAction(workflowTransition);
 
         return waitForWebhook(plugin.getKey(), TRIGGERED_URL);
     }
@@ -222,6 +236,6 @@ public class WorkflowPostFunctionTest
         Map params = new HashMap();
         params.put("issue", issueObject);
 
-        return issueManager.createIssueObject(authenticationContext.getUser().getDirectoryUser(), params);
+        return issueManager.createIssueObject(authenticationContext.getLoggedInUser(), params);
     }
 }

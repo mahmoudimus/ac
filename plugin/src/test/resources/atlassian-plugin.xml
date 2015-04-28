@@ -66,6 +66,9 @@
                class="it.com.atlassian.plugin.connect.jira.scopes.JiraScopeTestUtil"
                application="jira" />
 
+    <!-- JIRA CROSS-COMPATIBILITY FACTORY NEEDED FOR WIRED TESTS  -->
+    <component key="projectServiceBridgeFactory" class="com.atlassian.jira.compatibility.factory.project.ProjectServiceBridgeFactory"/>
+
     <!-- MOCK REST RESOURCES -->
     <rest key="agile-rest-mock" path="/greenhopper" version="1.0">
         <package>it.com.atlassian.plugin.connect.util.fixture.rest</package>

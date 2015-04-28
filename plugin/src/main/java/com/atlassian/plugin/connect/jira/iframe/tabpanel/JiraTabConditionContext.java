@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.jira.iframe.tabpanel;
 
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.plugin.issuetabpanel.ShowPanelRequest;
 import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
 import com.atlassian.jira.project.browse.BrowseContext;
@@ -27,23 +26,24 @@ public final class JiraTabConditionContext
         JiraHelper helper = new JiraHelper(ExecutingHttpRequest.get(),
                 request.issue().getProjectObject(),
                 ImmutableMap.<String, Object>of("issue", request.issue()));
-        return createContext(helper, request.remoteUser());
+        final ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
+        builder.put(CONTEXT_KEY_HELPER, helper);
+        if (request.remoteUser() != null)
+        {
+            builder.put(CONTEXT_KEY_USER, request.remoteUser());
+        }
+        return builder.build();
     }
 
     public static Map<String, Object> createConditionContext(BrowseContext browseContext)
     {
         JiraHelper helper = new JiraHelper(ExecutingHttpRequest.get(),
                 browseContext.getProject(), browseContext.createParameterMap());
-        return createContext(helper, browseContext.getUser());
-    }
-
-    private static Map<String, Object> createContext(JiraHelper helper, User user)
-    {
         final ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
         builder.put(CONTEXT_KEY_HELPER, helper);
-        if (user != null)
+        if (browseContext.getUser() != null)
         {
-            builder.put(CONTEXT_KEY_USER, user);
+            builder.put(CONTEXT_KEY_USER, browseContext.getUser());
         }
         return builder.build();
     }

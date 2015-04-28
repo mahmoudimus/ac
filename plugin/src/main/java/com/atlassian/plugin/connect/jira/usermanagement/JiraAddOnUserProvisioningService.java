@@ -1,7 +1,11 @@
 package com.atlassian.plugin.connect.jira.usermanagement;
 
 import com.atlassian.crowd.embedded.api.Group;
-import com.atlassian.crowd.exception.*;
+import com.atlassian.crowd.exception.ApplicationNotFoundException;
+import com.atlassian.crowd.exception.ApplicationPermissionException;
+import com.atlassian.crowd.exception.GroupNotFoundException;
+import com.atlassian.crowd.exception.OperationFailedException;
+import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
 import com.atlassian.jira.permission.PermissionSchemeManager;
 import com.atlassian.jira.permission.ProjectPermission;
@@ -14,9 +18,9 @@ import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.security.plugin.ProjectPermissionKey;
 import com.atlassian.jira.security.roles.DefaultRoleActors;
 import com.atlassian.jira.security.roles.ProjectRole;
+import com.atlassian.jira.security.roles.ProjectRoleActor;
 import com.atlassian.jira.security.roles.ProjectRoleActors;
 import com.atlassian.jira.security.roles.ProjectRoleImpl;
-import com.atlassian.jira.security.roles.actor.UserRoleActorFactory;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.util.ErrorCollection;
@@ -40,7 +44,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.any;
@@ -59,7 +66,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
 
     private static final ImmutableSet<String> DEFAULT_GROUPS_ALWAYS_EXPECTED = ImmutableSet.of();
     private static final ImmutableSet<String> DEFAULT_GROUPS_ONE_OR_MORE_EXPECTED = ImmutableSet.of("jira-users", "users");
-    
+
     private static final int ADMIN_PERMISSION = Permissions.ADMINISTER;
 
     private static final Logger log = LoggerFactory.getLogger(JiraAddOnUserProvisioningService.class);
@@ -294,7 +301,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
                             Collections.singleton(addOnUser.getKey()),
                             projectRole,
                             project,
-                            UserRoleActorFactory.TYPE,
+                            ProjectRoleActor.USER_ROLE_ACTOR_TYPE,
                             errorCollection);
                     String projectKey = null == project ? null : project.getKey();
                     log.info("Added user '{}' to project '{}' role '{}'", new Object[]{ addOnUser.getName(), projectKey, projectRole.getName() });
@@ -320,7 +327,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
                         Collections.singleton(addOnUser.getKey()),
                         projectRole,
                         project,
-                        UserRoleActorFactory.TYPE,
+                        ProjectRoleActor.USER_ROLE_ACTOR_TYPE,
                         errorCollection);
                 String projectKey = null == project ? null : project.getKey();
                 log.info("Removed user '{}' from project '{}' role '{}'", new Object[]{ addOnUser.getName(), projectKey, projectRole.getName() });
@@ -340,7 +347,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
             projectRoleService.addDefaultActorsToProjectRole(
                     Collections.singleton(addOnUser.getKey()),
                     projectRole,
-                    UserRoleActorFactory.TYPE,
+                    ProjectRoleActor.USER_ROLE_ACTOR_TYPE,
                     errorCollection
             );
             String projectRoleName = null == projectRole ? null : projectRole.getName();
@@ -353,7 +360,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         projectRoleService.removeDefaultActorsFromProjectRole(
                 Collections.singleton(addOnUser.getKey()),
                 projectRole,
-                UserRoleActorFactory.TYPE,
+                ProjectRoleActor.USER_ROLE_ACTOR_TYPE,
                 errorCollection
         );
         String projectRoleName = null == projectRole ? null : projectRole.getName();

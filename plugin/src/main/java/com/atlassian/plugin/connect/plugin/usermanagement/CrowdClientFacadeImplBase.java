@@ -6,18 +6,13 @@ import com.atlassian.crowd.service.client.ClientResourceLocator;
 import com.atlassian.crowd.service.client.CrowdClient;
 import com.atlassian.crowd.service.factory.CrowdClientFactory;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import static com.atlassian.crowd.integration.Constants.PROPERTIES_FILE;
 
-@Component
-public class CrowdClientFacadeImpl implements CrowdClientFacade
+public abstract class CrowdClientFacadeImplBase implements CrowdClientFacade
 {
     private final CrowdClientFactory crowdClientFactory;
 
-    @Autowired
-    public CrowdClientFacadeImpl(CrowdClientFactory crowdClientFactory)
+    public CrowdClientFacadeImplBase(CrowdClientFactory crowdClientFactory)
     {
         this.crowdClientFactory = crowdClientFactory;
     }
@@ -26,12 +21,6 @@ public class CrowdClientFacadeImpl implements CrowdClientFacade
     public CrowdClient getCrowdClient()
     {
         return crowdClientFactory.newInstance(getClientProperties());
-    }
-
-    @Override
-    public String getClientApplicationName()
-    {
-        return getClientProperties().getApplicationName();
     }
 
     private ClientProperties getClientProperties()
