@@ -41,7 +41,7 @@
               <post-functions>
                 <function type="class">
                   <arg name="remoteWorkflowPostFunctionConfiguration">string for JIRA to store</arg>
-                  <arg name="class.name">com.atlassian.plugin.connect.plugin.module.jira.workflow.RemoteWorkflowPostFunctionProvider</arg>
+                  <arg name="class.name">com.atlassian.plugin.connect.jira.workflow.RemoteWorkflowPostFunctionProvider</arg>
                   <arg name="remoteWorkflowPostFunctionUUID">5a74f74a-9eed-48b1-ba65-12c99846c840</arg>
                   <arg name="full.module.key">com.atlassian.plugins.atlassian-connect-pluginconnect-workflow-example__wf-pf-test</arg>
                 </function>

@@ -6,9 +6,6 @@
         <bundle-instructions>
             <Import-Package>
                 com.atlassian.plugin.connect*,
-                com.atlassian.plugin.connect.*,
-                com.atlassian.plugin.connect.modules.beans*,
-                com.atlassian.plugin.connect.modules.beans.*,
                 *;resolution:=optional
             </Import-Package>
         </bundle-instructions>
@@ -31,7 +28,7 @@
     <component-import key="connectApplinkManager" interface="com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager" />
     <component-import key="connectDescriptorValidator" interface="com.atlassian.plugin.connect.modules.schema.ConnectDescriptorValidator" />
     <component-import key="connectSchemaLocator" interface="com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectSchemaLocator" />
-    <component-import key="connectAddonRegistry" interface="com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry"/>
+    <component-import key="connectAddonRegistry" interface="com.atlassian.plugin.connect.plugin.ConnectAddonRegistry"/>
     <component-import key="connectAddonUserService" interface="com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService"/>
     <component-import key="connectAddOnUserProvisioningService" interface="com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserProvisioningService" />
     <component-import key="iFrameRenderStrategyRegistry" interface="com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry" />
@@ -40,11 +37,11 @@
 
     <!-- CONNECT MODULE PROVIDERS -->
     <component-import key="webItemModuleProvider" interface="com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider" />
-    <component-import key="blueprintModuleProvider" application="confluence" interface="com.atlassian.plugin.connect.plugin.capabilities.provider.BlueprintModuleProvider" />
-    <component-import key="workflowPostFunctionModuleProvider" application="jira" interface="com.atlassian.plugin.connect.plugin.capabilities.provider.WorkflowPostFunctionModuleProvider" />
+    <component-import key="blueprintModuleProvider" application="confluence" interface="com.atlassian.plugin.connect.confluence.capabilities.provider.BlueprintModuleProvider" />
+    <component-import key="workflowPostFunctionModuleProvider" application="jira" interface="com.atlassian.plugin.connect.jira.capabilities.provider.WorkflowPostFunctionModuleProvider" />
 
     <!-- CONNECT DESCRIPTOR FACTORIES -->
-    <component-import key="tabPanelDescriptorFactory" application="jira" interface="com.atlassian.plugin.connect.plugin.capabilities.descriptor.tabpanel.ConnectTabPanelModuleDescriptorFactory" />
+    <component-import key="tabPanelDescriptorFactory" application="jira" interface="com.atlassian.plugin.connect.jira.capabilities.descriptor.tabpanel.ConnectTabPanelModuleDescriptorFactory" />
     <component-import key="webSectionDescriptorFactory" interface="com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebSectionModuleDescriptorFactory" />
 
     <!-- CONNECT TEST SUPPORT -->
@@ -54,19 +51,19 @@
 
     <!-- OUR OWN LOCAL COMPONENTS -->
     <component key="jiraTestAuthenticator"
-               class="it.com.atlassian.plugin.connect.JiraTestAuthenticator"
-               interface="it.com.atlassian.plugin.connect.TestAuthenticator"
+               class="it.com.atlassian.plugin.connect.jira.JiraTestAuthenticator"
+               interface="com.atlassian.plugin.connect.util.auth.TestAuthenticator"
                application="jira" />
     <component key="confluenceTestAuthenticator"
-               class="it.com.atlassian.plugin.connect.ConfluenceTestAuthenticator"
-               interface="it.com.atlassian.plugin.connect.TestAuthenticator"
+               class="it.com.atlassian.plugin.connect.confluence.ConfluenceTestAuthenticator"
+               interface="com.atlassian.plugin.connect.util.auth.TestAuthenticator"
                application="confluence" />
     <component key="jiraWorkflowImporter"
-               class="it.com.atlassian.plugin.connect.workflow.jira.DefaultWorkflowImporter"
-               interface="it.com.atlassian.plugin.connect.workflow.jira.WorkflowImporter"
+               class="it.com.atlassian.plugin.connect.jira.workflow.DefaultWorkflowImporter"
+               interface="it.com.atlassian.plugin.connect.jira.workflow.WorkflowImporter"
                application="jira" />
     <component key="jiraScopeTestUtil"
-               class="it.com.atlassian.plugin.connect.scopes.jira.JiraScopeTestUtil"
+               class="it.com.atlassian.plugin.connect.jira.scopes.JiraScopeTestUtil"
                application="jira" />
 
     <!-- JIRA CROSS-COMPATIBILITY FACTORY NEEDED FOR WIRED TESTS  -->
@@ -74,7 +71,7 @@
 
     <!-- MOCK REST RESOURCES -->
     <rest key="agile-rest-mock" path="/greenhopper" version="1.0">
-        <package>com.atlassian.plugin.connect.testfixture.agile.rest</package>
+        <package>it.com.atlassian.plugin.connect.util.fixture.rest</package>
     </rest>
 
 </atlassian-plugin>

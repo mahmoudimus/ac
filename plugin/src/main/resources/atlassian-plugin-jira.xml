@@ -73,7 +73,7 @@
     </web-resource>
 
     <url-reading-web-resource-transformer key="connect-report-transformer" name="Connect report transformer"
-                                          class="com.atlassian.plugin.connect.plugin.capabilities.descriptor.ReportModuleCssTransformer"/>
+                                          class="com.atlassian.plugin.connect.jira.capabilities.descriptor.report.ReportModuleCssTransformer"/>
 
     <web-resource key="connect-report-thumbnails">
         <context>jira.browse.project</context>

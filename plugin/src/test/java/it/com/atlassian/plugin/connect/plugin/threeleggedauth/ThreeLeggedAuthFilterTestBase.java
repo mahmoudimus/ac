@@ -1,6 +1,5 @@
 package it.com.atlassian.plugin.connect.plugin.threeleggedauth;
 
-import com.atlassian.crowd.embedded.api.ApplicationFactory;
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.exception.ApplicationPermissionException;
 import com.atlassian.crowd.exception.InvalidCredentialException;
@@ -24,7 +23,7 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.threeleggedauth.ThreeLeggedAuthService;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
@@ -35,8 +34,8 @@ import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.ImmutableSet;
-import it.com.atlassian.plugin.connect.TestAuthenticator;
-import it.com.atlassian.plugin.connect.util.RequestUtil;
+import com.atlassian.plugin.connect.util.auth.TestAuthenticator;
+import it.com.atlassian.plugin.connect.util.request.RequestUtil;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

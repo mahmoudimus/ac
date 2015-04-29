@@ -13,8 +13,8 @@ import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.google.gson.JsonParser;
-import it.com.atlassian.plugin.connect.TestAuthenticator;
-import it.com.atlassian.plugin.connect.util.RequestUtil;
+import com.atlassian.plugin.connect.util.auth.TestAuthenticator;
+import it.com.atlassian.plugin.connect.util.request.RequestUtil;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,8 +23,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-import static com.atlassian.plugin.connect.test.util.AddonUtil.randomWebItemBean;
-import static it.com.atlassian.plugin.connect.installer.AbstractAddonLifecycleTest.DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY;
+import static com.atlassian.plugin.connect.util.AddonUtil.randomWebItemBean;
+import static it.com.atlassian.plugin.connect.plugin.installer.AbstractAddonLifecycleTest.DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 

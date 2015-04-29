@@ -67,7 +67,7 @@ public interface ConnectAddOnUserGroupProvisioningService
      * <strong>Do not cache</strong> the returned Application; it is immutable
      * and replaced every time a change is made
      *
-     * @throws ApplicationNotFoundException
+     * @throws ApplicationNotFoundException application with requested name does not exist
      */
     Application getCrowdApplication() throws ApplicationNotFoundException;
 
