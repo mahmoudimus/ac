@@ -167,11 +167,11 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
 
     private void testDynamicMacro(String macroKey)
     {
-        login(testUserFactory.basicUser());
         Content page = createPage(macroKey, "<h1>Hello world</h1>");
-        product.visit(ConfluencePageWithRemoteMacro.class, page.getTitle(), macroKey);
-        RenderedMacro renderedMacro1 = connectPageOperations.findMacroWithIdPrefix(macroKey);
-        String content1 = renderedMacro1.getIFrameElement("body");
+        ViewPage viewPage = getProduct().login(testUserFactory.basicUser().confUser(), ViewPage.class, String.valueOf(page.getId().asLong()));
+        viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(macroKey, 0);
+        String content1 = renderedMacro.getIFrameElement("body");
         assertThat(content1, is("<h1>Hello world</h1>"));
     }
 
