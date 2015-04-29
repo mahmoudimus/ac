@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
@@ -51,8 +52,6 @@ import static org.junit.Assert.assertThat;
  */
 public class TestMacroBody extends ConfluenceWebDriverTestBase
 {
-    private static final Logger logger = LoggerFactory.getLogger(TestMacroBody.class);
-
     protected ConfluenceRestClient restClient = new ConfluenceRestClient(getProduct());
     private static ConnectRunner remotePlugin;
 
@@ -165,14 +164,23 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
         testDynamicMacro("dynamic-macro-by-hash");
     }
 
-    private void testDynamicMacro(String macroKey)
+    private void testDynamicMacro(final String macroKey) throws Exception
     {
-        Content page = createPage(macroKey, "<h1>Hello world</h1>");
-        ViewPage viewPage = getProduct().login(testUserFactory.basicUser().confUser(), ViewPage.class, String.valueOf(page.getId().asLong()));
-        viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
-        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(macroKey, 0);
-        String content1 = renderedMacro.getIFrameElement("body");
-        assertThat(content1, is("<h1>Hello world</h1>"));
+
+        runWithAnonymousUsePermission(new Callable<Object>()
+        {
+            @Override
+            public Object call() throws Exception
+            {
+                final Content page = createPage(macroKey, "<h1>Hello world</h1>");
+                ViewPage viewPage = getProduct().login(testUserFactory.basicUser().confUser(), ViewPage.class, String.valueOf(page.getId().asLong()));
+                viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
+                RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(macroKey, 0);
+                String content1 = renderedMacro.getIFrameElement("body");
+                assertThat(content1, is("<h1>Hello world</h1>"));
+                return null;
+            }
+        });
     }
 
     @Test
