@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.jira.condition;
 
-import com.atlassian.plugin.connect.jira.condition.ViewingOwnProfileCondition;
+import com.atlassian.plugin.connect.modules.beans.ConnectEntityPropertyEqualToCondition;
 import com.atlassian.plugin.connect.plugin.condition.PageConditions;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.web.Condition;
@@ -59,7 +59,7 @@ public class JiraConditions extends PageConditions
         conditionMap.put(USER_IS_THE_LOGGED_IN_USER, ViewingOwnProfileCondition.class);
         conditionMap.put(VOTING_ENABLED, com.atlassian.jira.plugin.webfragment.conditions.VotingEnabledCondition.class);
         conditionMap.put(WATCHING_ENABLED, com.atlassian.jira.plugin.webfragment.conditions.WatchingEnabledCondition.class);
-        conditionMap.put(ENTITY_PROPERTY_EQUAL_TO, EntityPropertyEqualToConnectCondition.class);
+        conditionMap.put(ENTITY_PROPERTY_EQUAL_TO, ConnectEntityPropertyEqualToCondition.class);
 
         // issue conditions
         conditionMap.put(CAN_ATTACH_FILE_TO_ISSUE, com.atlassian.jira.plugin.webfragment.conditions.CanAttachFileToIssueCondition.class);

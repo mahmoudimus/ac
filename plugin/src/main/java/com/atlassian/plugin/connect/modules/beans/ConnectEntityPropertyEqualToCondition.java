@@ -20,7 +20,7 @@ import com.google.common.base.Strings;
 import java.util.Map;
 
 @ConnectCondition
-public class EntityPropertyEqualToConnectCondition extends AbstractWebCondition implements Condition
+public class ConnectEntityPropertyEqualToCondition extends AbstractWebCondition implements Condition
 {
     private final EntityPropertyEqualToCondition entityPropertyEqualToCondition;
     private final AddOnPropertyService addOnPropertyService;
@@ -28,7 +28,7 @@ public class EntityPropertyEqualToConnectCondition extends AbstractWebCondition 
 
     private Function2<ApplicationUser, JiraHelper, Boolean> shouldDisplayFunction;
 
-    public EntityPropertyEqualToConnectCondition(EntityPropertyEqualToCondition entityPropertyEqualToCondition, final AddOnPropertyService addOnPropertyService, final UserManager userManager)
+    public ConnectEntityPropertyEqualToCondition(EntityPropertyEqualToCondition entityPropertyEqualToCondition, final AddOnPropertyService addOnPropertyService, final UserManager userManager)
     {
         this.entityPropertyEqualToCondition = entityPropertyEqualToCondition;
         this.addOnPropertyService = addOnPropertyService;
@@ -38,7 +38,7 @@ public class EntityPropertyEqualToConnectCondition extends AbstractWebCondition 
     @Override
     public void init(final Map<String, String> params) throws PluginParseException
     {
-        if ("addOn".equals(params.get("entity")))
+        if ("addon".equals(params.get("entity")))
         {
             final String propertyKey = Strings.nullToEmpty(params.get("propertyKey"));
             final String propertyValue = Strings.nullToEmpty(params.get("value"));

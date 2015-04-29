@@ -16,6 +16,7 @@ module accepts conditions, see their specific module documentation page.
     * [Confluence](#confluence-conditions)
     * [JIRA](#jira-conditions)
       * [Condition parameter mappings](#jira-condition-parameters)
+      * [Connect-specific conditions](#connect-specific-conditions)
 * [Remote conditions](#remote)
 
 ## <a name="static"></a>Static conditions
@@ -159,6 +160,7 @@ Each product defines a set of static conditions relevant to its domain.
 * `user_is_the_logged_in_user`
 * `voting_enabled`
 * `watching_enabled`
+* `entity_property_equal_to`
 
 ##### <a name="jira-condition-parameters"></a>Condition parameter mappings
 
@@ -332,6 +334,47 @@ in Atlassian Connect module declarations and how they map to the permissions des
         </tr>
     </tbody>
 </table>
+
+##### <a name="connect-specific-conditions"></a>Connect-specific JIRA conditions
+
+Some conditions are not direct translations of JIRA conditions. They are described in detail here.
+
+###### <a name="entity_property_equal_to"></a>entity_property_equal_to
+
+This condition lets you test whether the entity property is equal to the specified value. Supported entities:
+
+* `project`
+* `issue`
+* `issuetype`
+* `comment`
+* `addon`
+
+When using this condition you need to specify the entity, property key and expected value:
+
+    {
+        "name": "My Addon",
+        "modules": {
+            "generalPages": [
+                {
+                    "conditions": [
+                        {
+                            "condition": "entity_property_equal_to"
+                            "params": {
+                                "entity": "addon",
+                                "propertyKey": "isEnabled",
+                                "value": "true"
+                            {
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+
+In the above example the general page will be displayed if `isEnabled` add-on property is set to `true`.
+
+The `addon` entity is a bit special because it's always your add-on. All other entities depend on context. For example,
+if you add a web panel to some issue view then the condition for issue entity will be checked for the currently displayed issue.
 
 ## <a name="remote"></a>Remote conditions
 

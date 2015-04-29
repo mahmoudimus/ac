@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.condition;
 
 import com.atlassian.fugue.Option;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import java.util.Map;
@@ -37,7 +36,8 @@ public class ConnectConditionContext
         return result;
     }
 
-    public Option<String> getAddOnKey() {
+    public Option<String> getAddOnKey()
+    {
         return option(contextMap.get(CONNECT_ADD_ON_KEY_KEY));
     }
 
@@ -48,7 +48,8 @@ public class ConnectConditionContext
      * @return value or null if not defined
      */
     @Nullable
-    public String get(String key) {
+    public String get(String key)
+    {
         return contextMap.get(key);
     }
 }
