@@ -148,7 +148,7 @@ runTestsStage() {
             checkoutDefaultRepositoryTask()
             mavenTask(
                     description: 'Build Developer Documentation',
-                    goal: 'install -DskipTests',
+                    goal: 'site',
             )
             artifactDefinition(
                     name: 'Documentation',
