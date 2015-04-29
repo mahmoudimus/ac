@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.plugin.condition.ConnectCondition;
@@ -109,13 +108,14 @@ public class ConditionModuleFragmentFactory
     {
         String className = "";
         DOMElement element = null;
-        Map<String, String> params = newHashMap(bean.getParams());
+
+        final ConnectConditionContext.Builder contextBuilder = ConnectConditionContext.builder(bean.getParams());
 
         if (isRemoteCondition(bean))
         {
             className = AddOnCondition.class.getName();
-            params.put(AddOnCondition.ADDON_KEY, addOnKey);
-            params.put(AddOnCondition.URL, bean.getCondition());
+            contextBuilder.put(AddOnCondition.ADDON_KEY, addOnKey);
+            contextBuilder.put(AddOnCondition.URL, bean.getCondition());
         }
         else
         {
@@ -126,7 +126,7 @@ public class ConditionModuleFragmentFactory
                 className = clazz.getName();
                 if (clazz.isAnnotationPresent(ConnectCondition.class))
                 {
-                    params = ConnectConditionContext.addConnectContext(params, addOnKey);
+                    contextBuilder.putAddOnKey(addOnKey);
                 }
             }
         }
@@ -137,7 +137,7 @@ public class ConditionModuleFragmentFactory
             element.addAttribute("class", className);
             element.addAttribute("invert", Boolean.toString(bean.isInvert()));
 
-            paramsModuleFragmentFactory.addParamsToElement(element, params);
+            paramsModuleFragmentFactory.addParamsToElement(element, contextBuilder.build().toMap());
         }
         else
         {

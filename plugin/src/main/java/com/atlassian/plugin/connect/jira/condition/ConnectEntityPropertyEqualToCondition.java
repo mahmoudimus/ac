@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.modules.beans;
+package com.atlassian.plugin.connect.jira.condition;
 
 import com.atlassian.fugue.Function2;
 import com.atlassian.fugue.Option;

@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.jira.condition;
 
-import com.atlassian.plugin.connect.modules.beans.ConnectEntityPropertyEqualToCondition;
 import com.atlassian.plugin.connect.plugin.condition.PageConditions;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.web.Condition;
