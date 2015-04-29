@@ -363,7 +363,7 @@ When using this condition you need to specify the entity, property key and expec
                                 "entity": "addon",
                                 "propertyKey": "isEnabled",
                                 "value": "true"
-                            {
+                            }
                         }
                     ]
                 }
