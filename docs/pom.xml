@@ -148,8 +148,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <properties>
-        <skipNpm>false</skipNpm>
-    </properties>
 </project>

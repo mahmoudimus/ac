@@ -742,6 +742,7 @@
         <node.version>v0.10.26</node.version>
         <npm.version>1.4.3</npm.version>
         <blueprints.version>4.0.22</blueprints.version>
+        <skipNpm>false</skipNpm>
     </properties>
 
     <repositories>
