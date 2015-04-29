@@ -707,6 +707,7 @@
         <atlassian.webfragments.version>3.0.0-m7</atlassian.webfragments.version>
         <atlassian.html.encoder.version>1.4</atlassian.html.encoder.version>
         <quickreload.version>1.3</quickreload.version>
+        <frontend.plugin.version>0.0.22</frontend.plugin.version>
 
         <!-- TEST STUFF -->
         <atlassian.test.categories.version>0.5</atlassian.test.categories.version>
