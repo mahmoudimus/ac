@@ -51,8 +51,6 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
 {
     private static final Logger logger = LoggerFactory.getLogger(TestMacroBody.class);
 
-//    @Rule public WebDriverScreenshotRule webDriverScreenshotRule = new WebDriverScreenshotRule();
-
     protected ConfluenceRestClient restClient = new ConfluenceRestClient(getProduct());
     private static ConnectRunner remotePlugin;
 

@@ -32,7 +32,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class MacroBodyServlet extends ContextServlet
 {
-    public static enum CollectionType {
+    public static enum CollectionType
+    {
         BY_HASH,
         BY_ID
     }
@@ -56,13 +57,15 @@ public class MacroBodyServlet extends ContextServlet
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context)
     {
+        log("get macro body at url [ " + req.getRequestURL() + " ]");
         try
         {
             String pageId = req.getParameter("pageId");
             String pageVersion = req.getParameter("pageVersion");
 
             URL url = null;
-            switch (collectionType) {
+            switch (collectionType)
+            {
                 case BY_ID:
                     String macroId = req.getParameter("macroId");
                     url = URI.create(baseUrl + "/rest/api/content/" + pageId + "/history/" + pageVersion + "/macro/id/" + macroId).toURL();
@@ -106,7 +109,7 @@ public class MacroBodyServlet extends ContextServlet
 
     private void log(String s)
     {
-        System.out.println("MacroBodyServlet: "+s);
+        System.out.println("MacroBodyServlet: " + s);
     }
 
 }
