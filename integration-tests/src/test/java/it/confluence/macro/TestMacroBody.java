@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.HttpUtils;
+import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWithRemoteMacro;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
@@ -39,6 +40,7 @@ import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
 import static junit.framework.TestCase.assertEquals;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -167,8 +169,7 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
     {
         login(testUserFactory.basicUser());
         Content page = createPage(macroKey, "<h1>Hello world</h1>");
-        getProduct().viewPage(String.valueOf(page.getId().asLong()));
-
+        product.visit(ConfluencePageWithRemoteMacro.class, page.getTitle(), macroKey);
         RenderedMacro renderedMacro1 = connectPageOperations.findMacroWithIdPrefix(macroKey);
         String content1 = renderedMacro1.getIFrameElement("body");
         assertThat(content1, is("<h1>Hello world</h1>"));
