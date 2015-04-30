@@ -2,12 +2,15 @@ package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
+import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstallException;
+import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstaller;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.upm.api.util.Option;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.upm.spi.PluginInstallHandler;
 import com.atlassian.upm.spi.PluginInstallResult;
 import com.google.common.base.Charsets;
+import com.google.common.base.Throwables;
 import com.google.common.io.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,9 +96,17 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
 
             return new PluginInstallResult(plugin);
         }
-        catch (PluginInstallException e)
+        catch (ConnectAddOnInstallException e)
         {
-            throw e;
+            // translate the internal exception to one that UPM understands
+            PluginInstallException exception = e.getI18nKey() == null ? new PluginInstallException(e.getMessage()) :
+                    new PluginInstallException(e.getMessage(), e.getI18nKey(), e.getI18nArgs());
+            Throwable cause = e.getCause();
+            if (cause != null)
+            {
+                exception.initCause(cause);
+            }
+            throw exception;
         }
         catch (Exception e)
         {
@@ -103,7 +114,7 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
             // an internal error and recommend contacting Atlassian support.
             log.error("Failed to install " + descriptorFile.getName() + ": " + e.getMessage(), e);
             Option<String> i18nKey = Option.some("connect.remote.upm.install.internal.error");
-            throw new PluginInstallException("Unable to install connect add on. " + e.getMessage(),i18nKey);
+            throw new PluginInstallException("Unable to install connect add on. " + e.getMessage(), i18nKey);
         }
     }
 

@@ -18,7 +18,9 @@ import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserDisabl
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonInstallFailedEvent;
-import com.atlassian.upm.spi.PluginInstallException;
+import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstallException;
+import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstaller;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.google.common.base.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -29,6 +31,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 
 @Component
+@ExportAsService(ConnectAddOnInstaller.class)
 public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
 {
     private final PluginController pluginController;
@@ -69,7 +72,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     }
 
     @Override
-    public Plugin install(String jsonDescriptor) throws PluginInstallException
+    public Plugin install(String jsonDescriptor) throws ConnectAddOnInstallException
     {
         String pluginKey = null;
         Plugin addonPluginWrapper;
@@ -150,7 +153,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                     }
                     catch (ConnectAddOnUserDisableException caude)
                     {
-                        throw new PluginInstallException("Could not disable add", caude);
+                        throw new ConnectAddOnInstallException("Could not disable add", caude);
                     }
                     addonPluginWrapper = addonToPluginFactory.create(previousAddon);
                 }
@@ -171,14 +174,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                     }
                 }
             }
-            if(e instanceof PluginInstallException)
-            {
-                throw (PluginInstallException) e;
-            }
-            else
-            {
-                throw new PluginInstallException(e.getMessage(), e);
-            }
+            throw new ConnectAddOnInstallException(e.getMessage(), e);
         }
 
         long endTime = System.currentTimeMillis();

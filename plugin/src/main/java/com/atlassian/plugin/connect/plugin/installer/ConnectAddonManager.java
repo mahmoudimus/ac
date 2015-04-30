@@ -40,6 +40,7 @@ import com.atlassian.plugin.connect.spi.event.ConnectAddonUninstalledEvent;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.http.ReKeyableAuthorizationGenerator;
+import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstallException;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
@@ -166,7 +167,7 @@ public class ConnectAddonManager
     }
 
     /**
-     * This method is public for test visibility. In preference, please use {@link ConnectAddOnInstaller#install(String)}
+     * This method is public for test visibility. In preference, please use {@link com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstaller#install(String)}
      * @param jsonDescriptor the json descriptor of the add-on to install
      * @param targetState  the intended state of the add-on after a successful installation
      * @param maybePreviousSharedSecret   optionally, the previous shared secret (used for signing)
@@ -495,7 +496,7 @@ public class ConnectAddonManager
         catch (LifecycleCallbackException e)
         {
             Serializable[] params = e.getParams() != null ? e.getParams() : new Serializable[] {};
-            throw new PluginInstallException(e.getMessage(), e.getI18nKey(), params);
+            throw new ConnectAddOnInstallException(e.getMessage(), e.getI18nKey(), params);
         }
     }
 
@@ -745,7 +746,7 @@ public class ConnectAddonManager
         }
         catch (ConnectAddOnUserInitException e)
         {
-            PluginInstallException exception = new PluginInstallException(e.getMessage(), e.getI18nKey(), addOn.getName());
+            ConnectAddOnInstallException exception = new ConnectAddOnInstallException(e.getMessage(), e.getI18nKey(), addOn.getName());
             exception.initCause(e);
             throw exception;
         }
