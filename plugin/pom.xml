@@ -38,7 +38,7 @@
             <groupId>com.atlassian.analytics</groupId>
             <artifactId>analytics-api</artifactId>
             <version>${atlassian.analytics.version}</version>
-            <scope>plugin</scope>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
