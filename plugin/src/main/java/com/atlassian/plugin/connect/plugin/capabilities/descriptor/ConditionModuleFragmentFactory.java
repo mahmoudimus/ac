@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.plugin.condition.ConnectCondition;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.plugin.capabilities.module.AddOnCondition;
 import com.atlassian.plugin.connect.plugin.condition.ConnectConditionContext;
+import com.atlassian.plugin.connect.spi.product.ConditionClassResolver;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.web.Condition;
 
@@ -119,12 +121,13 @@ public class ConditionModuleFragmentFactory
         }
         else
         {
-            Class<? extends Condition> clazz = productAccessor.getConditions().get(bean.getCondition());
+            ConditionClassResolver conditionClassResolver = productAccessor.getConditions();
+            Option<? extends Class<? extends Condition>> clazz = conditionClassResolver.get(bean.getCondition(), bean.getParams());
 
-            if (null != clazz)
+            if (clazz.isDefined())
             {
-                className = clazz.getName();
-                if (clazz.isAnnotationPresent(ConnectCondition.class))
+                className = clazz.get().getName();
+                if (clazz.get().isAnnotationPresent(ConnectCondition.class))
                 {
                     contextBuilder.putAddOnKey(addOnKey);
                 }
