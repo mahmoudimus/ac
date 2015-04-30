@@ -51,6 +51,12 @@
                 <module>integration-tests</module>
             </modules>
         </profile>
+        <profile>
+            <id>wt</id>
+            <modules>
+                <module>wired-tests</module>
+            </modules>
+        </profile>
     </profiles>
 
     <build>
