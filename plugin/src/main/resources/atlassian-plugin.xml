@@ -19,11 +19,6 @@
         <url-pattern>/atlassian-connect/schema/*</url-pattern>
     </servlet-filter>
 
-    <servlet-filter key="documentation-filter" class="com.atlassian.plugin.connect.plugin.docs.DocumentationFilter"
-                    location="after-encoding" weight="90">
-        <url-pattern>/atlassian-connect/docs*</url-pattern>
-    </servlet-filter>
-
     <!-- the 3LA filter needs to run after the JWT filter (to read attributes on the request) and before the ApiScopingFilter (to set the principal) -->
     <servlet-filter key="three-legged-auth-filter" class="com.atlassian.plugin.connect.plugin.threeleggedauth.ThreeLeggedAuthFilter"
             location="after-encoding" weight="10000">
@@ -79,11 +74,6 @@
     </servlet>
 
     <web-panel key="connect-dialog-options" location="atl.header" class="com.atlassian.plugin.connect.plugin.dialog.DialogOptionsWebPanel"/>
-
-    <!-- docs are built and copied into target/classes/docs during the prepare-package phase -->
-    <web-resource key="docs">
-        <resource type="download" name="docs/" location="docs" />
-    </web-resource>
 
     <web-resource key="iframe-host-css">
         <resource type="download" name="core-host.css" location="/css/core/host-css.css" />

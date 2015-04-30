@@ -830,11 +830,11 @@
                             <goal>npm</goal>
                         </goals>
                         <phase>generate-resources</phase>
-                         <configuration>
+                        <configuration>
                             <workingDirectory>../plugin</workingDirectory>
                             <arguments>install</arguments>
                             <skip>${skipNpm}</skip>
-                         </configuration>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -1268,97 +1268,6 @@
                 </plugins>
             </build>
         </profile>
-
-        <profile>
-            <id>docs</id>
-            <!-- Build the docs - these goals MUST run after schema generation -->
-            <activation>
-                <property>
-                    <name>!skipDocs</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.github.eirslett</groupId>
-                        <artifactId>frontend-maven-plugin</artifactId>
-                        <version>${frontend.plugin.version}</version>
-                        <configuration>
-                            <workingDirectory>../docs</workingDirectory>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>install node and npm</id>
-                                <goals>
-                                    <goal>install-node-and-npm</goal>
-                                </goals>
-                                <phase>generate-resources</phase>
-                                <configuration>
-                                    <nodeVersion>${node.version}</nodeVersion>
-                                    <npmVersion>${npm.version}</npmVersion>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>npm connect-js install</id>
-                                <goals>
-                                    <goal>npm</goal>
-                                </goals>
-                                <phase>generate-resources</phase>
-                                <configuration>
-                                    <workingDirectory>../docs</workingDirectory>
-                                    <arguments>install ${atlassian.connect-js.path}</arguments>
-                                    <skip>${skipNpm}</skip>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>npm install</id>
-                                <goals>
-                                    <goal>npm</goal>
-                                </goals>
-                                <phase>prepare-package</phase>
-                                <configuration>
-                                    <arguments>install</arguments>
-                                    <skip>${skipNpm}</skip>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>npm run-script build</id>
-                                <goals>
-                                    <goal>npm</goal>
-                                </goals>
-                                <phase>prepare-package</phase>
-                                <configuration>
-                                    <arguments>run-script build</arguments>
-                                    <skip>${skipNpm}</skip>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <version>2.6</version>
-                        <executions>
-                            <execution>
-                                <id>copy-resources</id>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${project.build.directory}/classes/docs</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>../docs/target/www</directory>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
 
     <properties>
@@ -1378,8 +1287,6 @@
             use-maven,3
             include-artifact,com.atlassian.plugins:atlassian-connect-integration-tests
         </od.testing.configuration>
-        <frontend.plugin.version>0.0.22</frontend.plugin.version>
-        <skipNpm>false</skipNpm>
         <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
     </properties>
 </project>
