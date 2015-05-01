@@ -50,4 +50,9 @@ public class BlueprintModuleBean extends RequiredKeyBean
     {
         return icon;
     }
+
+    public boolean hasCreateResult()
+    {
+        return null != createResult;
+    }
 }
