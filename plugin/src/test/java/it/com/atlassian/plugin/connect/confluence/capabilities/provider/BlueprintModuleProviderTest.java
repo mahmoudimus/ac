@@ -126,7 +126,7 @@ public class BlueprintModuleProviderTest
             // check the blueprint descriptor
             BlueprintModuleDescriptor blueprintModuleDescriptor = (BlueprintModuleDescriptor) descriptors.get(2);
             assertNotNull(blueprintModuleDescriptor);
-            // assertEquals("view", blueprintModuleDescriptor.getCreateResult());
+            assertEquals("view", blueprintModuleDescriptor.getCreateResult());
 
             blueprintModuleDescriptor.enabled();
 

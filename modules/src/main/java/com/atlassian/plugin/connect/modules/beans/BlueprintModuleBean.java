@@ -21,6 +21,11 @@ public class BlueprintModuleBean extends RequiredKeyBean
     @Required
     private BlueprintTemplateBean template;
 
+    /**
+     * Defines the screen to go to when creating this type of Blueprint. A value of `view` causes Confluence to bypass the
+     * editor page and automatically create the page content. The user lands in the view of the created page. When `edit`,
+     * the user is sent to the editor which is pre-filled with the template content. If not set, this will default to `edit`.
+     */
     @StringSchemaAttributes(format="createResult")
     private String createResult;
 
