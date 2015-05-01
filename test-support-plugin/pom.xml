@@ -118,6 +118,7 @@
                 <artifactId>maven-amps-plugin</artifactId>
                 <configuration>
                     <skipManifestValidation>true</skipManifestValidation>
+                    <skipRestDocGeneration>true</skipRestDocGeneration>
                     <enableFastdev>false</enableFastdev>
                 </configuration>
             </plugin>

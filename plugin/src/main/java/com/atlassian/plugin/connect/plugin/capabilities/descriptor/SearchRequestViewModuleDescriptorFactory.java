@@ -1,5 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
+import java.net.URISyntaxException;
+import java.util.Collections;
+
 import com.atlassian.jira.issue.views.util.SearchRequestViewBodyWriterUtil;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestURLHandler;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptor;
@@ -22,12 +25,10 @@ import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.templaterenderer.TemplateRenderer;
+
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.net.URISyntaxException;
-import java.util.Collections;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -125,7 +126,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
                             addon.getKey(),
                             bean.getKey(addon),
                             bean.createUri(),
-                            bean.getDisplayName());
+                            bean.getDisplayName(), authenticationContext);
                 }
                 catch (URISyntaxException e)
                 {

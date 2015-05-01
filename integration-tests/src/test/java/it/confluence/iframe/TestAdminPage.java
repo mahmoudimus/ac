@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceAdminP
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectConfluenceAdminHomePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
+import it.util.ConnectTestUserFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -73,7 +74,7 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws Exception
     {
-        loginAndVisit(TestUser.ADMIN, ConfluenceAdminHomePage.class);
+        loginAndVisit(testUserFactory.admin(), ConfluenceAdminHomePage.class);
 
         ConfluenceAdminPage adminPage = product.getPageBinder().bind(ConfluenceAdminPage.class, PLUGIN_KEY, PAGE_KEY);
 
@@ -91,7 +92,7 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
     @Test
     public void nonAdminCanNotSeePage()
     {
-        login(TestUser.BARNEY);
+        login(testUserFactory.basicUser());
         InsufficientPermissionsPage page = product.visit(InsufficientPermissionsPage.class, PLUGIN_KEY, PAGE_KEY);
         assertThat(page.getErrorMessage(), containsString("You do not have the correct permissions"));
         assertThat(page.getErrorMessage(), containsString("My Admin Page"));
@@ -103,7 +104,7 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
         // web item should not be displayed
-        ConnectConfluenceAdminHomePage adminPage = loginAndVisit(TestUser.ADMIN, ConnectConfluenceAdminHomePage.class);
+        ConnectConfluenceAdminHomePage adminPage = loginAndVisit(testUserFactory.admin(), ConnectConfluenceAdminHomePage.class);
         assertThat("Expected web-item for page to NOT be present", adminPage.getWebItem(PAGE_KEY).isPresent(), is(false));
 
         // directly retrieving page should result in access denied

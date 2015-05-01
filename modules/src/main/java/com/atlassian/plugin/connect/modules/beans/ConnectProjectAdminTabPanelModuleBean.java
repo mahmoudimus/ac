@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.ConnectProjectAdminTab
  * project administration page.
  *
  *#### Example
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#PRJ_ADMIN_PAGE_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#PRJ_ADMIN_PAGE_EXAMPLE}
  * @schemaTitle Project Admin Tab Panel
  */
 @SchemaDefinition("projectAdminTabPanel")

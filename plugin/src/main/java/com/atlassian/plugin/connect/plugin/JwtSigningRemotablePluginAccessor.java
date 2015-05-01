@@ -12,9 +12,12 @@ import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 import java.net.URI;
 import java.util.Map;
@@ -54,9 +57,7 @@ public class JwtSigningRemotablePluginAccessor extends DefaultRemotablePluginAcc
     {
         assertThatTargetPathAndParamsDoNotDuplicateParams(targetPath, params);
 
-        UserKey userKey = userManager.getRemoteUserKey();
-        String userKeyValue = userKey == null ? "" : userKey.getStringValue();
-        String encodedJwt = JwtAuthorizationGenerator.encodeJwt(HttpMethod.GET, targetPath, getBaseUrl(), params, userKeyValue, consumerService.getConsumer().getKey(), jwtService, requireSharedSecret(getAppLink()));
+        String encodedJwt = JwtAuthorizationGenerator.encodeJwt(HttpMethod.GET, targetPath, getBaseUrl(), params, userManager, consumerService.getConsumer().getKey(), jwtService, requireSharedSecret(getAppLink()));
         final UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(URI.create(createGetUrl(targetPath, params))));
         uriBuilder.addQueryParameter(JwtConstants.JWT_PARAM_NAME, encodedJwt);
 

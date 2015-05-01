@@ -3,12 +3,12 @@ package com.atlassian.plugin.connect.plugin.module.jira.projectconfig;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.project.Project;
 import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
-import com.atlassian.plugin.connect.plugin.module.jira.conditions.IsProjectAdminCondition;
 import com.atlassian.plugin.connect.plugin.module.page.IFramePageServlet;
 import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.sal.api.user.UserManager;
+import com.google.common.annotations.VisibleForTesting;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -16,12 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
-import com.google.common.annotations.VisibleForTesting;
-
 
 /**
  * A servlet that loads a plugin config tab from a remote plugin's iframe.
- * <p/>
+ *
  * This differs slightly from the regular {@link IFramePageServlet} in that it includes nasty workaround for JRA-16407.
  */
 public class IFrameProjectConfigTabServlet extends IFramePageServlet

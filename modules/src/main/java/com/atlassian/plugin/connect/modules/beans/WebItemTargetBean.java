@@ -3,8 +3,6 @@ package com.atlassian.plugin.connect.modules.beans;
 import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.WebItemTargetBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
-import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.WebItemTargetOptions;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -14,7 +12,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBITEM_TARGET_INLINE_DIALOG_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBITEM_TARGET_INLINE_DIALOG_EXAMPLE}
  * @schemaTitle Web Item Target
  * @since 1.0
  */
@@ -29,8 +27,8 @@ public class WebItemTargetBean extends BaseModuleBean
 
     // TODO: The table with descriptions is needed until we fix ACDEV-1381
     /**
-     * An object containing options which vary based on the type of web item target you are implementing. 
-     * <p/>
+     * <p>An object containing options which vary based on the type of web item target you are implementing.</p>
+     *
      * <div id="inlineDialog" class="aui-expander-content reveal-collapsible">
      * <code>Inline Dialog Options</code>
      * <table class="props table table-striped aui">

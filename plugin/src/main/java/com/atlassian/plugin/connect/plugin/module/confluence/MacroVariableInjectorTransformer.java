@@ -16,22 +16,24 @@ import java.util.List;
 import static org.apache.commons.lang.StringEscapeUtils.escapeJavaScript;
 
 /**
- * Transforms content dealing with macros that is injected into the Confluence "editor" context
- * for the desired Remote Macro.
- * <p/>
- * It is generally used to process a template resource file to customize it for each macro by
+ * <p>Transforms content dealing with macros that is injected into the Confluence "editor" context
+ * for the desired Remote Macro.</p>
+ *
+ * <p>It is generally used to process a template resource file to customize it for each macro by
  * replacing parameter information in the form of %%SOME_KEY%%. Keys are defined as child elements
- * on the transformer instance in the form of:
+ * on the transformer instance in the form of:</p>
+ *
  * <pre>
  *     &lt;var name="SOME_KEY" value="some value" i18-key="some.key"&gt;
  * </pre>
- * The 'i18n-key' attribute is optional and if provided, will cause a runtime lookup of that
+ *
+ * <p>The 'i18n-key' attribute is optional and if provided, will cause a runtime lookup of that
  * message key with the value as the single argument.  All values will be Javascript escaped
- * except for css values.
- * <p/>
- * Thus, a system with many Remote Macros installed may have many near-identical copies of
+ * except for css values.</p>
+ *
+ * <p>Thus, a system with many Remote Macros installed may have many near-identical copies of
  * resources in the editor context, each with slightly different variables (We could possibly
- * improve this to reduce duplicate code in the future).
+ * improve this to reduce duplicate code in the future).</p>
  */
 public class MacroVariableInjectorTransformer implements WebResourceTransformer
 {

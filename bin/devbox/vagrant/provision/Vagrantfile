@@ -59,9 +59,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             sudo npm install -g http-server
             npm i -g atlas-connect"
 
-  #install Java 7
+  #install Java
   config.vm.provision "shell",
     inline: "mkdir -p /etc/puppet/modules;
+            puppet module install puppetlabs/apt --version 1.7.0;
             puppet module install puppetlabs/nodejs;
             puppet module install puppetlabs/apache"
   config.vm.provision :puppet

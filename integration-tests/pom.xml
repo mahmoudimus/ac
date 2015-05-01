@@ -68,6 +68,7 @@
                         <groupId>com.atlassian.maven.plugins</groupId>
                         <artifactId>maven-amps-plugin</artifactId>
                         <configuration>
+                            <skipRestDocGeneration>true</skipRestDocGeneration>
                             <systemPropertyVariables>
                                 <mpac.username>${env.bamboo_mpac_staging_username}</mpac.username>
                                 <mpac.password>${env.bamboo_mpac_staging_password}</mpac.password>
@@ -436,8 +437,6 @@
                             <id>jira</id>
                             <version>${atlassian.jira.version}</version>
                             <log4jProperties>src/test/resources/log4j-jira.properties</log4jProperties>
-                            <productDataPath>${basedir}/src/test/resources/jira-generated-test-resources.zip
-                            </productDataPath>
                             <systemPropertyVariables>
                                 <product>jira</product>
                                 <com.atlassian.plugin.connect.add_on_properties.max_properties>${addonconfig.maxpropertiesperplugin}</com.atlassian.plugin.connect.add_on_properties.max_properties>
@@ -513,9 +512,6 @@
                             <version>${atlassian.confluence.version}</version>
                             <log4jProperties>src/test/resources/log4j-confluence.properties
                             </log4jProperties>
-                            <productDataPath>
-                                ${basedir}/src/test/resources/confluence-generated-test-resources.zip
-                            </productDataPath>
                             <systemPropertyVariables>
                                 <product>confluence</product>
                                 <com.atlassian.plugin.connect.add_on_properties.max_properties>${addonconfig.maxpropertiesperplugin}</com.atlassian.plugin.connect.add_on_properties.max_properties>

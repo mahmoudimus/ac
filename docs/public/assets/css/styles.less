@@ -60,9 +60,17 @@ td:first-of-type {
     }
 }
 
-table.issue-table tr > .key {
-    white-space: nowrap;
-    width: 60px;
+table.issue-table tr {
+    // The icon column
+    > :first-child {
+        width: 30px;
+    }
+
+    // The key column
+    > :nth-child(2) {
+        white-space: nowrap;
+        width: 60px;
+    }
 }
 
 pre code {

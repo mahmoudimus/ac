@@ -12,10 +12,10 @@ public class BeanWithKeyAndParams extends RequiredKeyBean
 {
     /**
      * This object represents a map of key/value pairs, where each property name and value corresponds to the parameter name and value respectively.
-     * <p/>
+     *
      *#### Example
      *
-     * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#PARAMS_EXAMPLE}
+     * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#PARAMS_EXAMPLE}
      * @schemaTitle Object
      */
     private Map<String, String> params;

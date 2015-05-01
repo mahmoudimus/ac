@@ -10,6 +10,8 @@ import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
+import it.util.ConnectTestUserFactory;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -22,7 +24,6 @@ import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean.newWebSectionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static it.util.TestUser.ADMIN;
 import static org.junit.Assert.assertTrue;
 
 public class TestWebSection extends ConfluenceWebDriverTestBase
@@ -80,10 +81,11 @@ public class TestWebSection extends ConfluenceWebDriverTestBase
     @Test
     public void testWebItemFoundWithinWebSection() throws MalformedURLException, XmlRpcFault
     {
-        final ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(ADMIN), "ds", "Page with web section", "some page content");
+        TestUser user = testUserFactory.basicUser();
+        final ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(user), "ds", "Page with web section", "some page content");
         final String pageId = pageData.getId();
 
-        ViewPage viewPage = loginAndVisit(ADMIN, ViewPage.class, pageId);
+        ViewPage viewPage = loginAndVisit(user, ViewPage.class, pageId);
 
         ToolsMenu toolsMenu = viewPage.openToolsMenu();
 

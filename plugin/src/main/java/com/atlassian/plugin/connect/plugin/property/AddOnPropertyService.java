@@ -20,6 +20,10 @@ public interface AddOnPropertyService
      * Gets a property from the add-on store. <p> This method checks parameter validity and tries to get a property for
      * an add-on. </p>
      *
+     * @param user the user performing the request
+     * @param sourcePluginKey the key of the add-on performing the request
+     * @param addOnKey the key of the add-on that owns the property
+     * @param propertyKey the key of the property
      * @return GetServiceResult which calls one of two callbacks: OnFailed or OnSuccess,
      * OnFailed is called with OperationResult explaining the reason
      * OnSuccess is called with AddOnProperty that was retrieved.
@@ -34,8 +38,13 @@ public interface AddOnPropertyService
      * Sets a property from the add-on store. <p> This method checks parameter validity and tries to set a property for
      * an add-on. </p>
      *
+     * @param user the user performing the request
+     * @param sourcePluginKey the key of the add-on performing the request
+     * @param addOnKey the key of the add-on that owns the property
+     * @param propertyKey the key of the property
+     * @param value the value of the property
+     * @param testFunction a condition that must pass for the property to be stored
      * @param <T> type of object which is the reason of testFunction failure
-     *
      * @return PutServiceResult which calls one of three callbacks: onPreconditionFailed, OnFailed or OnSuccess
      * PreconditionFailed is called with an object of type T that was the result of testFunction failure.
      * OnFailed is called with OperationResult explaining the reason of failure
@@ -53,8 +62,12 @@ public interface AddOnPropertyService
      * Deletes a property from the add-on store. <p> This method checks parameter validity and tries to delete a
      * property for an add-on. </p>
      *
-     ** @param <T> type of object which is the reason of testFunction failure
-     *
+     * @param user the user performing the request
+     * @param sourcePluginKey the key of the add-on performing the request
+     * @param addOnKey the key of the add-on that owns the property
+     * @param propertyKey the key of the property
+     * @param testFunction a condition that must pass for the property to be deleted
+     * @param <T> type of object which is the reason of testFunction failure
      * @return DeleteServiceResult which calls one of three callbacks: onPreconditionFailed, OnFailed or OnSuccess
      * PreconditionFailed is called with an object of type T that was the result of testFunction failure.
      * OnFailed is called with OperationResult explaining the reason of failure
@@ -71,6 +84,9 @@ public interface AddOnPropertyService
      * Returns a list of all properties for a given add-on. <p> This method checks parameter validity and lists all
      * properties belonging to an add-on. </p>
      *
+     * @param user the user performing the request
+     * @param sourcePluginKey the key of the add-on performing the request
+     * @param addOnKey the key of the add-on that owns the property
      * @return GetAllServiceResult which calls one of two callbacks: OnFailed or OnSuccess,
      * OnFailed is called with OperationResult explaining the reason
      * OnSuccess is called with AddOnPropertyIterable that was retrieved.

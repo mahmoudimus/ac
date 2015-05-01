@@ -16,7 +16,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *
  *#### Example
  *
- * @exampleJson {@see com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBPANEL_EXAMPLE}
+ * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#WEBPANEL_EXAMPLE}
  * @schemaTitle Web Panel
  * @since 1.0
  */
@@ -31,9 +31,9 @@ public class WebPanelModuleBean extends BeanWithKeyAndParamsAndConditions
     private String url;
 
     /**
-     * Location in the application interface for this panel.
-     * <p/>
-     * Product location documentation:
+     * <p>Location in the application interface for this panel.</p>
+     *
+     * <p>Product location documentation:</p>
      *
      * * [JIRA locations](https://developer.atlassian.com/display/JIRADEV/Web+Fragments)
      * * [Confluence locations](https://developer.atlassian.com/display/CONFDEV/Web+UI+Modules)

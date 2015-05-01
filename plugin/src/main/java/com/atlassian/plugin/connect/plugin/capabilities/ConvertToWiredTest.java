@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 public @interface ConvertToWiredTest
 {
     /**
-     * The optional reason why the test should be converted
+     * @return the optional reason why the test should be converted
      */
     String value() default "";
 }
