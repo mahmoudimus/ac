@@ -32,6 +32,7 @@ public class ConnectAddOnUsersImpl implements ConnectAddOnUsers
     private final ConnectAddonManager connectAddonManager;
     private final ApplicationService applicationService;
     private final ConnectAddOnUserGroupProvisioningService userGroupProvisioningService;
+    private final MembershipQuery<User> membershipQuery;
 
     @Autowired
     public ConnectAddOnUsersImpl(ConnectAddonManager connectAddonManager, ApplicationService applicationService, ConnectAddOnUserGroupProvisioningService userGroupProvisioningService)
@@ -39,17 +40,22 @@ public class ConnectAddOnUsersImpl implements ConnectAddOnUsers
         this.connectAddonManager = connectAddonManager;
         this.applicationService = applicationService;
         this.userGroupProvisioningService = userGroupProvisioningService;
+        membershipQuery = queryFor(User.class, user()).childrenOf(group()).withName(ADDON_USER_GROUP_KEY).returningAtMost(ALL_RESULTS);
     }
 
     @Override
     public Iterable<User> getAddonUsersToUpgradeForHostProduct()
             throws ApplicationNotFoundException
     {
-        MembershipQuery<User> membershipQuery =
-                queryFor(User.class, user()).childrenOf(group()).withName(ADDON_USER_GROUP_KEY).returningAtMost(ALL_RESULTS);
-
         return filter(applicationService.searchDirectGroupRelationships(userGroupProvisioningService.getCrowdApplication(), membershipQuery),
                 isHostProductAddonUserKey());
+    }
+
+    @Override
+    public Iterable<User> getAddonUsersToClean()
+            throws ApplicationNotFoundException
+    {
+        return applicationService.searchDirectGroupRelationships(userGroupProvisioningService.getCrowdApplication(), membershipQuery);
     }
 
     private Predicate<User> isHostProductAddonUserKey()

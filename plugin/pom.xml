@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.29-SNAPSHOT</version>
+        <version>1.1.30-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -38,7 +38,7 @@
             <groupId>com.atlassian.analytics</groupId>
             <artifactId>analytics-api</artifactId>
             <version>${atlassian.analytics.version}</version>
-            <scope>plugin</scope>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
