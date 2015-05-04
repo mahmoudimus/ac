@@ -427,7 +427,7 @@
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                         <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                         <webdriver.browser>${webdriver.browser}</webdriver.browser>
-                        <com.atlassian.connect.jwt.expiry_seconds>5</com.atlassian.connect.jwt.expiry_seconds>
+                        <!--<com.atlassian.connect.jwt.expiry_seconds>60</com.atlassian.connect.jwt.expiry_seconds>-->
                     </systemPropertyVariables>
 
                     <functionalTestPattern>it/**/Test*.java</functionalTestPattern>
