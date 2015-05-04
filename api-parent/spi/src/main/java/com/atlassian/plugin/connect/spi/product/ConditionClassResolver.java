@@ -115,7 +115,7 @@ public final class ConditionClassResolver
 
         final boolean matches(String conditionName, Map<String, String> parameters)
         {
-            return this.conditionName.equals(conditionClass) && paramsPredicate.apply(parameters);
+            return this.conditionName.equals(conditionName) && paramsPredicate.apply(parameters);
         }
 
         public Class<? extends Condition> getConditionClass()
