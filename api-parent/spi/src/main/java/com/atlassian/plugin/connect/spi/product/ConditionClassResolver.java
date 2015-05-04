@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.spi.product;
 
 import com.atlassian.fugue.Option;
-import com.atlassian.fugue.Pair;
 import com.atlassian.plugin.web.Condition;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
@@ -15,6 +14,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * This class is used to map connect conditions/parameters pairs to actual condition classes.
@@ -31,10 +32,10 @@ import java.util.TreeSet;
 public final class ConditionClassResolver
 {
     private final Map<String, Class<? extends Condition>> conditionsMap;
-    private final List<Pair<Rule, Class<? extends Condition>>> conditionRules;
+    private final List<Rule> conditionRules;
     private final Set<String> allConditionNames;
 
-    private ConditionClassResolver(final Map<String, Class<? extends Condition>> conditionsMap, final List<Pair<Rule, Class<? extends Condition>>> conditionRules, final Collection<String> allConditionNames)
+    private ConditionClassResolver(final Map<String, Class<? extends Condition>> conditionsMap, final List<Rule> conditionRules, final Collection<String> allConditionNames)
     {
         this.allConditionNames = new TreeSet<>(allConditionNames);
         this.conditionsMap = new TreeMap<>(conditionsMap);
@@ -43,11 +44,11 @@ public final class ConditionClassResolver
 
     public Option<? extends Class<? extends Condition>> get(final String condition, final Map<String, String> params)
     {
-        for (Pair<Rule, Class<? extends Condition>> rule : conditionRules)
+        for (Rule rule : conditionRules)
         {
-            if (rule.left().matches(condition, params))
+            if (rule.matches(condition, params))
             {
-                return Option.some(rule.right());
+                return Option.some(rule.getConditionClass());
             }
         }
         return Option.option(conditionsMap.get(condition));
@@ -66,7 +67,7 @@ public final class ConditionClassResolver
     public static final class Builder
     {
         private final Map<String, Class<? extends Condition>> conditionsMap = Maps.newTreeMap();
-        private final List<Pair<Rule, Class<? extends Condition>>> conditionRules = Lists.newArrayList();
+        private final List<Rule> conditionRules = Lists.newArrayList();
         private final Set<String> allConditionNames = Sets.newTreeSet();
 
         public Builder() {}
@@ -88,15 +89,7 @@ public final class ConditionClassResolver
 
         public Builder rule(final String conditionName, final Predicate<Map<String, String>> rulePredicate, Class<? extends Condition> condition)
         {
-            Rule rule = new Rule()
-            {
-                @Override
-                public boolean matches(final String condition, final Map<String, String> parameters)
-                {
-                    return conditionName.equals(condition) && rulePredicate.apply(parameters);
-                }
-            };
-            conditionRules.add(Pair.<Rule, Class<? extends Condition>>pair(rule, condition));
+            conditionRules.add(new Rule(conditionName, rulePredicate, condition));
             allConditionNames.add(conditionName);
             return this;
         }
@@ -107,8 +100,27 @@ public final class ConditionClassResolver
         }
     }
 
-    private interface Rule
+    private static class Rule
     {
-        boolean matches(String conditionName, Map<String, String> parameters);
+        private final String conditionName;
+        private final Predicate<Map<String, String>> paramsPredicate;
+        private final Class<? extends Condition> conditionClass;
+
+        public Rule(final String conditionName, final Predicate<Map<String, String>> paramsPredicate, final Class<? extends Condition> conditionClass)
+        {
+            this.conditionName = checkNotNull(conditionName);
+            this.paramsPredicate = checkNotNull(paramsPredicate);
+            this.conditionClass = checkNotNull(conditionClass);
+        }
+
+        final boolean matches(String conditionName, Map<String, String> parameters)
+        {
+            return this.conditionName.equals(conditionClass) && paramsPredicate.apply(parameters);
+        }
+
+        public Class<? extends Condition> getConditionClass()
+        {
+            return conditionClass;
+        }
     }
 }
