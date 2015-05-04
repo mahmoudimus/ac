@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.module;
 
-import com.atlassian.plugin.AutowireCapablePlugin;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginArtifact;
 import com.atlassian.plugin.impl.AbstractDelegatingPlugin;
@@ -10,11 +9,11 @@ import com.atlassian.plugin.module.ContainerManagedPlugin;
 /**
  * A decorator for addon bundles that delegates all autowiring requests to the actual connect plugin
  */
-public class AutowireWithConnectPluginDecorator extends AbstractDelegatingPlugin implements AutowireCapablePlugin, ContainerManagedPlugin
+public class AutowireWithConnectPluginDecorator extends AbstractDelegatingPlugin implements ContainerManagedPlugin
 {
-    private final AutowireCapablePlugin theConnectPlugin;
+    private final ContainerManagedPlugin theConnectPlugin;
 
-    public AutowireWithConnectPluginDecorator(AutowireCapablePlugin theConnectPlugin, Plugin delegate)
+    public AutowireWithConnectPluginDecorator(ContainerManagedPlugin theConnectPlugin, Plugin delegate)
     {
         super(delegate);
         this.theConnectPlugin = theConnectPlugin;
@@ -31,30 +30,6 @@ public class AutowireWithConnectPluginDecorator extends AbstractDelegatingPlugin
         {
             return cast(getClass().getClassLoader().loadClass(clazz));
         }
-    }
-
-    @Override
-    public <T> T autowire(Class<T> clazz) throws UnsupportedOperationException
-    {
-        return getContianerManagedPlugin().getContainerAccessor().createBean(clazz);
-    }
-
-    @Override
-    public <T> T autowire(Class<T> clazz, AutowireStrategy autowireStrategy) throws UnsupportedOperationException
-    {
-        return getContianerManagedPlugin().getContainerAccessor().createBean(clazz);
-    }
-
-    @Override
-    public void autowire(Object instance)
-    {
-        getContianerManagedPlugin().getContainerAccessor().injectBean(instance);
-    }
-
-    @Override
-    public void autowire(Object instance, AutowireStrategy autowireStrategy)
-    {
-        getContianerManagedPlugin().getContainerAccessor().injectBean(instance);
     }
 
     @SuppressWarnings("unchecked")
