@@ -11,6 +11,9 @@ import com.atlassian.crowd.search.query.membership.MembershipQuery;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningService;
 
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.collection.IsIterableWithSize;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,10 +21,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
 import static com.atlassian.crowd.search.query.entity.EntityQuery.ALL_RESULTS;
-import static com.google.common.collect.Iterables.getOnlyElement;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.mockito.Matchers.any;
@@ -33,7 +36,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 public class ConnectAddOnUsersImplTest
 {
-    private ConnectAddOnUsers connectAddOnUsers;
+    private ConnectAddOnUsersImpl connectAddOnUsers;
 
     @Mock
     private Application application;
@@ -58,7 +61,7 @@ public class ConnectAddOnUsersImplTest
     }
 
     @Test
-    public void filtersFromMembersOfAddonsGroup()
+    public void getAddonUsersToUpgradeForHostProductFiltersFromMembersOfAddonsGroup()
             throws ApplicationNotFoundException
     {
         connectAddOnUsers.getAddonUsersToUpgradeForHostProduct();
@@ -77,13 +80,61 @@ public class ConnectAddOnUsersImplTest
     }
 
     @Test
-    public void retrievesAddonsForRegisteredAddonUsers()
+    public void getAddonUsersToUpgradeForHostProductRetrievesAddonsForRegisteredAddonUsers()
             throws ApplicationNotFoundException
     {
         Iterable<User> users = connectAddOnUsers.getAddonUsersToUpgradeForHostProduct();
 
         assertThat(users, IsIterableWithSize.<User>iterableWithSize(1));
-        assertThat(getOnlyElement(users).getName(), is("addon_rad-jira-addon"));
+        assertThat(users, contains(hasName("addon_rad-jira-addon")));
+    }
+
+    @SuppressWarnings ("unchecked")
+    @Test
+    public void getAddonUsersToCleanRetrievesAddonsForRegisteredAddonUsers()
+            throws ApplicationNotFoundException
+    {
+        Iterable<User> users = connectAddOnUsers.getAddonUsersToClean();
+
+        assertThat(users, IsIterableWithSize.<User>iterableWithSize(2));
+        assertThat(users, contains(hasName("addon_rad-jira-addon"), hasName("addon_rad-confluence-addon")));
+    }
+
+    @Test
+    public void getAddonUsersToCleanFiltersFromMembersOfAddonsGroup()
+            throws ApplicationNotFoundException
+    {
+        connectAddOnUsers.getAddonUsersToClean();
+
+        ArgumentCaptor<MembershipQuery> userQueryCaptor = ArgumentCaptor.forClass(MembershipQuery.class);
+        verify(applicationService).searchDirectGroupRelationships(eq(application), userQueryCaptor.capture());
+
+        @SuppressWarnings ("unchecked")
+        MembershipQuery<User> userQuery = userQueryCaptor.getValue();
+
+        assertThat(userQuery, notNullValue());
+        assertThat(userQuery.isFindChildren(), is(true));
+        assertThat(userQuery.getEntityNameToMatch(), is("atlassian-addons"));
+        assertThat(userQuery.getEntityToMatch(), is(EntityDescriptor.group()));
+        assertThat(userQuery.getMaxResults(), is(ALL_RESULTS));
+    }
+
+    private Matcher<User> hasName(final String name)
+    {
+        return new TypeSafeMatcher<User>()
+        {
+            @Override
+            protected boolean matchesSafely(User user)
+            {
+                return user != null && user.getName().equals(name);
+            }
+
+            @Override
+            public void describeTo(Description description)
+            {
+                description.appendText("Expected user with name ").appendValue(name);
+            }
+        };
     }
 
     private static User mockUser(String name)

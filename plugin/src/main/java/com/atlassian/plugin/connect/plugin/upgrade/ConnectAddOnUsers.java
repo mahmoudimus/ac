@@ -4,7 +4,7 @@ import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.model.user.User;
 
 /**
- * Finds connect add-on users for the host product that require updating as part of
+ * Finds connect add-on users that require updating as part of
  * {@link ConnectAddOnUserAppSpecificAttributeUpgradeTask}.
  *
  * <strong>Not suitable for general-purpose add-on user management</strong>
@@ -12,5 +12,8 @@ import com.atlassian.crowd.model.user.User;
 public interface ConnectAddOnUsers
 {
     Iterable<User> getAddonUsersToUpgradeForHostProduct()
+            throws ApplicationNotFoundException;
+
+    Iterable<User> getAddonUsersToClean()
             throws ApplicationNotFoundException;
 }

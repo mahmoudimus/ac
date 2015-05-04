@@ -80,7 +80,6 @@ public class ConnectAddOnUserAppSpecificAttributeUpgradeTask implements PluginUp
                 throw new Exception(String.format("Failed to complete Upgrade Task. User had an invalid email: \"%s\"", user.getName()));
             }
 
-            applicationService.removeUserAttributes(application, user.getName(), buildAttributeConnectAddOnAttributeName(OLD_ATTRIBUTE_APPLICATION_NAME));
             applicationService.storeUserAttributes(application, user.getName(), buildConnectAddOnUserAttribute(crowdClientFacade.getClientApplicationName()));
             if (featureManager.isOnDemand())
             {
@@ -88,10 +87,20 @@ public class ConnectAddOnUserAppSpecificAttributeUpgradeTask implements PluginUp
                 // This is currently required due to the fact that the DbCachingRemoteDirectory implementation used by JIRA and Confluence doesn't currently
                 // write attributes back to the Crowd Server. https://ecosystem.atlassian.net/browse/EMBCWD-975 has been raised to look at re-implementing this feature!
                 CrowdClient crowdClient = crowdClientFacade.getCrowdClient();
-                crowdClient.removeUserAttributes(user.getName(), buildAttributeConnectAddOnAttributeName(OLD_ATTRIBUTE_APPLICATION_NAME));
                 crowdClient.storeUserAttributes(user.getName(), buildConnectAddOnUserAttribute(crowdClientFacade.getClientApplicationName()));
             }
         }
+
+        for (User user : connectAddOnUsers.getAddonUsersToClean())
+        {
+            applicationService.removeUserAttributes(application, user.getName(), buildAttributeConnectAddOnAttributeName(OLD_ATTRIBUTE_APPLICATION_NAME));
+            if (featureManager.isOnDemand())
+            {
+                CrowdClient crowdClient = crowdClientFacade.getCrowdClient();
+                crowdClient.removeUserAttributes(user.getName(), buildAttributeConnectAddOnAttributeName(OLD_ATTRIBUTE_APPLICATION_NAME));
+            }
+        }
+
         return Collections.emptyList();
     }
 
