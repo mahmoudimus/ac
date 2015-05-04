@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.module;
 
 import java.util.Set;
 
-import com.atlassian.plugin.AutowireCapablePlugin;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginArtifact;
 import com.atlassian.plugin.impl.AbstractDelegatingPlugin;
@@ -15,14 +14,14 @@ import org.slf4j.LoggerFactory;
 /**
  * A decorator for addon bundles that delegates all autowiring requests to the actual connect plugin
  */
-public class AutowireWithConnectPluginDecorator extends AbstractDelegatingPlugin implements AutowireCapablePlugin, ContainerManagedPlugin
+public class AutowireWithConnectPluginDecorator extends AbstractDelegatingPlugin implements ContainerManagedPlugin
 {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final AutowireCapablePlugin theConnectPlugin;
+    private final ContainerManagedPlugin theConnectPlugin;
     private final Set<Class<?>> productConditions;
 
-    public AutowireWithConnectPluginDecorator(AutowireCapablePlugin theConnectPlugin, Plugin delegate, Set<Class<?>> productConditions)
+    public AutowireWithConnectPluginDecorator(ContainerManagedPlugin theConnectPlugin, Plugin delegate, Set<Class<?>> productConditions)
     {
         super(delegate);
         this.theConnectPlugin = theConnectPlugin;
@@ -40,30 +39,6 @@ public class AutowireWithConnectPluginDecorator extends AbstractDelegatingPlugin
         {
             return cast(getClass().getClassLoader().loadClass(clazz));
         }
-    }
-
-    @Override
-    public <T> T autowire(Class<T> clazz) throws UnsupportedOperationException
-    {
-        return getContianerManagedPlugin().getContainerAccessor().createBean(clazz);
-    }
-
-    @Override
-    public <T> T autowire(Class<T> clazz, AutowireStrategy autowireStrategy) throws UnsupportedOperationException
-    {
-        return getContianerManagedPlugin().getContainerAccessor().createBean(clazz);
-    }
-
-    @Override
-    public void autowire(Object instance)
-    {
-        getContianerManagedPlugin().getContainerAccessor().injectBean(instance);
-    }
-
-    @Override
-    public void autowire(Object instance, AutowireStrategy autowireStrategy)
-    {
-        getContianerManagedPlugin().getContainerAccessor().injectBean(instance);
     }
 
     @SuppressWarnings("unchecked")
