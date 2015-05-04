@@ -52,7 +52,7 @@
             </modules>
         </profile>
         <profile>
-            <id>wt</id>
+            <id>wired</id>
             <modules>
                 <module>wired-tests</module>
             </modules>

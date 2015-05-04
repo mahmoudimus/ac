@@ -1219,57 +1219,6 @@
         </profile>
 
         <profile>
-            <id>wired</id>
-            <properties>
-                <skipITs>false</skipITs>
-                <build.test.plugin>true</build.test.plugin>
-                <devmode>true</devmode>
-                <test.plugin.artifact> </test.plugin.artifact>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.bsc.maven</groupId>
-                        <artifactId>maven-processor-plugin</artifactId>
-                        <version>2.2.4</version>
-                        <executions>
-                            <execution>
-                                <id>process</id>
-                                <goals>
-                                    <goal>process</goal>
-                                </goals>
-                                <phase>process-resources</phase>
-                            </execution>
-                            <execution>
-                                <id>process-test</id>
-                                <goals>
-                                    <goal>process-test</goal>
-                                </goals>
-                                <phase>generate-test-sources</phase>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <additionalSourceDirectories>
-                                <additionalSourceDirectory>../modules/src/main/java/</additionalSourceDirectory>
-                                <additionalSourceDirectory>../api-parent/spi/src/main/java/</additionalSourceDirectory>
-                            </additionalSourceDirectories>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <compilerArgument>-proc:none</compilerArgument>
-                            <source>1.7</source>
-                            <target>1.7</target>
-                            <encoding>${project.build.sourceEncoding}</encoding>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
             <id>docs</id>
             <!-- Build the docs - these goals MUST run after schema generation -->
             <activation>
