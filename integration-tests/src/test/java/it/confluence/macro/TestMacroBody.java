@@ -101,7 +101,6 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
         {
             public void processBody(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> context, String body) throws IOException
             {
-                System.out.println("dynamicMacroBodyHandler: dynamic macro found body [ "+body+" ]");
                 Map<String, Object> data = Maps.newHashMap(context);
                 data.put("body", body);
                 HttpUtils.renderHtml(resp, "confluence/macro/dynamic-macro-body.mu", data);
@@ -166,21 +165,12 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
 
     private void testDynamicMacro(final String macroKey) throws Exception
     {
-
-        runWithAnonymousUsePermission(new Callable<Object>()
-        {
-            @Override
-            public Object call() throws Exception
-            {
-                final Content page = createPage(macroKey, "<h1>Hello world</h1>");
-                ViewPage viewPage = getProduct().login(testUserFactory.basicUser().confUser(), ViewPage.class, String.valueOf(page.getId().asLong()));
-                viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
-                RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(macroKey, 0);
-                String content1 = renderedMacro.getIFrameElement("body");
-                assertThat(content1, is("<h1>Hello world</h1>"));
-                return null;
-            }
-        });
+        final Content page = createPage(macroKey, "<h1>Hello world</h1>");
+        ViewPage viewPage = getProduct().login(testUserFactory.basicUser().confUser(), ViewPage.class, String.valueOf(page.getId().asLong()));
+        viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
+        RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(macroKey, 0);
+        String content1 = renderedMacro.getIFrameElement("body");
+        assertThat(content1, is("<h1>Hello world</h1>"));
     }
 
     @Test

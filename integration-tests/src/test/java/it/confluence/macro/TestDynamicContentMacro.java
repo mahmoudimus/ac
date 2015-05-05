@@ -192,7 +192,6 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                 .addRoute("/slow-macro", new SlowMacroServlet(22))
                 .addRoute("/dynamic-macro", ConnectAppServlets.helloWorldServlet())
                 .addRoute("/dynamic-macro-static", ConnectAppServlets.dynamicMacroStaticServlet())
-
                 .start();
     }
 
@@ -570,5 +569,4 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
             resp.getWriter().close();
         }
     }
-
 }
