@@ -7,8 +7,6 @@
 </head>
 <body>
 
-<div id="baseurl">{{baseurl}}</div>
-
 <div id="body">{{{body}}}</div>
 
 </body>
