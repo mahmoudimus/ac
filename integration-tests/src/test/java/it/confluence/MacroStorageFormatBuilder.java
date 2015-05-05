@@ -1,7 +1,5 @@
 package it.confluence;
 
-import org.apache.commons.lang.StringEscapeUtils;
-
 import java.util.HashMap;
 import java.util.Map;
 

@@ -1,8 +1,6 @@
 package it.confluence.macro;
 
 import com.atlassian.confluence.api.model.content.Content;
-import com.atlassian.confluence.api.model.content.ContentRepresentation;
-import com.atlassian.confluence.api.model.content.ContentType;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
@@ -12,10 +10,8 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.HttpUtils;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWithRemoteMacro;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import com.google.common.collect.Maps;
 import it.confluence.ConfluenceRestClient;
 import it.confluence.ConfluenceWebDriverTestBase;
@@ -27,21 +23,16 @@ import it.servlet.macro.MacroBodyServlet;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean.newStaticContentMacroModuleBean;
-import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.randomName;
 import static junit.framework.TestCase.assertEquals;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -52,7 +43,6 @@ import static org.junit.Assert.assertThat;
  */
 public class TestMacroBody extends ConfluenceWebDriverTestBase
 {
-    protected ConfluenceRestClient restClient = new ConfluenceRestClient(getProduct());
     private static ConnectRunner remotePlugin;
 
     @BeforeClass
@@ -165,7 +155,7 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
 
     private void testDynamicMacro(final String macroKey) throws Exception
     {
-        final Content page = createPage(macroKey, "<h1>Hello world</h1>");
+        final Content page = createPageWithRichTextMacroAndBody(macroKey, "<h1>Hello world</h1>");
         ViewPage viewPage = getProduct().login(testUserFactory.basicUser().confUser(), ViewPage.class, String.valueOf(page.getId().asLong()));
         viewPage.getRenderedContent().getTextTimed().byDefaultTimeout();
         RenderedMacro renderedMacro = connectPageOperations.findMacroWithIdPrefix(macroKey, 0);
@@ -189,26 +179,16 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
     {
         login(testUserFactory.basicUser());
         String headingText = "Test Static Macro " + macroKey + "";
-        Content page = createPage(macroKey, "<h1>" + headingText + "</h1>");
+        Content page = createPageWithRichTextMacroAndBody(macroKey, "<h1>" + headingText + "</h1>");
         ViewPage viewPage = getProduct().viewPage(String.valueOf(page.getId().asLong()));
         String headingTextFromPage = viewPage.getMainContent().find(By.tagName("h1")).getText();
         assertEquals(headingText, headingTextFromPage);
     }
 
-    protected Content createContent(String title, String body)
-    {
-        Content content = Content.builder(ContentType.PAGE)
-                .space(TestSpace.DEMO.getKey())
-                .title(title)
-                .body(body, ContentRepresentation.STORAGE)
-                .build();
-        return restClient.content().create(content).claim();
-    }
-
-    private Content createPage(String macroKey, String macroBody)
+    private Content createPageWithRichTextMacroAndBody(String macroKey, String macroBody)
     {
         long tag = System.currentTimeMillis();
         String contentBody = new MacroStorageFormatBuilder(macroKey).richTextBody(macroBody).build();
-        return createContent("test page - " + tag, contentBody);
+        return createPage("test page - " + tag, contentBody);
     }
 }
