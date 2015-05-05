@@ -1,12 +1,7 @@
 package com.atlassian.plugin.connect.plugin.condition;
 
 import com.atlassian.fugue.Option;
-import com.atlassian.jira.plugin.webfragment.conditions.AbstractWebCondition;
-import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
-import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.plugin.condition.ConnectCondition;
-import com.atlassian.plugin.connect.plugin.condition.ConnectConditionContext;
 import com.atlassian.plugin.connect.plugin.property.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.property.AddOnPropertyService;
 import com.atlassian.plugin.web.Condition;
@@ -19,7 +14,7 @@ import com.google.common.base.Strings;
 import java.util.Map;
 
 @ConnectCondition
-public class ConnectEntityPropertyEqualToCondition extends AbstractWebCondition implements Condition
+public class ConnectEntityPropertyEqualToCondition implements Condition
 {
     public static final Predicate<Map<String, String>> RULE_PREDICATE = new Predicate<Map<String, String>>()
     {
@@ -59,9 +54,9 @@ public class ConnectEntityPropertyEqualToCondition extends AbstractWebCondition 
     }
 
     @Override
-    public boolean shouldDisplay(final ApplicationUser applicationUser, final JiraHelper jiraHelper)
+    public boolean shouldDisplay(final Map<String, Object> context)
     {
-        UserProfile userProfile = applicationUser != null ? userManager.getUserProfile(applicationUser.getUsername()) : null;
+        UserProfile userProfile = userManager.getUserProfile(userManager.getRemoteUserKey());
         return addOnPropertyService.getPropertyValue(userProfile, addOnKey, addOnKey, propertyKey).fold(
                 new Function<AddOnPropertyService.OperationStatus, Boolean>()
                 {
