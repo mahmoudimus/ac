@@ -105,11 +105,19 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
 
     private String getLocalUrl(ConnectAddonBean connectAddonBean, WebItemModuleBean bean)
     {
-        String localUrl = ConnectIFrameServlet.iFrameServletPath(connectAddonBean.getKey(), bean.getUrl());
+        String location = stripLeadingSlash(bean.getUrl());
+        String localUrl = ConnectIFrameServlet.iFrameServletPath(connectAddonBean.getKey(), location);
 
         UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(URI.create(localUrl)));
         uriBuilder.addQueryParameter(WEB_ITEM_SOURCE_QUERY_PARAM, bean.getKey(connectAddonBean));
 
         return uriBuilder.toUri().toString();
+    }
+
+    private String stripLeadingSlash(String location) {
+        if(location.startsWith("/")) {
+            return location.substring(1);
+        }
+        return location;
     }
 }
