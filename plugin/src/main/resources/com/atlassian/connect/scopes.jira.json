@@ -2,7 +2,7 @@
   "scopes": [
     {
       "key": "READ",
-      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "customFieldOption", "issueLink", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "user", "filter", "myself", "userPicker", "groupsPicker", "auditing", "jql", "configuration", "commentProperties"],
+      "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "customFieldOption", "issueLink", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "user", "filter", "myself", "userPicker", "groupsPicker", "auditing", "jql", "configuration", "commentProperties", "role"],
       "pathKeys": ["download attachments", "project avatars", "user avatars", "thumbnails"],
       "methods": ["GET"]
     },
@@ -262,6 +262,13 @@
         "basePaths": ["/configuration"],
         "versions": ["2", "latest"],
         "public": true
+    },
+    {
+      "key" : "role",
+      "name" : "api",
+      "basePaths": ["/role($|/.*)"],
+      "versions": ["2", "latest"],
+      "public": true
     }
   ],
   "soapRpcPaths": [

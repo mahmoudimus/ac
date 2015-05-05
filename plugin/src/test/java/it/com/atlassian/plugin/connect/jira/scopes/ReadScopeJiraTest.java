@@ -88,4 +88,16 @@ public class ReadScopeJiraTest extends ScopeTestBase
         assertValidRequest(HttpMethod.GET, "/rest/api/2/jql/autocompletedata/suggestions?fieldName=issuetype&fieldValue=");
     }
 
+    @Test
+    public void shouldAllowUsageOfRoleResource() throws IOException, NoSuchAlgorithmException
+    {
+        assertValidRequest(HttpMethod.GET, "/rest/api/2/role");
+    }
+
+    @Test
+    public void shouldAllowUsageOfRoleResourceForSingleRole() throws IOException, NoSuchAlgorithmException
+    {
+        assertValidRequest(HttpMethod.GET, "/rest/api/2/role/10000");
+    }
+
 }
