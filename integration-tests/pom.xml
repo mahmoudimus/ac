@@ -485,7 +485,7 @@
                                 <pluginArtifact>
                                     <groupId>com.atlassian.jira.tests</groupId>
                                     <artifactId>jira-testkit-plugin</artifactId>
-                                    <version>${testkit.version}</version>
+                                    <version>${atlassian.jira.testkit.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.jwt</groupId>
@@ -828,10 +828,6 @@
     </build>
 
     <properties>
-        <testkit.version>${atlassian.jira.testkit.version}</testkit.version>
-        <jetty.version>8.1.7.v20120910</jetty.version>
-        <functest.version>0.7.1</functest.version>
-        <functestbasics.version>1.9.7</functestbasics.version>
         <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
     </properties>
 </project>

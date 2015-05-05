@@ -124,7 +124,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>  <!-- ?????? -->
+            <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <exclusions>
                 <exclusion>
@@ -148,12 +148,6 @@
             <artifactId>jwt-api</artifactId>
             <scope>provided</scope>
         </dependency>
-<!--        <dependency>
-            <groupId>cc.plural</groupId>
-            <artifactId>jsonij</artifactId>
-            <version>0.2.11</version>
-            <scope>provided</scope>
-        </dependency>-->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
@@ -206,6 +200,10 @@
                 <version>2.4</version>
                 <executions>
                     <execution>
+                        <id>default-jar</id>
+                        <phase/>
+                    </execution>
+                    <execution>
                         <id>test-jar</id>
                         <goals>
                             <goal>test-jar</goal>
@@ -222,13 +220,6 @@
                 <artifactId>maven-processor-plugin</artifactId>
                 <version>2.2.4</version>
                 <executions>
-                    <!--<execution>
-                        <id>process</id>
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
-                        <phase>process-resources</phase>
-                    </execution>-->
                     <execution>
                         <id>process-test</id>
                         <goals>
@@ -259,12 +250,16 @@
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
                 <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <phase/> <!-- We are binding the default jar to a non-existent phase to prevent the main plugin from being created -->
+                    </execution>
+                </executions>
                 <configuration>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
-                    <!--<installPlugin>false</installPlugin>-->
                     <skipRestDocGeneration>true</skipRestDocGeneration>
-                    <buildTestPlugin>${build.test.plugin}</buildTestPlugin>
                     <testBundleExcludes>
                         <testBundleExclude>
                             <groupId>${project.groupId}</groupId>
@@ -273,14 +268,9 @@
                     </testBundleExcludes>
 
                     <systemPropertyVariables>
-                        <xvfb.enable>${xvfb.enable}</xvfb.enable>
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                         <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
-                        <webdriver.browser>${webdriver.browser}</webdriver.browser>
-                        <com.atlassian.connect.jwt.expiry_seconds>5</com.atlassian.connect.jwt.expiry_seconds>
                     </systemPropertyVariables>
-
-                    <functionalTestPattern>it/**/Test*.java</functionalTestPattern>
 
                     <products>
                         <product>
@@ -290,7 +280,6 @@
                             <productDataPath>${basedir}/../integration-tests/src/test/resources/jira-generated-test-resources.zip</productDataPath>
                             <systemPropertyVariables>
                                 <product>jira</product>
-                                <com.atlassian.plugin.connect.add_on_properties.max_properties>${addonconfig.maxpropertiesperplugin}</com.atlassian.plugin.connect.add_on_properties.max_properties>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -336,7 +325,7 @@
                                 <pluginArtifact>
                                     <groupId>com.atlassian.jira.tests</groupId>
                                     <artifactId>jira-testkit-plugin</artifactId>
-                                    <version>${testkit.version}</version>
+                                    <version>${atlassian.jira.testkit.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.jwt</groupId>
@@ -370,7 +359,6 @@
                             <productDataPath>${basedir}/../integration-tests/src/test/resources/confluence-generated-test-resources.zip</productDataPath>
                             <systemPropertyVariables>
                                 <product>confluence</product>
-                                <com.atlassian.plugin.connect.add_on_properties.max_properties>${addonconfig.maxpropertiesperplugin}</com.atlassian.plugin.connect.add_on_properties.max_properties>
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
@@ -429,9 +417,7 @@
                             </bundledArtifacts>
                         </product>
                     </products>
-
                     <testGroups>
-
                         <testGroup>
                             <id>confluence</id>
                             <productIds>
@@ -441,8 +427,7 @@
                                 <testedProduct>confluence</testedProduct>
                             </systemProperties>
                             <excludes>
-                                <exclude>it/jira/**/*.java</exclude>
-                                <exclude>at/**</exclude>
+                                <exclude>it/**/jira/**/*.java</exclude>
                             </excludes>
                         </testGroup>
                         <testGroup>
@@ -454,226 +439,9 @@
                                 <testedProduct>jira</testedProduct>
                             </systemProperties>
                             <excludes>
-                                <exclude>it/confluence/**/*.java</exclude>
-                                <exclude>at/**</exclude>
+                                <exclude>it/**/confluence/**/*.java</exclude>
                             </excludes>
                         </testGroup>
-
-                        <!-- Tests of cross-product functionality on Confluence -->
-
-                        <testGroup>
-                            <id>confluence-common-misc</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>confluence</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/common/**/*.java</include>
-                            </includes>
-                            <excludes>
-                                <exclude>it/common/iframe/*.java</exclude>
-                                <exclude>it/common/jsapi/*.java</exclude>
-                                <exclude>it/common/lifecycle/*.java</exclude>
-                            </excludes>
-                        </testGroup>
-                        <testGroup>
-                            <id>confluence-common-iframe</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>confluence</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/common/iframe/*.java</include>
-                            </includes>
-                        </testGroup>
-                        <testGroup>
-                            <id>confluence-common-lifecycle</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>confluence</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/common/lifecycle/*.java</include>
-                            </includes>
-                        </testGroup>
-
-                        <!-- Tests of Confluence-specific functionality -->
-
-                        <testGroup>
-                            <id>confluence-misc</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>confluence</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/confluence/**/*.java</include>
-                            </includes>
-                            <excludes>
-                                <exclude>it/confluence/iframe/*.java</exclude>
-                                <exclude>it/confluence/item/*.java</exclude>
-                                <exclude>it/confluence/jsapi/*.java</exclude>
-                                <exclude>it/confluence/macro/*.java</exclude>
-                            </excludes>
-                        </testGroup>
-                        <testGroup>
-                            <id>confluence-iframe</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>confluence</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/confluence/iframe/*.java</include>
-                            </includes>
-                        </testGroup>
-                        <testGroup>
-                            <id>confluence-item</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>confluence</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/confluence/item/*.java</include>
-                            </includes>
-                        </testGroup>
-                        <testGroup>
-                            <id>confluence-jsapi</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>confluence</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/common/jsapi/*.java</include>
-                                <include>it/confluence/jsapi/*.java</include>
-                            </includes>
-                        </testGroup>
-                        <testGroup>
-                            <id>confluence-macro</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>confluence</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/confluence/macro/*.java</include>
-                            </includes>
-                        </testGroup>
-
-                        <!-- Tests of cross-product functionality on JIRA -->
-
-                        <testGroup>
-                            <id>jira-common-misc</id>
-                            <productIds>
-                                <productId>jira</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>jira</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/common/**/*.java</include>
-                            </includes>
-                            <excludes>
-                                <exclude>it/common/iframe/*.java</exclude>
-                                <exclude>it/common/jsapi/*.java</exclude>
-                                <exclude>it/common/lifecycle/*.java</exclude>
-                            </excludes>
-                        </testGroup>
-                        <testGroup>
-                            <id>jira-common-iframe</id>
-                            <productIds>
-                                <productId>jira</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>jira</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/common/iframe/*.java</include>
-                            </includes>
-                        </testGroup>
-                        <testGroup>
-                            <id>jira-common-lifecycle</id>
-                            <productIds>
-                                <productId>jira</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>jira</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/common/lifecycle/*.java</include>
-                            </includes>
-                        </testGroup>
-
-                        <!-- Tests of JIRA-specific functionality -->
-
-                        <testGroup>
-                            <id>jira-misc</id>
-                            <productIds>
-                                <productId>jira</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>jira</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/jira/**/*.java</include>
-                            </includes>
-                            <excludes>
-                                <exclude>it/jira/iframe/*.java</exclude>
-                                <exclude>it/jira/item/*.java</exclude>
-                                <exclude>it/jira/jsapi/*.java</exclude>
-                            </excludes>
-                        </testGroup>
-                        <testGroup>
-                            <id>jira-iframe</id>
-                            <productIds>
-                                <productId>jira</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>jira</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/jira/iframe/*.java</include>
-                            </includes>
-                        </testGroup>
-                        <testGroup>
-                            <id>jira-item</id>
-                            <productIds>
-                                <productId>jira</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>jira</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/jira/item/*.java</include>
-                            </includes>
-                        </testGroup>
-                        <testGroup>
-                            <id>jira-jsapi</id>
-                            <productIds>
-                                <productId>jira</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>jira</testedProduct>
-                            </systemProperties>
-                            <includes>F
-                                <include>it/common/jsapi/*.java</include>
-                                <include>it/jira/jsapi/*.java</include>
-                            </includes>
-                        </testGroup>
-
                     </testGroups>
                 </configuration>
                 <dependencies>
@@ -694,15 +462,5 @@
     </build>
 
     <properties>
-        <testkit.version>${atlassian.jira.testkit.version}</testkit.version>
-        <jetty.version>8.1.7.v20120910</jetty.version>
-        <functest.version>0.7.1</functest.version>
-        <functestbasics.version>1.9.7</functestbasics.version>
-        <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
-
-        <skipITs>false</skipITs>
-        <build.test.plugin>true</build.test.plugin>
-        <devmode>true</devmode>
-        <test.plugin.artifact> </test.plugin.artifact>
     </properties>
 </project>
