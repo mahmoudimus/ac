@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.jira.condition;
+package com.atlassian.plugin.connect.plugin.condition;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.plugin.webfragment.conditions.AbstractWebCondition;

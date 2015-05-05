@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.jira.condition;
 
+import com.atlassian.plugin.connect.plugin.condition.ConnectEntityPropertyEqualToCondition;
 import com.atlassian.plugin.connect.plugin.condition.CrossProductConditions;
 import com.atlassian.plugin.connect.plugin.condition.PageConditions;
 import com.atlassian.plugin.connect.spi.product.ConditionClassResolver;
