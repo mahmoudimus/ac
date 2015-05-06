@@ -151,6 +151,23 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
      * * [JIRA locations](https://developer.atlassian.com/display/JIRADEV/Web+Fragments)
      * * [Confluence locations](https://developer.atlassian.com/display/CONFDEV/Web+UI+Modules)
      *
+     * If this property is not specified, a default location is used:
+     *
+     * JIRA:
+     *
+     * * `generalPage`: system.top.navigation.bar
+     * * `adminPage`: advanced_menu_section/advanced_section
+     * * `profiledPage`: system.user.options/personal
+     *
+     * Confluence:
+     *
+     * * `generalPage`: system.browse
+     * * `adminPage`: system.admin/marketplace_confluence
+     * * `profiledPage`: system.profile
+     *
+     * If you wish to have no link to the page shown anywhere, you can provide an invalid location value.
+     * By convention, this value should be "none".
+     *
      * @return the location of the link to the page
      */ 
     public String getLocation()
