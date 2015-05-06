@@ -543,7 +543,6 @@
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <versionOverridesPath>${basedir}/../bin/amps-overrides.properties</versionOverridesPath>
-                    <buildTestPlugin>false</buildTestPlugin>
                     <testBundleExcludes>
                         <testBundleExclude>
                             <groupId>com.atlassian.plugin</groupId>
@@ -766,33 +765,6 @@
                             </bundledArtifacts>
                         </product>
                     </products>
-
-                    <testGroups>
-                        <testGroup>
-                            <id>confluence</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>confluence</testedProduct>
-                            </systemProperties>
-                            <excludes>
-                                <exclude>it/**/jira/**/*.java</exclude>
-                            </excludes>
-                        </testGroup>
-                        <testGroup>
-                            <id>jira</id>
-                            <productIds>
-                                <productId>jira</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>jira</testedProduct>
-                            </systemProperties>
-                            <excludes>
-                                <exclude>it/**/confluence/**/*.java</exclude>
-                            </excludes>
-                        </testGroup>
-                    </testGroups>
                 </configuration>
             </plugin>
             <plugin>
