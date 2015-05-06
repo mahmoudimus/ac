@@ -1,7 +1,6 @@
-package com.atlassian.plugin.connect.util.io;
+package it.com.atlassian.plugin.connect.util.io;
 
 import org.apache.commons.io.IOUtils;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;

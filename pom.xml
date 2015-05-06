@@ -52,6 +52,12 @@
                 <module>integration-tests</module>
             </modules>
         </profile>
+        <profile>
+            <id>wired</id>
+            <modules>
+                <module>wired-tests</module>
+            </modules>
+        </profile>
     </profiles>
 
     <build>
@@ -720,6 +726,8 @@
         <webdriver.browser>firefox</webdriver.browser>
         <plugin.testrunner.version>1.2.0</plugin.testrunner.version>
         <atlassian.jira.projects.version>1.20.0-D20150217T051447</atlassian.jira.projects.version>
+        <functest.version>0.7.1</functest.version>
+        <functestbasics.version>1.9.7</functestbasics.version>
 
         <!-- BUILD STUFF -->
         <apache-commons-version>3.1</apache-commons-version>
