@@ -157,13 +157,13 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
      *
      * * `generalPage`: system.top.navigation.bar
      * * `adminPage`: advanced\_menu\_section/advanced_section
-     * * `profiledPage`: system.user.options/personal
+     * * `profilePage`: system.user.options/personal
      *
      * Confluence:
      *
      * * `generalPage`: system.browse
      * * `adminPage`: system.admin/marketplace_confluence
-     * * `profiledPage`: system.profile
+     * * `profilePage`: system.profile
      *
      * If you wish to have no link to the page shown anywhere, you can provide an invalid location value.
      * By convention, this value should be "none".
