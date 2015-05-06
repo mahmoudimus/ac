@@ -67,6 +67,7 @@ public class BlueprintModuleProviderTest
                 .withName(new I18nProperty(MODULE_NAME, ""))
                 .withKey(MODULE_KEY)
                 .withTemplate(new BlueprintTemplateBeanBuilder().withUrl("/blueprints/blueprint.xml").build())
+                .withCreateResult("view")
                 .withIcon(new IconBeanBuilder().withUrl("/blueprints/blueprints.png").build())
                 .build();
 
@@ -125,6 +126,7 @@ public class BlueprintModuleProviderTest
             // check the blueprint descriptor
             BlueprintModuleDescriptor blueprintModuleDescriptor = (BlueprintModuleDescriptor) descriptors.get(2);
             assertNotNull(blueprintModuleDescriptor);
+            assertEquals("view", blueprintModuleDescriptor.getCreateResult());
 
             blueprintModuleDescriptor.enabled();
 

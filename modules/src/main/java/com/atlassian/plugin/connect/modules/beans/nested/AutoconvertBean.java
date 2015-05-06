@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#AUTOCONVERT_EXAMPLE}
  * @schemaTitle Autoconvert
- * @since 1.1
+ * @since 1.1.27
  */
 @SchemaDefinition("autoconvert")
 public class AutoconvertBean extends BaseModuleBean
