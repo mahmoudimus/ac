@@ -148,25 +148,31 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
      *
      * Product location documentation:
      *
-     * * [JIRA locations](https://developer.atlassian.com/display/JIRADEV/Web+Fragments)
-     * * [Confluence locations](https://developer.atlassian.com/display/CONFDEV/Web+UI+Modules)
-     *
-     * If this property is not specified, a default location is used:
+     * <ul>
+     * <li><a href="https://developer.atlassian.com/display/JIRADEV/Web+Fragments">JIRA locations</a></li>
+     * <li><a href="https://developer.atlassian.com/display/CONFDEV/Web+UI+Modules">Confluence locations</a></li>
+     * </ul>
+     *  
+     * If the <code>location</code> property is not specified, a default location is used:
      *
      * JIRA:
      *
-     * * `generalPage`: system.top.navigation.bar
-     * * `adminPage`: advanced\_menu\_section/advanced_section
-     * * `profilePage`: system.user.options/personal
+     * <ul> 
+     * <li><code>generalPage</code>: system.top.navigation.bar</li>
+     * <li><code>adminPage</code>: advanced\_menu\_section/advanced_section</li>
+     * </ul> 
      *
      * Confluence:
      *
-     * * `generalPage`: system.browse
-     * * `adminPage`: system.admin/marketplace_confluence
-     * * `profilePage`: system.profile
+     * <ul>
+     * <li><code>generalPage</code>: system.browse</li>
+     * <li><code>adminPage</code>: system.admin/marketplace_confluence</li>
+     * <li><code>profilePage</code>: system.profile</li>
+     * </ul>
      *
-     * If you wish to have no link to the page shown anywhere, you can provide an invalid location value.
-     * By convention, this value should be "none".
+     * You may wish to have no link to the page shown anywhere - for example, if you are using the page as the
+     * target of a <a href="../../javascript/module-Dialog.html">JavaScript API dialog</a>. 
+     * In this case, set the value of <code>location</code> to "none".
      *
      * @return the location of the link to the page
      */ 
