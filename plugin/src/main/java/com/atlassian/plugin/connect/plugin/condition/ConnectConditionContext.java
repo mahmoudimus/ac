@@ -16,7 +16,7 @@ import static com.atlassian.fugue.Option.option;
  */
 public class ConnectConditionContext
 {
-    private static final String CONNECT_ADD_ON_KEY_KEY = "AtlassianConnectAddOnKey";
+    public static final String CONNECT_ADD_ON_KEY_KEY = "addOnKey";
 
     private final Map<String, String> contextMap;
 

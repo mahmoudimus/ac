@@ -371,7 +371,7 @@ then the failure will be logged and the condition will be evaluated as `false`.
 ## <a name="entity-property"></a>Entity property condition
 
 There is a common notion of entity properties in Atlassian products. Entities like `issue` or `project` can have properties that can
- be set by Connect add-ons via REST API. Also, add-ons themselves can have properties too. Properties are a great way to display
+ be set by Connect add-ons via REST API. Add-ons can also have their own properties. Properties are a great way to display
  something conditionally. This can be achieved with the `entity_property_equal_to` condition.
 
  This condition lets you test whether the entity property is equal to the specified value. Supported entities depend on the product:
@@ -390,7 +390,7 @@ This is list will surely grow in the future while new entity properties become a
                  {
                      "conditions": [
                          {
-                             "condition": "entity_property_equal_to"
+                             "condition": "entity_property_equal_to",
                              "params": {
                                  "entity": "addon",
                                  "propertyKey": "isEnabled",

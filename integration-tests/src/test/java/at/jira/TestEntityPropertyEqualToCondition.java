@@ -1,4 +1,4 @@
-package it.jira;
+package at.jira;
 
 import com.atlassian.jira.testkit.client.restclient.EntityPropertyClient;
 import com.atlassian.jira.util.json.JSONException;
@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import hudson.plugins.jira.soap.RemoteIssue;
 import it.common.rest.AddOnPropertyClient;
+import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
 import org.junit.AfterClass;
@@ -117,6 +118,16 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
         RemoteIssue issue = createIssue();
 
         addOnPropertyClient.putProperty(remotePlugin.getAddon().getKey(), "prop", "false");
+
+        assertThat(webPanelIsVisible("add-on-property-web-panel", issue), equalTo(false));
+    }
+
+    @Test
+    public void webPanelShouldNotBeVisibleIfAddOnPropertyIsNotSet() throws Exception
+    {
+        RemoteIssue issue = createIssue();
+
+        addOnPropertyClient.deleteProperty(remotePlugin.getAddon().getKey(), "prop", "false");
 
         assertThat(webPanelIsVisible("add-on-property-web-panel", issue), equalTo(false));
     }
