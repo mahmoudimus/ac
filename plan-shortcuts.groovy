@@ -62,11 +62,19 @@ runTestsStage() {
         ) {
             commonRequirements()
             checkoutDefaultRepositoryTask()
-            mavenTestTask(
+            cloverTestTask(
                     description: 'Run Unit Tests',
                     goal: 'package',
                     environmentVariables: ''
             )
+            cloverReportArtifact(
+                    name: 'Unit Tests'
+            )
+            cloverJSONArtifact(
+                    name: 'Unit Tests'
+            )
+            cloverMiscConfiguration()
+            cloverBambooTask()
         }
         job(
                 key: 'QUNIT',
@@ -74,7 +82,7 @@ runTestsStage() {
         ) {
             commonRequirements()
             checkoutDefaultRepositoryTask()
-            mavenTestTask(
+            cloverTestTask(
                     description: 'Run QUnit Tests using Karma',
                     goal: 'package -Pkarma-tests -DskipUnits',
                     environmentVariables: ''
@@ -85,6 +93,14 @@ runTestsStage() {
                     pattern: 'karma-results.xml',
                     shared: 'false'
             )
+            cloverReportArtifact(
+                    name: 'QUnit Tests'
+            )
+            cloverJSONArtifact(
+                    name: 'QUnit Tests'
+            )
+            cloverMiscConfiguration()
+            cloverBambooTask()
         }
         job(
                 key:'JDOC',
@@ -399,6 +415,14 @@ mavenTask(['description', 'goal']) {
     )
 }
 
+cloverTestTask(['description', 'goal', 'environmentVariables']) {
+    mavenTestTask(
+            description: '#description',
+            goal: 'clover2:setup #goal clover2:aggregate clover2:clover',
+            environmentVariables: '#environmentVariables'
+    )
+}
+
 mavenTestTask(['description', 'goal', 'environmentVariables']) {
     mavenTaskImpl(
             description: '#description',
@@ -422,6 +446,44 @@ mavenTaskImpl(['description', 'goal', 'environmentVariables', 'hasTests', 'testD
             environmentVariables: '#environmentVariables',
             hasTests: '#hasTests',
             testDirectory: '#testDirectory'
+    )
+}
+
+cloverReportArtifact(['name']) {
+    artifactDefinition(
+            name:'Clover Report (System) - #name',
+            location:'target/site/clover',
+            pattern:'**/*.*',
+            shared:'true'
+    )
+}
+
+cloverJSONArtifact(['name']) {
+    artifactDefinition(
+            name:'Coverage (JSON - System) - #name',
+            pattern:'coverage-*.json',
+            shared:'true'
+    )
+}
+
+cloverMiscConfiguration() {
+    coverageJSON(
+            enabled:'true'
+    )
+    clover(
+            type:'custom',
+            path:'/target/site/clover'
+    )
+}
+
+cloverBambooTask() {
+    task(
+            type:'custom',
+            createTaskKey:'com.atlassian.bamboo.plugins.bamboo-coverage-json-plugin:coverage-json-task',
+            description:'',
+            final:'true',
+            format:'clover',
+            location:'**/clover.xml'
     )
 }
 
