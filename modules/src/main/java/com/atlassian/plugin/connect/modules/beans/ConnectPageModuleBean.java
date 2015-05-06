@@ -147,7 +147,7 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
      * menu link on the left side of the Administration Console.
      *
      * Product location documentation:
-     * 
+     *
      * * [JIRA locations](https://developer.atlassian.com/display/JIRADEV/Web+Fragments)
      * * [Confluence locations](https://developer.atlassian.com/display/CONFDEV/Web+UI+Modules)
      *
@@ -156,7 +156,7 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
      * JIRA:
      *
      * * `generalPage`: system.top.navigation.bar
-     * * `adminPage`: advanced_menu_section/advanced_section
+     * * `adminPage`: advanced\_menu\_section/advanced_section
      * * `profiledPage`: system.user.options/personal
      *
      * Confluence:
