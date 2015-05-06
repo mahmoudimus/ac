@@ -467,13 +467,15 @@ cloverJSONArtifact(['name']) {
 }
 
 cloverMiscConfiguration() {
-    coverageJSON(
+    miscellaneousConfiguration() {
+        coverageJSON(
             enabled:'true'
-    )
-    clover(
+        )
+        clover(
             type:'custom',
             path:'/target/site/clover'
-    )
+        )
+    }
 }
 
 cloverBambooTask() {
