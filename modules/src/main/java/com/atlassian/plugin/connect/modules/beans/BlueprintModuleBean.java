@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.json.schema.annotation.Required;
-import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.BlueprintModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
@@ -26,10 +25,9 @@ public class BlueprintModuleBean extends RequiredKeyBean
      * editor page and automatically create the page content. The user lands in the view of the created page. When `edit`,
      * the user is sent to the editor which is pre-filled with the template content. If not set, this will default to `edit`.
      */
-    @StringSchemaAttributes(format="createResult")
     private String createResult;
 
-    public BlueprintModuleBean() { }
+    public BlueprintModuleBean() {}
 
     public BlueprintModuleBean(BlueprintModuleBeanBuilder builder)
     {
