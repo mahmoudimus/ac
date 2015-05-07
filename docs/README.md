@@ -47,9 +47,15 @@ Got it? If not, all you need to know is that you need to write your docs in Mark
 
 ## Workflow for generating documentation
 
-To generate these docs, you'll need to make sure you have Nodejs installed. If you're on a mac, I suggest just doing a `brew install node`. Once you've got Nodejs installed, just run the following to install all the dependencies:
+Currently there are three main requirements for the docs modules:
 
-    npm install
+1. Json-Schema from the plugin module,
+2. Version 0.10.26 of NodeJs and
+3. Atlassian-Connect-Js repository
+
+The easiest way to fulfill all the requirements is to run the following command in the parent directory.
+
+    mvn clean install pre-site -DskipTests
 
 ### Running the server
 
