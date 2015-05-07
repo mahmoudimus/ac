@@ -81,7 +81,7 @@
                         <goals>
                             <goal>npm</goal>
                         </goals>
-                        <phase>site</phase>
+                        <phase>pre-site</phase>
                         <configuration>
                             <arguments>install</arguments>
                             <skip>${skipNpm}</skip>
