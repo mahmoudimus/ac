@@ -59,7 +59,7 @@ The easiest way to fulfill all the requirements is to run the following command 
 
 ### Running the server
 
-Harp has it's own server that allows you to preview your doc dynamically without having to rebuild it after each change. The server will pick up changes to your Markdown and any changes to your templates or assets -- the Harp preprocessor is dynamic.
+Harp has its own server that allows you to preview your doc dynamically without having to rebuild it after each change. The server will pick up changes to your Markdown and any changes to your templates or assets -- the Harp preprocessor is dynamic.
 
 It's nice that Harp picks up changes dynamically, but it doesn't automatically update the browser when these changes are detected. For that, I recommend the awesome [LiveReload](http://livereload.com/) mac app. Harp + LiveReload makes it possible to work on your doc and see your changes in real-time.
 
