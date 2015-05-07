@@ -55,11 +55,7 @@ public class BlueprintModuleDescriptorFactory
         blueprintElement.addAttribute("index-key", bean.getRawKey());
         blueprintElement.addAttribute("content-template-key",contentTemplateKey);
         blueprintElement.addAttribute("system", "true");
-
-        if (bean.hasCreateResult())
-        {
-            blueprintElement.addAttribute("create-result", bean.getCreateResult());
-        }
+        blueprintElement.addAttribute("create-result", bean.getCreateResult().toString());
 
         if(log.isDebugEnabled()) {
             log.debug(Dom4jUtils.printNode(blueprintElement));

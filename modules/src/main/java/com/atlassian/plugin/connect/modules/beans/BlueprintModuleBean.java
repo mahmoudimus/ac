@@ -1,8 +1,10 @@
 package com.atlassian.plugin.connect.modules.beans;
 
+import com.atlassian.json.schema.annotation.CommonSchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.plugin.connect.modules.beans.builder.BlueprintModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
+import com.atlassian.plugin.connect.modules.beans.nested.CreateResultType;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 
 /**
@@ -23,9 +25,10 @@ public class BlueprintModuleBean extends RequiredKeyBean
     /**
      * Defines the screen to go to when creating this type of Blueprint. A value of `view` causes Confluence to bypass the
      * editor page and automatically create the page content. The user lands in the view of the created page. When `edit`,
-     * the user is sent to the editor which is pre-filled with the template content. If not set, this will default to `edit`.
+     * the user is sent to the editor which is pre-filled with the template content.
      */
-    private String createResult;
+    @CommonSchemaAttributes(defaultValue = "edit")
+    private CreateResultType createResult;
 
     public BlueprintModuleBean() {}
 
@@ -44,7 +47,7 @@ public class BlueprintModuleBean extends RequiredKeyBean
         return template;
     }
 
-    public String getCreateResult()
+    public CreateResultType getCreateResult()
     {
         return createResult;
     }
@@ -52,10 +55,5 @@ public class BlueprintModuleBean extends RequiredKeyBean
     public IconBean getIcon()
     {
         return icon;
-    }
-
-    public boolean hasCreateResult()
-    {
-        return null != createResult;
     }
 }

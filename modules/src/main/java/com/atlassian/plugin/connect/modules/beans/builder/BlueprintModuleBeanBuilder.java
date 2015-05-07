@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.modules.beans.builder;
 
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
+import com.atlassian.plugin.connect.modules.beans.nested.CreateResultType;
 import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 
 public class BlueprintModuleBeanBuilder extends RequiredKeyBeanBuilder<BlueprintModuleBeanBuilder,BlueprintModuleBean>
@@ -9,7 +10,7 @@ public class BlueprintModuleBeanBuilder extends RequiredKeyBeanBuilder<Blueprint
 
     private IconBean icon;
     private BlueprintTemplateBean template;
-    private String createResult;
+    private CreateResultType createResult;
 
     public BlueprintModuleBeanBuilder() { }
 
@@ -19,7 +20,7 @@ public class BlueprintModuleBeanBuilder extends RequiredKeyBeanBuilder<Blueprint
         return this;
     }
 
-    public BlueprintModuleBeanBuilder withCreateResult(String createResult)
+    public BlueprintModuleBeanBuilder withCreateResult(CreateResultType createResult)
     {
         this.createResult = createResult;
         return this;

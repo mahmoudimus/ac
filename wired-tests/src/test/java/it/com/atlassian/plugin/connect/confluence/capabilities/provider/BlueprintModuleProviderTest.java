@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BlueprintTemplateBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.IconBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.CreateResultType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.confluence.capabilities.provider.BlueprintModuleProvider;
@@ -67,7 +68,7 @@ public class BlueprintModuleProviderTest
                 .withName(new I18nProperty(MODULE_NAME, ""))
                 .withKey(MODULE_KEY)
                 .withTemplate(new BlueprintTemplateBeanBuilder().withUrl("/blueprints/blueprint.xml").build())
-                .withCreateResult("view")
+                .withCreateResult(CreateResultType.VIEW)
                 .withIcon(new IconBeanBuilder().withUrl("/blueprints/blueprints.png").build())
                 .build();
 
