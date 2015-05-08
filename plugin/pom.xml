@@ -343,6 +343,11 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.stash</groupId>
+            <artifactId>stash-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-core</artifactId>
             <scope>provided</scope>
@@ -626,6 +631,7 @@
                             com.github.fge.msgsimple*;version="1.1.2-atlassian",
                             com.github.fge.msgsimple.*;version="1.1.2-atlassian",
                             com.atlassian.jira.bc.user;resolution:=optional,
+                            org.apache.commons.io*;version="[1,3)",
                             *;resolution:=optional
                         </Import-Package>
                         <Export-Package>
@@ -757,6 +763,46 @@
                                     <version>${blueprints.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
+                        </product>
+                        <product>
+                            <id>stash</id>
+                            <version>${atlassian.stash.version}</version>
+                            <systemPropertyVariables>
+                                <product>stash</product>
+                                <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
+                            </systemPropertyVariables>
+                            <pluginArtifacts>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.labs.plugins</groupId>
+                                    <artifactId>quickreload</artifactId>
+                                    <version>${quickreload.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.webhooks</groupId>
+                                    <artifactId>atlassian-webhooks-plugin</artifactId>
+                                    <version>${atlassian.webhooks.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.httpclient</groupId>
+                                    <artifactId>atlassian-httpclient-plugin</artifactId>
+                                    <version>${atlassian.httpclient.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.jwt</groupId>
+                                    <artifactId>jwt-plugin</artifactId>
+                                    <version>${atlassian.jwt.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <artifactId>json-schema-validator-atlassian-bundle</artifactId>
+                                    <groupId>com.atlassian.bundles</groupId>
+                                    <version>${atlassian.json.schema.validator.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>atlassian-connect-test-support-plugin</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
+                            </pluginArtifacts>
 
                             <bundledArtifacts>
                                 <bundledArtifact>
@@ -767,6 +813,32 @@
                             </bundledArtifacts>
                         </product>
                     </products>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.atlassian.plugin</groupId>
+                <artifactId>atlassian-spring-scanner-maven-plugin</artifactId>
+                <version>${atlassian.spring.scanner.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>atlassian-spring-scanner</goal>
+                        </goals>
+                        <!-- process-classes seems to be skipped if you are using scala
+                             so perhaps use prepare-package -->
+                        <phase>process-classes</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includeExclude>+com.atlassian.plugin.connect.*</includeExclude>
+                    <scannedDependencies>
+                        <dependency>
+                            <groupId>com.atlassian.plugin</groupId>
+                            <artifactId>atlassian-spring-scanner-external-jar</artifactId>
+                        </dependency>
+                    </scannedDependencies>
+                    <verbose>false</verbose>
                 </configuration>
             </plugin>
             <plugin>
@@ -1045,6 +1117,20 @@
                             <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/confluence-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/confluence-schema-pretty.json</prettyOutput>
+                            <enumCase>insensitive</enumCase>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stash-schema</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>generate-schema</goal>
+                        </goals>
+                        <configuration>
+                            <generatorProvider>com.atlassian.plugin.connect.stash.StashSchemaGeneratorProvider</generatorProvider>
+                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
+                            <rawOutput>${project.build.outputDirectory}/schema/stash-schema.json</rawOutput>
+                            <prettyOutput>${project.build.outputDirectory}/schema/stash-schema-pretty.json</prettyOutput>
                             <enumCase>insensitive</enumCase>
                         </configuration>
                     </execution>

@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.jira;
+package com.atlassian.plugin.connect.stash;
 
 import com.atlassian.json.schema.EnumCase;
 import com.atlassian.json.schema.JsonSchemaGenerator;
@@ -8,11 +8,11 @@ import com.atlassian.json.schema.scanner.model.InterfaceList;
 import com.atlassian.plugin.connect.api.capabilities.descriptor.ConnectSchemaGenerator;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
 
-public class JiraSchemaGeneratorProvider implements JsonSchemaGeneratorProvider
+public class StashSchemaGeneratorProvider implements JsonSchemaGeneratorProvider
 {
     @Override
     public JsonSchemaGenerator provide(EnumCase enumCase, InterfaceList interfaceList, JsonSchemaDocs schemaDocs, String ignoreFilter)
     {
-        return new ConnectSchemaGenerator(enumCase, interfaceList, schemaDocs, ignoreFilter, ProductFilter.JIRA);
+        return new ConnectSchemaGenerator(enumCase, interfaceList, schemaDocs, ignoreFilter, ProductFilter.STASH);
     }
 }
