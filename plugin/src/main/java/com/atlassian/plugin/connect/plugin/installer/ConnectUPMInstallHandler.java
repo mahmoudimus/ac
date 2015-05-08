@@ -98,10 +98,12 @@ public class ConnectUPMInstallHandler implements PluginInstallHandler
         }
         catch (ConnectAddOnInstallException e)
         {
+            Throwable cause = e.getCause();
+            Throwables.propagateIfInstanceOf(cause, PluginInstallException.class);
+
             // translate the internal exception to one that UPM understands
             PluginInstallException exception = e.getI18nKey() == null ? new PluginInstallException(e.getMessage()) :
                     new PluginInstallException(e.getMessage(), e.getI18nKey(), e.getI18nArgs());
-            Throwable cause = e.getCause();
             if (cause != null)
             {
                 exception.initCause(cause);
