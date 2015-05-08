@@ -22,6 +22,7 @@ import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstallException;
 import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstaller;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.google.common.base.Predicate;
+import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -174,6 +175,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                     }
                 }
             }
+            Throwables.propagateIfInstanceOf(e, ConnectAddOnInstallException.class);
             throw new ConnectAddOnInstallException(e.getMessage(), e);
         }
 
