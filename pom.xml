@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.1.30-SNAPSHOT</version>
+    <version>1.1.31-SNAPSHOT</version>
     <organization>
         <name>Atlassian</name>
         <url>http://atlassian.com/</url>
@@ -50,6 +50,12 @@
             <id>freezer-release-profile</id>
             <modules>
                 <module>integration-tests</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>wired</id>
+            <modules>
+                <module>wired-tests</module>
             </modules>
         </profile>
     </profiles>
@@ -683,7 +689,7 @@
         <atlassian.sal.version>2.10.0</atlassian.sal.version>
         <atlassian.selenium.version>2.2-rc3</atlassian.selenium.version>
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>
-        <atlassian.connect-js.version>2.0.1</atlassian.connect-js.version>
+        <atlassian.connect-js.version>3.1.0</atlassian.connect-js.version>
         <atlassian.connect-js.path>git+ssh://git@stash.atlassian.com:7997/ac/atlassian-connect-js.git#${atlassian.connect-js.version}</atlassian.connect-js.path>
         <atlassian.jira.projects.plugin.version>1.20.0-D20150217T051447</atlassian.jira.projects.plugin.version>
 
@@ -703,6 +709,7 @@
         <frontend.plugin.version>0.0.22</frontend.plugin.version>
 
         <!-- TEST STUFF -->
+        <atlassian.confluence.productDataVersion>${atlassian.confluence.version}</atlassian.confluence.productDataVersion>
         <atlassian.jira.cross.compat.version>0.28</atlassian.jira.cross.compat.version>
         <atlassian.test.categories.version>0.5</atlassian.test.categories.version>
         <aui.version>5.2</aui.version>
@@ -719,6 +726,8 @@
         <webdriver.browser>firefox</webdriver.browser>
         <plugin.testrunner.version>1.2.0</plugin.testrunner.version>
         <atlassian.jira.projects.version>1.20.0-D20150217T051447</atlassian.jira.projects.version>
+        <functest.version>0.7.1</functest.version>
+        <functestbasics.version>1.9.7</functestbasics.version>
 
         <!-- BUILD STUFF -->
         <apache-commons-version>3.1</apache-commons-version>
