@@ -30,11 +30,14 @@ public class BlueprintModuleBean extends RequiredKeyBean
     @CommonSchemaAttributes(defaultValue = "edit")
     private CreateResultType createResult;
 
-    public BlueprintModuleBean() {}
+    public BlueprintModuleBean() {
+        initialise();
+    }
 
     public BlueprintModuleBean(BlueprintModuleBeanBuilder builder)
     {
         super(builder);
+        initialise();
     }
 
     public static BlueprintModuleBeanBuilder newBlueprintModuleBean()
@@ -55,5 +58,12 @@ public class BlueprintModuleBean extends RequiredKeyBean
     public IconBean getIcon()
     {
         return icon;
+    }
+
+    private void initialise() {
+        if (null == createResult)
+        {
+            createResult = CreateResultType.EDIT;
+        }
     }
 }
