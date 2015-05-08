@@ -147,9 +147,32 @@ public class ConnectPageModuleBean extends BeanWithKeyAndParamsAndConditions
      * menu link on the left side of the Administration Console.
      *
      * Product location documentation:
-     * 
-     * * [JIRA locations](https://developer.atlassian.com/display/JIRADEV/Web+Fragments)
-     * * [Confluence locations](https://developer.atlassian.com/display/CONFDEV/Web+UI+Modules)
+     *
+     * <ul>
+     * <li><a href="https://developer.atlassian.com/display/JIRADEV/Web+Fragments">JIRA locations</a></li>
+     * <li><a href="https://developer.atlassian.com/display/CONFDEV/Web+UI+Modules">Confluence locations</a></li>
+     * </ul>
+     *  
+     * If the <code>location</code> property is not specified, a default location is used:
+     *
+     * JIRA:
+     *
+     * <ul> 
+     * <li><code>generalPage</code>: system.top.navigation.bar</li>
+     * <li><code>adminPage</code>: advanced\_menu\_section/advanced_section</li>
+     * </ul> 
+     *
+     * Confluence:
+     *
+     * <ul>
+     * <li><code>generalPage</code>: system.browse</li>
+     * <li><code>adminPage</code>: system.admin/marketplace_confluence</li>
+     * <li><code>profilePage</code>: system.profile</li>
+     * </ul>
+     *
+     * You may wish to have no link to the page shown anywhere - for example, if you are using the page as the
+     * target of a <a href="../../javascript/module-Dialog.html">JavaScript API dialog</a>. 
+     * In this case, set the value of <code>location</code> to "none".
      *
      * @return the location of the link to the page
      */ 

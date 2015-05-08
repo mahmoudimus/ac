@@ -5,7 +5,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.30-SNAPSHOT</version>
+        <version>1.1.31-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -427,7 +427,6 @@
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                         <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
                         <webdriver.browser>${webdriver.browser}</webdriver.browser>
-                        <com.atlassian.connect.jwt.expiry_seconds>5</com.atlassian.connect.jwt.expiry_seconds>
                     </systemPropertyVariables>
 
                     <functionalTestPattern>it/**/Test*.java</functionalTestPattern>
@@ -485,7 +484,7 @@
                                 <pluginArtifact>
                                     <groupId>com.atlassian.jira.tests</groupId>
                                     <artifactId>jira-testkit-plugin</artifactId>
-                                    <version>${testkit.version}</version>
+                                    <version>${atlassian.jira.testkit.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.jwt</groupId>
@@ -510,6 +509,7 @@
                         <product>
                             <id>confluence</id>
                             <version>${atlassian.confluence.version}</version>
+                            <productDataVersion>${atlassian.confluence.productDataVersion}</productDataVersion>
                             <log4jProperties>src/test/resources/log4j-confluence.properties
                             </log4jProperties>
                             <systemPropertyVariables>
@@ -828,10 +828,6 @@
     </build>
 
     <properties>
-        <testkit.version>${atlassian.jira.testkit.version}</testkit.version>
-        <jetty.version>8.1.7.v20120910</jetty.version>
-        <functest.version>0.7.1</functest.version>
-        <functestbasics.version>1.9.7</functestbasics.version>
         <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
     </properties>
 </project>

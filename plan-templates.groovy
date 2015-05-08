@@ -60,13 +60,14 @@ plan(
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest Confluence SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
-            applicationVersion: '5.8-SNAPSHOT',
+            productVersion: '5.9.0-SNAPSHOT',
+            productDataVersion: '5.8-m56',
     )
     stage(
             name: 'Run Tests'
     ) {
         testJobsForConfluence(
-                mavenProductParameters: '-Datlassian.confluence.version=${bamboo_product_version}'
+                mavenProductParameters: '-Datlassian.confluence.version=${bamboo_product_version} -Datlassian.confluence.productDataVersion=${bamboo_product_data_version}'
         )
     }
 }
@@ -78,7 +79,8 @@ plan(
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest JIRA SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
-            applicationVersion: '6.5-SNAPSHOT',
+            productVersion: '6.5-SNAPSHOT',
+            productDataVersion: '[not used]',
     )
     stage(
             name: 'Run Tests'
