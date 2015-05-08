@@ -1,0 +1,69 @@
+<application key="bitbucket">
+
+    <web-section key="admin.pages" name="Remotable Plugins" location="system.admin" weight="100">
+        <label>Remote Plugins</label>
+    </web-section>
+
+    <rest key="rest" path="/atlassian-connect" version="1">
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+        <package>com.atlassian.plugin.connect.plugin.rest</package>
+    </rest>
+
+    <!-- JavaScript and CSS resource inclusions for relevant contexts -->
+
+    <web-resource key="atlassian-connect-resources" name="Connect resources for inclusion on every page.">
+        <context>atl.admin</context>
+        <context>atl.general</context>
+
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:dialog-page-resource</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:bitbucket-remote-condition</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-css</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:bitbucket-iframe-host-js</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:bitbucket-ap-extensions</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:bitbucket-ap-user</dependency>
+
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
+    <!-- JavaScript API Core -->
+
+    <web-resource key="ap-core">
+        <resource type="download" name="core-host.js" location="/js/core/connect-host-amd.js" />
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
+    <web-resource key="ap-extensions">
+        <resource type="download" name="connect-cookie.js" location="/js/core/connect-host-cookie.js" />
+        <resource type="download" name="connect-env.js" location="/js/core/connect-host-env.js" />
+        <resource type="download" name="connect-messages.js" location="/js/core/connect-host-messages.js" />
+        <resource type="download" name="connect-request.js" location="/js/core/connect-host-request.js" />
+        <resource type="download" name="connect-history.js" location="/js/core/connect-host-history.js" />
+        <resource type="download" name="connect-dialog.js" location="/js/core/connect-host-dialog.js" />
+        <resource type="download" name="connect-inline-dialog.js" location="/js/core/connect-host-inline-dialog.js" />
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:bitbucket-ap-core</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:bitbucket-iframe-host-js</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
+    <web-resource key="ap-user">
+        <resource type="download" name="user.js" location="/js/iframe/host/user.js" />
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:bitbucket-ap-core</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
+    <web-resource key="iframe-host-js">
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:bitbucket-ap-core</dependency>
+        <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
+        <resource type="download" name="content-resolver.js" location="/js/iframe/host/content-resolver.js" />
+        <dependency>com.atlassian.auiplugin:dialog2</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
+    <web-resource key="remote-condition">
+        <resource type="download" name="remote.js" location="js/condition/remote.js" />
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:bitbucket-ap-core</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
+</application>

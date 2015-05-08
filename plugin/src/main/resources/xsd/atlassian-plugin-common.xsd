@@ -16,7 +16,6 @@
                 </xs:annotation>
             </xs:enumeration>
             <xs:enumeration value="bitbucket"/>
-            <xs:enumeration value="stash"/>
             <xs:enumeration value="bamboo"/>
             <xs:enumeration value="refapp">
                 <xs:annotation>
@@ -25,6 +24,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:enumeration>
+            <xs:enumeration value="stash"/>
             <xs:enumeration value="container">
                 <xs:annotation>
                     <xs:documentation>
