@@ -340,6 +340,11 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.stash</groupId>
+            <artifactId>stash-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-core</artifactId>
             <scope>provided</scope>
@@ -603,6 +608,7 @@
                             com.github.fge.jsonschema.processors.*;version="${json.schema.validator.version}",
                             com.github.fge.msgsimple*;version="1.1.2-atlassian",
                             com.github.fge.msgsimple.*;version="1.1.2-atlassian",
+                            org.apache.commons.io*;version="${apache-commons-io-version}",
                             *;resolution:=optional
                         </Import-Package>
                         <Export-Package>
@@ -793,6 +799,32 @@
                             </excludes>
                         </testGroup>
                     </testGroups>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.atlassian.plugin</groupId>
+                <artifactId>atlassian-spring-scanner-maven-plugin</artifactId>
+                <version>${atlassian.spring.scanner.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>atlassian-spring-scanner</goal>
+                        </goals>
+                        <!-- process-classes seems to be skipped if you are using scala
+                             so perhaps use prepare-package -->
+                        <phase>process-classes</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includeExclude>+com.atlassian.plugin.connect.*</includeExclude>
+                    <scannedDependencies>
+                        <dependency>
+                            <groupId>com.atlassian.plugin</groupId>
+                            <artifactId>atlassian-spring-scanner-external-jar</artifactId>
+                        </dependency>
+                    </scannedDependencies>
+                    <verbose>false</verbose>
                 </configuration>
             </plugin>
             <plugin>
@@ -1057,6 +1089,20 @@
                             <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/confluence-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/confluence-schema-pretty.json</prettyOutput>
+                            <enumCase>insensitive</enumCase>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stash-schema</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>generate-schema</goal>
+                        </goals>
+                        <configuration>
+                            <generatorProvider>com.atlassian.plugin.connect.schema.StashSchemaGeneratorProvider</generatorProvider>
+                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
+                            <rawOutput>${project.build.outputDirectory}/schema/stash-schema.json</rawOutput>
+                            <prettyOutput>${project.build.outputDirectory}/schema/stash-schema-pretty.json</prettyOutput>
                             <enumCase>insensitive</enumCase>
                         </configuration>
                     </execution>

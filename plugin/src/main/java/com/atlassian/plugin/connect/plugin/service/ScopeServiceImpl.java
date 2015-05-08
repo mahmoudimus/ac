@@ -47,6 +47,11 @@ public class ScopeServiceImpl implements ScopeService
             return StaticAddOnScopes.buildForJira();
         }
 
+        if (lowerCaseDisplayName.contains("stash"))
+        {
+            return StaticAddOnScopes.buildForStash();
+        }
+
         throw new IllegalArgumentException(String.format("Application display name '%s' is not recognised as either Confluence or JIRA. Please set it to a value that when converted to lower case contains either 'confluence' or 'jira'.", applicationDisplayName));
     }
 }

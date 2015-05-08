@@ -564,6 +564,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.atlassian.stash</groupId>
+                <artifactId>stash-api</artifactId>
+                <version>${atlassian.stash.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
                 <version>1.3.9</version>
@@ -572,7 +578,7 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.4</version>
+                <version>${apache-commons-io-version}</version>
             </dependency>
             <!--Non-ancient version of Xerces for unit tests -->
             <dependency>
@@ -682,6 +688,7 @@
         <atlassian.rest.version>2.9.13</atlassian.rest.version>
         <atlassian.sal.version>2.10.0</atlassian.sal.version>
         <atlassian.selenium.version>2.2-rc3</atlassian.selenium.version>
+        <atlassian.stash.version>3.9.0-rc2</atlassian.stash.version>
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>
         <atlassian.connect-js.version>2.0.1</atlassian.connect-js.version>
         <atlassian.connect-js.path>git+ssh://git@stash.atlassian.com:7997/ac/atlassian-connect-js.git#${atlassian.connect-js.version}</atlassian.connect-js.path>
@@ -723,11 +730,12 @@
 
         <!-- BUILD STUFF -->
         <apache-commons-version>3.1</apache-commons-version>
+        <apache-commons-io-version>2.4</apache-commons-io-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
         <atlassian.upm.on.demand>false</atlassian.upm.on.demand>
         <buildNumber>SNAPSHOT</buildNumber>
-        <atlassian.spring.scanner.version>1.2.2</atlassian.spring.scanner.version>
+        <atlassian.spring.scanner.version>1.2.9</atlassian.spring.scanner.version>
         <ao.long.timeout>180000</ao.long.timeout>
         <ao.short.timeout>30000</ao.short.timeout>
         <skipTests>false</skipTests>

@@ -1,0 +1,13 @@
+<application key="stash">
+
+    <web-section key="admin.pages" name="Remotable Plugins" location="system.admin" weight="100">
+        <label>Remote Plugins</label>
+    </web-section>
+
+    <rest key="rest" path="/atlassian-connect" version="1">
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+        <package>com.atlassian.plugin.connect.plugin.rest</package>
+    </rest>
+
+</application>

@@ -11,6 +11,8 @@ import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.plugin.usermanagement.CrowdClientFacade;
 import com.atlassian.plugin.connect.plugin.util.FeatureManager;
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.message.Message;
 import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
@@ -28,7 +30,8 @@ import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUse
  * <em>synch.APPLICATION_NAME.atlassian-connect-user</em>
  */
 @ExportAsService
-@Component
+@ConfluenceComponent
+@JiraComponent
 public class ConnectAddOnUserAppSpecificAttributeUpgradeTask implements PluginUpgradeTask
 {
     public static final String OLD_ATTRIBUTE_APPLICATION_NAME = "crowd-embedded";

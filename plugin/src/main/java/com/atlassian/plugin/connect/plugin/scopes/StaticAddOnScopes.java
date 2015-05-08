@@ -46,6 +46,11 @@ public class StaticAddOnScopes
         return buildFor("jira", "jiraagile", "common", "tempo", "integration_test");
     }
 
+    public static Collection<AddOnScope> buildForStash() throws IOException
+    {
+        return buildFor("stash", "common");
+    }
+
     /**
      * Parse static resources into the {@link Collection} of {@link AddOnScope}s used to whitelist incoming {@link javax.servlet.http.HttpServletRequest}s.
      * For efficiency call this method sparingly, as repeated calls will all load scopes from file.

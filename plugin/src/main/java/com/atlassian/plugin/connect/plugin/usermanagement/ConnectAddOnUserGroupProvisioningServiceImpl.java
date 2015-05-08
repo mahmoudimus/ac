@@ -15,16 +15,18 @@ import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.group.GroupTemplate;
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @ExportAsDevService
-@Component
+@ConfluenceComponent
+@JiraComponent
 public class ConnectAddOnUserGroupProvisioningServiceImpl implements ConnectAddOnUserGroupProvisioningService
 {
     private static final String CROWD_APPLICATION_NAME = "crowd-embedded"; // magic knowledge
@@ -35,7 +37,7 @@ public class ConnectAddOnUserGroupProvisioningServiceImpl implements ConnectAddO
 
     @Inject
     public ConnectAddOnUserGroupProvisioningServiceImpl(ApplicationService applicationService,
-                                                        ApplicationManager applicationManager)
+            ApplicationManager applicationManager)
     {
         this.applicationService = checkNotNull(applicationService);
         this.applicationManager = checkNotNull(applicationManager);
