@@ -83,28 +83,41 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
     @Test
     public void testCreateWorkflowPostFunction()
     {
+        String clonedWorkflowName = "cloned";
+        product.backdoor().getTestkit().workflow().cloneWorkflow(JiraWorkflow.DEFAULT_WORKFLOW_NAME, clonedWorkflowName);
+
         login(testUserFactory.admin());
         setTextAsDefaultWorkflowViewMode();
 
-        ExtendedViewWorkflowTransitionPage viewWorkflowTransitionPage = copyOfDefaultWorkflowAndGoToFirstTransition();
+        ViewWorkflowSteps workflowStepsPage = product.visit(ViewWorkflowSteps.class, clonedWorkflowName);
+        ExtendedViewWorkflowTransitionPage viewWorkflowTransitionPage = (ExtendedViewWorkflowTransitionPage)goToFirstTransition(clonedWorkflowName, workflowStepsPage);
+
         AddWorkflowTransitionPostFunctionPage addTransitionPostFunctionPage = viewWorkflowTransitionPage.goToAddPostFunction();
+
         AddWorkflowTransitionFunctionParamsPage addTransitionPostFunctionParamsPage
                 = addTransitionPostFunctionPage.selectAndSubmitByName(WORKFLOW_POST_FUNCTION_NAME);
+
         viewWorkflowTransitionPage = (ExtendedViewWorkflowTransitionPage)addTransitionPostFunctionParamsPage.submit();
 
         JiraEditWorkflowTransitionFunctionParamsPage editTransitionFunctionParamsPage
                 = viewWorkflowTransitionPage.updateFirstPostFunction(addonKey, WORKFLOW_POST_FUNCTION_KEY);
         String workflowConfiguration = editTransitionFunctionParamsPage.getIframeQueryParams().get("config");
+
         assertEquals("workflow configuration text for post function", workflowConfiguration);
     }
 
     @Test
     public void testCreateInvalidWorkflowPostFunction()
     {
+        String clonedWorkflowName = "cloned2";
+        product.backdoor().getTestkit().workflow().cloneWorkflow(JiraWorkflow.DEFAULT_WORKFLOW_NAME, clonedWorkflowName);
+
         login(testUserFactory.admin());
         setTextAsDefaultWorkflowViewMode();
 
-        ExtendedViewWorkflowTransitionPage viewWorkflowTransitionPage = copyOfDefaultWorkflowAndGoToFirstTransition();
+        ViewWorkflowSteps workflowStepsPage = product.visit(ViewWorkflowSteps.class, clonedWorkflowName);
+        ExtendedViewWorkflowTransitionPage viewWorkflowTransitionPage = (ExtendedViewWorkflowTransitionPage)goToFirstTransition(clonedWorkflowName, workflowStepsPage);
+
         JiraEditWorkflowTransitionFunctionParamsPage addTransitionPostFunctionPage
                 = viewWorkflowTransitionPage.goToAddAddonPostFunction(
                 WORKFLOW_POST_FUNCTION_INVALID_NAME, addonKey, WORKFLOW_POST_FUNCTION_INVALID_KEY);
@@ -121,25 +134,10 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
                 testUserFactory.basicUser().getUsername());
     }
 
-    private ExtendedViewWorkflowTransitionPage copyOfDefaultWorkflowAndGoToFirstTransition()
-    {
-        String workflowName = RandomStringUtils.randomAlphanumeric(20);
-        WorkflowsPage workflowsPage = product.visit(WorkflowsPage.class);
-        ViewWorkflowSteps workflowStepsPage = copyDefaultWorkflow(workflowsPage, workflowName);
-        return (ExtendedViewWorkflowTransitionPage)goToFirstTransition(workflowName, workflowStepsPage);
-    }
-
     private void setTextAsDefaultWorkflowViewMode()
     {
         ViewWorkflowSteps workflowStepsPage = product.visit(ViewWorkflowSteps.class, JiraWorkflow.DEFAULT_WORKFLOW_NAME);
         workflowStepsPage.setCurrentViewMode(WorkflowHeader.WorkflowMode.TEXT);
-    }
-
-    private ViewWorkflowSteps copyDefaultWorkflow(WorkflowsPage workflowsPage, String workflowName)
-    {
-        CopyWorkflowDialog copyWorkflowDialog = workflowsPage.openCopyJiraDialog();
-        copyWorkflowDialog.setName(workflowName);
-        return copyWorkflowDialog.submit(WorkflowHeader.WorkflowMode.TEXT);
     }
 
     private ViewWorkflowTransitionPage goToFirstTransition(String workflowName, ViewWorkflowSteps workflowStepsPage)
