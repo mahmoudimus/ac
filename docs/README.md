@@ -69,6 +69,10 @@ To run the server, simply issue the following command:
 
 This will launch an HTTP server on <http://localhost:9000>.
 
+You may run into node-sass binding issues if you run this command with a version of node >= 0.12.0. To fix this issue, try this command from the docs/ directory:
+
+    npm rebuild node-sass
+
 ### Generating static docs
 
 You'll likely never need to do this locally since we'll probably be doing this during the builds, but if you do, it's simply:
