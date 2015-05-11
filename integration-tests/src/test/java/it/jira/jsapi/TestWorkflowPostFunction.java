@@ -83,11 +83,10 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
     @Test
     public void testCreateWorkflowPostFunction()
     {
-        String clonedWorkflowName = "cloned";
+        String clonedWorkflowName = RandomStringUtils.randomAlphabetic(10);
         product.backdoor().getTestkit().workflow().cloneWorkflow(JiraWorkflow.DEFAULT_WORKFLOW_NAME, clonedWorkflowName);
 
         login(testUserFactory.admin());
-        setTextAsDefaultWorkflowViewMode();
 
         ViewWorkflowSteps workflowStepsPage = product.visit(ViewWorkflowSteps.class, clonedWorkflowName);
         ExtendedViewWorkflowTransitionPage viewWorkflowTransitionPage = (ExtendedViewWorkflowTransitionPage)goToFirstTransition(clonedWorkflowName, workflowStepsPage);
@@ -109,11 +108,10 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
     @Test
     public void testCreateInvalidWorkflowPostFunction()
     {
-        String clonedWorkflowName = "cloned2";
+        String clonedWorkflowName = RandomStringUtils.randomAlphabetic(10);
         product.backdoor().getTestkit().workflow().cloneWorkflow(JiraWorkflow.DEFAULT_WORKFLOW_NAME, clonedWorkflowName);
 
         login(testUserFactory.admin());
-        setTextAsDefaultWorkflowViewMode();
 
         ViewWorkflowSteps workflowStepsPage = product.visit(ViewWorkflowSteps.class, clonedWorkflowName);
         ExtendedViewWorkflowTransitionPage viewWorkflowTransitionPage = (ExtendedViewWorkflowTransitionPage)goToFirstTransition(clonedWorkflowName, workflowStepsPage);
@@ -132,12 +130,6 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
         String projectKey = RandomStringUtils.randomAlphabetic(6).toUpperCase();
         product.backdoor().project().addProject(projectKey, projectKey,
                 testUserFactory.basicUser().getUsername());
-    }
-
-    private void setTextAsDefaultWorkflowViewMode()
-    {
-        ViewWorkflowSteps workflowStepsPage = product.visit(ViewWorkflowSteps.class, JiraWorkflow.DEFAULT_WORKFLOW_NAME);
-        workflowStepsPage.setCurrentViewMode(WorkflowHeader.WorkflowMode.TEXT);
     }
 
     private ViewWorkflowTransitionPage goToFirstTransition(String workflowName, ViewWorkflowSteps workflowStepsPage)
