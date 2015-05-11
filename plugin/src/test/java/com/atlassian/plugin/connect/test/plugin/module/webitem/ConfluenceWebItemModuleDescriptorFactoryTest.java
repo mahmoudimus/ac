@@ -84,7 +84,8 @@ public class ConfluenceWebItemModuleDescriptorFactoryTest
                 "myLinkId",
                 false,
                 product,
-                false);
+                false,
+                "section");
         
         descriptor.init(plugin, createElement());
         descriptor.enabled();

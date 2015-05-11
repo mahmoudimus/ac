@@ -12,12 +12,9 @@ import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderSt
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-import com.atlassian.uri.Uri;
-import com.atlassian.uri.UriBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,7 +27,6 @@ import static com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameSe
 public class DefaultWebItemModuleProvider implements WebItemModuleProvider
 {
     private static final String DEFAULT_DIALOG_DIMENSION = "100%"; // NB: the client (js) may size the parent of the iframe if the opening is done from JS
-    public static final String WEB_ITEM_SOURCE_QUERY_PARAM = "s";
 
     private final WebItemModuleDescriptorFactory webItemFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
@@ -76,7 +72,9 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
         }
         else
         {
-            String localUrl = getLocalUrl(connectAddonBean, bean);
+            String location = stripLeadingSlash(bean.getUrl());
+            String localUrl = ConnectIFrameServlet.iFrameServletPath(connectAddonBean.getKey(), location);
+
             WebItemModuleBean newBean = newWebItemBean(bean).withUrl(localUrl).build();
             descriptors.add(webItemFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, newBean));
         }
@@ -103,19 +101,10 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
         return descriptors;
     }
 
-    private String getLocalUrl(ConnectAddonBean connectAddonBean, WebItemModuleBean bean)
+    private String stripLeadingSlash(String location)
     {
-        String location = stripLeadingSlash(bean.getUrl());
-        String localUrl = ConnectIFrameServlet.iFrameServletPath(connectAddonBean.getKey(), location);
-
-        UriBuilder uriBuilder = new UriBuilder(Uri.fromJavaUri(URI.create(localUrl)));
-        uriBuilder.addQueryParameter(WEB_ITEM_SOURCE_QUERY_PARAM, bean.getKey(connectAddonBean));
-
-        return uriBuilder.toUri().toString();
-    }
-
-    private String stripLeadingSlash(String location) {
-        if(location.startsWith("/")) {
+        if (location.startsWith("/"))
+        {
             return location.substring(1);
         }
         return location;
