@@ -30,12 +30,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.servlet.http.HttpServletRequest;
-import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -185,16 +184,20 @@ public class WebItemModuleProviderTest
         assertThat(descriptor.getLink(), pointsTo(servletRequest, expectedUrl));
     }
 
-    private Matcher<? super WebLink> pointsTo(final HttpServletRequest servletRequest, final String url) {
-        return new TypeSafeMatcher<WebLink>() {
+    private Matcher<? super WebLink> pointsTo(final HttpServletRequest servletRequest, final String url)
+    {
+        return new TypeSafeMatcher<WebLink>()
+        {
             @Override
-            protected boolean matchesSafely(WebLink webLink) {
+            protected boolean matchesSafely(WebLink webLink)
+            {
                 String displayableUrl = webLink.getDisplayableUrl(servletRequest, Collections.<String, Object>emptyMap());
                 return displayableUrl.startsWith(url);
             }
 
             @Override
-            public void describeTo(Description description) {
+            public void describeTo(Description description)
+            {
                 description.appendText("weblink containing url starting with " + url);
             }
         };
