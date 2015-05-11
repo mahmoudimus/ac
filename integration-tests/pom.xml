@@ -829,5 +829,9 @@
 
     <properties>
         <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
+        <od.testing.configuration>
+            use-java,8
+            use-maven,3
+        </od.testing.configuration>
     </properties>
 </project>
