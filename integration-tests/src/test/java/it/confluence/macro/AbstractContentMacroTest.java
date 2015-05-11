@@ -41,7 +41,6 @@ import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBase
 {
-
     protected static final String DEFAULT_MACRO_URL = "/render-macro";
 
     protected static final String SIMPLE_MACRO_NAME = "Simple Macro";
@@ -76,8 +75,6 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
 
     protected static final String HIDDEN_MACRO_NAME = "Hidden Macro";
     protected static final String HIDDEN_MACRO_KEY = "hidden-macro";
-
-    protected ConfluenceRestClient restClient = new ConfluenceRestClient(getProduct(), testUserFactory.admin());
 
     @BeforeClass
     public static void setUpClass()
@@ -489,31 +486,9 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
 
     protected abstract String getAddonBaseUrl();
 
-    protected Content createPage(String title, String body)
-    {
-        Content content = Content.builder(ContentType.PAGE)
-                .space(TestSpace.DEMO.getKey())
-                .title(title)
-                .body(body, ContentRepresentation.STORAGE)
-                .build();
-        return restClient.content().create(content).claim();
-    }
-
     protected void addCommentWithMacro(String pageId) throws MalformedURLException, XmlRpcFault
     {
         String body = format("<div class=\"%1$s\"><ac:macro ac:name=\"%1$s\" /></div>", SIMPLE_MACRO_KEY);
         confluenceOps.addComment(some(testUserFactory.basicUser()), pageId, body);
-    }
-
-    protected void cancelEditor(EditorPage editorPage)
-    {
-        try
-        {
-            product.getPageBinder().bind(editorPage.getClass()).cancel();
-        }
-        catch (Throwable t)
-        {
-            LoggerFactory.getLogger(AbstractContentMacroTest.class).warn(t.getMessage());
-        }
     }
 }

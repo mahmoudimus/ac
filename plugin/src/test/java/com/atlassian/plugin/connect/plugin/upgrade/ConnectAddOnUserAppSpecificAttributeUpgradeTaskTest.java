@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.upgrade;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -62,13 +64,16 @@ public class ConnectAddOnUserAppSpecificAttributeUpgradeTaskTest
         when(featureManager.isOnDemand()).thenReturn(true);
         when(crowdClientFacade.getCrowdClient()).thenReturn(crowdClient);
         when(crowdClientFacade.getClientApplicationName()).thenReturn("the-app-name");
+        when(connectAddOnUsers.getAddonUsersToUpgradeForHostProduct()).thenReturn(Collections.<User>emptyList());
+        when(connectAddOnUsers.getAddonUsersToClean()).thenReturn(Collections.<User>emptyList());
         upgradeTask = new ConnectAddOnUserAppSpecificAttributeUpgradeTask(applicationService, connectAddOnUsers, addOnUserGroupProvisioningService, crowdClientFacade, featureManager);
     }
 
     @Test
     public void onlyUpdatesHostProductAddonUsers() throws Exception
     {
-        setupMockAddonUsers();
+        List<User> users = setupMockAddonUsers();
+        when(connectAddOnUsers.getAddonUsersToUpgradeForHostProduct()).thenReturn(users);
 
         upgradeTask.doUpgrade();
 
@@ -79,7 +84,8 @@ public class ConnectAddOnUserAppSpecificAttributeUpgradeTaskTest
     @Test
     public void updatesAttributeForRelevantApplication() throws Exception
     {
-        setupMockAddonUsers();
+        List<User> users = setupMockAddonUsers();
+        when(connectAddOnUsers.getAddonUsersToUpgradeForHostProduct()).thenReturn(users);
         upgradeTask.doUpgrade();
         verify(applicationService).storeUserAttributes(eq(application), anyString(), anyMap());
     }
@@ -88,7 +94,8 @@ public class ConnectAddOnUserAppSpecificAttributeUpgradeTaskTest
     @Test
     public void updatesAttributeForRelevantUser() throws Exception
     {
-        setupMockAddonUsers("addon_care", "addon_wanna.miss.a.tha-ang");
+        List<User> users = setupMockAddonUsers("addon_care", "addon_wanna.miss.a.tha-ang");
+        when(connectAddOnUsers.getAddonUsersToUpgradeForHostProduct()).thenReturn(users);
         upgradeTask.doUpgrade();
 
         verify(applicationService).storeUserAttributes(any(Application.class), eq("addon_care"), anyMap());
@@ -100,7 +107,8 @@ public class ConnectAddOnUserAppSpecificAttributeUpgradeTaskTest
     @Test (expected = Exception.class)
     public void validatesAddonUserName() throws Exception
     {
-        setupMockAddonUsers("you_give_addon_a.bad.name");
+        List<User> users = setupMockAddonUsers("you_give_addon_a.bad.name");
+        when(connectAddOnUsers.getAddonUsersToUpgradeForHostProduct()).thenReturn(users);
 
         upgradeTask.doUpgrade();
     }
@@ -120,7 +128,8 @@ public class ConnectAddOnUserAppSpecificAttributeUpgradeTaskTest
     @Test
     public void skipsRemoteUpdateForBTF() throws Exception
     {
-        setupMockAddonUsers("addon_care");
+        List<User> users = setupMockAddonUsers("addon_care");
+        when(connectAddOnUsers.getAddonUsersToUpgradeForHostProduct()).thenReturn(users);
         when(featureManager.isOnDemand()).thenReturn(false);
 
         upgradeTask.doUpgrade();
@@ -131,7 +140,8 @@ public class ConnectAddOnUserAppSpecificAttributeUpgradeTaskTest
     @Test
     public void namesAttributeBasedOnHostApplication() throws Exception
     {
-        setupMockAddonUsers();
+        List<User> users = setupMockAddonUsers();
+        when(connectAddOnUsers.getAddonUsersToUpgradeForHostProduct()).thenReturn(users);
 
         upgradeTask.doUpgrade();
 
@@ -142,15 +152,33 @@ public class ConnectAddOnUserAppSpecificAttributeUpgradeTaskTest
     @Test
     public void deletesOldAttribute() throws Exception
     {
-        setupMockAddonUsers("addon_mind");
+
+        List<User> users = setupMockAddonUsers("addon_mind", "addon_count");
+        when(connectAddOnUsers.getAddonUsersToClean()).thenReturn(users);
 
         upgradeTask.doUpgrade();
 
+        verify(connectAddOnUsers, atLeastOnce()).getAddonUsersToClean();
         verify(applicationService).removeUserAttributes(application, "addon_mind", "synch.crowd-embedded.atlassian-connect-user");
+        verify(applicationService).removeUserAttributes(application, "addon_count", "synch.crowd-embedded.atlassian-connect-user");
         verify(crowdClient).removeUserAttributes("addon_mind", "synch.crowd-embedded.atlassian-connect-user");
+        verify(crowdClient).removeUserAttributes("addon_count", "synch.crowd-embedded.atlassian-connect-user");
     }
 
-    private void setupMockAddonUsers(String... names)
+    @Test
+    public void skipsRemoteAttributeDeletionForBTF() throws Exception
+    {
+        List<User> users = setupMockAddonUsers("addon_mind", "addon_count");
+        when(connectAddOnUsers.getAddonUsersToClean()).thenReturn(users);
+        when(featureManager.isOnDemand()).thenReturn(false);
+
+        upgradeTask.doUpgrade();
+
+        verify(applicationService).removeUserAttributes(application, "addon_count", "synch.crowd-embedded.atlassian-connect-user");
+        verify(crowdClient, never()).removeUserAttributes(anyString(), anyString());
+    }
+
+    private List<User> setupMockAddonUsers(String... names)
             throws ApplicationNotFoundException
     {
         String userNames[] = (names.length > 0) ? names : new String[] { "addon_default" };
@@ -164,7 +192,7 @@ public class ConnectAddOnUserAppSpecificAttributeUpgradeTaskTest
             users.add(mockUser);
         }
 
-        when(connectAddOnUsers.getAddonUsersToUpgradeForHostProduct()).thenReturn(users);
+        return users;
     }
 
     @SuppressWarnings ("unchecked")

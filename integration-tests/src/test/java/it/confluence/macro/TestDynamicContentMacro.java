@@ -24,6 +24,7 @@ import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
 import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
 import it.confluence.MacroStorageFormatBuilder;
 import it.servlet.ConnectAppServlets;
+import it.servlet.InstallHandlerServlet;
 import org.apache.commons.io.IOUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -79,6 +80,9 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
+        final InstallHandlerServlet installHandlerServlet = new InstallHandlerServlet();
+        String addonKey = AddonTestUtils.randomAddOnKey();
+
         DynamicContentMacroModuleBean simpleMacro = createSimpleMacro(newDynamicContentMacroModuleBean());
         DynamicContentMacroModuleBean allParameterTypesMacro = createAllParametersMacro(newDynamicContentMacroModuleBean());
         DynamicContentMacroModuleBean featuredMacro = createFeaturedMacro(newDynamicContentMacroModuleBean());
@@ -154,8 +158,8 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                 )
                 .build();
 
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
-
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), addonKey)
+                .addJWT(installHandlerServlet)
                 .setAuthenticationToNone()
                 .addScope(ScopeName.ADMIN) // for using ap.request
                 .addModules("dynamicContentMacros",

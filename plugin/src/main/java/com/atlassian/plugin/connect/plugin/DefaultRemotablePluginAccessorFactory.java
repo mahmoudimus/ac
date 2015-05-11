@@ -14,7 +14,6 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
-import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;

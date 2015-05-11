@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.WorkflowPostFunctionResource;
+import com.atlassian.plugin.connect.jira.capabilities.provider.WorkflowPostFunctionResource;
 import com.atlassian.plugin.web.Condition;
 
 

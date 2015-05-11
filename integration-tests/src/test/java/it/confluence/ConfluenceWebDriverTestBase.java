@@ -1,5 +1,8 @@
 package it.confluence;
 
+import com.atlassian.confluence.api.model.content.Content;
+import com.atlassian.confluence.api.model.content.ContentRepresentation;
+import com.atlassian.confluence.api.model.content.ContentType;
 import com.atlassian.confluence.it.Space;
 import com.atlassian.confluence.it.maven.MavenDependencyHelper;
 import com.atlassian.confluence.it.maven.MavenUploadablePlugin;
@@ -17,6 +20,7 @@ import com.atlassian.confluence.pageobjects.component.editor.EditorContent;
 import com.atlassian.confluence.pageobjects.component.editor.toolbars.InsertDropdownMenu;
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
+import com.atlassian.confluence.pageobjects.page.content.EditorPage;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.pageobjects.page.HomePage;
@@ -39,6 +43,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.util.concurrent.Callable;
@@ -53,15 +58,13 @@ import java.util.concurrent.Callable;
 public class ConfluenceWebDriverTestBase
 {
     protected static final ConfluenceTestedProduct product = TestedProductProvider.getConfluenceTestedProduct();
-
     protected static final ConfluenceRpc rpc = ConfluenceRpc.newInstance(product.getProductInstance().getBaseUrl(), ConfluenceRpc.Version.V2_WITH_WIKI_MARKUP);
-
     protected static ConnectTestUserFactory testUserFactory;
-
     protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(
             product.getPageBinder(), product.getTester().getDriver());
 
     private boolean hasBeenFocused;
+    protected ConfluenceRestClient restClient = new ConfluenceRestClient(getProduct(), testUserFactory.admin());
 
     public static class TestSpace
     {
@@ -311,4 +314,27 @@ public class ConfluenceWebDriverTestBase
             rpc.revokeAnonymousUsePermission();
         }
     }
+
+    protected void cancelEditor(EditorPage editorPage)
+    {
+        try
+        {
+            product.getPageBinder().bind(editorPage.getClass()).cancel();
+        }
+        catch (Throwable t)
+        {
+            LoggerFactory.getLogger(ConfluenceWebDriverTestBase.class).warn(t.getMessage());
+        }
+    }
+
+    protected Content createPage(String title, String storageFormat)
+    {
+        Content content = Content.builder(ContentType.PAGE)
+                .space(TestSpace.DEMO.getKey())
+                .title(title)
+                .body(storageFormat, ContentRepresentation.STORAGE)
+                .build();
+        return restClient.content().create(content).claim();
+    }
+
 }

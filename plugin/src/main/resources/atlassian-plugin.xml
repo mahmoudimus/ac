@@ -7,7 +7,7 @@
 
     <resource type="i18n" name="i18n" location="com.atlassian.connect.i18n"/>
 
-    <health-check key="addonsGroupHealthCheck" name="Add-on Group Health Check" class="com.atlassian.plugin.connect.healthcheck.AtlassianAddonsGroupHealthCheck" />
+    <health-check key="addonsGroupHealthCheck" name="Add-on Group Health Check" class="com.atlassian.plugin.connect.plugin.AtlassianAddonsGroupHealthCheck" />
 
     <servlet-filter key="iframe-resources" class="com.atlassian.plugin.connect.plugin.iframe.StaticResourcesFilter"
                     location="after-encoding">
@@ -17,11 +17,6 @@
     <servlet-filter key="schema-resources" class="com.atlassian.plugin.connect.plugin.capabilities.schema.SchemaFilter"
                     location="after-encoding" weight="90">
         <url-pattern>/atlassian-connect/schema/*</url-pattern>
-    </servlet-filter>
-
-    <servlet-filter key="documentation-filter" class="com.atlassian.plugin.connect.plugin.docs.DocumentationFilter"
-                    location="after-encoding" weight="90">
-        <url-pattern>/atlassian-connect/docs*</url-pattern>
     </servlet-filter>
 
     <!-- the 3LA filter needs to run after the JWT filter (to read attributes on the request) and before the ApiScopingFilter (to set the principal) -->
@@ -80,11 +75,6 @@
 
     <web-panel key="connect-dialog-options" location="atl.header" class="com.atlassian.plugin.connect.plugin.dialog.DialogOptionsWebPanel"/>
 
-    <!-- docs are built and copied into target/classes/docs during the prepare-package phase -->
-    <web-resource key="docs">
-        <resource type="download" name="docs/" location="docs" />
-    </web-resource>
-
     <web-resource key="iframe-host-css">
         <resource type="download" name="core-host.css" location="/css/core/host-css.css" />
         <resource type="download" name="host.css" location="/css/iframe/host.css" />
@@ -107,9 +97,9 @@
     </web-resource>
 
     <applinks-application-type name="Remote Plugin Container" key="remote-plugin-container-type"
-                                   class="com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerApplicationTypeImpl"
+                                   class="com.atlassian.plugin.connect.plugin.applinks.RemotePluginContainerApplicationTypeImpl"
                                    interface="com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType">
-            <manifest-producer class="com.atlassian.plugin.connect.plugin.module.applinks.RemotePluginContainerManifestProducer"/>
+            <manifest-producer class="com.atlassian.plugin.connect.plugin.applinks.RemotePluginContainerManifestProducer"/>
     </applinks-application-type>
 
     <analytics-whitelist key="analyticsWhitelist" resource="whitelist/connect_whitelist.json"/>

@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.event;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
-import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserDisableException;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitException;
 import com.atlassian.plugin.event.PluginEventListener;

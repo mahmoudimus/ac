@@ -27,7 +27,7 @@ public class RemoteDialogOpeningPage extends AbstractConnectIFrameComponent<Remo
 {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private  static final int REMOTE_DIALOG_WAIT_MS = 20000;
+    private  static final int REMOTE_DIALOG_WAIT_MS = 50000;
 
     @Inject
     protected AtlassianWebDriver driver;

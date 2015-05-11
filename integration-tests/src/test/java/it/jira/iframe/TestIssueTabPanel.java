@@ -3,7 +3,7 @@ package it.jira.iframe;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
+import com.atlassian.plugin.connect.jira.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
