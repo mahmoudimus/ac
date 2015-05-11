@@ -11,11 +11,13 @@
       return text;
   }
 
-  function insertIframeContent(iframe, clientCode){
+  function insertIframeContent(iframe, clientCode) {
       var script = iframe[0].contentWindow.document.createElement("script");
       script.type = "text/javascript";
       script.innerHTML = clientCode;
-      iframe[0].contentWindow.document.body.appendChild(script);
+      $(iframe).load(function () {
+          this.contentWindow.document.body.appendChild(script);
+      });
   }
 
   function createConnectIframe(appendTo, clientCode){
