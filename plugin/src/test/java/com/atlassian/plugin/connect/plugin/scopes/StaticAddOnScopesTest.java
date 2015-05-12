@@ -1,12 +1,14 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.spi.scope.AddOnScope;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.Is;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,25 +35,30 @@ public class StaticAddOnScopesTest
     @Test(expected = IllegalArgumentException.class)
     public void dereferencingANullScopeReferenceResultsInException() throws IOException
     {
-        StaticAddOnScopes.dereference(getTestScopes(), asList((ScopeName)null));
+        StaticAddOnScopes.dereference(getTestScopes(), asList((ScopeName) null));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void readingABadResourceNameResultsInException() throws IOException
     {
-        StaticAddOnScopes.buildFor("bad_name");
+        StaticAddOnScopes.buildFor(resourceLocation("bad_name"));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void scopesWithDuplicateKeysResultsInAnException() throws IOException
     {
-        List<AddOnScope> scopes = new ArrayList<AddOnScope>(getTestScopes());
+        List<AddOnScope> scopes = new ArrayList<>(getTestScopes());
         scopes.addAll(getTestScopes());
         StaticAddOnScopes.dereference(scopes, asList(ScopeName.READ));
     }
 
     private Collection<AddOnScope> getTestScopes() throws IOException
     {
-        return StaticAddOnScopes.buildFor("test");
+        return StaticAddOnScopes.buildFor(resourceLocation("test"));
+    }
+
+    private static URL resourceLocation(String product)
+    {
+        return StaticAddOnScopesTest.class.getResource("/com/atlassian/connect/scopes." + product + ".json");
     }
 }

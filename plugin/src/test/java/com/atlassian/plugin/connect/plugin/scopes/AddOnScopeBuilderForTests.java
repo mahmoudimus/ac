@@ -1,7 +1,9 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.spi.scope.RestApiScopeHelper;
+import com.atlassian.plugin.connect.spi.scope.AddOnScope;
+import com.atlassian.plugin.connect.spi.scope.AddOnScopeApiPath;
+import com.atlassian.plugin.connect.spi.scope.helper.RestApiScopeHelper;
 import org.hamcrest.Matcher;
 
 import java.util.Collection;

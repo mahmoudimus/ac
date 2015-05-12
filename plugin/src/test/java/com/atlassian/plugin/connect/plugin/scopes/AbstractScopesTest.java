@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.scopes;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.spi.scope.ProductScopeProvider;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
@@ -9,7 +10,6 @@ import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
 import com.atlassian.plugin.connect.plugin.service.ScopeServiceImpl;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
-import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.collect.Sets;
 import org.apache.commons.io.IOUtils;
@@ -44,10 +44,10 @@ public abstract class AbstractScopesTest
     private final String requestBody;
     private final boolean expectedOutcome;
     private final String contextPath;
-    private final String productName;
 
+    private final ProductScopeProvider scopeProvider;
 
-    public AbstractScopesTest(ScopeName scope, HttpMethod method, String path, String requestBody, boolean expectedOutcome, String contextPath, String productName)
+    public AbstractScopesTest(ScopeName scope, HttpMethod method, String path, String requestBody, boolean expectedOutcome, String contextPath, ProductScopeProvider scopeProvider)
     {
         this.scope = scope;
         this.method = method;
@@ -55,7 +55,7 @@ public abstract class AbstractScopesTest
         this.requestBody = requestBody;
         this.expectedOutcome = expectedOutcome;
         this.contextPath = contextPath;
-        this.productName = productName;
+        this.scopeProvider = scopeProvider;
     }
 
     @Before
@@ -77,10 +77,7 @@ public abstract class AbstractScopesTest
         JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService = mock(JsonConnectAddOnIdentifierService.class);
         when(jsonConnectAddOnIdentifierService.isConnectAddOn(PLUGIN_KEY)).thenReturn(true);
 
-        ApplicationProperties applicationProperties = mock(ApplicationProperties.class);
-        when(applicationProperties.getDisplayName()).thenReturn(productName);
-
-        ScopeService scopeService = new ScopeServiceImpl(applicationProperties);
+        ScopeService scopeService = new ScopeServiceImpl(scopeProvider);
 
         Set<ScopeName> scopeSet = (null == scope) ? Sets.<ScopeName>newHashSet() : Sets.newHashSet(scope);
         ConnectAddonBean addon = ConnectAddonBean.newConnectAddonBean()

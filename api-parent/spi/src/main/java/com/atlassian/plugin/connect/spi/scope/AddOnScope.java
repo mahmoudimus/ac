@@ -1,8 +1,6 @@
-package com.atlassian.plugin.connect.plugin.scopes;
+package com.atlassian.plugin.connect.spi.scope;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.spi.scope.ApiResourceInfo;
-import com.atlassian.plugin.connect.spi.scope.ApiScope;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;

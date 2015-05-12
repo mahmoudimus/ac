@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.jira.scopes;
 
+import com.atlassian.plugin.connect.jira.scope.JiraScopeProvider;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.plugin.scopes.AbstractScopesTest;
@@ -86,7 +87,7 @@ public class JiraAgileRestScopesTest extends AbstractScopesTest
 
     public JiraAgileRestScopesTest(ScopeName scope, HttpMethod method, String path, boolean expectedOutcome)
     {
-        super(scope, method, path, "", expectedOutcome, "/jira", "JIRA");
+        super(scope, method, path, "", expectedOutcome, "/jira", new JiraScopeProvider());
     }
 
 }
