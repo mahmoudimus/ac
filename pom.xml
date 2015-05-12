@@ -784,6 +784,7 @@
         <npm.version>1.4.3</npm.version>
         <blueprints.version>4.0.22</blueprints.version>
         <skipNpm>false</skipNpm>
+        <javadoc.additional.params></javadoc.additional.params>
     </properties>
 
     <repositories>
