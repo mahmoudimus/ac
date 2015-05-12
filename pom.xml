@@ -54,6 +54,12 @@
         </profile>
     </profiles>
 
+    <scm>
+        <connection>scm:git:ssh://git@stash.atlassian.com:7997/ac/atlassian-connect.git</connection>
+        <developerConnection>scm:git:ssh://git@stash.atlassian.com:7997/ac/atlassian-connect.git</developerConnection>
+        <url>http://stash.atlassian.com/projects/ac/repos/atlassian-connect</url>
+    </scm>
+
     <build>
         <finalName>${project.artifactId}</finalName>
         <pluginManagement>
