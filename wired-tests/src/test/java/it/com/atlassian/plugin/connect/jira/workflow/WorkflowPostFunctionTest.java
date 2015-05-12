@@ -65,7 +65,7 @@ public class WorkflowPostFunctionTest
     private final JiraAuthenticationContext authenticationContext;
     private final AddonTestFilterResults testFilterResults;
     private final WorkflowImporter workflowImporter;
-    private final JiraTestUtil scopeTestUtil;
+    private final JiraTestUtil jiraTestUtil;
 
     private Plugin plugin;
     private JiraWorkflow workflow;
@@ -77,7 +77,7 @@ public class WorkflowPostFunctionTest
                                     JiraAuthenticationContext authenticationContext,
                                     AddonTestFilterResults testFilterResults,
                                     WorkflowImporter workflowImporter,
-                                    JiraTestUtil scopeTestUtil)
+                                    JiraTestUtil jiraTestUtil)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
@@ -86,7 +86,7 @@ public class WorkflowPostFunctionTest
         this.authenticationContext = authenticationContext;
         this.testFilterResults = testFilterResults;
         this.workflowImporter = workflowImporter;
-        this.scopeTestUtil = scopeTestUtil;
+        this.jiraTestUtil = jiraTestUtil;
     }
 
     @BeforeClass
@@ -179,7 +179,7 @@ public class WorkflowPostFunctionTest
 
     private ServletRequestSnapshot triggerWorkflowTransition() throws CreateException, IOException
     {
-        MutableIssue issue = issueManager.getIssueObject(scopeTestUtil.createIssue().getId());
+        MutableIssue issue = issueManager.getIssueObject(jiraTestUtil.createIssue().getId());
         workflowManager.migrateIssueToWorkflow(issue, workflow, issue.getStatusObject());
         WorkflowTransitionUtilImpl workflowTransition = new WorkflowTransitionUtilImpl(
                 authenticationContext,
