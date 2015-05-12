@@ -608,7 +608,7 @@
                             com.github.fge.jsonschema.processors.*;version="${json.schema.validator.version}",
                             com.github.fge.msgsimple*;version="1.1.2-atlassian",
                             com.github.fge.msgsimple.*;version="1.1.2-atlassian",
-                            org.apache.commons.io*;version="${apache-commons-io-version}",
+                            org.apache.commons.io*,
                             *;resolution:=optional
                         </Import-Package>
                         <Export-Package>
