@@ -762,6 +762,46 @@
                                     <version>${project.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
+                        </product>
+                        <product>
+                            <id>stash</id>
+                            <version>${atlassian.stash.version}</version>
+                            <systemPropertyVariables>
+                                <product>stash</product>
+                                <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
+                            </systemPropertyVariables>
+                            <pluginArtifacts>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.labs.plugins</groupId>
+                                    <artifactId>quickreload</artifactId>
+                                    <version>${quickreload.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.webhooks</groupId>
+                                    <artifactId>atlassian-webhooks-plugin</artifactId>
+                                    <version>${atlassian.webhooks.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.httpclient</groupId>
+                                    <artifactId>atlassian-httpclient-plugin</artifactId>
+                                    <version>${atlassian.httpclient.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.jwt</groupId>
+                                    <artifactId>jwt-plugin</artifactId>
+                                    <version>${atlassian.jwt.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <artifactId>json-schema-validator-atlassian-bundle</artifactId>
+                                    <groupId>com.atlassian.bundles</groupId>
+                                    <version>${atlassian.json.schema.validator.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>atlassian-connect-test-support-plugin</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
+                            </pluginArtifacts>
 
                             <bundledArtifacts>
                                 <bundledArtifact>

@@ -54,17 +54,18 @@ public class StashWebItemModuleDescriptorFactory implements ProductSpecificWebIt
 
     private static final class RemoteStashWebItemModuleDescriptor extends DefaultWebItemModuleDescriptor
     {
-        private final WebFragmentHelper webFragmentHelper;
-        private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
-        private final UrlVariableSubstitutor urlVariableSubstitutor;
-        private final PluggableParametersExtractor webFragmentModuleContextExtractor;
-        private final ModuleContextFilter moduleContextFilter;
-        private final String url;
-        private final String pluginKey;
-        private final String moduleKey;
-        private boolean absolute;
         private final AddOnUrlContext addOnUrlContext;
-        private final boolean isDialog;
+        private final boolean dialog;
+        private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
+        private final ModuleContextFilter moduleContextFilter;
+        private final String moduleKey;
+        private final String pluginKey;
+        private final String url;
+        private final UrlVariableSubstitutor urlVariableSubstitutor;
+        private final WebFragmentHelper webFragmentHelper;
+        private final PluggableParametersExtractor webFragmentModuleContextExtractor;
+
+        private boolean absolute;
 
         public RemoteStashWebItemModuleDescriptor(
                 WebInterfaceManager webInterfaceManager,
@@ -76,20 +77,21 @@ public class StashWebItemModuleDescriptorFactory implements ProductSpecificWebIt
                 String url,
                 String pluginKey,
                 String moduleKey,
-                boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog)
+                boolean absolute, AddOnUrlContext addOnUrlContext, boolean dialog)
         {
             super(webInterfaceManager);
-            this.webFragmentHelper = webFragmentHelper;
-            this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
-            this.urlVariableSubstitutor = urlVariableSubstitutor;
-            this.webFragmentModuleContextExtractor = webFragmentModuleContextExtractor;
-            this.moduleContextFilter = moduleContextFilter;
-            this.url = url;
-            this.pluginKey = pluginKey;
-            this.moduleKey = moduleKey;
+
             this.absolute = absolute;
             this.addOnUrlContext = addOnUrlContext;
-            this.isDialog = isDialog;
+            this.dialog = dialog;
+            this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
+            this.moduleKey = moduleKey;
+            this.moduleContextFilter = moduleContextFilter;
+            this.pluginKey = pluginKey;
+            this.url = url;
+            this.urlVariableSubstitutor = urlVariableSubstitutor;
+            this.webFragmentHelper = webFragmentHelper;
+            this.webFragmentModuleContextExtractor = webFragmentModuleContextExtractor;
         }
 
         @Override
@@ -97,13 +99,12 @@ public class StashWebItemModuleDescriptorFactory implements ProductSpecificWebIt
         {
             return new RemoteWebLink(this, webFragmentHelper, iFrameUriBuilderFactory,
                     urlVariableSubstitutor, webFragmentModuleContextExtractor, moduleContextFilter, url, pluginKey,
-                    moduleKey, absolute, addOnUrlContext, isDialog);
+                    moduleKey, absolute, addOnUrlContext, dialog);
         }
 
         @Override
         public void destroy()
         {
-            //To change body of implemented methods use File | Settings | File Templates.
         }
     }
 

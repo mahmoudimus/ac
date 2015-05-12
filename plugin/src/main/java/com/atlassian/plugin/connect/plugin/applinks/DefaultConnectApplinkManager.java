@@ -21,6 +21,7 @@ import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.StashComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
@@ -41,6 +42,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 @ExportAsDevService
 @JiraComponent // Confluence is handled separately in FixedConfluenceApplinkManager
+@StashComponent
 public class DefaultConnectApplinkManager implements ConnectApplinkManager
 {
     public static final String PLUGIN_KEY_PROPERTY = JwtConstants.AppLinks.ADD_ON_ID_PROPERTY_NAME;

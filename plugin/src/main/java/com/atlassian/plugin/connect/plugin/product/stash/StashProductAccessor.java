@@ -3,20 +3,30 @@ package com.atlassian.plugin.connect.plugin.product.stash;
 import java.util.Map;
 
 import com.atlassian.extras.api.ProductLicense;
+import com.atlassian.extras.api.stash.StashLicense;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.StashComponent;
 import com.atlassian.plugin.web.Condition;
 
+import com.atlassian.stash.license.LicenseService;
 import com.google.common.collect.ImmutableMap;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @StashComponent
 public class StashProductAccessor implements ProductAccessor
 {
+    private final LicenseService licenseService;
+
+    @Autowired
+    public StashProductAccessor(LicenseService licenseService) {
+        this.licenseService = licenseService;
+    }
+
     @Override
     public Map<String, Class<? extends Condition>> getConditions()
     {
-        return null;
+        return ImmutableMap.of();
     }
 
     @Override
@@ -34,13 +44,13 @@ public class StashProductAccessor implements ProductAccessor
     @Override
     public String getPreferredAdminSectionKey()
     {
-        return "system.admin/marketplace_stash";
+        return "atl.admin/admin-plugins-section";
     }
 
     @Override
     public int getPreferredAdminWeight()
     {
-        return 100;
+        return 1000;
     }
 
     @Override
@@ -52,25 +62,25 @@ public class StashProductAccessor implements ProductAccessor
     @Override
     public String getPreferredGeneralSectionKey()
     {
-        return "some.sections";
+        return "header.global.primary";
     }
 
     @Override
     public int getPreferredProfileWeight()
     {
-        return 100;
+        return 1000;
     }
 
     @Override
     public String getPreferredProfileSectionKey()
     {
-        return "some.profile";
+        return "stash.user.profile.secondary.tabs";
     }
 
     @Override
     public Option<ProductLicense> getProductLicense()
     {
-        return Option.none();
+        return Option.<ProductLicense>option(licenseService.get());
     }
 
     @Override

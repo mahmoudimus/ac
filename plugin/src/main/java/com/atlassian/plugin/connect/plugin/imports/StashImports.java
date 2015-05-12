@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import com.atlassian.plugin.spring.scanner.annotation.component.StashComponent;
 import com.atlassian.plugin.spring.scanner.annotation.imports.StashImport;
 import com.atlassian.plugin.web.WebFragmentHelper;
+import com.atlassian.stash.license.LicenseService;
 import com.atlassian.stash.user.PermissionService;
 import com.atlassian.stash.user.StashAuthenticationContext;
 import com.atlassian.stash.user.UserAdminService;
@@ -20,6 +21,7 @@ public class StashImports
 {
     @Inject
     public StashImports(
+            @StashImport LicenseService licenseService,
             @StashImport StashAuthenticationContext stashAuthenticationContext,
             @StashImport PermissionService permissionService,
             @StashImport UserAdminService userAdminService,

@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class StashModuleContextFilter extends AbstractModuleContextFilter<StashUser>
 {
     public static final String PROJECT_ID = "project.id";
+    public static final String PROJECT_KEY = "projectKey";
     public static final String REPOSITORY_ID = "repository.id";
 
     private final StashAuthenticationContext authenticationContext;
