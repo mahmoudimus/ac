@@ -12,20 +12,24 @@
   }
 
   function insertIframeContent(iframe, clientCode) {
-      var script = iframe[0].contentWindow.document.createElement("script");
+      var script = iframe.contentWindow.document.createElement("script");
       script.type = "text/javascript";
       script.innerHTML = clientCode;
-      $(iframe).load(function () {
-          this.contentWindow.document.body.appendChild(script);
-      });
+      iframe.contentWindow.document.body.appendChild(script);
   }
 
   function createConnectIframe(appendTo, clientCode){
-      var baseUrl = window.location.origin + contextPath();
+      var baseUrl = window.location.origin + contextPath(),
       addonKey = 'addon-key' + makeid(),
       moduleKey = 'module-key' + makeid(),
       container = $('<div />').attr('id', 'embedded-' + addonKey + '__' + moduleKey).addClass('iframecontainer');
       appendTo.append(container);
+
+      appendTo.on('ra.iframe.create', 'iframe', function () {
+          $(this).load(function () {
+              insertIframeContent(this,clientCode);
+          });
+      });
 
       _AP.create({
           ns: addonKey + '__' + moduleKey,
@@ -40,13 +44,6 @@
           data: {},
           "timeZone":"Europe/London"
       });
-
-      // set a safe time for knowing when the iframe might have been appended to the dom.
-      setTimeout(function(){
-        var iframe = appendTo.find('iframe');
-        insertIframeContent(iframe, clientCode);
-      }, 300);
-
   }
 
   function removeConnectIframes(){
