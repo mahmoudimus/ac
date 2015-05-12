@@ -13,6 +13,7 @@ import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
+import it.com.atlassian.plugin.connect.jira.util.JiraTestUtil;
 import it.com.atlassian.plugin.connect.plugin.scopes.ScopeTestBase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,14 +25,14 @@ import java.security.NoSuchAlgorithmException;
 @RunWith (AtlassianPluginsTestRunner.class)
 public class DeleteScopeJiraTest extends ScopeTestBase
 {
-    private final JiraScopeTestUtil scopeTestUtil;
+    private final JiraTestUtil scopeTestUtil;
 
     public DeleteScopeJiraTest(TestPluginInstaller testPluginInstaller,
             TestAuthenticator testAuthenticator,
             JwtWriterFactory jwtWriterFactory,
             ConnectAddonRegistry connectAddonRegistry,
             ApplicationProperties applicationProperties,
-            JiraScopeTestUtil scopeTestUtil)
+            JiraTestUtil scopeTestUtil)
     {
         super(ScopeName.DELETE, testPluginInstaller, testAuthenticator, jwtWriterFactory, connectAddonRegistry, applicationProperties);
         this.scopeTestUtil = scopeTestUtil;

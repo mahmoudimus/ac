@@ -1,6 +1,4 @@
-package it.com.atlassian.plugin.connect.jira.scopes;
-
-import java.io.IOException;
+package it.com.atlassian.plugin.connect.jira.util;
 
 import com.atlassian.jira.bc.issue.IssueService;
 import com.atlassian.jira.bc.issue.comment.CommentService;
@@ -10,20 +8,21 @@ import com.atlassian.jira.compatibility.bridge.project.ProjectCreationData;
 import com.atlassian.jira.compatibility.bridge.project.ProjectServiceBridge;
 import com.atlassian.jira.entity.property.EntityProperty;
 import com.atlassian.jira.entity.property.EntityPropertyService;
+import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.comments.Comment;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
-
 import com.google.common.collect.ImmutableMap;
-
 import org.apache.commons.lang3.RandomStringUtils;
+
+import java.io.IOException;
 
 import static org.junit.Assert.assertTrue;
 
-public class JiraScopeTestUtil
+public class JiraTestUtil
 {
     public static final String ADMIN_USERNAME = "admin";
 
@@ -34,12 +33,12 @@ public class JiraScopeTestUtil
     private final CommentPropertyService commentPropertyService;
     private final IssueService issueService;
 
-    public JiraScopeTestUtil(final UserManager userManager,
-            final ProjectService projectService,
-            final ProjectServiceBridge projectServiceBridge,
-            final CommentService commentService,
-            final CommentPropertyService commentPropertyService,
-            final IssueService issueService)
+    public JiraTestUtil(final UserManager userManager,
+                        final ProjectService projectService,
+                        final ProjectServiceBridge projectServiceBridge,
+                        final CommentService commentService,
+                        final CommentPropertyService commentPropertyService,
+                        final IssueService issueService)
     {
         this.userManager = userManager;
         this.projectService = projectService;
@@ -68,7 +67,7 @@ public class JiraScopeTestUtil
 
     public ApplicationUser getAdmin() {return userManager.getUserByKey(ADMIN_USERNAME);}
 
-    public Comment createComment() throws JSONException, IOException
+    public Issue createIssue() throws IOException
     {
         final ApplicationUser admin = getAdmin();
 
@@ -76,13 +75,23 @@ public class JiraScopeTestUtil
 
         IssueService.IssueResult issueResult = issueService.create(admin, issueService.validateCreate(admin, issueService.newIssueInputParameters()
                 .setIssueTypeId("1")
+                .setReporterId(admin.getKey())
                 .setAssigneeId(admin.getKey())
                 .setDescription("Description")
                 .setProjectId(project.getId())
                 .setSummary("Summary")));
 
+        return issueResult.getIssue();
+    }
+
+    public Comment createComment() throws JSONException, IOException
+    {
+        final ApplicationUser admin = getAdmin();
+
+        Issue issue = createIssue();
+
         final CommentService.CommentCreateValidationResult validationResult = commentService.validateCommentCreate(admin, CommentService.CommentParameters.builder()
-                .issue(issueResult.getIssue())
+                .issue(issue)
                 .body("comment")
                 .build());
 
