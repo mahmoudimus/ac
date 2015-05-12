@@ -72,8 +72,7 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
         }
         else
         {
-            String location = stripLeadingSlash(bean.getUrl());
-            String localUrl = ConnectIFrameServlet.iFrameServletPath(connectAddonBean.getKey(), location);
+            String localUrl = ConnectIFrameServlet.iFrameServletPath(connectAddonBean.getKey(), bean.getUrl());
 
             WebItemModuleBean newBean = newWebItemBean(bean).withUrl(localUrl).build();
             descriptors.add(webItemFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, newBean));
@@ -99,14 +98,5 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
         }
 
         return descriptors;
-    }
-
-    private String stripLeadingSlash(String location)
-    {
-        if (location.startsWith("/"))
-        {
-            return location.substring(1);
-        }
-        return location;
     }
 }
