@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 @RunWith (AtlassianPluginsTestRunner.class)
 public class ConfluenceWebItemModuleProviderTest extends AbstractConnectAddonTest
 {
-    public static final String SPACE_KEY = "TS";
+    public static final String SPACE_KEY = "ds";
 
     public ConfluenceWebItemModuleProviderTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
     {
@@ -34,10 +34,9 @@ public class ConfluenceWebItemModuleProviderTest extends AbstractConnectAddonTes
     @Test
     public void singleAddonLinkWithReplacement() throws Exception
     {
-
         WebItemModuleDescriptor descriptor = registerWebItem("mySpace={space.key}", "atl.admin/menu");
 
-        Map<String, Object> context = new HashMap<String, Object>();
+        Map<String, Object> context = new HashMap<>();
         Page page = mock(Page.class);
         Space space = mock(Space.class);
         WebInterfaceContext wic = mock(WebInterfaceContext.class);
@@ -54,6 +53,5 @@ public class ConfluenceWebItemModuleProviderTest extends AbstractConnectAddonTes
 
         assertTrue("wrong url prefix. expected: " + BASE_URL + "/my/addon but got: " + convertedUrl, convertedUrl.startsWith(BASE_URL + "/my/addon"));
         assertTrue("space key not found in: " + convertedUrl, convertedUrl.contains("mySpace=" + SPACE_KEY));
-
     }
 }
