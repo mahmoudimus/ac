@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <artifactId>atlassian-public-pom</artifactId>
         <groupId>com.atlassian.pom</groupId>
-        <version>42</version>
+        <artifactId>public-pom</artifactId>
+        <version>3.0.90</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
@@ -84,6 +84,37 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>2.9.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>1.4</version>
+                    <executions>
+                        <execution>
+                            <id>ban-milestones-and-release-candidates</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <banVersionDeps>
+                                        <excludes>
+                                            <!-- Connect currently depends on milestones of atlassian-plugins-webfragment,
+                                            atlassian-plugins-osgi, atlassian-plugins-core and atlassian-plugins-osgi-bridge
+                                            -->
+                                            <exclude>com.atlassian.plugins</exclude>
+                                            <!-- Need to depend on a milestone of Stash until a full release has been
+                                            done with the components that were added for connect -->
+                                            <exclude>com.atlassian.stash</exclude>
+                                            <!-- still depend on a milestone -->
+                                            <exclude>external.atlassian.json</exclude>
+                                        </excludes>
+                                    </banVersionDeps>
+                                </rules>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <artifactId>maven-site-plugin</artifactId>
