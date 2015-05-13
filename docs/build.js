@@ -23,8 +23,8 @@ var confluenceSchemaSourcePath = '../plugin/target/classes/schema/confluence-sch
 
 var jiraSchemaPath =       'schema/schema/jira-schema.json';
 var confluenceSchemaPath = 'schema/schema/confluence-schema.json';
-var jiraScopesPath =       'schema/com/atlassian/connect/scopes.jira.json';
-var confluenceScopesPath = 'schema/com/atlassian/connect/scopes.confluence.json';
+var jiraScopesPath =       'schema/com/atlassian/connect/jira/scopes.jira.json';
+var confluenceScopesPath = 'schema/com/atlassian/connect/confluence/scopes.confluence.json';
 var commonScopesPath =     'schema/com/atlassian/connect/scopes.common.json';
 
 program
