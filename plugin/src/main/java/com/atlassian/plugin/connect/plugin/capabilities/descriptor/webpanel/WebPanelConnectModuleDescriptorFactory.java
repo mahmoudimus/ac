@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.jira.capabilities.descriptor.ConnectJiraAgileWebPanelElementEnhancer;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -10,6 +9,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModule
 import com.atlassian.plugin.connect.plugin.capabilities.module.webpanel.IFrameWebPanel;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
+import com.atlassian.plugin.connect.spi.web.ProductWebPanelElementEnhancer;
 import com.atlassian.plugin.web.descriptors.WebPanelModuleDescriptor;
 import com.google.common.base.Strings;
 import org.apache.commons.lang3.StringUtils;
@@ -18,17 +18,24 @@ import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
+
 @Component
 public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebPanelModuleBean,WebPanelModuleDescriptor>
 {
     private final ConnectContainerUtil connectContainerUtil;
     private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
+    private final Collection<ProductWebPanelElementEnhancer> webPanelElementEnhancers;
 
     @Autowired
-    public WebPanelConnectModuleDescriptorFactory(ConnectContainerUtil connectContainerUtil, ConditionModuleFragmentFactory conditionModuleFragmentFactory)
+    public WebPanelConnectModuleDescriptorFactory(
+            ConnectContainerUtil connectContainerUtil,
+            ConditionModuleFragmentFactory conditionModuleFragmentFactory,
+            Collection<ProductWebPanelElementEnhancer> webPanelElementEnhancers)
     {
         this.connectContainerUtil = connectContainerUtil;
         this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
+        this.webPanelElementEnhancers = webPanelElementEnhancers;
     }
 
     @Override
@@ -80,7 +87,10 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
         webPanelElement.addAttribute("height", bean.getLayout().getHeight());
         webPanelElement.addAttribute("url", bean.getUrl());
 
-        ConnectJiraAgileWebPanelElementEnhancer.enhance(bean, webPanelElement);
+        for (ProductWebPanelElementEnhancer webPanelElementEnhancer : webPanelElementEnhancers)
+        {
+            webPanelElementEnhancer.enhance(bean, webPanelElement);
+        }
 
         return webPanelElement;
     }
