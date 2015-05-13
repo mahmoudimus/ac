@@ -72,7 +72,8 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
         }
         else
         {
-            String localUrl = ConnectIFrameServlet.iFrameServletPath(connectAddonBean.getKey(),bean.getUrl());
+            String localUrl = ConnectIFrameServlet.iFrameServletPath(connectAddonBean.getKey(), bean.getUrl());
+
             WebItemModuleBean newBean = newWebItemBean(bean).withUrl(localUrl).build();
             descriptors.add(webItemFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, newBean));
         }
