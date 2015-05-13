@@ -131,7 +131,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
         RemoteWebPanel panel = viewIssuePage.findWebPanel(getModuleKey(runner, ISSUE_PANEL_LEFT2_KEY)).waitUntilContentLoaded();
 
         assertEquals(issue.id, panel.getFromQueryString("my-issue-id"));
-        assertEquals(projectId, panel.getFromQueryString("my-project-id"));
+        assertEquals(String.valueOf(projectId), panel.getFromQueryString("my-project-id"));
 
         assertEquals("ilwp2-OK", panel.getCustomMessage());
 
@@ -146,7 +146,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
         JiraProjectAdministrationPage projectAdministrationPage = product.visit(JiraProjectAdministrationPage.class, projectKey);
         RemoteWebPanel panel = projectAdministrationPage.findWebPanel(getModuleKey(runner, PROJECT_CONFIG_PANEL_KEY)).waitUntilContentLoaded();
 
-        assertEquals(projectId, panel.getProjectId());
+        assertEquals(String.valueOf(projectId), panel.getProjectId());
         assertEquals(user.getUsername(), panel.getUserId());
         assertNotNull(panel.getUserKey());
 
@@ -164,7 +164,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
         JiraViewIssuePage page = product.visit(JiraViewIssuePage.class, issue.key);
         RemoteWebPanel panel = page.findWebPanel(getModuleKey(runner, ISSUE_PANEL_LEFT_KEY)).waitUntilContentLoaded();
 
-        assertEquals(projectId, panel.getProjectId());
+        assertEquals(String.valueOf(projectId), panel.getProjectId());
         assertEquals(issue.id, panel.getIssueId());
         assertEquals(user.getUsername(), panel.getUserId());
         assertNotNull(panel.getUserKey());
@@ -183,7 +183,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
         JiraViewIssuePage page = product.visit(JiraViewIssuePage.class, issue.key);
         RemoteWebPanel panel = page.findWebPanel(getModuleKey(runner, ISSUE_PANEL_RIGHT_KEY)).waitUntilContentLoaded();
 
-        assertEquals(projectId, panel.getProjectId());
+        assertEquals(String.valueOf(projectId), panel.getProjectId());
         assertEquals(issue.id, panel.getIssueId());
         assertEquals(user.getUsername(), panel.getUserId());
         assertNotNull(panel.getUserKey());
@@ -201,7 +201,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
         JiraProjectAdministrationPage projectAdministrationPage = product.visit(JiraProjectAdministrationPage.class, projectKey);
         RemoteWebPanel panel = projectAdministrationPage.findWebPanel(getModuleKey(runner, PROJECT_CONFIG_HEADER_KEY)).waitUntilContentLoaded();
 
-        assertEquals(projectId, panel.getProjectId());
+        assertEquals(String.valueOf(projectId), panel.getProjectId());
         assertEquals(user.getUsername(), panel.getUserId());
         assertNotNull(panel.getUserKey());
 
