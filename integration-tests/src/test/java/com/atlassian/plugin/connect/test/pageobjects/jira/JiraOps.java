@@ -25,8 +25,7 @@ public class JiraOps
     
     public int getProjectId(String projectKey)
     {
-        String response = backdoor.rawRestApiControl().rootResource().path("api/2/project/" + projectKey).get(String.class);
-
+        String response = backdoor.rawRestApiControl().rootResource().path("/project/" + projectKey).get(String.class);
         JsonParser parser = new JsonParser();
         return parser.parse(response).getAsJsonObject().get("id").getAsInt();
     }
@@ -51,7 +50,7 @@ public class JiraOps
     public void transitionIssue(String issueKey)
             throws java.rmi.RemoteException
     {
-        backdoor.rawRestApiControl().rootResource().path("api/2/issue/" + issueKey + "/transitions")
+        backdoor.rawRestApiControl().rootResource().path("/issue/" + issueKey + "/transitions")
                 .post("{\"transition\": {\"id\": \"5\"}}");
     }
 }
