@@ -199,7 +199,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         assertNotNull("Web item should be found", webItem);
 
         assertEquals(projectKey, webItem.getFromQueryString("project.key"));
-        assertEquals(projectId, webItem.getFromQueryString("project.id"));
+        assertEquals(String.valueOf(projectId), webItem.getFromQueryString("project.id"));
         assertThat(webItem.getPath(), startsWith(product.getProductInstance().getBaseUrl()));
     }
 
@@ -213,7 +213,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         assertNotNull("Web item should be found", webItem);
 
         assertEquals(projectKey, webItem.getFromQueryString("project_key"));
-        assertEquals(projectId, webItem.getFromQueryString("pid"));
+        assertEquals(String.valueOf(projectId), webItem.getFromQueryString("pid"));
         assertThat(webItem.getPath(), startsWith(runner.getAddon().getBaseUrl()));
         verifyStandardAddOnRelativeQueryParameters(webItem, "/jira");
     }
