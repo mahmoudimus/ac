@@ -31,7 +31,8 @@ public class JiraWebDriverTestBase
 
     protected static JiraOps jiraOps;
 
-    protected static RemoteProject project;
+    protected static String projectKey;
+    protected static int projectId;
 
     protected static ConnectTestUserFactory testUserFactory;
 
@@ -79,14 +80,15 @@ public class JiraWebDriverTestBase
         
         product.getPageBinder().override(ViewWorkflowTransitionPage.class, ExtendedViewWorkflowTransitionPage.class);
 
-        jiraOps = new JiraOps(product.getProductInstance());
-        project = jiraOps.createProject();
+        jiraOps = new JiraOps();
+        projectKey = jiraOps.createProject();
+        projectId = jiraOps.getProjectId(projectKey);
     }
 
     @AfterClass
     public static void afterClass() throws RemoteException
     {
-        jiraOps.deleteProject(project.getKey());
+        jiraOps.deleteProject(projectKey);
     }
 
     protected void testLoggedInAndAnonymous(final Callable runnable) throws Exception

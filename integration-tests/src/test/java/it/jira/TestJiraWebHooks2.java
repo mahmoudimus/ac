@@ -1,6 +1,7 @@
 package it.jira;
 
 
+import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
@@ -27,7 +28,7 @@ public class TestJiraWebHooks2
 
     public TestJiraWebHooks2()
     {
-        this.jiraOps = new JiraOps(baseUrl);
+        this.jiraOps = new JiraOps();
     }
 
     @Test
@@ -38,8 +39,8 @@ public class TestJiraWebHooks2
             @Override
             public void test(WebHookWaiter waiter) throws Exception
             {
-                RemoteProject project = jiraOps.createProject();
-                jiraOps.createIssue(project.getKey(), "As Filip I want JIRA WebHooks to really work.");
+                String projectKey = jiraOps.createProject();
+                jiraOps.createIssue(projectKey, "As Filip I want JIRA WebHooks to really work.");
                 WebHookBody body = waiter.waitForHook();
                 assertWebHookDidFire(body, JIRA_ISSUE_CREATED);
             }
@@ -61,9 +62,9 @@ public class TestJiraWebHooks2
             @Override
             public void test(WebHookWaiter waiter) throws Exception
             {
-                RemoteProject project = jiraOps.createProject();
-                RemoteIssue issue = jiraOps.createIssue(project.getKey(), "As Filip I want JIRA WebHooks listeners to get issue updates");
-                jiraOps.updateIssue(issue.getKey(), ImmutableMap.of("summary", "As Filip I want JIRA WebHooks listeners to get all issue updates"));
+                String projectKey = jiraOps.createProject();
+                IssueCreateResponse issue = jiraOps.createIssue(projectKey, "As Filip I want JIRA WebHooks listeners to get issue updates");
+                jiraOps.setIssueSummary(issue.key, "As Filip I want JIRA WebHooks listeners to get all issue updates");
                 WebHookBody body = waiter.waitForHook();
                 assertWebHookDidFire(body, JIRA_ISSUE_UPDATED);
             }
@@ -78,10 +79,10 @@ public class TestJiraWebHooks2
             @Override
             public void test(WebHookWaiter waiter) throws Exception
             {
-                RemoteProject project = jiraOps.createProject();
-                RemoteIssue issue = jiraOps.createIssue(project.getKey(), "As Filip I want JIRA WebHooks listeners to get issue transition");
-                RemoteNamedObject[] availableActions = jiraOps.availableActions(issue.getKey());
-                jiraOps.transitionIssue(issue.getKey(), availableActions[0].getId(), ImmutableMap.of("summary", "As Filip I want JIRA WebHooks listeners to get all issue transitions"));
+                String projectKey = jiraOps.createProject();
+                IssueCreateResponse issue = jiraOps.createIssue(projectKey, "As Filip I want JIRA WebHooks listeners to get issue transition");
+                //RemoteNamedObject[] availableActions = jiraOps.availableActions(issueKey);
+                jiraOps.transitionIssue(issue.key);
                 WebHookBody body = waiter.waitForHook();
                 assertWebHookDidFire(body, JIRA_ISSUE_UPDATED);
             }

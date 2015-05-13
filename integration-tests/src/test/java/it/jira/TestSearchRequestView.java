@@ -1,5 +1,6 @@
 package it.jira;
 
+import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.jira.IssueNavigatorViewsMenu;
@@ -100,12 +101,12 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     public void verifyIssueKeyIsPartOfUrl() throws Exception
     {
         login(testUserFactory.basicUser());
-        RemoteIssue issue = createIssue();
+        IssueCreateResponse issue = createIssue();
         findSearchRequestViewEntry().click();
         NameValuePairs queryParameters = searchRequestViewServlet.waitForQueryParameters();
 
         assertNoTimeout(queryParameters);
-        assertThat(queryParameters.any("issues").getValue(), containsString(issue.getKey()));
+        assertThat(queryParameters.any("issues").getValue(), containsString(issue.key));
     }
 
     @Test
@@ -145,14 +146,14 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     private IssueNavigatorViewsMenu.ViewEntry findSearchRequestViewEntry() throws Exception
     {
         JiraAdvancedSearchPage searchPage = product.visit(JiraAdvancedSearchPage.class);
-        searchPage.enterQuery("project = " + project.getKey()).submit();
+        searchPage.enterQuery("project = " + projectKey).submit();
         IssueNavigatorViewsMenu viewsMenu = searchPage.viewsMenu().open();
         return viewsMenu.entryWithLabel(LABEL);
     }
 
-    private RemoteIssue createIssue() throws Exception
+    private IssueCreateResponse createIssue() throws Exception
     {
-        return jiraOps.createIssue(project.getKey(), "test issue");
+        return jiraOps.createIssue(projectKey, "test issue");
     }
 
     private void assertNoTimeout(NameValuePairs queryParameters)

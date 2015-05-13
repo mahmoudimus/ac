@@ -1,95 +1,57 @@
 package com.atlassian.plugin.connect.test.pageobjects.jira;
 
-import com.atlassian.pageobjects.ProductInstance;
-import hudson.plugins.jira.soap.JiraSoapService;
-import hudson.plugins.jira.soap.JiraSoapServiceServiceLocator;
-import hudson.plugins.jira.soap.RemoteFieldValue;
-import hudson.plugins.jira.soap.RemoteIssue;
-import hudson.plugins.jira.soap.RemoteNamedObject;
-import hudson.plugins.jira.soap.RemoteProject;
+import com.atlassian.jira.testkit.client.Backdoor;
+import com.atlassian.jira.tests.TestBase;
+import com.google.gson.JsonParser;
 import org.apache.commons.lang.RandomStringUtils;
+import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 
-import java.net.URL;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 public class JiraOps
 {
-    final JiraSoapService soap;
-    final String token;
-
-    public JiraOps(ProductInstance instance)
+    final Backdoor backdoor;
+    public JiraOps()
     {
-        this(instance.getBaseUrl());
+        backdoor = TestBase.funcTestHelper.backdoor;
     }
 
-    public JiraOps(String baseUrl)
-    {
-        JiraSoapService svc;
-        try
-        {
-            svc = new JiraSoapServiceServiceLocator().getJirasoapserviceV2(new URL(
-                    baseUrl + "/rpc/soap/jirasoapservice-v2"));
-            token = svc.login("admin", "admin");
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException(e);
-        }
-        soap = svc;
-    }
-
-    public RemoteProject createProject() throws java.rmi.RemoteException
+    public String createProject() throws java.rmi.RemoteException
     {
         String key = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
-        return soap.createProject(token, key, "Test project " + key,
-                "This is a test project " + key,
-                null, "admin", null, null, null);
-
+        backdoor.project().addProject("Test project " + key, key, "admin");
+        return key;
     }
-
-    public void deleteProject(String key) throws java.rmi.RemoteException
+    
+    public int getProjectId(String projectKey)
     {
-        soap.deleteProject(token, key);
+        String response = backdoor.rawRestApiControl().rootResource().path("api/2/project/" + projectKey).get(String.class);
+
+        JsonParser parser = new JsonParser();
+        return parser.parse(response).getAsJsonObject().get("id").getAsInt();
     }
 
-    public RemoteIssue createIssue(String projectKey, String summary) throws
+    public void deleteProject(String projectKey) throws java.rmi.RemoteException
+    {
+        backdoor.project().deleteProject(projectKey);
+    }
+
+    public IssueCreateResponse createIssue(String projectKey, String summary) throws
             java.rmi.RemoteException
     {
-        RemoteIssue issue = new RemoteIssue();
-        issue.setProject(projectKey);
-        issue.setType("3"); // "task"
-        issue.setSummary(summary);
-        return soap.createIssue(token, issue);
+        return backdoor.issues().createIssue(projectKey, summary);
     }
 
-    public RemoteIssue updateIssue(String issueKey, Map<String, String> fields) throws
+    public void setIssueSummary(String issueKey, String summary) throws
             java.rmi.RemoteException
     {
-        List<RemoteFieldValue> values = newArrayList();
-        for (Map.Entry<String, String> entry : fields.entrySet())
-        {
-            values.add(new RemoteFieldValue(entry.getKey(), new String[]{entry.getValue()}));
-        }
-        return soap.updateIssue(token, issueKey, values.toArray(new RemoteFieldValue[values.size()]));
+        backdoor.issues().setSummary(issueKey, summary);
     }
 
-    public RemoteNamedObject[] availableActions(String issueKey) throws java.rmi.RemoteException
-    {
-        return soap.getAvailableActions(token, issueKey);
-    }
-
-    public RemoteIssue transitionIssue(String issueKey, String actionId, Map<String, String> fields)
+    public void transitionIssue(String issueKey)
             throws java.rmi.RemoteException
     {
-        List<RemoteFieldValue> values = newArrayList();
-        for (Map.Entry<String, String> entry : fields.entrySet())
-        {
-            values.add(new RemoteFieldValue(entry.getKey(), new String[]{entry.getValue()}));
-        }
-        return soap.progressWorkflowAction(token, issueKey, actionId, values.toArray(new RemoteFieldValue[values.size()]));
+        backdoor.rawRestApiControl().rootResource().path("api/2/issue/" + issueKey + "/transitions")
+                .post("{\"transition\": {\"id\": \"5\"}}");
     }
 }

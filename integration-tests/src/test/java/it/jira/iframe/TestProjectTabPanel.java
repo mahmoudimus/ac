@@ -115,12 +115,12 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
         assertEquals("Success", embeddedAddonTestPage.getMessage());
 
         Map<String, String> conditionRequestParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
-        assertThat(conditionRequestParams, hasEntry("projectKey", project.getKey()));
-        assertThat(conditionRequestParams, hasEntry("projectId", project.getId()));
+        assertThat(conditionRequestParams, hasEntry("projectKey", projectKey));
+        assertThat(conditionRequestParams, hasEntry("projectId", String.valueOf(projectId)));
     }
 
     private JiraProjectSummaryPageWithAddonTab visitProjectSummaryPage()
     {
-        return product.visit(JiraProjectSummaryPageWithAddonTab.class, project.getKey(), ADDON_KEY, MODULE_KEY);
+        return product.visit(JiraProjectSummaryPageWithAddonTab.class, projectKey, ADDON_KEY, MODULE_KEY);
     }
 }

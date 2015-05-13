@@ -2,6 +2,7 @@ package it.jira.jsapi;
 
 import com.atlassian.jira.pageobjects.pages.viewissue.ViewIssuePage;
 import com.atlassian.jira.pageobjects.util.Tracer;
+import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.jira.RemoteRefreshIssuePageWebPanel;
@@ -29,7 +30,7 @@ public class TestJiraRefreshIssuePage extends JiraWebDriverTestBase
     private static ConnectRunner addon;
     private static WebPanelModuleBean refreshIssuePageWebPanelModuleBean;
 
-    private RemoteIssue issue;
+    private IssueCreateResponse issue;
 
     @BeforeClass
     public static void startAddon() throws Exception
@@ -59,14 +60,14 @@ public class TestJiraRefreshIssuePage extends JiraWebDriverTestBase
     @Before
     public void setUp() throws RemoteException
     {
-        issue = jiraOps.createIssue(project.getKey(), "Test Issue");
+        issue = jiraOps.createIssue(projectKey, "Test Issue");
     }
 
     @Test
     public void shouldRefreshIssuePage() throws RemoteException
     {
         login(testUserFactory.basicUser());
-        ViewIssuePage viewIssuePage = product.visit(ViewIssuePage.class, issue.getKey());
+        ViewIssuePage viewIssuePage = product.visit(ViewIssuePage.class, issue.key);
         RemoteRefreshIssuePageWebPanel refreshIssuePageWebPanel = findRefreshIssuePageWebPanel();
         refreshIssuePageWebPanel.waitUntilRefreshIssuePageActionLoaded();
 

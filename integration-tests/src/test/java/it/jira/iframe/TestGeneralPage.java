@@ -100,7 +100,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
     @Test
     public void canClickOnPageLinkAndSeeAddonContents() throws MalformedURLException, URISyntaxException
     {
-        loginAndVisit(testUserFactory.basicUser(), JiraViewProjectPage.class, project.getKey());
+        loginAndVisit(testUserFactory.basicUser(), JiraViewProjectPage.class, projectKey);
 
         JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, KEY_MY_AWESOME_PAGE, PAGE_NAME, addonKey);
 
@@ -115,8 +115,8 @@ public class TestGeneralPage extends JiraWebDriverTestBase
         // check iframe url params
         Map<String,String> iframeQueryParams = addonContentsPage.getIframeQueryParams();
         verifyContainsStandardAddOnQueryParamters(iframeQueryParams, product.getProductInstance().getContextPath());
-        assertThat(iframeQueryParams, hasEntry("project_key", project.getKey()));
-        assertThat(iframeQueryParams, hasEntry("project_id", project.getId()));
+        assertThat(iframeQueryParams, hasEntry("project_key", projectKey));
+        assertThat(iframeQueryParams, hasEntry("project_id", String.valueOf(projectId)));
     }
 
     @Test
@@ -147,7 +147,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
 
         remotePlugin.setToggleableConditionShouldDisplay(false);
         
-        product.visit(JiraViewProjectPage.class, project.getKey());
+        product.visit(JiraViewProjectPage.class, projectKey);
 
         JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, contextPageModuleKey, CONTEXT_PAGE_NAME);
 
@@ -164,6 +164,6 @@ public class TestGeneralPage extends JiraWebDriverTestBase
 
         Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
 
-        assertThat(conditionParams, hasEntry(equalTo("project_key"), equalTo(project.getKey())));
+        assertThat(conditionParams, hasEntry(equalTo("project_key"), equalTo(projectKey)));
     }
 }
