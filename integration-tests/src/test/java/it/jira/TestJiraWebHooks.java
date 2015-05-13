@@ -101,8 +101,7 @@ public class TestJiraWebHooks
             {
                 String projectKey = jiraOps.createProject();
                 IssueCreateResponse issue = jiraOps.createIssue(projectKey, "As Ben I want JIRA WebHooks listeners to get issue transition");
-                //RemoteNamedObject[] availableActions = jiraOps.availableActions(issueKey);
-                jiraOps.transitionIssue(issue.key);
+                jiraOps.transitionIssueToArbitraryStatus(issue.key);
                 WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
                 assertEquals("jira:issue_updated", body.find("webhookEvent"));

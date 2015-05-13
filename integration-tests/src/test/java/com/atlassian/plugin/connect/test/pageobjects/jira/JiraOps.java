@@ -1,11 +1,16 @@
 package com.atlassian.plugin.connect.test.pageobjects.jira;
 
 import com.atlassian.jira.testkit.client.Backdoor;
+import com.atlassian.jira.testkit.client.IssuesControl;
+import com.atlassian.jira.testkit.client.restclient.Issue;
+import com.atlassian.jira.testkit.client.restclient.IssueTransitionsMeta;
 import com.atlassian.jira.tests.TestBase;
 import com.google.gson.JsonParser;
+import com.sun.jersey.api.client.WebResource;
 import org.apache.commons.lang.RandomStringUtils;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 
+import java.util.List;
 import java.util.Locale;
 
 public class JiraOps
@@ -47,10 +52,14 @@ public class JiraOps
         backdoor.issues().setSummary(issueKey, summary);
     }
 
-    public void transitionIssue(String issueKey)
+    public void transitionIssueToArbitraryStatus(String issueKey)
             throws java.rmi.RemoteException
     {
+        WebResource transitionsEndpoint = backdoor.rawRestApiControl().rootResource().path("/issue/" + issueKey + "/transitions");
+        String transitions = transitionsEndpoint.get(String.class);
+        JsonParser parser = new JsonParser();
+        String transitionId = parser.parse(transitions).getAsJsonObject().get("transitions").getAsJsonArray().get(0).getAsJsonObject().get("id").getAsString();
         backdoor.rawRestApiControl().rootResource().path("/issue/" + issueKey + "/transitions")
-                .post("{\"transition\": {\"id\": \"5\"}}");
+                .post("{\"transition\": {\"id\": \"" + String.valueOf(transitionId) + "\"}}");
     }
 }
