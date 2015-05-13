@@ -18,24 +18,19 @@ import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-
 @Component
 public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebPanelModuleBean,WebPanelModuleDescriptor>
 {
     private final ConnectContainerUtil connectContainerUtil;
     private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
-    private final Collection<ProductWebPanelElementEnhancer> webPanelElementEnhancers;
 
     @Autowired
     public WebPanelConnectModuleDescriptorFactory(
             ConnectContainerUtil connectContainerUtil,
-            ConditionModuleFragmentFactory conditionModuleFragmentFactory,
-            Collection<ProductWebPanelElementEnhancer> webPanelElementEnhancers)
+            ConditionModuleFragmentFactory conditionModuleFragmentFactory)
     {
         this.connectContainerUtil = connectContainerUtil;
         this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
-        this.webPanelElementEnhancers = webPanelElementEnhancers;
     }
 
     @Override
@@ -87,11 +82,16 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
         webPanelElement.addAttribute("height", bean.getLayout().getHeight());
         webPanelElement.addAttribute("url", bean.getUrl());
 
-        for (ProductWebPanelElementEnhancer webPanelElementEnhancer : webPanelElementEnhancers)
+        for (ProductWebPanelElementEnhancer webPanelElementEnhancer : getProductEnhancers())
         {
             webPanelElementEnhancer.enhance(bean, webPanelElement);
         }
 
         return webPanelElement;
+    }
+
+    private Iterable<ProductWebPanelElementEnhancer> getProductEnhancers()
+    {
+        return connectContainerUtil.getBeansOfType(ProductWebPanelElementEnhancer.class);
     }
 }
