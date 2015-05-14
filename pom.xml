@@ -171,7 +171,7 @@
                         <configuration>
                             <rules>
                                 <requireMavenVersion>
-                                    <version>[3.0,)</version>
+                                    <version>[3.2, 3.3)</version>
                                 </requireMavenVersion>
                             </rules>
                             <skip>
@@ -668,7 +668,7 @@
     </dependencyManagement>
     <properties>
         <!-- VERSIONS -->
-        <amps.version>4.2.22</amps.version>
+        <amps.version>5.0.16</amps.version>
         <atlassian.analytics.version>3.68</atlassian.analytics.version>
         <atlassian.applinks.version>4.2.4</atlassian.applinks.version>
         <atlassian.confluence.version>5.7-OD-48-066</atlassian.confluence.version>
@@ -740,7 +740,7 @@
         <ao.short.timeout>30000</ao.short.timeout>
         <skipTests>false</skipTests>
         <skipUnits>${skipTests}</skipUnits>
-        <schema.generator.version>1.0.0-m5</schema.generator.version>
+        <schema.generator.version>1.0.0</schema.generator.version>
         <json.schema.validator.version>2.2.5</json.schema.validator.version>
         <node.version>v0.10.26</node.version>
         <npm.version>1.4.3</npm.version>
