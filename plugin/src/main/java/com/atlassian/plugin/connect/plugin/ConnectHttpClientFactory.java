@@ -14,7 +14,6 @@ import com.atlassian.httpclient.api.HttpClient;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.httpclient.api.factory.HttpClientOptions;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.google.common.collect.Lists;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -25,15 +24,13 @@ public class ConnectHttpClientFactory implements DisposableBean
     private final HttpClient httpClient;
     private final HttpClientFactory httpClientFactory;
     private final PluginRetrievalService pluginRetrievalService;
-    private final DarkFeatureManager darkFeatureManager;
     private final List<HttpClient> instances = Lists.newArrayList();
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    public ConnectHttpClientFactory(DarkFeatureManager darkFeatureManager, HttpClientFactory httpClientFactory,
+    public ConnectHttpClientFactory(HttpClientFactory httpClientFactory,
         PluginRetrievalService pluginRetrievalService)
     {
-        this.darkFeatureManager = checkNotNull(darkFeatureManager);
         this.pluginRetrievalService = checkNotNull(pluginRetrievalService);
         this.httpClientFactory = checkNotNull(httpClientFactory);
         this.httpClient = httpClientFactory.create(getHttpClientOptions());
