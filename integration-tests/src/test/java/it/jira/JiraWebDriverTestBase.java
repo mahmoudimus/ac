@@ -29,6 +29,10 @@ public class JiraWebDriverTestBase
 
     protected static JiraTestedProduct product = TestedProductProvider.getJiraTestedProduct();
 
+    /**
+     * @deprecated use {@code product.backdoor()} instead
+     */
+    @Deprecated()
     protected static JiraOps jiraOps;
 
     protected static RemoteProject project;

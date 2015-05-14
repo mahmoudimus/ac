@@ -376,10 +376,9 @@ There is a common notion of entity properties in Atlassian products. Entities li
 
  This condition lets you test whether the entity property is equal to the specified value. Supported entities depend on the product:
 
- * JIRA: `project`, `issue`, `issuetype`, `comment`, `addon`
- * Confluence: `addon`
+ * Common: `addon`
+ * JIRA: `project`, `issue`, `issuetype`, `comment`
 
-This is list will surely grow in the future while new entity properties become available in both products.
 
  When using the condition you need to specify the entity, property key and expected value:
 
@@ -403,7 +402,5 @@ This is list will surely grow in the future while new entity properties become a
          }
      }
 
- In the above example the general page will be displayed if `isEnabled` add-on property is set to `true`.
-
- The `addon` entity is a bit special because it's always your add-on. All other entities depend on context. For example,
- if you add a web panel to some issue view then the condition for issue entity will be checked for the currently displayed issue.
+ In the above example the general page will be displayed if the `isEnabled` add-on property is set to `true`. All entities other than `addon` depend on context. For example,
+ if you add a web panel with an issue entity condition to some issue view, then the condition will be checked against the properties of the currently displayed issue.

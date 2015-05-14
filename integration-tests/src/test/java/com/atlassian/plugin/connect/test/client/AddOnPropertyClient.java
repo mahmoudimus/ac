@@ -1,4 +1,4 @@
-package it.common.rest;
+package com.atlassian.plugin.connect.test.client;
 
 import com.atlassian.pageobjects.TestedProduct;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;

@@ -1,5 +1,6 @@
 package at.jira;
 
+import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.jira.testkit.client.restclient.EntityPropertyClient;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
@@ -10,7 +11,7 @@ import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import hudson.plugins.jira.soap.RemoteIssue;
-import it.common.rest.AddOnPropertyClient;
+import com.atlassian.plugin.connect.test.client.AddOnPropertyClient;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
@@ -85,9 +86,9 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
     public void webPanelShouldBeVisibleIfIssuePropertyIsSetToTrue() throws RemoteException, JSONException
     {
 
-        RemoteIssue issue = createIssue();
+        IssueCreateResponse issue = createIssue();
 
-        issueEntityPropertyClient.put(issue.getKey(), "prop", json("true"));
+        issueEntityPropertyClient.put(issue.key(), "prop", json("true"));
 
         assertThat(webPanelIsVisible("issue-property-web-panel", issue), equalTo(true));
     }
@@ -95,9 +96,9 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
     @Test
     public void webPanelShouldNotBeVisibleIfIssuePropertyIsSetToFalse() throws JSONException, RemoteException
     {
-        RemoteIssue issue = createIssue();
+        IssueCreateResponse issue = createIssue();
 
-        issueEntityPropertyClient.put(issue.getKey(), "prop", json("false"));
+        issueEntityPropertyClient.put(issue.key(), "prop", json("false"));
 
         assertThat(webPanelIsVisible("issue-property-web-panel", issue), equalTo(false));
     }
@@ -105,7 +106,7 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
     @Test
     public void webPanelShouldBeVisibleIfAddOnPropertyIsSetToTrue() throws Exception
     {
-        RemoteIssue issue = createIssue();
+        IssueCreateResponse issue = createIssue();
 
         addOnPropertyClient.putProperty(remotePlugin.getAddon().getKey(), "prop", "true");
 
@@ -115,7 +116,7 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
     @Test
     public void webPanelShouldNotBeVisibleIfAddOnPropertyIsSetToFalse() throws Exception
     {
-        RemoteIssue issue = createIssue();
+        IssueCreateResponse issue = createIssue();
 
         addOnPropertyClient.putProperty(remotePlugin.getAddon().getKey(), "prop", "false");
 
@@ -125,23 +126,24 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
     @Test
     public void webPanelShouldNotBeVisibleIfAddOnPropertyIsNotSet() throws Exception
     {
-        RemoteIssue issue = createIssue();
+        IssueCreateResponse issue = createIssue();
 
         addOnPropertyClient.deleteProperty(remotePlugin.getAddon().getKey(), "prop", "false");
 
         assertThat(webPanelIsVisible("add-on-property-web-panel", issue), equalTo(false));
     }
 
-    private RemoteIssue createIssue() throws RemoteException
+    private IssueCreateResponse createIssue() throws RemoteException
     {
         TestUser user = testUserFactory.basicUser();
         login(user);
-        return jiraOps.createIssue(project.getKey(), "Test issue");
+
+        return product.backdoor().issues().createIssue(project.getKey(), "Test issue");
     }
 
-    private boolean webPanelIsVisible(String panelKey, final RemoteIssue issue)
+    private boolean webPanelIsVisible(String panelKey, final IssueCreateResponse issue)
     {
-        product.visit(JiraViewIssuePage.class, issue.getKey());
+        product.visit(JiraViewIssuePage.class, issue.key());
         return connectPageOperations.existsWebPanel(ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), panelKey));
     }
 
