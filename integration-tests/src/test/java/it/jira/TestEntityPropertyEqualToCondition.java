@@ -1,4 +1,4 @@
-package at.jira;
+package it.jira;
 
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.jira.testkit.client.restclient.EntityPropertyClient;
@@ -15,6 +15,7 @@ import com.atlassian.plugin.connect.test.client.AddOnPropertyClient;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -27,6 +28,7 @@ import static org.junit.Assert.assertThat;
 
 public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
 {
+    public static final String PROJECT_KEY = "PR";
     private static ConnectRunner remotePlugin;
     private EntityPropertyClient issueEntityPropertyClient;
     private AddOnPropertyClient addOnPropertyClient;
@@ -80,6 +82,15 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
     {
         issueEntityPropertyClient = new EntityPropertyClient(product.environmentData(), "issue");
         addOnPropertyClient = new AddOnPropertyClient(product, remotePlugin);
+        login(new TestUser("admin"));
+        product.backdoor().project().addProject("Entity Property", PROJECT_KEY, "admin");
+    }
+
+    @After
+    public void tearDown()
+    {
+        login(new TestUser("admin"));
+        product.backdoor().project().deleteProject(PROJECT_KEY);
     }
 
     @Test
@@ -135,10 +146,7 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
 
     private IssueCreateResponse createIssue() throws RemoteException
     {
-        TestUser user = testUserFactory.basicUser();
-        login(user);
-
-        return product.backdoor().issues().createIssue(project.getKey(), "Test issue");
+        return product.backdoor().issues().createIssue(PROJECT_KEY, "Test issue");
     }
 
     private boolean webPanelIsVisible(String panelKey, final IssueCreateResponse issue)

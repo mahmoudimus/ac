@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.jira.condition;
 
 import com.atlassian.plugin.connect.plugin.condition.ConnectEntityPropertyEqualToCondition;
-import com.atlassian.plugin.connect.plugin.condition.CrossProductConditions;
 import com.atlassian.plugin.connect.plugin.condition.PageConditions;
 import com.atlassian.plugin.connect.spi.product.ConditionClassResolver;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
@@ -47,7 +46,7 @@ public class JiraConditions extends PageConditions
     protected static ConditionClassResolver getConditionMap()
     {
         return ConditionClassResolver.builder()
-                .with(CrossProductConditions.getConditions())
+                .with(PageConditions.getPageConditions())
                 .mapping(FEATURE_FLAG, com.atlassian.sal.api.features.DarkFeatureEnabledCondition.class)
                 .mapping(HAS_SELECTED_PROJECT, com.atlassian.jira.plugin.webfragment.conditions.HasSelectedProjectCondition.class)
                 .mapping(IS_ADMIN_MODE, com.atlassian.jira.plugin.webfragment.conditions.IsAdminModeCondition.class)

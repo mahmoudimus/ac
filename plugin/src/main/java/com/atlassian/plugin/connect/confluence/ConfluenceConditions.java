@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.confluence;
 
-import com.atlassian.plugin.connect.plugin.condition.CrossProductConditions;
 import com.atlassian.plugin.connect.plugin.condition.PageConditions;
 import com.atlassian.plugin.connect.spi.condition.UserIsAdminCondition;
 import com.atlassian.plugin.connect.spi.product.ConditionClassResolver;
@@ -62,7 +61,7 @@ public class ConfluenceConditions extends PageConditions
     protected static ConditionClassResolver getConditionMap()
     {
         return ConditionClassResolver.builder()
-                .with(CrossProductConditions.getConditions())
+                .with(PageConditions.getPageConditions())
                 .mapping(ACTIVE_THEME, com.atlassian.confluence.plugin.descriptor.web.conditions.ActiveThemeCondition.class)
                 .mapping(CAN_EDIT_SPACE_STYLES, com.atlassian.confluence.plugin.descriptor.web.conditions.CanEditSpaceStylesCondition.class)
                 .mapping(CAN_SIGNUP, com.atlassian.confluence.plugin.descriptor.web.conditions.user.CanSignupCondition.class)
