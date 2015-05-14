@@ -18,7 +18,7 @@ plan(
                 name: 'Version, tag and merge',
                 description: 'Sets new pom versions, git-tags, merges to master, pushes to master and develop'
         ) {
-            maven30Requirement()
+            maven32Requirement()
             checkoutDefaultRepositoryTask()
             task(
                     type: 'script',
