@@ -28,6 +28,8 @@
     <script src="//code.jquery.com/jquery-1.8.3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.3.0/lodash.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
+    <script src="//cdn.rawgit.com/jrburke/almond/0.3.0/almond.js"></script>
     <script src="//aui-cdn.atlassian.com/aui-adg/<%= auiVersion %>/js/aui.min.js"></script>
     <script src="//aui-cdn.atlassian.com/aui-adg/<%= auiVersion %>/js/aui-soy.min.js"></script>
     <script src="//aui-cdn.atlassian.com/aui-adg/<%= auiVersion %>/js/aui-experimental.min.js"></script>
@@ -36,7 +38,6 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/mode/javascript/javascript.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/mode/clike/clike.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.4/sequence-diagram-min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
     <script type="text/javascript">
         // The context path is the first n - (current document depth) segments of the path
         window.contextPath = window.contextPath || _.once(function() {
@@ -231,6 +232,11 @@
         }());
     </script>
     <script src="<%= relDocRoot %>assets/js/connect-host.js"></script>
+    <script type="text/javascript">
+        require(['ac/cookie', 'ac/env', 'ac/inline-dialog', 'ac/dialog', 'ac/messages', 'ac/request', 'ac/history']);
+        window._AP = require('connect-host');
+    </script>
+    <script src="<%= relDocRoot %>assets/js/connect-user.js"></script>
     <script src="<%= relDocRoot %>assets/js/jsandbox.js"></script>
     <script src="<%= relDocRoot %>assets/js/startup-commands.js"></script>
     <script src="<%= relDocRoot %>assets/js/static-includes.js"></script>
