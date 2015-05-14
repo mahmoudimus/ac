@@ -15,7 +15,14 @@ import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugin.web.model.WebLink;
+import com.atlassian.uri.UriBuilder;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -25,6 +32,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @JiraComponent
 public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebItemModuleDescriptorFactory
 {
+    public static final ImmutableSet<String> ADMIN_MENUS_KEYS = ImmutableSet.of(
+            "admin_system_menu",
+            "admin_plugins_menu",
+            "admin_users_menu",
+            "admin_issues_menu",
+            "admin_project_menu");
+
     private final WebFragmentHelper webFragmentHelper;
     private final WebInterfaceManager webInterfaceManager;
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
@@ -32,6 +46,8 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
     private final JiraAuthenticationContext jiraAuthenticationContext;
     private final PluggableParametersExtractor webFragmentModuleContextExtractor;
     private final ModuleContextFilter moduleContextFilter;
+
+    public static final String WEB_ITEM_SOURCE_QUERY_PARAM = "s";
 
     @Autowired
     public JiraWebItemModuleDescriptorFactory(
@@ -53,11 +69,11 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
     }
 
     @Override
-    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog)
+    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog, String section)
     {
         return new RemoteJiraWebItemModuleDescriptor(jiraAuthenticationContext, webInterfaceManager, webFragmentHelper,
                 iFrameUriBuilderFactory, urlVariableSubstitutor, webFragmentModuleContextExtractor, moduleContextFilter,
-                url, pluginKey, moduleKey, absolute, addOnUrlContext, isDialog);
+                url, pluginKey, moduleKey, absolute, addOnUrlContext, isDialog, section);
     }
 
     private static final class RemoteJiraWebItemModuleDescriptor extends JiraWebItemModuleDescriptor
@@ -73,6 +89,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
         private boolean absolute;
         private final AddOnUrlContext addOnUrlContext;
         private final boolean isDialog;
+        private final String section;
 
         public RemoteJiraWebItemModuleDescriptor(
                 JiraAuthenticationContext jiraAuthenticationContext,
@@ -85,7 +102,7 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
                 String url,
                 String pluginKey,
                 String moduleKey,
-                boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog)
+                boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog, String section)
         {
             super(jiraAuthenticationContext, webInterfaceManager);
             this.webFragmentHelper = webFragmentHelper;
@@ -93,12 +110,23 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
             this.urlVariableSubstitutor = urlVariableSubstitutor;
             this.webFragmentModuleContextExtractor = webFragmentModuleContextExtractor;
             this.moduleContextFilter = moduleContextFilter;
-            this.url = url;
             this.pluginKey = pluginKey;
             this.moduleKey = moduleKey;
             this.absolute = absolute;
             this.addOnUrlContext = addOnUrlContext;
             this.isDialog = isDialog;
+            this.section = section;
+
+            this.url = appendSourceQueryParameterToUrlIfNeeded(url);
+        }
+
+        private String appendSourceQueryParameterToUrlIfNeeded(final String url)
+        {
+            if (addOnUrlContext == AddOnUrlContext.page && isAdminSection(section))
+            {
+                return addWebItemSourceQueryParamIfNotPresent(url, moduleKey);
+            }
+            return url;
         }
 
         @Override
@@ -113,6 +141,45 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
         public void destroy()
         {
             //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        private String addWebItemSourceQueryParamIfNotPresent(String link, String key)
+        {
+            String path = getPathFromUrlTemplate(link);
+
+            Map<String, List<String>> queryListMap = UriBuilder.splitParameters(getQueryFromUrlTemplate(link));
+
+            HashMap<String, List<String>> resultingQueryMap = new HashMap<>(queryListMap);
+            if (!resultingQueryMap.containsKey(WEB_ITEM_SOURCE_QUERY_PARAM))
+            {
+                resultingQueryMap.put(WEB_ITEM_SOURCE_QUERY_PARAM, ImmutableList.of(key));
+            }
+
+            return path + "?" + UriBuilder.joinParameters(resultingQueryMap);
+        }
+
+        private boolean isAdminSection(final String section)
+        {
+            String[] fragments = section.split("/");
+            return fragments.length != 0 && ADMIN_MENUS_KEYS.contains(fragments[0]);
+        }
+
+        private String getQueryFromUrlTemplate(final String localUrl)
+        {
+            if (localUrl.indexOf('?') != -1)
+            {
+                return localUrl.substring(localUrl.indexOf('?') + 1);
+            }
+            return "";
+        }
+
+        private String getPathFromUrlTemplate(final String localUrl)
+        {
+            if (localUrl.indexOf('?') != -1)
+            {
+                return localUrl.substring(0, localUrl.indexOf('?'));
+            }
+            return localUrl;
         }
     }
 }

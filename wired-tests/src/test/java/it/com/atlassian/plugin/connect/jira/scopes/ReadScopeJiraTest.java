@@ -10,10 +10,12 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
+import it.com.atlassian.plugin.connect.jira.util.JiraTestUtil;
 import it.com.atlassian.plugin.connect.plugin.scopes.ScopeTestBase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,14 +27,14 @@ import java.security.NoSuchAlgorithmException;
 @RunWith(AtlassianPluginsTestRunner.class)
 public class ReadScopeJiraTest extends ScopeTestBase
 {
-    private final JiraScopeTestUtil scopeTestUtil;
+    private final JiraTestUtil scopeTestUtil;
 
     public ReadScopeJiraTest(TestPluginInstaller testPluginInstaller,
                              TestAuthenticator testAuthenticator,
                              JwtWriterFactory jwtWriterFactory,
                              ConnectAddonRegistry connectAddonRegistry,
                              ApplicationProperties applicationProperties,
-                             JiraScopeTestUtil scopeTestUtil)
+                             JiraTestUtil scopeTestUtil)
     {
         super(ScopeName.READ, testPluginInstaller, testAuthenticator, jwtWriterFactory, connectAddonRegistry,
                 applicationProperties);
@@ -62,7 +64,7 @@ public class ReadScopeJiraTest extends ScopeTestBase
     @Test
     public void shouldAllowGetSecureUserAvatar() throws Exception
     {
-        assertValidRequest(HttpMethod.GET, "/secure/useravatar?ownerId=" + JiraScopeTestUtil.ADMIN_USERNAME);
+        assertValidRequest(HttpMethod.GET, "/secure/useravatar?ownerId=" + JiraTestUtil.ADMIN_USERNAME);
     }
 
     @Test

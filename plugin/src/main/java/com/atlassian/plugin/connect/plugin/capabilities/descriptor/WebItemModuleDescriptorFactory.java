@@ -80,7 +80,10 @@ public class WebItemModuleDescriptorFactory
         String i18nKey = bean.needsEscaping() ? StringEscapeUtils.escapeHtml(bean.getName().getI18n()) : bean.getName().getI18n();
 
         webItemElement.addAttribute("key", webItemKey);
-        webItemElement.addAttribute("section", moduleProviderContext.getLocationQualifier().processLocation(bean.getLocation()));
+
+        String section = moduleProviderContext.getLocationQualifier().processLocation(bean.getLocation());
+        webItemElement.addAttribute("section", section);
+
         webItemElement.addAttribute("weight", Integer.toString(bean.getWeight()));
 
         webItemElement.addElement("label")
@@ -157,11 +160,11 @@ public class WebItemModuleDescriptorFactory
             log.debug("Created web item: " + printNode(webItemElement));
         }
 
-        return createWebItemDescriptor(addon, theConnectPlugin, webItemElement, webItemKey, url, bean.isAbsolute(), bean.getContext(), isDialog);
+        return createWebItemDescriptor(addon, theConnectPlugin, webItemElement, webItemKey, url, bean.isAbsolute(), bean.getContext(), isDialog, section);
     }
 
     private WebItemModuleDescriptor createWebItemDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, Element webItemElement, String moduleKey, String url,
-                                                            boolean absolute, AddOnUrlContext urlContext, boolean isDialog)
+                                                            boolean absolute, AddOnUrlContext urlContext, boolean isDialog, String section)
     {
         webItemElement.addAttribute("system", "true");
 
@@ -171,11 +174,11 @@ public class WebItemModuleDescriptorFactory
                 , moduleKey
                 , absolute
                 , urlContext
-                , isDialog);
+                , isDialog
+                , section);
 
         descriptor.init(theConnectPlugin, webItemElement);
 
         return descriptor;
     }
-
 }
