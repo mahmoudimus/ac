@@ -210,6 +210,8 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
                 userTemplate.setDisplayName(addOnDisplayName);
                 applicationService.updateUser(getApplication(), userTemplate);
             }
+
+            applicationService.updateUserCredential(getApplication(), user.getName(), PasswordCredential.NONE);
         }
 
         addConnectUserAttribute(user);
