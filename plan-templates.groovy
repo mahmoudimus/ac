@@ -61,7 +61,10 @@ plan(
 ) {
     productSnapshotPlanConfiguration(
             productVersion: '5.9.0-SNAPSHOT',
-            productDataVersion: '5.8-m56',
+    )
+    variable(
+            key: 'bamboo.product.data.version',
+            value: '5.8-m56'
     )
     stage(
             name: 'Run Tests'
@@ -79,14 +82,17 @@ plan(
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest JIRA SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
-            productVersion: '6.5-SNAPSHOT',
-            productDataVersion: '[not used]',
+            productVersion: '7.0-SNAPSHOT',
+    )
+    variable(
+            key: 'bamboo.jira.testkit.version',
+            value: '7.0.36'
     )
     stage(
             name: 'Run Tests'
     ) {
         testJobsForJIRA(
-                mavenProductParameters: '-Datlassian.jira.version=${bamboo_product_version}'
+                mavenProductParameters: '-Datlassian.jira.version=${bamboo_product_version} -Datlassian.jira.testkit.version=${bamboo_jira_testkit_version}'
         )
     }
 }
