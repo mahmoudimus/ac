@@ -77,7 +77,7 @@ public abstract class ThreeLeggedAuthFilterTestBase
 
     private static final Logger log = LoggerFactory.getLogger(ThreeLeggedAuthFilterTestBase.class);
     private static final String ADMIN_USERNAME = "admin";
-    protected String SUBJECT_USERNAME = "barney";
+    protected String SUBJECT_USERNAME = "admin";
     protected String SUBJECT_USERKEY;
     protected String INACTIVE_USERNAME = "inactive_user";
     protected String INACTIVE_USERKEY;

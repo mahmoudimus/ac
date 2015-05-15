@@ -4,8 +4,6 @@ import com.atlassian.fugue.Option;
 import com.atlassian.jira.bc.issue.comment.CommentService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.CreateException;
-import com.atlassian.jira.issue.Issue;
-import com.atlassian.jira.issue.IssueFactory;
 import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -13,7 +11,11 @@ import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.jira.workflow.WorkflowManager;
 import com.atlassian.jira.workflow.WorkflowTransitionUtilImpl;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.modules.beans.*;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
+import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
@@ -23,6 +25,7 @@ import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+import it.com.atlassian.plugin.connect.jira.util.JiraTestUtil;
 import it.com.atlassian.plugin.connect.util.request.HeaderUtil;
 import org.apache.http.HttpHeaders;
 import org.json.JSONObject;
@@ -33,8 +36,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
@@ -55,18 +56,16 @@ public class WorkflowPostFunctionTest
     private static final String INSTALLED_URL = "/installed";
 
     private static final String ADMIN_USER = "admin";
-    private static final String ISSUE_TYPE_BUG = "1";
-    private static final long DEFAULT_PROJECT_ID = 10000L;
     private static final int RESOLVE_ACTION = 11;
 
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
     private final WorkflowManager workflowManager;
-    private final IssueFactory issueFactory;
     private final IssueManager issueManager;
     private final JiraAuthenticationContext authenticationContext;
     private final AddonTestFilterResults testFilterResults;
     private final WorkflowImporter workflowImporter;
+    private final JiraTestUtil jiraTestUtil;
 
     private Plugin plugin;
     private JiraWorkflow workflow;
@@ -74,20 +73,20 @@ public class WorkflowPostFunctionTest
     public WorkflowPostFunctionTest(TestPluginInstaller testPluginInstaller,
                                     TestAuthenticator testAuthenticator,
                                     WorkflowManager workflowManager,
-                                    IssueFactory issueFactory,
                                     IssueManager issueManager,
                                     JiraAuthenticationContext authenticationContext,
                                     AddonTestFilterResults testFilterResults,
-                                    WorkflowImporter workflowImporter)
+                                    WorkflowImporter workflowImporter,
+                                    JiraTestUtil jiraTestUtil)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
         this.workflowManager = workflowManager;
-        this.issueFactory = issueFactory;
         this.issueManager = issueManager;
         this.authenticationContext = authenticationContext;
         this.testFilterResults = testFilterResults;
         this.workflowImporter = workflowImporter;
+        this.jiraTestUtil = jiraTestUtil;
     }
 
     @BeforeClass
@@ -178,9 +177,9 @@ public class WorkflowPostFunctionTest
         assertNotNull(payload.get("configuration"));
     }
 
-    private ServletRequestSnapshot triggerWorkflowTransition() throws CreateException
+    private ServletRequestSnapshot triggerWorkflowTransition() throws CreateException, IOException
     {
-        MutableIssue issue = issueManager.getIssueObject(createIssue("triggerWorkflowTransition").getId());
+        MutableIssue issue = issueManager.getIssueObject(jiraTestUtil.createIssue().getId());
         workflowManager.migrateIssueToWorkflow(issue, workflow, issue.getStatusObject());
         WorkflowTransitionUtilImpl workflowTransition = new WorkflowTransitionUtilImpl(
                 authenticationContext,
@@ -219,19 +218,5 @@ public class WorkflowPostFunctionTest
         }, 5);
 
         return request[0];
-    }
-
-    private Issue createIssue(String summary) throws CreateException
-    {
-        MutableIssue issueObject = issueFactory.getIssue();
-        issueObject.setProjectId(DEFAULT_PROJECT_ID);
-        issueObject.setIssueTypeId(ISSUE_TYPE_BUG);
-        issueObject.setSummary(summary);
-        issueObject.setReporterId(ADMIN_USER);
-
-        Map params = new HashMap();
-        params.put("issue", issueObject);
-
-        return issueManager.createIssueObject(authenticationContext.getLoggedInUser(), params);
     }
 }

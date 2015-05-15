@@ -225,7 +225,6 @@
                             <id>jira</id>
                             <version>${atlassian.jira.version}</version>
                             <log4jProperties>src/test/resources/log4j-jira.properties</log4jProperties>
-                            <productDataPath>${basedir}/../integration-tests/src/test/resources/jira-generated-test-resources.zip</productDataPath>
                             <systemPropertyVariables>
                                 <product>jira</product>
                             </systemPropertyVariables>
@@ -304,7 +303,6 @@
                             <id>confluence</id>
                             <version>${atlassian.confluence.version}</version>
                             <log4jProperties>src/test/resources/log4j-confluence.properties</log4jProperties>
-                            <productDataPath>${basedir}/../integration-tests/src/test/resources/confluence-generated-test-resources.zip</productDataPath>
                             <systemPropertyVariables>
                                 <product>confluence</product>
                             </systemPropertyVariables>

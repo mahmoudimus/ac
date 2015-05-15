@@ -55,7 +55,7 @@
     },
     {
       "key": "ADMIN",
-      "restPathKeys": ["group", "screens", "workflow"],
+      "restPathKeys": ["group", "screens", "workflow", "role"],
       "methods": ["GET"]
     }
   ],
@@ -262,6 +262,13 @@
         "basePaths": ["/configuration"],
         "versions": ["2", "latest"],
         "public": true
+    },
+    {
+      "key" : "role",
+      "name" : "api",
+      "basePaths": ["/role($|/.*)"],
+      "versions": ["2", "latest"],
+      "public": true
     }
   ],
   "soapRpcPaths": [
