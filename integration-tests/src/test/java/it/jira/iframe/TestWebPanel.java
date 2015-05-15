@@ -4,6 +4,7 @@ package it.jira.iframe;
 import java.rmi.RemoteException;
 
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
+import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
@@ -126,7 +127,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     @Test
     public void testViewIssuePageWithArbitraryDataInUrl() throws Exception
     {
-        IssueCreateResponse issue = jiraOps.createIssue(projectKey, "Test issue for panel");
+        IssueCreateResponse issue = TestBase.funcTestHelper.backdoor.issues().createIssue(projectKey, "Test issue for panel");
         JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.key);
         RemoteWebPanel panel = viewIssuePage.findWebPanel(getModuleKey(runner, ISSUE_PANEL_LEFT2_KEY)).waitUntilContentLoaded();
 
@@ -160,7 +161,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     {
         TestUser user = testUserFactory.basicUser();
         login(user);
-        IssueCreateResponse issue = jiraOps.createIssue(projectKey, "Test issue for left remotable-web-panel panel");
+        IssueCreateResponse issue = TestBase.funcTestHelper.backdoor.issues().createIssue(projectKey, "Test issue for left remotable-web-panel panel");
         JiraViewIssuePage page = product.visit(JiraViewIssuePage.class, issue.key);
         RemoteWebPanel panel = page.findWebPanel(getModuleKey(runner, ISSUE_PANEL_LEFT_KEY)).waitUntilContentLoaded();
 
@@ -179,7 +180,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     {
         TestUser user = testUserFactory.basicUser();
         login(user);
-        IssueCreateResponse issue = jiraOps.createIssue(projectKey, "Another test issue for right remotable-web-panel panel");
+        IssueCreateResponse issue = TestBase.funcTestHelper.backdoor.issues().createIssue(projectKey, "Another test issue for right remotable-web-panel panel");
         JiraViewIssuePage page = product.visit(JiraViewIssuePage.class, issue.key);
         RemoteWebPanel panel = page.findWebPanel(getModuleKey(runner, ISSUE_PANEL_RIGHT_KEY)).waitUntilContentLoaded();
 

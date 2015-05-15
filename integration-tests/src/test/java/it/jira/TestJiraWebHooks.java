@@ -1,20 +1,18 @@
 package it.jira;
 
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
+import com.atlassian.jira.testkit.client.restclient.Issue;
+import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
 
-import com.google.common.collect.ImmutableMap;
-
+import org.apache.commons.lang.RandomStringUtils;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
-import hudson.plugins.jira.soap.RemoteIssue;
-import hudson.plugins.jira.soap.RemoteNamedObject;
-import hudson.plugins.jira.soap.RemoteProject;
+import java.util.Locale;
 
 import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider.getJiraTestedProduct;
 import static com.atlassian.plugin.connect.test.webhook.WebHookTestServlet.runInJsonRunner;
@@ -30,12 +28,8 @@ import static org.junit.Assert.assertThat;
 public class TestJiraWebHooks
 {
     private final String baseUrl = getJiraTestedProduct().getProductInstance().getBaseUrl();
-    private final JiraOps jiraOps;
 
-    public TestJiraWebHooks()
-    {
-        this.jiraOps = new JiraOps();
-    }
+    public TestJiraWebHooks() {}
 
     @Test
     public void testWebHookOnIssueCreated() throws Exception
@@ -45,8 +39,9 @@ public class TestJiraWebHooks
             @Override
             public void test(WebHookWaiter waiter) throws Exception
             {
-                String projectKey = jiraOps.createProject();
-                jiraOps.createIssue(projectKey, "As Filip I want JIRA WebHooks to really work.");
+                String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
+                TestBase.funcTestHelper.backdoor.project().addProject("Test project " + projectKey, projectKey, "admin");
+                TestBase.funcTestHelper.backdoor.issues().createIssue(projectKey, "As Ben I want JIRA WebHooks listeners to get issue updates");
                 WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
                 assertEquals("jira:issue_created", body.find("webhookEvent"));
@@ -63,8 +58,9 @@ public class TestJiraWebHooks
             @Override
             public void test(WebHookWaiter waiter) throws Exception
             {
-                String projectKey = jiraOps.createProject();
-                jiraOps.createIssue(projectKey, "As Filip I really like creating issues.");
+                String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
+                TestBase.funcTestHelper.backdoor.project().addProject("Test project " + projectKey, projectKey, "admin");
+                TestBase.funcTestHelper.backdoor.issues().createIssue(projectKey, "As Filip I really like creating issues.");
                 WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
                 assertThat(body.getConnectVersion(),isVersionNumber());
@@ -80,9 +76,10 @@ public class TestJiraWebHooks
             @Override
             public void test(WebHookWaiter waiter) throws Exception
             {
-                String projectKey = jiraOps.createProject();
-                IssueCreateResponse issue = jiraOps.createIssue(projectKey, "As Ben I want JIRA WebHooks listeners to get issue updates");
-                jiraOps.setIssueSummary(issue.key, "As Ben I want JIRA WebHooks listeners to get all issue updates");
+                String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
+                TestBase.funcTestHelper.backdoor.project().addProject("Test project " + projectKey, projectKey, "admin");
+                IssueCreateResponse issue = TestBase.funcTestHelper.backdoor.issues().createIssue(projectKey, "As Ben I want JIRA WebHooks listeners to get issue updates");
+                TestBase.funcTestHelper.backdoor.issues().setSummary(issue.key, "As Ben I want JIRA WebHooks listeners to get all issue updates");
                 WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
                 assertEquals("jira:issue_updated", body.find("webhookEvent"));
@@ -99,9 +96,11 @@ public class TestJiraWebHooks
             @Override
             public void test(WebHookWaiter waiter) throws Exception
             {
-                String projectKey = jiraOps.createProject();
-                IssueCreateResponse issue = jiraOps.createIssue(projectKey, "As Ben I want JIRA WebHooks listeners to get issue transition");
-                jiraOps.transitionIssueToArbitraryStatus(issue.key);
+                String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
+                TestBase.funcTestHelper.backdoor.project().addProject("Test project " + projectKey, projectKey, "admin");
+                IssueCreateResponse issue = TestBase.funcTestHelper.backdoor.issues().createIssue(projectKey, "As Ben I want JIRA WebHooks listeners to get issue transition");
+                int transitionId = TestBase.funcTestHelper.backdoor.issues().getIssue(issue.key, Issue.Expand.transitions).transitions.get(0).id;
+                TestBase.funcTestHelper.backdoor.issues().transitionIssue(issue.key, transitionId);
                 WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
                 assertEquals("jira:issue_updated", body.find("webhookEvent"));

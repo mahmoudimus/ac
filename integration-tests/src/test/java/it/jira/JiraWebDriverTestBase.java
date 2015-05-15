@@ -9,19 +9,19 @@ import com.atlassian.jira.webtests.LicenseKeys;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import com.atlassian.plugin.connect.test.pageobjects.jira.workflow.ExtendedViewWorkflowTransitionPage;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
-import hudson.plugins.jira.soap.RemoteProject;
 import it.util.ConnectTestUserFactory;
 import it.util.JiraTestUserFactory;
 import it.util.TestUser;
+import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
 import java.rmi.RemoteException;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 
 public class JiraWebDriverTestBase
@@ -29,10 +29,8 @@ public class JiraWebDriverTestBase
 
     protected static JiraTestedProduct product = TestedProductProvider.getJiraTestedProduct();
 
-    protected static JiraOps jiraOps;
-
     protected static String projectKey;
-    protected static int projectId;
+    protected static long projectId;
 
     protected static ConnectTestUserFactory testUserFactory;
 
@@ -80,15 +78,14 @@ public class JiraWebDriverTestBase
         
         product.getPageBinder().override(ViewWorkflowTransitionPage.class, ExtendedViewWorkflowTransitionPage.class);
 
-        jiraOps = new JiraOps();
-        projectKey = jiraOps.createProject();
-        projectId = jiraOps.getProjectId(projectKey);
+        projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
+        projectId = TestBase.funcTestHelper.backdoor.project().addProject("Test project " + projectKey, projectKey, "admin");
     }
 
     @AfterClass
     public static void afterClass() throws RemoteException
     {
-        jiraOps.deleteProject(projectKey);
+        TestBase.funcTestHelper.backdoor.project().deleteProject(projectKey);
     }
 
     protected void testLoggedInAndAnonymous(final Callable runnable) throws Exception

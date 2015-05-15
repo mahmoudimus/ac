@@ -1,6 +1,7 @@
 package it.jira;
 
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
+import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.jira.IssueNavigatorViewsMenu;
@@ -153,7 +154,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
 
     private IssueCreateResponse createIssue() throws Exception
     {
-        return jiraOps.createIssue(projectKey, "test issue");
+        return TestBase.funcTestHelper.backdoor.issues().createIssue(projectKey, "test issue");
     }
 
     private void assertNoTimeout(NameValuePairs queryParameters)

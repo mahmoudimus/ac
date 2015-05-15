@@ -3,6 +3,7 @@ package it.jira.jsapi;
 import com.atlassian.jira.pageobjects.pages.viewissue.ViewIssuePage;
 import com.atlassian.jira.pageobjects.util.Tracer;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
+import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.jira.RemoteRefreshIssuePageWebPanel;
@@ -60,7 +61,7 @@ public class TestJiraRefreshIssuePage extends JiraWebDriverTestBase
     @Before
     public void setUp() throws RemoteException
     {
-        issue = jiraOps.createIssue(projectKey, "Test Issue");
+        issue = TestBase.funcTestHelper.backdoor.issues().createIssue(projectKey, "Test Issue");
     }
 
     @Test

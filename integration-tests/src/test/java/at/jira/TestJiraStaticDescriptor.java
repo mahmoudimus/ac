@@ -2,6 +2,7 @@ package at.jira;
 
 import at.util.ExternalAddonInstaller;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
+import com.atlassian.jira.tests.TestBase;
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
 import com.google.common.base.Optional;
 import hudson.plugins.jira.soap.RemoteIssue;
@@ -35,7 +36,7 @@ public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
     @Test
     public void testAcActionWebItemIsPresent() throws RemoteException
     {
-        IssueCreateResponse issue = jiraOps.createIssue(projectKey, "Atlassian Connect Web Panel Test Issue");
+        IssueCreateResponse issue = TestBase.funcTestHelper.backdoor.issues().createIssue(projectKey, "Atlassian Connect Web Panel Test Issue");
 
         login(testUserFactory.basicUser());
         product.goToViewIssue(issue.key);

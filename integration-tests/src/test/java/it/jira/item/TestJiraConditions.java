@@ -1,6 +1,7 @@
 package it.jira.item;
 
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
+import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -217,7 +218,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     {
         login(user);
 
-        IssueCreateResponse issue = jiraOps.createIssue(projectKey, "Nought but a test.");
+        IssueCreateResponse issue = TestBase.funcTestHelper.backdoor.issues().createIssue(projectKey, "Nought but a test.");
         JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.key);
         RemoteWebItem webItem = viewIssuePage.findWebItem(getModuleKey(CONTEXT_PARAMETERIZED_WEBITEM), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
