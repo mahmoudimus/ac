@@ -14,6 +14,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.client.WebDriverSessionAwareDownloader;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWithRemoteMacro;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
@@ -25,19 +26,17 @@ import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
 import it.confluence.MacroStorageFormatBuilder;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
-import org.apache.commons.io.IOUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.concurrent.Callable;
 
 import static com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean.newDynamicContentMacroModuleBean;
@@ -277,7 +276,9 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
     public String extractPDFText(ViewPage viewPage) throws IOException
     {
         String pdfUrl = viewPage.openToolsMenu().getMenuItem(By.id("action-export-pdf-link")).getHref();
-        PdfReader reader = new PdfReader(loadData(pdfUrl));
+        byte[] pdfData = loadDataFromUrl(pdfUrl);
+
+        PdfReader reader = new PdfReader(pdfData);
         PdfReaderContentParser parser = new PdfReaderContentParser(reader);
         TextExtractionStrategy strategy;
         StringBuilder buf = new StringBuilder();
@@ -290,34 +291,18 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         return buf.toString();
     }
 
-    private byte[] loadData(String urlString)
-    {
-        try
-        {
-            URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setInstanceFollowRedirects(true);
-            connection.setConnectTimeout(15 * 1000); // 15 second time out
-            connection.setRequestMethod("GET");
-            connection.connect();
-            if (connection.getResponseCode() != 200)
-            {
-                throw new RuntimeException("Could not load remote PDF: " + connection.getResponseMessage());
-            }
-            else
-            {
-                return IOUtils.toByteArray(connection.getInputStream());
-            }
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException("Could not load remote PDF: "+e.getMessage(), e);
-        }
-    }
-
     private String extractWordText(ViewPage viewPage) throws IOException
     {
-        return IOUtils.toString(new URL(viewPage.openToolsMenu().getMenuItem(By.id("action-export-word-link")).getHref()));
+        String url = viewPage.openToolsMenu().getMenuItem(By.id("action-export-word-link")).getHref();
+        byte[] data = loadDataFromUrl(url);
+        return new String(data);
+    }
+
+    private byte[] loadDataFromUrl(String url) throws IOException
+    {
+        WebDriver driver = getProduct().getTester().getDriver().getDriver();
+        WebDriverSessionAwareDownloader downloader = new WebDriverSessionAwareDownloader(driver);
+        return downloader.downloadBytes(url);
     }
 
     @Test
