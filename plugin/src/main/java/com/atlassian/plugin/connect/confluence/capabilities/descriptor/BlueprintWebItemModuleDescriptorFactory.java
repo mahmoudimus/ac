@@ -50,7 +50,10 @@ public class BlueprintWebItemModuleDescriptorFactory
 
         String i18nKeyOrName = Strings.isNullOrEmpty(bean.getName().getI18n()) ? bean.getDisplayName() : bean.getName().getI18n();
         webItemElement.addAttribute("key", webItemKey);
-        webItemElement.addAttribute("section", "system.create.dialog/content");
+
+        String section = "system.create.dialog/content";
+        webItemElement.addAttribute("section", section);
+
         webItemElement.addAttribute("i18n-name-key", i18nKeyOrName);
 
 //      See: https://ecosystem.atlassian.net/browse/CE-19
@@ -73,7 +76,7 @@ public class BlueprintWebItemModuleDescriptorFactory
         }
 
         final WebItemModuleDescriptor descriptor = productWebItemDescriptorFactory
-                .createWebItemModuleDescriptor(null, addon.getKey(), webItemKey, true, null, true);
+                .createWebItemModuleDescriptor(null, addon.getKey(), webItemKey, true, null, true, section);
         descriptor.init(plugin, webItemElement);
         return descriptor;
     }

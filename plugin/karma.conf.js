@@ -9,7 +9,7 @@ module.exports = function(config) {
 
 
     // frameworks to use
-    frameworks: ['qunit', 'requirejs', 'sinon'],
+    frameworks: ['requirejs', 'qunit', 'sinon'],
 
 
     // list of files / patterns to load in the browser

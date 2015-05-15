@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.1.30-SNAPSHOT</version>
+    <version>1.1.31-SNAPSHOT</version>
     <organization>
         <name>Atlassian</name>
         <url>http://atlassian.com/</url>
@@ -50,6 +50,12 @@
             <id>freezer-release-profile</id>
             <modules>
                 <module>integration-tests</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>wired</id>
+            <modules>
+                <module>wired-tests</module>
             </modules>
         </profile>
     </profiles>
@@ -165,7 +171,7 @@
                         <configuration>
                             <rules>
                                 <requireMavenVersion>
-                                    <version>[3.0,)</version>
+                                    <version>[3.2, 3.3)</version>
                                 </requireMavenVersion>
                             </rules>
                             <skip>
@@ -662,7 +668,7 @@
     </dependencyManagement>
     <properties>
         <!-- VERSIONS -->
-        <amps.version>4.2.22</amps.version>
+        <amps.version>5.0.16</amps.version>
         <atlassian.analytics.version>3.68</atlassian.analytics.version>
         <atlassian.applinks.version>4.2.4</atlassian.applinks.version>
         <atlassian.confluence.version>5.7-OD-48-066</atlassian.confluence.version>
@@ -673,7 +679,7 @@
         <atlassian.httpclient.api.version>0.17</atlassian.httpclient.api.version>
         <atlassian.jira.version>6.5-OD-02-089</atlassian.jira.version>
         <atlassian.jira.rest.version>${atlassian.jira.version}</atlassian.jira.rest.version>
-        <atlassian.jira.testkit.version>6.2.21</atlassian.jira.testkit.version>
+        <atlassian.jira.testkit.version>6.5.15</atlassian.jira.testkit.version>
         <atlassian.mail.version>2.5.4</atlassian.mail.version>
         <atlassian.oauth.version>1.3.0</atlassian.oauth.version>
         <atlassian.jwt.version>1.2.2</atlassian.jwt.version>
@@ -683,7 +689,7 @@
         <atlassian.sal.version>2.10.0</atlassian.sal.version>
         <atlassian.selenium.version>2.2-rc3</atlassian.selenium.version>
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>
-        <atlassian.connect-js.version>2.0.1</atlassian.connect-js.version>
+        <atlassian.connect-js.version>3.1.2</atlassian.connect-js.version>
         <atlassian.connect-js.path>git+ssh://git@stash.atlassian.com:7997/ac/atlassian-connect-js.git#${atlassian.connect-js.version}</atlassian.connect-js.path>
         <atlassian.jira.projects.plugin.version>1.20.0-D20150217T051447</atlassian.jira.projects.plugin.version>
 
@@ -703,6 +709,7 @@
         <frontend.plugin.version>0.0.22</frontend.plugin.version>
 
         <!-- TEST STUFF -->
+        <atlassian.confluence.productDataVersion>${atlassian.confluence.version}</atlassian.confluence.productDataVersion>
         <atlassian.jira.cross.compat.version>0.28</atlassian.jira.cross.compat.version>
         <atlassian.test.categories.version>0.5</atlassian.test.categories.version>
         <aui.version>5.2</aui.version>
@@ -719,6 +726,8 @@
         <webdriver.browser>firefox</webdriver.browser>
         <plugin.testrunner.version>1.2.0</plugin.testrunner.version>
         <atlassian.jira.projects.version>1.20.0-D20150217T051447</atlassian.jira.projects.version>
+        <functest.version>0.7.1</functest.version>
+        <functestbasics.version>1.9.7</functestbasics.version>
 
         <!-- BUILD STUFF -->
         <apache-commons-version>3.1</apache-commons-version>
@@ -731,7 +740,7 @@
         <ao.short.timeout>30000</ao.short.timeout>
         <skipTests>false</skipTests>
         <skipUnits>${skipTests}</skipUnits>
-        <schema.generator.version>1.0.0-m5</schema.generator.version>
+        <schema.generator.version>1.0.0</schema.generator.version>
         <json.schema.validator.version>2.2.5</json.schema.validator.version>
         <node.version>v0.10.26</node.version>
         <npm.version>1.4.3</npm.version>

@@ -1,9 +1,13 @@
 package com.atlassian.plugin.connect.confluence.macro;
 
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
+import com.atlassian.confluence.content.render.xhtml.ConversionContextPropertyName;
+import com.atlassian.confluence.content.render.xhtml.storage.macro.MacroId;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.Spaced;
+import com.atlassian.confluence.xhtml.api.MacroDefinition;
+import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
@@ -44,7 +48,21 @@ public class MacroModuleContextExtractorImpl implements MacroModuleContextExtrac
 
         moduleContext.put("macro.body", StringUtils.left(storageFormatBody, MAX_BODY_LENGTH));
         moduleContext.put("macro.truncated", Boolean.toString(storageFormatBody.length() > MAX_BODY_LENGTH));
-        moduleContext.put("macro.hash", DigestUtils.md5Hex(storageFormatBody));
+
+        MacroDefinition macroDefinition = (MacroDefinition) conversionContext.getProperty(ConversionContextPropertyName.MACRO_DEFINITION);
+
+        Option<MacroId> macroId = macroDefinition.getMacroId();
+        if(macroId.isDefined()) {
+            // the getMacroId call will fall back to the hash if no macro Id is specified
+            String macroIdString = macroId.get().getId();
+            moduleContext.put("macro.hash", macroIdString); // backwards compatible
+            moduleContext.put("macro.id", macroIdString);
+        } else {
+            // the option will be none if there is no id _and_ there is no body so we can skip these parameters
+            moduleContext.put("macro.hash", "");
+            moduleContext.put("macro.id", "");
+        }
+
         moduleContext.put("output.type", conversionContext.getOutputType());
 
         ContentEntityObject entity = conversionContext.getEntity();

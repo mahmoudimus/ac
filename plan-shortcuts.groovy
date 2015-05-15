@@ -12,12 +12,16 @@ commonPlanConfiguration() {
     )
 }
 
-productSnapshotPlanConfiguration(['applicationVersion']) {
+productSnapshotPlanConfiguration(['productVersion', 'productDataVersion']) {
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (develop)')
     variable(
             key: 'bamboo.product.version',
-            value: '#applicationVersion'
+            value: '#productVersion'
+    )
+    variable(
+            key: 'bamboo.product.data.version',
+            value: '#productDataVersion'
     )
     trigger(
             type: 'cron',
@@ -374,9 +378,9 @@ commonRequirements() {
     )
 }
 
-maven30Requirement() {
+maven32Requirement() {
     requirement(
-            key: 'system.builder.mvn3.Maven 3.0',
+            key: 'system.builder.mvn3.Maven 3.2',
             condition: 'exists'
     )
 }
@@ -418,7 +422,7 @@ mavenTaskImpl(['description', 'goal', 'environmentVariables', 'hasTests', 'testD
             description: '#description',
             goal: '#goal -B -nsu -e',
             buildJdk: 'JDK 1.8',
-            mavenExecutable: 'Maven 3.0',
+            mavenExecutable: 'Maven 3.2',
             environmentVariables: '#environmentVariables',
             hasTests: '#hasTests',
             testDirectory: '#testDirectory'
