@@ -10,11 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import hudson.plugins.jira.soap.RemoteIssue;
-import com.atlassian.plugin.connect.test.client.AddOnPropertyClient;
-import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
-import it.util.TestUser;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -31,7 +27,6 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
     public static final String PROJECT_KEY = "PR";
     private static ConnectRunner remotePlugin;
     private EntityPropertyClient issueEntityPropertyClient;
-    private AddOnPropertyClient addOnPropertyClient;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -48,18 +43,6 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
                                         .withCondition("entity_property_equal_to")
                                         .withParam("propertyKey", "prop")
                                         .withParam("entity", "issue")
-                                        .withParam("value", "true")
-                                        .build())
-                                .withUrl("/content")
-                                .build(),
-                        new WebPanelModuleBeanBuilder()
-                                .withKey("add-on-property-web-panel")
-                                .withLocation("atl.jira.view.issue.right.context")
-                                .withName(new I18nProperty("add-on-property-web-panel", "add-on-property-web-panel"))
-                                .withConditions(new SingleConditionBeanBuilder()
-                                        .withCondition("entity_property_equal_to")
-                                        .withParam("propertyKey", "prop")
-                                        .withParam("entity", "addon")
                                         .withParam("value", "true")
                                         .build())
                                 .withUrl("/content")
@@ -81,15 +64,14 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
     public void setUp()
     {
         issueEntityPropertyClient = new EntityPropertyClient(product.environmentData(), "issue");
-        addOnPropertyClient = new AddOnPropertyClient(product, remotePlugin);
-        login(new TestUser("admin"));
+        login(testUserFactory.admin());
         product.backdoor().project().addProject("Entity Property", PROJECT_KEY, "admin");
     }
 
     @After
     public void tearDown()
     {
-        login(new TestUser("admin"));
+        login(testUserFactory.admin());
         product.backdoor().project().deleteProject(PROJECT_KEY);
     }
 
@@ -115,33 +97,10 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
     }
 
     @Test
-    public void webPanelShouldBeVisibleIfAddOnPropertyIsSetToTrue() throws Exception
+    public void webPanelShouldNotBeVisibleIfIssuePropertyIsNotSet() throws JSONException, RemoteException
     {
         IssueCreateResponse issue = createIssue();
-
-        addOnPropertyClient.putProperty(remotePlugin.getAddon().getKey(), "prop", "true");
-
-        assertThat(webPanelIsVisible("add-on-property-web-panel", issue), equalTo(true));
-    }
-
-    @Test
-    public void webPanelShouldNotBeVisibleIfAddOnPropertyIsSetToFalse() throws Exception
-    {
-        IssueCreateResponse issue = createIssue();
-
-        addOnPropertyClient.putProperty(remotePlugin.getAddon().getKey(), "prop", "false");
-
-        assertThat(webPanelIsVisible("add-on-property-web-panel", issue), equalTo(false));
-    }
-
-    @Test
-    public void webPanelShouldNotBeVisibleIfAddOnPropertyIsNotSet() throws Exception
-    {
-        IssueCreateResponse issue = createIssue();
-
-        addOnPropertyClient.deleteProperty(remotePlugin.getAddon().getKey(), "prop", "false");
-
-        assertThat(webPanelIsVisible("add-on-property-web-panel", issue), equalTo(false));
+        assertThat(webPanelIsVisible("issue-property-web-panel", issue), equalTo(false));
     }
 
     private IssueCreateResponse createIssue() throws RemoteException

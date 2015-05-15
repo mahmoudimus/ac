@@ -1,11 +1,11 @@
-package it.confluence;
+package it.common;
 
+import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.client.AddOnPropertyClient;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
-import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
+import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
+import com.atlassian.plugin.connect.test.pageobjects.RemotePluginAwarePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
@@ -14,12 +14,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class TestAddOnPropertyCondition extends ConfluenceWebDriverTestBase
+public class TestAddOnPropertyCondition extends MultiProductWebDriverTestBase
 {
     private static ConnectRunner remotePlugin;
     private AddOnPropertyClient addOnPropertyClient;
@@ -27,6 +26,13 @@ public class TestAddOnPropertyCondition extends ConfluenceWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
+        final String productContextPath = product.getProductInstance().getContextPath().toLowerCase();
+        String globallyVisibleLocation = productContextPath.contains("jira")
+                ? "system.top.navigation.bar"
+                : productContextPath.contains("wiki") || productContextPath.contains("confluence")
+                        ? "system.help/pages"
+                        : null;
+
         remotePlugin = new ConnectRunner(product)
                 .addJWT()
                 .addModules(
@@ -34,7 +40,8 @@ public class TestAddOnPropertyCondition extends ConfluenceWebDriverTestBase
                         newPageBean()
                                 .withName(new I18nProperty("Add-on property controlled page", null))
                                 .withKey("add-on-property-page")
-                                .withUrl("/pg?page_id={page.id}&page_version={page.version}&page_type={page.type}")
+                                .withUrl("/pg")
+                                .withLocation(globallyVisibleLocation)
                                 .withWeight(1234)
                                 .withConditions(new SingleConditionBeanBuilder()
                                         .withCondition("entity_property_equal_to")
@@ -65,7 +72,7 @@ public class TestAddOnPropertyCondition extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void webPanelShouldBeVisibleIfAddOnPropertyIsSetToTrue() throws Exception
+    public void pageShouldBeVisibleIfAddOnPropertyIsSetToTrue() throws Exception
     {
         addOnPropertyClient.putProperty(remotePlugin.getAddon().getKey(), "prop", "true");
 
@@ -73,7 +80,7 @@ public class TestAddOnPropertyCondition extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void webPanelShouldNotBeVisibleIfAddOnPropertyIsSetToFalse() throws Exception
+    public void pageShouldNotBeVisibleIfAddOnPropertyIsSetToFalse() throws Exception
     {
         addOnPropertyClient.putProperty(remotePlugin.getAddon().getKey(), "prop", "false");
 
@@ -81,7 +88,7 @@ public class TestAddOnPropertyCondition extends ConfluenceWebDriverTestBase
     }
 
     @Test
-    public void webPanelShouldNotBeVisibleIfAddOnPropertyIsNotSet() throws Exception
+    public void pageShouldNotBeVisibleIfAddOnPropertyIsNotSet() throws Exception
     {
         addOnPropertyClient.deleteProperty(remotePlugin.getAddon().getKey(), "prop", "false");
 
@@ -90,17 +97,8 @@ public class TestAddOnPropertyCondition extends ConfluenceWebDriverTestBase
 
     private boolean webPageIsVisible()
     {
-        try
-        {
-            ConfluenceOps.ConfluencePageData pageData = confluenceOps.setPage(some(testUserFactory.basicUser()), "ds", "A test page", "some page content");
-
-            product.visit(ConfluenceViewPage.class, pageData.getId());
-
-            return connectPageOperations.existsWebItem(ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), "add-on-property-page"));
-        }
-        catch (Exception ex)
-        {
-            throw new RuntimeException("ex");
-        }
+        loginAndVisit(testUserFactory.admin(), HomePage.class);
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "add-on-property-page", "Add-on property controlled page", remotePlugin.getAddon().getKey());
+        return page.isRemotePluginLinkPresent();
     }
 }
