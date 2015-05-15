@@ -17,6 +17,7 @@ module accepts conditions, see their specific module documentation page.
     * [JIRA](#jira-conditions)
       * [Condition parameter mappings](#jira-condition-parameters)
 * [Remote conditions](#remote)
+* [Entity property condition](#entity-property)
 
 ## <a name="static"></a>Static conditions
 
@@ -130,6 +131,7 @@ Each product defines a set of static conditions relevant to its domain.
 * `user_watching_space_for_content_type`
 * `viewing_content`
 * `viewing_own_profile`
+* [`entity_property_equal_to`](#entity-property)
 
 #### <a name="jira-conditions"></a>JIRA
 
@@ -159,6 +161,7 @@ Each product defines a set of static conditions relevant to its domain.
 * `user_is_the_logged_in_user`
 * `voting_enabled`
 * `watching_enabled`
+* [`entity_property_equal_to`](#entity-property)
 
 ##### <a name="jira-condition-parameters"></a>Condition parameter mappings
 
@@ -364,3 +367,40 @@ Remote conditions are URLs and must start with either 'http' or '/', and return 
 
 If there is an error communicating with the remote resource (for example, the request timeout period of 10 seconds elapses with no response),
 then the failure will be logged and the condition will be evaluated as `false`.
+
+## <a name="entity-property"></a>Entity property condition
+
+There is a common notion of entity properties in Atlassian products. Entities like `issue` or `project` can have properties that can
+ be set by Connect add-ons via REST API. Add-ons can also have their own properties. Properties are a great way to display
+ something conditionally. This can be achieved with the `entity_property_equal_to` condition.
+
+ This condition lets you test whether the entity property is equal to the specified value. Supported entities depend on the product:
+
+ * Common: `addon`
+ * JIRA: `project`, `issue`, `issuetype`, `comment`
+
+
+ When using the condition you need to specify the entity, property key and expected value:
+
+     {
+         "name": "My Addon",
+         "modules": {
+             "generalPages": [
+                 {
+                     "conditions": [
+                         {
+                             "condition": "entity_property_equal_to",
+                             "params": {
+                                 "entity": "addon",
+                                 "propertyKey": "isEnabled",
+                                 "value": "true"
+                             }
+                         }
+                     ]
+                 }
+             ]
+         }
+     }
+
+ In the above example the general page will be displayed if the `isEnabled` add-on property is set to `true`. All entities other than `addon` depend on context. For example,
+ if you add a web panel with an issue entity condition to some issue view, then the condition will be checked against the properties of the currently displayed issue.
