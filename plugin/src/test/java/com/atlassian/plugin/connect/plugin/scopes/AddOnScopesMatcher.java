@@ -1,16 +1,16 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
-import com.google.common.collect.Lists;
-import org.hamcrest.BaseMatcher;
+import com.atlassian.plugin.connect.spi.scope.AddOnScope;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 
 import java.util.Collection;
 import java.util.Iterator;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class AddOnScopesMatcher extends BaseMatcher<Collection<AddOnScope>>
+public class AddOnScopesMatcher extends TypeSafeMatcher<Collection<AddOnScope>>
 {
     private final Collection<Matcher<AddOnScope>> scopeMatchers;
 
@@ -20,31 +20,19 @@ public class AddOnScopesMatcher extends BaseMatcher<Collection<AddOnScope>>
     }
 
     @Override
-    public boolean matches(Object item)
+    protected boolean matchesSafely(final Collection<AddOnScope> addOnScopes)
     {
-        if (!(item instanceof Collection))
-        {
-            System.out.println("Not a Collection: " + item);
-            return false;
-        }
-
-        Collection actuals = (Collection) item;
-
         // shortcut for efficiency
-        if (actuals.size() != scopeMatchers.size())
+        if (addOnScopes.size() != scopeMatchers.size())
         {
             return false;
         }
 
-        Iterator<Matcher<AddOnScope>> scopeMatchersIter = scopeMatchers.iterator();
-        Collection actualsToCheck = Lists.newArrayList(actuals);
-
-        while (scopeMatchersIter.hasNext())
+        for (final Matcher<AddOnScope> scopeMatcher : scopeMatchers)
         {
-            Matcher<AddOnScope> scopeMatcher = scopeMatchersIter.next();
             boolean matched = false;
 
-            Iterator<Object> actualsIter = actualsToCheck.iterator();
+            Iterator<AddOnScope> actualsIter = addOnScopes.iterator();
             while (actualsIter.hasNext() && !matched)
             {
                 if (scopeMatcher.matches(actualsIter.next()))
@@ -59,7 +47,7 @@ public class AddOnScopesMatcher extends BaseMatcher<Collection<AddOnScope>>
             }
         }
 
-        return actualsToCheck.isEmpty();
+        return addOnScopes.isEmpty();
     }
 
     @Override

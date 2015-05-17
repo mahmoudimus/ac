@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.confluence.scopes;
 
+import com.atlassian.plugin.connect.confluence.scope.ConfluenceScopeProvider;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
@@ -54,6 +55,6 @@ public class ConfluenceXMLRPCScopesTest extends AbstractScopesTest
 
     public ConfluenceXMLRPCScopesTest(ScopeName scope, String methodName, boolean expectedOutcome)
     {
-        super(scope, HttpMethod.POST, "/confluence/rpc/xmlrpc", APITestUtil.createXmlRpcPayload(methodName), expectedOutcome, "/confluence", "Confluence");
+        super(scope, HttpMethod.POST, "/confluence/rpc/xmlrpc", APITestUtil.createXmlRpcPayload(methodName), expectedOutcome, "/confluence", new ConfluenceScopeProvider());
     }
 }

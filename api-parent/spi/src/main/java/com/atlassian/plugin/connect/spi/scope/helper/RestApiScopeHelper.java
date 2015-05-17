@@ -1,5 +1,6 @@
-package com.atlassian.plugin.connect.spi.scope;
+package com.atlassian.plugin.connect.spi.scope.helper;
 
+import com.atlassian.plugin.connect.spi.scope.ApiResourceInfo;
 import com.atlassian.plugin.connect.spi.util.ServletUtils;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.annotations.VisibleForTesting;
@@ -108,9 +109,9 @@ public final class RestApiScopeHelper
         public RestScope(String name, Collection<String> versions, String basePath, Collection<String> methods, boolean pathIsRegex)
         {
             this.name = name;
-            this.versions = new ArrayList<String>(Collections2.transform(versions, LOWERCASE_TRANSFORM)); // TransformedCollection.equals() is broken
+            this.versions = new ArrayList<>(Collections2.transform(versions, LOWERCASE_TRANSFORM)); // TransformedCollection.equals() is broken
             this.basePath = basePath;
-            this.methods = new ArrayList<String>(Collections2.transform(methods, LOWERCASE_TRANSFORM));
+            this.methods = new ArrayList<>(Collections2.transform(methods, LOWERCASE_TRANSFORM));
             this.pathIsRegex = pathIsRegex;
         }
 

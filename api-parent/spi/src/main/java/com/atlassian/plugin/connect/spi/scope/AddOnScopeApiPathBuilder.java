@@ -1,11 +1,11 @@
-package com.atlassian.plugin.connect.plugin.scopes;
+package com.atlassian.plugin.connect.spi.scope;
 
 import com.atlassian.plugin.connect.modules.beans.nested.AddOnScopeBean;
-import com.atlassian.plugin.connect.spi.scope.JsonRpcApiScopeHelper;
-import com.atlassian.plugin.connect.spi.scope.PathScopeHelper;
-import com.atlassian.plugin.connect.spi.scope.RestApiScopeHelper;
-import com.atlassian.plugin.connect.spi.scope.RpcEncodedSoapApiScopeHelper;
-import com.atlassian.plugin.connect.spi.scope.XmlRpcApiScopeHelper;
+import com.atlassian.plugin.connect.spi.scope.helper.JsonRpcApiScopeHelper;
+import com.atlassian.plugin.connect.spi.scope.helper.PathScopeHelper;
+import com.atlassian.plugin.connect.spi.scope.helper.RestApiScopeHelper;
+import com.atlassian.plugin.connect.spi.scope.helper.RpcEncodedSoapApiScopeHelper;
+import com.atlassian.plugin.connect.spi.scope.helper.XmlRpcApiScopeHelper;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 
@@ -15,11 +15,11 @@ import java.util.Collection;
 
 public class AddOnScopeApiPathBuilder
 {
-    Collection<RestApiScopeHelper.RestScope> restResources = new ArrayList<RestApiScopeHelper.RestScope>();
-    Collection<RpcEncodedSoapApiScopeHelper> soapResources = new ArrayList<RpcEncodedSoapApiScopeHelper>();
-    Collection<JsonRpcApiScopeHelper>        jsonResources = new ArrayList<JsonRpcApiScopeHelper>();
-    Collection<XmlRpcApiScopeHelper>         xmlResources = new ArrayList<XmlRpcApiScopeHelper>();
-    Collection<PathScopeHelper>              paths         = new ArrayList<PathScopeHelper>();
+    Collection<RestApiScopeHelper.RestScope> restResources = new ArrayList<>();
+    Collection<RpcEncodedSoapApiScopeHelper> soapResources = new ArrayList<>();
+    Collection<JsonRpcApiScopeHelper>        jsonResources = new ArrayList<>();
+    Collection<XmlRpcApiScopeHelper>         xmlResources = new ArrayList<>();
+    Collection<PathScopeHelper>              paths         = new ArrayList<>();
 
     public AddOnScopeApiPathBuilder withRestPaths(AddOnScopeBean.RestPathBean restPathBean, Collection<String> methods)
     {
@@ -82,7 +82,7 @@ public class AddOnScopeApiPathBuilder
 
     public Collection<AddOnScopeApiPath> build()
     {
-        Collection<AddOnScopeApiPath> paths = new ArrayList<AddOnScopeApiPath>();
+        Collection<AddOnScopeApiPath> paths = new ArrayList<>();
 
         if (!restResources.isEmpty())
         {

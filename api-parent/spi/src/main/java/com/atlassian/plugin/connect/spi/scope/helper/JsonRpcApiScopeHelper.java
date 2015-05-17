@@ -1,76 +1,67 @@
-package com.atlassian.plugin.connect.spi.scope;
+package com.atlassian.plugin.connect.spi.scope.helper;
 
+import com.atlassian.plugin.connect.spi.scope.ApiResourceInfo;
 import com.atlassian.plugin.connect.spi.util.ServletUtils;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Function;
-import com.google.common.collect.Lists;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.dom4j.Document;
-import org.dom4j.Element;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
-import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Collection;
 
-import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.readDocument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.transform;
 
 /**
- * An api scope for xml-rpc requests
+ * An api scope for json-rpc requests
  */
-public class XmlRpcApiScopeHelper
+public final class JsonRpcApiScopeHelper
 {
-    private final String path;
     private final Collection<String> methods;
-    private final Iterable<ApiResourceInfo> apiResourceInfo;
+    private final String path;
+    private final String httpMethod;
+    private transient final Iterable<ApiResourceInfo> apiResourceInfo;
 
-    public XmlRpcApiScopeHelper(final String path, Collection<String> methods)
+    public JsonRpcApiScopeHelper(final String path, Collection<String> methods)
+    {
+        this(path, methods, "POST");
+    }
+
+    public JsonRpcApiScopeHelper(final String path, Collection<String> methods, final String httpMethod)
     {
         this.path = path;
-        // This is horrific: for transformed collections being passed in,
-        // EqualsBuilder will no longer return true, even though
-        // inspection or 'toString' show exactly the same contents for both sides of the comparison...
-        // So copying the collection to make EqualsBuilder happy.
-        this.methods = Lists.newArrayList(methods);
+        this.methods = methods;
+        this.httpMethod = checkNotNull(httpMethod).toUpperCase();
         this.apiResourceInfo = transform(methods, new Function<String, ApiResourceInfo>()
         {
             @Override
             public ApiResourceInfo apply(String from)
             {
-                return new ApiResourceInfo(path, "POST", from);
+                return new ApiResourceInfo(path, JsonRpcApiScopeHelper.this.httpMethod, from);
             }
         });
-    }
-    
-    @Nullable
-    public static String extractMethod(HttpServletRequest rq)
-    {
-        Document doc = readDocument(rq);
-        if(doc == null)
-        {
-            return null;
-        }
-        Element root = doc.getRootElement();
-        if(root == null)
-        {
-            return null;
-        }
-        Element methodName = root.element("methodName");
-        if(null == methodName)
-        {
-            return null;
-        }
-        return methodName.getTextTrim();
     }
 
     public boolean allow(HttpServletRequest request, UserKey user)
     {
+        if (!httpMethod.equals(request.getMethod()))
+        {
+            return false;
+        }
+
         final String pathInfo = ServletUtils.extractPathInfo(request);
         if (path.equals(pathInfo))
         {
+            // methodName not in path so extract it from body
             String method = extractMethod(request);
             if (method == null)
             {
@@ -81,12 +72,38 @@ public class XmlRpcApiScopeHelper
                 return true;
             }
         }
+        else
+        {
+            // methodName in path
+            String method = pathInfo.replaceAll(path + "/", "");
+            return methods.contains(method);
+        }
         return false;
     }
 
     public Iterable<ApiResourceInfo> getApiResourceInfos()
     {
         return apiResourceInfo;
+    }
+
+    public static String extractMethod(HttpServletRequest request)
+    {
+        InputStream in = null;
+        try
+        {
+            in = request.getInputStream();
+            InputStreamReader reader = new InputStreamReader(in);
+            JSONObject json = (JSONObject) JSONValue.parse(reader);
+            return json.get("method").toString();
+        }
+        catch (IOException e)
+        {
+            return null;
+        }
+        finally
+        {
+            IOUtils.closeQuietly(in);
+        }
     }
 
     @Override
@@ -101,7 +118,7 @@ public class XmlRpcApiScopeHelper
             return false;
         }
 
-        XmlRpcApiScopeHelper that = (XmlRpcApiScopeHelper) o;
+        JsonRpcApiScopeHelper that = (JsonRpcApiScopeHelper) o;
         // don't consider apiResourceInfo as it is built from path and methods
         return new EqualsBuilder()
                 .append(path, that.path)

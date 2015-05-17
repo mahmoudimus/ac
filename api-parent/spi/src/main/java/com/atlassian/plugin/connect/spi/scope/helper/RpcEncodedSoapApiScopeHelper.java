@@ -1,7 +1,8 @@
-package com.atlassian.plugin.connect.spi.scope;
+package com.atlassian.plugin.connect.spi.scope.helper;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.fugue.Pair;
+import com.atlassian.plugin.connect.spi.scope.ApiResourceInfo;
 import com.atlassian.plugin.connect.spi.util.ServletUtils;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Function;
@@ -56,7 +57,7 @@ public final class RpcEncodedSoapApiScopeHelper
                                         String httpMethod)
     {
         // convert to ArrayList because the Collection subclass returned from Collections2.transform() has a broken equals()
-        this(path, new ArrayList<SoapScope>(transform(methods, new Function<String, SoapScope>()
+        this(path, new ArrayList<>(transform(methods, new Function<String, SoapScope>()
         {
             @Override
             public SoapScope apply(String from)

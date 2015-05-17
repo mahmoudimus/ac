@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
+import com.atlassian.plugin.connect.spi.scope.AddOnScope;
+import com.atlassian.plugin.connect.spi.scope.AddOnScopeApiPath;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
