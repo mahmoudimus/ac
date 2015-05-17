@@ -12,16 +12,12 @@ commonPlanConfiguration() {
     )
 }
 
-productSnapshotPlanConfiguration(['productVersion', 'productDataVersion']) {
+productSnapshotPlanConfiguration(['productVersion']) {
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (develop)')
     variable(
             key: 'bamboo.product.version',
             value: '#productVersion'
-    )
-    variable(
-            key: 'bamboo.product.data.version',
-            value: '#productDataVersion'
     )
     trigger(
             type: 'cron',

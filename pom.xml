@@ -558,6 +558,12 @@
             </dependency>
             <dependency>
                 <groupId>com.atlassian.crowd</groupId>
+                <artifactId>embedded-crowd-core</artifactId>
+                <version>${atlassian.crowd.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.crowd</groupId>
                 <artifactId>crowd-integration-client-rest</artifactId>
                 <version>${atlassian.crowd.version}</version>
                 <scope>provided</scope>
@@ -672,7 +678,7 @@
         <atlassian.analytics.version>3.68</atlassian.analytics.version>
         <atlassian.applinks.version>4.2.4</atlassian.applinks.version>
         <atlassian.confluence.version>5.7-OD-48-066</atlassian.confluence.version>
-        <atlassian.crowd.version>2.8.0-OD-4</atlassian.crowd.version>
+        <atlassian.crowd.version>2.8.2</atlassian.crowd.version>
         <atlassian.fugue.version>1.1</atlassian.fugue.version>
         <atlassian.healthcheck.version>2.0.4</atlassian.healthcheck.version>
         <atlassian.httpclient.version>0.20.1</atlassian.httpclient.version>
@@ -693,7 +699,7 @@
         <atlassian.connect-js.path>git+ssh://git@stash.atlassian.com:7997/ac/atlassian-connect-js.git#${atlassian.connect-js.version}</atlassian.connect-js.path>
         <atlassian.jira.projects.plugin.version>1.20.0-D20150217T051447</atlassian.jira.projects.plugin.version>
 
-        <atlassian.upm.version>2.18.4</atlassian.upm.version>
+        <atlassian.upm.version>2.19-mapps-m5</atlassian.upm.version>
 
         <atlassian.uri.version>0.1</atlassian.uri.version>
         <atlassian-util-concurrent.version>2.4.0</atlassian-util-concurrent.version>
