@@ -65,8 +65,8 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
         return {
 
             /**
-            * Allows custom validation and save callback functions for jira workflow configurations.
-            * @see {WorkflowConfiguration}
+            * Allows custom validation and save callback functions for jira workflow configurations and dashboard items.
+            * @see {WorkflowConfiguration, DashboardItem}
             * @exports jira
             */
             apis: {
@@ -79,6 +79,10 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                     remote.getWorkflowConfiguration(callback);
                 },
 
+                /**
+                 * Set title of a dashboard item
+                 * @param title - the title to set
+                 */
                 setDashboardItemTitle: function(title) {
                     remote.setDashboardItemTitle(title);
                 },
