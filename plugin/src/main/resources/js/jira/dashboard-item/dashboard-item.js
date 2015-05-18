@@ -40,15 +40,18 @@
     $(document).ready(function() {
 
         $("body").on("resized",".ap-container", function(e, dimensions) {
-            var inlineGadgetContainer = AJS.$(e.target).parents(".gadget-inline").first();
-            var gadgetId = inlineGadgetContainer.attr("id");
-            var gadget = new AG.InlineGadgetAPI(inlineGadgetContainer);
-            var layout = AG.DashboardManager.getLayout();
-            var result = layout.getGadgets().filter(function(g) {
-                return "gadget-".concat(g.getId()) == gadgetId;
-            });
-            result[0].resize();
-            layout.refresh();
+            var resizedParents = AJS.$(e.target).parents(".gadget-inline");
+            if (resizedParents.length > 0) {
+                var inlineGadgetContainer = resizedParents.first();
+                var gadgetId = inlineGadgetContainer.attr("id");
+                var gadget = new AG.InlineGadgetAPI(inlineGadgetContainer);
+                var layout = AG.DashboardManager.getLayout();
+                var result = layout.getGadgets().filter(function (g) {
+                    return "gadget-".concat(g.getId()) == gadgetId;
+                });
+                result[0].resize();
+                layout.refresh();
+            }
         });
 
     });
