@@ -53,7 +53,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
     private static final String VENDOR_NAME = "Atlassian";
     private static final String DASHBOARD_ITEM_ID_QUERY_PARAM = "dashboardItemId";
     private static final String DASHBOARD_ID_QUERY_PARAM = "dashboardId";
-    private static final TestUser TEST_USER = TestUser.BARNEY;
+    private static final TestUser TEST_USER = new TestUser("barney");
     private static ConnectRunner addon;
 
     @BeforeClass
