@@ -13,6 +13,8 @@ import org.openqa.selenium.WebElement;
 
 import javax.inject.Inject;
 
+import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
+
 /**
  *
  */
@@ -31,7 +33,7 @@ public class ConfluenceGeneralPage implements GeneralPage
     private final String linkText;
     private final boolean ignoreBrowseMenu;
 
-    private WebElement browseMenuLink;
+    private PageElement browseMenuLink;
     private PageElement linkElement;
     private final String extraPrefix;
 
@@ -64,14 +66,13 @@ public class ConfluenceGeneralPage implements GeneralPage
     public void init()
     {
         By browseLocator = By.id("browse-menu-link");
-        if (!ignoreBrowseMenu && driver.elementExists(browseLocator))
+        if (ignoreBrowseMenu || !driver.elementExists(browseLocator))
         {
-            browseMenuLink = driver.findElement(browseLocator);
+            browseLocator = By.id("help-menu-link");
         }
-        else
-        {
-            browseMenuLink = driver.findElement(By.id("help-menu-link"));
-        }
+
+        browseMenuLink = elementFinder.find(browseLocator);
+        waitUntilTrue(browseMenuLink.timed().isVisible());
     }
 
     @Override
