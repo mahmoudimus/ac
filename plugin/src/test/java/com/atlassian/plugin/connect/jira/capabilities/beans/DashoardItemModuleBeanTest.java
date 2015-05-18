@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.test.plugin.capabilities.beans;
+package com.atlassian.plugin.connect.jira.capabilities.beans;
 
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.DashboardItemModuleBean;
@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static com.atlassian.plugin.connect.test.plugin.capabilities.TestFileReader.readAddonTestFile;
+import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
