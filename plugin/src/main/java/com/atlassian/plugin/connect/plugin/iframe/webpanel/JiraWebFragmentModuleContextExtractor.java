@@ -187,6 +187,11 @@ public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleC
                         {
                             moduleContext.put("dashboardItem.id", (String) id);
                         }
+                        final Object key = value.get("moduleKey");
+                        if (key instanceof String)
+                        {
+                            moduleContext.put("dashboardItem.key", (String) key);
+                        }
                     }
                 },
                 new ParameterExtractor<Map<Object, Object>>()

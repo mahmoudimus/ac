@@ -670,7 +670,7 @@
         <atlassian.healthcheck.version>2.0.4</atlassian.healthcheck.version>
         <atlassian.httpclient.version>0.20.1</atlassian.httpclient.version>
         <atlassian.httpclient.api.version>0.17</atlassian.httpclient.api.version>
-        <atlassian.jira.version>6.5-OD-01-119</atlassian.jira.version>
+        <atlassian.jira.version>6.5-OD-04-052</atlassian.jira.version>
         <atlassian.jira.rest.version>${atlassian.jira.version}</atlassian.jira.rest.version>
         <atlassian.jira.testkit.version>6.2.21</atlassian.jira.testkit.version>
         <atlassian.mail.version>2.5.4</atlassian.mail.version>

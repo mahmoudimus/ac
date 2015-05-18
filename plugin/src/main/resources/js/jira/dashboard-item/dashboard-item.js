@@ -12,10 +12,6 @@
                     });
                 },
                 internals: {
-                    closeDashboardItemEdit: function () {
-                        var that = this;
-                        new AG.InlineGadgetAPI(AJS.$(that.iframe).parents(".gadget-inline")).closeEdit();
-                    },
                     setDashboardItemTitle: function(title) {
                         var that = this;
                         // TODO this should be replaced with a valid gadget API

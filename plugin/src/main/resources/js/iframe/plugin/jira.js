@@ -79,13 +79,6 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                     remote.getWorkflowConfiguration(callback);
                 },
 
-                /**
-                 * close an edit view of dashboard item
-                 */
-                closeDashboardItemEdit: function() {
-                    remote.closeDashboardItemEdit();
-                },
-
                 setDashboardItemTitle: function(title) {
                     remote.setDashboardItemTitle(title);
                 },

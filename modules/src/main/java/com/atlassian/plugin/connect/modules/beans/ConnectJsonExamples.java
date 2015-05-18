@@ -84,6 +84,7 @@ public class ConnectJsonExamples
     public static final String PANEL_LAYOUT_EXAMPLE = createPanelLayoutExample();
     public static final String PARAMS_EXAMPLE = createParamsExample();
     public static final String POST_FUNCTION_EXAMPLE = createPostFunctionExample();
+    public static final String DASHBOARD_ITEM_EXAMPLE = createDashboardItemExample();
     public static final String PRJ_ADMIN_PAGE_EXAMPLE = createProjectAdminPageExample();
     public static final String REPORT_EXAMPLE = createReportExample();
     public static final String SCOPES_EXAMPLE = createScopesExample();
@@ -838,6 +839,20 @@ public class ConnectJsonExamples
                         .build();
 
         return gson.toJson(createJsonArray("confluenceContentProperties", contentPropertyModuleBean));
+    }
+
+    private static String createDashboardItemExample()
+    {
+        final DashboardItemModuleBean dashboardItemExample = DashboardItemModuleBean.newBuilder()
+                .withDescription(new I18nProperty("Dashboard item description", "description.i18n.key"))
+                .withName(new I18nProperty("Dashboard item title", "description.title.key"))
+                .withThumbnailUrl("atlassian-icon-16.png")
+                .withUrl("/dashboard-item-test?dashboardItemId={dashboardItem.id}&dashboardId={dashboard.id}&view={dashboardItemViewType}")
+                .withKey("dashboard-item-key")
+                .configurable(true)
+                .build();
+
+        return gson.toJson(createJsonArray("dashboardItems", dashboardItemExample));
     }
 
     private static JsonObject createJsonArray(String name, ModuleBean bean)

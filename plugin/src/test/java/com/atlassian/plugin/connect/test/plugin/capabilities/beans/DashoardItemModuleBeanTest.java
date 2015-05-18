@@ -67,7 +67,7 @@ public class DashoardItemModuleBeanTest
     private static DashboardItemModuleBean createModuleBean()
     {
         return DashboardItemModuleBean.newBuilder()
-                .withTitle(new I18nProperty("Title", "title.key"))
+                .withDescription(new I18nProperty("Title", "title.key"))
                 .withDescription(new I18nProperty("Description", "description.key"))
                 .withThumbnailUrl("/thumbnail.jpg")
                 .withUrl("some-iframe-url")
