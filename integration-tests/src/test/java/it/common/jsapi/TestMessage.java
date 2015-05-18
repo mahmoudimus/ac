@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.test.pageobjects.RemoteMessageGeneralPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.common.MultiProductWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
+import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -57,7 +58,7 @@ public class TestMessage extends MultiProductWebDriverTestBase
     @Test
     public void testCreateInfoMessage() throws Exception
     {
-        loginAndVisit(TestUser.ADMIN, HomePage.class);
+        loginAndVisit(testUserFactory.basicUser(), HomePage.class);
         GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, ADDON_GENERALPAGE, ADDON_GENERALPAGE_NAME, remotePlugin.getAddon().getKey());
         remotePage.clickAddOnLink();
         RemoteMessageGeneralPage remoteMessagePage = product.getPageBinder().bind(RemoteMessageGeneralPage.class, ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), ADDON_GENERALPAGE));

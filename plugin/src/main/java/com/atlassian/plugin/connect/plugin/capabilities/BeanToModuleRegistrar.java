@@ -50,20 +50,18 @@ public class BeanToModuleRegistrar
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
 
     private final ConcurrentHashMap<String, DynamicDescriptorRegistration.Registration> registrations;
-    private final ProductAccessor productAccessor;
     private final ContainerManagedPlugin theConnectPlugin;
     private final ApplicationProperties applicationProperties;
 
     @Autowired
     public BeanToModuleRegistrar(DynamicDescriptorRegistration dynamicDescriptorRegistration,
-                                 PluginRetrievalService pluginRetrievalService, ProductAccessor productAccessor,
+                                 PluginRetrievalService pluginRetrievalService,
                                  ApplicationProperties applicationProperties)
     {
         this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
-        this.productAccessor = productAccessor;
         this.applicationProperties = applicationProperties;
         this.theConnectPlugin = (ContainerManagedPlugin) pluginRetrievalService.getPlugin();
-        this.registrations = new ConcurrentHashMap<String, DynamicDescriptorRegistration.Registration>();
+        this.registrations = new ConcurrentHashMap<>();
     }
 
     public synchronized void registerDescriptorsForBeans(ConnectAddonBean addon) throws InvalidDescriptorException

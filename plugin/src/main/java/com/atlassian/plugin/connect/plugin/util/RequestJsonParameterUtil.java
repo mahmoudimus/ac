@@ -1,19 +1,22 @@
 package com.atlassian.plugin.connect.plugin.util;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import com.atlassian.plugin.connect.plugin.iframe.context.InvalidContextParameterException;
+
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -142,6 +145,11 @@ public class RequestJsonParameterUtil
 
     private String[] toStringArray(Object value)
     {
+        if (value == null)
+        {
+            return new String[] { null };
+        }
+
         if (value instanceof String[])
         {
             return (String[]) value;
@@ -156,7 +164,6 @@ public class RequestJsonParameterUtil
         {
             return iterableToStringArray((Iterable<?>)value);
         }
-
 
         return new String[]{value.toString()};
     }

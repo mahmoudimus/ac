@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.27-SNAPSHOT</version>
+        <version>1.1.31-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -136,7 +136,6 @@
                             <id>jira</id>
                             <version>${atlassian.jira.version}</version>
                             <log4jProperties>${basedir}/../integration-tests/src/test/resources/log4j-jira.properties</log4jProperties>
-                            <productDataPath>${basedir}/../integration-tests/src/test/resources/jira-generated-test-resources.zip</productDataPath>
                             <systemPropertyVariables>
                                 <product>jira</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
@@ -202,7 +201,6 @@
                             <id>confluence</id>
                             <version>${atlassian.confluence.version}</version>
                             <log4jProperties>${basedir}/../integration-tests/src/test/resources/log4j-confluence.properties</log4jProperties>
-                            <productDataPath>${basedir}/../integration-tests/src/test/resources/confluence-generated-test-resources.zip</productDataPath>
                             <systemPropertyVariables>
                                 <product>confluence</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>

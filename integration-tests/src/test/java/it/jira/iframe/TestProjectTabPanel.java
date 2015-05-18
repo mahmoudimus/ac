@@ -1,7 +1,7 @@
 package it.jira.iframe;
 
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
+import com.atlassian.plugin.connect.jira.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.helptips.JiraHelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.ParameterCapturingConditionServlet;
+import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -37,8 +38,6 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
     private static final String MODULE_KEY = "ac-test-project-tab";
     private static final String MODULE_TITLE = "AC Test Project Tab";
 
-    private static final TestUser USER = TestUser.BARNEY;
-
     private static ConnectRunner addon;
 
     @Rule
@@ -50,7 +49,6 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
     public static void setUpClass() throws Exception
     {
         logout();
-        new JiraHelpTipApiClient(product, USER).dismissAllHelpTips();
 
         addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), ADDON_KEY)
                 .setAuthenticationToNone()
@@ -83,13 +81,22 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
     @Test
     public void projectTabShouldBePresentAndReceiveContextParametersForAnonymous() throws Exception
     {
-        visitAndVerifyRemoteProjectTabPanelFromSummaryPage();
+        runWithAnonymousUsePermission(new Callable<Void>()
+        {
+            @Override
+            public Void call() throws Exception
+            {
+                logout();
+                visitAndVerifyRemoteProjectTabPanelFromSummaryPage();
+                return null;
+            }
+        });
     }
 
     @Test
     public void projectTabShouldBePresentAndReceiveContextParameters() throws Exception
     {
-        loginAndRun(USER, new Callable<Void>() {
+        loginAndRun(testUserFactory.basicUser(), new Callable<Void>() {
 
             @Override
             public Void call() throws Exception

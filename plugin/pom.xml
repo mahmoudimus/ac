@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.27-SNAPSHOT</version>
+        <version>1.1.31-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -32,6 +32,20 @@
             <artifactId>json-schemagen-core</artifactId>
             <version>${schema.generator.version}</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.analytics</groupId>
+            <artifactId>analytics-api</artifactId>
+            <version>${atlassian.analytics.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.jira.compat</groupId>
+            <artifactId>jira-cross-compatibility-lib-bridge-factory</artifactId>
+            <version>${atlassian.jira.cross.compat.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- TODO: get schema-validator and guava 15.0+ versions into the products so we don't have to bundle them -->
@@ -206,6 +220,16 @@
         <dependency>
             <groupId>com.atlassian.crowd</groupId>
             <artifactId>embedded-crowd-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.crowd</groupId>
+            <artifactId>embedded-crowd-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>dom4j</groupId>
+                    <artifactId>dom4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- the upm is here just for debugging -->
@@ -529,16 +553,15 @@
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <versionOverridesPath>${basedir}/../bin/amps-overrides.properties</versionOverridesPath>
-                    <buildTestPlugin>${build.test.plugin}</buildTestPlugin>
                     <testBundleExcludes>
                         <testBundleExclude>
                             <groupId>com.atlassian.plugin</groupId>
                             <artifactId>atlassian-spring-scanner</artifactId>
                         </testBundleExclude>
                         <testBundleExclude>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>atlassian-connect-modules</artifactId>
-                        </testBundleExclude>
+                        <groupId>${project.groupId}</groupId>
+                        <artifactId>atlassian-connect-modules</artifactId>
+                    </testBundleExclude>
                         <testBundleExclude>
                             <groupId>com.google.code.gson</groupId>
                             <artifactId>gson</artifactId>
@@ -560,6 +583,13 @@
                     </pluginDependencies>
                     <instructions>
                         <Import-Package>
+
+                            <!-- Required for pa / pi to work with the new version of atlassian-plugins -->
+                            com.atlassian.plugin.osgi.bridge.external;
+                            org.osgi.util.tracker;
+                            org.osgi.framework;
+                            <!-- End pa / pi imports -->
+
                             com.github.fge.jsonschema.validator;version="${atlassian.json.schema.validator.version}",
                             com.github.fge.jsonschema.core*;version="1.2.4",
                             com.github.fge.jsonschema.cfg*;version="${json.schema.validator.version}",
@@ -586,17 +616,11 @@
                         </Import-Package>
                         <Export-Package>
                             com.atlassian.plugin.connect.api*;version="${project.version}",
-                            com.atlassian.plugin.connect.api.*;version="${project.version}",
                             com.atlassian.plugin.connect.spi*;version="${project.version}",
-                            com.atlassian.plugin.connect.spi.*;version="${project.version}",
                             com.atlassian.plugin.connect.plugin*;version="${project.version}",
-                            com.atlassian.plugin.connect.plugin.*;version="${project.version}",
-                            com.atlassian.plugin.connect.plugin.product*;version="${project.version}",
-                            com.atlassian.plugin.connect.plugin.product.*;version="${project.version}",
                             com.atlassian.plugin.connect.modules*,
-                            com.atlassian.plugin.connect.modules.*,
-                            com.atlassian.plugin.connect.modules.beans*,
-                            com.atlassian.plugin.connect.modules.beans.*
+                            com.atlassian.plugin.connect.confluence*;version="${project.version}",
+                            com.atlassian.plugin.connect.jira*;version="${project.version}"
                         </Export-Package>
                         <Spring-Context>*</Spring-Context>
                         <Atlassian-Plugin-Key>${project.groupId}.${project.artifactId}</Atlassian-Plugin-Key>
@@ -613,7 +637,6 @@
                             <id>jira</id>
                             <version>${atlassian.jira.version}</version>
                             <log4jProperties>${basedir}/../integration-tests/src/test/resources/log4j-jira.properties</log4jProperties>
-                            <productDataPath>${basedir}/../integration-tests/src/test/resources/jira-generated-test-resources.zip</productDataPath>
                             <systemPropertyVariables>
                                 <product>jira</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
@@ -679,20 +702,11 @@
                                     <version>${project.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
-
-                            <bundledArtifacts>
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.analytics</groupId>
-                                    <artifactId>analytics-client</artifactId>
-                                    <version>${atlassian.analytics.version}</version>
-                                </bundledArtifact>
-                            </bundledArtifacts>
                         </product>
                         <product>
                             <id>confluence</id>
                             <version>${atlassian.confluence.version}</version>
                             <log4jProperties>${basedir}/../integration-tests/src/test/resources/log4j-confluence.properties</log4jProperties>
-                            <productDataPath>${basedir}/../integration-tests/src/test/resources/confluence-generated-test-resources.zip</productDataPath>
                             <jvmArgs>-Xmx512m -XX:MaxPermSize=512m</jvmArgs>
                             <systemPropertyVariables>
                                 <product>confluence</product>
@@ -756,44 +770,9 @@
                                     <artifactId>developer-toolbox-plugin</artifactId>
                                     <version>${toolbox.version}</version>
                                 </bundledArtifact>
-
-                                <bundledArtifact>
-                                    <groupId>com.atlassian.analytics</groupId>
-                                    <artifactId>analytics-client</artifactId>
-                                    <version>${atlassian.analytics.version}</version>
-                                </bundledArtifact>
                             </bundledArtifacts>
                         </product>
                     </products>
-
-                    <testGroups>
-                        <testGroup>
-                            <id>confluence</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>confluence</testedProduct>
-                            </systemProperties>
-                            <excludes>
-                                <exclude>it/jira/*.java</exclude>
-                                <exclude>it/**/jira/*.java</exclude>
-                            </excludes>
-                        </testGroup>
-                        <testGroup>
-                            <id>jira</id>
-                            <productIds>
-                                <productId>jira</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>jira</testedProduct>
-                            </systemProperties>
-                            <excludes>
-                                <exclude>it/confluence/*.java</exclude>
-                                <exclude>it/**/confluence/*.java</exclude>
-                            </excludes>
-                        </testGroup>
-                    </testGroups>
                 </configuration>
             </plugin>
             <plugin>
@@ -831,11 +810,11 @@
                             <goal>npm</goal>
                         </goals>
                         <phase>generate-resources</phase>
-                         <configuration>
+                        <configuration>
                             <workingDirectory>../plugin</workingDirectory>
                             <arguments>install</arguments>
                             <skip>${skipNpm}</skip>
-                         </configuration>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -1040,7 +1019,7 @@
                             <goal>generate-schema</goal>
                         </goals>
                         <configuration>
-                            <generatorProvider>com.atlassian.plugin.connect.schema.JiraSchemaGeneratorProvider</generatorProvider>
+                            <generatorProvider>com.atlassian.plugin.connect.jira.JiraSchemaGeneratorProvider</generatorProvider>
                             <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/jira-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/jira-schema-pretty.json</prettyOutput>
@@ -1054,7 +1033,7 @@
                             <goal>generate-schema</goal>
                         </goals>
                         <configuration>
-                            <generatorProvider>com.atlassian.plugin.connect.schema.ConfluenceSchemaGeneratorProvider</generatorProvider>
+                            <generatorProvider>com.atlassian.plugin.connect.confluence.ConfluenceSchemaGeneratorProvider</generatorProvider>
                             <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/confluence-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/confluence-schema-pretty.json</prettyOutput>
@@ -1218,148 +1197,6 @@
                 </plugins>
             </build>
         </profile>
-
-        <profile>
-            <id>wired</id>
-            <properties>
-                <skipITs>false</skipITs>
-                <build.test.plugin>true</build.test.plugin>
-                <devmode>true</devmode>
-                <test.plugin.artifact> </test.plugin.artifact>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.bsc.maven</groupId>
-                        <artifactId>maven-processor-plugin</artifactId>
-                        <version>2.2.4</version>
-                        <executions>
-                            <execution>
-                                <id>process</id>
-                                <goals>
-                                    <goal>process</goal>
-                                </goals>
-                                <phase>process-resources</phase>
-                            </execution>
-                            <execution>
-                                <id>process-test</id>
-                                <goals>
-                                    <goal>process-test</goal>
-                                </goals>
-                                <phase>generate-test-sources</phase>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <additionalSourceDirectories>
-                                <additionalSourceDirectory>../modules/src/main/java/</additionalSourceDirectory>
-                                <additionalSourceDirectory>../api-parent/spi/src/main/java/</additionalSourceDirectory>
-                            </additionalSourceDirectories>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <compilerArgument>-proc:none</compilerArgument>
-                            <source>1.7</source>
-                            <target>1.7</target>
-                            <encoding>${project.build.sourceEncoding}</encoding>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>docs</id>
-            <!-- Build the docs - these goals MUST run after schema generation -->
-            <activation>
-                <property>
-                    <name>!skipDocs</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.github.eirslett</groupId>
-                        <artifactId>frontend-maven-plugin</artifactId>
-                        <version>${frontend.plugin.version}</version>
-                        <configuration>
-                            <workingDirectory>../docs</workingDirectory>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>install node and npm</id>
-                                <goals>
-                                    <goal>install-node-and-npm</goal>
-                                </goals>
-                                <phase>generate-resources</phase>
-                                <configuration>
-                                    <nodeVersion>${node.version}</nodeVersion>
-                                    <npmVersion>${npm.version}</npmVersion>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>npm connect-js install</id>
-                                <goals>
-                                    <goal>npm</goal>
-                                </goals>
-                                <phase>generate-resources</phase>
-                                <configuration>
-                                    <workingDirectory>../docs</workingDirectory>
-                                    <arguments>install ${atlassian.connect-js.path}</arguments>
-                                    <skip>${skipNpm}</skip>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>npm install</id>
-                                <goals>
-                                    <goal>npm</goal>
-                                </goals>
-                                <phase>prepare-package</phase>
-                                <configuration>
-                                    <arguments>install</arguments>
-                                    <skip>${skipNpm}</skip>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>npm run-script build</id>
-                                <goals>
-                                    <goal>npm</goal>
-                                </goals>
-                                <phase>prepare-package</phase>
-                                <configuration>
-                                    <arguments>run-script build</arguments>
-                                    <skip>${skipNpm}</skip>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <version>2.6</version>
-                        <executions>
-                            <execution>
-                                <id>copy-resources</id>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${project.build.directory}/classes/docs</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>../docs/target/www</directory>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
 
     <properties>
@@ -1375,11 +1212,10 @@
         <debugSchemaGen>false</debugSchemaGen>
         <ao.version>0.25.2</ao.version>
         <od.testing.configuration>
+            use-java,8
             use-maven,3
             include-artifact,com.atlassian.plugins:atlassian-connect-integration-tests
         </od.testing.configuration>
-        <frontend.plugin.version>0.0.22</frontend.plugin.version>
-        <skipNpm>false</skipNpm>
         <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
     </properties>
 </project>

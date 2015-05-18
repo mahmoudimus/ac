@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.modules.beans.nested;
 
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.SchemaDefinition;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.MatcherBeanBuilder;
 
@@ -27,6 +28,7 @@ public class MatcherBean extends BaseModuleBean
      * The pattern is a string that defines a single URL to match.
      */
     @Required
+    @StringSchemaAttributes(maxLength = 1024)
     private String pattern;
 
     public MatcherBean()

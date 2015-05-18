@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
+import com.atlassian.json.schema.annotation.ArraySchemaAttributes;
 import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
@@ -23,7 +24,7 @@ import java.util.List;
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#AUTOCONVERT_EXAMPLE}
  * @schemaTitle Autoconvert
- * @since 1.1
+ * @since 1.1.27
  */
 @SchemaDefinition("autoconvert")
 public class AutoconvertBean extends BaseModuleBean
@@ -38,6 +39,7 @@ public class AutoconvertBean extends BaseModuleBean
     /**
      * The list of patterns that define what URLs should be matched.
      */
+    @ArraySchemaAttributes(maxItems = 200)
     private List<MatcherBean> matchers;
 
     public AutoconvertBean()

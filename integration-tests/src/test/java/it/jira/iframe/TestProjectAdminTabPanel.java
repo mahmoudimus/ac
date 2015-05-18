@@ -3,7 +3,7 @@ package it.jira.iframe;
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
+import com.atlassian.plugin.connect.jira.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.helptips.JiraHelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectAdministrationTab;
@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.ParameterCapturingConditionServlet;
+import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
@@ -70,8 +71,6 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
                 .addRoute("/pct", ConnectAppServlets.apRequestServlet())
                 .addRoute(PARAMETER_CAPTURE_URL, PARAMETER_CAPTURING_SERVLET)
                 .start();
-
-        new JiraHelpTipApiClient(product, TestUser.ADMIN).dismissConfigureProjectTips();
     }
 
     @AfterClass
@@ -86,7 +85,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
     @Test
     public void testViewProjectAdminTab() throws Exception
     {
-        final ProjectSummaryPageTab page = loginAndVisit(TestUser.ADMIN, ProjectSummaryPageTab.class, project.getKey());
+        final ProjectSummaryPageTab page = loginAndVisit(testUserFactory.admin(), ProjectSummaryPageTab.class, project.getKey());
 
         assertThat(page.getTabs().getTabs(), IsCollectionContaining.<ProjectConfigTabs.Tab>hasItem(projectConfigTabMatcher(PROJECT_CONFIG_TAB_NAME)));
 
@@ -109,7 +108,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
     @Test
     public void tabIsNotAccessibleWithFalseCondition() throws RemoteException
     {
-        ProjectSummaryPageTab page = loginAndVisit(TestUser.ADMIN, ProjectSummaryPageTab.class, project.getKey());
+        ProjectSummaryPageTab page = loginAndVisit(testUserFactory.admin(), ProjectSummaryPageTab.class, project.getKey());
         assertThat("AddOn project config tab should be present", page.getTabs().getTabs(),
                 IsCollectionContaining.<ProjectConfigTabs.Tab>hasItem(projectConfigTabMatcher(PROJECT_CONFIG_TAB_NAME)));
 

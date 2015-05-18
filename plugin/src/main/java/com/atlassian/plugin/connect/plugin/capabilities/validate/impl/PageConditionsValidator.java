@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidator;
+import com.atlassian.plugin.connect.plugin.condition.PageConditions;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.sal.api.message.I18nResolver;
 import org.slf4j.Logger;

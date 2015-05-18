@@ -23,5 +23,5 @@ public final class I18nModuleDescriptor extends AbstractModuleDescriptor<Void>
     {
         return super.getModuleClassName();
     }
-    
+
 }

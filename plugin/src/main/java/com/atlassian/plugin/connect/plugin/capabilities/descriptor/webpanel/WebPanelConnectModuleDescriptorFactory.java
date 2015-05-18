@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModule
 import com.atlassian.plugin.connect.plugin.capabilities.module.webpanel.IFrameWebPanel;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
+import com.atlassian.plugin.connect.spi.web.ProductWebPanelElementEnhancer;
 import com.atlassian.plugin.web.descriptors.WebPanelModuleDescriptor;
 import com.google.common.base.Strings;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +18,6 @@ import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-
 @Component
 public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebPanelModuleBean,WebPanelModuleDescriptor>
 {
@@ -25,7 +25,9 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
     private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
 
     @Autowired
-    public WebPanelConnectModuleDescriptorFactory(ConnectContainerUtil connectContainerUtil, ConditionModuleFragmentFactory conditionModuleFragmentFactory)
+    public WebPanelConnectModuleDescriptorFactory(
+            ConnectContainerUtil connectContainerUtil,
+            ConditionModuleFragmentFactory conditionModuleFragmentFactory)
     {
         this.connectContainerUtil = connectContainerUtil;
         this.conditionModuleFragmentFactory = conditionModuleFragmentFactory;
@@ -80,8 +82,16 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
         webPanelElement.addAttribute("height", bean.getLayout().getHeight());
         webPanelElement.addAttribute("url", bean.getUrl());
 
-        WebPanelElementEnhancer.enhance(bean, webPanelElement);
+        for (ProductWebPanelElementEnhancer webPanelElementEnhancer : getProductEnhancers())
+        {
+            webPanelElementEnhancer.enhance(bean, webPanelElement);
+        }
 
         return webPanelElement;
+    }
+
+    private Iterable<ProductWebPanelElementEnhancer> getProductEnhancers()
+    {
+        return connectContainerUtil.getBeansOfType(ProductWebPanelElementEnhancer.class);
     }
 }

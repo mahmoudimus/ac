@@ -84,7 +84,14 @@ The JWT claims object contains security information about the message. For examp
         "iat": 1300819370,
         "exp": 1300819380,
         "qsh": "8063ff4ca1e41df7bc90c8ab6d0f6207d491cf6dad7c66ea797b4614b71922e9",
-        "sub": "a_user_key"
+        "sub": "batman",
+        "context": {
+            "user": {
+                "userKey": "batman",
+                "username": "bwayne",
+                "displayName": "Bruce Wayne"
+            }
+        }
     }
 
 <table class='aui'>
@@ -136,6 +143,31 @@ The JWT claims object contains security information about the message. For examp
         <td>The audience(s) of this token. For REST API calls from an add-on to a product, the audience claim can be
         used to disambiguate the intended recipients. This attribute is not used for JIRA and Confluence at the moment,
         but will become mandatory when making REST calls from an add-on to e.g. the bitbucket.org domain.</td>
+    </tr>
+    <tr>
+        <td>`context` (optional)</td>
+        <td>Object</td>
+        <td>The context claim is an extension added by Atlassian Connect which may contain useful context for outbound requests (from the product to your add-on).
+
+            The current user (the same user in the `sub` claim) is added to the context. This contains the userKey, username and display name for the subject.
+
+            <pre>
+"context": {
+    "user": {
+        "userKey": "batman",
+        "username": "bwayne",
+        "displayName": "Bruce Wayne"
+    }
+}
+            </pre>
+
+            <ul>
+                <li>`userKey` &mdash; the primary key of the user. Anytime you want to store a reference to a user in long term storage (eg a database or index) you should use the key because it can never change. The user key should never be displayed to the user as it may be a non human readable value.</li>
+                <li>`username` &mdash; a unique secondary key, but should not be stored in long-term storage because it can change over time. This is the value that the user logs into the application with, and may be displayed to the user.</li>
+                <li>`displayName` &mdash; the user's name.</li>
+            </ul>
+
+        </td>
     </tr>
 
 </table>

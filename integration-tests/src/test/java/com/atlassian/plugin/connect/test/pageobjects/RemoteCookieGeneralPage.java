@@ -47,10 +47,11 @@ public class RemoteCookieGeneralPage
     @Init
     public void init()
     {
-        this.containerDiv = driver.findElement(By.id("embedded-" + this.addonAndModuleKey));
+        By iFrameLocator = By.id("embedded-" + this.addonAndModuleKey);
+        waitUntilTrue(elementFinder.find(iFrameLocator).timed().isVisible());
+
+        this.containerDiv = driver.findElement(iFrameLocator);
     }
-
-
 
     public void saveCookie()
     {

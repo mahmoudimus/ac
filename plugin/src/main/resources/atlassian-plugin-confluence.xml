@@ -6,13 +6,13 @@
         <label>Remote Plugins</label>
     </web-section>
 
-    <web-resource-transformer key="macroVariableTransformer" class="com.atlassian.plugin.connect.plugin.module.confluence.MacroVariableInjectorTransformer"/>
+    <web-resource-transformer key="macroVariableTransformer" class="com.atlassian.plugin.connect.confluence.macro.MacroVariableInjectorTransformer"/>
 
     <rest key="rest" path="/atlassian-connect" version="1">
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
         <package>com.atlassian.plugin.connect.plugin.rest</package>
-        <package>com.atlassian.plugin.connect.plugin.product.confluence.rest</package>
+        <package>com.atlassian.plugin.connect.confluence.macro.rest</package>
     </rest>
 
     <!-- JavaScript and CSS resource inclusions for relevant contexts -->
@@ -29,6 +29,8 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-css</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-iframe-host-js</dependency>
 
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-extensions</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-user</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-macro</dependency>
 
         <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
@@ -37,17 +39,31 @@
     <web-resource key="atlassian-connect-autoconvert-resources" name="Connect resources for autoconvert">
         <resource type="download" name="autoconvert.js" location="/js/confluence/macro/autoconvert.js" />
         <resource type="download" name="autoconvert-init.js" location="/js/confluence/macro/autoconvert-init.js" />
-        <data key="connect-autoconvert-data" class="com.atlassian.plugin.connect.plugin.product.confluence.AutoconvertWebResourceDataProvider" />
+        <data key="connect-autoconvert-data" class="com.atlassian.plugin.connect.confluence.capabilities.descriptor.macro.AutoconvertWebResourceDataProvider" />
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
         <context>editor</context>
         <context>viewcontent</context>
     </web-resource>
-    <module-type key="autoconvert" class="com.atlassian.plugin.connect.plugin.product.confluence.AutoconvertModuleDescriptor" />
+    <module-type key="autoconvert" class="com.atlassian.plugin.connect.confluence.capabilities.descriptor.macro.AutoconvertModuleDescriptor" />
 
     <!-- JavaScript API Core -->
 
     <web-resource key="ap-core">
-        <resource type="download" name="core-host.js" location="/js/core/connect-host.js" />
+        <resource type="download" name="core-host.js" location="/js/core/connect-host-amd.js" />
         <dependency>confluence.web.resources:almond</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
+    <web-resource key="ap-extensions">
+        <resource type="download" name="connect-cookie.js" location="/js/core/connect-host-cookie.js" />
+        <resource type="download" name="connect-env.js" location="/js/core/connect-host-env.js" />
+        <resource type="download" name="connect-messages.js" location="/js/core/connect-host-messages.js" />
+        <resource type="download" name="connect-request.js" location="/js/core/connect-host-request.js" />
+        <resource type="download" name="connect-history.js" location="/js/core/connect-host-history.js" />
+        <resource type="download" name="connect-dialog.js" location="/js/core/connect-host-dialog.js" />
+        <resource type="download" name="connect-inline-dialog.js" location="/js/core/connect-host-inline-dialog.js" />
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-core</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-iframe-host-js</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
@@ -59,7 +75,6 @@
 
     <web-resource key="iframe-host-js">
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-core</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-user</dependency>
         <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
         <resource type="download" name="content-resolver.js" location="/js/iframe/host/content-resolver.js" />
         <dependency>com.atlassian.auiplugin:dialog2</dependency>

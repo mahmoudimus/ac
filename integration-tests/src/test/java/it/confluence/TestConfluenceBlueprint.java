@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
+import it.util.ConnectTestUserFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -65,14 +66,16 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
     @Test
     public void testRemoteSimpleBlueprintVisibleInDialog() throws XmlRpcFault, IOException
     {
-        loginAndVisit(TestUser.BARNEY, DashboardPage.class).createDialog.click();
+        login(testUserFactory.basicUser());
+        product.visit(DashboardPage.class).createDialog.click();
         product.getPageBinder().bind(CreateContentDialog.class).waitForBlueprint(completeKey);
     }
 
     @Test
     public void testRemoteSimpleBlueprintCanCreatePage() throws XmlRpcFault, IOException
     {
-        loginAndVisit(TestUser.BARNEY, DashboardPage.class).createDialog.click();
+        login(testUserFactory.basicUser());
+        product.visit(DashboardPage.class).createDialog.click();
         assertTrue("new page includes blueprint content",
                 product.getPageBinder()
                         .bind(CreateContentDialog.class)

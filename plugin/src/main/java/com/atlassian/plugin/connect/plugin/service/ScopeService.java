@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.service;
 
-import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
+import com.atlassian.plugin.connect.spi.scope.AddOnScope;
 
 import java.io.IOException;
 import java.util.Collection;

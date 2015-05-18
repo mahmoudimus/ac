@@ -12,12 +12,12 @@ commonPlanConfiguration() {
     )
 }
 
-productSnapshotPlanConfiguration(['applicationVersion']) {
+productSnapshotPlanConfiguration(['productVersion']) {
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (develop)')
     variable(
             key: 'bamboo.product.version',
-            value: '#applicationVersion'
+            value: '#productVersion'
     )
     trigger(
             type: 'cron',
@@ -62,11 +62,19 @@ runTestsStage() {
         ) {
             commonRequirements()
             checkoutDefaultRepositoryTask()
-            mavenTestTask(
+            cloverTestTask(
                     description: 'Run Unit Tests',
-                    goal: 'package -DskipDocs',
+                    goal: 'package',
                     environmentVariables: ''
             )
+            cloverReportArtifact(
+                    name: 'Unit Tests'
+            )
+            cloverJSONArtifact(
+                    name: 'Unit Tests'
+            )
+            cloverMiscConfiguration()
+            cloverBambooTask()
         }
         job(
                 key: 'QUNIT',
@@ -74,9 +82,9 @@ runTestsStage() {
         ) {
             commonRequirements()
             checkoutDefaultRepositoryTask()
-            mavenTestTask(
+            cloverTestTask(
                     description: 'Run QUnit Tests using Karma',
-                    goal: 'package -Pkarma-tests -DskipUnits -DskipDocs',
+                    goal: 'package -Pkarma-tests -DskipUnits',
                     environmentVariables: ''
             )
             artifactDefinition(
@@ -85,6 +93,14 @@ runTestsStage() {
                     pattern: 'karma-results.xml',
                     shared: 'false'
             )
+            cloverReportArtifact(
+                    name: 'QUnit Tests'
+            )
+            cloverJSONArtifact(
+                    name: 'QUnit Tests'
+            )
+            cloverMiscConfiguration()
+            cloverBambooTask()
         }
         job(
                 key:'JDOC',
@@ -95,7 +111,7 @@ runTestsStage() {
             checkoutDefaultRepositoryTask()
             mavenTask(
                     description: 'Build Plugin and Generate Javadoc',
-                    goal: 'install -DskipDocs -DskipTests javadoc:javadoc',
+                    goal: 'install -DskipTests javadoc:javadoc',
             )
         }
         job(
@@ -107,7 +123,7 @@ runTestsStage() {
             checkoutDefaultRepositoryTask()
             mavenTask(
                     description: 'Build Plugin',
-                    goal: 'install -DskipDocs -DskipTests',
+                    goal: 'install -DskipTests',
             )
             task(
                     type: 'npm',
@@ -126,7 +142,7 @@ runTestsStage() {
             setupVncTask()
             mavenTestTask(
                     description: 'Run Add-On Descriptor Validation Tests',
-                    goal: 'test -DdescriptorValidation=true -DskipDocs -DskipTests',
+                    goal: 'test -DdescriptorValidation=true -DskipTests',
                     environmentVariables: 'DISPLAY=":20" MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m" CHROME_BIN=/usr/bin/google-chrome',
             )
             artifactDefinition(
@@ -148,7 +164,7 @@ runTestsStage() {
             checkoutDefaultRepositoryTask()
             mavenTask(
                     description: 'Build Developer Documentation',
-                    goal: 'install -DskipTests',
+                    goal: 'install site -DskipTests',
             )
             artifactDefinition(
                     name: 'Documentation',
@@ -324,7 +340,7 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
         checkoutDefaultRepositoryTask()
         mavenTestTask(
                 description: 'Run Wired Lifecycle Tests for #product',
-                goal: 'verify -PpluginLifecycle -DtestGroups=#testGroup -DskipUnits -DskipDocs #additionalMavenParameters',
+                goal: 'verify -PpluginLifecycle -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
         )
     }
@@ -339,7 +355,7 @@ wiredTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
         checkoutDefaultRepositoryTask()
         mavenTestTask(
                 description: 'Run Wired Tests for #product',
-                goal: 'verify -Pwired -DtestGroups=#testGroup -DskipUnits -DskipDocs #additionalMavenParameters',
+                goal: 'verify -Pwired -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
         )
     }
@@ -355,7 +371,7 @@ integrationTestJob(['key', 'product', 'testGroup', 'groupName', 'additionalMaven
         setupVncTask()
         mavenTestTask(
                 description: 'Run Integration Tests for #product #groupName',
-                goal: 'verify -Pit -DtestGroups=#testGroup -DskipUnits -DskipDocs #additionalMavenParameters',
+                goal: 'verify -Pit -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters',
                 environmentVariables: 'DISPLAY=":20" MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m" CHROME_BIN=/usr/bin/google-chrome',
         )
         defineWebDriverOutputArtefact()
@@ -374,9 +390,9 @@ commonRequirements() {
     )
 }
 
-maven30Requirement() {
+maven32Requirement() {
     requirement(
-            key: 'system.builder.mvn3.Maven 3.0',
+            key: 'system.builder.mvn3.Maven 3.2',
             condition: 'exists'
     )
 }
@@ -399,6 +415,14 @@ mavenTask(['description', 'goal']) {
     )
 }
 
+cloverTestTask(['description', 'goal', 'environmentVariables']) {
+    mavenTestTask(
+            description: '#description',
+            goal: 'clover2:setup #goal clover2:aggregate clover2:clover',
+            environmentVariables: '#environmentVariables'
+    )
+}
+
 mavenTestTask(['description', 'goal', 'environmentVariables']) {
     mavenTaskImpl(
             description: '#description',
@@ -418,10 +442,50 @@ mavenTaskImpl(['description', 'goal', 'environmentVariables', 'hasTests', 'testD
             description: '#description',
             goal: '#goal -B -nsu -e',
             buildJdk: 'JDK 1.8',
-            mavenExecutable: 'Maven 3.0',
+            mavenExecutable: 'Maven 3.2',
             environmentVariables: '#environmentVariables',
             hasTests: '#hasTests',
             testDirectory: '#testDirectory'
+    )
+}
+
+cloverReportArtifact(['name']) {
+    artifactDefinition(
+            name:'Clover Report (System) - #name',
+            location:'target/site/clover',
+            pattern:'**/*.*',
+            shared:'true'
+    )
+}
+
+cloverJSONArtifact(['name']) {
+    artifactDefinition(
+            name:'Coverage (JSON - System) - #name',
+            pattern:'coverage-*.json',
+            shared:'true'
+    )
+}
+
+cloverMiscConfiguration() {
+    miscellaneousConfiguration() {
+        coverageJSON(
+            enabled:'true'
+        )
+        clover(
+            type:'custom',
+            path:'/target/site/clover'
+        )
+    }
+}
+
+cloverBambooTask() {
+    task(
+            type:'custom',
+            createTaskKey:'com.atlassian.bamboo.plugins.bamboo-coverage-json-plugin:coverage-json-task',
+            description:'',
+            final:'true',
+            format:'clover',
+            location:'**/clover.xml'
     )
 }
 

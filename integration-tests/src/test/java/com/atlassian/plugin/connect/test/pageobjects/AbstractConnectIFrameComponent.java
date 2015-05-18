@@ -20,7 +20,7 @@ import javax.inject.Inject;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 
-public abstract class AbstractConnectIFrameComponent<C>
+public abstract class AbstractConnectIFrameComponent< C extends AbstractConnectIFrameComponent >
 {
     @Inject
     protected AtlassianWebDriver driver;
@@ -122,6 +122,12 @@ public abstract class AbstractConnectIFrameComponent<C>
         return withinIFrame(textOfElement(By.id(elementId)));
     }
 
+    public String getIFrameElement(String elementId)
+    {
+        waitUntilContentElementNotEmpty(elementId);
+        return withinIFrame(htmlOfElement(By.id(elementId)));
+    }
+
     /**
      * Provides a {@link WebDriver} with access to the iframe's content.
      */
@@ -146,6 +152,18 @@ public abstract class AbstractConnectIFrameComponent<C>
             public String apply(WebDriver frame)
             {
                 return frame.findElement(by).getText();
+            }
+        };
+    }
+
+    protected Function<WebDriver, String> htmlOfElement(final By by)
+    {
+        return new Function<WebDriver, String>()
+        {
+            @Override
+            public String apply(WebDriver frame)
+            {
+                return frame.findElement(by).getAttribute("innerHTML");
             }
         };
     }

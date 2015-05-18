@@ -9,6 +9,10 @@ parameters are common across all requests:
 * `cp`: the context path of the instance (eg: `/wiki`)
 * `xdm_e`: the base url of the host application, used for the Javascript bridge (xdm - cross domain messaging)
 * `xdm_c`: the xdm channel to establish communication over
+* `user_id`: the user's username. This may change and `user_key` should be used instead <span class="aui-lozenge">DEPRECATED</span>
+* `user_key`: the user's unique identifier <span class="aui-lozenge">DEPRECATED</span>
+
+The `user_id` and `user_key` parameters are deprecated in favour of the [`context.user` JWT claim](./understanding-jwt.html#token-structure-claims).
 
 Additionally, your Atlassian Connect add-on can receive context parameters from the Atlassian application by using
 variable tokens in the URL attributes of your modules. The add-on can use this to present content specific to the
