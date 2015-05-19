@@ -72,7 +72,7 @@ public class TestXdmEvents extends JiraWebDriverTestBase
     {
         login(testUserFactory.basicUser());
 
-        IssueCreateResponse issue = TestBase.funcTestHelper.backdoor.issues().createIssue(projectKey, "Test issue for panel");
+        IssueCreateResponse issue = product.backdoor().issues().createIssue(projectKey, "Test issue for panel");
         JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.key);
 
         RemoteXdmEventPanel panelA1 = viewIssuePage.findXdmEventPanel(remotePluginA.getAddon().getKey(), "xdm-events-a1");

@@ -154,7 +154,7 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
 
     private IssueCreateResponse createIssue() throws Exception
     {
-        return TestBase.funcTestHelper.backdoor.issues().createIssue(projectKey, "test issue");
+        return product.backdoor().issues().createIssue(projectKey, "test issue");
     }
 
     private void assertNoTimeout(NameValuePairs queryParameters)

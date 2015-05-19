@@ -127,7 +127,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     @Test
     public void testViewIssuePageWithArbitraryDataInUrl() throws Exception
     {
-        IssueCreateResponse issue = TestBase.funcTestHelper.backdoor.issues().createIssue(projectKey, "Test issue for panel");
+        IssueCreateResponse issue = product.backdoor().issues().createIssue(projectKey, "Test issue for panel");
         JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.key);
         RemoteWebPanel panel = viewIssuePage.findWebPanel(getModuleKey(runner, ISSUE_PANEL_LEFT2_KEY)).waitUntilContentLoaded();
 
@@ -161,7 +161,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     {
         TestUser user = testUserFactory.basicUser();
         login(user);
-        IssueCreateResponse issue = TestBase.funcTestHelper.backdoor.issues().createIssue(projectKey, "Test issue for left remotable-web-panel panel");
+        IssueCreateResponse issue = product.backdoor().issues().createIssue(projectKey, "Test issue for left remotable-web-panel panel");
         JiraViewIssuePage page = product.visit(JiraViewIssuePage.class, issue.key);
         RemoteWebPanel panel = page.findWebPanel(getModuleKey(runner, ISSUE_PANEL_LEFT_KEY)).waitUntilContentLoaded();
 
@@ -180,7 +180,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     {
         TestUser user = testUserFactory.basicUser();
         login(user);
-        IssueCreateResponse issue = TestBase.funcTestHelper.backdoor.issues().createIssue(projectKey, "Another test issue for right remotable-web-panel panel");
+        IssueCreateResponse issue = product.backdoor().issues().createIssue(projectKey, "Another test issue for right remotable-web-panel panel");
         JiraViewIssuePage page = product.visit(JiraViewIssuePage.class, issue.key);
         RemoteWebPanel panel = page.findWebPanel(getModuleKey(runner, ISSUE_PANEL_RIGHT_KEY)).waitUntilContentLoaded();
 

@@ -218,7 +218,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     {
         login(user);
 
-        IssueCreateResponse issue = TestBase.funcTestHelper.backdoor.issues().createIssue(projectKey, "Nought but a test.");
+        IssueCreateResponse issue = product.backdoor().issues().createIssue(projectKey, "Nought but a test.");
         JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.key);
         RemoteWebItem webItem = viewIssuePage.findWebItem(getModuleKey(CONTEXT_PARAMETERIZED_WEBITEM), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);

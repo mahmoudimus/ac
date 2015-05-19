@@ -36,8 +36,8 @@ public class TestJiraWebHooks2
             public void test(WebHookWaiter waiter) throws Exception
             {
                 String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
-                TestBase.funcTestHelper.backdoor.project().addProject("Test project " + projectKey, projectKey, "admin");
-                TestBase.funcTestHelper.backdoor.issues().createIssue(projectKey, "As Filip I want JIRA WebHooks to really work.");
+                getJiraTestedProduct().backdoor().project().addProject("Test project " + projectKey, projectKey, "admin");
+                getJiraTestedProduct().backdoor().issues().createIssue(projectKey, "As Filip I want JIRA WebHooks to really work.");
                 WebHookBody body = waiter.waitForHook();
                 assertWebHookDidFire(body, JIRA_ISSUE_CREATED);
             }
@@ -60,9 +60,9 @@ public class TestJiraWebHooks2
             public void test(WebHookWaiter waiter) throws Exception
             {
                 String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
-                TestBase.funcTestHelper.backdoor.project().addProject("Test project " + projectKey, projectKey, "admin");
-                IssueCreateResponse issue = TestBase.funcTestHelper.backdoor.issues().createIssue(projectKey, "As Filip I want JIRA WebHooks listeners to get issue updates");
-                TestBase.funcTestHelper.backdoor.issues().setSummary(issue.key, "As Filip I want JIRA WebHooks listeners to get all issue updates");
+                getJiraTestedProduct().backdoor().project().addProject("Test project " + projectKey, projectKey, "admin");
+                IssueCreateResponse issue = getJiraTestedProduct().backdoor().issues().createIssue(projectKey, "As Filip I want JIRA WebHooks listeners to get issue updates");
+                getJiraTestedProduct().backdoor().issues().setSummary(issue.key, "As Filip I want JIRA WebHooks listeners to get all issue updates");
                 WebHookBody body = waiter.waitForHook();
                 assertWebHookDidFire(body, JIRA_ISSUE_UPDATED);
             }
@@ -78,10 +78,10 @@ public class TestJiraWebHooks2
             public void test(WebHookWaiter waiter) throws Exception
             {
                 String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
-                TestBase.funcTestHelper.backdoor.project().addProject("Test project " + projectKey, projectKey, "admin");
-                IssueCreateResponse issue = TestBase.funcTestHelper.backdoor.issues().createIssue(projectKey, "As Filip I want JIRA WebHooks listeners to get issue transition");
-                int transitionId = TestBase.funcTestHelper.backdoor.issues().getIssue(issue.key, Issue.Expand.transitions).transitions.get(0).id;
-                TestBase.funcTestHelper.backdoor.issues().transitionIssue(issue.key, transitionId);
+                getJiraTestedProduct().backdoor().project().addProject("Test project " + projectKey, projectKey, "admin");
+                IssueCreateResponse issue = getJiraTestedProduct().backdoor().issues().createIssue(projectKey, "As Filip I want JIRA WebHooks listeners to get issue transition");
+                int transitionId = getJiraTestedProduct().backdoor().issues().getIssue(issue.key, Issue.Expand.transitions).transitions.get(0).id;
+                getJiraTestedProduct().backdoor().issues().transitionIssue(issue.key, transitionId);
                 WebHookBody body = waiter.waitForHook();
                 assertWebHookDidFire(body, JIRA_ISSUE_UPDATED);
             }

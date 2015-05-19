@@ -55,13 +55,13 @@ public class JiraWebDriverTestBase
         product.getPageBinder().override(ViewWorkflowTransitionPage.class, ExtendedViewWorkflowTransitionPage.class);
 
         projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
-        projectId = TestBase.funcTestHelper.backdoor.project().addProject("Test project " + projectKey, projectKey, "admin");
+        projectId = product.backdoor().project().addProject("Test project " + projectKey, projectKey, "admin");
     }
 
     @AfterClass
     public static void afterClass() throws RemoteException
     {
-        TestBase.funcTestHelper.backdoor.project().deleteProject(projectKey);
+        product.backdoor().project().deleteProject(projectKey);
     }
 
     protected void testLoggedInAndAnonymous(final Callable runnable) throws Exception
