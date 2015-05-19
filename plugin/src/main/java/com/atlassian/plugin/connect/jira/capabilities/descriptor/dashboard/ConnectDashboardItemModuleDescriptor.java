@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.module.jira.dashboard;
+package com.atlassian.plugin.connect.jira.capabilities.descriptor.dashboard;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.gadgets.plugins.DashboardItemModule;

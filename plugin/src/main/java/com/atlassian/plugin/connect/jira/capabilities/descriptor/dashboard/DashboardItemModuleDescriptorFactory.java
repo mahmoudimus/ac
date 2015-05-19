@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
+package com.atlassian.plugin.connect.jira.capabilities.descriptor.dashboard;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.gadgets.directory.Category;
@@ -10,12 +10,14 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.DashboardItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.atlassian.plugin.connect.plugin.capabilities.condition.ConnectConditionElementParserFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.webpanel.PluggableParametersExtractor;
-import com.atlassian.plugin.connect.plugin.module.jira.dashboard.ConnectDashboardItemModuleDescriptor;
+import com.atlassian.plugin.connect.jira.capabilities.descriptor.dashboard.ConnectDashboardItemModuleDescriptor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
