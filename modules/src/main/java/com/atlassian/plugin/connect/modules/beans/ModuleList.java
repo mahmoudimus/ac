@@ -228,7 +228,7 @@ public class ModuleList extends BaseModuleBean
      * Add new dashboard item to JIRA.
      * @schemaTitle Dashboard Item
      */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.DashboardItemModuleProvider", products = {ProductFilter.JIRA})
+    @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.DashboardItemModuleProvider", products = {ProductFilter.JIRA})
     private List<DashboardItemModuleBean> jiraDashboardItems;
 
     /////////////////////////////////////////////////////
