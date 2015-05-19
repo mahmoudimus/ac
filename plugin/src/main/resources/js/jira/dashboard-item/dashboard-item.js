@@ -13,10 +13,9 @@
                 },
                 internals: {
                     setDashboardItemTitle: function(title) {
-                        var that = this;
                         // TODO this should be replaced with a valid gadget API
-                        var dashboardItemTitle = AJS.$(AJS.$(that.iframe).parents('.gadget-container').find('h3.dashboard-item-title')[0]);
-                        dashboardItemTitle.text(title);
+                        var dashboardItemTitle = $($(this.iframe).parents('.gadget-container').find('h3.dashboard-item-title')[0]);
+                        dashboardItemTitle.text(this);
                     }
                 },
                 stubs: ["triggerDashboardItemEdit"]
@@ -40,7 +39,7 @@
     $(document).ready(function() {
 
         $("body").on("resized",".ap-container", function(e, dimensions) {
-            var resizedParents = AJS.$(e.target).parents(".gadget-inline");
+            var resizedParents = $(e.target).parents(".gadget-inline");
             if (resizedParents.length > 0) {
                 var inlineGadgetContainer = resizedParents.first();
                 var gadgetId = inlineGadgetContainer.attr("id");
