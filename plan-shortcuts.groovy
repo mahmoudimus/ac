@@ -12,16 +12,12 @@ commonPlanConfiguration() {
     )
 }
 
-productSnapshotPlanConfiguration(['productVersion', 'productDataVersion']) {
+productSnapshotPlanConfiguration(['productVersion']) {
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (develop)')
     variable(
             key: 'bamboo.product.version',
             value: '#productVersion'
-    )
-    variable(
-            key: 'bamboo.product.data.version',
-            value: '#productDataVersion'
     )
     trigger(
             type: 'cron',
@@ -66,11 +62,19 @@ runTestsStage() {
         ) {
             commonRequirements()
             checkoutDefaultRepositoryTask()
-            mavenTestTask(
+            cloverTestTask(
                     description: 'Run Unit Tests',
                     goal: 'package',
                     environmentVariables: ''
             )
+            cloverReportArtifact(
+                    name: 'Unit Tests'
+            )
+            cloverJSONArtifact(
+                    name: 'Unit Tests'
+            )
+            cloverMiscConfiguration()
+            cloverBambooTask()
         }
         job(
                 key: 'QUNIT',
@@ -78,7 +82,7 @@ runTestsStage() {
         ) {
             commonRequirements()
             checkoutDefaultRepositoryTask()
-            mavenTestTask(
+            cloverTestTask(
                     description: 'Run QUnit Tests using Karma',
                     goal: 'package -Pkarma-tests -DskipUnits',
                     environmentVariables: ''
@@ -89,6 +93,14 @@ runTestsStage() {
                     pattern: 'karma-results.xml',
                     shared: 'false'
             )
+            cloverReportArtifact(
+                    name: 'QUnit Tests'
+            )
+            cloverJSONArtifact(
+                    name: 'QUnit Tests'
+            )
+            cloverMiscConfiguration()
+            cloverBambooTask()
         }
         job(
                 key:'JDOC',
@@ -378,9 +390,9 @@ commonRequirements() {
     )
 }
 
-maven30Requirement() {
+maven32Requirement() {
     requirement(
-            key: 'system.builder.mvn3.Maven 3.0',
+            key: 'system.builder.mvn3.Maven 3.2',
             condition: 'exists'
     )
 }
@@ -403,6 +415,14 @@ mavenTask(['description', 'goal']) {
     )
 }
 
+cloverTestTask(['description', 'goal', 'environmentVariables']) {
+    mavenTestTask(
+            description: '#description',
+            goal: 'clover2:setup #goal clover2:aggregate clover2:clover',
+            environmentVariables: '#environmentVariables'
+    )
+}
+
 mavenTestTask(['description', 'goal', 'environmentVariables']) {
     mavenTaskImpl(
             description: '#description',
@@ -422,10 +442,50 @@ mavenTaskImpl(['description', 'goal', 'environmentVariables', 'hasTests', 'testD
             description: '#description',
             goal: '#goal -B -nsu -e',
             buildJdk: 'JDK 1.8',
-            mavenExecutable: 'Maven 3.0',
+            mavenExecutable: 'Maven 3.2',
             environmentVariables: '#environmentVariables',
             hasTests: '#hasTests',
             testDirectory: '#testDirectory'
+    )
+}
+
+cloverReportArtifact(['name']) {
+    artifactDefinition(
+            name:'Clover Report (System) - #name',
+            location:'target/site/clover',
+            pattern:'**/*.*',
+            shared:'true'
+    )
+}
+
+cloverJSONArtifact(['name']) {
+    artifactDefinition(
+            name:'Coverage (JSON - System) - #name',
+            pattern:'coverage-*.json',
+            shared:'true'
+    )
+}
+
+cloverMiscConfiguration() {
+    miscellaneousConfiguration() {
+        coverageJSON(
+            enabled:'true'
+        )
+        clover(
+            type:'custom',
+            path:'/target/site/clover'
+        )
+    }
+}
+
+cloverBambooTask() {
+    task(
+            type:'custom',
+            createTaskKey:'com.atlassian.bamboo.plugins.bamboo-coverage-json-plugin:coverage-json-task',
+            description:'',
+            final:'true',
+            format:'clover',
+            location:'**/clover.xml'
     )
 }
 

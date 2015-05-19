@@ -1,17 +1,18 @@
 package com.atlassian.plugin.connect.jira.capabilities.descriptor;
 
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
+import com.atlassian.plugin.connect.spi.web.ProductWebPanelElementEnhancer;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import org.dom4j.Element;
 
 /**
  * Augment webPanels with conditional elements
  */
-public class ConnectJiraAgileWebPanelElementEnhancer
+@JiraComponent
+public class ConnectJiraAgileWebPanelElementEnhancer implements ProductWebPanelElementEnhancer
 {
-
-    public static void enhance(WebPanelModuleBean bean, Element webPanelElement)
+    public void enhance(WebPanelModuleBean bean, Element webPanelElement)
     {
-
         /**
          * AC-765 Jira Agile requires icon font and value to render a webPanel
          */

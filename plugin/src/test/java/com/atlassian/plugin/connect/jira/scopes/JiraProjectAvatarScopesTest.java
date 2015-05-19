@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.jira.scopes;
 
+import com.atlassian.plugin.connect.jira.scope.JiraScopeProvider;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
@@ -18,7 +19,7 @@ public class JiraProjectAvatarScopesTest extends AbstractScopesTest
 
     public JiraProjectAvatarScopesTest(ScopeName scope, HttpMethod method, String path, boolean expectedOutcome)
     {
-        super(scope, method, path, "", expectedOutcome, "/jira", "JIRA");
+        super(scope, method, path, "", expectedOutcome, "/jira", new JiraScopeProvider());
     }
 
     @Parameterized.Parameters(name = "Scope {0}: {1} {2} --> {3}")

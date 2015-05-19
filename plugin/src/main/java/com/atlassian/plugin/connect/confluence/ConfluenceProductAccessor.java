@@ -6,6 +6,7 @@ import com.atlassian.extras.api.AtlassianLicense;
 import com.atlassian.extras.api.Product;
 import com.atlassian.extras.api.ProductLicense;
 import com.atlassian.fugue.Option;
+import com.atlassian.plugin.connect.spi.product.ConditionClassResolver;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.web.Condition;
@@ -89,7 +90,7 @@ public final class ConfluenceProductAccessor implements ProductAccessor
     }
 
     @Override
-    public Map<String, Class<? extends Condition>> getConditions()
+    public ConditionClassResolver getConditions()
     {
         return confluenceConditions.getConditions();
     }

@@ -52,8 +52,7 @@ public class ConnectConditionFactoryImpl implements ConnectConditionFactory
     public Condition createCondition(final String addOnKey, final List<ConditionalBean> conditionalBeans,
             final Iterable<Class<? extends Condition>> additionalConditions)
     {
-        DOMElement conditionFragment = conditionModuleFragmentFactory
-                .createFragment(addOnKey, conditionalBeans, additionalConditions);
+        DOMElement conditionFragment = conditionModuleFragmentFactory.createFragment(addOnKey, conditionalBeans, additionalConditions);
         return conditionElementParser.makeConditions(theConnectPlugin, conditionFragment, CompositeType.AND);
     }
 

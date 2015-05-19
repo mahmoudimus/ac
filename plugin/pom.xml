@@ -221,6 +221,16 @@
             <groupId>com.atlassian.crowd</groupId>
             <artifactId>embedded-crowd-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.crowd</groupId>
+            <artifactId>embedded-crowd-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>dom4j</groupId>
+                    <artifactId>dom4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <!-- the upm is here just for debugging -->
         <dependency>
@@ -627,7 +637,6 @@
                             <id>jira</id>
                             <version>${atlassian.jira.version}</version>
                             <log4jProperties>${basedir}/../integration-tests/src/test/resources/log4j-jira.properties</log4jProperties>
-                            <productDataPath>${basedir}/../integration-tests/src/test/resources/jira-generated-test-resources.zip</productDataPath>
                             <systemPropertyVariables>
                                 <product>jira</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
@@ -698,7 +707,6 @@
                             <id>confluence</id>
                             <version>${atlassian.confluence.version}</version>
                             <log4jProperties>${basedir}/../integration-tests/src/test/resources/log4j-confluence.properties</log4jProperties>
-                            <productDataPath>${basedir}/../integration-tests/src/test/resources/confluence-generated-test-resources.zip</productDataPath>
                             <jvmArgs>-Xmx512m -XX:MaxPermSize=512m</jvmArgs>
                             <systemPropertyVariables>
                                 <product>confluence</product>

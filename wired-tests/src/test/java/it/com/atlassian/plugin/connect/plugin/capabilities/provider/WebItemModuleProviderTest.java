@@ -17,19 +17,24 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectM
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
 import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
+import com.atlassian.plugin.web.model.WebLink;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -37,6 +42,7 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemTargetBean.newWe
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static com.atlassian.plugin.connect.testsupport.util.AddonUtil.randomPluginKey;
 import static com.google.common.collect.Lists.newArrayList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -174,8 +180,27 @@ public class WebItemModuleProviderTest
         WebItemModuleDescriptor descriptor = (WebItemModuleDescriptor) descriptors.get(0);
         descriptor.enabled();
 
-        assertEquals(CONTEXT_PATH + "/plugins/servlet/ac/" + addon.getKey() + "/some-page-key",
-                descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>()));
+        String expectedUrl = CONTEXT_PATH + "/plugins/servlet/ac/" + addon.getKey() + "/some-page-key";
+        assertThat(descriptor.getLink(), pointsTo(servletRequest, expectedUrl));
+    }
+
+    private Matcher<? super WebLink> pointsTo(final HttpServletRequest servletRequest, final String url)
+    {
+        return new TypeSafeMatcher<WebLink>()
+        {
+            @Override
+            protected boolean matchesSafely(WebLink webLink)
+            {
+                String displayableUrl = webLink.getDisplayableUrl(servletRequest, Collections.<String, Object>emptyMap());
+                return displayableUrl.startsWith(url);
+            }
+
+            @Override
+            public void describeTo(Description description)
+            {
+                description.appendText("weblink containing url starting with " + url);
+            }
+        };
     }
 
     @Test

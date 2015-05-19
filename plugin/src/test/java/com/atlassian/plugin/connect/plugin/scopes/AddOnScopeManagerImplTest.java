@@ -9,6 +9,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifi
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
 import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
+import com.atlassian.plugin.connect.spi.scope.AddOnScope;
+import com.atlassian.plugin.connect.spi.scope.AddOnScopeApiPathBuilder;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.sal.api.user.UserKey;
 import org.junit.Before;
@@ -158,7 +160,7 @@ public class AddOnScopeManagerImplTest
 
         Setup withScope(ScopeName scopeName)
         {
-            when(connectAddonBeanFactory.fromJsonSkipValidation(buildMockDescriptor())).thenReturn(buildAddOnBean(new HashSet<ScopeName>(asList(scopeName))));
+            when(connectAddonBeanFactory.fromJsonSkipValidation(buildMockDescriptor())).thenReturn(buildAddOnBean(new HashSet<>(asList(scopeName))));
             return this;
         }
 
@@ -180,7 +182,7 @@ public class AddOnScopeManagerImplTest
 
     private Collection<AddOnScope> buildTestScopes()
     {
-        Set<AddOnScope> scopes = new HashSet<AddOnScope>();
+        Set<AddOnScope> scopes = new HashSet<>();
         scopes.add(new AddOnScope(ScopeName.READ.name(), new AddOnScopeApiPathBuilder().withRestPaths(new AddOnScopeBean.RestPathBean("api", "api", asList("/user"), asList("2")), asList("get")).build()));
         scopes.add(new AddOnScope(ScopeName.WRITE.name(), new AddOnScopeApiPathBuilder().withRestPaths(new AddOnScopeBean.RestPathBean("api", "api", asList("/user/write/.+"), asList("2")), asList("post")).build()));
         scopes.add(new AddOnScope(ScopeName.DELETE.name(), new AddOnScopeApiPathBuilder().withRestPaths(new AddOnScopeBean.RestPathBean("api", "api", asList("/user/.+/delete"), asList("2")), asList("delete")).build()));

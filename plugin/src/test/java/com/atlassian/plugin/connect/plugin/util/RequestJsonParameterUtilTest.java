@@ -111,6 +111,17 @@ public class RequestJsonParameterUtilTest
     }
 
     @Test
+    public void copesWithExplicitNullValuesAtTopLevel()
+    {
+        ImmutableMap<String, String[]> requestParams =
+                ImmutableMap.of(CONTEXT_PARAMETER_KEY, new String[] { "{\"project\":null}" });
+        final Map<String, String[]> processedParams = extractor.tryExtractContextFromJson(requestParams);
+        assertThat(processedParams.entrySet(), hasSize(1));
+        assertThat(processedParams.get("project"), is(new String[] {null}));
+    }
+
+
+    @Test
     public void upperCaseUrlParamsNotOverriddenByJson()
     {
         String[] contextJsonStr = new String[]{"{\"project\":{\"id\":10100}}"};
