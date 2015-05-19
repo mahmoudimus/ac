@@ -58,7 +58,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
          * Attach a callback function to run when user clicks 'edit' in the dashboard item's menu
          * @noDemo
          * @memberOf DashboardItem
-         * @param {Function} listener called on save.
+         * @param {Function} listener called on dashboard item edit.
          */
         onDashboardItemEdit: function (listener){
             dashboardItemEditListener = listener;
