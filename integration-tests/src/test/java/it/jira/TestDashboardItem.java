@@ -103,7 +103,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
     }
 
     @Test
-    public void testAddingTwoIdentiticalDashboardItemsToDashboard()
+    public void testTwoDashboardItemsWithTheSameKeyAddedSuccessfulyToTheDashboard()
     {
         final DashboardPage dashboard = createDashboard(generateDashboardTitle());
 

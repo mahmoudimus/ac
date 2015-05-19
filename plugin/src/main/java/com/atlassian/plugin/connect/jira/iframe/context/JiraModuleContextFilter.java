@@ -34,6 +34,8 @@ public class JiraModuleContextFilter extends AbstractModuleContextFilter<Applica
     public static final String POSTFUNCTION_ID = "postFunction.id";
     public static final String POSTFUNCTION_CONFIG = "postFunction.config";
     public static final String DASHBOARD_ITEM_ID = "dashboardItem.id";
+    public static final String DASHBOARD_ITEM_KEY = "dashboardItem.key";
+    public static final String DASHBOARD_ITEM_VIEW_TYPE = "dashboardItem.viewType";
     public static final String DASHBOARD_ID = "dashboard.id";
 
     private final PermissionManager permissionManager;
@@ -201,7 +203,9 @@ public class JiraModuleContextFilter extends AbstractModuleContextFilter<Applica
                 PermissionChecks.<ApplicationUser>alwaysAllowed(POSTFUNCTION_ID),
                 PermissionChecks.<ApplicationUser>alwaysAllowed(POSTFUNCTION_CONFIG),
                 // Dashboard items are always allowed. Permission checking is applied per dashboard already.
-                PermissionChecks.<ApplicationUser>alwaysAllowed(DASHBOARD_ITEM_ID)
+                PermissionChecks.<ApplicationUser>alwaysAllowed(DASHBOARD_ITEM_ID),
+                PermissionChecks.<ApplicationUser>alwaysAllowed(DASHBOARD_ITEM_KEY),
+                PermissionChecks.<ApplicationUser>alwaysAllowed(DASHBOARD_ITEM_VIEW_TYPE)
         );
     }
 }

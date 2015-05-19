@@ -14,8 +14,9 @@
                 internals: {
                     setDashboardItemTitle: function(title) {
                         // TODO this should be replaced with a valid gadget API
+                        debugger;
                         var dashboardItemTitle = $($(this.iframe).parents('.gadget-container').find('h3.dashboard-item-title')[0]);
-                        dashboardItemTitle.text(this);
+                        dashboardItemTitle.text(title);
                     }
                 },
                 stubs: ["triggerDashboardItemEdit"]
