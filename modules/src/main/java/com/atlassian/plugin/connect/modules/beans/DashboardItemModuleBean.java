@@ -5,7 +5,6 @@ import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.DashboardItemModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Dashboard items allow add-on to display a summary information data on the dashboard. Each dashboard-item can be configured
@@ -73,9 +72,9 @@ public class DashboardItemModuleBean extends BeanWithKeyAndParamsAndConditions
     {
         super();
         this.description = I18nProperty.empty();
-        this.url = StringUtils.EMPTY;
+        this.url = "";
         this.configurable = false;
-        this.thumbnailUrl = StringUtils.EMPTY;
+        this.thumbnailUrl = "";
     }
 
 
