@@ -50,7 +50,16 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
             };
         }
     };
+    /**
+     * @class DashboardItem
+     */
     var DashboardItem = {
+        /**
+         * Attach a callback function to run when user clicks 'edit' in the dashboard item's menu
+         * @noDemo
+         * @memberOf DashboardItem
+         * @param {Function} listener called on save.
+         */
         onDashboardItemEdit: function (listener){
             dashboardItemEditListener = listener;
         },
