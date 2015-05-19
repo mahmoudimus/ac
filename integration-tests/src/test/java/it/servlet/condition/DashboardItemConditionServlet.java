@@ -23,7 +23,7 @@ public class DashboardItemConditionServlet extends HttpServlet
 
     public static ConditionalBean conditionBean()
     {
-        return newSingleConditionBean().withCondition(DASHBOARD_ITEM_CONDITION_URL + "?dashboardItemViewType={dashboardItemViewType}&key={dashboardItem.key}").build();
+        return newSingleConditionBean().withCondition(DASHBOARD_ITEM_CONDITION_URL + "?dashboardItemViewType={dashboardItem.viewType}&key={dashboardItem.key}").build();
     }
     
     public DashboardItemConditionServlet(final String expectedUser, final List<String> expectedMode, final String expectedKey)

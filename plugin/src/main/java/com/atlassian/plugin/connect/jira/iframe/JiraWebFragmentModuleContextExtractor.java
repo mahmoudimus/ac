@@ -242,7 +242,7 @@ public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleC
                             final Object name = ((Map) viewType).get("name");
                             if (name instanceof String)
                             {
-                                moduleContext.put("dashboardItemViewType", (String) name);
+                                moduleContext.put("dashboardItem.viewType", (String) name);
                             }
                         }
                     }

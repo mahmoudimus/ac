@@ -43,7 +43,7 @@ public class ConnectDashboardItemModuleDescriptor extends AbstractModuleDescript
         super(moduleFactory);
         this.directoryDefinition = directoryDefinition;
         this.description = description;
-        this.module = new ConnectDirectoryModule(parametersExtractor, directoryDefinition, renderStrategy, moduleContextFilter, configurable, condition);
+        this.module = new ConnectDashboardItemModule(parametersExtractor, directoryDefinition, renderStrategy, moduleContextFilter, configurable, condition);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class ConnectDashboardItemModuleDescriptor extends AbstractModuleDescript
         return description.getI18n();
     }
 
-    private static class ConnectDirectoryModule implements DashboardItemModule
+    private static class ConnectDashboardItemModule implements DashboardItemModule
     {
         private final Boolean configurable;
         private final Condition condition;
@@ -86,7 +86,7 @@ public class ConnectDashboardItemModuleDescriptor extends AbstractModuleDescript
         private final PluggableParametersExtractor moduleContextExtractor;
         private final IFrameRenderStrategy renderStrategy;
 
-        private ConnectDirectoryModule(final PluggableParametersExtractor moduleContextExtractor,
+        private ConnectDashboardItemModule(final PluggableParametersExtractor moduleContextExtractor,
                 final DirectoryDefinition directoryDefinition,
                 final IFrameRenderStrategy renderStrategy,
                 final ModuleContextFilter moduleContextFilter,

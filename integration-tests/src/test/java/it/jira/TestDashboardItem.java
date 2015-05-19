@@ -53,7 +53,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
     private static final String VENDOR_NAME = "Atlassian";
     private static final String DASHBOARD_ITEM_ID_QUERY_PARAM = "dashboardItemId";
     private static final String DASHBOARD_ID_QUERY_PARAM = "dashboardId";
-    private static final TestUser TEST_USER = new TestUser("barney");
+    private static final TestUser TEST_USER = new TestUser("admin");
     private static ConnectRunner addon;
 
     @BeforeClass
@@ -69,7 +69,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
                                 .withDescription(new I18nProperty(DASHBOARD_ITEM_DESCRIPTION, "description.i18n.key"))
                                 .withName(new I18nProperty(DASHBOARD_ITEM_TITLE, "description.title.key"))
                                 .withThumbnailUrl("atlassian-icon-16.png")
-                                .withUrl("/dashboard-item-test?dashboardItemId={dashboardItem.id}&dashboardId={dashboard.id}&view={dashboardItemViewType}")
+                                .withUrl("/dashboard-item-test?dashboardItemId={dashboardItem.id}&dashboardId={dashboard.id}&view={dashboardItem.viewType}")
                                 .withKey(DASHBOARD_ITEM_KEY)
                                 .configurable(true)
                                 .build())
@@ -235,7 +235,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
                                 .withDescription(new I18nProperty("Description", "description.i18n"))
                                 .withName(new I18nProperty(title, "title.i18n"))
                                 .withThumbnailUrl("atlassian-icon-16.png")
-                                .withUrl("/item-with-condition?dashboardItemId={dashboardItem.id}&dashboardId={dashboard.id}&view={dashboardItemViewType}")
+                                .withUrl("/item-with-condition?dashboardItemId={dashboardItem.id}&dashboardId={dashboard.id}&view={dashboardItem.viewType}")
                                 .withConditions(DashboardItemConditionServlet.conditionBean())
                                 .withKey(moduleKey)
                                 .configurable(true)

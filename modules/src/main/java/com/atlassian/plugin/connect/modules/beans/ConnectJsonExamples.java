@@ -847,7 +847,7 @@ public class ConnectJsonExamples
                 .withDescription(new I18nProperty("Dashboard item description", "description.i18n.key"))
                 .withName(new I18nProperty("Dashboard item title", "description.title.key"))
                 .withThumbnailUrl("atlassian-icon-16.png")
-                .withUrl("/dashboard-item-test?dashboardItemId={dashboardItem.id}&dashboardId={dashboard.id}&view={dashboardItemViewType}")
+                .withUrl("/dashboard-item-test?dashboardItemId={dashboardItem.id}&dashboardId={dashboard.id}&view={dashboardItem.viewType}")
                 .withKey("dashboard-item-key")
                 .configurable(true)
                 .build();
