@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.rest.addons;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddOnInstaller;
+import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstaller;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
