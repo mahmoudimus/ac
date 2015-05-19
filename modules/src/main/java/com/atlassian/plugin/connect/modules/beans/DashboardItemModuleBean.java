@@ -29,10 +29,10 @@ public class DashboardItemModuleBean extends BeanWithKeyAndParamsAndConditions
      * The URL of the service which will render the dashboard item. Following context parameters are supported in
      * url.
      *
-     * * `dashboardItemViewType` type of the view in which dashboard item is displayed. Currently supported values are default (for dashboard) and directory. This list may be extended
      * * `dashboard.id` unique id of the dashboard on which the item is rendered. This parameter is passed only on default view
      * * `dashboardItem.id` unique id of the dashboard item which is rendered. This parameter is passed only on default view
      * * `dashboardItem.key` key of the dashboard item. This parameter is passed in both: default and directory view
+     * * `dashboardItem.viewType` type of the view in which dashboard item is displayed. Default (for dashboard) and directory. This list may be extended
      */
     @Required
     @StringSchemaAttributes (format = "uri-template")
