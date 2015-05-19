@@ -8,8 +8,6 @@ import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.JwtAuthorizationGenerator;
-import com.atlassian.plugin.connect.plugin.JwtSigningRemotablePluginAccessor;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.util.UriBuilderUtils;
