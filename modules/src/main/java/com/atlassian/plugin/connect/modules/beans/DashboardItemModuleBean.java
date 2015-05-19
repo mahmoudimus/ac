@@ -11,7 +11,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
  * to display information relevant to a particular user.
  *
  *#### Example
- * For a full add-on example, see [dashboard item example add-on](bitbucket.org/atlassianlabs/atlassian-connect-jira-dashboard-item-example).
+ * For a full add-on example, see [dashboard item example add-on](https://bitbucket.org/atlassianlabs/atlassian-connect-jira-dashboard-item-example).
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#DASHBOARD_ITEM_EXAMPLE}
  * @schemaTitle Dashboard Item
@@ -40,7 +40,7 @@ public class DashboardItemModuleBean extends BeanWithKeyAndParamsAndConditions
 
     /**
      * Specify if the dashboard-item is configurable or not. Configurable dashboard items should render configuration
-     * view if there is no configuration stored for the dashboard item. [Dashboard item properties](scopes/jira-rest-scopes.html) can
+     * view if there is no configuration stored for the dashboard item. [Dashboard item properties](../../scopes/jira-rest-scopes.html) can
      * be used for configuration storage.
      *
      * In addition, configurable dashboard items should register a javascript callback for `edit click`.
