@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.module;
 
-import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
+import com.atlassian.plugin.connect.spi.iframe.page.IFramePageRenderer;
+import com.atlassian.plugin.connect.spi.module.page.PageInfo;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.plugin.web.conditions.InvertedCondition;
@@ -39,7 +40,7 @@ public class TestIFramePageRenderer
     public void setup()
     {
         MockitoAnnotations.initMocks(this);
-        this.iframePageRenderer = new IFramePageRenderer(templateRenderer, iframeRenderer, hostApplicationInfo);
+        this.iframePageRenderer = new IFramePageRendererImpl(templateRenderer, iframeRenderer, hostApplicationInfo);
     }
 
     @Test

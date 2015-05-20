@@ -1,17 +1,17 @@
 package com.atlassian.plugin.connect.confluence.macro;
 
-import java.net.URI;
-import java.util.Map;
-
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.spaces.Spaced;
-import com.atlassian.plugin.connect.plugin.util.contextparameter.RequestContextParameterFactory;
-import com.atlassian.plugin.connect.plugin.util.contextparameter.RequestContextParameters;
+import com.atlassian.plugin.connect.api.util.RequestContextParameterFactory;
+import com.atlassian.plugin.connect.api.util.RequestContextParameters;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.renderer.v2.macro.Macro;
 import org.apache.commons.lang.StringUtils;
+
+import java.net.URI;
+import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
 

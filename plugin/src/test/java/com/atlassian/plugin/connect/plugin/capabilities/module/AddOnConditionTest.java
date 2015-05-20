@@ -2,13 +2,13 @@ package com.atlassian.plugin.connect.plugin.capabilities.module;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.gzipfilter.org.apache.commons.lang.ObjectUtils;
-import com.atlassian.plugin.connect.plugin.UserPreferencesRetriever;
+import com.atlassian.plugin.connect.api.iframe.webpanel.PluggableParametersExtractor;
+import com.atlassian.plugin.connect.spi.user.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactoryImpl;
-import com.atlassian.plugin.connect.plugin.iframe.webpanel.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.license.LicenseStatus;
 import com.atlassian.plugin.connect.plugin.module.HostApplicationInfo;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutorImpl;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeServiceImpl;
 import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
@@ -139,7 +139,7 @@ public class AddOnConditionTest
     public void init()
     {
         final IFrameUriBuilderFactoryImpl iFrameUriBuilderFactory = new IFrameUriBuilderFactoryImpl(
-                new UrlVariableSubstitutor(new IsDevModeServiceImpl()),
+                new UrlVariableSubstitutorImpl(new IsDevModeServiceImpl()),
                 remotablePluginAccessorFactory,
                 userManager,
                 new TestHostApplicationInfo(URL, "/"),

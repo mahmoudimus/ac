@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.confluence.macro;
 
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
 
 import java.util.Map;
 

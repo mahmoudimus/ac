@@ -14,12 +14,12 @@ import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeUtil;
-import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserProvisioningService;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.component.ComponentLocator;
@@ -37,12 +37,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import javax.annotation.Nullable;
 
-import static com.atlassian.confluence.security.SpacePermission.*;
+import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.COMMENT_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.CREATEEDIT_PAGE_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.CREATE_ATTACHMENT_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.EDITBLOG_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.REMOVE_ATTACHMENT_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.REMOVE_BLOG_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.REMOVE_COMMENT_PERMISSION;
+import static com.atlassian.confluence.security.SpacePermission.REMOVE_PAGE_PERMISSION;
 import static com.google.common.collect.Iterables.filter;
 import static java.util.Arrays.asList;
 

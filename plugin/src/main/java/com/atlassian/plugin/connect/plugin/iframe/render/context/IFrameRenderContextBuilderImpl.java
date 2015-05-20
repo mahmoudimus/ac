@@ -1,18 +1,16 @@
 package com.atlassian.plugin.connect.plugin.iframe.render.context;
 
 import com.atlassian.html.encode.JavascriptEncoder;
-import com.atlassian.plugin.connect.plugin.UserPreferencesRetriever;
+import com.atlassian.plugin.connect.spi.user.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.plugin.module.HostApplicationInfo;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.json.simple.JSONObject;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.List;
 import java.util.Map;
 
 import static com.atlassian.plugin.connect.plugin.util.EncodingUtils.escapeQuotes;

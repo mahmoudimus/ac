@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.usermanagement;
 
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.google.common.annotations.VisibleForTesting;
 

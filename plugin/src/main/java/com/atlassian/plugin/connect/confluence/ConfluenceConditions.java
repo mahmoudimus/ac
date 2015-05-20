@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.confluence;
 
-import com.atlassian.plugin.connect.plugin.condition.PageConditions;
+import com.atlassian.plugin.connect.spi.condition.PageConditions;
 import com.atlassian.plugin.connect.spi.condition.UserIsAdminCondition;
 import com.atlassian.plugin.connect.spi.product.ConditionClassResolver;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;

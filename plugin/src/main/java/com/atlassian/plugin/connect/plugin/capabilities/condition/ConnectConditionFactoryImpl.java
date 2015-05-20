@@ -1,8 +1,9 @@
 package com.atlassian.plugin.connect.plugin.capabilities.condition;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.capabilities.condition.ConditionElementParserFactory;
+import com.atlassian.plugin.connect.api.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.descriptors.ConditionElementParser;

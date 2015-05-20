@@ -12,7 +12,7 @@ import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.Spaced;
 import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.userstatus.UserStatus;
-import com.atlassian.plugin.connect.plugin.product.EventMapper;
+import com.atlassian.plugin.connect.spi.product.EventMapper;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;

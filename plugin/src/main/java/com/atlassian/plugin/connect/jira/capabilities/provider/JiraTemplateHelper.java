@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.jira.capabilities.provider;
 
+import com.atlassian.plugin.connect.api.capabilities.provider.ModuleTemplate;
+
 public class JiraTemplateHelper
 {
     private static final String TEMPLATE_PATH = "velocity/";

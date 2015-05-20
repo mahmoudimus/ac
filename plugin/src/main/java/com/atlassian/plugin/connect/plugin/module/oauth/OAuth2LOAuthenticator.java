@@ -2,8 +2,8 @@ package com.atlassian.plugin.connect.plugin.module.oauth;
 
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.Check;
+import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
-import com.atlassian.plugin.connect.plugin.scopes.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.plugin.util.DefaultMessage;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
@@ -47,15 +47,17 @@ public class OAuth2LOAuthenticator implements Authenticator
     private final ApplicationProperties applicationProperties;
     private final UserManager userManager;
     private final String ourConsumerKey;
+    private final AddOnKeyExtractor addOnKeyExtractor;
 
     @Autowired
     public OAuth2LOAuthenticator(AuthenticationController authenticationController,
             ApplicationProperties applicationProperties,
             OAuthLinkManager oAuthLinkManager, UserManager userManager,
-            ConsumerService consumerService)
+            ConsumerService consumerService, AddOnKeyExtractor addOnKeyExtractor)
     {
         this.oAuthLinkManager = oAuthLinkManager;
         this.userManager = userManager;
+        this.addOnKeyExtractor = addOnKeyExtractor;
         this.authenticationController = Check.notNull(authenticationController,
                 "authenticationController");
         this.applicationProperties = Check.notNull(applicationProperties, "applicationProperties");
@@ -194,7 +196,7 @@ public class OAuth2LOAuthenticator implements Authenticator
         the request needs
         to be authorized to ensure it has access to the appropriate API scope.
          */
-        AddOnKeyExtractor.setClientKey(request, consumerKey);
+        addOnKeyExtractor.setClientKey(request, consumerKey);
         log.info("Authenticated app '{}' as user '{}' successfully", consumerKey, user.getName());
         return new Result.Success(user);
         /*!-helper methods*/

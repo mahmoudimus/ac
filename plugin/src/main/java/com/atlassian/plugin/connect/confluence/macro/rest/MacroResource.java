@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.confluence.macro.rest;
 
 import com.atlassian.fugue.Option;
+import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.confluence.macro.MacroContentManager;
-import com.atlassian.plugin.connect.plugin.scopes.AddOnKeyExtractor;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import com.google.common.base.Function;
 import com.google.common.base.Suppliers;
@@ -21,10 +21,12 @@ import static com.atlassian.fugue.Option.option;
 public class MacroResource
 {
     private final MacroContentManager macroContentManager;
+    private final AddOnKeyExtractor addOnKeyExtractor;
 
-    public MacroResource(MacroContentManager macroContentManager)
+    public MacroResource(MacroContentManager macroContentManager, final AddOnKeyExtractor addOnKeyExtractor)
     {
         this.macroContentManager = macroContentManager;
+        this.addOnKeyExtractor = addOnKeyExtractor;
     }
 
     @Path("/app/{appKey}")
@@ -73,6 +75,6 @@ public class MacroResource
 
     private Option<String> getConsumerKeyFromRequest(HttpServletRequest request)
     {
-        return option(AddOnKeyExtractor.extractClientKey(request));
+        return option(addOnKeyExtractor.extractClientKey(request));
     }
 }

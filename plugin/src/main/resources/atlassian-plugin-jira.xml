@@ -1,6 +1,6 @@
 <application key="jira">
 
-    <resource type="i18n" key="addon-18n" name="jira-addon-i18n" location="com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonResourceBundle"/>
+    <resource type="i18n" key="addon-18n" name="jira-addon-i18n" location="com.atlassian.plugin.connect.jira.integration.plugins.ConnectAddonResourceBundle"/>
 
     <rest key="rest" path="/atlassian-connect" version="1">
         <dispatcher>REQUEST</dispatcher>

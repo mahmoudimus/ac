@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.test.utils;
 
-import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
+import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 
 public class WebItemUtils
 {

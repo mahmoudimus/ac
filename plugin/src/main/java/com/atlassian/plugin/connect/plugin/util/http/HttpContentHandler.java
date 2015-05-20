@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.util.http;
 
+import com.atlassian.plugin.connect.api.util.http.ContentRetrievalException;
+
 /**
  * Callback when http content is retrieved
  */

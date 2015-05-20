@@ -2,19 +2,19 @@ package com.atlassian.plugin.connect.jira.iframe.tabpanel.project;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.project.Project;
-import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
-import com.atlassian.plugin.connect.plugin.module.page.IFramePageServlet;
-import com.atlassian.plugin.connect.plugin.module.page.PageInfo;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.api.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.spi.iframe.page.IFramePageRenderer;
+import com.atlassian.plugin.connect.spi.module.page.IFramePageServlet;
+import com.atlassian.plugin.connect.spi.module.page.PageInfo;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.annotations.VisibleForTesting;
 
+import java.io.IOException;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Map;
 
 
 /**

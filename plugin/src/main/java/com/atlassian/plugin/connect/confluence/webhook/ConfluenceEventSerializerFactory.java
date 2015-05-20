@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.atlassian.confluence.event.events.ConfluenceEvent;
 import com.atlassian.confluence.setup.settings.SettingsManager;
-import com.atlassian.plugin.connect.plugin.product.EventMapper;
+import com.atlassian.plugin.connect.spi.product.EventMapper;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.webhooks.spi.provider.EventSerializer;

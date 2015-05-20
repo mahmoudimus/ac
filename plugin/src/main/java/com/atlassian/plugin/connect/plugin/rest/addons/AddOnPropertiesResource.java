@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.rest.addons;
 
 import com.atlassian.fugue.Either;
 import com.atlassian.fugue.Option;
+import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.plugin.property.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.property.AddOnPropertyIterable;
 import com.atlassian.plugin.connect.plugin.property.AddOnPropertyService;
@@ -9,7 +10,6 @@ import com.atlassian.plugin.connect.plugin.property.AddOnPropertyServiceImpl;
 import com.atlassian.plugin.connect.plugin.rest.RestResult;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddOnPropertiesBean;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddOnProperty;
-import com.atlassian.plugin.connect.plugin.scopes.AddOnKeyExtractor;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.message.I18nResolver;

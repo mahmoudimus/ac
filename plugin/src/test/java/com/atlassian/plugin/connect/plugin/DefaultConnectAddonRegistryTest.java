@@ -2,8 +2,7 @@ package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.DefaultConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.installer.AddonSettings;
+import com.atlassian.plugin.connect.api.installer.AddonSettings;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;

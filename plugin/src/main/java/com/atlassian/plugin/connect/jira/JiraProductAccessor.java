@@ -8,11 +8,9 @@ import com.atlassian.fugue.Option;
 import com.atlassian.jira.bc.license.JiraLicenseService;
 import com.atlassian.jira.license.LicenseDetails;
 import com.atlassian.plugin.connect.jira.condition.JiraConditions;
-import com.atlassian.plugin.connect.plugin.condition.ConditionsProvider;
 import com.atlassian.plugin.connect.spi.product.ConditionClassResolver;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-import com.atlassian.plugin.web.Condition;
 
 import com.google.common.collect.ImmutableMap;
 

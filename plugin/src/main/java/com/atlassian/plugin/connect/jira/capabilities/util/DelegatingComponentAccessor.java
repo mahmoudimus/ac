@@ -1,10 +1,9 @@
 package com.atlassian.plugin.connect.jira.capabilities.util;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 
-import org.springframework.stereotype.Component;
-
-@Component
+@JiraComponent
 public class DelegatingComponentAccessor
 {
     public <T> T getComponent(Class<T> componentClass)

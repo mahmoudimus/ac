@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.jira.searchrequestview;
 
 import com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFactory;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.capabilities.condition.ConnectConditionElementParserFactory;
+import com.atlassian.plugin.connect.api.capabilities.condition.ConnectConditionElementParserFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.descriptors.ConditionElementParser;
@@ -28,6 +28,7 @@ public class ConnectConditionDescriptorFactory implements ConditionDescriptorFac
     @Inject
     public ConnectConditionDescriptorFactory(final ConnectConditionElementParserFactory conditionElementParserFactory)
     {
+        //TODO: check if ConnectConditionElementParserFactory really needed ( and not the interface )
         this.conditionElementParser = conditionElementParserFactory.getConditionElementParser();
     }
 

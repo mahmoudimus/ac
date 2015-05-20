@@ -2,8 +2,6 @@ package com.atlassian.plugin.connect.plugin.iframe.render.context;
 
 import java.util.Map;
 
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
-
 /**
  *
  */

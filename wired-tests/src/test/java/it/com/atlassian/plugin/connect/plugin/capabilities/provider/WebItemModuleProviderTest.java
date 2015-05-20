@@ -3,6 +3,8 @@ package it.com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.api.iframe.servlet.ConnectIFrameServletHelper;
+import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -11,11 +13,9 @@ import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
-import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider;
-import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
+import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugin.util.WaitUntil;
@@ -484,7 +484,7 @@ public class WebItemModuleProviderTest
     {
         final WebItemTargetBean target = webItemModuleBean.getTarget();
         final String prefix = target.isDialogTarget() || target.isInlineDialogTarget()
-                ? ConnectIFrameServlet.iFrameServletPath(pluginKey, webItemModuleBean.getKey(addOnBean))
+                ? ConnectIFrameServletHelper.iFrameServletPath(pluginKey, webItemModuleBean.getKey(addOnBean))
                 : BASE_URL + "/my/addon";
         final String href = descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>());
         final String message = String.format("Expecting the href to start with '%s' but it was '%s'", prefix, href);

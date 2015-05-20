@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.jira.condition;
 
-import com.atlassian.plugin.connect.plugin.condition.ConnectEntityPropertyEqualToCondition;
-import com.atlassian.plugin.connect.plugin.condition.PageConditions;
+import com.atlassian.plugin.connect.api.condition.ConnectEntityPropertyEqualToCondition;
+import com.atlassian.plugin.connect.spi.condition.PageConditions;
 import com.atlassian.plugin.connect.spi.product.ConditionClassResolver;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 
@@ -13,7 +13,6 @@ import static com.google.common.base.Predicates.not;
 @JiraComponent
 public class JiraConditions extends PageConditions
 {
-
     public static final String CAN_ATTACH_FILE_TO_ISSUE = "can_attach_file_to_issue";
     public static final String CAN_MANAGE_ATTACHMENTS = "can_manage_attachments";
     public static final String FEATURE_FLAG = "feature_flag";

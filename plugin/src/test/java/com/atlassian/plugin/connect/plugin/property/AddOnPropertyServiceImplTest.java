@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.property;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
 import com.atlassian.plugin.connect.plugin.property.AddOnPropertyStore.PutResultWithOptionalProperty;
-import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.property.AddOnPropertyService.DeleteServiceResult;
 import com.atlassian.plugin.connect.plugin.property.AddOnPropertyService.PutServiceResult;
 import com.atlassian.sal.api.user.UserKey;
