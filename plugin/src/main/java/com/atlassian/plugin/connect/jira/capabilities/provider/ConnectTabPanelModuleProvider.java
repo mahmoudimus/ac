@@ -11,8 +11,8 @@ import com.atlassian.plugin.connect.jira.iframe.tabpanel.profile.ConnectIFramePr
 import com.atlassian.plugin.connect.jira.iframe.tabpanel.project.ConnectIFrameProjectTabPanel;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProvider;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
+import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.jira.iframe.tabpanel.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;

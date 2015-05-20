@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.capabilities.provider;
+package com.atlassian.plugin.connect.spi.module;
 
 /**
  * A utility that qualifies any locations (and location segments) that match keys in web items or web sections.

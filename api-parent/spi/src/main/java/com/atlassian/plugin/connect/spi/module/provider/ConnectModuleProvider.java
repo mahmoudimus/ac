@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.capabilities.provider;
+package com.atlassian.plugin.connect.spi.module.provider;
 
 import java.util.List;
 
