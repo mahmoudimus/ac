@@ -44,7 +44,7 @@ public class ConfluenceGeneralPage implements GeneralPage
     @SuppressWarnings("unused")
     public void init()
     {
-        Poller.waitUntilTrue(findLinkElement().withTimeout(TimeoutType.SLOW_PAGE_LOAD).timed().isVisible());
+        Poller.waitUntilTrue(findLinkElement().withTimeout(TimeoutType.PAGE_LOAD).timed().isVisible());
     }
 
     @Override
