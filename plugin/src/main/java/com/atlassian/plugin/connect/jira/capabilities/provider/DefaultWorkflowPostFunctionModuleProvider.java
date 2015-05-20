@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.atlassian.plugin.connect.jira.capabilities.provider.JiraTemplateHelper.*;
+
 @JiraComponent
 @ExportAsDevService
 public class DefaultWorkflowPostFunctionModuleProvider implements WorkflowPostFunctionModuleProvider
@@ -39,7 +41,7 @@ public class DefaultWorkflowPostFunctionModuleProvider implements WorkflowPostFu
     @Override
     public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, String jsonFieldName, List<WorkflowPostFunctionModuleBean> beans)
     {
-        List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
+        List<ModuleDescriptor> descriptors = new ArrayList<>();
 
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         for (WorkflowPostFunctionModuleBean bean : beans)
@@ -74,7 +76,7 @@ public class DefaultWorkflowPostFunctionModuleProvider implements WorkflowPostFu
         IFrameRenderStrategyBuilder.InitializedBuilder builder = iFrameRenderStrategyBuilderFactory.builder()
                 .addOn(addon.getKey())
                 .module(bean.getKey(addon))
-                .workflowPostFunctionTemplate(resource)
+                .template(workflowPostFunctionTemplate(resource))
                 .urlTemplate(urlBean.getUrl())
                 ;
 

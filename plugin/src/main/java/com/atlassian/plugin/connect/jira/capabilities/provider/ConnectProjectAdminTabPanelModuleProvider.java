@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+import static com.atlassian.plugin.connect.jira.capabilities.provider.JiraTemplateHelper.*;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet.iFrameServletPath;
 
@@ -75,7 +76,7 @@ public class ConnectProjectAdminTabPanelModuleProvider
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(connectAddonBean.getKey())
                     .module(bean.getKey(connectAddonBean))
-                    .projectAdminTabTemplate()
+                    .template(projectAdminTabTemplate())
                     .urlTemplate(bean.getUrl())
                     .additionalRenderContext(ADMIN_ACTIVE_TAB, bean.getKey(connectAddonBean))
                     .conditions(bean.getConditions())
