@@ -12,12 +12,12 @@ commonPlanConfiguration() {
     )
 }
 
-productSnapshotPlanConfiguration(['applicationVersion']) {
+productSnapshotPlanConfiguration(['productVersion']) {
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (develop)')
     variable(
             key: 'bamboo.product.version',
-            value: '#applicationVersion'
+            value: '#productVersion'
     )
     trigger(
             type: 'cron',
@@ -406,9 +406,9 @@ commonRequirements() {
     )
 }
 
-maven30Requirement() {
+maven32Requirement() {
     requirement(
-            key: 'system.builder.mvn3.Maven 3.0',
+            key: 'system.builder.mvn3.Maven 3.2',
             condition: 'exists'
     )
 }
