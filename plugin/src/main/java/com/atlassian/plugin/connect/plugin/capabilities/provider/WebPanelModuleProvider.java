@@ -8,6 +8,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel.WebP
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
+import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,7 +37,7 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
     @Override
     public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, String jsonFieldName, List<WebPanelModuleBean> beans)
     {
-        List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
+        List<ModuleDescriptor> descriptors = new ArrayList<>();
 
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         for (WebPanelModuleBean bean : beans)
@@ -61,7 +63,7 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
     private Collection<? extends ModuleDescriptor> beanToDescriptors(ConnectModuleProviderContext moduleProviderContext,
                                                                      Plugin theConnectPlugin, WebPanelModuleBean bean)
     {
-        List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
+        List<ModuleDescriptor> descriptors = new ArrayList<>();
 
         descriptors.add(webPanelFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean));
 

@@ -7,8 +7,8 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
 import com.atlassian.plugin.connect.jira.capabilities.descriptor.SearchRequestViewModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProvider;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
+import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class SearchRequestViewModuleProvider implements ConnectModuleProvider<Se
     @Override
     public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, String jsonFieldName, List<SearchRequestViewModuleBean> beans)
     {
-        List<ModuleDescriptor> moduleDescriptors = new ArrayList<ModuleDescriptor>();
+        List<ModuleDescriptor> moduleDescriptors = new ArrayList<>();
 
         for (SearchRequestViewModuleBean bean : beans)
         {
