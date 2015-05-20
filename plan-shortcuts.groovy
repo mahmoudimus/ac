@@ -12,12 +12,12 @@ commonPlanConfiguration() {
     )
 }
 
-productSnapshotPlanConfiguration(['productVersion']) {
+productSnapshotPlanConfiguration(['applicationVersion']) {
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (develop)')
     variable(
             key: 'bamboo.product.version',
-            value: '#productVersion'
+            value: '#applicationVersion'
     )
     trigger(
             type: 'cron',
@@ -338,11 +338,19 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
         )
         commonRequirements()
         checkoutDefaultRepositoryTask()
-        mavenTestTask(
+        cloverTestTask(
                 description: 'Run Wired Lifecycle Tests for #product',
                 goal: 'verify -PpluginLifecycle -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
         )
+        cloverReportArtifact(
+                name: '#product - Lifecycle Tests'
+        )
+        cloverJSONArtifact(
+                name: '#product - Lifecycle Tests'
+        )
+        cloverMiscConfiguration()
+        cloverBambooTask()
     }
 }
 
@@ -353,11 +361,19 @@ wiredTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
     ) {
         commonRequirements()
         checkoutDefaultRepositoryTask()
-        mavenTestTask(
+        cloverTestTask(
                 description: 'Run Wired Tests for #product',
                 goal: 'verify -Pwired -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
         )
+        cloverReportArtifact(
+                name: '#product - Wired Tests'
+        )
+        cloverJSONArtifact(
+                name: '#product - Wired Tests'
+        )
+        cloverMiscConfiguration()
+        cloverBambooTask()
     }
 }
 
@@ -390,9 +406,9 @@ commonRequirements() {
     )
 }
 
-maven32Requirement() {
+maven30Requirement() {
     requirement(
-            key: 'system.builder.mvn3.Maven 3.2',
+            key: 'system.builder.mvn3.Maven 3.0',
             condition: 'exists'
     )
 }
@@ -442,7 +458,7 @@ mavenTaskImpl(['description', 'goal', 'environmentVariables', 'hasTests', 'testD
             description: '#description',
             goal: '#goal -B -nsu -e',
             buildJdk: 'JDK 1.8',
-            mavenExecutable: 'Maven 3.2',
+            mavenExecutable: 'Maven 3.0',
             environmentVariables: '#environmentVariables',
             hasTests: '#hasTests',
             testDirectory: '#testDirectory'
