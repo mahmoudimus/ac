@@ -254,7 +254,6 @@ public class TestDialog extends MultiProductWebDriverTestBase
         HomePage homePage = product.visit(HomePage.class);
 
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginDialog", DIALOG_WEB_ITEM_NAME, runner.getAddon().getKey());
-        assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
         assertThat(remotePluginTest.getLocation(), endsWith(homePage.getUrl()));
 
@@ -271,7 +270,6 @@ public class TestDialog extends MultiProductWebDriverTestBase
         login(testUserFactory.basicUser());
         product.visit(HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParentDialog", SIZE_TO_PARENT_DIALOG_WEB_ITEM_NAME, runner.getAddon().getKey());
-        assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
         assertTrue(remotePluginTest.isNotFullSize());
     }
@@ -334,7 +332,6 @@ public class TestDialog extends MultiProductWebDriverTestBase
     {
         product.visit(HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, dashedModuleKey, moduleName, runner.getAddon().getKey());
-        assertTrue(page.isRemotePluginLinkPresent());
 
         return page;
     }

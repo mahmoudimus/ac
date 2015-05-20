@@ -55,6 +55,7 @@ public class TestedProductProvider
         {
             FixedConfluenceTestedProduct testedProduct = TestedProductFactory.create(FixedConfluenceTestedProduct.class);
             testedProduct.getPageBinder().override(GeneralPage.class, ConfluenceGeneralPage.class);
+            testedProduct.getPageBinder().override(HomePage.class, com.atlassian.confluence.pageobjects.page.DashboardPage.class);
             return testedProduct;
         }
     };

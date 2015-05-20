@@ -106,8 +106,6 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
         ConfluenceViewPage createdPage = createAndVisitViewPage();
         ConfluenceGeneralPage generalPage = product.getPageBinder().bind(ConfluenceGeneralPage.class, KEY_MY_AWESOME_PAGE, PAGE_NAME, addonKey);
 
-        assertThat(generalPage.isRemotePluginLinkPresent(), is(true));
-
         URI url = new URI(generalPage.getRemotePluginLinkHref());
         assertThat(url.getPath(), is("/confluence/plugins/servlet/ac/" + addonKey + "/" + KEY_MY_AWESOME_PAGE));
 

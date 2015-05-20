@@ -3,9 +3,8 @@ package it.common;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.client.AddOnPropertyClient;
-import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginAwarePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
@@ -20,8 +19,11 @@ import static org.junit.Assert.assertThat;
 
 public class TestAddOnPropertyCondition extends MultiProductWebDriverTestBase
 {
+    public static final String PAGE_KEY = "add-on-property-page";
     public static final String PAGE_NAME = "Prop";
+
     private static ConnectRunner remotePlugin;
+
     private AddOnPropertyClient addOnPropertyClient;
 
     @BeforeClass
@@ -33,7 +35,7 @@ public class TestAddOnPropertyCondition extends MultiProductWebDriverTestBase
                         "generalPages",
                         newPageBean()
                                 .withName(new I18nProperty(PAGE_NAME, null))
-                                .withKey("add-on-property-page")
+                                .withKey(PAGE_KEY)
                                 .withUrl("/pg")
                                 .withLocation(getGloballyVisibleLocation())
                                 .withWeight(1234)
@@ -92,7 +94,6 @@ public class TestAddOnPropertyCondition extends MultiProductWebDriverTestBase
     private boolean webPageIsVisible()
     {
         loginAndVisit(testUserFactory.admin(), HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "add-on-property-page", PAGE_NAME, remotePlugin.getAddon().getKey());
-        return page.isRemotePluginLinkPresent();
+        return connectPageOperations.existsWebItem(ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), PAGE_KEY));
     }
 }

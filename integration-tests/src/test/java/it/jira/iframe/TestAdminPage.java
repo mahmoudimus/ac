@@ -77,8 +77,6 @@ public class TestAdminPage extends JiraWebDriverTestBase
 
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, PLUGIN_KEY, PAGE_KEY);
 
-        assertThat(adminPage.isRemotePluginLinkPresent(), is(true));
-
         URI url = new URI(adminPage.getRemotePluginLinkHref());
         assertThat(url.getPath(), is("/jira/plugins/servlet/ac/" + PLUGIN_KEY + "/" + PAGE_KEY));
 
@@ -92,8 +90,6 @@ public class TestAdminPage extends JiraWebDriverTestBase
         loginAndVisit(testUserFactory.admin(), JiraAdministrationHomePage.class);
 
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, PLUGIN_KEY, PAGE_KEY);
-
-        assertThat(adminPage.isRemotePluginLinkPresent(), is(true));
 
         ConnectAddOnEmbeddedTestPage addonContentsPage = adminPage.clickAddOnLink();
         assertTrue("Addon is full size", addonContentsPage.isFullSize());

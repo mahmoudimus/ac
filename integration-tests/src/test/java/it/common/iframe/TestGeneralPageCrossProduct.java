@@ -109,7 +109,6 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
         // Regression test for AC-885 (ensure descriptor query strings are not decoded before parsing)
         loginAndVisit(testUserFactory.admin(), HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "encodedSpaces", ENCODED_SPACES_PAGE_NAME, remotePlugin.getAddon().getKey());
-        assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
 
         assertThat(remotePluginTest.getValueBySelector("#hello-world-message"), is("Hello world"));
@@ -120,7 +119,6 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
     {
         loginAndVisit(testUserFactory.admin(), HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParent", SIZE_TO_PARENT_GENERAL_PAGE, remotePlugin.getAddon().getKey());
-        assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
 
         assertTrue(remotePluginTest.isFullSize());

@@ -104,8 +104,6 @@ public class TestGeneralPage extends JiraWebDriverTestBase
 
         JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, KEY_MY_AWESOME_PAGE, PAGE_NAME, addonKey);
 
-        assertThat(viewProjectPage.isRemotePluginLinkPresent(), is(true));
-
         URI url = new URI(viewProjectPage.getRemotePluginLinkHref());
         assertThat(url.getPath(), is("/jira/plugins/servlet/ac/" + addonKey + "/" + KEY_MY_AWESOME_PAGE));
 
@@ -150,8 +148,6 @@ public class TestGeneralPage extends JiraWebDriverTestBase
         product.visit(JiraViewProjectPage.class, project.getKey());
 
         JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, contextPageModuleKey, CONTEXT_PAGE_NAME);
-
-        assertThat(viewProjectPage.isRemotePluginLinkPresent(), is(true));
 
         URI url = new URI(viewProjectPage.getRemotePluginLinkHref());
         assertThat(url.getPath(), is("/jira/plugins/servlet/ac/my-plugin/" + KEY_MY_CONTEXT_PAGE));

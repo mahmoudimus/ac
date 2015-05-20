@@ -68,7 +68,6 @@ public class TestRequest extends MultiProductWebDriverTestBase
     {
         loginAndVisit(betty, HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, PAGE_MODULE_KEY, PAGE_NAME, remotePlugin.getAddon().getKey());
-        assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
         assertTrue(remotePluginTest.getTitle().contains(PAGE_NAME));
         assertEquals("Success", remotePluginTest.getMessage());

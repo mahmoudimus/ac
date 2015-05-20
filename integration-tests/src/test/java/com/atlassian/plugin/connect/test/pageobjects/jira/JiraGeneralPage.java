@@ -62,12 +62,6 @@ public final class JiraGeneralPage implements GeneralPage
     }
 
     @Override
-    public boolean isRemotePluginLinkPresent()
-    {
-        return link.get().isDefined();
-    }
-
-    @Override
     public ConnectAddOnEmbeddedTestPage clickAddOnLink()
     {
         final WebElement webElement = link.get().get();

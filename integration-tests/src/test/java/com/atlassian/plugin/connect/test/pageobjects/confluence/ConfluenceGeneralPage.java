@@ -26,6 +26,8 @@ public class ConfluenceGeneralPage implements GeneralPage
     private final String linkText;
     private final String extraPrefix;
 
+    private PageElement linkElement;
+
     public ConfluenceGeneralPage(String pageKey, String linkText)
     {
         this(pageKey, linkText, "");
@@ -42,21 +44,13 @@ public class ConfluenceGeneralPage implements GeneralPage
     @SuppressWarnings("unused")
     public void init()
     {
-        this.pageBinder.bind(ConfluenceHeader.class, new Object[0]);
-    }
-
-    @Override
-    public boolean isRemotePluginLinkPresent()
-    {
-        return findLinkElement().isPresent();
+        Poller.waitUntilTrue(findLinkElement().withTimeout(TimeoutType.PAGE_LOAD).timed().isVisible());
     }
 
     @Override
     public ConnectAddOnEmbeddedTestPage clickAddOnLink()
     {
-        PageElement linkElement = findLinkElement();
-        Poller.waitUntilTrue(linkElement.timed().isVisible());
-        linkElement.click();
+        findLinkElement().click();
         return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, extraPrefix, pageKey, true);
     }
 

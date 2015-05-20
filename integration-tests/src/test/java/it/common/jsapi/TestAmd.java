@@ -57,7 +57,6 @@ public class TestAmd extends MultiProductWebDriverTestBase
         loginAndVisit(testUserFactory.admin(), HomePage.class);
 
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "amdTest", PAGE_NAME, remotePlugin.getAddon().getKey());
-        assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
 
         assertEquals("true", remotePluginTest.waitForValue("amd-env"));

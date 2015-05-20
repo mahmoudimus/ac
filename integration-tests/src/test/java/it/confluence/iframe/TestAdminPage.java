@@ -78,8 +78,6 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
 
         ConfluenceAdminPage adminPage = product.getPageBinder().bind(ConfluenceAdminPage.class, PLUGIN_KEY, PAGE_KEY);
 
-        assertThat(adminPage.isRemotePluginLinkPresent(), is(true));
-
         URI url = new URI(adminPage.getRemotePluginLinkHref());
         assertThat(url.getPath(), is("/confluence/plugins/servlet/ac/" + PLUGIN_KEY + "/" + PAGE_KEY));
 
