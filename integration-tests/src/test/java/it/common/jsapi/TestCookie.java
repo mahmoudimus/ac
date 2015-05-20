@@ -9,8 +9,6 @@ import com.atlassian.plugin.connect.test.pageobjects.RemoteCookieGeneralPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.common.MultiProductWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
-import it.util.ConnectTestUserFactory;
-import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -21,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 public class TestCookie extends MultiProductWebDriverTestBase
 {
     private static final String ADDON_GENERALPAGE = "ac-general-cookie-page";
-    private static final String ADDON_GENERALPAGE_NAME = "AC Cookie Page";
+    private static final String ADDON_GENERALPAGE_NAME = "Cookie";
 
     private static ConnectRunner remotePlugin;
 

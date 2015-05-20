@@ -1,8 +1,5 @@
 package it.confluence.iframe;
 
-import java.net.URI;
-import java.util.Map;
-
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
@@ -10,8 +7,9 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceGenera
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-
-import it.util.ConnectTestUserFactory;
+import it.confluence.ConfluenceWebDriverTestBase;
+import it.servlet.ConnectAppServlets;
+import it.servlet.condition.ParameterCapturingConditionServlet;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -19,10 +17,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
-import it.confluence.ConfluenceWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
-import it.servlet.condition.ParameterCapturingConditionServlet;
-import it.util.TestUser;
+import java.net.URI;
+import java.util.Map;
 
 import static com.atlassian.fugue.Option.some;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
@@ -48,6 +44,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
 
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
     private static final String PARAMETER_CAPTURE_CONDITION_URL = "/parameterCapture";
+    public static final String PAGE_NAME = "A";
 
     private static ConnectRunner runner;
     private String addonKey;
@@ -64,7 +61,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
                 .addModules(
                         "generalPages",
                         newPageBean()
-                                .withName(new I18nProperty("My Awesome Page", null))
+                                .withName(new I18nProperty(PAGE_NAME, null))
                                 .withKey(KEY_MY_AWESOME_PAGE)
                                 .withUrl("/pg?page_id={page.id}&page_version={page.version}&page_type={page.type}")
                                 .withWeight(1234)
@@ -105,7 +102,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
         login(testUserFactory.basicUser());
 
         ConfluenceViewPage createdPage = createAndVisitViewPage();
-        ConfluenceGeneralPage generalPage = product.getPageBinder().bind(ConfluenceGeneralPage.class, KEY_MY_AWESOME_PAGE, "My Awesome Page", true, addonKey);
+        ConfluenceGeneralPage generalPage = product.getPageBinder().bind(ConfluenceGeneralPage.class, KEY_MY_AWESOME_PAGE, PAGE_NAME, addonKey);
 
         assertThat(generalPage.isRemotePluginLinkPresent(), is(true));
 
@@ -138,7 +135,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
         // directly retrieving page should result in access denied
         InsufficientPermissionsPage insufficientPermissionsPage = product.visit(InsufficientPermissionsPage.class, addonKey, moduleKeyOnly(awesomePageModuleKey));
         assertThat(insufficientPermissionsPage.getErrorMessage(), containsString("You do not have the correct permissions"));
-        assertThat(insufficientPermissionsPage.getErrorMessage(), containsString("My Awesome Page"));
+        assertThat(insufficientPermissionsPage.getErrorMessage(), containsString(PAGE_NAME));
     }
 
     private ConfluenceViewPage createAndVisitViewPage() throws Exception

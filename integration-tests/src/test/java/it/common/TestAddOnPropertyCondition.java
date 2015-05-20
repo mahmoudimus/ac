@@ -20,6 +20,7 @@ import static org.junit.Assert.assertThat;
 
 public class TestAddOnPropertyCondition extends MultiProductWebDriverTestBase
 {
+    public static final String PAGE_NAME = "Prop";
     private static ConnectRunner remotePlugin;
     private AddOnPropertyClient addOnPropertyClient;
 
@@ -30,7 +31,7 @@ public class TestAddOnPropertyCondition extends MultiProductWebDriverTestBase
         String globallyVisibleLocation = productContextPath.contains("jira")
                 ? "system.top.navigation.bar"
                 : productContextPath.contains("wiki") || productContextPath.contains("confluence")
-                        ? "system.help/pages"
+                        ? "system.header/left"
                         : null;
 
         remotePlugin = new ConnectRunner(product)
@@ -38,7 +39,7 @@ public class TestAddOnPropertyCondition extends MultiProductWebDriverTestBase
                 .addModules(
                         "generalPages",
                         newPageBean()
-                                .withName(new I18nProperty("Add-on property controlled page", null))
+                                .withName(new I18nProperty(PAGE_NAME, null))
                                 .withKey("add-on-property-page")
                                 .withUrl("/pg")
                                 .withLocation(globallyVisibleLocation)
@@ -98,7 +99,7 @@ public class TestAddOnPropertyCondition extends MultiProductWebDriverTestBase
     private boolean webPageIsVisible()
     {
         loginAndVisit(testUserFactory.admin(), HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "add-on-property-page", "Add-on property controlled page", remotePlugin.getAddon().getKey());
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "add-on-property-page", PAGE_NAME, remotePlugin.getAddon().getKey());
         return page.isRemotePluginLinkPresent();
     }
 }

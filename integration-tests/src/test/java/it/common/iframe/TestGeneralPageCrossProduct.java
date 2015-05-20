@@ -4,39 +4,43 @@ import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.*;
+import com.atlassian.plugin.connect.test.pageobjects.AccessDeniedIFramePage;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
+import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
+import com.atlassian.plugin.connect.test.pageobjects.PluginManagerPage;
+import com.atlassian.plugin.connect.test.pageobjects.RemotePluginAwarePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.common.MultiProductWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
 import it.servlet.condition.CheckUsernameConditionServlet;
-import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.TimeZone;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.IconBean.newIconBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
-import static java.lang.String.valueOf;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
 {
+    public static final String PAGE_NAME = "A";
+    public static final String AMD_PAGE_NAME = "AMD";
+    public static final String BETTY_PAGE_NAME = "Betty";
+    public static final String ENCODED_SPACES_PAGE_NAME = "Enc";
+    public static final String SIZE_TO_PARENT_GENERAL_PAGE = "SzP";
     private static ConnectRunner remotePlugin;
-    
+
     private static TestUser betty;
 
     @BeforeClass
@@ -45,9 +49,9 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
         betty = testUserFactory.admin();
         final String productContextPath = product.getProductInstance().getContextPath().toLowerCase();
         String globallyVisibleLocation = productContextPath.contains("jira")
-            ? "system.top.navigation.bar"
-            : productContextPath.contains("wiki") || productContextPath.contains("confluence")
-                ? "system.help/pages"
+                ? "system.top.navigation.bar"
+                : productContextPath.contains("wiki") || productContextPath.contains("confluence")
+                ? "system.header/left"
                 : null;
 
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
@@ -55,7 +59,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
                 .addModules("generalPages",
                         newPageBean()
                                 .withKey("remotePluginGeneral")
-                                .withName(new I18nProperty("Remotable Plugin app1 General", null))
+                                .withName(new I18nProperty(PAGE_NAME, null))
                                 .withUrl("/rpg")
                                 .withLocation(globallyVisibleLocation)
                                 .withIcon(newIconBean()
@@ -64,13 +68,13 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
                                 .build(),
                         newPageBean()
                                 .withKey("amdTest")
-                                .withName(new I18nProperty("AMD Test app1 General", null))
+                                .withName(new I18nProperty(AMD_PAGE_NAME, null))
                                 .withUrl("/amdTest")
                                 .withLocation(globallyVisibleLocation)
                                 .build(),
                         newPageBean()
                                 .withKey("onlyBetty")
-                                .withName(new I18nProperty("Only Betty", null))
+                                .withName(new I18nProperty(BETTY_PAGE_NAME, null))
                                 .withUrl("/ob")
                                 .withLocation(globallyVisibleLocation)
                                 .withConditions(
@@ -83,13 +87,13 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
                                 .build(),
                         newPageBean()
                                 .withKey("encodedSpaces")
-                                .withName(new I18nProperty("Encoded Spaces", null))
+                                .withName(new I18nProperty(ENCODED_SPACES_PAGE_NAME, null))
                                 .withUrl("/my?bologne=O%20S%20C%20A%20R")
                                 .withLocation(globallyVisibleLocation)
                                 .build(),
                         newPageBean()
                                 .withKey("sizeToParent")
-                                .withName(new I18nProperty("Size to parent general page", null))
+                                .withName(new I18nProperty(SIZE_TO_PARENT_GENERAL_PAGE, null))
                                 .withUrl("/fsg")
                                 .withLocation(globallyVisibleLocation)
                                 .build())
@@ -116,7 +120,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
     public void testMyGeneralLoaded()
     {
         loginAndVisit(betty, HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneral", "Remotable Plugin app1 General", remotePlugin.getAddon().getKey());
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginGeneral", PAGE_NAME, remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
         assertTrue(remotePluginTest.getTitle().contains("Remotable Plugin app1 General"));
@@ -156,7 +160,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
     public void testRemoteConditionSucceeds()
     {
         loginAndVisit(betty, HomePage.class);
-        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty", "Only Betty", remotePlugin.getAddon().getKey());
+        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty", BETTY_PAGE_NAME, remotePlugin.getAddon().getKey());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
 
         assertTrue(remotePluginTest.getTitle().contains("Only Betty"));
@@ -197,7 +201,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
     {
         // Regression test for AC-885 (ensure descriptor query strings are not decoded before parsing)
         loginAndVisit(testUserFactory.admin(), HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "encodedSpaces", "Encoded Spaces", remotePlugin.getAddon().getKey());
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "encodedSpaces", ENCODED_SPACES_PAGE_NAME, remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
 
@@ -209,10 +213,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
     {
         loginAndVisit(testUserFactory.admin(), HomePage.class);
 
-        String LINK_TEXT = "AMD Test app1 General";
-//        RemoteWebItem webItem = connectPageOperations.findWebItem(RemoteWebItem.ItemMatchingMode.LINK_TEXT, LINK_TEXT, Optional.<String>absent());
-
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "amdTest", LINK_TEXT, remotePlugin.getAddon().getKey());
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "amdTest", AMD_PAGE_NAME, remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
 
@@ -225,7 +226,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
     public void testSizeToParent()
     {
         loginAndVisit(testUserFactory.admin(), HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParent", "Size to parent general page", remotePlugin.getAddon().getKey());
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParent", SIZE_TO_PARENT_GENERAL_PAGE, remotePlugin.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
 

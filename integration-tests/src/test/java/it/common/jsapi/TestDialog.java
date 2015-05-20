@@ -30,7 +30,6 @@ import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
 import it.servlet.condition.ParameterCapturingConditionServlet;
 import it.servlet.condition.ParameterCapturingServlet;
-import it.util.ConnectTestUserFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -55,21 +54,21 @@ import static org.junit.Assert.assertTrue;
 public class TestDialog extends MultiProductWebDriverTestBase
 {
     private static final String ADDON_GENERALPAGE = "ac-general-page";
-    private static final String ADDON_GENERALPAGE_NAME = "AC General Page";
+    private static final String ADDON_GENERALPAGE_NAME = "A";
 
     private static final String ADDON_DIALOG = "my-dialog";
-    private static final String ADDON_DIALOG_NAME = "my dialog";
+    private static final String ADDON_DIALOG_NAME = "B";
 
     private static final String ADDON_GENERALPAGE_WEBITEM_DIALOG = "general-page-opening-webitem-dialog";
-    private static final String ADDON_GENERALPAGE_NAME_WEBITEM_DIALOG = "WebItem Dialog Opener Page";
+    private static final String ADDON_GENERALPAGE_NAME_WEBITEM_DIALOG = "C";
 
     private static final String ADDON_WEBITEM_DIALOG = "my-webitem-dialog";
-    private static final String ADDON_WEBITEM_DIALOG_NAME = "my webitem dialog";
+    private static final String ADDON_WEBITEM_DIALOG_NAME = "D";
 
     private static final String JWT_EXPIRY_DIALOG = "checkDialogJwtExpiry";
-    private static final String JWT_EXPIRY_DIALOG_NAME = "check dialog JWT expiry";
+    private static final String JWT_EXPIRY_DIALOG_NAME = "JWTD";
     private static final String JWT_EXPIRY_INLINE_DIALOG = "checkInlineDialogJwtExpiry";
-    private static final String JWT_EXPIRY_INLINE_DIALOG_NAME = "check inline dialog JWT expiry";
+    private static final String JWT_EXPIRY_INLINE_DIALOG_NAME = "JWTID";
 
     private static final ParameterCapturingServlet PARAMETER_CAPTURING_SERVLET = ConnectAppServlets.parameterCapturingDialogServlet();
     private static final InstallHandlerServlet INSTALL_HANDLER_SERVLET = ConnectAppServlets.installHandlerServlet();
@@ -87,7 +86,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
         String globallyVisibleLocation = productContextPath.contains("jira")
                 ? "system.top.navigation.bar"
                 : productContextPath.contains("wiki") || productContextPath.contains("confluence")
-                ? "system.help/pages"
+                ? "system.header/left"
                 : null;
 
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
