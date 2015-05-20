@@ -1,21 +1,15 @@
 package it.common.rest;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
-
+import it.servlet.InstallHandlerServlet;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
@@ -23,15 +17,26 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.eclipse.jetty.server.Response;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
+import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import it.servlet.InstallHandlerServlet;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.Collection;
 
 import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider.getTestedProduct;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 /**
  * Functional test for add-on properties
@@ -98,7 +103,7 @@ public class TestAddOnProperties
 
         String response = sendSuccessfulGetRequestForPropertyKey(property.key);
         RestAddOnProperty result = gson.fromJson(response, RestAddOnProperty.class);
-        assertEquals(property, result);
+        assertThat(result, isEqualToIgnoringBaseUrl(property));
 
         assertDeleted(propertyKey);
     }
@@ -116,7 +121,7 @@ public class TestAddOnProperties
 
         String response = sendSuccessfulGetRequestForPropertyKey(property.key);
         RestAddOnProperty result = gson.fromJson(response, RestAddOnProperty.class);
-        assertEquals(property, result);
+        assertThat(result, isEqualToIgnoringBaseUrl(property));
 
         assertDeleted(propertyKey);
     }
@@ -156,7 +161,7 @@ public class TestAddOnProperties
 
         String response = sendSuccessfulGetRequestForPropertyKey(property.key);
         RestAddOnProperty result = gson.fromJson(response, RestAddOnProperty.class);
-        assertEquals(property, result);
+        assertThat(result, isEqualToIgnoringBaseUrl(property));
 
         int responseCode3 = executeDeleteRequest(property.key);
         assertEquals(Response.SC_NO_CONTENT, responseCode3);
@@ -250,7 +255,7 @@ public class TestAddOnProperties
         RestAddOnPropertiesBean result = gson.fromJson(response, RestAddOnPropertiesBean.class);
 
         RestAddOnPropertiesBean expected = RestAddOnPropertiesBean.fromRestAddOnProperties(property);
-        assertEquals(expected, result);
+        assertThat(result, isEqualToIgnoringBaseUrl(expected));
         assertDeleted(propertyKey);
     }
 
@@ -342,6 +347,80 @@ public class TestAddOnProperties
         connection.setRequestMethod("DELETE");
         runner.getSignedRequestHandler().sign(url.toURI(), "DELETE", null, connection);
         return connection.getResponseCode();
+    }
+
+    private Matcher<? super RestAddOnProperty> isEqualToIgnoringBaseUrl(final RestAddOnProperty expected)
+    {
+        return new TypeSafeMatcher<RestAddOnProperty>()
+        {
+            @Override
+            protected boolean matchesSafely(final RestAddOnProperty property)
+            {
+                String urlWithoutBaseUrl = expected.self.substring(baseUrl.length());
+                return new EqualsBuilder()
+                        .append(property.key, expected.key)
+                        .append(property.value, expected.value)
+                        .isEquals()
+                        && property.self.endsWith(urlWithoutBaseUrl);
+            }
+
+            @Override
+            public void describeTo(final Description description)
+            {
+                description.appendValue(expected);
+            }
+        };
+    }
+
+    private Matcher<? super RestAddOnPropertiesBean> isEqualToIgnoringBaseUrl(final RestAddOnPropertiesBean expected)
+    {
+        return new TypeSafeMatcher<RestAddOnPropertiesBean>()
+        {
+            @Override
+            protected boolean matchesSafely(final RestAddOnPropertiesBean properties)
+            {
+                Iterable<RestAddOnPropertiesBean.RestAddOnPropertyBean> expectedBeans = Arrays.asList(expected.keys);
+                Iterable<Matcher<? super RestAddOnPropertiesBean.RestAddOnPropertyBean>> transform = Iterables.transform(expectedBeans, new Function<RestAddOnPropertiesBean.RestAddOnPropertyBean, Matcher<? super RestAddOnPropertiesBean.RestAddOnPropertyBean>>()
+                {
+                    @Override
+                    public Matcher<? super RestAddOnPropertiesBean.RestAddOnPropertyBean> apply(final RestAddOnPropertiesBean.RestAddOnPropertyBean input)
+                    {
+                        return isEqualToIgnoringBaseUrl(input);
+                    }
+                });
+
+                Collection<Matcher<? super RestAddOnPropertiesBean.RestAddOnPropertyBean>> matchers = Lists.newArrayList(transform);
+                return IsIterableContainingInAnyOrder.containsInAnyOrder(matchers).matches(Arrays.asList(properties.keys));
+            }
+
+            @Override
+            public void describeTo(final Description description)
+            {
+                description.appendValue(expected);
+            }
+        };
+    }
+
+    private Matcher<? super RestAddOnPropertiesBean.RestAddOnPropertyBean > isEqualToIgnoringBaseUrl(final RestAddOnPropertiesBean.RestAddOnPropertyBean expected)
+    {
+        return new TypeSafeMatcher<RestAddOnPropertiesBean.RestAddOnPropertyBean >()
+        {
+            @Override
+            protected boolean matchesSafely(final RestAddOnPropertiesBean.RestAddOnPropertyBean  property)
+            {
+                String urlWithoutBaseUrl = expected.self.substring(baseUrl.length());
+                return new EqualsBuilder()
+                        .append(property.key, expected.key)
+                        .isEquals()
+                        && property.self.endsWith(urlWithoutBaseUrl);
+            }
+
+            @Override
+            public void describeTo(final Description description)
+            {
+                description.appendValue(expected);
+            }
+        };
     }
 
     private class RequestResponse
