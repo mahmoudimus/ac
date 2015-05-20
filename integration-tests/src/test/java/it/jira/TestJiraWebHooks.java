@@ -42,7 +42,7 @@ public class TestJiraWebHooks
             {
                 String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
                 getJiraTestedProduct().backdoor().project().addProject("Test project " + projectKey, projectKey, "admin");
-                getJiraTestedProduct().backdoor().issues().createIssue(projectKey, "As Ben I want JIRA WebHooks listeners to get issue updates");
+                getJiraTestedProduct().backdoor().issues().createIssue(projectKey, "As Filip I want JIRA WebHooks to really work.");
                 WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
                 assertEquals("jira:issue_created", body.find("webhookEvent"));
