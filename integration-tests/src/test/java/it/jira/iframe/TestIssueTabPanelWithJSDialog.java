@@ -86,10 +86,10 @@ public class TestIssueTabPanelWithJSDialog extends JiraWebDriverTestBase
     @Before
     public void setUpTest() throws Exception
     {
+        user = testUserFactory.basicUser();
         String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase();
         String projectId = String.valueOf(product.backdoor().project().addProject(projectKey, projectKey, user.getUsername()));
         project = new TestProject(projectKey, projectId);
-        user = testUserFactory.basicUser();
         issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for tab", user.getUsername());
     }
 
