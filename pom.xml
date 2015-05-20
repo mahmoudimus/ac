@@ -203,6 +203,18 @@
                 <version>2.4</version>
                 <!-- !versions 2.5 and 2.5.1 broke tree filtering -->
             </plugin>
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>maven-clover2-plugin</artifactId>
+                <version>${clover.libversion}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.atlassian.clover</groupId>
+                        <artifactId>clover</artifactId>
+                        <version>${clover.libversion}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
         </plugins>
     </build>
     <reporting>
@@ -671,11 +683,6 @@
                 <scope>test</scope>
             </dependency>
 
-            <dependency>
-                <groupId>com.atlassian.clover</groupId>
-                <artifactId>clover</artifactId>
-                <version>4.0.3</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
     <properties>
@@ -740,6 +747,7 @@
         <atlassian.jira.projects.version>1.20.0-D20150217T051447</atlassian.jira.projects.version>
         <functest.version>0.7.1</functest.version>
         <functestbasics.version>1.9.7</functestbasics.version>
+        <clover.libversion>4.0.3</clover.libversion>
 
         <!-- BUILD STUFF -->
         <apache-commons-version>3.1</apache-commons-version>
