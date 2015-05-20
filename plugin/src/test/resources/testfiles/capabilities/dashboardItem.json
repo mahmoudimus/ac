@@ -1,0 +1,16 @@
+{
+  "url" : "some-iframe-url",
+  "title" : {
+    "value" : "Title",
+    "i18n" : "title.key"
+  },
+  "description" : {
+    "value" : "Description",
+    "i18n" : "description.key"
+  },
+  "configurable" : true,
+  "thumbnailUrl" : "/thumbnail.jpg",
+  "conditions" : [{
+    "condition":"/some_condition"
+  }]
+}
