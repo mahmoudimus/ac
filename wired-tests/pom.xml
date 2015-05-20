@@ -190,6 +190,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.clover</groupId>
+            <artifactId>clover</artifactId>
+            <version>${clover.libversion}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -401,6 +408,18 @@
                                 <artifactId>hamcrest-core</artifactId>
                             </exclusion>
                         </exclusions>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>maven-clover2-plugin</artifactId>
+                <version>${clover.libversion}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.atlassian.clover</groupId>
+                        <artifactId>clover</artifactId>
+                        <version>${clover.libversion}</version>
                     </dependency>
                 </dependencies>
             </plugin>

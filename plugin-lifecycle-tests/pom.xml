@@ -89,7 +89,11 @@
             <version>${atlassian.confluence.version}</version>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.atlassian.clover</groupId>
+            <artifactId>clover</artifactId>
+            <version>${clover.libversion}</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -332,7 +336,19 @@
                     </execution>
                 </executions>
             </plugin>
-        </plugins>
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>maven-clover2-plugin</artifactId>
+                <version>${clover.libversion}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.atlassian.clover</groupId>
+                        <artifactId>clover</artifactId>
+                        <version>${clover.libversion}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+       </plugins>
     </build>
 
     <profiles>

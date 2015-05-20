@@ -122,7 +122,12 @@
             <artifactId>hamcrest-all</artifactId>
             <scope>provided</scope>
         </dependency>
-    </dependencies>
+        <dependency>
+            <groupId>com.atlassian.clover</groupId>
+            <artifactId>clover</artifactId>
+            <version>${clover.libversion}</version>
+        </dependency>
+     </dependencies>
 
     <build>
         <plugins>
@@ -135,8 +140,18 @@
                     <enableFastdev>false</enableFastdev>
                 </configuration>
             </plugin>
-        </plugins>
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>maven-clover2-plugin</artifactId>
+                <version>${clover.libversion}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.atlassian.clover</groupId>
+                        <artifactId>clover</artifactId>
+                        <version>${clover.libversion}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+       </plugins>
     </build>
-
-
 </project>

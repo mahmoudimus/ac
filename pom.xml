@@ -682,7 +682,11 @@
                 <version>1.9</version>
                 <scope>test</scope>
             </dependency>
-
+            <dependency>
+                <groupId>com.atlassian.clover</groupId>
+                <artifactId>clover</artifactId>
+                <version>${clover.libversion}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <properties>
