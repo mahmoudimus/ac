@@ -132,8 +132,8 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     @Override
     public TemplatedBuilder template(final ModuleTemplate moduleTemplate)
     {
-        this.template = moduleTemplate.template;
-        this.accessDeniedTemplate = moduleTemplate.deniedAccessTemplate;
+        template = moduleTemplate.template;
+        accessDeniedTemplate = moduleTemplate.accessDeniedTemplate;
         return this;
     }
 
