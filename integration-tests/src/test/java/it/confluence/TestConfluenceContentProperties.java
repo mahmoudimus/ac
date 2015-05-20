@@ -291,23 +291,25 @@ public class TestConfluenceContentProperties
     private PageResponse<Content> executeCql(String cql) throws Exception
     {
         log.debug(cql);
+        final int retries = 100;
+        final int waitTime = 100;
         try
         {
             // confluence's index queue flushes every 5 secs (see config of IndexQueueFlusher), we don't have a rest client method to wait on this indexing
-            for (int i = 0; i < 60; i++)
+            for (int i = 0; i < retries; i++)
             {
                 PageResponse<Content> result = cqlSearchService.searchContent(cql).get();
                 if (result.size() >= 1)
                     return result;
 
-                Thread.sleep(100);
+                Thread.sleep(waitTime);
             }
         }
         catch (Exception ex)
         {
-            throw new RuntimeException("Could not execute :"+cql,ex);
+            throw new RuntimeException("Could not execute :"+cql, ex);
         }
-        fail("Did not find any results after 6 secs for query string : " + cql);
+        fail(String.format("Did not find any results after %d secs for query string : %s", retries * waitTime / 1000 , cql));
         return null;
     }
 }
