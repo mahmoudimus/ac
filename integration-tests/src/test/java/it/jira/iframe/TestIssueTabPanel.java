@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.ParameterCapturingConditionServlet;
+import it.util.TestProject;
 import it.util.TestUser;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
@@ -46,6 +47,7 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
 
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
 
+    private TestProject project;
     private TestUser user;
     private IssueCreateResponse issue;
 
@@ -83,6 +85,9 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
     @Before
     public void setUpTest() throws Exception
     {
+        String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase();
+        String projectId = String.valueOf(product.backdoor().project().addProject(projectKey, projectKey, user.getUsername()));
+        project = new TestProject(projectKey, projectId);
         user = testUserFactory.basicUser();
         issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for tab", user.getUsername());
     }

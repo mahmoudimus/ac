@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithR
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
+import it.util.TestProject;
 import it.util.TestUser;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
@@ -42,6 +43,7 @@ public class TestIssueTabPanelWithJSDialog extends JiraWebDriverTestBase
 
     private TestUser user;
     private IssueCreateResponse issue;
+    private TestProject project;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -84,8 +86,11 @@ public class TestIssueTabPanelWithJSDialog extends JiraWebDriverTestBase
     @Before
     public void setUpTest() throws Exception
     {
+        String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase();
+        String projectId = String.valueOf(product.backdoor().project().addProject(projectKey, projectKey, user.getUsername()));
+        project = new TestProject(projectKey, projectId);
         user = testUserFactory.basicUser();
-        issue = product.backdoor().issues().createIssue(project.getId(), "Test issue for tab", user.getUsername());
+        issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for tab", user.getUsername());
     }
 
     @After
