@@ -98,7 +98,7 @@ public class TestJira extends JiraWebDriverTestBase
         TestUser user = testUserFactory.basicUser();
         login(user);
         // ensure one issue
-        IssueCreateResponse issue = product.backdoor().issues().createIssue(projectKey, "Test issue for dialog action cog test");
+        IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for dialog action cog test");
         
 
         final ShifterDialog shifterDialog = product.getPageBinder()
@@ -121,7 +121,7 @@ public class TestJira extends JiraWebDriverTestBase
             @Override
             public Object call() throws Exception
             {
-                IssueCreateResponse issue = product.backdoor().issues().createIssue(projectKey, "Test issue for tab");
+                IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for tab");
                 String addOnKey = runner.getAddon().getKey();
                 JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(
                         JiraViewIssuePageWithRemotePluginIssueTab.class, ISSUE_TAB_PANEL_KEY, issue.key, addOnKey);
@@ -140,8 +140,8 @@ public class TestJira extends JiraWebDriverTestBase
             @Override
             public Object call() throws Exception
             {
-                IssueCreateResponse issue = product.backdoor().issues().createIssue(projectKey, "Test issue for tab");
-                product.visit(AdvancedSearch.class).enterQuery("project = " + projectKey).submit();
+                IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for tab");
+                product.visit(AdvancedSearch.class).enterQuery("project = " + project.getKey()).submit();
 
                 PlainTextView plainTextView = product.getPageBinder()
                         .bind(ViewChangingSearchResult.class)

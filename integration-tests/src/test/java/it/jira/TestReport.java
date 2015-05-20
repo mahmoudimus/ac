@@ -32,7 +32,7 @@ public class TestReport extends JiraWebDriverTestBase
         @Override
         public String getExpectedContextParamValue()
         {
-            return projectKey;
+            return project.getKey();
         }
     };
     private static final TestReportInfo secondTestReport = new TestReportInfo("Other Test Report", "some description", "other-test-report", "projectId", ReportCategory.OTHER)
@@ -40,7 +40,7 @@ public class TestReport extends JiraWebDriverTestBase
         @Override
         public String getExpectedContextParamValue()
         {
-            return String.valueOf(projectId);
+            return project.getId();
         }
     };
 
@@ -121,7 +121,7 @@ public class TestReport extends JiraWebDriverTestBase
 
     private ReportsPage goToProjectReportPage()
     {
-        return loginAndVisit(testUserFactory.basicUser(), ReportsPage.class, projectKey);
+        return loginAndVisit(testUserFactory.basicUser(), ReportsPage.class, project.getKey());
     }
 
     private ReportsPage.Report getReportFromReportsPage(ReportsPage reportsPage, TestReportInfo reportInfo)

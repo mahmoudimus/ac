@@ -14,6 +14,7 @@ import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import it.util.ConnectTestUserFactory;
 import it.util.JiraTestUserFactory;
+import it.util.TestProject;
 import it.util.TestUser;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
@@ -28,9 +29,8 @@ public class JiraWebDriverTestBase
 {
 
     protected static JiraTestedProduct product = TestedProductProvider.getJiraTestedProduct();
-
-    protected static String projectKey;
-    protected static long projectId;
+    
+    protected static TestProject project;
 
     protected static ConnectTestUserFactory testUserFactory;
 
@@ -54,14 +54,16 @@ public class JiraWebDriverTestBase
         
         product.getPageBinder().override(ViewWorkflowTransitionPage.class, ExtendedViewWorkflowTransitionPage.class);
 
-        projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
-        projectId = product.backdoor().project().addProject("Test project " + projectKey, projectKey, "admin");
+        
+        String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
+        String projectId = String.valueOf(product.backdoor().project().addProject("Test project " + projectKey, projectKey, "admin"));
+        project = new TestProject(projectKey, projectId);
     }
 
     @AfterClass
     public static void afterClass() throws RemoteException
     {
-        product.backdoor().project().deleteProject(projectKey);
+        product.backdoor().project().deleteProject(project.getKey());
     }
 
     protected void testLoggedInAndAnonymous(final Callable runnable) throws Exception

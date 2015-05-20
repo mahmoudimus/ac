@@ -98,7 +98,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
                                 .withName(new I18nProperty("Panel with condition", "conditional.panel"))
                                 .withKey(WEB_PANEL_WITH_CONDITION_KEY)
                                         // panel doesn't load properly as it 404s - not a prob for this test (asserts existence not content)
-                                .withUrl("/cwp?projectKey={project.key}")
+                                .withUrl("/cwp?project.getKey()={project.key}")
                                 .withLocation("com.atlassian.jira.plugin.headernav.left.context")
                                 .withLayout(new WebPanelLayout("100%", "200px"))
                                 .withWeight(1234)
@@ -127,12 +127,12 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     @Test
     public void testViewIssuePageWithArbitraryDataInUrl() throws Exception
     {
-        IssueCreateResponse issue = product.backdoor().issues().createIssue(projectKey, "Test issue for panel");
+        IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for panel");
         JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.key);
         RemoteWebPanel panel = viewIssuePage.findWebPanel(getModuleKey(runner, ISSUE_PANEL_LEFT2_KEY)).waitUntilContentLoaded();
 
         assertEquals(issue.id, panel.getFromQueryString("my-issue-id"));
-        assertEquals(String.valueOf(projectId), panel.getFromQueryString("my-project-id"));
+        assertEquals(project.getId(), panel.getFromQueryString("my-project-id"));
 
         assertEquals("ilwp2-OK", panel.getCustomMessage());
 
@@ -144,10 +144,10 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     {
         TestUser user = testUserFactory.admin();
         login(user);
-        JiraProjectAdministrationPage projectAdministrationPage = product.visit(JiraProjectAdministrationPage.class, projectKey);
+        JiraProjectAdministrationPage projectAdministrationPage = product.visit(JiraProjectAdministrationPage.class, project.getKey());
         RemoteWebPanel panel = projectAdministrationPage.findWebPanel(getModuleKey(runner, PROJECT_CONFIG_PANEL_KEY)).waitUntilContentLoaded();
 
-        assertEquals(String.valueOf(projectId), panel.getProjectId());
+        assertEquals(project.getId(), panel.getProjectId());
         assertEquals(user.getUsername(), panel.getUserId());
         assertNotNull(panel.getUserKey());
 
@@ -161,11 +161,11 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     {
         TestUser user = testUserFactory.basicUser();
         login(user);
-        IssueCreateResponse issue = product.backdoor().issues().createIssue(projectKey, "Test issue for left remotable-web-panel panel");
+        IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for left remotable-web-panel panel");
         JiraViewIssuePage page = product.visit(JiraViewIssuePage.class, issue.key);
         RemoteWebPanel panel = page.findWebPanel(getModuleKey(runner, ISSUE_PANEL_LEFT_KEY)).waitUntilContentLoaded();
 
-        assertEquals(String.valueOf(projectId), panel.getProjectId());
+        assertEquals(project.getId(), panel.getProjectId());
         assertEquals(issue.id, panel.getIssueId());
         assertEquals(user.getUsername(), panel.getUserId());
         assertNotNull(panel.getUserKey());
@@ -180,11 +180,11 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     {
         TestUser user = testUserFactory.basicUser();
         login(user);
-        IssueCreateResponse issue = product.backdoor().issues().createIssue(projectKey, "Another test issue for right remotable-web-panel panel");
+        IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Another test issue for right remotable-web-panel panel");
         JiraViewIssuePage page = product.visit(JiraViewIssuePage.class, issue.key);
         RemoteWebPanel panel = page.findWebPanel(getModuleKey(runner, ISSUE_PANEL_RIGHT_KEY)).waitUntilContentLoaded();
 
-        assertEquals(String.valueOf(projectId), panel.getProjectId());
+        assertEquals(project.getId(), panel.getProjectId());
         assertEquals(issue.id, panel.getIssueId());
         assertEquals(user.getUsername(), panel.getUserId());
         assertNotNull(panel.getUserKey());
@@ -199,10 +199,10 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     {
         TestUser user = testUserFactory.admin();
         login(user);
-        JiraProjectAdministrationPage projectAdministrationPage = product.visit(JiraProjectAdministrationPage.class, projectKey);
+        JiraProjectAdministrationPage projectAdministrationPage = product.visit(JiraProjectAdministrationPage.class, project.getKey());
         RemoteWebPanel panel = projectAdministrationPage.findWebPanel(getModuleKey(runner, PROJECT_CONFIG_HEADER_KEY)).waitUntilContentLoaded();
 
-        assertEquals(String.valueOf(projectId), panel.getProjectId());
+        assertEquals(project.getId(), panel.getProjectId());
         assertEquals(user.getUsername(), panel.getUserId());
         assertNotNull(panel.getUserKey());
 
@@ -233,12 +233,12 @@ public final class TestWebPanel extends JiraWebDriverTestBase
     @Test
     public void panelIsNotVisibleWithFalseCondition()
     {
-        product.visit(JiraViewProjectPage.class, projectKey);
+        product.visit(JiraViewProjectPage.class, project.getKey());
 
         assertThat("AddOn web panel should be present", connectPageOperations.existsWebPanel(getModuleKey(runner, WEB_PANEL_WITH_CONDITION_KEY)), is(true));
         runner.setToggleableConditionShouldDisplay(false);
 
-        product.visit(JiraViewProjectPage.class, projectKey);
+        product.visit(JiraViewProjectPage.class, project.getKey());
 
         assertThat("AddOn web panel should NOT be present", connectPageOperations.existsWebPanel(getModuleKey(runner, WEB_PANEL_WITH_CONDITION_KEY)), is(false));
     }

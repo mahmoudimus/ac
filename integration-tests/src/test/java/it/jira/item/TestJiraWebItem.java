@@ -181,12 +181,12 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     @Test
     public void testBettyCanSeeAbsoluteWebItem()
     {
-        JiraViewProjectPage viewProjectPage = loginAndVisit(betty, JiraViewProjectPage.class, projectKey);
+        JiraViewProjectPage viewProjectPage = loginAndVisit(betty, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ABSOLUTE_WEBITEM), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
 
         assertThat(webItem.getPath(), startsWith("http://www.google.com/?"));
-        assertThat(webItem.getFromQueryString("myProjectKey"), equalTo(projectKey));
+        assertThat(webItem.getFromQueryString("myProjectKey"), equalTo(project.getKey()));
     }
 
     @Test
@@ -194,12 +194,12 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     {
         TestUser admin = testUserFactory.basicUser();
 
-        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, projectKey);
+        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(PAGE_CONTEXT_WEBITEM), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
 
-        assertEquals(projectKey, webItem.getFromQueryString("project.key"));
-        assertEquals(String.valueOf(projectId), webItem.getFromQueryString("project.id"));
+        assertEquals(project.getKey(), webItem.getFromQueryString("project.key"));
+        assertEquals(project.getId(), webItem.getFromQueryString("project.id"));
         assertThat(webItem.getPath(), startsWith(product.getProductInstance().getBaseUrl()));
     }
 
@@ -208,12 +208,12 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     {
         TestUser admin = testUserFactory.basicUser();
 
-        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, projectKey);
+        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ADDON_DIRECT_WEBITEM), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
 
-        assertEquals(projectKey, webItem.getFromQueryString("project_key"));
-        assertEquals(String.valueOf(projectId), webItem.getFromQueryString("pid"));
+        assertEquals(project.getKey(), webItem.getFromQueryString("project_key"));
+        assertEquals(project.getId(), webItem.getFromQueryString("pid"));
         assertThat(webItem.getPath(), startsWith(runner.getAddon().getBaseUrl()));
         verifyStandardAddOnRelativeQueryParameters(webItem, "/jira");
     }
@@ -223,7 +223,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     {
         TestUser admin = testUserFactory.basicUser();
 
-        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, projectKey);
+        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(PRODUCT_WEBITEM), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
 
@@ -231,7 +231,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
 
         URL url = new URL(webItem.getPath());
         assertThat(url.getPath(), is("/jira/browse/ACDEV-1234"));
-        assertEquals(projectKey, webItem.getFromQueryString("project_key"));
+        assertEquals(project.getKey(), webItem.getFromQueryString("project_key"));
     }
 
     @Test
@@ -239,7 +239,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     {
         TestUser admin = testUserFactory.basicUser();
 
-        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, projectKey);
+        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(ABSOLUTE_WEBITEM)));
     }
 
@@ -250,7 +250,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     {
         TestUser admin = testUserFactory.basicUser();
 
-        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, projectKey);
+        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ABSOLUTE_WEBITEM_INLINE_DIALOG), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
         assertTrue("web item should be an inline dialog", webItem.isInlineDialog());
@@ -264,7 +264,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     {
         TestUser admin = testUserFactory.basicUser();
 
-        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, projectKey);
+        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ADDON_WEBITEM_INLINE_DIALOG), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
         assertTrue("web item should be an inline dialog", webItem.isInlineDialog());
@@ -291,7 +291,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     {
         TestUser admin = testUserFactory.basicUser();
 
-        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, projectKey);
+        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(moduleKey), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
         assertTrue("web item should be an inline dialog", webItem.isInlineDialog());
@@ -304,7 +304,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     {
         TestUser admin = testUserFactory.basicUser();
 
-        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, projectKey);
+        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ADDON_WEBITEM_INLINE_DIALOG), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
         assertTrue("web item should be an inline dialog", webItem.isInlineDialog());
@@ -318,7 +318,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     {
         TestUser admin = testUserFactory.basicUser();
 
-        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, projectKey);
+        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ABSOLUTE_WEBITEM_DIALOG), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
         assertTrue("web item should be a dialog", webItem.isDialog());
@@ -340,7 +340,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     {
         TestUser admin = testUserFactory.basicUser();
 
-        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, projectKey);
+        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(ADDON_WEBITEM_DIALOG), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
         assertTrue("web item should be a dialog", webItem.isDialog());
@@ -372,7 +372,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     {
         TestUser admin = testUserFactory.basicUser();
 
-        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, projectKey);
+        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(moduleKey), Optional.<String>absent());
         webItem.click();
         RemoteDialog dialogPage = product.getPageBinder().bind(RemoteDialog.class);
@@ -397,7 +397,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
     {
         TestUser admin = testUserFactory.basicUser();
 
-        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, projectKey);
+        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(moduleKey), Optional.<String>absent());
         webItem.click();
         RemoteDialog dialogPage = product.getPageBinder().bind(RemoteDialog.class).waitUntilContentElementNotEmpty("client-http-status");
@@ -447,7 +447,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
         String dialogOptionKey = dialogOptionKey(chrome, moduleKey);
         TestUser admin = testUserFactory.basicUser();
 
-        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, projectKey);
+        JiraViewProjectPage viewProjectPage = loginAndVisit(admin, JiraViewProjectPage.class, project.getKey());
         RemoteWebItem webItem = viewProjectPage.findWebItem(getModuleKey(dialogOptionKey), Optional.<String>absent());
         webItem.click();
         RemoteDialog dialogPage = product.getPageBinder().bind(RemoteDialog.class);

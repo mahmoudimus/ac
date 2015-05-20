@@ -61,7 +61,7 @@ public class TestJiraRefreshIssuePage extends JiraWebDriverTestBase
     @Before
     public void setUp() throws RemoteException
     {
-        issue = product.backdoor().issues().createIssue(projectKey, "Test Issue");
+        issue = product.backdoor().issues().createIssue(project.getKey(), "Test Issue");
     }
 
     @Test

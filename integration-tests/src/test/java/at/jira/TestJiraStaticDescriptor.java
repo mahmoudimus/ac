@@ -36,7 +36,7 @@ public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
     @Test
     public void testAcActionWebItemIsPresent() throws RemoteException
     {
-        IssueCreateResponse issue = product.backdoor().issues().createIssue(projectKey, "Atlassian Connect Web Panel Test Issue");
+        IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Atlassian Connect Web Panel Test Issue");
 
         login(testUserFactory.basicUser());
         product.goToViewIssue(issue.key);

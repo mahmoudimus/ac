@@ -85,36 +85,36 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
     @Test
     public void testViewProjectAdminTab() throws Exception
     {
-        final ProjectSummaryPageTab page = loginAndVisit(testUserFactory.admin(), ProjectSummaryPageTab.class, projectKey);
+        final ProjectSummaryPageTab page = loginAndVisit(testUserFactory.admin(), ProjectSummaryPageTab.class, project.getKey());
 
         assertThat(page.getTabs().getTabs(), IsCollectionContaining.<ProjectConfigTabs.Tab>hasItem(projectConfigTabMatcher(PROJECT_CONFIG_TAB_NAME)));
 
         final String linkId = addonAndModuleKey(remotePlugin.getAddon().getKey(), PROJECT_CONFIG_MODULE_KEY);
         final JiraProjectAdministrationTab remoteProjectAdministrationTab =
-                page.getTabs().gotoTab(linkId, JiraProjectAdministrationTab.class, projectKey, remotePlugin.getAddon().getKey(), PROJECT_CONFIG_MODULE_KEY);
+                page.getTabs().gotoTab(linkId, JiraProjectAdministrationTab.class, project.getKey(), remotePlugin.getAddon().getKey(), PROJECT_CONFIG_MODULE_KEY);
 
         // Test of workaround for JRA-26407.
         assertNotNull(remoteProjectAdministrationTab.getProjectHeader());
 
         assertEquals(PROJECT_CONFIG_TAB_NAME, remoteProjectAdministrationTab.getTabs().getSelectedTab().getName());
-        assertEquals(projectKey, remoteProjectAdministrationTab.getProjectKey());
+        assertEquals(project.getKey(), remoteProjectAdministrationTab.getProjectKey());
         assertEquals("Success", remoteProjectAdministrationTab.getMessage());
 
         Map<String,String> conditionRequestParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
-        assertThat(conditionRequestParams, hasEntry("projectKey", projectKey));
-        assertThat(conditionRequestParams, hasEntry("projectId", String.valueOf(projectId)));
+        assertThat(conditionRequestParams, hasEntry("projectKey", project.getKey()));
+        assertThat(conditionRequestParams, hasEntry("projectId", String.valueOf(project.getId())));
     }
 
     @Test
     public void tabIsNotAccessibleWithFalseCondition() throws RemoteException
     {
-        ProjectSummaryPageTab page = loginAndVisit(testUserFactory.admin(), ProjectSummaryPageTab.class, projectKey);
+        ProjectSummaryPageTab page = loginAndVisit(testUserFactory.admin(), ProjectSummaryPageTab.class, project.getKey());
         assertThat("AddOn project config tab should be present", page.getTabs().getTabs(),
                 IsCollectionContaining.<ProjectConfigTabs.Tab>hasItem(projectConfigTabMatcher(PROJECT_CONFIG_TAB_NAME)));
 
         remotePlugin.setToggleableConditionShouldDisplay(false);
 
-        page = product.visit(ProjectSummaryPageTab.class, projectKey);
+        page = product.visit(ProjectSummaryPageTab.class, project.getKey());
         assertThat("AddOn project config tab should NOT be present", page.getTabs().getTabs(),
                 not(IsCollectionContaining.<ProjectConfigTabs.Tab>hasItem(projectConfigTabMatcher(PROJECT_CONFIG_TAB_NAME))));
     }

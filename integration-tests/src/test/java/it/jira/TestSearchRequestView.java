@@ -147,14 +147,14 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     private IssueNavigatorViewsMenu.ViewEntry findSearchRequestViewEntry() throws Exception
     {
         JiraAdvancedSearchPage searchPage = product.visit(JiraAdvancedSearchPage.class);
-        searchPage.enterQuery("project = " + projectKey).submit();
+        searchPage.enterQuery("project = " + project.getKey()).submit();
         IssueNavigatorViewsMenu viewsMenu = searchPage.viewsMenu().open();
         return viewsMenu.entryWithLabel(LABEL);
     }
 
     private IssueCreateResponse createIssue() throws Exception
     {
-        return product.backdoor().issues().createIssue(projectKey, "test issue");
+        return product.backdoor().issues().createIssue(project.getKey(), "test issue");
     }
 
     private void assertNoTimeout(NameValuePairs queryParameters)

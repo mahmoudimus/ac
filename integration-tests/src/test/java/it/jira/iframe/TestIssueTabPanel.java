@@ -47,8 +47,6 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
 
     private TestUser user;
-    private String projectKey;
-    private long projectId;
     private IssueCreateResponse issue;
 
     @BeforeClass
@@ -86,9 +84,7 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
     public void setUpTest() throws Exception
     {
         user = testUserFactory.basicUser();
-        projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase();
-        projectId = product.backdoor().project().addProject(projectKey, projectKey, user.getUsername());
-        issue = product.backdoor().issues().createIssue(projectId, "Test issue for tab", user.getUsername());
+        issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for tab", user.getUsername());
     }
 
     @Test
@@ -102,8 +98,8 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
         Map<String,String> conditionRequestParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
         assertThat(conditionRequestParams, hasEntry("issue_id", issue.id()));
         assertThat(conditionRequestParams, hasEntry("issue_key", issue.key()));
-        assertThat(conditionRequestParams, hasEntry("project_id", String.valueOf(projectId)));
-        assertThat(conditionRequestParams, hasEntry("project_key", projectKey));
+        assertThat(conditionRequestParams, hasEntry("project_id", project.getId()));
+        assertThat(conditionRequestParams, hasEntry("project_key", project.getKey()));
     }
 
     @Test

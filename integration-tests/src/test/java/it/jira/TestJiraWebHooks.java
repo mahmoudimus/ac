@@ -2,7 +2,6 @@ package it.jira;
 
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.jira.testkit.client.restclient.Issue;
-import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
@@ -15,7 +14,6 @@ import org.junit.Test;
 import java.util.Locale;
 
 import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider.getJiraTestedProduct;
-import static com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider.getTestedProduct;
 import static com.atlassian.plugin.connect.test.webhook.WebHookTestServlet.runInJsonRunner;
 import static it.matcher.ParamMatchers.isVersionNumber;
 import static org.junit.Assert.assertEquals;
