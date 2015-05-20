@@ -86,7 +86,7 @@ plan(
     )
     variable(
             key: 'bamboo.jira.testkit.version',
-            value: '7.0.36'
+            value: '7.0.40'
     )
     stage(
             name: 'Run Tests'
