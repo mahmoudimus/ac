@@ -27,13 +27,6 @@ public class TestAddOnPropertyCondition extends MultiProductWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        final String productContextPath = product.getProductInstance().getContextPath().toLowerCase();
-        String globallyVisibleLocation = productContextPath.contains("jira")
-                ? "system.top.navigation.bar"
-                : productContextPath.contains("wiki") || productContextPath.contains("confluence")
-                        ? "system.header/left"
-                        : null;
-
         remotePlugin = new ConnectRunner(product)
                 .addJWT()
                 .addModules(
@@ -42,7 +35,7 @@ public class TestAddOnPropertyCondition extends MultiProductWebDriverTestBase
                                 .withName(new I18nProperty(PAGE_NAME, null))
                                 .withKey("add-on-property-page")
                                 .withUrl("/pg")
-                                .withLocation(globallyVisibleLocation)
+                                .withLocation(getGloballyVisibleLocation())
                                 .withWeight(1234)
                                 .withConditions(new SingleConditionBeanBuilder()
                                         .withCondition("entity_property_equal_to")

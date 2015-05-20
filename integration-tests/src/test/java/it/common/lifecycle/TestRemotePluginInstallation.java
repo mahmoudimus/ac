@@ -12,7 +12,7 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.n
 
 public class TestRemotePluginInstallation extends MultiProductWebDriverTestBase
 {
-    public static final String PAGE_NAME = "A";
+    public static final String PAGE_NAME = "Foo";
 
     @Test
     public void testChangedKey() throws Exception

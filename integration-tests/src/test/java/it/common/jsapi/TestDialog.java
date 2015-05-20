@@ -54,16 +54,16 @@ import static org.junit.Assert.assertTrue;
 public class TestDialog extends MultiProductWebDriverTestBase
 {
     private static final String ADDON_GENERALPAGE = "ac-general-page";
-    private static final String ADDON_GENERALPAGE_NAME = "A";
+    private static final String ADDON_GENERALPAGE_NAME = "AA";
 
     private static final String ADDON_DIALOG = "my-dialog";
-    private static final String ADDON_DIALOG_NAME = "B";
+    private static final String ADDON_DIALOG_NAME = "BB";
 
     private static final String ADDON_GENERALPAGE_WEBITEM_DIALOG = "general-page-opening-webitem-dialog";
-    private static final String ADDON_GENERALPAGE_NAME_WEBITEM_DIALOG = "C";
+    private static final String ADDON_GENERALPAGE_NAME_WEBITEM_DIALOG = "CC";
 
     private static final String ADDON_WEBITEM_DIALOG = "my-webitem-dialog";
-    private static final String ADDON_WEBITEM_DIALOG_NAME = "D";
+    private static final String ADDON_WEBITEM_DIALOG_NAME = "DD";
 
     private static final String JWT_EXPIRY_DIALOG = "checkDialogJwtExpiry";
     private static final String JWT_EXPIRY_DIALOG_NAME = "JWTD";
@@ -72,6 +72,8 @@ public class TestDialog extends MultiProductWebDriverTestBase
 
     private static final ParameterCapturingServlet PARAMETER_CAPTURING_SERVLET = ConnectAppServlets.parameterCapturingDialogServlet();
     private static final InstallHandlerServlet INSTALL_HANDLER_SERVLET = ConnectAppServlets.installHandlerServlet();
+    public static final String DIALOG_WEB_ITEM_NAME = "EE";
+    public static final String SIZE_TO_PARENT_DIALOG_WEB_ITEM_NAME = "SzP";
 
     private static ConnectRunner runner;
 
@@ -82,13 +84,6 @@ public class TestDialog extends MultiProductWebDriverTestBase
     {
         logout();
 
-        final String productContextPath = product.getProductInstance().getContextPath().toLowerCase();
-        String globallyVisibleLocation = productContextPath.contains("jira")
-                ? "system.top.navigation.bar"
-                : productContextPath.contains("wiki") || productContextPath.contains("confluence")
-                ? "system.header/left"
-                : null;
-
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .addJWT(INSTALL_HANDLER_SERVLET)
                 .addModules("generalPages",
@@ -96,16 +91,19 @@ public class TestDialog extends MultiProductWebDriverTestBase
                                 .withName(new I18nProperty(ADDON_GENERALPAGE_NAME, null))
                                 .withUrl("/pg")
                                 .withKey(ADDON_GENERALPAGE)
+                                .withLocation(getGloballyVisibleLocation())
                                 .build(),
                         newPageBean()
                                 .withName(new I18nProperty(ADDON_DIALOG_NAME, null))
                                 .withUrl("/my-dialog-url?myuserid={user.id}")
                                 .withKey(ADDON_DIALOG)
+                                .withLocation("none")
                                 .build(),
                         newPageBean()
                                 .withName(new I18nProperty(ADDON_GENERALPAGE_NAME_WEBITEM_DIALOG, null))
                                 .withUrl("/general-page")
                                 .withKey(ADDON_GENERALPAGE_WEBITEM_DIALOG)
+                                .withLocation(getGloballyVisibleLocation())
                                 .build()
                 )
                 .addModules("webItems",
@@ -121,21 +119,21 @@ public class TestDialog extends MultiProductWebDriverTestBase
                                 .build(),
                         newWebItemBean()
                                 .withKey("remotePluginDialog")
-                                .withName(new I18nProperty("Remotable Plugin app1 Dialog", null))
+                                .withName(new I18nProperty(DIALOG_WEB_ITEM_NAME, null))
                                 .withUrl("/rpd")
                                 .withTarget(newWebItemTargetBean()
                                         .withType(WebItemTargetType.dialog)
                                         .build())
-                                .withLocation(globallyVisibleLocation)
+                                .withLocation(getGloballyVisibleLocation())
                                 .build(),
                         newWebItemBean()
                                 .withKey("sizeToParentDialog")
-                                .withName(new I18nProperty("Size to parent dialog page", null))
+                                .withName(new I18nProperty(SIZE_TO_PARENT_DIALOG_WEB_ITEM_NAME, null))
                                 .withUrl("/fsd")
                                 .withTarget(newWebItemTargetBean()
                                         .withType(WebItemTargetType.dialog)
                                         .build())
-                                .withLocation(globallyVisibleLocation)
+                                .withLocation(getGloballyVisibleLocation())
                                 .build(),
                         newWebItemBean()
                                 .withKey(JWT_EXPIRY_DIALOG)
@@ -144,7 +142,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
                                 .withTarget(newWebItemTargetBean()
                                         .withType(WebItemTargetType.dialog)
                                         .build())
-                                .withLocation(globallyVisibleLocation)
+                                .withLocation(getGloballyVisibleLocation())
                                 .build(),
                         newWebItemBean()
                                 .withKey(JWT_EXPIRY_INLINE_DIALOG)
@@ -153,7 +151,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
                                 .withTarget(newWebItemTargetBean()
                                         .withType(WebItemTargetType.inlineDialog)
                                         .build())
-                                .withLocation(globallyVisibleLocation)
+                                .withLocation(getGloballyVisibleLocation())
                                 .build()
                 )
 
@@ -255,7 +253,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
         login(testUserFactory.basicUser());
         HomePage homePage = product.visit(HomePage.class);
 
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginDialog", "Remotable Plugin app1 Dialog", runner.getAddon().getKey());
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "remotePluginDialog", DIALOG_WEB_ITEM_NAME, runner.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
         assertThat(remotePluginTest.getLocation(), endsWith(homePage.getUrl()));
@@ -272,7 +270,7 @@ public class TestDialog extends MultiProductWebDriverTestBase
     {
         login(testUserFactory.basicUser());
         product.visit(HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParentDialog", "Size to parent dialog page", runner.getAddon().getKey());
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParentDialog", SIZE_TO_PARENT_DIALOG_WEB_ITEM_NAME, runner.getAddon().getKey());
         assertTrue(page.isRemotePluginLinkPresent());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
         assertTrue(remotePluginTest.isNotFullSize());

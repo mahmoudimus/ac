@@ -44,7 +44,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
 
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
     private static final String PARAMETER_CAPTURE_CONDITION_URL = "/parameterCapture";
-    public static final String PAGE_NAME = "A";
+    public static final String PAGE_NAME = "Foo";
 
     private static ConnectRunner runner;
     private String addonKey;

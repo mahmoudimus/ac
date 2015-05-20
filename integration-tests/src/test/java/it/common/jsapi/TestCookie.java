@@ -32,6 +32,7 @@ public class TestCookie extends MultiProductWebDriverTestBase
                 .addModules("generalPages",
                         newPageBean()
                                 .withName(new I18nProperty(ADDON_GENERALPAGE_NAME, null))
+                                .withLocation(getGloballyVisibleLocation())
                                 .withUrl("/pg")
                                 .withKey(ADDON_GENERALPAGE)
                                 .build()

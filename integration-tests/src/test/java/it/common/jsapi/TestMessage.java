@@ -34,6 +34,7 @@ public class TestMessage extends MultiProductWebDriverTestBase
                                 .withName(new I18nProperty(ADDON_GENERALPAGE_NAME, null))
                                 .withUrl("/pg")
                                 .withKey(ADDON_GENERALPAGE)
+                                .withLocation(getGloballyVisibleLocation())
                                 .build()
                 )
                 .addRoute("/pg", ConnectAppServlets.openMessageServlet())
