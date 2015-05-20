@@ -98,7 +98,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
                                 .withName(new I18nProperty("Panel with condition", "conditional.panel"))
                                 .withKey(WEB_PANEL_WITH_CONDITION_KEY)
                                         // panel doesn't load properly as it 404s - not a prob for this test (asserts existence not content)
-                                .withUrl("/cwp?project.getKey()={project.key}")
+                                .withUrl("/cwp?projectKey={project.key}")
                                 .withLocation("com.atlassian.jira.plugin.headernav.left.context")
                                 .withLayout(new WebPanelLayout("100%", "200px"))
                                 .withWeight(1234)

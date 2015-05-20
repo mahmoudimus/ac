@@ -102,7 +102,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
 
         Map<String,String> conditionRequestParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
         assertThat(conditionRequestParams, hasEntry("projectKey", project.getKey()));
-        assertThat(conditionRequestParams, hasEntry("projectId", String.valueOf(project.getId())));
+        assertThat(conditionRequestParams, hasEntry("projectId", project.getId()));
     }
 
     @Test
