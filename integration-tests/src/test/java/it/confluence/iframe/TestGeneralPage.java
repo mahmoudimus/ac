@@ -65,6 +65,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
                                 .withKey(KEY_MY_AWESOME_PAGE)
                                 .withUrl("/pg?page_id={page.id}&page_version={page.version}&page_type={page.type}")
                                 .withWeight(1234)
+                                .withLocation("system.header/left")
                                 .withConditions(toggleableConditionBean())
                                 .build(),
                         newPageBean()
@@ -72,6 +73,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
                                 .withKey(KEY_MY_CONTEXT_PAGE)
                                 .withUrl("/pg?page_id={page.id}")
                                 .withWeight(1234)
+                                .withLocation("system.header/left")
                                 .withConditions(newSingleConditionBean().withCondition(PARAMETER_CAPTURE_CONDITION_URL +
                                         "?page_id={page.id}").build())
                                 .build())

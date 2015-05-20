@@ -45,6 +45,7 @@ public class TestRemotePluginInstallation extends MultiProductWebDriverTestBase
                         .withKey("changedPage")
                         .withName(new I18nProperty(PAGE_NAME, null))
                         .withUrl("/page")
+                        .withLocation(getGloballyVisibleLocation())
                         .build())
                 .addRoute("/page", ConnectAppServlets.helloWorldServlet())
                 .setAuthenticationToNone()
