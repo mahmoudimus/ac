@@ -1,14 +1,12 @@
 package it.jira.jsapi;
 
+import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteXdmEventPanel;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import hudson.plugins.jira.soap.RemoteIssue;
 import it.jira.JiraWebDriverTestBase;
-import it.util.ConnectTestUserFactory;
-import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -70,8 +68,8 @@ public class TestXdmEvents extends JiraWebDriverTestBase
     {
         login(testUserFactory.basicUser());
 
-        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for panel");
-        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey());
+        IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for panel");
+        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.key);
 
         RemoteXdmEventPanel panelA1 = viewIssuePage.findXdmEventPanel(remotePluginA.getAddon().getKey(), "xdm-events-a1");
         RemoteXdmEventPanel panelA2 = viewIssuePage.findXdmEventPanel(remotePluginA.getAddon().getKey(), "xdm-events-a2");

@@ -9,33 +9,28 @@ import com.atlassian.jira.webtests.LicenseKeys;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraOps;
 import com.atlassian.plugin.connect.test.pageobjects.jira.workflow.ExtendedViewWorkflowTransitionPage;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
-import hudson.plugins.jira.soap.RemoteProject;
 import it.util.ConnectTestUserFactory;
 import it.util.JiraTestUserFactory;
+import it.util.TestProject;
 import it.util.TestUser;
+import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
 import java.rmi.RemoteException;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 
 public class JiraWebDriverTestBase
 {
 
     protected static JiraTestedProduct product = TestedProductProvider.getJiraTestedProduct();
-
-    /**
-     * @deprecated use {@code product.backdoor()} instead
-     */
-    @Deprecated()
-    protected static JiraOps jiraOps;
-
-    protected static RemoteProject project;
+    
+    protected static TestProject project;
 
     protected static ConnectTestUserFactory testUserFactory;
 
@@ -59,14 +54,16 @@ public class JiraWebDriverTestBase
         
         product.getPageBinder().override(ViewWorkflowTransitionPage.class, ExtendedViewWorkflowTransitionPage.class);
 
-        jiraOps = new JiraOps(product.getProductInstance());
-        project = jiraOps.createProject();
+        
+        String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
+        String projectId = String.valueOf(product.backdoor().project().addProject("Test project " + projectKey, projectKey, "admin"));
+        project = new TestProject(projectKey, projectId);
     }
 
     @AfterClass
     public static void afterClass() throws RemoteException
     {
-        jiraOps.deleteProject(project.getKey());
+        product.backdoor().project().deleteProject(project.getKey());
     }
 
     protected void testLoggedInAndAnonymous(final Callable runnable) throws Exception
