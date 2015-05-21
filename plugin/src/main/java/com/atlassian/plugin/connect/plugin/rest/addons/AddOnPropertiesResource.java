@@ -329,18 +329,16 @@ public class AddOnPropertiesResource
 
     private Either<RestParamError, String> propertyValue(final HttpServletRequest request)
     {
+        int contentLength = request.getContentLength();
+        if (contentLength > AddOnPropertyServiceImpl.MAXIMUM_PROPERTY_VALUE_LENGTH)
+        {
+            return Either.left(RestParamError.PROPERTY_VALUE_TOO_LONG);
+        }
+
         try
         {
-            ByteArrayOutputStream output = new ByteArrayOutputStream();
-            IOUtils.copyLarge(request.getInputStream(), output, 0, AddOnPropertyServiceImpl.MAXIMUM_PROPERTY_VALUE_LENGTH + 1);
-            byte[] bytes = output.toByteArray();
-
-            if (bytes.length > AddOnPropertyServiceImpl.MAXIMUM_PROPERTY_VALUE_LENGTH)
-            {
-                return Either.left(RestParamError.PROPERTY_VALUE_TOO_LONG);
-            }
-
-            return Either.right(new String(bytes, Charset.defaultCharset()));
+            char[] charData = IOUtils.toCharArray(request.getReader());
+            return Either.right(new String(charData));
         }
         catch (IOException e)
         {
