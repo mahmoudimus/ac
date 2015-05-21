@@ -105,14 +105,9 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
         Map<String,String> conditionRequestParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
         assertThat(conditionRequestParams, hasEntry("issue_id", issue.id()));
         assertThat(conditionRequestParams, hasEntry("issue_key", issue.key()));
-<<<<<<< HEAD
-        assertThat(conditionRequestParams, hasEntry("project_id", String.valueOf(projectId)));
-        assertThat(conditionRequestParams, hasEntry("project_key", projectKey));
         assertThat(conditionRequestParams, hasEntry("issue_type_id", expectedIssueTypeId));
-=======
         assertThat(conditionRequestParams, hasEntry("project_id", project.getId()));
         assertThat(conditionRequestParams, hasEntry("project_key", project.getKey()));
->>>>>>> develop
     }
 
     @Test
