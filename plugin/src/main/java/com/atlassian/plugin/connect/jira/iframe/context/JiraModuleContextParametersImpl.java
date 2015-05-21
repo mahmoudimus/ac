@@ -18,6 +18,7 @@ public class JiraModuleContextParametersImpl extends HashMapModuleContextParamet
         {
             put(JiraModuleContextFilter.ISSUE_KEY, issue.getKey());
             put(JiraModuleContextFilter.ISSUE_ID, Long.toString(issue.getId()));
+            put(JiraModuleContextFilter.ISSUETYPE_ID, issue.getIssueTypeId());
             addProject(issue.getProjectObject());
         }
     }

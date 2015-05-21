@@ -1,13 +1,16 @@
 package com.atlassian.plugin.connect.jira.iframe.context;
 
+import com.atlassian.fugue.Option;
 import com.atlassian.gadgets.dashboard.DashboardId;
 import com.atlassian.gadgets.dashboard.spi.DashboardPermissionService;
 import com.atlassian.jira.bc.EntityNotFoundException;
 import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.bc.project.component.ProjectComponent;
 import com.atlassian.jira.bc.project.component.ProjectComponentManager;
+import com.atlassian.jira.config.IssueTypeService;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueManager;
+import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.project.version.Version;
 import com.atlassian.jira.project.version.VersionManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -37,6 +40,7 @@ public class JiraModuleContextFilter extends AbstractModuleContextFilter<Applica
     public static final String DASHBOARD_ITEM_KEY = "dashboardItem.key";
     public static final String DASHBOARD_ITEM_VIEW_TYPE = "dashboardItem.viewType";
     public static final String DASHBOARD_ID = "dashboard.id";
+    public static final String ISSUETYPE_ID = "issuetype.id";
 
     private final PermissionManager permissionManager;
     private final ProjectService projectService;
@@ -46,6 +50,7 @@ public class JiraModuleContextFilter extends AbstractModuleContextFilter<Applica
     private final JiraAuthenticationContext authenticationContext;
     private final DashboardPermissionService dashboardPermissionService;
     private final Iterable<PermissionCheck<ApplicationUser>> permissionChecks;
+    private final IssueTypeService issueTypeService;
 
     @Autowired
     public JiraModuleContextFilter(
@@ -56,7 +61,8 @@ public class JiraModuleContextFilter extends AbstractModuleContextFilter<Applica
             final VersionManager versionManager,
             final ProjectComponentManager projectComponentManager,
             final JiraAuthenticationContext authenticationContext,
-            final DashboardPermissionService dashboardPermissionService)
+            final DashboardPermissionService dashboardPermissionService,
+            final IssueTypeService issueTypeService)
     {
         super(pluginAccessor, ApplicationUser.class);
         this.permissionManager = permissionManager;
@@ -66,6 +72,7 @@ public class JiraModuleContextFilter extends AbstractModuleContextFilter<Applica
         this.projectComponentManager = projectComponentManager;
         this.authenticationContext = authenticationContext;
         this.dashboardPermissionService = dashboardPermissionService;
+        this.issueTypeService = issueTypeService;
         this.permissionChecks = constructPermissionChecks();
     }
 
@@ -112,6 +119,21 @@ public class JiraModuleContextFilter extends AbstractModuleContextFilter<Applica
                     {
                         Issue issue = issueManager.getIssueObject(value);
                         return issue != null && permissionManager.hasPermission(Permissions.BROWSE, issue, user);
+                    }
+                },
+                new PermissionCheck<ApplicationUser>()
+                {
+                    @Override
+                    public String getParameterName()
+                    {
+                        return ISSUETYPE_ID;
+                    }
+
+                    @Override
+                    public boolean hasPermission(final String value, final ApplicationUser user)
+                    {
+                        final Option<IssueType> issueType = issueTypeService.getIssueType(user, value);
+                        return issueType.isDefined();
                     }
                 },
                 new PermissionChecks.LongValue<ApplicationUser>()
