@@ -32,7 +32,7 @@ public class AddOnServiceTest
     @Test
     public void testIsAddOnEnabled() throws IOException
     {
-        final String addonKey = "ac-test " + System.currentTimeMillis();
+        final String addonKey = "ac-test-" + System.currentTimeMillis();
         installPlugin(addonKey);
 
         assertTrue("AddOnService is expected to return true for enabled add-ons", addOnService.isAddOnEnabled(addonKey));
