@@ -22,7 +22,8 @@ public class AddOnServiceTest
     private final TestPluginInstaller testPluginInstaller;
     private final AddOnService addOnService;
 
-    public AddOnServiceTest(final TestPluginInstaller testPluginInstaller, final AddOnService addOnService)
+    public AddOnServiceTest(final TestPluginInstaller testPluginInstaller,
+            final AddOnService addOnService)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.addOnService = addOnService;
