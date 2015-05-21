@@ -1,12 +1,10 @@
 package it.jira;
 
-import com.atlassian.confluence.it.TestUserFactory;
 import com.atlassian.jira.pageobjects.dialogs.ShifterDialog;
 import com.atlassian.jira.pageobjects.navigator.AdvancedSearch;
 import com.atlassian.jira.pageobjects.pages.admin.configuration.ViewGeneralConfigurationPage;
 import com.atlassian.jira.plugin.issuenav.pageobjects.IssueDetailPage;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
-import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
@@ -20,9 +18,7 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.PlainTextView;
 import com.atlassian.plugin.connect.test.pageobjects.jira.ViewChangingSearchResult;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
-import hudson.plugins.jira.soap.RemoteIssue;
 import it.servlet.ConnectAppServlets;
-import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 import org.junit.*;
 

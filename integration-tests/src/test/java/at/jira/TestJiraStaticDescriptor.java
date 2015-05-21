@@ -2,10 +2,8 @@ package at.jira;
 
 import at.util.ExternalAddonInstaller;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
-import com.atlassian.jira.tests.TestBase;
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
 import com.google.common.base.Optional;
-import hudson.plugins.jira.soap.RemoteIssue;
 import it.jira.JiraWebDriverTestBase;
 import org.junit.After;
 import org.junit.Before;
