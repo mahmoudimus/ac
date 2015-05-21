@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.ParameterCapturingConditionServlet;
+import it.util.TestProject;
 import it.util.TestUser;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
@@ -46,9 +47,8 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
 
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
 
+    private TestProject project;
     private TestUser user;
-    private String projectKey;
-    private long projectId;
     private IssueCreateResponse issue;
 
     @BeforeClass
@@ -86,9 +86,10 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
     public void setUpTest() throws Exception
     {
         user = testUserFactory.basicUser();
-        projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase();
-        projectId = product.backdoor().project().addProject(projectKey, projectKey, user.getUsername());
-        issue = product.backdoor().issues().createIssue(projectId, "Test issue for tab", user.getUsername());
+        String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase();
+        String projectId = String.valueOf(product.backdoor().project().addProject(projectKey, projectKey, user.getUsername()));
+        project = new TestProject(projectKey, projectId);
+        issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for tab", user.getUsername());
     }
 
     @Test
@@ -102,8 +103,8 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
         Map<String,String> conditionRequestParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
         assertThat(conditionRequestParams, hasEntry("issue_id", issue.id()));
         assertThat(conditionRequestParams, hasEntry("issue_key", issue.key()));
-        assertThat(conditionRequestParams, hasEntry("project_id", String.valueOf(projectId)));
-        assertThat(conditionRequestParams, hasEntry("project_key", projectKey));
+        assertThat(conditionRequestParams, hasEntry("project_id", project.getId()));
+        assertThat(conditionRequestParams, hasEntry("project_key", project.getKey()));
     }
 
     @Test
