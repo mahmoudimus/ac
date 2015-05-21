@@ -16,9 +16,9 @@ import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;
-import com.google.common.io.LimitInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -331,9 +331,10 @@ public class AddOnPropertiesResource
     {
         try
         {
-            LimitInputStream limitInputStream =
-                    new LimitInputStream(request.getInputStream(), AddOnPropertyServiceImpl.MAXIMUM_PROPERTY_VALUE_LENGTH + 1);
-            byte[] bytes = IOUtils.toByteArray(limitInputStream);
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            IOUtils.copyLarge(request.getInputStream(), output, 0, AddOnPropertyServiceImpl.MAXIMUM_PROPERTY_VALUE_LENGTH + 1);
+            byte[] bytes = output.toByteArray();
+
             if (bytes.length > AddOnPropertyServiceImpl.MAXIMUM_PROPERTY_VALUE_LENGTH)
             {
                 return Either.left(RestParamError.PROPERTY_VALUE_TOO_LONG);
