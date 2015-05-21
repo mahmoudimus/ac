@@ -715,7 +715,7 @@
         <frontend.plugin.version>0.0.22</frontend.plugin.version>
 
         <!-- TEST STUFF -->
-        <atlassian.confluence.productDataVersion>${atlassian.confluence.version}</atlassian.confluence.productDataVersion>
+        <atlassian.confluence.productDataVersion>5.8-m56</atlassian.confluence.productDataVersion>
         <atlassian.jira.cross.compat.version>0.28</atlassian.jira.cross.compat.version>
         <atlassian.test.categories.version>0.5</atlassian.test.categories.version>
         <aui.version>5.2</aui.version>
