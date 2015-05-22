@@ -19,7 +19,6 @@ import static com.atlassian.plugin.connect.modules.beans.StaticContentMacroModul
  */
 public class TestConfluenceCloseMacroEditor extends ConfluenceWebDriverTestBase
 {
-    private static final String MACRO_NAME = AbstractContentMacroTest.EDITOR_MACRO_NAME;
 
     private static ConnectRunner addon;
     private static StaticContentMacroModuleBean editorMacroModuleBean;
@@ -50,14 +49,14 @@ public class TestConfluenceCloseMacroEditor extends ConfluenceWebDriverTestBase
     public void shouldCloseMacroEditorWhenInsertingMacroOnNewPage()
     {
         CreatePage createPage = getProduct().loginAndCreatePage(testUserFactory.basicUser().confUser(), TestSpace.DEMO);
-        selectMacro(createPage, MACRO_NAME, new Runnable()
+        selectMacro(createPage, editorMacroModuleBean.getName().getRawValue(), new Runnable()
         {
 
             @Override
             public void run()
             {
                 RemoteMacroEditorDialog remoteMacroEditor = connectPageOperations.findDialog(
-                        AbstractContentMacroTest.EDITOR_MACRO_KEY, RemoteMacroEditorDialog.class);
+                        editorMacroModuleBean.getRawKey(), RemoteMacroEditorDialog.class);
                 remoteMacroEditor.closeMacroEditorAndWaitUntilHidden();
             }
         });

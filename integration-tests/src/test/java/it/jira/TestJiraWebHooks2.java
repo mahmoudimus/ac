@@ -3,7 +3,6 @@ package it.jira;
 
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.jira.testkit.client.restclient.Issue;
-import com.atlassian.jira.tests.TestBase;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;
 import com.atlassian.plugin.connect.test.webhook.WebHookWaiter;
@@ -22,8 +21,8 @@ import static org.junit.Assert.assertThat;
 public class TestJiraWebHooks2
 {
     private final String baseUrl = getJiraTestedProduct().getProductInstance().getBaseUrl();
-    public static final String JIRA_ISSUE_CREATED = "jira:issue_created";
-    public static final String JIRA_ISSUE_UPDATED = "jira:issue_updated";
+    private static final String JIRA_ISSUE_CREATED = "jira:issue_created";
+    private static final String JIRA_ISSUE_UPDATED = "jira:issue_updated";
 
     public TestJiraWebHooks2() {}
 

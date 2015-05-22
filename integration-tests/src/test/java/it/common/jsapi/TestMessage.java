@@ -18,8 +18,7 @@ import static org.junit.Assert.assertEquals;
 
 public class TestMessage extends MultiProductWebDriverTestBase
 {
-    private static final String ADDON_GENERALPAGE = "ac-message-general-page";
-    private static final String ADDON_GENERALPAGE_NAME = "Msg";
+    private static final String PAGE_KEY = "ac-message-general-page";
 
     private static ConnectRunner remotePlugin;
 
@@ -31,9 +30,9 @@ public class TestMessage extends MultiProductWebDriverTestBase
                 .setAuthenticationToNone()
                 .addModules("generalPages",
                         newPageBean()
-                                .withName(new I18nProperty(ADDON_GENERALPAGE_NAME, null))
+                                .withName(new I18nProperty("Msg", null))
                                 .withUrl("/pg")
-                                .withKey(ADDON_GENERALPAGE)
+                                .withKey(PAGE_KEY)
                                 .withLocation(getGloballyVisibleLocation())
                                 .build()
                 )
@@ -58,9 +57,9 @@ public class TestMessage extends MultiProductWebDriverTestBase
     public void testCreateInfoMessage() throws Exception
     {
         loginAndVisit(testUserFactory.basicUser(), HomePage.class);
-        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, ADDON_GENERALPAGE, ADDON_GENERALPAGE_NAME, remotePlugin.getAddon().getKey());
+        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, PAGE_KEY, remotePlugin.getAddon().getKey());
         remotePage.clickAddOnLink();
-        RemoteMessageGeneralPage remoteMessagePage = product.getPageBinder().bind(RemoteMessageGeneralPage.class, ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), ADDON_GENERALPAGE));
+        RemoteMessageGeneralPage remoteMessagePage = product.getPageBinder().bind(RemoteMessageGeneralPage.class, ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), PAGE_KEY));
         remoteMessagePage.openInfoMessage();
         assertEquals(remoteMessagePage.getMessageTitleText(), "plain text title");
     }

@@ -11,9 +11,12 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.ParameterCapturingConditionServlet;
-import it.util.ConnectTestUserFactory;
-import it.util.TestUser;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import java.net.MalformedURLException;
@@ -27,7 +30,9 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndM
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
 import static it.modules.ConnectAsserts.verifyContainsStandardAddOnQueryParamters;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -45,8 +50,8 @@ public class TestGeneralPage extends JiraWebDriverTestBase
     private static final String PARAMETER_CAPTURE_CONDITION_URL = "/parameterCapture";
     
     private static ConnectRunner remotePlugin;
-    
-    private String addonKey;
+
+    private static String addonKey;
     private String awesomePageModuleKey;
     private String contextPageModuleKey;
 
@@ -56,7 +61,8 @@ public class TestGeneralPage extends JiraWebDriverTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
+        addonKey = AddonTestUtils.randomAddOnKey();
+        remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), addonKey)
                 .setAuthenticationToNone()
                 .addModules(
                         "generalPages",
@@ -92,7 +98,6 @@ public class TestGeneralPage extends JiraWebDriverTestBase
     @Before
     public void beforeEachTest()
     {
-        this.addonKey = remotePlugin.getAddon().getKey();
         this.awesomePageModuleKey = addonAndModuleKey(addonKey,KEY_MY_AWESOME_PAGE);
         this.contextPageModuleKey = addonAndModuleKey(addonKey,KEY_MY_CONTEXT_PAGE);
     }
@@ -102,7 +107,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
     {
         loginAndVisit(testUserFactory.basicUser(), JiraViewProjectPage.class, project.getKey());
 
-        JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, KEY_MY_AWESOME_PAGE, PAGE_NAME, addonKey);
+        JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, KEY_MY_AWESOME_PAGE, addonKey);
 
         URI url = new URI(viewProjectPage.getRemotePluginLinkHref());
         assertThat(url.getPath(), is("/jira/plugins/servlet/ac/" + addonKey + "/" + KEY_MY_AWESOME_PAGE));
@@ -147,7 +152,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
         
         product.visit(JiraViewProjectPage.class, project.getKey());
 
-        JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, contextPageModuleKey, CONTEXT_PAGE_NAME);
+        JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, contextPageModuleKey, addonKey);
 
         URI url = new URI(viewProjectPage.getRemotePluginLinkHref());
         assertThat(url.getPath(), is("/jira/plugins/servlet/ac/my-plugin/" + KEY_MY_CONTEXT_PAGE));

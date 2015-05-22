@@ -26,9 +26,10 @@ import static org.junit.Assert.assertTrue;
 
 public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
 {
-    public static final String BETTY_PAGE_NAME = "Betty";
-    public static final String ENCODED_SPACES_PAGE_NAME = "Enc";
-    public static final String SIZE_TO_PARENT_GENERAL_PAGE = "SzP";
+    private static final String ONLY_BETTY_PAGE_KEY = "onlyBetty";
+    private static final String SIZE_TO_PARENT_PAGE_KEY = "sizeToParent";
+    private static final String ENCODED_SPACES_PAGE_KEY = "encodedSpaces";
+    private static final String BETTY_PAGE_NAME = "Betty";
 
     private static ConnectRunner remotePlugin;
 
@@ -43,7 +44,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
                 .addJWT()
                 .addModules("generalPages",
                         newPageBean()
-                                .withKey("onlyBetty")
+                                .withKey(ONLY_BETTY_PAGE_KEY)
                                 .withName(new I18nProperty(BETTY_PAGE_NAME, null))
                                 .withUrl("/ob")
                                 .withLocation(getGloballyVisibleLocation())
@@ -56,14 +57,14 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
                                                 .build())
                                 .build(),
                         newPageBean()
-                                .withKey("encodedSpaces")
-                                .withName(new I18nProperty(ENCODED_SPACES_PAGE_NAME, null))
+                                .withKey(ENCODED_SPACES_PAGE_KEY)
+                                .withName(new I18nProperty("Enc", null))
                                 .withUrl("/my?bologne=O%20S%20C%20A%20R")
                                 .withLocation(getGloballyVisibleLocation())
                                 .build(),
                         newPageBean()
-                                .withKey("sizeToParent")
-                                .withName(new I18nProperty(SIZE_TO_PARENT_GENERAL_PAGE, null))
+                                .withKey(SIZE_TO_PARENT_PAGE_KEY)
+                                .withName(new I18nProperty("SzP", null))
                                 .withUrl("/fsg")
                                 .withLocation(getGloballyVisibleLocation())
                                 .build())
@@ -97,7 +98,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
     public void testRemoteConditionSucceeds()
     {
         loginAndVisit(betty, HomePage.class);
-        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, "onlyBetty", BETTY_PAGE_NAME, remotePlugin.getAddon().getKey());
+        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, ONLY_BETTY_PAGE_KEY, remotePlugin.getAddon().getKey());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
 
         assertTrue(remotePluginTest.getTitle().contains(BETTY_PAGE_NAME));
@@ -108,7 +109,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
     {
         // Regression test for AC-885 (ensure descriptor query strings are not decoded before parsing)
         loginAndVisit(testUserFactory.admin(), HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "encodedSpaces", ENCODED_SPACES_PAGE_NAME, remotePlugin.getAddon().getKey());
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, ENCODED_SPACES_PAGE_KEY, remotePlugin.getAddon().getKey());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
 
         assertThat(remotePluginTest.getValueBySelector("#hello-world-message"), is("Hello world"));
@@ -118,7 +119,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
     public void testSizeToParent()
     {
         loginAndVisit(testUserFactory.admin(), HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "sizeToParent", SIZE_TO_PARENT_GENERAL_PAGE, remotePlugin.getAddon().getKey());
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, SIZE_TO_PARENT_PAGE_KEY, remotePlugin.getAddon().getKey());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
 
         assertTrue(remotePluginTest.isFullSize());

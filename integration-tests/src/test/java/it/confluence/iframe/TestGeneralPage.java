@@ -44,7 +44,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
 
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
     private static final String PARAMETER_CAPTURE_CONDITION_URL = "/parameterCapture";
-    public static final String PAGE_NAME = "Foo";
+    private static final String PAGE_NAME = "Foo";
 
     private static ConnectRunner runner;
     private String addonKey;
@@ -104,7 +104,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
         login(testUserFactory.basicUser());
 
         ConfluenceViewPage createdPage = createAndVisitViewPage();
-        ConfluenceGeneralPage generalPage = product.getPageBinder().bind(ConfluenceGeneralPage.class, KEY_MY_AWESOME_PAGE, PAGE_NAME, addonKey);
+        ConfluenceGeneralPage generalPage = product.getPageBinder().bind(ConfluenceGeneralPage.class, KEY_MY_AWESOME_PAGE, addonKey);
 
         URI url = new URI(generalPage.getRemotePluginLinkHref());
         assertThat(url.getPath(), is("/confluence/plugins/servlet/ac/" + addonKey + "/" + KEY_MY_AWESOME_PAGE));

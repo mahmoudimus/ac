@@ -16,12 +16,11 @@ import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class TestAmd extends MultiProductWebDriverTestBase
 {
 
-    public static final String PAGE_NAME = "AMD";
+    private static final String PAGE_KEY = "amdTest";
 
     private static ConnectRunner remotePlugin;
 
@@ -32,8 +31,8 @@ public class TestAmd extends MultiProductWebDriverTestBase
                 .addJWT()
                 .addModules("generalPages",
                         newPageBean()
-                                .withKey("amdTest")
-                                .withName(new I18nProperty(PAGE_NAME, null))
+                                .withKey(PAGE_KEY)
+                                .withName(new I18nProperty("AMD", null))
                                 .withUrl("/amdTest")
                                 .withLocation(getGloballyVisibleLocation())
                                 .build())
@@ -56,7 +55,7 @@ public class TestAmd extends MultiProductWebDriverTestBase
     {
         loginAndVisit(testUserFactory.admin(), HomePage.class);
 
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "amdTest", PAGE_NAME, remotePlugin.getAddon().getKey());
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, PAGE_KEY, remotePlugin.getAddon().getKey());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
 
         assertEquals("true", remotePluginTest.waitForValue("amd-env"));

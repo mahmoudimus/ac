@@ -27,8 +27,8 @@ import static org.junit.Assert.assertTrue;
 public class TestRequest extends MultiProductWebDriverTestBase
 {
 
-    public static final String PAGE_MODULE_KEY = "remotePluginGeneral";
-    public static final String PAGE_NAME = "Request";
+    private static final String PAGE_MODULE_KEY = "remotePluginGeneral";
+    private static final String PAGE_NAME = "Request";
 
     private static ConnectRunner remotePlugin;
 
@@ -67,7 +67,7 @@ public class TestRequest extends MultiProductWebDriverTestBase
     public void testRequestFromGeneralPage()
     {
         loginAndVisit(betty, HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, PAGE_MODULE_KEY, PAGE_NAME, remotePlugin.getAddon().getKey());
+        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, PAGE_MODULE_KEY, remotePlugin.getAddon().getKey());
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
         assertTrue(remotePluginTest.getTitle().contains(PAGE_NAME));
         assertEquals("Success", remotePluginTest.getMessage());

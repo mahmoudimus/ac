@@ -27,8 +27,8 @@ public class TestUpgrade
     private final String baseUrl = getTestedProduct().getProductInstance().getBaseUrl();
 
     private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
-    public static final String KEY_PAGE_ONE = "page-one";
-    public static final String KEY_PAGE_TWO = "page-two";
+    private static final String KEY_PAGE_ONE = "page-one";
+    private static final String KEY_PAGE_TWO = "page-two";
 
     private ConnectRunner plugin0;
     private ConnectRunner plugin1;

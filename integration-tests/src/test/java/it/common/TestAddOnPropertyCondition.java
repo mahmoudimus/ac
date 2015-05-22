@@ -19,8 +19,8 @@ import static org.junit.Assert.assertThat;
 
 public class TestAddOnPropertyCondition extends MultiProductWebDriverTestBase
 {
-    public static final String PAGE_KEY = "add-on-property-page";
-    public static final String PAGE_NAME = "Prop";
+    private static final String PAGE_KEY = "add-on-property-page";
+    private static final String PAGE_NAME = "Prop";
 
     private static ConnectRunner remotePlugin;
 

@@ -12,7 +12,7 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.n
 
 public class TestRemotePluginInstallation extends MultiProductWebDriverTestBase
 {
-    public static final String PAGE_NAME = "Foo";
+    private static final String PAGE_NAME = "Foo";
 
     @Test
     public void testChangedKey() throws Exception
@@ -30,7 +30,7 @@ public class TestRemotePluginInstallation extends MultiProductWebDriverTestBase
         try
         {
             product.visit(HomePage.class);
-            product.getPageBinder().bind(GeneralPage.class, "changedPage", PAGE_NAME, addOn.getAddon().getKey()).clickAddOnLink(); // will throw if it fails to load
+            product.getPageBinder().bind(GeneralPage.class, "changedPage", addOn.getAddon().getKey()).clickAddOnLink(); // will throw if it fails to load
         }
         finally
         {
@@ -43,7 +43,7 @@ public class TestRemotePluginInstallation extends MultiProductWebDriverTestBase
         return new ConnectRunner(product.getProductInstance().getBaseUrl(), addOnKey)
                 .addModule("generalPages", newPageBean()
                         .withKey("changedPage")
-                        .withName(new I18nProperty(PAGE_NAME, null))
+                        .withName(new I18nProperty("Foo", null))
                         .withUrl("/page")
                         .withLocation(getGloballyVisibleLocation())
                         .build())

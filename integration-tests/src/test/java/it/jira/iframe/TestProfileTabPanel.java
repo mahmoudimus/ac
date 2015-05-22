@@ -1,9 +1,5 @@
 package it.jira.iframe;
 
-import java.rmi.RemoteException;
-import java.util.Map;
-
-import com.atlassian.confluence.it.TestUserFactory;
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -13,18 +9,18 @@ import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
 import com.atlassian.plugin.connect.test.pageobjects.jira.InsufficientPermissionsViewProfileTab;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProfilePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-
-import it.util.ConnectTestUserFactory;
+import it.jira.JiraWebDriverTestBase;
+import it.servlet.ConnectAppServlets;
+import it.servlet.condition.ParameterCapturingConditionServlet;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
-import it.jira.JiraWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
-import it.servlet.condition.ParameterCapturingConditionServlet;
-import it.util.TestUser;
+import java.rmi.RemoteException;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean.newTabPanelBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
@@ -43,7 +39,8 @@ import static org.junit.Assert.assertThat;
  */
 public class TestProfileTabPanel extends JiraWebDriverTestBase
 {
-    public static final String RAW_MODULE_KEY = "profile-tab-panel";
+    private static final String RAW_MODULE_KEY = "profile-tab-panel";
+
     private static ConnectRunner remotePlugin;
 
     @Rule

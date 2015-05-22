@@ -1,12 +1,12 @@
 package com.atlassian.plugin.connect.test.pageobjects.confluence;
 
-import com.atlassian.confluence.pageobjects.component.header.ConfluenceHeader;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.pageobjects.elements.timeout.TimeoutType;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import org.openqa.selenium.By;
@@ -23,21 +23,12 @@ public class ConfluenceGeneralPage implements GeneralPage
     private PageBinder pageBinder;
 
     private final String pageKey;
-    private final String linkText;
-    private final String extraPrefix;
+    private final String addonKey;
 
-    private PageElement linkElement;
-
-    public ConfluenceGeneralPage(String pageKey, String linkText)
-    {
-        this(pageKey, linkText, "");
-    }
-
-    public ConfluenceGeneralPage(String pageKey, String linkText, String extraPrefix)
+    public ConfluenceGeneralPage(String pageKey, String addonKey)
     {
         this.pageKey = pageKey;
-        this.linkText = linkText;
-        this.extraPrefix = extraPrefix;
+        this.addonKey = addonKey;
     }
 
     @Init
@@ -51,7 +42,7 @@ public class ConfluenceGeneralPage implements GeneralPage
     public ConnectAddOnEmbeddedTestPage clickAddOnLink()
     {
         findLinkElement().click();
-        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, extraPrefix, pageKey, true);
+        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addonKey, pageKey, true);
     }
 
     public String getRemotePluginLinkHref()
@@ -61,6 +52,6 @@ public class ConfluenceGeneralPage implements GeneralPage
 
     private PageElement findLinkElement()
     {
-        return elementFinder.find(By.linkText(linkText), TimeoutType.DEFAULT);
+        return elementFinder.find(By.id(ModuleKeyUtils.addonAndModuleKey(addonKey, pageKey)), TimeoutType.DEFAULT);
     }
 }
