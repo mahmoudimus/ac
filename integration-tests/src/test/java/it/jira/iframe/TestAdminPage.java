@@ -8,10 +8,9 @@ import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdminPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdministrationHomePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
-import it.util.ConnectTestUserFactory;
-import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -26,7 +25,9 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.n
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test of general page in JIRA
@@ -78,7 +79,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
         JiraAdminPage adminPage = product.getPageBinder().bind(JiraAdminPage.class, PLUGIN_KEY, PAGE_KEY);
 
         URI url = new URI(adminPage.getRemotePluginLinkHref());
-        assertThat(url.getPath(), is("/jira/plugins/servlet/ac/" + PLUGIN_KEY + "/" + PAGE_KEY));
+        assertThat(url.getPath(), is("/jira" + IframeUtils.iframeServletPath(PLUGIN_KEY, PAGE_KEY)));
 
         ConnectAddOnEmbeddedTestPage addonContentsPage = adminPage.clickAddOnLink();
         assertEquals("Hello world", addonContentsPage.getValueBySelector("#hello-world-message"));

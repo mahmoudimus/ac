@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
 import com.atlassian.pageobjects.Page;
+import com.atlassian.plugin.connect.test.utils.IframeUtils;
 
 public class ConnectGeneralTestPage extends ConnectAddOnEmbeddedTestPage implements Page
 {
@@ -13,6 +14,6 @@ public class ConnectGeneralTestPage extends ConnectAddOnEmbeddedTestPage impleme
     @Override
     public String getUrl()
     {
-        return "/plugins/servlet/ac/"+ addOnKey + "/" + pageElementKey;
+        return IframeUtils.iframeServletPath(addOnKey, pageElementKey);
     }
 }

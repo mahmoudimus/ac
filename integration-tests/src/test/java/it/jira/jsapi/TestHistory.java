@@ -1,13 +1,11 @@
 package it.jira.jsapi;
 
-import com.atlassian.confluence.it.TestUserFactory;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteHistoryGeneralPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
-import it.util.ConnectTestUserFactory;
-import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,7 +16,9 @@ import java.net.URISyntaxException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.isEmptyString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -63,7 +63,7 @@ public class TestHistory extends JiraWebDriverTestBase
         RemoteHistoryGeneralPage addonHistoryGeneralPage = loginAndVisit(testUserFactory.basicUser(), RemoteHistoryGeneralPage.class, PLUGIN_KEY, GENERAL_PAGE_KEY);
 
         URI url = new URI(addonHistoryGeneralPage.hostUrl());
-        assertThat(url.getPath(), is("/jira/plugins/servlet/ac/" + PLUGIN_KEY + "/" + GENERAL_PAGE_KEY));
+        assertThat(url.getPath(), is("/jira" + IframeUtils.iframeServletPath(PLUGIN_KEY, GENERAL_PAGE_KEY)));
         assertThat(url.getFragment(), isEmptyOrNullString());
 
         addonHistoryGeneralPage.javascriptPushState();

@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceGenera
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.ParameterCapturingConditionServlet;
@@ -107,7 +108,7 @@ public class TestGeneralPage extends ConfluenceWebDriverTestBase
         ConfluenceGeneralPage generalPage = product.getPageBinder().bind(ConfluenceGeneralPage.class, KEY_MY_AWESOME_PAGE, addonKey);
 
         URI url = new URI(generalPage.getRemotePluginLinkHref());
-        assertThat(url.getPath(), is("/confluence/plugins/servlet/ac/" + addonKey + "/" + KEY_MY_AWESOME_PAGE));
+        assertThat(url.getPath(), is("/confluence" + IframeUtils.iframeServletPath(addonKey, KEY_MY_AWESOME_PAGE)));
 
         ConnectAddOnEmbeddedTestPage addonContentsPage = generalPage.clickAddOnLink();
 

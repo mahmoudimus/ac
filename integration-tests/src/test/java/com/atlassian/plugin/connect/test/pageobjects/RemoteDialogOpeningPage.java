@@ -4,6 +4,7 @@ import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
+import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.slf4j.Logger;
@@ -36,7 +37,7 @@ public class RemoteDialogOpeningPage extends ConnectAddOnPage implements Page
     @Override
     public String getUrl()
     {
-        return "/plugins/servlet/ac/"+ addOnKey + "/" + pageElementKey;
+        return IframeUtils.iframeServletPath(addOnKey, pageElementKey);
     }
 
     public RemoteCloseDialogPage openKey(String expectedNamespace)

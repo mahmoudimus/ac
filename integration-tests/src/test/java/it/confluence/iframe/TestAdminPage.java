@@ -1,7 +1,5 @@
 package it.confluence.iframe;
 
-import java.net.URI;
-
 import com.atlassian.confluence.pageobjects.page.admin.ConfluenceAdminHomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
@@ -10,17 +8,16 @@ import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceAdminPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectConfluenceAdminHomePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-
-import it.util.ConnectTestUserFactory;
+import com.atlassian.plugin.connect.test.utils.IframeUtils;
+import it.confluence.ConfluenceWebDriverTestBase;
+import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
-import it.confluence.ConfluenceWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
-import it.util.TestUser;
+import java.net.URI;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
@@ -79,7 +76,7 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
         ConfluenceAdminPage adminPage = product.getPageBinder().bind(ConfluenceAdminPage.class, PLUGIN_KEY, PAGE_KEY);
 
         URI url = new URI(adminPage.getRemotePluginLinkHref());
-        assertThat(url.getPath(), is("/confluence/plugins/servlet/ac/" + PLUGIN_KEY + "/" + PAGE_KEY));
+        assertThat(url.getPath(), is("/confluence" + IframeUtils.iframeServletPath(PLUGIN_KEY, PAGE_KEY)));
 
         // TODO Admin page web-item location has incorrect text ("OSGi")
 

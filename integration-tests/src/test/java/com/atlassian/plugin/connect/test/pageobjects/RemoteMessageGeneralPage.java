@@ -9,6 +9,7 @@ import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
+import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
 
 import org.openqa.selenium.By;
@@ -31,7 +32,7 @@ public class RemoteMessageGeneralPage extends ConnectAddOnPage implements Page
     @Override
     public String getUrl()
     {
-        return "/plugins/servlet/ac/"+ addOnKey + "/" + pageElementKey;
+        return IframeUtils.iframeServletPath(addOnKey, pageElementKey);
     }
 
     public void openInfoMessage()

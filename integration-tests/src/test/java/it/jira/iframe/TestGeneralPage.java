@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraGeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.ParameterCapturingConditionServlet;
@@ -110,7 +111,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
         JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, KEY_MY_AWESOME_PAGE, addonKey);
 
         URI url = new URI(viewProjectPage.getRemotePluginLinkHref());
-        assertThat(url.getPath(), is("/jira/plugins/servlet/ac/" + addonKey + "/" + KEY_MY_AWESOME_PAGE));
+        assertThat(url.getPath(), is("/jira" + IframeUtils.iframeServletPath(addonKey, KEY_MY_AWESOME_PAGE)));
 
         ConnectAddOnEmbeddedTestPage addonContentsPage = viewProjectPage.clickAddOnLink();
         assertThat(addonContentsPage.isFullSize(), is(true));
@@ -155,7 +156,7 @@ public class TestGeneralPage extends JiraWebDriverTestBase
         JiraGeneralPage viewProjectPage = product.getPageBinder().bind(JiraGeneralPage.class, contextPageModuleKey, addonKey);
 
         URI url = new URI(viewProjectPage.getRemotePluginLinkHref());
-        assertThat(url.getPath(), is("/jira/plugins/servlet/ac/my-plugin/" + KEY_MY_CONTEXT_PAGE));
+        assertThat(url.getPath(), is("/jira" + IframeUtils.iframeServletPath("my-plugin", KEY_MY_CONTEXT_PAGE)));
 
         PARAMETER_CAPTURING_SERVLET.clearParams();
 

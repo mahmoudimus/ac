@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
 import com.atlassian.pageobjects.Page;
+import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.google.common.base.Function;
 import org.openqa.selenium.By;
@@ -28,7 +29,7 @@ public class RemoteHistoryGeneralPage extends ConnectAddOnPage implements Page
     @Override
     public String getUrl()
     {
-        return "/plugins/servlet/ac/"+ addOnKey + "/" + pageElementKey;
+        return IframeUtils.iframeServletPath(addOnKey, pageElementKey);
     }
 
     public String hostUrl() {
