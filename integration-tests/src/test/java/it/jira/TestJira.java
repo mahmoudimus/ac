@@ -1,10 +1,10 @@
 package it.jira;
 
-import com.atlassian.confluence.it.TestUserFactory;
 import com.atlassian.jira.pageobjects.dialogs.ShifterDialog;
 import com.atlassian.jira.pageobjects.navigator.AdvancedSearch;
 import com.atlassian.jira.pageobjects.pages.admin.configuration.ViewGeneralConfigurationPage;
 import com.atlassian.jira.plugin.issuenav.pageobjects.IssueDetailPage;
+import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
@@ -18,9 +18,7 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.PlainTextView;
 import com.atlassian.plugin.connect.test.pageobjects.jira.ViewChangingSearchResult;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
-import hudson.plugins.jira.soap.RemoteIssue;
 import it.servlet.ConnectAppServlets;
-import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 import org.junit.*;
 
@@ -96,10 +94,11 @@ public class TestJira extends JiraWebDriverTestBase
         TestUser user = testUserFactory.basicUser();
         login(user);
         // ensure one issue
-        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for dialog action cog test");
+        IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for dialog action cog test");
+        
 
         final ShifterDialog shifterDialog = product.getPageBinder()
-                .navigateToAndBind(IssueDetailPage.class, issue.getKey())
+                .navigateToAndBind(IssueDetailPage.class, issue.key)
                 .details()
                 .openFocusShifter();
         ConnectAddOnEmbeddedTestPage page = shifterDialog.queryAndSelect("Test Issue Action", ConnectAddOnEmbeddedTestPage.class, runner.getAddon().getKey(), JIRA_ISSUE_ACTION_KEY, true);
@@ -118,10 +117,10 @@ public class TestJira extends JiraWebDriverTestBase
             @Override
             public Object call() throws Exception
             {
-                RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for tab");
+                IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for tab");
                 String addOnKey = runner.getAddon().getKey();
                 JiraViewIssuePageWithRemotePluginIssueTab page = product.visit(
-                        JiraViewIssuePageWithRemotePluginIssueTab.class, ISSUE_TAB_PANEL_KEY, issue.getKey(), addOnKey);
+                        JiraViewIssuePageWithRemotePluginIssueTab.class, ISSUE_TAB_PANEL_KEY, issue.key, addOnKey);
                 Assert.assertEquals("Success", page.getMessage());
                 return null;
             }
@@ -137,13 +136,13 @@ public class TestJira extends JiraWebDriverTestBase
             @Override
             public Object call() throws Exception
             {
-                RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Test issue for tab");
+                IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for tab");
                 product.visit(AdvancedSearch.class).enterQuery("project = " + project.getKey()).submit();
 
                 PlainTextView plainTextView = product.getPageBinder()
                         .bind(ViewChangingSearchResult.class)
                         .openView("Raw Keys", PlainTextView.class);
-                assertTrue(plainTextView.getContent().contains(issue.getKey()));
+                assertTrue(plainTextView.getContent().contains(issue.key));
                 return null;
             }
         });

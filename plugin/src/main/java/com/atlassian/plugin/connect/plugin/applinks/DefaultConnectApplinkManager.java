@@ -19,8 +19,8 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
+import com.atlassian.plugin.connect.spi.applinks.MutatingApplicationLinkServiceProvider;
 import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
-import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
@@ -29,18 +29,19 @@ import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.google.common.base.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
-import javax.inject.Inject;
 import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.security.PublicKey;
 import java.util.List;
+import javax.annotation.Nullable;
+import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @ExportAsDevService
-@JiraComponent // Confluence is handled separately in FixedConfluenceApplinkManager
+@Component
 public class DefaultConnectApplinkManager implements ConnectApplinkManager
 {
     public static final String PLUGIN_KEY_PROPERTY = JwtConstants.AppLinks.ADD_ON_ID_PROPERTY_NAME;
@@ -52,9 +53,9 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
     protected final TransactionTemplate transactionTemplate;
 
     @Inject
-    public DefaultConnectApplinkManager(MutatingApplicationLinkService applicationLinkService, TypeAccessor typeAccessor, PluginSettingsFactory pluginSettingsFactory, OAuthLinkManager oAuthLinkManager, TransactionTemplate transactionTemplate)
+    public DefaultConnectApplinkManager(MutatingApplicationLinkServiceProvider applicationLinkServiceProvider, TypeAccessor typeAccessor, PluginSettingsFactory pluginSettingsFactory, OAuthLinkManager oAuthLinkManager, TransactionTemplate transactionTemplate)
     {
-        this.applicationLinkService = applicationLinkService;
+        this.applicationLinkService = applicationLinkServiceProvider.getMutatingApplicationLinkService();
         this.typeAccessor = typeAccessor;
         this.pluginSettingsFactory = pluginSettingsFactory;
         this.oAuthLinkManager = oAuthLinkManager;

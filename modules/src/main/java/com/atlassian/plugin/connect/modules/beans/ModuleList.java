@@ -4,12 +4,12 @@ import com.atlassian.json.schema.annotation.ObjectSchemaAttributes;
 import com.atlassian.plugin.connect.modules.annotation.ConnectModule;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
-import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.isParameterizedListWithType;
@@ -170,7 +170,7 @@ public class ModuleList extends BaseModuleBean
     /**
      * The Issue Tab Panel module allows you to add new tabs to the 'Browse Component' page.
      */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider", products = {ProductFilter.JIRA})
+    @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.ConnectTabPanelModuleProvider", products = {ProductFilter.JIRA})
     private List<ConnectTabPanelModuleBean> jiraIssueTabPanels;
 
     /**
@@ -178,19 +178,19 @@ public class ModuleList extends BaseModuleBean
      *
      * @schemaTitle Project Admin Tab Panel
      */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider", products = {ProductFilter.JIRA})
+    @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider", products = {ProductFilter.JIRA})
     private List<ConnectProjectAdminTabPanelModuleBean> jiraProjectAdminTabPanels;
 
     /**
      * The Project Tab Panel module allows you to add new panels to the 'Project' page.
      */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider", products = {ProductFilter.JIRA})
+    @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.ConnectTabPanelModuleProvider", products = {ProductFilter.JIRA})
     private List<ConnectTabPanelModuleBean> jiraProjectTabPanels;
 
     /**
      * The User Profile Tab Panel module allows you to add new tabs to the 'Browse Component' page.
      */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider", products = {ProductFilter.JIRA})
+    @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.ConnectTabPanelModuleProvider", products = {ProductFilter.JIRA})
     private List<ConnectTabPanelModuleBean> jiraProfileTabPanels;
 
     /**
@@ -199,7 +199,7 @@ public class ModuleList extends BaseModuleBean
      *
      * @schemaTitle Search Request View
      */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.SearchRequestViewModuleProvider", products = {ProductFilter.JIRA})
+    @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.SearchRequestViewModuleProvider", products = {ProductFilter.JIRA})
     private List<SearchRequestViewModuleBean> jiraSearchRequestViews;
 
     /**
@@ -207,22 +207,29 @@ public class ModuleList extends BaseModuleBean
      *
      * @schemaTitle Workflow Post Function
      */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultWorkflowPostFunctionModuleProvider", products = {ProductFilter.JIRA})
+    @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.DefaultWorkflowPostFunctionModuleProvider", products = {ProductFilter.JIRA})
     private List<WorkflowPostFunctionModuleBean> jiraWorkflowPostFunctions;
 
     /**
      * The Entity Property are add-on key/value stories in certain JIRA objects, such as issues and projects.
      * @schemaTitle Entity Property
      */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.EntityPropertyModuleProvider", products = {ProductFilter.JIRA})
+    @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.EntityPropertyModuleProvider", products = {ProductFilter.JIRA})
     private List<EntityPropertyModuleBean> jiraEntityProperties;
 
     /**
      * Add new report modules to JIRA projects.
      * @schemaTitle Report
      */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ReportModuleProvider", products = {ProductFilter.JIRA})
+    @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.ReportModuleProvider", products = {ProductFilter.JIRA})
     private List<ReportModuleBean> jiraReports;
+
+    /**
+     * Add new dashboard item to JIRA.
+     * @schemaTitle Dashboard Item
+     */
+    @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.DashboardItemModuleProvider", products = {ProductFilter.JIRA})
+    private List<DashboardItemModuleBean> jiraDashboardItems;
 
     /////////////////////////////////////////////////////
     ///////    CONFLUENCE MODULES
@@ -233,20 +240,20 @@ public class ModuleList extends BaseModuleBean
      *
      * @schemaTitle Dynamic Content Macro
      */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.DynamicContentMacroModuleProvider", products = {ProductFilter.CONFLUENCE})
+    @ConnectModule(value = "com.atlassian.plugin.connect.confluence.capabilities.provider.DynamicContentMacroModuleProvider", products = {ProductFilter.CONFLUENCE})
     private List<DynamicContentMacroModuleBean> dynamicContentMacros;
 
     /**
      * A User Profile Page module is used to add new elements to Confluence user profiles.
      */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.ProfilePageModuleProvider", products = {ProductFilter.CONFLUENCE}) // Note: Jira uses jiraProfileTabPanels instead
+    @ConnectModule(value = "com.atlassian.plugin.connect.confluence.capabilities.provider.ProfilePageModuleProvider", products = {ProductFilter.CONFLUENCE}) // Note: Jira uses jiraProfileTabPanels instead
     private List<ConnectPageModuleBean> profilePages;
 
     /**
      * The Space Tools Tab module allows you to add new tabs to the Space Tools area of Confluence.
      * @schemaTitle Space Tools Tab
      */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.SpaceToolsTabModuleProvider", products = {ProductFilter.CONFLUENCE})
+    @ConnectModule(value = "com.atlassian.plugin.connect.confluence.capabilities.provider.SpaceToolsTabModuleProvider", products = {ProductFilter.CONFLUENCE})
     private List<SpaceToolsTabModuleBean> spaceToolsTabs;
 
     /**
@@ -256,7 +263,7 @@ public class ModuleList extends BaseModuleBean
      *
      * @schemaTitle Static Content Macro
      */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.StaticContentMacroModuleProvider", products = {ProductFilter.CONFLUENCE})
+    @ConnectModule(value = "com.atlassian.plugin.connect.confluence.capabilities.provider.StaticContentMacroModuleProvider", products = {ProductFilter.CONFLUENCE})
     private List<StaticContentMacroModuleBean> staticContentMacros;
 
     /**
@@ -264,7 +271,7 @@ public class ModuleList extends BaseModuleBean
      *
      * @schemaTitle Blueprint
      */
-    @ConnectModule(value = "com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultBlueprintModuleProvider", products = {ProductFilter.CONFLUENCE})
+    @ConnectModule(value = "com.atlassian.plugin.connect.confluence.capabilities.provider.DefaultBlueprintModuleProvider", products = {ProductFilter.CONFLUENCE})
     private List<BlueprintModuleBean> blueprints;
 
     /**
@@ -275,7 +282,7 @@ public class ModuleList extends BaseModuleBean
      * @see <a href="https://developer.atlassian.com/display/CONFDEV/Content+Properties+in+the+REST+API">
      *     developer.atlassian.com</a> for more details
      */
-    @ConnectModule (value = "com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultContentPropertyModuleProvider", products = { ProductFilter.CONFLUENCE })
+    @ConnectModule (value = "com.atlassian.plugin.connect.confluence.capabilities.provider.DefaultContentPropertyModuleProvider", products = { ProductFilter.CONFLUENCE })
     private List<ContentPropertyModuleBean> confluenceContentProperties;
 
     public ModuleList()
@@ -291,6 +298,7 @@ public class ModuleList extends BaseModuleBean
         this.jiraWorkflowPostFunctions = newArrayList();
         this.jiraEntityProperties = newArrayList();
         this.jiraReports = newArrayList();
+        this.jiraDashboardItems = newArrayList();
         this.profilePages = newArrayList();
         this.spaceToolsTabs = newArrayList();
         this.staticContentMacros = newArrayList();
@@ -385,6 +393,10 @@ public class ModuleList extends BaseModuleBean
         if (null == confluenceContentProperties)
         {
             this.confluenceContentProperties = newArrayList();
+        }
+        if (null == jiraDashboardItems)
+        {
+            this.jiraDashboardItems = newArrayList();
         }
     }
 
@@ -491,6 +503,11 @@ public class ModuleList extends BaseModuleBean
         return confluenceContentProperties;
     }
 
+    public List<DashboardItemModuleBean> getJiraDashboardItems()
+    {
+        return jiraDashboardItems;
+    }
+
     // don't call super because BaseCapabilityBean has no data
     @Override
     public boolean equals(Object otherObj)
@@ -528,6 +545,7 @@ public class ModuleList extends BaseModuleBean
                 .append(webPanels, other.webPanels)
                 .append(webSections, other.webSections)
                 .append(jiraReports, other.jiraReports)
+                .append(jiraDashboardItems, other.jiraDashboardItems)
                 .build();
     }
 
@@ -556,6 +574,7 @@ public class ModuleList extends BaseModuleBean
                 .append(webPanels)
                 .append(webSections)
                 .append(jiraReports)
+                .append(jiraDashboardItems)
                 .build();
     }
     
@@ -581,7 +600,7 @@ public class ModuleList extends BaseModuleBean
                     else
                     {
                         ModuleBean moduleBean = (ModuleBean) field.get(this);
-                        beanList = moduleBean == null ? ImmutableList.<ModuleBean>of() : newArrayList(moduleBean);
+                        beanList = moduleBean == null ? Collections.<ModuleBean>emptyList() : newArrayList(moduleBean);
                     }
                     
                     if(!beanList.isEmpty())

@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities;
 
-import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 
 import javax.inject.Inject;

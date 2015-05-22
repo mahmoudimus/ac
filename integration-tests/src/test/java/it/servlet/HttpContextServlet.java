@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 
 import static com.atlassian.fugue.Option.option;
@@ -18,10 +19,17 @@ public class HttpContextServlet extends HttpServlet
 {
     private final Map<String, Object> baseContext = newHashMap();
     private final ContextServlet servlet;
+    private final Iterable<TestServletContextExtractor> servletContextExtractors;
 
     public HttpContextServlet(ContextServlet servlet)
     {
+        this(servlet, new ArrayList<TestServletContextExtractor>());
+    }
+
+    public HttpContextServlet(ContextServlet servlet, Iterable<TestServletContextExtractor> extractors)
+    {
         this.servlet = checkNotNull(servlet);
+        this.servletContextExtractors = extractors;
     }
 
     @Override
@@ -39,6 +47,7 @@ public class HttpContextServlet extends HttpServlet
     private ImmutableMap<String, Object> getContext(HttpServletRequest req) throws IOException
     {
         return ImmutableMap.<String, Object>builder()
+                           .putAll(extractContext(req))
                            .putAll(baseContext)
                            .put("req_url", nullToEmpty(option(req.getRequestURL()).getOrElse(new StringBuffer()).toString()))
                            .put("req_uri", nullToEmpty(req.getRequestURI()))
@@ -49,6 +58,20 @@ public class HttpContextServlet extends HttpServlet
                            .put("licenseStatus", nullToEmpty(req.getParameter("lic")))
                            .put("timeZone", nullToEmpty(req.getParameter("tz")))
                            .build();
+    }
+
+    private Map<String, ?> extractContext(final HttpServletRequest req)
+    {
+        final ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
+        for (TestServletContextExtractor extractor : servletContextExtractors)
+        {
+            final Object extractedValue = extractor.extract(req);
+            if (extractedValue != null)
+            {
+                builder.put(extractor.getParameterId(), extractedValue);
+            }
+        }
+        return builder.build();
     }
 
     public Map<String, Object> getBaseContext()

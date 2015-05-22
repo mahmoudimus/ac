@@ -1,6 +1,7 @@
 package it.jira;
 
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
+import com.atlassian.jira.testkit.client.IssueTypeControl;
 import com.atlassian.jira.testkit.client.IssuesControl;
 import com.atlassian.jira.testkit.client.ProjectControl;
 import com.atlassian.jira.testkit.client.restclient.*;
@@ -66,7 +67,7 @@ public class TestEntityProperty
                                 .build()
                 )
                 .start();
-        issueClient = new IssuesControl(localEnvironmentData);
+        issueClient = new IssuesControl(localEnvironmentData, new IssueTypeControl(localEnvironmentData));
         entityPropertyClient = new EntityPropertyClient(localEnvironmentData, "issue");
         projectControl = new ProjectControl(localEnvironmentData);
         searchClient = new SearchClient(localEnvironmentData);

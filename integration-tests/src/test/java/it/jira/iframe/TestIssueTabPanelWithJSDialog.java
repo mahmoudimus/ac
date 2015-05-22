@@ -3,7 +3,7 @@ package it.jira.iframe;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectTabPanelModuleProvider;
+import com.atlassian.plugin.connect.jira.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteCloseDialogPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteDialogOpeningPage;
@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithR
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
+import it.util.TestProject;
 import it.util.TestUser;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
@@ -41,9 +42,8 @@ public class TestIssueTabPanelWithJSDialog extends JiraWebDriverTestBase
     private static final String ADDON_DIALOG_NAME = "my dialog";
 
     private TestUser user;
-    private String projectKey;
-    private long projectId;
     private IssueCreateResponse issue;
+    private TestProject project;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -87,15 +87,16 @@ public class TestIssueTabPanelWithJSDialog extends JiraWebDriverTestBase
     public void setUpTest() throws Exception
     {
         user = testUserFactory.basicUser();
-        projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase();
-        projectId = product.backdoor().project().addProject(projectKey, projectKey, user.getUsername());
-        issue = product.backdoor().issues().createIssue(projectId, "Test issue for tab", user.getUsername());
+        String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase();
+        String projectId = String.valueOf(product.backdoor().project().addProject(projectKey, projectKey, user.getUsername()));
+        project = new TestProject(projectKey, projectId);
+        issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for tab", user.getUsername());
     }
 
     @After
     public void cleanUpTest()
     {
-        product.backdoor().project().deleteProject(projectKey);
+        product.backdoor().project().deleteProject(project.getKey());
     }
 
     @Test
@@ -108,7 +109,7 @@ public class TestIssueTabPanelWithJSDialog extends JiraWebDriverTestBase
         RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, addonAndModuleKey(PLUGIN_KEY, ISSUE_TAB_PANEL_W_DIALOG));
         RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey(addonAndModuleKey(PLUGIN_KEY, ADDON_DIALOG));
 
-        assertThat(closeDialogPage.getFromQueryString("myproject_key"), is(projectKey));
+        assertThat(closeDialogPage.getFromQueryString("myproject_key"), is(project.getKey()));
         assertThat(closeDialogPage.getFromQueryString("myissue_key"), is(issue.key()));
 
         closeDialogPage.close();

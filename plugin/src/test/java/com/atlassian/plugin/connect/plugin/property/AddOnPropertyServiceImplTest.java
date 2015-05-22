@@ -1,16 +1,15 @@
 package com.atlassian.plugin.connect.plugin.property;
 
 import com.atlassian.fugue.Option;
+import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO;
-import com.atlassian.plugin.connect.plugin.property.AddOnPropertyStore.PutResultWithOptionalProperty;
-import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.property.AddOnPropertyService.DeleteServiceResult;
 import com.atlassian.plugin.connect.plugin.property.AddOnPropertyService.PutServiceResult;
+import com.atlassian.plugin.connect.plugin.property.AddOnPropertyStore.PutResultWithOptionalProperty;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;
-import com.google.common.hash.HashCode;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +26,9 @@ import static com.atlassian.plugin.connect.plugin.property.AddOnPropertyService.
 import static com.atlassian.plugin.connect.plugin.property.AddOnPropertyServiceImpl.OperationStatusImpl;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddOnPropertyServiceImplTest
@@ -45,8 +46,6 @@ public class AddOnPropertyServiceImplTest
     private UserManager userManager;
     @Mock
     private ConnectAddonRegistry connectAddonRegistry;
-    @Mock
-    private HashCode hashCode;
 
     private AddOnPropertyService service;
     private Function<OperationStatus, Void> mockFunction;

@@ -1,52 +1,53 @@
 package com.atlassian.plugin.connect.plugin.service;
 
-import com.atlassian.plugin.connect.plugin.scopes.AddOnScope;
-import com.atlassian.plugin.connect.plugin.scopes.StaticAddOnScopes;
-import com.atlassian.sal.api.ApplicationProperties;
-import org.apache.commons.lang.StringUtils;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.spi.scope.AddOnScope;
+import com.atlassian.plugin.connect.spi.scope.helper.AddOnScopeLoadJsonFileHelper;
+import com.atlassian.plugin.connect.spi.scope.ProductScopeProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Component
 public class ScopeServiceImpl implements ScopeService
 {
-    private final ApplicationProperties applicationProperties;
+    private final ProductScopeProvider productScopeProvider;
 
     @Autowired
-    public ScopeServiceImpl(ApplicationProperties applicationProperties)
+    public ScopeServiceImpl(ProductScopeProvider productScopeProvider)
     {
-        this.applicationProperties = checkNotNull(applicationProperties);
+        this.productScopeProvider = checkNotNull(productScopeProvider);
     }
 
     @Override
     public Collection<AddOnScope> build() throws IOException
     {
-        String applicationDisplayName = applicationProperties.getDisplayName();
+        Map<ScopeName, AddOnScope> scopes = new HashMap<>();
 
-        if (StringUtils.isEmpty(applicationDisplayName))
-        {
-            throw new IllegalArgumentException("Application display name can be neither null nor blank");
-        }
+        AddOnScopeLoadJsonFileHelper.addProductScopesFromFile(scopes, resourceLocation("common"));
+        // TODO ACDEV-1214: don't load integration_test scopes in prod
+        AddOnScopeLoadJsonFileHelper.addProductScopesFromFile(scopes, resourceLocation("integration-test"));
 
-        String lowerCaseDisplayName = applicationDisplayName.toLowerCase();
+        AddOnScopeLoadJsonFileHelper.combineProductScopes(scopes, productScopeProvider.getScopes());
 
-        // alternately we could send the display name straight through to StaticAddOnScopes.buildFor(String)
-        // but with a name like "display name" I'm not confident that it won't contain formatting or extra characters
-        if (lowerCaseDisplayName.contains("confluence"))
-        {
-            return StaticAddOnScopes.buildForConfluence();
-        }
+        List<AddOnScope> scopeList = new ArrayList<>(scopes.values());
+        Collections.sort(scopeList);
 
-        if (lowerCaseDisplayName.contains("jira"))
-        {
-            return StaticAddOnScopes.buildForJira();
-        }
+        return scopeList;
+    }
 
-        throw new IllegalArgumentException(String.format("Application display name '%s' is not recognised as either Confluence or JIRA. Please set it to a value that when converted to lower case contains either 'confluence' or 'jira'.", applicationDisplayName));
+    private static URL resourceLocation(String product)
+    {
+        return ScopeServiceImpl.class.getResource("/com/atlassian/connect/scopes." + product + ".json");
     }
 }

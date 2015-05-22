@@ -26,6 +26,15 @@
         <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
+    <web-resource key="atlassian-connect-dashboard-item-resources" name="Connect resources for dashboard page.">
+        <context>atl.dashboard</context>
+
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-atlassian-connect-resources</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-dashboard-item</dependency>
+
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
     <!-- JavaScript API Core -->
 
     <web-resource key="ap-core">
@@ -77,6 +86,14 @@
         <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
+    <web-resource key="dashboard-item">
+        <resource type="download" name="dashboard-item.js" location="js/jira/dashboard-item/dashboard-item.js" />
+
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
     <web-resource key="events">
         <resource type="download" name="jira-events.js" location="/js/jira/events/events.js" />
         <resource type="download" name="jira-events-rpc.js" location="/js/jira/events/events-rpc.js" />
@@ -86,7 +103,7 @@
     </web-resource>
 
     <url-reading-web-resource-transformer key="connect-report-transformer" name="Connect report transformer"
-                                          class="com.atlassian.plugin.connect.plugin.capabilities.descriptor.ReportModuleCssTransformer"/>
+                                          class="com.atlassian.plugin.connect.jira.capabilities.descriptor.report.ReportModuleCssTransformer"/>
 
     <web-resource key="connect-report-thumbnails">
         <context>jira.browse.project</context>

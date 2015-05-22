@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.spi.product;
 import com.atlassian.extras.api.ProductLicense;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
-import com.atlassian.plugin.web.Condition;
 
 import java.util.Map;
 
@@ -26,7 +25,7 @@ public interface ProductAccessor extends HostProperties
 
     Map<String, String> getLinkContextParams();
 
-    Map<String, Class<? extends Condition>> getConditions();
+    ConditionClassResolver getConditions();
 
     boolean needsAdminPageNameEscaping();
 
