@@ -6,4 +6,8 @@ public class ConnectAddOnUserDisableException extends Exception
     {
         super(cause);
     }
+
+    public ConnectAddOnUserDisableException(String message) {
+        super(message);
+    }
 }

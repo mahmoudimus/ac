@@ -9,9 +9,7 @@ import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitEx
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.spring.scanner.annotation.component.StashComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-import com.atlassian.stash.user.StashUser;
-import com.atlassian.stash.user.UserAdminService;
-import com.atlassian.stash.user.UserService;
+import com.atlassian.stash.user.*;
 
 import com.google.common.collect.Maps;
 
@@ -25,16 +23,12 @@ public class StashConnectAddOnUserService implements ConnectAddOnUserService
 {
     private final UserAdminService userAdminService;
     private final UserService userService;
-    // TODO: replace this with a more persistent storage
-    private final ConcurrentMap<String, Integer> nameToUserId;
 
     @Autowired
     public StashConnectAddOnUserService(UserAdminService userAdminService, UserService userService)
     {
         this.userAdminService = userAdminService;
         this.userService = userService;
-
-        nameToUserId = Maps.newConcurrentMap();
     }
 
     @Override
@@ -44,9 +38,16 @@ public class StashConnectAddOnUserService implements ConnectAddOnUserService
     }
 
     @Override
-    public void disableAddonUser(String addOnKey) throws ConnectAddOnUserDisableException
-    {
-        // not supported yet
+    public void disableAddonUser(String addOnKey) throws ConnectAddOnUserDisableException {
+        ServiceUser user = userService.getServiceUserByName(addOnKey, true);
+        if (user == null) {
+            throw new ConnectAddOnUserDisableException("No user exists for add-on " + addOnKey);
+        }
+
+        if (user.isActive())
+        {
+            userAdminService.updateServiceUser(new ServiceUserUpdateRequest.Builder(user).active(false).build());
+        }
     }
 
     @Override
@@ -65,28 +66,14 @@ public class StashConnectAddOnUserService implements ConnectAddOnUserService
 
     private StashUser getUser(String addOnKey, String displayName)
     {
-        StashUser user = null;
-        while (user == null)
+        StashUser user = userService.getServiceUserByName(addOnKey, true);
+        if (user == null)
         {
-            Integer userId = nameToUserId.get(addOnKey);
-            if (userId == null)
-            {
-                user = userAdminService.createServiceUser(displayName);
-                userId = nameToUserId.putIfAbsent(addOnKey, user.getId());
-                if (userId != null)
-                {
-                    // user has been created concurrently - use that instead
-                    user = null;
-                }
-            }
-            else
-            {
-                user = userService.getUserById(userId);
-                if (user == null)
-                {
-                    nameToUserId.remove(addOnKey);
-                }
-            }
+            user = userAdminService.createServiceUser(new ServiceUserCreateRequest.Builder()
+                    .label("connect-add-on")
+                    .name(addOnKey)
+                    .displayName(displayName)
+                    .build());
         }
         return user;
     }

@@ -21,9 +21,6 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-css</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:stash-iframe-host-js</dependency>
 
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-workflow-post-function</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-events</dependency>
-
         <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
@@ -31,7 +28,7 @@
 
     <web-resource key="ap-core">
         <resource type="download" name="core-host.js" location="/js/core/connect-host.js" />
-        <dependency>jira.webresources:almond</dependency>
+        <dependency>stash.webresources:almond</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
