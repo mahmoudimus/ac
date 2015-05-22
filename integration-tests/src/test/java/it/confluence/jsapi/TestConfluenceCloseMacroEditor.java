@@ -4,7 +4,6 @@ import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RemoteMacroEditorDialog;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.util.ConnectTestUserFactory;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.confluence.macro.AbstractContentMacroTest;
 import it.servlet.ConnectAppServlets;

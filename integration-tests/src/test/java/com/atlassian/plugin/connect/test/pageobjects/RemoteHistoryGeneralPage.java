@@ -1,8 +1,6 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
 import com.atlassian.pageobjects.Page;
-import com.atlassian.pageobjects.PageBinder;
-import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.google.common.base.Function;
 import org.openqa.selenium.By;
@@ -23,28 +21,15 @@ public class RemoteHistoryGeneralPage extends ConnectAddOnPage implements Page
     @Inject
     protected AtlassianWebDriver driver;
 
-    @Inject
-    protected PageBinder pageBinder;
-
-    @Inject
-    protected PageElementFinder elementFinder;
-
-    private final String addonKey;
-    private final String moduleKey;
-
-
-    public RemoteHistoryGeneralPage(String addOnKey, String moduleKey) {
-        super(addOnKey, moduleKey, true);
-        this.addonKey = addOnKey;
-        this.moduleKey = moduleKey;
+    public RemoteHistoryGeneralPage(String addonKey, String moduleKey) {
+        super(addonKey, moduleKey, true);
     }
 
     @Override
     public String getUrl()
     {
-        return "/plugins/servlet/ac/"+ addonKey + "/" + moduleKey;
+        return "/plugins/servlet/ac/"+ addOnKey + "/" + pageElementKey;
     }
-
 
     public String hostUrl() {
         return driver.getCurrentUrl();
@@ -117,15 +102,7 @@ public class RemoteHistoryGeneralPage extends ConnectAddOnPage implements Page
     }
 
     public String logMessage(){
-        return runInFrame(new Callable<String>()
-        {
-
-            @Override
-            public String call() throws Exception
-            {
-                return driver.findElement(By.id("log")).getText();
-            }
-        });
+        return getValue("log");
     }
 
     public void clearLog(){
@@ -163,7 +140,4 @@ public class RemoteHistoryGeneralPage extends ConnectAddOnPage implements Page
             }
         });
     }
-
-
-
 }

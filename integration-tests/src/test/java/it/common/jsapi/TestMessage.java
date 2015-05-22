@@ -1,10 +1,7 @@
 package it.common.jsapi;
 
-import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteMessageGeneralPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.common.MultiProductWebDriverTestBase;
@@ -52,15 +49,14 @@ public class TestMessage extends MultiProductWebDriverTestBase
     /**
      * Tests opening an info message from a general page with json descriptor
      */
-
     @Test
     public void testCreateInfoMessage() throws Exception
     {
-        loginAndVisit(testUserFactory.basicUser(), HomePage.class);
-        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, PAGE_KEY, remotePlugin.getAddon().getKey());
-        remotePage.clickAddOnLink();
-        RemoteMessageGeneralPage remoteMessagePage = product.getPageBinder().bind(RemoteMessageGeneralPage.class, ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), PAGE_KEY));
-        remoteMessagePage.openInfoMessage();
-        assertEquals(remoteMessagePage.getMessageTitleText(), "plain text title");
+        RemoteMessageGeneralPage page = loginAndVisit(testUserFactory.basicUser(),
+                RemoteMessageGeneralPage.class, remotePlugin.getAddon().getKey(), PAGE_KEY);
+
+        page.openInfoMessage();
+        assertEquals(page.getMessageTitleText(), "plain text title");
     }
 }
+

@@ -1,10 +1,7 @@
 package it.common.jsapi;
 
-import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteCookieGeneralPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.common.MultiProductWebDriverTestBase;
@@ -56,10 +53,9 @@ public class TestCookie extends MultiProductWebDriverTestBase
     @Test
     public void testCreateCookie() throws Exception
     {
-        loginAndVisit(testUserFactory.basicUser(), HomePage.class);
-        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, PAGE_KEY, remotePlugin.getAddon().getKey());
-        remotePage.clickAddOnLink();
-        RemoteCookieGeneralPage remoteCookiePage = product.getPageBinder().bind(RemoteCookieGeneralPage.class, ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), PAGE_KEY));
+        RemoteCookieGeneralPage remoteCookiePage = loginAndVisit(testUserFactory.basicUser(),
+                RemoteCookieGeneralPage.class, remotePlugin.getAddon().getKey(), PAGE_KEY);
+
         remoteCookiePage.readCookie();
         assertEquals(remoteCookiePage.getCookieContents(), "undefined");
         remoteCookiePage.saveCookie();
@@ -67,17 +63,15 @@ public class TestCookie extends MultiProductWebDriverTestBase
         assertEquals(remoteCookiePage.getCookieContents(), "cookie contents");
     }
 
-
     /**
      * Tests deleting a cookie
      */
     @Test
     public void testEraseCookie() throws Exception
     {
-        loginAndVisit(testUserFactory.basicUser(), HomePage.class);
-        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, PAGE_KEY, remotePlugin.getAddon().getKey());
-        remotePage.clickAddOnLink();
-        RemoteCookieGeneralPage remoteCookiePage = product.getPageBinder().bind(RemoteCookieGeneralPage.class, ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), PAGE_KEY));
+        RemoteCookieGeneralPage remoteCookiePage = loginAndVisit(testUserFactory.basicUser(),
+                RemoteCookieGeneralPage.class, remotePlugin.getAddon().getKey(), PAGE_KEY);
+
         remoteCookiePage.saveCookie();
         remoteCookiePage.eraseCookie();
         remoteCookiePage.readCookie();

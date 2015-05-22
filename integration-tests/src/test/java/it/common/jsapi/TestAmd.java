@@ -1,12 +1,9 @@
 package it.common.jsapi;
 
-import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
-import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginAwarePage;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectGeneralTestPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.common.MultiProductWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
@@ -53,13 +50,11 @@ public class TestAmd extends MultiProductWebDriverTestBase
     @Test
     public void testAmd()
     {
-        loginAndVisit(testUserFactory.admin(), HomePage.class);
+        ConnectGeneralTestPage page = loginAndVisit(testUserFactory.basicUser(),
+                ConnectGeneralTestPage.class, remotePlugin.getAddon().getKey(), PAGE_KEY);
 
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, PAGE_KEY, remotePlugin.getAddon().getKey());
-        ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
-
-        assertEquals("true", remotePluginTest.waitForValue("amd-env"));
-        assertEquals("true", remotePluginTest.waitForValue("amd-request"));
-        assertEquals("true", remotePluginTest.waitForValue("amd-dialog"));
+        assertEquals("true", page.waitForValue("amd-env"));
+        assertEquals("true", page.waitForValue("amd-request"));
+        assertEquals("true", page.waitForValue("amd-dialog"));
     }
 }

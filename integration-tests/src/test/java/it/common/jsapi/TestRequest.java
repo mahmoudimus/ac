@@ -1,12 +1,9 @@
 package it.common.jsapi;
 
-import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
-import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginAwarePage;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectGeneralTestPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.common.MultiProductWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
@@ -32,13 +29,9 @@ public class TestRequest extends MultiProductWebDriverTestBase
 
     private static ConnectRunner remotePlugin;
 
-    private static TestUser betty;
-
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        betty = testUserFactory.admin();
-
         String pageUrl = "/rpg";
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .addJWT()
@@ -66,31 +59,32 @@ public class TestRequest extends MultiProductWebDriverTestBase
     @Test
     public void testRequestFromGeneralPage()
     {
-        loginAndVisit(betty, HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, PAGE_MODULE_KEY, remotePlugin.getAddon().getKey());
-        ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
-        assertTrue(remotePluginTest.getTitle().contains(PAGE_NAME));
-        assertEquals("Success", remotePluginTest.getMessage());
-        assertTrue(remotePluginTest.getIframeQueryParams().containsKey("cp"));
-        assertNotNull(remotePluginTest.getFullName());
-        assertThat(remotePluginTest.getFullName().toLowerCase(), Matchers.containsString(betty.getUsername()));
-        assertEquals(betty.getUsername(), remotePluginTest.getUserId());
-        assertTrue(remotePluginTest.getLocale().startsWith("en-"));
+        TestUser user = testUserFactory.basicUser();
+        ConnectGeneralTestPage page = loginAndVisit(user,
+                ConnectGeneralTestPage.class, remotePlugin.getAddon().getKey(), PAGE_MODULE_KEY);
+
+        assertTrue(page.getTitle().contains(PAGE_NAME));
+        assertEquals("Success", page.getMessage());
+        assertTrue(page.getIframeQueryParams().containsKey("cp"));
+        assertNotNull(page.getFullName());
+        assertThat(page.getFullName().toLowerCase(), Matchers.containsString(user.getUsername()));
+        assertEquals(user.getUsername(), page.getUserId());
+        assertTrue(page.getLocale().startsWith("en-"));
 
         // timezone should be the same as the default one
-        assertEquals(TimeZone.getDefault().getRawOffset(), TimeZone.getTimeZone(remotePluginTest.getTimeZone()).getRawOffset());
+        assertEquals(TimeZone.getDefault().getRawOffset(), TimeZone.getTimeZone(page.getTimeZone()).getRawOffset());
 
         // basic tests of the RA.request API
-        assertEquals("200", remotePluginTest.getClientHttpStatus());
-        String statusText = remotePluginTest.getClientHttpStatusText();
+        assertEquals("200", page.getClientHttpStatus());
+        String statusText = page.getClientHttpStatusText();
         assertTrue("OK".equals(statusText) || "success".equals(statusText));
-        String contentType = remotePluginTest.getClientHttpContentType();
+        String contentType = page.getClientHttpContentType();
         assertTrue(contentType != null && contentType.startsWith("text/plain"));
-        assertEquals(betty.getUsername(), remotePluginTest.getClientHttpData());
-        assertEquals(betty.getUsername(), remotePluginTest.getClientHttpResponseText());
+        assertEquals(user.getUsername(), page.getClientHttpData());
+        assertEquals(user.getUsername(), page.getClientHttpResponseText());
 
         // media type tests of the RA.request API
-        assertEquals("{\"name\": \"" + betty.getUsername() + "\"}", remotePluginTest.getClientHttpDataJson());
-        assertEquals("<user><name>" + betty.getUsername() + "</name></user>", remotePluginTest.getClientHttpDataXml());
+        assertEquals("{\"name\": \"" + user.getUsername() + "\"}", page.getClientHttpDataJson());
+        assertEquals("<user><name>" + user.getUsername() + "</name></user>", page.getClientHttpDataXml());
     }
 }
