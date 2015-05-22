@@ -1210,7 +1210,7 @@
         <runKarma>false</runKarma>
         <mvnCommand>/usr/bin/mvn</mvnCommand>
         <debugSchemaGen>false</debugSchemaGen>
-        <ao.version>0.25.2</ao.version>
+        <ao.version>0.29.3</ao.version>
         <od.testing.configuration>
             use-java,8
             use-maven,3
