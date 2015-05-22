@@ -26,6 +26,15 @@
         <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
+    <web-resource key="atlassian-connect-dashboard-item-resources" name="Connect resources for dashboard page.">
+        <context>atl.dashboard</context>
+
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-atlassian-connect-resources</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-dashboard-item</dependency>
+
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
     <!-- JavaScript API Core -->
 
     <web-resource key="ap-core">
@@ -72,6 +81,14 @@
     <web-resource key="workflow-post-function">
         <resource type="download" name="workflow-post-function.js" location="js/jira/workflow-post-function/workflow-post-function.js" />
         <resource type="download" name="workflow-post-function-rpc.js" location="js/jira/workflow-post-function/workflow-post-function-rpc.js" />
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
+    <web-resource key="dashboard-item">
+        <resource type="download" name="dashboard-item.js" location="js/jira/dashboard-item/dashboard-item.js" />
+
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>

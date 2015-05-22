@@ -1,7 +1,9 @@
 AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
     "use strict";
     var workflowListener,
-        validationListener;
+        validationListener,
+        dashboardItemEditListener;
+
     /**
     * @class WorkflowConfiguration
     */
@@ -48,12 +50,32 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
             };
         }
     };
+    /**
+     * @class DashboardItem
+     */
+    var DashboardItem = {
+        /**
+         * Attach a callback function to run when user clicks 'edit' in the dashboard item's menu
+         * @noDemo
+         * @memberOf DashboardItem
+         * @param {Function} listener called on dashboard item edit.
+         */
+        onDashboardItemEdit: function (listener){
+            dashboardItemEditListener = listener;
+        },
+        triggerEdit: function (){
+            if($.isFunction(dashboardItemEditListener)){
+                dashboardItemEditListener.call();
+            }
+        }
+    };
+
     var apis = rpc.extend(function (remote) {
         return {
 
             /**
-            * Allows custom validation and save callback functions for jira workflow configurations.
-            * @see {WorkflowConfiguration}
+            * Allows custom validation and save callback functions for jira workflow configurations and dashboard items.
+            * @see {WorkflowConfiguration, DashboardItem}
             * @exports jira
             */
             apis: {
@@ -65,6 +87,16 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                 getWorkflowConfiguration: function (callback) {
                     remote.getWorkflowConfiguration(callback);
                 },
+
+                /**
+                 * Set title of a dashboard item
+                 * @param title - the title to set
+                 */
+                setDashboardItemTitle: function(title) {
+                    remote.setDashboardItemTitle(title);
+                },
+
+
                 /**
                 * Refresh an issue page without reloading the browser.
                 * This is helpful when your add-on updates information about an issue in the background.
@@ -83,8 +115,10 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
 
                 setWorkflowConfigurationMessage: function () {
                     return WorkflowConfiguration.trigger();
+                },
+                triggerDashboardItemEdit: function () {
+                    return DashboardItem.triggerEdit();
                 }
-
             },
             stubs: ["triggerJiraEvent"]
 
@@ -93,7 +127,8 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
     });
 
     return $.extend(apis, {
-        WorkflowConfiguration: WorkflowConfiguration
+        WorkflowConfiguration: WorkflowConfiguration,
+        DashboardItem: DashboardItem
     });
 
 });

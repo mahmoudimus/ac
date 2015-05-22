@@ -82,11 +82,11 @@ plan(
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest JIRA SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
-            productVersion: '7.0-SNAPSHOT',
+            productVersion: '7.0.0-SNAPSHOT',
     )
     variable(
             key: 'bamboo.jira.testkit.version',
-            value: '7.0.36'
+            value: '7.0.40'
     )
     stage(
             name: 'Run Tests'

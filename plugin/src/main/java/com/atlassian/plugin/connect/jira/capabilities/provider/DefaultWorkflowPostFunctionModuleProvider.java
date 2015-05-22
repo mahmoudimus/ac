@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.jira.capabilities.descriptor.workflow.WorkflowPostFunctionModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilder;
 import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.atlassian.plugin.connect.jira.capabilities.provider.JiraTemplateHelper.*;
 
 @JiraComponent
 @ExportAsDevService
@@ -39,7 +41,7 @@ public class DefaultWorkflowPostFunctionModuleProvider implements WorkflowPostFu
     @Override
     public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, String jsonFieldName, List<WorkflowPostFunctionModuleBean> beans)
     {
-        List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
+        List<ModuleDescriptor> descriptors = new ArrayList<>();
 
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         for (WorkflowPostFunctionModuleBean bean : beans)
@@ -74,7 +76,7 @@ public class DefaultWorkflowPostFunctionModuleProvider implements WorkflowPostFu
         IFrameRenderStrategyBuilder.InitializedBuilder builder = iFrameRenderStrategyBuilderFactory.builder()
                 .addOn(addon.getKey())
                 .module(bean.getKey(addon))
-                .workflowPostFunctionTemplate(resource)
+                .template(workflowPostFunctionTemplate(resource))
                 .urlTemplate(urlBean.getUrl())
                 ;
 

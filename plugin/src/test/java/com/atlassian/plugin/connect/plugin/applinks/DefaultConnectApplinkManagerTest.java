@@ -13,6 +13,7 @@ import com.atlassian.jwt.JwtConstants;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
+import com.atlassian.plugin.connect.spi.applinks.MutatingApplicationLinkServiceProvider;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManager;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
@@ -42,6 +43,7 @@ public class DefaultConnectApplinkManagerTest
 {
     private static final String USER_KEY = "some_user_key";
 
+    @Mock private MutatingApplicationLinkServiceProvider applicationLinkServiceProvider;
     @Mock private MutatingApplicationLinkService applicationLinkService;
     @Mock private TypeAccessor typeAccessor;
     @Mock private PluginSettingsFactory pluginSettingsFactory;
@@ -150,7 +152,8 @@ public class DefaultConnectApplinkManagerTest
             }
         };
 
-        connectApplinkManager = new DefaultConnectApplinkManager(applicationLinkService, typeAccessor,
+        when(applicationLinkServiceProvider.getMutatingApplicationLinkService()).thenReturn(applicationLinkService);
+        connectApplinkManager = new DefaultConnectApplinkManager(applicationLinkServiceProvider, typeAccessor,
                 pluginSettingsFactory, oAuthLinkManager, transactionTemplate);
 
         when(connectApplicationType.getId()).thenReturn(RemotePluginContainerApplicationTypeImpl.TYPE_ID);

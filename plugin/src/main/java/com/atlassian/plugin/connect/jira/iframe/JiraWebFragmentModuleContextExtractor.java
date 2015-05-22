@@ -165,6 +165,87 @@ public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleC
                             }
                         }
                     }
+                },
+                new ParameterExtractor<Map<Object, Object>>()
+                {
+                    @Override
+                    public String getContextKey()
+                    {
+                        return "dashboardItem";
+                    }
+
+                    @Override
+                    public Class getExpectedType()
+                    {
+                        return Map.class;
+                    }
+
+                    @Override
+                    public void addToContext(final JiraModuleContextParameters moduleContext, final Map<Object, Object> value)
+                    {
+                        final Object id = value.get("id");
+                        if (id instanceof String)
+                        {
+                            moduleContext.put("dashboardItem.id", (String) id);
+                        }
+                        final Object key = value.get("moduleKey");
+                        if (key instanceof String)
+                        {
+                            moduleContext.put("dashboardItem.key", (String) key);
+                        }
+                    }
+                },
+                new ParameterExtractor<Map<Object, Object>>()
+                {
+                    @Override
+                    public String getContextKey()
+                    {
+                        return "dashboard";
+                    }
+
+                    @Override
+                    public Class getExpectedType()
+                    {
+                        return Map.class;
+                    }
+
+                    @Override
+                    public void addToContext(final JiraModuleContextParameters moduleContext, final Map<Object, Object> value)
+                    {
+                        final Object id = value.get("id");
+                        if (id instanceof String)
+                        {
+                            moduleContext.put("dashboard.id", (String) id);
+                        }
+                    }
+                },
+                new ParameterExtractor<Map<Object, Object>>()
+                {
+                    @Override
+                    public String getContextKey()
+                    {
+                        return "view";
+                    }
+
+                    @Override
+                    public Class getExpectedType()
+                    {
+                        return Map.class;
+                    }
+
+                    @Override
+                    public void addToContext(final JiraModuleContextParameters moduleContext, final Map<Object, Object> value)
+                    {
+                        final Object viewType = value.get("viewType");
+                        if (viewType instanceof Map)
+                        {
+                            final Object name = ((Map) viewType).get("name");
+                            if (name instanceof String)
+                            {
+                                moduleContext.put("dashboardItem.viewType", (String) name);
+                            }
+                        }
+                    }
                 }
         );
     }

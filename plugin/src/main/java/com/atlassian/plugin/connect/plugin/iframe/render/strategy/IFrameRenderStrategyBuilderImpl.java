@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 
 import com.atlassian.fugue.Option;
+import com.atlassian.plugin.connect.jira.capabilities.provider.ModuleTemplate;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.capabilities.condition.ConnectConditionFactory;
-import com.atlassian.plugin.connect.jira.capabilities.provider.WorkflowPostFunctionResource;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.iframe.render.context.IFrameRenderContextBuilderFactory;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
@@ -38,10 +38,6 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     private static final String TEMPLATE_GENERIC_INLINE = TEMPLATE_PATH + "iframe-body-inline.vm";
     private static final String TEMPLATE_PAGE = TEMPLATE_PATH + "iframe-page.vm";
     private static final String TEMPLATE_JSON = TEMPLATE_PATH + "iframe-json.vm";
-    private static final String TEMPLATE_PROJECT_ADMIN_TAB = TEMPLATE_PATH + "iframe-page-project-admin.vm";
-    private static final String TEMPLATE_POSTFUNCTION_CREATE = TEMPLATE_PATH + "jira/postfunction/create.vm";
-    private static final String TEMPLATE_POSTFUNCTION_EDIT = TEMPLATE_PATH + "jira/postfunction/edit.vm";
-    private static final String TEMPLATE_POSTFUNCTION_VIEW = TEMPLATE_PATH + "jira/postfunction/view.vm";
 
     private static final String TEMPLATE_ACCESS_DENIED_PAGE = TEMPLATE_PATH + "iframe-page-accessdenied.vm";
     private static final String TEMPLATE_ACCESS_DENIED_GENERIC_BODY = TEMPLATE_PATH + "iframe-body-accessdenied.vm";
@@ -134,33 +130,10 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     }
 
     @Override
-    public TemplatedBuilder projectAdminTabTemplate()
+    public TemplatedBuilder template(final ModuleTemplate moduleTemplate)
     {
-        template = TEMPLATE_PROJECT_ADMIN_TAB;
-        accessDeniedTemplate = TEMPLATE_ACCESS_DENIED_PAGE;
-        return this;
-    }
-
-    @Override
-    public TemplatedBuilder workflowPostFunctionTemplate(WorkflowPostFunctionResource resource)
-    {
-        accessDeniedTemplate = TEMPLATE_ACCESS_DENIED_GENERIC_BODY;
-
-        switch (resource)
-        {
-            case CREATE:
-                template = TEMPLATE_POSTFUNCTION_CREATE;
-                break;
-
-            case EDIT:
-                template = TEMPLATE_POSTFUNCTION_EDIT;
-                break;
-
-            case VIEW:
-                template = TEMPLATE_POSTFUNCTION_VIEW;
-                break;
-        }
-
+        template = moduleTemplate.template;
+        accessDeniedTemplate = moduleTemplate.accessDeniedTemplate;
         return this;
     }
 
@@ -404,8 +377,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         @Override
         public boolean shouldShow(Map<String, ? extends Object> conditionContext)
         {
-            boolean show = condition == null || condition.shouldDisplay((Map<String,Object>)conditionContext);
-            return show;
+            return condition == null || condition.shouldDisplay((Map<String,Object>)conditionContext);
         }
 
         @Override

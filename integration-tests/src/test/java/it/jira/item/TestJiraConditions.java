@@ -1,5 +1,6 @@
 package it.jira.item;
 
+import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -11,11 +12,9 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.base.Optional;
 
-import hudson.plugins.jira.soap.RemoteIssue;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.condition.CheckUsernameConditionServlet;
 import it.servlet.condition.ParameterCapturingConditionServlet;
-import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
 
 import org.junit.After;
@@ -152,7 +151,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
         JiraViewProjectPage viewProjectPage = loginAndVisit(barney, JiraViewProjectPage.class, project.getKey());
         assertTrue("Web item should NOT be found", viewProjectPage.webItemDoesNotExist(getModuleKey(onlyBettyWebItem)));
     }
-    
+
     @Test
     public void adminCannotSeeBettyWebItem()
     {
@@ -212,12 +211,12 @@ public class TestJiraConditions extends JiraWebDriverTestBase
         assertNotNull("Web item should be found", webItem);
     }
 
-    private RemoteIssue navigateToJiraIssuePageAndVerifyParameterCapturingWebItem(TestUser user) throws Exception
+    private IssueCreateResponse navigateToJiraIssuePageAndVerifyParameterCapturingWebItem(TestUser user) throws Exception
     {
         login(user);
 
-        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Nought but a test.");
-        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.getKey());
+        IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Nought but a test.");
+        JiraViewIssuePage viewIssuePage = product.visit(JiraViewIssuePage.class, issue.key);
         RemoteWebItem webItem = viewIssuePage.findWebItem(getModuleKey(CONTEXT_PARAMETERIZED_WEBITEM), Optional.<String>absent());
         assertNotNull("Web item should be found", webItem);
 
@@ -243,11 +242,11 @@ public class TestJiraConditions extends JiraWebDriverTestBase
     public void contextParametersArePassedToConditions() throws Exception
     {
         TestUser user = testUserFactory.basicUser();
-        RemoteIssue issue = navigateToJiraIssuePageAndVerifyParameterCapturingWebItem(user);
+        IssueCreateResponse issue = navigateToJiraIssuePageAndVerifyParameterCapturingWebItem(user);
 
         Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
 
-        assertThat(conditionParams, hasEntry(equalTo("issueId"), equalTo(issue.getId())));
+        assertThat(conditionParams, hasEntry(equalTo("issueId"), equalTo(issue.id)));
         assertThat(conditionParams, hasEntry(equalTo("projectKey"), equalTo(project.getKey())));
     }
 

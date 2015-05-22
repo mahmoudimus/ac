@@ -295,12 +295,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jvnet.hudson</groupId>
-            <artifactId>jira-api</artifactId>
-            <version>1.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
             <version>${jetty.version}</version>
