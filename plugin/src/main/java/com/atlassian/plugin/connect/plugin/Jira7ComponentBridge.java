@@ -1,22 +1,14 @@
 package com.atlassian.plugin.connect.plugin;
 
-import com.atlassian.plugin.module.ContainerAccessor;
-import com.atlassian.plugin.module.ContainerManagedPlugin;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
+import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
-import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.SingletonBeanRegistry;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-
-import java.lang.reflect.Field;
+import org.springframework.context.ApplicationContext;
 
 /**
  * This class is full of OSGI/Spring hacks to Conditionally ComponentImport the UserPropertyService from JIRA
@@ -28,56 +20,44 @@ import java.lang.reflect.Field;
 public class Jira7ComponentBridge implements LifecycleAware
 {
     private static final Logger logger = LoggerFactory.getLogger(Jira7ComponentBridge.class);
-    private final ContainerManagedPlugin theConnectPlugin;
 
-    private BundleContext bundleContext;
+    private final ApplicationContext applicationContext;
 
     @Autowired
-    public Jira7ComponentBridge(final BundleContext bundleContext,  PluginRetrievalService pluginRetrievalService)
+    public Jira7ComponentBridge(ApplicationContext applicationContext)
     {
-        this.bundleContext = bundleContext;
-        this.theConnectPlugin = (ContainerManagedPlugin) pluginRetrievalService.getPlugin();
+        this.applicationContext = applicationContext;
     }
 
     @Override
     public void onStart()
     {
-        // service tracker to respond to changes in service availability; will invoke addingService immediately if already present
-        new ServiceTracker<>(bundleContext, "com.atlassian.jira.bc.user.UserPropertyService", new ServiceTrackerCustomizer<Object, Object>()
+        String userPropertyClassName = "com.atlassian.jira.bc.user.UserPropertyService";
+        makeComponentAvailableInPluginContainer(userPropertyClassName, "userPropertyService");
+    }
+
+    /**
+     * Makes the class available in the plugin container, it has to be available in the osgi context
+     * @param className className to ComponentImport
+     * @param id id of the component, by default Spring
+     * @return true if component is available
+     */
+    private boolean makeComponentAvailableInPluginContainer(String className, String id)
+    {
+        try
         {
-            @Override
-            public Object addingService(final ServiceReference<Object> reference)
-            {
-                logger.debug("addingService [{}]", reference);
-                ContainerAccessor containerAccessor = theConnectPlugin.getContainerAccessor();
+            Class<?> aClass = Class.forName(className);
+            Object component = ComponentAccessor.getOSGiComponentInstanceOfType(aClass);
 
-                try
-                {
-                    Field f = containerAccessor.getClass().getDeclaredField("nativeBeanFactory");
-                    f.setAccessible(true);
-                    SingletonBeanRegistry registry = (SingletonBeanRegistry) f.get(containerAccessor);
-                    registry.registerSingleton("userPropertyService", bundleContext.getService(reference));
-                }
-                catch (Exception e)
-                {
-                    logger.info("Tried to register dynamically the UserPropertyService but failed.");
-                }
+            SingletonBeanRegistry autowireCapableBeanFactory = (SingletonBeanRegistry) applicationContext.getAutowireCapableBeanFactory();
 
-                return bundleContext.getService(reference);
-            }
+            autowireCapableBeanFactory.registerSingleton(id, component);
 
-            @Override
-            public void modifiedService(final ServiceReference<Object> reference, final Object service)
-            {
-                // nothing to do here
-            }
-
-            @Override
-            public void removedService(final ServiceReference<Object> reference, final Object service)
-            {
-                logger.debug("removedService [{}] [{}]", reference, service);
-                bundleContext.ungetService(reference);
-            }
-        }).open();
+            return true;
+        }
+        catch (ClassNotFoundException e)
+        {
+            return false;
+        }
     }
 }
