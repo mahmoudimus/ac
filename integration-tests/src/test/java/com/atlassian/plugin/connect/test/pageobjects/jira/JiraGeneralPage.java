@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.test.pageobjects.jira;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.webdriver.AtlassianWebDriver;
@@ -29,9 +30,9 @@ public final class JiraGeneralPage implements GeneralPage
 
     @Inject
     private PageBinder pageBinder;
+
     private final String pageKey;
-    private final String linkText;
-    private final String addOnKey;
+    private final String addonKey;
 
     private final Supplier<Option<WebElement>> link = new Supplier<Option<WebElement>>()
     {
@@ -45,26 +46,10 @@ public final class JiraGeneralPage implements GeneralPage
         }
     };
 
-    @Deprecated
-    /**
-     * @deprecated You must specify an addOnKey! Please migrate to {@link #JiraGeneralPage(String, String, String)}.
-     */
-    public JiraGeneralPage(String pageKey, String linkText)
-    {
-        this(pageKey, linkText, "");
-    }
-
-    public JiraGeneralPage(String pageKey, String linkText, String addOnKey)
+    public JiraGeneralPage(String pageKey, String addonKey)
     {
         this.pageKey = pageKey;
-        this.linkText = linkText;
-        this.addOnKey = addOnKey;
-    }
-
-    @Override
-    public boolean isRemotePluginLinkPresent()
-    {
-        return link.get().isDefined();
+        this.addonKey = addonKey;
     }
 
     @Override
@@ -73,7 +58,7 @@ public final class JiraGeneralPage implements GeneralPage
         final WebElement webElement = link.get().get();
         webElement.click();
         logger.debug("Link '{}' was found and clicked.", webElement);
-        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addOnKey, pageKey, true);
+        return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addonKey, pageKey, true);
     }
 
     public void clickRemotePluginLinkWithoutBinding()
@@ -163,7 +148,7 @@ public final class JiraGeneralPage implements GeneralPage
 
     private By link()
     {
-        return By.linkText(linkText);
+        return By.id(ModuleKeyUtils.addonAndModuleKey(addonKey, pageKey));
     }
 
     private void dismissCreateProjectDialogIfPresent()

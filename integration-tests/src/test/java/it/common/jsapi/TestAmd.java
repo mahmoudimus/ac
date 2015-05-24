@@ -1,8 +1,9 @@
 package it.common.jsapi;
 
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteMessageGeneralPage;
+import com.atlassian.plugin.connect.test.pageobjects.ConnectGeneralTestPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.common.MultiProductWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
@@ -13,27 +14,27 @@ import org.junit.Test;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static org.junit.Assert.assertEquals;
 
-public class TestMessage extends MultiProductWebDriverTestBase
+public class TestAmd extends MultiProductWebDriverTestBase
 {
-    private static final String PAGE_KEY = "ac-message-general-page";
+
+    private static final String PAGE_KEY = "amdTest";
 
     private static ConnectRunner remotePlugin;
-
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
-                .setAuthenticationToNone()
+                .addJWT()
                 .addModules("generalPages",
                         newPageBean()
-                                .withName(new I18nProperty("Msg", null))
-                                .withUrl("/pg")
                                 .withKey(PAGE_KEY)
+                                .withName(new I18nProperty("AMD", null))
+                                .withUrl("/amdTest")
                                 .withLocation(getGloballyVisibleLocation())
-                                .build()
-                )
-                .addRoute("/pg", ConnectAppServlets.openMessageServlet())
+                                .build())
+                .addRoute("/amdTest", ConnectAppServlets.amdTestServlet())
+                .addScope(ScopeName.READ)
                 .start();
     }
 
@@ -46,17 +47,14 @@ public class TestMessage extends MultiProductWebDriverTestBase
         }
     }
 
-    /**
-     * Tests opening an info message from a general page with json descriptor
-     */
     @Test
-    public void testCreateInfoMessage() throws Exception
+    public void testAmd()
     {
-        RemoteMessageGeneralPage page = loginAndVisit(testUserFactory.basicUser(),
-                RemoteMessageGeneralPage.class, remotePlugin.getAddon().getKey(), PAGE_KEY);
+        ConnectGeneralTestPage page = loginAndVisit(testUserFactory.basicUser(),
+                ConnectGeneralTestPage.class, remotePlugin.getAddon().getKey(), PAGE_KEY);
 
-        page.openInfoMessage();
-        assertEquals(page.getMessageTitleText(), "plain text title");
+        assertEquals("true", page.waitForValue("amd-env"));
+        assertEquals("true", page.waitForValue("amd-request"));
+        assertEquals("true", page.waitForValue("amd-dialog"));
     }
 }
-

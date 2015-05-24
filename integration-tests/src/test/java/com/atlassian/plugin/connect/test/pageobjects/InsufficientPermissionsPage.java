@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.test.pageobjects;
 
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.binder.WaitUntil;
+import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import org.openqa.selenium.By;
 
@@ -24,7 +25,7 @@ public class InsufficientPermissionsPage implements Page
     @Override
     public String getUrl()
     {
-        return String.format("/plugins/servlet/ac/%s/%s", appKey, pageKey);
+        return IframeUtils.iframeServletPath(appKey, pageKey);
     }
 
     @WaitUntil

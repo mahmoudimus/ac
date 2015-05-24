@@ -9,4 +9,9 @@ public class IframeUtils
     {
         return IFRAME_ID_PREFIX + moduleKey + IFRAME_ID_SUFFIX;
     }
+
+    public static String iframeServletPath(String addonKey, String moduleKey)
+    {
+        return String.format("/plugins/servlet/ac/%s/%s", addonKey, moduleKey);
+    }
 }

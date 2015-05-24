@@ -1,12 +1,12 @@
 package it.jira.iframe;
 
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
+import com.atlassian.plugin.connect.jira.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.jira.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteCloseDialogPage;
-import com.atlassian.plugin.connect.test.pageobjects.RemoteDialogOpeningPage;
+import com.atlassian.plugin.connect.test.pageobjects.RemoteDialogOpeningPanel;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
@@ -106,7 +106,7 @@ public class TestIssueTabPanelWithJSDialog extends JiraWebDriverTestBase
         product.quickLogin(user.getUsername(), user.getPassword());
         product.visit(JiraViewIssuePageWithRemotePluginIssueTab.class, ISSUE_TAB_PANEL_W_DIALOG, issue.key(), PLUGIN_KEY);
 
-        RemoteDialogOpeningPage dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPage.class, addonAndModuleKey(PLUGIN_KEY, ISSUE_TAB_PANEL_W_DIALOG));
+        RemoteDialogOpeningPanel dialogOpeningPage = product.getPageBinder().bind(RemoteDialogOpeningPanel.class, addonAndModuleKey(PLUGIN_KEY, ISSUE_TAB_PANEL_W_DIALOG));
         RemoteCloseDialogPage closeDialogPage = dialogOpeningPage.openKey(addonAndModuleKey(PLUGIN_KEY, ADDON_DIALOG));
 
         assertThat(closeDialogPage.getFromQueryString("myproject_key"), is(project.getKey()));

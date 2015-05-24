@@ -47,7 +47,7 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
     private static String bettyAndBarneyWebItem;
     private static final String ADMIN_RIGHTS_WEBITEM = "admin-rights";
     private static final String CONTEXT_PARAMETERIZED_WEBITEM = "context-parameterized";
-    public static final String SPACE_CONTEXT_PARAMETERIZED_WEB_PANEL = CONTEXT_PARAMETERIZED_WEBITEM + "-space";
+    private static final String SPACE_CONTEXT_PARAMETERIZED_WEB_PANEL = CONTEXT_PARAMETERIZED_WEBITEM + "-space";
 
     private static String onlyBettyConditionUrl;
     private static String onlyBarneyConditionUrl;
