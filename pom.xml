@@ -45,7 +45,14 @@
             <modules>
                 <module>plugin-lifecycle-tests</module>
             </modules>
-        </profile>
+            <dependencies>
+                <dependency>
+                    <groupId>com.atlassian.clover</groupId>
+                    <artifactId>clover</artifactId>
+                    <version>${clover.libversion}</version>
+                </dependency>
+            </dependencies>
+         </profile>
         <profile>
             <id>freezer-release-profile</id>
             <modules>
@@ -57,6 +64,13 @@
             <modules>
                 <module>wired-tests</module>
             </modules>
+            <dependencies>
+                <dependency>
+                    <groupId>com.atlassian.clover</groupId>
+                    <artifactId>clover</artifactId>
+                    <version>${clover.libversion}</version>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 
@@ -257,12 +271,6 @@
                         <artifactId>slf4j-log4j12</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.atlassian.clover</groupId>
-                <artifactId>clover</artifactId>
-                <version>${clover.libversion}</version>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>

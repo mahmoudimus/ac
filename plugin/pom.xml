@@ -497,11 +497,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.atlassian.clover</groupId>
-            <artifactId>clover</artifactId>
-        </dependency>
- 
     </dependencies>
 
     <build>
