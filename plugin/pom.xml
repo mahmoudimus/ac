@@ -496,6 +496,12 @@
             <version>${ao.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.clover</groupId>
+            <artifactId>clover</artifactId>
+        </dependency>
+ 
     </dependencies>
 
     <build>
@@ -539,6 +545,15 @@
                                 <placement>f</placement>
                             </tag>
                         </tags>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>com.atlassian.maven.plugins</groupId>
+                    <artifactId>maven-clover2-plugin</artifactId>
+                    <configuration combine.self="override">
+                        <excludes>
+                            <exclude>**/test/**/*.java</exclude>
+                        </excludes>
                     </configuration>
                 </plugin>
             </plugins>

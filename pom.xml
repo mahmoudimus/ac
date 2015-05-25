@@ -91,6 +91,14 @@
                         <skip>true</skip>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>com.atlassian.maven.plugins</groupId>
+                    <artifactId>maven-clover2-plugin</artifactId>
+                    <version>${clover.libversion}</version>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
         <extensions>
@@ -670,6 +678,11 @@
                 <version>1.9</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>com.atlassian.clover</groupId>
+                <artifactId>clover</artifactId>
+                <version>${clover.libversion}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <properties>
@@ -752,6 +765,7 @@
         <npm.version>1.4.3</npm.version>
         <blueprints.version>4.0.22</blueprints.version>
         <skipNpm>false</skipNpm>
+        <clover.libversion>4.0.3</clover.libversion>
     </properties>
 
     <repositories>

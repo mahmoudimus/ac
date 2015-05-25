@@ -338,11 +338,19 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
         )
         commonRequirements()
         checkoutDefaultRepositoryTask()
-        mavenTestTask(
+        cloverTestTask(
                 description: 'Run Wired Lifecycle Tests for #product',
                 goal: 'verify -PpluginLifecycle -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
         )
+        cloverReportArtifact(
+                name: '#product - Lifecycle Tests'
+        )
+        cloverJSONArtifact(
+                name: '#product - Lifecycle Tests'
+        )
+        cloverMiscConfiguration()
+        cloverBambooTask()
     }
 }
 
@@ -353,11 +361,19 @@ wiredTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
     ) {
         commonRequirements()
         checkoutDefaultRepositoryTask()
-        mavenTestTask(
+        cloverTestTask(
                 description: 'Run Wired Tests for #product',
                 goal: 'verify -Pwired -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
         )
+        cloverReportArtifact(
+                name: '#product - Wired Tests'
+        )
+        cloverJSONArtifact(
+                name: '#product - Wired Tests'
+        )
+        cloverMiscConfiguration()
+        cloverBambooTask()
     }
 }
 
