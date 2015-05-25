@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.api.capabilities.descriptor.url.AbsoluteAddO
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.api.iframe.servlet.ConnectIFrameServletHelper;
+import com.atlassian.plugin.connect.api.iframe.servlet.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.connect.confluence.capabilities.descriptor.macro.AutoconvertModuleDescriptor;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
@@ -244,7 +244,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                 .addAttribute("value", macroKey).getParent()
                 .addElement("var")
                 .addAttribute("name", "URL")
-                .addAttribute("value", ConnectIFrameServletHelper.iFrameServletPath(addon.getKey(), macroBean.getRawKey())).getParent()
+                .addAttribute("value", ConnectIFrameServletPath.forModule(addon.getKey(), macroBean.getRawKey())).getParent()
                 .addElement("var")
                 .addAttribute("name", "WIDTH")
                 .addAttribute("value", macroBean.getEditor().getWidth()).getParent()

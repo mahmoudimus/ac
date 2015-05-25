@@ -2,9 +2,6 @@ package com.atlassian.plugin.connect.plugin.iframe.render.context;
 
 import java.util.Map;
 
-/**
- *
- */
 public interface IFrameRenderContextBuilder
 {
     AddOnContextBuilder addOn(String key);

@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.api.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.api.iframe.servlet.ConnectIFrameServletHelper;
+import com.atlassian.plugin.connect.api.iframe.servlet.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.ConnectModuleDescriptorFactory;
@@ -67,7 +67,7 @@ public class ConnectReportModuleDescriptorFactory implements ConnectModuleDescri
 
     private Element createReportDescriptor(final ReportModuleBean bean, final ConnectAddonBean connectAddonBean)
     {
-        final String iFrameServletPath = ConnectIFrameServletHelper.iFrameServletPath(connectAddonBean.getKey(), bean.getRawKey());
+        final String iFrameServletPath = ConnectIFrameServletPath.forModule(connectAddonBean.getKey(), bean.getRawKey());
 
         final Element reportModule = new DOMElement("report");
         reportModule.addAttribute("key", bean.getKey(connectAddonBean));

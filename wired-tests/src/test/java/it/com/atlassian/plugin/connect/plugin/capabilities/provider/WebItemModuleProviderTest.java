@@ -3,7 +3,7 @@ package it.com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.api.iframe.servlet.ConnectIFrameServletHelper;
+import com.atlassian.plugin.connect.api.iframe.servlet.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
@@ -484,7 +484,7 @@ public class WebItemModuleProviderTest
     {
         final WebItemTargetBean target = webItemModuleBean.getTarget();
         final String prefix = target.isDialogTarget() || target.isInlineDialogTarget()
-                ? ConnectIFrameServletHelper.iFrameServletPath(pluginKey, webItemModuleBean.getKey(addOnBean))
+                ? ConnectIFrameServletPath.forModule(pluginKey, webItemModuleBean.getKey(addOnBean))
                 : BASE_URL + "/my/addon";
         final String href = descriptor.getLink().getDisplayableUrl(servletRequest, new HashMap<String, Object>());
         final String message = String.format("Expecting the href to start with '%s' but it was '%s'", prefix, href);

@@ -11,7 +11,7 @@ import java.util.Map;
  * createMapOf("user", createMapOf("name", "joe")), {@link UrlVariableSubstitutor#replace(String, java.util.Map)}
  * would return "hi=joe".
  * <p>
- * All values in the context are percent-encoded for subsitution into a URL.
+ * All values in the context will be percent-encoded for subsitution into a URL.
  * <p>
  * Variables that that cannot be found in the map are replaced by an empty string. For example,
  * given the source String "hi={foo.bar}" and an empty map, {@link UrlVariableSubstitutor#replace(String, java.util.Map)}

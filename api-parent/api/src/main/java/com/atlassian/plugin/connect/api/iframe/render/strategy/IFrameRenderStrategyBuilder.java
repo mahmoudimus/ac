@@ -4,9 +4,6 @@ import com.atlassian.plugin.connect.api.capabilities.provider.ModuleTemplate;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.web.Condition;
 
-/**
- *
- */
 public interface IFrameRenderStrategyBuilder
 {
     AddOnUriBuilder addOn(String key);

@@ -5,6 +5,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.api.iframe.servlet.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.jira.condition.IsProjectAdminCondition;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -19,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static com.atlassian.plugin.connect.api.iframe.servlet.ConnectIFrameServletHelper.iFrameServletPath;
 import static com.atlassian.plugin.connect.jira.capabilities.provider.JiraTemplateHelper.projectAdminTabTemplate;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 
@@ -61,7 +61,7 @@ public class ConnectProjectAdminTabPanelModuleProvider
             WebItemModuleBean webItemModuleBean = newWebItemBean()
                     .withName(bean.getName())
                     .withKey(bean.getRawKey())
-                    .withUrl(iFrameServletPath(connectAddonBean.getKey(), bean.getRawKey()))
+                    .withUrl(ConnectIFrameServletPath.forModule(connectAddonBean.getKey(), bean.getRawKey()))
                     .withContext(AddOnUrlContext.page)
                     .withLocation(bean.getAbsoluteLocation())
                     .withWeight(bean.getWeight())
