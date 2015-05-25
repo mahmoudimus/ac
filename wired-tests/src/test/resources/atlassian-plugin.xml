@@ -34,6 +34,7 @@
     <component-import key="iFrameRenderStrategyRegistry" interface="com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry" />
     <component-import key="jwtApplinkFinder" interface="com.atlassian.jwt.applinks.JwtApplinkFinder" />
     <component-import key="threeLeggedAuthService" interface="com.atlassian.plugin.connect.plugin.threeleggedauth.ThreeLeggedAuthService" />
+    <component-import key="addOnService" interface="com.atlassian.plugin.connect.api.ConnectAddonAccessor" />
 
     <!-- CONNECT MODULE PROVIDERS -->
     <component-import key="webItemModuleProvider" interface="com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider" />
