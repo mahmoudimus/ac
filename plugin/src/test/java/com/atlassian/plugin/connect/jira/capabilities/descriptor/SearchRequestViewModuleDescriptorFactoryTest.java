@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.jira.capabilities.descriptor;
 
-import com.atlassian.jira.bc.license.JiraLicenseService;
 import com.atlassian.jira.issue.views.util.SearchRequestViewBodyWriterUtil;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestURLHandler;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptorImpl;
@@ -10,29 +9,30 @@ import com.atlassian.jira.plugin.webfragment.descriptors.ConditionDescriptorFact
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.capabilities.descriptor.ConditionModuleFragmentFactory;
+import com.atlassian.plugin.connect.api.capabilities.descriptor.ParamsModuleFragmentFactory;
+import com.atlassian.plugin.connect.api.iframe.render.uri.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.jira.capabilities.util.DelegatingComponentAccessor;
+import com.atlassian.plugin.connect.jira.searchrequestview.ConnectConditionDescriptorFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.jira.condition.JiraConditions;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactoryImpl;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ParamsModuleFragmentFactory;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
-import com.atlassian.plugin.connect.jira.capabilities.util.DelegatingComponentAccessor;
-import com.atlassian.plugin.connect.api.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.jira.searchrequestview.ConnectConditionDescriptorFactory;
-import com.atlassian.plugin.connect.jira.JiraProductAccessor;
+import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import org.dom4j.Element;
+import org.dom4j.dom.DOMElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
+
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
@@ -42,7 +42,11 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -82,14 +86,37 @@ public class SearchRequestViewModuleDescriptorFactoryTest
     public void beforeEachTest() throws Exception
     {
         this.addon = newConnectAddonBean().withKey("my-plugin").build();
-        this.moduleProviderContext = new DefaultConnectModuleProviderContext(addon);
+
+        this.moduleProviderContext = mock(ConnectModuleProviderContext.class);
+        when(moduleProviderContext.getConnectAddonBean()).thenReturn(addon);
+
         when(plugin.getKey()).thenReturn("my-plugin");
         when(plugin.<UserLoggedInCondition>loadClass(eq("com.atlassian.jira.plugin.webfragment.conditions.UserLoggedInCondition"), any(Class.class)))
                 .thenReturn(UserLoggedInCondition.class);
 
         ConditionDescriptorFactory conditionDescriptorFactory = new ConditionDescriptorFactoryImpl(webFragmentHelper);
-        ConditionModuleFragmentFactory conditionModuleFragmentFactory = new ConditionModuleFragmentFactoryImpl(
-                new JiraProductAccessor(new JiraConditions(), mock(JiraLicenseService.class)), new ParamsModuleFragmentFactory());
+
+        ParamsModuleFragmentFactory paramsModuleFragmentFactory = mock(ParamsModuleFragmentFactory.class);
+        doAnswer(new Answer()
+        {
+            @Override
+            public Object answer(final InvocationOnMock invocationOnMock) throws Throwable
+            {
+                Element element = (Element) invocationOnMock.getArguments()[0];
+                Map<String,String> params = (Map) invocationOnMock.getArguments()[1];
+                for(Map.Entry<String,String> entry : params.entrySet())
+                {
+                    element.addElement("param")
+                            .addAttribute("name",entry.getKey())
+                            .addAttribute("value",entry.getValue());
+                }
+                return null;
+            }
+        }).when(paramsModuleFragmentFactory).addParamsToElement(any(Element.class), anyMap());
+
+        ConditionModuleFragmentFactory conditionModuleFragmentFactory = mock(ConditionModuleFragmentFactory.class);
+        when(conditionModuleFragmentFactory.createFragment(anyString(), anyList())).thenReturn(new DOMElement("conditions"));
+
         when(webFragmentHelper.loadCondition(eq(UserLoggedInCondition.class.getCanonicalName()), eq(plugin))).thenReturn(new UserLoggedInCondition());
 
         when(componentAccessor.getComponent(SearchRequestURLHandler.class)).thenReturn(urlHandler);

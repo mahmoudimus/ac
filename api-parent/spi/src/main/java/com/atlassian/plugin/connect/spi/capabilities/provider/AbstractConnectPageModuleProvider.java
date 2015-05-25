@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.capabilities.provider;
+package com.atlassian.plugin.connect.spi.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -20,7 +20,6 @@ import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.page;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
-import static com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet.RAW_CLASSIFIER;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -30,6 +29,8 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  */
 public abstract class AbstractConnectPageModuleProvider implements ConnectModuleProvider<ConnectPageModuleBean>
 {
+    private static final String RAW_CLASSIFIER = "raw";
+
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;

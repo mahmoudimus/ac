@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.module.webfragment;
 
 import com.atlassian.plugin.connect.api.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
+import com.atlassian.plugin.connect.api.service.IsDevModeService;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.lang3.StringUtils;

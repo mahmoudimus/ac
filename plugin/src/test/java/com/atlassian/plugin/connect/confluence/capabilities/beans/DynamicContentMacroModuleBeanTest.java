@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.confluence.capabilities.beans;
 
+import com.atlassian.plugin.connect.confluence.capabilities.bean.matchers.SameDeepPropertyValuesAs;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
@@ -11,7 +12,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MatcherBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.util.io.TestFileReader;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs;
 
 import com.google.gson.Gson;
 import org.junit.Test;

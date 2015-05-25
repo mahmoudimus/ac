@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.service;
+package com.atlassian.plugin.connect.api.service;
 
 public interface IsDevModeService
 {

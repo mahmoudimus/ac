@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.capabilities.descriptor.ConditionModuleFragmentFactory;
+import com.atlassian.plugin.connect.api.capabilities.descriptor.ParamsModuleFragmentFactory;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;

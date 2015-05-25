@@ -4,7 +4,6 @@ import com.atlassian.plugin.connect.jira.scope.JiraScopeProvider;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
-import com.atlassian.plugin.connect.plugin.scopes.AbstractScopesTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 

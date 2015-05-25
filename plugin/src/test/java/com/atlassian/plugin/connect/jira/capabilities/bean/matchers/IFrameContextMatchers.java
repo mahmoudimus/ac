@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.capabilities.beans.matchers;
+package com.atlassian.plugin.connect.jira.capabilities.bean.matchers;
 
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import org.hamcrest.Description;

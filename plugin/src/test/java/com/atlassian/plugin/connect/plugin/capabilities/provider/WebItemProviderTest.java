@@ -10,7 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactoryImpl;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IconModuleFragmentFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ParamsModuleFragmentFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ParamsModuleFragmentFactoryImpl;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactoryImpl;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
@@ -78,8 +78,8 @@ public class WebItemProviderTest
         webItemFactory = new WebItemModuleDescriptorFactoryImpl(
                 new WebItemModuleDescriptorFactoryForTests(webInterfaceManager),
                 new IconModuleFragmentFactory(remotablePluginAccessorFactoryForTests),
-                new ConditionModuleFragmentFactoryImpl(mock(ProductAccessor.class), new ParamsModuleFragmentFactory()),
-                new ParamsModuleFragmentFactory());
+                new ConditionModuleFragmentFactoryImpl(mock(ProductAccessor.class), new ParamsModuleFragmentFactoryImpl()),
+                new ParamsModuleFragmentFactoryImpl());
         servletRequest = mock(HttpServletRequest.class);
 
         when(webInterfaceManager.getWebFragmentHelper()).thenReturn(webFragmentHelper);
