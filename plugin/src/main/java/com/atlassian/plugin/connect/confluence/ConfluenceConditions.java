@@ -1,17 +1,18 @@
 package com.atlassian.plugin.connect.confluence;
 
-import com.atlassian.plugin.connect.spi.condition.PageConditions;
+import com.atlassian.plugin.connect.spi.condition.ConditionsProvider;
+import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
 import com.atlassian.plugin.connect.spi.condition.UserIsAdminCondition;
 import com.atlassian.plugin.connect.spi.product.ConditionClassResolver;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /*
  * NOTE: this class must be under the beans package (or a sub package) so our doclet can pick it up
  */
 @ConfluenceComponent
-public class ConfluenceConditions extends PageConditions
+public class ConfluenceConditions implements ConditionsProvider
 {
-
     public static final String ACTIVE_THEME = "active_theme";
     public static final String CAN_EDIT_SPACE_STYLES = "can_edit_space_styles";
     public static final String CAN_SIGNUP = "can_signup";
@@ -52,16 +53,19 @@ public class ConfluenceConditions extends PageConditions
     public static final String VIEWING_OWN_PROFILE = "viewing_own_profile";
 
     public static final String USER_IS_CONFLUENCE_ADMIN = "user_is_confluence_administrator";
+    private final PageConditionsFactory pageConditionsFactory;
 
-    public ConfluenceConditions()
+    @Autowired
+    public ConfluenceConditions(PageConditionsFactory pageConditionsFactory)
     {
-        super(getConditionMap());
+        this.pageConditionsFactory = pageConditionsFactory;
     }
 
-    protected static ConditionClassResolver getConditionMap()
+    @Override
+    public ConditionClassResolver getConditions()
     {
         return ConditionClassResolver.builder()
-                .with(PageConditions.getPageConditions())
+                .with(pageConditionsFactory.getPageConditions())
                 .mapping(ACTIVE_THEME, com.atlassian.confluence.plugin.descriptor.web.conditions.ActiveThemeCondition.class)
                 .mapping(CAN_EDIT_SPACE_STYLES, com.atlassian.confluence.plugin.descriptor.web.conditions.CanEditSpaceStylesCondition.class)
                 .mapping(CAN_SIGNUP, com.atlassian.confluence.plugin.descriptor.web.conditions.user.CanSignupCondition.class)

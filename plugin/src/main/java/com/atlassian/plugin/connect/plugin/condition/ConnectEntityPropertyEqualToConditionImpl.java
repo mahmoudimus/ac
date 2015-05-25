@@ -8,7 +8,6 @@ import com.atlassian.plugin.connect.plugin.property.AddOnPropertyService;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 
 import java.util.Map;
@@ -16,16 +15,6 @@ import java.util.Map;
 @ConnectCondition
 public class ConnectEntityPropertyEqualToConditionImpl implements ConnectEntityPropertyEqualToCondition
 {
-    public static final Predicate<Map<String, String>> RULE_PREDICATE = new Predicate<Map<String, String>>()
-    {
-        @Override
-        public boolean apply(final Map<String, String> parameters)
-        {
-            return "addon".equals(parameters.get("entity"));
-        }
-    };
-
-
     private final AddOnPropertyService addOnPropertyService;
     private final UserManager userManager;
 

@@ -1,9 +1,11 @@
 package com.atlassian.plugin.connect.jira.condition;
 
 import com.atlassian.plugin.connect.api.condition.ConnectEntityPropertyEqualToCondition;
-import com.atlassian.plugin.connect.spi.condition.PageConditions;
+import com.atlassian.plugin.connect.spi.condition.ConditionsProvider;
+import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
 import com.atlassian.plugin.connect.spi.product.ConditionClassResolver;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.google.common.base.Predicates.not;
 
@@ -11,7 +13,7 @@ import static com.google.common.base.Predicates.not;
  * NOTE: this class must be under the beans package (or a sub package) so our doclet can pick it up
  */
 @JiraComponent
-public class JiraConditions extends PageConditions
+public class JiraConditions implements ConditionsProvider
 {
     public static final String CAN_ATTACH_FILE_TO_ISSUE = "can_attach_file_to_issue";
     public static final String CAN_MANAGE_ATTACHMENTS = "can_manage_attachments";
@@ -37,15 +39,19 @@ public class JiraConditions extends PageConditions
     public static final String VOTING_ENABLED = "voting_enabled";
     public static final String WATCHING_ENABLED = "watching_enabled";
 
-    public JiraConditions()
+    private final PageConditionsFactory pageConditionsFactory;
+
+    @Autowired
+    public JiraConditions(PageConditionsFactory pageConditionsFactory)
     {
-        super(getConditionMap());
+        this.pageConditionsFactory = pageConditionsFactory;
     }
 
-    protected static ConditionClassResolver getConditionMap()
+    @Override
+    public ConditionClassResolver getConditions()
     {
         return ConditionClassResolver.builder()
-                .with(PageConditions.getPageConditions())
+                .with(pageConditionsFactory.getPageConditions())
                 .mapping(FEATURE_FLAG, com.atlassian.sal.api.features.DarkFeatureEnabledCondition.class)
                 .mapping(HAS_SELECTED_PROJECT, com.atlassian.jira.plugin.webfragment.conditions.HasSelectedProjectCondition.class)
                 .mapping(IS_ADMIN_MODE, com.atlassian.jira.plugin.webfragment.conditions.IsAdminModeCondition.class)
