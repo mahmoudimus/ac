@@ -17,6 +17,7 @@ import com.atlassian.jira.bc.projectroles.ProjectRoleService;
 import com.atlassian.jira.bc.subtask.conversion.IssueToSubTaskConversionService;
 import com.atlassian.jira.bc.subtask.conversion.SubTaskToIssueConversionService;
 import com.atlassian.jira.config.FeatureManager;
+import com.atlassian.jira.config.IssueTypeService;
 import com.atlassian.jira.config.SubTaskManager;
 import com.atlassian.jira.config.properties.ApplicationProperties;
 import com.atlassian.jira.issue.IssueManager;
@@ -102,7 +103,8 @@ public class JiraImports
             @JiraImport IssuePropertyService issuePropertyService,
             @JiraImport IssueTypePropertyService issueTypePropertyService,
             @JiraImport ProjectPropertyService projectPropertyService,
-            @JiraImport DashboardItemPropertyService dashboardItemPropertyService)
+            @JiraImport DashboardItemPropertyService dashboardItemPropertyService,
+            @JiraImport IssueTypeService issueTypeService)
     {
     }
 }

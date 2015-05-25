@@ -3,9 +3,8 @@ package it.common;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.client.AddOnPropertyClient;
-import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginAwarePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
@@ -20,28 +19,25 @@ import static org.junit.Assert.assertThat;
 
 public class TestAddOnPropertyCondition extends MultiProductWebDriverTestBase
 {
+    private static final String PAGE_KEY = "add-on-property-page";
+    private static final String PAGE_NAME = "Prop";
+
     private static ConnectRunner remotePlugin;
+
     private AddOnPropertyClient addOnPropertyClient;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        final String productContextPath = product.getProductInstance().getContextPath().toLowerCase();
-        String globallyVisibleLocation = productContextPath.contains("jira")
-                ? "system.top.navigation.bar"
-                : productContextPath.contains("wiki") || productContextPath.contains("confluence")
-                        ? "system.help/pages"
-                        : null;
-
         remotePlugin = new ConnectRunner(product)
                 .addJWT()
                 .addModules(
                         "generalPages",
                         newPageBean()
-                                .withName(new I18nProperty("Add-on property controlled page", null))
-                                .withKey("add-on-property-page")
+                                .withName(new I18nProperty(PAGE_NAME, null))
+                                .withKey(PAGE_KEY)
                                 .withUrl("/pg")
-                                .withLocation(globallyVisibleLocation)
+                                .withLocation(getGloballyVisibleLocation())
                                 .withWeight(1234)
                                 .withConditions(new SingleConditionBeanBuilder()
                                         .withCondition("entity_property_equal_to")
@@ -98,7 +94,6 @@ public class TestAddOnPropertyCondition extends MultiProductWebDriverTestBase
     private boolean webPageIsVisible()
     {
         loginAndVisit(testUserFactory.admin(), HomePage.class);
-        RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, "add-on-property-page", "Add-on property controlled page", remotePlugin.getAddon().getKey());
-        return page.isRemotePluginLinkPresent();
+        return connectPageOperations.existsWebItem(ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), PAGE_KEY));
     }
 }

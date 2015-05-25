@@ -1,16 +1,11 @@
 package it.common.jsapi;
 
-import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteCookieGeneralPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.common.MultiProductWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
-import it.util.ConnectTestUserFactory;
-import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -20,8 +15,7 @@ import static org.junit.Assert.assertEquals;
 
 public class TestCookie extends MultiProductWebDriverTestBase
 {
-    private static final String ADDON_GENERALPAGE = "ac-general-cookie-page";
-    private static final String ADDON_GENERALPAGE_NAME = "AC Cookie Page";
+    private static final String PAGE_KEY = "ac-general-cookie-page";
 
     private static ConnectRunner remotePlugin;
 
@@ -33,9 +27,10 @@ public class TestCookie extends MultiProductWebDriverTestBase
                 .setAuthenticationToNone()
                 .addModules("generalPages",
                         newPageBean()
-                                .withName(new I18nProperty(ADDON_GENERALPAGE_NAME, null))
+                                .withName(new I18nProperty("Cookie", null))
+                                .withLocation(getGloballyVisibleLocation())
                                 .withUrl("/pg")
-                                .withKey(ADDON_GENERALPAGE)
+                                .withKey(PAGE_KEY)
                                 .build()
                 )
                 .addRoute("/pg", ConnectAppServlets.cookieServlet())
@@ -58,10 +53,9 @@ public class TestCookie extends MultiProductWebDriverTestBase
     @Test
     public void testCreateCookie() throws Exception
     {
-        loginAndVisit(testUserFactory.basicUser(), HomePage.class);
-        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, ADDON_GENERALPAGE, ADDON_GENERALPAGE_NAME, remotePlugin.getAddon().getKey());
-        remotePage.clickAddOnLink();
-        RemoteCookieGeneralPage remoteCookiePage = product.getPageBinder().bind(RemoteCookieGeneralPage.class, ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), ADDON_GENERALPAGE));
+        RemoteCookieGeneralPage remoteCookiePage = loginAndVisit(testUserFactory.basicUser(),
+                RemoteCookieGeneralPage.class, remotePlugin.getAddon().getKey(), PAGE_KEY);
+
         remoteCookiePage.readCookie();
         assertEquals(remoteCookiePage.getCookieContents(), "undefined");
         remoteCookiePage.saveCookie();
@@ -69,17 +63,15 @@ public class TestCookie extends MultiProductWebDriverTestBase
         assertEquals(remoteCookiePage.getCookieContents(), "cookie contents");
     }
 
-
     /**
      * Tests deleting a cookie
      */
     @Test
     public void testEraseCookie() throws Exception
     {
-        loginAndVisit(testUserFactory.basicUser(), HomePage.class);
-        GeneralPage remotePage = product.getPageBinder().bind(GeneralPage.class, ADDON_GENERALPAGE, ADDON_GENERALPAGE_NAME, remotePlugin.getAddon().getKey());
-        remotePage.clickAddOnLink();
-        RemoteCookieGeneralPage remoteCookiePage = product.getPageBinder().bind(RemoteCookieGeneralPage.class, ModuleKeyUtils.addonAndModuleKey(remotePlugin.getAddon().getKey(), ADDON_GENERALPAGE));
+        RemoteCookieGeneralPage remoteCookiePage = loginAndVisit(testUserFactory.basicUser(),
+                RemoteCookieGeneralPage.class, remotePlugin.getAddon().getKey(), PAGE_KEY);
+
         remoteCookiePage.saveCookie();
         remoteCookiePage.eraseCookie();
         remoteCookiePage.readCookie();

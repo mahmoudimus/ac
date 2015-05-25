@@ -378,12 +378,12 @@ public class TestDashboardItem extends JiraWebDriverTestBase
 
         public String getPropertiesStatus()
         {
-            return getValueById("propertiesStatus");
+            return waitForValue("propertiesStatus");
         }
 
         public String getProperties()
         {
-            return getValueById("properties");
+            return waitForValue("properties");
         }
 
 

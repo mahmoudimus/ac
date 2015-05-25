@@ -16,6 +16,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceUserPr
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectConfluenceAdminHomePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import com.google.common.base.Optional;
 import it.servlet.ConnectAppServlets;
 import org.apache.commons.lang.RandomStringUtils;
@@ -285,6 +286,6 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
 
     private String getServletPath(String module)
     {
-        return "/confluence/plugins/servlet/ac/" + runner.getAddon().getKey() + "/" + module;
+        return "/confluence" + IframeUtils.iframeServletPath(runner.getAddon().getKey(), module);
     }
 }

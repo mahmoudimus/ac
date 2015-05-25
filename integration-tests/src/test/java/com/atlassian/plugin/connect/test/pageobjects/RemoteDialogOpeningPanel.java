@@ -1,12 +1,14 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
-import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.plugin.connect.test.utils.IframeUtils;
+import com.atlassian.webdriver.AtlassianWebDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,15 +16,19 @@ import javax.inject.Inject;
 import java.util.concurrent.Callable;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
+import static com.atlassian.plugin.connect.test.pageobjects.RemotePageUtil.runInFrame;
 
 /**
  * Page with a single button to open a dialog
  */
-public class RemoteDialogOpeningPage extends ConnectAddOnPage implements Page
+public class RemoteDialogOpeningPanel extends AbstractConnectIFrameComponent<RemoteDialogOpeningPanel>
 {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private  static final int REMOTE_DIALOG_WAIT_MS = 50000;
+
+    @Inject
+    protected AtlassianWebDriver driver;
 
     @Inject
     protected PageBinder pageBinder;
@@ -30,14 +36,19 @@ public class RemoteDialogOpeningPage extends ConnectAddOnPage implements Page
     @Inject
     protected PageElementFinder elementFinder;
 
-    public RemoteDialogOpeningPage(String addonKey, String moduleKey) {
-        super(addonKey, moduleKey, true);
+    private final String pageElementKey;
+
+    protected WebElement containerDiv;
+
+    public RemoteDialogOpeningPanel(String pageElementKey)
+    {
+        this.pageElementKey = pageElementKey;
     }
 
-    @Override
-    public String getUrl()
+    @Init
+    public void init()
     {
-        return IframeUtils.iframeServletPath(addOnKey, pageElementKey);
+        this.containerDiv = driver.findElement(By.id("embedded-" + pageElementKey));
     }
 
     public RemoteCloseDialogPage openKey(String expectedNamespace)
@@ -53,7 +64,7 @@ public class RemoteDialogOpeningPage extends ConnectAddOnPage implements Page
 
     private void open(final String id)
     {
-        runInFrame(new Callable<Void>()
+        runInFrame(driver, containerDiv, new Callable<Void>()
         {
             @Override
             public Void call() throws Exception
@@ -64,5 +75,16 @@ public class RemoteDialogOpeningPage extends ConnectAddOnPage implements Page
                 return null;
             }
         });
+    }
+
+    public String waitForValue(String key)
+    {
+        return RemotePageUtil.waitForValue(driver, containerDiv, key);
+    }
+
+    @Override
+    protected String getFrameId()
+    {
+        return IframeUtils.iframeId("embedded-" + pageElementKey);
     }
 }

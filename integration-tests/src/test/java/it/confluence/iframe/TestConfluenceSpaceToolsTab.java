@@ -37,7 +37,7 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndM
  */
 public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
 {
-    public static final String TAB_MODULE_KEY = "ac-space-tab";
+    private static final String TAB_MODULE_KEY = "ac-space-tab";
     private static ConnectRunner remotePlugin;
 
     @BeforeClass

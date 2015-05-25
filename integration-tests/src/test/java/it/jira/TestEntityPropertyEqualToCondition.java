@@ -24,7 +24,7 @@ import static org.junit.Assert.assertThat;
 
 public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
 {
-    public static final String PROJECT_KEY = "PR";
+    private static final String PROJECT_KEY = "PR";
     private static ConnectRunner remotePlugin;
     private EntityPropertyClient issueEntityPropertyClient;
 

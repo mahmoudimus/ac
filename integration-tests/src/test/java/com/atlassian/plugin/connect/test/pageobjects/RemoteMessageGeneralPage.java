@@ -4,58 +4,40 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
+import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.binder.Init;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
+import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import com.atlassian.webdriver.AtlassianWebDriver;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
-import static com.atlassian.plugin.connect.test.pageobjects.RemotePageUtil.runInFrame;
 
 /**
  * Page with a single button to open a dialog
  */
-public class RemoteMessageGeneralPage
+public class RemoteMessageGeneralPage extends ConnectAddOnPage implements Page
 {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Inject
-    protected AtlassianWebDriver driver;
-
-    @Inject
-    protected PageBinder pageBinder;
 
     @Inject
     protected PageElementFinder elementFinder;
 
-    private final String addonAndModuleKey;
-
-    protected WebElement containerDiv;
-
-    public RemoteMessageGeneralPage(String addonAndModuleKey)
-    {
-        this.addonAndModuleKey = addonAndModuleKey;
+    public RemoteMessageGeneralPage(String addonKey, String moduleKey) {
+        super(addonKey, moduleKey, true);
     }
 
-
-    @Init
-    public void init()
+    @Override
+    public String getUrl()
     {
-        this.containerDiv = driver.findElement(By.id("embedded-" + this.addonAndModuleKey));
+        return IframeUtils.iframeServletPath(addOnKey, pageElementKey);
     }
-
-
 
     public void openInfoMessage()
     {
-        runInFrame(driver, containerDiv, new Callable<Void>()
+        runInFrame(new Callable<Void>()
         {
             @Override
             public Void call() throws Exception
@@ -66,13 +48,10 @@ public class RemoteMessageGeneralPage
                 return null;
             }
         });
-
     }
 
     public String getMessageTitleText()
     {
         return elementFinder.find(By.cssSelector("#ac-message-container .aui-message .title")).getText();
     }
-
-
 }
