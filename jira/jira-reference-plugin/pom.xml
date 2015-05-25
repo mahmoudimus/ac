@@ -7,8 +7,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>connect-reference-plugin-confluence</artifactId>
-    <name>Atlassian Connect - Reference Plugin in Confluence</name>
+    <artifactId>atlassian-connect-jira-reference-plugin</artifactId>
+    <name>Atlassian Connect - Reference Plugin in JIRA</name>
     <packaging>atlassian-plugin</packaging>
 
     <dependencies>
@@ -19,9 +19,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.confluence</groupId>
-            <artifactId>confluence</artifactId>
-            <version>${atlassian.confluence.version}</version>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-api</artifactId>
+            <version>${atlassian.jira.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -65,7 +65,7 @@
         <plugins>
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
-                <artifactId>maven-confluence-plugin</artifactId>
+                <artifactId>maven-jira-plugin</artifactId>
                 <version>${amps.version}</version>
                 <extensions>true</extensions>
             </plugin>

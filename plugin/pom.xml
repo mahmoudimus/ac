@@ -137,14 +137,14 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>atlassian-connect-test-support-plugin</artifactId>
-            <version>${project.version}</version>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>atlassian-connect-test-support-plugin</artifactId>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -688,19 +688,9 @@
                                     <version>${atlassian.json.schema.validator.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>atlassian-connect-test-support-plugin</artifactId>
-                                    <version>${project.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
                                     <groupId>com.atlassian.jira</groupId>
                                     <artifactId>jira-projects-plugin</artifactId>
                                     <version>${atlassian.jira.projects.plugin.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>com.atlassian.plugins</groupId>
-                                    <artifactId>connect-reference-plugin-jira</artifactId>
-                                    <version>${project.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
                         </product>
@@ -749,19 +739,9 @@
                                     <version>${atlassian.confluence.version}</version>
                                 </pluginArtifact>
                                 <pluginArtifact>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>atlassian-connect-test-support-plugin</artifactId>
-                                    <version>${project.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
                                     <groupId>com.atlassian.confluence.plugins</groupId>
                                     <artifactId>confluence-create-content-plugin</artifactId>
                                     <version>${blueprints.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
-                                    <groupId>com.atlassian.plugins</groupId>
-                                    <artifactId>connect-reference-plugin-confluence</artifactId>
-                                    <version>${project.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
 

@@ -286,7 +286,7 @@
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.plugins</groupId>
-                                    <artifactId>connect-reference-plugin-jira</artifactId>
+                                    <artifactId>atlassian-connect-reference-plugin-jira</artifactId>
                                     <version>${project.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
@@ -349,7 +349,7 @@
                                 </pluginArtifact>
                                 <pluginArtifact>
                                     <groupId>com.atlassian.plugins</groupId>
-                                    <artifactId>connect-reference-plugin-confluence</artifactId>
+                                    <artifactId>atlassian-connect-reference-plugin-confluence</artifactId>
                                     <version>${project.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
