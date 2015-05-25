@@ -468,7 +468,7 @@ mavenTaskImpl(['description', 'goal', 'environmentVariables', 'hasTests', 'testD
 cloverReportArtifact(['name']) {
     artifactDefinition(
             name:'Clover Report (System) - #name',
-            location:'target/site/clover',
+            location:'plugin/target/site/clover',
             pattern:'**/*.*',
             shared:'true'
     )
@@ -489,7 +489,7 @@ cloverMiscConfiguration() {
         )
         clover(
             type:'custom',
-            path:'/target/site/clover'
+            path:'plugin/target/site/clover'
         )
     }
 }
