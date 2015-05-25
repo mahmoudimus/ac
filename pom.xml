@@ -50,6 +50,7 @@
                     <groupId>com.atlassian.clover</groupId>
                     <artifactId>clover</artifactId>
                     <version>${clover.libversion}</version>
+                    <scope>compile</scope>
                 </dependency>
             </dependencies>
          </profile>
@@ -69,6 +70,7 @@
                     <groupId>com.atlassian.clover</groupId>
                     <artifactId>clover</artifactId>
                     <version>${clover.libversion}</version>
+                    <scope>compile</scope>
                 </dependency>
             </dependencies>
         </profile>
