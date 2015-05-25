@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.condition;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.capabilities.condition.ConnectConditionElementParserFactory;
+import com.atlassian.plugin.connect.api.capabilities.condition.ConditionElementParserFactory;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;
@@ -11,7 +11,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 @Named
-public class ConnectConditionElementParserFactoryImpl implements ConnectConditionElementParserFactory
+public class ConnectConditionElementParserFactoryImpl implements ConditionElementParserFactory
 {
     private final ConditionElementParser conditionElementParser;
 
