@@ -82,7 +82,7 @@ runTestsStage() {
         ) {
             commonRequirements()
             checkoutDefaultRepositoryTask()
-            cloverTestTask(
+            mavenTestTask(
                     description: 'Run QUnit Tests using Karma',
                     goal: 'package -Pkarma-tests -DskipUnits',
                     environmentVariables: ''
@@ -93,14 +93,6 @@ runTestsStage() {
                     pattern: 'karma-results.xml',
                     shared: 'false'
             )
-            cloverReportArtifact(
-                    name: 'QUnit Tests'
-            )
-            cloverJSONArtifact(
-                    name: 'QUnit Tests'
-            )
-            cloverMiscConfiguration()
-            cloverBambooTask()
         }
         job(
                 key:'JDOC',
@@ -338,11 +330,19 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
         )
         commonRequirements()
         checkoutDefaultRepositoryTask()
-        mavenTestTask(
+        cloverTestTask(
                 description: 'Run Wired Lifecycle Tests for #product',
                 goal: 'verify -PpluginLifecycle -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
         )
+        cloverReportArtifact(
+                name: '#product - Lifecycle Tests'
+        )
+        cloverJSONArtifact(
+                name: '#product - Lifecycle Tests'
+        )
+        cloverMiscConfiguration()
+        cloverBambooTask()
     }
 }
 
@@ -353,11 +353,19 @@ wiredTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
     ) {
         commonRequirements()
         checkoutDefaultRepositoryTask()
-        mavenTestTask(
+        cloverTestTask(
                 description: 'Run Wired Tests for #product',
                 goal: 'verify -Pwired -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
         )
+        cloverReportArtifact(
+                name: '#product - Wired Tests'
+        )
+        cloverJSONArtifact(
+                name: '#product - Wired Tests'
+        )
+        cloverMiscConfiguration()
+        cloverBambooTask()
     }
 }
 
@@ -452,7 +460,7 @@ mavenTaskImpl(['description', 'goal', 'environmentVariables', 'hasTests', 'testD
 cloverReportArtifact(['name']) {
     artifactDefinition(
             name:'Clover Report (System) - #name',
-            location:'target/site/clover',
+            location:'plugin/target/site/clover',
             pattern:'**/*.*',
             shared:'true'
     )
@@ -473,7 +481,7 @@ cloverMiscConfiguration() {
         )
         clover(
             type:'custom',
-            path:'/target/site/clover'
+            path:'plugin/target/site/clover'
         )
     }
 }
