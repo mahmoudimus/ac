@@ -22,6 +22,7 @@ public interface ConnectAddonAccessor
      *
      * @param addonKey key of the add-on to return license of
      * @return ACTIVE if the add-on is licensed, otherwise NONE
+     * @since 1.1.32
      */
     LicenseStatus getLicenseStatus(String addonKey);
 }
