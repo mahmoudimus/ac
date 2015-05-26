@@ -25,11 +25,11 @@
 
     <modules>
         <module>api-parent</module>
-        <module>reference-plugin-jira</module>
-        <module>reference-plugin-confluence</module>
         <module>modules</module>
-        <module>test-support-plugin</module>
         <module>plugin</module>
+        <module>confluence</module>
+        <module>jira</module>
+        <module>test-support-plugin</module>
         <module>docs</module>
     </modules>
 
