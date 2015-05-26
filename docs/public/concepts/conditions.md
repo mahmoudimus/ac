@@ -339,7 +339,7 @@ in Atlassian Connect module declarations and how they map to the permissions des
 ## <a name="entity-property"></a>Entity property condition
 
 There is a common notion of entity properties in Atlassian products. Entities like `issue` or `project` can have properties that can
- be set by Connect add-ons via REST API. Add-ons can also have their own properties. Properties are a great way to display
+ be set by Connect add-ons via the  REST API. Add-ons can also have their own properties. Properties are a great way to display
  something conditionally. This can be achieved with the `entity_property_equal_to` condition.
 
  This condition lets you test whether the entity property is equal to the specified value. Supported entities depend on the product:
