@@ -109,6 +109,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
 
         dashboard.gadgets()
                 .openAddGadgetDialog()
+                .searchFor(DASHBOARD_ITEM_TITLE)
                 .addGadget(DASHBOARD_ITEM_TITLE)
                 .addGadget(DASHBOARD_ITEM_TITLE)
                 .simpleClose();
@@ -297,6 +298,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
     {
         dashboard.gadgets()
                 .openAddGadgetDialog()
+                .searchFor(title)
                 .addGadget(title)
                 .simpleClose();
     }
