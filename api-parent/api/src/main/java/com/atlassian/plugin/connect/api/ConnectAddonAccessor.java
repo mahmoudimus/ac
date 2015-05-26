@@ -18,7 +18,7 @@ public interface ConnectAddonAccessor
     boolean isAddonEnabled(String addonKey);
 
     /**
-     * Returns the license status of Connect add-on
+     * Returns the license status of Connect add-on.
      *
      * @param addonKey key of the add-on to return license of
      * @return ACTIVE if the add-on is licensed, otherwise NONE
