@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
+package com.atlassian.plugin.connect.plugin.capabilities.descriptor.contentproperty;
 
 import com.atlassian.confluence.plugins.contentproperty.index.config.ContentPropertyIndexSchemaModuleDescriptor;
 import com.atlassian.plugin.Plugin;
@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
@@ -16,8 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
-import java.io.StringWriter;
+import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.printNode;
 
 @ConfluenceComponent
 public class ContentPropertyIndexSchemaModuleDescriptorFactory implements
@@ -49,7 +49,7 @@ public class ContentPropertyIndexSchemaModuleDescriptorFactory implements
     {
         ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         Element indexSchema = new DOMElement("content-property-index-schema");
-        indexSchema.addAttribute("key", bean.getKey(connectAddonBean));
+        indexSchema.addAttribute("key", bean.getKey(connectAddonBean)+"-index-schema");
 
         for (ContentPropertyIndexKeyConfigurationBean keyConfigurationBean : bean.getKeyConfigurations())
         {
@@ -72,16 +72,7 @@ public class ContentPropertyIndexSchemaModuleDescriptorFactory implements
     {
         if (log.isDebugEnabled())
         {
-            try
-            {
-                StringWriter writer = new StringWriter();
-                indexSchema.write(writer);
-                log.debug(writer.toString());
-            }
-            catch (IOException ex)
-            {
-                log.warn("Error attempting to log schema ", ex);
-            }
+            log.debug(printNode(indexSchema));
         }
     }
 }

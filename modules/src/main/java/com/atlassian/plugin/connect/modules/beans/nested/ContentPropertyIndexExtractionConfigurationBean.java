@@ -22,6 +22,7 @@ public class ContentPropertyIndexExtractionConfigurationBean
      */
     @Required
     private final String objectName;
+
     /**
      * The type of the referenced value.
      *
@@ -38,10 +39,24 @@ public class ContentPropertyIndexExtractionConfigurationBean
     @Required
     private final ContentPropertyIndexFieldType type;
 
+    /**
+     * CQL Field name alias for this content property.
+     * TODO
+     */
+    private final String alias;
+
     public ContentPropertyIndexExtractionConfigurationBean(String objectName, ContentPropertyIndexFieldType type)
     {
         this.objectName = objectName;
         this.type = type;
+        this.alias = null; // use a Option?
+    }
+
+    public ContentPropertyIndexExtractionConfigurationBean(String objectName, ContentPropertyIndexFieldType type, String alias)
+    {
+        this.objectName = objectName;
+        this.type = type;
+        this.alias = alias;
     }
 
     public String getObjectName()
@@ -52,5 +67,10 @@ public class ContentPropertyIndexExtractionConfigurationBean
     public ContentPropertyIndexFieldType getType()
     {
         return type;
+    }
+
+    public String getAlias()
+    {
+        return alias;
     }
 }

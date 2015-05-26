@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -8,7 +9,8 @@ import com.atlassian.confluence.plugins.contentproperty.index.config.ContentProp
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ContentPropertyIndexSchemaModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.contentproperty.ContentPropertyIndexSchemaModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.contentproperty.CqlFieldModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 
 import com.google.common.base.Function;
@@ -22,27 +24,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ConfluenceComponent
 public class DefaultContentPropertyModuleProvider implements ContentPropertyModuleProvider
 {
-    private final ContentPropertyIndexSchemaModuleDescriptorFactory factory;
+    private final ContentPropertyIndexSchemaModuleDescriptorFactory cpFactory;
+    private final CqlFieldModuleDescriptorFactory cfFactory;
 
     @Autowired
     public DefaultContentPropertyModuleProvider(
-            ContentPropertyIndexSchemaModuleDescriptorFactory factory)
+            ContentPropertyIndexSchemaModuleDescriptorFactory cpFactory,
+            CqlFieldModuleDescriptorFactory cfFactory)
     {
-        this.factory = factory;
+        this.cpFactory = cpFactory;
+        this.cfFactory = cfFactory;
     }
 
     @Override
     public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin plugin,
-            String jsonFieldName, List<ContentPropertyModuleBean> beans)
+                                                 String jsonFieldName, List<ContentPropertyModuleBean> beans)
     {
-        return Lists.transform(beans, new Function<ContentPropertyModuleBean, ModuleDescriptor>()
+        final List<ModuleDescriptor> result = new ArrayList<>();
+        result.addAll(Lists.transform(beans, new Function<ContentPropertyModuleBean, ModuleDescriptor>()
         {
             @Override
             public ContentPropertyIndexSchemaModuleDescriptor apply(
                     @Nullable ContentPropertyModuleBean input)
             {
-                return factory.createModuleDescriptor(moduleProviderContext, plugin, input);
+                return cpFactory.createModuleDescriptor(moduleProviderContext, plugin, input);
             }
-        });
+        }));
+        result.addAll(cfFactory.createModuleDescriptors(moduleProviderContext, plugin, beans));
+        return result;
     }
 }
