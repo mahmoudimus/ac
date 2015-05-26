@@ -71,8 +71,7 @@ public class ConnectAddOnUserServiceImplTest
     private @Mock ApplicationManager applicationManager;
     private @Mock Application application;
     private @Mock User user;
-    private @Mock
-    ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService;
+    private @Mock ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService;
     private @Mock CrowdClientFacade crowdClientFacade;
     private @Mock CrowdClient crowdClient;
     private @Mock FeatureManager featureManager;

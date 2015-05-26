@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.confluence.capabilities.bean.matchers;
+package com.atlassian.plugin.connect.testsupport.util.matcher;
 
 import org.hamcrest.Description;
 import org.hamcrest.Factory;

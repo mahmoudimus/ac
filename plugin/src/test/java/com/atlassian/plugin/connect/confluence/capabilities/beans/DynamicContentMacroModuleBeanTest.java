@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.confluence.capabilities.beans;
 
-import com.atlassian.plugin.connect.confluence.capabilities.bean.matchers.SameDeepPropertyValuesAs;
+import com.atlassian.plugin.connect.testsupport.util.matcher.SameDeepPropertyValuesAs;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
