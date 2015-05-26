@@ -6,7 +6,7 @@ import com.atlassian.confluence.util.i18n.I18NBeanFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.util.Dom4jUtils;
 import com.atlassian.plugin.module.ModuleFactory;

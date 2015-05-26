@@ -21,8 +21,11 @@ import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.crowd.service.client.CrowdClient;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
-import com.atlassian.plugin.connect.plugin.util.FeatureManager;
+import com.atlassian.plugin.connect.spi.product.FeatureManager;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -37,7 +40,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import static com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserUtil.buildAttributeConnectAddOnAttributeName;
+import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.buildAttributeConnectAddOnAttributeName;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;

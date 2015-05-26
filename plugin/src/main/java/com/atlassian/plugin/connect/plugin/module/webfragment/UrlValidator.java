@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.module.webfragment;
 import java.net.URI;
 import java.util.Collections;
 
+import com.atlassian.plugin.connect.api.module.webfragment.UrlVariableSubstitutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

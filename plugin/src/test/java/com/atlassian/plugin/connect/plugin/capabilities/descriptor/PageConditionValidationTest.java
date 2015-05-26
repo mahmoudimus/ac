@@ -3,7 +3,9 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.impl.PageConditionsValidator;
+import com.atlassian.plugin.connect.plugin.condition.PageConditionsFactoryImpl;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
+import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.opensymphony.util.FileUtils;
 import org.junit.Before;
@@ -22,10 +24,10 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class PageConditionValidationTest
 {
-    private
     @Mock
-    I18nResolver i18nResolver;
+    private I18nResolver i18nResolver;
 
+    private PageConditionsFactory pageConditionsFactory = new PageConditionsFactoryImpl();
     private PageConditionsValidator conditionsValidator;
 
     @Before
@@ -33,7 +35,7 @@ public class PageConditionValidationTest
     {
         when(i18nResolver.getText(anyString(), anyString(), anyString())).thenReturn("error message");
 
-        this.conditionsValidator = new PageConditionsValidator(i18nResolver);
+        this.conditionsValidator = new PageConditionsValidator(i18nResolver, pageConditionsFactory);
     }
 
     @Test

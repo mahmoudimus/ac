@@ -5,6 +5,7 @@ import com.atlassian.confluence.macro.browser.beans.MacroParameter;
 import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.confluence.util.i18n.DocumentationBean;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
@@ -21,7 +22,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 import java.util.List;
 
@@ -33,8 +36,12 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.arrayContainingInAnyOrder;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasToString;
 import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 
@@ -47,6 +54,8 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
     public static final String MACRO_DESCRIPTION = "The Macro Description";
     @Mock
     protected ContainerContext containerContext;
+    @Mock
+    protected AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter;
 
     protected Plugin plugin = new PluginForTests("my-plugin", "My Plugin");
     protected XhtmlMacroModuleDescriptor descriptor;
@@ -60,15 +69,36 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
     public void beforeEachTest() throws Exception
     {
         setupContainer();
+        setupUrlConverter();
         this.descriptor = createModuleDescriptorForTest();
         this.descriptor.enabled();
     }
 
-    private void setupContainer() {
+    private void setupUrlConverter()
+    {
+        when(absoluteAddOnUrlConverter.getAbsoluteUrl((ConnectAddonBean)any(), anyString())).then(new Answer<Object>()
+        {
+            @Override
+            public Object answer(final InvocationOnMock invocationOnMock) throws Throwable
+            {
+                String url  = (String) invocationOnMock.getArguments()[1];
+                if (url.startsWith("/"))
+                {
+                    return "http://www.example.com" + url;
+                }
+                return invocationOnMock.getArguments()[1];
+            }
+        });
+    }
+
+    private void setupContainer()
+    {
         when(containerContext.isSetup()).thenReturn(true);
         when(containerContext.getComponent("docBean")).thenReturn(new MockDocBean());
         ContainerManager.getInstance().setContainerContext(containerContext);
     }
+
+
 
     @Test
     public void verifyPluginKeyIsCorrect() throws Exception

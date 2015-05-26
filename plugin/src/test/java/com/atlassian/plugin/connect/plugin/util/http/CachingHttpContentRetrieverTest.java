@@ -7,6 +7,7 @@ import com.atlassian.httpclient.api.ResponsePromise;
 import com.atlassian.httpclient.api.ResponseTransformation;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginInformation;
+import com.atlassian.plugin.connect.spi.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.plugin.ConnectHttpClientFactory;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;

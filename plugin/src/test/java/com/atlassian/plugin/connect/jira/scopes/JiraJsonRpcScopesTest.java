@@ -5,7 +5,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.connect.plugin.scopes.APITestUtil;
-import com.atlassian.plugin.connect.plugin.scopes.AbstractScopesTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 

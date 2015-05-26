@@ -4,7 +4,7 @@ import com.atlassian.jira.bc.project.component.ProjectComponent;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.version.Version;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
 
 /**
  * @since 1.0

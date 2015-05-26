@@ -2,6 +2,8 @@ package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.base.Strings;

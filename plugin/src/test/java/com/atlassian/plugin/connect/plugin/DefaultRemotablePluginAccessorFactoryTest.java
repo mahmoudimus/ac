@@ -9,8 +9,10 @@ import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager;
+import com.atlassian.plugin.connect.spi.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
 import com.atlassian.plugin.connect.plugin.util.http.CachingHttpContentRetriever;
@@ -72,7 +74,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
         when(pluginAccessor.getPlugin(PLUGIN_KEY)).thenReturn(plugin);
 
         when(connectApplinkManager.getAppLink(PLUGIN_KEY)).thenReturn(mock(ApplicationLink.class));
-        factory = new DefaultRemotablePluginAccessorFactory(connectApplinkManager, descriptorRegistry, oAuthLinkManager, mockCachingHttpContentRetriever(), pluginAccessor, applicationProperties, eventPublisher,jwtService, consumerService, userManager, connectAddonBeanFactory);
+        factory = new DefaultRemotablePluginAccessorFactoryImpl(connectApplinkManager, descriptorRegistry, oAuthLinkManager, mockCachingHttpContentRetriever(), pluginAccessor, applicationProperties, eventPublisher,jwtService, consumerService, userManager, connectAddonBeanFactory);
     }
 
     @Test

@@ -2,18 +2,18 @@ package com.atlassian.plugin.connect.jira.iframe;
 
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.project.Project;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.jira.iframe.context.JiraModuleContextParameters;
 import com.atlassian.plugin.connect.jira.iframe.context.JiraModuleContextParametersImpl;
-import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor;
+import com.atlassian.plugin.connect.spi.iframe.webpanel.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.ImmutableList;
 
-import javax.inject.Inject;
 import java.security.Principal;
 import java.util.Map;
+import javax.inject.Inject;
 
 @JiraComponent
 public class JiraWebFragmentModuleContextExtractor implements WebFragmentModuleContextExtractor

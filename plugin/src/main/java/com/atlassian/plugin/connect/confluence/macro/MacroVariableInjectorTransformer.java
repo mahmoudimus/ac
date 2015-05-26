@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.confluence.macro;
 import com.atlassian.confluence.util.i18n.I18NBeanFactory;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.plugin.ConnectPluginInfo;
+import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.elements.ResourceLocation;
 import com.atlassian.plugin.servlet.DownloadableClasspathResource;
 import com.atlassian.plugin.servlet.DownloadableResource;

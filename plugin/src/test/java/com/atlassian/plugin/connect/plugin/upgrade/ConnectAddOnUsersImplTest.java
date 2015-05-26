@@ -9,7 +9,7 @@ import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.search.EntityDescriptor;
 import com.atlassian.crowd.search.query.membership.MembershipQuery;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningService;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;

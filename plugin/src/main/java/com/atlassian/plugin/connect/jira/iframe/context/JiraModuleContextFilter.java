@@ -18,7 +18,7 @@ import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.plugin.iframe.context.AbstractModuleContextFilter;
+import com.atlassian.plugin.connect.spi.iframe.context.AbstractModuleContextFilter;
 import com.atlassian.plugin.connect.spi.module.PermissionCheck;
 import com.atlassian.plugin.connect.spi.module.PermissionChecks;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;

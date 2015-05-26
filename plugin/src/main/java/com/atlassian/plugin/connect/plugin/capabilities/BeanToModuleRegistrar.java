@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.capabilities;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.modules.annotation.ConnectModule;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
@@ -12,8 +13,7 @@ import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.exception.ModuleProviderNotFoundException;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.connect.api.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 import com.atlassian.plugin.module.ContainerAccessor;

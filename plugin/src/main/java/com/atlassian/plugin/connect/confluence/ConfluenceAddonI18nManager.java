@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.confluence;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonI18nManager;
+import com.atlassian.plugin.connect.spi.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.util.resource.AlternativeDirectoryResourceLoader;
@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -23,6 +22,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import javax.inject.Inject;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;

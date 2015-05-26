@@ -3,9 +3,9 @@ package com.atlassian.plugin.connect.jira.capabilities.descriptor.tabpanel;
 import com.atlassian.jira.plugin.issuetabpanel.IssueTabPanel3;
 import com.atlassian.jira.plugin.issuetabpanel.IssueTabPanelModuleDescriptorImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.api.iframe.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.jira.iframe.tabpanel.issue.ConnectIFrameIssueTabPanel;
 import com.atlassian.plugin.module.ModuleFactory;
 

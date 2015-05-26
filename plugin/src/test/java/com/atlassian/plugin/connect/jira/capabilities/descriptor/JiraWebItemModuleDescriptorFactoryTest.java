@@ -2,15 +2,14 @@ package com.atlassian.plugin.connect.jira.capabilities.descriptor;
 
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
+import com.atlassian.plugin.connect.api.iframe.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.api.iframe.render.uri.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.api.iframe.webpanel.PluggableParametersExtractor;
+import com.atlassian.plugin.connect.api.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.plugin.iframe.webpanel.PluggableParametersExtractor;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.util.fixture.PluginForTests;
-import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.conditions.ConditionLoadingException;
@@ -25,7 +24,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +35,8 @@ import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -181,14 +184,25 @@ public class JiraWebItemModuleDescriptorFactoryTest
 
     private UrlVariableSubstitutor createUrlSubstitutor()
     {
-        return new UrlVariableSubstitutor(new IsDevModeService()
+        UrlVariableSubstitutor mock = mock(UrlVariableSubstitutor.class);
+        when(mock.append(anyString(), anyMap())).then(new Answer<Object>()
         {
             @Override
-            public boolean isDevMode()
+            public Object answer(final InvocationOnMock invocationOnMock) throws Throwable
             {
-                return false;
+                return invocationOnMock.getArguments()[0];
             }
         });
+        when(mock.replace(anyString(), anyMap())).then(new Answer<Object>()
+        {
+            @Override
+            public Object answer(final InvocationOnMock invocationOnMock) throws Throwable
+            {
+                String template = (String) invocationOnMock.getArguments()[0];
+                return template.replaceAll("\\{.*?\\}","");
+            }
+        });
+        return mock;
     }
 
     private Element createElement()

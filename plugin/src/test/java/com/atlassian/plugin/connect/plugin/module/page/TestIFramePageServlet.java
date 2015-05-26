@@ -1,8 +1,10 @@
 package com.atlassian.plugin.connect.plugin.module.page;
 
-import com.atlassian.plugin.connect.plugin.module.IFramePageRenderer;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.api.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.spi.iframe.page.IFramePageRenderer;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
+import com.atlassian.plugin.connect.spi.module.page.IFramePageServlet;
+import com.atlassian.plugin.connect.spi.module.page.PageInfo;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Before;

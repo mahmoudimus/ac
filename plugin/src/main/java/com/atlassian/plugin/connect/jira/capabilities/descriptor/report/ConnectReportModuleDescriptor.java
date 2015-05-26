@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.jira.capabilities.descriptor.report;
 
-
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.plugin.report.Report;
 import com.atlassian.jira.plugin.report.ReportModuleDescriptor;
@@ -9,13 +8,13 @@ import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.api.iframe.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.api.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.connect.api.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.jira.iframe.context.JiraModuleContextParameters;
 import com.atlassian.plugin.connect.jira.iframe.context.JiraModuleContextParametersImpl;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.api.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.util.concurrent.NotNull;

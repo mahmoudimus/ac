@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.confluence.iframe.context.serializer;
 import com.atlassian.confluence.content.CustomContentEntityObject;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.plugin.connect.confluence.iframe.context.extractor.ContentContextMapParameterExtractor;
-import com.atlassian.plugin.connect.plugin.module.context.ParameterSerializer;
+import com.atlassian.plugin.connect.spi.module.context.ParameterSerializer;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.google.common.collect.ImmutableMap;
 

@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module.util.redirect;
 
-import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.spi.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;

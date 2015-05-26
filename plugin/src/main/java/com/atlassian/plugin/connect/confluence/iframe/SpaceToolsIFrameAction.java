@@ -1,18 +1,18 @@
 package com.atlassian.plugin.connect.confluence.iframe;
 
 import com.atlassian.confluence.spaces.actions.SpaceAdminAction;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.api.iframe.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.confluence.iframe.context.ConfluenceModuleContextParameters;
 import com.atlassian.plugin.connect.confluence.iframe.context.ConfluenceModuleContextParametersImpl;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 
 import java.io.IOException;
 import java.util.Collections;
 
-import static com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyUtil.renderAccessDeniedToString;
-import static com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyUtil.renderToString;
+import static com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyUtil.renderAccessDeniedToString;
+import static com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyUtil.renderToString;
 
 public class SpaceToolsIFrameAction extends SpaceAdminAction
 {

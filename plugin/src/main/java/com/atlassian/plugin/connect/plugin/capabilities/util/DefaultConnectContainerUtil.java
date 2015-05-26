@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.util;
 
+import com.atlassian.plugin.connect.api.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 

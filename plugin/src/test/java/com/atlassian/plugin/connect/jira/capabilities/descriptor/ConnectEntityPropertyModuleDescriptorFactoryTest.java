@@ -8,12 +8,15 @@ import com.atlassian.jira.plugin.index.EntityPropertyIndexDocumentModuleDescript
 import com.atlassian.jira.plugin.index.EntityPropertyIndexDocumentModuleDescriptorImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
-import com.atlassian.plugin.connect.modules.beans.nested.*;
-import com.atlassian.plugin.connect.jira.capabilities.descriptor.ConnectEntityPropertyModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
-import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexType;
+import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyType;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.google.common.collect.ImmutableList;
 import org.hamcrest.Matchers;
@@ -33,9 +36,13 @@ import static com.atlassian.jira.index.IndexDocumentConfiguration.KeyConfigurati
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean.newEntityPropertyModuleBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith (MockitoJUnitRunner.class)
@@ -68,7 +75,10 @@ public class ConnectEntityPropertyModuleDescriptorFactoryTest
         when(autowireUtil.createBean(eq(EntityPropertyIndexDocumentModuleDescriptorImpl.class)))
                 .thenReturn(new EntityPropertyIndexDocumentModuleDescriptorImpl(authContext, moduleFactory));
         EntityPropertyModuleBean bean = createBean();
-        this.moduleDescriptor = factory.createModuleDescriptor(new DefaultConnectModuleProviderContext(addon), plugin, bean);
+
+        ConnectModuleProviderContext context = mock(ConnectModuleProviderContext.class);
+        when(context.getConnectAddonBean()).thenReturn(addon);
+        this.moduleDescriptor = factory.createModuleDescriptor(context, plugin, bean);
     }
 
     @Test

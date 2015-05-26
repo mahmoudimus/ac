@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.iframe.context;
 
+import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**

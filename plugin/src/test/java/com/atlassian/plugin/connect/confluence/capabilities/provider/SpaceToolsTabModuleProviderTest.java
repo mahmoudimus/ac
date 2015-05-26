@@ -1,7 +1,8 @@
 package com.atlassian.plugin.connect.confluence.capabilities.provider;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
+import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
+import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.confluence.capabilities.descriptor.XWorkActionDescriptorFactory;
 import com.atlassian.plugin.connect.confluence.iframe.SpaceToolsIFrameAction;
 import com.atlassian.plugin.connect.confluence.iframe.SpaceToolsTabContext;
@@ -12,12 +13,10 @@ import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.XWorkActionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.XWorkInterceptorBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
+import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -35,6 +34,7 @@ import static com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -65,7 +65,8 @@ public class SpaceToolsTabModuleProviderTest
     public void setup()
     {
         this.addon = newConnectAddonBean().withKey("my-plugin").build();
-        this.moduleProviderContext = new DefaultConnectModuleProviderContext(addon);
+        this.moduleProviderContext = mock(ConnectModuleProviderContext.class);
+        when(moduleProviderContext.getConnectAddonBean()).thenReturn(addon);
         provider = new SpaceToolsTabModuleProvider(webItemModuleDescriptorFactory, xWorkActionDescriptorFactory,
                 productAccessor, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
         when(plugin.getKey()).thenReturn("my-plugin");

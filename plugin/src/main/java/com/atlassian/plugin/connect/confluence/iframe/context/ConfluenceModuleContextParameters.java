@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.confluence.iframe.context;
 import com.atlassian.confluence.core.ContentEntityObject;
 import com.atlassian.confluence.pages.AbstractPage;
 import com.atlassian.confluence.spaces.Space;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
 
 /**
  * @since 1.0

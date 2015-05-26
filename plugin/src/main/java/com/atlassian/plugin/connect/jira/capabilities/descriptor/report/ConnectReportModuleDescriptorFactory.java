@@ -1,17 +1,16 @@
 package com.atlassian.plugin.connect.jira.capabilities.descriptor.report;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
+import com.atlassian.plugin.connect.api.capabilities.util.ConnectContainerUtil;
+import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
+import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.api.iframe.servlet.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
+import com.atlassian.plugin.connect.spi.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.GeneralPageModuleProvider;
-import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -53,7 +52,7 @@ public class ConnectReportModuleDescriptorFactory implements ConnectModuleDescri
                 .module(bean.getKey(connectAddonBean))
                 .pageTemplate()
                 .urlTemplate(bean.getUrl())
-                .decorator(GeneralPageModuleProvider.ATL_GENERAL_DECORATOR)
+                .decorator("atl.general")
                 .resizeToParent(true)
                 .title(bean.getDisplayName())
                 .build();
@@ -68,7 +67,7 @@ public class ConnectReportModuleDescriptorFactory implements ConnectModuleDescri
 
     private Element createReportDescriptor(final ReportModuleBean bean, final ConnectAddonBean connectAddonBean)
     {
-        final String iFrameServletPath = ConnectIFrameServlet.iFrameServletPath(connectAddonBean.getKey(), bean.getRawKey());
+        final String iFrameServletPath = ConnectIFrameServletPath.forModule(connectAddonBean.getKey(), bean.getRawKey());
 
         final Element reportModule = new DOMElement("report");
         reportModule.addAttribute("key", bean.getKey(connectAddonBean));

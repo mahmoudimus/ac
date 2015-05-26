@@ -2,13 +2,13 @@ package com.atlassian.plugin.connect.plugin.capabilities.module;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.iframe.webpanel.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
 import com.atlassian.plugin.connect.plugin.condition.ConnectConditionContext;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.plugin.iframe.webpanel.PluggableParametersExtractor;
+import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.api.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.util.BundleUtil;
-import com.atlassian.plugin.connect.plugin.util.http.ContentRetrievalException;
+import com.atlassian.plugin.connect.api.util.http.ContentRetrievalException;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.event.AddOnConditionFailedEvent;
 import com.atlassian.plugin.connect.spi.event.AddOnConditionInvokedEvent;

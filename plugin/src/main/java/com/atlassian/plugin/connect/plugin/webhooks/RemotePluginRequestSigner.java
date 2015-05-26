@@ -2,11 +2,11 @@ package com.atlassian.plugin.connect.plugin.webhooks;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.httpclient.api.Request;
-import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.util.BundleUtil;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
+import com.atlassian.plugin.connect.spi.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.HttpMethod;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;

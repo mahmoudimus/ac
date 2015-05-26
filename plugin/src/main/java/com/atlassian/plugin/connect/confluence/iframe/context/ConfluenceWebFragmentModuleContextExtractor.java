@@ -7,17 +7,14 @@ import com.atlassian.confluence.pages.actions.AbstractPageAwareAction;
 import com.atlassian.confluence.plugin.descriptor.web.WebInterfaceContext;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.user.ConfluenceUser;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.confluence.iframe.context.ConfluenceModuleContextFilter;
-import com.atlassian.plugin.connect.confluence.iframe.context.ConfluenceModuleContextParameters;
-import com.atlassian.plugin.connect.confluence.iframe.context.ConfluenceModuleContextParametersImpl;
-import com.atlassian.plugin.connect.plugin.iframe.webpanel.WebFragmentModuleContextExtractor;
+import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.spi.iframe.webpanel.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 
-import javax.inject.Inject;
 import java.util.Map;
+import javax.inject.Inject;
 
 /**
  *

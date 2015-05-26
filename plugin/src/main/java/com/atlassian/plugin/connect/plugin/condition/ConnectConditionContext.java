@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.condition;
 
 import com.atlassian.fugue.Option;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import java.util.Map;

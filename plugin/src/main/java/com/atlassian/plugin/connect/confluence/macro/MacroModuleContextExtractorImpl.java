@@ -8,12 +8,11 @@ import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.Spaced;
 import com.atlassian.confluence.xhtml.api.MacroDefinition;
 import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.spi.iframe.context.HashMapModuleContextParameters;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 

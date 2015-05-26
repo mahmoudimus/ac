@@ -1,11 +1,12 @@
 package com.atlassian.plugin.connect.plugin.module.webitem;
 
+import com.atlassian.plugin.connect.api.iframe.webpanel.PluggableParametersExtractor;
+import com.atlassian.plugin.connect.api.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.api.module.webitem.RemoteWebLink;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
-import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.plugin.iframe.webpanel.PluggableParametersExtractor;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.api.iframe.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.api.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.descriptors.WebFragmentModuleDescriptor;
 import com.google.common.collect.ImmutableMap;

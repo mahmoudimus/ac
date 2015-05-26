@@ -6,7 +6,7 @@ import com.atlassian.confluence.pages.Page;
 import com.atlassian.confluence.pages.actions.AbstractPageAwareAction;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.user.ConfluenceUser;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;

@@ -6,17 +6,17 @@ import com.atlassian.gadgets.plugins.DashboardItemModule.Author;
 import com.atlassian.gadgets.plugins.DashboardItemModule.DirectoryDefinition;
 import com.atlassian.gadgets.plugins.DashboardItemModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.capabilities.condition.ConditionElementParserFactory;
+import com.atlassian.plugin.connect.api.capabilities.descriptor.ConditionModuleFragmentFactory;
+import com.atlassian.plugin.connect.api.iframe.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
+import com.atlassian.plugin.connect.api.iframe.webpanel.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.DashboardItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
-import com.atlassian.plugin.connect.plugin.capabilities.condition.ConnectConditionElementParserFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
-import com.atlassian.plugin.connect.plugin.iframe.webpanel.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.spi.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
@@ -35,7 +35,7 @@ import java.util.Set;
 public class DashboardItemModuleDescriptorFactory implements ConnectModuleDescriptorFactory<DashboardItemModuleBean, DashboardItemModuleDescriptor>
 {
     private final ConditionModuleFragmentFactory conditionModuleFragmentFactory;
-    private final ConnectConditionElementParserFactory conditionElementParserFactory;
+    private final ConditionElementParserFactory conditionElementParserFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final ModuleFactory moduleFactory;
     private final PluggableParametersExtractor parametersExtractor;
@@ -44,7 +44,7 @@ public class DashboardItemModuleDescriptorFactory implements ConnectModuleDescri
 
     @Autowired
     public DashboardItemModuleDescriptorFactory(final ConditionModuleFragmentFactory conditionModuleFragmentFactory,
-            final ConnectConditionElementParserFactory conditionElementParserFactory,
+            final ConditionElementParserFactory conditionElementParserFactory,
             final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             final ModuleFactory moduleFactory,
             final PluggableParametersExtractor parametersExtractor,

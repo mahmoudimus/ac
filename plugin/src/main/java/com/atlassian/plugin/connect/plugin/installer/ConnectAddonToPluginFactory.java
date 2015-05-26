@@ -3,10 +3,10 @@ package com.atlassian.plugin.connect.plugin.installer;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginInformation;
 import com.atlassian.plugin.PluginState;
+import com.atlassian.plugin.connect.api.iframe.servlet.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
-import com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet;
 import com.google.common.base.Strings;
 
 import javax.inject.Inject;
@@ -63,7 +63,7 @@ public class ConnectAddonToPluginFactory
         ConnectPageModuleBean configurePage = addon.getModules().getConfigurePage();
         if (null != configurePage && !Strings.isNullOrEmpty(configurePage.getUrl()))
         {
-            pluginInfo.addParameter(CONFIGURE_URL, ConnectIFrameServlet.iFrameServletPath(addon.getKey(), configurePage.getRawKey()));
+            pluginInfo.addParameter(CONFIGURE_URL, ConnectIFrameServletPath.forModule(addon.getKey(), configurePage.getRawKey()));
         }
 
         return pluginInfo;
