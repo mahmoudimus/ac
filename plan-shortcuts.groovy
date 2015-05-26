@@ -82,7 +82,7 @@ runTestsStage() {
         ) {
             commonRequirements()
             checkoutDefaultRepositoryTask()
-            cloverTestTask(
+            mavenTestTask(
                     description: 'Run QUnit Tests using Karma',
                     goal: 'package -Pkarma-tests -DskipUnits',
                     environmentVariables: ''
@@ -93,14 +93,6 @@ runTestsStage() {
                     pattern: 'karma-results.xml',
                     shared: 'false'
             )
-            cloverReportArtifact(
-                    name: 'QUnit Tests'
-            )
-            cloverJSONArtifact(
-                    name: 'QUnit Tests'
-            )
-            cloverMiscConfiguration()
-            cloverBambooTask()
         }
         job(
                 key:'JDOC',
