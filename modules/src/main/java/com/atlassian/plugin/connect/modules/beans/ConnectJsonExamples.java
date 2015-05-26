@@ -852,7 +852,7 @@ public class ConnectJsonExamples
                 .configurable(true)
                 .build();
 
-        return gson.toJson(createJsonArray("dashboardItems", dashboardItemExample));
+        return gson.toJson(createJsonArray("jiraDashboardItems", dashboardItemExample));
     }
 
     private static JsonObject createJsonArray(String name, ModuleBean bean)
