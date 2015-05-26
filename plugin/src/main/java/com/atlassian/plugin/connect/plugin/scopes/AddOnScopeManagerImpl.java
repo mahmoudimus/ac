@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.spi.scope.AddOnScope;
 import com.atlassian.plugin.connect.spi.scope.AddOnScopeApiPath;
 import com.atlassian.plugin.connect.spi.scope.ApiScope;
 import com.atlassian.plugin.connect.spi.scope.helper.RestApiScopeHelper;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
@@ -28,6 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.any;
 
 @Component
+@ExportAsDevService
 public final class AddOnScopeManagerImpl implements AddOnScopeManager
 {
     private final Collection<AddOnScope> allScopes;

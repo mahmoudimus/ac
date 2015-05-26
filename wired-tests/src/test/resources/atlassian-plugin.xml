@@ -35,6 +35,7 @@
     <component-import key="jwtApplinkFinder" interface="com.atlassian.jwt.applinks.JwtApplinkFinder" />
     <component-import key="threeLeggedAuthService" interface="com.atlassian.plugin.connect.plugin.threeleggedauth.ThreeLeggedAuthService" />
     <component-import key="addOnService" interface="com.atlassian.plugin.connect.api.ConnectAddonAccessor" />
+    <component-import key="addOnScopeManager" interface="com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManager" />
 
     <!-- CONNECT MODULE PROVIDERS -->
     <component-import key="webItemModuleProvider" interface="com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider" />
