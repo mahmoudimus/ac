@@ -45,16 +45,14 @@
             <modules>
                 <module>plugin-lifecycle-tests</module>
             </modules>
-            <dependencies>
-                <dependency>
-                    <groupId>com.atlassian.clover</groupId>
-                    <artifactId>clover</artifactId>
-                    <version>${clover.libversion}</version>
-                    <scope>compile</scope>
-                </dependency>
-            </dependencies>
          </profile>
         <profile>
+            <id>pluginLifecycle-clover</id>
+            <modules>
+                <module>plugin-lifecycle-tests</module>
+            </modules>
+         </profile>
+         <profile>
             <id>freezer-release-profile</id>
             <modules>
                 <module>integration-tests</module>
@@ -65,14 +63,12 @@
             <modules>
                 <module>wired-tests</module>
             </modules>
-            <dependencies>
-                <dependency>
-                    <groupId>com.atlassian.clover</groupId>
-                    <artifactId>clover</artifactId>
-                    <version>${clover.libversion}</version>
-                    <scope>compile</scope>
-                </dependency>
-            </dependencies>
+        </profile>
+        <profile>
+            <id>wired-clover</id>
+            <modules>
+                <module>wired-tests</module>
+            </modules>
         </profile>
     </profiles>
 

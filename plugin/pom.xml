@@ -1188,6 +1188,31 @@
                 </plugins>
             </build>
         </profile>
+
+        <profile>
+            <id>pluginLifecycle-clover</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.atlassian.clover</groupId>
+                    <artifactId>clover</artifactId>
+                    <version>${clover.libversion}</version>
+                    <scope>compile</scope>
+                </dependency>
+            </dependencies>
+         </profile>
+
+        <profile>
+            <id>wired-clover</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.atlassian.clover</groupId>
+                    <artifactId>clover</artifactId>
+                    <version>${clover.libversion}</version>
+                    <scope>compile</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+
     </profiles>
 
     <properties>
