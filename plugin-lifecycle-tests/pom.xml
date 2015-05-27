@@ -343,6 +343,13 @@
                 <build.test.plugin>true</build.test.plugin>
             </properties>
         </profile>
+        <profile>
+            <id>pluginLifecycle-clover</id>
+            <properties>
+                <skipITs>false</skipITs>
+                <build.test.plugin>true</build.test.plugin>
+            </properties>
+        </profile>
     </profiles>
 
     <properties>
