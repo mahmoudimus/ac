@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.isParameterizedListWithType;
 import static com.google.common.collect.Lists.newArrayList;
@@ -106,6 +107,11 @@ import static com.google.common.collect.Lists.newArrayList;
 @ObjectSchemaAttributes(additionalProperties = false)
 public class ModuleList extends BaseModuleBean
 {
+    Map<Class<? extends BaseModuleBean>, List<String>> entries;
+    
+    
+    
+    
     /////////////////////////////////////////////////////
     ///////    COMMON MODULES
     /////////////////////////////////////////////////////

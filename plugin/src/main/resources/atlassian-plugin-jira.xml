@@ -8,6 +8,13 @@
         <package>com.atlassian.plugin.connect.plugin.rest</package>
     </rest>
 
+    <connect-module-provider
+            key="EntityProperties"
+            class="com.atlassian.plugin.jira.connect.provider.TestEntityPropertyModuleProvider"
+            name="JIRA Workflow Post Function Module Provider">
+        <description>...</description>
+    </connect-module-provider>
+
     <!-- JavaScript and CSS resource inclusions for relevant contexts -->
 
     <web-resource key="atlassian-connect-resources" name="Connect resources for inclusion on every page.">
