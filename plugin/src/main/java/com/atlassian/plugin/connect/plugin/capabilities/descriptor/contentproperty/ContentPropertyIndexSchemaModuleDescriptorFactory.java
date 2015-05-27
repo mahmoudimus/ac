@@ -64,15 +64,11 @@ public class ContentPropertyIndexSchemaModuleDescriptorFactory implements
             }
         }
 
-        logSchema(indexSchema);
-        return indexSchema;
-    }
-
-    private void logSchema(Element indexSchema)
-    {
         if (log.isDebugEnabled())
         {
             log.debug(printNode(indexSchema));
         }
+        return indexSchema;
     }
+
 }

@@ -1,6 +1,5 @@
 package it.com.atlassian.plugin.connect.plugin.threeleggedauth;
 
-import com.atlassian.crowd.embedded.api.ApplicationFactory;
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.exception.ApplicationPermissionException;
 import com.atlassian.crowd.exception.InvalidCredentialException;

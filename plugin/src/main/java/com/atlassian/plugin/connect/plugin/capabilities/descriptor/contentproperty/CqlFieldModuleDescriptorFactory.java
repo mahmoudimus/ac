@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor.contentproperty;
 
+import com.atlassian.confluence.plugins.contentproperty.index.descriptor.ContentPropertyAliasModuleDescriptor;
+import com.atlassian.confluence.plugins.contentproperty.index.schema.SchemaFieldType;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -9,7 +11,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKey
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-import com.atlassian.querylang.plugins.AQLFieldModuleDescriptor;
+import com.atlassian.querylang.fields.FieldHandler;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.slf4j.Logger;
@@ -39,6 +41,8 @@ public class CqlFieldModuleDescriptorFactory
                                                                           Plugin plugin,
                                                                           List<ContentPropertyModuleBean> beans)
     {
+        ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
+
         List<ModuleDescriptor> descriptors = new ArrayList<>();
         for (ContentPropertyModuleBean bean : beans)
         {
@@ -47,39 +51,48 @@ public class CqlFieldModuleDescriptorFactory
                 int index = 0;
                 for (ContentPropertyIndexExtractionConfigurationBean extractionBean : keyConfigurationBean.getExtractions())
                 {
-
-                    AQLFieldModuleDescriptor  descriptor = connectContainerUtil.createBean
-                            (AQLFieldModuleDescriptor .class);
-                    descriptor.init(plugin, createXmlConfig(moduleProviderContext, bean, extractionBean, index++));
-                    descriptors.add(descriptor);
-
+                    if (extractionBean.getAlias() != null)
+                    {
+                        ContentPropertyAliasModuleDescriptor descriptor = connectContainerUtil.createBean(ContentPropertyAliasModuleDescriptor.class);
+                        descriptor.setAliasName(extractionBean.getAlias());
+                        descriptor.setPropertyKey(keyConfigurationBean.getPropertyKey());
+                        switch (extractionBean.getType())
+                        {
+                            case number:
+                                descriptor.setType(SchemaFieldType.NUMBER);
+                                break;
+                            case date:
+                                descriptor.setType(SchemaFieldType.DATE);
+                                break;
+                            case string:
+                                descriptor.setType(SchemaFieldType.STRING);
+                                break;
+                            case text:
+                                descriptor.setType(SchemaFieldType.TEXT);
+                                break;
+                        }
+                        descriptor.setJsonExpression(extractionBean.getObjectName());
+                        descriptor.init(plugin, createXmlConfig(bean.getKey(connectAddonBean) + keyConfigurationBean.getPropertyKey() + "-" + extractionBean.getObjectName() + "-" + (++index)));
+                        descriptors.add(descriptor);
+                    }
                 }
             }
         }
         return descriptors;
     }
 
-    private Element createXmlConfig(ConnectModuleProviderContext moduleProviderContext,
-                                    ContentPropertyModuleBean bean,
-                                    ContentPropertyIndexExtractionConfigurationBean extractionBean,
-                                    int index)
+    private Element createXmlConfig(String moduleKey)
     {
-        ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
-        Element indexSchema = new DOMElement("cql-field");
-        indexSchema.addAttribute("key", bean.getKey(connectAddonBean)+"-cql-field-"+index);
-        indexSchema.addAttribute("fieldName", extractionBean.getAlias());
-//        indexSchema.addAttribute("name", extractionBean.getL);
-        indexSchema.addAttribute("class", "");
-
-        logSchema(indexSchema);
-        return indexSchema;
-    }
-
-    private void logSchema(Element indexSchema)
-    {
+        Element aliasElement = new DOMElement("content-property-field-alias");
+        aliasElement.addAttribute("key", moduleKey + "-field-alias");
+        aliasElement.addAttribute("i18n-name-key", moduleKey);
+        aliasElement.addAttribute("class", FieldHandler.class.getName());
         if (log.isDebugEnabled())
         {
-            log.debug(printNode(indexSchema));
+            log.debug(printNode(aliasElement));
         }
+        return aliasElement;
     }
+
+
 }
