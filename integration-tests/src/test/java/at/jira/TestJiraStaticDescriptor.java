@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.rmi.RemoteException;
 
-@Category (OnDemandAcceptanceTest.class)
+// @Category (OnDemandAcceptanceTest.class)
 public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
 {
     private static final String WEB_ITEM_ID = "com.atlassian.connect.acceptance.test__opsbar-test-web-item";
