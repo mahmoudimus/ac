@@ -5,6 +5,9 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
 import com.google.common.collect.Lists;
 
 import java.util.List;
+import java.util.Map;
+
+import static com.google.common.collect.Maps.newHashMap;
 
 public class MacroParameterBeanBuilder extends BaseModuleBeanBuilder<MacroParameterBeanBuilder, MacroParameterBean>
 {
@@ -17,6 +20,7 @@ public class MacroParameterBeanBuilder extends BaseModuleBeanBuilder<MacroParame
     private String defaultValue;
     private List<String> values;
     private List<String> aliases;
+    private Map<String, String> options;
 
     public MacroParameterBeanBuilder()
     {
@@ -33,6 +37,7 @@ public class MacroParameterBeanBuilder extends BaseModuleBeanBuilder<MacroParame
         this.defaultValue = defaultBean.getDefaultValue();
         this.values = defaultBean.getValues();
         this.aliases = defaultBean.getAliases();
+        this.options = defaultBean.getOptions();
     }
 
     public MacroParameterBeanBuilder withIdentifier(String identifier)
@@ -86,6 +91,20 @@ public class MacroParameterBeanBuilder extends BaseModuleBeanBuilder<MacroParame
     public MacroParameterBeanBuilder withAliases(String... aliases)
     {
         this.aliases = Lists.newArrayList(aliases);
+        return this;
+    }
+
+    public MacroParameterBeanBuilder withOption(String key, String value)
+    {
+        if (this.options == null)
+            this.options = newHashMap();
+        options.put(key, value);
+        return this;
+    }
+
+    public MacroParameterBeanBuilder withOptions(Map<String, String> options)
+    {
+        this.options = newHashMap(options);
         return this;
     }
 

@@ -538,6 +538,7 @@ public class ConnectJsonExamples
                 .withMultiple(false)
                 .withRequired(true)
                 .withValues("Map", "Satellite")
+                .withOption("someOptionKey", "A value")
                 .build();
 
         return gson.toJson(createJsonArray("parameters", macroParameterBean));

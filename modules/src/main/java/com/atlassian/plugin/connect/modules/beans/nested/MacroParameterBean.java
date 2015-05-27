@@ -7,8 +7,10 @@ import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.MacroParameterBeanBuilder;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Describes a parameter input field for a macro.
@@ -90,6 +92,11 @@ public class MacroParameterBean extends BaseModuleBean
     private List<String> values;
 
     /**
+     * Optional configuration for macro parameters dependent on the type of parameter
+     */
+    private Map<String, String> options;
+
+    /**
      * Aliases for the macro parameter.
      */
     private List<String> aliases;
@@ -138,6 +145,10 @@ public class MacroParameterBean extends BaseModuleBean
         if (null == aliases)
         {
             aliases = ImmutableList.of();
+        }
+        if (null == options)
+        {
+            options = ImmutableMap.of();
         }
     }
 
@@ -199,6 +210,11 @@ public class MacroParameterBean extends BaseModuleBean
     public List<String> getAliases()
     {
         return aliases;
+    }
+
+    public Map<String, String> getOptions()
+    {
+        return options;
     }
 
     public static MacroParameterBeanBuilder newMacroParameterBean()

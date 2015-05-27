@@ -180,6 +180,10 @@ public abstract class AbstractContentMacroModuleDescriptorFactory<B extends Base
             {
                 parameter.addElement("alias").addAttribute("name", value);
             }
+            for (Map.Entry<String, String> entry : parameterBean.getOptions().entrySet())
+            {
+                parameter.addElement("option").addAttribute("key", entry.getKey()).addAttribute("value", entry.getValue());
+            }
         }
     }
 

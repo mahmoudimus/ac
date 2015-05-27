@@ -261,6 +261,7 @@ public abstract class AbstractContentMacroModuleDescriptorTest<B extends BaseCon
                         .withRequired(true)
                         .withValues("Parameter Value")
                         .withAliases("Parameter Alias")
+                        .withOption("optionKey", "someValue")
                         .build()
                 );
     }
