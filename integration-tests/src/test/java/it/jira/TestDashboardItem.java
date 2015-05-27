@@ -32,6 +32,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -187,6 +188,9 @@ public class TestDashboardItem extends JiraWebDriverTestBase
     public void testDashboardItemReactsToEditClick()
     {
         DashboardPage dashboard = createDashboard(generateDashboardTitle());
+
+        closeBaseUrlBanner();
+
         addDashboardItemToDashboard(dashboard);
 
         GadgetMenu dashboardItemMenu = bindDashboardPage()
@@ -388,7 +392,6 @@ public class TestDashboardItem extends JiraWebDriverTestBase
             return waitForValue("properties");
         }
 
-
         public void assertEditClicked()
         {
             runInFrame(new Callable<Void>()
@@ -413,6 +416,20 @@ public class TestDashboardItem extends JiraWebDriverTestBase
                     return null;
                 }
             });
+        }
+    }
+
+    private void closeBaseUrlBanner()
+    {
+        try
+        {
+            WebElement banner = product.getTester().getDriver().findElement(By.xpath("//div[@id='aui-flag-container']"));
+            WebElement closeButton = banner.findElement(By.xpath("//span[@role='button']"));
+            closeButton.click();
+        }
+        catch (RuntimeException ex)
+        {
+            // apparently the banner is not present
         }
     }
 }
