@@ -6,7 +6,7 @@ import com.atlassian.confluence.spaces.Spaced;
 import com.atlassian.plugin.connect.api.util.RequestContextParameterFactory;
 import com.atlassian.plugin.connect.api.util.RequestContextParameters;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.renderer.v2.macro.Macro;
 import org.apache.commons.lang.StringUtils;
 

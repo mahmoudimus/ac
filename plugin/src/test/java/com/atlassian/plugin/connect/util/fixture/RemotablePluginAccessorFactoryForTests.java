@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.plugin.DefaultRemotablePluginAccessorBase;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.util.concurrent.Promise;
 import com.google.common.base.Supplier;
 

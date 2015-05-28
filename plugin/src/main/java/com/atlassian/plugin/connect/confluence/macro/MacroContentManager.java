@@ -13,7 +13,7 @@ import com.atlassian.plugin.connect.api.util.http.ContentRetrievalErrors;
 import com.atlassian.plugin.connect.api.util.http.ContentRetrievalException;
 import com.atlassian.plugin.connect.spi.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.util.http.HttpContentRetriever;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.transaction.TransactionCallback;

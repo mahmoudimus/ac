@@ -11,7 +11,7 @@ import com.atlassian.plugin.connect.api.iframe.render.uri.IFrameUriBuilderFactor
 import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
