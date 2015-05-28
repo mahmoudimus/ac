@@ -8,13 +8,13 @@ import java.io.InputStream;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 
+import com.atlassian.plugin.connect.spi.util.APITestUtil;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import com.atlassian.plugin.connect.spi.APITestUtil;
 
 import static org.mockito.Mockito.when;
 

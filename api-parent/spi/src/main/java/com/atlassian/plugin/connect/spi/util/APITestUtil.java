@@ -1,4 +1,4 @@
-package it.com.atlassian.plugin.connect.util;
+package com.atlassian.plugin.connect.spi.util;
 
 /*
  * Copy-pasted to workaround for http://jira.codehaus.org/browse/MNG-3559

@@ -1,12 +1,11 @@
 package it.com.atlassian.plugin.connect.jira.scopes.manager;
 
+import com.atlassian.plugin.connect.api.http.HttpMethod;
+import com.atlassian.plugin.connect.api.scopes.AddOnScopeManager;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManager;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
-import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.connect.testsupport.scopes.ScopeTestHelper;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-import it.com.atlassian.plugin.connect.plugin.scopes.manager.RequestInApiScopeTest;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
@@ -18,11 +17,11 @@ import static java.util.Arrays.asList;
 
 @Application ("jira")
 @RunWith (AtlassianPluginsTestRunner.class)
-public class JiraRestScopesTest extends RequestInApiScopeTest
+public class JiraRestScopesTest extends ScopeManagerTest
 {
-    public JiraRestScopesTest(AddOnScopeManager scopeManager, TestPluginInstaller testPluginInstaller)
+    public JiraRestScopesTest(AddOnScopeManager scopeManager, ScopeTestHelper scopeTestHelper)
     {
-        super(scopeManager, testPluginInstaller, testData());
+        super(scopeManager, scopeTestHelper, testData());
     }
 
     /**

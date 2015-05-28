@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.spi.http;
+package com.atlassian.plugin.connect.api.http;
 
 /**
  * Represents HTTP methods.

@@ -1,12 +1,11 @@
 package it.com.atlassian.plugin.connect.jira.scopes.manager;
 
+import com.atlassian.plugin.connect.api.http.HttpMethod;
+import com.atlassian.plugin.connect.api.scopes.AddOnScopeManager;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManager;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
-import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.connect.testsupport.scopes.ScopeTestHelper;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-import it.com.atlassian.plugin.connect.plugin.scopes.manager.RequestInApiScopeTest;
 import org.junit.runner.RunWith;
 
 import java.util.Arrays;
@@ -16,13 +15,13 @@ import static it.com.atlassian.plugin.connect.jira.util.JiraScopeTestHelper.empt
 
 @Application ("jira")
 @RunWith (AtlassianPluginsTestRunner.class)
-public class JiraProjectAvatarScopesTest extends RequestInApiScopeTest
+public class JiraProjectAvatarScopesTest extends ScopeManagerTest
 {
     private static final String PROJECT_AVATAR_URL = "/jira/secure/projectavatar";
 
-    public JiraProjectAvatarScopesTest(AddOnScopeManager scopeManager, TestPluginInstaller testPluginInstaller)
+    public JiraProjectAvatarScopesTest(AddOnScopeManager scopeManager, ScopeTestHelper scopeTestHelper)
     {
-        super(scopeManager, testPluginInstaller, testData());
+        super(scopeManager, scopeTestHelper, testData());
     }
     
     public static Collection<ScopeTestData> testData()

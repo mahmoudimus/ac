@@ -35,7 +35,7 @@
     <component-import key="jwtApplinkFinder" interface="com.atlassian.jwt.applinks.JwtApplinkFinder" />
     <component-import key="threeLeggedAuthService" interface="com.atlassian.plugin.connect.plugin.threeleggedauth.ThreeLeggedAuthService" />
     <component-import key="addOnService" interface="com.atlassian.plugin.connect.api.ConnectAddonAccessor" />
-    <component-import key="addOnScopeManager" interface="com.atlassian.plugin.connect.plugin.scopes.AddOnScopeManager" />
+    <component-import key="addOnScopeManager" interface="com.atlassian.plugin.connect.api.scopes.AddOnScopeManager" />
 
     <!-- CONNECT MODULE PROVIDERS -->
     <component-import key="webItemModuleProvider" interface="com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider" />
@@ -48,6 +48,7 @@
 
     <!-- CONNECT TEST SUPPORT -->
     <component-import key="testPluginInstaller" interface="com.atlassian.plugin.connect.testsupport.TestPluginInstaller" />
+    <component-import key="scopeTestHelper" interface="com.atlassian.plugin.connect.testsupport.scopes.ScopeTestHelper" />
     <component-import key="testFilterResults" interface="com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults" />
     <component-import key="precannedResponseHelper" interface="com.atlassian.plugin.connect.testsupport.filter.AddonPrecannedResponseHelper" />
 

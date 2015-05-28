@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.plugin.util.BundleUtil;
 import com.atlassian.plugin.connect.spi.ConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.spi.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.webhooks.spi.plugin.RequestSigner;
 import org.osgi.framework.BundleContext;

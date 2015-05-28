@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.scopes;
+package com.atlassian.plugin.connect.api.scopes;
 
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.annotations.VisibleForTesting;
