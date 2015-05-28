@@ -332,7 +332,7 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
         checkoutDefaultRepositoryTask()
         mavenTestTask(
                 description: 'Run Wired Lifecycle Tests for #product',
-                goal: 'clover2:setup verify -PpluginLifecycle,clover -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters clover2:clover',
+                goal: 'clover2:setup verify -PpluginLifecycle,clover -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters clover2:aggregate clover2:clover',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
         )
         cloverReportArtifact(
@@ -355,7 +355,7 @@ wiredTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
         checkoutDefaultRepositoryTask()
         mavenTestTask(
                 description: 'Run Wired Tests for #product',
-                goal: 'clover2:setup verify -Pwired,clover -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters clover2:clover',
+                goal: 'clover2:setup verify -Pwired,clover -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters clover2:aggregate clover2:clover',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
         )
         cloverReportArtifact(
