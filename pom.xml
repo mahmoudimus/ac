@@ -46,12 +46,6 @@
                 <module>plugin-lifecycle-tests</module>
             </modules>
          </profile>
-        <profile>
-            <id>pluginLifecycle-clover</id>
-            <modules>
-                <module>plugin-lifecycle-tests</module>
-            </modules>
-         </profile>
          <profile>
             <id>freezer-release-profile</id>
             <modules>
@@ -60,12 +54,6 @@
         </profile>
         <profile>
             <id>wired</id>
-            <modules>
-                <module>wired-tests</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>wired-clover</id>
             <modules>
                 <module>wired-tests</module>
             </modules>
