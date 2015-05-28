@@ -33,14 +33,14 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-user</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-macro</dependency>
 
-        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+        <condition class="com.atlassian.plugin.connect.core.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <web-resource key="atlassian-connect-autoconvert-resources" name="Connect resources for autoconvert">
         <resource type="download" name="autoconvert.js" location="/js/confluence/macro/autoconvert.js" />
         <resource type="download" name="autoconvert-init.js" location="/js/confluence/macro/autoconvert-init.js" />
         <data key="connect-autoconvert-data" class="com.atlassian.plugin.connect.confluence.capabilities.descriptor.macro.AutoconvertWebResourceDataProvider" />
-        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+        <condition class="com.atlassian.plugin.connect.core.module.ConnectAddonsInstalledCondition"/>
         <context>editor</context>
         <context>viewcontent</context>
     </web-resource>
@@ -51,7 +51,7 @@
     <web-resource key="ap-core">
         <resource type="download" name="core-host.js" location="/js/core/connect-host-amd.js" />
         <dependency>confluence.web.resources:almond</dependency>
-        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+        <condition class="com.atlassian.plugin.connect.core.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <web-resource key="ap-extensions">
@@ -64,13 +64,13 @@
         <resource type="download" name="connect-inline-dialog.js" location="/js/core/connect-host-inline-dialog.js" />
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-core</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-iframe-host-js</dependency>
-        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+        <condition class="com.atlassian.plugin.connect.core.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <web-resource key="ap-user">
         <resource type="download" name="user.js" location="/js/iframe/host/user.js" />
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-core</dependency>
-        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+        <condition class="com.atlassian.plugin.connect.core.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <web-resource key="iframe-host-js">
@@ -78,13 +78,13 @@
         <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
         <resource type="download" name="content-resolver.js" location="/js/iframe/host/content-resolver.js" />
         <dependency>com.atlassian.auiplugin:dialog2</dependency>
-        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+        <condition class="com.atlassian.plugin.connect.core.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <web-resource key="remote-condition">
         <resource type="download" name="remote.js" location="js/condition/remote.js" />
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-core</dependency>
-        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+        <condition class="com.atlassian.plugin.connect.core.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <!-- Confluence specific javascript modules -->
@@ -94,7 +94,7 @@
         <resource type="download" name="editor-rpc.js" location="js/confluence/macro/editor-rpc.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:confluence-ap-core</dependency>
-        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+        <condition class="com.atlassian.plugin.connect.core.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
 </application>

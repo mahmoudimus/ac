@@ -25,26 +25,26 @@
     <component-import key="licenseHandler" interface="com.atlassian.sal.api.license.LicenseHandler" />
 
     <!-- CONNECT COMPONENTS -->
-    <component-import key="connectApplinkManager" interface="com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager" />
+    <component-import key="connectApplinkManager" interface="com.atlassian.plugin.connect.core.applinks.ConnectApplinkManager" />
     <component-import key="connectDescriptorValidator" interface="com.atlassian.plugin.connect.modules.schema.ConnectDescriptorValidator" />
-    <component-import key="connectSchemaLocator" interface="com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectSchemaLocator" />
+    <component-import key="connectSchemaLocator" interface="com.atlassian.plugin.connect.core.capabilities.schema.ConnectSchemaLocator" />
     <component-import key="connectAddonRegistry" interface="com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry"/>
-    <component-import key="connectAddonUserService" interface="com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService"/>
+    <component-import key="connectAddonUserService" interface="com.atlassian.plugin.connect.core.usermanagement.ConnectAddOnUserService"/>
     <component-import key="connectAddOnUserProvisioningService" interface="com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService" />
     <component-import key="iFrameRenderStrategyRegistry" interface="com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry" />
     <component-import key="jwtApplinkFinder" interface="com.atlassian.jwt.applinks.JwtApplinkFinder" />
-    <component-import key="threeLeggedAuthService" interface="com.atlassian.plugin.connect.plugin.threeleggedauth.ThreeLeggedAuthService" />
+    <component-import key="threeLeggedAuthService" interface="com.atlassian.plugin.connect.core.threeleggedauth.ThreeLeggedAuthService" />
     <component-import key="addOnService" interface="com.atlassian.plugin.connect.api.ConnectAddonAccessor" />
     <component-import key="addOnScopeManager" interface="com.atlassian.plugin.connect.api.scopes.AddOnScopeManager" />
 
     <!-- CONNECT MODULE PROVIDERS -->
-    <component-import key="webItemModuleProvider" interface="com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProvider" />
+    <component-import key="webItemModuleProvider" interface="com.atlassian.plugin.connect.core.capabilities.provider.WebItemModuleProvider" />
     <component-import key="blueprintModuleProvider" application="confluence" interface="com.atlassian.plugin.connect.confluence.capabilities.provider.BlueprintModuleProvider" />
     <component-import key="workflowPostFunctionModuleProvider" application="jira" interface="com.atlassian.plugin.connect.jira.capabilities.provider.WorkflowPostFunctionModuleProvider" />
 
     <!-- CONNECT DESCRIPTOR FACTORIES -->
     <component-import key="tabPanelDescriptorFactory" application="jira" interface="com.atlassian.plugin.connect.jira.capabilities.descriptor.tabpanel.ConnectTabPanelModuleDescriptorFactory" />
-    <component-import key="webSectionDescriptorFactory" interface="com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebSectionModuleDescriptorFactory" />
+    <component-import key="webSectionDescriptorFactory" interface="com.atlassian.plugin.connect.core.capabilities.descriptor.ConnectWebSectionModuleDescriptorFactory" />
 
     <!-- CONNECT TEST SUPPORT -->
     <component-import key="testPluginInstaller" interface="com.atlassian.plugin.connect.testsupport.TestPluginInstaller" />

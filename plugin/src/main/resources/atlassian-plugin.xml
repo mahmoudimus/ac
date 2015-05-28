@@ -7,30 +7,30 @@
 
     <resource type="i18n" name="i18n" location="com.atlassian.connect.i18n"/>
 
-    <health-check key="addonsGroupHealthCheck" name="Add-on Group Health Check" class="com.atlassian.plugin.connect.plugin.AtlassianAddonsGroupHealthCheck" />
+    <health-check key="addonsGroupHealthCheck" name="Add-on Group Health Check" class="com.atlassian.plugin.connect.core.AtlassianAddonsGroupHealthCheck" />
 
-    <servlet-filter key="iframe-resources" class="com.atlassian.plugin.connect.plugin.iframe.StaticResourcesFilter"
+    <servlet-filter key="iframe-resources" class="com.atlassian.plugin.connect.core.iframe.StaticResourcesFilter"
                     location="after-encoding">
         <url-pattern>/atlassian-connect/*</url-pattern>
     </servlet-filter>
 
-    <servlet-filter key="schema-resources" class="com.atlassian.plugin.connect.plugin.capabilities.schema.SchemaFilter"
+    <servlet-filter key="schema-resources" class="com.atlassian.plugin.connect.core.capabilities.schema.SchemaFilter"
                     location="after-encoding" weight="90">
         <url-pattern>/atlassian-connect/schema/*</url-pattern>
     </servlet-filter>
 
     <!-- the 3LA filter needs to run after the JWT filter (to read attributes on the request) and before the ApiScopingFilter (to set the principal) -->
-    <servlet-filter key="three-legged-auth-filter" class="com.atlassian.plugin.connect.plugin.threeleggedauth.ThreeLeggedAuthFilter"
+    <servlet-filter key="three-legged-auth-filter" class="com.atlassian.plugin.connect.core.threeleggedauth.ThreeLeggedAuthFilter"
             location="after-encoding" weight="10000">
         <url-pattern>/*</url-pattern>
     </servlet-filter>
 
-    <servlet-filter key="api-scoping" class="com.atlassian.plugin.connect.plugin.scopes.ApiScopingFilter"
+    <servlet-filter key="api-scoping" class="com.atlassian.plugin.connect.core.scopes.ApiScopingFilter"
             location="before-decoration" weight="200">
         <url-pattern>/*</url-pattern>
     </servlet-filter>
 
-    <servlet-filter key="oauth-2lo-authentication" class="com.atlassian.plugin.connect.plugin.module.oauth.OAuth2LOFilter"
+    <servlet-filter key="oauth-2lo-authentication" class="com.atlassian.plugin.connect.core.module.oauth.OAuth2LOFilter"
             location="after-encoding" weight="2000">
         <url-pattern>/*</url-pattern>
     </servlet-filter>
@@ -43,7 +43,7 @@
 
     <servlet key="remotablePluginsPermanentRedirectingServlet"
              name="Remotable Plugins Permanent Redirecting Servlet"
-             class="com.atlassian.plugin.connect.plugin.module.util.redirect.LegacyAddonRedirectServlet">
+             class="com.atlassian.plugin.connect.core.module.util.redirect.LegacyAddonRedirectServlet">
         <description>
             Redirects to a Remote App resource, usually an image, with a permanent redirect, but
             doesn't sign the request.  Request parameters are included in the redirect.
@@ -53,7 +53,7 @@
 
     <servlet-filter key="acPermanentRedirectingFilter"
              name="Ac Permanent Redirecting Servlet"
-             class="com.atlassian.plugin.connect.plugin.module.util.redirect.RedirectOnNotFoundFilter">
+             class="com.atlassian.plugin.connect.core.module.util.redirect.RedirectOnNotFoundFilter">
         <description>
             Permanent redirects from old /atlassian-connect/* urls to /ac/*
         </description>
@@ -69,11 +69,11 @@
     </servlet-filter>
 
     <servlet key="addon-iframe-servlet"
-             class="com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameServlet">
+             class="com.atlassian.plugin.connect.core.iframe.servlet.ConnectIFrameServlet">
         <url-pattern>/ac/*</url-pattern>
     </servlet>
 
-    <web-panel key="connect-dialog-options" location="atl.header" class="com.atlassian.plugin.connect.plugin.dialog.DialogOptionsWebPanel"/>
+    <web-panel key="connect-dialog-options" location="atl.header" class="com.atlassian.plugin.connect.core.dialog.DialogOptionsWebPanel"/>
 
     <web-resource key="iframe-host-css">
         <resource type="download" name="core-host.css" location="/css/core/host-css.css" />
@@ -81,7 +81,7 @@
         <resource type="download" name="admin.css" location="/css/iframe/admin.css" />
         <resource type="download" name="messages-main.css" location="css/messages/main.css" />
 
-        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+        <condition class="com.atlassian.plugin.connect.core.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <web-resource key="images">
@@ -97,9 +97,9 @@
     </web-resource>
 
     <applinks-application-type name="Remote Plugin Container" key="remote-plugin-container-type"
-                                   class="com.atlassian.plugin.connect.plugin.applinks.RemotePluginContainerApplicationTypeImpl"
+                                   class="com.atlassian.plugin.connect.core.applinks.RemotePluginContainerApplicationTypeImpl"
                                    interface="com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType">
-            <manifest-producer class="com.atlassian.plugin.connect.plugin.applinks.RemotePluginContainerManifestProducer"/>
+            <manifest-producer class="com.atlassian.plugin.connect.core.applinks.RemotePluginContainerManifestProducer"/>
     </applinks-application-type>
 
     <analytics-whitelist key="analyticsWhitelist" resource="whitelist/connect_whitelist.json"/>
@@ -110,7 +110,7 @@
 
     <ao key="add-on-properties-ao-module" name="Active Objects Module">
         <description>Datastore for add-on properties.</description>
-        <entity>com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO</entity>
+        <entity>com.atlassian.plugin.connect.core.ao.AddOnPropertyAO</entity>
     </ao>
 
 </atlassian-plugin>
