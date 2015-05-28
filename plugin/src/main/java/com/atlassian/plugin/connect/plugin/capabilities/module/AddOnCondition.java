@@ -12,7 +12,7 @@ import com.atlassian.plugin.connect.api.util.http.ContentRetrievalException;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.event.AddOnConditionFailedEvent;
 import com.atlassian.plugin.connect.spi.event.AddOnConditionInvokedEvent;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.util.concurrent.Promise;
 import org.apache.commons.lang3.time.StopWatch;

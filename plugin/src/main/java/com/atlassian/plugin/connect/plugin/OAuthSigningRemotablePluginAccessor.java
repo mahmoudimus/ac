@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.api.util.UriBuilderUtils;
 import com.atlassian.plugin.connect.spi.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.google.common.base.Function;

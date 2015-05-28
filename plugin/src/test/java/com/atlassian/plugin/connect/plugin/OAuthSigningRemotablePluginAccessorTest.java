@@ -6,7 +6,7 @@ import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;

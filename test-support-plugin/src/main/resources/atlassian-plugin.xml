@@ -13,6 +13,7 @@
             <Export-Package>
                 com.atlassian.plugin.connect.testsupport*,
                 com.atlassian.plugin.connect.testsupport.filter*
+                com.atlassian.plugin.connect.testsupport.scopes*
             </Export-Package>
         </bundle-instructions>
     </plugin-info>
@@ -36,6 +37,11 @@
     <component key="testPluginInstaller"
                class="com.atlassian.plugin.connect.testsupport.DefaultTestPluginInstaller" 
                interface="com.atlassian.plugin.connect.testsupport.TestPluginInstaller"
+               public="true"
+            />
+    <component key="scopeTestHelper"
+               class="com.atlassian.plugin.connect.testsupport.scopes.ScopeTestHelperImpl"
+               interface="com.atlassian.plugin.connect.testsupport.scopes.ScopeTestHelper"
                public="true"
             />
 

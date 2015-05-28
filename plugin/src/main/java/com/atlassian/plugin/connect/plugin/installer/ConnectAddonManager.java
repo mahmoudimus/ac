@@ -39,7 +39,7 @@ import com.atlassian.plugin.connect.spi.event.ConnectAddonInstalledEvent;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonUninstallFailedEvent;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonUninstalledEvent;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.http.ReKeyableAuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstallException;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
