@@ -51,7 +51,9 @@ public class ConnectIsLoadedTest
 
     private void connectShouldBeLoaded(String productBaseUrl) throws IOException
     {
-        URI url = URI.create(productBaseUrl + "/rest/plugins/1.0/"); // NB: needs the trailing slash otherwise it 404s (!!)
+        // NB: Doesn't handle multiple slashes or the absence of a trailing slash
+        String restPath = (productBaseUrl.endsWith("/")) ? "rest/plugins/1.0/" : "/rest/plugins/1.0/";
+        URI url = URI.create(productBaseUrl + restPath);
         HttpURLConnection connection = (HttpURLConnection) url.toURL().openConnection();
         String auth = USERNAME + ":" + PASSWORD;
         connection.setRequestProperty("Authorization", "Basic " + new String(Base64.encodeBase64(auth.getBytes())));
