@@ -10,9 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.google.common.collect.Maps.newHashMap;
@@ -160,6 +158,8 @@ public class ConnectAddonBean extends BaseModuleBean
      */
     @SchemaIgnore("shallow")
     private ModuleList modules;
+    
+    private Map<String, List<BaseModuleBean>> testModules;
 
     /**
      * Set of [scopes](../scopes/scopes.html) requested by this add on
@@ -178,7 +178,8 @@ public class ConnectAddonBean extends BaseModuleBean
         this.links = newHashMap();
         this.lifecycle = LifecycleBean.newLifecycleBean().build();
         this.modules = new ModuleList();
-        this.scopes = new HashSet<ScopeName>();
+        this.testModules = new HashMap<>();
+        this.scopes = new HashSet<>();
         this.baseUrl = "";
         this.authentication = newAuthenticationBean().build();
         this.enableLicensing = null;

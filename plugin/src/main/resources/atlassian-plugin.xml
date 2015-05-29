@@ -6,7 +6,7 @@
     </plugin-info>
 
     <described-module-type key="connect-module-provider" name="Connect Module Provider"
-                    class="com.atlassian.plugin.connect.spi.ConnectModuleProviderModuleDescriptor">
+                    class="com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderModuleDescriptor">
         <description>Classes providing Connect modules</description>
     </described-module-type>
     
