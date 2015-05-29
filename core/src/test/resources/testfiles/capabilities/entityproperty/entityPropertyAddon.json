@@ -1,0 +1,34 @@
+{
+    "key": "my-add-on",
+    "name": "My Add-On",
+    "version": "2.0",
+    "vendor": {
+        "name": "Atlassian",
+        "url": "http://www.atlassian.com"
+    },
+    "baseUrl": "http://www.example.com",
+    "authentication": {
+        "type": "jwt"
+    },
+    "modules": {
+        "jiraEntityProperties": [{
+            "name": {
+                "value" :"My index",
+                "i18n": "my.index"
+            },
+            "entityType": "issue",
+            "keyConfigurations": [{
+                "propertyKey" : "attachment",
+                "extractions" : [{
+                    "objectName" : "attachment.size",
+                    "type" : "number"
+                }, {
+                    "objectName" : "attachment.extension",
+                    "type" : "string",
+                    "alias": "attachmentExtension"
+                }]
+            }]
+        }]
+    },
+    "scopes" : []
+}

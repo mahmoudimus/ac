@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.core.scopes;
 
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.api.scopes.AddOnScopeManager;
 import com.atlassian.plugin.connect.core.installer.ConnectAddonBeanFactory;
 import com.atlassian.plugin.connect.core.service.ScopeService;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;

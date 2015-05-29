@@ -1,0 +1,18 @@
+{
+    "name": {
+        "value" :"My index",
+        "i18n": "my.index"
+    },
+    "entityType": "issue",
+    "keyConfigurations": [{
+        "propertyKey" : "attachment",
+        "extractions" : [{
+            "objectName" : "attachment.size",
+            "type" : "number"
+        }, {
+            "objectName" : "attachment.extension",
+            "type" : "string",
+            "alias": "attachmentExtension"
+        }]
+    }]
+}

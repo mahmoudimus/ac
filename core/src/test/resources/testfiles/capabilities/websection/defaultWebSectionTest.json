@@ -1,0 +1,33 @@
+{
+    "key": "my-plugin",
+    "name": "My Plugin",
+    "version": "1.0",
+    "vendor": {
+        "name": "Atlassian",
+        "url": "http://www.atlassian.com"
+    },
+    "links": {
+        "self": "http://www.example.com/capabilities",
+        "homepage": "http://www.example.com"
+    },
+    "baseUrl": "http://www.example.com",
+    "authentication" : {
+        "type" : "oauth",
+        "publicKey": "S0m3Publ1cK3y"
+    },
+    "modules": {
+        "webSections": [{
+            "weight": 200,
+            "location": "system.preset.filters",
+            "name": {
+                "value": "My Web Section",
+                "i18n": "i.love.plugins"
+            },
+            "key":"my-web-section",
+            "tooltip": {
+                "value": "Does batman even need robin?",
+                "i18n": "batman.robin"
+            }
+        }]
+    }
+}

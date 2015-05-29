@@ -11,7 +11,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MatcherBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.util.io.TestFileReader;
 
 import com.google.gson.Gson;
 import org.junit.Test;

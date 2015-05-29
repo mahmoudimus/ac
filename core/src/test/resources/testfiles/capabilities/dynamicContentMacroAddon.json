@@ -1,0 +1,104 @@
+{
+  "authentication": {
+    "type": "jwt"
+  },
+  "baseUrl": "http://www.example.com",
+  "key": "my-add-on",
+  "modules": {
+    "dynamicContentMacros": [
+      {
+        "aliases": [
+          "some-alias"
+        ],
+        "bodyType": "plain-text",
+        "categories": [
+          "hidden-macros"
+        ],
+        "description": {
+          "i18n": "some.macro.desc",
+          "value": "Some Description"
+        },
+        "documentation": {
+          "altText": "Doc Alt Text",
+          "title": "Doc Title",
+          "url": "http://docs.example.com/macro"
+        },
+        "editor": {
+          "editTitle": {
+            "i18n": "edit.title.key",
+            "value": "Edit Title"
+          },
+          "height": "100px",
+          "insertTitle": {
+            "i18n": "insert.title.key",
+            "value": "Insert Title"
+          },
+          "url": "/my-macro-editor",
+          "width": "200px"
+        },
+        "featured": true,
+        "height": "50px",
+        "icon": {
+          "height": 80,
+          "url": "/mymacro/icon.png",
+          "width": 80
+        },
+        "imagePlaceholder": {
+          "applyChrome": true,
+          "height": 25,
+          "url": "images/placeholder.png",
+          "width": 100
+        },
+        "name": {
+          "i18n": "some.macro.name",
+          "value": "Some Macro"
+        },
+        "key":"dynamic-content-macro",
+        "outputType": "block",
+        "parameters": [
+          {
+            "aliases": [
+              "paramAlias1"
+            ],
+            "defaultValue": "default",
+            "description": {
+              "i18n": "desc.key",
+              "value": "Some Description"
+            },
+            "identifier": "myparam",
+            "multiple": false,
+            "name": {
+              "i18n": "name.key",
+              "value": "Some Name"
+            },
+            "required": true,
+            "type": "enum",
+            "values": [
+              "paramValue1",
+              "paramValue2"
+            ]
+          }
+        ],
+        "url": "/my-macro",
+        "width": "100px",
+        "renderModes": {
+          "pdf": { "url": "/render-map-pdf"},
+          "default": { "url": "/render-map-default"}
+        },
+        "autoconvert": {
+            "urlParameter": "url",
+            "matchers": [
+              { "pattern":"/docs/google.com/document/d/{fileId}/edit" }
+            ]
+          }
+      }
+    ]
+  },
+  "name": "My Add-On",
+  "vendor": {
+    "name": "Atlassian",
+    "url": "http://www.atlassian.com"
+  },
+  "version": "2.0",
+  "scopes": []
+}

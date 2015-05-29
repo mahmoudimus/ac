@@ -1,0 +1,42 @@
+{
+    "authentication": {
+        "publicKey": "S0m3Publ1cK3y",
+        "type": "oauth"
+    },
+    "baseUrl": "http://www.example.com",
+    "modules": {
+        "jiraSearchRequestViews": [
+            {
+                "conditions": [
+                    {
+                        "condition": "user_is_logged_in",
+                        "invert": false
+                    }
+                ],
+                "description": {
+                    "i18n": "my.searchRequestView.desc",
+                    "value": "My description"
+                },
+                "name": {
+                    "i18n": "my.searchRequestView",
+                    "value": "My Search Request View"
+                },
+                "key":"jira-search-request-view",
+                "params": {
+                    "delimiter": ","
+                },
+                "url": "/search-request.csv",
+                "weight": 10
+            }
+        ]
+    },
+    "scopes": [
+    ],
+    "key": "my-add-on",
+    "name": "My Add-On",
+    "vendor": {
+        "name": "Atlassian",
+        "url": "http://www.atlassian.com"
+    },
+    "version": "2.0"
+}

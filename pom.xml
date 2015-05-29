@@ -26,12 +26,12 @@
     <modules>
         <module>api-parent</module>
         <module>modules</module>
+        <module>core</module>
         <module>plugin</module>
         <module>confluence</module>
         <module>jira</module>
         <module>test-support-plugin</module>
         <module>docs</module>
-        <module>core</module>
     </modules>
 
     <profiles>

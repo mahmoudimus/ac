@@ -10,8 +10,6 @@ import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDes
 import com.atlassian.plugin.connect.spi.capabilities.provider.AbstractConnectPageModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
-import com.atlassian.plugin.connect.util.fixture.PluginForTests;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.google.common.collect.ImmutableList;

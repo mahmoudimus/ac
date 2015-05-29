@@ -4,6 +4,7 @@ import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jwt.core.Clock;
 import com.atlassian.jwt.core.SystemClock;
 import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
+import com.atlassian.plugin.connect.api.scopes.AddOnScopeManager;
 import com.atlassian.plugin.connect.core.module.permission.HttpServletResponseWithAnalytics;
 import com.atlassian.plugin.connect.core.module.permission.InputConsumingHttpServletRequest;
 import com.atlassian.plugin.connect.spi.event.ScopedRequestAllowedEvent;

@@ -16,8 +16,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
-import com.atlassian.plugin.connect.util.fixture.ConnectContainerUtilForTests;
 import com.atlassian.plugin.elements.ResourceDescriptor;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.webresource.UrlMode;
