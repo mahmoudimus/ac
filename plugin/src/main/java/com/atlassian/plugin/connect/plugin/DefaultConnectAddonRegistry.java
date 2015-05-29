@@ -11,9 +11,10 @@ import javax.inject.Named;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.PluginState;
+import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.installer.AddonSettings;
+import com.atlassian.plugin.connect.api.installer.AddonSettings;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;

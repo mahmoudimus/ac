@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.plugin.module;
 
-import com.atlassian.plugin.connect.plugin.UserPreferencesRetriever;
+import com.atlassian.plugin.connect.spi.user.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.plugin.license.LicenseStatus;
-import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
+import com.atlassian.plugin.connect.spi.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.plugin.util.LocaleHelper;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;

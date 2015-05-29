@@ -46,12 +46,6 @@ public final class JiraAdminPage implements AdminPage
     }
 
     @Override
-    public boolean isRemotePluginLinkPresent()
-    {
-        return link.get().isDefined();
-    }
-
-    @Override
     public ConnectAddOnEmbeddedTestPage clickAddOnLink()
     {
         final WebElement webElement = link.get().get();

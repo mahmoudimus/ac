@@ -4,7 +4,6 @@ import at.util.ExternalAddonInstaller;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
 import com.google.common.base.Optional;
-import hudson.plugins.jira.soap.RemoteIssue;
 import it.jira.JiraWebDriverTestBase;
 import org.junit.After;
 import org.junit.Before;
@@ -15,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.rmi.RemoteException;
 
-@Category (OnDemandAcceptanceTest.class)
+// @Category (OnDemandAcceptanceTest.class)
 public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
 {
     private static final String WEB_ITEM_ID = "com.atlassian.connect.acceptance.test__opsbar-test-web-item";
@@ -35,10 +34,10 @@ public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
     @Test
     public void testAcActionWebItemIsPresent() throws RemoteException
     {
-        RemoteIssue issue = jiraOps.createIssue(project.getKey(), "Atlassian Connect Web Panel Test Issue");
+        IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Atlassian Connect Web Panel Test Issue");
 
         login(testUserFactory.basicUser());
-        product.goToViewIssue(issue.getKey());
+        product.goToViewIssue(issue.key);
 
         connectPageOperations.findWebItem(WEB_ITEM_ID, Optional.<String>absent());
     }

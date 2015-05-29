@@ -1,16 +1,14 @@
 package com.atlassian.plugin.connect.jira.iframe.context.extractor;
 
 import com.atlassian.jira.project.Project;
-import com.atlassian.plugin.connect.plugin.module.context.ContextMapParameterExtractor;
-import com.atlassian.plugin.connect.plugin.module.context.ParameterSerializer;
 import com.atlassian.plugin.connect.jira.iframe.context.serializer.ProjectSerializer;
+import com.atlassian.plugin.connect.spi.module.context.ContextMapParameterExtractor;
+import com.atlassian.plugin.connect.spi.module.context.ParameterSerializer;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-
 import com.google.common.base.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Extracts project parameters that can be included in webpanel's iframe url.

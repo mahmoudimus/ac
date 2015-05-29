@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module;
 
-import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.webresource.condition.SimpleUrlReadingCondition;
 import com.atlassian.plugin.webresource.condition.UrlReadingCondition;
 

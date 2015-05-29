@@ -1,9 +1,9 @@
 package it.jira.iframe;
 
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
+import com.atlassian.plugin.connect.jira.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.jira.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithRemotePluginIssueTab;
@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.ParameterCapturingConditionServlet;
+import it.util.TestProject;
 import it.util.TestUser;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
@@ -46,9 +47,8 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
 
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
 
+    private TestProject project;
     private TestUser user;
-    private String projectKey;
-    private long projectId;
     private IssueCreateResponse issue;
 
     @BeforeClass
@@ -63,7 +63,7 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
                         .withConditions(
                             toggleableConditionBean(),
                             newSingleConditionBean().withCondition(PARAMETER_CAPTURE_URL +
-                                    "?issue_id={issue.id}&issue_key={issue.key}&project_id={project.id}&project_key={project.key}").build()
+                                    "?issue_id={issue.id}&issue_key={issue.key}&project_id={project.id}&project_key={project.key}&issue_type_id={issuetype.id}").build()
                         )
                         .withWeight(1234)
                         .build())
@@ -86,9 +86,10 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
     public void setUpTest() throws Exception
     {
         user = testUserFactory.basicUser();
-        projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase();
-        projectId = product.backdoor().project().addProject(projectKey, projectKey, user.getUsername());
-        issue = product.backdoor().issues().createIssue(projectId, "Test issue for tab", user.getUsername());
+        String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase();
+        String projectId = String.valueOf(product.backdoor().project().addProject(projectKey, projectKey, user.getUsername()));
+        project = new TestProject(projectKey, projectId);
+        issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for tab", user.getUsername());
     }
 
     @Test
@@ -99,11 +100,14 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
                 JiraViewIssuePageWithRemotePluginIssueTab.class, "issue-tab-panel", issue.key(), PLUGIN_KEY);
         assertThat(page.getMessage(), is("Success"));
 
+        final String expectedIssueTypeId = product.backdoor().issues().getIssue(issue.id).fields.issuetype.id;
+
         Map<String,String> conditionRequestParams = PARAMETER_CAPTURING_SERVLET.getParamsFromLastRequest();
         assertThat(conditionRequestParams, hasEntry("issue_id", issue.id()));
         assertThat(conditionRequestParams, hasEntry("issue_key", issue.key()));
-        assertThat(conditionRequestParams, hasEntry("project_id", String.valueOf(projectId)));
-        assertThat(conditionRequestParams, hasEntry("project_key", projectKey));
+        assertThat(conditionRequestParams, hasEntry("issue_type_id", expectedIssueTypeId));
+        assertThat(conditionRequestParams, hasEntry("project_id", project.getId()));
+        assertThat(conditionRequestParams, hasEntry("project_key", project.getKey()));
     }
 
     @Test
@@ -122,4 +126,5 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
         page = product.visit(JiraViewIssuePage.class, issue.key());
         assertThat(page.isTabPanelPresent(completeKey), is(false));
     }
+
 }

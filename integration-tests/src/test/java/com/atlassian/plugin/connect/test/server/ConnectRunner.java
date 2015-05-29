@@ -8,6 +8,7 @@ import java.net.URI;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -28,8 +29,9 @@ import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.Environment;
 import com.atlassian.plugin.connect.test.HttpUtils;
@@ -227,6 +229,12 @@ public class ConnectRunner
         return this;
     }
 
+    public ConnectRunner setVendor(final VendorBean vendor)
+    {
+        addonBuilder.withVendor(vendor);
+        return this;
+    }
+
     public ConnectRunner disableInstallationStatusCheck()
     {
         checkInstallationStatus = false;
@@ -345,6 +353,12 @@ public class ConnectRunner
         addonBuilder.withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withPublicKey(signedRequestHandler.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString()).build());
 
         //return addPermission(Permissions.CREATE_OAUTH_LINK);
+        return this;
+    }
+
+    public ConnectRunner addScopes(ScopeName... scopesToAdd)
+    {
+        Collections.addAll(scopes, scopesToAdd);
         return this;
     }
 

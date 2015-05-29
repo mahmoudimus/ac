@@ -5,13 +5,9 @@ import com.atlassian.plugin.connect.modules.beans.ReportCategory;
 import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.helptips.JiraHelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import hudson.plugins.jira.soap.RemoteProject;
 import it.servlet.ConnectAppServlets;
-import it.util.ConnectTestUserFactory;
-import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -30,7 +26,7 @@ public class TestReport extends JiraWebDriverTestBase
     private static final TestReportInfo firstTestReport = new TestReportInfo("Agile Test Report", "description", "agile-test-report", "projectKey", ReportCategory.AGILE)
     {
         @Override
-        public String getExpectedContextParamValue(final RemoteProject project)
+        public String getExpectedContextParamValue()
         {
             return project.getKey();
         }
@@ -38,9 +34,9 @@ public class TestReport extends JiraWebDriverTestBase
     private static final TestReportInfo secondTestReport = new TestReportInfo("Other Test Report", "some description", "other-test-report", "projectId", ReportCategory.OTHER)
     {
         @Override
-        public String getExpectedContextParamValue(final RemoteProject project)
+        public String getExpectedContextParamValue()
         {
-            return String.valueOf(project.getId());
+            return project.getId();
         }
     };
 
@@ -115,7 +111,7 @@ public class TestReport extends JiraWebDriverTestBase
             final Map<String, String> queryParams = embeddedReportPage.getIframeQueryParams();
 
             assertThat(queryParams, hasEntry(equalTo(reportInfo.contextParam),
-                    equalTo(reportInfo.getExpectedContextParamValue(project))));
+                    equalTo(reportInfo.getExpectedContextParamValue())));
         }
     }
 
@@ -153,6 +149,6 @@ public class TestReport extends JiraWebDriverTestBase
             this.reportCategory = reportCategory;
         }
 
-        public abstract String getExpectedContextParamValue(final RemoteProject project);
+        public abstract String getExpectedContextParamValue();
     }
 }

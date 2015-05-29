@@ -1,9 +1,5 @@
 package it.confluence;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executors;
-
 import com.atlassian.confluence.api.model.JsonString;
 import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.api.model.content.ContentRepresentation;
@@ -36,12 +32,10 @@ import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.util.concurrent.Promise;
 import com.atlassian.util.concurrent.Promises;
-
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 import org.junit.After;
@@ -51,6 +45,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executors;
 
 import static com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean.newContentPropertyModuleBean;
 import static com.google.common.collect.Lists.newArrayList;
@@ -69,11 +67,11 @@ public class TestConfluenceContentProperties
 {
     private static final Logger log = LoggerFactory.getLogger(TestConfluenceContentProperties.class);
 
-    public static final String PROPERTY_KEY = "basepropkey";
-    public static final String TEXT_FIELD_OBJECT_KEY = "mytitle";
-    public static final String NUMERIC_FIELD_OBJECT_KEY = "likes";
-    public static final String DATE_FIELD_OBJECT_KEY = "editTime";
-    public static final String STRING_FIELD_OBJECT_KEY = "tags";
+    private static final String PROPERTY_KEY = "basepropkey";
+    private static final String TEXT_FIELD_OBJECT_KEY = "mytitle";
+    private static final String NUMERIC_FIELD_OBJECT_KEY = "likes";
+    private static final String DATE_FIELD_OBJECT_KEY = "editTime";
+    private static final String STRING_FIELD_OBJECT_KEY = "tags";
 
     // values
     private static final int NUMERIC_VALUE = 5;
@@ -291,23 +289,25 @@ public class TestConfluenceContentProperties
     private PageResponse<Content> executeCql(String cql) throws Exception
     {
         log.debug(cql);
+        final int retries = 100;
+        final int waitTime = 100;
         try
         {
             // confluence's index queue flushes every 5 secs (see config of IndexQueueFlusher), we don't have a rest client method to wait on this indexing
-            for (int i = 0; i < 60; i++)
+            for (int i = 0; i < retries; i++)
             {
                 PageResponse<Content> result = cqlSearchService.searchContent(cql).get();
                 if (result.size() >= 1)
                     return result;
 
-                Thread.sleep(100);
+                Thread.sleep(waitTime);
             }
         }
         catch (Exception ex)
         {
-            throw new RuntimeException("Could not execute :"+cql,ex);
+            throw new RuntimeException("Could not execute :"+cql, ex);
         }
-        fail("Did not find any results after 6 secs for query string : " + cql);
+        fail(String.format("Did not find any results after %d secs for query string : %s", retries * waitTime / 1000 , cql));
         return null;
     }
 }

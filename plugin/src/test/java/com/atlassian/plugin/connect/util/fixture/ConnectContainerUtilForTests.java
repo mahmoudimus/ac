@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.util.fixture;
 
-import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
+import com.atlassian.plugin.connect.api.capabilities.util.ConnectContainerUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;

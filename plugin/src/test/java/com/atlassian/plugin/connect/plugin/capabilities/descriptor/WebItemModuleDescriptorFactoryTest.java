@@ -1,13 +1,15 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.builder.WebItemModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.module.DynamicMarkerCondition;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
@@ -71,13 +73,13 @@ public class WebItemModuleDescriptorFactoryTest
         this.addon = newConnectAddonBean().withKey("my-key").build();
         this.moduleProviderContext = new DefaultConnectModuleProviderContext(addon);
 
-        ConditionModuleFragmentFactory conditionModuleFragmentFactory = new ConditionModuleFragmentFactory(mock(ProductAccessor.class), new ParamsModuleFragmentFactory());
+        ConditionModuleFragmentFactory conditionModuleFragmentFactory = new ConditionModuleFragmentFactoryImpl(mock(ProductAccessor.class), new ParamsModuleFragmentFactoryImpl());
 
         RemotablePluginAccessorFactoryForTests pluginAccessorFactory = new RemotablePluginAccessorFactoryForTests();
         pluginAccessorFactory.withBaseUrl(ADDON_BASE_URL);
-        webItemFactory = new WebItemModuleDescriptorFactory(new WebItemModuleDescriptorFactoryForTests(webInterfaceManager),
+        webItemFactory = new WebItemModuleDescriptorFactoryImpl(new WebItemModuleDescriptorFactoryForTests(webInterfaceManager),
                 new IconModuleFragmentFactory(pluginAccessorFactory), conditionModuleFragmentFactory,
-                new ParamsModuleFragmentFactory());
+                new ParamsModuleFragmentFactoryImpl());
 
         when(servletRequest.getContextPath()).thenReturn("http://ondemand.com/jira");
 

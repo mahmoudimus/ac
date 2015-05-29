@@ -1,6 +1,6 @@
 <application key="jira">
 
-    <resource type="i18n" key="addon-18n" name="jira-addon-i18n" location="com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonResourceBundle"/>
+    <resource type="i18n" key="addon-18n" name="jira-addon-i18n" location="com.atlassian.plugin.connect.jira.integration.plugins.ConnectAddonResourceBundle"/>
 
     <rest key="rest" path="/atlassian-connect" version="1">
         <dispatcher>REQUEST</dispatcher>
@@ -20,9 +20,19 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-remote-condition</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-css</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-iframe-host-js</dependency>
-
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-extensions</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-user</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-workflow-post-function</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-events</dependency>
+
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
+    <web-resource key="atlassian-connect-dashboard-item-resources" name="Connect resources for dashboard page.">
+        <context>atl.dashboard</context>
+
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-atlassian-connect-resources</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-dashboard-item</dependency>
 
         <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
@@ -30,8 +40,21 @@
     <!-- JavaScript API Core -->
 
     <web-resource key="ap-core">
-        <resource type="download" name="core-host.js" location="/js/core/connect-host.js" />
+        <resource type="download" name="core-host.js" location="/js/core/connect-host-amd.js" />
         <dependency>jira.webresources:almond</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
+    <web-resource key="ap-extensions">
+        <resource type="download" name="connect-cookie.js" location="/js/core/connect-host-cookie.js" />
+        <resource type="download" name="connect-env.js" location="/js/core/connect-host-env.js" />
+        <resource type="download" name="connect-messages.js" location="/js/core/connect-host-messages.js" />
+        <resource type="download" name="connect-request.js" location="/js/core/connect-host-request.js" />
+        <resource type="download" name="connect-history.js" location="/js/core/connect-host-history.js" />
+        <resource type="download" name="connect-dialog.js" location="/js/core/connect-host-dialog.js" />
+        <resource type="download" name="connect-inline-dialog.js" location="/js/core/connect-host-inline-dialog.js" />
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-iframe-host-js</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
@@ -43,7 +66,6 @@
 
     <web-resource key="iframe-host-js">
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-user</dependency>
         <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
         <resource type="download" name="content-resolver.js" location="/js/iframe/host/content-resolver.js" />
         <dependency>com.atlassian.auiplugin:dialog2</dependency>
@@ -61,6 +83,14 @@
     <web-resource key="workflow-post-function">
         <resource type="download" name="workflow-post-function.js" location="js/jira/workflow-post-function/workflow-post-function.js" />
         <resource type="download" name="workflow-post-function-rpc.js" location="js/jira/workflow-post-function/workflow-post-function-rpc.js" />
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
+    <web-resource key="dashboard-item">
+        <resource type="download" name="dashboard-item.js" location="js/jira/dashboard-item/dashboard-item.js" />
+
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>

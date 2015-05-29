@@ -6,7 +6,7 @@ import com.atlassian.json.schema.JsonSchemaGeneratorProvider;
 import com.atlassian.json.schema.doclet.model.JsonSchemaDocs;
 import com.atlassian.json.schema.scanner.model.InterfaceList;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
-import com.atlassian.plugin.connect.plugin.descriptor.ConnectSchemaGenerator;
+import com.atlassian.plugin.connect.api.capabilities.descriptor.ConnectSchemaGenerator;
 
 public class ConfluenceSchemaGeneratorProvider implements JsonSchemaGeneratorProvider
 {

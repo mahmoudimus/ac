@@ -18,6 +18,7 @@ import com.atlassian.crowd.model.group.GroupTemplate;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

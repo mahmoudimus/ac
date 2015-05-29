@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.rest.addons;
 
 import com.atlassian.fugue.Either;
 import com.atlassian.fugue.Option;
+import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.plugin.property.AddOnProperty;
 import com.atlassian.plugin.connect.plugin.property.AddOnPropertyIterable;
 import com.atlassian.plugin.connect.plugin.property.AddOnPropertyService;
@@ -9,16 +10,15 @@ import com.atlassian.plugin.connect.plugin.property.AddOnPropertyServiceImpl;
 import com.atlassian.plugin.connect.plugin.rest.RestResult;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddOnPropertiesBean;
 import com.atlassian.plugin.connect.plugin.rest.data.RestAddOnProperty;
-import com.atlassian.plugin.connect.plugin.scopes.AddOnKeyExtractor;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;
-import com.google.common.io.LimitInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -329,17 +329,16 @@ public class AddOnPropertiesResource
 
     private Either<RestParamError, String> propertyValue(final HttpServletRequest request)
     {
+        int contentLength = request.getContentLength();
+        if (contentLength > AddOnPropertyServiceImpl.MAXIMUM_PROPERTY_VALUE_LENGTH)
+        {
+            return Either.left(RestParamError.PROPERTY_VALUE_TOO_LONG);
+        }
+
         try
         {
-            LimitInputStream limitInputStream =
-                    new LimitInputStream(request.getInputStream(), AddOnPropertyServiceImpl.MAXIMUM_PROPERTY_VALUE_LENGTH + 1);
-            byte[] bytes = IOUtils.toByteArray(limitInputStream);
-            if (bytes.length > AddOnPropertyServiceImpl.MAXIMUM_PROPERTY_VALUE_LENGTH)
-            {
-                return Either.left(RestParamError.PROPERTY_VALUE_TOO_LONG);
-            }
-
-            return Either.right(new String(bytes, Charset.defaultCharset()));
+            char[] charData = IOUtils.toCharArray(request.getReader());
+            return Either.right(new String(charData));
         }
         catch (IOException e)
         {

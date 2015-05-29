@@ -5,8 +5,8 @@ import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.AutoconvertBeanBuilder;
-import com.google.common.collect.ImmutableList;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#AUTOCONVERT_EXAMPLE}
  * @schemaTitle Autoconvert
- * @since 1.1
+ * @since 1.1.27
  */
 @SchemaDefinition("autoconvert")
 public class AutoconvertBean extends BaseModuleBean
@@ -44,7 +44,7 @@ public class AutoconvertBean extends BaseModuleBean
 
     public AutoconvertBean()
     {
-        this.matchers = ImmutableList.of();
+        this.matchers = Collections.emptyList();
         this.urlParameter = "";
     }
 
@@ -54,7 +54,7 @@ public class AutoconvertBean extends BaseModuleBean
 
         if (null == matchers)
         {
-            this.matchers = ImmutableList.of();
+            this.matchers = Collections.emptyList();
         }
 
         if (null == urlParameter)

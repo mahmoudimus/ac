@@ -2,7 +2,7 @@ package it.util;
 
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.jira.testkit.client.Backdoor;
-import com.atlassian.jira.tests.TestBase;
+import com.atlassian.jira.testkit.client.util.TestKitLocalEnvironmentData;
 import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
 import com.atlassian.plugin.connect.test.helptips.JiraHelpTipApiClient;
 
@@ -14,7 +14,7 @@ public class JiraTestUserFactory extends ConnectTestUserFactory
 
     public JiraTestUserFactory(JiraTestedProduct product)
     {
-        this(product, TestBase.funcTestHelper.backdoor);
+        this(product, new Backdoor(new TestKitLocalEnvironmentData()));
     }
 
     public JiraTestUserFactory(JiraTestedProduct product, Backdoor backdoor)

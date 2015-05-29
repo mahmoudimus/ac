@@ -5,7 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.beans.matchers.SameDeepPropertyValuesAs;
+import com.atlassian.plugin.connect.testsupport.util.matcher.SameDeepPropertyValuesAs;
 import com.google.gson.Gson;
 import org.junit.Test;
 

@@ -4,6 +4,7 @@ import com.atlassian.jira.security.auth.trustedapps.KeyFactory;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
+import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +41,7 @@ public class AddOnKeyExtractorTest
         when(request.getContextPath()).thenReturn("/confluence");
         when(consumerService.getConsumer()).thenReturn(Consumer.key(THIS_ADD_ON_KEY).name("whatever").signatureMethod(Consumer.SignatureMethod.HMAC_SHA1).publicKey(new KeyFactory.InvalidPublicKey(new Exception())).build());
 
-        addOnKeyExtractor = new AddOnKeyExtractor(jsonConnectAddOnIdentifierService, consumerService);
+        addOnKeyExtractor = new AddOnKeyExtractorImpl(jsonConnectAddOnIdentifierService, consumerService);
     }
 
     @Test

@@ -11,9 +11,9 @@ import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.service.client.CrowdClient;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserGroupProvisioningService;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.plugin.usermanagement.CrowdClientFacade;
-import com.atlassian.plugin.connect.plugin.util.FeatureManager;
+import com.atlassian.plugin.connect.spi.product.FeatureManager;
 
 import org.junit.Before;
 import org.junit.Test;

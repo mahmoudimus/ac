@@ -38,12 +38,6 @@ public class ConfluenceAdminPage implements AdminPage
     }
 
     @Override
-    public boolean isRemotePluginLinkPresent()
-    {
-        return findLinkElement().isPresent();
-    }
-
-    @Override
     public ConnectAddOnEmbeddedTestPage clickAddOnLink()
     {
         findLinkElement().click();

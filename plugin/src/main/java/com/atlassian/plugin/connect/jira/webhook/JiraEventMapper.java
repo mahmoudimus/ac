@@ -1,11 +1,10 @@
 package com.atlassian.plugin.connect.jira.webhook;
 
-import java.util.Map;
-
 import com.atlassian.jira.event.JiraEvent;
-import com.atlassian.plugin.connect.plugin.product.EventMapper;
-
+import com.atlassian.plugin.connect.spi.product.EventMapper;
 import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
 
 public class JiraEventMapper implements EventMapper<JiraEvent>
 {

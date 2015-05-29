@@ -4,7 +4,7 @@ import com.atlassian.jira.bc.project.component.ProjectComponent;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.version.Version;
-import com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters;
+import com.atlassian.plugin.connect.spi.iframe.context.HashMapModuleContextParameters;
 
 /**
  *
@@ -18,6 +18,7 @@ public class JiraModuleContextParametersImpl extends HashMapModuleContextParamet
         {
             put(JiraModuleContextFilter.ISSUE_KEY, issue.getKey());
             put(JiraModuleContextFilter.ISSUE_ID, Long.toString(issue.getId()));
+            put(JiraModuleContextFilter.ISSUETYPE_ID, issue.getIssueTypeId());
             addProject(issue.getProjectObject());
         }
     }

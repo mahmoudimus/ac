@@ -33,6 +33,22 @@ or Confluence Cloud with Atlassian Connect as follows:
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
 
+## [1.1.32](../release-notes/1-1-0.html#1.1.32)
+* Add `entity_property_equal_to` condition for add-on properties [ACJIRA-362](https://ecosystem.atlassian.net/browse/ACJIRA-362)
+* JIRA: Add `entity_property_equal_to` condition for project, issue, issue type and comment properties [ACJIRA-362](https://ecosystem.atlassian.net/browse/ACJIRA-362)
+* JIRA: Provide dashboard items [ACJIRA-248](https://ecosystem.atlassian.net/browse/ACJIRA-248)
+* Confluence: Add view mode parameter for blueprints [CE-110](https://ecosystem.atlassian.net/browse/CE-110)
+* JIRA: Add issue type ID context parameter for issue tab panels [ACJIRA-417](https://ecosystem.atlassian.net/browse/ACJIRA-417)
+* Confluence: Add macro.id context parameter for macros [CE-79](https://ecosystem.atlassian.net/browse/CE-79)
+* JIRA: Whitelist REST API endpoints for dashboard items [ACJIRA-247](https://ecosystem.atlassian.net/browse/ACJIRA-247)
+* JIRA: Whitelist REST API endpoints for project roles [ACJIRA-394](https://ecosystem.atlassian.net/browse/ACJIRA-394)
+* Client-side JWT refresh fails for users with UTF-8 characters in the display name [ACJS-36](https://ecosystem.atlassian.net/browse/ACJS-36)
+* Dialog close button doesn't work if there is an error loading the contents [ACJS-6](https://ecosystem.atlassian.net/browse/ACJS-6)
+* Hotkeys cannot be used in dialogs until focused by the user [ACJS-22](https://ecosystem.atlassian.net/browse/ACJS-22)
+* Confluence: : = | RAW | = : parameter causes errors in macros [AC-1573](https://ecosystem.atlassian.net/browse/AC-1573)
+* JIRA: Admin pages lose navigation context [ACJIRA-114](https://ecosystem.atlassian.net/browse/ACJIRA-114)
+* Errors in the JavaScript API are swallowed [ACJS-2](https://ecosystem.atlassian.net/browse/ACJS-2)
+
 ## [1.1.29](../release-notes/1-1-0.html#1.1.29)
 * Username and display name available on the JWT token [AC-1558](https://ecosystem.atlassian.net/browse/AC-1558)
 * Autoconvert: Limiter on number of possible patterns for a single macro

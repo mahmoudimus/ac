@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.jira.iframe.tabpanel;
 
 import com.atlassian.jira.project.browse.BrowseContext;
-import com.atlassian.plugin.connect.plugin.module.page.IFrameContextImpl;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.api.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.spi.module.page.IFrameContextImpl;
 import com.atlassian.plugin.connect.spi.module.IFrameContext;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
 import com.atlassian.plugin.web.Condition;

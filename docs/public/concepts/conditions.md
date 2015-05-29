@@ -16,6 +16,7 @@ module accepts conditions, see their specific module documentation page.
     * [Confluence](#confluence-conditions)
     * [JIRA](#jira-conditions)
       * [Condition parameter mappings](#jira-condition-parameters)
+* [Entity property condition](#entity-property)
 * [Remote conditions](#remote)
 
 ## <a name="static"></a>Static conditions
@@ -130,6 +131,7 @@ Each product defines a set of static conditions relevant to its domain.
 * `user_watching_space_for_content_type`
 * `viewing_content`
 * `viewing_own_profile`
+* [`entity_property_equal_to`](#entity-property)
 
 #### <a name="jira-conditions"></a>JIRA
 
@@ -159,6 +161,7 @@ Each product defines a set of static conditions relevant to its domain.
 * `user_is_the_logged_in_user`
 * `voting_enabled`
 * `watching_enabled`
+* [`entity_property_equal_to`](#entity-property)
 
 ##### <a name="jira-condition-parameters"></a>Condition parameter mappings
 
@@ -333,7 +336,58 @@ in Atlassian Connect module declarations and how they map to the permissions des
     </tbody>
 </table>
 
+## <a name="entity-property"></a>Entity property condition
+
+There is a common notion of entity properties in Atlassian products. Entities like `issue` or `project` can have properties that can
+ be set by Connect add-ons via the  REST API. Add-ons can also have their own properties. Properties are a great way to display
+ something conditionally. This can be achieved with the `entity_property_equal_to` condition.
+
+ This condition lets you test whether the entity property is equal to the specified value. Supported entities depend on the product:
+
+ * Common: `addon`
+ * JIRA: `project`, `issue`, `issuetype`, `comment`
+
+
+ When using the condition you need to specify the entity, property key and expected value:
+
+     {
+         "name": "My Addon",
+         "modules": {
+             "generalPages": [
+                 {
+                     "conditions": [
+                         {
+                             "condition": "entity_property_equal_to",
+                             "params": {
+                                 "entity": "addon",
+                                 "propertyKey": "isEnabled",
+                                 "value": "true"
+                             }
+                         }
+                     ]
+                 }
+             ]
+         }
+     }
+
+ In the above example the general page will be displayed if the `isEnabled` add-on property is set to `true`. All entities other than `addon` depend on context. For example,
+ if you add a web panel with an issue entity condition to some issue view, then the condition will be checked against the properties of the currently displayed issue.
+
 ## <a name="remote"></a>Remote conditions
+
+A remote condition is a condition which is implemented as an add-on resource. Upon evaluation, the Atlassian application
+issues a request to the remote resource and expects a response which specifies whether to show or hide the module feature.
+
+**NOTE:** The use of remote conditions is discouraged in favor of [Entity property conditions](#entity-property).
+
+Remote conditions are URLs and must start with either 'http' or '/', and return a 200 HTTP response code with
+a JSON body containing the boolean ```shouldDisplay``` field.
+
+    {
+        "shouldDisplay": false
+    }
+
+The following module declaration exemplifies the use of a remote condition.
 
     {
         "name": "My Addon",
@@ -350,17 +404,8 @@ in Atlassian Connect module declarations and how they map to the permissions des
         }
     }
 
-For a remote condition, the Atlassian application issues a request to the remote resource and expects a response which
-specifies whether to show or hide the module feature.
-
-    {
-        "shouldDisplay": false
-    }
-
 The add-on can pass parameters to the remote condition as URL query parameters. Remote condition has request
 authentication information passed through as a header, rather than as a query string parameter.
-
-Remote conditions are URLs and must start with either 'http' or '/', and return a 200 HTTP response code with a JSON body containing the boolean ```shouldDisplay``` field.
 
 If there is an error communicating with the remote resource (for example, the request timeout period of 10 seconds elapses with no response),
 then the failure will be logged and the condition will be evaluated as `false`.

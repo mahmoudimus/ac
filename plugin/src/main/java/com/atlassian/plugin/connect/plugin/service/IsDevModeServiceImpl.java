@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.service;
 
+import com.atlassian.plugin.connect.api.service.IsDevModeService;
 import org.springframework.stereotype.Component;
 
 @Component

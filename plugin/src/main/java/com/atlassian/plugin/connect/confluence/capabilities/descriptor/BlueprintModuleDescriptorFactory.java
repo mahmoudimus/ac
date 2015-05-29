@@ -6,8 +6,8 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.builder.LinkBeanBuilder;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.capabilities.descriptor.ConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.util.Dom4jUtils;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
@@ -55,6 +55,7 @@ public class BlueprintModuleDescriptorFactory
         blueprintElement.addAttribute("index-key", bean.getRawKey());
         blueprintElement.addAttribute("content-template-key",contentTemplateKey);
         blueprintElement.addAttribute("system", "true");
+        blueprintElement.addAttribute("create-result", bean.getCreateResult().toString());
 
         if(log.isDebugEnabled()) {
             log.debug(Dom4jUtils.printNode(blueprintElement));

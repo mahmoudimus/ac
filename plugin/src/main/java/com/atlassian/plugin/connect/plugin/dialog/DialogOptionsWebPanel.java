@@ -1,23 +1,20 @@
 package com.atlassian.plugin.connect.plugin.dialog;
 
+import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
+import com.atlassian.plugin.web.model.AbstractWebPanel;
+import com.atlassian.plugin.web.model.WebPanel;
+import com.atlassian.templaterenderer.TemplateRenderer;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
-import com.atlassian.plugin.web.model.AbstractWebPanel;
-import com.atlassian.plugin.web.model.WebPanel;
-import com.atlassian.templaterenderer.TemplateRenderer;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.toCompleteKey;
 
 public class DialogOptionsWebPanel extends AbstractWebPanel implements WebPanel
 {

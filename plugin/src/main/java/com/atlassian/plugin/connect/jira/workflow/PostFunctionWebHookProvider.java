@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.jira.workflow;
 
-import com.atlassian.plugin.connect.jira.workflow.RemoteWorkflowPostFunctionEvent;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.webhooks.spi.provider.WebHookProvider;

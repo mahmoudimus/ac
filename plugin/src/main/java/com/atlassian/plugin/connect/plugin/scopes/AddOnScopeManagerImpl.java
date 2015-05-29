@@ -1,11 +1,15 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
+import com.atlassian.plugin.connect.api.scopes.AddOnScopeManager;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
-import com.atlassian.plugin.connect.plugin.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.service.ScopeService;
+import com.atlassian.plugin.connect.spi.scope.AddOnScope;
+import com.atlassian.plugin.connect.spi.scope.AddOnScopeApiPath;
 import com.atlassian.plugin.connect.spi.scope.ApiScope;
-import com.atlassian.plugin.connect.spi.scope.RestApiScopeHelper;
+import com.atlassian.plugin.connect.spi.scope.helper.RestApiScopeHelper;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.user.UserKey;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
@@ -26,6 +30,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.any;
 
 @Component
+@ExportAsDevService
 public final class AddOnScopeManagerImpl implements AddOnScopeManager
 {
     private final Collection<AddOnScope> allScopes;
@@ -50,7 +55,7 @@ public final class AddOnScopeManagerImpl implements AddOnScopeManager
     {
         RestApiScopeHelper.RestScope restScope = new RestApiScopeHelper.RestScope("atlassian-connect", Arrays.asList("1", "latest"), "/addons($|/.*)", Arrays.asList("GET", "POST", "PUT", "DELETE"), true);
 
-        ArrayList<AddOnScopeApiPath> paths = new ArrayList<AddOnScopeApiPath>();
+        ArrayList<AddOnScopeApiPath> paths = new ArrayList<>();
         paths.add(new AddOnScopeApiPath.RestApiPath(Collections.singleton(restScope)));
 
         return new AddOnScope("ADD_ON_PROPERTIES", paths);

@@ -12,16 +12,12 @@ commonPlanConfiguration() {
     )
 }
 
-productSnapshotPlanConfiguration(['productVersion', 'productDataVersion']) {
+productSnapshotPlanConfiguration(['productVersion']) {
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (develop)')
     variable(
             key: 'bamboo.product.version',
             value: '#productVersion'
-    )
-    variable(
-            key: 'bamboo.product.data.version',
-            value: '#productDataVersion'
     )
     trigger(
             type: 'cron',
@@ -68,9 +64,17 @@ runTestsStage() {
             checkoutDefaultRepositoryTask()
             mavenTestTask(
                     description: 'Run Unit Tests',
-                    goal: 'package',
+                    goal: 'clover2:setup package clover2:clover',
                     environmentVariables: ''
             )
+            cloverReportArtifact(
+                    name: 'Unit Tests'
+            )
+            cloverJSONArtifact(
+                    name: 'Unit Tests'
+            )
+            cloverMiscConfiguration()
+            cloverBambooTask()
         }
         job(
                 key: 'QUNIT',
@@ -328,9 +332,17 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
         checkoutDefaultRepositoryTask()
         mavenTestTask(
                 description: 'Run Wired Lifecycle Tests for #product',
-                goal: 'verify -PpluginLifecycle -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters',
+                goal: 'clover2:setup verify -PpluginLifecycle,clover -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters clover2:aggregate clover2:clover',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
         )
+        cloverReportArtifact(
+                name: '#product - Lifecycle Tests'
+        )
+        cloverJSONArtifact(
+                name: '#product - Lifecycle Tests'
+        )
+        cloverMiscConfiguration()
+        cloverBambooTask()
     }
 }
 
@@ -343,9 +355,17 @@ wiredTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
         checkoutDefaultRepositoryTask()
         mavenTestTask(
                 description: 'Run Wired Tests for #product',
-                goal: 'verify -Pwired -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters',
+                goal: 'clover2:setup verify -Pwired,clover -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters clover2:aggregate clover2:clover',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
         )
+        cloverReportArtifact(
+                name: '#product - Wired Tests'
+        )
+        cloverJSONArtifact(
+                name: '#product - Wired Tests'
+        )
+        cloverMiscConfiguration()
+        cloverBambooTask()
     }
 }
 
@@ -378,9 +398,9 @@ commonRequirements() {
     )
 }
 
-maven30Requirement() {
+maven32Requirement() {
     requirement(
-            key: 'system.builder.mvn3.Maven 3.0',
+            key: 'system.builder.mvn3.Maven 3.2',
             condition: 'exists'
     )
 }
@@ -422,10 +442,50 @@ mavenTaskImpl(['description', 'goal', 'environmentVariables', 'hasTests', 'testD
             description: '#description',
             goal: '#goal -B -nsu -e',
             buildJdk: 'JDK 1.8',
-            mavenExecutable: 'Maven 3.0',
+            mavenExecutable: 'Maven 3.2',
             environmentVariables: '#environmentVariables',
             hasTests: '#hasTests',
             testDirectory: '#testDirectory'
+    )
+}
+
+cloverReportArtifact(['name']) {
+    artifactDefinition(
+            name:'Clover Report (System) - #name',
+            location:'plugin/target/site/clover',
+            pattern:'**/*.*',
+            shared:'true'
+    )
+}
+
+cloverJSONArtifact(['name']) {
+    artifactDefinition(
+            name:'Coverage (JSON - System) - #name',
+            pattern:'coverage-*.json',
+            shared:'true'
+    )
+}
+
+cloverMiscConfiguration() {
+    miscellaneousConfiguration() {
+        coverageJSON(
+            enabled:'true'
+        )
+        clover(
+            type:'custom',
+            path:'plugin/target/site/clover'
+        )
+    }
+}
+
+cloverBambooTask() {
+    task(
+            type:'custom',
+            createTaskKey:'com.atlassian.bamboo.plugins.bamboo-coverage-json-plugin:coverage-json-task',
+            description:'',
+            final:'true',
+            format:'clover',
+            location:'**/clover.xml'
     )
 }
 

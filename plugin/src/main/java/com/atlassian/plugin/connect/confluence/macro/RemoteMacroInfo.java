@@ -3,8 +3,8 @@ package com.atlassian.plugin.connect.confluence.macro;
 import java.net.URI;
 
 import com.atlassian.confluence.macro.Macro;
-import com.atlassian.plugin.connect.plugin.util.contextparameter.RequestContextParameterFactory;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.api.util.RequestContextParameterFactory;
+import com.atlassian.plugin.connect.api.http.HttpMethod;
 
 import org.dom4j.Element;
 
