@@ -111,7 +111,12 @@ public class ContentPropertyAliasModuleDescriptorFactory
             }
             uiSupportelement.addAttribute("i18n-key", uiSupport.getI18nKey());
             uiSupportelement.addAttribute("i18n-field-tooltip", uiSupport.getTooltipI18nKey());
-            uiSupportelement.addAttribute("data-uri", addonBaseUrl + uiSupport.getDataUri());
+
+            String relativeDataUri = uiSupport.getDataUri();
+            if (relativeDataUri != null)
+            {
+                uiSupportelement.addAttribute("data-uri", addonBaseUrl + uiSupport.getDataUri());
+            }
             aliasElement.add(uiSupportelement);
         }
 
