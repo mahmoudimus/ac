@@ -4,7 +4,7 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddonUserUpdateException;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.PluginEventManager;
@@ -62,7 +62,7 @@ public class ConnectPluginProperEventHandler implements InitializingBean, Dispos
                 {
                     addonManager.disableConnectAddonWithoutPersistingState(pluginKey);
                 }
-                catch (ConnectAddOnUserDisableException e)
+                catch (ConnectAddonUserUpdateException e)
                 {
                     log.error("Unable to disable addon user for addon: " + pluginKey, e);
                 }

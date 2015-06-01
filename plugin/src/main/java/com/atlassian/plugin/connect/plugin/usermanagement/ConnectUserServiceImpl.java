@@ -23,17 +23,21 @@ import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitExcept
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.plugin.connect.spi.product.FeatureManager;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.atlassian.sal.api.user.UserKey;
+
 import com.google.common.collect.ImmutableMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nonnull;
 
 import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.Constants;
 import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
@@ -42,21 +46,22 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @ExportAsDevService
 @JiraComponent
 @ConfluenceComponent
-public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
+public class ConnectUserServiceImpl implements ConnectUserService
 {
     private final ApplicationService applicationService;
     private final ApplicationManager applicationManager;
     private final ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService;
     private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
     private final FeatureManager featureManager;
-    private static final Logger log = LoggerFactory.getLogger(ConnectAddOnUserServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ConnectUserServiceImpl.class);
     private final CrowdClientFacade crowdClientFacade;
 
     @Autowired
-    public ConnectAddOnUserServiceImpl(ApplicationService applicationService,
-            ApplicationManager applicationManager,
-            ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService,
-            ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService, FeatureManager featureManager, CrowdClientFacade crowdClientFacade)
+    public ConnectUserServiceImpl(ApplicationService applicationService,
+                                  ApplicationManager applicationManager,
+                                  ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService,
+                                  ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService,
+                                  FeatureManager featureManager, CrowdClientFacade crowdClientFacade)
     {
         this.crowdClientFacade = crowdClientFacade;
         this.applicationService = checkNotNull(applicationService);
@@ -66,12 +71,13 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         this.featureManager = checkNotNull(featureManager);
     }
 
+    @Nonnull
     @Override
-    public String getOrCreateUserKey(String addOnKey, String addOnDisplayName) throws ConnectAddOnUserInitException
+    public UserKey getUserKeyForAddon(@Nonnull String addonKey, @Nonnull String addonDisplayName) throws ConnectAddOnUserInitException
     {
         try
         {
-            return createOrEnableAddOnUser(ConnectAddOnUserUtil.usernameForAddon(checkNotNull(addOnKey)), checkNotNull(addOnDisplayName));
+            return createOrEnableAddOnUser(ConnectAddOnUserUtil.usernameForAddon(checkNotNull(addonKey)), checkNotNull(addonDisplayName));
         }
         catch (InvalidCredentialException
                 | InvalidUserException
@@ -89,9 +95,24 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     }
 
     @Override
-    public void disableAddonUser(String addOnKey) throws ConnectAddOnUserDisableException
+    public boolean isUserActive(@Nonnull UserKey userKey)
     {
-        String username = ConnectAddOnUserUtil.usernameForAddon(addOnKey);
+        try
+        {
+            User user = findUserByUsername(userKey.getStringValue());
+            return user != null && user.isActive();
+        }
+        catch (ApplicationNotFoundException e)
+        {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    @Override
+    public void setUserActiveForAddon(@Nonnull String addonKey, boolean active)
+            throws ConnectAddOnUserInitException
+    {
+        String username = ConnectAddOnUserUtil.usernameForAddon(addonKey);
 
         try
         {
@@ -107,51 +128,33 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
                 }
                 catch (InvalidUserException | OperationFailedException | ApplicationPermissionException | UserNotFoundException e)
                 {
-                    throw new ConnectAddOnUserDisableException(e);
+                    throw new ConnectAddOnUserInitException(e);
                 }
             }
         }
         catch (ApplicationNotFoundException e)
         {
-            throw new ConnectAddOnUserDisableException(e);
+            throw new ConnectAddOnUserInitException(e);
         }
     }
 
-    @VisibleForTesting
+    @Nonnull
     @Override
-    public boolean isAddOnUserActive(String addOnKey)
-    {
-        String username = ConnectAddOnUserUtil.usernameForAddon(addOnKey);
-        User user;
-
-        try
-        {
-            user = findUserByUsername(username);
-        }
-        catch (ApplicationNotFoundException e)
-        {
-            throw new IllegalStateException(e);
-        }
-
-        return null != user && user.isActive();
+    public UserKey setUserScopesForAddon(@Nonnull String addonKey, @Nonnull String addonDisplayName,
+            @Nonnull Set<ScopeName> previousScopes, @Nonnull Set<ScopeName> newScopes) throws ConnectAddOnUserInitException {
+        UserKey userKey = getUserKeyForAddon(checkNotNull(addonKey), checkNotNull(addonDisplayName));
+        connectAddOnUserProvisioningService.provisionAddonUserForScopes(userKey, previousScopes, newScopes);
+        return userKey;
     }
 
-    @Override
-    public String provisionAddonUserForScopes(String addOnKey, String addOnDisplayName, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
-    {
-        String username = getOrCreateUserKey(checkNotNull(addOnKey), checkNotNull(addOnDisplayName));
-        connectAddOnUserProvisioningService.provisionAddonUserForScopes(username, previousScopes, newScopes);
-        return username;
-    }
-
-    private String createOrEnableAddOnUser(String username, String addOnDisplayName)
-            throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException, ApplicationNotFoundException, ConnectAddOnUserInitException, InvalidAuthenticationException
+    private UserKey createOrEnableAddOnUser(String username, String addOnDisplayName)
+            throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException,
+            MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException,
+            ApplicationNotFoundException, ConnectAddOnUserInitException, InvalidAuthenticationException
     {
         connectAddOnUserGroupProvisioningService.ensureGroupExists(Constants.ADDON_USER_GROUP_KEY);
         User user = ensureUserExists(username, addOnDisplayName);
         connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), Constants.ADDON_USER_GROUP_KEY);
-
-
 
         for (String group : connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected())
         {
@@ -192,28 +195,28 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
                     "Please check with an instance administrator that at least one of these groups exists and that it is not read-only.");
         }
 
-        return user.getName();
+        return new UserKey(user.getName());
     }
 
-    private User ensureUserExists(String username, String addOnDisplayName)
+    private User ensureUserExists(String username, String addonDisplayName)
             throws OperationFailedException, InvalidCredentialException, ApplicationPermissionException, UserNotFoundException, InvalidUserException, ApplicationNotFoundException, ConnectAddOnUserInitException, InvalidAuthenticationException
     {
         User user = findUserByUsername(username);
 
         if (null == user)
         {
-            user = createUser(username, addOnDisplayName);
+            user = createUser(username, addonDisplayName);
         }
         else
         {
             // just in case an admin changes the email address
             // (we don't rely on this to prevent an admin taking control of the account, but it would make it more difficult)
-            if (!Constants.ADDON_USER_EMAIL_ADDRESS.equals(user.getEmailAddress()) || !user.isActive() || !addOnDisplayName.equals(user.getDisplayName()))
+            if (!Constants.ADDON_USER_EMAIL_ADDRESS.equals(user.getEmailAddress()) || !user.isActive() || !addonDisplayName.equals(user.getDisplayName()))
             {
                 UserTemplate userTemplate = new UserTemplate(user);
                 userTemplate.setEmailAddress(Constants.ADDON_USER_EMAIL_ADDRESS);
                 userTemplate.setActive(true);
-                userTemplate.setDisplayName(addOnDisplayName);
+                userTemplate.setDisplayName(addonDisplayName);
                 applicationService.updateUser(getApplication(), userTemplate);
             }
         }

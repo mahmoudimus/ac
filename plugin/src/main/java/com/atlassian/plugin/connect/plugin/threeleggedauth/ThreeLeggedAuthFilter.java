@@ -1,8 +1,6 @@
 package com.atlassian.plugin.connect.plugin.threeleggedauth;
 
 import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.crowd.embedded.api.CrowdService;
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.jwt.core.http.auth.SimplePrincipal;
@@ -10,6 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.util.DefaultMessage;
+import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.sal.api.auth.AuthenticationListener;
 import com.atlassian.sal.api.auth.Authenticator;
 import com.atlassian.sal.api.message.I18nResolver;
@@ -17,7 +16,7 @@ import com.atlassian.sal.api.message.Message;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,9 +44,9 @@ public class ThreeLeggedAuthFilter implements Filter
     private final ThreeLeggedAuthService threeLeggedAuthService;
     private final ConnectAddonManager connectAddonManager;
     private final UserManager userManager;
+    private final ConnectUserService userService;
     private final AuthenticationListener authenticationListener;
     private final JwtApplinkFinder jwtApplinkFinder;
-    private final CrowdService crowdService;
     private final String badCredentialsMessage; // protect against phishing by not saying whether the add-on, user or secret was wrong
 
     private final static Logger log = LoggerFactory.getLogger(ThreeLeggedAuthFilter.class);
@@ -57,17 +56,17 @@ public class ThreeLeggedAuthFilter implements Filter
     public ThreeLeggedAuthFilter(ThreeLeggedAuthService threeLeggedAuthService,
                                  ConnectAddonManager connectAddonManager,
                                  UserManager userManager,
+                                 ConnectUserService userService,
                                  AuthenticationListener authenticationListener,
                                  JwtApplinkFinder jwtApplinkFinder,
-                                 CrowdService crowdService,
                                  I18nResolver i18nResolver)
     {
-        this.threeLeggedAuthService = checkNotNull(threeLeggedAuthService);
-        this.connectAddonManager = checkNotNull(connectAddonManager);
-        this.userManager = checkNotNull(userManager);
-        this.authenticationListener = checkNotNull(authenticationListener);
-        this.jwtApplinkFinder = checkNotNull(jwtApplinkFinder);
-        this.crowdService = checkNotNull(crowdService);
+        this.threeLeggedAuthService = checkNotNull(threeLeggedAuthService, "threeLeggedAuthService");
+        this.connectAddonManager = checkNotNull(connectAddonManager, "connectAddonManager");
+        this.userManager = checkNotNull(userManager, "userManager");
+        this.userService = checkNotNull(userService, "userService");
+        this.authenticationListener = checkNotNull(authenticationListener, "authenticationListener");
+        this.jwtApplinkFinder = checkNotNull(jwtApplinkFinder, "jwtApplinkFinder");
         this.badCredentialsMessage = i18nResolver.getText("connect.3la.bad_credentials");
     }
 
@@ -247,17 +246,10 @@ public class ThreeLeggedAuthFilter implements Filter
         }
         else
         {
-            User user = crowdService.getUser(userProfile.getUsername());
-            // no impersonating an inactive user; no zombies
-            if (user == null)
-            {
-                // if this ever happens then our internal libs disagree on what is a user and what is not
-                throw new RuntimeException(String.format("The user manager said that user '%s' exists but Crowd does not know about it.", userProfile.getUsername()));
-            }
-            else if (!user.isActive())
+            if (!userService.isUserActive(userKey))
             {
                 String externallyVisibleMessage = String.format(MSG_FORMAT_NOT_ALLOWING_IMPERSONATION, addOnKey, subject);
-                log.debug("{} because the crowd service says that this user is inactive.", externallyVisibleMessage);
+                log.debug("{} because this user is inactive.", externallyVisibleMessage);
                 fail(request, response, externallyVisibleMessage, HttpServletResponse.SC_UNAUTHORIZED);
                 throw new InvalidSubjectException(subject);
             }
@@ -300,20 +292,20 @@ public class ThreeLeggedAuthFilter implements Filter
                 if (addOnUserKey instanceof String)
                 {
                     String userKeyString = (String) addOnUserKey;
-                    User user = crowdService.getUser(userKeyString);
-
+                    UserKey userKey = new UserKey(userKeyString);
+                    UserProfile userProfile = userManager.getUserProfile(userKey);
                     // if the add-on's user has been disabled then we explicitly deny access so that admins and our add-on
                     // lifecycle code can instantly prevent an add-on from making any calls (e.g. when an add-on is disabled)
-                    if (null == user)
+                    if (null == userProfile)
                     {
                         throw new InvalidSubjectException(String.format("The user '%s' does not exist", userKeyString));
                     }
-                    else if (!user.isActive())
+                    if (!userService.isUserActive(userKey))
                     {
                         throw new InvalidSubjectException(String.format("The user '%s' is inactive", userKeyString));
                     }
 
-                    userPrincipal = new SimplePrincipal(userKeyString);
+                    userPrincipal = new SimplePrincipal(userProfile.getUsername());
                 }
                 else
                 {

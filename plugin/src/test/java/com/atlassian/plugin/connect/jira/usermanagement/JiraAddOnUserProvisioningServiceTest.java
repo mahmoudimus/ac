@@ -17,6 +17,8 @@ import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitExcept
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
+import com.atlassian.sal.api.user.UserKey;
+
 import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,6 +37,7 @@ import static org.mockito.Mockito.when;
 public class JiraAddOnUserProvisioningServiceTest
 {
     private static String USERNAME = "addon-blaah";
+    private static UserKey USER_KEY = new UserKey(USERNAME);
     private static String ADDONS_ADMIN_GROUP = "atlassian-addons-admin";
 
     @Mock private GlobalPermissionManager jiraPermissionManager;
@@ -67,7 +70,6 @@ public class JiraAddOnUserProvisioningServiceTest
                                                                    connectAddOnUserGroupProvisioningService,
                                                                    transactionTemplate,
                                                                    jiraProjectPermissionManager);
-
     }
 
     @Test
@@ -85,7 +87,7 @@ public class JiraAddOnUserProvisioningServiceTest
 
         try
         {
-            provisioningService.provisionAddonUserForScopes(USERNAME, previousScopes, newScopes);
+            provisioningService.provisionAddonUserForScopes(USER_KEY, previousScopes, newScopes);
             fail("Provisioning addon should not have succeeded");
         }
         catch (ConnectAddOnUserInitException exception)

@@ -25,8 +25,7 @@ import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.component.ComponentLocator;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
-import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
+import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
@@ -40,7 +39,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
 import static com.atlassian.confluence.security.SpacePermission.COMMENT_PERMISSION;
@@ -83,7 +81,6 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
     private final SpacePermissionManager spacePermissionManager;
     private final SpaceManager spaceManager;
     private final UserAccessor userAccessor;
-    private final UserManager userManager;
     private final EventPublisher eventPublisher;
     private final ConnectAddonRegistry connectAddonRegistry;
     private final TransactionTemplate transactionTemplate;
@@ -93,15 +90,14 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
                                                   SpacePermissionManager spacePermissionManager,
                                                   SpaceManager spaceManager,
                                                   UserAccessor userAccessor,
-                                                  UserManager userManager,
                                                   EventPublisher eventPublisher,
-                                                  ConnectAddonRegistry connectAddonRegistry, TransactionTemplate transactionTemplate)
+                                                  ConnectAddonRegistry connectAddonRegistry,
+                                                  TransactionTemplate transactionTemplate)
     {
         this.confluencePermissionManager = confluencePermissionManager;
         this.spacePermissionManager = spacePermissionManager;
         this.spaceManager = spaceManager;
         this.userAccessor = userAccessor;
-        this.userManager = userManager;
         this.eventPublisher = eventPublisher;
         this.connectAddonRegistry = connectAddonRegistry;
         this.transactionTemplate = transactionTemplate;
@@ -109,7 +105,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
     }
 
     @Override
-    public void provisionAddonUserForScopes(final String username, final Set<ScopeName> previousScopes, final Set<ScopeName> newScopes)
+    public void provisionAddonUserForScopes(final UserKey userKey, final Set<ScopeName> previousScopes, final Set<ScopeName> newScopes)
     {
         // Required for temporary permissions exemptions, because unless you call init() in the current thread at least once then you
         // can't use the thread-local cache, and we need to use it to set an exemption on "can the current user change this permission"
@@ -137,7 +133,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
                         @Override
                         public void run()
                         {
-                            provisionAddonUserForScopeInTransaction(username, previousScopes, newScopes);
+                            provisionAddonUserForScopeInTransaction(userKey, previousScopes, newScopes);
                         }
                     });
 
@@ -160,9 +156,9 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
         }
     }
 
-    private void provisionAddonUserForScopeInTransaction(String username, Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
+    private void provisionAddonUserForScopeInTransaction(UserKey userKey, Set<ScopeName> previousScopes, Set<ScopeName> newScopes)
     {
-        final ConfluenceUser confluenceAddonUser = getConfluenceUser(username);
+        final ConfluenceUser confluenceAddonUser = getConfluenceUser(userKey);
 
         // After a manual re-install of the add-on, there are no previous known scopes, but there could still be
         // an existing permission setup from the previous installation that needs to be removed.
@@ -204,16 +200,15 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
         return DEFAULT_GROUPS_ONE_OR_MORE_EXPECTED;
     }
 
-    private ConfluenceUser getConfluenceUser(String username)
+    private ConfluenceUser getConfluenceUser(UserKey userKey)
     {
-        UserProfile userProfile = userManager.getUserProfile(username);
+        ConfluenceUser existing = userAccessor.getExistingUserByKey(userKey);
 
-        if (userProfile == null)
+        if (existing == null)
         {
-            throw new IllegalStateException("User for user key " + username + " does not exist");
+            throw new IllegalStateException("User for user key " + userKey + " does not exist");
         }
-
-        return userAccessor.getExistingUserByKey(userProfile.getUserKey());
+        return existing;
     }
 
     private void grantAddonUserGlobalAdmin(final ConfluenceUser confluenceAddonUser)
@@ -343,8 +338,8 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
         final Iterable<ConnectAddonBean> connectAddonBeans = fetchAddonsWithSpaceAdminScope();
         for (ConnectAddonBean connectAddonBean : connectAddonBeans)
         {
-            String username =  ConnectAddOnUserUtil.usernameForAddon(connectAddonBean.getKey());
-            grantAddonUserSpaceAdmin(getConfluenceUser(username));
+            UserKey userKey = new UserKey(ConnectAddOnUserUtil.usernameForAddon(connectAddonBean.getKey()));
+            grantAddonUserSpaceAdmin(getConfluenceUser(userKey));
         }
 
     }
@@ -354,7 +349,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
         return filter(connectAddonRegistry.getAllAddonBeans(), new Predicate<ConnectAddonBean>()
         {
             @Override
-            public boolean apply(@Nullable ConnectAddonBean addon)
+            public boolean apply(ConnectAddonBean addon)
             {
                 final Set<ScopeName> normalizedScopes = ScopeUtil.normalize(addon.getScopes());
                 return (normalizedScopes.contains(ScopeName.SPACE_ADMIN) && !normalizedScopes.contains(ScopeName.ADMIN));

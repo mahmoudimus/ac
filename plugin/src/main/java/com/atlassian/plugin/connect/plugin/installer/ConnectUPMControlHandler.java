@@ -5,7 +5,7 @@ import com.atlassian.plugin.PluginException;
 import com.atlassian.plugin.PluginRestartState;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddonUserUpdateException;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.upm.spi.PluginControlHandler;
 import org.slf4j.Logger;
@@ -61,7 +61,7 @@ public class ConnectUPMControlHandler implements PluginControlHandler
         {
             connectAddonManager.disableConnectAddon(pluginKey);
         }
-        catch (ConnectAddOnUserDisableException e)
+        catch (ConnectAddonUserUpdateException e)
         {
             log.error("Unable to disable connect addon fully...", e);
         }
@@ -112,7 +112,7 @@ public class ConnectUPMControlHandler implements PluginControlHandler
         {
             connectAddonManager.uninstallConnectAddon(plugin.getKey());
         }
-        catch (ConnectAddOnUserDisableException e)
+        catch (ConnectAddonUserUpdateException e)
         {
             log.error("Unable to uninstall connect addon fully...", e);
         }
