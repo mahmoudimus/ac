@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.1.33-SNAPSHOT</version>
+    <version>1.133-stash-m01</version>
     <organization>
         <name>Atlassian</name>
         <url>http://atlassian.com/</url>
@@ -64,7 +64,7 @@
         <connection>scm:git:ssh://git@stash.atlassian.com:7997/ac/atlassian-connect.git</connection>
         <developerConnection>scm:git:ssh://git@stash.atlassian.com:7997/ac/atlassian-connect.git</developerConnection>
         <url>http://stash.atlassian.com/projects/ac/repos/atlassian-connect</url>
-      <tag>HEAD</tag>
+      <tag>1.1.33-stash-m01</tag>
   </scm>
 
     <build>
