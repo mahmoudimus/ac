@@ -1,12 +1,13 @@
 package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.plugin.connect.modules.beans.builder.UISupportModuleBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
 public class UISupportModuleBean extends BaseModuleBean
 {
     private String defaultOperator;
-    private String i18nKey;
-    private String tooltipI18nKey;
+    private I18nProperty name;
+    private I18nProperty tooltip;
     private String dataUri;
 
     public UISupportModuleBean(UISupportModuleBeanBuilder builder) {
@@ -28,9 +29,9 @@ public class UISupportModuleBean extends BaseModuleBean
         return defaultOperator;
     }
 
-    public String getI18nKey()
+    public I18nProperty getName()
     {
-        return i18nKey;
+        return name;
     }
 
     public String getDataUri()
@@ -38,8 +39,8 @@ public class UISupportModuleBean extends BaseModuleBean
         return dataUri;
     }
 
-    public String getTooltipI18nKey()
+    public I18nProperty getTooltip()
     {
-        return tooltipI18nKey;
+        return tooltip;
     }
 }

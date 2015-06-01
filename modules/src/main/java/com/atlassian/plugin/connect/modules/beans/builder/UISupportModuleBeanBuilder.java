@@ -1,13 +1,14 @@
 package com.atlassian.plugin.connect.modules.beans.builder;
 
 import com.atlassian.plugin.connect.modules.beans.UISupportModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
 public class UISupportModuleBeanBuilder<T extends UISupportModuleBeanBuilder, B extends UISupportModuleBean> extends BaseModuleBeanBuilder<T, B>
 {
     private String defaultOperator;
-    private String i18nKey;
+    private I18nProperty name;
+    private I18nProperty tooltip;
     private String dataUri;
-    private String tooltipI18nKey;
 
     public UISupportModuleBeanBuilder()
     {
@@ -16,9 +17,9 @@ public class UISupportModuleBeanBuilder<T extends UISupportModuleBeanBuilder, B 
     public UISupportModuleBeanBuilder(UISupportModuleBean defaultBean)
     {
         this.defaultOperator = defaultBean.getDefaultOperator();
-        this.i18nKey = defaultBean.getI18nKey();
         this.dataUri = defaultBean.getDataUri();
-        this.tooltipI18nKey = defaultBean.getTooltipI18nKey();
+        this.name = defaultBean.getName();
+        this.tooltip = defaultBean.getTooltip();
     }
 
     public T withDefaultOperator(String defaultOperator)
@@ -27,21 +28,21 @@ public class UISupportModuleBeanBuilder<T extends UISupportModuleBeanBuilder, B 
         return (T) this;
     }
 
-    public T withi18nKey(String i18nKey)
+    public T withName(I18nProperty name)
     {
-        this.i18nKey = i18nKey;
+        this.name = name;
         return (T) this;
     }
 
     public T withDataUri(String dataUri)
     {
-        this.dataUri = i18nKey;
+        this.dataUri = dataUri;
         return (T) this;
     }
 
-    public T withTooltipI18nKey(String tooltipI18nKey)
+    public T withTooltip(I18nProperty tooltip)
     {
-        this.tooltipI18nKey = tooltipI18nKey;
+        this.tooltip = tooltip;
         return (T) this;
     }
 

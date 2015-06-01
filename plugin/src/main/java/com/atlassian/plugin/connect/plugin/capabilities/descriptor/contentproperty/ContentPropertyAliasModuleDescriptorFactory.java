@@ -105,8 +105,15 @@ public class ContentPropertyAliasModuleDescriptorFactory
                 uiSupportelement.addAttribute("operator", uiSupport.getDefaultOperator());
                 uiSupportelement.addAttribute("default-operator", uiSupport.getDefaultOperator());
             }
-            uiSupportelement.addAttribute("i18n-key", uiSupport.getI18nKey());
-            uiSupportelement.addAttribute("i18n-field-tooltip", uiSupport.getTooltipI18nKey());
+
+            if (uiSupport.getName() != null)
+            {
+                uiSupportelement.addAttribute("i18n-key", uiSupport.getName().getKeyOrValue());
+            }
+            if (uiSupport.getTooltip() != null)
+            {
+                uiSupportelement.addAttribute("i18n-field-tooltip", uiSupport.getTooltip().getKeyOrValue());
+            }
             aliasElement.add(uiSupportelement);
         }
 
