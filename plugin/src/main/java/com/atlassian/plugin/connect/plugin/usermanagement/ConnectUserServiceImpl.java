@@ -143,7 +143,8 @@ public class ConnectUserServiceImpl implements ConnectUserService
     @Nonnull
     @Override
     public UserKey setUserScopesForAddon(@Nonnull String addonKey, @Nonnull String addonDisplayName,
-            @Nonnull Set<ScopeName> previousScopes, @Nonnull Set<ScopeName> newScopes) throws ConnectAddOnUserInitException {
+            @Nonnull Set<ScopeName> previousScopes, @Nonnull Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
+    {
         UserKey userKey = getUserKeyForAddon(checkNotNull(addonKey), checkNotNull(addonDisplayName));
         connectAddOnUserProvisioningService.provisionAddonUserForScopes(userKey, previousScopes, newScopes);
         return userKey;

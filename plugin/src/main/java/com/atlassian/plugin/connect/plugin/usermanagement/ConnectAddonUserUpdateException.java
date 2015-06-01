@@ -7,7 +7,8 @@ public class ConnectAddonUserUpdateException extends Exception
         super(cause);
     }
 
-    public ConnectAddonUserUpdateException(String message) {
+    public ConnectAddonUserUpdateException(String message)
+    {
         super(message);
     }
 }
