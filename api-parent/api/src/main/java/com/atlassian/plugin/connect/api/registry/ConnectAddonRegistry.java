@@ -5,6 +5,7 @@ import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.api.installer.AddonSettings;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.sal.api.user.UserKey;
 
 
 /**
@@ -43,11 +44,11 @@ public interface ConnectAddonRegistry
 
     boolean hasSecret(String pluginKey);
 
-    void storeUserKey(String pluginKey, String userKey);
+    void storeUserKey(String pluginKey, UserKey userKey);
 
     void removeUserKey(String pluginKey);
 
-    String getUserKey(String pluginKey);
+    UserKey getUserKey(String pluginKey);
 
     boolean hasUserKey(String pluginKey);
 

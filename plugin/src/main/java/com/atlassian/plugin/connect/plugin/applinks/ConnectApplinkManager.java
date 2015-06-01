@@ -5,6 +5,7 @@ import com.atlassian.fugue.Option;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.sal.api.user.UserKey;
 
 import java.net.URI;
 
@@ -34,7 +35,7 @@ public interface ConnectApplinkManager
      * @param publicKey the publicKey used for asymmetric key encryption. Cannot be null if using OAUTH or JWT+RSA
      * @param addonUserKey the user-key of the add-on user; will be stored for later retrieval when we work out the {@link java.security.Principal} for incoming requests from this add-on
      */
-    void createAppLink(ConnectAddonBean addon, String baseUrl, AuthenticationType authType, String publicKey, String addonUserKey);
+    void createAppLink(ConnectAddonBean addon, String baseUrl, AuthenticationType authType, String publicKey, UserKey addonUserKey);
 
     /**
      * Deletes an {@link ApplicationLink} for an Atlassian Connect add-on.

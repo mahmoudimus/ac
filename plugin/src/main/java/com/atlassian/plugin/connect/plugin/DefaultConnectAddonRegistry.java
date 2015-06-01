@@ -19,6 +19,7 @@ import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
+import com.atlassian.sal.api.user.UserKey;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -141,7 +142,7 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     }
 
     @Override
-    public void storeUserKey(String pluginKey, String userKey)
+    public void storeUserKey(String pluginKey, UserKey userKey)
     {
         storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setUserKey(userKey));
     }
@@ -149,11 +150,11 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     @Override
     public void removeUserKey(String pluginKey)
     {
-        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setUserKey(""));
+        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setUserKey(null));
     }
 
     @Override
-    public String getUserKey(String pluginKey)
+    public UserKey getUserKey(String pluginKey)
     {
         return getAddonSettings(pluginKey).getUserKey();
     }
@@ -271,6 +272,11 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     private boolean has(String value)
     {
         return !Strings.isNullOrEmpty(value);
+    }
+
+    private boolean has(UserKey value)
+    {
+        return value != null && has(value.getStringValue());
     }
 
     private PluginSettings settings()
