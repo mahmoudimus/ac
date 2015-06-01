@@ -1,8 +1,66 @@
 {
-  "scopes": [],
-  "restPaths": [],
+  "scopes": [
+      {
+          "key": "READ",
+          "restPathKeys": ["application-properties", "project and contents", "ssh", "mirrors"],
+          "pathKeys": ["project avatars", "user avatars"],
+          "methods": ["GET"]
+      },
+      {
+          "key": "WRITE",
+          "restPathKeys": ["application-properties", "project and contents", "ssh", "mirrors"],
+          "methods": ["POST", "PUT"]
+      },
+      {
+          "key": "DELETE",
+          "restPathKeys": ["application-properties", "project and contents", "ssh", "mirrors"],
+          "methods": ["DELETE"]
+      }
+
+  ],
+    "restPaths": [
+        {
+            "key": "application-properties",
+            "name": "api",
+            "basePaths": ["/application-properties($|/.*)"],
+            "versions": ["1", "latest"],
+            "public":true
+        },
+        {
+            "key": "project and contents",
+            "name": "api",
+            "basePaths": ["/projects($|/.*)"],
+            "versions": ["1", "latest"],
+            "public":true
+        },
+        {
+            "key": "ssh",
+            "name": "ssh",
+            "basePaths": ["($|/.*)"],
+            "versions": ["1", "latest"],
+            "public":true
+        },
+        {
+            "key": "mirrors",
+            "name": "mirrors",
+            "basePaths": ["($|/.*)"],
+            "versions": ["1", "latest"],
+            "public":true
+        }
+  ],
   "soapRpcPaths": [],
   "jsonRpcPaths": [],
-  "paths": []
+  "paths": [
+      {
+          "key": "project avatars",
+          "paths": ["/projects/([^/]*)/avatar.png($|/.*)"],
+          "public": true
+      },
+      {
+          "key": "user avatars",
+          "paths": ["/users/([^/]*)/avatar.png($|/.*)"],
+          "public": true
+      }
+  ]
 }
 
