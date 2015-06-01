@@ -545,7 +545,7 @@
                         </tags>
                     </configuration>
                 </plugin>
-                <!--<plugin>
+                <plugin>
                     <groupId>com.atlassian.maven.plugins</groupId>
                     <artifactId>maven-clover2-plugin</artifactId>
                     <configuration combine.self="override">
@@ -553,7 +553,7 @@
                             <exclude>**/test/**/*.java</exclude>
                         </excludes>
                     </configuration>
-                </plugin>-->
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -1205,6 +1205,19 @@
                 </plugins>
             </build>
         </profile>
+
+        <profile>
+            <id>clover</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.atlassian.clover</groupId>
+                    <artifactId>clover</artifactId>
+                    <version>${clover.libversion}</version>
+                    <scope>compile</scope>
+                </dependency>
+            </dependencies>
+         </profile>
+
     </profiles>
 
     <properties>

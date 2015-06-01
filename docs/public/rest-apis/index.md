@@ -10,7 +10,7 @@ Note that the `context-path` element is not always used.
 
     https://myhost.com:port/context-path/rest/api-name/api-version/resource-name
 
-## Product APIs
+## <a name="product-apis"></a>Product APIs
 
 [Atlassian REST API Browser](product-api-browser.html) provides an interactive interface to help you get acquainted with the available APIs.
 Additionally, there is static REST API documentation available for [JIRA](https://docs.atlassian.com/jira/REST/latest) and [Confluence](https://docs.atlassian.com/confluence/REST/latest).
