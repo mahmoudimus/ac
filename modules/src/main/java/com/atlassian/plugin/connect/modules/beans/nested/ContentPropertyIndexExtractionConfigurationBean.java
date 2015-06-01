@@ -1,6 +1,9 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.UISupportModuleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexExtractionConfigurationBeanBuilder;
 
 /**
  * Representation of a extraction recipe for a single JSON value. For more information,
@@ -10,7 +13,7 @@ import com.atlassian.json.schema.annotation.Required;
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE}
  * @schemaTitle Content Property Index Extraction Configuration
  */
-public class ContentPropertyIndexExtractionConfigurationBean
+public class ContentPropertyIndexExtractionConfigurationBean implements ModuleBean
 {
     /**
      * The objectName to the JSON data which is supposed to be indexed. The objectName will be the key of a flatten JSON object with '.' as the delimiter.
@@ -39,24 +42,19 @@ public class ContentPropertyIndexExtractionConfigurationBean
     @Required
     private final ContentPropertyIndexFieldType type;
 
+    private final UISupportModuleBean uiSupport;
+
     /**
      * CQL Field name alias for this content property.
-     * TODO
      */
     private final String alias;
 
-    public ContentPropertyIndexExtractionConfigurationBean(String objectName, ContentPropertyIndexFieldType type)
+    public ContentPropertyIndexExtractionConfigurationBean(ContentPropertyIndexExtractionConfigurationBeanBuilder builder)
     {
-        this.objectName = objectName;
-        this.type = type;
-        this.alias = null; // use a Option?
-    }
-
-    public ContentPropertyIndexExtractionConfigurationBean(String objectName, ContentPropertyIndexFieldType type, String alias)
-    {
-        this.objectName = objectName;
-        this.type = type;
-        this.alias = alias;
+        this.objectName = builder.getObjectName();
+        this.type = builder.getType();
+        this.alias = builder.getAlias();
+        this.uiSupport = builder.getUiSupport();
     }
 
     public String getObjectName()
@@ -72,5 +70,10 @@ public class ContentPropertyIndexExtractionConfigurationBean
     public String getAlias()
     {
         return alias;
+    }
+
+    public UISupportModuleBean getUiSupport()
+    {
+        return uiSupport;
     }
 }

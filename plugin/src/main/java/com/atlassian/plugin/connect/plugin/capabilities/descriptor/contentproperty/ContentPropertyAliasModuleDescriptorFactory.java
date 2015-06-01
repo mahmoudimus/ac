@@ -6,7 +6,9 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
+import com.atlassian.plugin.connect.modules.beans.UISupportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean;
+import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFieldType;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.capabilities.util.ConnectContainerUtil;
@@ -25,14 +27,14 @@ import java.util.List;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.printNode;
 
 @ConfluenceComponent
-public class CqlFieldModuleDescriptorFactory
+public class ContentPropertyAliasModuleDescriptorFactory
 {
     private static final Logger log = LoggerFactory.getLogger(ContentPropertyIndexSchemaModuleDescriptorFactory.class);
 
     private final ConnectContainerUtil connectContainerUtil;
 
     @Autowired
-    public CqlFieldModuleDescriptorFactory(ConnectContainerUtil connectContainerUtil)
+    public ContentPropertyAliasModuleDescriptorFactory(ConnectContainerUtil connectContainerUtil)
     {
         this.connectContainerUtil = connectContainerUtil;
     }
@@ -72,7 +74,7 @@ public class CqlFieldModuleDescriptorFactory
                                 break;
                         }
                         descriptor.setJsonExpression(extractionBean.getObjectName());
-                        descriptor.init(plugin, createXmlConfig(bean.getKey(connectAddonBean) + keyConfigurationBean.getPropertyKey() + "-" + extractionBean.getObjectName() + "-" + (++index)));
+                        descriptor.init(plugin, createXmlConfig(extractionBean, bean.getKey(connectAddonBean) + keyConfigurationBean.getPropertyKey() + "-" + extractionBean.getObjectName() + "-" + (++index)));
                         descriptors.add(descriptor);
                     }
                 }
@@ -81,12 +83,33 @@ public class CqlFieldModuleDescriptorFactory
         return descriptors;
     }
 
-    private Element createXmlConfig(String moduleKey)
+    private Element createXmlConfig(ContentPropertyIndexExtractionConfigurationBean extractionBean, String moduleKey)
     {
         Element aliasElement = new DOMElement("content-property-field-alias");
         aliasElement.addAttribute("key", moduleKey + "-field-alias");
         aliasElement.addAttribute("i18n-name-key", moduleKey);
         aliasElement.addAttribute("class", FieldHandler.class.getName());
+
+        UISupportModuleBean uiSupport = extractionBean.getUiSupport();
+        if (uiSupport != null)
+        {
+            Element uiSupportelement = new DOMElement("ui-support");
+            uiSupportelement.addAttribute("value-type", extractionBean.getType().toString());
+            if (uiSupport.getDefaultOperator() == null)
+            {
+                uiSupportelement.addAttribute("operator", extractionBean.getType() == ContentPropertyIndexFieldType.text ? "~" : "=");
+                uiSupportelement.addAttribute("default-operator", extractionBean.getType() == ContentPropertyIndexFieldType.text ? "~" : "=");
+            }
+            else
+            {
+                uiSupportelement.addAttribute("operator", uiSupport.getDefaultOperator());
+                uiSupportelement.addAttribute("default-operator", uiSupport.getDefaultOperator());
+            }
+            uiSupportelement.addAttribute("i18n-key", uiSupport.getI18nKey());
+            uiSupportelement.addAttribute("i18n-field-tooltip", uiSupport.getTooltipI18nKey());
+            aliasElement.add(uiSupportelement);
+        }
+
         if (log.isDebugEnabled())
         {
             log.debug(printNode(aliasElement));

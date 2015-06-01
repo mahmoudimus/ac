@@ -4,7 +4,6 @@ import com.atlassian.plugin.connect.modules.beans.UISupportModuleBean;
 
 public class UISupportModuleBeanBuilder<T extends UISupportModuleBeanBuilder, B extends UISupportModuleBean> extends BaseModuleBeanBuilder<T, B>
 {
-    // private ValueType valueType; // TODO import this from com.atlassian.querylang.fields
     private String defaultOperator;
     private String i18nKey;
     private String dataUri;

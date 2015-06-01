@@ -10,7 +10,7 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.contentproperty.ContentPropertyIndexSchemaModuleDescriptorFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.contentproperty.CqlFieldModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.contentproperty.ContentPropertyAliasModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 
 import com.google.common.base.Function;
@@ -24,20 +24,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ConfluenceComponent
 public class DefaultContentPropertyModuleProvider implements ContentPropertyModuleProvider
 {
-    private final ContentPropertyIndexSchemaModuleDescriptorFactory cpFactory;
-    private final CqlFieldModuleDescriptorFactory cfFactory;
+    private final ContentPropertyIndexSchemaModuleDescriptorFactory cpIndexFactory;
+    private final ContentPropertyAliasModuleDescriptorFactory cpAliasFactory;
 
     @Autowired
     public DefaultContentPropertyModuleProvider(
-            ContentPropertyIndexSchemaModuleDescriptorFactory cpFactory,
-            CqlFieldModuleDescriptorFactory cfFactory)
+            ContentPropertyIndexSchemaModuleDescriptorFactory cpIndexFactory,
+            ContentPropertyAliasModuleDescriptorFactory cpAliasFactory)
     {
-        this.cpFactory = cpFactory;
-        this.cfFactory = cfFactory;
+        this.cpIndexFactory = cpIndexFactory;
+        this.cpAliasFactory = cpAliasFactory;
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin plugin,
+    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext,
+                                                 final Plugin plugin,
                                                  String jsonFieldName, List<ContentPropertyModuleBean> beans)
     {
         final List<ModuleDescriptor> result = new ArrayList<>();
@@ -47,10 +48,10 @@ public class DefaultContentPropertyModuleProvider implements ContentPropertyModu
             public ContentPropertyIndexSchemaModuleDescriptor apply(
                     @Nullable ContentPropertyModuleBean input)
             {
-                return cpFactory.createModuleDescriptor(moduleProviderContext, plugin, input);
+                return cpIndexFactory.createModuleDescriptor(moduleProviderContext, plugin, input);
             }
         }));
-        result.addAll(cfFactory.createModuleDescriptors(moduleProviderContext, plugin, beans));
+        result.addAll(cpAliasFactory.createModuleDescriptors(moduleProviderContext, plugin, beans));
         return result;
     }
 }

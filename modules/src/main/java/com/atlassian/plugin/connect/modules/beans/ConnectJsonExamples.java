@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
+import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexExtractionConfigurationBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
@@ -58,7 +59,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBe
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 
-@SuppressWarnings ("UnusedDeclaration")
+@SuppressWarnings("UnusedDeclaration")
 public class ConnectJsonExamples
 {
     private static final Gson gson = ConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create();
@@ -766,7 +767,8 @@ public class ConnectJsonExamples
         return gson.toJson(issueAttachmentIndexConfiguration);
     }
 
-    private static String createAutoconvertExample() {
+    private static String createAutoconvertExample()
+    {
         DynamicContentMacroModuleBean dynamicMacroWithAutoconvert = newDynamicContentMacroModuleBean()
                 .withUrl("/dynamic-macro?url={url}")
                 .withKey("dynamic-macro-with-autoconvert")
@@ -794,7 +796,8 @@ public class ConnectJsonExamples
         return gson.toJson(dynamicMacroWithAutoconvert);
     }
 
-    private static String createMatcherExample() {
+    private static String createMatcherExample()
+    {
 
         MatcherBean matcher = MatcherBean.newMatcherBean()
                 .withPattern("https://www.facebook.com/{}/about")
@@ -805,16 +808,16 @@ public class ConnectJsonExamples
 
     private static String createContentPropertyIndexExtractionConfigurationExample()
     {
-        return gson.toJson(new ContentPropertyIndexExtractionConfigurationBean("attachment.size", ContentPropertyIndexFieldType.number));
+        return gson.toJson(createContentPropertyIndexExtractionConfigurationBean("attachment.size", ContentPropertyIndexFieldType.number));
     }
 
     private static String createContentPropertyIndexKeyConfigurationExample()
     {
         List<ContentPropertyIndexExtractionConfigurationBean> extractionConfiguration = Lists.newArrayList(
-                new ContentPropertyIndexExtractionConfigurationBean("attachment.size", ContentPropertyIndexFieldType.number),
-                new ContentPropertyIndexExtractionConfigurationBean("attachment.extension", ContentPropertyIndexFieldType.string),
-                new ContentPropertyIndexExtractionConfigurationBean("attachment.updated", ContentPropertyIndexFieldType.date),
-                new ContentPropertyIndexExtractionConfigurationBean("attachment.author", ContentPropertyIndexFieldType.text)
+                createContentPropertyIndexExtractionConfigurationBean("attachment.size", ContentPropertyIndexFieldType.number),
+                createContentPropertyIndexExtractionConfigurationBean("attachment.extension", ContentPropertyIndexFieldType.string),
+                createContentPropertyIndexExtractionConfigurationBean("attachment.updated", ContentPropertyIndexFieldType.date),
+                createContentPropertyIndexExtractionConfigurationBean("attachment.author", ContentPropertyIndexFieldType.text)
         );
 
         return gson.toJson(new ContentPropertyIndexKeyConfigurationBean("attachment", extractionConfiguration));
@@ -823,10 +826,10 @@ public class ConnectJsonExamples
     private static String createContentPropertyExample()
     {
         List<ContentPropertyIndexExtractionConfigurationBean> extractionConfiguration = Lists.newArrayList(
-                new ContentPropertyIndexExtractionConfigurationBean("attachment.size", ContentPropertyIndexFieldType.number),
-                new ContentPropertyIndexExtractionConfigurationBean("attachment.extension", ContentPropertyIndexFieldType.string),
-                new ContentPropertyIndexExtractionConfigurationBean("attachment.updated", ContentPropertyIndexFieldType.date),
-                new ContentPropertyIndexExtractionConfigurationBean("attachment.author", ContentPropertyIndexFieldType.text)
+                createContentPropertyIndexExtractionConfigurationBean("attachment.size", ContentPropertyIndexFieldType.number),
+                createContentPropertyIndexExtractionConfigurationBean("attachment.extension", ContentPropertyIndexFieldType.string),
+                createContentPropertyIndexExtractionConfigurationBean("attachment.updated", ContentPropertyIndexFieldType.date),
+                createContentPropertyIndexExtractionConfigurationBean("attachment.author", ContentPropertyIndexFieldType.text)
         );
         ContentPropertyIndexKeyConfigurationBean indexConfiguration =
                 new ContentPropertyIndexKeyConfigurationBean("attachment", extractionConfiguration);
@@ -873,5 +876,14 @@ public class ConnectJsonExamples
         JsonObject obj = new JsonObject();
         obj.add("modules", modulesObject);
         return obj;
+    }
+
+    private static ContentPropertyIndexExtractionConfigurationBean
+    createContentPropertyIndexExtractionConfigurationBean(String objectName, ContentPropertyIndexFieldType type)
+    {
+        return new ContentPropertyIndexExtractionConfigurationBeanBuilder()
+                .withObjectName(objectName)
+                .withType(type)
+                .build();
     }
 }

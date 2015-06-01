@@ -4,7 +4,6 @@ import com.atlassian.plugin.connect.modules.beans.builder.UISupportModuleBeanBui
 
 public class UISupportModuleBean extends BaseModuleBean
 {
-    // private ValueType valueType; // TODO import this from com.atlassian.querylang.fields
     private String defaultOperator;
     private String i18nKey;
     private String tooltipI18nKey;
@@ -23,7 +22,6 @@ public class UISupportModuleBean extends BaseModuleBean
     {
         return new UISupportModuleBeanBuilder(defaultBean);
     }
-
 
     public String getDefaultOperator()
     {
