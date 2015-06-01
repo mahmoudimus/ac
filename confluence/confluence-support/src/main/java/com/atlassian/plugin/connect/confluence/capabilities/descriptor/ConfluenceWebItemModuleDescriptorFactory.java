@@ -6,12 +6,13 @@ import com.atlassian.plugin.connect.api.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.api.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.api.iframe.webpanel.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.api.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.api.module.webitem.RemoteWebLink;
+import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.spi.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
+import com.atlassian.sal.api.component.ComponentLocator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -22,7 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @ConfluenceComponent
 public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecificWebItemModuleDescriptorFactory
 {
-    private final WebFragmentHelper webFragmentHelper;
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
     private final PluggableParametersExtractor webFragmentModuleContextExtractor;
     private final ModuleContextFilter moduleContextFilter;
@@ -30,7 +30,6 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
 
     @Autowired
     public ConfluenceWebItemModuleDescriptorFactory(
-            WebFragmentHelper webFragmentHelper,
             IFrameUriBuilderFactory iFrameUriBuilderFactory,
             PluggableParametersExtractor webFragmentModuleContextExtractor,
             ModuleContextFilter moduleContextFilter,
@@ -40,12 +39,12 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
         this.iFrameUriBuilderFactory = checkNotNull(iFrameUriBuilderFactory);
         this.webFragmentModuleContextExtractor = checkNotNull(webFragmentModuleContextExtractor);
         this.moduleContextFilter = checkNotNull(moduleContextFilter);
-        this.webFragmentHelper = checkNotNull(webFragmentHelper);
     }
 
     @Override
     public WebItemModuleDescriptor createWebItemModuleDescriptor(final String url, final String pluginKey, final String moduleKey, final boolean absolute, final AddOnUrlContext addOnUrlContext, final boolean isDialog, final String section)
     {
+        WebFragmentHelper webFragmentHelper = ComponentLocator.getComponent(WebFragmentHelper.class);
         return new RemoteConfluenceWebItemModuleDescriptor(
                 webFragmentHelper
                 , iFrameUriBuilderFactory
