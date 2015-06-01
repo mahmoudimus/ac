@@ -35,7 +35,7 @@ public class UISupportModuleBeanBuilder<T extends UISupportModuleBeanBuilder, B 
 
     public T withDataUri(String dataUri)
     {
-        this.dataUri = i18nKey;
+        this.dataUri = dataUri;
         return (T) this;
     }
 

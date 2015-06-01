@@ -73,8 +73,12 @@ public class ContentPropertyAliasModuleDescriptorFactory
                                 descriptor.setType(SchemaFieldType.TEXT);
                                 break;
                         }
+
+                        String moduleKey = bean.getKey(connectAddonBean) + keyConfigurationBean.getPropertyKey() + "-" + extractionBean.getObjectName() + "-" + (++index);
+                        String addonBaseUrl = connectAddonBean.getBaseUrl();
+
                         descriptor.setJsonExpression(extractionBean.getObjectName());
-                        descriptor.init(plugin, createXmlConfig(extractionBean, bean.getKey(connectAddonBean) + keyConfigurationBean.getPropertyKey() + "-" + extractionBean.getObjectName() + "-" + (++index)));
+                        descriptor.init(plugin, createXmlConfig(extractionBean, moduleKey, addonBaseUrl));
                         descriptors.add(descriptor);
                     }
                 }
@@ -83,7 +87,7 @@ public class ContentPropertyAliasModuleDescriptorFactory
         return descriptors;
     }
 
-    private Element createXmlConfig(ContentPropertyIndexExtractionConfigurationBean extractionBean, String moduleKey)
+    private Element createXmlConfig(ContentPropertyIndexExtractionConfigurationBean extractionBean, String moduleKey, String addonBaseUrl)
     {
         Element aliasElement = new DOMElement("content-property-field-alias");
         aliasElement.addAttribute("key", moduleKey + "-field-alias");
@@ -107,6 +111,7 @@ public class ContentPropertyAliasModuleDescriptorFactory
             }
             uiSupportelement.addAttribute("i18n-key", uiSupport.getI18nKey());
             uiSupportelement.addAttribute("i18n-field-tooltip", uiSupport.getTooltipI18nKey());
+            uiSupportelement.addAttribute("data-uri", addonBaseUrl + uiSupport.getDataUri());
             aliasElement.add(uiSupportelement);
         }
 
