@@ -69,7 +69,7 @@ public class ConfluenceWebItemModuleDescriptorFactoryTest
         Plugin plugin = new PluginForTests("my-key", "My Plugin");
 
         ConfluenceWebItemModuleDescriptorFactory webItemFactory =
-                new ConfluenceWebItemModuleDescriptorFactory(webFragmentHelper, iFrameUriBuilderFactory,
+                new ConfluenceWebItemModuleDescriptorFactory(iFrameUriBuilderFactory,
                         webFragmentModuleContextExtractor, moduleContextFilter, urlVariableSubstitutor);
 
         when(servletRequest.getContextPath()).thenReturn("ElContexto");

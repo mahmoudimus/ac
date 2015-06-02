@@ -5,10 +5,8 @@ import com.atlassian.confluence.content.render.xhtml.StorageFormatCleaner;
 import com.atlassian.confluence.core.ContentEntityManager;
 import com.atlassian.confluence.license.LicenseService;
 import com.atlassian.confluence.pages.PageManager;
-import com.atlassian.confluence.plugin.descriptor.web.ConfluenceWebFragmentHelper;
 import com.atlassian.confluence.security.PermissionManager;
 import com.atlassian.confluence.security.SpacePermissionManager;
-import com.atlassian.confluence.security.administrators.PermissionsAdministratorBuilder;
 import com.atlassian.confluence.security.websudo.WebSudoManager;
 import com.atlassian.confluence.setup.settings.CoreFeaturesManager;
 import com.atlassian.confluence.setup.settings.SettingsManager;
@@ -34,10 +32,6 @@ public class ConfluenceImports
 {
     @Inject
     public ConfluenceImports(
-            // these two are components from an external jar, not an OSGi service
-            @ConfluenceComponent ConfluenceWebFragmentHelper confluenceWebFragmentHelper,
-            @ConfluenceComponent ("permissionsAdministratorBuilder") PermissionsAdministratorBuilder permissionsAdministratorBuilder,
-
             @ConfluenceImport BandanaManager bandanaManager,
             @ConfluenceImport @Qualifier("contentEntityManager") ContentEntityManager contentEntityManager,
             @ConfluenceImport I18NBeanFactory i18NBeanFactory,
