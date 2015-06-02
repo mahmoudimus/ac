@@ -158,7 +158,8 @@ public class ConnectAddonBean extends BaseModuleBean
      */
     @SchemaIgnore("shallow")
     private ModuleList modules;
-    
+
+    @SchemaIgnore("shallow")
     private Map<String, List<BaseModuleBean>> testModules;
 
     /**
@@ -212,6 +213,11 @@ public class ConnectAddonBean extends BaseModuleBean
         if (null == modules)
         {
             this.modules = new ModuleList();
+        }
+
+        if (null == testModules)
+        {
+            this.testModules = new HashMap<>();
         }
 
         if (null == vendor)
@@ -276,6 +282,11 @@ public class ConnectAddonBean extends BaseModuleBean
     public ModuleList getModules()
     {
         return modules;
+    }
+    
+    public Map<String, List<BaseModuleBean>> getTestModules()
+    {
+        return testModules;
     }
 
     public Map<String, String> getLinks()

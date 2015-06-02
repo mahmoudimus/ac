@@ -5,10 +5,10 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}" />
     </plugin-info>
 
-    <described-module-type key="connect-module-provider" name="Connect Module Provider"
-                    class="com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderModuleDescriptor">
-        <description>Classes providing Connect modules</description>
-    </described-module-type>
+    <!--<described-module-type key="connect-module-provider" name="Connect Module Provider"-->
+                    <!--class="com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderModuleDescriptor">-->
+        <!--<description>Classes providing Connect modules</description>-->
+    <!--</described-module-type>-->
     
     <resource type="i18n" name="i18n" location="com.atlassian.connect.i18n"/>
 

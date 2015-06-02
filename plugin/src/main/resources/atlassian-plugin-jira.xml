@@ -10,8 +10,15 @@
 
     <connect-module-provider
             key="EntityProperties"
-            class="com.atlassian.plugin.jira.connect.provider.TestEntityPropertyModuleProvider"
+            class="com.atlassian.plugin.connect.jira.capabilities.provider.EntityPropertyModuleProvider"
             name="JIRA Workflow Post Function Module Provider">
+        <description>...</description>
+    </connect-module-provider>
+
+    <connect-module-provider
+            key="GeneralPages"
+            class="com.atlassian.plugin.connect.plugin.capabilities.provider.GeneralPageModuleProvider"
+            name="general page">
         <description>...</description>
     </connect-module-provider>
 
