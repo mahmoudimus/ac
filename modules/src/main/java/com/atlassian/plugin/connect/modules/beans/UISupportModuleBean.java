@@ -1,16 +1,24 @@
 package com.atlassian.plugin.connect.modules.beans;
 
+import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.json.schema.annotation.SchemaDefinition;
+import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.UISupportModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 
+@SchemaDefinition("uiSupport")
 public class UISupportModuleBean extends BaseModuleBean
 {
+    @StringSchemaAttributes(format = "defaultOperator")
     private String defaultOperator;
+    @Required
     private I18nProperty name;
     private I18nProperty tooltip;
+    @StringSchemaAttributes(format = "dataUri")
     private String dataUri;
 
-    public UISupportModuleBean(UISupportModuleBeanBuilder builder) {
+    public UISupportModuleBean(UISupportModuleBeanBuilder builder)
+    {
         super(builder);
     }
 
