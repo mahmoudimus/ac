@@ -154,7 +154,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
                 ApplicationLink link = applicationLinkService.addApplicationLink(expectedApplicationId, applicationType, details);
 
                 link.putProperty(PLUGIN_KEY_PROPERTY, pluginKey);
-                link.putProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME, addonUserKey.getStringValue());
+                link.putProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME, addonUserKey == null ? null : addonUserKey.getStringValue());
                 link.putProperty("IS_ACTIVITY_ITEM_PROVIDER", Boolean.FALSE.toString());
                 link.putProperty("system", Boolean.TRUE.toString());
 
