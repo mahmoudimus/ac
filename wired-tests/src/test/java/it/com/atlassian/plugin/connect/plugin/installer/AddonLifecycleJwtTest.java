@@ -13,7 +13,7 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonPrecannedResponseHelper;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
@@ -49,7 +49,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
                                  TestAuthenticator testAuthenticator,
                                  AddonTestFilterResults testFilterResults,
                                  ConnectApplinkManager connectApplinkManager,
-                                 ConnectAddOnUserService connectAddOnUserService,
+                                 ConnectUserService connectUserService,
                                  UserManager userManager,
                                  ApplicationService applicationService,
                                  ApplicationManager applicationManager,
@@ -57,7 +57,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
                                  AddonPrecannedResponseHelper addonPrecannedResponseHelper,
                                  ConnectAddonRegistry connectAddonRegistry)
     {
-        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService, userManager, applicationService, applicationManager, darkFeatureManager, connectAddonRegistry);
+        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectUserService, userManager, applicationService, applicationManager, darkFeatureManager, connectAddonRegistry);
         this.darkFeatureManager = darkFeatureManager;
         this.addonPrecannedResponseHelper = addonPrecannedResponseHelper;
     }

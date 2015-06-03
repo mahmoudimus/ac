@@ -5,7 +5,7 @@ import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
@@ -24,14 +24,14 @@ public class AddonLifecycleAuthNoneTest extends AbstractAddonLifecycleTest
                                          TestAuthenticator testAuthenticator,
                                          AddonTestFilterResults testFilterResults,
                                          ConnectApplinkManager connectApplinkManager,
-                                         ConnectAddOnUserService connectAddOnUserService,
+                                         ConnectUserService connectUserService,
                                          UserManager userManager,
                                          ApplicationService applicationService,
                                          ApplicationManager applicationManager,
                                          DarkFeatureManager darkFeatureManager,
                                          ConnectAddonRegistry connectAddonRegistry)
     {
-        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService, userManager, applicationService, applicationManager, darkFeatureManager, connectAddonRegistry);
+        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectUserService, userManager, applicationService, applicationManager, darkFeatureManager, connectAddonRegistry);
     }
 
     @Override

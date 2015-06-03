@@ -19,6 +19,8 @@ import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
+import com.atlassian.sal.api.user.UserKey;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -169,7 +171,7 @@ public class OAuthToJwtUpdateTest
 
         // fake an existing applink. Note hard to fake oauth as requires addon to exist for permission check
         connectApplinkManager.createAppLink(oAuthAddOnBean, oAuthAddOnBean.getBaseUrl(), AuthenticationType.NONE,
-                oAuthAddOnBean.getAuthentication().getPublicKey(), "the old key");
+                oAuthAddOnBean.getAuthentication().getPublicKey(), new UserKey("the old key"));
 
         ApplicationLink existingApplink = connectApplinkManager.getAppLink(jwtPlugin.getKey());
 
@@ -207,7 +209,7 @@ public class OAuthToJwtUpdateTest
 
         // fake an existing applink. Note hard to fake oauth as requires addon to exist for permission check
         connectApplinkManager.createAppLink(oAuthAddOnBean, oAuthAddOnBean.getBaseUrl(), AuthenticationType.JWT,
-                "seeeeecret", "the old key");
+                "seeeeecret", new UserKey("the old key"));
 
         ApplicationLink existingApplink = connectApplinkManager.getAppLink(jwtPlugin.getKey());
 

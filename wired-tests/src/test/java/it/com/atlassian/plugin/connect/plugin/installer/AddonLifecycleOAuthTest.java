@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
@@ -38,7 +38,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
                                       TestAuthenticator testAuthenticator,
                                       AddonTestFilterResults testFilterResults,
                                       ConnectApplinkManager connectApplinkManager,
-                                      ConnectAddOnUserService connectAddOnUserService,
+                                      ConnectUserService connectUserService,
                                       UserManager userManager,
                                       ApplicationService applicationService,
                                       ApplicationManager applicationManager,
@@ -46,7 +46,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
                                       DarkFeatureManager darkFeatureManager,
                                       ConnectAddonRegistry connectAddonRegistry)
     {
-        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService, userManager, applicationService, applicationManager, darkFeatureManager, connectAddonRegistry);
+        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectUserService, userManager, applicationService, applicationManager, darkFeatureManager, connectAddonRegistry);
         requestUtil = new RequestUtil(applicationProperties);
     }
 

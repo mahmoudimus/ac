@@ -14,7 +14,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.JwtTestVerifier;
@@ -62,7 +62,7 @@ public abstract class AbstractAddonLifecycleTest
     protected final TestAuthenticator testAuthenticator;
     protected final AddonTestFilterResults testFilterResults;
     protected final ConnectApplinkManager connectApplinkManager;
-    protected final ConnectAddOnUserService connectAddOnUserService;
+    protected final ConnectUserService connectUserService;
     private final UserManager userManager;
     private final ApplicationService applicationService;
     private final ApplicationManager applicationManager;
@@ -81,7 +81,7 @@ public abstract class AbstractAddonLifecycleTest
                                          TestAuthenticator testAuthenticator,
                                          AddonTestFilterResults testFilterResults,
                                          ConnectApplinkManager connectApplinkManager,
-                                         ConnectAddOnUserService connectAddOnUserService,
+                                         ConnectUserService connectUserService,
                                          UserManager userManager,
                                          ApplicationService applicationService,
                                          ApplicationManager applicationManager,
@@ -92,7 +92,7 @@ public abstract class AbstractAddonLifecycleTest
         this.testAuthenticator = testAuthenticator;
         this.testFilterResults = testFilterResults;
         this.connectApplinkManager = connectApplinkManager;
-        this.connectAddOnUserService = connectAddOnUserService;
+        this.connectUserService = connectUserService;
         this.userManager = userManager;
         this.applicationService = applicationService;
         this.applicationManager = applicationManager;
@@ -546,10 +546,12 @@ public abstract class AbstractAddonLifecycleTest
 
             addonKey = plugin.getKey();
 
-            final boolean addOnShouldHaveUser = !addon.getAuthentication().getType().equals(AuthenticationType.NONE);
-            assertEquals("addon with auth=none should not have a user, all others should", addOnShouldHaveUser, connectAddOnUserService.isAddOnUserActive(addonKey));
+            final boolean addonShouldHaveUser = !addon.getAuthentication().getType().equals(AuthenticationType.NONE);
+            final String addonUsername = ADD_ON_USER_KEY_PREFIX + addon.getKey();
+            UserProfile userProfile = userManager.getUserProfile(addonUsername);
+            assertEquals("addon with auth=none should not have a user, all others should", addonShouldHaveUser, userProfile != null);
 
-            if (addOnShouldHaveUser)
+            if (addonShouldHaveUser)
             {
                 applicationService.removeUser(getApplication(), ADD_ON_USER_KEY_PREFIX + addonKey);
             }
@@ -559,7 +561,7 @@ public abstract class AbstractAddonLifecycleTest
 
             plugin = testPluginInstaller.installAddon(addon);
 
-            assertUserExistence(addon, addOnShouldHaveUser);
+            assertUserExistence(addon, addonShouldHaveUser);
         }
         finally
         {
@@ -729,7 +731,7 @@ public abstract class AbstractAddonLifecycleTest
         {
             assertFalse("addon with auth!=none should have a user", null == userProfile);
             UserKey userKey = userProfile.getUserKey();
-            assertEquals(String.format("addon user should%s be active", shouldBeActiveIfItExists ? "" : " not"), shouldBeActiveIfItExists, connectAddOnUserService.isAddOnUserActive(addon.getKey()));
+            assertEquals(String.format("addon user should%s be active", shouldBeActiveIfItExists ? "" : " not"), shouldBeActiveIfItExists, connectUserService.isUserActive(userProfile));
             assertTrue("addon user is not in group " + CONNECT_ADDON_USER_GROUP, userManager.isUserInGroup(userKey, CONNECT_ADDON_USER_GROUP));
         }
     }
