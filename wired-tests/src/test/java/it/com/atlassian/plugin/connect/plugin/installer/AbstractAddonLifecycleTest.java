@@ -26,6 +26,7 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.gson.JsonParser;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
+import it.com.atlassian.plugin.connect.util.user.AddonUserResolver;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -648,6 +649,11 @@ public abstract class AbstractAddonLifecycleTest
         {
             darkFeatureManager.disableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);
         }
+    }
+
+    protected String getAddonUserKey(String addonKey)
+    {
+        return AddonUserResolver.getAddonUserKey(addonKey, userManager);
     }
 
     private void testEnabledCallback() throws IOException

@@ -23,6 +23,7 @@ import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.google.gson.JsonParser;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
@@ -284,7 +285,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
 
             assertNotNull((appLink));
             assertEquals(addon.getBaseUrl(), appLink.getDisplayUrl().toString());
-            assertEquals("addon_" + addon.getKey(), appLink.getProperty("user.key"));
+            assertEquals(getAddonUserKey(addon.getKey()), appLink.getProperty("user.key"));
         }
         finally
         {

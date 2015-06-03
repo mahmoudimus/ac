@@ -27,6 +27,7 @@ import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioni
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+import com.atlassian.sal.api.user.UserKey;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
@@ -312,19 +313,20 @@ public class DetailedConfluenceSpaceAdminScopeTest
 
     private ConfluenceUser getAddonUser(String addonKey)
     {
-        return getUser(getAddonUsername(addonKey));
+        return getUser(getAddonUserKey(addonKey));
     }
 
-    private ConfluenceUser getUser(String username)
+    private ConfluenceUser getUser(UserKey userKey)
     {
-        return FindUserHelper.getUserByUsername(username);
+        return FindUserHelper.getUserByUserKey(userKey);
     }
 
-    private String getAddonUsername(String addonKey)
+    private UserKey getAddonUserKey(String addonKey)
     {
         checkNotNull(addonKey, "addonKey must not be null");
         ApplicationLink appLink = jwtApplinkFinder.find(addonKey);
-        return (String) appLink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
+        String userKeyString = (String) appLink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
+        return StringUtils.isEmpty(userKeyString) ? null : new UserKey(userKeyString);
     }
 
     private ConnectAddonBeanBuilder createAddonBean(ScopeName scope)

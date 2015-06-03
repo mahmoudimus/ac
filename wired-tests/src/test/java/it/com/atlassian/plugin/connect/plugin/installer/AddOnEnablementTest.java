@@ -11,6 +11,8 @@ import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
+import com.atlassian.sal.api.user.UserManager;
+import it.com.atlassian.plugin.connect.util.user.AddonUserResolver;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,14 +29,17 @@ public class AddOnEnablementTest
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
     private final JwtApplinkFinder jwtApplinkFinder;
+    private final UserManager userManager;
 
     private Plugin plugin;
 
-    public AddOnEnablementTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, JwtApplinkFinder jwtApplinkFinder)
+    public AddOnEnablementTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,
+                               JwtApplinkFinder jwtApplinkFinder, UserManager userManager)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
         this.jwtApplinkFinder = jwtApplinkFinder;
+        this.userManager = userManager;
     }
 
     @Before
@@ -55,18 +60,19 @@ public class AddOnEnablementTest
     }
 
     @Test
-    public void disablingPluginRemovesAppLinkUsernameProperty() throws IOException
+    public void disablingPluginRemovesAppLinkUserKeyProperty() throws IOException
     {
         ApplicationLink appLink = jwtApplinkFinder.find(plugin.getKey());
         assertEquals(null, appLink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME));
     }
 
     @Test
-    public void enablingPluginSetsAppLinkUsernameProperty() throws IOException
+    public void enablingPluginSetsAppLinkUserKeyProperty() throws IOException
     {
         testPluginInstaller.enableAddon(plugin.getKey());
         ApplicationLink appLink = jwtApplinkFinder.find(plugin.getKey());
-        assertEquals("addon_" + plugin.getKey(), appLink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME));
+        String addonUserKey = AddonUserResolver.getAddonUserKey(plugin.getKey(), userManager);
+        assertEquals(addonUserKey, appLink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME));
     }
 
     private Plugin installPlugin() throws IOException

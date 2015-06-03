@@ -10,17 +10,18 @@ import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+import com.atlassian.sal.api.user.UserKey;
+import com.atlassian.sal.api.user.UserManager;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
-import com.atlassian.sal.api.user.UserKey;
 
+import it.com.atlassian.plugin.connect.util.user.AddonUserResolver;
 import org.apache.commons.lang3.ObjectUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -50,19 +51,21 @@ public class OAuthToJwtUpdateTest
     private final ConnectAddonRegistry connectAddonRegistry;
     private final AddonTestFilterResults testFilterResults;
     private final ConnectApplinkManager connectApplinkManager;
+    private final UserManager userManager;
     private Plugin oAuthPlugin;
     private Plugin jwtPlugin;
     private ConnectAddonBean oAuthAddOnBean;
 
     public OAuthToJwtUpdateTest(TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator,
                                 ConnectAddonRegistry connectAddonRegistry, AddonTestFilterResults testFilterResults,
-                                ConnectApplinkManager connectApplinkManager)
+                                ConnectApplinkManager connectApplinkManager, UserManager userManager)
     {
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
         this.connectAddonRegistry = connectAddonRegistry;
         this.testFilterResults = testFilterResults;
         this.connectApplinkManager = connectApplinkManager;
+        this.userManager = userManager;
     }
 
     @BeforeClass
@@ -190,7 +193,7 @@ public class OAuthToJwtUpdateTest
         Object newSharedSecret = jwtApplink.getProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME);
         assertFalse(ObjectUtils.equals(origSharedSecret, newSharedSecret));
 
-        assertEquals(ConnectAddOnUserUtil.usernameForAddon(jwtPlugin.getKey()), jwtApplink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME));
+        assertEquals(getAddonUserKey(jwtPlugin.getKey()), jwtApplink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME));
         assertEquals(jwtPlugin.getKey(), jwtApplink.getProperty(JwtConstants.AppLinks.ADD_ON_ID_PROPERTY_NAME));
         assertEquals(Boolean.FALSE.toString(), jwtApplink.getProperty("IS_ACTIVITY_ITEM_PROVIDER"));
         assertEquals(Boolean.TRUE.toString(), jwtApplink.getProperty("system"));
@@ -228,7 +231,7 @@ public class OAuthToJwtUpdateTest
         Object newSharedSecret = jwtApplink.getProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME);
         assertFalse(ObjectUtils.equals(origSharedSecret, newSharedSecret));
 
-        assertEquals(ConnectAddOnUserUtil.usernameForAddon(jwtPlugin.getKey()), jwtApplink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME));
+        assertEquals(getAddonUserKey(jwtPlugin.getKey()), jwtApplink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME));
         assertEquals(jwtPlugin.getKey(), jwtApplink.getProperty(JwtConstants.AppLinks.ADD_ON_ID_PROPERTY_NAME));
         assertEquals(Boolean.FALSE.toString(), jwtApplink.getProperty("IS_ACTIVITY_ITEM_PROVIDER"));
         assertEquals(Boolean.TRUE.toString(), jwtApplink.getProperty("system"));
@@ -282,5 +285,10 @@ public class OAuthToJwtUpdateTest
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())
                 .withModule("webItems", randomWebItemBean())
                 .build();
+    }
+
+    private String getAddonUserKey(String addonKey)
+    {
+        return AddonUserResolver.getAddonUserKey(addonKey, userManager);
     }
 }
