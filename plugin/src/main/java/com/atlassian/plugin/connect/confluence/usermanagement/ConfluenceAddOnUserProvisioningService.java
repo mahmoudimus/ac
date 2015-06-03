@@ -40,6 +40,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import static com.atlassian.confluence.security.SpacePermission.ADMINISTER_SPACE_PERMISSION;
 import static com.atlassian.confluence.security.SpacePermission.COMMENT_PERMISSION;
 import static com.atlassian.confluence.security.SpacePermission.CREATEEDIT_PAGE_PERMISSION;
@@ -105,7 +107,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
     }
 
     @Override
-    public void provisionAddonUserForScopes(final UserKey userKey, final Set<ScopeName> previousScopes, final Set<ScopeName> newScopes)
+    public void provisionAddonUserForScopes(@Nonnull final UserKey userKey, @Nonnull final Set<ScopeName> previousScopes, @Nonnull final Set<ScopeName> newScopes)
     {
         // Required for temporary permissions exemptions, because unless you call init() in the current thread at least once then you
         // can't use the thread-local cache, and we need to use it to set an exemption on "can the current user change this permission"
@@ -188,16 +190,29 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
         }
     }
     
+    @Nonnull
     @Override
     public Set<String> getDefaultProductGroupsAlwaysExpected()
     {
         return DEFAULT_GROUPS_ALWAYS_EXPECTED;
     }
 
+    @Nonnull
     @Override
     public Set<String> getDefaultProductGroupsOneOrMoreExpected()
     {
         return DEFAULT_GROUPS_ONE_OR_MORE_EXPECTED;
+    }
+
+    private ConfluenceUser getConfluenceUser(String username)
+    {
+        ConfluenceUser existing = userAccessor.getUserByName(username);
+
+        if (existing == null)
+        {
+            throw new IllegalStateException("User with username " + username + " does not exist");
+        }
+        return existing;
     }
 
     private ConfluenceUser getConfluenceUser(UserKey userKey)
@@ -338,8 +353,8 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
         final Iterable<ConnectAddonBean> connectAddonBeans = fetchAddonsWithSpaceAdminScope();
         for (ConnectAddonBean connectAddonBean : connectAddonBeans)
         {
-            UserKey userKey = new UserKey(ConnectAddOnUserUtil.usernameForAddon(connectAddonBean.getKey()));
-            grantAddonUserSpaceAdmin(getConfluenceUser(userKey));
+            String username = ConnectAddOnUserUtil.usernameForAddon(connectAddonBean.getKey());
+            grantAddonUserSpaceAdmin(getConfluenceUser(username));
         }
 
     }

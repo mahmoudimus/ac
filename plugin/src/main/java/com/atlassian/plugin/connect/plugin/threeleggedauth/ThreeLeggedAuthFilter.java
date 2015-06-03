@@ -16,7 +16,7 @@ import com.atlassian.sal.api.message.Message;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +90,7 @@ public class ThreeLeggedAuthFilter implements Filter
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
         Object addOnKeyObject = servletRequest.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME);
-        String addOnKey = addOnKeyObject instanceof String ? (String)addOnKeyObject : null;
+        String addOnKey = addOnKeyObject instanceof String ? (String) addOnKeyObject : null;
 
         // warn if weird properties are set
         if (null != addOnKeyObject && !(addOnKeyObject instanceof String))
@@ -171,37 +171,37 @@ public class ThreeLeggedAuthFilter implements Filter
     /**
      * @return Return the user profile to impersonate with if allowed, otherwise null
      */
-    private UserProfile getUserProfileIfImpersonationAllowed(HttpServletRequest request, HttpServletResponse response, String subject, ConnectAddonBean addOnBean) throws InvalidSubjectException
+    private UserProfile getUserProfileIfImpersonationAllowed(HttpServletRequest request, HttpServletResponse response, String subjectUserKey, ConnectAddonBean addOnBean) throws InvalidSubjectException
     {
         if (getBoolean(SYS_PROP_ALLOW_IMPERSONATION))
         {
-            log.warn("Allowing add-on '{}' to impersonate user '{}' because the system property '{}' is set to true.", new String[]{ addOnBean.getKey(), subject, SYS_PROP_ALLOW_IMPERSONATION });
-            return getUserProfile(request, response, addOnBean.getKey(), subject);
+            log.warn("Allowing add-on '{}' to impersonate user '{}' because the system property '{}' is set to true.", new String[]{ addOnBean.getKey(), subjectUserKey, SYS_PROP_ALLOW_IMPERSONATION });
+            return getUserProfile(request, response, addOnBean.getKey(), subjectUserKey);
         }
         else
         {
-            if (threeLeggedAuthService.shouldSilentlyIgnoreUserAgencyRequest(subject, addOnBean))
+            if (threeLeggedAuthService.shouldSilentlyIgnoreUserAgencyRequest(subjectUserKey, addOnBean))
             {
                 log.warn("Ignoring subject claim '{}' on incoming request '{}' from Connect add-on '{}' because the {} said so.",
-                        new String[]{subject, request.getRequestURI(), addOnBean.getKey(), threeLeggedAuthService.getClass().getSimpleName()});
+                        new String[]{ subjectUserKey, request.getRequestURI(), addOnBean.getKey(), threeLeggedAuthService.getClass().getSimpleName()});
                 return null;
             }
             else
             {
-                final UserProfile userProfile = getUserProfile(request, response, addOnBean.getKey(), subject);
+                final UserProfile userProfile = getUserProfile(request, response, addOnBean.getKey(), subjectUserKey);
 
                 // a valid grant must exist
                 if (threeLeggedAuthService.hasGrant(userProfile.getUserKey(), addOnBean))
                 {
-                    log.info("Allowing add-on '{}' to impersonate user '{}' because a user-agent grant exists.", addOnBean.getKey(), subject);
+                    log.info("Allowing add-on '{}' to impersonate user '{}' because a user-agent grant exists.", addOnBean.getKey(), subjectUserKey);
                     return userProfile;
                 }
                 else
                 {
-                    String externallyVisibleMessage = String.format(MSG_FORMAT_NOT_ALLOWING_IMPERSONATION, addOnBean.getKey(), subject);
+                    String externallyVisibleMessage = String.format(MSG_FORMAT_NOT_ALLOWING_IMPERSONATION, addOnBean.getKey(), subjectUserKey);
                     log.warn("{} because this user has not granted user-agent rights to this add-on, or the grant has expired.", externallyVisibleMessage);
                     fail(request, response, externallyVisibleMessage, HttpServletResponse.SC_FORBIDDEN);
-                    throw new InvalidSubjectException(subject);
+                    throw new InvalidSubjectException(subjectUserKey);
                 }
             }
         }
@@ -234,8 +234,7 @@ public class ThreeLeggedAuthFilter implements Filter
     // a null return value means that a failure response has been returned
     private UserProfile getUserProfile(HttpServletRequest request, HttpServletResponse response, String addOnKey, String subject) throws InvalidSubjectException
     {
-        UserKey userKey = new UserKey(subject);
-        UserProfile userProfile = userManager.getUserProfile(userKey);
+        UserProfile userProfile = userManager.getUserProfile(new UserKey(subject));
 
         if (null == userProfile)
         {
@@ -246,7 +245,7 @@ public class ThreeLeggedAuthFilter implements Filter
         }
         else
         {
-            if (!userService.isUserActive(userKey))
+            if (!userService.isUserActive(userProfile))
             {
                 String externallyVisibleMessage = String.format(MSG_FORMAT_NOT_ALLOWING_IMPERSONATION, addOnKey, subject);
                 log.debug("{} because this user is inactive.", externallyVisibleMessage);
@@ -292,15 +291,20 @@ public class ThreeLeggedAuthFilter implements Filter
                 if (addOnUserKey instanceof String)
                 {
                     String userKeyString = (String) addOnUserKey;
-                    UserKey userKey = new UserKey(userKeyString);
-                    UserProfile userProfile = userManager.getUserProfile(userKey);
-                    // if the add-on's user has been disabled then we explicitly deny access so that admins and our add-on
-                    // lifecycle code can instantly prevent an add-on from making any calls (e.g. when an add-on is disabled)
+                    UserProfile userProfile = userManager.getUserProfile(new UserKey(userKeyString));
+                    if (null == userProfile)
+                    {
+                        // in older versions of connect, the addon username was being stored in the application link
+                        // instead of the user key.
+                        userProfile = userManager.getUserProfile(userKeyString);
+                    }
                     if (null == userProfile)
                     {
                         throw new InvalidSubjectException(String.format("The user '%s' does not exist", userKeyString));
                     }
-                    if (!userService.isUserActive(userKey))
+                    // if the add-on's user has been disabled then we explicitly deny access so that admins and our add-on
+                    // lifecycle code can instantly prevent an add-on from making any calls (e.g. when an add-on is disabled)
+                    if (!userService.isUserActive(userProfile))
                     {
                         throw new InvalidSubjectException(String.format("The user '%s' is inactive", userKeyString));
                     }

@@ -22,7 +22,8 @@ import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstallException;
 import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstaller;
 import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
-import com.atlassian.sal.api.user.UserKey;
+import com.atlassian.sal.api.user.UserProfile;
+
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
@@ -142,13 +143,13 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                               + pluginKey
                               + "]. Restoring previous version...", e);
                     ConnectAddonBean previousAddon = maybePreviousAddon.get();
-                    UserKey addonUserKey = this.connectUserService.getUserKeyForAddon(pluginKey, previousAddon.getName());
+                    UserProfile addonUser = this.connectUserService.getOrCreateAddonUser(pluginKey, previousAddon.getName());
                     addonRegistry.storeAddonSettings(pluginKey, previousSettings);
                     connectApplinkManager.createAppLink(previousAddon,
                                                         baseUrl,
                                                         maybePreviousAuthType.get(),
                                                         maybePreviousPublicKeyOrSharedSecret.getOrElse(""),
-                                                        addonUserKey);
+                                                        addonUser.getUserKey());
                     try
                     {
                         setAddonState(targetState, pluginKey);

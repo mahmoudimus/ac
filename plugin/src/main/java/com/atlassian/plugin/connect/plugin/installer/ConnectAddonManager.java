@@ -268,7 +268,7 @@ public class ConnectAddonManager
 
     public UserKey provisionUserIfNecessary(ConnectAddonBean addOn, String previousDescriptor)
     {
-        return addOnNeedsAUser(addOn) ? provisionAddOnUserAndScopes(addOn, previousDescriptor) : null;
+        return addOnNeedsAUser(addOn) ? provisionAddOnUserAndScopes(addOn, previousDescriptor).getUserKey() : null;
     }
 
     public void enableConnectAddon(final String pluginKey) throws ConnectAddOnUserInitException
@@ -517,24 +517,24 @@ public class ConnectAddonManager
             applicationLink.removeProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
         }
 
-        connectUserService.setUserActiveForAddon(addonKey, false);
+        connectUserService.setAddonUserActive(addonKey, false);
     }
 
     private void enableAddOnUser(ConnectAddonBean addon) throws ConnectAddOnUserInitException
     {
-        UserKey userKey = connectUserService.getUserKeyForAddon(addon.getKey(), addon.getName());
+        UserProfile user = connectUserService.getOrCreateAddonUser(addon.getKey(), addon.getName());
         ApplicationLink applicationLink = connectApplinkManager.getAppLink(addon.getKey());
 
         if (null != applicationLink)
         {
-            applicationLink.putProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME, userKey.getStringValue());
+            applicationLink.putProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME, user.getUserKey().getStringValue());
         }
         else
         {
             log.error("Unable to set the ApplicationLink user key property for add-on '{}' because the add-on has no ApplicationLink!", addon.getKey());
         }
 
-        connectUserService.setUserActiveForAddon(addon.getKey(), true);
+        connectUserService.setAddonUserActive(addon.getKey(), true);
     }
 
     // NB: the sharedSecret should be distributed synchronously and only on installation
@@ -731,7 +731,7 @@ public class ConnectAddonManager
         return AuthenticationType.JWT.equals(authType) && algorithm.requiresSharedSecret();
     }
 
-    private UserKey provisionAddOnUserAndScopes(ConnectAddonBean addOn, String previousDescriptor)
+    private UserProfile provisionAddOnUserAndScopes(ConnectAddonBean addOn, String previousDescriptor)
             throws PluginInstallException
     {
         Set<ScopeName> previousScopes = Sets.newHashSet();
@@ -745,7 +745,7 @@ public class ConnectAddonManager
 
         try
         {
-            return connectUserService.setUserScopesForAddon(addOn.getKey(), addOn.getName(), previousScopes, newScopes);
+            return connectUserService.provisionAddonUserForScopes(addOn.getKey(), addOn.getName(), previousScopes, newScopes);
         }
         catch (ConnectAddOnUserInitException e)
         {

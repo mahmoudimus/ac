@@ -28,16 +28,15 @@ import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceCompon
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.plugin.connect.spi.product.FeatureManager;
-import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 
-import com.atlassian.sal.api.user.UserKey;
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
 
 import com.google.common.collect.ImmutableMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 
@@ -57,15 +56,17 @@ public class ConnectUserServiceImpl implements ConnectUserService
     private final FeatureManager featureManager;
     private static final Logger log = LoggerFactory.getLogger(ConnectUserServiceImpl.class);
     private final CrowdClientFacade crowdClientFacade;
+    private final UserManager userManager;
 
     @Autowired
     public ConnectUserServiceImpl(ApplicationService applicationService,
-                                  ApplicationManager applicationManager,
-                                  ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService,
-                                  ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService,
-                                  FeatureManager featureManager, CrowdClientFacade crowdClientFacade)
+            ApplicationManager applicationManager,
+            ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService,
+            ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService,
+            FeatureManager featureManager, CrowdClientFacade crowdClientFacade, UserManager userManager)
     {
         this.crowdClientFacade = crowdClientFacade;
+        this.userManager = userManager;
         this.applicationService = checkNotNull(applicationService);
         this.applicationManager= checkNotNull(applicationManager);
         this.connectAddOnUserProvisioningService = checkNotNull(connectAddOnUserProvisioningService);
@@ -75,7 +76,7 @@ public class ConnectUserServiceImpl implements ConnectUserService
 
     @Nonnull
     @Override
-    public UserKey getUserKeyForAddon(@Nonnull String addonKey, @Nonnull String addonDisplayName) throws ConnectAddOnUserInitException
+    public UserProfile getOrCreateAddonUser(@Nonnull String addonKey, @Nonnull String addonDisplayName) throws ConnectAddOnUserInitException
     {
         try
         {
@@ -97,12 +98,16 @@ public class ConnectUserServiceImpl implements ConnectUserService
     }
 
     @Override
-    public boolean isUserActive(@Nonnull UserKey userKey)
+    public boolean isUserActive(@Nonnull UserProfile userProfile)
     {
         try
         {
-            User user = findUserByUsername(userKey.getStringValue());
-            return user != null && user.isActive();
+            User user = findUserByUsername(userProfile.getUsername());
+            if (user == null)
+            {
+                throw new IllegalStateException(String.format("The user manager said that user '%s' exists but Crowd does not know about it.", userProfile.getUsername()));
+            }
+            return user.isActive();
         }
         catch (ApplicationNotFoundException e)
         {
@@ -111,7 +116,7 @@ public class ConnectUserServiceImpl implements ConnectUserService
     }
 
     @Override
-    public void setUserActiveForAddon(@Nonnull String addonKey, boolean active)
+    public void setAddonUserActive(@Nonnull String addonKey, boolean active)
             throws ConnectAddOnUserInitException
     {
         String username = ConnectAddOnUserUtil.usernameForAddon(addonKey);
@@ -123,7 +128,7 @@ public class ConnectUserServiceImpl implements ConnectUserService
             if (null != user)
             {
                 UserTemplate userTemplate = new UserTemplate(user);
-                userTemplate.setActive(false);
+                userTemplate.setActive(active);
                 try
                 {
                     applicationService.updateUser(getApplication(), userTemplate);
@@ -142,15 +147,15 @@ public class ConnectUserServiceImpl implements ConnectUserService
 
     @Nonnull
     @Override
-    public UserKey setUserScopesForAddon(@Nonnull String addonKey, @Nonnull String addonDisplayName,
+    public UserProfile provisionAddonUserForScopes(@Nonnull String addonKey, @Nonnull String addonDisplayName,
             @Nonnull Set<ScopeName> previousScopes, @Nonnull Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
     {
-        UserKey userKey = getUserKeyForAddon(checkNotNull(addonKey), checkNotNull(addonDisplayName));
-        connectAddOnUserProvisioningService.provisionAddonUserForScopes(userKey, previousScopes, newScopes);
-        return userKey;
+        UserProfile user = getOrCreateAddonUser(checkNotNull(addonKey), checkNotNull(addonDisplayName));
+        connectAddOnUserProvisioningService.provisionAddonUserForScopes(user.getUserKey(), previousScopes, newScopes);
+        return user;
     }
 
-    private UserKey createOrEnableAddOnUser(String username, String addOnDisplayName)
+    private UserProfile createOrEnableAddOnUser(String username, String addOnDisplayName)
             throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException,
             MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException,
             ApplicationNotFoundException, ConnectAddOnUserInitException, InvalidAuthenticationException
@@ -198,7 +203,12 @@ public class ConnectUserServiceImpl implements ConnectUserService
                     "Please check with an instance administrator that at least one of these groups exists and that it is not read-only.");
         }
 
-        return new UserKey(user.getName());
+        UserProfile userProfile = userManager.getUserProfile(user.getName());
+        if (userProfile == null)
+        {
+            throw new IllegalStateException(String.format("The user manager said that the just created user '%s' does not exist.", user.getName()));
+        }
+        return userProfile;
     }
 
     private User ensureUserExists(String username, String addonDisplayName)

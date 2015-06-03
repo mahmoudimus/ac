@@ -152,9 +152,9 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
                 log.info("Creating an application link for Connect add-on with key '{}'", pluginKey);
 
                 ApplicationLink link = applicationLinkService.addApplicationLink(expectedApplicationId, applicationType, details);
-
+                String addonUserKeyString = addonUserKey == null ? "" : addonUserKey.getStringValue();
                 link.putProperty(PLUGIN_KEY_PROPERTY, pluginKey);
-                link.putProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME, addonUserKey == null ? null : addonUserKey.getStringValue());
+                link.putProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME, addonUserKeyString);
                 link.putProperty("IS_ACTIVITY_ITEM_PROVIDER", Boolean.FALSE.toString());
                 link.putProperty("system", Boolean.TRUE.toString());
 

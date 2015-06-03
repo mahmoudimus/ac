@@ -36,8 +36,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class JiraAddOnUserProvisioningServiceTest
 {
-    private static String USERNAME = "addon-blaah";
-    private static UserKey USER_KEY = new UserKey(USERNAME);
+    private static UserKey USER_KEY = new UserKey("aaab-bccd-eef-ggh");
     private static String ADDONS_ADMIN_GROUP = "atlassian-addons-admin";
 
     @Mock private GlobalPermissionManager jiraPermissionManager;
@@ -70,13 +69,14 @@ public class JiraAddOnUserProvisioningServiceTest
                                                                    connectAddOnUserGroupProvisioningService,
                                                                    transactionTemplate,
                                                                    jiraProjectPermissionManager);
+
     }
 
     @Test
     public void testMissingAdminPermissionReturnsCorrectErrorCode() throws ApplicationNotFoundException,
         OperationFailedException, ApplicationPermissionException
     {
-        when(userManager.getUserByName(USERNAME)).thenReturn(adminUser);
+        when(userManager.getUserByKey(USER_KEY.getStringValue())).thenReturn(adminUser);
 
         when(connectAddOnUserGroupProvisioningService.ensureGroupExists(ADDONS_ADMIN_GROUP)).thenReturn(false);
 

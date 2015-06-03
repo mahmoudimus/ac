@@ -27,6 +27,8 @@ import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioni
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.spi.product.FeatureManager;
 import com.atlassian.sal.api.user.UserKey;
+import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -72,10 +74,12 @@ public class ConnectUserServiceImplTest
     private @Mock ApplicationManager applicationManager;
     private @Mock Application application;
     private @Mock User user;
+    private @Mock UserProfile userProfile;
     private @Mock ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService;
     private @Mock CrowdClientFacade crowdClientFacade;
     private @Mock CrowdClient crowdClient;
     private @Mock FeatureManager featureManager;
+    private @Mock UserManager userManager;
 
     private ConnectUserServiceImpl connectUserService;
 
@@ -84,12 +88,13 @@ public class ConnectUserServiceImplTest
 
     private static final String ADD_ON_KEY = "my-cool-thingamajig";
     private static final String ADD_ON_USERNAME = "addon_my-cool-thingamajig";
-    private static final UserKey USER_KEY = new UserKey(ADD_ON_USERNAME);
+    private static final UserKey ADD_ON_USER_KEY = new UserKey("key::" + ADD_ON_USERNAME);
+
 
     @Test
     public void returnsCorrectUserKeyWhenItCreatesTheUser() throws ConnectAddOnUserInitException
     {
-        assertThat(connectUserService.getUserKeyForAddon(ADD_ON_KEY, ADD_ON_DISPLAY_NAME), is(USER_KEY));
+        assertThat(connectUserService.getOrCreateAddonUser(ADD_ON_KEY, ADD_ON_DISPLAY_NAME), is(userProfile));
     }
 
     @Test
@@ -113,21 +118,39 @@ public class ConnectUserServiceImplTest
     @Test
     public void findsUserByKey() throws ConnectAddOnUserInitException, UserNotFoundException
     {
-        connectUserService.getUserKeyForAddon(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+        connectUserService.getOrCreateAddonUser(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService).findUserByName(eq(application), eq(ADD_ON_USERNAME));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void isActiveReturnsFalseWhenUserDoesNotExist()
+    {
+        UserProfile profile = mock(UserProfile.class);
+        when(profile.getUserKey()).thenReturn(new UserKey("does not exist"));
+        assertThat(connectUserService.isUserActive(userProfile), is(false));
+    }
+
+    @Test
+    public void isActiveReturnsActivityStatusWhenUserExist() throws UserNotFoundException
+    {
+        UserProfile user1 = userExists("some user", new UserKey("12345"), true);
+        UserProfile user2 = userExists("another user", new UserKey("98734"), false);
+
+        assertThat(connectUserService.isUserActive(user1), is(true));
+        assertThat(connectUserService.isUserActive(user2), is(false));
     }
 
     @Test
     public void returnsCorrectUserKeyWhenTheUserAlreadyExists() throws ConnectAddOnUserInitException, UserNotFoundException, InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException
     {
         theUserExists();
-        assertThat(connectUserService.getUserKeyForAddon(ADD_ON_KEY, ADD_ON_DISPLAY_NAME), is(USER_KEY));
+        assertThat(connectUserService.getOrCreateAddonUser(ADD_ON_KEY, ADD_ON_DISPLAY_NAME), is(userProfile));
     }
 
     @Test
     public void userIsAddedToGroupWhenItCreatesTheUser() throws ConnectAddOnUserInitException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, MembershipAlreadyExistsException
     {
-        connectUserService.getUserKeyForAddon(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+        connectUserService.getOrCreateAddonUser(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService).addUserToGroup(eq(application), eq(ADD_ON_USERNAME), eq(GROUP_KEY));
     }
 
@@ -135,7 +158,7 @@ public class ConnectUserServiceImplTest
     public void userIsAddedToGroupWhenTheUserAlreadyExistsButIsNotAMember() throws ConnectAddOnUserInitException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, MembershipAlreadyExistsException, InvalidCredentialException, InvalidUserException
     {
         theUserExists();
-        connectUserService.getUserKeyForAddon(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+        connectUserService.getOrCreateAddonUser(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService).addUserToGroup(eq(application), eq(ADD_ON_USERNAME), eq(GROUP_KEY));
     }
 
@@ -144,14 +167,14 @@ public class ConnectUserServiceImplTest
     {
         theUserExists();
         when(applicationService.isUserDirectGroupMember(eq(application), eq(ADD_ON_USERNAME), eq(GROUP_KEY))).thenReturn(true);
-        connectUserService.getUserKeyForAddon(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+        connectUserService.getOrCreateAddonUser(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService, never()).addUserToGroup(eq(application), eq(ADD_ON_USERNAME), eq(GROUP_KEY));
     }
 
     @Test
     public void userIsCreatedWithCorrectEmailAddress() throws ConnectAddOnUserInitException, InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException
     {
-        connectUserService.getUserKeyForAddon(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+        connectUserService.getOrCreateAddonUser(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService).addUser(eq(application), argThat(hasExpectedEmailAddress()), any(PasswordCredential.class));
     }
 
@@ -160,7 +183,7 @@ public class ConnectUserServiceImplTest
     {
         theUserExists();
         when(user.getEmailAddress()).thenReturn("wrong");
-        connectUserService.getUserKeyForAddon(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+        connectUserService.getOrCreateAddonUser(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService).updateUser(eq(application), argThat(hasExpectedEmailAddress()));
     }
 
@@ -169,7 +192,7 @@ public class ConnectUserServiceImplTest
     {
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(ImmutableSet.of("product group"));
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(Collections.<String>emptySet());
-        connectUserService.getUserKeyForAddon(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+        connectUserService.getOrCreateAddonUser(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService, times(2)).addUserToGroup(eq(application), eq(ADD_ON_USERNAME), captor.capture());
         assertThat(captor.getAllValues(), containsInAnyOrder(GROUP_KEY, "product group"));
     }
@@ -179,7 +202,7 @@ public class ConnectUserServiceImplTest
     {
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(Collections.<String>emptySet());
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(ImmutableSet.of("product group"));
-        connectUserService.getUserKeyForAddon(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+        connectUserService.getOrCreateAddonUser(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService, times(2)).addUserToGroup(eq(application), eq(ADD_ON_USERNAME), captor.capture());
         assertThat(captor.getAllValues(), containsInAnyOrder(GROUP_KEY, "product group"));
     }
@@ -189,7 +212,7 @@ public class ConnectUserServiceImplTest
     {
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(ImmutableSet.of("product group 1"));
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(ImmutableSet.of("product group 2"));
-        connectUserService.getUserKeyForAddon(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+        connectUserService.getOrCreateAddonUser(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService, times(3)).addUserToGroup(eq(application), eq(ADD_ON_USERNAME), captor.capture());
         assertThat(captor.getAllValues(), containsInAnyOrder(GROUP_KEY, "product group 1", "product group 2"));
     }
@@ -199,7 +222,7 @@ public class ConnectUserServiceImplTest
             throws Exception
     {
         when(applicationService.findUserByName(application, ADD_ON_USERNAME)).thenReturn(user);
-        connectUserService.getUserKeyForAddon(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+        connectUserService.getOrCreateAddonUser(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
 
         verify(applicationService).storeUserAttributes(eq(application), eq(ADD_ON_USERNAME), attributeCalled(buildAttributeConnectAddOnAttributeName("app-name")));
         verify(crowdClient).storeUserAttributes(eq(ADD_ON_USERNAME), attributeCalled(buildAttributeConnectAddOnAttributeName("app-name")));
@@ -211,7 +234,7 @@ public class ConnectUserServiceImplTest
     {
         when(featureManager.isOnDemand()).thenReturn(false);
         when(applicationService.findUserByName(application, ADD_ON_USERNAME)).thenReturn(user);
-        connectUserService.getUserKeyForAddon(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+        connectUserService.getOrCreateAddonUser(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
 
         verify(applicationService).storeUserAttributes(eq(application), eq(ADD_ON_USERNAME), attributeCalled(buildAttributeConnectAddOnAttributeName("app-name")));
         verify(crowdClient, never()).storeUserAttributes(anyString(), anyMap());
@@ -221,7 +244,7 @@ public class ConnectUserServiceImplTest
     public void userIsCreatedWithAtlassianConnectUserAttribute()
             throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, UserNotFoundException, InvalidAuthenticationException
     {
-        connectUserService.getUserKeyForAddon(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+        connectUserService.getOrCreateAddonUser(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService).addUser(eq(application), argThat(hasExpectedEmailAddress()), any(PasswordCredential.class));
         verify(applicationService).storeUserAttributes(eq(application), eq(ADD_ON_USERNAME), attributeCalled(buildAttributeConnectAddOnAttributeName("app-name")));
         verify(crowdClient).storeUserAttributes(eq(ADD_ON_USERNAME), attributeCalled(buildAttributeConnectAddOnAttributeName("app-name")));
@@ -233,7 +256,7 @@ public class ConnectUserServiceImplTest
     {
         when(featureManager.isOnDemand()).thenReturn(false);
 
-        connectUserService.getUserKeyForAddon(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+        connectUserService.getOrCreateAddonUser(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService).addUser(eq(application), argThat(hasExpectedEmailAddress()), any(PasswordCredential.class));
         verify(applicationService).storeUserAttributes(eq(application), eq(ADD_ON_USERNAME), attributeCalled(buildAttributeConnectAddOnAttributeName("app-name")));
         verify(crowdClient, never()).storeUserAttributes(anyString(), anyMap());
@@ -245,7 +268,7 @@ public class ConnectUserServiceImplTest
         theUserExists();
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(ImmutableSet.of("product group"));
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(Collections.<String>emptySet());
-        connectUserService.getUserKeyForAddon(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+        connectUserService.getOrCreateAddonUser(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService, times(2)).addUserToGroup(eq(application), eq(ADD_ON_USERNAME), captor.capture());
         assertThat(captor.getAllValues(), containsInAnyOrder(GROUP_KEY, "product group"));
     }
@@ -256,7 +279,7 @@ public class ConnectUserServiceImplTest
         theUserExists();
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(Collections.<String>emptySet());
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(ImmutableSet.of("product group"));
-        connectUserService.getUserKeyForAddon(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+        connectUserService.getOrCreateAddonUser(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService, times(2)).addUserToGroup(eq(application), eq(ADD_ON_USERNAME), captor.capture());
         assertThat(captor.getAllValues(), containsInAnyOrder(GROUP_KEY, "product group"));
     }
@@ -268,7 +291,7 @@ public class ConnectUserServiceImplTest
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(ImmutableSet.of("product group"));
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(Collections.<String>emptySet());
         when(applicationService.isUserDirectGroupMember(eq(application), eq(ADD_ON_USERNAME), eq("product group"))).thenReturn(true);
-        connectUserService.getUserKeyForAddon(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+        connectUserService.getOrCreateAddonUser(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService, never()).addUserToGroup(eq(application), eq(ADD_ON_USERNAME), eq("product group"));
     }
 
@@ -279,8 +302,34 @@ public class ConnectUserServiceImplTest
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(Collections.<String>emptySet());
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(ImmutableSet.of("product group"));
         when(applicationService.isUserDirectGroupMember(eq(application), eq(ADD_ON_USERNAME), eq("product group"))).thenReturn(true);
-        connectUserService.getUserKeyForAddon(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+        connectUserService.getOrCreateAddonUser(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService, never()).addUserToGroup(eq(application), eq(ADD_ON_USERNAME), eq("product group"));
+    }
+
+    @Test
+    public void userIsInactiveAfterSetAddonUserActiveFalse()
+            throws UserNotFoundException, InvalidUserException, InvalidCredentialException, ApplicationPermissionException, OperationFailedException
+    {
+        theUserExists();
+
+        connectUserService.setAddonUserActive(ADD_ON_KEY, false);
+        ArgumentCaptor<UserTemplate> userCaptor = ArgumentCaptor.forClass(UserTemplate.class);
+        verify(applicationService).updateUser(eq(application), userCaptor.capture());
+
+        assertThat(userCaptor.getValue().isActive(), is(false));
+    }
+
+    @Test
+    public void userIsActiveAfterSetAddonUserActiveTrue()
+            throws UserNotFoundException, InvalidUserException, InvalidCredentialException, ApplicationPermissionException, OperationFailedException
+    {
+        theUserExists();
+
+        connectUserService.setAddonUserActive(ADD_ON_KEY, true);
+        ArgumentCaptor<UserTemplate> userCaptor = ArgumentCaptor.forClass(UserTemplate.class);
+        verify(applicationService).updateUser(eq(application), userCaptor.capture());
+
+        assertThat(userCaptor.getValue().isActive(), is(true));
     }
 
     private void recoversFromRaceConditionResultingInException(Exception exceptionToThrowOnUserCreation) throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, UserNotFoundException
@@ -290,7 +339,7 @@ public class ConnectUserServiceImplTest
 
         when(applicationService.addUser(any(Application.class), any(UserTemplate.class), any(PasswordCredential.class))).thenThrow(exceptionToThrowOnUserCreation);
         when(applicationService.findUserByName(eq(application), eq(ADD_ON_USERNAME))).thenReturn(null, addonUser);
-        connectUserService.getUserKeyForAddon(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
+        connectUserService.getOrCreateAddonUser(ADD_ON_KEY, ADD_ON_DISPLAY_NAME);
         verify(applicationService, times(2)).findUserByName(eq(application), eq(ADD_ON_USERNAME));
     }
 
@@ -318,6 +367,19 @@ public class ConnectUserServiceImplTest
         when(applicationService.addUser(any(Application.class), any(UserTemplate.class), any(PasswordCredential.class))).thenThrow(new IllegalArgumentException("the code should not create a user"));
     }
 
+    private UserProfile userExists(String username, UserKey userKey, boolean active) throws UserNotFoundException
+    {
+        UserProfile profile = mock(UserProfile.class);
+        User someUser = mock(User.class);
+
+        when(profile.getUsername()).thenReturn(username);
+        when(userManager.getUserProfile(eq(userKey))).thenReturn(profile);
+        when(applicationService.findUserByName(any(Application.class), eq(username))).thenReturn(someUser);
+        when(someUser.isActive()).thenReturn(active);
+
+        return profile;
+    }
+
     @Before
     public void beforeEachTest() throws ApplicationNotFoundException, InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException
     {
@@ -325,13 +387,15 @@ public class ConnectUserServiceImplTest
         when(application.getName()).thenReturn(APPLICATION_NAME);
         when(crowdClientFacade.getClientApplicationName()).thenReturn("app-name");
         when(applicationService.addUser(eq(application), eq(new UserTemplate(ADD_ON_USERNAME)), eq(PasswordCredential.NONE))).thenReturn(user);
+        when(userManager.getUserProfile(eq(ADD_ON_USERNAME))).thenReturn(userProfile);
         when(user.getName()).thenReturn(ADD_ON_USERNAME);
+        when(userProfile.getUserKey()).thenReturn(ADD_ON_USER_KEY);
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(Collections.<String>emptySet());
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(Collections.<String>emptySet());
         when(crowdClientFacade.getCrowdClient()).thenReturn(crowdClient);
         when(featureManager.isOnDemand()).thenReturn(true);
         ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService = new ConnectAddOnUserGroupProvisioningServiceImpl(applicationService, applicationManager);
-        connectUserService = new ConnectUserServiceImpl(applicationService, applicationManager, connectAddOnUserProvisioningService, connectAddOnUserGroupProvisioningService, featureManager, crowdClientFacade);
+        connectUserService = new ConnectUserServiceImpl(applicationService, applicationManager, connectAddOnUserProvisioningService, connectAddOnUserGroupProvisioningService, featureManager, crowdClientFacade, userManager);
     }
 
     @SuppressWarnings ("unchecked")
