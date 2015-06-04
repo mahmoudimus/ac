@@ -33,6 +33,10 @@ or Confluence Cloud with Atlassian Connect as follows:
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
 
+
+## [1.1.33](../release-notes/1-1-0.html#1.1.33)
+* Confluence: Fixed broken generation of macroHash [CE-163](https://ecosystem.atlassian.net/browse/CE-163)
+
 ## [1.1.32](../release-notes/1-1-0.html#1.1.32)
 * Add `entity_property_equal_to` condition for add-on properties [ACJIRA-362](https://ecosystem.atlassian.net/browse/ACJIRA-362)
 * JIRA: Add `entity_property_equal_to` condition for project, issue, issue type and comment properties [ACJIRA-362](https://ecosystem.atlassian.net/browse/ACJIRA-362)

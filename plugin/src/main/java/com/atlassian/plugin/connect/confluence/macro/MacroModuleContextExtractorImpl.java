@@ -58,8 +58,9 @@ public class MacroModuleContextExtractorImpl implements MacroModuleContextExtrac
             moduleContext.put("macro.id", macroIdString);
         } else {
             // the option will be none if there is no id _and_ there is no body so we can skip these parameters
-            moduleContext.put("macro.hash", "");
-            moduleContext.put("macro.id", "");
+            String hash = macroDefinition.macroHash();
+            moduleContext.put("macro.hash", hash == null ? "" : hash);
+            moduleContext.put("macro.id", hash == null ? "" : hash);
         }
 
         moduleContext.put("output.type", conversionContext.getOutputType());
