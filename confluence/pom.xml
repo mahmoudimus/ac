@@ -13,6 +13,7 @@
 
     <modules>
         <module>confluence-reference-plugin</module>
+        <module>confluence-support</module>
     </modules>
 
 </project>
