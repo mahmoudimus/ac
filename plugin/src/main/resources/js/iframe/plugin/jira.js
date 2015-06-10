@@ -3,7 +3,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
     var workflowListener,
         validationListener,
         dashboardItemEditListener,
-        quickIssueCreateListener;
+        issueCreateListener;
 
     /**
     * @class WorkflowConfiguration
@@ -111,7 +111,12 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                     remote.triggerJiraEvent('refreshIssuePage');
                 },
                 openCreateIssueDialog: function (callback, fields) {
-                    remote.openCreateIssueDialog(callback, fields);
+                    if(callback){
+                        issueCreateListener = callback;
+                    } else {
+                        issueCreateListener = null;
+                    }
+                    remote.openCreateIssueDialog(fields);
                 }
             },
 
@@ -122,6 +127,11 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                 },
                 triggerDashboardItemEdit: function () {
                     return DashboardItem.triggerEdit();
+                },
+                triggerIssueCreateSubmit: function (issues) {
+                    if($.isFunction(issueCreateListener)){
+                        issueCreateListener.call({}, issues);
+                    }
                 }
             },
             stubs: ["triggerJiraEvent", "openCreateIssueDialog"]
