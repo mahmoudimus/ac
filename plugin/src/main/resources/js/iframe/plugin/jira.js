@@ -110,11 +110,8 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                 refreshIssuePage: function () {
                     remote.triggerJiraEvent('refreshIssuePage');
                 },
-                openCreateIssueDialog: function () {
-                    remote.triggerIssueCreate();
-                },
-                onQuickIssueCreate: function (callback) {
-                    quickIssueCreateListener = callback;
+                openCreateIssueDialog: function (callback, fields) {
+                    remote.openCreateIssueDialog(callback, fields);
                 }
             },
 
@@ -125,14 +122,9 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                 },
                 triggerDashboardItemEdit: function () {
                     return DashboardItem.triggerEdit();
-                },
-                triggerQuickIssueCreated: function (issues) {
-                    if($.isFunction(quickIssueCreateListener)){
-                        quickIssueCreateListener.call(this, issues);
-                    }
                 }
             },
-            stubs: ["triggerJiraEvent", "triggerIssueCreate"]
+            stubs: ["triggerJiraEvent", "openCreateIssueDialog"]
 
         };
 

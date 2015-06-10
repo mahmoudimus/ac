@@ -8,14 +8,6 @@
                 } catch (e){
                     throw new Error("Failed to refresh the issue page");
                 }
-            },
-            createIssueDialog: function(callback){
-                // yeah, i know.
-                JIRA.Forms.createCreateIssueForm({}).asDialog({
-                    trigger: document.createElement("a"),
-                    id: "create-issue-dialog",
-                    windowTitle: AJS.I18n.getText('admin.issue.operations.create')
-                }).show();
             }
         };
     });
