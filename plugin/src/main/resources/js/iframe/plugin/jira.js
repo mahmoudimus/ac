@@ -110,6 +110,18 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                 refreshIssuePage: function () {
                     remote.triggerJiraEvent('refreshIssuePage');
                 },
+
+                /**
+                * Open the quick create issue dialog
+                * This opens the "create issue" dialog and triggers a callback containing the list of issues created.
+                * @noDemo
+                * @example
+                * AP.require('jira', function(jira){
+                *   jira.openCreateIssueDialog(function(issues){
+                *       alert(issues[0]['fields']['summary']);
+                *   });
+                * });
+                */
                 openCreateIssueDialog: function (callback, fields) {
                     if(callback){
                         issueCreateListener = callback;

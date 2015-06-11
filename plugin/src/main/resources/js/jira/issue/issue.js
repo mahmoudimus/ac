@@ -13,7 +13,7 @@
                 dialog.show();
                 var sanitizedIssues = [];
                 var createCallback = function (e, issues) {
-                    var i,sanitizedIssue;
+                    var i, sanitizedIssue;
                     sanitizedIssues = [];
                     for(i in issues) {
                         sanitizedIssues.push(issues[i].createdIssueDetails);
