@@ -37,22 +37,6 @@ public class RemoteQuickCreateIssueGeneralPage extends ConnectAddOnPage implemen
         return IframeUtils.iframeServletPath(addOnKey, pageElementKey);
     }
 
-    private boolean waitForHistoryChange(final String oldText)
-    {
-
-        driver.waitUntil(new Function<WebDriver, Boolean>()
-        {
-
-            @Override
-            public Boolean apply(WebDriver webDriver)
-            {
-                return !driver.findElement(By.id("log")).getText().equals(oldText);
-
-            }
-        });
-        return true;
-    }
-
     public void launchQuickCreate() {
         runInFrame(new Callable<Void>()
         {
@@ -67,7 +51,7 @@ public class RemoteQuickCreateIssueGeneralPage extends ConnectAddOnPage implemen
     }
 
     public String getCreatedIssueSummary() {
-        return getValue("summary");
+        return getValue("summarytext");
     }
 
     public WebElement getQuickCreateDialog() {

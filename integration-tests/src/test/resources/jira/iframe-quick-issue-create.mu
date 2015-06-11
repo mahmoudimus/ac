@@ -8,13 +8,12 @@
   <body>
 
   <button id="dialog">Click me to open issue create</button>
-  <div id="summary"></div>
+  <div id="summarytext"></div>
     <script type="text/javascript">
         AP.require(['jira', '_dollar'], function(j, $){
             $("#dialog").bind("click", function(){
                 var func = function (issues) {
-                    $("#summary")[0].innerHTML = issues[0]['fields']['summary'];
-                    console.log('addon quick issue created', issues);
+                    $("#summarytext")[0].innerHTML = issues[0]['fields']['summary'];
                 };
 
                 j.openCreateIssueDialog(func, {

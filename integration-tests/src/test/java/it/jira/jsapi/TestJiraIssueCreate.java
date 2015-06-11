@@ -97,7 +97,7 @@ public class TestJiraIssueCreate extends JiraWebDriverTestBase
     public void canReceiveCreatedIssuesFromAddon() throws MalformedURLException, URISyntaxException
     {
         loginAndVisit(testUserFactory.basicUser(), JiraViewProjectPage.class, project.getKey());
-        RemoteQuickCreateIssueGeneralPage generalPage = loginAndVisit(testUserFactory.admin(), RemoteQuickCreateIssueGeneralPage.class, addonKey, KEY_MY_AWESOME_PAGE);
+        RemoteQuickCreateIssueGeneralPage generalPage = loginAndVisit(testUserFactory.basicUser(), RemoteQuickCreateIssueGeneralPage.class, addonKey, KEY_MY_AWESOME_PAGE);
 
         generalPage.launchQuickCreate();
 
@@ -107,7 +107,7 @@ public class TestJiraIssueCreate extends JiraWebDriverTestBase
 
         createIssueDialog.fill("summary", "test");
         createIssueDialog.submit(GlobalMessage.class);
-        assertEquals(generalPage.getCreatedIssueSummary(), equals("test"));
+        assertEquals(generalPage.getCreatedIssueSummary(), "test");
 
     }
 
