@@ -74,7 +74,7 @@ public class TestJiraIssueCreate extends JiraWebDriverTestBase
                                 .withConditions(toggleableConditionBean())
                                 .withWeight(1234)
                                 .build())
-                .addRoute("/pg", ConnectAppServlets.QuickCreateIssueServlet())
+                .addRoute("/pg", ConnectAppServlets.quickCreateIssueServlet())
                 .start();
     }
 
@@ -110,7 +110,4 @@ public class TestJiraIssueCreate extends JiraWebDriverTestBase
         assertEquals(generalPage.getCreatedIssueSummary(), "test");
 
     }
-
-
-
 }

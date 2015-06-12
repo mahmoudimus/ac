@@ -27,7 +27,8 @@ public class RemoteQuickCreateIssueGeneralPage extends ConnectAddOnPage implemen
     @Inject
     protected AtlassianWebDriver driver;
 
-    public RemoteQuickCreateIssueGeneralPage(String addonKey, String moduleKey) {
+    public RemoteQuickCreateIssueGeneralPage(String addonKey, String moduleKey)
+    {
         super(addonKey, moduleKey, true);
     }
 

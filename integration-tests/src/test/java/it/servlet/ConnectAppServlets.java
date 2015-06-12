@@ -148,7 +148,7 @@ public class ConnectAppServlets
     /**
      * @return a servlet that tests AP.onDialogMessage() and captures parameters sent to it.
      */
-    public static HttpServlet QuickCreateIssueServlet()
+    public static HttpServlet quickCreateIssueServlet()
     {
         return wrapContextAwareServlet(new MustacheServlet("jira/iframe-quick-issue-create.mu"));
     }
