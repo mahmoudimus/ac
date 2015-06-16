@@ -160,7 +160,7 @@ public class ConnectAddonBean extends BaseModuleBean
     private ModuleList modules;
 
     @SchemaIgnore("shallow")
-    private Map<String, List<BaseModuleBean>> testModules;
+    private Map<String, List<? extends BaseModuleBean>> testModules;
 
     /**
      * Set of [scopes](../scopes/scopes.html) requested by this add on
@@ -284,7 +284,7 @@ public class ConnectAddonBean extends BaseModuleBean
         return modules;
     }
     
-    public Map<String, List<BaseModuleBean>> getTestModules()
+    public Map<String, List<? extends BaseModuleBean>> getTestModules()
     {
         return testModules;
     }

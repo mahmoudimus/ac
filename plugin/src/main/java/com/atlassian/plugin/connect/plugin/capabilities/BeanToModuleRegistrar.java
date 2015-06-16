@@ -165,7 +165,7 @@ public class BeanToModuleRegistrar
         int i = 0;
 
         
-        for (Map.Entry<String,List<BaseModuleBean>> entry : addon.getTestModules().entrySet())
+        for (Map.Entry<String,List<? extends BaseModuleBean>> entry : addon.getTestModules().entrySet())
         {
             boolean providerFound = false;
             for (ConnectModuleProvider provider : collection)
@@ -181,7 +181,7 @@ public class BeanToModuleRegistrar
             }
         }
 
-        for (Map.Entry<String,List<BaseModuleBean>> entry : addon.getTestModules().entrySet())
+        for (Map.Entry<String,List<? extends BaseModuleBean>> entry : addon.getTestModules().entrySet())
         {
             for (ConnectModuleProvider provider : collection)
             {
