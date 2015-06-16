@@ -96,6 +96,9 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                     remote.setDashboardItemTitle(title);
                 },
 
+                isDashboardItemEditable : function(callback) {
+                    remote.isDashboardItemEditable(callback);
+                },
 
                 /**
                 * Refresh an issue page without reloading the browser.
