@@ -5,7 +5,7 @@ import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
 import com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectSchemaLocator;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidatorService;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
-import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
+import com.atlassian.plugin.connect.api.service.IsDevModeService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;

@@ -1,40 +1,53 @@
 # Conditions
 
-A condition specifies requirements that must be met for a user to access the features or UI exposed by a module. For
-instance, the condition can require a user to be an administrator, have edit permissions, and apply other requirements
-for access. If the condition is not met, the panel, page, or other UI element exposed by the add-on does not appear on
-the page.
+A condition specifies requirements that must be met for a user interface element exposed by an add-on to be displayed
+to a user. Typical use cases include requiring a user to be logged in or to have specific permissions.
 
-Various types of modules accept conditions, including `generalPages`, `adminPages`, and `webItems`. To see whether a certain
-module accepts conditions, see their specific module documentation page.
+Various types of modules accept conditions, including
+[Pages](../modules/common/page.html), [Web Panels](../modules/common/web-panel.html) and [Web Items](../modules/common/web-item.html).
+To see whether a certain module accepts conditions, see its specific module documentation page.
+
+There are different classes of conditions. Most commonly used are [the predefined conditions provided by each host product](#static).
+When further customization is needed, conditions can be specified [in terms of properties stored by the add-on in the host product](#entity-property).
+
+These conditions operate on properties of the user at the browser, the entity being viewed (e.g. an issue or a blog post)
+or its container (e.g. a project or a space), or the entire system.
+
+Add-ons can also use conditions as building blocks of [boolean expressions](#boolean-operations) containing the
+logical operations conjunction (AND), disjunction (OR), or negation.
+
+Finally, add-ons with complex requirements can define the behavior of a condition [using a remote service endpoint](#remote).
+As these remote service invocations have a negative impact the user experience, their use is discouraged.
 
 ## Table of contents
 
-* [Static conditions](#static)
+* [Predefined conditions](#static)
   * [Condition parameters](#static-condition-parameters)
-  * [Product-specific static conditions](#product-specific-conditions)
-    * [Confluence](#confluence-conditions)
-    * [JIRA](#jira-conditions)
-      * [Condition parameter mappings](#jira-condition-parameters)
+* [Entity property conditions](#entity-property)
+* [Boolean operations](#boolean-operations)
 * [Remote conditions](#remote)
+* [Appendix: List of predefined conditions](#product-specific-conditions)
+  * [Confluence](#confluence-conditions)
+  * [JIRA](#jira-conditions)
+    * [Condition parameter mappings](#jira-condition-parameters)
 
-## <a name="static"></a>Static conditions
+## <a name="static"></a>Predefined conditions
 
-A static condition is a condition which is exposed from the host Atlassian application.
+A predefined condition is a condition which is exposed from the host Atlassian application.
+See [the list of predefined conditions](#product-specific-conditions).
 
-For example, a condition that will evaluate when only anonymous users view the page is specified by the following
-module declaration:
+For example, a condition that will evaluate when only logged-in users view the page is specified by the following
+module declaration.
+
 
 ```
 {
-    "name": "My Addon",
     "modules": {
         "generalPages": [
             {
                 "conditions": [
                     {
-                        "condition": "user_is_logged_in",
-                        "invert": true
+                        "condition": "user_is_logged_in"
                     }
                 ]
             }
@@ -45,27 +58,19 @@ module declaration:
 
 ### <a name="static-condition-parameters"></a>Condition parameters
 
-Certain static conditions also accept parameters. For example:
+Certain predefined conditions accept parameters.
 
-* `has_issue_permission`
-* `has_project_permission`
-
-These conditions restrict access to the modules based upon user permission settings for the issue or project.
-Note that behind the scenes, the issue permission check simply checks the project context for the issue and conducts the
-permission check for the user against that project.
-
-You can pass parameters to conditions as follows:
+For example, the `has_issue_permission` condition passes only for users who have the permission specified in the
+ondition. The issue for which permissions are checked is the issue being viewed by the user at the browser.
 
 ```
 {
-    "name": "My Addon",
     "modules": {
         "generalPages": [
             {
                 "conditions": [
                     {
                         "condition": "has_issue_permission",
-                        "invert": false,
                         "params": {
                             "permission": "resolv"
                         }
@@ -77,16 +82,135 @@ You can pass parameters to conditions as follows:
 }
 ```
 
-In this case, the user must have not just access to the issue but resolve permissions specifically. The permissions applicable
-to Atlassian Connect JIRA add-on modules are equivalent to those applicable to JIRA Java plugin development, as described
-in the [JIRA Permissions class reference](https://docs.atlassian.com/jira/latest/com/atlassian/jira/security/Permissions.html)
-documentation.
+## <a name="entity-property"></a>Entity property conditions
 
-### <a name="product-specific-conditions"></a>Product-specific static conditions
+Add-ons that need to impose custom requirements on when user interface elements are displayed can use the
+predefined `entity_property_equal_to` condition. This condition allows fast comparisons to be made against data stored
+by the add-on in the host product.
 
-Each product defines a set of static conditions relevant to its domain.
+The `entity_property_equal_to` condition can be used for properties of a set of entities specific to each host product.
+See the documentation of [the product REST API's](../rest-apis/#product-apis) for information about how to manage
+properties for each entity.
 
-#### <a name="confluence-conditions"></a>Confluence
+The condition requires three parameters to be specified. The referenced entity is defined by the context of the page
+being viewed, e.g. for the JIRA issue `FOO-123`, properties of both the issue itself and of the project `FOO` can be
+referenced.
+
+* `entity` - the entity on which the property has been stored
+  * Common: [`addon`](hosted-data-storage.html)
+  * JIRA: `project`, `issue`, `issuetype`, `comment`
+* `propertyKey` - the key of the property to check
+* `value` - the value to compare the property value against
+
+For example, an add-on could let administrators activate functionality per JIRA project, storing a boolean property
+`isEnabled` on each project using the product's REST API, and then use
+the `entity_property_equal_to` to test for it with the following module definition.
+
+```
+{
+    "modules": {
+        "webPanels": [
+            {
+                "location": "atl.jira.view.issue.right.context",
+                "conditions": [
+                    {
+                        "condition": "entity_property_equal_to",
+                        "params": {
+                            "entity": "project",
+                            "propertyKey": "isEnabled",
+                            "value": "true"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}
+```
+
+Also, an add-on that allows users to associate data with a JIRA issue could store a boolean property `hasContent`
+on that issue indicating that the issue has additional data, and then use this condition to control the display of a
+web panel with additional information.
+
+## <a name="boolean-operations"></a>Boolean operations
+
+The [Composite Condition](../modules/fragment/composite-condition.html) module fragment can be used wherever a condition
+is expected. This allows the construction of boolean expressions aggregating multiple conditions.
+
+For example, a condition that will evaluate when only anonymous users view the page is specified by the following
+module declaration.
+
+
+```
+{
+    "modules": {
+        "generalPages": [
+            {
+                "conditions": [
+                    {
+                        "condition": "user_is_logged_in",
+                        "invert": false
+                    }
+                ]
+            }
+        ]
+    }
+}
+```
+
+## <a name="remote"></a>Remote conditions
+
+A remote condition is a condition which is implemented as an add-on resource. Upon evaluation, the Atlassian application
+issues a request to the remote resource and expects a response which specifies whether to show or hide the module feature.
+
+**NOTE** If a module with a remote condition is included on a page, the user at the browser will not see the page fully loaded
+until the remote condition has returned, and, if applicable, the module itself has loaded. Considering this
+negative impact on the user experience, add-ons are discouraged from using remote conditions. Consider if the condition
+result can be precalculated, stored as an entity propertiy in the appropriate context in the host application, and then
+checked using an [Entity property condition](#entity-property).
+
+Remote conditions are URLs and must start with either 'https' or '/', and return a 200 HTTP response code with
+a JSON body containing the boolean ```shouldDisplay``` field.
+
+    {
+        "shouldDisplay": false
+    }
+
+The following module declaration exemplifies the use of a remote condition.
+
+    {
+        "modules": {
+            "generalPages": [
+                {
+                    "conditions": [
+                        {
+                            "condition": "/condition/onlyBettyCondition"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+
+The add-on can pass parameters to the remote condition as URL query parameters. Remote condition has request
+authentication information passed through as a header, rather than as a query string parameter.
+
+If there is an error communicating with the remote resource (for example, the request timeout period of 10 seconds elapses with no response),
+then the failure will be logged and the condition will be evaluated as `false`.
+
+## <a name="product-specific-conditions"></a>Appendix: List of predefined conditions
+
+Each product defines a set of conditions relevant to its domain.
+
+### <a name "common-conditions"></a>Common
+
+* [`entity_property_equal_to`](#entity-property)
+* `feature_flag`
+* `user_is_admin`
+* `user_is_logged_in`
+* `user_is_sysadmin`
+
+### <a name="confluence-conditions"></a>Confluence
 
 * `active_theme`
 * `can_edit_space_styles`
@@ -96,7 +220,6 @@ Each product defines a set of static conditions relevant to its domain.
 * `email_address_public`
 * `favourite_page`
 * `favourite_space`
-* `feature_flag`
 * `following_target_user`
 * `has_attachment`
 * `has_blog_post`
@@ -120,10 +243,7 @@ Each product defines a set of static conditions relevant to its domain.
 * `user_favouriting_target_user_personal_space`
 * `user_has_personal_blog`
 * `user_has_personal_space`
-* `user_is_admin`
 * `user_is_confluence_administrator`
-* `user_is_logged_in`
-* `user_is_sysadmin`
 * `user_logged_in_editable`
 * `user_watching_page`
 * `user_watching_space`
@@ -131,11 +251,10 @@ Each product defines a set of static conditions relevant to its domain.
 * `viewing_content`
 * `viewing_own_profile`
 
-#### <a name="jira-conditions"></a>JIRA
+### <a name="jira-conditions"></a>JIRA
 
 * `can_attach_file_to_issue`
 * `can_manage_attachments`
-* `feature_flag`
 * `has_issue_permission`
 * `has_project_permission`
 * `has_selected_project`
@@ -152,15 +271,12 @@ Each product defines a set of static conditions relevant to its domain.
 * `sub_tasks_enabled`
 * `time_tracking_enabled`
 * `user_has_issue_history`
-* `user_is_admin`
-* `user_is_logged_in`
 * `user_is_project_admin`
-* `user_is_sysadmin`
 * `user_is_the_logged_in_user`
 * `voting_enabled`
 * `watching_enabled`
 
-##### <a name="jira-condition-parameters"></a>Condition parameter mappings
+#### <a name="jira-condition-parameters"></a>Condition parameter mappings
 
 The following table shows the condition parameters available for `has_issue_permission` and `has_project_permission`
 in Atlassian Connect module declarations and how they map to the permissions described in the
@@ -333,34 +449,3 @@ in Atlassian Connect module declarations and how they map to the permissions des
     </tbody>
 </table>
 
-## <a name="remote"></a>Remote conditions
-
-    {
-        "name": "My Addon",
-        "modules": {
-            "generalPages": [
-                {
-                    "conditions": [
-                        {
-                            "condition": "/condition/onlyBettyCondition"
-                        }
-                    ]
-                }
-            ]
-        }
-    }
-
-For a remote condition, the Atlassian application issues a request to the remote resource and expects a response which
-specifies whether to show or hide the module feature.
-
-    {
-        "shouldDisplay": false
-    }
-
-The add-on can pass parameters to the remote condition as URL query parameters. Remote condition has request
-authentication information passed through as a header, rather than as a query string parameter.
-
-Remote conditions are URLs and must start with either 'http' or '/', and return a 200 HTTP response code with a JSON body containing the boolean ```shouldDisplay``` field.
-
-If there is an error communicating with the remote resource (for example, the request timeout period of 10 seconds elapses with no response),
-then the failure will be logged and the condition will be evaluated as `false`.

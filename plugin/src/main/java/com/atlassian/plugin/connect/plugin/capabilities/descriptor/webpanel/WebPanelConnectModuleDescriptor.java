@@ -1,10 +1,10 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel;
 
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextFilter;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.api.iframe.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.api.iframe.webpanel.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.plugin.iframe.webpanel.ConnectIFrameWebPanel;
-import com.atlassian.plugin.connect.plugin.iframe.webpanel.PluggableParametersExtractor;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.web.WebInterfaceManager;

@@ -20,11 +20,12 @@ context, for example, for the particular JIRA issue or project that is open in t
 
 JIRA supports these context variables:
 
- * `issue.id`, `issue.key`
+ * `issue.id`, `issue.key`, `issuetype.id`
  * `project.id`, `project.key`
  * `version.id`
  * `component.id`
  * `profileUser.name`, `profileUser.key` (this is available on the view user profile page)
+ * `dashboardItem.id`, `dashboardItem.key`, `dashboardItem.viewType`, `dashboard.id` (these are available for dashboard items)
 
 Confluence supports these context variables:
 

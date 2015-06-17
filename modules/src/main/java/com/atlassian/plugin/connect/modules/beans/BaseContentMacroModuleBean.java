@@ -30,9 +30,9 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
      * - If you can predict the size of your body and it is consistently less than 128 characters, you
      * can include it in the GET request using the `{macro.body}` parameter.
      * - If you know your macro contains a body that will often exceed the 128 character threshold
-     * (or is known to contain sensitive data), then you can include the `{macro.hash}` parameter and
+     * (or is known to contain sensitive data), then you can include the `{macro.id}` parameter and
      * use the Confluence REST api to call back to collect the body.
-     * - If you want, you can include, `{macro.body}`, `{macro.hash}`, and `{macro.truncated}`. This way
+     * - If you want, you can include, `{macro.body}`, `{macro.id}`, and `{macro.truncated}`. This way
      * your plugin can call back to confluence only if `{macro.truncated}` is '`true`'.  This will allow
      * you to skip the callback if it's not needed.  This would be useful for macros that don't
      * contain sensitive data of an unpredictable size.
@@ -41,14 +41,14 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
      *__Note:__ If you include the `{macro.body}` in your URL you are potentially leaking sensitive data
      * to any intermediate host on the internet.  This may result in the body being cached or indexed
      * by a third party.  If you are concerned about the security of your macro, you should always use
-     * the `{macro.hash}` and use the Confluence REST API to collect the body.
+     * the `{macro.id}` and use the Confluence REST API to collect the body.
      *
      * Here's an example:
      *
      * Declare the variables that are later required to fetch the macro content in the URL:
      *
      *    {
-     *        "url": "/render-macro?pageId={page.id}&pageVersion={page.version}&macroHash={macro.hash}"
+     *        "url": "/render-macro?pageId={page.id}&pageVersion={page.version}&macroId={macro.id}"
      *    }
      *
      * Then use the Confluence REST API to collect the body, for example directly from the iframe:
@@ -56,11 +56,11 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
      *    AP.require("request", function(request) {
      *        var pageId = getUrlParameter("pageId");
      *        var pageVersion = getUrlParameter("pageVersion");
-     *        var macroHash = getUrlParameter("macroHash");
+     *        var macroId = getUrlParameter("macroId");
      *        request({
      *            url: "/rest/api/content/" + pageId +
      *                 "/history/" + pageVersion +
-     *                 "/macro/hash/" + macroHash,
+     *                 "/macro/id/" + macroId,
      *            success: function(response) {
      *                var macro = JSON.parse(response);
      *                process(macro.body);
@@ -68,13 +68,14 @@ public abstract class BaseContentMacroModuleBean extends RequiredKeyBean
      *        });
      *    });
      *
-     * __Preview Mode:__ If you use the `{macro.hash}` in your URL, the REST api will not return the macro body during
+     * __Preview Mode:__ If you use the `{macro.id}` in your URL, the REST api will not return the macro body during
      * a preview request, because the page has not been saved yet. You can use the `{output.type}` parameter to detect
      * whether the macro is rendered in preview mode and adapt the response accordingly.
      *
      * Currently supported variables for macros are:
      *
-     * - `macro.hash`: The hash of the macro body
+     * - `macro.hash`: The hash of the macro body (deprecated, use the macro.id)
+     * - `macro.id`: The id of the macro
      * - `macro.body`: The macro body, truncated to 128 characters
      * - `macro.truncated`: True if the macro body was truncated, false of not
      * - `page.id`: The page ID, e.g. `1376295`

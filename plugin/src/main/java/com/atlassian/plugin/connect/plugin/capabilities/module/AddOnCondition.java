@@ -2,16 +2,17 @@ package com.atlassian.plugin.connect.plugin.capabilities.module;
 
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.PluginParseException;
+import com.atlassian.plugin.connect.api.iframe.webpanel.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.plugin.iframe.webpanel.PluggableParametersExtractor;
+import com.atlassian.plugin.connect.plugin.condition.ConnectConditionContext;
+import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.api.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.plugin.util.BundleUtil;
-import com.atlassian.plugin.connect.plugin.util.http.ContentRetrievalException;
+import com.atlassian.plugin.connect.api.util.http.ContentRetrievalException;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.event.AddOnConditionFailedEvent;
 import com.atlassian.plugin.connect.spi.event.AddOnConditionInvokedEvent;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.util.concurrent.Promise;
 import org.apache.commons.lang3.time.StopWatch;
@@ -34,7 +35,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class AddOnCondition implements Condition
 {
     public static final String URL = "url";
-    public static final String ADDON_KEY = "addOnKey";
+    public static final String ADDON_KEY = ConnectConditionContext.CONNECT_ADD_ON_KEY_KEY;
 
     private static final Logger log = LoggerFactory.getLogger(AddOnCondition.class);
 

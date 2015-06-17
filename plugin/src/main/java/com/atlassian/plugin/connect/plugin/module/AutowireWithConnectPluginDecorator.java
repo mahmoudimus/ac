@@ -1,31 +1,22 @@
 package com.atlassian.plugin.connect.plugin.module;
 
-import java.util.Set;
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginArtifact;
 import com.atlassian.plugin.impl.AbstractDelegatingPlugin;
 import com.atlassian.plugin.module.ContainerAccessor;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * A decorator for addon bundles that delegates all autowiring requests to the actual connect plugin
  */
 public class AutowireWithConnectPluginDecorator extends AbstractDelegatingPlugin implements ContainerManagedPlugin
 {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     private final ContainerManagedPlugin theConnectPlugin;
-    private final Set<Class<?>> productConditions;
 
-    public AutowireWithConnectPluginDecorator(ContainerManagedPlugin theConnectPlugin, Plugin delegate, Set<Class<?>> productConditions)
+    public AutowireWithConnectPluginDecorator(ContainerManagedPlugin theConnectPlugin, Plugin delegate)
     {
         super(delegate);
         this.theConnectPlugin = theConnectPlugin;
-        this.productConditions = productConditions;
     }
 
     @Override

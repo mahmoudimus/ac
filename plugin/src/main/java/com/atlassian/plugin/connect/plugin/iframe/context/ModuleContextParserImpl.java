@@ -1,15 +1,16 @@
 package com.atlassian.plugin.connect.plugin.iframe.context;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
-
+import com.atlassian.plugin.connect.api.iframe.context.ModuleContextFilter;
+import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.plugin.util.RequestJsonParameterUtil;
+import com.atlassian.plugin.connect.spi.iframe.context.HashMapModuleContextParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**

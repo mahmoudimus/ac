@@ -1,21 +1,20 @@
 package com.atlassian.plugin.connect.plugin.iframe.servlet;
 
 import com.atlassian.fugue.Option;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
+import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParser;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleUiParamParser;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategy;
-import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyRegistry;
 
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 /**
@@ -89,10 +88,5 @@ public class ConnectIFrameServlet extends HttpServlet
         }
 
         return renderStrategy;
-    }
-
-    public static String iFrameServletPath(String addOnKey, String moduleKey)
-    {
-        return "/plugins/servlet/ac/" + checkNotNull(addOnKey) + "/" + checkNotNull(moduleKey);
     }
 }

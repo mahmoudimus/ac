@@ -1,14 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Type;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.annotation.Nullable;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.integration.plugins.DynamicDescriptorRegistration;
 import com.atlassian.plugin.connect.modules.annotation.ConnectModule;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
@@ -16,31 +10,35 @@ import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleList;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.exception.ModuleProviderNotFoundException;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DescriptorToRegister;
-import com.atlassian.plugin.connect.plugin.integration.plugins.DynamicDescriptorRegistration;
+import com.atlassian.plugin.connect.api.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
-import com.atlassian.plugin.connect.spi.product.ProductAccessor;
+import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 import com.atlassian.plugin.module.ContainerAccessor;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.ApplicationProperties;
-
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Nullable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebHookModuleBean.newWebHookBean;
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.isParameterizedListWithType;
-import static com.google.common.collect.Lists.newArrayList;
 
 @Component
 public class BeanToModuleRegistrar
@@ -50,20 +48,18 @@ public class BeanToModuleRegistrar
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
 
     private final ConcurrentHashMap<String, DynamicDescriptorRegistration.Registration> registrations;
-    private final ProductAccessor productAccessor;
     private final ContainerManagedPlugin theConnectPlugin;
     private final ApplicationProperties applicationProperties;
 
     @Autowired
     public BeanToModuleRegistrar(DynamicDescriptorRegistration dynamicDescriptorRegistration,
-                                 PluginRetrievalService pluginRetrievalService, ProductAccessor productAccessor,
+                                 PluginRetrievalService pluginRetrievalService,
                                  ApplicationProperties applicationProperties)
     {
         this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
-        this.productAccessor = productAccessor;
         this.applicationProperties = applicationProperties;
         this.theConnectPlugin = (ContainerManagedPlugin) pluginRetrievalService.getPlugin();
-        this.registrations = new ConcurrentHashMap<String, DynamicDescriptorRegistration.Registration>();
+        this.registrations = new ConcurrentHashMap<>();
     }
 
     public synchronized void registerDescriptorsForBeans(ConnectAddonBean addon) throws InvalidDescriptorException
@@ -173,7 +169,7 @@ public class BeanToModuleRegistrar
                     else
                     {
                         ModuleBean moduleBean = (ModuleBean) field.get(moduleList);
-                        beanList = moduleBean == null ? ImmutableList.<ModuleBean>of() : newArrayList(moduleBean);
+                        beanList = moduleBean == null ? Collections.EMPTY_LIST : Collections.singletonList(moduleBean);
                     }
 
                     List<DescriptorToRegister> registerMe = getDescriptors(addon, ctx, field.getName(), anno, beanList);

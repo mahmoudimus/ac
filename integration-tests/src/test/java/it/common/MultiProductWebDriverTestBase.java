@@ -95,4 +95,22 @@ public abstract class MultiProductWebDriverTestBase
             throw new UnsupportedOperationException("Sorry, I don't know how to log into " + product.getClass().getCanonicalName());
         }
     }
+
+    protected static String getGloballyVisibleLocation()
+    {
+        String location;
+        if (product instanceof JiraTestedProduct)
+        {
+            location = "system.top.navigation.bar";
+        }
+        else if (product instanceof ConfluenceTestedProduct)
+        {
+            location = "system.header/left";
+        }
+        else
+        {
+            throw new UnsupportedOperationException("Sorry, I don't recognize " + product.getClass().getCanonicalName());
+        }
+        return location;
+    }
 }

@@ -12,6 +12,7 @@ import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.PluginState;
+import com.atlassian.plugin.connect.api.installer.AddonSettings;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -23,12 +24,12 @@ import com.atlassian.plugin.connect.plugin.ConnectHttpClientFactory;
 import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
-import com.atlassian.plugin.connect.plugin.integration.plugins.ConnectAddonI18nManager;
+import com.atlassian.plugin.connect.spi.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
-import com.atlassian.plugin.connect.plugin.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
+import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.api.service.IsDevModeService;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserDisableException;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
@@ -38,8 +39,9 @@ import com.atlassian.plugin.connect.spi.event.ConnectAddonInstalledEvent;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonUninstallFailedEvent;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonUninstalledEvent;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.http.ReKeyableAuthorizationGenerator;
+import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstallException;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
@@ -166,13 +168,16 @@ public class ConnectAddonManager
     }
 
     /**
-     * This method is public for test visibility. In preference, please use {@link ConnectAddOnInstaller#install(String)}
+     * This method is public for test visibility. In preference, please use
+     * {@link com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstaller#install(String)}
+     *
      * @param jsonDescriptor the json descriptor of the add-on to install
      * @param targetState  the intended state of the add-on after a successful installation
      * @param maybePreviousSharedSecret   optionally, the previous shared secret (used for signing)
      * @param reusePreviousPublicKeyOrSharedSecret   toggle whether or not we issue a new secret/key if the previous one is defined
      * @return a {@link ConnectAddonBean} representation of the add-on
      */
+    @VisibleForTesting
     public ConnectAddonBean installConnectAddon(String jsonDescriptor, PluginState targetState, Option<String> maybePreviousSharedSecret, boolean reusePreviousPublicKeyOrSharedSecret)
     {
         long startTime = System.currentTimeMillis();
@@ -495,7 +500,7 @@ public class ConnectAddonManager
         catch (LifecycleCallbackException e)
         {
             Serializable[] params = e.getParams() != null ? e.getParams() : new Serializable[] {};
-            throw new PluginInstallException(e.getMessage(), e.getI18nKey(), params);
+            throw new ConnectAddOnInstallException(e.getMessage(), e.getI18nKey(), params);
         }
     }
 
@@ -745,7 +750,7 @@ public class ConnectAddonManager
         }
         catch (ConnectAddOnUserInitException e)
         {
-            PluginInstallException exception = new PluginInstallException(e.getMessage(), e.getI18nKey(), addOn.getName());
+            ConnectAddOnInstallException exception = new ConnectAddOnInstallException(e.getMessage(), e.getI18nKey(), addOn.getName());
             exception.initCause(e);
             throw exception;
         }

@@ -2,10 +2,11 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebSectionModuleDescriptorFactory;
 
+import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
+import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +29,7 @@ public class WebSectionModuleProvider implements ConnectModuleProvider<WebSectio
     public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext,
                                                  Plugin theConnectPlugin, String jsonFieldName, List<WebSectionModuleBean> beans)
     {
-        List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
+        List<ModuleDescriptor> descriptors = new ArrayList<>();
 
         for (WebSectionModuleBean bean : beans)
         {
@@ -41,7 +42,7 @@ public class WebSectionModuleProvider implements ConnectModuleProvider<WebSectio
     private Collection<? extends ModuleDescriptor> beanToDescriptors(ConnectModuleProviderContext moduleProviderContext,
                                                                      Plugin theConnectPlugin, WebSectionModuleBean bean)
     {
-        List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
+        List<ModuleDescriptor> descriptors = new ArrayList<>();
 
         descriptors.add(webSectionFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean));
 

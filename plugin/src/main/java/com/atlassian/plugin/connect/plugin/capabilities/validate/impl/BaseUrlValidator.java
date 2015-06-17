@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.validate.impl;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidator;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
-import com.atlassian.plugin.connect.plugin.service.IsDevModeService;
+import com.atlassian.plugin.connect.api.service.IsDevModeService;
 
 import javax.inject.Inject;
 import javax.inject.Named;

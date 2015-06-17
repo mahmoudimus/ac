@@ -6,13 +6,13 @@
         <label>Remote Plugins</label>
     </web-section>
 
-    <web-resource-transformer key="macroVariableTransformer" class="com.atlassian.plugin.connect.plugin.module.confluence.MacroVariableInjectorTransformer"/>
+    <web-resource-transformer key="macroVariableTransformer" class="com.atlassian.plugin.connect.confluence.macro.MacroVariableInjectorTransformer"/>
 
     <rest key="rest" path="/atlassian-connect" version="1">
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
         <package>com.atlassian.plugin.connect.plugin.rest</package>
-        <package>com.atlassian.plugin.connect.plugin.product.confluence.rest</package>
+        <package>com.atlassian.plugin.connect.confluence.macro.rest</package>
     </rest>
 
     <!-- JavaScript and CSS resource inclusions for relevant contexts -->
@@ -39,12 +39,12 @@
     <web-resource key="atlassian-connect-autoconvert-resources" name="Connect resources for autoconvert">
         <resource type="download" name="autoconvert.js" location="/js/confluence/macro/autoconvert.js" />
         <resource type="download" name="autoconvert-init.js" location="/js/confluence/macro/autoconvert-init.js" />
-        <data key="connect-autoconvert-data" class="com.atlassian.plugin.connect.plugin.product.confluence.AutoconvertWebResourceDataProvider" />
+        <data key="connect-autoconvert-data" class="com.atlassian.plugin.connect.confluence.capabilities.descriptor.macro.AutoconvertWebResourceDataProvider" />
         <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
         <context>editor</context>
         <context>viewcontent</context>
     </web-resource>
-    <module-type key="autoconvert" class="com.atlassian.plugin.connect.plugin.product.confluence.AutoconvertModuleDescriptor" />
+    <module-type key="autoconvert" class="com.atlassian.plugin.connect.confluence.capabilities.descriptor.macro.AutoconvertModuleDescriptor" />
 
     <!-- JavaScript API Core -->
 

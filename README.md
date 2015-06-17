@@ -6,7 +6,7 @@ When getting started developing within Atlassian Connect, these commands will co
 
 ## Prerequisites
 
-* Maven 3 (n.b. the Atlassian SDK currently ships with Maven 2.1)
+* Maven 3.2 (n.b. the Atlassian SDK currently ships with Maven 2.1)
 
 ## Development
 

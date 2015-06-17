@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.util.contextparameter;
 import java.util.List;
 import java.util.Set;
 
+import com.atlassian.plugin.connect.api.util.RequestContextParameterFactory;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 

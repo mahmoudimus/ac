@@ -1,10 +1,12 @@
 package com.atlassian.plugin.connect.plugin.iframe.webpanel;
 
 import com.atlassian.plugin.PluginAccessor;
-import com.atlassian.plugin.connect.plugin.iframe.context.HashMapModuleContextParameters;
-import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParameters;
-import com.atlassian.plugin.connect.plugin.iframe.context.module.ConnectContextParameterResolverModuleDescriptor;
-import com.atlassian.plugin.connect.plugin.iframe.context.module.ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver;
+import com.atlassian.plugin.connect.api.iframe.webpanel.PluggableParametersExtractor;
+import com.atlassian.plugin.connect.spi.iframe.context.HashMapModuleContextParameters;
+import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.spi.iframe.context.module.ConnectContextParameterResolverModuleDescriptor;
+import com.atlassian.plugin.connect.spi.iframe.context.module.ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver;
+import com.atlassian.plugin.connect.spi.iframe.webpanel.WebFragmentModuleContextExtractor;
 import com.atlassian.plugin.connect.spi.module.ContextParametersExtractor;
 import com.atlassian.plugin.connect.spi.module.ContextParametersValidator;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -19,7 +21,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Collections;
 import java.util.Map;
 
-import static com.atlassian.plugin.connect.test.util.UnitTestMatchers.predicateThatWillMatch;
+import static com.atlassian.plugin.connect.util.matcher.UnitTestMatchers.predicateThatWillMatch;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.argThat;
@@ -49,7 +51,7 @@ public final class PluggableParametersExtractorTest
     @Before
     public void setUp() throws Exception
     {
-        extractor = new PluggableParametersExtractor(connectModuleContextExtractor, pluginAccessor);
+        extractor = new PluggableParametersExtractorImpl(connectModuleContextExtractor, pluginAccessor);
         when(connectModuleContextExtractor.extractParameters(CONTEXT)).thenReturn(LOCAL_PARAMS);
     }
 

@@ -23,8 +23,8 @@ var confluenceSchemaSourcePath = '../plugin/target/classes/schema/confluence-sch
 
 var jiraSchemaPath =       'schema/schema/jira-schema.json';
 var confluenceSchemaPath = 'schema/schema/confluence-schema.json';
-var jiraScopesPath =       'schema/com/atlassian/connect/scopes.jira.json';
-var confluenceScopesPath = 'schema/com/atlassian/connect/scopes.confluence.json';
+var jiraScopesPath =       'schema/com/atlassian/connect/jira/scopes.jira.json';
+var confluenceScopesPath = 'schema/com/atlassian/connect/confluence/scopes.confluence.json';
 var commonScopesPath =     'schema/com/atlassian/connect/scopes.common.json';
 
 program
@@ -552,7 +552,6 @@ function compileHarpSources(callback) {
 }
 
 function mergeFiles(toFile, filesToMerge){
-    var toFileContents = fs.readFileSync(toFile, "utf-8");
     var toAppend = "";
     filesToMerge.forEach(function(file){
         toAppend = toAppend + fs.readFileSync(file, "utf-8");
@@ -563,14 +562,21 @@ function mergeFiles(toFile, filesToMerge){
 }
 
 function compileJsDocs() {
-    fs.copySync('./node_modules/atlassian-connect-js/dist/connect-host.js', 'target/gensrc/public/assets/js/connect-host.js');
     fs.copySync('./node_modules/atlassian-connect-js/dist/all-debug.js', 'target/gensrc/public/assets/js/connect-client.js');
-    // append local modules that are not from core.
+    fs.copySync('../plugin/src/main/resources/js/iframe/host/user.js', 'target/gensrc/public/assets/js/connect-user.js');
+    // concatenate into the final host file
     var pluginFiles = [
         '../plugin/src/main/resources/js/iframe/plugin/user.js'
     ],
     hostFiles = [
-        '../plugin/src/main/resources/js/iframe/host/user.js',
+        './node_modules/atlassian-connect-js/dist/connect-host.js',
+        './node_modules/atlassian-connect-js/dist/connect-host-cookie.js',
+        './node_modules/atlassian-connect-js/dist/connect-host-env.js',
+        './node_modules/atlassian-connect-js/dist/connect-host-messages.js',
+        './node_modules/atlassian-connect-js/dist/connect-host-request.js',
+        './node_modules/atlassian-connect-js/dist/connect-host-history.js',
+        './node_modules/atlassian-connect-js/dist/connect-host-dialog.js',
+        './node_modules/atlassian-connect-js/dist/connect-host-inline-dialog.js'
     ];
     mergeFiles('target/gensrc/public/assets/js/connect-client.js', pluginFiles);
     mergeFiles('target/gensrc/public/assets/js/connect-host.js', hostFiles);

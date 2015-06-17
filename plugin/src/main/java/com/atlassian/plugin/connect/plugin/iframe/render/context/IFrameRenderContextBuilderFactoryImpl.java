@@ -1,26 +1,15 @@
 package com.atlassian.plugin.connect.plugin.iframe.render.context;
 
-import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.connect.plugin.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.plugin.module.HostApplicationInfo;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
-import com.atlassian.plugin.elements.ResourceDescriptor;
+import com.atlassian.plugin.connect.spi.user.UserPreferencesRetriever;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
-import com.atlassian.plugin.webresource.UrlMode;
 import com.atlassian.plugin.webresource.WebResourceUrlProvider;
 import com.atlassian.sal.api.user.UserManager;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 /**
  *

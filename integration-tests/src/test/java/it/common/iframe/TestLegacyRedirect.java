@@ -3,6 +3,7 @@ package it.common.iframe;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import it.common.MultiProductWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import org.apache.http.HttpStatus;
@@ -119,10 +120,9 @@ public class TestLegacyRedirect extends MultiProductWebDriverTestBase
     @Test
     public void testCanAccessDirectly() throws Exception
     {
-        URL url = new URL(product.getProductInstance().getBaseUrl() + "/plugins/servlet/ac/" +
-                remotePlugin.getAddon().getKey() + "/" + ADDON_GENERALPAGE);
+        String iframeServletPath = IframeUtils.iframeServletPath(remotePlugin.getAddon().getKey(), ADDON_GENERALPAGE);
+        URL url = new URL(product.getProductInstance().getBaseUrl() + iframeServletPath);
         HttpURLConnection yc = (HttpURLConnection) url.openConnection();
         assertEquals(HttpStatus.SC_OK, yc.getResponseCode());
     }
-
 }

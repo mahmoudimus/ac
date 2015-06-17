@@ -3,6 +3,7 @@ package it.servlet;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RemoteMacroEditorDialog;
 import com.atlassian.plugin.connect.test.pageobjects.jira.RemoteRefreshIssuePageWebPanel;
+import com.google.common.collect.Lists;
 import it.servlet.condition.ParameterCapturingServlet;
 import it.servlet.iframe.CustomMessageServlet;
 import it.servlet.iframe.MustacheServlet;
@@ -10,6 +11,7 @@ import it.servlet.macro.ExtendedMacroServlet;
 import it.servlet.macro.SimpleMacroServlet;
 
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Utility methods for creating test servlets suitable for serving Connect iframes.
@@ -92,6 +94,15 @@ public class ConnectAppServlets
     {
         return wrapContextAwareServlet(new MustacheServlet("jira/iframe-fail-validate-workflow-post-function.mu"));
     }
+
+    /**
+     * @return a servlet that which displays dashboard item properties, changes the title and reacts to edit event
+     */
+    public static HttpServlet dashboardItemServlet(Iterable<TestServletContextExtractor> extractors)
+    {
+        return wrapContextAwareServlet(new MustacheServlet("jira/dashboardItem/dashboard-item.mu"), extractors);
+    }
+
 
     /**
      * Verify from a WebDriver test using {@link RemoteWebPanel#getCustomMessage()}.
@@ -203,7 +214,12 @@ public class ConnectAppServlets
 
     public static HttpServlet wrapContextAwareServlet(ContextServlet servlet)
     {
-        return new HttpContextServlet(servlet);
+        return wrapContextAwareServlet(servlet, Lists.<TestServletContextExtractor>newArrayList());
+    }
+
+    public static HttpServlet wrapContextAwareServlet(ContextServlet servlet, Iterable<TestServletContextExtractor> extractors)
+    {
+        return new HttpContextServlet(servlet, extractors);
     }
 
     public static HttpServlet echoQueryParametersServlet()
