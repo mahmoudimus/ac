@@ -69,6 +69,9 @@ public class ConfluenceRestScopesTest extends ScopeManagerTest
                 emptyBodyForConfluence(ScopeName.READ, HttpMethod.POST, "/confluence/rest/api/contentbody/convert/", true),
 
                 emptyBodyForConfluence(ScopeName.READ, HttpMethod.GET, "/confluence/rest/api/space/test/content", true),
+                emptyBodyForConfluence(ScopeName.WRITE, HttpMethod.POST, "/confluence/rest/api/space/test/", true),
+                emptyBodyForConfluence(ScopeName.WRITE, HttpMethod.PUT, "/confluence/rest/api/space/test/content", true),
+                emptyBodyForConfluence(ScopeName.WRITE, HttpMethod.DELETE, "/confluence/rest/api/space/test/content", true),
 
                 emptyBodyForConfluence(ScopeName.READ, HttpMethod.GET, "/confluence/rest/prototype/1/label/44/watches", true),
                 emptyBodyForConfluence(ScopeName.WRITE, HttpMethod.POST, "/confluence/rest/prototype/1/label/44/watches", true),
