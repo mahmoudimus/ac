@@ -8,16 +8,16 @@
         <package>com.atlassian.plugin.connect.plugin.rest</package>
     </rest>
 
-    <connect-module-provider
-            key="EntityProperties"
-            class="com.atlassian.plugin.connect.jira.capabilities.provider.EntityPropertyModuleProvider"
-            name="JIRA Workflow Post Function Module Provider">
-        <description>...</description>
-    </connect-module-provider>
+    <!--<connect-module-provider-->
+            <!--key="EntityProperties"-->
+            <!--class="com.atlassian.plugin.connect.jira.capabilities.provider.EntityPropertyModuleProvider"-->
+            <!--name="JIRA Workflow Post Function Module Provider">-->
+        <!--<description>...</description>-->
+    <!--</connect-module-provider>-->
 
     <connect-module-provider
             key="GeneralPages"
-            class="com.atlassian.plugin.connect.plugin.capabilities.provider.GeneralPageModuleProvider"
+            class="com.atlassian.plugin.connect.plugin.capabilities.provider.GeneralPageTestModuleProvider"
             name="general page">
         <description>...</description>
     </connect-module-provider>

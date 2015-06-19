@@ -19,6 +19,7 @@ import com.atlassian.plugin.connect.spi.module.ContextParametersValidator;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderModuleDescriptor;
 import com.atlassian.plugin.connect.spi.module.provider.ModuleListProviderContainer;
+import com.atlassian.plugin.connect.spi.module.provider.TestConnectModuleProvider;
 import com.atlassian.plugin.module.ContainerAccessor;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
@@ -155,7 +156,7 @@ public class BeanToModuleRegistrar
     {
         //Collection<ModuleDescriptor<?>> descriptors = theConnectPlugin.getModuleDescriptors();
         Collection<ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver> collection1 = pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<>(ConnectContextParameterResolverModuleDescriptor.class));
-        Collection<ConnectModuleProvider> collection = pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<ConnectModuleProvider>(ConnectModuleProviderModuleDescriptor.class));
+        Collection<TestConnectModuleProvider> collection = pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class));
 //        for (Map.Entry<Class<? extends BaseModuleBean>, List<Module>> entry : moduleList.entries())
 //        {
 //            ConnectModuleProvider moduleProvider = connectModuleProviderRegistry.get(entry.key());
@@ -168,7 +169,7 @@ public class BeanToModuleRegistrar
         for (Map.Entry<String,List<JsonObject>> entry : addon.getTestModules().entrySet())
         {
             boolean providerFound = false;
-            for (ConnectModuleProvider provider : collection)
+            for (TestConnectModuleProvider provider : collection)
             {
                 if(provider.getClass().getSimpleName().contains(entry.getKey().substring(0, entry.getKey().length() - 1)))
                 {
@@ -183,7 +184,7 @@ public class BeanToModuleRegistrar
 
         for (Map.Entry<String,List<JsonObject>> entry : addon.getTestModules().entrySet())
         {
-            for (ConnectModuleProvider provider : collection)
+            for (TestConnectModuleProvider provider : collection)
             {
                 if(provider.getClass().getSimpleName().toLowerCase().contains(entry.getKey().toLowerCase().substring(0, entry.getKey().length() - 1)))
                 {
@@ -191,17 +192,18 @@ public class BeanToModuleRegistrar
                     JsonObject testJson = entry.getValue().get(0);
                     Set testSet = testJson.entrySet();
                     int k = 0;
-//                    List<ModuleDescriptor> descriptors = provider.provideModules(new DefaultConnectModuleProviderContext(addon),
-//                            ctx.getTheConnectPlugin(), entry.getKey(), entry.getValue());
-//                    List<DescriptorToRegister> theseDescriptors = Lists.transform(descriptors, new Function<ModuleDescriptor, DescriptorToRegister>()
-//                    {
-//                        @Override
-//                        public DescriptorToRegister apply(@Nullable ModuleDescriptor input)
-//                        {
-//                            return new DescriptorToRegister(input);
-//                        }
-//                    });
-//                    descriptorsToRegister.addAll(theseDescriptors);
+                    List<ModuleDescriptor> descriptors = provider.provideModules(new DefaultConnectModuleProviderContext(addon), ctx.getTheConnectPlugin(), entry.getValue());
+                    
+
+                    List<DescriptorToRegister> theseDescriptors = Lists.transform(descriptors, new Function<ModuleDescriptor, DescriptorToRegister>()
+                    {
+                        @Override
+                        public DescriptorToRegister apply(@Nullable ModuleDescriptor input)
+                        {
+                            return new DescriptorToRegister(input);
+                        }
+                    });
+                    descriptorsToRegister.addAll(theseDescriptors);
                 }
             }
         }

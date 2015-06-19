@@ -6,12 +6,12 @@ import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.util.concurrent.ResettableLazyReference;
 import org.dom4j.Element;
 
-public class ConnectModuleProviderModuleDescriptor extends AbstractModuleDescriptor<ConnectModuleProvider>
+public class ConnectModuleProviderModuleDescriptor extends AbstractModuleDescriptor<TestConnectModuleProvider>
 {
-    private final ResettableLazyReference<ConnectModuleProvider> moduleLazyReference = new ResettableLazyReference<ConnectModuleProvider>()
+    private final ResettableLazyReference<TestConnectModuleProvider> moduleLazyReference = new ResettableLazyReference<TestConnectModuleProvider>()
     {
         @Override
-        protected ConnectModuleProvider create() throws Exception
+        protected TestConnectModuleProvider create() throws Exception
         {
             System.out.println("HI WE'RE CREATING THE LAZY REFERENCE");
             return moduleFactory.createModule(moduleClassName, ConnectModuleProviderModuleDescriptor.this);
@@ -34,7 +34,7 @@ public class ConnectModuleProviderModuleDescriptor extends AbstractModuleDescrip
     }
 
     @Override
-    public ConnectModuleProvider getModule()
+    public TestConnectModuleProvider getModule()
     {
         System.out.println("HI WE'RE GETTING THE MODULE");
         return moduleLazyReference.get();
