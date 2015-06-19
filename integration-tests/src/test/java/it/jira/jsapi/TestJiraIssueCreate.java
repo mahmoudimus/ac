@@ -36,7 +36,6 @@ import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionB
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
 import static it.modules.ConnectAsserts.verifyContainsStandardAddOnQueryParamters;
-import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
@@ -71,7 +70,6 @@ public class TestJiraIssueCreate extends JiraWebDriverTestBase
                                 .withName(new I18nProperty(PAGE_NAME, null))
                                 .withKey(KEY_MY_AWESOME_PAGE)
                                 .withUrl("/pg?project_id={project.id}&project_key={project.key}")
-                                .withConditions(toggleableConditionBean())
                                 .withWeight(1234)
                                 .build())
                 .addRoute("/pg", ConnectAppServlets.quickCreateIssueServlet())
@@ -90,7 +88,7 @@ public class TestJiraIssueCreate extends JiraWebDriverTestBase
     @Before
     public void beforeEachTest()
     {
-        this.awesomePageModuleKey = addonAndModuleKey(addonKey,KEY_MY_AWESOME_PAGE);
+        this.awesomePageModuleKey = addonAndModuleKey(addonKey, KEY_MY_AWESOME_PAGE);
     }
 
     @Test

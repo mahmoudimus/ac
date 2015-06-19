@@ -114,6 +114,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                 /**
                 * Open the quick create issue dialog
                 * This opens the "create issue" dialog and triggers a callback containing the list of issues created.
+                * Note: This is unavailable on general admin and project admin pages.
                 * @noDemo
                 * @example
                 * AP.require('jira', function(jira){
@@ -123,11 +124,7 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                 * });
                 */
                 openCreateIssueDialog: function (callback, fields) {
-                    if(callback){
-                        issueCreateListener = callback;
-                    } else {
-                        issueCreateListener = null;
-                    }
+                    issueCreateListener = callback || null;
                     remote.openCreateIssueDialog(fields);
                 }
             },

@@ -38,7 +38,8 @@ public class RemoteQuickCreateIssueGeneralPage extends ConnectAddOnPage implemen
         return IframeUtils.iframeServletPath(addOnKey, pageElementKey);
     }
 
-    public void launchQuickCreate() {
+    public void launchQuickCreate()
+    {
         runInFrame(new Callable<Void>()
         {
             @Override
@@ -51,15 +52,18 @@ public class RemoteQuickCreateIssueGeneralPage extends ConnectAddOnPage implemen
 
     }
 
-    public String getCreatedIssueSummary() {
+    public String getCreatedIssueSummary()
+    {
         return getValue("summarytext");
     }
 
-    public WebElement getQuickCreateDialog() {
+    public WebElement getQuickCreateDialog()
+    {
         return driver.findElement(By.id("create-issue-dialog"));
     }
 
-    public String logMessage(){
+    public String logMessage()
+    {
         return getValue("log");
     }
 
