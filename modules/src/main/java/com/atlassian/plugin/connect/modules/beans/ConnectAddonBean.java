@@ -7,8 +7,10 @@ import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
+import com.google.gson.JsonObject;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import com.atlassian.plugin.connect.modules.beans.ModuleJson;
 
 import java.util.*;
 
@@ -159,8 +161,8 @@ public class ConnectAddonBean extends BaseModuleBean
     @SchemaIgnore("shallow")
     private ModuleList modules;
 
-    @SchemaIgnore("shallow")
-    private Map<String, List<? extends BaseModuleBean>> testModules;
+//    @SchemaIgnore("shallow")
+    private Map<String, List<JsonObject>> testModules;
 
     /**
      * Set of [scopes](../scopes/scopes.html) requested by this add on
@@ -284,7 +286,7 @@ public class ConnectAddonBean extends BaseModuleBean
         return modules;
     }
     
-    public Map<String, List<? extends BaseModuleBean>> getTestModules()
+    public Map<String, List<JsonObject>> getTestModules()
     {
         return testModules;
     }

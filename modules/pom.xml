@@ -66,6 +66,12 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.activeobjects</groupId>
+            <artifactId>activeobjects-plugin</artifactId>
+            <version>0.28.7</version>
+            <scope>provided</scope>
+        </dependency>
 
     </dependencies>
 

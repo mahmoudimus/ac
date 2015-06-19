@@ -16,7 +16,6 @@ import com.atlassian.plugin.connect.api.integration.plugins.DescriptorToRegister
 import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
 import com.atlassian.plugin.connect.spi.iframe.context.module.ConnectContextParameterResolverModuleDescriptor;
 import com.atlassian.plugin.connect.spi.module.ContextParametersValidator;
-import com.atlassian.plugin.connect.spi.module.Module;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderModuleDescriptor;
 import com.atlassian.plugin.connect.spi.module.provider.ModuleListProviderContainer;
@@ -28,6 +27,7 @@ import com.atlassian.sal.api.ApplicationProperties;
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -165,7 +165,7 @@ public class BeanToModuleRegistrar
         int i = 0;
 
         
-        for (Map.Entry<String,List<? extends BaseModuleBean>> entry : addon.getTestModules().entrySet())
+        for (Map.Entry<String,List<JsonObject>> entry : addon.getTestModules().entrySet())
         {
             boolean providerFound = false;
             for (ConnectModuleProvider provider : collection)
@@ -181,23 +181,27 @@ public class BeanToModuleRegistrar
             }
         }
 
-        for (Map.Entry<String,List<? extends BaseModuleBean>> entry : addon.getTestModules().entrySet())
+        for (Map.Entry<String,List<JsonObject>> entry : addon.getTestModules().entrySet())
         {
             for (ConnectModuleProvider provider : collection)
             {
                 if(provider.getClass().getSimpleName().toLowerCase().contains(entry.getKey().toLowerCase().substring(0, entry.getKey().length() - 1)))
                 {
-                    List<ModuleDescriptor> descriptors = provider.provideModules(new DefaultConnectModuleProviderContext(addon),
-                            ctx.getTheConnectPlugin(), entry.getKey(), entry.getValue());
-                    List<DescriptorToRegister> theseDescriptors = Lists.transform(descriptors, new Function<ModuleDescriptor, DescriptorToRegister>()
-                    {
-                        @Override
-                        public DescriptorToRegister apply(@Nullable ModuleDescriptor input)
-                        {
-                            return new DescriptorToRegister(input);
-                        }
-                    });
-                    descriptorsToRegister.addAll(theseDescriptors);
+                    //String test = entry.getValue().get(0).getAsString();
+                    JsonObject testJson = entry.getValue().get(0);
+                    Set testSet = testJson.entrySet();
+                    int k = 0;
+//                    List<ModuleDescriptor> descriptors = provider.provideModules(new DefaultConnectModuleProviderContext(addon),
+//                            ctx.getTheConnectPlugin(), entry.getKey(), entry.getValue());
+//                    List<DescriptorToRegister> theseDescriptors = Lists.transform(descriptors, new Function<ModuleDescriptor, DescriptorToRegister>()
+//                    {
+//                        @Override
+//                        public DescriptorToRegister apply(@Nullable ModuleDescriptor input)
+//                        {
+//                            return new DescriptorToRegister(input);
+//                        }
+//                    });
+//                    descriptorsToRegister.addAll(theseDescriptors);
                 }
             }
         }
