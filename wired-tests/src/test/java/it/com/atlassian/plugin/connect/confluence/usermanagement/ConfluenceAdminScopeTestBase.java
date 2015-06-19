@@ -6,6 +6,7 @@ import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.confluence.user.persistence.dao.compatibility.FindUserHelper;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.user.UserManager;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import it.com.atlassian.plugin.connect.plugin.usermanagement.AdminScopeTestBase;
@@ -28,13 +29,13 @@ public abstract class ConfluenceAdminScopeTestBase extends AdminScopeTestBase
         this.userManager = checkNotNull(userManager);
     }
 
-    protected ConfluenceUser getUser(String username)
+    protected ConfluenceUser getUser(UserKey userKey)
     {
-        return FindUserHelper.getUserByUsername(username);
+        return FindUserHelper.getUserByUserKey(userKey);
     }
 
     @Override
-    protected boolean isUserTopLevelAdmin(String username)
+    protected boolean isUserTopLevelAdmin(UserKey userKey)
     {
         // now flush the permissions cache so that it rebuilds to reflect new permission sets
         //
@@ -44,6 +45,6 @@ public abstract class ConfluenceAdminScopeTestBase extends AdminScopeTestBase
         // the alternative is to flush the cache in the prod code, which may have unintended side-effects
         ThreadLocalCache.flush();
 
-        return confluencePermissionManager.isConfluenceAdministrator(getUser(username));
+        return confluencePermissionManager.isConfluenceAdministrator(getUser(userKey));
     }
 }

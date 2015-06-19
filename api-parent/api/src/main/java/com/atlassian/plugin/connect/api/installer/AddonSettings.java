@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.api.installer;
 
 
 import com.atlassian.plugin.PluginState;
+import com.atlassian.sal.api.user.UserKey;
 
 public class AddonSettings
 {
@@ -58,14 +59,14 @@ public class AddonSettings
         return this;
     }
 
-    public String getUserKey()
+    public UserKey getUserKey()
     {
-        return userKey;
+        return userKey == null ? null : new UserKey(userKey);
     }
 
-    public AddonSettings setUserKey(String user)
+    public AddonSettings setUserKey(UserKey userKey)
     {
-        this.userKey = user;
+        this.userKey = userKey == null ? null : userKey.getStringValue();
 
         return this;
     }

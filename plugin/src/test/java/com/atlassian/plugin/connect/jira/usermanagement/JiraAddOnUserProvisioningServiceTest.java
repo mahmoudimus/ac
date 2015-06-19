@@ -17,6 +17,8 @@ import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitExcept
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
+import com.atlassian.sal.api.user.UserKey;
+
 import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +36,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class JiraAddOnUserProvisioningServiceTest
 {
-    private static String USERNAME = "addon-blaah";
+    private static UserKey USER_KEY = new UserKey("aaab-bccd-eef-ggh");
     private static String ADDONS_ADMIN_GROUP = "atlassian-addons-admin";
 
     @Mock private GlobalPermissionManager jiraPermissionManager;
@@ -74,7 +76,7 @@ public class JiraAddOnUserProvisioningServiceTest
     public void testMissingAdminPermissionReturnsCorrectErrorCode() throws ApplicationNotFoundException,
         OperationFailedException, ApplicationPermissionException
     {
-        when(userManager.getUserByName(USERNAME)).thenReturn(adminUser);
+        when(userManager.getUserByKey(USER_KEY.getStringValue())).thenReturn(adminUser);
 
         when(connectAddOnUserGroupProvisioningService.ensureGroupExists(ADDONS_ADMIN_GROUP)).thenReturn(false);
 
@@ -85,7 +87,7 @@ public class JiraAddOnUserProvisioningServiceTest
 
         try
         {
-            provisioningService.provisionAddonUserForScopes(USERNAME, previousScopes, newScopes);
+            provisioningService.provisionAddonUserForScopes(USER_KEY, previousScopes, newScopes);
             fail("Provisioning addon should not have succeeded");
         }
         catch (ConnectAddOnUserInitException exception)

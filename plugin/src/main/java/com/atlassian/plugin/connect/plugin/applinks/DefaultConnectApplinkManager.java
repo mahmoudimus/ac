@@ -26,6 +26,7 @@ import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
+import com.atlassian.sal.api.user.UserKey;
 import com.google.common.base.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +64,7 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
     }
 
     /**
-     * @deprecated use {@code createAppLink(final ConnectAddonBean addon, final String baseUrl, final AuthenticationType authType, final String publicKey, final String addonUserKey)} instead
+     * @deprecated use {@code createAppLink(final ConnectAddonBean addon, final String baseUrl, final AuthenticationType authType, final String publicKey, final UserKey addonUserKey)} instead
      */
     @Deprecated
     @Override
@@ -124,7 +125,8 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
 
     @Override
     public void createAppLink(final ConnectAddonBean addon, final String baseUrl,
-                              final AuthenticationType authType, final String publicKey, final String addonUserKey)
+                              final AuthenticationType authType, final String publicKey,
+                              final UserKey addonUserKey)
     {
         transactionTemplate.execute(new TransactionCallback<Void>()
         {
@@ -150,9 +152,9 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
                 log.info("Creating an application link for Connect add-on with key '{}'", pluginKey);
 
                 ApplicationLink link = applicationLinkService.addApplicationLink(expectedApplicationId, applicationType, details);
-
+                String addonUserKeyString = addonUserKey == null ? "" : addonUserKey.getStringValue();
                 link.putProperty(PLUGIN_KEY_PROPERTY, pluginKey);
-                link.putProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME, addonUserKey);
+                link.putProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME, addonUserKeyString);
                 link.putProperty("IS_ACTIVITY_ITEM_PROVIDER", Boolean.FALSE.toString());
                 link.putProperty("system", Boolean.TRUE.toString());
 

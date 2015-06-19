@@ -13,7 +13,7 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonPrecannedResponseHelper;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
@@ -23,6 +23,7 @@ import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.google.gson.JsonParser;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
@@ -49,7 +50,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
                                  TestAuthenticator testAuthenticator,
                                  AddonTestFilterResults testFilterResults,
                                  ConnectApplinkManager connectApplinkManager,
-                                 ConnectAddOnUserService connectAddOnUserService,
+                                 ConnectUserService connectUserService,
                                  UserManager userManager,
                                  ApplicationService applicationService,
                                  ApplicationManager applicationManager,
@@ -57,7 +58,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
                                  AddonPrecannedResponseHelper addonPrecannedResponseHelper,
                                  ConnectAddonRegistry connectAddonRegistry)
     {
-        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService, userManager, applicationService, applicationManager, darkFeatureManager, connectAddonRegistry);
+        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectUserService, userManager, applicationService, applicationManager, darkFeatureManager, connectAddonRegistry);
         this.darkFeatureManager = darkFeatureManager;
         this.addonPrecannedResponseHelper = addonPrecannedResponseHelper;
     }
@@ -284,7 +285,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
 
             assertNotNull((appLink));
             assertEquals(addon.getBaseUrl(), appLink.getDisplayUrl().toString());
-            assertEquals("addon_" + addon.getKey(), appLink.getProperty("user.key"));
+            assertEquals(getAddonUserKey(addon.getKey()), appLink.getProperty("user.key"));
         }
         finally
         {

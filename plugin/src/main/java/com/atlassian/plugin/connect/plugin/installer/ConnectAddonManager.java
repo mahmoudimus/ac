@@ -24,13 +24,12 @@ import com.atlassian.plugin.connect.plugin.ConnectHttpClientFactory;
 import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddonUserUpdateException;
 import com.atlassian.plugin.connect.spi.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.api.service.IsDevModeService;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserDisableException;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonEnableFailedEvent;
@@ -43,10 +42,12 @@ import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.http.ReKeyableAuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstallException;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
+import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.atlassian.sal.api.message.I18nResolver;
+import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.upm.spi.PluginInstallException;
@@ -105,7 +106,7 @@ public class ConnectAddonManager
     private HttpClient httpClient;
     private final ConnectAddonRegistry addonRegistry;
     private final BeanToModuleRegistrar beanToModuleRegistrar;
-    private final ConnectAddOnUserService connectAddOnUserService;
+    private final ConnectUserService connectUserService;
     private final EventPublisher eventPublisher;
     private final ConsumerService consumerService;
     private final ApplicationProperties applicationProperties;
@@ -122,7 +123,7 @@ public class ConnectAddonManager
     @Inject
     public ConnectAddonManager(IsDevModeService isDevModeService, UserManager userManager,
                                RemotablePluginAccessorFactory remotablePluginAccessorFactory, ConnectAddonRegistry addonRegistry,
-                               BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService,
+                               BeanToModuleRegistrar beanToModuleRegistrar, ConnectUserService connectUserService,
                                EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties,
                                LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext,
                                ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory,
@@ -137,7 +138,7 @@ public class ConnectAddonManager
         this.httpClient = connectHttpClientFactory.getInstance();
         this.addonRegistry = addonRegistry;
         this.beanToModuleRegistrar = beanToModuleRegistrar;
-        this.connectAddOnUserService = connectAddOnUserService;
+        this.connectUserService = connectUserService;
         this.eventPublisher = eventPublisher;
         this.consumerService = consumerService;
         this.applicationProperties = applicationProperties;
@@ -211,7 +212,7 @@ public class ConnectAddonManager
                 : null;
         String newAddOnSigningKey = newUseSharedSecret ? newSharedSecret : addOn.getAuthentication().getPublicKey(); // the key stored on the applink: used to sign outgoing requests and verify incoming requests
 
-        String userKey = provisionUserIfNecessary(addOn, previousDescriptor);
+        UserKey userKey = provisionUserIfNecessary(addOn, previousDescriptor);
 
         AddonSettings settings = new AddonSettings()
                 .setAuth(newAuthType.name())
@@ -265,9 +266,9 @@ public class ConnectAddonManager
         return addOn;
     }
 
-    public String provisionUserIfNecessary(ConnectAddonBean addOn, String previousDescriptor)
+    public UserKey provisionUserIfNecessary(ConnectAddonBean addOn, String previousDescriptor)
     {
-        return addOnNeedsAUser(addOn) ? provisionAddOnUserAndScopes(addOn, previousDescriptor) : null;
+        return addOnNeedsAUser(addOn) ? provisionAddOnUserAndScopes(addOn, previousDescriptor).getUserKey() : null;
     }
 
     public void enableConnectAddon(final String pluginKey) throws ConnectAddOnUserInitException
@@ -305,19 +306,19 @@ public class ConnectAddonManager
         }
     }
 
-    public void disableConnectAddon(final String pluginKey) throws ConnectAddOnUserDisableException
+    public void disableConnectAddon(final String pluginKey) throws ConnectAddonUserUpdateException
     {
         disableConnectAddon(pluginKey, true, true);
     }
 
     public void disableConnectAddonWithoutPersistingState(final String pluginKey)
-            throws ConnectAddOnUserDisableException
+            throws ConnectAddonUserUpdateException
     {
         disableConnectAddon(pluginKey, false, true);
     }
 
     private void disableConnectAddon(final String pluginKey, boolean persistState, boolean sendEvent)
-            throws ConnectAddOnUserDisableException
+            throws ConnectAddonUserUpdateException
     {
         long startTime = System.currentTimeMillis();
         remotablePluginAccessorFactory.remove(pluginKey);
@@ -348,7 +349,7 @@ public class ConnectAddonManager
         return beanToModuleRegistrar.descriptorsAreRegistered(pluginKey);
     }
 
-    public void uninstallConnectAddon(final String pluginKey) throws ConnectAddOnUserDisableException
+    public void uninstallConnectAddon(final String pluginKey) throws ConnectAddonUserUpdateException
     {
         uninstallConnectAddon(pluginKey, true);
     }
@@ -359,7 +360,7 @@ public class ConnectAddonManager
         {
             uninstallConnectAddon(pluginKey, false);
         }
-        catch (ConnectAddOnUserDisableException e)
+        catch (ConnectAddonUserUpdateException e)
         {
             //uh, don't you know what "quietly" means?
         }
@@ -367,7 +368,7 @@ public class ConnectAddonManager
     }
 
     private void uninstallConnectAddon(final String pluginKey, boolean sendEvent)
-            throws ConnectAddOnUserDisableException
+            throws ConnectAddonUserUpdateException
     {
         long startTime = System.currentTimeMillis();
         if (addonRegistry.hasDescriptor(pluginKey))
@@ -507,32 +508,33 @@ public class ConnectAddonManager
     // removing the property from the app link removes the Authenticator's ability to assign a user to incoming requests
     // and as these users cannot log in anyway this reduces their possible actions to zero
     // (but don't remove the user as we need to preserve the history of their actions (e.g. audit trail, issue edited by <user>)
-    private void disableAddOnUser(String addOnKey) throws ConnectAddOnUserDisableException
+    private void disableAddOnUser(String addonKey) throws ConnectAddonUserUpdateException
     {
-        ApplicationLink applicationLink = connectApplinkManager.getAppLink(addOnKey);
+        ApplicationLink applicationLink = connectApplinkManager.getAppLink(addonKey);
 
         if (null != applicationLink)
         {
             applicationLink.removeProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
         }
 
-        connectAddOnUserService.disableAddonUser(addOnKey);
+        connectUserService.setAddonUserActive(addonKey, false);
     }
 
     private void enableAddOnUser(ConnectAddonBean addon) throws ConnectAddOnUserInitException
     {
-        String userKey = connectAddOnUserService.getOrCreateUserKey(addon.getKey(), addon.getName());
-
+        UserProfile user = connectUserService.getOrCreateAddonUser(addon.getKey(), addon.getName());
         ApplicationLink applicationLink = connectApplinkManager.getAppLink(addon.getKey());
 
         if (null != applicationLink)
         {
-            applicationLink.putProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME, userKey);
+            applicationLink.putProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME, user.getUserKey().getStringValue());
         }
         else
         {
             log.error("Unable to set the ApplicationLink user key property for add-on '{}' because the add-on has no ApplicationLink!", addon.getKey());
         }
+
+        connectUserService.setAddonUserActive(addon.getKey(), true);
     }
 
     // NB: the sharedSecret should be distributed synchronously and only on installation
@@ -729,7 +731,7 @@ public class ConnectAddonManager
         return AuthenticationType.JWT.equals(authType) && algorithm.requiresSharedSecret();
     }
 
-    private String provisionAddOnUserAndScopes(ConnectAddonBean addOn, String previousDescriptor)
+    private UserProfile provisionAddOnUserAndScopes(ConnectAddonBean addOn, String previousDescriptor)
             throws PluginInstallException
     {
         Set<ScopeName> previousScopes = Sets.newHashSet();
@@ -743,10 +745,7 @@ public class ConnectAddonManager
 
         try
         {
-            return connectAddOnUserService.provisionAddonUserForScopes(addOn.getKey(),
-                                                                       addOn.getName(),
-                                                                       previousScopes,
-                                                                       newScopes);
+            return connectUserService.provisionAddonUserForScopes(addOn.getKey(), addOn.getName(), previousScopes, newScopes);
         }
         catch (ConnectAddOnUserInitException e)
         {

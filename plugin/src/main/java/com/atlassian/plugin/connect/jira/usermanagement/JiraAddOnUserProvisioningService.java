@@ -34,6 +34,8 @@ import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
+import com.atlassian.sal.api.user.UserKey;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -46,6 +48,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
@@ -100,12 +104,14 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         this.transactionTemplate = transactionTemplate;
     }
 
+    @Nonnull
     @Override
     public Set<String> getDefaultProductGroupsAlwaysExpected()
     {
         return DEFAULT_GROUPS_ALWAYS_EXPECTED;
     }
 
+    @Nonnull
     @Override
     public Set<String> getDefaultProductGroupsOneOrMoreExpected()
     {
@@ -113,7 +119,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     }
 
     @Override
-    public void provisionAddonUserForScopes(final String username, final Set<ScopeName> previousScopes, final Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
+    public void provisionAddonUserForScopes(@Nonnull final UserKey userKey, @Nonnull final Set<ScopeName> previousScopes, @Nonnull final Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
     {
         // Subvert permission checking while provisioning add-on users. This can be invoked on a thread with no
         // authentication context (for example, the auto-update task thread run scheduled by the UPM) so permission
@@ -123,19 +129,19 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
             @Override
             public Void doInTransaction()
             {
-                provisionAddonUserForScopesInTransaction(username, previousScopes, newScopes);
+                provisionAddonUserForScopesInTransaction(userKey, previousScopes, newScopes);
                 return null;
             }
         }));
     }
 
-    private void provisionAddonUserForScopesInTransaction(final String username, final Set<ScopeName> previousScopes, final Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
+    private void provisionAddonUserForScopesInTransaction(final UserKey userKey, final Set<ScopeName> previousScopes, final Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
     {
-        ApplicationUser user = userManager.getUserByName(username);
-
+        String userKeyString = userKey.getStringValue();
+        ApplicationUser user = userManager.getUserByKey(userKeyString);
         if (null == user)
         {
-            throw new IllegalArgumentException(String.format("Cannot provision non-existent user '%s': please create it first!", username));
+            throw new IllegalArgumentException(String.format("Cannot provision non-existent user with key '%s': please create it first!", userKeyString));
         }
 
         // After a manual re-install of the add-on, there are no previous known scopes, but there could still be

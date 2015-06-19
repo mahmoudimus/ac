@@ -15,13 +15,15 @@ import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkUtil;
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserDisableException;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddonUserUpdateException;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonInstallFailedEvent;
 import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstallException;
 import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstaller;
+import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
+import com.atlassian.sal.api.user.UserProfile;
+
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
@@ -45,7 +47,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     private final ConnectAddonManager connectAddonManager;
     private final ConnectAddonRegistry addonRegistry;
     private final ConnectApplinkManager connectApplinkManager;
-    private final ConnectAddOnUserService connectAddOnUserService;
+    private final ConnectUserService connectUserService;
 
     private static final Logger log = LoggerFactory.getLogger(DefaultConnectAddOnInstaller.class);
 
@@ -59,7 +61,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             ConnectAddonManager connectAddonManager,
             ConnectAddonRegistry addonRegistry,
             ConnectApplinkManager connectApplinkManager,
-            ConnectAddOnUserService connectAddOnUserService)
+            ConnectUserService connectUserService)
     {
         this.pluginController = pluginController;
         this.pluginAccessor = pluginAccessor;
@@ -70,7 +72,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         this.connectAddonManager = connectAddonManager;
         this.addonRegistry = addonRegistry;
         this.connectApplinkManager = connectApplinkManager;
-        this.connectAddOnUserService = connectAddOnUserService;
+        this.connectUserService = connectUserService;
     }
 
     @Override
@@ -141,19 +143,18 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                               + pluginKey
                               + "]. Restoring previous version...", e);
                     ConnectAddonBean previousAddon = maybePreviousAddon.get();
-                    String addonUserKey = this.connectAddOnUserService.getOrCreateUserKey(pluginKey,
-                                                                                          previousAddon.getName());
+                    UserProfile addonUser = this.connectUserService.getOrCreateAddonUser(pluginKey, previousAddon.getName());
                     addonRegistry.storeAddonSettings(pluginKey, previousSettings);
                     connectApplinkManager.createAppLink(previousAddon,
                                                         baseUrl,
                                                         maybePreviousAuthType.get(),
                                                         maybePreviousPublicKeyOrSharedSecret.getOrElse(""),
-                                                        addonUserKey);
+                                                        addonUser.getUserKey());
                     try
                     {
                         setAddonState(targetState, pluginKey);
                     }
-                    catch (ConnectAddOnUserDisableException caude)
+                    catch (ConnectAddonUserUpdateException caude)
                     {
                         throw new ConnectAddOnInstallException("Could not disable add", caude);
                     }
@@ -200,7 +201,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         });
     }
 
-    private void setAddonState(PluginState targetState, String pluginKey) throws ConnectAddOnUserDisableException
+    private void setAddonState(PluginState targetState, String pluginKey) throws ConnectAddonUserUpdateException
     {
         if (null == targetState)
         {

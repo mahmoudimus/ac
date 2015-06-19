@@ -10,8 +10,10 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.sal.api.user.UserKey;
 import com.google.common.collect.ImmutableSet;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,7 +51,7 @@ public abstract class AdminScopeTestBase
     public void hasCorrectTopLevelAdminStatus() throws IOException
     {
         plugin = installPlugin(getScope());
-        assertEquals(shouldBeTopLevelAdmin(), isUserTopLevelAdmin(getAddonUsername(plugin)));
+        assertEquals(shouldBeTopLevelAdmin(), isUserTopLevelAdmin(getAddonUserKey(plugin)));
     }
 
     @Test
@@ -57,7 +59,7 @@ public abstract class AdminScopeTestBase
     {
         plugin = installPlugin(getScope());
         plugin = installPlugin(getScopeOneDown());
-        assertEquals(false, isUserTopLevelAdmin(getAddonUsername(plugin)));
+        assertEquals(false, isUserTopLevelAdmin(getAddonUserKey(plugin)));
     }
 
     @Test
@@ -65,7 +67,7 @@ public abstract class AdminScopeTestBase
     {
         plugin = installPlugin(getScopeOneDown());
         plugin = installPlugin(getScope());
-        assertEquals(shouldBeTopLevelAdmin(), isUserTopLevelAdmin(getAddonUsername(plugin)));
+        assertEquals(shouldBeTopLevelAdmin(), isUserTopLevelAdmin(getAddonUserKey(plugin)));
     }
 
     /**
@@ -77,7 +79,7 @@ public abstract class AdminScopeTestBase
         testAuthenticator.unauthenticate();
         plugin = installPlugin(getScopeOneDown());
         plugin = installPlugin(getScope());
-        assertEquals(shouldBeTopLevelAdmin(), isUserTopLevelAdmin(getAddonUsername(plugin)));
+        assertEquals(shouldBeTopLevelAdmin(), isUserTopLevelAdmin(getAddonUserKey(plugin)));
     }
 
     @Test
@@ -86,18 +88,19 @@ public abstract class AdminScopeTestBase
         plugin = installPlugin(getScope());
         testPluginInstaller.uninstallAddon(plugin);
         plugin = installPlugin(getScopeOneDown());
-        assertEquals(false, isUserTopLevelAdmin(getAddonUsername(plugin)));
+        assertEquals(false, isUserTopLevelAdmin(getAddonUserKey(plugin)));
     }
 
     protected abstract ScopeName getScope();
     protected abstract ScopeName getScopeOneDown();
     protected abstract boolean shouldBeTopLevelAdmin();
-    protected abstract boolean isUserTopLevelAdmin(String username);
+    protected abstract boolean isUserTopLevelAdmin(UserKey userKey);
 
-    protected String getAddonUsername(Plugin plugin) throws IOException
+    protected UserKey getAddonUserKey(Plugin plugin) throws IOException
     {
         ApplicationLink appLink = jwtApplinkFinder.find(plugin.getKey());
-        return (String) appLink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
+        String userKeyString = (String) appLink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
+        return StringUtils.isEmpty(userKeyString) ? null : new UserKey(userKeyString);
     }
 
     @Before
