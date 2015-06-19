@@ -28,10 +28,4 @@ public class ConnectAddonAccessorImpl implements ConnectAddonAccessor
         return connectAddonManager.isAddonEnabled(addonKey);
     }
 
-    @Override
-    public LicenseStatus getLicenseStatus(final String addonKey)
-    {
-        return licenseRetriever.getLicenseStatus(addonKey);
-    }
-
 }

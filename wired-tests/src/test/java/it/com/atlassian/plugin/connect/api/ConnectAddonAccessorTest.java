@@ -5,7 +5,6 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
-import com.atlassian.plugin.connect.plugin.api.LicenseStatus;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import org.junit.Test;
@@ -14,7 +13,6 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 
 import static com.atlassian.plugin.connect.testsupport.util.AddonUtil.randomWebItemBean;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -57,28 +55,6 @@ public class ConnectAddonAccessorTest
         testPluginInstaller.disableAddon(addonKey);
 
         assertFalse("ConnectAddonAccessor is expected to return false for disabled add-ons", addOnService.isAddonEnabled(addonKey));
-
-        testPluginInstaller.uninstallAddon(addonKey);
-    }
-
-    @Test
-    public void testAddonIsLicensed() throws IOException
-    {
-        final String addonKey = "ac-test-" + System.currentTimeMillis();
-        installPlugin(addonKey, true);
-
-        assertEquals(LicenseStatus.ACTIVE, addOnService.getLicenseStatus(addonKey));
-
-        testPluginInstaller.uninstallAddon(addonKey);
-    }
-
-    @Test
-    public void testAddonIsNotLicensed() throws IOException
-    {
-        final String addonKey = "ac-test-" + System.currentTimeMillis();
-        installPlugin(addonKey, false);
-
-        assertEquals(LicenseStatus.NONE, addOnService.getLicenseStatus(addonKey));
 
         testPluginInstaller.uninstallAddon(addonKey);
     }
