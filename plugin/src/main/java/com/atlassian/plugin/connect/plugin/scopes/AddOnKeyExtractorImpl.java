@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
 import com.atlassian.jwt.JwtConstants;
-import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,19 +17,19 @@ import javax.servlet.http.HttpServletRequest;
 public class AddOnKeyExtractorImpl implements AddOnKeyExtractor
 {
     /**
-     * Set by a {@link javax.servlet.Filter}, possibly using {@link com.atlassian.plugin.connect.plugin.module.oauth.OAuth2LOAuthenticator} or {@link com.atlassian.jwt.plugin.sal.JwtAuthenticator},
+     * Set by a {@link javax.servlet.Filter}, possibly using
+     * {@link com.atlassian.plugin.connect.plugin.module.oauth.OAuth2LOAuthenticator} or
+     * {@link com.atlassian.jwt.plugin.sal.JwtAuthenticatorImpl},
      * indicating the Connect add-on that is the origin of the current request.
      */
     private static final String PLUGIN_KEY = JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME;
 
     private final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
-    private final String ourConsumerKey;
 
     @Autowired
-    public AddOnKeyExtractorImpl(final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, ConsumerService consumerService)
+    public AddOnKeyExtractorImpl(final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService)
     {
         this.jsonConnectAddOnIdentifierService = jsonConnectAddOnIdentifierService;
-        this.ourConsumerKey = consumerService.getConsumer().getKey();
     }
 
     @Override
@@ -38,11 +37,10 @@ public class AddOnKeyExtractorImpl implements AddOnKeyExtractor
     public String getAddOnKeyFromHttpRequest(@Nonnull HttpServletRequest req)
     {
         String addOnKey = extractClientKey(req);
-        if (addOnKey != null)
+        if (addOnKey == null)
         {
-            return addOnKey;
+            addOnKey = extractXdmRequestKey(req);
         }
-        addOnKey = extractXdmRequestKey(req);
         if (addOnKey != null && jsonConnectAddOnIdentifierService.isConnectAddOn(addOnKey))
         {
             return addOnKey;
@@ -53,8 +51,7 @@ public class AddOnKeyExtractorImpl implements AddOnKeyExtractor
     @Override
     public boolean isAddOnRequest(@Nonnull HttpServletRequest request)
     {
-        String addOnKey = extractClientKey(request);
-        return (addOnKey != null && !ourConsumerKey.equals(addOnKey)) || (extractXdmRequestKey(request) != null);
+        return getAddOnKeyFromHttpRequest(request) != null;
     }
 
     @Override
