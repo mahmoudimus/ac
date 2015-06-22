@@ -10,6 +10,7 @@
         "content-prototype",
         "create-dialog-spaces",
         "label",
+        "longtask",
         "notification",
         "search",
         "searchv3",
@@ -116,6 +117,12 @@
       "basePaths": ["/spaces"],
       "versions": ["1.0", "latest"],
       "public": false
+    },
+    {
+      "key": "longtask",
+      "name": "api",
+      "basePaths": ["/longtask($|/.*)"],
+      "public": true
     },
     {
       "key": "action",
