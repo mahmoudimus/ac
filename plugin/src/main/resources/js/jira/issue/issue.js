@@ -4,7 +4,10 @@
         return {
             createIssueDialog: function(callback, fields){
                 if(!JIRA || !JIRA.Forms || !JIRA.Forms.createCreateIssueForm){
-                    throw new Error("Create issue form is not available");
+                    if(console && console.warn){
+                        console.warn("Connect: Create issue form is not available");
+                    }
+                    return false;
                 }
                 var dialog = JIRA.Forms.createCreateIssueForm(fields).asDialog({
                     trigger: document.createElement("a"),
