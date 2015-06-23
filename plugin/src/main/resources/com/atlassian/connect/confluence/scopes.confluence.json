@@ -122,6 +122,7 @@
       "key": "longtask",
       "name": "api",
       "basePaths": ["/longtask($|/.*)"],
+      "versions": [],
       "public": true
     },
     {
