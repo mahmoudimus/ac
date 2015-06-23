@@ -18,6 +18,7 @@ public class ConnectAddonToPluginFactory
     public static final String ATLASSIAN_CONNECT_INFO_PARAM = "atlassian-connect-addon";
     public static final String ATLASSIAN_LICENSING_ENABLED = "atlassian-licensing-enabled";
     public static final String CONFIGURE_URL = "configure.url";
+    public static final String POST_INSTALL_URL = "post.install.url";
     
     private final BeanToModuleRegistrar beanToModuleRegistrar;
 
@@ -65,7 +66,14 @@ public class ConnectAddonToPluginFactory
         {
             pluginInfo.addParameter(CONFIGURE_URL, ConnectIFrameServletPath.forModule(addon.getKey(), configurePage.getRawKey()));
         }
-
+        
+        ConnectPageModuleBean postInstallPage = addon.getModules().getGettingStartedPage();
+        if (null != postInstallPage && !Strings.isNullOrEmpty(postInstallPage.getUrl()))
+        {
+            pluginInfo.addParameter(POST_INSTALL_URL, ConnectIFrameServletPath.forModule(addon.getKey(), postInstallPage.getRawKey()));
+        }
+        
+        
         return pluginInfo;
     }
 }
