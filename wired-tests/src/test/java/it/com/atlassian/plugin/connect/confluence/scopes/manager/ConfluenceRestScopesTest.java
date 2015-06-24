@@ -82,9 +82,9 @@ public class ConfluenceRestScopesTest extends ScopeManagerTest
                 emptyBodyForConfluence(ScopeName.READ, HttpMethod.GET, "/confluence/rest/create-dialog/1.0/spaces", true),
                 emptyBodyForConfluence(ScopeName.WRITE, HttpMethod.POST, "/confluence/rest/create-dialog/1.0/spaces/skip-space-welcome-dialog", false),
 
-                emptyBodyForConfluence(ScopeName.READ, HttpMethod.GET, "/confluence/rest/longtask", true),
-                emptyBodyForConfluence(ScopeName.READ, HttpMethod.GET, "/confluence/rest/longtask/1234", true),
-                emptyBodyForConfluence(ScopeName.WRITE, HttpMethod.POST, "/confluence/rest/longtask/1234", false));
+                emptyBodyForConfluence(ScopeName.READ, HttpMethod.GET, "/confluence/rest/api/longtask", true),
+                emptyBodyForConfluence(ScopeName.READ, HttpMethod.GET, "/confluence/rest/api/longtask/1234", true),
+                emptyBodyForConfluence(ScopeName.WRITE, HttpMethod.POST, "/confluence/rest/api/longtask/1234", false));
 
 
     }
