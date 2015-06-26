@@ -2,18 +2,23 @@
   "scopes": [
       {
           "key": "READ",
-          "restPathKeys": ["application-properties", "project and contents", "ssh", "mirrors"],
+          "restPathKeys": ["application-properties", "project and contents", "ssh", "mirroring"],
           "pathKeys": ["project avatars", "user avatars"],
           "methods": ["GET"]
       },
       {
+          "key": "READ",
+          "restPathKeys": ["mirroring-auth"],
+          "methods": ["GET", "POST"]
+      },
+      {
           "key": "WRITE",
-          "restPathKeys": ["application-properties", "project and contents", "ssh", "mirrors"],
+          "restPathKeys": ["application-properties", "project and contents", "ssh", "mirroring"],
           "methods": ["POST", "PUT"]
       },
       {
           "key": "DELETE",
-          "restPathKeys": ["application-properties", "project and contents", "ssh", "mirrors"],
+          "restPathKeys": ["application-properties", "project and contents", "ssh", "mirroring"],
           "methods": ["DELETE"]
       }
 
@@ -41,9 +46,16 @@
             "public":true
         },
         {
-            "key": "mirrors",
-            "name": "mirrors",
+            "key": "mirroring",
+            "name": "mirroring",
             "basePaths": ["($|/.*)"],
+            "versions": ["1", "latest"],
+            "public":true
+        },
+        {
+            "key": "mirroring-auth",
+            "name": "mirroring",
+            "basePaths": ["/authenticate(/)?"],
             "versions": ["1", "latest"],
             "public":true
         }
