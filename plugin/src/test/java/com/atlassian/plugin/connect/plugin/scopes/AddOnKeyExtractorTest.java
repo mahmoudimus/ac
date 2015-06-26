@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
+import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jira.security.auth.trustedapps.KeyFactory;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.oauth.Consumer;
@@ -33,6 +34,8 @@ public class AddOnKeyExtractorTest
     private ConsumerService consumerService;
     @Mock
     private HttpServletRequest request;
+    @Mock
+    private EventPublisher eventPublisher;
 
     @Before
     public void setUp() throws Exception
@@ -41,7 +44,7 @@ public class AddOnKeyExtractorTest
         when(request.getContextPath()).thenReturn("/confluence");
         when(consumerService.getConsumer()).thenReturn(Consumer.key(THIS_ADD_ON_KEY).name("whatever").signatureMethod(Consumer.SignatureMethod.HMAC_SHA1).publicKey(new KeyFactory.InvalidPublicKey(new Exception())).build());
 
-        addOnKeyExtractor = new AddOnKeyExtractorImpl(jsonConnectAddOnIdentifierService, consumerService);
+        addOnKeyExtractor = new AddOnKeyExtractorImpl(jsonConnectAddOnIdentifierService, consumerService, eventPublisher);
     }
 
     @Test
