@@ -807,4 +807,11 @@
             </snapshots>
         </repository>
     </repositories>
+    <scm>
+        <connection>scm:git:git@bitbucket.org:atlassian/atlassian-connect.git</connection>
+        <developerConnection>scm:git:git@bitbucket.org:atlassian/atlassian-connect.git</developerConnection>
+        <url>https://bitbucket.org/atlassian/atlassian-connect</url>
+        <tag>HEAD</tag>
+    </scm>
+
 </project>
