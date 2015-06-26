@@ -68,7 +68,10 @@ public class ConfluenceRestScopesTest extends ScopeManagerTest
 
                 emptyBodyForConfluence(ScopeName.READ, HttpMethod.POST, "/confluence/rest/api/contentbody/convert/", true),
 
-                emptyBodyForConfluence(ScopeName.READ, HttpMethod.GET, "/confluence/rest/api/space/test/content", true),
+                emptyBodyForConfluence(ScopeName.READ, HttpMethod.GET, "/confluence/rest/api/space", true),
+                emptyBodyForConfluence(ScopeName.WRITE, HttpMethod.POST, "/confluence/rest/api/space", true),
+                emptyBodyForConfluence(ScopeName.WRITE, HttpMethod.PUT, "/confluence/rest/api/space/12345", true),
+                emptyBodyForConfluence(ScopeName.DELETE, HttpMethod.DELETE, "/confluence/rest/api/space/12345", true),
 
                 emptyBodyForConfluence(ScopeName.READ, HttpMethod.GET, "/confluence/rest/prototype/1/label/44/watches", true),
                 emptyBodyForConfluence(ScopeName.WRITE, HttpMethod.POST, "/confluence/rest/prototype/1/label/44/watches", true),
@@ -77,7 +80,13 @@ public class ConfluenceRestScopesTest extends ScopeManagerTest
 
                 emptyBodyForConfluence(null, HttpMethod.GET, "/confluence/rest/create-dialog/1.0/spaces", false),
                 emptyBodyForConfluence(ScopeName.READ, HttpMethod.GET, "/confluence/rest/create-dialog/1.0/spaces", true),
-                emptyBodyForConfluence(ScopeName.WRITE, HttpMethod.POST, "/confluence/rest/create-dialog/1.0/spaces/skip-space-welcome-dialog", false));
+                emptyBodyForConfluence(ScopeName.WRITE, HttpMethod.POST, "/confluence/rest/create-dialog/1.0/spaces/skip-space-welcome-dialog", false),
+
+                emptyBodyForConfluence(ScopeName.READ, HttpMethod.GET, "/confluence/rest/api/longtask", true),
+                emptyBodyForConfluence(ScopeName.READ, HttpMethod.GET, "/confluence/rest/api/longtask/1234", true),
+                emptyBodyForConfluence(ScopeName.WRITE, HttpMethod.POST, "/confluence/rest/api/longtask/1234", false));
+
+
     }
 
 }
