@@ -1,9 +1,11 @@
 package com.atlassian.plugin.connect.plugin.module.oauth;
 
+import com.atlassian.event.api.EventPublisher;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.Check;
 import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
+import com.atlassian.plugin.connect.plugin.util.AbstractInitializingComponent;
 import com.atlassian.plugin.connect.plugin.util.DefaultMessage;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
@@ -32,7 +34,7 @@ import java.security.Principal;
  * Authenticates an incoming 2LO request
  */
 @Component
-public class OAuth2LOAuthenticator implements Authenticator
+public class OAuth2LOAuthenticator extends AbstractInitializingComponent implements Authenticator
 {
     /**
      * The request attribute key that the request dispatcher uses to store the original URL for a
@@ -46,22 +48,24 @@ public class OAuth2LOAuthenticator implements Authenticator
     private final AuthenticationController authenticationController;
     private final ApplicationProperties applicationProperties;
     private final UserManager userManager;
-    private final String ourConsumerKey;
+    private String ourConsumerKey;
     private final AddOnKeyExtractor addOnKeyExtractor;
+    private final ConsumerService consumerService;
 
     @Autowired
     public OAuth2LOAuthenticator(AuthenticationController authenticationController,
             ApplicationProperties applicationProperties,
             OAuthLinkManager oAuthLinkManager, UserManager userManager,
-            ConsumerService consumerService, AddOnKeyExtractor addOnKeyExtractor)
+            ConsumerService consumerService, AddOnKeyExtractor addOnKeyExtractor, EventPublisher eventPublisher)
     {
+        super(eventPublisher);
         this.oAuthLinkManager = oAuthLinkManager;
         this.userManager = userManager;
         this.addOnKeyExtractor = addOnKeyExtractor;
         this.authenticationController = Check.notNull(authenticationController,
                 "authenticationController");
         this.applicationProperties = Check.notNull(applicationProperties, "applicationProperties");
-        this.ourConsumerKey = consumerService.getConsumer().getKey();
+        this.consumerService = Check.notNull(consumerService, "consumerService");
     }
 
     public Result authenticate(HttpServletRequest request, HttpServletResponse response)
@@ -263,6 +267,12 @@ public class OAuth2LOAuthenticator implements Authenticator
                     new Object[] { message.URL, ope.getProblem(), ope.getParameters() }
             );
         }
+    }
+
+    @Override
+    protected void finalInit()
+    {
+        this.ourConsumerKey = consumerService.getConsumer().getKey();
     }
 
     private void sendError(HttpServletResponse response, int status, OAuthMessage message)
