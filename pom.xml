@@ -808,10 +808,9 @@
         </repository>
     </repositories>
     <scm>
-        <connection>scm:git:https://dnguyentan@bitbucket.org/atlassian/atlassian-connect.git</connection>
-        <developerConnection>scm:git:https://dnguyentan@bitbucket.org/atlassian/atlassian-connect.git</developerConnection>
-        <url>https://bitbucket.org/atlassian/atlassian-connect</url>
-        <tag>HEAD</tag>
+        <connection>scm:git:ssh://git@stash.atlassian.com:7997/ac/atlassian-connect.git</connection>
+        <developerConnection>scm:git:ssh://git@stash.atlassian.com:7997/ac/atlassian-connect.git</developerConnection>
+        <url>https://stash.atlassian.com/projects/AC/repos/atlassian-connect</url>
     </scm>
 
 </project>
