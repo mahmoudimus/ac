@@ -5,8 +5,11 @@ import com.atlassian.jira.security.auth.trustedapps.KeyFactory;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
+import com.atlassian.plugin.event.events.PluginEnabledEvent;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +39,8 @@ public class AddOnKeyExtractorTest
     private HttpServletRequest request;
     @Mock
     private EventPublisher eventPublisher;
+    @Mock
+    private Plugin plugin;
 
     @Before
     public void setUp() throws Exception
@@ -45,6 +50,11 @@ public class AddOnKeyExtractorTest
         when(consumerService.getConsumer()).thenReturn(Consumer.key(THIS_ADD_ON_KEY).name("whatever").signatureMethod(Consumer.SignatureMethod.HMAC_SHA1).publicKey(new KeyFactory.InvalidPublicKey(new Exception())).build());
 
         addOnKeyExtractor = new AddOnKeyExtractorImpl(jsonConnectAddOnIdentifierService, consumerService, eventPublisher);
+        // Simulately send addOnKeyExtractor 3 major events to trigger init.
+        ((AddOnKeyExtractorImpl) addOnKeyExtractor).afterPropertiesSet();
+        ((AddOnKeyExtractorImpl) addOnKeyExtractor).onStart();
+        when(plugin.getKey()).thenReturn(AddOnKeyExtractorImpl.PLUGIN_KEY);
+        ((AddOnKeyExtractorImpl) addOnKeyExtractor).onPluginEnabled(new PluginEnabledEvent(plugin));
     }
 
     @Test

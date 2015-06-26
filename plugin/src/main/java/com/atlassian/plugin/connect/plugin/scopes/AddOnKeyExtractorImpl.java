@@ -41,7 +41,7 @@ public class AddOnKeyExtractorImpl implements AddOnKeyExtractor, InitializingBea
     /**
      * The key of this atlassian-connect plugig.
      */
-    private static final String PLUGIN_KEY = "com.atlassian.plugins.atlassian-connect-plugin";
+    public static final String PLUGIN_KEY = "com.atlassian.plugins.atlassian-connect-plugin";
 
     private final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
     private final ConsumerService consumerService;
