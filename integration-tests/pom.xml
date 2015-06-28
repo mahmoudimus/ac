@@ -424,6 +424,7 @@
                     </systemPropertyVariables>
 
                     <functionalTestPattern>it/**/Test*.java</functionalTestPattern>
+                    <output>${project.build.outputDirectory}/output.log</output>
 
                     <products>
                         <product>

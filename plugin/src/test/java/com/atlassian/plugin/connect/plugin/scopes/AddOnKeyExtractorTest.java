@@ -7,6 +7,7 @@ import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
+import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 
@@ -53,7 +54,7 @@ public class AddOnKeyExtractorTest
         // Simulately send addOnKeyExtractor 3 major events to trigger init.
         ((AddOnKeyExtractorImpl) addOnKeyExtractor).afterPropertiesSet();
         ((AddOnKeyExtractorImpl) addOnKeyExtractor).onStart();
-        when(plugin.getKey()).thenReturn(AddOnKeyExtractorImpl.PLUGIN_KEY);
+        when(plugin.getKey()).thenReturn(ConnectPluginInfo.getPluginKey());
         ((AddOnKeyExtractorImpl) addOnKeyExtractor).onPluginEnabled(new PluginEnabledEvent(plugin));
     }
 

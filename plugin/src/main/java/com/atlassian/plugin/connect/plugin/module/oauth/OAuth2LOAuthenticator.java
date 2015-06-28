@@ -4,6 +4,7 @@ import com.atlassian.event.api.EventPublisher;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.Check;
 import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
+import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.util.AbstractInitializingComponent;
 import com.atlassian.plugin.connect.plugin.util.DefaultMessage;
@@ -58,7 +59,7 @@ public class OAuth2LOAuthenticator extends AbstractInitializingComponent impleme
             OAuthLinkManager oAuthLinkManager, UserManager userManager,
             ConsumerService consumerService, AddOnKeyExtractor addOnKeyExtractor, EventPublisher eventPublisher)
     {
-        super(eventPublisher);
+        super(eventPublisher, ConnectPluginInfo.getPluginKey());
         this.oAuthLinkManager = oAuthLinkManager;
         this.userManager = userManager;
         this.addOnKeyExtractor = addOnKeyExtractor;

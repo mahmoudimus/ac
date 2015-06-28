@@ -7,8 +7,7 @@ import javax.annotation.concurrent.GuardedBy;
 
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.oauth.util.Check;
-import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
 
@@ -17,30 +16,36 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
+import static com.atlassian.oauth.util.Check.notNull;
+
 /**
  * Abstract component who wait for major event to perform some kind of database touching.
- *
+ * The need of this come from a bug in plugins in platform 2 SAL-282, onStart is called too early.
+ * go/awesome-launcher for more information.
+ * After moving to platform 3, we can simply replace this by LifecycleAware.onStart()
  */
 public abstract class AbstractInitializingComponent implements InitializingBean, DisposableBean, LifecycleAware
 {
     private Logger logger = LoggerFactory.getLogger(getClass());
-    /**
-     * The key of this atlassian-connect plugig.
-     */
-    public static final String PLUGIN_KEY = "com.atlassian.plugins.atlassian-connect-plugin";
     private final EventPublisher eventPublisher;
     @GuardedBy ("this")
     private final Set<LifecycleEvent> lifecycleEvents = EnumSet.noneOf(LifecycleEvent.class);
 
-    public AbstractInitializingComponent(final EventPublisher eventPublisher)
+    /**
+     * The plugin that contains this component.
+     */
+    private final String targetPluginKey;
+
+    public AbstractInitializingComponent(final EventPublisher eventPublisher, final String targetPluginKey)
     {
-        this.eventPublisher = Check.notNull(eventPublisher, "eventPublisher");
+        this.targetPluginKey = notNull(targetPluginKey, "targetPluginKey");
+        this.eventPublisher = notNull(eventPublisher, "eventPublisher");
     }
 
     @EventListener
     public void onPluginEnabled(PluginEnabledEvent event)
     {
-        if (PLUGIN_KEY.equals(event.getPlugin().getKey()))
+        if (isTheConnectPlugin(event.getPlugin()))
         {
             onLifecycleEvent(LifecycleEvent.PLUGIN_ENABLED);
         }
@@ -80,6 +85,11 @@ public abstract class AbstractInitializingComponent implements InitializingBean,
             eventPublisher.unregister(this);
             finalInit();
         }
+    }
+
+    protected boolean isTheConnectPlugin(Plugin plugin)
+    {
+        return (targetPluginKey.equals(plugin.getKey()));
     }
 
     synchronized private boolean isLifecycleReady(LifecycleEvent event)
