@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.event;
 
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
@@ -51,7 +52,7 @@ public class ConnectPluginProperEventHandler extends AbstractInitializingCompone
     @SuppressWarnings("unused")
     public void beforePluginDisabled(BeforePluginDisabledEvent beforePluginDisabledEvent) throws IOException
     {
-        if (isTargetPlugin(beforePluginDisabledEvent.getPlugin()))
+        if (isTheConnectPlugin(beforePluginDisabledEvent.getPlugin()))
         {
             for (String pluginKey : addonRegistry.getAllAddonKeys())
             {
@@ -67,5 +68,9 @@ public class ConnectPluginProperEventHandler extends AbstractInitializingCompone
         }
     }
 
+    private boolean isTheConnectPlugin(Plugin plugin)
+    {
+        return (ConnectPluginInfo.getPluginKey().equals(plugin.getKey()));
+    }
 
 }
