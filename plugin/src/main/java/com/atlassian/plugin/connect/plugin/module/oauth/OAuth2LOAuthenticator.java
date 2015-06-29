@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.util.AbstractInitializingComponent;
 import com.atlassian.plugin.connect.plugin.util.DefaultMessage;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.auth.AuthenticationController;
@@ -36,6 +37,7 @@ import java.security.Principal;
  * Authenticates an incoming 2LO request
  */
 @Component
+@ExportAsService(LifecycleAware.class)
 public class OAuth2LOAuthenticator extends AbstractInitializingComponent implements Authenticator, LifecycleAware
 {
     /**

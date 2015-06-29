@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.util.AbstractInitializingComponent;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,8 @@ import javax.servlet.http.HttpServletRequest;
  * Class allowing for extracting of plugin key from http requests.
  */
 @Component
-public class AddOnKeyExtractorImpl extends AbstractInitializingComponent implements AddOnKeyExtractor, LifecycleAware
+@ExportAsService(LifecycleAware.class)
+public class AddOnKeyExtractorImpl extends AbstractInitializingComponent implements AddOnKeyExtractor
 {
     /**
      * Set by a {@link javax.servlet.Filter}, possibly using {@link com.atlassian.plugin.connect.plugin.module.oauth.OAuth2LOAuthenticator} or {@link com.atlassian.jwt.plugin.sal.JwtAuthenticator},
