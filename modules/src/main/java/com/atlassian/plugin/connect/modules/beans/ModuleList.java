@@ -165,6 +165,9 @@ public class ModuleList extends BaseModuleBean
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.PostInstallPageModuleProvider")
     private ConnectPageModuleBean postInstallPage;
 
+    @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.PostUpdatePageModuleProvider")
+    private ConnectPageModuleBean postUpdatePage;
+
 
     /////////////////////////////////////////////////////
     ///////    JIRA MODULES
@@ -473,6 +476,11 @@ public class ModuleList extends BaseModuleBean
         return postInstallPage;
     }
 
+    public ConnectPageModuleBean getPostUpdatePage()
+    {
+        return postUpdatePage;
+    }
+
     public List<ConnectPageModuleBean> getProfilePages()
     {
         return profilePages;
@@ -537,6 +545,7 @@ public class ModuleList extends BaseModuleBean
                 .append(dynamicContentMacros, other.dynamicContentMacros)
                 .append(configurePage, other.configurePage)
                 .append(postInstallPage, other.postInstallPage)
+                .append(postUpdatePage, other.postUpdatePage)
                 .append(generalPages, other.generalPages)
                 .append(jiraIssueTabPanels, other.jiraIssueTabPanels)
                 .append(jiraProfileTabPanels, other.jiraProfileTabPanels)
@@ -567,6 +576,7 @@ public class ModuleList extends BaseModuleBean
                 .append(dynamicContentMacros)
                 .append(configurePage)
                 .append(postInstallPage)
+                .append(postUpdatePage)
                 .append(generalPages)
                 .append(jiraIssueTabPanels)
                 .append(jiraProfileTabPanels)
