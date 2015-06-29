@@ -8,9 +8,9 @@ import com.atlassian.plugin.module.ModuleFactory;
  * It's here so we have a registration for configure pages.
  * If this didn't exist, then addons that only have a configure page would never be enabled
  */
-public class GettingStartedPageModuleDescriptor extends AbstractModuleDescriptor<Void>
+public class PostInstallPageModuleDescriptor extends AbstractModuleDescriptor<Void>
 {
-    public GettingStartedPageModuleDescriptor()
+    public PostInstallPageModuleDescriptor()
     {
         super(ModuleFactory.LEGACY_MODULE_FACTORY);
     }

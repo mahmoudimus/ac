@@ -47,17 +47,17 @@ public class PluginManagerPage implements Page
             driver.waitUntilElementIsNotLocatedAt(By.className("loading"), userPlugins);
         }
     }
-
-    public void clickConfigurePluginButton(String pluginKeyAndName, String pageKey)
+    
+    private void clickPluginButton(String pluginKeyAndName, String pageKey, String buttonText)
     {
         for (WebElement element : driver.findElements(By.className("upm-plugin-name")))
         {
             if (element.getText().trim().equals(pluginKeyAndName))
             {
                 element.click();
-                By byConfigure = By.linkText("Configure");
-                driver.waitUntilElementIsVisible(byConfigure);
-                WebElement configureLink = driver.findElement(byConfigure);
+                By byButton = By.linkText(buttonText);
+                driver.waitUntilElementIsVisible(byButton);
+                WebElement configureLink = driver.findElement(byButton);
                 if (configureLink.getAttribute("href").endsWith(
                         pluginKeyAndName + "/" + pageKey))
                 {
@@ -67,5 +67,16 @@ public class PluginManagerPage implements Page
             }
         }
         throw new IllegalStateException("Didn't find plugin " + pluginKeyAndName);
+        
+    }
+
+    public void clickConfigurePluginButton(String pluginKeyAndName, String pageKey)
+    {
+        clickPluginButton(pluginKeyAndName, pageKey, "Configure");
+    }
+
+    public void clickGetStartedPluginButton(String pluginKeyAndName, String pageKey)
+    {
+        clickPluginButton(pluginKeyAndName, pageKey, "Get Started");
     }
 }

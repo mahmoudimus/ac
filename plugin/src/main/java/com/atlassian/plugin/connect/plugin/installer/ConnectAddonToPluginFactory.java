@@ -66,8 +66,8 @@ public class ConnectAddonToPluginFactory
         {
             pluginInfo.addParameter(CONFIGURE_URL, ConnectIFrameServletPath.forModule(addon.getKey(), configurePage.getRawKey()));
         }
-        
-        ConnectPageModuleBean postInstallPage = addon.getModules().getGettingStartedPage();
+
+        ConnectPageModuleBean postInstallPage = addon.getModules().getPostInstallPage();
         if (null != postInstallPage && !Strings.isNullOrEmpty(postInstallPage.getUrl()))
         {
             pluginInfo.addParameter(POST_INSTALL_URL, ConnectIFrameServletPath.forModule(addon.getKey(), postInstallPage.getRawKey()));

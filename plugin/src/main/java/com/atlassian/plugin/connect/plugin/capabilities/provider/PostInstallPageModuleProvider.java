@@ -3,9 +3,9 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConfigurePageModuleDescriptor;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.PostInstallPageModuleDescriptor;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
@@ -18,13 +18,13 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
-public class GettingStartedPageModuleProvider extends AbstractAdminPageModuleProvider
+public class PostInstallPageModuleProvider extends AbstractGeneralPageModuleProvider
 {
     @Autowired
-    public GettingStartedPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-                                       IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-                                       WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                                       ProductAccessor productAccessor)
+    public PostInstallPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+                                         IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                         WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+                                         ProductAccessor productAccessor)
     {
         super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory,
                 productAccessor);
@@ -37,11 +37,11 @@ public class GettingStartedPageModuleProvider extends AbstractAdminPageModulePro
 
         if(null != beans && !beans.isEmpty())
         {
-            ConnectPageModuleBean configBean = beans.get(0);
+            ConnectPageModuleBean postInstallBean = beans.get(0);
 
-            ModuleDescriptor descriptor = new ConfigurePageModuleDescriptor();
-            descriptor.init(theConnectPlugin, new DOMElement("connectGettingStartedPage").addAttribute("key",
-                    configBean.getKey(moduleProviderContext.getConnectAddonBean())));
+            ModuleDescriptor descriptor = new PostInstallPageModuleDescriptor();
+            descriptor.init(theConnectPlugin, new DOMElement("connectPostInstallPage").addAttribute("key",
+                    postInstallBean.getKey(moduleProviderContext.getConnectAddonBean())));
 
             return ImmutableList.of(descriptor);
         }
