@@ -157,11 +157,15 @@ public class ModuleList extends BaseModuleBean
 
     /**
      * A configure page module is a page module used to configure the addon itself.
-     * It's link will appear in the add-ons entry in 'Manage Add-ons'.
+     * Its link will appear in the add-on's entry in 'Manage Add-ons'.
      */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.ConfigurePageModuleProvider")
     private ConnectPageModuleBean configurePage;
 
+    /**
+     * A post-install page module is used to provide information about the add-on after it is installed.
+     * Its link will appear in the add-on's entry in 'Manage Add-ons'.
+     */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.PostInstallPageModuleProvider")
     private ConnectPageModuleBean postInstallPage;
 

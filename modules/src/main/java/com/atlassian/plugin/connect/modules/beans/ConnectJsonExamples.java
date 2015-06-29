@@ -230,6 +230,11 @@ public class ConnectJsonExamples
                 .withKey("my-config-page")
                 .withUrl("/my-config-page")
                 .build();
+        ConnectPageModuleBean postInstallPageModuleBean = ConnectPageModuleBean.newPageBean()
+                .withName(new I18nProperty("My Post-Install Page", "mypostinstallpage.name"))
+                .withKey("my-post-install-page")
+                .withUrl("/my-post-install-page")
+                .build();
         ConnectPageModuleBean userProfilePageModuleBean = ConnectPageModuleBean.newPageBean()
                 .withName(new I18nProperty("My Confluence User Profile Page", "myprofilepage.name"))
                 .withKey("my-confluence-user-profile-page")
@@ -240,6 +245,7 @@ public class ConnectJsonExamples
                 "generalPages", generalPageModuleBean,
                 "adminPages", adminPageModuleBean,
                 "configurePage", configurePageModuleBean,
+                "postInstallPage", postInstallPageModuleBean,
                 "profilePages", userProfilePageModuleBean
         ));
         return gson.toJson(object);
