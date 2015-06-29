@@ -33,9 +33,6 @@ or Confluence Cloud with Atlassian Connect as follows:
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
 
-## [1.1.36](../release-notes/1-1-0.html#1.1.36)
-* Restructuring of Confluence-specific Connect code [ACDEV-1997](https://ecosystem.atlassian.net/browse/ACDEV-1997)
-
 ## [1.1.35](../release-notes/1-1-0.html#1.1.35)
 * Fixed broken dialog button callbacks [ACJS-41](https://ecosystem.atlassian.net/browse/ACJS-41)
 
