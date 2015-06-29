@@ -12,6 +12,7 @@ import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.auth.AuthenticationController;
 import com.atlassian.sal.api.auth.Authenticator;
+import com.atlassian.sal.api.lifecycle.LifecycleAware;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import net.oauth.OAuth;
@@ -35,7 +36,7 @@ import java.security.Principal;
  * Authenticates an incoming 2LO request
  */
 @Component
-public class OAuth2LOAuthenticator extends AbstractInitializingComponent implements Authenticator
+public class OAuth2LOAuthenticator extends AbstractInitializingComponent implements Authenticator, LifecycleAware
 {
     /**
      * The request attribute key that the request dispatcher uses to store the original URL for a

@@ -45,7 +45,7 @@ public abstract class AbstractInitializingComponent implements InitializingBean,
     @EventListener
     public void onPluginEnabled(PluginEnabledEvent event)
     {
-        if (isTheConnectPlugin(event.getPlugin()))
+        if (isTargetPlugin(event.getPlugin()))
         {
             onLifecycleEvent(LifecycleEvent.PLUGIN_ENABLED);
         }
@@ -87,7 +87,7 @@ public abstract class AbstractInitializingComponent implements InitializingBean,
         }
     }
 
-    protected boolean isTheConnectPlugin(Plugin plugin)
+    protected boolean isTargetPlugin(Plugin plugin)
     {
         return (targetPluginKey.equals(plugin.getKey()));
     }

@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserDisabl
 import com.atlassian.plugin.connect.plugin.util.AbstractInitializingComponent;
 import com.atlassian.plugin.event.PluginEventListener;
 import com.atlassian.plugin.event.events.BeforePluginDisabledEvent;
+import com.atlassian.sal.api.lifecycle.LifecycleAware;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,7 @@ import javax.inject.Named;
 import java.io.IOException;
 
 @Named
-public class ConnectPluginProperEventHandler extends AbstractInitializingComponent implements InitializingBean, DisposableBean
+public class ConnectPluginProperEventHandler extends AbstractInitializingComponent implements InitializingBean, DisposableBean, LifecycleAware
 {
     private static final Logger log = LoggerFactory.getLogger(ConnectPluginProperEventHandler.class);
     private final ConnectAddonRegistry addonRegistry;
@@ -48,7 +49,7 @@ public class ConnectPluginProperEventHandler extends AbstractInitializingCompone
     @SuppressWarnings("unused")
     public void beforePluginDisabled(BeforePluginDisabledEvent beforePluginDisabledEvent) throws IOException
     {
-        if (isTheConnectPlugin(beforePluginDisabledEvent.getPlugin()))
+        if (isTargetPlugin(beforePluginDisabledEvent.getPlugin()))
         {
             for (String pluginKey : addonRegistry.getAllAddonKeys())
             {
