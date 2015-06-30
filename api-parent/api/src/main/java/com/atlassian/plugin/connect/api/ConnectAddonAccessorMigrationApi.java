@@ -15,7 +15,7 @@ public interface ConnectAddonAccessorMigrationApi
      *
      * @param addonKey key of the add-on to return license of
      * @return ACTIVE if the add-on is licensed, otherwise NONE
-     * @since 1.1.32
+     * @since 1.1.37
      */
     LicenseStatus getLicenseStatus(final String addonKey);
 }

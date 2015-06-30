@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
 @ExportAsService
-public class ConnectAddonAccessorMigrationApiFactory implements ServiceFactory
+public class ConnectAddonAccessorForMigrationFactory implements ServiceFactory
 {
     public static final String ATLASSIAN_PLUGIN_KEY = "Atlassian-Plugin-Key";
     public final static String TEMPO_PLUGIN_KEY = "com.tempoplugin.tempo-core";
@@ -20,7 +20,7 @@ public class ConnectAddonAccessorMigrationApiFactory implements ServiceFactory
     private final LicenseRetriever licenseRetriever;
 
     @Autowired
-    public ConnectAddonAccessorMigrationApiFactory(final LicenseRetriever licenseRetriever)
+    public ConnectAddonAccessorForMigrationFactory(final LicenseRetriever licenseRetriever)
     {
         this.licenseRetriever = licenseRetriever;
     }
@@ -31,7 +31,7 @@ public class ConnectAddonAccessorMigrationApiFactory implements ServiceFactory
         final String pluginKey = bundle.getHeaders().get(ATLASSIAN_PLUGIN_KEY);
         if (pluginKey != null && pluginKey.equals(TEMPO_PLUGIN_KEY))
         {
-            return new ConnectAddonAccessorMigrationApiImpl(licenseRetriever);
+            return new ConnectAddonAccessorForMigrationImpl(licenseRetriever);
         }
         else
         {
@@ -52,11 +52,11 @@ public class ConnectAddonAccessorMigrationApiFactory implements ServiceFactory
         }
     }
 
-    private static class ConnectAddonAccessorMigrationApiImpl implements ConnectAddonAccessorMigrationApi
+    private static class ConnectAddonAccessorForMigrationImpl implements ConnectAddonAccessorMigrationApi
     {
         private final LicenseRetriever licenseRetriever;
 
-        private ConnectAddonAccessorMigrationApiImpl(final LicenseRetriever licenseRetriever)
+        private ConnectAddonAccessorForMigrationImpl(final LicenseRetriever licenseRetriever)
         {
             this.licenseRetriever = licenseRetriever;
         }
