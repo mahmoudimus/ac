@@ -22,7 +22,7 @@
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-user</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-workflow-post-function</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-events</dependency>
-
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-create-issue-dialog</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
@@ -89,6 +89,14 @@
     <web-resource key="dashboard-item">
         <resource type="download" name="dashboard-item.js" location="js/jira/dashboard-item/dashboard-item.js" />
 
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
+    <web-resource key="create-issue-dialog">
+        <resource type="download" name="create-issue-dialog.js" location="/js/jira/issue/issue.js" />
+        <resource type="download" name="create-issue-dialog-rpc.js" location="/js/jira/issue/issue-rpc.js" />
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
