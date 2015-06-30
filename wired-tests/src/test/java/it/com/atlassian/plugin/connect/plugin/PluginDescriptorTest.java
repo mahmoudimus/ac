@@ -22,7 +22,7 @@ public class PluginDescriptorTest
     }
 
     @Test
-    public void getModulesForDescriptors()
+    public void shouldReturnModulesForDescriptors()
     {
         final Collection<ModuleDescriptor<Object>> moduleDescriptors = pluginAccessor.getModuleDescriptors(new ModuleDescriptorPredicate<Object>()
         {
@@ -46,7 +46,7 @@ public class PluginDescriptorTest
             }
             catch (UnsupportedOperationException e)
             {
-                // Module types, web resources etc. do not expose classes via getMethod(
+                // Module types, web resources etc. do not expose classes via getModule()
             }
         }
     }
