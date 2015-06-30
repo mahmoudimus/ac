@@ -60,6 +60,7 @@ public class TestPostInstallPage extends AbstractPageTestBase
                         .build())
                 .addRoute("/page", ConnectAppServlets.helloWorldServlet())
                 .addScope(ScopeName.READ)
+                .enableLicensing()
                 .start();
 
         try

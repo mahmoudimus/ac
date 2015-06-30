@@ -32,12 +32,12 @@ public abstract class AbstractGeneralPageModuleProvider extends AbstractConnectP
     @Override
     protected String getDefaultSection()
     {
-        return productAccessor.getPreferredAdminSectionKey();
+        return productAccessor.getPreferredGeneralSectionKey();
     }
 
     @Override
     protected int getDefaultWeight()
     {
-        return productAccessor.getPreferredAdminWeight();
+        return productAccessor.getPreferredGeneralWeight();
     }
 }
