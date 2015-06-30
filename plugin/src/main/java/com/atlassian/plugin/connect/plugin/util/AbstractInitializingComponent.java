@@ -19,10 +19,10 @@ import org.springframework.beans.factory.InitializingBean;
 import static com.atlassian.oauth.util.Check.notNull;
 
 /**
- * Abstract component who wait for major event to perform some kind of database touching.
- * The need of this come from a bug in plugins in platform 2 SAL-282, onStart is called too early.
- * go/awesome-launcher for more information.
- * After moving to platform 3, we can simply replace this by LifecycleAware.onStart()
+ * An abstract component that waits for certain tenancy events before interacting with the database.
+ * This is a workaround for a bug in SAL-282 (onStart is being called too early).
+ * go.atlassian.com/awesome-launcher for more information.
+ * After moving to platform 3, these methods can be replaced with an implementation of LifecycleAware.onStart()
  */
 public abstract class AbstractInitializingComponent implements InitializingBean, DisposableBean, LifecycleAware
 {
@@ -71,10 +71,8 @@ public abstract class AbstractInitializingComponent implements InitializingBean,
     }
 
     /**
-     * Wait for both PluginEnableEvent and onStart before performing any initialization that relating to DB or external
-     * service. The need of this come from a bug in plugins in platform 2 SAL-282, onStart is called too early.
-     * go/awesome-launcher for more information. After platform 3, we don't need this kind of 3-2-1-GO! any more, just
-     * to use onStart.
+     * Wait for both PluginEnableEvent and onStart before performing any initialization relating to the DB or external
+     * services (see {@link AbstractInitializingComponent} for why we need to do this).
      */
     private void onLifecycleEvent(LifecycleEvent event)
     {
@@ -99,11 +97,10 @@ public abstract class AbstractInitializingComponent implements InitializingBean,
 
     protected abstract void finalInit();
 
-
     static enum LifecycleEvent
     {
         AFTER_PROPERTIES_SET,
         PLUGIN_ENABLED,
-        LIFECYCLE_AWARE_ON_START;
+        LIFECYCLE_AWARE_ON_START
     }
 }

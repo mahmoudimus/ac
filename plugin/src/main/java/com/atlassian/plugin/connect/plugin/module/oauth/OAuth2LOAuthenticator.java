@@ -38,7 +38,7 @@ import java.security.Principal;
  */
 @Component
 @ExportAsService(LifecycleAware.class)
-public class OAuth2LOAuthenticator extends AbstractInitializingComponent implements Authenticator, LifecycleAware
+public class OAuth2LOAuthenticator extends AbstractInitializingComponent implements Authenticator
 {
     /**
      * The request attribute key that the request dispatcher uses to store the original URL for a

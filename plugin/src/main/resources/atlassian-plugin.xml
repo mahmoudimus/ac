@@ -113,6 +113,4 @@
         <entity>com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO</entity>
     </ao>
 
-    <component-import key="eventPublisher" interface="com.atlassian.event.api.EventPublisher"/>
-
 </atlassian-plugin>

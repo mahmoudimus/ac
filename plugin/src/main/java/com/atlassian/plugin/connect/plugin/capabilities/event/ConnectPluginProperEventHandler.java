@@ -23,7 +23,7 @@ import java.io.IOException;
 
 @Named
 @ExportAsService(LifecycleAware.class)
-public class ConnectPluginProperEventHandler extends AbstractInitializingComponent implements InitializingBean, DisposableBean
+public class ConnectPluginProperEventHandler extends AbstractInitializingComponent
 {
     private static final Logger log = LoggerFactory.getLogger(ConnectPluginProperEventHandler.class);
     private final ConnectAddonRegistry addonRegistry;
