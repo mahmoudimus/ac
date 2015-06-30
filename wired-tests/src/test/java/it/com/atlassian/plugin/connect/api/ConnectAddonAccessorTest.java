@@ -61,14 +61,9 @@ public class ConnectAddonAccessorTest
 
     private void installPlugin(final String addonKey) throws IOException
     {
-        installPlugin(addonKey, false);
-    }
-
-    private void installPlugin(final String addonKey, final Boolean licensing) throws IOException
-    {
         final ConnectAddonBean addonBean = ConnectAddonBean.newConnectAddonBean()
                 .withKey(addonKey)
-                .withLicensing(licensing)
+                .withLicensing(false)
                 .withDescription(ConnectAddonAccessorTest.class.getCanonicalName())
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(addonKey))
                 .withAuthentication(AuthenticationBean.newAuthenticationBean().withType(AuthenticationType.JWT).build())

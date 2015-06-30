@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.api;
 
 import com.atlassian.plugin.connect.api.ConnectAddonAccessorMigrationApi;
+import com.atlassian.plugin.connect.jira.api.ConnectAddonAccessorMigrationApiFactory;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -48,6 +49,4 @@ public class ConnectAddonAccessorMigrationApiFactoryTest
         when(bundle.getHeaders()).thenReturn(headers);
         return bundle;
     }
-
-    private ConnectAddonAccessorMigrationApiFactory connectAddonAccessorMigrationApiFactory;
 }

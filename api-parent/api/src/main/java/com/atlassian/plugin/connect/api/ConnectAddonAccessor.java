@@ -9,9 +9,9 @@ public interface ConnectAddonAccessor
     /**
      * Checks if the Connect add-on is installed and enabled.
      *
-     * @param addonKey key of the add-on to check
+     * @param addOnKey key of the add-on to check
      * @return true if the Connect add-on is installed and enabled, otherwise false
      */
-    boolean isAddonEnabled(String addonKey);
+    boolean isAddonEnabled(String addOnKey);
 
 }

@@ -1,6 +1,7 @@
-package com.atlassian.plugin.connect.plugin.api;
+package com.atlassian.plugin.connect.jira.api;
 
 import com.atlassian.plugin.connect.api.ConnectAddonAccessorMigrationApi;
+import com.atlassian.plugin.connect.plugin.api.LicenseStatus;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
@@ -63,7 +64,7 @@ public class ConnectAddonAccessorMigrationApiFactory implements ServiceFactory
         @Override
         public LicenseStatus getLicenseStatus(final String addonKey)
         {
-            throw new UnsupportedOperationException("Not implemented");
+            return licenseRetriever.getLicenseStatus(addonKey);
         }
     }
 }
