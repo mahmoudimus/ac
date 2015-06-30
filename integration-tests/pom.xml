@@ -630,6 +630,18 @@
                                 <include>it/common/lifecycle/*.java</include>
                             </includes>
                         </testGroup>
+                        <testGroup>
+                            <id>confluence-common-upm</id>
+                            <productIds>
+                                <productId>confluence</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProduct>confluence</testedProduct>
+                            </systemProperties>
+                            <includes>
+                                <include>it/common/upm/*.java</include>
+                            </includes>
+                        </testGroup>
 
                         <!-- Tests of Confluence-specific functionality -->
 
@@ -742,6 +754,18 @@
                             </systemProperties>
                             <includes>
                                 <include>it/common/lifecycle/*.java</include>
+                            </includes>
+                        </testGroup>
+                        <testGroup>
+                            <id>jira-common-upm</id>
+                            <productIds>
+                                <productId>jira</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProduct>jira</testedProduct>
+                            </systemProperties>
+                            <includes>
+                                <include>it/common/upm/*.java</include>
                             </includes>
                         </testGroup>
 

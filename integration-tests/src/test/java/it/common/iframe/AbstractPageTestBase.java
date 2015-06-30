@@ -72,6 +72,7 @@ public class AbstractPageTestBase extends MultiProductWebDriverTestBase
                 .addModule(fieldName, pageBeanBuilder.build())
                 .setAuthenticationToNone()
                 .addRoute(route, ConnectAppServlets.apRequestServlet())
+                .enableLicensing()
                 .start();
     }
 
