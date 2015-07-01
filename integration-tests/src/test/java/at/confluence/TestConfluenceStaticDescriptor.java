@@ -41,12 +41,12 @@ public class TestConfluenceStaticDescriptor
     @Test
     public void testAcDashboardWebItemIsPresent()
     {
-        logOut();
         product.login(ADMIN.confUser(), DashboardPage.class);
         connectPageOperations.findWebItem(WEB_ITEM_ID, Optional.<String>absent());
     }
 
-    private void logOut()
+    @Before
+    public void logOut()
     {
         product.getTester().getDriver().manage().deleteAllCookies();
     }
