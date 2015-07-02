@@ -1,10 +1,12 @@
 package at.jira;
 
-import at.util.ExternalAddonInstaller;
+import java.rmi.RemoteException;
+
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
+
 import com.google.common.base.Optional;
-import it.jira.JiraWebDriverTestBase;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,9 +14,10 @@ import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.rmi.RemoteException;
+import at.util.ExternalAddonInstaller;
+import it.jira.JiraWebDriverTestBase;
 
-// @Category (OnDemandAcceptanceTest.class)
+@Category (OnDemandAcceptanceTest.class)
 public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
 {
     private static final String WEB_ITEM_ID = "com.atlassian.connect.acceptance.test__opsbar-test-web-item";
