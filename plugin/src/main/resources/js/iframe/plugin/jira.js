@@ -2,7 +2,8 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
     "use strict";
     var workflowListener,
         validationListener,
-        dashboardItemEditListener;
+        dashboardItemEditListener,
+        issueCreateListener;
 
     /**
     * @class WorkflowConfiguration
@@ -96,6 +97,9 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                     remote.setDashboardItemTitle(title);
                 },
 
+                isDashboardItemEditable : function(callback) {
+                    remote.isDashboardItemEditable(callback);
+                },
 
                 /**
                 * Refresh an issue page without reloading the browser.
@@ -108,6 +112,23 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                 */
                 refreshIssuePage: function () {
                     remote.triggerJiraEvent('refreshIssuePage');
+                },
+
+                /**
+                * Open the quick create issue dialog
+                * This opens the "create issue" dialog and triggers a callback containing the list of issues created.
+                * Note: This is unavailable on general admin and project admin pages.
+                * @noDemo
+                * @example
+                * AP.require('jira', function(jira){
+                *   jira.openCreateIssueDialog(function(issues){
+                *       alert(issues[0]['fields']['summary']);
+                *   });
+                * });
+                */
+                openCreateIssueDialog: function (callback, fields) {
+                    issueCreateListener = callback || null;
+                    remote.openCreateIssueDialog(fields);
                 }
             },
 
@@ -118,9 +139,14 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                 },
                 triggerDashboardItemEdit: function () {
                     return DashboardItem.triggerEdit();
+                },
+                triggerIssueCreateSubmit: function (issues) {
+                    if($.isFunction(issueCreateListener)){
+                        issueCreateListener.call({}, issues);
+                    }
                 }
             },
-            stubs: ["triggerJiraEvent"]
+            stubs: ["triggerJiraEvent", "openCreateIssueDialog"]
 
         };
 
