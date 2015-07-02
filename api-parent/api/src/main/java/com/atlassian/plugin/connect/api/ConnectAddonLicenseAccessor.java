@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.plugin.api.LicenseStatus;
  *
  * @since 1.1.37
  */
-public interface ConnectAddonAccessorMigrationApi
+public interface ConnectAddonLicenseAccessor
 {
 
     /**
