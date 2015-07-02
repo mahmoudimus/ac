@@ -9,13 +9,16 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
+import com.atlassian.plugin.connect.plugin.util.AbstractInitializingComponent;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
+import com.atlassian.sal.api.lifecycle.LifecycleAware;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.InitializingBean;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -51,11 +54,11 @@ public class AddOnKeyExtractorTest
         when(consumerService.getConsumer()).thenReturn(Consumer.key(THIS_ADD_ON_KEY).name("whatever").signatureMethod(Consumer.SignatureMethod.HMAC_SHA1).publicKey(new KeyFactory.InvalidPublicKey(new Exception())).build());
 
         addOnKeyExtractor = new AddOnKeyExtractorImpl(jsonConnectAddOnIdentifierService, consumerService, eventPublisher);
-        // Simulately send addOnKeyExtractor 3 major events to trigger init.
-        ((AddOnKeyExtractorImpl) addOnKeyExtractor).afterPropertiesSet();
-        ((AddOnKeyExtractorImpl) addOnKeyExtractor).onStart();
+        // Sent 3 mains events to trigger init.
+        ((InitializingBean) addOnKeyExtractor).afterPropertiesSet();
+        ((LifecycleAware) addOnKeyExtractor).onStart();
         when(plugin.getKey()).thenReturn(ConnectPluginInfo.getPluginKey());
-        ((AddOnKeyExtractorImpl) addOnKeyExtractor).onPluginEnabled(new PluginEnabledEvent(plugin));
+        ((AbstractInitializingComponent) addOnKeyExtractor).onPluginEnabled(new PluginEnabledEvent(plugin));
     }
 
     @Test
