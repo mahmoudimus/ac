@@ -32,6 +32,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.Principal;
 
+import static com.atlassian.oauth.util.Check.notNull;
+
 /**
  * Authenticates an incoming 2LO request
  */
@@ -65,10 +67,10 @@ public class OAuth2LOAuthenticator extends AbstractInitializingComponent impleme
         this.oAuthLinkManager = oAuthLinkManager;
         this.userManager = userManager;
         this.addOnKeyExtractor = addOnKeyExtractor;
-        this.authenticationController = Check.notNull(authenticationController,
+        this.authenticationController = notNull(authenticationController,
                 "authenticationController");
-        this.applicationProperties = Check.notNull(applicationProperties, "applicationProperties");
-        this.consumerService = Check.notNull(consumerService, "consumerService");
+        this.applicationProperties = notNull(applicationProperties, "applicationProperties");
+        this.consumerService = notNull(consumerService, "consumerService");
     }
 
     public Result authenticate(HttpServletRequest request, HttpServletResponse response)
