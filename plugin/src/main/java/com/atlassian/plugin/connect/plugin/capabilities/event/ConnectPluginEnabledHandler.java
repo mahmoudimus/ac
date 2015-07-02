@@ -18,7 +18,6 @@ import javax.inject.Named;
 @ExportAsService(LifecycleAware.class)
 public class ConnectPluginEnabledHandler extends AbstractInitializingComponent
 {
-    private static final Logger log = LoggerFactory.getLogger(ConnectPluginEnabledHandler.class);
     private final ConnectAddonRegistry addonRegistry;
     private final ConnectAddonManager addonManager;
 
@@ -26,7 +25,7 @@ public class ConnectPluginEnabledHandler extends AbstractInitializingComponent
     public ConnectPluginEnabledHandler(ConnectAddonRegistry addonRegistry,
             ConnectAddonManager addonManager, EventPublisher eventPublisher)
     {
-        super(eventPublisher, ConnectPluginInfo.getPluginKey());
+        super(eventPublisher);
         this.addonRegistry = addonRegistry;
         this.addonManager = addonManager;
     }

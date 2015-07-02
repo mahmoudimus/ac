@@ -8,6 +8,7 @@ import javax.annotation.concurrent.GuardedBy;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
 
@@ -31,14 +32,8 @@ public abstract class AbstractInitializingComponent implements InitializingBean,
     @GuardedBy ("this")
     private final Set<LifecycleEvent> lifecycleEvents = EnumSet.noneOf(LifecycleEvent.class);
 
-    /**
-     * The plugin that contains this component.
-     */
-    private final String targetPluginKey;
-
-    public AbstractInitializingComponent(final EventPublisher eventPublisher, final String targetPluginKey)
+    public AbstractInitializingComponent(final EventPublisher eventPublisher)
     {
-        this.targetPluginKey = notNull(targetPluginKey, "targetPluginKey");
         this.eventPublisher = notNull(eventPublisher, "eventPublisher");
     }
 
@@ -87,7 +82,7 @@ public abstract class AbstractInitializingComponent implements InitializingBean,
 
     protected boolean isTargetPlugin(Plugin plugin)
     {
-        return (targetPluginKey.equals(plugin.getKey()));
+        return (ConnectPluginInfo.getPluginKey().equals(plugin.getKey()));
     }
 
     synchronized private boolean isLifecycleReady(LifecycleEvent event)

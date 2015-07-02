@@ -4,7 +4,6 @@ import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
-import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import com.atlassian.plugin.connect.plugin.util.AbstractInitializingComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
@@ -37,7 +36,7 @@ public class AddOnKeyExtractorImpl extends AbstractInitializingComponent impleme
     @Autowired
     public AddOnKeyExtractorImpl(final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, ConsumerService consumerService, EventPublisher eventPublisher)
     {
-        super(eventPublisher, ConnectPluginInfo.getPluginKey());
+        super(eventPublisher);
         this.jsonConnectAddOnIdentifierService = jsonConnectAddOnIdentifierService;
         this.consumerService = consumerService;
     }
