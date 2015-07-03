@@ -21,7 +21,7 @@ public interface AddOnPropertyAO extends Entity
     // joined plugin key with property key separated by colon
     // Due to MySQL database, "MAXIMUM_PROPERTY_KEY_LENGTH + ConnectAddonBean.MAX_KEY_LENGTH + 1" cannot be greater than 255
     @Unique
-    @StringLength(StringLength.UNLIMITED)
+    @StringLength(MAXIMUM_PROPERTY_KEY_LENGTH + ConnectAddonBean.MAX_KEY_LENGTH + 1)
     String getPrimaryKey();
     void setPrimaryKey(String primaryKey);
 
@@ -32,7 +32,7 @@ public interface AddOnPropertyAO extends Entity
     void setPluginKey(String key);
 
     @NotNull
-    @StringLength(StringLength.UNLIMITED)
+    @StringLength(MAXIMUM_PROPERTY_KEY_LENGTH)
     String getPropertyKey();
     void setPropertyKey(String key);
 
