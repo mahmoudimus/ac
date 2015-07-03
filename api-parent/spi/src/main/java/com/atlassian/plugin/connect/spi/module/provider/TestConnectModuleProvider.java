@@ -10,4 +10,8 @@ import java.util.List;
 public interface TestConnectModuleProvider
 {
     List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin plugin, List<JsonObject> modules);
+    
+    String getDescriptorKey();
+    
+    Class getBeanClass();
 }

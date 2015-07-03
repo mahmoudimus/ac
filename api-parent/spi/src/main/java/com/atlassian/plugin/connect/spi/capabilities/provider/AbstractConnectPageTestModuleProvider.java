@@ -32,6 +32,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public abstract class AbstractConnectPageTestModuleProvider implements TestConnectModuleProvider
 {
     private static final String RAW_CLASSIFIER = "raw";
+    private static final Class BEAN_CLASS = ConnectPageModuleBean.class;
 
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
@@ -105,6 +106,12 @@ public abstract class AbstractConnectPageTestModuleProvider implements TestConne
         }
 
         return builder.build();
+    }
+
+    @Override
+    public Class getBeanClass()
+    {
+        return BEAN_CLASS;
     }
 
     protected boolean needsEscaping()

@@ -151,32 +151,27 @@ public class BeanToModuleRegistrar
 
         return builder.build().getModules();
     }
+    
+    private TestConnectModuleProvider findProvider(String descriptorKey, Collection<TestConnectModuleProvider> providers)
+    {
+        for(TestConnectModuleProvider provider: providers)
+        {
+            if(provider.getDescriptorKey().equals(descriptorKey))
+            {
+                return provider;
+            }
+        }
+        return null;        
+    }
 
     private void processFields(ConnectAddonBean addon, ModuleList moduleList, BeanTransformContext ctx, List<DescriptorToRegister> descriptorsToRegister)
     {
-        //Collection<ModuleDescriptor<?>> descriptors = theConnectPlugin.getModuleDescriptors();
         Collection<ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver> collection1 = pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<>(ConnectContextParameterResolverModuleDescriptor.class));
-        Collection<TestConnectModuleProvider> collection = pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class));
-//        for (Map.Entry<Class<? extends BaseModuleBean>, List<Module>> entry : moduleList.entries())
-//        {
-//            ConnectModuleProvider moduleProvider = connectModuleProviderRegistry.get(entry.key());
-//            List<ModuleDescriptor> descriptors = provider.provideModules(new DefaultConnectModuleProviderContext(addon), entry.value());
-//            descriptorsToRegister.addAll(transform(descriptors));
-//        }
-        int i = 0;
+        Collection<TestConnectModuleProvider> providers = pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class));
 
-        
         for (Map.Entry<String,List<JsonObject>> entry : addon.getTestModules().entrySet())
         {
-            boolean providerFound = false;
-            for (TestConnectModuleProvider provider : collection)
-            {
-                if(provider.getClass().getSimpleName().contains(entry.getKey().substring(0, entry.getKey().length() - 1)))
-                {
-                    providerFound = true;
-                }
-            }
-            if(!providerFound)
+            if(findProvider(entry.getKey(), providers) == null)
             {
                 // BAD NEWS, FAIL!
             }
@@ -184,36 +179,19 @@ public class BeanToModuleRegistrar
 
         for (Map.Entry<String,List<JsonObject>> entry : addon.getTestModules().entrySet())
         {
-            for (TestConnectModuleProvider provider : collection)
+            TestConnectModuleProvider provider = findProvider(entry.getKey(), providers);
+            JsonObject testJson = entry.getValue().get(0);
+            List<ModuleDescriptor> descriptors = provider.provideModules(new DefaultConnectModuleProviderContext(addon), ctx.getTheConnectPlugin(), entry.getValue());
+            List<DescriptorToRegister> theseDescriptors = Lists.transform(descriptors, new Function<ModuleDescriptor, DescriptorToRegister>()
             {
-                if(provider.getClass().getSimpleName().toLowerCase().contains(entry.getKey().toLowerCase().substring(0, entry.getKey().length() - 1)))
+                @Override
+                public DescriptorToRegister apply(@Nullable ModuleDescriptor input)
                 {
-                    //String test = entry.getValue().get(0).getAsString();
-                    JsonObject testJson = entry.getValue().get(0);
-                    Set testSet = testJson.entrySet();
-                    int k = 0;
-                    List<ModuleDescriptor> descriptors = provider.provideModules(new DefaultConnectModuleProviderContext(addon), ctx.getTheConnectPlugin(), entry.getValue());
-                    
-
-                    List<DescriptorToRegister> theseDescriptors = Lists.transform(descriptors, new Function<ModuleDescriptor, DescriptorToRegister>()
-                    {
-                        @Override
-                        public DescriptorToRegister apply(@Nullable ModuleDescriptor input)
-                        {
-                            return new DescriptorToRegister(input);
-                        }
-                    });
-                    descriptorsToRegister.addAll(theseDescriptors);
+                    return new DescriptorToRegister(input);
                 }
-            }
+            });
+            descriptorsToRegister.addAll(theseDescriptors);
         }
-        
-//        for (ConnectModuleProvider provider : collection)
-//        {
-//            provider.provideModules().
-//        }
-//
-//        for()
         
         for (Field field : moduleList.getClass().getDeclaredFields())
         {

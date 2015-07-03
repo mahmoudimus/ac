@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class GeneralPageTestModuleProvider extends AbstractConnectPageTestModuleProvider
 {
+    public static final String DESCRIPTOR_KEY = "generalPages";
     public static final String ATL_GENERAL_DECORATOR = "atl.general";
     private final ProductAccessor productAccessor;
 
@@ -42,5 +43,10 @@ public class GeneralPageTestModuleProvider extends AbstractConnectPageTestModule
     {
         return ATL_GENERAL_DECORATOR;
     }
-
+    
+    @Override
+    public String getDescriptorKey()
+    {
+        return DESCRIPTOR_KEY;
+    }
 }
