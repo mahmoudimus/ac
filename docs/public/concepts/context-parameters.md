@@ -19,7 +19,7 @@ The following parameters are common across all requests and are always included 
 * `cp`: the context path of the instance (eg: `/wiki`)
 * `xdm_e`: the base url of the host application, used for the Javascript bridge (xdm - cross domain messaging)
 * `xdm_c`: the xdm channel to establish communication over
-* `user_id`: the uspater's username. This may change and `user_key` should be used instead <span class="aui-lozenge">DEPRECATED</span>
+* `user_id`: the user's username. This may change and `user_key` should be used instead <span class="aui-lozenge">DEPRECATED</span>
 * `user_key`: the user's unique identifier <span class="aui-lozenge">DEPRECATED</span>
 
 **NOTE** The `user_id` and `user_key` parameters are deprecated in favour of the [`context.user` JWT claim](./understanding-jwt.html#token-structure-claims).
