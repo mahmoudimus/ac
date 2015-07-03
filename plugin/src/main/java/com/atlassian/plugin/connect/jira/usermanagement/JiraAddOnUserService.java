@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.usermanagement;
+package com.atlassian.plugin.connect.jira.usermanagement;
 
 import java.util.Set;
 
@@ -22,8 +22,13 @@ import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvi
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil;
+import com.atlassian.plugin.connect.crowd.usermanagement.api.CrowdClientProvider;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.product.FeatureManager;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserService;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -32,31 +37,38 @@ import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.Constants;
 import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * Provides
+ *
+ * @since v1.1.37
+ */
+@SuppressWarnings ("unused")
 @ExportAsDevService
-@Component
-public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
+@JiraComponent
+public class JiraAddOnUserService implements ConnectAddOnUserService
 {
     private final ApplicationService applicationService;
     private final ApplicationManager applicationManager;
     private final ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService;
     private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
     private final FeatureManager featureManager;
-    private static final Logger log = LoggerFactory.getLogger(ConnectAddOnUserServiceImpl.class);
-    private final CrowdClientFacade crowdClientFacade;
+    private static final Logger log = LoggerFactory.getLogger(JiraAddOnUserService.class);
+    private final CrowdClientProvider crowdClientProvider;
+    private final HostProperties hostProperties;
 
     @Autowired
-    public ConnectAddOnUserServiceImpl(ApplicationService applicationService,
+    public JiraAddOnUserService(ApplicationService applicationService,
             ApplicationManager applicationManager,
             ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService,
-            ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService, FeatureManager featureManager, CrowdClientFacade crowdClientFacade)
+            ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService, FeatureManager featureManager, CrowdClientProvider crowdClientProvider,
+            HostProperties hostProperties)
     {
-        this.crowdClientFacade = crowdClientFacade;
+        this.crowdClientProvider = crowdClientProvider;
+        this.hostProperties = hostProperties;
         this.applicationService = checkNotNull(applicationService);
         this.applicationManager= checkNotNull(applicationManager);
         this.connectAddOnUserProvisioningService = checkNotNull(connectAddOnUserProvisioningService);
@@ -65,7 +77,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     }
 
     @Override
-    public String getOrCreateUserKey(String addOnKey, String addOnDisplayName) throws ConnectAddOnUserInitException
+    public String getOrCreateUserName(String addOnKey, String addOnDisplayName) throws ConnectAddOnUserInitException
     {
         try
         {
@@ -137,7 +149,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     @Override
     public String provisionAddonUserForScopes(String addOnKey, String addOnDisplayName, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
     {
-        String username = getOrCreateUserKey(checkNotNull(addOnKey), checkNotNull(addOnDisplayName));
+        String username = getOrCreateUserName(checkNotNull(addOnKey), checkNotNull(addOnDisplayName));
         connectAddOnUserProvisioningService.provisionAddonUserForScopes(username, previousScopes, newScopes);
         return username;
     }
@@ -145,9 +157,9 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
     private String createOrEnableAddOnUser(String username, String addOnDisplayName)
             throws InvalidCredentialException, InvalidUserException, ApplicationPermissionException, OperationFailedException, MembershipAlreadyExistsException, InvalidGroupException, GroupNotFoundException, UserNotFoundException, ApplicationNotFoundException, ConnectAddOnUserInitException, InvalidAuthenticationException
     {
-        connectAddOnUserGroupProvisioningService.ensureGroupExists(Constants.ADDON_USER_GROUP_KEY);
+        connectAddOnUserGroupProvisioningService.ensureGroupExists(ConnectAddOnUserUtil.Constants.ADDON_USER_GROUP_KEY);
         User user = ensureUserExists(username, addOnDisplayName);
-        connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), Constants.ADDON_USER_GROUP_KEY);
+        connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), ConnectAddOnUserUtil.Constants.ADDON_USER_GROUP_KEY);
 
 
 
@@ -206,10 +218,10 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         {
             // just in case an admin changes the email address
             // (we don't rely on this to prevent an admin taking control of the account, but it would make it more difficult)
-            if (!Constants.ADDON_USER_EMAIL_ADDRESS.equals(user.getEmailAddress()) || !user.isActive() || !addOnDisplayName.equals(user.getDisplayName()))
+            if (!ConnectAddOnUserUtil.Constants.ADDON_USER_EMAIL_ADDRESS.equals(user.getEmailAddress()) || !user.isActive() || !addOnDisplayName.equals(user.getDisplayName()))
             {
                 UserTemplate userTemplate = new UserTemplate(user);
-                userTemplate.setEmailAddress(Constants.ADDON_USER_EMAIL_ADDRESS);
+                userTemplate.setEmailAddress(ConnectAddOnUserUtil.Constants.ADDON_USER_EMAIL_ADDRESS);
                 userTemplate.setActive(true);
                 userTemplate.setDisplayName(addOnDisplayName);
                 applicationService.updateUser(getApplication(), userTemplate);
@@ -229,7 +241,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         {
             // Justin Koke says that NONE password prevents logging in
             UserTemplate userTemplate = new UserTemplate(username);
-            userTemplate.setEmailAddress(Constants.ADDON_USER_EMAIL_ADDRESS); // so that "reset password" emails go nowhere
+            userTemplate.setEmailAddress(ConnectAddOnUserUtil.Constants.ADDON_USER_EMAIL_ADDRESS); // so that "reset password" emails go nowhere
             userTemplate.setActive(true); //if you don't set this, it defaults to inactive!!!
             userTemplate.setDisplayName(addOnDisplayName);
             user = applicationService.addUser(getApplication(), userTemplate, PasswordCredential.NONE);
@@ -258,20 +270,6 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             // --> handle the race condition of something else creating this user at around the same time (as unlikely as that should be)
             user = findUserWithFastFailure(username, e);
         }
-        catch (Exception e)
-        {
-            if (e.getClass().getCanonicalName().equals("org.springframework.dao.DataIntegrityViolationException"))
-            {
-                // our analytics revealed 57 of these in 1 week and prod instance logs suggest that this is another user creation race condition
-                // see https://ecosystem.atlassian.net/browse/ACDEV-1499
-                // --> handle the race condition of something else creating this user at around the same time (as unlikely as that should be)
-                user = findUserWithFastFailure(username, e);
-            }
-            else
-            {
-                throw e;
-            }
-        }
         return user;
     }
 
@@ -279,7 +277,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             throws ApplicationNotFoundException, OperationFailedException, ApplicationPermissionException, UserNotFoundException, InvalidAuthenticationException
     {
         // Set connect attributes on user -- at this point we are confident we have a user
-        ImmutableMap<String, Set<String>> connectAddOnUserAttribute = buildConnectAddOnUserAttribute(crowdClientFacade.getClientApplicationName());
+        ImmutableMap<String, Set<String>> connectAddOnUserAttribute = buildConnectAddOnUserAttribute(hostProperties.getKey());
         applicationService.storeUserAttributes(getApplication(), user.getName(), connectAddOnUserAttribute);
 
         if (featureManager.isOnDemand())
@@ -287,7 +285,7 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
             // Sets the connect attribute on the Remote Crowd Server if running in OD
             // This is currently required due to the fact that the DbCachingRemoteDirectory implementation used by JIRA and Confluence doesn't currently
             // write attributes back to the Crowd Server. This can be removed completely with Crowd 2.9 since addUser can take a UserWithAttributes in this version
-            crowdClientFacade.getCrowdClient().storeUserAttributes(user.getName(), connectAddOnUserAttribute);
+            crowdClientProvider.getCrowdClient().storeUserAttributes(user.getName(), connectAddOnUserAttribute);
         }
     }
 
@@ -326,4 +324,5 @@ public class ConnectAddOnUserServiceImpl implements ConnectAddOnUserService
         return applicationManager.findByName(connectAddOnUserGroupProvisioningService.getCrowdApplicationName());
     }
 }
+
 

@@ -5,7 +5,7 @@ import com.atlassian.plugin.PluginException;
 import com.atlassian.plugin.PluginRestartState;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserDisableException;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.upm.spi.PluginControlHandler;
 import org.slf4j.Logger;
@@ -71,15 +71,15 @@ public class ConnectUPMControlHandler implements PluginControlHandler
     public Plugin getPlugin(String pluginKey)
     {
         Plugin plugin = null;
-        
+
         ConnectAddonBean addon = connectAddonManager.getExistingAddon(pluginKey);
-        
+
         if(null != addon)
         {
             PluginState state = (isPluginEnabled(pluginKey)) ? PluginState.ENABLED : PluginState.DISABLED;
             plugin = addonToPluginFactory.create(addon,state);
         }
-        
+
         return plugin;
     }
 
@@ -87,11 +87,11 @@ public class ConnectUPMControlHandler implements PluginControlHandler
     public Collection<? extends Plugin> getPlugins()
     {
         List<Plugin> plugins = new ArrayList<Plugin>();
-        
+
         for(String pluginKey : connectAddonManager.getAllAddonKeys())
         {
             Plugin plugin = getPlugin(pluginKey);
-            
+
             if(null != plugin)
             {
                 plugins.add(plugin);
@@ -101,7 +101,7 @@ public class ConnectUPMControlHandler implements PluginControlHandler
                 log.debug("found addon key: " + pluginKey + " in registry, but descriptor does not exist!!");
             }
         }
-        
+
         return plugins;
     }
 

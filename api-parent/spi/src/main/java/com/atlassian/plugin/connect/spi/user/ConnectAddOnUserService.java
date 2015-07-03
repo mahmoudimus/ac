@@ -1,14 +1,16 @@
-package com.atlassian.plugin.connect.plugin.usermanagement;
-
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
-import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.google.common.annotations.VisibleForTesting;
+package com.atlassian.plugin.connect.spi.user;
 
 import java.util.Set;
 
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+
+import com.google.common.annotations.VisibleForTesting;
+
 public interface ConnectAddOnUserService
 {
-    String getOrCreateUserKey(String addOnKey, String addOnDisplayName) throws ConnectAddOnUserInitException;
+    String getOrCreateUserName(String addOnKey, String addOnDisplayName) throws ConnectAddOnUserInitException;
 
     void disableAddonUser(String addOnKey) throws ConnectAddOnUserDisableException;
 

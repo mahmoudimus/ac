@@ -4,8 +4,7 @@ import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.model.user.User;
 
 /**
- * Finds connect add-on users that require updating as part of
- * {@link ConnectAddOnUserAppSpecificAttributeUpgradeTask}.
+ * Finds connect add-on users that require updating
  *
  * <strong>Not suitable for general-purpose add-on user management</strong>
  */

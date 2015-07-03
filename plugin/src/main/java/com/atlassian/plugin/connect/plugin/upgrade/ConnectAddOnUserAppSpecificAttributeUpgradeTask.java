@@ -9,8 +9,9 @@ import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.service.client.CrowdClient;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
-import com.atlassian.plugin.connect.plugin.usermanagement.CrowdClientFacade;
+import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.product.FeatureManager;
+import com.atlassian.plugin.connect.spi.user.CrowdClientProvider;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.message.Message;
 import com.atlassian.sal.api.upgrade.PluginUpgradeTask;
@@ -35,22 +36,25 @@ public class ConnectAddOnUserAppSpecificAttributeUpgradeTask implements PluginUp
     private ApplicationService applicationService;
     private final ConnectAddOnUsers connectAddOnUsers;
     private ConnectAddOnUserGroupProvisioningService addOnUserGroupProvisioningService;
-    private final CrowdClientFacade crowdClientFacade;
+    private final CrowdClientProvider crowdClientFacade;
     private FeatureManager featureManager;
+    private final HostProperties hostProperties;
 
     @Autowired
     public ConnectAddOnUserAppSpecificAttributeUpgradeTask(
             ApplicationService applicationService,
             ConnectAddOnUsers connectAddOnUsers,
             ConnectAddOnUserGroupProvisioningService addOnUserGroupProvisioningService,
-            CrowdClientFacade crowdClientFacade,
-            FeatureManager featureManager)
+            CrowdClientProvider crowdClientFacade,
+            FeatureManager featureManager,
+            HostProperties hostProperties)
     {
         this.applicationService = applicationService;
         this.connectAddOnUsers = connectAddOnUsers;
         this.addOnUserGroupProvisioningService = addOnUserGroupProvisioningService;
         this.crowdClientFacade = crowdClientFacade;
         this.featureManager = featureManager;
+        this.hostProperties = hostProperties;
     }
 
     @Override
@@ -80,14 +84,14 @@ public class ConnectAddOnUserAppSpecificAttributeUpgradeTask implements PluginUp
                 throw new Exception(String.format("Failed to complete Upgrade Task. User had an invalid email: \"%s\"", user.getName()));
             }
 
-            applicationService.storeUserAttributes(application, user.getName(), buildConnectAddOnUserAttribute(crowdClientFacade.getClientApplicationName()));
+            applicationService.storeUserAttributes(application, user.getName(), buildConnectAddOnUserAttribute(hostProperties.getKey()));
             if (featureManager.isOnDemand())
             {
                 // Sets the connect attribute on the Remote Crowd Server if running in OD
                 // This is currently required due to the fact that the DbCachingRemoteDirectory implementation used by JIRA and Confluence doesn't currently
                 // write attributes back to the Crowd Server. https://ecosystem.atlassian.net/browse/EMBCWD-975 has been raised to look at re-implementing this feature!
                 CrowdClient crowdClient = crowdClientFacade.getCrowdClient();
-                crowdClient.storeUserAttributes(user.getName(), buildConnectAddOnUserAttribute(crowdClientFacade.getClientApplicationName()));
+                crowdClient.storeUserAttributes(user.getName(), buildConnectAddOnUserAttribute(hostProperties.getKey()));
             }
         }
 

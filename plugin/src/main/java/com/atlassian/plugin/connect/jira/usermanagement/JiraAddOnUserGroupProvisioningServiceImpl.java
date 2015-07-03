@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.usermanagement;
+package com.atlassian.plugin.connect.jira.usermanagement;
 
 import javax.inject.Inject;
 
@@ -16,27 +16,26 @@ import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.group.GroupTemplate;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @ExportAsDevService
-@Component
-public class ConnectAddOnUserGroupProvisioningServiceImpl implements ConnectAddOnUserGroupProvisioningService
+@JiraComponent
+public class JiraAddOnUserGroupProvisioningServiceImpl implements ConnectAddOnUserGroupProvisioningService
 {
     private static final String CROWD_APPLICATION_NAME = "crowd-embedded"; // magic knowledge
-    private static final Logger LOG = LoggerFactory.getLogger(ConnectAddOnUserGroupProvisioningServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JiraAddOnUserGroupProvisioningServiceImpl.class);
 
     private final ApplicationService applicationService;
     private final ApplicationManager applicationManager;
 
     @Inject
-    public ConnectAddOnUserGroupProvisioningServiceImpl(ApplicationService applicationService,
-                                                        ApplicationManager applicationManager)
+    public JiraAddOnUserGroupProvisioningServiceImpl(ApplicationService applicationService, ApplicationManager applicationManager)
     {
         this.applicationService = checkNotNull(applicationService);
         this.applicationManager = checkNotNull(applicationManager);

@@ -15,8 +15,8 @@ import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkUtil;
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserDisableException;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonInstallFailedEvent;
 import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstallException;
@@ -141,8 +141,8 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                               + pluginKey
                               + "]. Restoring previous version...", e);
                     ConnectAddonBean previousAddon = maybePreviousAddon.get();
-                    String addonUserKey = this.connectAddOnUserService.getOrCreateUserKey(pluginKey,
-                                                                                          previousAddon.getName());
+                    String addonUserKey = this.connectAddOnUserService.getOrCreateUserName(pluginKey,
+                            previousAddon.getName());
                     addonRegistry.storeAddonSettings(pluginKey, previousSettings);
                     connectApplinkManager.createAppLink(previousAddon,
                                                         baseUrl,
