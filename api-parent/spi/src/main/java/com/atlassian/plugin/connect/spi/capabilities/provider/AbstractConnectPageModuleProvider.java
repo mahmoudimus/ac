@@ -14,6 +14,8 @@ import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.web.Condition;
 import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,17 +29,18 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  * Base class for ConnectModuleProviders of Connect Pages. Note that there is actually no P2 module descriptor. Instead
  * it is modelled as a web-item plus a servlet
  */
-public abstract class AbstractConnectPageModuleProvider implements ConnectModuleProvider<ConnectPageModuleBean>
+public abstract class AbstractConnectPageModuleProvider implements ConnectModuleProvider
 {
     private static final String RAW_CLASSIFIER = "raw";
+    private static final Class BEAN_CLASS = ConnectPageModuleBean.class;
 
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
 
     public AbstractConnectPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            WebItemModuleDescriptorFactory webItemModuleDescriptorFactory)
+                                             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory)
     {
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
@@ -45,14 +48,14 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, String jsonFieldName,
-                                                 List<ConnectPageModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<JsonObject> modules)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
 
-        for (ConnectPageModuleBean bean : beans)
+        for (JsonObject module : modules)
         {
+            ConnectPageModuleBean bean = new Gson().fromJson(module, ConnectPageModuleBean.class);
             // register a render strategy for our iframe page
             IFrameRenderStrategy pageRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(connectAddonBean.getKey())
@@ -103,6 +106,12 @@ public abstract class AbstractConnectPageModuleProvider implements ConnectModule
         }
 
         return builder.build();
+    }
+
+    @Override
+    public Class getBeanClass()
+    {
+        return BEAN_CLASS;
     }
 
     protected boolean needsEscaping()

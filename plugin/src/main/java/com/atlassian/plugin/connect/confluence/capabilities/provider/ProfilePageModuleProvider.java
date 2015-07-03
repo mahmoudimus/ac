@@ -13,6 +13,8 @@ public class ProfilePageModuleProvider extends AbstractConnectPageModuleProvider
 {
     private final ProductAccessor productAccessor;
 
+    public static final String DESCRIPTOR_KEY = "profilePages";
+
     @Autowired
     public ProfilePageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
                                      IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
@@ -41,4 +43,9 @@ public class ProfilePageModuleProvider extends AbstractConnectPageModuleProvider
         return "atl.userprofile";
     }
 
+    @Override
+    public String getDescriptorKey()
+    {
+        return DESCRIPTOR_KEY;
+    }
 }

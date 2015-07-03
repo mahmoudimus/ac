@@ -1,16 +1,17 @@
 package com.atlassian.plugin.connect.spi.module.provider;
 
-import java.util.List;
-
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ModuleJson;
+import com.google.gson.JsonObject;
 
-/**
- * @since 1.0
- */
-public interface ConnectModuleProvider<T>
+import java.util.List;
+
+public interface ConnectModuleProvider
 {
-    // TODO(ACDEV-1344): pull plugin and jsonFieldName into context
-    List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin plugin,
-                                          String jsonFieldName, List<T> beans);
+    List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin plugin, List<JsonObject> modules);
+    
+    String getDescriptorKey();
+    
+    Class getBeanClass();
 }

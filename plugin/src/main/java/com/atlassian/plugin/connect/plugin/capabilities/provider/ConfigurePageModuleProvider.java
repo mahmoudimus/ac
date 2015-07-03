@@ -10,6 +10,8 @@ import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDes
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,6 +22,8 @@ import java.util.List;
 @Component
 public class ConfigurePageModuleProvider extends AbstractAdminPageModuleProvider
 {
+    public static final String DESCRIPTOR_KEY = "configurePage";
+    
     @Autowired
     public ConfigurePageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
@@ -31,13 +35,13 @@ public class ConfigurePageModuleProvider extends AbstractAdminPageModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, String jsonFieldName, List<ConnectPageModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<JsonObject> modules)
     {
-        super.provideModules(moduleProviderContext, theConnectPlugin, jsonFieldName, beans);
+        super.provideModules(moduleProviderContext, theConnectPlugin, modules);
 
-        if(null != beans && !beans.isEmpty())
+        if(null != modules && !modules.isEmpty())
         {
-            ConnectPageModuleBean configBean = beans.get(0);
+            ConnectPageModuleBean configBean = new Gson().fromJson(modules.get(0), ConnectPageModuleBean.class);
 
             ModuleDescriptor descriptor = new ConfigurePageModuleDescriptor();
             descriptor.init(theConnectPlugin, new DOMElement("connectConfigurePage").addAttribute("key",
@@ -53,6 +57,12 @@ public class ConfigurePageModuleProvider extends AbstractAdminPageModuleProvider
     protected boolean hasWebItem()
     {
         return false;
+    }
+
+    @Override
+    public String getDescriptorKey()
+    {
+        return DESCRIPTOR_KEY;
     }
 
 }

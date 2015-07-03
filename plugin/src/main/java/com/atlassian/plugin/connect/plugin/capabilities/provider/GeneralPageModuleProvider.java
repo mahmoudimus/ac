@@ -11,14 +11,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class GeneralPageModuleProvider extends AbstractConnectPageModuleProvider
 {
+    public static final String DESCRIPTOR_KEY = "generalPages";
     public static final String ATL_GENERAL_DECORATOR = "atl.general";
     private final ProductAccessor productAccessor;
 
     @Autowired
     public GeneralPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            ProductAccessor productAccessor)
+                                     IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                     WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+                                     ProductAccessor productAccessor)
     {
         super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory);
         this.productAccessor = productAccessor;
@@ -41,5 +42,10 @@ public class GeneralPageModuleProvider extends AbstractConnectPageModuleProvider
     {
         return ATL_GENERAL_DECORATOR;
     }
-
+    
+    @Override
+    public String getDescriptorKey()
+    {
+        return DESCRIPTOR_KEY;
+    }
 }

@@ -10,7 +10,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class AdminPageModuleProvider extends AbstractAdminPageModuleProvider
 {
-
+    public static final String DESCRIPTOR_KEY = "adminPages";
+    
     @Autowired
     public AdminPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
@@ -19,5 +20,11 @@ public class AdminPageModuleProvider extends AbstractAdminPageModuleProvider
     {
         super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory,
               productAccessor);
+    }
+
+    @Override
+    public String getDescriptorKey()
+    {
+        return DESCRIPTOR_KEY;
     }
 }

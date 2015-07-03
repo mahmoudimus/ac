@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.capabilities;
 
-import com.atlassian.jira.plugin.util.ModuleDescriptors;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
@@ -15,11 +14,9 @@ import com.atlassian.plugin.connect.plugin.exception.ModuleProviderNotFoundExcep
 import com.atlassian.plugin.connect.api.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
 import com.atlassian.plugin.connect.spi.iframe.context.module.ConnectContextParameterResolverModuleDescriptor;
-import com.atlassian.plugin.connect.spi.module.ContextParametersValidator;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderModuleDescriptor;
 import com.atlassian.plugin.connect.spi.module.provider.ModuleListProviderContainer;
-import com.atlassian.plugin.connect.spi.module.provider.TestConnectModuleProvider;
 import com.atlassian.plugin.module.ContainerAccessor;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
@@ -152,9 +149,9 @@ public class BeanToModuleRegistrar
         return builder.build().getModules();
     }
     
-    private TestConnectModuleProvider findProvider(String descriptorKey, Collection<TestConnectModuleProvider> providers)
+    private ConnectModuleProvider findProvider(String descriptorKey, Collection<ConnectModuleProvider> providers)
     {
-        for(TestConnectModuleProvider provider: providers)
+        for(ConnectModuleProvider provider: providers)
         {
             if(provider.getDescriptorKey().equals(descriptorKey))
             {
@@ -167,7 +164,7 @@ public class BeanToModuleRegistrar
     private void processFields(ConnectAddonBean addon, ModuleList moduleList, BeanTransformContext ctx, List<DescriptorToRegister> descriptorsToRegister)
     {
         Collection<ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver> collection1 = pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<>(ConnectContextParameterResolverModuleDescriptor.class));
-        Collection<TestConnectModuleProvider> providers = pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class));
+        Collection<ConnectModuleProvider> providers = pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class));
 
         for (Map.Entry<String,List<JsonObject>> entry : addon.getTestModules().entrySet())
         {
@@ -179,7 +176,7 @@ public class BeanToModuleRegistrar
 
         for (Map.Entry<String,List<JsonObject>> entry : addon.getTestModules().entrySet())
         {
-            TestConnectModuleProvider provider = findProvider(entry.getKey(), providers);
+            ConnectModuleProvider provider = findProvider(entry.getKey(), providers);
             JsonObject testJson = entry.getValue().get(0);
             List<ModuleDescriptor> descriptors = provider.provideModules(new DefaultConnectModuleProviderContext(addon), ctx.getTheConnectPlugin(), entry.getValue());
             List<DescriptorToRegister> theseDescriptors = Lists.transform(descriptors, new Function<ModuleDescriptor, DescriptorToRegister>()
