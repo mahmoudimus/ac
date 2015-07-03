@@ -1,7 +1,6 @@
-package com.atlassian.plugin.connect.plugin.api;
+package com.atlassian.plugin.connect.jira.api;
 
 import com.atlassian.plugin.connect.api.ConnectAddonLicenseAccessor;
-import com.atlassian.plugin.connect.jira.api.ConnectAddonLicenseAccessorFactory;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
@@ -36,6 +35,7 @@ public class ConnectAddonLicenseAccessorFactoryTest
     @Test
     public void addOnAccessorForMigrationFactoryThrowsExceptionForOtherPlugins()
     {
+
         exception.expect(ConnectAddonLicenseAccessorFactory.UnauthorizedPluginException.class);
 
         migrationFactory.getService(mockBundle("bad-plugin-key"), mock(ServiceRegistration.class));

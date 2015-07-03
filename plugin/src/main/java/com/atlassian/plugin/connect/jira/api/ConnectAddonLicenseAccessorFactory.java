@@ -46,7 +46,7 @@ public class ConnectAddonLicenseAccessorFactory implements ServiceFactory<Connec
     }
 
     @VisibleForTesting
-    public static class UnauthorizedPluginException extends RuntimeException
+    static class UnauthorizedPluginException extends RuntimeException
     {
         public UnauthorizedPluginException(final String pluginKey)
         {
