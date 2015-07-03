@@ -7,6 +7,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebSec
 
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,8 +17,11 @@ import java.util.Collection;
 import java.util.List;
 
 @Component
-public class WebSectionModuleProvider implements ConnectModuleProvider<WebSectionModuleBean>
+public class WebSectionModuleProvider implements ConnectModuleProvider
 {
+    public static final String DESCRIPTOR_KEY = "webSections";
+    public static final Class BEAN_CLASS = WebSectionModuleBean.class;
+    
     private final ConnectWebSectionModuleDescriptorFactory webSectionFactory;
 
     @Autowired
@@ -26,13 +31,13 @@ public class WebSectionModuleProvider implements ConnectModuleProvider<WebSectio
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext,
-                                                 Plugin theConnectPlugin, String jsonFieldName, List<WebSectionModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<JsonObject> modules)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<>();
 
-        for (WebSectionModuleBean bean : beans)
+        for (JsonObject module : modules)
         {
+            WebSectionModuleBean bean = new Gson().fromJson(module, WebSectionModuleBean.class);
             descriptors.addAll(beanToDescriptors(moduleProviderContext, theConnectPlugin, bean));
         }
 
@@ -47,5 +52,17 @@ public class WebSectionModuleProvider implements ConnectModuleProvider<WebSectio
         descriptors.add(webSectionFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean));
 
         return descriptors;
+    }
+
+    @Override
+    public String getDescriptorKey()
+    {
+        return DESCRIPTOR_KEY;
+    }
+
+    @Override
+    public Class getBeanClass()
+    {
+        return BEAN_CLASS;
     }
 }

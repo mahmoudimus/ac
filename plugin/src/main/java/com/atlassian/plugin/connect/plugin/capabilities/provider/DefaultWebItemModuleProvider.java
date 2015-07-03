@@ -13,6 +13,8 @@ import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +29,8 @@ import static com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameSe
 @ExportAsDevService
 public class DefaultWebItemModuleProvider implements WebItemModuleProvider
 {
+    public static final String DESCRIPTOR_KEY = "webItems";
+    public static final Class BEAN_CLASS = WebItemModuleBean.class;
     private static final String DEFAULT_DIALOG_DIMENSION = "100%"; // NB: the client (js) may size the parent of the iframe if the opening is done from JS
 
     private final WebItemModuleDescriptorFactory webItemFactory;
@@ -44,13 +48,13 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin,
-                                                 String jsonFieldName, List<WebItemModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<JsonObject> modules)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
-        for (WebItemModuleBean bean : beans)
+        for (JsonObject module : modules)
         {
+            WebItemModuleBean bean = new Gson().fromJson(module, WebItemModuleBean.class);
             descriptors.addAll(beanToDescriptors(moduleProviderContext, theConnectPlugin, bean));
         }
 
@@ -100,4 +104,17 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
 
         return descriptors;
     }
+
+    @Override
+    public String getDescriptorKey()
+    {
+        return DESCRIPTOR_KEY;
+    }
+
+    @Override
+    public Class getBeanClass()
+    {
+        return BEAN_CLASS;
+    }
+
 }

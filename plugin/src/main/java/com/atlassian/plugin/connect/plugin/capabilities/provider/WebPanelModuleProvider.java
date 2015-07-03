@@ -10,6 +10,8 @@ import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrat
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +20,11 @@ import java.util.Collection;
 import java.util.List;
 
 @Component
-public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelModuleBean>
+public class WebPanelModuleProvider implements ConnectModuleProvider
 {
+    public static final String DESCRIPTOR_KEY = "webPanels";
+    public static final Class BEAN_CLASS = WebPanelModuleBean.class;
+    
     private final WebPanelConnectModuleDescriptorFactory webPanelFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
@@ -35,13 +40,14 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, String jsonFieldName, List<WebPanelModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<JsonObject> modules)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<>();
 
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
-        for (WebPanelModuleBean bean : beans)
+        for (JsonObject module : modules)
         {
+            WebPanelModuleBean bean = new Gson().fromJson(module, WebPanelModuleBean.class);
             // register an iframe rendering strategy
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(connectAddonBean.getKey())
@@ -68,5 +74,17 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
         descriptors.add(webPanelFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean));
 
         return descriptors;
+    }
+
+    @Override
+    public String getDescriptorKey()
+    {
+        return DESCRIPTOR_KEY;
+    }
+
+    @Override
+    public Class getBeanClass()
+    {
+        return BEAN_CLASS;
     }
 }

@@ -11,12 +11,17 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebHoo
 
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class WebHookModuleProvider implements ConnectModuleProvider<WebHookModuleBean>
+public class WebHookModuleProvider implements ConnectModuleProvider
 {
+    public static final String DESCRIPTOR_KEY = "webHooks";
+    public static final Class BEAN_CLASS = WebHookModuleBean.class;
+    
     private ConnectWebHookModuleDescriptorFactory connectWebHookModuleDescriptorFactory;
 
     @Autowired
@@ -26,13 +31,13 @@ public class WebHookModuleProvider implements ConnectModuleProvider<WebHookModul
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext,
-                                                 Plugin theConnectPlugin, String jsonFieldName, List<WebHookModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<JsonObject> modules)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<>();
 
-        for (WebHookModuleBean bean : beans)
+        for (JsonObject module: modules)
         {
+            WebHookModuleBean bean = new Gson().fromJson(module, WebHookModuleBean.class);
             descriptors.addAll(beanToDescriptors(moduleProviderContext, theConnectPlugin, bean));
         }
 
@@ -46,5 +51,17 @@ public class WebHookModuleProvider implements ConnectModuleProvider<WebHookModul
         descriptors.add(connectWebHookModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean));
 
         return descriptors;
+    }
+
+    @Override
+    public Class getBeanClass()
+    {
+        return BEAN_CLASS;
+    }
+
+    @Override
+    public String getDescriptorKey()
+    {
+        return DESCRIPTOR_KEY;
     }
 }

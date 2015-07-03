@@ -6,11 +6,61 @@
     </plugin-info>
 
     <connect-module-provider
-            key="GeneralPages"
+            key="generalPages"
             class="com.atlassian.plugin.connect.plugin.capabilities.provider.GeneralPageModuleProvider"
-            name="general page">
+            name="General Page Module Provider">
         <description>...</description>
     </connect-module-provider>
+
+    <connect-module-provider
+            key="adminPages"
+            class="com.atlassian.plugin.connect.plugin.capabilities.provider.AdminPageModuleProvider"
+            name="Admin Page Module Provider">
+        <description>...</description>
+    </connect-module-provider>
+
+    <connect-module-provider
+            key="configurePage"
+            class="com.atlassian.plugin.connect.plugin.capabilities.provider.ConfigurePageModuleProvider"
+            name="Configure Page Module Provider">
+        <description>...</description>
+    </connect-module-provider>
+
+    <connect-module-provider
+            key="profilePages"
+            class="com.atlassian.plugin.connect.plugin.capabilities.provider.ProfilePageModuleProvider"
+            name="Profile Page Module Provider">
+        <description>...</description>
+    </connect-module-provider>
+
+    <connect-module-provider
+            key="webItems"
+            class="com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultWebItemModuleProvider"
+            name="Web Item Module Provider">
+        <description>...</description>
+    </connect-module-provider>
+
+    <connect-module-provider
+            key="webPanels"
+            class="com.atlassian.plugin.connect.plugin.capabilities.provider.WebPanelModuleProvider"
+            name="Web Panel Module Provider">
+        <description>...</description>
+    </connect-module-provider>
+
+    <connect-module-provider
+            key="webSections"
+            class="com.atlassian.plugin.connect.plugin.capabilities.provider.WebSectionModuleProvider"
+            name="Web Section Module Provider">
+        <description>...</description>
+    </connect-module-provider>
+
+    <connect-module-provider
+            key="webHooks"
+            class="com.atlassian.plugin.connect.plugin.capabilities.provider.WebHookModuleProvider"
+            name="Web Hook Module Provider">
+        <description>...</description>
+    </connect-module-provider>
+    
     
     <resource type="i18n" name="i18n" location="com.atlassian.connect.i18n"/>
 
