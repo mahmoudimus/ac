@@ -18,6 +18,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 @ConfluenceComponent
 public class StaticContentMacroModuleProvider extends AbstractContentMacroModuleProvider<StaticContentMacroModuleBean>
 {
+    public static final String DESCRIPTOR_KEY = "staticContentMacros";
+    public static final Class BEAN_CLASS = StaticContentMacroModuleBean.class;
+    
     private final StaticContentMacroModuleDescriptorFactory macroModuleDescriptorFactory;
 
     @Autowired
@@ -29,7 +32,7 @@ public class StaticContentMacroModuleProvider extends AbstractContentMacroModule
                                             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
                                             ConnectAddonI18nManager connectAddonI18nManager)
     {
-        super(webItemModuleDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory, connectAddonI18nManager);
+        super(webItemModuleDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory, connectAddonI18nManager, BEAN_CLASS);
         this.macroModuleDescriptorFactory = macroModuleDescriptorFactory;
     }
 
@@ -37,5 +40,17 @@ public class StaticContentMacroModuleProvider extends AbstractContentMacroModule
     protected ModuleDescriptor createMacroModuleDescriptor(ConnectModuleProviderContext moduleProviderContext,Plugin theConnectPlugin, StaticContentMacroModuleBean macroBean)
     {
         return macroModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, macroBean);
+    }
+
+    @Override
+    public Class getBeanClass()
+    {
+        return BEAN_CLASS;
+    }
+
+    @Override
+    public String getDescriptorKey()
+    {
+        return DESCRIPTOR_KEY;
     }
 }

@@ -22,6 +22,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 public class DynamicContentMacroModuleProvider extends AbstractContentMacroModuleProvider<DynamicContentMacroModuleBean>
 {
     public static final String CONTENT_CLASSIFIER = "content";
+    public static final String DESCRIPTOR_KEY = "dynamicContentMacros";
+    public static final Class BEAN_CLASS = DynamicContentMacroModuleBean.class;
 
     private final DynamicContentMacroModuleDescriptorFactory dynamicContentMacroModuleDescriptorFactory;
 
@@ -34,7 +36,7 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
                                              IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
 										     ConnectAddonI18nManager connectAddonI18nManager)
     {
-        super(webItemModuleDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory, connectAddonI18nManager);
+        super(webItemModuleDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory, connectAddonI18nManager, BEAN_CLASS);
         this.dynamicContentMacroModuleDescriptorFactory = macroModuleDescriptorFactory;
     }
 
@@ -55,5 +57,17 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
         iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), macroBean.getRawKey(), CONTENT_CLASSIFIER, renderStrategy);
 
         return dynamicContentMacroModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, macroBean);
+    }
+
+    @Override
+    public Class getBeanClass()
+    {
+        return BEAN_CLASS;
+    }
+
+    @Override
+    public String getDescriptorKey()
+    {
+        return DESCRIPTOR_KEY;
     }
 }

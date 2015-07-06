@@ -23,6 +23,8 @@ import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -40,8 +42,11 @@ import static com.google.common.collect.Lists.newArrayList;
  * The other web item is for the legacy Space Admin section, which appears for Documentation Theme spaces.
  */
 @ConfluenceComponent
-public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceToolsTabModuleBean>
+public class SpaceToolsTabModuleProvider implements ConnectModuleProvider
 {
+    public static final String DESCRIPTOR_KEY = "spaceToolsTabs";
+    public static final Class BEAN_CLASS = SpaceToolsTabModuleBean.class;
+    
     @VisibleForTesting
     public static final String SPACE_TOOLS_SECTION = "system.space.tools";
     @VisibleForTesting
@@ -73,14 +78,15 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, String jsonFieldName, List<SpaceToolsTabModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<JsonObject> modules)
     {
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
-        List<ModuleDescriptor> modules = newArrayList();
-        for (SpaceToolsTabModuleBean bean : beans)
+        List<ModuleDescriptor> moduleDescriptors = newArrayList();
+        for (JsonObject module : modules)
         {
+            SpaceToolsTabModuleBean bean = new Gson().fromJson(module, SpaceToolsTabModuleBean.class);
             XWorkActionModuleBean actionBean = createActionBean(connectAddonBean, bean);
-            modules.add(xWorkActionDescriptorFactory.create(connectAddonBean, theConnectPlugin, actionBean));
+            moduleDescriptors.add(xWorkActionDescriptorFactory.create(connectAddonBean, theConnectPlugin, actionBean));
 
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(connectAddonBean.getKey())
@@ -94,11 +100,11 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
             String actionUrl = actionBean.getUrl() + "?key=${space.key}";
             for (WebItemModuleBean webItemModuleBean : createWebItemBeans(bean, actionUrl))
             {
-                modules.add(webItemModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin,
+                moduleDescriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin,
                         webItemModuleBean));
             }
         }
-        return modules;
+        return moduleDescriptors;
     }
 
     private XWorkActionModuleBean createActionBean(ConnectAddonBean addon, SpaceToolsTabModuleBean bean)
@@ -164,5 +170,17 @@ public class SpaceToolsTabModuleProvider implements ConnectModuleProvider<SpaceT
                 .build();
 
         return ImmutableList.of(spaceToolsWebItemBean, spaceAdminWebItemBean);
+    }
+
+    @Override
+    public Class getBeanClass()
+    {
+        return BEAN_CLASS;
+    }
+
+    @Override
+    public String getDescriptorKey()
+    {
+        return DESCRIPTOR_KEY;
     }
 }

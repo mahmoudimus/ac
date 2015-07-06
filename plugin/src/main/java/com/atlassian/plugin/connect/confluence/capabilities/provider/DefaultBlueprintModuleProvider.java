@@ -10,6 +10,8 @@ import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderCon
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -18,7 +20,9 @@ import java.util.List;
 @ExportAsDevService
 public class DefaultBlueprintModuleProvider implements BlueprintModuleProvider
 {
-
+    public static final String DESCRIPTOR_KEY = "blueprints";
+    public static final Class BEAN_CLASS = BlueprintModuleBean.class;
+    
     private final BlueprintWebItemModuleDescriptorFactory blueprintModuleWebItemDescriptorFactory;
     private final BlueprintModuleDescriptorFactory blueprintModuleDescriptorFactory;
     private final BlueprintContentTemplateModuleDescriptorFactory blueprintContentTemplateModuleDescriptorFactory;
@@ -34,28 +38,40 @@ public class DefaultBlueprintModuleProvider implements BlueprintModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin plugin, String jsonFieldName, List<BlueprintModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<JsonObject> modules)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 
-        for (BlueprintModuleBean bean : beans)
+        for (JsonObject module : modules)
         {
-
+            BlueprintModuleBean bean = new Gson().fromJson(module, BlueprintModuleBean.class);
             builder.add(
                     blueprintModuleWebItemDescriptorFactory.createModuleDescriptor(moduleProviderContext,
-                            plugin,
+                            theConnectPlugin,
                             bean));
             builder.add(
                     blueprintContentTemplateModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext,
-                            plugin,
+                            theConnectPlugin,
                             bean));
             builder.add(
                     blueprintModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext,
-                            plugin,
+                            theConnectPlugin,
                             bean));
 
         }
 
         return builder.build();
+    }
+
+    @Override
+    public Class getBeanClass()
+    {
+        return BEAN_CLASS;
+    }
+
+    @Override
+    public String getDescriptorKey()
+    {
+        return DESCRIPTOR_KEY;
     }
 }

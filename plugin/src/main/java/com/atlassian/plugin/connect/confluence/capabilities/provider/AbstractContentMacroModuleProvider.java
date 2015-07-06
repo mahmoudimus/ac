@@ -26,6 +26,8 @@ import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
 import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
@@ -39,8 +41,9 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWe
 import static com.google.common.collect.Lists.newArrayList;
 
 public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMacroModuleBean>
-        implements ConnectModuleProvider<T>
+        implements ConnectModuleProvider
 {
+    public final Class<T> BEAN_CLASS;
     private static final Logger log = LoggerFactory.getLogger(AbstractContentMacroModuleProvider.class);
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final HostContainer hostContainer;
@@ -54,7 +57,8 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                                               AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
                                               IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
                                               IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-                                              ConnectAddonI18nManager connectAddonI18nManager)
+                                              ConnectAddonI18nManager connectAddonI18nManager,
+                                              Class beanClass)
     {
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
         this.hostContainer = hostContainer;
@@ -62,21 +66,22 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.connectAddonI18nManager = connectAddonI18nManager;
+        this.BEAN_CLASS = beanClass;
     }
 
     protected abstract ModuleDescriptor createMacroModuleDescriptor(ConnectModuleProviderContext moduleProviderContext,
                                                                     Plugin theConnectPlugin, T macroBean);
 
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext,
-                                                 Plugin theConnectPlugin, String jsonFieldName, List<T> beans)
+    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<JsonObject> modules)
     {
         List<ModuleDescriptor> moduleDescriptors = newArrayList();
 
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         MacroI18nBuilder i18nBuilder = new MacroI18nBuilder(connectAddonBean.getKey());
 
-        for (T bean : beans)
+        for (JsonObject module : modules)
         {
+            T bean = new Gson().fromJson(module, BEAN_CLASS);
             moduleDescriptors.addAll(createModuleDescriptors(moduleProviderContext, theConnectPlugin, bean));
             i18nBuilder.add(bean, connectAddonBean);
         }
