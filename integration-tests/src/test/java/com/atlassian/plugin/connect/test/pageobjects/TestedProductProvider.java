@@ -11,64 +11,65 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceGenera
 import com.atlassian.plugin.connect.test.pageobjects.confluence.FixedConfluenceTestedProduct;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdminSummaryPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraGeneralPage;
-import com.atlassian.util.concurrent.ResettableLazyReference;
 
 public class TestedProductProvider
 {
     public static JiraTestedProduct getJiraTestedProduct()
     {
-        return jiraTestedProduct.get();
+        JiraTestedProduct testedProduct = TestedProductFactory.create(JiraTestedProduct.class);
+        customizeJiraTestedProduct(testedProduct);
+        return testedProduct;
     }
 
     public static ConfluenceTestedProduct getConfluenceTestedProduct()
     {
-        return confluenceTestedProduct.get();
+        FixedConfluenceTestedProduct testedProduct = TestedProductFactory.create(FixedConfluenceTestedProduct.class);
+        customizeConfluenceTestedProduct(testedProduct);
+        return testedProduct;
     }
 
     public static TestedProduct getTestedProduct()
     {
+        String testedProductClassName = getTestedProductClassNameFromEnvironment();
+        TestedProduct testedProduct = TestedProductFactory.create(testedProductClassName);
+        return customizeTestedProduct(testedProduct);
+    }
+
+    private static String getTestedProductClassNameFromEnvironment()
+    {
         switch (System.getProperty("testedProduct", ""))
         {
             case "jira":
-                return getJiraTestedProduct();
+                return JiraTestedProduct.class.getName();
             case "confluence":
-                return getConfluenceTestedProduct();
+                return FixedConfluenceTestedProduct.class.getName();
             default:
-                return testedProduct.get();
+                return System.getProperty("testedProductClass", JiraTestedProduct.class.getName());
         }
     }
 
-    private static ResettableLazyReference<TestedProduct<?>> testedProduct = new ResettableLazyReference<TestedProduct<?>>()
+    private static <T extends TestedProduct> T customizeTestedProduct(T testedProduct)
     {
-        @Override
-        protected TestedProduct<?> create() throws Exception
+        if (testedProduct instanceof JiraTestedProduct)
         {
-            return TestedProductFactory.create(System.getProperty("testedProductClass", JiraTestedProduct.class.getName()));
+            customizeJiraTestedProduct(testedProduct);
         }
-    };
+        else if (testedProduct instanceof ConfluenceTestedProduct)
+        {
+            customizeConfluenceTestedProduct(testedProduct);
+        }
+        return testedProduct;
+    }
 
-
-    private static ResettableLazyReference<ConfluenceTestedProduct> confluenceTestedProduct = new ResettableLazyReference<ConfluenceTestedProduct>()
+    private static void customizeJiraTestedProduct(TestedProduct testedProduct)
     {
-        @Override
-        protected ConfluenceTestedProduct create() throws Exception
-        {
-            FixedConfluenceTestedProduct testedProduct = TestedProductFactory.create(FixedConfluenceTestedProduct.class);
-            testedProduct.getPageBinder().override(GeneralPage.class, ConfluenceGeneralPage.class);
-            return testedProduct;
-        }
-    };
+        testedProduct.getPageBinder().override(GeneralPage.class, ConfluenceGeneralPage.class);
+    }
 
-    private static ResettableLazyReference<JiraTestedProduct> jiraTestedProduct = new ResettableLazyReference<JiraTestedProduct>()
+    private static void customizeConfluenceTestedProduct(TestedProduct testedProduct)
     {
-        @Override
-        protected JiraTestedProduct create() throws Exception
-        {
-            JiraTestedProduct testedProduct = TestedProductFactory.create(JiraTestedProduct.class);
-            testedProduct.getPageBinder().override(AdminHomePage.class, JiraAdminSummaryPage.class);
-            testedProduct.getPageBinder().override(GeneralPage.class, JiraGeneralPage.class);
-            testedProduct.getPageBinder().override(HomePage.class, DashboardPage.class);
-            return testedProduct;
-        }
-    };
+        testedProduct.getPageBinder().override(AdminHomePage.class, JiraAdminSummaryPage.class);
+        testedProduct.getPageBinder().override(GeneralPage.class, JiraGeneralPage.class);
+        testedProduct.getPageBinder().override(HomePage.class, DashboardPage.class);
+    }
 }
