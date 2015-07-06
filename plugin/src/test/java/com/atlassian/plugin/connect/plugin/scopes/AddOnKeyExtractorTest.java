@@ -1,24 +1,17 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
-import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jira.security.auth.trustedapps.KeyFactory;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
-import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
-import com.atlassian.plugin.connect.plugin.util.AbstractInitializingComponent;
-import com.atlassian.plugin.event.events.PluginEnabledEvent;
-import com.atlassian.sal.api.lifecycle.LifecycleAware;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.beans.factory.InitializingBean;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -41,10 +34,6 @@ public class AddOnKeyExtractorTest
     private ConsumerService consumerService;
     @Mock
     private HttpServletRequest request;
-    @Mock
-    private EventPublisher eventPublisher;
-    @Mock
-    private Plugin plugin;
 
     @Before
     public void setUp() throws Exception
@@ -53,12 +42,7 @@ public class AddOnKeyExtractorTest
         when(request.getContextPath()).thenReturn("/confluence");
         when(consumerService.getConsumer()).thenReturn(Consumer.key(THIS_ADD_ON_KEY).name("whatever").signatureMethod(Consumer.SignatureMethod.HMAC_SHA1).publicKey(new KeyFactory.InvalidPublicKey(new Exception())).build());
 
-        addOnKeyExtractor = new AddOnKeyExtractorImpl(jsonConnectAddOnIdentifierService, consumerService, eventPublisher);
-        // Sent 3 mains events to trigger init.
-        ((InitializingBean) addOnKeyExtractor).afterPropertiesSet();
-        ((LifecycleAware) addOnKeyExtractor).onStart();
-        when(plugin.getKey()).thenReturn(ConnectPluginInfo.getPluginKey());
-        ((AbstractInitializingComponent) addOnKeyExtractor).onPluginEnabled(new PluginEnabledEvent(plugin));
+        addOnKeyExtractor = new AddOnKeyExtractorImpl(jsonConnectAddOnIdentifierService, consumerService);
     }
 
     @Test

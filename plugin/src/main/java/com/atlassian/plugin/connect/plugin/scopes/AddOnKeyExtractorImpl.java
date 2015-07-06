@@ -1,13 +1,9 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
-import com.atlassian.event.api.EventPublisher;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
-import com.atlassian.plugin.connect.plugin.util.AbstractInitializingComponent;
-import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
-import com.atlassian.sal.api.lifecycle.LifecycleAware;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,8 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  * Class allowing for extracting of plugin key from http requests.
  */
 @Component
-@ExportAsService(LifecycleAware.class)
-public class AddOnKeyExtractorImpl extends AbstractInitializingComponent implements AddOnKeyExtractor
+public class AddOnKeyExtractorImpl implements AddOnKeyExtractor
 {
     /**
      * Set by a {@link javax.servlet.Filter}, possibly using {@link com.atlassian.plugin.connect.plugin.module.oauth.OAuth2LOAuthenticator} or {@link com.atlassian.jwt.plugin.sal.JwtAuthenticator},
@@ -31,12 +26,10 @@ public class AddOnKeyExtractorImpl extends AbstractInitializingComponent impleme
 
     private final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
     private final ConsumerService consumerService;
-    private String ourConsumerKey;
 
     @Autowired
-    public AddOnKeyExtractorImpl(final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, ConsumerService consumerService, EventPublisher eventPublisher)
+    public AddOnKeyExtractorImpl(final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, ConsumerService consumerService)
     {
-        super(eventPublisher);
         this.jsonConnectAddOnIdentifierService = jsonConnectAddOnIdentifierService;
         this.consumerService = consumerService;
     }
@@ -62,7 +55,7 @@ public class AddOnKeyExtractorImpl extends AbstractInitializingComponent impleme
     public boolean isAddOnRequest(@Nonnull HttpServletRequest request)
     {
         String addOnKey = extractClientKey(request);
-        return (addOnKey != null && !ourConsumerKey.equals(addOnKey)) || (extractXdmRequestKey(request) != null);
+        return (addOnKey != null && !consumerService.getConsumer().getKey().equals(addOnKey)) || (extractXdmRequestKey(request) != null);
     }
 
     @Override
@@ -90,9 +83,4 @@ public class AddOnKeyExtractorImpl extends AbstractInitializingComponent impleme
         return req.getHeader(AP_REQUEST_HEADER);
     }
 
-    @Override
-    protected void finalInit()
-    {
-        this.ourConsumerKey = consumerService.getConsumer().getKey();
-    }
 }

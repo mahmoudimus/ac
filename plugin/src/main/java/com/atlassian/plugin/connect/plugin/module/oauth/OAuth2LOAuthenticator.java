@@ -1,18 +1,13 @@
 package com.atlassian.plugin.connect.plugin.module.oauth;
 
-import com.atlassian.event.api.EventPublisher;
 import com.atlassian.oauth.consumer.ConsumerService;
-import com.atlassian.oauth.util.Check;
 import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
-import com.atlassian.plugin.connect.plugin.util.AbstractInitializingComponent;
 import com.atlassian.plugin.connect.plugin.util.DefaultMessage;
-import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.auth.AuthenticationController;
 import com.atlassian.sal.api.auth.Authenticator;
-import com.atlassian.sal.api.lifecycle.LifecycleAware;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import net.oauth.OAuth;
@@ -38,8 +33,7 @@ import static com.atlassian.oauth.util.Check.notNull;
  * Authenticates an incoming 2LO request
  */
 @Component
-@ExportAsService(LifecycleAware.class)
-public class OAuth2LOAuthenticator extends AbstractInitializingComponent implements Authenticator
+public class OAuth2LOAuthenticator implements Authenticator
 {
     /**
      * The request attribute key that the request dispatcher uses to store the original URL for a
@@ -53,7 +47,6 @@ public class OAuth2LOAuthenticator extends AbstractInitializingComponent impleme
     private final AuthenticationController authenticationController;
     private final ApplicationProperties applicationProperties;
     private final UserManager userManager;
-    private String ourConsumerKey;
     private final AddOnKeyExtractor addOnKeyExtractor;
     private final ConsumerService consumerService;
 
@@ -61,9 +54,8 @@ public class OAuth2LOAuthenticator extends AbstractInitializingComponent impleme
     public OAuth2LOAuthenticator(AuthenticationController authenticationController,
             ApplicationProperties applicationProperties,
             OAuthLinkManager oAuthLinkManager, UserManager userManager,
-            ConsumerService consumerService, AddOnKeyExtractor addOnKeyExtractor, EventPublisher eventPublisher)
+            ConsumerService consumerService, AddOnKeyExtractor addOnKeyExtractor)
     {
-        super(eventPublisher);
         this.oAuthLinkManager = oAuthLinkManager;
         this.userManager = userManager;
         this.addOnKeyExtractor = addOnKeyExtractor;
@@ -104,7 +96,7 @@ public class OAuth2LOAuthenticator extends AbstractInitializingComponent impleme
         {
             consumerKey = message.getConsumerKey();
             oAuthLinkManager.validateOAuth2LORequest(message);
-            if (ourConsumerKey.equals(consumerKey))
+            if (consumerService.getConsumer().getKey().equals(consumerKey))
             {
                 String authHeader = request.getHeader("Authorization");
                 if (authHeader != null)
@@ -272,12 +264,6 @@ public class OAuth2LOAuthenticator extends AbstractInitializingComponent impleme
                     new Object[] { message.URL, ope.getProblem(), ope.getParameters() }
             );
         }
-    }
-
-    @Override
-    protected void finalInit()
-    {
-        this.ourConsumerKey = consumerService.getConsumer().getKey();
     }
 
     private void sendError(HttpServletResponse response, int status, OAuthMessage message)
