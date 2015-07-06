@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
  * Representation of a group of extractions specified by an add-on.
  */
 @ConfluenceComponent
-public class DefaultContentPropertyModuleProvider implements ContentPropertyModuleProvider
+public class DefaultContentPropertyModuleProvider extends ContentPropertyModuleProvider
 {
     public static final String DESCRIPTOR_KEY = "confluenceContentProperties";
     public static final Class BEAN_CLASS = ContentPropertyModuleBean.class;

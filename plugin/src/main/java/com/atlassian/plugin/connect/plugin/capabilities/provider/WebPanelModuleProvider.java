@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Component
-public class WebPanelModuleProvider implements ConnectModuleProvider
+public class WebPanelModuleProvider extends ConnectModuleProvider
 {
     public static final String DESCRIPTOR_KEY = "webPanels";
     public static final Class BEAN_CLASS = WebPanelModuleBean.class;

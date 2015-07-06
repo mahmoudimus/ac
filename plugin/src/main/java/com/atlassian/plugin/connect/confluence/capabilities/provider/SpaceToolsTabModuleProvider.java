@@ -42,7 +42,7 @@ import static com.google.common.collect.Lists.newArrayList;
  * The other web item is for the legacy Space Admin section, which appears for Documentation Theme spaces.
  */
 @ConfluenceComponent
-public class SpaceToolsTabModuleProvider implements ConnectModuleProvider
+public class SpaceToolsTabModuleProvider extends ConnectModuleProvider
 {
     public static final String DESCRIPTOR_KEY = "spaceToolsTabs";
     public static final Class BEAN_CLASS = SpaceToolsTabModuleBean.class;

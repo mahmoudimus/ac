@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @JiraComponent
-public class DashboardItemModuleProvider implements ConnectModuleProvider
+public class DashboardItemModuleProvider extends ConnectModuleProvider
 {
     public static final String DESCRIPTOR_KEY = "jiraDashboardItems";
     public static final Class BEAN_CLASS = DashboardItemModuleBean.class;

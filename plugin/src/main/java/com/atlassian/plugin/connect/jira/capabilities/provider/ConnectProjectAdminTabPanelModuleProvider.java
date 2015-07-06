@@ -30,7 +30,7 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWe
  * Instead it is modelled as a web-item plus a servlet
  */
 @JiraComponent
-public class ConnectProjectAdminTabPanelModuleProvider implements ConnectModuleProvider
+public class ConnectProjectAdminTabPanelModuleProvider extends ConnectModuleProvider
 {
     public static final String DESCRIPTOR_KEY = "jiraProjectAdminTabPanels";
     public static final Class BEAN_CLASS = ConnectProjectAdminTabPanelModuleBean.class;    

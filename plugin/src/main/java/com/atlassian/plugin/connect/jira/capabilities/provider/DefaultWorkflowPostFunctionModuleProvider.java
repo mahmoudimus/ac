@@ -24,7 +24,7 @@ import static com.atlassian.plugin.connect.jira.capabilities.provider.JiraTempla
 
 @JiraComponent
 @ExportAsDevService
-public class DefaultWorkflowPostFunctionModuleProvider implements WorkflowPostFunctionModuleProvider
+public class DefaultWorkflowPostFunctionModuleProvider extends WorkflowPostFunctionModuleProvider
 {
     public static final String DESCRIPTOR_KEY = "jiraWorkflowPostFunctions";
     public static final Class BEAN_CLASS = WorkflowPostFunctionModuleBean.class;

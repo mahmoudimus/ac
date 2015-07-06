@@ -19,7 +19,7 @@ import java.util.List;
  * @since 1.2
  */
 @JiraComponent
-public class ReportModuleProvider implements ConnectModuleProvider
+public class ReportModuleProvider extends ConnectModuleProvider
 {
     public static final String DESCRIPTOR_KEY = "jiraReports";
     public static final Class BEAN_CLASS = ReportModuleBean.class;

@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 @JiraComponent
-public abstract class ConnectTabPanelModuleProvider implements ConnectModuleProvider
+public abstract class ConnectTabPanelModuleProvider extends ConnectModuleProvider
 {
     private final ConnectTabPanelModuleDescriptorFactory descriptorFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;

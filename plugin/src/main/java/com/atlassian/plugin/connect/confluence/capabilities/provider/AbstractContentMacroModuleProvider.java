@@ -41,7 +41,7 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWe
 import static com.google.common.collect.Lists.newArrayList;
 
 public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMacroModuleBean>
-        implements ConnectModuleProvider
+        extends ConnectModuleProvider
 {
     public final Class<T> BEAN_CLASS;
     private static final Logger log = LoggerFactory.getLogger(AbstractContentMacroModuleProvider.class);

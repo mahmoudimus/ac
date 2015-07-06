@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 @JiraComponent
-public class EntityPropertyModuleProvider implements ConnectModuleProvider
+public class EntityPropertyModuleProvider extends ConnectModuleProvider
 {
     public static final String DESCRIPTOR_KEY = "jiraEntityProperties";
     public static final Class BEAN_CLASS = EntityPropertyModuleBean.class;

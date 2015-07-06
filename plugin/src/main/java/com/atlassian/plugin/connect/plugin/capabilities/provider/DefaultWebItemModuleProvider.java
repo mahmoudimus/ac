@@ -27,7 +27,7 @@ import static com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameSe
 
 @Component
 @ExportAsDevService
-public class DefaultWebItemModuleProvider implements WebItemModuleProvider
+public class DefaultWebItemModuleProvider extends WebItemModuleProvider
 {
     public static final String DESCRIPTOR_KEY = "webItems";
     public static final Class BEAN_CLASS = WebItemModuleBean.class;

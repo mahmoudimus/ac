@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class WebHookModuleProvider implements ConnectModuleProvider
+public class WebHookModuleProvider extends ConnectModuleProvider
 {
     public static final String DESCRIPTOR_KEY = "webHooks";
     public static final Class BEAN_CLASS = WebHookModuleBean.class;

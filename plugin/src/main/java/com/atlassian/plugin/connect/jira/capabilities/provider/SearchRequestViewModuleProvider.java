@@ -16,7 +16,7 @@ import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
-public class SearchRequestViewModuleProvider implements ConnectModuleProvider
+public class SearchRequestViewModuleProvider extends ConnectModuleProvider
 {
     public static final String DESCRIPTOR_KEY = "jiraSearchRequestViews";
     public static final Class BEAN_CLASS = SearchRequestViewModuleBean.class;

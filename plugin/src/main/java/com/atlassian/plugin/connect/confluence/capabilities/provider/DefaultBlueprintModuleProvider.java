@@ -18,7 +18,7 @@ import java.util.List;
 
 @ConfluenceComponent
 @ExportAsDevService
-public class DefaultBlueprintModuleProvider implements BlueprintModuleProvider
+public class DefaultBlueprintModuleProvider extends BlueprintModuleProvider
 {
     public static final String DESCRIPTOR_KEY = "blueprints";
     public static final Class BEAN_CLASS = BlueprintModuleBean.class;

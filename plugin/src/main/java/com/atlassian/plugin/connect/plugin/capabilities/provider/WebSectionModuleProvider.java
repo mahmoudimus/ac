@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Component
-public class WebSectionModuleProvider implements ConnectModuleProvider
+public class WebSectionModuleProvider extends ConnectModuleProvider
 {
     public static final String DESCRIPTOR_KEY = "webSections";
     public static final Class BEAN_CLASS = WebSectionModuleBean.class;

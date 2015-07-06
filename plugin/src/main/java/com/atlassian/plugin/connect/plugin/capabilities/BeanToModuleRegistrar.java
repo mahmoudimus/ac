@@ -4,20 +4,16 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.integration.plugins.DynamicDescriptorRegistration;
-import com.atlassian.plugin.connect.modules.annotation.ConnectModule;
 import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
-import com.atlassian.plugin.connect.plugin.exception.ModuleProviderNotFoundException;
 import com.atlassian.plugin.connect.api.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
 import com.atlassian.plugin.connect.spi.iframe.context.module.ConnectContextParameterResolverModuleDescriptor;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderModuleDescriptor;
-import com.atlassian.plugin.connect.spi.module.provider.ModuleListProviderContainer;
-import com.atlassian.plugin.module.ContainerAccessor;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
@@ -30,14 +26,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Field;
-import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebHookModuleBean.newWebHookBean;
-import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.isParameterizedListWithType;
 
 @Component
 public class BeanToModuleRegistrar
@@ -177,7 +170,6 @@ public class BeanToModuleRegistrar
         for (Map.Entry<String,List<JsonObject>> entry : addon.getTestModules().entrySet())
         {
             ConnectModuleProvider provider = findProvider(entry.getKey(), providers);
-            JsonObject testJson = entry.getValue().get(0);
             List<ModuleDescriptor> descriptors = provider.provideModules(new DefaultConnectModuleProviderContext(addon), ctx.getTheConnectPlugin(), entry.getValue());
             List<DescriptorToRegister> theseDescriptors = Lists.transform(descriptors, new Function<ModuleDescriptor, DescriptorToRegister>()
             {
@@ -188,86 +180,6 @@ public class BeanToModuleRegistrar
                 }
             });
             descriptorsToRegister.addAll(theseDescriptors);
-        }
-        
-        for (Field field : moduleList.getClass().getDeclaredFields())
-        {
-            if (field.isAnnotationPresent(ConnectModule.class))
-            {
-                try
-                {
-                    ConnectModule anno = field.getAnnotation(ConnectModule.class);
-                    field.setAccessible(true);
-
-                    Type fieldType = field.getGenericType();
-
-                    List<? extends ModuleBean> beanList;
-
-                    if (isParameterizedListWithType(fieldType, ModuleBean.class))
-                    {
-                        beanList = (List<? extends ModuleBean>) field.get(moduleList);
-                    }
-                    else
-                    {
-                        ModuleBean moduleBean = (ModuleBean) field.get(moduleList);
-                        beanList = moduleBean == null ? Collections.EMPTY_LIST : Collections.singletonList(moduleBean);
-                    }
-
-                    List<DescriptorToRegister> registerMe = getDescriptors(addon, ctx, field.getName(), anno, beanList);
-                    descriptorsToRegister.addAll(registerMe);
-                }
-                catch (IllegalAccessException e)
-                {
-                    //ignore. this should never happen
-                }
-            }
-        }
-    }
-
-
-    private List<DescriptorToRegister> getDescriptors(ConnectAddonBean addon, BeanTransformContext ctx, String jsonFieldName, ConnectModule providerAnnotation, List<? extends ModuleBean> beans)
-    {
-        List<ProductFilter> products = Arrays.asList(providerAnnotation.products());
-        if (products.contains(ProductFilter.ALL) || (null != ctx.getAppFilter() && products.contains(ctx.getAppFilter())))
-        {
-            Class<? extends ConnectModuleProvider> theProviderClass = null;
-            try
-            {
-                theProviderClass = (Class<? extends ConnectModuleProvider>) Class.forName(providerAnnotation.value());
-            }
-            catch (ClassNotFoundException e)
-            {
-                throw new ModuleProviderNotFoundException("Unable to load module provider for class [" + providerAnnotation.value() + "]", e);
-            }
-
-            ContainerAccessor accessor = theConnectPlugin.getContainerAccessor();
-            Collection<? extends ConnectModuleProvider> providers = accessor.getBeansOfType(theProviderClass);
-
-
-            if (!providers.isEmpty())
-            {
-                ConnectModuleProvider provider = providers.iterator().next();
-
-                List<ModuleDescriptor> descriptors = provider.provideModules(new DefaultConnectModuleProviderContext(addon),
-                        ctx.getTheConnectPlugin(), jsonFieldName, beans);
-                
-                return Lists.transform(descriptors, new Function<ModuleDescriptor, DescriptorToRegister>()
-                {
-                    @Override
-                    public DescriptorToRegister apply(@Nullable ModuleDescriptor input)
-                    {
-                        return new DescriptorToRegister(input);
-                    }
-                });
-            }
-            else
-            {
-                return Collections.EMPTY_LIST;
-            }
-        }
-        else
-        {
-            return Collections.EMPTY_LIST;
         }
     }
 

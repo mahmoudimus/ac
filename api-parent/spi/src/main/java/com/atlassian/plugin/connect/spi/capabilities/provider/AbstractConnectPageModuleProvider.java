@@ -29,7 +29,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  * Base class for ConnectModuleProviders of Connect Pages. Note that there is actually no P2 module descriptor. Instead
  * it is modelled as a web-item plus a servlet
  */
-public abstract class AbstractConnectPageModuleProvider implements ConnectModuleProvider
+public abstract class AbstractConnectPageModuleProvider extends ConnectModuleProvider
 {
     private static final String RAW_CLASSIFIER = "raw";
     private static final Class BEAN_CLASS = ConnectPageModuleBean.class;
