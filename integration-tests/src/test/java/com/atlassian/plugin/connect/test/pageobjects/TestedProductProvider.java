@@ -63,13 +63,13 @@ public class TestedProductProvider
 
     private static void customizeJiraTestedProduct(TestedProduct testedProduct)
     {
-        testedProduct.getPageBinder().override(GeneralPage.class, ConfluenceGeneralPage.class);
+        testedProduct.getPageBinder().override(AdminHomePage.class, JiraAdminSummaryPage.class);
+        testedProduct.getPageBinder().override(GeneralPage.class, JiraGeneralPage.class);
+        testedProduct.getPageBinder().override(HomePage.class, DashboardPage.class);
     }
 
     private static void customizeConfluenceTestedProduct(TestedProduct testedProduct)
     {
-        testedProduct.getPageBinder().override(AdminHomePage.class, JiraAdminSummaryPage.class);
-        testedProduct.getPageBinder().override(GeneralPage.class, JiraGeneralPage.class);
-        testedProduct.getPageBinder().override(HomePage.class, DashboardPage.class);
+        testedProduct.getPageBinder().override(GeneralPage.class, ConfluenceGeneralPage.class);
     }
 }
