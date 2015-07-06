@@ -4,7 +4,6 @@ import com.atlassian.jwt.JwtConstants;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

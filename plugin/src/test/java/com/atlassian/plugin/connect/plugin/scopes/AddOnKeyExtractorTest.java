@@ -6,7 +6,6 @@ import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
