@@ -161,7 +161,7 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
         login(testUserFactory.basicUser());
         RemotePluginAwarePage page = goToPageWithLink(JWT_EXPIRY_INLINE_DIALOG_KEY);
         ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
-        RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, remotePluginTest, true);
+        RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, remotePluginTest);
         verifyIframeURLHasVersionNumber(dialog);
     }
 
