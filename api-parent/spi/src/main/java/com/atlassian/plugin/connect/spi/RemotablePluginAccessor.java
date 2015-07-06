@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.spi;
 
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.util.concurrent.Promise;
 
 import java.net.URI;

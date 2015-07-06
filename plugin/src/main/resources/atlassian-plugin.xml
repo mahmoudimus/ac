@@ -104,10 +104,6 @@
 
     <analytics-whitelist key="analyticsWhitelist" resource="whitelist/connect_whitelist.json"/>
 
-    <component-import key="ao" name="Active Objects Service" interface="com.atlassian.activeobjects.external.ActiveObjects">
-        <description>Component to access Active Objects functionality to persist webhooks.</description>
-    </component-import>
-
     <ao key="add-on-properties-ao-module" name="Active Objects Module">
         <description>Datastore for add-on properties.</description>
         <entity>com.atlassian.plugin.connect.plugin.ao.AddOnPropertyAO</entity>

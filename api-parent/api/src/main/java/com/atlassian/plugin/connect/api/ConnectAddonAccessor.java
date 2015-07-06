@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.api;
 
 /**
  * Service which checks if Connect add-on is enabled.
- * @since 1.1.31
+ * @since 1.1.32
  */
 public interface ConnectAddonAccessor
 {

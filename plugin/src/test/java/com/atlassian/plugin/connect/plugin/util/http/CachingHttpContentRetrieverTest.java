@@ -10,7 +10,7 @@ import com.atlassian.plugin.PluginInformation;
 import com.atlassian.plugin.connect.spi.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.plugin.ConnectHttpClientFactory;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.google.common.base.Function;

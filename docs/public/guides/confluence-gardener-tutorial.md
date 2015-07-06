@@ -165,7 +165,7 @@ Now you're ready to start developing functionality for your Gardener add-on.
 All the functions that request data from Confluence are in your `js/data.js` file. The functions are incomplete, 
 so in this step you'll flesh these out. 
 
-You'll use the [Confluence REST API browser](https://bunjil.jira-dev.com/wiki/plugins/servlet/restbrowser) and
+You'll use the [REST API browser](../rest-apis/product-api-browser.html) and
 the [AP.request documentation](../javascript/module-request.html) to implement functions to get
 page and space hierarchy in Confluence, and add Gardener functionality to move and remove pages.
 

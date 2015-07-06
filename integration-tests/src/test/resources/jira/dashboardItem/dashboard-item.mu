@@ -12,6 +12,7 @@
     <div>Status: <span id="propertiesStatus"></span></div>
     <div>Status: <span id="properties"></span></div>
     <div>Edit:<span id="editBox"></span></div>
+    <div>Editable:<span id="editable"></span></div>
     <div><button id="set-title">Set title</button></div>
     <script>
       (function (AP) {
@@ -31,6 +32,13 @@
             document.getElementById("editBox").innerHTML = "edit triggered";
           });
         });
+
+        AP.require(['jira'], function (jira) {
+            jira.isDashboardItemEditable(function (result) {
+              document.getElementById("editable").innerHTML = result;
+            });
+          }
+        );
 
         document.getElementById("set-title").addEventListener('click', function() {
           AP.require(['jira'], function(jira) {

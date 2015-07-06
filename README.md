@@ -69,8 +69,7 @@ Then, start debugging using the remote debug target and thereafter run the test 
 
 To run manually
 
-    cd plugin
-    mvn amps:debug -Pwired -Dproduct=<jira|confluence> -Dproduct.version=<version>
+    mvn amps:debug -pl wired-tests -Pwired -Dproduct=<jira|confluence> -Dproduct.version=<version>
 
 
 ## Running
