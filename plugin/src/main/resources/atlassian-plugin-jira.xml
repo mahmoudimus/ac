@@ -7,6 +7,50 @@
         <dispatcher>INCLUDE</dispatcher>
         <package>com.atlassian.plugin.connect.plugin.rest</package>
     </rest>
+
+    <connect-module-provider
+            key="jiraDashboardItems"
+            class="com.atlassian.plugin.connect.jira.capabilities.provider.DashboardItemModuleProvider"
+            name="Dashboard Item Module Provider">
+        <description>...</description>
+    </connect-module-provider>
+
+    <connect-module-provider
+            key="jiraEntityProperties"
+            class="com.atlassian.plugin.connect.jira.capabilities.provider.EntityPropertyModuleProvider"
+            name="Entity Property Module Provider">
+        <description>...</description>
+    </connect-module-provider>
+
+    <connect-module-provider
+            key="jiraProjectAdminTabPanels"
+            class="com.atlassian.plugin.connect.jira.capabilities.provider.ProjectAdminTabPanelModuleProvider"
+            name="Project Admin Tab Panel Module Provider">
+        <description>...</description>
+    </connect-module-provider>
+
+    <connect-module-provider
+            key="jiraReports"
+            class="com.atlassian.plugin.connect.jira.capabilities.provider.ReportModuleProvider"
+            name="Report Module Provider">
+        <description>...</description>
+    </connect-module-provider>
+
+    <connect-module-provider
+            key="jiraSearchRequestViews"
+            class="com.atlassian.plugin.connect.jira.capabilities.provider.SearchRequestViewModuleProvider"
+            name="Search Request View Module Provider">
+        <description>...</description>
+    </connect-module-provider>
+
+    <connect-module-provider
+            key="jiraWorkflowPostFunctions"
+            class="com.atlassian.plugin.connect.jira.capabilities.provider.DefaultWorkflowPostFunctionModuleProvider"
+            name="Workflow Post Function Module Provider">
+        <description>...</description>
+    </connect-module-provider>
+    
+    <!-- TODO: tab panels! what's up with those? so weird imo -->
     
     <!-- JavaScript and CSS resource inclusions for relevant contexts -->
 

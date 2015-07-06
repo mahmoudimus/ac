@@ -16,6 +16,8 @@ import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -28,11 +30,11 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWe
  * Instead it is modelled as a web-item plus a servlet
  */
 @JiraComponent
-public class ConnectProjectAdminTabPanelModuleProvider
-        implements ConnectModuleProvider<ConnectProjectAdminTabPanelModuleBean>
+public class ConnectProjectAdminTabPanelModuleProvider implements ConnectModuleProvider
 {
+    public static final String DESCRIPTOR_KEY = "jiraProjectAdminTabPanels";
+    public static final Class BEAN_CLASS = ConnectProjectAdminTabPanelModuleBean.class;    
     public static final String PROJECT_ADMIN_TAB_PANELS = "jiraProjectAdminTabPanels";
-
     private static final String ADMIN_ACTIVE_TAB = "adminActiveTab";
 
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
@@ -50,13 +52,15 @@ public class ConnectProjectAdminTabPanelModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, String jsonFieldName, List<ConnectProjectAdminTabPanelModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<JsonObject> modules)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
-        for (ConnectProjectAdminTabPanelModuleBean bean : beans)
+        for (JsonObject module: modules)
         {
+            ConnectProjectAdminTabPanelModuleBean bean = new Gson().fromJson(module, ConnectProjectAdminTabPanelModuleBean.class);
+
             // render a web item for our tab
             WebItemModuleBean webItemModuleBean = newWebItemBean()
                     .withName(bean.getName())
@@ -88,6 +92,18 @@ public class ConnectProjectAdminTabPanelModuleProvider
         }
 
         return builder.build();
+    }
+
+    @Override
+    public Class getBeanClass()
+    {
+        return BEAN_CLASS;
+    }
+
+    @Override
+    public String getDescriptorKey()
+    {
+        return DESCRIPTOR_KEY;
     }
 
 }

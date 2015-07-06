@@ -9,13 +9,18 @@ import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderCon
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 @JiraComponent
-public class EntityPropertyModuleProvider implements ConnectModuleProvider<EntityPropertyModuleBean>
+public class EntityPropertyModuleProvider implements ConnectModuleProvider
 {
+    public static final String DESCRIPTOR_KEY = "jiraEntityProperties";
+    public static final Class BEAN_CLASS = EntityPropertyModuleBean.class;
+    
     private final ConnectEntityPropertyModuleDescriptorFactory descriptorFactory;
 
     @Autowired
@@ -25,16 +30,29 @@ public class EntityPropertyModuleProvider implements ConnectModuleProvider<Entit
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, final String jsonFieldName, final List<EntityPropertyModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<JsonObject> modules)
     {
-        return Lists.transform(beans, new Function<EntityPropertyModuleBean, ModuleDescriptor>()
+        return Lists.transform(modules, new Function<JsonObject, ModuleDescriptor>()
         {
             @Override
-            public ModuleDescriptor apply(final EntityPropertyModuleBean bean)
+            public ModuleDescriptor apply(final JsonObject module)
             {
+                EntityPropertyModuleBean bean = new Gson().fromJson(module, EntityPropertyModuleBean.class);
+
                 return descriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean);
             }
         });
     }
 
+    @Override
+    public Class getBeanClass()
+    {
+        return BEAN_CLASS;
+    }
+
+    @Override
+    public String getDescriptorKey()
+    {
+        return DESCRIPTOR_KEY;
+    }
 }

@@ -11,11 +11,16 @@ import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
-public class SearchRequestViewModuleProvider implements ConnectModuleProvider<SearchRequestViewModuleBean>
+public class SearchRequestViewModuleProvider implements ConnectModuleProvider
 {
+    public static final String DESCRIPTOR_KEY = "jiraSearchRequestViews";
+    public static final Class BEAN_CLASS = SearchRequestViewModuleBean.class;
+    
     private final SearchRequestViewModuleDescriptorFactory searchRequestViewModuleDescriptorFactory;
 
     @Autowired
@@ -25,16 +30,29 @@ public class SearchRequestViewModuleProvider implements ConnectModuleProvider<Se
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, String jsonFieldName, List<SearchRequestViewModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<JsonObject> modules)
     {
         List<ModuleDescriptor> moduleDescriptors = new ArrayList<>();
 
-        for (SearchRequestViewModuleBean bean : beans)
+        for (JsonObject module : modules)
         {
+            SearchRequestViewModuleBean bean = new Gson().fromJson(module, SearchRequestViewModuleBean.class);
             ModuleDescriptor descriptor = searchRequestViewModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean);
             moduleDescriptors.add(descriptor);
         }
 
         return moduleDescriptors;
+    }
+    
+    @Override
+    public Class getBeanClass()
+    {
+        return BEAN_CLASS;
+    }
+
+    @Override
+    public String getDescriptorKey()
+    {
+        return DESCRIPTOR_KEY;
     }
 }

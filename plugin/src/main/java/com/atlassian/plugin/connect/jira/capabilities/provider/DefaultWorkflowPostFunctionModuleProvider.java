@@ -13,6 +13,8 @@ import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -24,6 +26,9 @@ import static com.atlassian.plugin.connect.jira.capabilities.provider.JiraTempla
 @ExportAsDevService
 public class DefaultWorkflowPostFunctionModuleProvider implements WorkflowPostFunctionModuleProvider
 {
+    public static final String DESCRIPTOR_KEY = "jiraWorkflowPostFunctions";
+    public static final Class BEAN_CLASS = WorkflowPostFunctionModuleBean.class;
+    
     private final WorkflowPostFunctionModuleDescriptorFactory workflowPostFunctionFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
@@ -39,13 +44,14 @@ public class DefaultWorkflowPostFunctionModuleProvider implements WorkflowPostFu
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, String jsonFieldName, List<WorkflowPostFunctionModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<JsonObject> modules)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<>();
 
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
-        for (WorkflowPostFunctionModuleBean bean : beans)
+        for (JsonObject module : modules)
         {
+            WorkflowPostFunctionModuleBean bean = new Gson().fromJson(module, WorkflowPostFunctionModuleBean.class);
             // register render strategies for iframe workflow views
             if (bean.hasCreate())
             {
@@ -88,5 +94,17 @@ public class DefaultWorkflowPostFunctionModuleProvider implements WorkflowPostFu
         IFrameRenderStrategy renderStrategy = builder.build();
 
         iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getRawKey(), resource.getResource(), renderStrategy);
+    }
+
+    @Override
+    public Class getBeanClass()
+    {
+        return BEAN_CLASS;
+    }
+
+    @Override
+    public String getDescriptorKey()
+    {
+        return DESCRIPTOR_KEY;
     }
 }

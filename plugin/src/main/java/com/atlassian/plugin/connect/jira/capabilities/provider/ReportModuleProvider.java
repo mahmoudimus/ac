@@ -9,6 +9,8 @@ import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderCon
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -17,8 +19,11 @@ import java.util.List;
  * @since 1.2
  */
 @JiraComponent
-public class ReportModuleProvider implements ConnectModuleProvider<ReportModuleBean>
+public class ReportModuleProvider implements ConnectModuleProvider
 {
+    public static final String DESCRIPTOR_KEY = "jiraReports";
+    public static final Class BEAN_CLASS = ReportModuleBean.class;
+    
     private final ConnectReportModuleDescriptorFactory moduleDescriptorFactory;
 
     @Autowired
@@ -28,16 +33,28 @@ public class ReportModuleProvider implements ConnectModuleProvider<ReportModuleB
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin connectPlugin,
-            final String jsonFieldName, final List<ReportModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<JsonObject> modules)
     {
-        return Lists.transform(beans, new Function<ReportModuleBean, ModuleDescriptor>()
+        return Lists.transform(modules, new Function<JsonObject, ModuleDescriptor>()
         {
             @Override
-            public ModuleDescriptor apply(final ReportModuleBean reportModuleBean)
+            public ModuleDescriptor apply(final JsonObject module)
             {
-                return moduleDescriptorFactory.createModuleDescriptor(moduleProviderContext, connectPlugin, reportModuleBean);
+                ReportModuleBean bean = new Gson().fromJson(module, ReportModuleBean.class);
+                return moduleDescriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean);
             }
         });
+    }
+    
+    @Override
+    public Class getBeanClass()
+    {
+        return BEAN_CLASS;
+    }
+
+    @Override
+    public String getDescriptorKey()
+    {
+        return DESCRIPTOR_KEY;
     }
 }

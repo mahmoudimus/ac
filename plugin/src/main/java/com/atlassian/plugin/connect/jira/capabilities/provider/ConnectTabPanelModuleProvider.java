@@ -20,18 +20,22 @@ import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderCon
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Map;
 
 @JiraComponent
-public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<ConnectTabPanelModuleBean>
+public class ConnectTabPanelModuleProvider implements ConnectModuleProvider
 {
     private final ConnectTabPanelModuleDescriptorFactory descriptorFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
+    public static final String DESCRIPTOR_KEY = "jiraIssueTabPanels";
+    public static final Class BEAN_CLASS = ConnectTabPanelModuleBean.class;
     public static final String ISSUE_TAB_PANELS = "jiraIssueTabPanels";
     public static final String PROJECT_TAB_PANELS = "jiraProjectTabPanels";
     public static final String PROFILE_TAB_PANELS = "jiraProfileTabPanels";
@@ -64,15 +68,16 @@ public class ConnectTabPanelModuleProvider implements ConnectModuleProvider<Conn
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, String jsonFieldName,
-                                                 List<ConnectTabPanelModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<JsonObject> modules)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
 
-        for (ConnectTabPanelModuleBean bean : beans)
+        for (JsonObject module : modules)
         {
+            ConnectTabPanelModuleBean bean = new Gson().fromJson(module, ConnectTabPanelModuleBean.class);
+            
             if (FIELD_TO_HINTS.containsKey(jsonFieldName))
             {
                 // register a render strategy for tab panels
