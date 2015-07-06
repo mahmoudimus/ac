@@ -15,12 +15,10 @@ import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteDialog;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteInlineDialog;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginAwarePage;
-import com.atlassian.plugin.connect.test.pageobjects.RemotePluginDialog;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.common.MultiProductWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
@@ -160,9 +158,9 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
     {
         login(testUserFactory.basicUser());
         RemotePluginAwarePage page = goToPageWithLink(JWT_EXPIRY_INLINE_DIALOG_KEY);
-        ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
-        RemotePluginDialog dialog = product.getPageBinder().bind(RemotePluginDialog.class, remotePluginTest);
-        verifyIframeURLHasVersionNumber(dialog);
+        page.clickAddOnLink();
+        RemoteInlineDialog inlineDialog = product.getPageBinder().bind(RemoteInlineDialog.class);
+        verifyIframeURLHasVersionNumber(inlineDialog);
     }
 
     private String getJwtFromParameterCapturingServlet(ParameterCapturingServlet parameterCapturingServlet)
