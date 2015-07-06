@@ -49,8 +49,27 @@
             name="Workflow Post Function Module Provider">
         <description>...</description>
     </connect-module-provider>
-    
-    <!-- TODO: tab panels! what's up with those? so weird imo -->
+
+    <connect-module-provider
+            key="jiraIssueTabPanels"
+            class="com.atlassian.plugin.connect.jira.capabilities.provider.IssueTabPanelModuleProvider"
+            name="Issue Tab Panel Module Provider">
+        <description>...</description>
+    </connect-module-provider>
+
+    <connect-module-provider
+            key="jiraProjectTabPanels"
+            class="com.atlassian.plugin.connect.jira.capabilities.provider.ProjectTabPanelModuleProvider"
+            name="Project Tab Panel Module Provider">
+        <description>...</description>
+    </connect-module-provider>
+
+    <connect-module-provider
+            key="jiraProfileTabPanels"
+            class="com.atlassian.plugin.connect.jira.capabilities.provider.ProfileTabPanelModuleProvider"
+            name="Profile Tab Panel Module Provider">
+        <description>...</description>
+    </connect-module-provider>
     
     <!-- JavaScript and CSS resource inclusions for relevant contexts -->
 

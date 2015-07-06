@@ -1,0 +1,43 @@
+package com.atlassian.plugin.connect.jira.capabilities.provider;
+
+import com.atlassian.plugin.ModuleDescriptor;
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
+import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.jira.capabilities.descriptor.tabpanel.ConnectTabPanelModuleDescriptorFactory;
+import com.atlassian.plugin.connect.jira.capabilities.descriptor.tabpanel.ConnectViewProfilePanelModuleDescriptor;
+import com.atlassian.plugin.connect.jira.iframe.tabpanel.TabPanelDescriptorHints;
+import com.atlassian.plugin.connect.jira.iframe.tabpanel.profile.ConnectIFrameProfileTabPanel;
+import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.google.gson.JsonObject;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+
+public class ProfileTabPanelModuleProvider extends ConnectTabPanelModuleProvider
+{
+    public static final String DESCRIPTOR_KEY = "jiraProfileTabPanels";
+
+    @Autowired
+    public ProfileTabPanelModuleProvider(ConnectTabPanelModuleDescriptorFactory descriptorFactory,
+                                       IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                       IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory)
+    {
+        super(descriptorFactory, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory);
+    }
+
+    @Override
+    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<JsonObject> modules)
+    {
+        TabPanelDescriptorHints hints = new TabPanelDescriptorHints("profile-tab-page",
+                ConnectViewProfilePanelModuleDescriptor.class, ConnectIFrameProfileTabPanel.class);
+
+        return provideModules(moduleProviderContext, theConnectPlugin, modules, hints);
+    }
+
+    @Override
+    public String getDescriptorKey()
+    {
+        return DESCRIPTOR_KEY;
+    }
+}

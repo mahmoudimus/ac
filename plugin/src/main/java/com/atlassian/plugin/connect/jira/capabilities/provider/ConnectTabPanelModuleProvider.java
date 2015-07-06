@@ -28,13 +28,13 @@ import java.util.List;
 import java.util.Map;
 
 @JiraComponent
-public class ConnectTabPanelModuleProvider implements ConnectModuleProvider
+public abstract class ConnectTabPanelModuleProvider implements ConnectModuleProvider
 {
     private final ConnectTabPanelModuleDescriptorFactory descriptorFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
-    public static final String DESCRIPTOR_KEY = "jiraIssueTabPanels";
+    
     public static final Class BEAN_CLASS = ConnectTabPanelModuleBean.class;
     public static final String ISSUE_TAB_PANELS = "jiraIssueTabPanels";
     public static final String PROJECT_TAB_PANELS = "jiraProjectTabPanels";
@@ -66,9 +66,8 @@ public class ConnectTabPanelModuleProvider implements ConnectModuleProvider
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
     }
-
-    @Override
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<JsonObject> modules)
+    
+    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<JsonObject> modules, TabPanelDescriptorHints hints)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 
@@ -77,26 +76,28 @@ public class ConnectTabPanelModuleProvider implements ConnectModuleProvider
         for (JsonObject module : modules)
         {
             ConnectTabPanelModuleBean bean = new Gson().fromJson(module, ConnectTabPanelModuleBean.class);
-            
-            if (FIELD_TO_HINTS.containsKey(jsonFieldName))
-            {
-                // register a render strategy for tab panels
-                IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                        .addOn(connectAddonBean.getKey())
-                        .module(bean.getKey(connectAddonBean))
-                        .genericBodyTemplate()
-                        .urlTemplate(bean.getUrl())
-                        .conditions(bean.getConditions())
-                        .title(bean.getDisplayName())
-                        .build();
-                iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), renderStrategy);
 
-                // construct a module descriptor that JIRA will use to retrieve tab modules from
-                builder.add(descriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean,
-                        FIELD_TO_HINTS.get(jsonFieldName)));
-            }
+            // register a render strategy for tab panels
+            IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
+                    .addOn(connectAddonBean.getKey())
+                    .module(bean.getKey(connectAddonBean))
+                    .genericBodyTemplate()
+                    .urlTemplate(bean.getUrl())
+                    .conditions(bean.getConditions())
+                    .title(bean.getDisplayName())
+                    .build();
+            iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), renderStrategy);
+
+            // construct a module descriptor that JIRA will use to retrieve tab modules from
+            builder.add(descriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean, hints));
         }
 
         return builder.build();
+    }
+
+    @Override
+    public Class getBeanClass()
+    {
+        return BEAN_CLASS;
     }
 }
