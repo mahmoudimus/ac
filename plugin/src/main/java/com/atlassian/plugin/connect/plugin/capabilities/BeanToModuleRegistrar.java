@@ -70,10 +70,10 @@ public class BeanToModuleRegistrar
         BeanTransformContext ctx = new BeanTransformContext(theConnectPlugin, ProductFilter.valueOf(applicationProperties.getDisplayName().toUpperCase()));
 
         //we MUST add in the lifecycle webhooks first
-        ModuleList moduleList = getCapabilitiesWithLifecycleWebhooks(addon);
+        Map<String, List<JsonObject>> moduleList = getCapabilitiesWithLifecycleWebhooks(addon);
 
         //now process the module fields
-        processFields(addon, moduleList, ctx, descriptorsToRegister);
+        processFields(addon, ctx, descriptorsToRegister);
 
 
         if (!descriptorsToRegister.isEmpty())
@@ -118,7 +118,7 @@ public class BeanToModuleRegistrar
         return registrations.containsKey(pluginKey);
     }
 
-    private ModuleList getCapabilitiesWithLifecycleWebhooks(ConnectAddonBean addon)
+    private Map<String, List<JsonObject>> getCapabilitiesWithLifecycleWebhooks(ConnectAddonBean addon)
     {
         LifecycleBean lifecycle = addon.getLifecycle();
         ConnectAddonBeanBuilder builder = newConnectAddonBean(addon);
@@ -154,23 +154,27 @@ public class BeanToModuleRegistrar
         return null;        
     }
 
-    private void processFields(ConnectAddonBean addon, ModuleList moduleList, BeanTransformContext ctx, List<DescriptorToRegister> descriptorsToRegister)
+    private void processFields(ConnectAddonBean addon, BeanTransformContext ctx, List<DescriptorToRegister> descriptorsToRegister)
     {
         Collection<ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver> collection1 = pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<>(ConnectContextParameterResolverModuleDescriptor.class));
         Collection<ConnectModuleProvider> providers = pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class));
 
-        for (Map.Entry<String,List<JsonObject>> entry : addon.getTestModules().entrySet())
+        for (Map.Entry<String,List<JsonObject>> entry : addon.getModules().entrySet())
         {
-            if(findProvider(entry.getKey(), providers) == null)
+            ConnectModuleProvider provider = findProvider(entry.getKey(), providers);
+            if(provider == null)
             {
                 // BAD NEWS, FAIL!
             }
+            
+            
         }
 
-        for (Map.Entry<String,List<JsonObject>> entry : addon.getTestModules().entrySet())
+        for (Map.Entry<String,List<JsonObject>> entry : addon.getModules().entrySet())
         {
             ConnectModuleProvider provider = findProvider(entry.getKey(), providers);
-            List<ModuleDescriptor> descriptors = provider.provideModules(new DefaultConnectModuleProviderContext(addon), ctx.getTheConnectPlugin(), entry.getValue());
+            List<ConnectAddonBean> bean = provider.validate(entry.getValue());
+            List<ModuleDescriptor> descriptors = provider.provideModules(new DefaultConnectModuleProviderContext(addon), ctx.getTheConnectPlugin(), bean);
             List<DescriptorToRegister> theseDescriptors = Lists.transform(descriptors, new Function<ModuleDescriptor, DescriptorToRegister>()
             {
                 @Override

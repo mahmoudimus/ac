@@ -10,7 +10,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.google.gson.JsonObject;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import com.atlassian.plugin.connect.modules.beans.ModuleJson;
 
 import java.util.*;
 
@@ -158,11 +157,7 @@ public class ConnectAddonBean extends BaseModuleBean
     /**
      * The list of modules this add on provides
      */
-    @SchemaIgnore("shallow")
-    private ModuleList modules;
-
-//    @SchemaIgnore("shallow")
-    private Map<String, List<JsonObject>> testModules;
+    private Map<String, List<JsonObject>> modules;
 
     /**
      * Set of [scopes](../scopes/scopes.html) requested by this add on
@@ -180,8 +175,7 @@ public class ConnectAddonBean extends BaseModuleBean
         this.vendor = VendorBean.newVendorBean().build();
         this.links = newHashMap();
         this.lifecycle = LifecycleBean.newLifecycleBean().build();
-        this.modules = new ModuleList();
-        this.testModules = new HashMap<>();
+        this.modules = new HashMap<>();
         this.scopes = new HashSet<>();
         this.baseUrl = "";
         this.authentication = newAuthenticationBean().build();
@@ -214,12 +208,7 @@ public class ConnectAddonBean extends BaseModuleBean
 
         if (null == modules)
         {
-            this.modules = new ModuleList();
-        }
-
-        if (null == testModules)
-        {
-            this.testModules = new HashMap<>();
+            this.modules = new HashMap<>();
         }
 
         if (null == vendor)
@@ -281,14 +270,9 @@ public class ConnectAddonBean extends BaseModuleBean
         return vendor;
     }
 
-    public ModuleList getModules()
+    public Map<String, List<JsonObject>> getModules()
     {
         return modules;
-    }
-    
-    public Map<String, List<JsonObject>> getTestModules()
-    {
-        return testModules;
     }
 
     public Map<String, String> getLinks()

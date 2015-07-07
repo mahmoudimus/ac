@@ -98,6 +98,6 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
 
     private void provideModules()
     {
-        moduleProvider.provideModules(moduleProviderContext, plugin, "thePageField", beans);
+        moduleProvider.provideModules(moduleProviderContext, plugin, beans);
     }
 }

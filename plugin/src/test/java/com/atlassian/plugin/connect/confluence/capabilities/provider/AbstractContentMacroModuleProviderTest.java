@@ -110,7 +110,7 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
         T builder = createMacroBeanBuilder()
                 .withName(new I18nProperty("The Macro Name", "macro.name.key"))
                 .withUrl("/my-macro");
-        List<ModuleDescriptor> modules = moduleProvider.provideModules(moduleProviderContext, plugin, "", Lists.newArrayList(builder.build()));
+        List<ModuleDescriptor> modules = moduleProvider.provideModules(moduleProviderContext, plugin, Lists.newArrayList(builder.build()));
         assertThat(modules, containsInAnyOrder(is(instanceOf(XhtmlMacroModuleDescriptor.class))));
     }
 
@@ -121,7 +121,7 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
                 .withName(new I18nProperty("The Macro Name", "macro.name.key"))
                 .withUrl("/my-macro")
                 .withFeatured(true);
-        List<ModuleDescriptor> modules = moduleProvider.provideModules(moduleProviderContext, plugin, "", Lists.newArrayList(builder.build()));
+        List<ModuleDescriptor> modules = moduleProvider.provideModules(moduleProviderContext, plugin, Lists.newArrayList(builder.build()));
         assertThat(modules, containsInAnyOrder(
                 is(instanceOf(XhtmlMacroModuleDescriptor.class)),
                 is(instanceOf(WebItemModuleDescriptor.class))
@@ -136,7 +136,7 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
                 .withUrl("/my-macro")
                 .withFeatured(true)
                 .withIcon(IconBean.newIconBean().withUrl("/assets/image.png").build());
-        List<ModuleDescriptor> modules = moduleProvider.provideModules(moduleProviderContext, plugin, "", Lists.newArrayList(builder.build()));
+        List<ModuleDescriptor> modules = moduleProvider.provideModules(moduleProviderContext, plugin, Lists.newArrayList(builder.build()));
         assertThat(modules, containsInAnyOrder(
                 is(instanceOf(XhtmlMacroModuleDescriptor.class)),
                 is(instanceOf(WebItemModuleDescriptor.class)),
@@ -158,7 +158,7 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
                         .withHeight("100px")
                         .build()
                 );
-        List<ModuleDescriptor> modules = moduleProvider.provideModules(moduleProviderContext, plugin, "", Lists.newArrayList(builder.build()));
+        List<ModuleDescriptor> modules = moduleProvider.provideModules(moduleProviderContext, plugin, Lists.newArrayList(builder.build()));
         assertThat(modules, containsInAnyOrder(
                 is(instanceOf(XhtmlMacroModuleDescriptor.class)),
                 is(instanceOf(ServletModuleDescriptor.class)),
@@ -176,7 +176,7 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
                                                           .withUrl("/images/placeholder.png")
                                                           .build()
                 );
-        List<ModuleDescriptor> modules = moduleProvider.provideModules(moduleProviderContext, plugin, "", Lists.newArrayList(builder.build()));
+        List<ModuleDescriptor> modules = moduleProvider.provideModules(moduleProviderContext, plugin, Lists.newArrayList(builder.build()));
         Macro macro = getMacro(modules);
         assertThat(macro, is(instanceOf(EditorImagePlaceholder.class)));
     }
@@ -289,7 +289,7 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
 
     private ImagePlaceholder getImagePlaceholder(T builder, Map<String, String> parameters)
     {
-        List<ModuleDescriptor> modules = moduleProvider.provideModules(moduleProviderContext, plugin, "", Lists.newArrayList(builder.build()));
+        List<ModuleDescriptor> modules = moduleProvider.provideModules(moduleProviderContext, plugin, Lists.newArrayList(builder.build()));
         EditorImagePlaceholder macro = (EditorImagePlaceholder) getMacro(modules);
         return macro.getImagePlaceholder(parameters, mock(ConversionContext.class));
     }

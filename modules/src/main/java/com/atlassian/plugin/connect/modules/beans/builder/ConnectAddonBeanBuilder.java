@@ -5,16 +5,14 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper.isParameterizedList;
 import static com.google.common.collect.Collections2.transform;
@@ -32,13 +30,12 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     private String description;
     private VendorBean vendor;
     private Map<String, String> links;
-    private ModuleList modules;
     private Set<ScopeName> scopes;
     private LifecycleBean lifecycle;
     private String baseUrl;
     private AuthenticationBean authentication;
     private Boolean enableLicensing;
-    private Map<String, List<JsonObject>> testModules;
+    private Map<String, List<JsonObject>> modules;
 
     public ConnectAddonBeanBuilder()
     {
@@ -54,7 +51,6 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         this.vendor = defaultBean.getVendor();
         this.links = defaultBean.getLinks();
         this.modules = defaultBean.getModules();
-        this.testModules = defaultBean.getTestModules();
         this.lifecycle = defaultBean.getLifecycle();
         this.baseUrl = defaultBean.getBaseUrl();
         this.authentication = defaultBean.getAuthentication();
@@ -111,10 +107,14 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     {
         if (null == modules)
         {
-            this.modules = new ModuleList();
+            this.modules = new HashMap<>();
+        }
+        if (null == modules.get(fieldName))
+        {
+            modules.put(fieldName, new ArrayList<JsonObject>());
         }
 
-        addBeanReflectivelyByType(fieldName, modules, bean);
+        modules.get(fieldName).add(new Gson().toJsonTree(bean).getAsJsonObject());
 
         return (T) this;
     }
@@ -168,7 +168,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         }));
     }
 
-    private void addBeanReflectivelyByType(String fieldName, ModuleList capabilities, ModuleBean bean)
+    private void addBeanReflectivelyByType(String fieldName, Map<String, List<JsonObject>> capabilities, ModuleBean bean)
     {
         Class beanClass = bean.getClass();
         try
