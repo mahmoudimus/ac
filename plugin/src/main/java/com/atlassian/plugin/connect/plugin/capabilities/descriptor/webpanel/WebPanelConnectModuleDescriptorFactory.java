@@ -37,21 +37,21 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
     public WebPanelModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, WebPanelModuleBean bean)
     {
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
-        Element domElement = createDomElement(bean, bean.getKey(connectAddonBean), connectAddonBean);
+        Element domElement = createDomElement(bean, bean.getKey(connectAddonBean), moduleProviderContext);
         final WebPanelModuleDescriptor descriptor = connectContainerUtil.createBean(WebPanelConnectModuleDescriptor.class);
 
         descriptor.init(theConnectPlugin, domElement);
         return descriptor;
     }
 
-    private Element createDomElement(WebPanelModuleBean bean, String webPanelKey, ConnectAddonBean addon)
+    private Element createDomElement(WebPanelModuleBean bean, String webPanelKey, ConnectModuleProviderContext moduleProviderContext)
     {
         String i18nKeyOrName = Strings.isNullOrEmpty(bean.getName().getI18n()) ? bean.getDisplayName() : bean.getName().getI18n();
 
         Element webPanelElement = new DOMElement("remote-web-panel");
         webPanelElement.addAttribute("key", webPanelKey);
         webPanelElement.addAttribute("i18n-name-key", i18nKeyOrName);
-        webPanelElement.addAttribute("location", bean.getLocation());
+        webPanelElement.addAttribute("location", moduleProviderContext.getLocationQualifier().processLocation(bean.getLocation()));
 
         if (null != bean.getWeight())
         {
@@ -60,7 +60,7 @@ public class WebPanelConnectModuleDescriptorFactory implements ConnectModuleDesc
 
         if (!bean.getConditions().isEmpty())
         {
-            DOMElement conditionFragment = conditionModuleFragmentFactory.createFragment(addon.getKey(), bean.getConditions());
+            DOMElement conditionFragment = conditionModuleFragmentFactory.createFragment(moduleProviderContext.getConnectAddonBean().getKey(), bean.getConditions());
             webPanelElement.add(conditionFragment);
         }
 
