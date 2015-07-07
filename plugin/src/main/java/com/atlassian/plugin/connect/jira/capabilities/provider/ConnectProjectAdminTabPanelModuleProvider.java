@@ -30,7 +30,7 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWe
  * Instead it is modelled as a web-item plus a servlet
  */
 @JiraComponent
-public class ConnectProjectAdminTabPanelModuleProvider extends ConnectModuleProvider
+public class ConnectProjectAdminTabPanelModuleProvider extends ConnectModuleProvider<ConnectProjectAdminTabPanelModuleBean>
 {
     public static final String DESCRIPTOR_KEY = "jiraProjectAdminTabPanels";
     public static final Class BEAN_CLASS = ConnectProjectAdminTabPanelModuleBean.class;    
@@ -52,15 +52,13 @@ public class ConnectProjectAdminTabPanelModuleProvider extends ConnectModuleProv
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<JsonObject> modules)
+    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<ConnectProjectAdminTabPanelModuleBean> beans)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
-        for (JsonObject module: modules)
+        for (ConnectProjectAdminTabPanelModuleBean bean : beans)
         {
-            ConnectProjectAdminTabPanelModuleBean bean = new Gson().fromJson(module, ConnectProjectAdminTabPanelModuleBean.class);
-
             // render a web item for our tab
             WebItemModuleBean webItemModuleBean = newWebItemBean()
                     .withName(bean.getName())

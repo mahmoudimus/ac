@@ -48,13 +48,12 @@ public class DefaultWebItemModuleProvider extends WebItemModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<JsonObject> modules)
+    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<WebItemModuleBean> beans)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
-        for (JsonObject module : modules)
+        for (WebItemModuleBean bean : beans)
         {
-            WebItemModuleBean bean = new Gson().fromJson(module, WebItemModuleBean.class);
             descriptors.addAll(beanToDescriptors(moduleProviderContext, theConnectPlugin, bean));
         }
 

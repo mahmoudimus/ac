@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Component
-public class WebPanelModuleProvider extends ConnectModuleProvider
+public class WebPanelModuleProvider extends ConnectModuleProvider<WebPanelModuleBean>
 {
     public static final String DESCRIPTOR_KEY = "webPanels";
     public static final Class BEAN_CLASS = WebPanelModuleBean.class;
@@ -40,14 +40,13 @@ public class WebPanelModuleProvider extends ConnectModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<JsonObject> modules)
+    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<WebPanelModuleBean> beans)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<>();
 
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
-        for (JsonObject module : modules)
+        for (WebPanelModuleBean bean : beans)
         {
-            WebPanelModuleBean bean = new Gson().fromJson(module, WebPanelModuleBean.class);
             // register an iframe rendering strategy
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(connectAddonBean.getKey())

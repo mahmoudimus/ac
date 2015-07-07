@@ -1,7 +1,8 @@
 package com.atlassian.plugin.connect.jira.capabilities.provider;
 
+import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 
-public abstract class WorkflowPostFunctionModuleProvider extends ConnectModuleProvider
+public abstract class WorkflowPostFunctionModuleProvider extends ConnectModuleProvider<WorkflowPostFunctionModuleBean>
 {
 }

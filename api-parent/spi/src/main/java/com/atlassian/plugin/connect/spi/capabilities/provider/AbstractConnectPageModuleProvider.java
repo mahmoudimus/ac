@@ -29,7 +29,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  * Base class for ConnectModuleProviders of Connect Pages. Note that there is actually no P2 module descriptor. Instead
  * it is modelled as a web-item plus a servlet
  */
-public abstract class AbstractConnectPageModuleProvider extends ConnectModuleProvider
+public abstract class AbstractConnectPageModuleProvider extends ConnectModuleProvider<ConnectPageModuleBean>
 {
     private static final String RAW_CLASSIFIER = "raw";
     private static final Class BEAN_CLASS = ConnectPageModuleBean.class;
@@ -48,14 +48,13 @@ public abstract class AbstractConnectPageModuleProvider extends ConnectModulePro
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<JsonObject> modules)
+    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<ConnectPageModuleBean> beans)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
 
-        for (JsonObject module : modules)
+        for (ConnectPageModuleBean bean : beans)
         {
-            ConnectPageModuleBean bean = new Gson().fromJson(module, ConnectPageModuleBean.class);
             // register a render strategy for our iframe page
             IFrameRenderStrategy pageRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(connectAddonBean.getKey())

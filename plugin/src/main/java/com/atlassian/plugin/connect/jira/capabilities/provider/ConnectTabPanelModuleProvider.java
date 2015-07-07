@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 @JiraComponent
-public abstract class ConnectTabPanelModuleProvider extends ConnectModuleProvider
+public abstract class ConnectTabPanelModuleProvider extends ConnectModuleProvider<ConnectTabPanelModuleBean>
 {
     private final ConnectTabPanelModuleDescriptorFactory descriptorFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
@@ -67,16 +67,14 @@ public abstract class ConnectTabPanelModuleProvider extends ConnectModuleProvide
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
     }
     
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<JsonObject> modules, TabPanelDescriptorHints hints)
+    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<ConnectTabPanelModuleBean> beans, TabPanelDescriptorHints hints)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
 
-        for (JsonObject module : modules)
+        for (ConnectTabPanelModuleBean bean : beans)
         {
-            ConnectTabPanelModuleBean bean = new Gson().fromJson(module, ConnectTabPanelModuleBean.class);
-
             // register a render strategy for tab panels
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(connectAddonBean.getKey())

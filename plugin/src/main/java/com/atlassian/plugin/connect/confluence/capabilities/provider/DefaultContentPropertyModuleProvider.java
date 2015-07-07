@@ -35,15 +35,14 @@ public class DefaultContentPropertyModuleProvider extends ContentPropertyModuleP
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<JsonObject> modules)
+    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<ContentPropertyModuleBean> beans)
     {
-        return Lists.transform(modules, new Function<JsonObject, ModuleDescriptor>()
+        return Lists.transform(beans, new Function<ContentPropertyModuleBean, ModuleDescriptor>()
         {
             @Override
             public ContentPropertyIndexSchemaModuleDescriptor apply(
-                    @Nullable JsonObject module)
+                    @Nullable ContentPropertyModuleBean bean)
             {
-                ContentPropertyModuleBean bean = new Gson().fromJson(module, ContentPropertyModuleBean.class);
                 return factory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean);
             }
         });

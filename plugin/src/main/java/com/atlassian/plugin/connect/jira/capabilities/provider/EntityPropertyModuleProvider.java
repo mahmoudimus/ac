@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 @JiraComponent
-public class EntityPropertyModuleProvider extends ConnectModuleProvider
+public class EntityPropertyModuleProvider extends ConnectModuleProvider<EntityPropertyModuleBean>
 {
     public static final String DESCRIPTOR_KEY = "jiraEntityProperties";
     public static final Class BEAN_CLASS = EntityPropertyModuleBean.class;
@@ -30,15 +30,13 @@ public class EntityPropertyModuleProvider extends ConnectModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<JsonObject> modules)
+    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<EntityPropertyModuleBean> beans)
     {
-        return Lists.transform(modules, new Function<JsonObject, ModuleDescriptor>()
+        return Lists.transform(beans, new Function<EntityPropertyModuleBean, ModuleDescriptor>()
         {
             @Override
-            public ModuleDescriptor apply(final JsonObject module)
+            public ModuleDescriptor apply(final EntityPropertyModuleBean bean)
             {
-                EntityPropertyModuleBean bean = new Gson().fromJson(module, EntityPropertyModuleBean.class);
-
                 return descriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean);
             }
         });

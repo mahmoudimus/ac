@@ -41,7 +41,7 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWe
 import static com.google.common.collect.Lists.newArrayList;
 
 public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMacroModuleBean>
-        extends ConnectModuleProvider
+        extends ConnectModuleProvider<T>
 {
     public final Class<T> BEAN_CLASS;
     private static final Logger log = LoggerFactory.getLogger(AbstractContentMacroModuleProvider.class);
@@ -72,16 +72,16 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     protected abstract ModuleDescriptor createMacroModuleDescriptor(ConnectModuleProviderContext moduleProviderContext,
                                                                     Plugin theConnectPlugin, T macroBean);
 
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<JsonObject> modules)
+    @Override
+    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<T> beans)
     {
         List<ModuleDescriptor> moduleDescriptors = newArrayList();
 
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         MacroI18nBuilder i18nBuilder = new MacroI18nBuilder(connectAddonBean.getKey());
 
-        for (JsonObject module : modules)
+        for (T bean : beans)
         {
-            T bean = new Gson().fromJson(module, BEAN_CLASS);
             moduleDescriptors.addAll(createModuleDescriptors(moduleProviderContext, theConnectPlugin, bean));
             i18nBuilder.add(bean, connectAddonBean);
         }

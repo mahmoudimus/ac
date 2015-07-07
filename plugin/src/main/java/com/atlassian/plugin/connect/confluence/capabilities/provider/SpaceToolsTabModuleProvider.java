@@ -42,7 +42,7 @@ import static com.google.common.collect.Lists.newArrayList;
  * The other web item is for the legacy Space Admin section, which appears for Documentation Theme spaces.
  */
 @ConfluenceComponent
-public class SpaceToolsTabModuleProvider extends ConnectModuleProvider
+public class SpaceToolsTabModuleProvider extends ConnectModuleProvider<SpaceToolsTabModuleBean>
 {
     public static final String DESCRIPTOR_KEY = "spaceToolsTabs";
     public static final Class BEAN_CLASS = SpaceToolsTabModuleBean.class;
@@ -78,13 +78,12 @@ public class SpaceToolsTabModuleProvider extends ConnectModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<JsonObject> modules)
+    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<SpaceToolsTabModuleBean> beans)
     {
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         List<ModuleDescriptor> moduleDescriptors = newArrayList();
-        for (JsonObject module : modules)
+        for (SpaceToolsTabModuleBean bean : beans)
         {
-            SpaceToolsTabModuleBean bean = new Gson().fromJson(module, SpaceToolsTabModuleBean.class);
             XWorkActionModuleBean actionBean = createActionBean(connectAddonBean, bean);
             moduleDescriptors.add(xWorkActionDescriptorFactory.create(connectAddonBean, theConnectPlugin, actionBean));
 

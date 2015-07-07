@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @JiraComponent
-public class DashboardItemModuleProvider extends ConnectModuleProvider
+public class DashboardItemModuleProvider extends ConnectModuleProvider<DashboardItemModuleBean>
 {
     public static final String DESCRIPTOR_KEY = "jiraDashboardItems";
     public static final Class BEAN_CLASS = DashboardItemModuleBean.class;
@@ -31,14 +31,13 @@ public class DashboardItemModuleProvider extends ConnectModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<JsonObject> modules)
+    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<DashboardItemModuleBean> beans)
     {
-        return Lists.transform(modules, new Function<JsonObject, ModuleDescriptor>()
+        return Lists.transform(beans, new Function<DashboardItemModuleBean, ModuleDescriptor>()
         {
             @Override
-            public ModuleDescriptor apply(final JsonObject module)
+            public ModuleDescriptor apply(final DashboardItemModuleBean bean)
             {
-                DashboardItemModuleBean bean = new Gson().fromJson(module, DashboardItemModuleBean.class);
                 return dashboardItemModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean);
             }
         });

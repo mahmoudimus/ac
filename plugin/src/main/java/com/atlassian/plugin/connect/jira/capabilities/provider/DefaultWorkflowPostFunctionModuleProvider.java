@@ -44,14 +44,13 @@ public class DefaultWorkflowPostFunctionModuleProvider extends WorkflowPostFunct
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<JsonObject> modules)
+    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<WorkflowPostFunctionModuleBean> beans)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<>();
 
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
-        for (JsonObject module : modules)
+        for (WorkflowPostFunctionModuleBean bean : beans)
         {
-            WorkflowPostFunctionModuleBean bean = new Gson().fromJson(module, WorkflowPostFunctionModuleBean.class);
             // register render strategies for iframe workflow views
             if (bean.hasCreate())
             {

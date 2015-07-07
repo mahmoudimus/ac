@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class WebHookModuleProvider extends ConnectModuleProvider
+public class WebHookModuleProvider extends ConnectModuleProvider<WebHookModuleBean>
 {
     public static final String DESCRIPTOR_KEY = "webHooks";
     public static final Class BEAN_CLASS = WebHookModuleBean.class;
@@ -31,13 +31,12 @@ public class WebHookModuleProvider extends ConnectModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<JsonObject> modules)
+    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<WebHookModuleBean> beans)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<>();
 
-        for (JsonObject module: modules)
+        for (WebHookModuleBean bean: beans)
         {
-            WebHookModuleBean bean = new Gson().fromJson(module, WebHookModuleBean.class);
             descriptors.addAll(beanToDescriptors(moduleProviderContext, theConnectPlugin, bean));
         }
 

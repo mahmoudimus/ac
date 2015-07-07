@@ -16,7 +16,7 @@ import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @JiraComponent
-public class SearchRequestViewModuleProvider extends ConnectModuleProvider
+public class SearchRequestViewModuleProvider extends ConnectModuleProvider<SearchRequestViewModuleBean>
 {
     public static final String DESCRIPTOR_KEY = "jiraSearchRequestViews";
     public static final Class BEAN_CLASS = SearchRequestViewModuleBean.class;
@@ -30,13 +30,12 @@ public class SearchRequestViewModuleProvider extends ConnectModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<JsonObject> modules)
+    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<SearchRequestViewModuleBean> beans)
     {
         List<ModuleDescriptor> moduleDescriptors = new ArrayList<>();
 
-        for (JsonObject module : modules)
+        for (SearchRequestViewModuleBean bean : beans)
         {
-            SearchRequestViewModuleBean bean = new Gson().fromJson(module, SearchRequestViewModuleBean.class);
             ModuleDescriptor descriptor = searchRequestViewModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean);
             moduleDescriptors.add(descriptor);
         }

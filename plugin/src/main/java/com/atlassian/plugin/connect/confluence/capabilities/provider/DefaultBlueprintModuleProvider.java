@@ -38,13 +38,12 @@ public class DefaultBlueprintModuleProvider extends BlueprintModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<JsonObject> modules)
+    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<BlueprintModuleBean> beans)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 
-        for (JsonObject module : modules)
+        for (BlueprintModuleBean bean : beans)
         {
-            BlueprintModuleBean bean = new Gson().fromJson(module, BlueprintModuleBean.class);
             builder.add(
                     blueprintModuleWebItemDescriptorFactory.createModuleDescriptor(moduleProviderContext,
                             theConnectPlugin,

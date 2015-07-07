@@ -19,7 +19,7 @@ import java.util.List;
  * @since 1.2
  */
 @JiraComponent
-public class ReportModuleProvider extends ConnectModuleProvider
+public class ReportModuleProvider extends ConnectModuleProvider<ReportModuleBean>
 {
     public static final String DESCRIPTOR_KEY = "jiraReports";
     public static final Class BEAN_CLASS = ReportModuleBean.class;
@@ -33,14 +33,13 @@ public class ReportModuleProvider extends ConnectModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<JsonObject> modules)
+    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<ReportModuleBean> beans)
     {
-        return Lists.transform(modules, new Function<JsonObject, ModuleDescriptor>()
+        return Lists.transform(beans, new Function<ReportModuleBean, ModuleDescriptor>()
         {
             @Override
-            public ModuleDescriptor apply(final JsonObject module)
+            public ModuleDescriptor apply(final ReportModuleBean bean)
             {
-                ReportModuleBean bean = new Gson().fromJson(module, ReportModuleBean.class);
                 return moduleDescriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean);
             }
         });

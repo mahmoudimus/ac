@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Component
-public class WebSectionModuleProvider extends ConnectModuleProvider
+public class WebSectionModuleProvider extends ConnectModuleProvider<WebSectionModuleBean>
 {
     public static final String DESCRIPTOR_KEY = "webSections";
     public static final Class BEAN_CLASS = WebSectionModuleBean.class;
@@ -31,13 +31,12 @@ public class WebSectionModuleProvider extends ConnectModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<JsonObject> modules)
+    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<WebSectionModuleBean> beans)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<>();
 
-        for (JsonObject module : modules)
+        for (WebSectionModuleBean bean : beans)
         {
-            WebSectionModuleBean bean = new Gson().fromJson(module, WebSectionModuleBean.class);
             descriptors.addAll(beanToDescriptors(moduleProviderContext, theConnectPlugin, bean));
         }
 

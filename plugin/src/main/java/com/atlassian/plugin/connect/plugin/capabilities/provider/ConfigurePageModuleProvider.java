@@ -35,14 +35,13 @@ public class ConfigurePageModuleProvider extends AbstractAdminPageModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<JsonObject> modules)
+    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<ConnectPageModuleBean> beans)
     {
-        super.provideModules(moduleProviderContext, theConnectPlugin, modules);
+        super.provideModules(moduleProviderContext, theConnectPlugin, beans);
 
-        if(null != modules && !modules.isEmpty())
+        if(null != beans && !beans.isEmpty())
         {
-            ConnectPageModuleBean configBean = new Gson().fromJson(modules.get(0), ConnectPageModuleBean.class);
-
+            ConnectPageModuleBean configBean = beans.get(0);
             ModuleDescriptor descriptor = new ConfigurePageModuleDescriptor();
             descriptor.init(theConnectPlugin, new DOMElement("connectConfigurePage").addAttribute("key",
                     configBean.getKey(moduleProviderContext.getConnectAddonBean())));

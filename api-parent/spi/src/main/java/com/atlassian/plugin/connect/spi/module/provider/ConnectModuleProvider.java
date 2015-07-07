@@ -8,17 +8,17 @@ import com.google.gson.JsonObject;
 
 import java.util.List;
 
-public abstract class ConnectModuleProvider
+public abstract class ConnectModuleProvider<T>
 {
-    public abstract List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<JsonObject> modules);
+    public abstract List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<T> beans);
     
     public abstract String getDescriptorKey();
-    
+
     public abstract Class getBeanClass();
     
-    public boolean validate(List<JsonObject> modules)
+    public List<T> validate(List<JsonObject> modules)
     {
-        return true;
-        
+        return null;
+
     }
 }

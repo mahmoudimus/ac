@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 
-public abstract class WebItemModuleProvider extends ConnectModuleProvider
+public abstract class WebItemModuleProvider extends ConnectModuleProvider<WebItemModuleBean>
 {
 
 }
