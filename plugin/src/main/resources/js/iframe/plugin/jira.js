@@ -97,6 +97,11 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                     remote.setDashboardItemTitle(title);
                 },
 
+                /**
+                 * Returns whether the current user is permitted to edit the dashboard item
+                 *
+                 * @param {Function} callback - the callback that handles the response
+                 */
                 isDashboardItemEditable : function(callback) {
                     remote.isDashboardItemEditable(callback);
                 },
