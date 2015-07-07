@@ -121,7 +121,7 @@ public class AddOnPropertiesResource
      * @response.representation.200.doc
      *      The property containing key, value and link to self.
      * @response.representation.400.doc
-     *      Property key longer than 255 characters.
+     *      Property key longer than 127 characters.
      * @response.representation.401.doc
      *      Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.
      * @response.representation.404.doc
@@ -172,7 +172,7 @@ public class AddOnPropertiesResource
      * @response.representation.201.doc
      *      Property has been created.
      * @response.representation.400.doc
-     *      Property key longer than 255 characters.
+     *      Property key longer than 127 characters.
      * @response.representation.401.doc
      *      Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.
      * @response.representation.404.doc
@@ -219,7 +219,7 @@ public class AddOnPropertiesResource
      * @response.representation.204.doc
      *      Nothing is returned on success.
      * @response.representation.400.doc
-     *      Property key longer than 255 characters.
+     *      Property key longer than 127 characters.
      * @response.representation.401.doc
      *      Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.
      * @response.representation.404.doc
