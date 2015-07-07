@@ -33,6 +33,15 @@ or Confluence Cloud with Atlassian Connect as follows:
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
 
+## [1.1.37](../release-notes/1-1-0.html#1.1.35)
+* Reduced addon property key to 127
+* JIRA: Added ability to open Create Issue Dialog from the addon [ACJIRA-113](https://ecosystem.atlassian.net/browse/ACJIRA-113)
+* JIRA: Added API to check if user is allowed to modify the dashboard [ACJIRA-436](https://ecosystem.atlassian.net/browse/ACJIRA-436)
+* Fix non-responsive dialog chrome buttons when errors from loading content [ACJS-44](https://ecosystem.atlassian.net/browse/ACJS-44)
+* Fixed javascript errors when pressing escape on a non-dialog iframe [ACJS-46](https://ecosystem.atlassian.net/browse/ACJS-46)
+* Confluence: Added scope to create space with an addon [CE-157](https://ecosystem.atlassian.net/browse/CE-157)
+* JIRA: Fixed refreshIssuePage to run on first call [AC-1599](https://ecosystem.atlassian.net/browse/AC-1599)
+
 ## [1.1.35](../release-notes/1-1-0.html#1.1.35)
 * Fixed broken dialog button callbacks [ACJS-41](https://ecosystem.atlassian.net/browse/ACJS-41)
 
