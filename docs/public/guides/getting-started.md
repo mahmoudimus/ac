@@ -220,11 +220,17 @@ authentication and many other patterns you can use to develop your own add-ons.
 
 ### Tools to help you develop
 
-We've written two example tools, one in Java and one in Javascript. These tools help generate some of the plumbing
+We've written a few example tools to help you to get started. These tools help generate some of the plumbing
 required for your Connect add-on:
 
- * [atlassian-connect-play-java](https://bitbucket.org/atlassian/atlassian-connect-play-java)
- * [atlassian-connect-express](https://bitbucket.org/atlassian/atlassian-connect-express)
+ * [Node.js](https://bitbucket.org/atlassian/atlassian-connect-express)
+ * [.Net](https://bitbucket.org/atlassian/atlassian-connect-.net)
+
+There are also a few unsupported Atlassian and community contributed tools:
+
+ * [Play (Java)](https://bitbucket.org/atlassian/atlassian-connect-play-java)
+ * [Play (Scala)](https://bitbucket.org/atlassianlabs/atlassian-connect-play-scala)
+ * [Symphony2 Atlassian Connect Bundle](https://github.com/thecatontheflat/atlassian-connect-bundle)
 
 ### Join the Connect community
 
