@@ -31,7 +31,7 @@ Contributions are encouraged! To start working on Atlassian Connect, follow this
     * Include your issue key and a short description
 4. Commit and push
 5. Create a pull request in [Stash](https://stash.atlassian.com/projects/AC/repos/atlassian-connect/) with 1-3 reviewers from the team (depending on the complexity of the change).
-6. Request a QA Demo with Atlassian Connect QA [Connect Team](https://extranet.atlassian.com/display/ARA/Atlassian+Connect+Team)
+6. Request a QA Demo with [Atlassian Connect Team] (https://extranet.atlassian.com/display/ARA/Atlassian+Connect+Team) QA
 
 For more details see the [internal developer's guide](https://extranet.atlassian.com/x/cAhDg).
 
