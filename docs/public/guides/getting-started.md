@@ -231,6 +231,7 @@ There are also a few unsupported Atlassian and community contributed tools:
  * [Play (Java)](https://bitbucket.org/atlassian/atlassian-connect-play-java)
  * [Play (Scala)](https://bitbucket.org/atlassianlabs/atlassian-connect-play-scala)
  * [Symphony2 Atlassian Connect Bundle](https://github.com/thecatontheflat/atlassian-connect-bundle)
+ * Haskell - (AC Core)[http://hackage.haskell.org/package/atlassian-connect-core] / (AC Descriptor)[http://hackage.haskell.org/package/atlassian-connect-descriptor]
 
 ### Join the Connect community
 
