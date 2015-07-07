@@ -807,11 +807,4 @@
             </snapshots>
         </repository>
     </repositories>
-    <scm>
-        <connection>scm:git:ssh://git@stash.atlassian.com:7997/ac/atlassian-connect.git</connection>
-        <developerConnection>scm:git:ssh://git@stash.atlassian.com:7997/ac/atlassian-connect.git</developerConnection>
-        <url>https://stash.atlassian.com/projects/AC/repos/atlassian-connect</url>
-      <tag>HEAD</tag>
-  </scm>
-
 </project>
