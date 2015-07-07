@@ -34,7 +34,6 @@ or Confluence Cloud with Atlassian Connect as follows:
 </div>
 
 ## [1.1.37](../release-notes/1-1-0.html#1.1.35)
-* Reduced addon property key to 127
 * JIRA: Added ability to open Create Issue Dialog from the addon [ACJIRA-113](https://ecosystem.atlassian.net/browse/ACJIRA-113)
 * JIRA: Added API to check if user is allowed to modify the dashboard [ACJIRA-436](https://ecosystem.atlassian.net/browse/ACJIRA-436)
 * Fix non-responsive dialog chrome buttons when errors from loading content [ACJS-44](https://ecosystem.atlassian.net/browse/ACJS-44)
