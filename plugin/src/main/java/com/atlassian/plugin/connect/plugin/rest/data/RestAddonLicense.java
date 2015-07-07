@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.rest.data;
 
-import com.atlassian.plugin.connect.plugin.license.LicenseStatus;
 import com.atlassian.upm.api.license.entity.LicenseType;
 import org.codehaus.jackson.annotate.JsonProperty;
 
