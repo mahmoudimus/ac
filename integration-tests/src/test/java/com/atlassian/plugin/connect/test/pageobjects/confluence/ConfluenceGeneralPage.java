@@ -9,6 +9,7 @@ import com.atlassian.pageobjects.elements.timeout.TimeoutType;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
+import com.atlassian.plugin.connect.test.pageobjects.RemotePageUtil;
 import org.openqa.selenium.By;
 
 import javax.inject.Inject;
@@ -41,7 +42,8 @@ public class ConfluenceGeneralPage implements GeneralPage
     @Override
     public ConnectAddOnEmbeddedTestPage clickAddOnLink()
     {
-        findLinkElement().click();
+        PageElement link = findLinkElement();
+        RemotePageUtil.clickAddonLinkWithKeyboardFallback(link);
         return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addonKey, pageKey, true);
     }
 
