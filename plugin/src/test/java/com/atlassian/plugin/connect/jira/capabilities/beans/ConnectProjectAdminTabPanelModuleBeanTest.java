@@ -6,8 +6,6 @@ import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelMod
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.jira.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.opensymphony.util.FileUtils;
 import org.junit.Test;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -32,40 +30,39 @@ public class ConnectProjectAdminTabPanelModuleBeanTest
     @Test
     public void producesCorrectJSON() throws Exception
     {
-//        String json = getGson().toJson(createBean(), ConnectAddonBean.class);
-//        assertThat(json, is(sameJSONAs(expectedJson())));
+        String json = getGson().toJson(createBean(), ConnectAddonBean.class);
+        assertThat(json, is(sameJSONAs(expectedJson())));
     }
 
     @Test
     public void producesExactlyOneProjectAdminTabPanelModule()
     {
-        List<JsonObject> modules = createBean().getModules().get(ConnectProjectAdminTabPanelModuleProvider.DESCRIPTOR_KEY);
+        List<? extends ModuleBean> modules = createBean().getModules().getJiraProjectAdminTabPanels();
 
         assertThat(modules, hasSize(1));
     }
 
-//    @Test
-//    public void producesModuleOfCorrectType()
-//    {
-//        ModuleBean moduleBean = createBean().getModules().getJiraProjectAdminTabPanels().get(0);
-//
-//        assertThat(moduleBean, is(instanceOf(ConnectProjectAdminTabPanelModuleBean.class)));
-//    }
-//
-//    @Test
-//    public void prefixesLocationCorrectly()
-//    {
-//        ConnectProjectAdminTabPanelModuleBean moduleBean = createBean().getModules().getJiraProjectAdminTabPanels().get(0);
-//
-//        assertThat(moduleBean.getAbsoluteLocation(), is("atl.jira.proj.config/a-location"));
-//    }
+    @Test
+    public void producesModuleOfCorrectType()
+    {
+        ModuleBean moduleBean = createBean().getModules().getJiraProjectAdminTabPanels().get(0);
+
+        assertThat(moduleBean, is(instanceOf(ConnectProjectAdminTabPanelModuleBean.class)));
+    }
+
+    @Test
+    public void prefixesLocationCorrectly()
+    {
+        ConnectProjectAdminTabPanelModuleBean moduleBean = createBean().getModules().getJiraProjectAdminTabPanels().get(0);
+
+        assertThat(moduleBean.getAbsoluteLocation(), is("atl.jira.proj.config/a-location"));
+    }
 
     private ConnectAddonBean createBean()
     {
         Map<String, String> links = new HashMap<String, String>();
         links.put("self", "http://www.example.com/capabilities");
         links.put("homepage", "http://www.example.com");
-
 
         return newConnectAddonBean()
                 .withName("My Plugin")

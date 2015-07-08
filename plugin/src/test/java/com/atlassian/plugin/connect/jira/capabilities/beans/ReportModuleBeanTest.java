@@ -21,10 +21,10 @@ public class ReportModuleBeanTest
     @Test
     public void producesCorrectJSON() throws IOException
     {
-//        List<ReportModuleBean> addonBeans = readTestFile().getModules().getJiraReports();
-//
-//        assertThat(addonBeans, hasSize(2));
-//        assertThat(addonBeans, contains(createBeans()));
+        List<ReportModuleBean> addonBeans = readTestFile().getModules().getJiraReports();
+
+        assertThat(addonBeans, hasSize(2));
+        assertThat(addonBeans, contains(createBeans()));
     }
 
     private static ReportModuleBean[] createBeans()
