@@ -140,7 +140,7 @@ public class ConnectAddonBean extends BaseModuleBean
      * Only add-ons with a baseUrl starting with ``https://`` can be [installed in cloud instances](../developing/cloud-installation.html)
      * servers. ``http://`` may still be used for testing locally.
      *
-     * Note: each add-on must have a unique baseUrl. If you would like to host multiple add-ons from the same host, consider adding a path prefix into the baseUrl.
+     * Note: each add-on must have a unique baseUrl. If you would like to serve multiple add-ons from the same host, consider adding a path prefix into the baseUrl.
      */
     @Required
     @StringSchemaAttributes(format = "uri")
