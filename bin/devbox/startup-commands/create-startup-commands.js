@@ -258,7 +258,7 @@ var getCliOpts = function(callback) {
             help: 'Output directory'
         })
         .option('manifestoBaseUrl', {
-            default: 'https://manifesto.uc-inf.net'
+            default: 'https://manifesto.atlassian.io'
         })
         .option('dacBaseUrl', {
             default: 'https://developer.atlassian.com/static'
