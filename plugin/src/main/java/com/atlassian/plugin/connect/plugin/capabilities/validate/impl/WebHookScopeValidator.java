@@ -12,6 +12,7 @@ import com.google.common.collect.Iterables;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.util.List;
 
 
 /**
@@ -35,18 +36,18 @@ public class WebHookScopeValidator implements AddOnBeanValidator
     @Override
     public void validate(final ConnectAddonBean addon) throws InvalidDescriptorException
     {
-//        for (WebHookModuleBean webHookModuleBean : addon.getModules().getWebhooks())
-//        {
-//            final ScopeName requiredScope = webHookScopeService.getRequiredScope(webHookModuleBean.getEvent());
-//
-//            if (!Iterables.any(addon.getScopes(), new ImpliedScopePredicate(requiredScope)))
-//            {
-//                String exceptionMessage = String.format("Add-on '%s' requests web hook '%s' but not the '%s' scope "
-//                        + "required to receive it. Please request this scope in your descriptor.", addon.getKey(),
-//                        webHookModuleBean.getEvent(), requiredScope);
-//                throw new InvalidDescriptorException(exceptionMessage, "connect.install.error.missing.scope", requiredScope);
-//            }
-//        }
+        for (WebHookModuleBean webHookModuleBean : (List<WebHookModuleBean>)addon.getModuleBeans().get("webhooks"))
+        {
+            final ScopeName requiredScope = webHookScopeService.getRequiredScope(webHookModuleBean.getEvent());
+
+            if (!Iterables.any(addon.getScopes(), new ImpliedScopePredicate(requiredScope)))
+            {
+                String exceptionMessage = String.format("Add-on '%s' requests web hook '%s' but not the '%s' scope "
+                        + "required to receive it. Please request this scope in your descriptor.", addon.getKey(),
+                        webHookModuleBean.getEvent(), requiredScope);
+                throw new InvalidDescriptorException(exceptionMessage, "connect.install.error.missing.scope", requiredScope);
+            }
+        }
     }
 
     private static class ImpliedScopePredicate implements Predicate<ScopeName>

@@ -34,6 +34,7 @@ public class ConnectModulesGsonFactory
                 .registerTypeAdapterFactory(new NullIgnoringSetTypeAdapterFactory())
                 .registerTypeAdapter(WebItemTargetBean.class, new WebItemTargetBeanSerializer())
                 .registerTypeAdapter(JsonObject.class, new DynamicModuleSerializer())
+                .setPrettyPrinting()
                 .disableHtmlEscaping()
                 ;
     }

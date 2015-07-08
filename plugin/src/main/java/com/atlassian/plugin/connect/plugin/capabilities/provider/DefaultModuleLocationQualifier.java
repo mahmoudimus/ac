@@ -4,8 +4,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.RequiredKeyBean;
+import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.spi.module.ModuleLocationQualifier;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -36,13 +35,12 @@ public class DefaultModuleLocationQualifier implements ModuleLocationQualifier
             public Map<String, String> get()
             {
                 return ImmutableMap.<String, String>builder()
-//                        .putAll(createKeyToQualifiedKeyMap(addonBean.getModules().getWebItems()))
-//                        .putAll(createKeyToQualifiedKeyMap(addonBean.getModules().getWebSections()))
+                        .putAll(createKeyToQualifiedKeyMap((List<RequiredKeyBean>)addonBean.getModuleBeans().get("webItems")))
+                        .putAll(createKeyToQualifiedKeyMap((List<RequiredKeyBean>)addonBean.getModuleBeans().get("webSecions")))
                         .build();
             }
         });
     }
-
 
     private <T extends RequiredKeyBean> Map<String, String> createKeyToQualifiedKeyMap(List<T> beans)
     {

@@ -90,7 +90,7 @@ public class BeanToModuleRegistrarTest
                 .withScopes(new HashSet<ScopeName>(Arrays.asList(ScopeName.ADMIN)))
                 .build();
 
-        //beanToModuleRegistrar.registerDescriptorsForBeans(connectAddonBean);
+        beanToModuleRegistrar.registerDescriptorsForBeans(connectAddonBean);
     }
 
 }

@@ -159,6 +159,8 @@ public class BeanToModuleRegistrar
         Collection<ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver> collection1 = pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<>(ConnectContextParameterResolverModuleDescriptor.class));
         Collection<ConnectModuleProvider> providers = pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class));
 
+        Map<String, List<? extends BaseModuleBean>> beanMap = new HashMap<>();
+        
         for (Map.Entry<String,List<JsonObject>> entry : addon.getModules().entrySet())
         {
             ConnectModuleProvider provider = findProvider(entry.getKey(), providers);
@@ -166,15 +168,22 @@ public class BeanToModuleRegistrar
             {
                 // BAD NEWS, FAIL!
             }
-            
-            
-        }
 
-        for (Map.Entry<String,List<JsonObject>> entry : addon.getModules().entrySet())
+            List<? extends BaseModuleBean> beans = provider.validate(entry.getValue());
+            if(beans == null)
+            {
+                // BAD NEWS, FAIL!
+            }
+            beanMap.put(provider.getDescriptorKey(), beans);
+        }
+        
+        addon.setModuleBeans(beanMap);
+
+        for (Map.Entry<String,List<? extends BaseModuleBean>> entry : addon.getModuleBeans().entrySet())
         {
+            List<? extends BaseModuleBean> beans = entry.getValue();
             ConnectModuleProvider provider = findProvider(entry.getKey(), providers);
-            List<ConnectAddonBean> bean = provider.validate(entry.getValue());
-            List<ModuleDescriptor> descriptors = provider.provideModules(new DefaultConnectModuleProviderContext(addon), ctx.getTheConnectPlugin(), bean);
+            List<ModuleDescriptor> descriptors = provider.provideModules(new DefaultConnectModuleProviderContext(addon), ctx.getTheConnectPlugin(), beans);
             List<DescriptorToRegister> theseDescriptors = Lists.transform(descriptors, new Function<ModuleDescriptor, DescriptorToRegister>()
             {
                 @Override

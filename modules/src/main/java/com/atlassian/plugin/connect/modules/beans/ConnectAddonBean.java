@@ -159,6 +159,9 @@ public class ConnectAddonBean extends BaseModuleBean
      */
     private Map<String, List<JsonObject>> modules;
 
+    @SchemaIgnore
+    private transient Map<String, List<? extends BaseModuleBean>> moduleBeans;
+
     /**
      * Set of [scopes](../scopes/scopes.html) requested by this add on
      *
@@ -209,6 +212,11 @@ public class ConnectAddonBean extends BaseModuleBean
         if (null == modules)
         {
             this.modules = new HashMap<>();
+        }
+
+        if (null == moduleBeans)
+        {
+            this.moduleBeans = new HashMap<>();
         }
 
         if (null == vendor)
@@ -273,6 +281,16 @@ public class ConnectAddonBean extends BaseModuleBean
     public Map<String, List<JsonObject>> getModules()
     {
         return modules;
+    }
+
+    public Map<String, List<? extends BaseModuleBean>> getModuleBeans()
+    {
+        return moduleBeans;
+    }
+
+    public void setModuleBeans(Map<String, List<? extends BaseModuleBean>> moduleBeans)
+    {
+        this.moduleBeans = moduleBeans;
     }
 
     public Map<String, String> getLinks()
@@ -344,6 +362,7 @@ public class ConnectAddonBean extends BaseModuleBean
                 .append(authentication, other.authentication)
                 .append(enableLicensing, other.enableLicensing)
                 .append(modules, other.modules)
+                .append(moduleBeans, other.moduleBeans)
                 .append(scopes, other.scopes)
                 .isEquals();
     }
@@ -365,6 +384,7 @@ public class ConnectAddonBean extends BaseModuleBean
                 .append(authentication)
                 .append(enableLicensing)
                 .append(modules)
+                .append(moduleBeans)
                 .append(scopes)
                 .build();
     }
