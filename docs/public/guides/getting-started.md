@@ -141,8 +141,11 @@ You've created the essential components of a Connect add-on: an `atlassian-conne
 
 Connect support is currently only for Atlassian-hosted products like JIRA Cloud, and not yet included with downloaded or locally-hosted instances. To simulate cloud products, components like the Connect framework are included in startup commands. Without these components Connect add-ons aren't installable.
 
-1. Ensure you have the [Atlassian SDK installed](https://developer.atlassian.com/docs/getting-started/set-up-the-atlassian-plugin-sdk-and-build-a-project).
-    You'll need at least SDK version 4.2.20. If you run the <tt>atlas-version</tt> command, you should see something similar to this:  
+1. Ensure you have:
+    * Java 8
+    * the [Atlassian SDK installed](https://developer.atlassian.com/docs/getting-started/set-up-the-atlassian-plugin-sdk-and-build-a-project)
+
+    You'll need at least SDK version 4.2.20. If you run the `atlas-version` command, you should see something similar to this:  
 
     <tt>
         ATLAS Version:    4.2.20  
