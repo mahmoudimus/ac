@@ -220,18 +220,25 @@ authentication and many other patterns you can use to develop your own add-ons.
 
 ### Tools to help you develop
 
-We've written a few example tools to help you to get started. These tools help generate some of the plumbing
+We've written a few example frameworks to help you to get started. These tools help generate some of the plumbing
 required for your Connect add-on:
 
  * [Node.js](https://bitbucket.org/atlassian/atlassian-connect-express)
- * [.Net](https://bitbucket.org/atlassian/atlassian-connect-.net)
+ * [.NET](https://bitbucket.org/atlassian/atlassian-connect-.net)
 
 There are also a few unsupported Atlassian and community contributed tools:
 
- * [Play (Java)](https://bitbucket.org/atlassian/atlassian-connect-play-java)
- * [Play (Scala)](https://bitbucket.org/atlassianlabs/atlassian-connect-play-scala)
- * [Symphony2 Atlassian Connect Bundle](https://github.com/thecatontheflat/atlassian-connect-bundle)
- * Haskell - (AC Core)[http://hackage.haskell.org/package/atlassian-connect-core] / (AC Descriptor)[http://hackage.haskell.org/package/atlassian-connect-descriptor]
+* [Play (Java)](https://bitbucket.org/atlassian/atlassian-connect-play-java)
+* [Play (Scala)](https://bitbucket.org/atlassianlabs/atlassian-connect-play-scala)
+* [Symphony2 Atlassian Connect Bundle](https://github.com/thecatontheflat/atlassian-connect-bundle)
+* Dart
+  * _Atlassian Connect JWT library_ - [atlassian_connect_jwt](https://pub.dartlang.org/packages/atlassian_connect_jwt)
+  * _Services for handling communications with the host product_ - [atlassian_connect_host](https://pub.dartlang.org/packages/atlassian_connect_host)
+  * _Helpers for managing environment configuration_ - [atlassian_connect_config](https://pub.dartlang.org/packages/atlassian_connect_config)
+  * _Simple web server bundling the above components_ - [atlassian_connect_shelf](https://pub.dartlang.org/packages/atlassian_connect_shelf)
+* Haskell
+  * [atlassian-connect-core](http://hackage.haskell.org/package/atlassian-connect-core)
+  * [atlassian-connect-descriptor](http://hackage.haskell.org/package/atlassian-connect-descriptor)
 
 ### Join the Connect community
 
