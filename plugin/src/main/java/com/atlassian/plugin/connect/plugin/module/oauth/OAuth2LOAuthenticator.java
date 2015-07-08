@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.module.oauth;
 
 import com.atlassian.oauth.consumer.ConsumerService;
-import com.atlassian.oauth.util.Check;
 import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.plugin.util.DefaultMessage;
@@ -28,6 +27,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.Principal;
 
+import static com.atlassian.oauth.util.Check.notNull;
+
 /**
  * Authenticates an incoming 2LO request
  */
@@ -46,8 +47,8 @@ public class OAuth2LOAuthenticator implements Authenticator
     private final AuthenticationController authenticationController;
     private final ApplicationProperties applicationProperties;
     private final UserManager userManager;
-    private final String ourConsumerKey;
     private final AddOnKeyExtractor addOnKeyExtractor;
+    private final ConsumerService consumerService;
 
     @Autowired
     public OAuth2LOAuthenticator(AuthenticationController authenticationController,
@@ -58,10 +59,10 @@ public class OAuth2LOAuthenticator implements Authenticator
         this.oAuthLinkManager = oAuthLinkManager;
         this.userManager = userManager;
         this.addOnKeyExtractor = addOnKeyExtractor;
-        this.authenticationController = Check.notNull(authenticationController,
+        this.authenticationController = notNull(authenticationController,
                 "authenticationController");
-        this.applicationProperties = Check.notNull(applicationProperties, "applicationProperties");
-        this.ourConsumerKey = consumerService.getConsumer().getKey();
+        this.applicationProperties = notNull(applicationProperties, "applicationProperties");
+        this.consumerService = notNull(consumerService, "consumerService");
     }
 
     public Result authenticate(HttpServletRequest request, HttpServletResponse response)
@@ -95,7 +96,7 @@ public class OAuth2LOAuthenticator implements Authenticator
         {
             consumerKey = message.getConsumerKey();
             oAuthLinkManager.validateOAuth2LORequest(message);
-            if (ourConsumerKey.equals(consumerKey))
+            if (consumerService.getConsumer().getKey().equals(consumerKey))
             {
                 String authHeader = request.getHeader("Authorization");
                 if (authHeader != null)
