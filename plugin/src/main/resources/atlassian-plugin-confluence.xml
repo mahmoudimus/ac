@@ -16,6 +16,13 @@
     </rest>
 
     <connect-module-provider
+            key="profilePages"
+            class="com.atlassian.plugin.connect.confluence.capabilities.provider.ProfilePageModuleProvider"
+            name="Profile Page Module Provider">
+        <description>...</description>
+    </connect-module-provider>
+
+    <connect-module-provider
             key="blueprints"
             class="com.atlassian.plugin.connect.confluence.capabilities.provider.DefaultBlueprintModuleProvider"
             name="Blueprint Module Provider">

@@ -142,47 +142,16 @@ public class BeanToModuleRegistrar
         return builder.build().getModules();
     }
     
-    private ConnectModuleProvider findProvider(String descriptorKey, Collection<ConnectModuleProvider> providers)
-    {
-        for(ConnectModuleProvider provider: providers)
-        {
-            if(provider.getDescriptorKey().equals(descriptorKey))
-            {
-                return provider;
-            }
-        }
-        return null;        
-    }
+
 
     private void processFields(ConnectAddonBean addon, BeanTransformContext ctx, List<DescriptorToRegister> descriptorsToRegister)
     {
-        Collection<ConnectContextParameterResolverModuleDescriptor.ConnectContextParametersResolver> collection1 = pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<>(ConnectContextParameterResolverModuleDescriptor.class));
-        Collection<ConnectModuleProvider> providers = pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class));
-
-        Map<String, List<? extends BaseModuleBean>> beanMap = new HashMap<>();
-        
-        for (Map.Entry<String,List<JsonObject>> entry : addon.getModules().entrySet())
-        {
-            ConnectModuleProvider provider = findProvider(entry.getKey(), providers);
-            if(provider == null)
-            {
-                // BAD NEWS, FAIL!
-            }
-
-            List<? extends BaseModuleBean> beans = provider.validate(entry.getValue());
-            if(beans == null)
-            {
-                // BAD NEWS, FAIL!
-            }
-            beanMap.put(provider.getDescriptorKey(), beans);
-        }
-        
-        addon.setModuleBeans(beanMap);
+        validateModules(addon);
 
         for (Map.Entry<String,List<? extends BaseModuleBean>> entry : addon.getModuleBeans().entrySet())
         {
             List<? extends BaseModuleBean> beans = entry.getValue();
-            ConnectModuleProvider provider = findProvider(entry.getKey(), providers);
+            ConnectModuleProvider provider = findProvider(entry.getKey());
             List<ModuleDescriptor> descriptors = provider.provideModules(new DefaultConnectModuleProviderContext(addon), ctx.getTheConnectPlugin(), beans);
             List<DescriptorToRegister> theseDescriptors = Lists.transform(descriptors, new Function<ModuleDescriptor, DescriptorToRegister>()
             {
@@ -194,6 +163,42 @@ public class BeanToModuleRegistrar
             });
             descriptorsToRegister.addAll(theseDescriptors);
         }
+    }
+    
+    public void validateModules(ConnectAddonBean addon)
+    {
+        Map<String, List<? extends BaseModuleBean>> beanMap = new HashMap<>();
+        
+        for (Map.Entry<String,List<JsonObject>> entry : addon.getModules().entrySet())
+        {
+            ConnectModuleProvider provider = findProvider(entry.getKey());
+            if(provider == null)
+            {
+                // BAD NEWS, FAIL!
+            }
+
+            List<? extends BaseModuleBean> beans = provider.validate(entry.getValue(), provider.getBeanClass());
+            if(beans == null)
+            {
+                // BAD NEWS, FAIL!
+            }
+            beanMap.put(provider.getDescriptorKey(), beans);
+        }
+        addon.setModuleBeans(beanMap);
+    }
+
+    private ConnectModuleProvider findProvider(String descriptorKey)
+    {
+        Collection<ConnectModuleProvider> providers = pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class));
+
+        for(ConnectModuleProvider provider: providers)
+        {
+            if(provider.getDescriptorKey().equals(descriptorKey))
+            {
+                return provider;
+            }
+        }
+        return null;
     }
 
     private class BeanTransformContext

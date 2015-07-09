@@ -24,7 +24,7 @@
 
     <connect-module-provider
             key="jiraProjectAdminTabPanels"
-            class="com.atlassian.plugin.connect.jira.capabilities.provider.ProjectAdminTabPanelModuleProvider"
+            class="com.atlassian.plugin.connect.jira.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider"
             name="Project Admin Tab Panel Module Provider">
         <description>...</description>
     </connect-module-provider>

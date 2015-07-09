@@ -20,10 +20,14 @@ public abstract class ConnectModuleProvider<T>
 
     public abstract Class getBeanClass();
     
-    public List<T> validate(List<JsonObject> modules)
+    public List<T> validate(List<JsonObject> modules, Class<T> type)
     {
-        JsonElement moduleJsonList = new Gson().toJsonTree(modules);
         List<T> beans = new ArrayList<>();
-        return new Gson().fromJson(moduleJsonList, beans.getClass());
+        for(JsonObject module : modules)
+        {
+            T bean = new Gson().fromJson(module, type);
+            beans.add(bean);
+        }
+        return beans;
     }
 }

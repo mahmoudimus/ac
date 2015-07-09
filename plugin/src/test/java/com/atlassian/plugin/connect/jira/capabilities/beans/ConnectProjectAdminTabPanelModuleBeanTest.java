@@ -37,7 +37,7 @@ public class ConnectProjectAdminTabPanelModuleBeanTest
     @Test
     public void producesExactlyOneProjectAdminTabPanelModule()
     {
-        List<? extends ModuleBean> modules = createBean().getModules().getJiraProjectAdminTabPanels();
+        List<? extends ModuleBean> modules = createBean().getModuleBeans().get("jiraProjectAdminTabPanels");
 
         assertThat(modules, hasSize(1));
     }
@@ -45,7 +45,7 @@ public class ConnectProjectAdminTabPanelModuleBeanTest
     @Test
     public void producesModuleOfCorrectType()
     {
-        ModuleBean moduleBean = createBean().getModules().getJiraProjectAdminTabPanels().get(0);
+        ModuleBean moduleBean = createBean().getModuleBeans().get("jiraProjectAdminTabPanels").get(0);
 
         assertThat(moduleBean, is(instanceOf(ConnectProjectAdminTabPanelModuleBean.class)));
     }
@@ -53,7 +53,7 @@ public class ConnectProjectAdminTabPanelModuleBeanTest
     @Test
     public void prefixesLocationCorrectly()
     {
-        ConnectProjectAdminTabPanelModuleBean moduleBean = createBean().getModules().getJiraProjectAdminTabPanels().get(0);
+        ConnectProjectAdminTabPanelModuleBean moduleBean = (ConnectProjectAdminTabPanelModuleBean)createBean().getModuleBeans().get("jiraProjectAdminTabPanels").get(0);
 
         assertThat(moduleBean.getAbsoluteLocation(), is("atl.jira.proj.config/a-location"));
     }

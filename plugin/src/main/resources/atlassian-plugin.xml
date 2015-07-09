@@ -27,13 +27,6 @@
     </connect-module-provider>
 
     <connect-module-provider
-            key="profilePages"
-            class="com.atlassian.plugin.connect.plugin.capabilities.provider.ProfilePageModuleProvider"
-            name="Profile Page Module Provider">
-        <description>...</description>
-    </connect-module-provider>
-
-    <connect-module-provider
             key="webItems"
             class="com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultWebItemModuleProvider"
             name="Web Item Module Provider">

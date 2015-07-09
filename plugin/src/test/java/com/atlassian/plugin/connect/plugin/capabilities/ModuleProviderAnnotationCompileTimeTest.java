@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
  */
 public class ModuleProviderAnnotationCompileTimeTest
 {
+    // TODO delete this????? not sure
     /**
      * I realize that asserting true and just letting exceptions happen in a loop is not how we "normally" write tests
      * However, doing it this way ensures that if we ever add any new modules to the ModuleList class, they will automatically

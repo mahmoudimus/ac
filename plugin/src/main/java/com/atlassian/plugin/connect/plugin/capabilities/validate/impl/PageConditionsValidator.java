@@ -1,9 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities.validate.impl;
 
-import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
-import com.atlassian.plugin.connect.modules.beans.ModuleList;
+import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper;
@@ -18,6 +15,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -97,37 +95,11 @@ public class PageConditionsValidator implements AddOnBeanValidator
     {
         List<ConnectPageModuleBean> pages = new ArrayList<ConnectPageModuleBean>();
 
-        Field[] fields = ModuleList.class.getDeclaredFields();
-        
-        for(Field field : fields)
+        for (Map.Entry<String,List<? extends BaseModuleBean>> entry : addonBean.getModuleBeans().entrySet())
         {
-            try
+            if(entry.getValue().get(0) instanceof ConnectPageModuleBean)
             {
-                if(ConnectPageModuleBean.class.isAssignableFrom(field.getType()))
-                {
-                    field.setAccessible(true);
-                    ConnectPageModuleBean pageModule = (ConnectPageModuleBean) field.get(addonBean.getModules());
-                    
-                    if(null != pageModule)
-                    {
-                        pages.add(pageModule);
-                    }
-                }
-                else if(ConnectReflectionHelper.isParameterizedListWithType(field.getGenericType(),ConnectPageModuleBean.class))
-                {
-                    field.setAccessible(true);
-
-                    List<ConnectPageModuleBean> pageModuleList = (List<ConnectPageModuleBean>) field.get(addonBean.getModules());
-
-                    if(null != pageModuleList)
-                    {
-                        pages.addAll(pageModuleList);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                log.error("Error reflectively looking up page modules for validation", e);
+                pages.addAll((List<ConnectPageModuleBean>)entry.getValue());
             }
         }
        

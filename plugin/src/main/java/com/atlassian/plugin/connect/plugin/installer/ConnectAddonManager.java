@@ -11,6 +11,7 @@ import com.atlassian.jwt.SigningAlgorithm;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
+import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.api.installer.AddonSettings;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
@@ -93,6 +94,7 @@ public class ConnectAddonManager
     private static final String DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY = "connect.lifecycle.install.sign_with_prev_key.disable";
 
     private static final String USER_KEY = "user_key";
+    private final PluginAccessor pluginAccessor;
 
     public enum SyncHandler
     {
@@ -129,7 +131,8 @@ public class ConnectAddonManager
                                SharedSecretService sharedSecretService,
                                ConnectHttpClientFactory connectHttpClientFactory,
                                ConnectAddonI18nManager i18nManager,
-                               DarkFeatureManager darkFeatureManager)
+                               DarkFeatureManager darkFeatureManager,
+                               PluginAccessor pluginAccessor)
     {
         this.isDevModeService = isDevModeService;
         this.userManager = userManager;
@@ -150,6 +153,7 @@ public class ConnectAddonManager
         this.sharedSecretService = sharedSecretService;
         this.i18nManager = i18nManager;
         this.darkFeatureManager = darkFeatureManager;
+        this.pluginAccessor = pluginAccessor;
     }
 
     public boolean hasDescriptor(String pluginKey)
