@@ -50,9 +50,15 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
             (
                 fieldName = "conditions",
                 description = 
-                        "Conditions can be added to display only when all the given conditions are true." +
-                        "\n\nThe only supported conditions for pages are:" +
-                        "\n{@link com.atlassian.plugin.connect.modules.beans.PageConditions#CONDITION_LIST_MD}"
+                        "Conditions can be added to display only when all the given conditions are true.\n\n" +
+                        "The only supported conditions for pages are:\n" +
+                        "<ul>\n" +
+                        "<li><code>entity_property_equal_to</code>\n" +
+                        "<li><code>feature_flag</code>\n" +
+                        "<li><code>user_is_admin</code>\n" +
+                        "<li><code>user_is_logged_in</code>\n" +
+                        "<li><code>user_is_sysadmin</code>\n" +
+                        "</ul>"
             )
     }
 )

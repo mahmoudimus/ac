@@ -1,6 +1,6 @@
 package it.servlet.macro;
 
-import com.atlassian.plugin.connect.spi.http.HttpMethod;
+import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import it.servlet.ContextServlet;
 import it.servlet.InstallHandlerServlet;

@@ -62,9 +62,9 @@ runTestsStage() {
         ) {
             commonRequirements()
             checkoutDefaultRepositoryTask()
-            cloverTestTask(
+            mavenTestTask(
                     description: 'Run Unit Tests',
-                    goal: 'package',
+                    goal: 'clover2:setup package clover2:clover',
                     environmentVariables: ''
             )
             cloverReportArtifact(
@@ -330,9 +330,9 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
         )
         commonRequirements()
         checkoutDefaultRepositoryTask()
-        cloverTestTask(
+        mavenTestTask(
                 description: 'Run Wired Lifecycle Tests for #product',
-                goal: 'verify -PpluginLifecycle -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters',
+                goal: 'clover2:setup verify -PpluginLifecycle,clover -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters clover2:aggregate clover2:clover',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
         )
         cloverReportArtifact(
@@ -353,9 +353,9 @@ wiredTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
     ) {
         commonRequirements()
         checkoutDefaultRepositoryTask()
-        cloverTestTask(
+        mavenTestTask(
                 description: 'Run Wired Tests for #product',
-                goal: 'verify -Pwired -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters',
+                goal: 'clover2:setup verify -Pwired,clover -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters clover2:aggregate clover2:clover',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
         )
         cloverReportArtifact(
@@ -375,6 +375,7 @@ integrationTestJob(['key', 'product', 'testGroup', 'groupName', 'additionalMaven
             name: '#product - IT #groupName'
     ) {
         commonRequirements()
+        requirement(key:'elastic', condition:'equals', value:'true')
         checkoutDefaultRepositoryTask()
         setupVncTask()
         mavenTestTask(
@@ -420,14 +421,6 @@ mavenTask(['description', 'goal']) {
             environmentVariables: '',
             hasTests: 'false',
             testDirectory: ''
-    )
-}
-
-cloverTestTask(['description', 'goal', 'environmentVariables']) {
-    mavenTestTask(
-            description: '#description',
-            goal: 'clover2:setup #goal clover2:aggregate clover2:clover',
-            environmentVariables: '#environmentVariables'
     )
 }
 
