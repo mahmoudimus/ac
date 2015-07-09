@@ -16,6 +16,10 @@
                         // TODO this should be replaced with a valid gadget API
                         var dashboardItemTitle = $($(this.iframe).parents('.gadget-container').find('h3.dashboard-item-title')[0]);
                         dashboardItemTitle.text(title);
+                    },
+                    isDashboardItemEditable: function(callback) {
+                        var configureOption = $(this.iframe).parents('.gadget-container').find('li.configure');
+                        callback(configureOption.length != 0);
                     }
                 },
                 stubs: ["triggerDashboardItemEdit"]

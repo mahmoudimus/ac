@@ -2,6 +2,7 @@
   "name": "atlassian-connect-plugin",
   "version": "1.0.0",
   "devDependencies": {
+    "sinon": "1.14.1",
     "karma": "0.12.31",
     "karma-chrome-launcher": "^0.1.7",
     "karma-firefox-launcher": "^0.1.4",
