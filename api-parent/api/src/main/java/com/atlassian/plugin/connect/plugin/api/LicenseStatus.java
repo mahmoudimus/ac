@@ -1,8 +1,9 @@
-package com.atlassian.plugin.connect.plugin.license;
+package com.atlassian.plugin.connect.plugin.api;
 
 import java.util.Locale;
 
 /**
+ * API for checking a license status of an add-on.
  */
 public enum LicenseStatus
 {

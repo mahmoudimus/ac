@@ -7,9 +7,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- * Allows an add-on to register callbacks for plugin lifecycle events. Each property in this object is a url that can be
- * absolute or relative to the add-on's baseUrl. When a lifecycle event is fired, it will POST to the appropriate url
- * registered for the event.
+ * Allows an add-on to register callbacks for plugin lifecycle events. Each property in this object is a URL relative to
+ * the add-on's base URL. When a lifecycle event is fired, it will POST to the appropriate URL registered for the event.
  *
  *#### Lifecycle Attribute Example
  *

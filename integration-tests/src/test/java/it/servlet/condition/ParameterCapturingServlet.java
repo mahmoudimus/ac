@@ -13,10 +13,6 @@ import java.util.Map;
 
 public class ParameterCapturingServlet extends ContextServlet
 {
-    /**
-     * The suggested (though not mandatory) route for this servlet.
-     */
-    public static final String PARAMETER_CAPTURE_URL = "/parameterCapture";
 
     private static final Function<String[],String> HEAD_ARRAY = new Function<String[], String>()
     {
