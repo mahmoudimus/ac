@@ -86,7 +86,24 @@ downloader.run({
         var compatibleApps = result.addon.listing.compatibleApplications;
 
         if (!compatibleApps) {
-            console.error(result.addon.key.red, "no compatible apps", JSON.stringify(result.listing));
+            console.error(result.addon.key.red, "no compatible apps provided", JSON.stringify(result.addon.listing));
+            return;
+        }
+
+        var registeredCompatibleApps = ["jira", "confluence"];
+        var listCompatibleAppKeys = [];
+        for (var app in compatibleApps) {
+            listCompatibleAppKeys.push(compatibleApps[app].key);
+        }
+
+        var intersectionOfCompatibleApps = listCompatibleAppKeys.filter(
+                function(appKey) {
+                    return registeredCompatibleApps.indexOf(appKey) != -1;
+                }
+        );
+
+        if (intersectionOfCompatibleApps.length == 0) {
+            console.error(result.addon.key.red, "Specified application not compatible", listCompatibleAppKeys);
             return;
         }
 
