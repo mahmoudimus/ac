@@ -2,9 +2,12 @@ package com.atlassian.plugin.connect.test.pageobjects.jira;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.PageBinder;
+import com.atlassian.pageobjects.elements.PageElement;
+import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
+import com.atlassian.plugin.connect.test.pageobjects.RemotePageUtil;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -29,20 +32,22 @@ public final class JiraGeneralPage implements GeneralPage
     private AtlassianWebDriver driver;
 
     @Inject
+    private PageElementFinder elementFinder;
+
+    @Inject
     private PageBinder pageBinder;
 
     private final String pageKey;
     private final String addonKey;
 
-    private final Supplier<Option<WebElement>> link = new Supplier<Option<WebElement>>()
+    private final Supplier<Option<PageElement>> link = new Supplier<Option<PageElement>>()
     {
         @Override
-        public Option<WebElement> get()
+        public Option<PageElement> get()
         {
             dismissCreateProjectDialogIfPresent();
             expandMoreMenuIfExists();
-
-            return driver.elementExists(link()) ? some(driver.findElement(link())) : Option.<WebElement>none();
+            return some(elementFinder.find(link()));
         }
     };
 
@@ -55,9 +60,9 @@ public final class JiraGeneralPage implements GeneralPage
     @Override
     public ConnectAddOnEmbeddedTestPage clickAddOnLink()
     {
-        final WebElement webElement = link.get().get();
-        webElement.click();
-        logger.debug("Link '{}' was found and clicked.", webElement);
+        final PageElement linkElement = link.get().get();
+        RemotePageUtil.clickAddonLinkWithKeyboardFallback(linkElement);
+        logger.debug("Link '{}' was found and clicked.", linkElement);
         return pageBinder.bind(ConnectAddOnEmbeddedTestPage.class, addonKey, pageKey, true);
     }
 
@@ -72,10 +77,10 @@ public final class JiraGeneralPage implements GeneralPage
                         throw new IllegalStateException(format("Could not find link '%s'", link()));
                     }
                 },
-                new Function<WebElement, Void>()
+                new Function<PageElement, Void>()
                 {
                     @Override
-                    public Void apply(WebElement l)
+                    public Void apply(PageElement l)
                     {
                         l.click();
                         logger.debug("Link '{}' was found and clicked.", l);
@@ -97,10 +102,10 @@ public final class JiraGeneralPage implements GeneralPage
                         throw new IllegalStateException(format("Could not find link '%s'", link()));
                     }
                 },
-                new Function<WebElement, String>()
+                new Function<PageElement, String>()
                 {
                     @Override
-                    public String apply(WebElement l)
+                    public String apply(PageElement l)
                     {
                         return l.getAttribute("href");
                     }
