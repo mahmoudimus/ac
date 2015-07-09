@@ -20,7 +20,7 @@ public class RemoteMacroEditorDialog extends RemotePluginDialog
 
     public RemoteMacroEditorDialog(ConnectAddOnEmbeddedTestPage embeddedConnectPage)
     {
-        super(embeddedConnectPage, false);
+        super(embeddedConnectPage);
     }
 
     public RemoteMacroEditorDialog closeMacroEditorAndWaitUntilHidden()
