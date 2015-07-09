@@ -57,6 +57,11 @@ public class ContentPropertyIndexExtractionConfigurationBean implements ModuleBe
         this.uiSupport = builder.getUiSupport();
     }
 
+    public static ContentPropertyIndexExtractionConfigurationBeanBuilder newContentPropertyIndexExtractionConfigurationBean()
+    {
+        return new ContentPropertyIndexExtractionConfigurationBeanBuilder();
+    }
+
     public String getObjectName()
     {
         return objectName;

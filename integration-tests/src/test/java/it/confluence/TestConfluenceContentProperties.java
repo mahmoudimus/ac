@@ -23,6 +23,7 @@ import com.atlassian.confluence.rest.client.impl.RemoteLongTaskServiceImpl;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
+import com.atlassian.plugin.connect.modules.beans.UISupportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFieldType;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
@@ -51,6 +52,8 @@ import java.util.List;
 import java.util.concurrent.Executors;
 
 import static com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean.newContentPropertyModuleBean;
+import static com.atlassian.plugin.connect.modules.beans.UISupportModuleBean.newUISupportModuleBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean.newContentPropertyIndexExtractionConfigurationBean;
 import static com.google.common.collect.Lists.newArrayList;
 import static junit.framework.TestCase.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -109,13 +112,31 @@ public class TestConfluenceContentProperties
                     .withKeyConfiguration(
                             new ContentPropertyIndexKeyConfigurationBean(PROPERTY_KEY,
                                     newArrayList(
-                                            new ContentPropertyIndexExtractionConfigurationBean(TEXT_FIELD_OBJECT_KEY, ContentPropertyIndexFieldType.text),
-                                            new ContentPropertyIndexExtractionConfigurationBean(NUMERIC_FIELD_OBJECT_KEY, ContentPropertyIndexFieldType.number),
-                                            new ContentPropertyIndexExtractionConfigurationBean(DATE_FIELD_OBJECT_KEY, ContentPropertyIndexFieldType.date),
-                                            new ContentPropertyIndexExtractionConfigurationBean(STRING_FIELD_OBJECT_KEY, ContentPropertyIndexFieldType.string))))
+                                            newContentPropertyIndexExtractionConfigurationBean()
+                                                    .withObjectName(TEXT_FIELD_OBJECT_KEY)
+                                                    .withType(ContentPropertyIndexFieldType.text)
+                                                    .build(),
+                                            newContentPropertyIndexExtractionConfigurationBean()
+                                                    .withObjectName(NUMERIC_FIELD_OBJECT_KEY)
+                                                    .withType(ContentPropertyIndexFieldType.number)
+                                                    .build(),
+                                            newContentPropertyIndexExtractionConfigurationBean()
+                                                    .withObjectName(DATE_FIELD_OBJECT_KEY)
+                                                    .withType(ContentPropertyIndexFieldType.date)
+                                                    .build(),
+                                            newContentPropertyIndexExtractionConfigurationBean()
+                                                    .withObjectName(STRING_FIELD_OBJECT_KEY)
+                                                    .withType(ContentPropertyIndexFieldType.string)
+                                                    .withUiSupport(newUISupportModuleBean()
+                                                            .withName(new I18nProperty("value", "Category"))
+                                                            .withDataUri("/rest/semantix/category")
+                                                            .withDefaultOperator("=")
+                                                            .build())
+                                                    .build())))
                     .build();
 
             assertFalse("Key configurations should not be empty", moduleBean.getKeyConfigurations().isEmpty());
+
 
             System.out.println("Installing connect module to : " + baseUrl);
 
