@@ -1,35 +1,35 @@
 package it.jira;
 
+import java.rmi.RemoteException;
+import java.util.Locale;
+import java.util.concurrent.Callable;
+
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.jira.pageobjects.pages.AddPermissionPage;
 import com.atlassian.jira.pageobjects.pages.EditPermissionsPage;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.ViewWorkflowTransitionPage;
-import com.atlassian.jira.tests.TestBase;
-import com.atlassian.jira.webtests.LicenseKeys;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.plugin.connect.test.pageobjects.jira.workflow.ExtendedViewWorkflowTransitionPage;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
-import it.util.ConnectTestUserFactory;
-import it.util.JiraTestUserFactory;
-import it.util.TestProject;
-import it.util.TestUser;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
-import java.rmi.RemoteException;
-import java.util.Locale;
-import java.util.concurrent.Callable;
+import it.util.ConnectTestUserFactory;
+import it.util.JiraTestUserFactory;
+import it.util.TestProject;
+import it.util.TestUser;
 
 public class JiraWebDriverTestBase
 {
 
     protected static JiraTestedProduct product = TestedProductProvider.getJiraTestedProduct();
-    
+
     protected static TestProject project;
 
     protected static ConnectTestUserFactory testUserFactory;
@@ -51,10 +51,10 @@ public class JiraWebDriverTestBase
     public static void beforeClass() throws RemoteException
     {
         testUserFactory = new JiraTestUserFactory(product);
-        
+
         product.getPageBinder().override(ViewWorkflowTransitionPage.class, ExtendedViewWorkflowTransitionPage.class);
 
-        
+
         String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
         String projectId = String.valueOf(product.backdoor().project().addProject("Test project " + projectKey, projectKey, "admin"));
         project = new TestProject(projectKey, projectId);

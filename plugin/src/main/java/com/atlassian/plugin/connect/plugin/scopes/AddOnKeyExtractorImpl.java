@@ -21,16 +21,16 @@ public class AddOnKeyExtractorImpl implements AddOnKeyExtractor
      * Set by a {@link javax.servlet.Filter}, possibly using {@link com.atlassian.plugin.connect.plugin.module.oauth.OAuth2LOAuthenticator} or {@link com.atlassian.jwt.plugin.sal.JwtAuthenticator},
      * indicating the Connect add-on that is the origin of the current request.
      */
-    private static final String PLUGIN_KEY = JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME;
+    private static final String PLUGIN_KEY_ATTRIBUTE = JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME;
 
     private final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
-    private final String ourConsumerKey;
+    private final ConsumerService consumerService;
 
     @Autowired
     public AddOnKeyExtractorImpl(final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, ConsumerService consumerService)
     {
         this.jsonConnectAddOnIdentifierService = jsonConnectAddOnIdentifierService;
-        this.ourConsumerKey = consumerService.getConsumer().getKey();
+        this.consumerService = consumerService;
     }
 
     @Override
@@ -54,21 +54,21 @@ public class AddOnKeyExtractorImpl implements AddOnKeyExtractor
     public boolean isAddOnRequest(@Nonnull HttpServletRequest request)
     {
         String addOnKey = extractClientKey(request);
-        return (addOnKey != null && !ourConsumerKey.equals(addOnKey)) || (extractXdmRequestKey(request) != null);
+        return (addOnKey != null && !consumerService.getConsumer().getKey().equals(addOnKey)) || (extractXdmRequestKey(request) != null);
     }
 
     @Override
     @Nullable
     public String extractClientKey(@Nonnull HttpServletRequest req)
     {
-        return (String) req.getAttribute(PLUGIN_KEY);
+        return (String) req.getAttribute(PLUGIN_KEY_ATTRIBUTE);
     }
 
 
     @Override
     public void setClientKey(@Nonnull HttpServletRequest req, @Nonnull String clientKey)
     {
-        req.setAttribute(PLUGIN_KEY, clientKey);
+        req.setAttribute(PLUGIN_KEY_ATTRIBUTE, clientKey);
     }
 
     /**

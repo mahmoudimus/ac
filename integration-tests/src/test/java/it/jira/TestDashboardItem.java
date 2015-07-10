@@ -41,6 +41,7 @@ import javax.inject.Inject;
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -49,8 +50,13 @@ public class TestDashboardItem extends JiraWebDriverTestBase
 {
     private static final String ADDON_KEY = AddonTestUtils.randomAddOnKey();
     private static final String DASHBOARD_ITEM_DESCRIPTION = "Dashboard item description";
+
     private static final String DASHBOARD_ITEM_KEY = "dashboard-item-key";
     private static final String DASHBOARD_ITEM_TITLE = "Dashboard item title";
+
+    private static final String NON_CONFIGURABLE_DASHBOARD_ITEM_KEY = "dashboard-item-key-non-conf";
+    private static final String NON_CONFIGURABLE_DASHBOARD_ITEM_TITLE = "Dashboard item title non configurable";
+
     private static final String VENDOR_NAME = "Atlassian";
     private static final String DASHBOARD_ITEM_ID_QUERY_PARAM = "dashboardItemId";
     private static final String DASHBOARD_ID_QUERY_PARAM = "dashboardId";
@@ -66,14 +72,8 @@ public class TestDashboardItem extends JiraWebDriverTestBase
                 .setAuthenticationToNone()
                 .setVendor(newVendorBean().withName(VENDOR_NAME).withUrl("http://www.atlassian.com").build())
                 .addModules("jiraDashboardItems",
-                        DashboardItemModuleBean.newBuilder()
-                                .withDescription(new I18nProperty(DASHBOARD_ITEM_DESCRIPTION, "description.i18n.key"))
-                                .withName(new I18nProperty(DASHBOARD_ITEM_TITLE, "description.title.key"))
-                                .withThumbnailUrl("atlassian-icon-16.png")
-                                .withUrl("/dashboard-item-test?dashboardItemId={dashboardItem.id}&dashboardId={dashboard.id}&view={dashboardItem.viewType}")
-                                .withKey(DASHBOARD_ITEM_KEY)
-                                .configurable(true)
-                                .build())
+                        buildDashboardItemModule(DASHBOARD_ITEM_TITLE, DASHBOARD_ITEM_KEY, true),
+                        buildDashboardItemModule(NON_CONFIGURABLE_DASHBOARD_ITEM_TITLE, NON_CONFIGURABLE_DASHBOARD_ITEM_KEY, false))
                 .addRoute("/dashboard-item-test", ConnectAppServlets.dashboardItemServlet(Lists.newArrayList(
                         new TestServletContextExtractor(DASHBOARD_ITEM_ID_QUERY_PARAM),
                         new TestServletContextExtractor(DASHBOARD_ID_QUERY_PARAM))))
@@ -226,6 +226,30 @@ public class TestDashboardItem extends JiraWebDriverTestBase
     }
 
     @Test
+    public void testDashboardItemCanSeeThatItIsEditable()
+    {
+        DashboardPage dashboard = createDashboard(generateDashboardTitle());
+        addDashboardItemToDashboard(dashboard, DASHBOARD_ITEM_TITLE);
+
+        ConnectDashboardPageWrapper connectDashboard = bindConnectDashboardPage();
+        ConnectDashboardItemElement dashboardItem = getOnlyElement(connectDashboard.getDashboardItems(ADDON_KEY, DASHBOARD_ITEM_KEY));
+
+        assertTrue(dashboardItem.getEditable());
+    }
+
+    @Test
+    public void testDashboardItemCanSeeThatItIsNotEditable()
+    {
+        DashboardPage dashboard = createDashboard(generateDashboardTitle());
+        addDashboardItemToDashboard(dashboard, NON_CONFIGURABLE_DASHBOARD_ITEM_TITLE);
+
+        ConnectDashboardPageWrapper connectDashboard = bindConnectDashboardPage();
+        ConnectDashboardItemElement dashboardItem = getOnlyElement(connectDashboard.getDashboardItems(ADDON_KEY, NON_CONFIGURABLE_DASHBOARD_ITEM_KEY));
+
+        assertFalse(dashboardItem.getEditable());
+    }
+
+    @Test
     public void testDashboardItemRespectConditionForDirectoryView() throws Exception
     {
         String title = "Dashboard item with condition";
@@ -277,6 +301,18 @@ public class TestDashboardItem extends JiraWebDriverTestBase
         assertThat(dashboardItemsAfterRefresh, Matchers.emptyIterable());
 
         addOnRunner.stopAndUninstall();
+    }
+
+    private static DashboardItemModuleBean buildDashboardItemModule(String title, String key, boolean configurable)
+    {
+        return DashboardItemModuleBean.newBuilder()
+                .withDescription(new I18nProperty(DASHBOARD_ITEM_DESCRIPTION, "description.i18n.key"))
+                .withName(new I18nProperty(title, null))
+                .withThumbnailUrl("atlassian-icon-16.png")
+                .withUrl("/dashboard-item-test?dashboardItemId={dashboardItem.id}&dashboardId={dashboard.id}&view={dashboardItem.viewType}")
+                .withKey(key)
+                .configurable(configurable)
+                .build();
     }
 
     private DashboardPage bindDashboardPage()
@@ -390,6 +426,11 @@ public class TestDashboardItem extends JiraWebDriverTestBase
         public String getProperties()
         {
             return waitForValue("properties");
+        }
+
+        public boolean getEditable()
+        {
+            return Boolean.valueOf(waitForValue("editable"));
         }
 
         public void assertEditClicked()

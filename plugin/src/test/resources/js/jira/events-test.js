@@ -30,8 +30,7 @@
 
         test("refreshIssuePage passes the issue id", function() {
             jiraEvent.refreshIssuePage();
-            equal(window.JIRA.trigger.args[0][1], "abc-123");
+            equal(window.JIRA.trigger.args[0][1][0], "abc-123");
         });
-
     });
 })();

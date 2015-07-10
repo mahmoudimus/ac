@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.license;
 
 import javax.annotation.Nonnull;
 
+import com.atlassian.plugin.connect.plugin.api.LicenseStatus;
 import com.atlassian.upm.api.license.RemotePluginLicenseService;
 import com.atlassian.upm.api.license.entity.PluginLicense;
 import com.atlassian.upm.api.util.Option;

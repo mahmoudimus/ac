@@ -1,53 +1,39 @@
 package com.atlassian.plugin.connect.plugin.capabilities.event;
 
+import java.io.IOException;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import com.atlassian.event.api.EventPublisher;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddonUserUpdateException;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.event.PluginEventListener;
-import com.atlassian.plugin.event.PluginEventManager;
 import com.atlassian.plugin.event.events.BeforePluginDisabledEvent;
-import com.atlassian.plugin.event.events.PluginEnabledEvent;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.IOException;
-
 @Named
-public class ConnectPluginProperEventHandler implements InitializingBean, DisposableBean
+public class ConnectPluginDisabledHandler implements InitializingBean, DisposableBean
 {
-    private static final Logger log = LoggerFactory.getLogger(ConnectPluginProperEventHandler.class);
-    private final PluginEventManager pluginEventManager;
+    private static final Logger log = LoggerFactory.getLogger(ConnectPluginDisabledHandler.class);
+    private final EventPublisher eventPublisher;
     private final ConnectAddonRegistry addonRegistry;
     private final ConnectAddonManager addonManager;
 
-
     @Inject
-    public ConnectPluginProperEventHandler(PluginEventManager pluginEventManager, ConnectAddonRegistry addonRegistry, ConnectAddonManager addonManager)
+    public ConnectPluginDisabledHandler(final ConnectAddonRegistry addonRegistry,
+            final ConnectAddonManager addonManager, final EventPublisher eventPublisher)
     {
-        this.pluginEventManager = pluginEventManager;
+        this.eventPublisher = eventPublisher;
         this.addonRegistry = addonRegistry;
         this.addonManager = addonManager;
-    }
-
-    @PluginEventListener
-    @SuppressWarnings("unused")
-    public void pluginEnabled(PluginEnabledEvent pluginEnabledEvent) throws IOException, ConnectAddOnUserInitException
-    {
-        if (isTheConnectPlugin(pluginEnabledEvent.getPlugin()))
-        {
-            //enable all the addons if needed
-            for (String addonKey : addonRegistry.getAddonKeysToEnableOnRestart())
-            {
-                addonManager.enableConnectAddon(addonKey);
-            }
-        }
     }
 
     @PluginEventListener
@@ -78,13 +64,12 @@ public class ConnectPluginProperEventHandler implements InitializingBean, Dispos
     @Override
     public void afterPropertiesSet() throws Exception
     {
-        this.pluginEventManager.register(this);
+        eventPublisher.register(this);
     }
 
     @Override
     public void destroy() throws Exception
     {
-        this.pluginEventManager.unregister(this);
+        eventPublisher.unregister(this);
     }
-
 }
