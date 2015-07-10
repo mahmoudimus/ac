@@ -60,7 +60,7 @@ plan(
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest Confluence SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
-            productVersion: '5.9.0-SNAPSHOT',
+            productVersion: '5.9.1-SNAPSHOT',
     )
     variable(
             key: 'bamboo.product.data.version',

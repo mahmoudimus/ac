@@ -11,7 +11,6 @@ import it.servlet.macro.ExtendedMacroServlet;
 import it.servlet.macro.SimpleMacroServlet;
 
 import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * Utility methods for creating test servlets suitable for serving Connect iframes.
@@ -132,17 +131,14 @@ public class ConnectAppServlets
     /**
      * @return a servlet that tests AP.onDialogMessage() and captures parameters sent to it.
      */
-    public static HttpServlet parameterCapturingDialogServlet(ParameterCapturingServlet captureServlet)
-    {
-        return new HttpContextServlet(captureServlet);
-    }
-
-    /**
-     * @return a servlet that tests AP.onDialogMessage() and captures parameters sent to it.
-     */
     public static ParameterCapturingServlet parameterCapturingDialogServlet()
     {
         return new ParameterCapturingServlet(simpleDialogServlet());
+    }
+
+    public static ParameterCapturingServlet parameterCapturingInlineDialogServlet()
+    {
+        return new ParameterCapturingServlet(simpleInlineDialogServlet());
     }
 
     /**
@@ -249,6 +245,11 @@ public class ConnectAppServlets
     private static ContextServlet simpleDialogServlet()
     {
         return new MustacheServlet("dialog.mu");
+    }
+
+    private static ContextServlet simpleInlineDialogServlet()
+    {
+        return new MustacheServlet("iframe-inline-dialog.mu");
     }
 
     public static HttpServlet dynamicMacroStaticServlet()

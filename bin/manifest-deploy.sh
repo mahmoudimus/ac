@@ -16,7 +16,7 @@ read -s PASSWORD
 echo ""
 
 echo "Promoting $PLUGIN:$VERSION to jira: $ZONE"
-curl -u$USER:$PASSWORD -XPOST https://manifesto.uc-inf.net/api/env/$ZONE/product/jira/plugin/$PLUGIN -H"Content-Type: application/json" -d "{ \"version\": \"$VERSION\" }"
+curl -u$USER:$PASSWORD -XPOST https://manifesto.atlassian.io/api/env/$ZONE/product/jira/plugin/$PLUGIN -H"Content-Type: application/json" -d "{ \"version\": \"$VERSION\" }"
 echo ""
 echo "Promoting $PLUGIN:$VERSION to conf: $ZONE"
-curl -u$USER:$PASSWORD -XPOST https://manifesto.uc-inf.net/api/env/$ZONE/product/confluence/plugin/$PLUGIN -H"Content-Type: application/json" -d "{ \"version\": \"$VERSION\" }"
+curl -u$USER:$PASSWORD -XPOST https://manifesto.atlassian.io/api/env/$ZONE/product/confluence/plugin/$PLUGIN -H"Content-Type: application/json" -d "{ \"version\": \"$VERSION\" }"

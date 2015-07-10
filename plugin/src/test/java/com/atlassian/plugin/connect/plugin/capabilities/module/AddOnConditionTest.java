@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.api.iframe.webpanel.PluggableParametersExtra
 import com.atlassian.plugin.connect.spi.user.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.plugin.iframe.render.uri.IFrameUriBuilderFactoryImpl;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
-import com.atlassian.plugin.connect.plugin.license.LicenseStatus;
+import com.atlassian.plugin.connect.plugin.api.LicenseStatus;
 import com.atlassian.plugin.connect.plugin.module.HostApplicationInfo;
 import com.atlassian.plugin.connect.plugin.module.webfragment.UrlVariableSubstitutorImpl;
 import com.atlassian.plugin.connect.plugin.service.IsDevModeServiceImpl;
