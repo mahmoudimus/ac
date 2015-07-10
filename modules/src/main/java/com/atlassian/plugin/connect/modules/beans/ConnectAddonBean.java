@@ -160,7 +160,7 @@ public class ConnectAddonBean extends BaseModuleBean
     private Map<String, List<JsonObject>> modules;
 
     @SchemaIgnore
-    private transient Map<String, List<? extends BaseModuleBean>> moduleBeans;
+    private transient Map<String, List<ModuleBean>> moduleBeans;
 
     /**
      * Set of [scopes](../scopes/scopes.html) requested by this add on
@@ -283,12 +283,12 @@ public class ConnectAddonBean extends BaseModuleBean
         return modules;
     }
 
-    public Map<String, List<? extends BaseModuleBean>> getModuleBeans()
+    public Map<String, List<ModuleBean>> getModuleBeans()
     {
         return moduleBeans;
     }
 
-    public void setModuleBeans(Map<String, List<? extends BaseModuleBean>> moduleBeans)
+    public void setModuleBeans(Map<String, List<ModuleBean>> moduleBeans)
     {
         this.moduleBeans = moduleBeans;
     }

@@ -3,15 +3,16 @@ package com.atlassian.plugin.connect.plugin.capabilities;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.api.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.api.integration.plugins.DynamicDescriptorRegistration;
-import com.atlassian.plugin.connect.modules.beans.*;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
-import com.atlassian.plugin.connect.api.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
-import com.atlassian.plugin.connect.spi.iframe.context.module.ConnectContextParameterResolverModuleDescriptor;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderModuleDescriptor;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
@@ -26,7 +27,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
@@ -148,9 +154,9 @@ public class BeanToModuleRegistrar
     {
         validateModules(addon);
 
-        for (Map.Entry<String,List<? extends BaseModuleBean>> entry : addon.getModuleBeans().entrySet())
+        for (Map.Entry<String,List<ModuleBean>> entry : addon.getModuleBeans().entrySet())
         {
-            List<? extends BaseModuleBean> beans = entry.getValue();
+            List<ModuleBean> beans = entry.getValue();
             ConnectModuleProvider provider = findProvider(entry.getKey());
             List<ModuleDescriptor> descriptors = provider.provideModules(new DefaultConnectModuleProviderContext(addon), ctx.getTheConnectPlugin(), beans);
             List<DescriptorToRegister> theseDescriptors = Lists.transform(descriptors, new Function<ModuleDescriptor, DescriptorToRegister>()
@@ -167,7 +173,7 @@ public class BeanToModuleRegistrar
     
     public void validateModules(ConnectAddonBean addon)
     {
-        Map<String, List<? extends BaseModuleBean>> beanMap = new HashMap<>();
+        Map<String, List<ModuleBean>> beanMap = new HashMap<>();
         
         for (Map.Entry<String,List<JsonObject>> entry : addon.getModules().entrySet())
         {
@@ -177,7 +183,7 @@ public class BeanToModuleRegistrar
                 // BAD NEWS, FAIL!
             }
 
-            List<? extends BaseModuleBean> beans = provider.validate(entry.getValue(), provider.getBeanClass());
+            List<ModuleBean> beans = provider.validate(entry.getValue(), provider.getBeanClass());
             if(beans == null)
             {
                 // BAD NEWS, FAIL!

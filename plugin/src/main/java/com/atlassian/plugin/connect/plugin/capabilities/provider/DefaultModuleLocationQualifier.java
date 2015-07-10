@@ -1,10 +1,8 @@
 package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Map;
-
-import com.atlassian.plugin.connect.modules.beans.*;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.RequiredKeyBean;
 import com.atlassian.plugin.connect.spi.module.ModuleLocationQualifier;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -15,6 +13,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Map;
+
 public class DefaultModuleLocationQualifier implements ModuleLocationQualifier
 {
     private static final char LOCATION_SEGMENT_SEPARATOR = '/';
@@ -24,45 +26,43 @@ public class DefaultModuleLocationQualifier implements ModuleLocationQualifier
     // a map of unqualified key -> qualified key for all modules that can be referenced from the locations of other
     // modules.
     private final Supplier<Map<String, String>> keyMapSupplier;
-    private final ConnectAddonBean addonBean;
 
     public DefaultModuleLocationQualifier(final ConnectAddonBean addonBean)
     {
-        this.addonBean = addonBean;
         this.keyMapSupplier = Suppliers.memoize(new Supplier<Map<String, String>>()
         {
             @Override
             public Map<String, String> get()
             {
                 return ImmutableMap.<String, String>builder()
-                        .putAll(createKeyToQualifiedKeyMap((List<RequiredKeyBean>)addonBean.getModuleBeans().get("webItems")))
-                        .putAll(createKeyToQualifiedKeyMap((List<RequiredKeyBean>)addonBean.getModuleBeans().get("webSecions")))
+                        .putAll(createKeyToQualifiedKeyMap(addonBean.getModuleBeans().get("webItems")))
+                        .putAll(createKeyToQualifiedKeyMap(addonBean.getModuleBeans().get("webSecions")))
                         .build();
             }
         });
     }
 
-    private <T extends RequiredKeyBean> Map<String, String> createKeyToQualifiedKeyMap(List<T> beans)
+    private Map<String, String> createKeyToQualifiedKeyMap(List<ModuleBean> beans)
     {
-        final ImmutableMap<String, T> map = Maps.uniqueIndex(beans, new Function<T, String>()
+
+        final ImmutableMap<String, ModuleBean> map = Maps.uniqueIndex(beans, new Function<ModuleBean, String>()
         {
             @Override
-            public String apply(@Nullable T bean)
+            public String apply(@Nullable ModuleBean bean)
             {
-                return bean.getRawKey();
+                return ((RequiredKeyBean)bean).getRawKey();
             }
         });
 
-        return Maps.transformValues(map, new Function<T, String>()
+        return Maps.transformValues(map, new Function<ModuleBean, String>()
         {
             @Override
-            public String apply(@Nullable T bean)
+            public String apply(@Nullable ModuleBean bean)
             {
-                return bean.getKey(addonBean);
+                return ((RequiredKeyBean)bean).getRawKey();
             }
         });
     }
-
 
     @Override
     public String processLocation(String location)

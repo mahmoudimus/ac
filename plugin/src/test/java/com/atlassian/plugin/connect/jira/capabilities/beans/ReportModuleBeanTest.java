@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.jira.capabilities.beans;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ReportCategory;
 import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -21,13 +22,13 @@ public class ReportModuleBeanTest
     @Test
     public void producesCorrectJSON() throws IOException
     {
-        List<ReportModuleBean> addonBeans = (List<ReportModuleBean>)readTestFile().getModuleBeans().get("jiraReports");
+        List<ModuleBean> addonBeans = readTestFile().getModuleBeans().get("jiraReports");
 
         assertThat(addonBeans, hasSize(2));
         assertThat(addonBeans, contains(createBeans()));
     }
 
-    private static ReportModuleBean[] createBeans()
+    private static ModuleBean[] createBeans()
     {
         return new ReportModuleBean[] {
             ReportModuleBean.newBuilder()

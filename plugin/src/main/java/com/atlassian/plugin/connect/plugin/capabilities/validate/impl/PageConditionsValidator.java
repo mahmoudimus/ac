@@ -1,9 +1,11 @@
 package com.atlassian.plugin.connect.plugin.capabilities.validate.impl;
 
-import com.atlassian.plugin.connect.modules.beans.*;
+import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
-import com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidator;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
@@ -11,13 +13,12 @@ import com.atlassian.sal.api.message.I18nResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Field;
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import javax.inject.Inject;
-import javax.inject.Named;
 
 import static com.atlassian.plugin.connect.modules.util.ConditionUtils.isRemoteCondition;
 
@@ -31,13 +32,11 @@ import static com.atlassian.plugin.connect.modules.util.ConditionUtils.isRemoteC
 public class PageConditionsValidator implements AddOnBeanValidator
 {
     private static final Logger log = LoggerFactory.getLogger(PageConditionsValidator.class);
-    private final I18nResolver i18nResolver;
     private final PageConditionsFactory pageConditionsFactory;
 
     @Inject
     public PageConditionsValidator(I18nResolver i18nResolver, PageConditionsFactory pageConditionsFactory)
     {
-        this.i18nResolver = i18nResolver;
         this.pageConditionsFactory = pageConditionsFactory;
     }
 
@@ -95,11 +94,15 @@ public class PageConditionsValidator implements AddOnBeanValidator
     {
         List<ConnectPageModuleBean> pages = new ArrayList<ConnectPageModuleBean>();
 
-        for (Map.Entry<String,List<? extends BaseModuleBean>> entry : addonBean.getModuleBeans().entrySet())
+        for (Map.Entry<String,List<ModuleBean>> entry : addonBean.getModuleBeans().entrySet())
         {
             if(entry.getValue().get(0) instanceof ConnectPageModuleBean)
             {
-                pages.addAll((List<ConnectPageModuleBean>)entry.getValue());
+                List<ModuleBean> moduleBeans = entry.getValue();
+                for (ModuleBean moduleBean : moduleBeans)
+                {
+                    pages.add((ConnectPageModuleBean)moduleBean);
+                }
             }
         }
        

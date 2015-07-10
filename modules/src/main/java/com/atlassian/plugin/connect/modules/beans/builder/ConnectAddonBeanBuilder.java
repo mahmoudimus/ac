@@ -36,6 +36,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     private AuthenticationBean authentication;
     private Boolean enableLicensing;
     private Map<String, List<JsonObject>> modules;
+    private Map<String, List<ModuleBean>> moduleBeans;
 
     public ConnectAddonBeanBuilder()
     {
@@ -51,6 +52,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         this.vendor = defaultBean.getVendor();
         this.links = defaultBean.getLinks();
         this.modules = defaultBean.getModules();
+        this.moduleBeans = defaultBean.getModuleBeans();
         this.lifecycle = defaultBean.getLifecycle();
         this.baseUrl = defaultBean.getBaseUrl();
         this.authentication = defaultBean.getAuthentication();
@@ -115,6 +117,17 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         }
 
         modules.get(fieldName).add(new Gson().toJsonTree(bean).getAsJsonObject());
+
+        if (null == moduleBeans)
+        {
+            this.moduleBeans = new HashMap<>();
+        }
+        if (null == moduleBeans.get(fieldName))
+        {
+            moduleBeans.put(fieldName, new ArrayList<ModuleBean>());
+        }
+
+        moduleBeans.get(fieldName).add(bean);
 
         return (T) this;
     }
