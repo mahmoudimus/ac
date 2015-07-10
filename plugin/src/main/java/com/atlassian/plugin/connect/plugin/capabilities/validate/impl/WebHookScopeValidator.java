@@ -6,7 +6,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.WebHookScopeService;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidator;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
-import com.atlassian.sal.api.message.I18nResolver;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
@@ -24,13 +23,11 @@ import java.util.List;
 public class WebHookScopeValidator implements AddOnBeanValidator
 {
     private final WebHookScopeService webHookScopeService;
-    private final I18nResolver i18nResolver;
 
     @Inject
-    public WebHookScopeValidator(final WebHookScopeService webHookScopeService, I18nResolver i18nResolver)
+    public WebHookScopeValidator(final WebHookScopeService webHookScopeService)
     {
         this.webHookScopeService = webHookScopeService;
-        this.i18nResolver = i18nResolver;
     }
 
     @Override
