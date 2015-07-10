@@ -28,6 +28,12 @@
         </dependency>
 
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>atlassian-connect-crowd-support</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>external.atlassian.json</groupId>
             <artifactId>json-schemagen-core</artifactId>
             <version>${schema.generator.version}</version>

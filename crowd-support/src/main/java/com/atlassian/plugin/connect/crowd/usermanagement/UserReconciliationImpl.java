@@ -5,6 +5,9 @@ import java.util.Optional;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.model.user.UserTemplate;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class UserReconciliationImpl implements UserReconciliation
 {
     @Override

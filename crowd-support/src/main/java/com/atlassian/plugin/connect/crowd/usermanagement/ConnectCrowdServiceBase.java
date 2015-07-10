@@ -9,10 +9,14 @@ import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.InvalidUserException;
 import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.model.user.UserTemplate;
-import com.atlassian.plugin.connect.crowd.usermanagement.api.ConnectCrowdException;
+import com.atlassian.crowd.service.client.CrowdClient;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.crowd.usermanagement.api.ConnectCrowdService;
+import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
 
-public abstract class ConnectCrowdServiceBase implements ConnectCrowdService
+public abstract class ConnectCrowdServiceBase
+        implements ConnectCrowdService
 {
     private final UserReconciliation userReconciliation;
 
@@ -22,7 +26,7 @@ public abstract class ConnectCrowdServiceBase implements ConnectCrowdService
     }
 
     @Override
-    public User createOrEnableUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential) throws ConnectCrowdException
+    public User createOrEnableUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential)
     {
         Optional<? extends User> user = findUserByName(username);
         if (!user.isPresent())
@@ -40,22 +44,29 @@ public abstract class ConnectCrowdServiceBase implements ConnectCrowdService
     }
 
     @Override
-    public void disableUser(String username) throws ConnectCrowdException
+    public void disableUser(String username)
+            throws ConnectAddOnUserDisableException
     {
         Optional<? extends User> user = findUserByName(username);
         if (user.isPresent())
         {
             UserTemplate userTemplate = new UserTemplate(user.get());
-            updateUser(userTemplate);
+            try
+            {
+                updateUser(userTemplate);
+            }
+            catch (ConnectAddOnUserInitException e)
+            {
+                throw new ConnectAddOnUserDisableException((e.getCause() instanceof Exception) ?
+                        (Exception) e.getCause() : null);
+            }
         }
     }
 
     @Override
-    public abstract void setAttributesOnUser(User user, Map<String, Set<String>> attributes)
-        throws ConnectCrowdException;
+    public abstract void setAttributesOnUser(User user, Map<String, Set<String>> attributes);
 
     private User createUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential)
-            throws ConnectCrowdException
     {
         UserTemplate userTemplate = new UserTemplate(username);
         userTemplate.setEmailAddress(emailAddress);
@@ -65,6 +76,16 @@ public abstract class ConnectCrowdServiceBase implements ConnectCrowdService
         try
         {
             addUser(userTemplate, passwordCredential);
+            Optional<? extends User> user = findUserByName(username);
+            if (!user.isPresent())
+            {
+                throw new ConnectAddOnUserInitException(String.format("Tried to create user '%s' but the %s returned a null user!",
+                        username,
+                        CrowdClient.class.getSimpleName()),
+                        ConnectAddOnUserProvisioningService.USER_PROVISIONING_ERROR);
+            }
+
+            return user.get();
         }
         catch (OperationFailedException | InvalidUserException e)
         {
@@ -92,14 +113,6 @@ public abstract class ConnectCrowdServiceBase implements ConnectCrowdService
                 throw e;
             }
         }
-
-        Optional<? extends User> user = findUserByName(username);
-        if (!user.isPresent())
-        {
-            throw new ConnectCrowdException();
-        }
-
-        return user.get();
     }
 
     protected User findUserWithFastFailure(String username, Exception userAlreadyExistsException)
@@ -118,9 +131,9 @@ public abstract class ConnectCrowdServiceBase implements ConnectCrowdService
     }
 
     protected abstract void addUser(UserTemplate userTemplate, PasswordCredential passwordCredential)
-            throws ConnectCrowdException, OperationFailedException, InvalidUserException;
+            throws OperationFailedException, InvalidUserException;
 
-    protected abstract void updateUser(UserTemplate fixes) throws ConnectCrowdException;
+    protected abstract void updateUser(UserTemplate fixes);
 
     protected abstract Optional<? extends User> findUserByName(String username);
 }

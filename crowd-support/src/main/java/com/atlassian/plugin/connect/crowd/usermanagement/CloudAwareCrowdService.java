@@ -7,12 +7,13 @@ import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
-import com.atlassian.plugin.connect.crowd.usermanagement.api.ConnectCrowdException;
 import com.atlassian.plugin.connect.crowd.usermanagement.api.ConnectCrowdService;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.product.FeatureManager;
-import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
+import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * This implementation seeks to encapsulate workarounds for:
@@ -24,8 +25,7 @@ import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
  * </ul>
  * so that elsewhere, the business of adding users and attributes looks simple.
  */
-@JiraComponent
-@ConfluenceComponent
+@Component
 public class CloudAwareCrowdService implements ConnectCrowdService
 {
     private HostProperties hostProperties;
@@ -33,6 +33,7 @@ public class CloudAwareCrowdService implements ConnectCrowdService
     private final ConnectCrowdService remote;
     private final ConnectCrowdService embedded;
 
+    @Autowired
     public CloudAwareCrowdService(CrowdServiceFactory crowdServiceLocator,
             ApplicationService applicationService, ApplicationManager applicationManager,
             HostProperties hostProperties, FeatureManager featureManager,
@@ -46,7 +47,6 @@ public class CloudAwareCrowdService implements ConnectCrowdService
 
     @Override
     public User createOrEnableUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential)
-            throws ConnectCrowdException
     {
         if (isConfluence() && isOnDemand())
         {
@@ -59,7 +59,8 @@ public class CloudAwareCrowdService implements ConnectCrowdService
     }
 
     @Override
-    public void disableUser(String username) throws ConnectCrowdException
+    public void disableUser(String username)
+            throws ConnectAddOnUserDisableException
     {
         if (isConfluence() && isOnDemand())
         {
@@ -73,7 +74,6 @@ public class CloudAwareCrowdService implements ConnectCrowdService
 
     @Override
     public void setAttributesOnUser(User user, Map<String, Set<String>> attributes)
-            throws ConnectCrowdException
     {
         embedded.setAttributesOnUser(user, attributes);
 

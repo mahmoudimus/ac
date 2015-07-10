@@ -7,10 +7,15 @@ import com.atlassian.crowd.service.client.CrowdClient;
 import com.atlassian.crowd.service.factory.CrowdClientFactory;
 import com.atlassian.plugin.connect.crowd.usermanagement.api.CrowdClientProvider;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
 public class CrowdClientProviderImpl implements CrowdClientProvider
 {
     private final CrowdClientFactory crowdClientFactory;
 
+    @Autowired
     public CrowdClientProviderImpl(CrowdClientFactory crowdClientFactory)
     {
         this.crowdClientFactory = crowdClientFactory;

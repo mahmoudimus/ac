@@ -18,7 +18,7 @@ import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.group.GroupTemplate;
 import com.atlassian.crowd.service.client.CrowdClient;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
-import com.atlassian.plugin.connect.spi.user.CrowdClientProvider;
+import com.atlassian.plugin.connect.crowd.usermanagement.api.CrowdClientProvider;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 

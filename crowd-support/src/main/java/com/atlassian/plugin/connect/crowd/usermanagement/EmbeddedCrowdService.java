@@ -16,7 +16,7 @@ import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.UserTemplate;
-import com.atlassian.plugin.connect.crowd.usermanagement.api.ConnectCrowdException;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 
 public class EmbeddedCrowdService extends ConnectCrowdServiceBase
 {
@@ -33,7 +33,6 @@ public class EmbeddedCrowdService extends ConnectCrowdServiceBase
 
     @Override
     public void setAttributesOnUser(User user, Map<String, Set<String>> attributes)
-            throws ConnectCrowdException
     {
         try
         {
@@ -41,13 +40,13 @@ public class EmbeddedCrowdService extends ConnectCrowdServiceBase
         }
         catch (OperationFailedException | UserNotFoundException | ApplicationPermissionException e)
         {
-            throw new ConnectCrowdException(e);
+            throw new ConnectAddOnUserInitException(e);
         }
     }
 
     @Override
     protected void addUser(UserTemplate userTemplate, PasswordCredential passwordCredential)
-            throws ConnectCrowdException, OperationFailedException, InvalidUserException
+            throws OperationFailedException, InvalidUserException
     {
         try
         {
@@ -55,12 +54,11 @@ public class EmbeddedCrowdService extends ConnectCrowdServiceBase
         }
         catch (InvalidCredentialException | ApplicationPermissionException e)
         {
-            throw new ConnectCrowdException(e);
+            throw new ConnectAddOnUserInitException(e);
         }
     }
 
     protected void updateUser(UserTemplate requiredUpdates)
-            throws ConnectCrowdException
     {
         try
         {
@@ -69,7 +67,7 @@ public class EmbeddedCrowdService extends ConnectCrowdServiceBase
         catch (InvalidUserException | ApplicationPermissionException
                 | OperationFailedException | UserNotFoundException e)
         {
-            throw new ConnectCrowdException(e);
+            throw new ConnectAddOnUserInitException(e);
         }
     }
 

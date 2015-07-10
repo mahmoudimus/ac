@@ -5,6 +5,9 @@ import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.plugin.connect.crowd.usermanagement.api.ConnectCrowdService;
 import com.atlassian.plugin.connect.crowd.usermanagement.api.CrowdClientProvider;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class CrowdServiceFactoryImpl implements CrowdServiceFactory
 {
     @Override

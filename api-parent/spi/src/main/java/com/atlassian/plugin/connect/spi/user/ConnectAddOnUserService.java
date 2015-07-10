@@ -6,8 +6,6 @@ import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserDisableExc
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 
-import com.google.common.annotations.VisibleForTesting;
-
 public interface ConnectAddOnUserService
 {
     String getOrCreateUserName(String addOnKey, String addOnDisplayName) throws ConnectAddOnUserInitException;
@@ -15,7 +13,4 @@ public interface ConnectAddOnUserService
     void disableAddonUser(String addOnKey) throws ConnectAddOnUserDisableException;
 
     String provisionAddonUserForScopes(String addOnKey, String addOnDisplayName, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddOnUserInitException;
-
-    @VisibleForTesting
-    boolean isAddOnUserActive(String addOnKey);
 }

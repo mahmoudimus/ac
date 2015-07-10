@@ -14,7 +14,7 @@ import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.crowd.service.client.CrowdClient;
-import com.atlassian.plugin.connect.crowd.usermanagement.api.ConnectCrowdException;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.crowd.usermanagement.api.CrowdClientProvider;
 
 public class RemoteCrowdService extends ConnectCrowdServiceBase
@@ -29,7 +29,6 @@ public class RemoteCrowdService extends ConnectCrowdServiceBase
 
     @Override
     public void setAttributesOnUser(User user, Map<String, Set<String>> attributes)
-            throws ConnectCrowdException
     {
         try
         {
@@ -37,13 +36,13 @@ public class RemoteCrowdService extends ConnectCrowdServiceBase
         }
         catch (UserNotFoundException | InvalidAuthenticationException | ApplicationPermissionException | OperationFailedException e)
         {
-            throw new ConnectCrowdException(e);
+            throw new ConnectAddOnUserInitException(e);
         }
     }
 
     @Override
     protected void addUser(UserTemplate userTemplate, PasswordCredential passwordCredential)
-            throws ConnectCrowdException, OperationFailedException, InvalidUserException
+            throws OperationFailedException, InvalidUserException
     {
         try
         {
@@ -51,12 +50,11 @@ public class RemoteCrowdService extends ConnectCrowdServiceBase
         }
         catch (InvalidCredentialException | ApplicationPermissionException | InvalidAuthenticationException e)
         {
-            throw new ConnectCrowdException(e);
+            throw new ConnectAddOnUserInitException(e);
         }
     }
 
     protected void updateUser(UserTemplate requiredUpdates)
-            throws ConnectCrowdException
     {
         try
         {
@@ -65,7 +63,7 @@ public class RemoteCrowdService extends ConnectCrowdServiceBase
         catch (InvalidUserException | InvalidAuthenticationException
                 | ApplicationPermissionException | OperationFailedException | UserNotFoundException e)
         {
-            throw new ConnectCrowdException(e);
+            throw new ConnectAddOnUserInitException(e);
         }
     }
 
