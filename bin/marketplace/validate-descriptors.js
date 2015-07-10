@@ -56,6 +56,18 @@ function validate(opts, addonKey, descriptorFilename, descriptor, schema, callba
     });
 }
 
+var incompatibleApplications = {};
+
+var addIncompatibleApps = function(compatibleAppNameList) {
+    compatibleAppNameList.forEach(function(appName){
+        if (incompatibleApplications[appName]) {
+            incompatibleApplications[appName]++;
+        } else {
+            incompatibleApplications[appName] = 1;
+        }
+    });
+};
+
 downloader.run({
     before: function (opts) {
         marketplace.requestQueue().drain = function () {
@@ -96,7 +108,7 @@ downloader.run({
         );
 
         if (intersectionOfCompatibleApps.length == 0) {
-            console.error(result.addon.key.red, "Specified application not compatible", listCompatibleAppKeys);
+            addIncompatibleApps(listCompatibleAppKeys);
             return;
         }
 
@@ -110,5 +122,14 @@ downloader.run({
             args: [opts, result.addon.key, result.descriptorFilename, descriptor, schema]
         }, function () {});
     }
+});
+
+process.on('exit', function() {
+  if (incompatibleApplications !== {}) {
+      console.log("Incompatible Types Skipped:".red);
+      for(var appName in incompatibleApplications) {
+          console.log(appName.red, ": " + incompatibleApplications[appName]);
+      }
+  }
 });
 
