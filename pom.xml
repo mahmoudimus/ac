@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.1.38-SNAPSHOT</version>
+    <version>1.1.38-stash-01</version>
     <organization>
         <name>Atlassian</name>
         <url>http://atlassian.com/</url>
@@ -64,7 +64,8 @@
         <connection>scm:git:ssh://git@stash.atlassian.com:7997/ac/atlassian-connect.git</connection>
         <developerConnection>scm:git:ssh://git@stash.atlassian.com:7997/ac/atlassian-connect.git</developerConnection>
         <url>http://stash.atlassian.com/projects/ac/repos/atlassian-connect</url>
-    </scm>
+      <tag>atlassian-connect-parent-1.1.38-stash-01</tag>
+  </scm>
 
     <build>
         <finalName>${project.artifactId}</finalName>
@@ -836,7 +837,7 @@
         <blueprints.version>4.0.22</blueprints.version>
         <skipNpm>false</skipNpm>
         <clover.libversion>4.0.3</clover.libversion>
-        <javadoc.additional.params></javadoc.additional.params>
+        <javadoc.additional.params />
     </properties>
 
     <repositories>
