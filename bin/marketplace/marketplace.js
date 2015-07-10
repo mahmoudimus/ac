@@ -6,8 +6,7 @@ var request = require('request'),
         extend = require('node.extend'),
         nomnom = require('nomnom'),
         colors = require('colors'),
-        util = require('util'),
-        prompt = require('sync-prompt').prompt;
+        util = require('util');
 
 var selfExecute = require.main === module;
 
@@ -204,12 +203,6 @@ exports.run = function(runOpts) {
       username: opts.user,
       password: opts.pass
     }
-  }
-
-  if (includePrivateAddons(opts) && !opts.auth) {
-    opts.auth = {};
-    opts.auth.username = opts.user ? opts.user : prompt("Username: ");
-    opts.auth.password = prompt("Password: ", true);
   }
 
   if (opts.before) {

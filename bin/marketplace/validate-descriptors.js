@@ -73,13 +73,6 @@ downloader.run({
         });
     },
     descriptorDownloadedCallback: function (result, body, opts) {
-        if (result.type !== 'json') {
-            if (!warned) {
-                console.log("WARN:".yellow, "XML descriptors are not supported");
-                warned = true;
-            }
-            return;
-        }
 
         var descriptor = JSON.parse(body);
 

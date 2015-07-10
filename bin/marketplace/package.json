@@ -12,7 +12,6 @@
     "node.extend": "~1.0.9",
     "URIjs": "~1.12.1",
     "moment": "*",
-    "colors": "~0.6.2",
-    "sync-prompt": "~0.4.2"
+    "colors": "~0.6.2"
   }
 }
