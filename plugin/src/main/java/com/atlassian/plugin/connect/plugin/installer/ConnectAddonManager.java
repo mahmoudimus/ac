@@ -533,8 +533,6 @@ public class ConnectAddonManager
         {
             log.error("Unable to set the ApplicationLink user key property for add-on '{}' because the add-on has no ApplicationLink!", addon.getKey());
         }
-
-        connectUserService.setAddonUserActive(addon.getKey(), true);
     }
 
     // NB: the sharedSecret should be distributed synchronously and only on installation

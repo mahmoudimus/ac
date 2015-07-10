@@ -127,7 +127,7 @@ public class ConnectUserServiceImplTest
     {
         UserProfile profile = mock(UserProfile.class);
         when(profile.getUserKey()).thenReturn(new UserKey("does not exist"));
-        assertThat(connectUserService.isUserActive(userProfile), is(false));
+        connectUserService.isUserActive(userProfile);
     }
 
     @Test
