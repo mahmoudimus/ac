@@ -56,6 +56,18 @@ function validate(opts, addonKey, descriptorFilename, descriptor, schema, callba
     });
 }
 
+var incompatibleApplications = {};
+
+var addIncompatibleApps = function(compatibleAppNameList) {
+    compatibleAppNameList.forEach(function(appName){
+        if (incompatibleApplications[appName]) {
+            incompatibleApplications[appName]++;
+        } else {
+            incompatibleApplications[appName] = 1;
+        }
+    });
+};
+
 downloader.run({
     before: function (opts) {
         marketplace.requestQueue().drain = function () {
@@ -73,20 +85,30 @@ downloader.run({
         });
     },
     descriptorDownloadedCallback: function (result, body, opts) {
-        if (result.type !== 'json') {
-            if (!warned) {
-                console.log("WARN:".yellow, "XML descriptors are not supported");
-                warned = true;
-            }
-            return;
-        }
 
         var descriptor = JSON.parse(body);
 
         var compatibleApps = result.addon.listing.compatibleApplications;
 
         if (!compatibleApps) {
-            console.error(result.addon.key.red, "no compatible apps", JSON.stringify(result.listing));
+            console.error(result.addon.key.red, "no compatible apps provided", JSON.stringify(result.addon.listing));
+            return;
+        }
+
+        var registeredCompatibleApps = ["jira", "confluence"];
+        var listCompatibleAppKeys = [];
+        for (var app in compatibleApps) {
+            listCompatibleAppKeys.push(compatibleApps[app].key);
+        }
+
+        var intersectionOfCompatibleApps = listCompatibleAppKeys.filter(
+                function(appKey) {
+                    return registeredCompatibleApps.indexOf(appKey) != -1;
+                }
+        );
+
+        if (intersectionOfCompatibleApps.length == 0) {
+            addIncompatibleApps(listCompatibleAppKeys);
             return;
         }
 
@@ -100,5 +122,14 @@ downloader.run({
             args: [opts, result.addon.key, result.descriptorFilename, descriptor, schema]
         }, function () {});
     }
+});
+
+process.on('exit', function() {
+  if (incompatibleApplications !== {}) {
+      console.log("Incompatible Types Skipped:".red);
+      for(var appName in incompatibleApplications) {
+          console.log(appName.red, ": " + incompatibleApplications[appName]);
+      }
+  }
 });
 

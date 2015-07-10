@@ -24,4 +24,5 @@ public class ConnectAddonAccessorImpl implements ConnectAddonAccessor
     {
         return connectAddonManager.isAddonEnabled(addOnKey);
     }
+
 }

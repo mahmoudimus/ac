@@ -22,7 +22,7 @@ public class AddOnKeyExtractorImpl implements AddOnKeyExtractor
      * {@link com.atlassian.jwt.plugin.sal.JwtAuthenticatorImpl},
      * indicating the Connect add-on that is the origin of the current request.
      */
-    private static final String PLUGIN_KEY = JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME;
+    private static final String PLUGIN_KEY_ATTRIBUTE = JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME;
 
     private final JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
 
@@ -58,14 +58,14 @@ public class AddOnKeyExtractorImpl implements AddOnKeyExtractor
     @Nullable
     public String extractClientKey(@Nonnull HttpServletRequest req)
     {
-        return (String) req.getAttribute(PLUGIN_KEY);
+        return (String) req.getAttribute(PLUGIN_KEY_ATTRIBUTE);
     }
 
 
     @Override
     public void setClientKey(@Nonnull HttpServletRequest req, @Nonnull String clientKey)
     {
-        req.setAttribute(PLUGIN_KEY, clientKey);
+        req.setAttribute(PLUGIN_KEY_ATTRIBUTE, clientKey);
     }
 
     /**

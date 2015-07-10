@@ -375,6 +375,7 @@ integrationTestJob(['key', 'product', 'testGroup', 'groupName', 'additionalMaven
             name: '#product - IT #groupName'
     ) {
         commonRequirements()
+        requirement(key:'elastic', condition:'equals', value:'true')
         checkoutDefaultRepositoryTask()
         setupVncTask()
         mavenTestTask(
