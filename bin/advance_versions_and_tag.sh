@@ -34,22 +34,18 @@ git checkout master
 
 if ! [ -z $bamboo_release_build_revision ] && [ $bamboo_release_build_revision != "true" ]
 then
-    echo "${PREFIX} merging build revision into master"
-    git merge $bamboo_planRepository_revision
-    echo "${PREFIX} pushing master "
-    git push origin master
-
-    echo "${PREFIX} switching back to build revision"
-    git checkout $bamboo_planRepository_revision
+    COMMIT=$bamboo_planRepository_revision
 else
-    echo "${PREFIX} merging develop into master"
-    git merge develop
-    echo "${PREFIX} pushing master "
-    git push origin master
-
-    echo "${PREFIX} switching back to develop"
-    git checkout develop
+    COMMIT="develop"
 fi
+
+echo "${PREFIX} merging ${COMMIT} into master"
+git merge $COMMIT
+echo "${PREFIX} pushing master"
+git push origin master
+
+echo "${PREFIX} switching back to ${COMMIT}"
+git checkout $COMMIT
 
 echo "${PREFIX} incrementing -SNAPSHOT version in poms"
 mvn --batch-mode release:update-versions -DautoVersionSubmodules=true versions:update-child-modules
