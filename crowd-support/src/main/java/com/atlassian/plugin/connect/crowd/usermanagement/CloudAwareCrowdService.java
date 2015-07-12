@@ -5,8 +5,17 @@ import java.util.Set;
 
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
+import com.atlassian.crowd.exception.ApplicationNotFoundException;
+import com.atlassian.crowd.exception.ApplicationPermissionException;
+import com.atlassian.crowd.exception.GroupNotFoundException;
+import com.atlassian.crowd.exception.InvalidAuthenticationException;
+import com.atlassian.crowd.exception.OperationFailedException;
+import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
+import com.atlassian.crowd.model.application.Application;
+import com.atlassian.crowd.model.group.Group;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.crowd.usermanagement.api.ConnectCrowdService;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.product.FeatureManager;
@@ -26,7 +35,7 @@ import org.springframework.stereotype.Component;
  * so that elsewhere, the business of adding users and attributes looks simple.
  */
 @Component
-public class CloudAwareCrowdService implements ConnectCrowdService
+public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOnUserGroupProvisioningService
 {
     private HostProperties hostProperties;
     private final FeatureManager featureManager;
@@ -84,6 +93,74 @@ public class CloudAwareCrowdService implements ConnectCrowdService
             // write attributes back to the Crowd Server. This can be removed completely with Crowd 2.9 since addUser can take a UserWithAttributes in this version
             remote.setAttributesOnUser(user, attributes);
         }
+    }
+
+    @Override
+    public void ensureUserIsInGroup(String username, String groupName)
+            throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, InvalidAuthenticationException
+    {
+        if (isConfluence() && isOnDemand())
+        {
+            remote.ensureUserIsInGroup(username, groupName);
+        }
+        else
+        {
+            embedded.ensureUserIsInGroup(username, groupName);
+        }
+    }
+
+    @Override
+    public void removeUserFromGroup(String username, String groupName)
+            throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, InvalidAuthenticationException
+    {
+        if (isConfluence() && isOnDemand())
+        {
+            remote.removeUserFromGroup(username, groupName);
+        }
+        else
+        {
+            embedded.removeUserFromGroup(username, groupName);
+        }
+    }
+
+    @Override
+    public boolean ensureGroupExists(String groupName)
+            throws ApplicationNotFoundException, OperationFailedException, ApplicationPermissionException
+    {
+        if (isConfluence() && isOnDemand())
+        {
+            return remote.ensureGroupExists(groupName);
+        }
+        else
+        {
+            return embedded.ensureGroupExists(groupName);
+        }
+    }
+
+    @Override
+    public Group findGroupByKey(String groupName)
+            throws ApplicationNotFoundException
+    {
+        if (isConfluence() && isOnDemand())
+        {
+            return remote.findGroupByKey(groupName);
+        }
+        else
+        {
+            return embedded.findGroupByKey(groupName);
+        }
+    }
+
+    @Override
+    public String getCrowdApplicationName()
+    {
+        return embedded.getCrowdApplicationName();
+    }
+
+    @Override
+    public Application getCrowdApplication() throws ApplicationNotFoundException
+    {
+        return embedded.getCrowdApplication();
     }
 
     private boolean isOnDemand()

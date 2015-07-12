@@ -20,7 +20,8 @@ public interface ConnectAddOnUserGroupProvisioningService
      * @throws ApplicationPermissionException if the application's directory where the primary user resides does not allow operations of type {@link com.atlassian.crowd.embedded.api.OperationType#UPDATE_GROUP} or the group is readonly.
      * @throws OperationFailedException underlying directory implementation failed to execute the operation.
      */
-    void ensureUserIsInGroup(String userKey, String groupKey) throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException;
+    void ensureUserIsInGroup(String userKey, String groupKey)
+            throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, InvalidAuthenticationException;
 
     /**
      * Remove the user from the nominated group. It is not an error condition if the user is not a member of the group.
@@ -33,7 +34,8 @@ public interface ConnectAddOnUserGroupProvisioningService
      * @throws ApplicationPermissionException if the application's directory where the primary user resides does not allow operations of type {@link com.atlassian.crowd.embedded.api.OperationType#UPDATE_GROUP} or the group is readonly.
      * @throws OperationFailedException underlying directory implementation failed to execute the operation.
      */
-    void removeUserFromGroup(String userKey, String groupKey) throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException;
+    void removeUserFromGroup(String userKey, String groupKey)
+            throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, InvalidAuthenticationException;
 
     /**
      * Ensure that the nominated group exists. Create it if it doesn't already exist.

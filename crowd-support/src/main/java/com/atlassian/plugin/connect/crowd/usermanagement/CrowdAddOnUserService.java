@@ -7,6 +7,7 @@ import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.exception.ApplicationPermissionException;
 import com.atlassian.crowd.exception.GroupNotFoundException;
+import com.atlassian.crowd.exception.InvalidAuthenticationException;
 import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
@@ -66,7 +67,8 @@ public class CrowdAddOnUserService implements ConnectAddOnUserService
                 | UserNotFoundException
                 | GroupNotFoundException
                 | ApplicationNotFoundException
-                | OperationFailedException e)
+                | OperationFailedException
+                | InvalidAuthenticationException e)
         {
             throw new ConnectAddOnUserInitException(e);
         }
@@ -87,7 +89,7 @@ public class CrowdAddOnUserService implements ConnectAddOnUserService
     }
 
     private String createOrEnableAddOnUser(String username, String addOnDisplayName)
-            throws ApplicationNotFoundException, OperationFailedException, ApplicationPermissionException, UserNotFoundException, GroupNotFoundException
+            throws ApplicationNotFoundException, OperationFailedException, ApplicationPermissionException, UserNotFoundException, GroupNotFoundException, InvalidAuthenticationException
     {
         connectAddOnUserGroupProvisioningService.ensureGroupExists(Constants.ADDON_USER_GROUP_KEY);
         User user = connectCrowdService.createOrEnableUser(username, addOnDisplayName, Constants.ADDON_USER_EMAIL_ADDRESS, PREVENT_LOGIN);

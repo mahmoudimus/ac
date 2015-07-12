@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.util;
+package com.atlassian.plugin.connect.crowd.usermanagement;
 
 import com.atlassian.crowd.integration.rest.service.factory.RestCrowdClientFactory;
 import com.atlassian.crowd.service.factory.CrowdClientFactory;

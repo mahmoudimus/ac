@@ -10,14 +10,16 @@ import com.atlassian.crowd.exception.InvalidUserException;
 import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.crowd.service.client.CrowdClient;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.crowd.usermanagement.api.ConnectCrowdService;
 import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
 
 public abstract class ConnectCrowdServiceBase
-        implements ConnectCrowdService
+        implements ConnectCrowdService, ConnectAddOnUserGroupProvisioningService
 {
+    private static final String CROWD_APPLICATION_NAME = "crowd-embedded";
     private final UserReconciliation userReconciliation;
 
     public ConnectCrowdServiceBase(UserReconciliation userReconciliation)
@@ -136,4 +138,10 @@ public abstract class ConnectCrowdServiceBase
     protected abstract void updateUser(UserTemplate fixes);
 
     protected abstract Optional<? extends User> findUserByName(String username);
+
+    @Override
+    public String getCrowdApplicationName()
+    {
+        return CROWD_APPLICATION_NAME;
+    }
 }
