@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import com.atlassian.crowd.embedded.api.PasswordCredential;
@@ -11,6 +10,7 @@ import com.atlassian.crowd.exception.ApplicationPermissionException;
 import com.atlassian.crowd.exception.GroupNotFoundException;
 import com.atlassian.crowd.exception.InvalidAuthenticationException;
 import com.atlassian.crowd.exception.InvalidCredentialException;
+import com.atlassian.crowd.exception.InvalidGroupException;
 import com.atlassian.crowd.exception.InvalidUserException;
 import com.atlassian.crowd.exception.MembershipAlreadyExistsException;
 import com.atlassian.crowd.exception.MembershipNotFoundException;
@@ -18,31 +18,34 @@ import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.group.Group;
+import com.atlassian.crowd.model.group.GroupTemplate;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.crowd.service.client.CrowdClient;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.crowd.usermanagement.api.CrowdClientProvider;
 
+import com.google.common.base.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RemoteCrowdService extends ConnectCrowdServiceBase
+public class RemoteCrowd extends ConnectCrowdBase
 {
-    private static final Logger log = LoggerFactory.getLogger(RemoteCrowdService.class);
+    private static final Logger log = LoggerFactory.getLogger(RemoteCrowd.class);
     private final CrowdClientProvider crowdClientProvider;
 
-    public RemoteCrowdService(CrowdClientProvider crowdClientProvider, UserReconciliation userReconciliation)
+    public RemoteCrowd(CrowdClientProvider crowdClientProvider, UserReconciliation userReconciliation)
     {
         super(userReconciliation);
         this.crowdClientProvider = crowdClientProvider;
     }
 
     @Override
-    public void setAttributesOnUser(User user, Map<String, Set<String>> attributes)
+    public void setAttributesOnUser(String username, Map<String, Set<String>> attributes)
     {
         try
         {
-            client().storeUserAttributes(user.getName(), attributes);
+            client().storeUserAttributes(username, attributes);
         }
         catch (UserNotFoundException | InvalidAuthenticationException | ApplicationPermissionException | OperationFailedException e)
         {
@@ -77,7 +80,7 @@ public class RemoteCrowdService extends ConnectCrowdServiceBase
         }
     }
 
-    protected Optional<? extends User> findUserByName(String username)
+    public Optional<? extends User> findUserByName(String username)
     {
         try
         {
@@ -86,8 +89,15 @@ public class RemoteCrowdService extends ConnectCrowdServiceBase
         catch (UserNotFoundException | InvalidAuthenticationException |
                 ApplicationPermissionException | OperationFailedException e)
         {
-            return Optional.empty();
+            return Optional.absent();
         }
+    }
+
+    @Override
+    protected void addGroup(String groupName)
+            throws InvalidGroupException, OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException
+    {
+        client().addGroup(new GroupTemplate(groupName));
     }
 
     private CrowdClient client()
@@ -135,17 +145,19 @@ public class RemoteCrowdService extends ConnectCrowdServiceBase
     }
 
     @Override
-    public boolean ensureGroupExists(String groupKey)
-            throws ApplicationNotFoundException, OperationFailedException, ApplicationPermissionException
+    public Group findGroupByKey(String groupName)
+            throws ApplicationNotFoundException, ApplicationPermissionException, InvalidAuthenticationException
     {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public Group findGroupByKey(String groupKey)
-            throws ApplicationNotFoundException
-    {
-        throw new UnsupportedOperationException("Not implemented");
+        Group group;
+        try
+        {
+            group = client().getGroup(groupName);
+        }
+        catch (GroupNotFoundException| OperationFailedException gnf)
+        {
+            group = null;
+        }
+        return group;
     }
 
     @Override

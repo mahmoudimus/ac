@@ -1,7 +1,11 @@
 package com.atlassian.plugin.connect.jira.usermanagement;
 
+import java.util.Collections;
+import java.util.Set;
+
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.exception.ApplicationPermissionException;
+import com.atlassian.crowd.exception.InvalidAuthenticationException;
 import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
 import com.atlassian.jira.permission.PermissionSchemeManager;
@@ -11,21 +15,20 @@ import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
-import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
+
 import com.google.common.collect.Sets;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.Collections;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -71,8 +74,9 @@ public class JiraAddOnUserProvisioningServiceTest
     }
 
     @Test
-    public void testMissingAdminPermissionReturnsCorrectErrorCode() throws ApplicationNotFoundException,
-        OperationFailedException, ApplicationPermissionException
+    public void testMissingAdminPermissionReturnsCorrectErrorCode()
+            throws ApplicationNotFoundException,
+            OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException
     {
         when(userManager.getUserByName(USERNAME)).thenReturn(adminUser);
 

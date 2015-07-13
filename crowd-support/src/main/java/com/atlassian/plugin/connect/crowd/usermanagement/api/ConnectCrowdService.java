@@ -14,8 +14,8 @@ public interface ConnectCrowdService
     User createOrEnableUser(String username, String displayName,
             String emailAddress, PasswordCredential passwordCredential);
 
+    User createOrEnableUser(String username, String displayName,
+            String emailAddress, PasswordCredential passwordCredential, Map<String, Set<String>> attributes);
+
     void disableUser(String username) throws ConnectAddOnUserDisableException;
-
-    void setAttributesOnUser(User user, Map<String, Set<String>> attributes);
-
 }

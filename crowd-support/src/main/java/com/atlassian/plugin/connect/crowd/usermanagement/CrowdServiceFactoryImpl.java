@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.crowd.usermanagement;
 
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
-import com.atlassian.plugin.connect.crowd.usermanagement.api.ConnectCrowdService;
 import com.atlassian.plugin.connect.crowd.usermanagement.api.CrowdClientProvider;
 
 import org.springframework.stereotype.Component;
@@ -11,14 +10,14 @@ import org.springframework.stereotype.Component;
 public class CrowdServiceFactoryImpl implements CrowdServiceFactory
 {
     @Override
-    public ConnectCrowdService embedded(ApplicationService applicationService, UserReconciliation userReconciliation, ApplicationManager applicationManager)
+    public ConnectCrowdBase embedded(ApplicationService applicationService, UserReconciliation userReconciliation, ApplicationManager applicationManager)
     {
-        return new EmbeddedCrowdService(applicationService, userReconciliation, applicationManager);
+        return new EmbeddedCrowd(applicationService, userReconciliation, applicationManager);
     }
 
     @Override
-    public ConnectCrowdService remote(CrowdClientProvider crowdClientProvider, UserReconciliation userReconciliation)
+    public ConnectCrowdBase remote(CrowdClientProvider crowdClientProvider, UserReconciliation userReconciliation)
     {
-        return new RemoteCrowdService(crowdClientProvider, userReconciliation);
+        return new RemoteCrowd(crowdClientProvider, userReconciliation);
     }
 }

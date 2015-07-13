@@ -92,8 +92,7 @@ public class CrowdAddOnUserService implements ConnectAddOnUserService
             throws ApplicationNotFoundException, OperationFailedException, ApplicationPermissionException, UserNotFoundException, GroupNotFoundException, InvalidAuthenticationException
     {
         connectAddOnUserGroupProvisioningService.ensureGroupExists(Constants.ADDON_USER_GROUP_KEY);
-        User user = connectCrowdService.createOrEnableUser(username, addOnDisplayName, Constants.ADDON_USER_EMAIL_ADDRESS, PREVENT_LOGIN);
-        connectCrowdService.setAttributesOnUser(user, buildConnectAddOnUserAttribute(hostProperties.getKey()));
+        User user = connectCrowdService.createOrEnableUser(username, addOnDisplayName, Constants.ADDON_USER_EMAIL_ADDRESS, PREVENT_LOGIN, buildConnectAddOnUserAttribute(hostProperties.getKey()));
 
         connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), Constants.ADDON_USER_GROUP_KEY);
 

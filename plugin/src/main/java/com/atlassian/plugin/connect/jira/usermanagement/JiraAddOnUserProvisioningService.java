@@ -180,7 +180,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         {
             return null != connectAddOnUserGroupProvisioningService.findGroupByKey(ADDON_ADMIN_USER_GROUP_KEY);
         }
-        catch (ApplicationNotFoundException e)
+        catch (ApplicationNotFoundException | ApplicationPermissionException | InvalidAuthenticationException e)
         {
             throw new ConnectAddOnUserInitException(e);
         }
@@ -216,7 +216,8 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         }
     }
 
-    private void ensureGroupExistsAndIsAdmin(String groupKey) throws ConnectAddOnUserInitException, OperationFailedException, ApplicationNotFoundException, ApplicationPermissionException
+    private void ensureGroupExistsAndIsAdmin(String groupKey)
+            throws ConnectAddOnUserInitException, OperationFailedException, ApplicationNotFoundException, ApplicationPermissionException, InvalidAuthenticationException
     {
         final boolean created = connectAddOnUserGroupProvisioningService.ensureGroupExists(groupKey);
 

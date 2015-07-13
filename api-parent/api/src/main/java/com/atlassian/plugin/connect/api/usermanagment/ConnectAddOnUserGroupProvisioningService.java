@@ -46,7 +46,8 @@ public interface ConnectAddOnUserGroupProvisioningService
      * @throws ApplicationPermissionException if the application's directory where the primary user resides does not allow operations of type {@link com.atlassian.crowd.embedded.api.OperationType#UPDATE_GROUP} or the group is readonly.
      * @throws OperationFailedException underlying directory implementation failed to execute the operation.
      */
-    boolean ensureGroupExists(String groupKey) throws ApplicationNotFoundException, OperationFailedException, ApplicationPermissionException;
+    boolean ensureGroupExists(String groupKey)
+            throws ApplicationNotFoundException, OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException;
 
     /**
      * Find a group by its unique identifier.
@@ -55,7 +56,8 @@ public interface ConnectAddOnUserGroupProvisioningService
      * @return the {@link Group} if it exists, otherwise {@code null}
      * @throws ApplicationNotFoundException if the current application does not exist in Crowd
      */
-    public Group findGroupByKey(String groupKey) throws ApplicationNotFoundException;
+    Group findGroupByKey(String groupKey)
+            throws ApplicationNotFoundException, ApplicationPermissionException, InvalidAuthenticationException;
 
     /**
      * We need to know the name of the {@link Application} in Crowd so that we can find it.
@@ -64,6 +66,8 @@ public interface ConnectAddOnUserGroupProvisioningService
     String getCrowdApplicationName();
 
     /**
+     * @deprecated we shouldn't be dealing directly with the crowd application outside of the Crowd module any more.
+     *
      * @return the {@link Application} in which we perform user management
      *
      * <strong>Do not cache</strong> the returned Application; it is immutable

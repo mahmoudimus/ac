@@ -1,7 +1,12 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedTransferQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TransferQueue;
 
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
@@ -16,11 +21,14 @@ import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.group.Group;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.crowd.usermanagement.api.ConnectCrowdService;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.product.FeatureManager;
 import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,12 +43,16 @@ import org.springframework.stereotype.Component;
  * so that elsewhere, the business of adding users and attributes looks simple.
  */
 @Component
-public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOnUserGroupProvisioningService
+public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOnUserGroupProvisioningService, ConnectCrowdSyncService
 {
     private HostProperties hostProperties;
     private final FeatureManager featureManager;
-    private final ConnectCrowdService remote;
-    private final ConnectCrowdService embedded;
+    private final ConnectCrowdBase remote;
+    private final ConnectCrowdBase embedded;
+    private final ConcurrentHashMap<String, Map<String, Set<String>>> jiraPendingAttributes = new ConcurrentHashMap<>();
+    private final TransferQueue<String> confluenceUsersToBeSynced = new LinkedTransferQueue<>();
+
+    private static final Logger log = LoggerFactory.getLogger(CloudAwareCrowdService.class);
 
     @Autowired
     public CloudAwareCrowdService(CrowdServiceFactory crowdServiceLocator,
@@ -57,13 +69,84 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
     @Override
     public User createOrEnableUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential)
     {
-        if (isConfluence() && isOnDemand())
+        return createOrEnableUser(username, displayName, emailAddress, passwordCredential, Collections.<String, Set<String>>emptyMap());
+    }
+
+    @Override
+    public User createOrEnableUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential, Map<String, Set<String>> attributes)
+    {
+        User user;
+        if (isOnDemand())
         {
-            return remote.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
+            if (isConfluence())
+            {
+                user = createSyncedConfluenceUser(username, displayName, emailAddress, passwordCredential, attributes);
+            }
+            else
+            {
+                user = embedded.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
+                embedded.setAttributesOnUser(username, attributes);
+                jiraPendingAttributes.putIfAbsent(username, attributes);
+            }
         }
         else
         {
-            return embedded.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
+            user = embedded.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
+            embedded.setAttributesOnUser(username, attributes);
+        }
+        return user;
+    }
+
+    private User createSyncedConfluenceUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential, Map<String, Set<String>> attributes)
+    {
+        User user;
+        try
+        {
+            if (!embedded.findUserByName(username).isPresent())
+            {
+                user = remote.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
+                log.debug("queueing {} for sync", username);
+                boolean synced = confluenceUsersToBeSynced.tryTransfer(username, 10, TimeUnit.SECONDS);
+                // Double checking
+                if (!synced && !embedded.findUserByName(username).isPresent())
+                {
+                    throw new ConnectAddOnUserInitException("Could not find the user in the local Crowd cache");
+                }
+            }
+            else
+            {
+                user = remote.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
+            }
+            remote.setAttributesOnUser(username, attributes);
+            embedded.setAttributesOnUser(username, attributes);
+        }
+        catch (InterruptedException e)
+        {
+            throw new ConnectAddOnUserInitException(e);
+        }
+        return user;
+    }
+
+    @Override
+    public void handleSync(String username)
+    {
+        // The sync has completed so the remote directory should now have a copy
+        // of all the users we want to set an attribute on.
+        if (isConfluence())
+        {
+            boolean wasQueued = confluenceUsersToBeSynced.remove(username);
+            if (wasQueued) {
+                log.debug("Acknowledged synced user {}", username);
+            }
+        }
+        else
+        {
+            Map<String, Set<String>> attributes = jiraPendingAttributes.remove(username);
+            if (attributes != null)
+            {
+                log.debug("Set attributes for {}", username);
+                remote.setAttributesOnUser(username, attributes);
+            }
         }
     }
 
@@ -78,20 +161,6 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
         else
         {
             embedded.disableUser(username);
-        }
-    }
-
-    @Override
-    public void setAttributesOnUser(User user, Map<String, Set<String>> attributes)
-    {
-        embedded.setAttributesOnUser(user, attributes);
-
-        if (isOnDemand())
-        {
-            // Sets the connect attribute on the Remote Crowd Server if running in OD
-            // This is currently required due to the fact that the DbCachingRemoteDirectory implementation used by JIRA and Confluence doesn't currently
-            // write attributes back to the Crowd Server. This can be removed completely with Crowd 2.9 since addUser can take a UserWithAttributes in this version
-            remote.setAttributesOnUser(user, attributes);
         }
     }
 
@@ -125,7 +194,7 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
 
     @Override
     public boolean ensureGroupExists(String groupName)
-            throws ApplicationNotFoundException, OperationFailedException, ApplicationPermissionException
+            throws ApplicationNotFoundException, OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException
     {
         if (isConfluence() && isOnDemand())
         {
@@ -139,7 +208,7 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
 
     @Override
     public Group findGroupByKey(String groupName)
-            throws ApplicationNotFoundException
+            throws ApplicationNotFoundException, ApplicationPermissionException, InvalidAuthenticationException
     {
         if (isConfluence() && isOnDemand())
         {

@@ -59,12 +59,30 @@
         <dependency>
             <groupId>com.atlassian.crowd</groupId>
             <artifactId>crowd-integration-client-rest</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.crowd</groupId>
+            <artifactId>crowd-events</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.event</groupId>
+            <artifactId>atlassian-event</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.atlassian.crowd</groupId>
             <artifactId>crowd-api</artifactId>
             <version>${atlassian.crowd.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

@@ -1,33 +1,41 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
+import com.atlassian.crowd.exception.ApplicationNotFoundException;
+import com.atlassian.crowd.exception.ApplicationPermissionException;
+import com.atlassian.crowd.exception.InvalidAuthenticationException;
+import com.atlassian.crowd.exception.InvalidGroupException;
 import com.atlassian.crowd.exception.InvalidUserException;
 import com.atlassian.crowd.exception.OperationFailedException;
+import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.crowd.service.client.CrowdClient;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
-import com.atlassian.plugin.connect.crowd.usermanagement.api.ConnectCrowdService;
 import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
 
-public abstract class ConnectCrowdServiceBase
-        implements ConnectCrowdService, ConnectAddOnUserGroupProvisioningService
+import com.google.common.base.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public abstract class ConnectCrowdBase
+        implements ConnectAddOnUserGroupProvisioningService
 {
     private static final String CROWD_APPLICATION_NAME = "crowd-embedded";
     private final UserReconciliation userReconciliation;
+    private static final Logger log = LoggerFactory.getLogger(ConnectCrowdBase.class);
 
-    public ConnectCrowdServiceBase(UserReconciliation userReconciliation)
+    public ConnectCrowdBase(UserReconciliation userReconciliation)
     {
         this.userReconciliation = userReconciliation;
     }
 
-    @Override
     public User createOrEnableUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential)
     {
         Optional<? extends User> user = findUserByName(username);
@@ -45,7 +53,6 @@ public abstract class ConnectCrowdServiceBase
         return foundUser;
     }
 
-    @Override
     public void disableUser(String username)
             throws ConnectAddOnUserDisableException
     {
@@ -65,8 +72,7 @@ public abstract class ConnectCrowdServiceBase
         }
     }
 
-    @Override
-    public abstract void setAttributesOnUser(User user, Map<String, Set<String>> attributes);
+    public abstract void setAttributesOnUser(String username, Map<String, Set<String>> attributes);
 
     private User createUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential)
     {
@@ -132,12 +138,47 @@ public abstract class ConnectCrowdServiceBase
         return user.get();
     }
 
+    public abstract Optional<? extends User> findUserByName(String username);
+
     protected abstract void addUser(UserTemplate userTemplate, PasswordCredential passwordCredential)
             throws OperationFailedException, InvalidUserException;
 
     protected abstract void updateUser(UserTemplate fixes);
 
-    protected abstract Optional<? extends User> findUserByName(String username);
+    protected abstract void addGroup(String groupName)
+            throws InvalidGroupException, OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException;
+
+    @Override
+    public boolean ensureGroupExists(String groupName)
+            throws ApplicationNotFoundException, ApplicationPermissionException,
+            OperationFailedException, InvalidAuthenticationException
+    {
+        boolean created = false;
+
+        if (null == findGroupByKey(groupName))
+        {
+            try
+            {
+                addGroup(groupName);
+                created = true;
+                log.info("Created group '{}'.", groupName);
+            }
+            catch (InvalidGroupException ige)
+            {
+                // according to its javadoc addGroup() throws InvalidGroupException if the group already exists
+                // --> handle the race condition of something else creating this group at around the same time
+
+                if (null == findGroupByKey(groupName))
+                {
+                    // the ApplicationService is messing us around by saying that the group exists and then that it does not
+                    throw new RuntimeException(String.format("Crowd said that the %s '%s' did not exist, then that it could not be created because it does exist, then that it does not exist. Find a Crowd coder and beat them over the head with this message.",
+                            Group.class.getSimpleName(), groupName));
+                }
+            }
+        }
+
+        return created;
+    }
 
     @Override
     public String getCrowdApplicationName()

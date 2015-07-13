@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import com.atlassian.crowd.embedded.api.PasswordCredential;
@@ -24,16 +23,18 @@ import com.atlassian.crowd.model.group.GroupTemplate;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 
+import com.google.common.base.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EmbeddedCrowdService extends ConnectCrowdServiceBase
+public class EmbeddedCrowd extends ConnectCrowdBase
 {
-    private static final Logger log = LoggerFactory.getLogger(EmbeddedCrowdService.class);
+    private static final Logger log = LoggerFactory.getLogger(EmbeddedCrowd.class);
     private final ApplicationService applicationService;
     private ApplicationManager applicationManager;
 
-    public EmbeddedCrowdService(ApplicationService applicationService, UserReconciliation userReconciliation, ApplicationManager applicationManager)
+    public EmbeddedCrowd(ApplicationService applicationService, UserReconciliation userReconciliation, ApplicationManager applicationManager)
     {
         super(userReconciliation);
         this.applicationService = applicationService;
@@ -41,11 +42,11 @@ public class EmbeddedCrowdService extends ConnectCrowdServiceBase
     }
 
     @Override
-    public void setAttributesOnUser(User user, Map<String, Set<String>> attributes)
+    public void setAttributesOnUser(String username, Map<String, Set<String>> attributes)
     {
         try
         {
-            applicationService.storeUserAttributes(getCrowdApplication(), user.getName(), attributes);
+            applicationService.storeUserAttributes(getCrowdApplication(), username, attributes);
         }
         catch (OperationFailedException | UserNotFoundException | ApplicationPermissionException e)
         {
@@ -91,38 +92,6 @@ public class EmbeddedCrowdService extends ConnectCrowdServiceBase
     }
 
     @Override
-    public boolean ensureGroupExists(String groupName)
-            throws ApplicationNotFoundException, ApplicationPermissionException,
-            OperationFailedException
-    {
-        boolean created = false;
-
-        if (null == findGroupByKey(groupName))
-        {
-            try
-            {
-                applicationService.addGroup(getCrowdApplication(), new GroupTemplate(groupName));
-                created = true;
-                log.info("Created group '{}'.", groupName);
-            }
-            catch (InvalidGroupException ige)
-            {
-                // according to its javadoc addGroup() throws InvalidGroupException if the group already exists
-                // --> handle the race condition of something else creating this group at around the same time
-
-                if (null == findGroupByKey(groupName))
-                {
-                    // the ApplicationService is messing us around by saying that the group exists and then that it does not
-                    throw new RuntimeException(String.format("The %s %s said that the %s '%s' did not exist, then that it could not be created because it does exist, then that it does not exist. Find a Crowd coder and beat them over the head with this message.",
-                            ApplicationService.class.getSimpleName(), applicationService, Group.class.getSimpleName(), groupName));
-                }
-            }
-        }
-
-        return created;
-    }
-
-    @Override
     public Group findGroupByKey(String groupName) throws ApplicationNotFoundException
     {
         Group group;
@@ -164,16 +133,23 @@ public class EmbeddedCrowdService extends ConnectCrowdServiceBase
         }
     }
 
-    protected Optional<? extends User> findUserByName(String username)
+    public Optional<? extends User> findUserByName(String username)
     {
         try
         {
-            return Optional.ofNullable(applicationService.findUserByName(getCrowdApplication(), username));
+            return Optional.fromNullable(applicationService.findUserByName(getCrowdApplication(), username));
         }
         catch (UserNotFoundException e)
         {
-            return Optional.empty();
+            return Optional.absent();
         }
+    }
+
+    @Override
+    protected void addGroup(String groupName)
+            throws InvalidGroupException, OperationFailedException, ApplicationPermissionException
+    {
+        applicationService.addGroup(getCrowdApplication(), new GroupTemplate(groupName));
     }
 
     // Richard Atkins says that the Application is immutable and therefore the instance replaced every time changes occur,
