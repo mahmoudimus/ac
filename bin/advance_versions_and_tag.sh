@@ -31,12 +31,12 @@ echo "${PREFIX} switching to master branch"
 git remote set-url origin $bamboo_planRepository_repositoryUrl
 git fetch origin master
 git checkout master
+
 echo "${PREFIX} merging develop into master"
 git merge develop
-echo "${PREFIX} git-tagging ${NEW_VERSION}"
-git tag ${NEW_VERSION}
-echo "${PREFIX} git-pushing master branch to origin; this will cause the Freezer plan to start the release"
-git push --tags origin master
+echo "${PREFIX} pushing master "
+git push origin master
+
 echo "${PREFIX} switching back to develop"
 git checkout develop
 echo "${PREFIX} incrementing -SNAPSHOT version in poms"
