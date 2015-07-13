@@ -32,13 +32,21 @@ git remote set-url origin $bamboo_planRepository_repositoryUrl
 git fetch origin master
 git checkout master
 
-echo "${PREFIX} merging develop into master"
-git merge develop
-echo "${PREFIX} pushing master "
+if ! [ -z $bamboo_release_build_revision ] && [ $bamboo_release_build_revision != "true" ]
+then
+    COMMIT=$bamboo_planRepository_revision
+else
+    COMMIT="develop"
+fi
+
+echo "${PREFIX} merging ${COMMIT} into master"
+git merge $COMMIT
+echo "${PREFIX} pushing master"
 git push origin master
 
-echo "${PREFIX} switching back to develop"
-git checkout develop
+echo "${PREFIX} switching back to ${COMMIT}"
+git checkout $COMMIT
+
 echo "${PREFIX} incrementing -SNAPSHOT version in poms"
 mvn --batch-mode release:update-versions -DautoVersionSubmodules=true versions:update-child-modules
 NEW_SNAPSHOT_VERSION=$(mvn -npu org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=project.version | grep -v '\[' | grep -iv 'download' | grep -ve '[0-9]*/[0-9]*K')
