@@ -120,15 +120,14 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                 },
 
                 /**
-                * Opens the quick create issue dialog.  
-                * A callback will be invoked when the dialog is closed and will include an array of issues created.
-                * The dialog fields may be pre-filled with supplied data.
+                * Open the quick create issue dialog. The dialog fields may be pre-filled with supplied data. A callback will be invoked when the dialog is closed and will include an array of issues created. 
                 * 
                 * Note: This is unavailable on general admin and project admin pages.
                 * 
-                * Note: Not all fields can be pre-filled, only the project and issue type are supported
-                * @param {Function(issues):array} callback - callback invoked when dialog is closed
+                * @param {Function} callback - invoked when dialog is closed, takes a single parameter - array of issues created
                 * @param {Object} fields - contains data to pre-fill the dialog with
+                * @param {ProjectId} fields.pid - Project to pre-fill the dialog with
+                * @param {IssueType} fields.issueType - Issue type to pre-fill the dialog with
                 * @noDemo
                 * @example
                 * AP.require('jira', function(jira){
