@@ -28,12 +28,6 @@
         </dependency>
 
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>atlassian-connect-crowd-support</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>external.atlassian.json</groupId>
             <artifactId>json-schemagen-core</artifactId>
             <version>${schema.generator.version}</version>
@@ -144,6 +138,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>atlassian-connect-confluence-support</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>atlassian-connect-crowd-support</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -635,7 +634,8 @@
                             com.atlassian.plugin.connect.plugin*;version="${project.version}",
                             com.atlassian.plugin.connect.modules*,
                             com.atlassian.plugin.connect.confluence*;version="${project.version}",
-                            com.atlassian.plugin.connect.jira*;version="${project.version}"
+                            com.atlassian.plugin.connect.jira*;version="${project.version}",
+                            com.atlassian.plugin.connect.crowd*;version="${project.version}"
                         </Export-Package>
                         <Spring-Context>*</Spring-Context>
                         <Atlassian-Plugin-Key>${project.groupId}.${project.artifactId}</Atlassian-Plugin-Key>

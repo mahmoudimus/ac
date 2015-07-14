@@ -1,21 +1,23 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginException;
 import com.atlassian.plugin.PluginRestartState;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.spi.usermanagment.ConnectAddOnUserDisableException;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.upm.spi.PluginControlHandler;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 @ExportAsService(PluginControlHandler.class)
 @Named
@@ -86,7 +88,7 @@ public class ConnectUPMControlHandler implements PluginControlHandler
     @Override
     public Collection<? extends Plugin> getPlugins()
     {
-        List<Plugin> plugins = new ArrayList<Plugin>();
+        List<Plugin> plugins = new ArrayList<>();
 
         for(String pluginKey : connectAddonManager.getAllAddonKeys())
         {

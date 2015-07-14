@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.api.usermanagment;
+package com.atlassian.plugin.connect.spi.usermanagment;
 
 public class ConnectAddOnUserDisableException extends Exception
 {

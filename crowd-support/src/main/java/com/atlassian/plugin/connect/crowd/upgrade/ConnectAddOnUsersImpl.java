@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.upgrade;
+package com.atlassian.plugin.connect.crowd.upgrade;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -7,7 +7,7 @@ import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.search.query.membership.MembershipQuery;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
+import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 
 import com.google.common.base.Function;
@@ -29,15 +29,15 @@ import static com.google.common.collect.Sets.newHashSet;
 @Component
 public class ConnectAddOnUsersImpl implements ConnectAddOnUsers
 {
-    private final ConnectAddonManager connectAddonManager;
+    private final ConnectAddonRegistry connectAddOnRegistry;
     private final ApplicationService applicationService;
     private final ConnectAddOnUserGroupProvisioningService userGroupProvisioningService;
     private final MembershipQuery<User> membershipQuery;
 
     @Autowired
-    public ConnectAddOnUsersImpl(ConnectAddonManager connectAddonManager, ApplicationService applicationService, ConnectAddOnUserGroupProvisioningService userGroupProvisioningService)
+    public ConnectAddOnUsersImpl(ConnectAddonRegistry connectAddOnRegistry, ApplicationService applicationService, ConnectAddOnUserGroupProvisioningService userGroupProvisioningService)
     {
-        this.connectAddonManager = connectAddonManager;
+        this.connectAddOnRegistry = connectAddOnRegistry;
         this.applicationService = applicationService;
         this.userGroupProvisioningService = userGroupProvisioningService;
         membershipQuery = queryFor(User.class, user()).childrenOf(group()).withName(ADDON_USER_GROUP_KEY).returningAtMost(ALL_RESULTS);
@@ -73,7 +73,7 @@ public class ConnectAddOnUsersImpl implements ConnectAddOnUsers
 
     private HashSet<String> getAddonUserKeys()
     {
-        return newHashSet(transform(connectAddonManager.getAllAddonKeys(), new Function<String, String>()
+        return newHashSet(transform(connectAddOnRegistry.getAllAddonKeys(), new Function<String, String>()
         {
             @Override
             public String apply(String addonKey)

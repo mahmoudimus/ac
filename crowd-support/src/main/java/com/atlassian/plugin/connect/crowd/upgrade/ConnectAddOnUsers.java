@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.upgrade;
+package com.atlassian.plugin.connect.crowd.upgrade;
 
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.model.user.User;

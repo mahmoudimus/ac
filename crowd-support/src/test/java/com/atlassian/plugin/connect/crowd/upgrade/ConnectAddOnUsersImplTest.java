@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.upgrade;
+package com.atlassian.plugin.connect.crowd.upgrade;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.search.EntityDescriptor;
 import com.atlassian.crowd.search.query.membership.MembershipQuery;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
+import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 
 import org.hamcrest.Description;
@@ -43,7 +43,7 @@ public class ConnectAddOnUsersImplTest
     @Mock
     private ApplicationService applicationService;
     @Mock
-    private ConnectAddonManager connectAddonManager;
+    private ConnectAddonRegistry connectAddonRegistry;
     @Mock
     private ConnectAddOnUserGroupProvisioningService userGroupProvisioningService;
 
@@ -54,10 +54,10 @@ public class ConnectAddOnUsersImplTest
 
         List<User> allAddonUsers = asList(mockUser("addon_rad-jira-addon"), mockUser("addon_rad-confluence-addon"));
         when(applicationService.searchDirectGroupRelationships(any(Application.class), any(MembershipQuery.class))).thenReturn(allAddonUsers);
-        when(connectAddonManager.getAllAddonKeys()).thenReturn(singletonList("rad-jira-addon"));
+        when(connectAddonRegistry.getAllAddonKeys()).thenReturn(singletonList("rad-jira-addon"));
         when(userGroupProvisioningService.getCrowdApplication()).thenReturn(application);
 
-        connectAddOnUsers = new ConnectAddOnUsersImpl(connectAddonManager, applicationService, userGroupProvisioningService);
+        connectAddOnUsers = new ConnectAddOnUsersImpl(connectAddonRegistry, applicationService, userGroupProvisioningService);
     }
 
     @Test

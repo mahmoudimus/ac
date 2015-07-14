@@ -6,7 +6,7 @@ import java.util.Set;
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
-import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.spi.usermanagment.ConnectAddOnUserDisableException;
 
 public interface ConnectCrowdService
         extends ConnectAddOnUserGroupProvisioningService

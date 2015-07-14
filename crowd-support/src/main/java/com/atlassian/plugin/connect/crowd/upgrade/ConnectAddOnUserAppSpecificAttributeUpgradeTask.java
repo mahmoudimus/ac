@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.plugin.upgrade;
+package com.atlassian.plugin.connect.crowd.upgrade;
 
 import java.util.Collection;
 import java.util.Collections;
