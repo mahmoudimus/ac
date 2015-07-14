@@ -9,10 +9,6 @@ plan(
     pollingTrigger(repositoryName: 'Atlassian Connect (develop)')
     hipChatNotification()
     runTestsStage()
-    variable(
-            key: 'bamboo.release.build.revision',
-            value: 'true'
-    )
     stage(
             name: 'Start Release',
             manual: 'true'
