@@ -1,5 +1,7 @@
 package it.com.atlassian.plugin.connect.plugin.installer;
 
+import java.io.IOException;
+
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
@@ -9,28 +11,28 @@ import com.atlassian.jwt.exception.JwtParseException;
 import com.atlassian.jwt.exception.JwtUnknownIssuerException;
 import com.atlassian.jwt.exception.JwtVerificationException;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.crowd.usermanagement.api.ConnectCrowdService;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonPrecannedResponseHelper;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.JwtTestVerifier;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
+import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.upm.spi.PluginInstallException;
+
 import com.google.gson.JsonParser;
-import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.io.IOException;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static org.junit.Assert.assertEquals;
@@ -49,7 +51,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
                                  TestAuthenticator testAuthenticator,
                                  AddonTestFilterResults testFilterResults,
                                  ConnectApplinkManager connectApplinkManager,
-                                 ConnectAddOnUserService connectAddOnUserService,
+                                 ConnectCrowdService connectCrowdService,
                                  UserManager userManager,
                                  ApplicationService applicationService,
                                  ApplicationManager applicationManager,
@@ -57,7 +59,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
                                  AddonPrecannedResponseHelper addonPrecannedResponseHelper,
                                  ConnectAddonRegistry connectAddonRegistry)
     {
-        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService, userManager, applicationService, applicationManager, darkFeatureManager, connectAddonRegistry);
+        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectCrowdService, userManager, applicationService, applicationManager, darkFeatureManager, connectAddonRegistry);
         this.darkFeatureManager = darkFeatureManager;
         this.addonPrecannedResponseHelper = addonPrecannedResponseHelper;
     }
@@ -72,7 +74,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
     public void setup() throws Exception
     {
         testAuthenticator.authenticateUser("admin");
-        
+
         initBeans(newAuthenticationBean().withType(AuthenticationType.JWT).build());
     }
 
@@ -88,7 +90,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
             plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
-            
+
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
             String payload = request.getEntity();
 
@@ -119,7 +121,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
 
             addonKey = plugin.getKey();
             final String finalKey = addonKey;
-            
+
             ServletRequestSnapshot installRequest = testFilterResults.getRequest(addonKey, INSTALLED);
             String installPayload = installRequest.getEntity();
 

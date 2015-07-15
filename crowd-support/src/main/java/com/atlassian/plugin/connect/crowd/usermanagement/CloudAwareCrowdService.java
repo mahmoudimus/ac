@@ -27,6 +27,9 @@ import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.product.FeatureManager;
 import com.atlassian.plugin.connect.spi.usermanagment.ConnectAddOnUserDisableException;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -230,6 +233,22 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
     public Application getCrowdApplication() throws ApplicationNotFoundException
     {
         return embedded.getCrowdApplication();
+    }
+
+    @Override
+    @VisibleForTesting
+    public boolean isUserActive(String username)
+    {
+        Optional<? extends User> userOption;
+        if (isConfluence() && isOnDemand())
+        {
+            userOption = embedded.findUserByName(username);
+        }
+        else
+        {
+            userOption = remote.findUserByName(username);
+        }
+        return userOption.isPresent() && userOption.get().isActive();
     }
 
     private boolean isOnDemand()

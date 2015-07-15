@@ -4,25 +4,28 @@ import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.OAuth;
+import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.crowd.usermanagement.api.ConnectCrowdService;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
+import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
+import com.atlassian.plugin.connect.testsupport.util.auth.TestConstants;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.atlassian.sal.api.user.UserManager;
+
 import com.google.gson.JsonParser;
-import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
-import com.atlassian.plugin.connect.testsupport.util.auth.TestConstants;
-import it.com.atlassian.plugin.connect.util.request.RequestUtil;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import it.com.atlassian.plugin.connect.util.request.RequestUtil;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static org.junit.Assert.assertEquals;
@@ -38,7 +41,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
                                       TestAuthenticator testAuthenticator,
                                       AddonTestFilterResults testFilterResults,
                                       ConnectApplinkManager connectApplinkManager,
-                                      ConnectAddOnUserService connectAddOnUserService,
+                                      ConnectCrowdService connectCrowdService,
                                       UserManager userManager,
                                       ApplicationService applicationService,
                                       ApplicationManager applicationManager,
@@ -46,7 +49,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
                                       DarkFeatureManager darkFeatureManager,
                                       ConnectAddonRegistry connectAddonRegistry)
     {
-        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectAddOnUserService, userManager, applicationService, applicationManager, darkFeatureManager, connectAddonRegistry);
+        super(testPluginInstaller, testAuthenticator, testFilterResults, connectApplinkManager, connectCrowdService, userManager, applicationService, applicationManager, darkFeatureManager, connectAddonRegistry);
         requestUtil = new RequestUtil(applicationProperties);
     }
 
@@ -73,10 +76,10 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
             plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
-            
+
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
             String payload = request.getEntity();
-            
+
             boolean hasSharedSecret = new JsonParser().parse(payload).getAsJsonObject().has(SHARED_SECRET_FIELD_NAME);
             assertTrue("field " + SHARED_SECRET_FIELD_NAME + " found in request payload: " + payload, !hasSharedSecret);
 
@@ -138,7 +141,7 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
             boolean hasOauthLink = new JsonParser().parse(payload).getAsJsonObject()
                             .get("links").getAsJsonObject()
                             .get("oauth").getAsString().endsWith("/rest/atlassian-connect/latest/oauth");
-                
+
             assertTrue("OAuth link not found in request payload: " + payload, hasOauthLink);
             assertEquals("add-on with OAuth authentication should be able to make requests", 200, requestUtil.makeRequest(requestUtil.constructOAuthRequestFromAddOn(installOnlyBean.getKey())).getStatusCode());
         }
@@ -150,8 +153,8 @@ public class AddonLifecycleOAuthTest extends AbstractAddonLifecycleTest
                 testPluginInstaller.uninstallAddon(plugin);
             }
         }
-        
-        
+
+
     }
 
     @Test

@@ -13,7 +13,9 @@ public class UserReconciliationImpl implements UserReconciliation
     @Override
     public Optional<UserTemplate> getFixes(User user, String requiredDisplayName, String requiredEmailAddress, boolean active)
     {
-        if (user.getEmailAddress().equals(requiredEmailAddress) && user.getDisplayName().equals(requiredDisplayName) && user.isActive() == active)
+        if (user.getEmailAddress().equals(requiredEmailAddress)
+                && user.getDisplayName().equals(requiredDisplayName)
+                && user.isActive() == active)
         {
             return Optional.absent();
         }

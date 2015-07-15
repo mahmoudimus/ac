@@ -1,5 +1,7 @@
 package it.com.atlassian.plugin.connect.plugin.installer;
 
+import java.io.IOException;
+
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
@@ -7,29 +9,30 @@ import com.atlassian.crowd.model.application.Application;
 import com.atlassian.fugue.Option;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.crowd.usermanagement.api.ConnectCrowdService;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.JwtTestVerifier;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
+import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugin.util.WaitUntil;
 import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
+
 import com.google.gson.JsonParser;
-import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
+
 import org.junit.Test;
 
-import java.io.IOException;
-
+import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.usernameForAddon;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 import static com.atlassian.plugin.connect.testsupport.util.AddonUtil.randomWebItemBean;
@@ -62,7 +65,7 @@ public abstract class AbstractAddonLifecycleTest
     protected final TestAuthenticator testAuthenticator;
     protected final AddonTestFilterResults testFilterResults;
     protected final ConnectApplinkManager connectApplinkManager;
-    protected final ConnectAddOnUserService connectAddOnUserService;
+    protected final ConnectCrowdService connectCrowdService;
     private final UserManager userManager;
     private final ApplicationService applicationService;
     private final ApplicationManager applicationManager;
@@ -81,7 +84,7 @@ public abstract class AbstractAddonLifecycleTest
                                          TestAuthenticator testAuthenticator,
                                          AddonTestFilterResults testFilterResults,
                                          ConnectApplinkManager connectApplinkManager,
-                                         ConnectAddOnUserService connectAddOnUserService,
+                                         ConnectCrowdService connectCrowdService,
                                          UserManager userManager,
                                          ApplicationService applicationService,
                                          ApplicationManager applicationManager,
@@ -92,7 +95,7 @@ public abstract class AbstractAddonLifecycleTest
         this.testAuthenticator = testAuthenticator;
         this.testFilterResults = testFilterResults;
         this.connectApplinkManager = connectApplinkManager;
-        this.connectAddOnUserService = connectAddOnUserService;
+        this.connectCrowdService = connectCrowdService;
         this.userManager = userManager;
         this.applicationService = applicationService;
         this.applicationManager = applicationManager;
@@ -106,7 +109,7 @@ public abstract class AbstractAddonLifecycleTest
     {
         String pluginKeyPrefix = PLUGIN_KEY + "-" + authBean.getType().name().toLowerCase();
         String addonKey;
-        
+
         this.baseBean = newConnectAddonBean()
                 .withName(PLUGIN_NAME)
                 .withAuthentication(authBean)
@@ -360,7 +363,7 @@ public abstract class AbstractAddonLifecycleTest
             plugin = testPluginInstaller.installAddon(addon);
 
             addonKey = plugin.getKey();
-            
+
             testPluginInstaller.uninstallAddon(plugin);
             plugin = null;
 
@@ -547,7 +550,7 @@ public abstract class AbstractAddonLifecycleTest
             addonKey = plugin.getKey();
 
             final boolean addOnShouldHaveUser = !addon.getAuthentication().getType().equals(AuthenticationType.NONE);
-            assertEquals("addon with auth=none should not have a user, all others should", addOnShouldHaveUser, connectAddOnUserService.isAddOnUserActive(addonKey));
+            assertEquals("addon with auth=none should not have a user, all others should", addOnShouldHaveUser, connectCrowdService.isUserActive(usernameForAddon(addonKey)));
 
             if (addOnShouldHaveUser)
             {
@@ -729,7 +732,7 @@ public abstract class AbstractAddonLifecycleTest
         {
             assertFalse("addon with auth!=none should have a user", null == userProfile);
             UserKey userKey = userProfile.getUserKey();
-            assertEquals(String.format("addon user should%s be active", shouldBeActiveIfItExists ? "" : " not"), shouldBeActiveIfItExists, connectAddOnUserService.isAddOnUserActive(addon.getKey()));
+            assertEquals(String.format("addon user should%s be active", shouldBeActiveIfItExists ? "" : " not"), shouldBeActiveIfItExists, connectCrowdService.isUserActive(usernameForAddon(addon.getKey())));
             assertTrue("addon user is not in group " + CONNECT_ADDON_USER_GROUP, userManager.isUserInGroup(userKey, CONNECT_ADDON_USER_GROUP));
         }
     }
