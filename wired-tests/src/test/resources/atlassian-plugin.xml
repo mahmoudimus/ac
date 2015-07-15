@@ -29,7 +29,8 @@
     <component-import key="connectDescriptorValidator" interface="com.atlassian.plugin.connect.modules.schema.ConnectDescriptorValidator" />
     <component-import key="connectSchemaLocator" interface="com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectSchemaLocator" />
     <component-import key="connectAddonRegistry" interface="com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry"/>
-    <component-import key="connectAddonUserService" interface="com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService"/>
+    <component-import key="connectAddonUserService" interface="com.atlassian.plugin.connect.spi.user.ConnectAddOnUserService"/>
+    <component-import key="connectCrowdService" interface="com.atlassian.plugin.connect.crowd.usermanagement.api.ConnectCrowdService"/>
     <component-import key="connectAddOnUserProvisioningService" interface="com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService" />
     <component-import key="iFrameRenderStrategyRegistry" interface="com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry" />
     <component-import key="jwtApplinkFinder" interface="com.atlassian.jwt.applinks.JwtApplinkFinder" />

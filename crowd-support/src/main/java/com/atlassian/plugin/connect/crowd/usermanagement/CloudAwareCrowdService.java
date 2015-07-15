@@ -23,9 +23,11 @@ import com.atlassian.crowd.model.group.Group;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.crowd.usermanagement.api.ConnectCrowdService;
+import com.atlassian.plugin.connect.crowd.usermanagement.api.CrowdClientProvider;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.product.FeatureManager;
 import com.atlassian.plugin.connect.spi.usermanagment.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
@@ -46,6 +48,7 @@ import org.springframework.stereotype.Component;
  * so that elsewhere, the business of adding users with attributes looks simple.
  */
 @Component
+@ExportAsDevService
 public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOnUserGroupProvisioningService, ConnectCrowdSyncService
 {
     public static final int SYNC_WAIT_TIMEOUT = 10;
@@ -59,10 +62,10 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
     private static final Logger log = LoggerFactory.getLogger(CloudAwareCrowdService.class);
 
     @Autowired
-    public CloudAwareCrowdService(CrowdServiceFactory crowdServiceLocator,
+    public CloudAwareCrowdService(CrowdServiceLocator crowdServiceLocator,
             ApplicationService applicationService, ApplicationManager applicationManager,
             HostProperties hostProperties, FeatureManager featureManager,
-            CrowdClientProviderImpl crowdClientProvider, UserReconciliation userReconciliation)
+            CrowdClientProvider crowdClientProvider, UserReconciliation userReconciliation)
     {
         this.hostProperties = hostProperties;
         this.featureManager = featureManager;
