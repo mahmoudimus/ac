@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.modules.beans.builder;
 import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
+import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
@@ -116,7 +117,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
             modules.put(fieldName, new ArrayList<JsonObject>());
         }
 
-        modules.get(fieldName).add(new Gson().toJsonTree(bean).getAsJsonObject());
+        modules.get(fieldName).add(ConnectModulesGsonFactory.getGson().toJsonTree(bean).getAsJsonObject());
 
         if (null == moduleBeans)
         {

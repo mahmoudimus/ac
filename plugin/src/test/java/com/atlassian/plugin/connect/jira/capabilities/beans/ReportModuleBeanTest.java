@@ -1,20 +1,24 @@
 package com.atlassian.plugin.connect.jira.capabilities.beans;
 
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.ModuleBean;
-import com.atlassian.plugin.connect.modules.beans.ReportCategory;
-import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
+import com.atlassian.plugin.connect.jira.capabilities.provider.ReportModuleProvider;
+import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.google.gson.Gson;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
+import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 
 import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
 public class ReportModuleBeanTest
 {
@@ -22,10 +26,27 @@ public class ReportModuleBeanTest
     @Test
     public void producesCorrectJSON() throws IOException
     {
-        List<ModuleBean> addonBeans = readTestFile().getModuleBeans().get("jiraReports");
+        Map<String, String> links = new HashMap<String, String>();
+        links.put("self", "http://www.example.com/capabilities");
+        links.put("homepage", "http://www.example.com");
 
-        assertThat(addonBeans, hasSize(2));
-        assertThat(addonBeans, contains(createBeans()));
+        ConnectAddonBean addon = newConnectAddonBean()
+                .withName("My Plugin")
+                .withKey("my-plugin")
+                .withVersion("1.0")
+                .withLinks(links)
+                .withBaseurl("http://www.example.com")
+                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.JWT).withPublicKey("S0m3Publ1cK3y").build())
+                .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
+                .withModules(ReportModuleProvider.DESCRIPTOR_KEY, createBeans())
+                .build();
+
+
+        Gson gson = ConnectModulesGsonFactory.getGson();
+        String json = gson.toJson(addon, ConnectAddonBean.class);
+        String expectedJson = readTestFile();
+
+        assertThat(json, is(sameJSONAs(expectedJson)));
     }
 
     private static ModuleBean[] createBeans()
@@ -49,8 +70,8 @@ public class ReportModuleBeanTest
         };
     }
 
-    private static ConnectAddonBean readTestFile() throws IOException
+    private static String readTestFile() throws IOException
     {
-        return ConnectModulesGsonFactory.getGson().fromJson(readAddonTestFile("reportAddon.json"), ConnectAddonBean.class);
+        return readAddonTestFile("reportAddon.json");
     }
 }
