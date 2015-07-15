@@ -43,9 +43,9 @@ public class ConnectAddOnUsersImplTest
     @Mock
     private ApplicationService applicationService;
     @Mock
-    private ConnectAddonRegistry connectAddonRegistry;
-    @Mock
     private ConnectAddOnUserGroupProvisioningService userGroupProvisioningService;
+    @Mock
+    private ConnectAddonRegistry connectAddonRegistry;
 
     @Before
     public void beforeEach() throws ApplicationNotFoundException

@@ -60,6 +60,8 @@ public interface ConnectAddOnUserGroupProvisioningService
             throws ApplicationNotFoundException, ApplicationPermissionException, InvalidAuthenticationException;
 
     /**
+     * @deprecated we shouldn't be dealing directly with the crowd application outside of the Crowd module any more.
+     *
      * We need to know the name of the {@link Application} in Crowd so that we can find it.
      * @return the {@link String} unique name of the {@link Application} in which we perform user management
      */

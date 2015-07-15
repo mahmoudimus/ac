@@ -19,7 +19,8 @@ public class ConnectCrowdSyncListener
     }
 
     @EventListener
-    public void reportSyncedUser(UserUpdatedEvent event) {
+    public void reportSyncedUser(UserUpdatedEvent event)
+    {
         syncService.handleSync(event.getUser().getName());
     }
 

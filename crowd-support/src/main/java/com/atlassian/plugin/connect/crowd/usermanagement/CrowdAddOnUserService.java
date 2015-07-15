@@ -23,8 +23,6 @@ import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceCompon
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 
-import com.google.common.annotations.VisibleForTesting;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +37,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @JiraComponent
 public class CrowdAddOnUserService implements ConnectAddOnUserService
 {
-    // Justin Koke says that NONE password prevents logging in
+    // This password prevents logging in - we can't send remote crowd the pre-encrypted version, though
     public static final PasswordCredential PREVENT_LOGIN = PasswordCredential.unencrypted("X");
     private final ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService;
     private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;

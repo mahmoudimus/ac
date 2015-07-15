@@ -100,5 +100,12 @@
         <scope>test</scope>
     </dependency>
 
+    <!-- Mockito can't mock the ConnectAddonRegistry interface without this-->
+    <dependency>
+        <groupId>com.atlassian.plugins</groupId>
+        <artifactId>atlassian-plugins-api</artifactId>
+        <version>${atlassian.plugins.version}</version>
+        <scope>test</scope>
+    </dependency>
     </dependencies>
 </project>

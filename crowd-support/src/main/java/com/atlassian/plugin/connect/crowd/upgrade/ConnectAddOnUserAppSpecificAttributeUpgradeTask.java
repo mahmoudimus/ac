@@ -25,12 +25,14 @@ import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUti
 import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.validAddOnUsername;
 
 /**
- * A {@link com.atlassian.sal.api.upgrade.PluginUpgradeTask} that will iterate over all Connect AddOn Users and add a new attribute to them
+ * A {@link com.atlassian.sal.api.upgrade.PluginUpgradeTask} that will iterate
+ * over all Connect AddOn Users and add a new attribute to them
  * <em>synch.APPLICATION_NAME.atlassian-connect-user</em>
  */
 @ExportAsService
 @Component
-public class ConnectAddOnUserAppSpecificAttributeUpgradeTask implements PluginUpgradeTask
+public class ConnectAddOnUserAppSpecificAttributeUpgradeTask
+        implements PluginUpgradeTask
 {
     public static final String OLD_ATTRIBUTE_APPLICATION_NAME = "crowd-embedded";
     private ApplicationService applicationService;
