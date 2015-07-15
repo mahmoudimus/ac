@@ -48,6 +48,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOnUserGroupProvisioningService, ConnectCrowdSyncService
 {
+    public static final int SYNC_WAIT_TIMEOUT = 10;
     private HostProperties hostProperties;
     private final FeatureManager featureManager;
     private final ConnectCrowdBase remote;
@@ -109,7 +110,7 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
             {
                 user = remote.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
                 log.debug("queueing {} for sync", username);
-                boolean synced = confluenceUsersToBeSynced.tryTransfer(username, 10, TimeUnit.SECONDS);
+                boolean synced = confluenceUsersToBeSynced.tryTransfer(username, SYNC_WAIT_TIMEOUT, TimeUnit.SECONDS);
                 // Double checking
                 if (!synced && !embedded.findUserByName(username).isPresent())
                 {
