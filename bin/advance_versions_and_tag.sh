@@ -28,11 +28,14 @@ STARTING_VERSION=$(mvn -npu org.apache.maven.plugins:maven-help-plugin:2.1.1:eva
 NEW_VERSION=`echo ${STARTING_VERSION} | sed "s/${SNAPSHOT}//"`
 echo "${PREFIX} next release version: '${NEW_VERSION}'"
 echo "${PREFIX} switching to master branch"
-git remote set-url origin $bamboo_planRepository_repositoryUrl
+if ! [ -z $bamboo_planRepository_repositoryUrl ]
+then
+    git remote set-url origin $bamboo_planRepository_repositoryUrl
+fi
 git fetch origin master
 git checkout master
 
-if ! [ -z $bamboo_release_build_revision ] && [ $bamboo_release_build_revision != "true" ]
+if ! [ -z $bamboo_planRepository_revision ]
 then
     COMMIT=$bamboo_planRepository_revision
 else
