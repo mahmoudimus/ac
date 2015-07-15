@@ -39,11 +39,11 @@ import org.springframework.stereotype.Component;
  * This implementation seeks to encapsulate workarounds for:
  * <ul>
  *     <li>Crowd bugs like ACDEV-2037, which mean we need to use the crowd client in Confluence</li>
- *     <li>idiosyncrasies in Confluence and JIRA's use of Crowd Embedded</li>
- *     <li>Shortcomings in the implementation of Crowd user attributes</li>
+ *     <li>idiosyncrasies in Confluence and JIRA's use of Crowd Embedded (dealing directly with crowd embedded in Confluence leads to a race condition)</li>
+ *     <li>Shortcomings in the implementation of Crowd user attributes (they don't sync)</li>
  *     <li>knowledge about how crowd works in OD vs. Server that we need to know because of the above</li>
  * </ul>
- * so that elsewhere, the business of adding users and attributes looks simple.
+ * so that elsewhere, the business of adding users with attributes looks simple.
  */
 @Component
 public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOnUserGroupProvisioningService, ConnectCrowdSyncService
@@ -111,7 +111,7 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
                 user = remote.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
                 log.debug("queueing {} for sync", username);
                 boolean synced = confluenceUsersToBeSynced.tryTransfer(username, SYNC_WAIT_TIMEOUT, TimeUnit.SECONDS);
-                // Double checking
+                // Double checking, in case the user synced after we checked but before we waited (or we failed to receive the event somehow)
                 if (!synced && !embedded.findUserByName(username).isPresent())
                 {
                     throw new ConnectAddOnUserInitException("Could not find the user in the local Crowd cache");
@@ -134,10 +134,10 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
     @Override
     public void handleSync(String username)
     {
-        // The sync has completed so the remote directory should now have a copy
-        // of all the users we want to set an attribute on.
         if (isConfluence())
         {
+            // The sync has completed so our local crowd user table should now have a copy
+            // of the user we created remotely
             boolean wasQueued = confluenceUsersToBeSynced.remove(username);
             if (wasQueued) {
                 log.debug("Acknowledged synced user {}", username);
@@ -145,6 +145,7 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
         }
         else
         {
+            // The user has been synchronised to the remote directory, so we can set the remote attribute
             Map<String, Set<String>> attributes = jiraPendingAttributes.remove(username);
             if (attributes != null)
             {
