@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.crowd.usermanagement.api.CrowdClientProvider
 import org.springframework.stereotype.Component;
 
 @Component
-public class CrowdServiceFactoryImpl implements CrowdServiceFactory
+public class CrowdServiceLocatorImpl implements CrowdServiceLocator
 {
     @Override
     public ConnectCrowdBase embedded(ApplicationService applicationService, UserReconciliation userReconciliation, ApplicationManager applicationManager)
