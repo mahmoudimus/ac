@@ -23,7 +23,6 @@ import com.atlassian.crowd.model.group.Group;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.crowd.usermanagement.api.ConnectCrowdService;
-import com.atlassian.plugin.connect.crowd.usermanagement.api.CrowdClientProvider;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.product.FeatureManager;
 import com.atlassian.plugin.connect.spi.usermanagment.ConnectAddOnUserDisableException;

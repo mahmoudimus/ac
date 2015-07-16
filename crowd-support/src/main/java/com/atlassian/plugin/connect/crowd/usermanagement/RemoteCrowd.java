@@ -22,7 +22,6 @@ import com.atlassian.crowd.model.group.GroupTemplate;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.crowd.service.client.CrowdClient;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
-import com.atlassian.plugin.connect.crowd.usermanagement.api.CrowdClientProvider;
 
 import com.google.common.base.Optional;
 

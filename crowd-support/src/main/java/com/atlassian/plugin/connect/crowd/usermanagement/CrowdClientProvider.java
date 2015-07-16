@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.crowd.usermanagement.api;
+package com.atlassian.plugin.connect.crowd.usermanagement;
 
 import com.atlassian.crowd.service.client.CrowdClient;
 

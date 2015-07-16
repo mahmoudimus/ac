@@ -8,7 +8,6 @@ import java.util.Set;
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
-import com.atlassian.plugin.connect.crowd.usermanagement.api.CrowdClientProvider;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.product.FeatureManager;
 

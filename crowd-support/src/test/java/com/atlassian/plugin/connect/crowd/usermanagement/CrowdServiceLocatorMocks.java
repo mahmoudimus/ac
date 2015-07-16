@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.crowd.usermanagement;
 
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
-import com.atlassian.plugin.connect.crowd.usermanagement.api.CrowdClientProvider;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;

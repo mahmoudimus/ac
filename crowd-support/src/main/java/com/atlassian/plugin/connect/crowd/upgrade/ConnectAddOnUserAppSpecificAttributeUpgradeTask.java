@@ -9,7 +9,7 @@ import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.service.client.CrowdClient;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
-import com.atlassian.plugin.connect.crowd.usermanagement.api.CrowdClientProvider;
+import com.atlassian.plugin.connect.crowd.usermanagement.CrowdClientProvider;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.product.FeatureManager;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;

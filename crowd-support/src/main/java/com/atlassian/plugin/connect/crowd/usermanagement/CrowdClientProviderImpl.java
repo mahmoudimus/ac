@@ -5,7 +5,6 @@ import com.atlassian.crowd.service.client.ClientPropertiesImpl;
 import com.atlassian.crowd.service.client.ClientResourceLocator;
 import com.atlassian.crowd.service.client.CrowdClient;
 import com.atlassian.crowd.service.factory.CrowdClientFactory;
-import com.atlassian.plugin.connect.crowd.usermanagement.api.CrowdClientProvider;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
