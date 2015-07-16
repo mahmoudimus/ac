@@ -28,14 +28,12 @@ documentation is always guaranteed to be in sync.
 - [Atlassian Connect on Atlassian Answers](https://answers.atlassian.com/tags/atlassian-connect)
 
 ### What products support Atlassian Connect?
-Atlassian Connect is available in JIRA and Confluence Cloud for development and use.
-
-Atlassian Connect currently supports:
+Atlassian Connect is available in:
 
 - JIRA Cloud
 - Confluence Cloud
-
-Other products, including JIRA and Confluence Server will be supported in the future.
+- [HipChat](https://www.hipchat.com/docs/apiv2)
+- [Bitbucket](https://developer.atlassian.com/bitbucket/)
 
 ### How can I request new features for Atlassian Connect?
 If there's a feature you'd like to see added to Atlassian Connect, such as a new module type or a
@@ -162,14 +160,4 @@ and does not intend to ever make it available to cloud customers, then [Plugins 
 add-ons](https://developer.atlassian.com/display/DOCS/Getting+Started) will continue to be supported
 for development.
 
-### What happens when a customer moves from a cloud to server product, or vice versa?
-One of the great strengths of the Atlassian platform is that customers can choose the deployment
-model that best suits their needs. We often see customers move from cloud to server products (and vice
-versa) as their needs change. When a customer using one of your Atlassian Connect add-ons needs to
-move between deployment models, they will be able to continue to use your add-on.
-
-Atlassian sales will be able to transfer or issue new licenses as necessary. Developers will be
-responsible for re-associating any data stored on your service with the customer's new hostname.
-
-
-### See also [FAQS for P2 developers.](./faqs-for-p2-developers.html)
+### [FAQS for P2 developers.](./faqs-for-p2-developers.html)
