@@ -62,6 +62,7 @@ public abstract class ConnectCrowdBase
             UserTemplate userTemplate = new UserTemplate(user.get());
             try
             {
+                userTemplate.setActive(false);
                 updateUser(userTemplate);
             }
             catch (ConnectAddOnUserInitException e)

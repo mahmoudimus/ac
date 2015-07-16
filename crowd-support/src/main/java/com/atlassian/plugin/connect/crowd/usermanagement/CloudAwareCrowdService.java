@@ -92,14 +92,20 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
             else
             {
                 user = embedded.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
-                embedded.setAttributesOnUser(username, attributes);
-                jiraPendingAttributes.putIfAbsent(username, attributes);
+                if (!attributes.isEmpty())
+                {
+                    embedded.setAttributesOnUser(username, attributes);
+                    jiraPendingAttributes.putIfAbsent(username, attributes);
+                }
             }
         }
         else
         {
             user = embedded.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
-            embedded.setAttributesOnUser(username, attributes);
+            if (!attributes.isEmpty())
+            {
+                embedded.setAttributesOnUser(username, attributes);
+            }
         }
         return user;
     }
@@ -109,9 +115,9 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
         User user;
         try
         {
+            user = remote.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
             if (!embedded.findUserByName(username).isPresent())
             {
-                user = remote.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
                 log.debug("queueing {} for sync", username);
                 boolean synced = confluenceUsersToBeSynced.tryTransfer(username, syncTimeout, TimeUnit.SECONDS);
                 // Double checking, in case the user synced after we checked but before we waited (or we failed to receive the event somehow)
@@ -120,12 +126,11 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
                     throw new ConnectAddOnUserInitException("Could not find the user in the local Crowd cache");
                 }
             }
-            else
+            if (!attributes.isEmpty())
             {
-                user = remote.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
+                remote.setAttributesOnUser(username, attributes);
+                embedded.setAttributesOnUser(username, attributes);
             }
-            remote.setAttributesOnUser(username, attributes);
-            embedded.setAttributesOnUser(username, attributes);
         }
         catch (InterruptedException e)
         {
@@ -247,11 +252,11 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
         Optional<? extends User> userOption;
         if (isConfluence() && isOnDemand())
         {
-            userOption = embedded.findUserByName(username);
+            userOption = remote.findUserByName(username);
         }
         else
         {
-            userOption = remote.findUserByName(username);
+            userOption = embedded.findUserByName(username);
         }
         return userOption.isPresent() && userOption.get().isActive();
     }
