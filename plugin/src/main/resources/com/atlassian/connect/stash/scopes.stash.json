@@ -9,7 +9,12 @@
       {
           "key": "READ",
           "restPathKeys": ["mirroring-auth"],
-          "methods": ["GET", "POST"]
+          "methods": ["POST"]
+      },
+      {
+          "key": "READ",
+          "restPathKeys": ["ssh-keys"],
+          "methods": ["POST"]
       },
       {
           "key": "WRITE",
@@ -42,6 +47,13 @@
             "key": "ssh",
             "name": "ssh",
             "basePaths": ["($|/.*)"],
+            "versions": ["1", "latest"],
+            "public":true
+        },
+        {
+            "key": "ssh-keys",
+            "name": "ssh",
+            "basePaths": ["/keys(/)?"],
             "versions": ["1", "latest"],
             "public":true
         },
