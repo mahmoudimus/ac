@@ -999,6 +999,9 @@
                         <phase>process-classes</phase>
                     </execution>
                 </executions>
+                <configuration>
+                    <includeExclude>-com.atlassian.jira.compatibility.*</includeExclude>
+                </configuration>
             </plugin>
 
             <!-- this MUST run after compilation -->
