@@ -45,7 +45,7 @@
             <groupId>com.atlassian.jira.compat</groupId>
             <artifactId>jira-cross-compatibility-lib-bridge-factory</artifactId>
             <version>${atlassian.jira.cross.compat.version}</version>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
 
         <!-- TODO: get schema-validator and guava 15.0+ versions into the products so we don't have to bundle them -->
@@ -1000,6 +1000,14 @@
                         <phase>process-classes</phase>
                     </execution>
                 </executions>
+                <configuration>
+                    <scannedDependencies>
+                        <dependency>
+                            <groupId>com.atlassian.jira.compat</groupId>
+                            <artifactId>jira-cross-compatibility-lib-bridge-factory</artifactId>
+                        </dependency>
+                    </scannedDependencies>
+                </configuration>
             </plugin>
 
             <!-- this MUST run after compilation -->
