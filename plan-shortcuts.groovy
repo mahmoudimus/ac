@@ -330,10 +330,7 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
         )
         commonRequirements()
         checkoutDefaultRepositoryTask()
-        mavenTask(
-                description: 'Install',
-                goal: 'install'
-        )
+        mavenInstallTask()
         mavenTestTask(
                 description: 'Run Wired Lifecycle Tests for #product',
                 goal: 'clover2:setup verify -pl plugin-lifecycle-tests -PpluginLifecycle,clover -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters clover2:aggregate clover2:clover',
@@ -357,10 +354,7 @@ wiredTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
     ) {
         commonRequirements()
         checkoutDefaultRepositoryTask()
-        mavenTask(
-                description: 'Install',
-                goal: 'install'
-        )
+        mavenInstallTask()
         mavenTestTask(
                 description: 'Run Wired Tests for #product',
                 goal: 'clover2:setup verify -pl wired-tests -Pwired,clover -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters clover2:aggregate clover2:clover',
@@ -386,10 +380,7 @@ integrationTestJob(['key', 'product', 'testGroup', 'groupName', 'additionalMaven
         requirement(key:'elastic', condition:'equals', value:'true')
         checkoutDefaultRepositoryTask()
         setupVncTask()
-        mavenTask(
-                description: 'Install',
-                goal: 'install'
-        )
+        mavenInstallTask()
         mavenTestTask(
                 description: 'Run Integration Tests for #product #groupName',
                 goal: 'verify -pl integration-tests -Pit -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters',
@@ -423,6 +414,13 @@ checkoutDefaultRepositoryTask() {
             type: 'checkout',
             description: 'Checkout Default Repository',
             cleanCheckout: 'true'
+    )
+}
+
+mavenInstallTask() {
+    mavenTask(
+            description: 'Install',
+            goal: 'install -DskipUnits'
     )
 }
 
