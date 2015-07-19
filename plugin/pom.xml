@@ -1000,12 +1000,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <scannedDependencies>
-                        <dependency>
-                            <groupId>com.atlassian.jira.compat</groupId>
-                            <artifactId>jira-cross-compatibility-lib-bridge-factory</artifactId>
-                        </dependency>
-                    </scannedDependencies>
+                    <includeExclude>-com.atlassian.jira.compatibility.*</includeExclude>
                 </configuration>
             </plugin>
 
