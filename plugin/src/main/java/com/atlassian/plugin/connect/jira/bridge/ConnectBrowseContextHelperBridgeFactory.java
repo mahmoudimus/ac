@@ -4,5 +4,5 @@ import com.atlassian.jira.compatibility.factory.project.browse.BrowseContextHelp
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 
 @JiraComponent
-public class BrowseContextHelper extends BrowseContextHelperBridgeFactory
+public class ConnectBrowseContextHelperBridgeFactory extends BrowseContextHelperBridgeFactory
 { }
