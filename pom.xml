@@ -759,6 +759,7 @@
         <quickreload.version>1.3</quickreload.version>
         <frontend.plugin.version>0.0.22</frontend.plugin.version>
         <atlassian.jira.cross.compat.version>0.48</atlassian.jira.cross.compat.version>
+        <atlassian.jira.cross.compat.version>0.47</atlassian.jira.cross.compat.version>
 
         <!-- TEST STUFF -->
         <atlassian.confluence.productDataVersion>5.8-m56</atlassian.confluence.productDataVersion>
@@ -787,7 +788,7 @@
         <xvfb.enable>true</xvfb.enable>
         <atlassian.upm.on.demand>false</atlassian.upm.on.demand>
         <buildNumber>SNAPSHOT</buildNumber>
-        <atlassian.spring.scanner.version>1.2.9</atlassian.spring.scanner.version>
+        <atlassian.spring.scanner.version>1.2.2</atlassian.spring.scanner.version>
         <ao.long.timeout>180000</ao.long.timeout>
         <ao.short.timeout>30000</ao.short.timeout>
         <skipTests>false</skipTests>
