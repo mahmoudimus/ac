@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.jira.capabilities.descriptor.tabpanel;
 
+import com.atlassian.jira.compatibility.bridge.project.browse.BrowseContextHelperBridge;
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanel;
 import com.atlassian.jira.plugin.projectpanel.ProjectTabPanelModuleDescriptorImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -19,21 +20,23 @@ public class ConnectProjectTabPanelModuleDescriptor extends ProjectTabPanelModul
 {
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final ModuleContextFilter moduleContextFilter;
+    private final BrowseContextHelperBridge browseContextHelper;
 
     public ConnectProjectTabPanelModuleDescriptor(JiraAuthenticationContext jiraAuthenticationContext,
             ModuleFactory moduleFactory, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            ModuleContextFilter moduleContextFilter)
+            ModuleContextFilter moduleContextFilter, BrowseContextHelperBridge browseContextHelper)
     {
         super(jiraAuthenticationContext, moduleFactory);
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.moduleContextFilter = moduleContextFilter;
+        this.browseContextHelper = browseContextHelper;
     }
 
     @Override
     public ProjectTabPanel getModule()
     {
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKeyOnly(getKey()), moduleKeyOnly(getKey()));
-        return new ConnectIFrameProjectTabPanel(renderStrategy, moduleContextFilter);
+        return new ConnectIFrameProjectTabPanel(renderStrategy, moduleContextFilter, browseContextHelper);
     }
 
     @Override

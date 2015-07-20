@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.jira;
 
-import java.util.Map;
-
 import com.atlassian.extras.api.Product;
 import com.atlassian.extras.api.ProductLicense;
 import com.atlassian.fugue.Option;
@@ -11,10 +9,10 @@ import com.atlassian.plugin.connect.jira.condition.JiraConditions;
 import com.atlassian.plugin.connect.spi.product.ConditionClassResolver;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-
 import com.google.common.collect.ImmutableMap;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Map;
 
 @JiraComponent
 public final class JiraProductAccessor implements ProductAccessor
@@ -101,7 +99,7 @@ public final class JiraProductAccessor implements ProductAccessor
         for (LicenseDetails licenseDetails : licenses)
         {
             ProductLicense productLicense = licenseDetails.getJiraLicense();
-            if (productLicense.getProduct().equals(Product.JIRA))
+            if (productLicense.getProduct().getName().equals(Product.JIRA.getName()))
             {
                 jiraProductLicenseOption = Option.some(productLicense);
             }
