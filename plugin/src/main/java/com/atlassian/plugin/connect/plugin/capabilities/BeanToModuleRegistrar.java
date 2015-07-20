@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.WebHookModuleProvider;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
@@ -41,7 +42,6 @@ import static com.atlassian.plugin.connect.modules.beans.WebHookModuleBean.newWe
 @Component
 public class BeanToModuleRegistrar
 {
-    private static final String WEBHOOKS_FIELD = "webhooks";
 
     private final DynamicDescriptorRegistration dynamicDescriptorRegistration;
 
@@ -76,7 +76,7 @@ public class BeanToModuleRegistrar
         BeanTransformContext ctx = new BeanTransformContext(theConnectPlugin, ProductFilter.valueOf(applicationProperties.getDisplayName().toUpperCase()));
 
         //we MUST add in the lifecycle webhooks first
-        Map<String, List<JsonObject>> moduleList = getCapabilitiesWithLifecycleWebhooks(addon);
+        addon = getCapabilitiesWithLifecycleWebhooks(addon);
 
         //now process the module fields
         processFields(addon, ctx, descriptorsToRegister);
@@ -124,7 +124,7 @@ public class BeanToModuleRegistrar
         return registrations.containsKey(pluginKey);
     }
 
-    private Map<String, List<JsonObject>> getCapabilitiesWithLifecycleWebhooks(ConnectAddonBean addon)
+    private ConnectAddonBean getCapabilitiesWithLifecycleWebhooks(ConnectAddonBean addon)
     {
         LifecycleBean lifecycle = addon.getLifecycle();
         ConnectAddonBeanBuilder builder = newConnectAddonBean(addon);
@@ -132,20 +132,20 @@ public class BeanToModuleRegistrar
         if (!Strings.isNullOrEmpty(lifecycle.getEnabled()))
         {
             //add webhook
-            builder.withModule(WEBHOOKS_FIELD, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_ENABLED).withUrl(lifecycle.getEnabled()).build());
+            builder.withModule(WebHookModuleProvider.DESCRIPTOR_KEY, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_ENABLED).withUrl(lifecycle.getEnabled()).build());
         }
         if (!Strings.isNullOrEmpty(lifecycle.getDisabled()))
         {
             //add webhook
-            builder.withModule(WEBHOOKS_FIELD, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_DISABLED).withUrl(lifecycle.getDisabled()).build());
+            builder.withModule(WebHookModuleProvider.DESCRIPTOR_KEY, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_DISABLED).withUrl(lifecycle.getDisabled()).build());
         }
         if (!Strings.isNullOrEmpty(lifecycle.getUninstalled()))
         {
             //add webhook
-            builder.withModule(WEBHOOKS_FIELD, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_UNINSTALLED).withUrl(lifecycle.getUninstalled()).build());
+            builder.withModule(WebHookModuleProvider.DESCRIPTOR_KEY, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_UNINSTALLED).withUrl(lifecycle.getUninstalled()).build());
         }
 
-        return builder.build().getModules();
+        return builder.build();
     }
     
 
