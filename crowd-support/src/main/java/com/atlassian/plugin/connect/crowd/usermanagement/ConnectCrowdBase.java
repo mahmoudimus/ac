@@ -17,7 +17,7 @@ import com.atlassian.crowd.service.client.CrowdClient;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
-import com.atlassian.plugin.connect.spi.usermanagment.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
 
 import com.google.common.base.Optional;
 
@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 public abstract class ConnectCrowdBase
         implements ConnectAddOnUserGroupProvisioningService
 {
-    private static final String CROWD_APPLICATION_NAME = "crowd-embedded";
     private final UserReconciliation userReconciliation;
     private static final Logger log = LoggerFactory.getLogger(ConnectCrowdBase.class);
 
@@ -179,11 +178,5 @@ public abstract class ConnectCrowdBase
         }
 
         return created;
-    }
-
-    @Override
-    public String getCrowdApplicationName()
-    {
-        return CROWD_APPLICATION_NAME;
     }
 }

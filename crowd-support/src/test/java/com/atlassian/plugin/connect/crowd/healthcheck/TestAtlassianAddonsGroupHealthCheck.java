@@ -1,21 +1,22 @@
-package com.atlassian.plugin.connect.plugin;
+package com.atlassian.plugin.connect.crowd.healthcheck;
+
+import java.util.Collection;
+import java.util.HashSet;
 
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
-import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.healthcheck.core.HealthStatus;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.Constants;
+import com.atlassian.plugin.connect.crowd.usermanagement.CrowdApplicationProvider;
+
 import com.google.common.collect.Sets;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.Collection;
-import java.util.HashSet;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -26,14 +27,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith (MockitoJUnitRunner.class)
-public class AtlassianAddonsGroupHealthCheckTest
+public class TestAtlassianAddonsGroupHealthCheck
 {
-    @Mock
-    private ApplicationManager applicationManager;
     @Mock
     private ApplicationService applicationService;
     @Mock
-    private ConnectAddOnUserGroupProvisioningService groupProvisioningService;
+    private CrowdApplicationProvider crowdApplicationProvider;
 
     @Test
     public void testHealthyIfNoAddonUsers() throws Exception
@@ -176,17 +175,17 @@ public class AtlassianAddonsGroupHealthCheckTest
 
     private AtlassianAddonsGroupHealthCheck createHealthCheckWithUsers(Collection<User> users)
     {
-        return new TestHealthCheck(users, applicationManager, applicationService, groupProvisioningService);
+        return new TestHealthCheck(users, applicationService, crowdApplicationProvider);
     }
 
     private static class TestHealthCheck extends AtlassianAddonsGroupHealthCheck
     {
         private final Collection<User> users;
 
-        TestHealthCheck(final Collection<User> users, ApplicationManager applicationManager, ApplicationService applicationService,
-                ConnectAddOnUserGroupProvisioningService groupProvisioningService)
+        TestHealthCheck(final Collection<User> users, ApplicationService applicationService,
+                CrowdApplicationProvider crowdApplicationProvider)
         {
-            super(applicationManager, applicationService, groupProvisioningService);
+            super(applicationService, crowdApplicationProvider);
             this.users = users;
         }
 

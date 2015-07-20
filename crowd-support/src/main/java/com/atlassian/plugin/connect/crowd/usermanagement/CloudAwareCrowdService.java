@@ -16,16 +16,13 @@ import com.atlassian.crowd.exception.GroupNotFoundException;
 import com.atlassian.crowd.exception.InvalidAuthenticationException;
 import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.exception.UserNotFoundException;
-import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
-import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.group.Group;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
-import com.atlassian.plugin.connect.crowd.usermanagement.api.ConnectCrowdService;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.product.FeatureManager;
-import com.atlassian.plugin.connect.spi.usermanagment.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -62,14 +59,14 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
 
     @Autowired
     public CloudAwareCrowdService(CrowdServiceLocator crowdServiceLocator,
-            ApplicationService applicationService, ApplicationManager applicationManager,
+            ApplicationService applicationService, CrowdApplicationProvider crowdApplicationProvider,
             HostProperties hostProperties, FeatureManager featureManager,
             CrowdClientProvider crowdClientProvider, UserReconciliation userReconciliation)
     {
         this.hostProperties = hostProperties;
         this.featureManager = featureManager;
         this.remote = crowdServiceLocator.remote(crowdClientProvider, userReconciliation);
-        this.embedded = crowdServiceLocator.embedded(applicationService, userReconciliation, applicationManager);
+        this.embedded = crowdServiceLocator.embedded(applicationService, userReconciliation, crowdApplicationProvider);
     }
 
     @Override
@@ -230,18 +227,6 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
         {
             return embedded.findGroupByKey(groupName);
         }
-    }
-
-    @Override
-    public String getCrowdApplicationName()
-    {
-        return embedded.getCrowdApplicationName();
-    }
-
-    @Override
-    public Application getCrowdApplication() throws ApplicationNotFoundException
-    {
-        return embedded.getCrowdApplication();
     }
 
     @Override

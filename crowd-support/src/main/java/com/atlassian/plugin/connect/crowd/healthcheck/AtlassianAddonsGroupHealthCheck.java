@@ -1,7 +1,9 @@
-package com.atlassian.plugin.connect.plugin;
+package com.atlassian.plugin.connect.crowd.healthcheck;
+
+import java.util.Collection;
+import java.util.Set;
 
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
-import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.User;
@@ -12,14 +14,13 @@ import com.atlassian.crowd.search.query.membership.MembershipQuery;
 import com.atlassian.healthcheck.core.DefaultHealthStatus;
 import com.atlassian.healthcheck.core.HealthCheck;
 import com.atlassian.healthcheck.core.HealthStatus;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.Constants;
+import com.atlassian.plugin.connect.crowd.usermanagement.CrowdApplicationProvider;
+
 import com.google.common.collect.Sets;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
-import java.util.Set;
 
 import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.validAddOnEmailAddress;
 import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.validAddOnUsername;
@@ -32,16 +33,14 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
 
     private static final Logger log = LoggerFactory.getLogger(AtlassianAddonsGroupHealthCheck.class);
 
-    private final ApplicationManager applicationManager;
     private final ApplicationService applicationService;
-    private final ConnectAddOnUserGroupProvisioningService groupProvisioningService;
+    private final CrowdApplicationProvider crowdApplicationProvider;
 
-    public AtlassianAddonsGroupHealthCheck(ApplicationManager applicationManager, ApplicationService applicationService,
-            ConnectAddOnUserGroupProvisioningService groupProvisioningService)
+    public AtlassianAddonsGroupHealthCheck(ApplicationService applicationService,
+            CrowdApplicationProvider crowdApplicationProvider)
     {
-        this.applicationManager = applicationManager;
         this.applicationService = applicationService;
-        this.groupProvisioningService = groupProvisioningService;
+        this.crowdApplicationProvider = crowdApplicationProvider;
     }
 
     @Override
@@ -70,22 +69,6 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
                     log.warn("Add-on user '" + user.getName() + "' has incorrect prefix");
                     usersWithIncorrectPrefix.add(user);
                 }
-
-// An add-on which is installed in either JIRA or Confluence will create a _SHARED_ user. This check will
-// fail in the other product as there is no applink, but the user is (correctly) active.
-
-//                else
-//                {
-//                    String addonKey = StringUtils.removeStart(name, Constants.ADDON_USERNAME_PREFIX);
-//                    ApplicationLink applicationLink = jwtApplinkFinder.find(addonKey);
-//
-//                    // if there's no applink, the user should be disabled
-//                    if (applicationLink == null && user.isActive())
-//                    {
-//                        log.warn("Add-on user '" + user.getName() + "' is active but has no applink. Perhaps the add-on was installed");
-//                        usersIncorrectlyActive.add(user);
-//                    }
-//                }
             }
 
             boolean isHealthy = usersWithIncorrectEmails.isEmpty() && usersWithIncorrectPrefix.isEmpty() && usersIncorrectlyActive.isEmpty();
@@ -114,16 +97,11 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
 
             return new DefaultHealthStatus(CHECK_NAME, CHECK_DESCRIPTION, com.atlassian.healthcheck.core.Application.Plugin,
                     isHealthy, reason.toString(), healthCheckTime);
-//            return new DefaultHealthStatus(isHealthy, reason, healthCheckTime, com.atlassian.healthcheck.core.Application.Plugin,
-//                    HealthStatusExtended.Severity.CRITICAL, documentationUrl);
         }
         catch (ApplicationNotFoundException e)
         {
             return new DefaultHealthStatus(CHECK_NAME, CHECK_DESCRIPTION, com.atlassian.healthcheck.core.Application.Plugin,
                     false, "Could not find application " + e.getApplicationName(), healthCheckTime);
-//            return new DefaultHealthStatus(false, "Could not find application " + e.getApplicationName(),
-//                    healthCheckTime, com.atlassian.healthcheck.core.Application.Plugin,
-//                    HealthStatusExtended.Severity.CRITICAL, documentationUrl);
         }
     }
 
@@ -134,7 +112,7 @@ public class AtlassianAddonsGroupHealthCheck implements HealthCheck
 
     protected Collection<User> getAddonUsers() throws ApplicationNotFoundException
     {
-        Application application = applicationManager.findByName(groupProvisioningService.getCrowdApplicationName());
+        Application application = crowdApplicationProvider.getCrowdApplication();
 
         MembershipQuery<User> query = QueryBuilder
                 .queryFor(User.class, EntityDescriptor.user())

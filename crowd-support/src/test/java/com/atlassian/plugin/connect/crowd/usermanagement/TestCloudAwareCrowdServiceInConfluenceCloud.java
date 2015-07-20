@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
@@ -38,7 +37,7 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud
 {
     public static final PasswordCredential PASSWORD = PasswordCredential.unencrypted("addon-password");
     @Mock private ApplicationService applicationService;
-    @Mock private ApplicationManager applicationManager;
+    @Mock private CrowdApplicationProvider crowdApplicationProvider;
     @Mock private HostProperties hostProperties;
     @Mock private CrowdServiceLocator crowdServiceLocator;
     @Mock private ConnectCrowdBase remote;
@@ -67,7 +66,7 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud
         when(featureManager.isOnDemand()).thenReturn(true);
         when(hostProperties.getKey()).thenReturn("confluence");
 
-        cloudAwareCrowdService = new CloudAwareCrowdService(crowdServiceLocator, applicationService, applicationManager, hostProperties, featureManager, crowdClientProvider, userReconciliation);
+        cloudAwareCrowdService = new CloudAwareCrowdService(crowdServiceLocator, applicationService, crowdApplicationProvider, hostProperties, featureManager, crowdClientProvider, userReconciliation);
     }
 
     @SuppressWarnings ("unchecked")

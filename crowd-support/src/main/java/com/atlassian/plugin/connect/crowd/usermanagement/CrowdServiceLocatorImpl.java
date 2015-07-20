@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
-import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 
 import org.springframework.stereotype.Component;
@@ -9,9 +8,9 @@ import org.springframework.stereotype.Component;
 public class CrowdServiceLocatorImpl implements CrowdServiceLocator
 {
     @Override
-    public ConnectCrowdBase embedded(ApplicationService applicationService, UserReconciliation userReconciliation, ApplicationManager applicationManager)
+    public ConnectCrowdBase embedded(ApplicationService applicationService, UserReconciliation userReconciliation, CrowdApplicationProvider crowdApplicationProvider)
     {
-        return new EmbeddedCrowd(applicationService, userReconciliation, applicationManager);
+        return new EmbeddedCrowd(applicationService, userReconciliation, crowdApplicationProvider);
     }
 
     @Override

@@ -4,7 +4,6 @@ import java.util.Set;
 
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.spi.usermanagment.ConnectAddOnUserDisableException;
 
 public interface ConnectAddOnUserService
 {

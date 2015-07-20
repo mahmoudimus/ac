@@ -16,7 +16,6 @@ import com.atlassian.crowd.exception.MembershipAlreadyExistsException;
 import com.atlassian.crowd.exception.MembershipNotFoundException;
 import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.exception.UserNotFoundException;
-import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.group.GroupTemplate;
 import com.atlassian.crowd.model.user.UserTemplate;
@@ -157,12 +156,5 @@ public class RemoteCrowd extends ConnectCrowdBase
             group = null;
         }
         return group;
-    }
-
-    @Override
-    public Application getCrowdApplication() throws ApplicationNotFoundException
-    {
-        throw new UnsupportedOperationException("The RemoteCrowdService deals with the crowd client, " +
-            "and doesn't know anything about Crowd Applications.");
     }
 }

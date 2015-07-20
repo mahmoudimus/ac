@@ -5,7 +5,7 @@ import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.OAuth;
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.crowd.usermanagement.api.ConnectCrowdService;
+import com.atlassian.plugin.connect.crowd.usermanagement.ConnectCrowdService;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;

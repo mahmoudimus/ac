@@ -7,8 +7,8 @@ import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.service.client.CrowdClient;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
+import com.atlassian.plugin.connect.crowd.usermanagement.CrowdApplicationProvider;
 import com.atlassian.plugin.connect.crowd.usermanagement.CrowdClientProvider;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.product.FeatureManager;
@@ -37,7 +37,7 @@ public class ConnectAddOnUserAppSpecificAttributeUpgradeTask
     public static final String OLD_ATTRIBUTE_APPLICATION_NAME = "crowd-embedded";
     private ApplicationService applicationService;
     private final ConnectAddOnUsers connectAddOnUsers;
-    private ConnectAddOnUserGroupProvisioningService addOnUserGroupProvisioningService;
+    private CrowdApplicationProvider crowdApplicationProvider;
     private final CrowdClientProvider crowdClientFacade;
     private FeatureManager featureManager;
     private final HostProperties hostProperties;
@@ -46,14 +46,14 @@ public class ConnectAddOnUserAppSpecificAttributeUpgradeTask
     public ConnectAddOnUserAppSpecificAttributeUpgradeTask(
             ApplicationService applicationService,
             ConnectAddOnUsers connectAddOnUsers,
-            ConnectAddOnUserGroupProvisioningService addOnUserGroupProvisioningService,
+            CrowdApplicationProvider crowdApplicationProvider,
             CrowdClientProvider crowdClientFacade,
             FeatureManager featureManager,
             HostProperties hostProperties)
     {
         this.applicationService = applicationService;
         this.connectAddOnUsers = connectAddOnUsers;
-        this.addOnUserGroupProvisioningService = addOnUserGroupProvisioningService;
+        this.crowdApplicationProvider = crowdApplicationProvider;
         this.crowdClientFacade = crowdClientFacade;
         this.featureManager = featureManager;
         this.hostProperties = hostProperties;
@@ -74,7 +74,7 @@ public class ConnectAddOnUserAppSpecificAttributeUpgradeTask
     @Override
     public Collection<Message> doUpgrade() throws Exception
     {
-        Application application = addOnUserGroupProvisioningService.getCrowdApplication();
+        Application application = crowdApplicationProvider.getCrowdApplication();
         for (User user : connectAddOnUsers.getAddonUsersToUpgradeForHostProduct())
         {
             if (!validAddOnUsername(user))

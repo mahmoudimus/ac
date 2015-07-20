@@ -5,7 +5,6 @@ import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil;
-import com.atlassian.plugin.connect.crowd.usermanagement.api.ConnectCrowdService;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
 
 import com.google.common.collect.Sets;

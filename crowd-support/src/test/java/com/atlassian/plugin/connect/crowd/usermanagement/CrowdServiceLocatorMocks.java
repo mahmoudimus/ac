@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
-import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 
 import static org.mockito.Matchers.any;
@@ -12,7 +11,7 @@ public class CrowdServiceLocatorMocks
     {
         when(crowdServiceLocator.embedded(
                 any(ApplicationService.class), any(UserReconciliation.class),
-                any(ApplicationManager.class))).thenReturn(embedded);
+                any(CrowdApplicationProvider.class))).thenReturn(embedded);
 
         when(crowdServiceLocator.remote(
                 any(CrowdClientProvider.class), any(UserReconciliation.class))).thenReturn(remote);

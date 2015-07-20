@@ -9,7 +9,7 @@ import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.search.EntityDescriptor;
 import com.atlassian.crowd.search.query.membership.MembershipQuery;
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
+import com.atlassian.plugin.connect.crowd.usermanagement.CrowdApplicationProvider;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -43,7 +43,7 @@ public class ConnectAddOnUsersImplTest
     @Mock
     private ApplicationService applicationService;
     @Mock
-    private ConnectAddOnUserGroupProvisioningService userGroupProvisioningService;
+    private CrowdApplicationProvider crowdApplicationProvider;
     @Mock
     private ConnectAddonRegistry connectAddonRegistry;
 
@@ -55,9 +55,9 @@ public class ConnectAddOnUsersImplTest
         List<User> allAddonUsers = asList(mockUser("addon_rad-jira-addon"), mockUser("addon_rad-confluence-addon"));
         when(applicationService.searchDirectGroupRelationships(any(Application.class), any(MembershipQuery.class))).thenReturn(allAddonUsers);
         when(connectAddonRegistry.getAllAddonKeys()).thenReturn(singletonList("rad-jira-addon"));
-        when(userGroupProvisioningService.getCrowdApplication()).thenReturn(application);
+        when(crowdApplicationProvider.getCrowdApplication()).thenReturn(application);
 
-        connectAddOnUsers = new ConnectAddOnUsersImpl(connectAddonRegistry, applicationService, userGroupProvisioningService);
+        connectAddOnUsers = new ConnectAddOnUsersImpl(connectAddonRegistry, applicationService, crowdApplicationProvider);
     }
 
     @Test

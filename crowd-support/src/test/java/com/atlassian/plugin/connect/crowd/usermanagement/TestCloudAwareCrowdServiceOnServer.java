@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.atlassian.crowd.embedded.api.PasswordCredential;
-import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.product.FeatureManager;
@@ -41,7 +40,7 @@ public class TestCloudAwareCrowdServiceOnServer
     public static final String ADDON_PASSWORD = "addon-password";
     private final boolean isConfluence;
     @Mock private ApplicationService applicationService;
-    @Mock private ApplicationManager applicationManager;
+    @Mock private CrowdApplicationProvider crowdApplicationProvider;
     @Mock private HostProperties hostProperties;
     @Mock private CrowdServiceLocator crowdServiceLocator;
     @Mock private ConnectCrowdBase remote;
@@ -71,7 +70,7 @@ public class TestCloudAwareCrowdServiceOnServer
 
         mockCrowdServiceLocator(crowdServiceLocator, embedded, remote);
 
-        cloudAwareCrowdService = new CloudAwareCrowdService(crowdServiceLocator, applicationService, applicationManager, hostProperties, featureManager, crowdClientProvider, userReconciliation);
+        cloudAwareCrowdService = new CloudAwareCrowdService(crowdServiceLocator, applicationService, crowdApplicationProvider, hostProperties, featureManager, crowdClientProvider, userReconciliation);
 
         when(featureManager.isOnDemand()).thenReturn(false);
         when(hostProperties.getKey()).thenReturn(isConfluence ? "confluence" : "JIRA");

@@ -1,7 +1,11 @@
 package com.atlassian.plugin.connect.api.usermanagment;
 
-import com.atlassian.crowd.exception.*;
-import com.atlassian.crowd.model.application.Application;
+import com.atlassian.crowd.exception.ApplicationNotFoundException;
+import com.atlassian.crowd.exception.ApplicationPermissionException;
+import com.atlassian.crowd.exception.GroupNotFoundException;
+import com.atlassian.crowd.exception.InvalidAuthenticationException;
+import com.atlassian.crowd.exception.OperationFailedException;
+import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.model.group.Group;
 
 /**
@@ -18,6 +22,7 @@ public interface ConnectAddOnUserGroupProvisioningService
      * @throws UserNotFoundException when the user cannot be found in ANY directory
      * @throws GroupNotFoundException when the group cannot be found in ANY directory
      * @throws ApplicationPermissionException if the application's directory where the primary user resides does not allow operations of type {@link com.atlassian.crowd.embedded.api.OperationType#UPDATE_GROUP} or the group is readonly.
+     * @throws InvalidAuthenticationException if the operation was carried out against a remote crowd instance and failed to authenticate.
      * @throws OperationFailedException underlying directory implementation failed to execute the operation.
      */
     void ensureUserIsInGroup(String userKey, String groupKey)
@@ -32,6 +37,7 @@ public interface ConnectAddOnUserGroupProvisioningService
      * @throws UserNotFoundException when the user cannot be found in ANY directory
      * @throws GroupNotFoundException when the group cannot be found in ANY directory
      * @throws ApplicationPermissionException if the application's directory where the primary user resides does not allow operations of type {@link com.atlassian.crowd.embedded.api.OperationType#UPDATE_GROUP} or the group is readonly.
+     * @throws InvalidAuthenticationException if the operation was carried out against a remote crowd instance and failed to authenticate.
      * @throws OperationFailedException underlying directory implementation failed to execute the operation.
      */
     void removeUserFromGroup(String userKey, String groupKey)
@@ -44,6 +50,7 @@ public interface ConnectAddOnUserGroupProvisioningService
      * @return {@code true} if the group was created, otherwise {@code false}
      * @throws ApplicationNotFoundException if the Crowd application cannot be found
      * @throws ApplicationPermissionException if the application's directory where the primary user resides does not allow operations of type {@link com.atlassian.crowd.embedded.api.OperationType#UPDATE_GROUP} or the group is readonly.
+     * @throws InvalidAuthenticationException if the operation was carried out against a remote crowd instance and failed to authenticate.
      * @throws OperationFailedException underlying directory implementation failed to execute the operation.
      */
     boolean ensureGroupExists(String groupKey)
@@ -58,25 +65,4 @@ public interface ConnectAddOnUserGroupProvisioningService
      */
     Group findGroupByKey(String groupKey)
             throws ApplicationNotFoundException, ApplicationPermissionException, InvalidAuthenticationException;
-
-    /**
-     * @deprecated we shouldn't be dealing directly with the crowd application outside of the Crowd module any more.
-     *
-     * We need to know the name of the {@link Application} in Crowd so that we can find it.
-     * @return the {@link String} unique name of the {@link Application} in which we perform user management
-     */
-    String getCrowdApplicationName();
-
-    /**
-     * @deprecated we shouldn't be dealing directly with the crowd application outside of the Crowd module any more.
-     *
-     * @return the {@link Application} in which we perform user management
-     *
-     * <strong>Do not cache</strong> the returned Application; it is immutable
-     * and replaced every time a change is made
-     *
-     * @throws ApplicationNotFoundException application with requested name does not exist
-     */
-    Application getCrowdApplication() throws ApplicationNotFoundException;
-
 }

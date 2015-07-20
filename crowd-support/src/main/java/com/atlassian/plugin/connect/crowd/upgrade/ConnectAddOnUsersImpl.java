@@ -8,7 +8,7 @@ import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.search.query.membership.MembershipQuery;
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
+import com.atlassian.plugin.connect.crowd.usermanagement.CrowdApplicationProvider;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -31,15 +31,15 @@ public class ConnectAddOnUsersImpl implements ConnectAddOnUsers
 {
     private final ConnectAddonRegistry connectAddOnRegistry;
     private final ApplicationService applicationService;
-    private final ConnectAddOnUserGroupProvisioningService userGroupProvisioningService;
+    private final CrowdApplicationProvider crowdApplicationProvider;
     private final MembershipQuery<User> membershipQuery;
 
     @Autowired
-    public ConnectAddOnUsersImpl(ConnectAddonRegistry connectAddOnRegistry, ApplicationService applicationService, ConnectAddOnUserGroupProvisioningService userGroupProvisioningService)
+    public ConnectAddOnUsersImpl(ConnectAddonRegistry connectAddOnRegistry, ApplicationService applicationService, CrowdApplicationProvider crowdApplicationProvider)
     {
         this.connectAddOnRegistry = connectAddOnRegistry;
         this.applicationService = applicationService;
-        this.userGroupProvisioningService = userGroupProvisioningService;
+        this.crowdApplicationProvider = crowdApplicationProvider;
         membershipQuery = queryFor(User.class, user()).childrenOf(group()).withName(ADDON_USER_GROUP_KEY).returningAtMost(ALL_RESULTS);
     }
 
@@ -47,7 +47,7 @@ public class ConnectAddOnUsersImpl implements ConnectAddOnUsers
     public Iterable<User> getAddonUsersToUpgradeForHostProduct()
             throws ApplicationNotFoundException
     {
-        return filter(applicationService.searchDirectGroupRelationships(userGroupProvisioningService.getCrowdApplication(), membershipQuery),
+        return filter(applicationService.searchDirectGroupRelationships(crowdApplicationProvider.getCrowdApplication(), membershipQuery),
                 isHostProductAddonUserKey());
     }
 
@@ -55,7 +55,7 @@ public class ConnectAddOnUsersImpl implements ConnectAddOnUsers
     public Iterable<User> getAddonUsersToClean()
             throws ApplicationNotFoundException
     {
-        return applicationService.searchDirectGroupRelationships(userGroupProvisioningService.getCrowdApplication(), membershipQuery);
+        return applicationService.searchDirectGroupRelationships(crowdApplicationProvider.getCrowdApplication(), membershipQuery);
     }
 
     private Predicate<User> isHostProductAddonUserKey()

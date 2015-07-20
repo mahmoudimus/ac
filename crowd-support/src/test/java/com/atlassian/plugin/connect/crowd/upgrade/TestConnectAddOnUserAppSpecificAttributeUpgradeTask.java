@@ -11,7 +11,7 @@ import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.service.client.CrowdClient;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
+import com.atlassian.plugin.connect.crowd.usermanagement.CrowdApplicationProvider;
 import com.atlassian.plugin.connect.crowd.usermanagement.CrowdClientProvider;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.product.FeatureManager;
@@ -50,19 +50,19 @@ public class TestConnectAddOnUserAppSpecificAttributeUpgradeTask
         @Mock Application application;
 
         @Mock
-        ConnectAddOnUserGroupProvisioningService addOnUserGroupProvisioningService;
+        CrowdApplicationProvider crowdApplicationProvider;
 
         @Before
         public void setup() throws Exception
         {
                 initMocks(this);
-                when(addOnUserGroupProvisioningService.getCrowdApplication()).thenReturn(application);
+                when(crowdApplicationProvider.getCrowdApplication()).thenReturn(application);
                 when(featureManager.isOnDemand()).thenReturn(true);
                 when(crowdClientProvider.getCrowdClient()).thenReturn(crowdClient);
                 when(hostProperties.getKey()).thenReturn("the-app-name");
                 when(connectAddOnUsers.getAddonUsersToUpgradeForHostProduct()).thenReturn(Collections.<User>emptyList());
                 when(connectAddOnUsers.getAddonUsersToClean()).thenReturn(Collections.<User>emptyList());
-                upgradeTask = new ConnectAddOnUserAppSpecificAttributeUpgradeTask(applicationService, connectAddOnUsers, addOnUserGroupProvisioningService, crowdClientProvider, featureManager, hostProperties);
+                upgradeTask = new ConnectAddOnUserAppSpecificAttributeUpgradeTask(applicationService, connectAddOnUsers, crowdApplicationProvider, crowdClientProvider, featureManager, hostProperties);
         }
 
         @Test

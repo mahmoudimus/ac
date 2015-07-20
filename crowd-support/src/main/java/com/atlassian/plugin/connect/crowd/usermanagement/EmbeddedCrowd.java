@@ -15,7 +15,6 @@ import com.atlassian.crowd.exception.MembershipAlreadyExistsException;
 import com.atlassian.crowd.exception.MembershipNotFoundException;
 import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.exception.UserNotFoundException;
-import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.application.Application;
 import com.atlassian.crowd.model.group.Group;
@@ -32,13 +31,13 @@ public class EmbeddedCrowd extends ConnectCrowdBase
 {
     private static final Logger log = LoggerFactory.getLogger(EmbeddedCrowd.class);
     private final ApplicationService applicationService;
-    private ApplicationManager applicationManager;
+    private final CrowdApplicationProvider crowdApplicationProvider;
 
-    public EmbeddedCrowd(ApplicationService applicationService, UserReconciliation userReconciliation, ApplicationManager applicationManager)
+    public EmbeddedCrowd(ApplicationService applicationService, UserReconciliation userReconciliation, CrowdApplicationProvider crowdApplicationProvider)
     {
         super(userReconciliation);
         this.applicationService = applicationService;
-        this.applicationManager = applicationManager;
+        this.crowdApplicationProvider = crowdApplicationProvider;
     }
 
     @Override
@@ -152,18 +151,17 @@ public class EmbeddedCrowd extends ConnectCrowdBase
         applicationService.addGroup(getCrowdApplication(), new GroupTemplate(groupName));
     }
 
-    // Richard Atkins says that the Application is immutable and therefore the instance replaced every time changes occur,
-    // and that therefore we should never cache it
-    @Override
-    public Application getCrowdApplication()
+    private Application getCrowdApplication()
     {
         try
         {
-            return applicationManager.findByName(getCrowdApplicationName());
+            return crowdApplicationProvider.getCrowdApplication();
         }
         catch (ApplicationNotFoundException e)
         {
             throw new RuntimeException(e);
         }
     }
+
+
 }
