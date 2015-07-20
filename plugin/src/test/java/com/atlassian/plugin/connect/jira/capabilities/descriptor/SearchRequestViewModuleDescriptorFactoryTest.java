@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.jira.capabilities.descriptor;
 
+import com.atlassian.jira.compatibility.bridge.issue.views.SearchRequestViewUtilsBridge;
 import com.atlassian.jira.issue.views.util.SearchRequestViewBodyWriterUtil;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestURLHandler;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptorImpl;
@@ -76,6 +77,8 @@ public class SearchRequestViewModuleDescriptorFactoryTest
     private ConnectConditionDescriptorFactory connectConditionDescriptorFactory;
     @Mock
     private Condition condition;
+    @Mock
+    private SearchRequestViewUtilsBridge searchRequestViewUtils;
 
     private SearchRequestViewModuleDescriptorImpl descriptor;
 
@@ -132,7 +135,8 @@ public class SearchRequestViewModuleDescriptorFactoryTest
                 searchRequestViewBodyWriterUtil,
                 templateRenderer,
                 iFrameUriBuilderFactory,
-                componentAccessor);
+                componentAccessor,
+                searchRequestViewUtils);
 
         SearchRequestViewModuleBean bean = SearchRequestViewModuleBean.newSearchRequestViewModuleBean()
                 .withWeight(55)
