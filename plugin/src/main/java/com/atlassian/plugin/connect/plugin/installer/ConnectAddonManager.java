@@ -14,10 +14,7 @@ import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginState;
 import com.atlassian.plugin.connect.api.installer.AddonSettings;
-import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
-import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData;
+import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
@@ -55,6 +52,7 @@ import com.atlassian.uri.UriBuilder;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+import com.google.gson.JsonDeserializer;
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -70,6 +68,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
@@ -188,7 +187,6 @@ public class ConnectAddonManager
 
         Map<String, String> i18nCollector = newHashMap();
         ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor,i18nCollector);
-
         String pluginKey = addOn.getKey();
 
         if(!i18nCollector.isEmpty())
@@ -658,7 +656,8 @@ public class ConnectAddonManager
      */
     private ConnectAddonBean unmarshallDescriptor(final String pluginKey)
     {
-        return ConnectModulesGsonFactory.getGson().fromJson(addonRegistry.getDescriptor(pluginKey), ConnectAddonBean.class);
+        JsonDeserializer moduleDeserializer = new PluginAwareModuleBeanSerializer(pluginAccessor);
+        return ConnectModulesGsonFactory.getGson(moduleDeserializer).fromJson(addonRegistry.getDescriptor(pluginKey), ConnectAddonBean.class);
     }
 
     @VisibleForTesting
@@ -712,7 +711,7 @@ public class ConnectAddonManager
 
         ConnectAddonEventData data = dataBuilder.build();
 
-        return ConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create().toJson(data);
+        return ConnectModulesGsonFactory.getGson().toJson(data);
     }
 
     private String getConnectPluginVersion()

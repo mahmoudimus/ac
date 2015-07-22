@@ -7,6 +7,7 @@ import com.atlassian.json.schema.annotation.StringSchemaAttributes;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
+import com.google.common.base.Supplier;
 import com.google.gson.JsonObject;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -161,6 +162,8 @@ public class ConnectAddonBean extends BaseModuleBean
 
     @SchemaIgnore
     private transient Map<String, List<ModuleBean>> moduleBeans;
+    
+    private Map<String, Supplier<List<ModuleBean>>> modulesTest;
 
     /**
      * Set of [scopes](../scopes/scopes.html) requested by this add on
@@ -218,6 +221,12 @@ public class ConnectAddonBean extends BaseModuleBean
         {
             this.moduleBeans = new HashMap<>();
         }
+
+        if (null == modulesTest)
+        {
+            this.modulesTest = new HashMap<>();
+        }
+
 
         if (null == vendor)
         {
@@ -281,6 +290,12 @@ public class ConnectAddonBean extends BaseModuleBean
     public Map<String, List<JsonObject>> getModules()
     {
         return modules;
+    }
+
+    public Map<String, Supplier<List<ModuleBean>>> getModulesTest()
+    {
+        return modulesTest;
+
     }
 
     public Map<String, List<ModuleBean>> getModuleBeans()
@@ -363,6 +378,7 @@ public class ConnectAddonBean extends BaseModuleBean
                 .append(enableLicensing, other.enableLicensing)
                 .append(modules, other.modules)
                 .append(moduleBeans, other.moduleBeans)
+                .append(modulesTest, other.modulesTest)
                 .append(scopes, other.scopes)
                 .isEquals();
     }
@@ -385,6 +401,7 @@ public class ConnectAddonBean extends BaseModuleBean
                 .append(enableLicensing)
                 .append(modules)
                 .append(moduleBeans)
+                .append(modulesTest)
                 .append(scopes)
                 .build();
     }

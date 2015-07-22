@@ -114,8 +114,6 @@ public class DynamicContentMacroModuleBeanTest
                                 )
                                 .withImagePlaceholder(newImagePlaceholderBean()
                                                 .withUrl("images/placeholder.png")
-                                                .withWidth(100)
-                                                .withHeight(25)
                                                 .withApplyChrome(true)
                                                 .build()
                                 )

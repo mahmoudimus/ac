@@ -61,7 +61,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVe
 @SuppressWarnings ("UnusedDeclaration")
 public class ConnectJsonExamples
 {
-    private static final Gson gson = ConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create();
+    private static final Gson gson = ConnectModulesGsonFactory.getGson();
 
     public static final String ADDON_EXAMPLE = createAddonExample();
     public static final String AUTHENTICATION_EXAMPLE = createAuthenticationExample();

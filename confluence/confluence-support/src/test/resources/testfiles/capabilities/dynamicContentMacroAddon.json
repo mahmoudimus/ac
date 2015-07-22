@@ -39,15 +39,11 @@
         "featured": true,
         "height": "50px",
         "icon": {
-          "height": 80,
-          "url": "/mymacro/icon.png",
-          "width": 80
+          "url": "/mymacro/icon.png"
         },
         "imagePlaceholder": {
           "applyChrome": true,
-          "height": 25,
-          "url": "images/placeholder.png",
-          "width": 100
+          "url": "images/placeholder.png"
         },
         "name": {
           "i18n": "some.macro.name",
