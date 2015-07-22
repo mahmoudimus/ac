@@ -46,9 +46,9 @@ public class DefaultConnectAddonRegistryTest
     @Before
     public void setUp()
     {
-        this.registry = new DefaultConnectAddonRegistry(this.pluginSettingsFactory, this.connectAddonBeanFactory);
-
         when(this.pluginSettingsFactory.createGlobalSettings()).thenReturn(this.pluginSettings);
+
+        this.registry = new DefaultConnectAddonRegistry(this.pluginSettingsFactory, this.connectAddonBeanFactory);
     }
 
     @Test

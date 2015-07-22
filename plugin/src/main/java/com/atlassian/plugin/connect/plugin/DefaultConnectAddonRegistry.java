@@ -20,6 +20,9 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static com.atlassian.fugue.Option.none;
 import static com.atlassian.fugue.Option.some;
@@ -31,39 +34,59 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     private static final String ADDON_LIST_KEY = "ac.addon.list";
     private static final String ADDON_KEY_PREFIX = "acnct.";
 
-    private final PluginSettingsFactory pluginSettingsFactory;
+    private final PluginSettings settings;
 
     private final ConnectAddonBeanFactory connectAddonBeanFactory;
+
+    private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+    private final Lock write = readWriteLock.writeLock();
+    private final Lock read = readWriteLock.readLock();
 
     @Inject
     public DefaultConnectAddonRegistry(PluginSettingsFactory pluginSettingsFactory, ConnectAddonBeanFactory connectAddonBeanFactory)
     {
-        this.pluginSettingsFactory = pluginSettingsFactory;
+        this.settings = pluginSettingsFactory.createGlobalSettings();
         this.connectAddonBeanFactory = connectAddonBeanFactory;
     }
 
     @Override
     public void removeAll(String pluginKey)
     {
-        PluginSettings settings = settings();
-        settings.remove(addonStorageKey(pluginKey));
+        try
+        {
+            write.lock();
+            settings.remove(addonStorageKey(pluginKey));
 
-        Set<String> addonKeys = getAddonKeySet(settings);
-        addonKeys.remove(pluginKey);
+            Set<String> addonKeys = getAddonKeySet();
+            addonKeys.remove(pluginKey);
 
-        settings.put(ADDON_LIST_KEY, new ArrayList<String>(addonKeys));
+            settings.put(ADDON_LIST_KEY, new ArrayList<>(addonKeys));
+        }
+        finally
+        {
+            write.unlock();
+        }
     }
 
-    private Set<String> getAddonKeySet(PluginSettings settings)
+    private Set<String> getAddonKeySet()
     {
-        List<String> keyList = (List<String>) settings.get(ADDON_LIST_KEY);
+        List<String> keyList;
+        try
+        {
+            read.lock();
+            keyList = (List<String>) settings.get(ADDON_LIST_KEY);
+        }
+        finally
+        {
+            read.unlock();
+        }
 
         if (null == keyList)
         {
-            return new HashSet<String>();
+            return new HashSet<>();
         }
 
-        return new LinkedHashSet<String>(keyList);
+        return new LinkedHashSet<>(keyList);
     }
 
     @Override
@@ -105,31 +128,24 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     @Override
     public Iterable<String> getAllAddonKeys()
     {
-        return getAddonKeySet(settings());
+        return getAddonKeySet();
     }
 
     @Override
     public boolean hasAddons()
     {
-        List<String> keyList = (List<String>) settings().get(ADDON_LIST_KEY);
-        if (null == keyList)
-        {
-            return false;
-        }
-
-        return !keyList.isEmpty();
+        return !getAddonKeySet().isEmpty();
     }
 
     @Override
     public Iterable<ConnectAddonBean> getAllAddonBeans()
     {
-        PluginSettings settings = settings();
         Gson gson = new Gson();
 
         ImmutableList.Builder<ConnectAddonBean> addons = ImmutableList.builder();
-        for (String addonKey : getAddonKeySet(settings))
+        for (String addonKey : getAddonKeySet())
         {
-            AddonSettings addonSettings = this.getAddonSettings(addonKey, settings, gson);
+            AddonSettings addonSettings = this.getAddonSettings(addonKey, gson);
             for (ConnectAddonBean addonBean : this.getAddonBeanFromSettings(addonSettings))
             {
                 addons.add(addonBean);
@@ -154,14 +170,13 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     @Override
     public Iterable<String> getAddonKeysToEnableOnRestart()
     {
-        PluginSettings settings = settings();
         Gson gson = new Gson();
 
         ImmutableList.Builder<String> addonsToEnable = ImmutableList.builder();
 
-        for (String addonKey : getAddonKeySet(settings))
+        for (String addonKey : getAddonKeySet())
         {
-            String json = (String) settings.get(addonStorageKey(addonKey));
+            final String json = getRawAddonSettings(addonKey);
 
             if (!Strings.isNullOrEmpty(json))
             {
@@ -181,11 +196,6 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
         return !Strings.isNullOrEmpty(value);
     }
 
-    private PluginSettings settings()
-    {
-        return pluginSettingsFactory.createGlobalSettings();
-    }
-
     private String addonStorageKey(String addonKey)
     {
         return ADDON_KEY_PREFIX + addonKey;
@@ -195,20 +205,27 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     {
         String settingsToStore = new Gson().toJson(addonSettings);
 
-        PluginSettings settings = settings();
-        settings.put(addonStorageKey(pluginKey), settingsToStore);
+        try
+        {
+            write.lock();
+            settings.put(addonStorageKey(pluginKey), settingsToStore);
 
-        Set<String> addonSet = getAddonKeySet(settings);
-        addonSet.add(pluginKey);
-
-        settings.put(ADDON_LIST_KEY, new ArrayList<String>(addonSet));
-
+            Set<String> addonSet = getAddonKeySet();
+            if (addonSet.add(pluginKey))
+            {
+                settings.put(ADDON_LIST_KEY, new ArrayList<>(addonSet));
+            }
+        }
+        finally
+        {
+            write.unlock();
+        }
     }
 
     @Override
     public AddonSettings getAddonSettings(String pluginKey)
     {
-        return getAddonSettings(pluginKey, settings(), new Gson());
+        return getAddonSettings(pluginKey, new Gson());
     }
 
     @Override
@@ -218,15 +235,31 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
         return getAddonBeanFromSettings(addonSettings);
     }
 
-    private AddonSettings getAddonSettings(String pluginKey, PluginSettings settings, Gson gson)
+    private AddonSettings getAddonSettings(String pluginKey, Gson gson)
     {
         AddonSettings addonSettings = new AddonSettings();
-        String json = (String) settings.get(addonStorageKey(pluginKey));
+        String json = getRawAddonSettings(pluginKey);
+
         if (!Strings.isNullOrEmpty(json))
         {
             addonSettings = gson.fromJson(json, AddonSettings.class);
         }
         return addonSettings;
+    }
+
+    private String getRawAddonSettings(String pluginKey)
+    {
+        String json;
+        try
+        {
+            read.lock();
+            json = (String) settings.get(addonStorageKey(pluginKey));
+        }
+        finally
+        {
+            read.unlock();
+        }
+        return json;
     }
 
     private Option<ConnectAddonBean> getAddonBeanFromSettings(AddonSettings addonSettings)
@@ -247,7 +280,7 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     @Override
     public boolean hasAddonWithKey(final String pluginKey)
     {
-        return getAddonKeySet(settings()).contains(pluginKey);
+        return getAddonKeySet().contains(pluginKey);
     }
 
 }
