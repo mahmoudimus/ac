@@ -1,28 +1,25 @@
 package com.atlassian.plugin.connect.plugin;
 
+import com.atlassian.fugue.Option;
+import com.atlassian.plugin.PluginState;
+import com.atlassian.plugin.connect.api.installer.AddonSettings;
+import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
+import com.atlassian.sal.api.pluginsettings.PluginSettings;
+import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import com.atlassian.fugue.Option;
-import com.atlassian.plugin.PluginState;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.api.installer.AddonSettings;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonBeanFactory;
-import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-import com.atlassian.sal.api.pluginsettings.PluginSettings;
-import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
 
 import static com.atlassian.fugue.Option.none;
 import static com.atlassian.fugue.Option.some;
@@ -35,6 +32,7 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     private static final String ADDON_KEY_PREFIX = "acnct.";
 
     private final PluginSettingsFactory pluginSettingsFactory;
+
     private final ConnectAddonBeanFactory connectAddonBeanFactory;
 
     @Inject
@@ -69,18 +67,6 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     }
 
     @Override
-    public void storeDescriptor(String pluginKey, String json)
-    {
-        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setDescriptor(json));
-    }
-
-    @Override
-    public void removeDescriptor(String pluginKey)
-    {
-        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setDescriptor(""));
-    }
-
-    @Override
     public String getDescriptor(String pluginKey)
     {
         return getAddonSettings(pluginKey).getDescriptor();
@@ -90,18 +76,6 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     public boolean hasDescriptor(String pluginKey)
     {
         return has(getDescriptor(pluginKey));
-    }
-
-    @Override
-    public void storeBaseUrl(String pluginKey, String url)
-    {
-        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setBaseUrl(url));
-    }
-
-    @Override
-    public void removeBaseUrl(String pluginKey)
-    {
-        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setBaseUrl(""));
     }
 
     @Override
@@ -117,75 +91,15 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     }
 
     @Override
-    public void storeSecret(String pluginKey, String secret)
-    {
-        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setSecret(secret));
-    }
-
-    @Override
-    public void removeSecret(String pluginKey)
-    {
-        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setSecret(""));
-    }
-
-    @Override
     public String getSecret(String pluginKey)
     {
         return getAddonSettings(pluginKey).getSecret();
     }
 
     @Override
-    public boolean hasSecret(String pluginKey)
-    {
-        return has(getSecret(pluginKey));
-    }
-
-    @Override
-    public void storeUserKey(String pluginKey, String userKey)
-    {
-        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setUserKey(userKey));
-    }
-
-    @Override
-    public void removeUserKey(String pluginKey)
-    {
-        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setUserKey(""));
-    }
-
-    @Override
     public String getUserKey(String pluginKey)
     {
         return getAddonSettings(pluginKey).getUserKey();
-    }
-
-    @Override
-    public boolean hasUserKey(String pluginKey)
-    {
-        return has(getUserKey(pluginKey));
-    }
-
-    @Override
-    public void storeAuthType(String pluginKey, AuthenticationType type)
-    {
-        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setAuth(type.name()));
-    }
-
-    @Override
-    public void removeAuthType(String pluginKey)
-    {
-        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setAuth(""));
-    }
-
-    @Override
-    public AuthenticationType getAuthType(String pluginKey)
-    {
-        return AuthenticationType.valueOf(getAddonSettings(pluginKey).getAuth());
-    }
-
-    @Override
-    public boolean hasAuthType(String pluginKey)
-    {
-        return has(getAddonSettings(pluginKey).getAuth());
     }
 
     @Override
@@ -229,12 +143,6 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     public void storeRestartState(String pluginKey, PluginState state)
     {
         storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setRestartState(state.name()));
-    }
-
-    @Override
-    public void removeRestartState(String pluginKey)
-    {
-        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setRestartState(""));
     }
 
     @Override
@@ -335,6 +243,7 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
         }
         return beanOption;
     }
+
     @Override
     public boolean hasAddonWithKey(final String pluginKey)
     {
