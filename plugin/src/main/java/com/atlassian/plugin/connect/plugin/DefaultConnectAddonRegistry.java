@@ -158,7 +158,18 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     @Override
     public void storeRestartState(String pluginKey, PluginState state)
     {
-        storeAddonSettings(pluginKey, getAddonSettings(pluginKey).setRestartState(state.name()));
+        try
+        {
+            write.lock();
+
+            final AddonSettings addonSettings = getAddonSettings(pluginKey);
+            addonSettings.setRestartState(state.name());
+            storeAddonSettings(pluginKey, addonSettings);
+        }
+        finally
+        {
+            write.unlock();
+        }
     }
 
     @Override
@@ -201,6 +212,7 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
         return ADDON_KEY_PREFIX + addonKey;
     }
 
+    @Override
     public void storeAddonSettings(String pluginKey, AddonSettings addonSettings)
     {
         String settingsToStore = new Gson().toJson(addonSettings);
