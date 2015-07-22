@@ -143,13 +143,22 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
         Gson gson = new Gson();
 
         ImmutableList.Builder<ConnectAddonBean> addons = ImmutableList.builder();
-        for (String addonKey : getAddonKeySet())
+
+        try
         {
-            AddonSettings addonSettings = this.getAddonSettings(addonKey, gson);
-            for (ConnectAddonBean addonBean : this.getAddonBeanFromSettings(addonSettings))
+            read.lock();
+            for (String addonKey : getAddonKeySet())
             {
-                addons.add(addonBean);
+                AddonSettings addonSettings = this.getAddonSettings(addonKey, gson);
+                for (ConnectAddonBean addonBean : this.getAddonBeanFromSettings(addonSettings))
+                {
+                    addons.add(addonBean);
+                }
             }
+        }
+        finally
+        {
+            read.unlock();
         }
 
         return addons.build();
@@ -185,18 +194,26 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
 
         ImmutableList.Builder<String> addonsToEnable = ImmutableList.builder();
 
-        for (String addonKey : getAddonKeySet())
+        try
         {
-            final String json = getRawAddonSettings(addonKey);
-
-            if (!Strings.isNullOrEmpty(json))
+            read.lock();
+            for (String addonKey : getAddonKeySet())
             {
-                AddonSettings addonSettings = gson.fromJson(json, AddonSettings.class);
-                if (PluginState.ENABLED.name().equals(addonSettings.getRestartState()))
+                final String json = getRawAddonSettings(addonKey);
+
+                if (!Strings.isNullOrEmpty(json))
                 {
-                    addonsToEnable.add(addonKey);
+                    AddonSettings addonSettings = gson.fromJson(json, AddonSettings.class);
+                    if (PluginState.ENABLED.name().equals(addonSettings.getRestartState()))
+                    {
+                        addonsToEnable.add(addonKey);
+                    }
                 }
             }
+        }
+        finally
+        {
+            read.unlock();
         }
 
         return addonsToEnable.build();
