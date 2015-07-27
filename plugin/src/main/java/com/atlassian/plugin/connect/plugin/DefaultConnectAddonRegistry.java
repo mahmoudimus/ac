@@ -52,9 +52,9 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     @Override
     public void removeAll(String pluginKey)
     {
+        write.lock();
         try
         {
-            write.lock();
             settings.remove(addonStorageKey(pluginKey));
 
             Set<String> addonKeys = getAddonKeySet();
@@ -71,9 +71,10 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     private Set<String> getAddonKeySet()
     {
         List<String> keyList;
+
+        read.lock();
         try
         {
-            read.lock();
             keyList = (List<String>) settings.get(ADDON_LIST_KEY);
         }
         finally
@@ -144,9 +145,9 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
 
         ImmutableList.Builder<ConnectAddonBean> addons = ImmutableList.builder();
 
+        read.lock();
         try
         {
-            read.lock();
             for (String addonKey : getAddonKeySet())
             {
                 AddonSettings addonSettings = this.getAddonSettings(addonKey, gson);
@@ -167,10 +168,9 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     @Override
     public void storeRestartState(String pluginKey, PluginState state)
     {
+        write.lock();
         try
         {
-            write.lock();
-
             final AddonSettings addonSettings = getAddonSettings(pluginKey);
             if (!state.toString().equalsIgnoreCase(addonSettings.getRestartState()))
             {
@@ -197,9 +197,9 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
 
         ImmutableList.Builder<String> addonsToEnable = ImmutableList.builder();
 
+        read.lock();
         try
         {
-            read.lock();
             for (String addonKey : getAddonKeySet())
             {
                 final String json = getRawAddonSettings(addonKey);
@@ -237,9 +237,9 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     {
         String settingsToStore = new Gson().toJson(addonSettings);
 
+        write.lock();
         try
         {
-            write.lock();
             settings.put(addonStorageKey(pluginKey), settingsToStore);
 
             Set<String> addonSet = getAddonKeySet();
@@ -282,9 +282,10 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     private String getRawAddonSettings(String pluginKey)
     {
         String json;
+
+        read.lock();
         try
         {
-            read.lock();
             json = (String) settings.get(addonStorageKey(pluginKey));
         }
         finally
