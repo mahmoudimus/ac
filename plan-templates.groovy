@@ -14,15 +14,14 @@ plan(
             manual: 'true'
     ) {
         job(
-                key: 'VTM',
-                name: 'Version, tag and merge',
-                description: 'Sets new pom versions, git-tags, merges to master, pushes to master and develop'
+                key: 'REL',
+                name: 'Merge and increment version'
         ) {
             maven32Requirement()
             checkoutDefaultRepositoryTask()
             task(
                     type: 'script',
-                    description: 'Merge to Master and Update Development Version',
+                    description: 'Merge to master and increment POM versions on develop',
                     script: 'bin/advance_versions_and_tag.sh'
             )
         }
