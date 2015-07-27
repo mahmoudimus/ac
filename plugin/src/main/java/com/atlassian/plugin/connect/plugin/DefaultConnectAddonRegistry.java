@@ -31,8 +31,8 @@ import static com.atlassian.fugue.Option.some;
 @ExportAsDevService
 public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
 {
-    private static final String ADDON_LIST_KEY = "ac.addon.list";
-    private static final String ADDON_KEY_PREFIX = "acnct.";
+    protected static final String ADDON_LIST_KEY = "ac.addon.list";
+    protected static final String ADDON_KEY_PREFIX = "acnct.";
 
     private final PluginSettings settings;
 
@@ -172,8 +172,11 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
             write.lock();
 
             final AddonSettings addonSettings = getAddonSettings(pluginKey);
-            addonSettings.setRestartState(state.name());
-            storeAddonSettings(pluginKey, addonSettings);
+            if (!state.toString().equalsIgnoreCase(addonSettings.getRestartState()))
+            {
+                addonSettings.setRestartState(state);
+                storeAddonSettings(pluginKey, addonSettings);
+            }
         }
         finally
         {
