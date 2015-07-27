@@ -47,8 +47,9 @@ git merge $COMMIT
 echo "${PREFIX} pushing master"
 git push origin master
 
-echo "${PREFIX} switching back to ${COMMIT}"
-git checkout $COMMIT
+echo "${PREFIX} switching to develop"
+git fetch origin develop
+git checkout develop
 
 echo "${PREFIX} incrementing -SNAPSHOT version in poms"
 mvn --batch-mode release:update-versions -DautoVersionSubmodules=true versions:update-child-modules
@@ -58,7 +59,7 @@ echo "${PREFIX} pom files: ${POM_FILENAMES}"
 echo "${PREFIX} git-adding pom files"
 git add ${POM_FILENAMES}
 echo "${PREFIX} git-committing pom files"
-git commit -m "advanced snapshot version from ${STARTING_VERSION} to ${NEW_SNAPSHOT_VERSION}" ${POM_FILENAMES}
+git commit -m "Advanced snapshot version from ${STARTING_VERSION} to ${NEW_SNAPSHOT_VERSION}" ${POM_FILENAMES}
 echo "${PREFIX} git-pushing develop branch to origin"
 git push origin develop
 echo "${PREFIX} done!"
