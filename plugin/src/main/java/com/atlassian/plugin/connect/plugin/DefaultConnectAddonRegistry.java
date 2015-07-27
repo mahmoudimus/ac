@@ -150,7 +150,8 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
         {
             for (String addonKey : getAddonKeySet())
             {
-                AddonSettings addonSettings = this.getAddonSettings(addonKey, gson);
+                final String json = getRawAddonSettings(addonKey);
+                final AddonSettings addonSettings = deserializeAddonSettings(gson, json);
                 for (ConnectAddonBean addonBean : this.getAddonBeanFromSettings(addonSettings))
                 {
                     addons.add(addonBean);
@@ -206,7 +207,7 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
 
                 if (!Strings.isNullOrEmpty(json))
                 {
-                    AddonSettings addonSettings = gson.fromJson(json, AddonSettings.class);
+                    AddonSettings addonSettings = deserializeAddonSettings(gson, json);
                     if (PluginState.ENABLED.name().equals(addonSettings.getRestartState()))
                     {
                         addonsToEnable.add(addonKey);
@@ -270,29 +271,33 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     private AddonSettings getAddonSettings(String pluginKey, Gson gson)
     {
         AddonSettings addonSettings = new AddonSettings();
-        String json = getRawAddonSettings(pluginKey);
-
-        if (!Strings.isNullOrEmpty(json))
-        {
-            addonSettings = gson.fromJson(json, AddonSettings.class);
-        }
-        return addonSettings;
-    }
-
-    private String getRawAddonSettings(String pluginKey)
-    {
         String json;
 
         read.lock();
         try
         {
-            json = (String) settings.get(addonStorageKey(pluginKey));
+            json = getRawAddonSettings(pluginKey);
         }
         finally
         {
             read.unlock();
         }
-        return json;
+
+        if (!Strings.isNullOrEmpty(json))
+        {
+            addonSettings = deserializeAddonSettings(gson, json);
+        }
+        return addonSettings;
+    }
+
+    private AddonSettings deserializeAddonSettings(Gson gson, String json)
+    {
+        return gson.fromJson(json, AddonSettings.class);
+    }
+
+    private String getRawAddonSettings(String pluginKey)
+    {
+        return (String)settings.get(addonStorageKey(pluginKey));
     }
 
     private Option<ConnectAddonBean> getAddonBeanFromSettings(AddonSettings addonSettings)
