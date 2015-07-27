@@ -87,9 +87,9 @@ public class AddonSettings
         return restartState;
     }
 
-    public AddonSettings setRestartState(String restartState)
+    public AddonSettings setRestartState(PluginState restartState)
     {
-        this.restartState = restartState;
+        this.restartState = restartState.name();
         return this;
     }
 }
