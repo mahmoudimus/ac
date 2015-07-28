@@ -15,7 +15,7 @@ import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.util.ExternalAddonInstaller;
+import at.marketplace.ExternalAddonInstaller;
 import it.util.TestUser;
 
 @Category (OnDemandAcceptanceTest.class)
