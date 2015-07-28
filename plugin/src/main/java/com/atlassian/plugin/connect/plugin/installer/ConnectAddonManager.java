@@ -613,10 +613,15 @@ public class ConnectAddonManager
     }
 
     // we don't want to see "?user_key=2c9680504384c481014384c49e6a0004" in installation failure messages show to the users
-    private String removeQuery(URI installHandler)
+    private String removeQuery(URI uri)
     {
-        final String trimmed = installHandler.toString().replace(installHandler.getQuery(), "");
-        return trimmed.endsWith("?") ? trimmed.substring(0, trimmed.length()-1) : trimmed;
+        String uriString = uri.toString();
+        String query = uri.getQuery();
+        if (query != null)
+        {
+            uriString = uriString.replace(query, "");
+        }
+        return uriString.endsWith("?") ? uriString.substring(0, uriString.length()-1) : uriString;
     }
 
     private String findI18nKeyForHttpErrorCode(final int responseCode)
