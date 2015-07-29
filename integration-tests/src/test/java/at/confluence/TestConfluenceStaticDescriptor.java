@@ -18,10 +18,12 @@ import org.slf4j.LoggerFactory;
 import at.marketplace.ExternalAddonInstaller;
 import it.util.TestUser;
 
+import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
+
 @Category (OnDemandAcceptanceTest.class)
 public class TestConfluenceStaticDescriptor
 {
-    private static final String WEB_ITEM_ID = "com.atlassian.connect.acceptance.test__browse-test-web-item";
+    private static final String WEB_ITEM_TEXT = "AC Action";
     private static final Logger log = LoggerFactory.getLogger(TestConfluenceStaticDescriptor.class);
     private static final TestUser ADMIN = new TestUser("admin");
 
@@ -42,7 +44,7 @@ public class TestConfluenceStaticDescriptor
     public void testAcDashboardWebItemIsPresent()
     {
         product.login(ADMIN.confUser(), DashboardPage.class);
-        connectPageOperations.findWebItem(WEB_ITEM_ID, Optional.<String>absent());
+        connectPageOperations.findWebItem(LINK_TEXT, WEB_ITEM_TEXT, Optional.<String>absent());
     }
 
     @Before
