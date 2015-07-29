@@ -21,7 +21,7 @@ public class PostInstallPageModuleProviderTest extends AbstractPageModuleProvide
     @Test
     public void fetchesDefaultLocationFromProductAccessorWhenNotSpecified()
     {
-        verify(productAccessor, never()).getPreferredGeneralSectionKey(); // kinda weird test
+        verify(productAccessor, never()).getPreferredGeneralSectionKey();
     }
 
     @Test
