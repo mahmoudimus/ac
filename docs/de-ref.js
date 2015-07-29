@@ -10,6 +10,7 @@ var files = {
     jiraSchema:       'schema/jira-schema.json',
     confluenceSchema: 'schema/confluence-schema.json',
     jiraScopes:       'com/atlassian/connect/jira/scopes.jira.json',
+    agileScopes:      'com/atlassian/connect/jira/scopes.jiraagile.json',
     confluenceScopes: 'com/atlassian/connect/confluence/scopes.confluence.json',
     commonScopes:     'com/atlassian/connect/scopes.common.json'
 };
