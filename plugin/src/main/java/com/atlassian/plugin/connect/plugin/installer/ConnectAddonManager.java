@@ -1,5 +1,19 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.net.UnknownHostException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.core.MediaType;
+
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.fugue.Option;
@@ -51,27 +65,16 @@ import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.upm.spi.PluginInstallException;
 import com.atlassian.uri.UriBuilder;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.core.MediaType;
-import java.io.IOException;
-import java.io.Serializable;
-import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.net.UnknownHostException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
@@ -345,7 +348,10 @@ public class ConnectAddonManager
 
     public boolean isAddonEnabled(String pluginKey)
     {
-        return beanToModuleRegistrar.descriptorsAreRegistered(pluginKey);
+        log.info("Checking whether Connect addon '" + pluginKey + "' is enabled...");
+        boolean isEnabled = beanToModuleRegistrar.descriptorsAreRegistered(pluginKey);
+        log.info("'" + pluginKey + "' is " + (isEnabled ? "enabled" : "disabled"));
+        return isEnabled;
     }
 
     public void uninstallConnectAddon(final String pluginKey) throws ConnectAddOnUserDisableException

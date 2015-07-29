@@ -2,7 +2,33 @@
     "_embedded": {
         "version": {
             "_embedded": {
-                "highlights": [],
+                "highlights": [
+                    {
+                        "_links": {
+                            "screenshot": <%=screenshot asset goes here=>,
+                            "thumbnail": <%=thumbnail asset goes here=>
+                        },
+                        "title": "I wanna write the very test",
+                        "body": "<strong>That no test ever was</strong>"
+                    },
+                    {
+                        "_links": {
+                            "screenshot": <%=screenshot asset goes here=>,
+                            "thumbnail": <%=thumbnail asset goes here=>
+                        },
+                        "title": "To catch bugs is my real test",
+                        "body": "<strong>To fix them is my cause</strong>"
+                    },
+                    {
+                        "_links": {
+                            "screenshot": <%=screenshot asset goes here=>,
+                            "thumbnail": <%=thumbnail asset goes here=>
+                        },
+                        "title": "I will travel the happy paths",
+                        "body": "<strong>Searching far and wide...</strong>"
+                    }
+
+                ],
                 "screenshots": []
             },
             "_links": {
@@ -10,7 +36,7 @@
                     "href": "http://www.atlassian.com/licensing/marketplace/publisheragreement"
                 },
                 "artifact": {
-                    "href": "https://bitbucket.org/atlassianlabs/ac-acceptance-test-addon/raw/master/atlassian-connect.json"
+                    "href": "<%=descriptor url goes here=>"
                 }
             },
             "compatibilities": [
@@ -34,7 +60,7 @@
                 },
                 "supported": false
             },
-            "status": "private",
+            "status": "public",
             "text": {
                 "moreDetails": "",
                 "releaseSummary": "The first and only version"
@@ -45,17 +71,19 @@
     "_links": {
         "categories": [],
         "logo": {
-            "href": "https://bitbucket.org/atlassianlabs/ac-acceptance-test-addon/raw/master/simple-logo.png"
+            "href": "<%=logo url goes here=>"
         },
         "vendor": {
             "href": "/rest/2.0-beta/vendors/<%=vendor id goes here=>"
         }
     },
     "enableAtlassianAnswers": false,
-    "key": "com.atlassian.connect.acceptance.test",
-    "name": "Atlassian Connect acceptance test add-on",
-    "status": "private",
+    "key": "<%=key goes here=>",
+    "name": "<%=name goes here=>",
+    "status": "public",
     "summary": "I wanna be the very test that no test ever was.",
     "tagLine": "Regressions: gotta catch them all",
-    "vendorLinks": {}
+    "vendorLinks": {
+        "privacy": "https://www.atlassian.com/legal/privacy-policy"
+    }
 }

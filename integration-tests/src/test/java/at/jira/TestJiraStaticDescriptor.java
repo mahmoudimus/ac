@@ -14,13 +14,15 @@ import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import at.util.ExternalAddonInstaller;
+import at.marketplace.ExternalAddonInstaller;
 import it.jira.JiraWebDriverTestBase;
+
+import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
 
 @Category (OnDemandAcceptanceTest.class)
 public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
 {
-    private static final String WEB_ITEM_ID = "com.atlassian.connect.acceptance.test__opsbar-test-web-item";
+    private static final String WEB_ITEM_TEXT = "AC Action";
 
     protected static final ExternalAddonInstaller externalAddonInstaller = new ExternalAddonInstaller(
             product.getProductInstance().getBaseUrl(), testUserFactory.admin());
@@ -42,7 +44,7 @@ public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
         login(testUserFactory.basicUser());
         product.goToViewIssue(issue.key);
 
-        connectPageOperations.findWebItem(WEB_ITEM_ID, Optional.<String>absent());
+        connectPageOperations.findWebItem(LINK_TEXT, WEB_ITEM_TEXT, Optional.<String>absent());
     }
 
     @After
