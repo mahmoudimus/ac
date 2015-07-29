@@ -313,7 +313,6 @@ public class ExternalAddonInstaller
         transformResponse(request, acceptableCodes, errorMessage, null, true);
     }
 
-    //TODO Support retries
     private <T> T transformResponse(HttpUriRequest request, Set<Integer> acceptableCodes,
             String errorMessage, Function<CloseableHttpResponse, T> transformer, boolean forceJson)
             throws IOException
