@@ -84,8 +84,107 @@ public class JiraAgileRestScopesTest extends ScopeManagerTest
                 // Add issue to epic WRITE
                 emptyBodyForJira(null, HttpMethod.PUT, "jira/rest/greenhopper/1.0/epics/EPIC-42/add", false),
                 emptyBodyForJira(ScopeName.READ, HttpMethod.PUT, "jira/rest/greenhopper/1.0/epics/EPIC-42/add", false),
-                emptyBodyForJira(ScopeName.WRITE, HttpMethod.PUT, "jira/rest/greenhopper/1.0/epics/EPIC-42/add", true)));
+                emptyBodyForJira(ScopeName.WRITE, HttpMethod.PUT, "jira/rest/greenhopper/1.0/epics/EPIC-42/add", true),
 
+                // Move issues to backlog WRITE
+                emptyBodyForJira(null, HttpMethod.POST, "jira/rest/agile/1.0/backlog/issue", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.POST, "jira/rest/agile/1.0/backlog/issue", false),
+                emptyBodyForJira(ScopeName.WRITE, HttpMethod.POST, "jira/rest/agile/1.0/backlog/issue", true),
+
+                // Get all boards READ
+                emptyBodyForJira(null, HttpMethod.GET, "jira/rest/agile/1.0/board", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "jira/rest/agile/1.0/board", true),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "jira/rest/agile/1.0/board?type=Kanban&startAt=4", true),
+
+                // Get single board READ
+                emptyBodyForJira(null, HttpMethod.GET, "jira/rest/agile/1.0/board/1", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "jira/rest/agile/1.0/board/1", true),
+
+                // Get board's backlog READ
+                emptyBodyForJira(null, HttpMethod.GET, "jira/rest/agile/1.0/board/1/backlog", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "jira/rest/agile/1.0/board/1/backlog", true),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "jira/rest/agile/1.0/board/1/backlog?startAt=0&maxResults=100", true),
+
+                // Get board's issues READ
+                emptyBodyForJira(null, HttpMethod.GET, "jira/rest/agile/1.0/board/1/issue", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "jira/rest/agile/1.0/board/1/issue", true),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "jira/rest/agile/1.0/board/1/issue?startAt=0&maxResults=100", true),
+
+                // Get board's configuration READ
+                emptyBodyForJira(null, HttpMethod.GET, "jira/rest/agile/1.0/board/1/configuration", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "jira/rest/agile/1.0/board/1/configuration", true),
+
+                // Get board's epics READ
+                emptyBodyForJira(null, HttpMethod.GET, "jira/rest/agile/1.0/board/1/epic", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "jira/rest/agile/1.0/board/1/epic", true),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "jira/rest/agile/1.0/board/1/epic?startAt=0&maxResults=100", true),
+
+                // Get board's epic's issues READ
+                emptyBodyForJira(null, HttpMethod.GET, "jira/rest/agile/1.0/board/1/epic/2/issue", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "jira/rest/agile/1.0/board/1/epic/2/issue", true),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "jira/rest/agile/1.0/board/1/epic/2/issue?startAt=0&maxResults=100", true),
+
+                // Get board's sprints READ
+                emptyBodyForJira(null, HttpMethod.GET, "jira/rest/agile/1.0/board/1/sprint/", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "jira/rest/agile/1.0/board/1/sprint", true),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "jira/rest/agile/1.0/board/1/sprint?startAt=0&maxResults=100", true),
+
+                // Get board's sprint's issues READ
+                emptyBodyForJira(null, HttpMethod.GET, "jira/rest/agile/1.0/board/1/sprint/2/issue", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "jira/rest/agile/1.0/board/1/sprint/2/issue", true),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "jira/rest/agile/1.0/board/1/sprint/2/issue?startAt=0&maxResults=100", true),
+
+                // Get board's version READ
+                emptyBodyForJira(null, HttpMethod.GET, "jira/rest/agile/1.0/board/1/version", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "jira/rest/agile/1.0/board/1/version", true),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "jira/rest/agile/1.0/board/1/version?startAt=0&maxResults=100", true),
+
+                // Get enchanced issue READ
+                emptyBodyForJira(null, HttpMethod.GET, "jira/rest/agile/1.0/issue/1000", false),
+                emptyBodyForJira(null, HttpMethod.GET, "jira/rest/agile/1.0/issue/KEY-12", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "jira/rest/agile/1.0/issue/1000", true),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "jira/rest/agile/1.0/issue/KEY-12", true),
+
+                // Rank issues WRTIE
+                emptyBodyForJira(null, HttpMethod.PUT, "jira/rest/agile/1.0/issue/rank", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.PUT, "jira/rest/agile/1.0/issue/rank", false),
+                emptyBodyForJira(ScopeName.WRITE, HttpMethod.PUT, "jira/rest/agile/1.0/issue/rank", true),
+
+                // Create sprint WRTIE
+                emptyBodyForJira(null, HttpMethod.POST, "jira/rest/agile/1.0/sprint", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.POST, "jira/rest/agile/1.0/sprint", false),
+                emptyBodyForJira(ScopeName.WRITE, HttpMethod.POST, "jira/rest/agile/1.0/sprint", true),
+
+                // Get sprint READ
+                emptyBodyForJira(null, HttpMethod.GET, "jira/rest/agile/1.0/sprint/5", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "jira/rest/agile/1.0/sprint/5", true),
+
+                // Update sprint partialy WRTIE
+                emptyBodyForJira(null, HttpMethod.POST, "jira/rest/agile/1.0/sprint/5", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.POST, "jira/rest/agile/1.0/sprint/5", false),
+                emptyBodyForJira(ScopeName.WRITE, HttpMethod.POST, "jira/rest/agile/1.0/sprint/5", true),
+
+                // Update sprint WRTIE
+                emptyBodyForJira(null, HttpMethod.PUT, "jira/rest/agile/1.0/sprint/5", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.PUT, "jira/rest/agile/1.0/sprint/5", false),
+                emptyBodyForJira(ScopeName.WRITE, HttpMethod.PUT, "jira/rest/agile/1.0/sprint/5", true),
+
+                // Delete sprint DELETE
+                emptyBodyForJira(null, HttpMethod.POST, "jira/rest/agile/1.0/sprint/5", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.POST, "jira/rest/agile/1.0/sprint/5", false),
+                emptyBodyForJira(ScopeName.WRITE, HttpMethod.POST, "jira/rest/agile/1.0/sprint/5", false),
+                emptyBodyForJira(ScopeName.DELETE, HttpMethod.POST, "jira/rest/agile/1.0/sprint/5", true),
+
+                // Get issues for sprint READ
+                emptyBodyForJira(null, HttpMethod.GET, "jira/rest/agile/1.0/sprint/5/issue", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "jira/rest/agile/1.0/sprint/5/issue", true),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "jira/rest/agile/1.0/sprint/5/issue?startAt=0&maxResults=100", true),
+
+                // Move issues to sprint WRTIE
+                emptyBodyForJira(null, HttpMethod.POST, "jira/rest/agile/1.0/sprint/5/issue", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.POST, "jira/rest/agile/1.0/sprint/5/issue", false),
+                emptyBodyForJira(ScopeName.WRITE, HttpMethod.POST, "jira/rest/agile/1.0/sprint/5/issue", true)
+        ));
         return params;
     }
 }

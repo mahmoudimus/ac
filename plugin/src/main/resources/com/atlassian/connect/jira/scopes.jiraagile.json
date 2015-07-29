@@ -2,13 +2,18 @@
     "scopes": [
         {
             "key": "READ",
-            "restPathKeys": ["rapidview", "planBacklogData", "rapidviewconfigEditmodel", "epics"],
+            "restPathKeys": ["rapidview", "planBacklogData", "rapidviewconfigEditmodel", "epics", "board",  "epic", "sprint", "issue", "sprintIssues"],
             "methods": ["GET"]
         },
         {
             "key": "WRITE",
-            "restPathKeys": ["rank", "sprintRank", "addIssueToEpic"],
-            "methods": ["PUT"]
+            "restPathKeys": ["rank", "sprintRank", "addIssueToEpic", "moveToBacklog", "rankIssues", "createSprint", "sprint"],
+            "methods": ["PUT", "POST"]
+        },
+        {
+            "key": "DELETE",
+            "restPathKeys": ["sprint"],
+            "methods": ["DELETE"]
         }
     ],
     "restPaths": [
@@ -60,6 +65,62 @@
             "basePaths": ["/epics/.+/add$"],
             "versions": ["1.0"],
             "public": false
+        },
+        {
+            "key": "board",
+            "name": "agile",
+            "basePaths": ["/board($|\\?.*|/.*)"],
+            "versions": ["1.0"],
+            "public": true
+        },
+        {
+            "key": "moveToBacklog",
+            "name": "agile",
+            "basePaths": ["/backlog/issue($|\\?.*)"],
+            "versions": ["1.0"],
+            "public": true
+        },
+        {
+            "key": "epic",
+            "name": "agile",
+            "basePaths": ["/epic/[^/]+"],
+            "versions": ["1.0"],
+            "public": true
+        },
+        {
+            "key": "issue",
+            "name": "agile",
+            "basePaths": ["/issue/[^/]+"],
+            "versions": ["1.0"],
+            "public": true
+        },
+        {
+            "key": "rankIssues",
+            "name": "agile",
+            "basePaths": ["/issue/rank$"],
+            "versions": ["1.0"],
+            "public": true
+        },
+        {
+            "key": "createSprint",
+            "name": "agile",
+            "basePaths": ["/sprint$"],
+            "versions": ["1.0"],
+            "public": true
+        },
+        {
+            "key": "sprint",
+            "name": "agile",
+            "basePaths": ["/sprint/[0-9]+$"],
+            "versions": ["1.0"],
+            "public": true
+        },
+        {
+            "key": "sprintIssues",
+            "name": "agile",
+            "basePaths": ["/sprint/[0-9]+/issue$"],
+            "versions": ["1.0"],
+            "public": true
         }
     ]
 }
