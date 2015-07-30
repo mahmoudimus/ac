@@ -1,14 +1,13 @@
 package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
-import com.atlassian.sal.api.lifecycle.LifecycleAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
 /**
  * This class is full of OSGI/Spring hacks to Conditionally ComponentImport the UserPropertyService from JIRA
@@ -16,8 +15,8 @@ import org.springframework.context.ApplicationContext;
  * This requires the JIRA api pom dependency to be bumped to JIRA 7
  */
 @ExportAsService
-@JiraComponent
-public class Jira7ComponentBridge implements LifecycleAware
+@Component
+public class Jira7ComponentBridge
 {
     private static final Logger logger = LoggerFactory.getLogger(Jira7ComponentBridge.class);
 
@@ -29,8 +28,7 @@ public class Jira7ComponentBridge implements LifecycleAware
         this.applicationContext = applicationContext;
     }
 
-    @Override
-    public void onStart()
+    public void makeUserPropertyServiceAvailableInPluginContainer()
     {
         String userPropertyClassName = "com.atlassian.jira.bc.user.UserPropertyService";
         makeComponentAvailableInPluginContainer(userPropertyClassName, "userPropertyService");

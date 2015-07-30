@@ -3,7 +3,9 @@ package com.atlassian.plugin.connect.jira.capabilities.descriptor;
 import java.net.URISyntaxException;
 import java.util.Collections;
 
+import com.atlassian.jira.compatibility.bridge.issue.views.SearchRequestViewUtilsBridge;
 import com.atlassian.jira.issue.views.util.SearchRequestViewBodyWriterUtil;
+import com.atlassian.jira.issue.views.util.SearchRequestViewUtils;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestURLHandler;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptor;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptorImpl;
@@ -45,6 +47,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
     private final SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil;
     private final TemplateRenderer templateRenderer;
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
+    private final SearchRequestViewUtilsBridge searchRequestViewUtils;
 
     @Autowired
     public SearchRequestViewModuleDescriptorFactory(JiraAuthenticationContext authenticationContext,
@@ -54,7 +57,8 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
                                                     SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
                                                     TemplateRenderer templateRenderer,
                                                     IFrameUriBuilderFactory iFrameUriBuilderFactory,
-                                                    DelegatingComponentAccessor componentAccessor)
+                                                    DelegatingComponentAccessor componentAccessor,
+                                                    SearchRequestViewUtilsBridge searchRequestViewUtils)
     {
         this.authenticationContext = checkNotNull(authenticationContext);
         this.urlHandler = checkNotNull(componentAccessor.getComponent(SearchRequestURLHandler.class));
@@ -64,6 +68,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
         this.searchRequestViewBodyWriterUtil = checkNotNull(searchRequestViewBodyWriterUtil);
         this.templateRenderer = checkNotNull(templateRenderer);
         this.iFrameUriBuilderFactory = checkNotNull(iFrameUriBuilderFactory);
+        this.searchRequestViewUtils = checkNotNull(searchRequestViewUtils);
     }
 
     @Override
@@ -128,7 +133,9 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
                             addon.getKey(),
                             bean.getKey(addon),
                             bean.createUri(),
-                            bean.getDisplayName(), authenticationContext);
+                            bean.getDisplayName(), 
+                            authenticationContext,
+                            searchRequestViewUtils);
                 }
                 catch (URISyntaxException e)
                 {

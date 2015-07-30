@@ -1,9 +1,6 @@
 package com.atlassian.plugin.connect.plugin.scopes;
 
-import com.atlassian.jira.security.auth.trustedapps.KeyFactory;
 import com.atlassian.jwt.JwtConstants;
-import com.atlassian.oauth.Consumer;
-import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.api.scopes.AddOnKeyExtractor;
 import com.atlassian.plugin.connect.plugin.capabilities.JsonConnectAddOnIdentifierService;
 import org.junit.Before;
@@ -22,15 +19,12 @@ import static org.mockito.Mockito.when;
 @RunWith (MockitoJUnitRunner.class)
 public class AddOnKeyExtractorTest
 {
-    private static final String THIS_ADD_ON_KEY = "ac";
     private static final String ADD_ON_KEY = "my-add-on";
 
     private AddOnKeyExtractor addOnKeyExtractor;
 
     @Mock
     private JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
-    @Mock
-    private ConsumerService consumerService;
     @Mock
     private HttpServletRequest request;
 
@@ -39,14 +33,14 @@ public class AddOnKeyExtractorTest
     {
         when(request.getRequestURI()).thenReturn("/confluence/rest/xyz");
         when(request.getContextPath()).thenReturn("/confluence");
-        when(consumerService.getConsumer()).thenReturn(Consumer.key(THIS_ADD_ON_KEY).name("whatever").signatureMethod(Consumer.SignatureMethod.HMAC_SHA1).publicKey(new KeyFactory.InvalidPublicKey(new Exception())).build());
 
-        addOnKeyExtractor = new AddOnKeyExtractorImpl(jsonConnectAddOnIdentifierService, consumerService);
+        addOnKeyExtractor = new AddOnKeyExtractorImpl(jsonConnectAddOnIdentifierService);
     }
 
     @Test
-    public void testIsPluginRequestForJwtRequest() throws Exception
+    public void testIsPluginRequestForAddOnJwtRequest() throws Exception
     {
+        when(jsonConnectAddOnIdentifierService.isConnectAddOn(ADD_ON_KEY)).thenReturn(true);
         when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
         assertTrue(addOnKeyExtractor.isAddOnRequest(request));
     }
@@ -68,9 +62,10 @@ public class AddOnKeyExtractorTest
     }
 
     @Test
-    public void testIsNotPluginForJwtRequest() throws Exception
+    public void testIsNotPluginRequestForOtherJwtRequest() throws Exception
     {
-        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(THIS_ADD_ON_KEY);
+        when(jsonConnectAddOnIdentifierService.isConnectAddOn(ADD_ON_KEY)).thenReturn(false);
+        when(request.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME)).thenReturn(ADD_ON_KEY);
         assertFalse(addOnKeyExtractor.isAddOnRequest(request));
     }
 }

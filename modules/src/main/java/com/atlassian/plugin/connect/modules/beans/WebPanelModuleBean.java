@@ -24,7 +24,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class WebPanelModuleBean extends BeanWithKeyAndParamsAndConditions
 {
     /**
-     * The URL of the add-on resource that provides the web panel content.
+     * The URL of the add-on resource that provides the web panel content. This URL must be relative to the add-on's baseUrl.
      */
     @Required
     @StringSchemaAttributes(format = "uri-template")
