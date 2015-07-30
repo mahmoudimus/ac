@@ -7,8 +7,13 @@
         },
         {
             "key": "WRITE",
-            "restPathKeys": ["rank", "sprintRank", "addIssueToEpic", "moveToBacklog", "rankIssues", "createSprint", "sprint"],
-            "methods": ["PUT", "POST"]
+            "restPathKeys": ["rank", "sprint"],
+            "methods": ["PUT"]
+        },
+        {
+            "key": "WRITE",
+            "restPathKeys": ["sprintRank", "addIssueToEpic", "moveToBacklog", "rankIssues", "createSprint", "sprint"],
+            "methods": ["POST"]
         },
         {
             "key": "DELETE",
@@ -102,16 +107,16 @@
             "public": true
         },
         {
-            "key": "createSprint",
+            "key": "sprint",
             "name": "agile",
-            "basePaths": ["/sprint$"],
+            "basePaths": ["/sprint/[0-9]+$"],
             "versions": ["1.0"],
             "public": true
         },
         {
-            "key": "sprint",
+            "key": "createSprint",
             "name": "agile",
-            "basePaths": ["/sprint/[0-9]+$"],
+            "basePaths": ["/sprint$"],
             "versions": ["1.0"],
             "public": true
         },
