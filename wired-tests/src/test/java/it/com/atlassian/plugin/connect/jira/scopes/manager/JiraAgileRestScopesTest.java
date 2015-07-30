@@ -170,10 +170,10 @@ public class JiraAgileRestScopesTest extends ScopeManagerTest
                 emptyBodyForJira(ScopeName.WRITE, HttpMethod.PUT, "jira/rest/agile/1.0/sprint/5", true),
 
                 // Delete sprint DELETE
-                emptyBodyForJira(null, HttpMethod.POST, "jira/rest/agile/1.0/sprint/5", false),
-                emptyBodyForJira(ScopeName.READ, HttpMethod.POST, "jira/rest/agile/1.0/sprint/5", false),
-                emptyBodyForJira(ScopeName.WRITE, HttpMethod.POST, "jira/rest/agile/1.0/sprint/5", false),
-                emptyBodyForJira(ScopeName.DELETE, HttpMethod.POST, "jira/rest/agile/1.0/sprint/5", true),
+                emptyBodyForJira(null, HttpMethod.DELETE, "jira/rest/agile/1.0/sprint/5", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.DELETE, "jira/rest/agile/1.0/sprint/5", false),
+                emptyBodyForJira(ScopeName.WRITE, HttpMethod.DELETE, "jira/rest/agile/1.0/sprint/5", false),
+                emptyBodyForJira(ScopeName.DELETE, HttpMethod.DELETE, "jira/rest/agile/1.0/sprint/5", true),
 
                 // Get issues for sprint READ
                 emptyBodyForJira(null, HttpMethod.GET, "jira/rest/agile/1.0/sprint/5/issue", false),

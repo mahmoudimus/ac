@@ -7,12 +7,12 @@
         },
         {
             "key": "WRITE",
-            "restPathKeys": ["rank", "sprint"],
+            "restPathKeys": ["sprintRank", "rank", "addIssueToEpic", "rankIssues", "sprint"],
             "methods": ["PUT"]
         },
         {
             "key": "WRITE",
-            "restPathKeys": ["sprintRank", "addIssueToEpic", "moveToBacklog", "rankIssues", "createSprint", "sprint"],
+            "restPathKeys": [ "moveToBacklog", "moveIssuesToSprint", "createSprint", "sprint"],
             "methods": ["POST"]
         },
         {
@@ -107,13 +107,6 @@
             "public": true
         },
         {
-            "key": "sprint",
-            "name": "agile",
-            "basePaths": ["/sprint/[0-9]+$"],
-            "versions": ["1.0"],
-            "public": true
-        },
-        {
             "key": "createSprint",
             "name": "agile",
             "basePaths": ["/sprint$"],
@@ -121,7 +114,21 @@
             "public": true
         },
         {
+            "key": "sprint",
+            "name": "agile",
+            "basePaths": ["/sprint/[0-9]+$"],
+            "versions": ["1.0"],
+            "public": true
+        },
+        {
             "key": "sprintIssues",
+            "name": "agile",
+            "basePaths": ["/sprint/[0-9]+/issue($|\\?.*)"],
+            "versions": ["1.0"],
+            "public": true
+        },
+        {
+            "key": "moveIssuesToSprint",
             "name": "agile",
             "basePaths": ["/sprint/[0-9]+/issue$"],
             "versions": ["1.0"],
