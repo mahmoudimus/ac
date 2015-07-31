@@ -25,8 +25,7 @@ public class DefaultContentPropertyModuleProvider implements ContentPropertyModu
     private final ContentPropertyIndexSchemaModuleDescriptorFactory cpIndexFactory;
 
     @Autowired
-    public DefaultContentPropertyModuleProvider(
-            ContentPropertyIndexSchemaModuleDescriptorFactory cpIndexFactory)
+    public DefaultContentPropertyModuleProvider(ContentPropertyIndexSchemaModuleDescriptorFactory cpIndexFactory)
     {
         this.cpIndexFactory = cpIndexFactory;
     }
