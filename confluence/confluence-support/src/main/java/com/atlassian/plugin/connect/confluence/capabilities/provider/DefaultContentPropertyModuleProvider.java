@@ -24,15 +24,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class DefaultContentPropertyModuleProvider implements ContentPropertyModuleProvider
 {
     private final ContentPropertyIndexSchemaModuleDescriptorFactory cpIndexFactory;
-    private final ContentPropertyAliasModuleDescriptorFactory cpAliasFactory;
 
     @Autowired
     public DefaultContentPropertyModuleProvider(
-            ContentPropertyIndexSchemaModuleDescriptorFactory cpIndexFactory,
-            ContentPropertyAliasModuleDescriptorFactory cpAliasFactory)
+            ContentPropertyIndexSchemaModuleDescriptorFactory cpIndexFactory)
     {
         this.cpIndexFactory = cpIndexFactory;
-        this.cpAliasFactory = cpAliasFactory;
     }
 
     @Override
@@ -50,7 +47,6 @@ public class DefaultContentPropertyModuleProvider implements ContentPropertyModu
                 return cpIndexFactory.createModuleDescriptor(moduleProviderContext, plugin, input);
             }
         }));
-        result.addAll(cpAliasFactory.createModuleDescriptors(moduleProviderContext, plugin, beans));
         return result;
     }
 }
