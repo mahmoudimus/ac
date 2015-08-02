@@ -1,4 +1,4 @@
-package at.util;
+package at.marketplace;
 
 import java.net.MalformedURLException;
 import java.net.URL;
