@@ -63,3 +63,7 @@
 .ap-postFunction > .ap-container {
     margin-right: 120px;
 }
+
+.without-panel-padding {
+  margin: -20px;
+}

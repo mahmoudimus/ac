@@ -50,6 +50,7 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
                     .urlTemplate(bean.getUrl())
                     .title(bean.getDisplayName())
                     .dimensions(bean.getLayout().getWidth(), bean.getLayout().getHeight())
+                    .additionalRenderContext("without-panel-padding", bean.isWithoutPadding() ? "without-panel-padding" : "")
                     .build();
             iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), renderStrategy);
 
