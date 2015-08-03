@@ -52,6 +52,7 @@ public class ConnectEntityPropertyModuleDescriptorFactory implements ConnectModu
                 if (extractionBean.getAlias() != null)
                 {
                     propertyExtractionElement.addAttribute("alias", extractionBean.getAlias());
+                    propertyExtractionElement.addAttribute("conflictingPluginName", theConnectPlugin.getName());
                 }
             }
         }
