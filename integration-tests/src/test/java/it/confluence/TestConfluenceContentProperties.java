@@ -75,6 +75,8 @@ public class TestConfluenceContentProperties
     private static final String NUMERIC_FIELD_OBJECT_KEY = "likes";
     private static final String DATE_FIELD_OBJECT_KEY = "editTime";
     private static final String STRING_FIELD_OBJECT_KEY = "tags";
+    private static final String STRING_FIELD_OBJECT_ALIAS_KEY = "category";
+    private static final String NUMERIC_FIELD_OBJECT_ALIAS_KEY = "rank";
 
     // values
     private static final int NUMERIC_VALUE = 5;
@@ -82,6 +84,10 @@ public class TestConfluenceContentProperties
     private static final DateTime DATE_VALUE = new DateTime().withDate(2001, 1, 1).withTimeAtStartOfDay();
     private static final String STRING_VALUE = "stringToMatch";
     private static final String ALT_STRING_VALUE = "differentValue";
+    private static final String STRING_VALUE_FOR_ALIAS = "knowledge";
+    private static final String ALT_STRING_VALUE_FOR_ALIAS = "people";
+    private static final String NUMERIC_VALUE_FOR_ALIAS = "1";
+    private static final String ALT_NUMERIC_VALUE_FOR_ALIAS = "2";
 
     private static String baseUrl;
     private static List<Exception> setupFailure = new ArrayList<Exception>();
@@ -121,7 +127,7 @@ public class TestConfluenceContentProperties
                                                     .withType(ContentPropertyIndexFieldType.number)
                                                     .withAlias("rank")
                                                     .withUiSupport(newUISupportModuleBean()
-                                                            .withName(new I18nProperty("value", "Category"))
+                                                            .withName(new I18nProperty("value", "rank"))
                                                             .withDataUri("/rest/semantix/rank")
                                                             .build())
                                                     .build(),
@@ -132,9 +138,9 @@ public class TestConfluenceContentProperties
                                             newContentPropertyIndexExtractionConfigurationBean()
                                                     .withObjectName(STRING_FIELD_OBJECT_KEY)
                                                     .withType(ContentPropertyIndexFieldType.string)
-                                                    .withAlias("Category")
+                                                    .withAlias("category")
                                                     .withUiSupport(newUISupportModuleBean()
-                                                            .withName(new I18nProperty("value", "Category"))
+                                                            .withName(new I18nProperty("value", "category"))
                                                             .withDataUri("/rest/semantix/category")
                                                             .withDefaultOperator("=")
                                                             .build())
@@ -215,6 +221,8 @@ public class TestConfluenceContentProperties
         propertyValue.add(STRING_FIELD_OBJECT_KEY, new JsonPrimitive(STRING_VALUE));
         propertyValue.add(NUMERIC_FIELD_OBJECT_KEY, new JsonPrimitive(NUMERIC_VALUE));
         propertyValue.add(DATE_FIELD_OBJECT_KEY, new JsonPrimitive(DATE_VALUE.toString(ISODateTimeFormat.dateTime())));
+        propertyValue.add(STRING_FIELD_OBJECT_ALIAS_KEY, new JsonPrimitive(STRING_VALUE_FOR_ALIAS));
+        propertyValue.add(NUMERIC_FIELD_OBJECT_ALIAS_KEY, new JsonPrimitive(NUMERIC_VALUE_FOR_ALIAS));
 
         JsonContentProperty contentProperty = JsonContentProperty.builder()
                 .content(contentToFind.get())
@@ -231,6 +239,8 @@ public class TestConfluenceContentProperties
         otherProperty.add(STRING_FIELD_OBJECT_KEY, new JsonPrimitive(ALT_STRING_VALUE));
         otherProperty.add(NUMERIC_FIELD_OBJECT_KEY, new JsonPrimitive(1));
         otherProperty.add(DATE_FIELD_OBJECT_KEY, new JsonPrimitive(new DateTime().toString(ISODateTimeFormat.dateTime())));
+        propertyValue.add(STRING_FIELD_OBJECT_ALIAS_KEY, new JsonPrimitive(ALT_STRING_VALUE_FOR_ALIAS));
+        propertyValue.add(NUMERIC_FIELD_OBJECT_ALIAS_KEY, new JsonPrimitive(ALT_NUMERIC_VALUE_FOR_ALIAS));
 
         Promise<JsonContentProperty> otherProp = contentPropertyService.create(JsonContentProperty.builder()
                 .content(contentWithOtherProperty.get())
@@ -305,6 +315,18 @@ public class TestConfluenceContentProperties
 
         response = executeCql(String.format("content.property[%s].%s >= 2001-01-02", PROPERTY_KEY, DATE_FIELD_OBJECT_KEY));
         assertHasOneMatchingItem(response, contentWithOtherProperty);
+    }
+
+    @Test
+    public void testStringContentPropertyWithAlias() throws Exception {
+        PageResponse<Content> response = executeCql(String.format("%s = %s", STRING_FIELD_OBJECT_ALIAS_KEY, STRING_VALUE_FOR_ALIAS));
+                assertHasOneMatchingItem(response, contentToFind);
+    }
+
+    @Test
+    public void testNumericContentPropertyWithAlias() throws Exception {
+        PageResponse<Content> response = executeCql(String.format("%s = %s", NUMERIC_FIELD_OBJECT_ALIAS_KEY, NUMERIC_VALUE_FOR_ALIAS));
+        assertHasOneMatchingItem(response, contentToFind);
     }
 
     private void assertHasOneMatchingItem(PageResponse<Content> response, Promise<Content> content) throws Exception
