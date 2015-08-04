@@ -616,6 +616,7 @@
                             </systemProperties>
                             <includes>
                                 <include>it/common/iframe/*.java</include>
+                                <include>it/common/upm/*.java</include>
                             </includes>
                         </testGroup>
                         <testGroup>
@@ -628,18 +629,6 @@
                             </systemProperties>
                             <includes>
                                 <include>it/common/lifecycle/*.java</include>
-                            </includes>
-                        </testGroup>
-                        <testGroup>
-                            <id>confluence-common-upm</id>
-                            <productIds>
-                                <productId>confluence</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>confluence</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/common/upm/*.java</include>
                             </includes>
                         </testGroup>
 

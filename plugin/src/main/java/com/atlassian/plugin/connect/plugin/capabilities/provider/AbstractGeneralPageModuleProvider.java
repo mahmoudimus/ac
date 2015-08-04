@@ -12,6 +12,7 @@ import java.util.Collections;
 
 public abstract class AbstractGeneralPageModuleProvider extends AbstractConnectPageModuleProvider
 {
+    public static final String ATL_GENERAL_DECORATOR = "atl.general";
     private final ProductAccessor productAccessor;
 
     public AbstractGeneralPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
@@ -26,7 +27,7 @@ public abstract class AbstractGeneralPageModuleProvider extends AbstractConnectP
     @Override
     protected String getDecorator()
     {
-        return "atl.general";
+        return ATL_GENERAL_DECORATOR;
     }
 
     @Override
