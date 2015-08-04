@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.jira.iframe.tabpanel.project;
 
-import java.util.Map;
-
 import com.atlassian.jira.compatibility.bridge.project.browse.BrowseContextHelperBridge;
 import com.atlassian.jira.plugin.TabPanelModuleDescriptor;
 import com.atlassian.jira.plugin.browsepanel.TabPanel;
@@ -14,11 +12,12 @@ import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.jira.iframe.context.JiraModuleContextParameters;
 import com.atlassian.plugin.connect.jira.iframe.context.JiraModuleContextParametersImpl;
-
 import com.google.common.collect.Maps;
 
+import java.util.Map;
+
 import static com.atlassian.jira.plugin.webfragment.JiraWebInterfaceManager.CONTEXT_KEY_HELPER;
-import static com.atlassian.jira.plugin.webfragment.JiraWebInterfaceManager.CONTEXT_KEY_USER;
+import static com.atlassian.jira.plugin.webfragment.JiraWebInterfaceManager.CONTEXT_KEY_USERNAME;
 import static com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyUtil.renderToString;
 import static com.atlassian.plugin.connect.spi.iframe.webpanel.WebFragmentModuleContextExtractor.MODULE_CONTEXT_KEY;
 
@@ -81,7 +80,7 @@ public abstract class AbstractConnectIFrameTabPanel<D extends TabPanelModuleDesc
         ApplicationUser user = browseContextHelper.getUser(ctx);
         if (user != null)
         {
-            conditionContext.put(CONTEXT_KEY_USER, browseContextHelper.getUser(ctx));
+            conditionContext.put(CONTEXT_KEY_USERNAME, user.getUsername());
         }
         conditionContext.put(MODULE_CONTEXT_KEY, createUnfilteredContext(ctx));
     }
