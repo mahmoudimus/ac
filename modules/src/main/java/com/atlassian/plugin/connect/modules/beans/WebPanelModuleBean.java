@@ -59,6 +59,11 @@ public class WebPanelModuleBean extends BeanWithKeyAndParamsAndConditions
      */
     private I18nProperty tooltip;
 
+    /**
+     * Flag deciding if the iframe opts out of the 20px padding.
+     */
+    private boolean noPadding;
+
     public WebPanelModuleBean()
     {
         this.location = "";
@@ -121,6 +126,11 @@ public class WebPanelModuleBean extends BeanWithKeyAndParamsAndConditions
     public boolean isAbsolute()
     {
         return (null != getUrl() && getUrl().toLowerCase().startsWith("http"));
+    }
+
+    public boolean isWithoutPadding()
+    {
+        return noPadding;
     }
 
     public static WebPanelModuleBeanBuilder newWebPanelBean()
