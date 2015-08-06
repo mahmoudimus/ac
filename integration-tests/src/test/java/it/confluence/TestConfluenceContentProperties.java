@@ -123,11 +123,11 @@ public class TestConfluenceContentProperties
                                                     .withType(ContentPropertyIndexFieldType.text)
                                                     .build(),
                                             newContentPropertyIndexExtractionConfigurationBean()
-                                                    .withObjectName(NUMERIC_FIELD_OBJECT_KEY)
+                                                    .withObjectName(NUMERIC_FIELD_OBJECT_ALIAS_KEY)
                                                     .withType(ContentPropertyIndexFieldType.number)
-                                                    .withAlias("rank")
+                                                    .withAlias(NUMERIC_FIELD_OBJECT_ALIAS_KEY)
                                                     .withUiSupport(newUISupportModuleBean()
-                                                            .withName(new I18nProperty("value", "rank"))
+                                                            .withName(new I18nProperty("rank", "rank.value"))
                                                             .withDataUri("/rest/semantix/rank")
                                                             .build())
                                                     .build(),
@@ -136,11 +136,11 @@ public class TestConfluenceContentProperties
                                                     .withType(ContentPropertyIndexFieldType.date)
                                                     .build(),
                                             newContentPropertyIndexExtractionConfigurationBean()
-                                                    .withObjectName(STRING_FIELD_OBJECT_KEY)
+                                                    .withObjectName(STRING_FIELD_OBJECT_ALIAS_KEY)
                                                     .withType(ContentPropertyIndexFieldType.string)
-                                                    .withAlias("category")
+                                                    .withAlias(STRING_FIELD_OBJECT_ALIAS_KEY)
                                                     .withUiSupport(newUISupportModuleBean()
-                                                            .withName(new I18nProperty("value", "category"))
+                                                            .withName(new I18nProperty("category", "category.value"))
                                                             .withDataUri("/rest/semantix/category")
                                                             .withDefaultOperator("=")
                                                             .build())
@@ -239,8 +239,8 @@ public class TestConfluenceContentProperties
         otherProperty.add(STRING_FIELD_OBJECT_KEY, new JsonPrimitive(ALT_STRING_VALUE));
         otherProperty.add(NUMERIC_FIELD_OBJECT_KEY, new JsonPrimitive(1));
         otherProperty.add(DATE_FIELD_OBJECT_KEY, new JsonPrimitive(new DateTime().toString(ISODateTimeFormat.dateTime())));
-        propertyValue.add(STRING_FIELD_OBJECT_ALIAS_KEY, new JsonPrimitive(ALT_STRING_VALUE_FOR_ALIAS));
-        propertyValue.add(NUMERIC_FIELD_OBJECT_ALIAS_KEY, new JsonPrimitive(ALT_NUMERIC_VALUE_FOR_ALIAS));
+        otherProperty.add(STRING_FIELD_OBJECT_ALIAS_KEY, new JsonPrimitive(ALT_STRING_VALUE_FOR_ALIAS));
+        otherProperty.add(NUMERIC_FIELD_OBJECT_ALIAS_KEY, new JsonPrimitive(ALT_NUMERIC_VALUE_FOR_ALIAS));
 
         Promise<JsonContentProperty> otherProp = contentPropertyService.create(JsonContentProperty.builder()
                 .content(contentWithOtherProperty.get())
@@ -320,7 +320,7 @@ public class TestConfluenceContentProperties
     @Test
     public void testStringContentPropertyWithAlias() throws Exception {
         PageResponse<Content> response = executeCql(String.format("%s = %s", STRING_FIELD_OBJECT_ALIAS_KEY, STRING_VALUE_FOR_ALIAS));
-                assertHasOneMatchingItem(response, contentToFind);
+        assertHasOneMatchingItem(response, contentToFind);
     }
 
     @Test
