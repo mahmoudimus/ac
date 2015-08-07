@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.modules.beans.builder;
 
 import com.atlassian.plugin.connect.modules.beans.UISupportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.UISupportValueType;
 
 public class UISupportModuleBeanBuilder<T extends UISupportModuleBeanBuilder, B extends UISupportModuleBean> extends BaseModuleBeanBuilder<T, B>
 {
@@ -9,6 +10,8 @@ public class UISupportModuleBeanBuilder<T extends UISupportModuleBeanBuilder, B 
     private I18nProperty name;
     private I18nProperty tooltip;
     private String dataUri;
+    private UISupportValueType valueType;
+    private String i18nkey;
 
     public UISupportModuleBeanBuilder()
     {
@@ -20,6 +23,8 @@ public class UISupportModuleBeanBuilder<T extends UISupportModuleBeanBuilder, B 
         this.dataUri = defaultBean.getDataUri();
         this.name = defaultBean.getName();
         this.tooltip = defaultBean.getTooltip();
+        this.valueType = defaultBean.getValueType();
+        this.i18nkey = defaultBean.getI18nkey();
     }
 
     public T withDefaultOperator(String defaultOperator)
@@ -43,6 +48,16 @@ public class UISupportModuleBeanBuilder<T extends UISupportModuleBeanBuilder, B 
     public T withTooltip(I18nProperty tooltip)
     {
         this.tooltip = tooltip;
+        return (T) this;
+    }
+
+    public T withValueType(UISupportValueType valueType) {
+        this.valueType = valueType;
+        return (T) this;
+    }
+
+    public T withI18nKey(String i18nkey) {
+        this.i18nkey = i18nkey;
         return (T) this;
     }
 

@@ -28,6 +28,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExt
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFieldType;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.UISupportValueType;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -123,12 +124,15 @@ public class TestConfluenceContentProperties
                                                     .withType(ContentPropertyIndexFieldType.text)
                                                     .build(),
                                             newContentPropertyIndexExtractionConfigurationBean()
-                                                    .withObjectName(NUMERIC_FIELD_OBJECT_ALIAS_KEY)
+                                                    .withObjectName("value")
                                                     .withType(ContentPropertyIndexFieldType.number)
                                                     .withAlias(NUMERIC_FIELD_OBJECT_ALIAS_KEY)
                                                     .withUiSupport(newUISupportModuleBean()
-                                                            .withName(new I18nProperty("rank", "rank.value"))
+                                                            .withName(new I18nProperty("rank", "rank"))
                                                             .withDataUri("/rest/semantix/rank")
+                                                            .withDefaultOperator("=")
+                                                            .withI18nKey("rank")
+                                                            .withValueType(UISupportValueType.NUMBER)
                                                             .build())
                                                     .build(),
                                             newContentPropertyIndexExtractionConfigurationBean()
@@ -136,13 +140,15 @@ public class TestConfluenceContentProperties
                                                     .withType(ContentPropertyIndexFieldType.date)
                                                     .build(),
                                             newContentPropertyIndexExtractionConfigurationBean()
-                                                    .withObjectName(STRING_FIELD_OBJECT_ALIAS_KEY)
+                                                    .withObjectName("value")
                                                     .withType(ContentPropertyIndexFieldType.string)
                                                     .withAlias(STRING_FIELD_OBJECT_ALIAS_KEY)
                                                     .withUiSupport(newUISupportModuleBean()
                                                             .withName(new I18nProperty("category", "category.value"))
                                                             .withDataUri("/rest/semantix/category")
                                                             .withDefaultOperator("=")
+                                                            .withI18nKey("category")
+                                                            .withValueType(UISupportValueType.STRING)
                                                             .build())
                                                     .build())))
                     .build();
