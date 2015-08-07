@@ -1,10 +1,10 @@
-package com.atlassian.plugin.connect.stash.scope;
+package com.atlassian.plugin.connect.bitbucket.scope;
 
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.spi.scope.AddOnScope;
 import com.atlassian.plugin.connect.spi.scope.ProductScopeProvider;
 import com.atlassian.plugin.connect.spi.scope.helper.AddOnScopeLoadJsonFileHelper;
-import com.atlassian.plugin.spring.scanner.annotation.component.StashComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.BitbucketComponent;
 import com.google.common.collect.ImmutableList;
 
 import java.io.IOException;
@@ -12,13 +12,13 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-@StashComponent
-public class StashScopeProvider implements ProductScopeProvider
+@BitbucketComponent
+public class BitbucketScopeProvider implements ProductScopeProvider
 {
     @Override
     public Map<ScopeName, AddOnScope> getScopes()
     {
-        ImmutableList<String> products = ImmutableList.of("stash");
+        ImmutableList<String> products = ImmutableList.of("bitbucket");
 
         Map<ScopeName, AddOnScope> keyToScope = new HashMap<>();
         try
@@ -37,6 +37,6 @@ public class StashScopeProvider implements ProductScopeProvider
 
     private static URL resourceURL(String product)
     {
-        return StashScopeProvider.class.getResource("/com/atlassian/connect/stash/scopes." + product + ".json");
+        return BitbucketScopeProvider.class.getResource("/com/atlassian/connect/bitbucket/scopes." + product + ".json");
     }
 }

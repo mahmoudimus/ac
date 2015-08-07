@@ -1,4 +1,4 @@
-<application key="stash">
+<application key="bitbucket">
 
     <web-section key="admin.pages" name="Remotable Plugins" location="system.admin" weight="100">
         <label>Remote Plugins</label>
@@ -17,11 +17,11 @@
         <context>atl.general</context>
 
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:dialog-page-resource</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:stash-remote-condition</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:bitbucket-remote-condition</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:iframe-host-css</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:stash-iframe-host-js</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:stash-ap-extensions</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:stash-ap-user</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:bitbucket-iframe-host-js</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:bitbucket-ap-extensions</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:bitbucket-ap-user</dependency>
 
         <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
@@ -41,19 +41,19 @@
         <resource type="download" name="connect-history.js" location="/js/core/connect-host-history.js" />
         <resource type="download" name="connect-dialog.js" location="/js/core/connect-host-dialog.js" />
         <resource type="download" name="connect-inline-dialog.js" location="/js/core/connect-host-inline-dialog.js" />
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:stash-ap-core</dependency>
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:stash-iframe-host-js</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:bitbucket-ap-core</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:bitbucket-iframe-host-js</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <web-resource key="ap-user">
         <resource type="download" name="user.js" location="/js/iframe/host/user.js" />
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:stash-ap-core</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:bitbucket-ap-core</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
     <web-resource key="iframe-host-js">
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:stash-ap-core</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:bitbucket-ap-core</dependency>
         <resource type="download" name="main.js" location="/js/iframe/host/main.js" />
         <resource type="download" name="content-resolver.js" location="/js/iframe/host/content-resolver.js" />
         <dependency>com.atlassian.auiplugin:dialog2</dependency>
@@ -62,7 +62,7 @@
 
     <web-resource key="remote-condition">
         <resource type="download" name="remote.js" location="js/condition/remote.js" />
-        <dependency>com.atlassian.plugins.atlassian-connect-plugin:stash-ap-core</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:bitbucket-ap-core</dependency>
         <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 

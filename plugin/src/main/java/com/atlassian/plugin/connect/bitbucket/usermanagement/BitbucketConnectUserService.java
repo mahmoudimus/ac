@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.stash.usermanagement;
+package com.atlassian.plugin.connect.bitbucket.usermanagement;
 
 import java.util.Set;
 
@@ -6,12 +6,12 @@ import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitExcept
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.spi.user.ConnectUserService;
-import com.atlassian.plugin.spring.scanner.annotation.component.StashComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.BitbucketComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-import com.atlassian.stash.user.*;
+import com.atlassian.bitbucket.user.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +19,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.Nonnull;
 
 @ExportAsDevService
-@StashComponent
-public class StashConnectUserService implements ConnectUserService
+@BitbucketComponent
+public class BitbucketConnectUserService implements ConnectUserService
 {
     private final UserAdminService userAdminService;
     private final UserManager userManager;
     private final UserService userService;
 
     @Autowired
-    public StashConnectUserService(UserAdminService userAdminService, UserManager userManager, UserService userService)
+    public BitbucketConnectUserService(UserAdminService userAdminService, UserManager userManager, UserService userService)
     {
         this.userAdminService = userAdminService;
         this.userManager = userManager;
@@ -42,14 +42,14 @@ public class StashConnectUserService implements ConnectUserService
 
     @Override
     public boolean isUserActive(@Nonnull UserProfile userProfile) {
-        StashUser user = getUserByKey(userProfile.getUserKey());
+        ApplicationUser user = getUserByKey(userProfile.getUserKey());
         return user != null && user.isActive();
     }
 
     @Override
     public void setAddonUserActive(@Nonnull String addonKey, final boolean active)
     {
-        StashUser user = getAddonUser(addonKey);
+        ApplicationUser user = getAddonUser(addonKey);
         if (user == null)
         {
             throw new IllegalStateException("No user exists for add-on " + addonKey);
@@ -72,7 +72,7 @@ public class StashConnectUserService implements ConnectUserService
         return toUserProfile(getOrCreateUser(addonKey, addonDisplayName));
     }
 
-    private StashUser getAddonUser(String addOnKey) {
+    private ApplicationUser getAddonUser(String addOnKey) {
         return userService.getServiceUserByName(getAddonUsername(addOnKey), true);
     }
 
@@ -80,7 +80,7 @@ public class StashConnectUserService implements ConnectUserService
         return ConnectAddOnUserUtil.usernameForAddon(addonKey);
     }
 
-    private StashUser getOrCreateUser(String addOnKey, String displayName)
+    private ApplicationUser getOrCreateUser(String addOnKey, String displayName)
     {
         String username = getAddonUsername(addOnKey);
         ServiceUser user = userService.getServiceUserByName(username, true);
@@ -101,9 +101,9 @@ public class StashConnectUserService implements ConnectUserService
         return user;
     }
 
-    private StashUser getUserByKey(@Nonnull UserKey userKey)
+    private ApplicationUser getUserByKey(@Nonnull UserKey userKey)
     {
-        StashUser user = null;
+        ApplicationUser user = null;
         String userKeyString = userKey.getStringValue();
         if (StringUtils.isNumeric(userKey.getStringValue()))
         {
@@ -126,12 +126,12 @@ public class StashConnectUserService implements ConnectUserService
         return user;
     }
 
-    private UserKey toUserKey(StashUser user)
+    private UserKey toUserKey(ApplicationUser user)
     {
         return UserKey.fromLong(user.getId());
     }
 
-    private UserProfile toUserProfile(StashUser user)
+    private UserProfile toUserProfile(ApplicationUser user)
     {
         return userManager.getUserProfile(toUserKey(user));
     }

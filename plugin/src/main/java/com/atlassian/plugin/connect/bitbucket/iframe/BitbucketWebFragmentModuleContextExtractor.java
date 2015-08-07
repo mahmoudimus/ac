@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.stash.iframe;
+package com.atlassian.plugin.connect.bitbucket.iframe;
 
 import java.security.Principal;
 import java.util.Map;
@@ -7,25 +7,25 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
+import com.atlassian.plugin.connect.bitbucket.iframe.context.BitbucketModuleContextParameters;
+import com.atlassian.plugin.connect.bitbucket.iframe.context.BitbucketModuleContextParametersImpl;
 import com.atlassian.plugin.connect.spi.iframe.webpanel.WebFragmentModuleContextExtractor;
-import com.atlassian.plugin.connect.stash.iframe.context.StashModuleContextParameters;
-import com.atlassian.plugin.connect.stash.iframe.context.StashModuleContextParametersImpl;
-import com.atlassian.plugin.spring.scanner.annotation.component.StashComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.BitbucketComponent;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-import com.atlassian.stash.project.Project;
-import com.atlassian.stash.repository.Repository;
+import com.atlassian.bitbucket.project.Project;
+import com.atlassian.bitbucket.repository.Repository;
 
 import com.google.common.collect.ImmutableList;
 
-@StashComponent
-public class StashWebFragmentModuleContextExtractor implements WebFragmentModuleContextExtractor
+@BitbucketComponent
+public class BitbucketWebFragmentModuleContextExtractor implements WebFragmentModuleContextExtractor
 {
     private final Iterable<ParameterExtractor<?>> parameterExtractors;
     private final UserManager userManager;
 
     @Inject
-    public StashWebFragmentModuleContextExtractor(UserManager userManager)
+    public BitbucketWebFragmentModuleContextExtractor(UserManager userManager)
     {
         this.userManager = userManager;
         parameterExtractors = constructParameterExtractors();
@@ -39,7 +39,7 @@ public class StashWebFragmentModuleContextExtractor implements WebFragmentModule
             return (ModuleContextParameters) webFragmentContext;
         }
 
-        StashModuleContextParameters moduleContext = new StashModuleContextParametersImpl();
+        BitbucketModuleContextParameters moduleContext = new BitbucketModuleContextParametersImpl();
 
         for (ParameterExtractor extractor : parameterExtractors)
         {
@@ -86,7 +86,7 @@ public class StashWebFragmentModuleContextExtractor implements WebFragmentModule
             return expectedType;
         }
 
-        abstract void addToContext(StashModuleContextParameters moduleContext, T value);
+        abstract void addToContext(BitbucketModuleContextParameters moduleContext, T value);
     }
 
     private Iterable<ParameterExtractor<?>> constructParameterExtractors()
@@ -95,7 +95,7 @@ public class StashWebFragmentModuleContextExtractor implements WebFragmentModule
                 new ParameterExtractor<Project>("project", Project.class)
                 {
                     @Override
-                    public void addToContext(final StashModuleContextParameters moduleContext, final Project value)
+                    public void addToContext(final BitbucketModuleContextParameters moduleContext, final Project value)
                     {
                         moduleContext.addProject(value);
                     }
@@ -103,7 +103,7 @@ public class StashWebFragmentModuleContextExtractor implements WebFragmentModule
                 new ParameterExtractor<Repository>("repository", Repository.class)
                 {
                     @Override
-                    public void addToContext(final StashModuleContextParameters moduleContext, final Repository value)
+                    public void addToContext(final BitbucketModuleContextParameters moduleContext, final Repository value)
                     {
                         moduleContext.addRepository(value);
                     }
@@ -111,7 +111,7 @@ public class StashWebFragmentModuleContextExtractor implements WebFragmentModule
                 new ParameterExtractor<Principal>("userProfile", Principal.class)
                 {
                     @Override
-                    public void addToContext(final StashModuleContextParameters moduleContext, final Principal value)
+                    public void addToContext(final BitbucketModuleContextParameters moduleContext, final Principal value)
                     {
                         UserProfile profile = userManager.getUserProfile(value.getName());
                         if (profile == null)
@@ -125,7 +125,7 @@ public class StashWebFragmentModuleContextExtractor implements WebFragmentModule
                 new ParameterExtractor<Map>(WebFragmentModuleContextExtractor.MODULE_CONTEXT_KEY, Map.class)
                 {
                     @Override
-                    public void addToContext(final StashModuleContextParameters moduleContext, final Map value)
+                    public void addToContext(final BitbucketModuleContextParameters moduleContext, final Map value)
                     {
                         Set<Map.Entry> entries = value.entrySet();
                         for (Map.Entry entry : entries)

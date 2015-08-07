@@ -54,7 +54,7 @@
             <xsl:apply-templates select="@*|node()"/>
             <xsl:apply-templates select="document(concat('file:///',$baseDir,'/atlassian-plugin-confluence.xml'))"/>
             <xsl:apply-templates select="document(concat('file:///',$baseDir,'/atlassian-plugin-jira.xml'))"/>
-            <xsl:apply-templates select="document(concat('file:///',$baseDir,'/atlassian-plugin-stash.xml'))"/>
+            <xsl:apply-templates select="document(concat('file:///',$baseDir,'/atlassian-plugin-bitbucket.xml'))"/>
         </xsl:copy>
     </xsl:template>
 

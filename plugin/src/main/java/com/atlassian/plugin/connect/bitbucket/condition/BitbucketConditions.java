@@ -1,11 +1,11 @@
-package com.atlassian.plugin.connect.stash.condition;
+package com.atlassian.plugin.connect.bitbucket.condition;
 
 import com.atlassian.plugin.connect.spi.condition.ConditionsProvider;
 import com.atlassian.plugin.connect.spi.product.ConditionClassResolver;
-import com.atlassian.plugin.spring.scanner.annotation.component.StashComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.BitbucketComponent;
 
-@StashComponent
-public class StashConditions implements ConditionsProvider {
+@BitbucketComponent
+public class BitbucketConditions implements ConditionsProvider {
     @Override
     public ConditionClassResolver getConditions() {
         return ConditionClassResolver.builder()

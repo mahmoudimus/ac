@@ -1,14 +1,14 @@
-package com.atlassian.plugin.connect.stash;
+package com.atlassian.plugin.connect.bitbucket;
 
 import java.util.TimeZone;
 
 import javax.annotation.Nullable;
 
 import com.atlassian.plugin.connect.spi.user.UserPreferencesRetriever;
-import com.atlassian.plugin.spring.scanner.annotation.component.StashComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.BitbucketComponent;
 
-@StashComponent
-public class StashUserPreferenceRetriever implements UserPreferencesRetriever
+@BitbucketComponent
+public class BitbucketUserPreferenceRetriever implements UserPreferencesRetriever
 {
     @Override
     public TimeZone getTimeZoneFor(@Nullable String userName)

@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.stash;
+package com.atlassian.plugin.connect.bitbucket;
 
 import java.util.Map;
 
@@ -7,20 +7,20 @@ import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.spi.condition.ConditionsProvider;
 import com.atlassian.plugin.connect.spi.product.ConditionClassResolver;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
-import com.atlassian.plugin.spring.scanner.annotation.component.StashComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.BitbucketComponent;
 
-import com.atlassian.stash.license.LicenseService;
+import com.atlassian.bitbucket.license.LicenseService;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@StashComponent
-public class StashProductAccessor implements ProductAccessor
+@BitbucketComponent
+public class BitbucketProductAccessor implements ProductAccessor
 {
     private final ConditionsProvider conditionsProvider;
     private final LicenseService licenseService;
 
     @Autowired
-    public StashProductAccessor(ConditionsProvider conditionsProvider, LicenseService licenseService)
+    public BitbucketProductAccessor(ConditionsProvider conditionsProvider, LicenseService licenseService)
     {
         this.conditionsProvider = conditionsProvider;
         this.licenseService = licenseService;
@@ -35,7 +35,7 @@ public class StashProductAccessor implements ProductAccessor
     @Override
     public String getKey()
     {
-        return "stash";
+        return "bitbucket";
     }
 
     @Override
@@ -77,7 +77,7 @@ public class StashProductAccessor implements ProductAccessor
     @Override
     public String getPreferredProfileSectionKey()
     {
-        return "stash.user.profile.secondary.tabs";
+        return "bitbucket.user.profile.secondary.tabs";
     }
 
     @Override

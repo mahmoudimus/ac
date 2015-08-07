@@ -343,8 +343,8 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.stash</groupId>
-            <artifactId>stash-api</artifactId>
+            <groupId>com.atlassian.bitbucket.server</groupId>
+            <artifactId>bitbucket-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -764,11 +764,12 @@
                                 </pluginArtifact>
                             </pluginArtifacts>
                         </product>
+<!--
                         <product>
-                            <id>stash</id>
-                            <version>${atlassian.stash.version}</version>
+                            <id>bitbucket</id>
+                            <version>${atlassian.bitbucket.server.version}</version>
                             <systemPropertyVariables>
-                                <product>stash</product>
+                                <product>bitbucket</product>
                                 <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
                             </systemPropertyVariables>
                             <pluginArtifacts>
@@ -812,6 +813,7 @@
                                 </bundledArtifact>
                             </bundledArtifacts>
                         </product>
+                        -->
                     </products>
                 </configuration>
             </plugin>
@@ -1121,16 +1123,16 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>stash-schema</id>
+                        <id>bitbucket-schema</id>
                         <phase>process-classes</phase>
                         <goals>
                             <goal>generate-schema</goal>
                         </goals>
                         <configuration>
-                            <generatorProvider>com.atlassian.plugin.connect.stash.StashSchemaGeneratorProvider</generatorProvider>
+                            <generatorProvider>com.atlassian.plugin.connect.bitbucket.BitbucketSchemaGeneratorProvider</generatorProvider>
                             <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
-                            <rawOutput>${project.build.outputDirectory}/schema/stash-schema.json</rawOutput>
-                            <prettyOutput>${project.build.outputDirectory}/schema/stash-schema-pretty.json</prettyOutput>
+                            <rawOutput>${project.build.outputDirectory}/schema/bitbucket-schema.json</rawOutput>
+                            <prettyOutput>${project.build.outputDirectory}/schema/bitbucket-schema-pretty.json</prettyOutput>
                             <enumCase>insensitive</enumCase>
                         </configuration>
                     </execution>
