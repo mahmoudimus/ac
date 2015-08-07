@@ -11,7 +11,6 @@ public class WebPanelModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBui
     private String url;
     private Integer weight;
     private I18nProperty tooltip;
-    private boolean noPadding;
 
     public WebPanelModuleBeanBuilder()
     {
@@ -26,7 +25,6 @@ public class WebPanelModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBui
         this.url = webPanelBean.getUrl();
         this.weight = webPanelBean.getWeight();
         this.tooltip = webPanelBean.getTooltip();
-        this.noPadding = webPanelBean.isWithoutPadding();
     }
 
 
@@ -58,12 +56,6 @@ public class WebPanelModuleBeanBuilder extends BeanWithKeyParamsAndConditionsBui
     public WebPanelModuleBeanBuilder withTooltip(I18nProperty tooltip)
     {
         this.tooltip = tooltip;
-        return this;
-    }
-
-    public WebPanelModuleBeanBuilder withoutPadding(boolean withoutPadding)
-    {
-        this.noPadding = withoutPadding;
         return this;
     }
 
