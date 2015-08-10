@@ -117,6 +117,10 @@
       "title": "JIRA SOAP"
     },
     {
+      "filename": "jira-agile-rest-scopes.html",
+      "title": "JIRA Agile REST"
+    },
+    {
       "filename": "confluence-rest-scopes.html",
       "title": "Confluence REST"
     },
