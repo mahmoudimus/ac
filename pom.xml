@@ -718,7 +718,7 @@
     </dependencyManagement>
     <properties>
         <!-- VERSIONS -->
-        <amps.version>5.0.16</amps.version>
+        <amps.version>5.1.10</amps.version>
         <atlassian.analytics.version>3.68</atlassian.analytics.version>
         <atlassian.applinks.version>4.2.4</atlassian.applinks.version>
         <atlassian.confluence.version>5.9.0-OD-60-008</atlassian.confluence.version>
