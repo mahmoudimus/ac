@@ -1062,20 +1062,6 @@
                 </executions>
             </plugin>
 
-            <plugin>
-                <groupId>com.atlassian.plugin</groupId>
-                <artifactId>atlassian-spring-scanner-maven-plugin</artifactId>
-                <version>${atlassian.spring.scanner.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>atlassian-spring-scanner</goal>
-                        </goals>
-                        <phase>process-classes</phase>
-                    </execution>
-                </executions>
-            </plugin>
-
             <!-- this MUST run after compilation -->
             <plugin>
                 <groupId>external.atlassian.json</groupId>
