@@ -23,8 +23,6 @@ import com.atlassian.confluence.rest.client.impl.RemoteLongTaskServiceImpl;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
-import com.atlassian.plugin.connect.modules.beans.UISupportModuleBean;
-import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFieldType;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -124,12 +122,12 @@ public class TestConfluenceContentProperties
                                                     .withType(ContentPropertyIndexFieldType.text)
                                                     .build(),
                                             newContentPropertyIndexExtractionConfigurationBean()
-                                                    .withObjectName("value")
+                                                    .withObjectName(PROPERTY_KEY)
                                                     .withType(ContentPropertyIndexFieldType.number)
                                                     .withAlias(NUMERIC_FIELD_OBJECT_ALIAS_KEY)
                                                     .withUiSupport(newUISupportModuleBean()
                                                             .withName(new I18nProperty("rank", "rank"))
-                                                            .withDataUri("/rest/semantix/rank")
+                                                            .withDataUri("/rest/test/rank")
                                                             .withDefaultOperator("=")
                                                             .withI18nKey("rank")
                                                             .withValueType(UISupportValueType.NUMBER)
@@ -140,17 +138,26 @@ public class TestConfluenceContentProperties
                                                     .withType(ContentPropertyIndexFieldType.date)
                                                     .build(),
                                             newContentPropertyIndexExtractionConfigurationBean()
-                                                    .withObjectName("value")
+                                                    .withObjectName(NUMERIC_FIELD_OBJECT_KEY)
+                                                    .withType(ContentPropertyIndexFieldType.number)
+                                                    .build(),
+                                            newContentPropertyIndexExtractionConfigurationBean()
+                                                    .withObjectName(STRING_FIELD_OBJECT_KEY)
+                                                    .withType(ContentPropertyIndexFieldType.string)
+                                                    .build(),
+                                            newContentPropertyIndexExtractionConfigurationBean()
+                                                    .withObjectName(PROPERTY_KEY)
                                                     .withType(ContentPropertyIndexFieldType.string)
                                                     .withAlias(STRING_FIELD_OBJECT_ALIAS_KEY)
                                                     .withUiSupport(newUISupportModuleBean()
-                                                            .withName(new I18nProperty("category", "category.value"))
-                                                            .withDataUri("/rest/semantix/category")
+                                                            .withName(new I18nProperty("category", "category"))
+                                                            .withDataUri("/rest/test/category")
                                                             .withDefaultOperator("=")
                                                             .withI18nKey("category")
                                                             .withValueType(UISupportValueType.STRING)
                                                             .build())
-                                                    .build())))
+                                                    .build()
+                                    )))
                     .build();
 
             assertFalse("Key configurations should not be empty", moduleBean.getKeyConfigurations().isEmpty());
@@ -331,7 +338,7 @@ public class TestConfluenceContentProperties
 
     @Test
     public void testNumericContentPropertyWithAlias() throws Exception {
-        PageResponse<Content> response = executeCql(String.format("%s = %s", NUMERIC_FIELD_OBJECT_ALIAS_KEY, NUMERIC_VALUE_FOR_ALIAS));
+        PageResponse<Content> response = executeCql(String.format("%s > %s", NUMERIC_FIELD_OBJECT_ALIAS_KEY, NUMERIC_VALUE_FOR_ALIAS));
         assertHasOneMatchingItem(response, contentToFind);
     }
 

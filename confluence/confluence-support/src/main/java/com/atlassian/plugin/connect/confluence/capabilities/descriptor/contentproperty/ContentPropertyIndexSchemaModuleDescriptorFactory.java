@@ -67,10 +67,9 @@ public class ContentPropertyIndexSchemaModuleDescriptorFactory implements
                 propertyExtractionElement.addAttribute("type", extractionBean.getType().toString());
                 propertyExtractionElement.addAttribute("alias", extractionBean.getAlias());
 
-                Element uiSupportElement = propertyExtractionElement.addElement("ui-support");
-
                 UISupportModuleBean uiSupportBean = extractionBean.getUiSupport();
                 if (uiSupportBean != null) {
+                    Element uiSupportElement = propertyExtractionElement.addElement("ui-support");
 
                     uiSupportElement.addAttribute("value-type", extractionBean.getType().toString());
                     if (uiSupportBean.getDefaultOperator() == null)
