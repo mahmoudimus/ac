@@ -20,6 +20,11 @@
     {
       "filename": "connect-cookbook.html",
       "title": "Connect cookbook"
+    },
+    {
+      "filename": "https://developer.atlassian.com/static/bitbucket/",
+      "title": "Connect for Bitbucket",
+      "new": true
     }
   ],
   "developing": [
