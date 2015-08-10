@@ -110,8 +110,6 @@
                                             <!-- We're depending on a milestone of altassian-jwt -->
                                             <exclude>com.atlassian.jwt</exclude>
                                             <exclude>com.atlassian.bitbucket.server</exclude>
-                                            <!-- for spring scanner -->
-                                            <exclude>com.atlassian.plugin</exclude>
                                             <!-- Connect currently depends on milestones of atlassian-plugins-webfragment,
                                             atlassian-plugins-osgi, atlassian-plugins-core and atlassian-plugins-osgi-bridge
                                             -->
@@ -828,7 +826,7 @@
         <xvfb.enable>true</xvfb.enable>
         <atlassian.upm.on.demand>false</atlassian.upm.on.demand>
         <buildNumber>SNAPSHOT</buildNumber>
-        <atlassian.spring.scanner.version>1.2.10-m01</atlassian.spring.scanner.version>
+        <atlassian.spring.scanner.version>1.2.10</atlassian.spring.scanner.version>
         <ao.long.timeout>180000</ao.long.timeout>
         <ao.short.timeout>30000</ao.short.timeout>
         <skipTests>false</skipTests>
