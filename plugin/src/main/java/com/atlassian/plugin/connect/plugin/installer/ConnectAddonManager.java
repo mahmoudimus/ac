@@ -29,8 +29,6 @@ import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserDisableException;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonEnableFailedEvent;
@@ -43,6 +41,8 @@ import com.atlassian.plugin.connect.spi.http.ReKeyableAuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstallException;
 import com.atlassian.plugin.connect.spi.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
+import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.features.DarkFeatureManager;
@@ -532,7 +532,7 @@ public class ConnectAddonManager
 
     private void enableAddOnUser(ConnectAddonBean addon) throws ConnectAddOnUserInitException
     {
-        String userKey = connectAddOnUserService.getOrCreateUserKey(addon.getKey(), addon.getName());
+        String userKey = connectAddOnUserService.getOrCreateUserName(addon.getKey(), addon.getName());
 
         ApplicationLink applicationLink = connectApplinkManager.getAppLink(addon.getKey());
 

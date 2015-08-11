@@ -1,5 +1,8 @@
 package it.com.atlassian.plugin.connect.jira.usermanagement;
 
+import java.io.IOException;
+import java.util.List;
+
 import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.bc.project.ProjectService.CreateProjectValidationResult;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
@@ -11,21 +14,20 @@ import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
-
-import java.io.IOException;
-import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
@@ -294,7 +296,7 @@ public abstract class AbstractJiraPermissionScopeTest
 
     private String getAddOnUserName() throws ConnectAddOnUserInitException
     {
-        return connectAddOnUserService.getOrCreateUserKey(ADDON_KEY, "It's a PROJECT_ADMIN-scoped add-on for tests!");
+        return connectAddOnUserService.getOrCreateUserName(ADDON_KEY, "It's a PROJECT_ADMIN-scoped add-on for tests!");
     }
 
     protected ApplicationUser getAddOnUser() throws ConnectAddOnUserInitException
