@@ -9,6 +9,7 @@ import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.product.FeatureManager;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 
 import org.junit.Before;
@@ -20,6 +21,7 @@ import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Collections.singletonList;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -73,8 +75,13 @@ public class TestCloudAwareCrowdServiceInJiraCloud
     @Test
     public void createOrEnableUserSetsAttributesOnBothSides()
     {
+        Optional userOption = mock(Optional.class);
+
+        when(embedded.findUserByName(anyString())).thenReturn(userOption);
+        when(userOption.isPresent()).thenReturn(true);
+
         cloudAwareCrowdService.createOrEnableUser(ADDON_USER_NAME, ADDON_DISPLAY_NAME, EMAIL_ADDRESS, PASSWORD, ATTRIBUTES);
-        cloudAwareCrowdService.handleSync(ADDON_USER_NAME);
+        cloudAwareCrowdService.handleSync();
 
         verify(embedded).setAttributesOnUser(ADDON_USER_NAME, ATTRIBUTES);
         verify(remote).setAttributesOnUser(ADDON_USER_NAME, ATTRIBUTES);

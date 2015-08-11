@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -115,9 +116,11 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
             if (!embedded.findUserByName(username).isPresent())
             {
                 log.debug("queueing {} for sync", username);
-                boolean synced = confluenceUsersToBeSynced.tryTransfer(username, syncTimeout, TimeUnit.SECONDS);
-                // Double checking, in case the user synced after we checked but before we waited (or we failed to receive the event somehow)
-                if (!synced && !embedded.findUserByName(username).isPresent())
+                confluenceUsersToBeSynced.tryTransfer(username, syncTimeout, TimeUnit.SECONDS);
+
+                // Double checking, in case the user synced after we checked but before we waited
+                // ( or in case Crowd said it had finished the sync before it really had )
+                if (!embedded.findUserByName(username).isPresent())
                 {
                     throw new ConnectAddOnUserInitException("Could not find the user in the local Crowd cache");
                 }
@@ -136,25 +139,41 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
     }
 
     @Override
-    public void handleSync(String username)
+    public void handleSync()
     {
         if (isConfluence())
         {
-            // The sync has completed so our local crowd user table should now have a copy
-            // of the user we created remotely
-            boolean wasQueued = confluenceUsersToBeSynced.remove(username);
-            if (wasQueued) {
-                log.debug("Acknowledged synced user {}", username);
+            for (Iterator<String> iterator = confluenceUsersToBeSynced.iterator(); iterator.hasNext(); )
+            {
+                String toSync = iterator.next();
+                if (embedded.findUserByName(toSync).isPresent())
+                {
+                    log.info("Acknowledging receipt of synced user {}", toSync);
+                    iterator.remove();
+                }
+                else
+                {
+                    log.info("User {} hasn't synced yet - waiting for the next one, or a timeout", toSync);
+                }
             }
         }
         else
         {
             // The user has been synchronised to the remote directory, so we can set the remote attribute
-            Map<String, Set<String>> attributes = jiraPendingAttributes.remove(username);
-            if (attributes != null)
+            for (Iterator<String> iterator = jiraPendingAttributes.keySet().iterator(); iterator.hasNext(); )
             {
-                log.debug("Set attributes for {}", username);
-                remote.setAttributesOnUser(username, attributes);
+                String toSync = iterator.next();
+                if (embedded.findUserByName(toSync).isPresent())
+                {
+                    log.info("Setting attributes for {}", toSync);
+                    Map<String, Set<String>> attributes = jiraPendingAttributes.get(toSync);
+                    remote.setAttributesOnUser(toSync, attributes);
+                    iterator.remove();
+                }
+                else
+                {
+                    log.info("User {} hasn't synced yet - awaiting the next sync, or a timeout", toSync);
+                }
             }
         }
     }

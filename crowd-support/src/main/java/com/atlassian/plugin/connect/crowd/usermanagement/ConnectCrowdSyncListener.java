@@ -1,15 +1,19 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
-import com.atlassian.crowd.event.user.UserUpdatedEvent;
+import com.atlassian.crowd.event.directory.RemoteDirectorySynchronisedEvent;
 import com.atlassian.event.api.EventListener;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * Calls in to the ConnectCrowdSyncService after a directory sync has finished,
+ * to finalise add-on user setup.
+ *
+ * We can't use one of our components directly, because the event system
+ * appears to create a new instance instead of using the existing component.
+ */
 public class ConnectCrowdSyncListener
 {
-    private static final Logger log = LoggerFactory.getLogger(ConnectCrowdSyncListener.class);
     private final ConnectCrowdSyncService syncService;
 
     @Autowired
@@ -19,9 +23,9 @@ public class ConnectCrowdSyncListener
     }
 
     @EventListener
-    public void reportSyncedUser(UserUpdatedEvent event)
+    public void reportSyncedUser(RemoteDirectorySynchronisedEvent event)
     {
-        syncService.handleSync(event.getUser().getName());
+        syncService.handleSync();
     }
 
 }

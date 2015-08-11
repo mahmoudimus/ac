@@ -86,6 +86,7 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud
     @SuppressWarnings ("unchecked")
     @Test
     public void createOrEnableUserSetsAttributesOnBothSidesAfterSync()
+            throws InterruptedException
     {
         User user = mock(User.class);
         when(user.getName()).thenReturn(ADDON_USER_NAME);
@@ -100,7 +101,7 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud
             @Override
             public void run()
             {
-                cloudAwareCrowdService.handleSync(ADDON_USER_NAME);
+                cloudAwareCrowdService.handleSync();
             }
         }, 1, TimeUnit.SECONDS);
         cloudAwareCrowdService.createOrEnableUser(ADDON_USER_NAME, ADDON_DISPLAY_NAME, EMAIL_ADDRESS, PASSWORD, ATTRIBUTES);
@@ -110,12 +111,59 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud
     }
 
     @Test
+    public void createOrEnableUserSetsAttributesOnSecondSyncEvent()
+    {
+        User user = mock(User.class);
+        when(user.getName()).thenReturn(ADDON_USER_NAME);
+
+        when(userOption.isPresent()).thenReturn(
+                false, // No user is found when we search for an existing user
+                false, // The user still doesn't show up after a directory sync
+                true,  // The user shows up after a second directory sync
+                true); // The user is still there when we double-check at the end
+        when(userOption.get()).thenReturn(user);
+        when(embedded.findUserByName(anyString())).thenReturn(userOption);
+
+        cloudAwareCrowdService.setSyncTimeout(1);
+
+        ScheduledThreadPoolExecutor simulatedCrowdSyncEvent = new ScheduledThreadPoolExecutor(2);
+
+        // The first sync event
+        simulatedCrowdSyncEvent.schedule(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                cloudAwareCrowdService.handleSync();
+            }
+        }, 300, TimeUnit.MILLISECONDS);
+
+        // The second sync event
+        simulatedCrowdSyncEvent.schedule(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                cloudAwareCrowdService.handleSync();
+            }
+        }, 600, TimeUnit.MILLISECONDS);
+
+        cloudAwareCrowdService.createOrEnableUser(ADDON_USER_NAME, ADDON_DISPLAY_NAME, EMAIL_ADDRESS, PASSWORD, ATTRIBUTES);
+
+        verify(remote).setAttributesOnUser(ADDON_USER_NAME, ATTRIBUTES);
+        verify(embedded).setAttributesOnUser(ADDON_USER_NAME, ATTRIBUTES);
+    }
+
+
+    @Test
     public void createOrEnableUserSetsAttributesOnBothSidesAfterMissedSyncEvent()
     {
         User user = mock(User.class);
         when(user.getName()).thenReturn(ADDON_USER_NAME);
 
-        when(userOption.isPresent()).thenReturn(false, true);
+        when(userOption.isPresent()).thenReturn(
+                false, // No user is found when we search for an existing user
+                true); // The user shows up after the timeout has elapsed
         when(userOption.get()).thenReturn(user);
         when(embedded.findUserByName(anyString())).thenReturn(userOption);
 
