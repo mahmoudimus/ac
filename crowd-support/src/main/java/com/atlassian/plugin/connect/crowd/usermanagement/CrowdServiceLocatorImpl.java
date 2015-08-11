@@ -1,0 +1,21 @@
+package com.atlassian.plugin.connect.crowd.usermanagement;
+
+import com.atlassian.crowd.manager.application.ApplicationService;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class CrowdServiceLocatorImpl implements CrowdServiceLocator
+{
+    @Override
+    public ConnectCrowdBase embedded(ApplicationService applicationService, UserReconciliation userReconciliation, CrowdApplicationProvider crowdApplicationProvider)
+    {
+        return new EmbeddedCrowd(applicationService, userReconciliation, crowdApplicationProvider);
+    }
+
+    @Override
+    public ConnectCrowdBase remote(CrowdClientProvider crowdClientProvider, UserReconciliation userReconciliation)
+    {
+        return new RemoteCrowd(crowdClientProvider, userReconciliation);
+    }
+}

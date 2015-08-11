@@ -113,7 +113,7 @@ plan(
             name: 'Run Tests'
     ) {
         testJobsForJIRA(
-                mavenProductParameters: '-Datlassian.jira.version=${bamboo_product_version} -Datlassian.jira.testkit.version=${bamboo_jira_testkit_version} -Datlassian.darkfeature.com.atlassian.jira.config.CoreFeatures.LICENSE_ROLES_ENABLED=true'
+                mavenProductParameters: '-Datlassian.jira.version=${bamboo_product_version} -Datlassian.jira.testkit.version=${bamboo_jira_testkit_version} -Djvmargs="-Datlassian.darkfeature.com.atlassian.jira.config.CoreFeatures.LICENSE_ROLES_ENABLED=true"'
         )
     }
 }
