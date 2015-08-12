@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.confluence.capabilities.provider;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -22,12 +21,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ConfluenceComponent
 public class DefaultContentPropertyModuleProvider implements ContentPropertyModuleProvider
 {
-    private final ContentPropertyIndexSchemaModuleDescriptorFactory cpIndexFactory;
+    private final ContentPropertyIndexSchemaModuleDescriptorFactory contentPropertyIndexFactory;
 
     @Autowired
-    public DefaultContentPropertyModuleProvider(ContentPropertyIndexSchemaModuleDescriptorFactory cpIndexFactory)
+    public DefaultContentPropertyModuleProvider(ContentPropertyIndexSchemaModuleDescriptorFactory factory)
     {
-        this.cpIndexFactory = cpIndexFactory;
+        this.contentPropertyIndexFactory = factory;
     }
 
     @Override
@@ -35,16 +34,14 @@ public class DefaultContentPropertyModuleProvider implements ContentPropertyModu
                                                  final Plugin plugin,
                                                  String jsonFieldName, List<ContentPropertyModuleBean> beans)
     {
-        final List<ModuleDescriptor> result = new ArrayList<>();
-        result.addAll(Lists.transform(beans, new Function<ContentPropertyModuleBean, ModuleDescriptor>()
+        return Lists.transform(beans, new Function<ContentPropertyModuleBean, ModuleDescriptor>()
         {
             @Override
             public ContentPropertyIndexSchemaModuleDescriptor apply(
                     @Nullable ContentPropertyModuleBean input)
             {
-                return cpIndexFactory.createModuleDescriptor(moduleProviderContext, plugin, input);
+                return contentPropertyIndexFactory.createModuleDescriptor(moduleProviderContext, plugin, input);
             }
-        }));
-        return result;
+        });
     }
 }

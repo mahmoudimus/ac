@@ -74,12 +74,10 @@ public class ContentPropertyIndexSchemaModuleDescriptorFactory implements
                     uiSupportElement.addAttribute("value-type", extractionBean.getType().toString());
                     if (uiSupportBean.getDefaultOperator() == null)
                     {
-                        uiSupportElement.addAttribute("operator", extractionBean.getType() == ContentPropertyIndexFieldType.text ? "~" : "=");
                         uiSupportElement.addAttribute("default-operator", extractionBean.getType() == ContentPropertyIndexFieldType.text ? "~" : "=");
                     }
                     else
                     {
-                        uiSupportElement.addAttribute("operator", uiSupportBean.getDefaultOperator());
                         uiSupportElement.addAttribute("default-operator", uiSupportBean.getDefaultOperator());
                     }
                     if (uiSupportBean.getName() != null)
