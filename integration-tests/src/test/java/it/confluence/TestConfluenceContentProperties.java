@@ -92,6 +92,7 @@ public class TestConfluenceContentProperties
     private static List<Exception> setupFailure = new ArrayList<>();
     private static ListeningExecutorService executor;
     private static ContentPropertyModuleBean moduleBean;
+    private static ConnectRunner runner;
 
     private RemoteContentService contentService;
     private RemoteSpaceService spaceService;
@@ -170,7 +171,7 @@ public class TestConfluenceContentProperties
 
             System.out.println("Installing connect module to : " + baseUrl);
 
-            new ConnectRunner(baseUrl, addonKey)
+            runner = new ConnectRunner(baseUrl, addonKey)
                     .setAuthenticationToNone()
                     .addModules("confluenceContentProperties", moduleBean)
                     .start();
@@ -275,8 +276,12 @@ public class TestConfluenceContentProperties
     }
 
     @AfterClass
-    public static void tearDownClass()
+    public static void tearDownClass() throws Exception
     {
+        if (runner != null)
+        {
+            runner.stopAndUninstall();
+        }
         executor.shutdown();
     }
 
