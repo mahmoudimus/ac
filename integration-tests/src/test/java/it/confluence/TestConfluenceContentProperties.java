@@ -69,7 +69,7 @@ public class TestConfluenceContentProperties
 {
     private static final Logger log = LoggerFactory.getLogger(TestConfluenceContentProperties.class);
 
-    private static final String PROPERTY_KEY = "basepropkey";
+    private static String PROPERTY_KEY = "basepropkey";
     private static final String TEXT_FIELD_OBJECT_KEY = "mytitle";
     private static final String NUMERIC_FIELD_OBJECT_KEY = "likes";
     private static final String DATE_FIELD_OBJECT_KEY = "editTime";
@@ -110,6 +110,8 @@ public class TestConfluenceContentProperties
         try
         {
             baseUrl = TestedProductProvider.getConfluenceTestedProduct().getProductInstance().getBaseUrl();
+            String addonKey = AddonTestUtils.randomAddOnKey();
+            PROPERTY_KEY = PROPERTY_KEY + addonKey;
 
             ContentPropertyModuleBean moduleBean = newContentPropertyModuleBean()
                     .withKey("content-prop-module-key")
@@ -165,7 +167,7 @@ public class TestConfluenceContentProperties
 
             System.out.println("Installing connect module to : " + baseUrl);
 
-            new ConnectRunner(baseUrl, AddonTestUtils.randomAddOnKey())
+            new ConnectRunner(baseUrl, addonKey)
                     .setAuthenticationToNone()
                     .addModules("confluenceContentProperties", moduleBean)
                     .start();
