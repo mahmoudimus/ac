@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.atlassian.jira.plugin.webfragment.JiraWebInterfaceManager.CONTEXT_KEY_HELPER;
-import static com.atlassian.jira.plugin.webfragment.JiraWebInterfaceManager.CONTEXT_KEY_USER;
+import static com.atlassian.jira.plugin.webfragment.JiraWebInterfaceManager.CONTEXT_KEY_USERNAME;
 import static com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyUtil.renderToString;
 import static com.atlassian.plugin.connect.spi.iframe.webpanel.WebFragmentModuleContextExtractor.MODULE_CONTEXT_KEY;
 
@@ -69,7 +69,10 @@ public class ConnectIFrameIssueTabPanel extends AbstractIssueTabPanel3
         if (!request.isAnonymous())
         {
             ApplicationUser user = showPanelRequestHelperBridge.remoteUser(request);
-            conditionContext.put(CONTEXT_KEY_USER, user);
+            if (user != null)
+            {
+                conditionContext.put(CONTEXT_KEY_USERNAME, user.getUsername());
+            }
         }
         conditionContext.put(MODULE_CONTEXT_KEY, createUnfilteredContext(request.issue()));
     }
