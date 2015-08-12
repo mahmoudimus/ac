@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.43-SNAPSHOT</version>
+        <version>1.1.44-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -153,6 +153,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>atlassian-connect-crowd-support</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
             <scope>provided</scope>
@@ -228,10 +233,6 @@
         <dependency>
             <groupId>com.atlassian.crowd</groupId>
             <artifactId>crowd-integration-client-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.crowd</groupId>
-            <artifactId>crowd-integration-client-rest</artifactId>
         </dependency>
         <dependency>
             <groupId>com.atlassian.crowd</groupId>
@@ -645,7 +646,8 @@
                             com.atlassian.plugin.connect.plugin*;version="${project.version}",
                             com.atlassian.plugin.connect.modules*,
                             com.atlassian.plugin.connect.confluence*;version="${project.version}",
-                            com.atlassian.plugin.connect.jira*;version="${project.version}"
+                            com.atlassian.plugin.connect.jira*;version="${project.version}",
+                            com.atlassian.plugin.connect.crowd*;version="${project.version}"
                         </Export-Package>
                         <Spring-Context>*</Spring-Context>
                         <Atlassian-Plugin-Key>${project.groupId}.${project.artifactId}</Atlassian-Plugin-Key>
