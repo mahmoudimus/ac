@@ -69,7 +69,7 @@ public class TestConfluenceContentProperties
 {
     private static final Logger log = LoggerFactory.getLogger(TestConfluenceContentProperties.class);
 
-    private static final String propertyKey_BASE = "basepropkey";
+    private static final String PROPERTY_KEY = "basepropkey";
     private static final String TEXT_FIELD_OBJECT_KEY = "mytitle";
     private static final String NUMERIC_FIELD_OBJECT_KEY = "likes";
     private static final String DATE_FIELD_OBJECT_KEY = "editTime";
@@ -91,7 +91,6 @@ public class TestConfluenceContentProperties
     private static String baseUrl;
     private static List<Exception> setupFailure = new ArrayList<>();
     private static ListeningExecutorService executor;
-    private static ContentPropertyModuleBean moduleBean;
     private static ConnectRunner runner;
 
     private RemoteContentService contentService;
@@ -105,23 +104,20 @@ public class TestConfluenceContentProperties
 
     private Space space;
     private int spaceCount = 0;
-    private String propertyKey = null; // set in @Before
 
     @BeforeClass
     public static void initRunner() throws Exception
     {
-        String addonKey = AddonTestUtils.randomAddOnKey();
-        String propertyKey = addonKey+"."+propertyKey_BASE;
 
         try
         {
             baseUrl = TestedProductProvider.getConfluenceTestedProduct().getProductInstance().getBaseUrl();
 
-            moduleBean = newContentPropertyModuleBean()
+            ContentPropertyModuleBean moduleBean = newContentPropertyModuleBean()
                     .withKey("content-prop-module-key")
                     .withName(new I18nProperty("My Content Property Indexing module", "my.18n.name"))
                     .withKeyConfiguration(
-                            new ContentPropertyIndexKeyConfigurationBean(propertyKey,
+                            new ContentPropertyIndexKeyConfigurationBean(PROPERTY_KEY,
                                     newArrayList(
                                             newContentPropertyIndexExtractionConfigurationBean()
                                                     .withObjectName(TEXT_FIELD_OBJECT_KEY)
@@ -171,7 +167,7 @@ public class TestConfluenceContentProperties
 
             System.out.println("Installing connect module to : " + baseUrl);
 
-            runner = new ConnectRunner(baseUrl, addonKey)
+            runner = new ConnectRunner(baseUrl, AddonTestUtils.randomAddOnKey())
                     .setAuthenticationToNone()
                     .addModules("confluenceContentProperties", moduleBean)
                     .start();
@@ -188,10 +184,6 @@ public class TestConfluenceContentProperties
     @Before
     public void setUp() throws Exception
     {
-        // at the time of this writing there is only one key configuration
-        propertyKey = moduleBean.getKeyConfigurations().get(0).getPropertyKey();
-        log.info(String.format("using property key: %s",propertyKey));
-        
         if (!setupFailure.isEmpty())
             throw setupFailure.get(0);
         initConfluenceClient();
@@ -249,7 +241,7 @@ public class TestConfluenceContentProperties
 
         JsonContentProperty contentProperty = JsonContentProperty.builder()
                 .content(contentToFind.get())
-                .key(propertyKey)
+                .key(PROPERTY_KEY)
                 .value(new JsonString(propertyValue.toString()))
                 .build();
 
@@ -267,7 +259,7 @@ public class TestConfluenceContentProperties
 
         Promise<JsonContentProperty> otherProp = contentPropertyService.create(JsonContentProperty.builder()
                 .content(contentWithOtherProperty.get())
-                .key(propertyKey)
+                .key(PROPERTY_KEY)
                 .value(new JsonString(otherProperty.toString()))
                 .build());
 
@@ -307,40 +299,40 @@ public class TestConfluenceContentProperties
     @Test
     public void testTextContentProperty() throws Exception
     {
-        PageResponse<Content> response = executeCql(String.format("content.property[%s].%s ~ %s", propertyKey, TEXT_FIELD_OBJECT_KEY, TEXT_FRAGMENT_VALUE));
+        PageResponse<Content> response = executeCql(String.format("content.property[%s].%s ~ %s", PROPERTY_KEY, TEXT_FIELD_OBJECT_KEY, TEXT_FRAGMENT_VALUE));
         assertHasOneMatchingItem(response, contentToFind);
 
-        response = executeCql(String.format("content.property[%s].%s ~ %s", propertyKey, TEXT_FIELD_OBJECT_KEY, "other"));
+        response = executeCql(String.format("content.property[%s].%s ~ %s", PROPERTY_KEY, TEXT_FIELD_OBJECT_KEY, "other"));
         assertHasOneMatchingItem(response, contentWithOtherProperty);
     }
 
     @Test
     public void testNumericContentProperty() throws Exception
     {
-        PageResponse<Content> response = executeCql(String.format("content.property[%s].%s >= %s", propertyKey, NUMERIC_FIELD_OBJECT_KEY, NUMERIC_VALUE));
+        PageResponse<Content> response = executeCql(String.format("content.property[%s].%s >= %s", PROPERTY_KEY, NUMERIC_FIELD_OBJECT_KEY, NUMERIC_VALUE));
         assertHasOneMatchingItem(response, contentToFind);
 
-        response = executeCql(String.format("content.property[%s].%s < %s", propertyKey, NUMERIC_FIELD_OBJECT_KEY, NUMERIC_VALUE));
+        response = executeCql(String.format("content.property[%s].%s < %s", PROPERTY_KEY, NUMERIC_FIELD_OBJECT_KEY, NUMERIC_VALUE));
         assertHasOneMatchingItem(response ,contentWithOtherProperty);
     }
 
     @Test
     public void testStringContentProperty() throws Exception
     {
-        PageResponse<Content> response = executeCql(String.format("content.property[%s].%s = %s", propertyKey, STRING_FIELD_OBJECT_KEY, STRING_VALUE));
+        PageResponse<Content> response = executeCql(String.format("content.property[%s].%s = %s", PROPERTY_KEY, STRING_FIELD_OBJECT_KEY, STRING_VALUE));
         assertHasOneMatchingItem(response, contentToFind);
 
-        response = executeCql(String.format("content.property[%s].%s = %s", propertyKey, STRING_FIELD_OBJECT_KEY, ALT_STRING_VALUE));
+        response = executeCql(String.format("content.property[%s].%s = %s", PROPERTY_KEY, STRING_FIELD_OBJECT_KEY, ALT_STRING_VALUE));
         assertHasOneMatchingItem(response, contentWithOtherProperty);
     }
 
     @Test
     public void testDateContentProperty() throws Exception
     {
-        PageResponse<Content> response = executeCql(String.format("content.property[%s].%s < 2001-01-02", propertyKey, DATE_FIELD_OBJECT_KEY));
+        PageResponse<Content> response = executeCql(String.format("content.property[%s].%s < 2001-01-02", PROPERTY_KEY, DATE_FIELD_OBJECT_KEY));
         assertHasOneMatchingItem(response, contentToFind);
 
-        response = executeCql(String.format("content.property[%s].%s >= 2001-01-02", propertyKey, DATE_FIELD_OBJECT_KEY));
+        response = executeCql(String.format("content.property[%s].%s >= 2001-01-02", PROPERTY_KEY, DATE_FIELD_OBJECT_KEY));
         assertHasOneMatchingItem(response, contentWithOtherProperty);
     }
 
