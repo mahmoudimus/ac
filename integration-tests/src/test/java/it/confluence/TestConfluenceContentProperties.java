@@ -85,8 +85,8 @@ public class TestConfluenceContentProperties
     private static final String ALT_STRING_VALUE = "differentValue";
     private static final String STRING_VALUE_FOR_ALIAS = "knowledge";
     private static final String ALT_STRING_VALUE_FOR_ALIAS = "people";
-    private static final String NUMERIC_VALUE_FOR_ALIAS = "1";
-    private static final String ALT_NUMERIC_VALUE_FOR_ALIAS = "2";
+    private static final int NUMERIC_VALUE_FOR_ALIAS = 1;
+    private static final int ALT_NUMERIC_VALUE_FOR_ALIAS = 2;
 
     private static String baseUrl;
     private static List<Exception> setupFailure = new ArrayList<>();
@@ -352,8 +352,8 @@ public class TestConfluenceContentProperties
 
     @Test
     public void testNumericContentPropertyWithAlias() throws Exception {
-        PageResponse<Content> response = executeCql(String.format("%s > %s", NUMERIC_FIELD_OBJECT_ALIAS_KEY, NUMERIC_VALUE_FOR_ALIAS));
-        assertHasOneMatchingItem(response, contentToFind);
+        PageResponse<Content> response = executeCql(String.format("%s > %d", NUMERIC_FIELD_OBJECT_ALIAS_KEY, NUMERIC_VALUE_FOR_ALIAS));
+        assertHasOneMatchingItem(response, contentWithOtherProperty);
     }
 
     private void assertHasOneMatchingItem(PageResponse<Content> response, Promise<Content> content) throws Exception
