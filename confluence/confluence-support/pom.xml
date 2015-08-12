@@ -136,11 +136,6 @@
             <artifactId>jsonassert</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.atlassian.querylang</groupId>
-            <artifactId>atlassian-query-lang</artifactId>
-            <version>0.9.18</version>
-        </dependency>
 
     </dependencies>
 
