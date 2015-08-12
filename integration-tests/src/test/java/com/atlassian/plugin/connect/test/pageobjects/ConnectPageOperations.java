@@ -16,6 +16,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.List;
+
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode;
 import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode.ID;
 import static com.google.common.collect.Iterables.filter;
@@ -171,6 +173,11 @@ public class ConnectPageOperations
     public WebElement findElement(By by)
     {
         return driver.findElement(by);
+    }
+
+    public List<WebElement> findElements(By by)
+    {
+        return driver.findElements(by);
     }
 
     public WebElement findElementByClass(String className)
