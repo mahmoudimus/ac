@@ -2,8 +2,11 @@ package it.jira.jsapi;
 
 import com.atlassian.jira.pageobjects.pages.admin.workflow.AddWorkflowTransitionFunctionParamsPage;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.AddWorkflowTransitionPostFunctionPage;
+import com.atlassian.jira.pageobjects.pages.admin.workflow.CopyWorkflowDialog;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.ViewWorkflowSteps;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.ViewWorkflowTransitionPage;
+import com.atlassian.jira.pageobjects.pages.admin.workflow.WorkflowHeader;
+import com.atlassian.jira.pageobjects.pages.admin.workflow.WorkflowsPage;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
@@ -14,23 +17,12 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import org.apache.commons.lang.RandomStringUtils;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
-import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 public class TestWorkflowPostFunction extends JiraWebDriverTestBase
 {
@@ -131,77 +123,6 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
         String url = product.getTester().getDriver().getCurrentUrl();
         addTransitionPostFunctionPage.submit();
         assertEquals(url, product.getTester().getDriver().getCurrentUrl());
-    }
-
-    @Test
-    public void testAddingManyPostFunctionsRendersViewCorrectly()
-    {
-        //see ACJIRA-12
-
-        String clonedWorkflowName = RandomStringUtils.randomAlphabetic(10);
-        product.backdoor().getTestkit().workflow().cloneWorkflow(JiraWorkflow.DEFAULT_WORKFLOW_NAME, clonedWorkflowName);
-
-        login(testUserFactory.admin());
-
-        ViewWorkflowSteps workflowStepsPage = product.visit(ViewWorkflowSteps.class, clonedWorkflowName);
-        ExtendedViewWorkflowTransitionPage viewWorkflowTransitionPage = (ExtendedViewWorkflowTransitionPage)goToFirstTransition(clonedWorkflowName, workflowStepsPage);
-
-        AddWorkflowTransitionFunctionParamsPage addTransitionPostFunctionParamsPage;
-        for (int i = 0; i < 3; i++)
-        {
-            AddWorkflowTransitionPostFunctionPage addTransitionPostFunctionPage = viewWorkflowTransitionPage.goToAddPostFunction();
-
-            addTransitionPostFunctionParamsPage = addTransitionPostFunctionPage.selectAndSubmitByName(WORKFLOW_POST_FUNCTION_NAME);
-
-            viewWorkflowTransitionPage = (ExtendedViewWorkflowTransitionPage)addTransitionPostFunctionParamsPage.submit();
-        }
-        List<WebElement> elements = connectPageOperations.findElements(By.className("ap-content"));
-        assertThat(elements, hasSize(3));
-        assertThat(elements, notOverlappingInYAxis());
-    }
-
-    private Matcher<? super List<WebElement>> notOverlappingInYAxis()
-    {
-        return new TypeSafeMatcher<List<WebElement>>()
-        {
-            @Override
-            protected boolean matchesSafely(final List<WebElement> items)
-            {
-                return notOverlappingItems(items);
-            }
-
-            private boolean notOverlappingItems(final List<WebElement> webElements)
-            {
-                for (WebElement testedElement : webElements)
-                {
-                    Set<WebElement> rest = new HashSet<>(webElements);
-                    rest.remove(testedElement);
-                    for (WebElement element : rest)
-                    {
-                        int yTopPos = testedElement.getLocation().getY();
-                        int yBottomPos = yTopPos + testedElement.getSize().getHeight();
-
-                        if (inBoundingBox(element, yTopPos)
-                                || inBoundingBox(element, yBottomPos))
-                        {
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            }
-
-            private boolean inBoundingBox(final WebElement element, final int y)
-            {
-                return (element.getLocation().getY() < y) && (y < (element.getLocation().getY() + element.getSize().getHeight()));
-            }
-
-            @Override
-            public void describeTo(final Description description)
-            {
-                description.appendText("Not overlapping web elements.");
-            }
-        };
     }
 
     private static void ensureDefaultWorkflowActivated()
