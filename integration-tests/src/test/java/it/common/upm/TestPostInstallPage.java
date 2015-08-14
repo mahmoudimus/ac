@@ -40,12 +40,6 @@ public class TestPostInstallPage extends AbstractPageTestBase
         runCanClickOnPageLinkAndSeeAddonContents(PluginManager.class, Option.some("Get started"), testUserFactory.admin());
     }
 
-    @Override
-    protected <T extends Page> void revealLinkIfNecessary(T page)
-    {
-        ((PluginManager)page).expandPluginRow(pluginKey);
-    }
-
 //    @Test
     public void testPostInstallPage() throws Exception
     {
@@ -60,7 +54,6 @@ public class TestPostInstallPage extends AbstractPageTestBase
                         .build())
                 .addRoute("/page", ConnectAppServlets.helloWorldServlet())
                 .addScope(ScopeName.READ)
-                .enableLicensing()
                 .start();
 
         try
@@ -75,21 +68,5 @@ public class TestPostInstallPage extends AbstractPageTestBase
         {
             anotherPlugin.stopAndUninstall();
         }
-    }
-
-//    @Test
-    public void pageIsNotAccessibleWithFalseCondition()
-    {
-        runner.setToggleableConditionShouldDisplay(false);
-
-        login(testUserFactory.basicUser());
-
-        // note we don't check that the configure link isn't displayed due to AC-973
-
-        // directly retrieving page should result in access denied
-        InsufficientPermissionsPage insufficientPermissionsPage = product.visit(InsufficientPermissionsPage.class,
-                pluginKey, MY_AWESOME_PAGE_KEY);
-        assertThat(insufficientPermissionsPage.getErrorMessage(), containsString("You do not have the correct permissions"));
-        assertThat(insufficientPermissionsPage.getErrorMessage(), containsString(MY_AWESOME_PAGE));
     }
 }
