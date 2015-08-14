@@ -745,7 +745,7 @@
                                 <include>it/common/lifecycle/*.java</include>
                             </includes>
                         </testGroup>
-                        
+
                         <!-- Tests of JIRA-specific functionality -->
 
                         <testGroup>
