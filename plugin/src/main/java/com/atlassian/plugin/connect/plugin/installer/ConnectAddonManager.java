@@ -353,10 +353,7 @@ public class ConnectAddonManager
 
     public boolean isAddonEnabled(String pluginKey)
     {
-        log.info("Checking whether Connect addon '" + pluginKey + "' is enabled...");
-        boolean isEnabled = beanToModuleRegistrar.descriptorsAreRegistered(pluginKey);
-        log.info("'" + pluginKey + "' is " + (isEnabled ? "enabled" : "disabled"));
-        return isEnabled;
+        return beanToModuleRegistrar.descriptorsAreRegistered(pluginKey);
     }
 
     public void uninstallConnectAddon(final String pluginKey) throws ConnectAddOnUserDisableException
