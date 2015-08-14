@@ -113,6 +113,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     @Override
     public Set<String> getDefaultProductGroupsOneOrMoreExpected()
     {
+        // TODO Get default project role groups
         return DEFAULT_GROUPS_ONE_OR_MORE_EXPECTED;
     }
 

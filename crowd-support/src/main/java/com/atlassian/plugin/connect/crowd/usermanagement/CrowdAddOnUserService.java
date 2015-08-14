@@ -117,6 +117,10 @@ public class CrowdAddOnUserService implements ConnectAddOnUserService
         {
             try
             {
+                // TODO if we're re-enabling an add-on, we don't want to add the add-on user to all the license role groups,
+                // because what if the admin has removed access to an application on purpose?
+                // OR, is the add-on user having access to all applications just part of what it means to be a JIRA Connect add-on?
+
                 connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), group);
                 numPossibleDefaultGroupsAddedTo++;
             }
@@ -132,6 +136,8 @@ public class CrowdAddOnUserService implements ConnectAddOnUserService
                     "We expect at least one of these groups to exist - exactly which one should exist depends on the version of the instance." +
                     "The user needs to be a member of one of these groups for basic access, otherwise the add-on will not function correctly." +
                     "Please check with an instance administrator that at least one of these groups exists and that it is not read-only.");
+                    // TODO Change error message in the case of Renaissance to say that the groups existed but had admin access, so we filtered them out
+                    // or, keep this message the same but log every time we filter out an admin group
         }
 
         return user.getName();
