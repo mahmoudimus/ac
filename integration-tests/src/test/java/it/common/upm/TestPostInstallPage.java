@@ -1,27 +1,21 @@
 package it.common.upm;
 
 import com.atlassian.fugue.Option;
-import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
-import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
-import com.atlassian.plugin.connect.test.pageobjects.PluginManagerPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.upm.pageobjects.PluginManager;
 import it.common.iframe.AbstractPageTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
-import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertThat;
 
 /**
  * Test of addon configure page in Confluence
@@ -59,9 +53,9 @@ public class TestPostInstallPage extends AbstractPageTestBase
         try
         {
             login(testUserFactory.admin());
-            final PluginManagerPage upm = product.visit(PluginManagerPage.class);
-
-            upm.clickGetStartedPluginButton(anotherPlugin.getAddon().getKey(), "page");
+            final PluginManager upm = product.visit(PluginManager.class);
+            //URI configurePageURI = upm.getPlugin(anotherPlugin.getAddon().getKey()).openPluginDetails().getPostInstallLink().getHref();
+            //product.getTester().getDriver().navigate().to(configurePageURI.toURL());
             product.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, anotherPlugin.getAddon().getKey(), "page", true); // will throw if it fails to load
         }
         finally
