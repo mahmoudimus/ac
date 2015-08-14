@@ -745,19 +745,7 @@
                                 <include>it/common/lifecycle/*.java</include>
                             </includes>
                         </testGroup>
-                        <testGroup>
-                            <id>jira-common-upm</id>
-                            <productIds>
-                                <productId>jira</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>jira</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/common/upm/*.java</include>
-                            </includes>
-                        </testGroup>
-
+                        
                         <!-- Tests of JIRA-specific functionality -->
 
                         <testGroup>
