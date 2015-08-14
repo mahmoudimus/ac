@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.jira.usermanagement;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -8,6 +9,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
+import com.atlassian.application.api.ApplicationKey;
 import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.exception.ApplicationPermissionException;
@@ -15,6 +17,9 @@ import com.atlassian.crowd.exception.GroupNotFoundException;
 import com.atlassian.crowd.exception.InvalidAuthenticationException;
 import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.exception.UserNotFoundException;
+
+import com.atlassian.jira.application.ApplicationAuthorizationService;
+import com.atlassian.jira.application.ApplicationRoleManager;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
 import com.atlassian.jira.permission.PermissionSchemeManager;
 import com.atlassian.jira.permission.ProjectPermission;
@@ -83,6 +88,8 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
     private final TransactionTemplate transactionTemplate;
     private final PermissionManager jiraProjectPermissionManager;
+    private final ApplicationAuthorizationService applicationAuthorizationService;
+    private final ApplicationRoleManager applicationRoleManager;
 
     @Inject
     public JiraAddOnUserProvisioningService(GlobalPermissionManager jiraPermissionManager,
@@ -92,7 +99,9 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
             ProjectRoleService projectRoleService,
             ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService,
             TransactionTemplate transactionTemplate,
-            PermissionManager jiraProjectPermissionManager)
+            PermissionManager jiraProjectPermissionManager,
+            ApplicationAuthorizationService applicationAuthorizationService,
+            ApplicationRoleManager applicationRoleManager)
     {
         this.jiraProjectPermissionManager = jiraProjectPermissionManager;
         this.jiraPermissionManager = checkNotNull(jiraPermissionManager);
@@ -102,6 +111,8 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         this.projectRoleService = checkNotNull(projectRoleService);
         this.connectAddOnUserGroupProvisioningService = checkNotNull(connectAddOnUserGroupProvisioningService);
         this.transactionTemplate = transactionTemplate;
+        this.applicationAuthorizationService = applicationAuthorizationService;
+        this.applicationRoleManager = applicationRoleManager;
     }
 
     @Override
@@ -113,8 +124,20 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     @Override
     public Set<String> getDefaultProductGroupsOneOrMoreExpected()
     {
-        // TODO Get default project role groups
-        return DEFAULT_GROUPS_ONE_OR_MORE_EXPECTED;
+        if(!applicationAuthorizationService.rolesEnabled())
+        {
+            return DEFAULT_GROUPS_ONE_OR_MORE_EXPECTED;
+        }
+
+        Set<String> groupSet = new HashSet<>();
+        for(ApplicationKey applicationKey : applicationRoleManager.getDefaultApplicationKeys())
+        {
+            for (Group group : applicationRoleManager.getDefaultGroups(applicationKey))
+            {
+                groupSet.add(group.getName());
+            }
+        }
+        return groupSet;
     }
 
     @Override
