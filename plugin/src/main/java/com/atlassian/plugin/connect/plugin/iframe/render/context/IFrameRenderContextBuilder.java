@@ -26,6 +26,7 @@ public interface IFrameRenderContextBuilder
         InitializedBuilder resizeToParent(boolean resizeToParent);
         InitializedBuilder context(String key, Object value);
         InitializedBuilder context(Map<String, Object> additionalContext);
+        InitializedBuilder origin(String host);
         Map<String, Object> build();
     }
 }

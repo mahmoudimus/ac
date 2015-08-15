@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.plugin.iframe.render.context;
 
 import com.atlassian.html.encode.JavascriptEncoder;
-import com.atlassian.plugin.connect.spi.user.UserPreferencesRetriever;
 import com.atlassian.plugin.connect.plugin.module.HostApplicationInfo;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
+import com.atlassian.plugin.connect.spi.user.UserPreferencesRetriever;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.Maps;
@@ -111,6 +111,13 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
         public InitializedBuilder resizeToParent(boolean resizeToParent)
         {
             additionalContext.put("general", resizeToParent ? "1" : "");
+            return this;
+        }
+
+        @Override
+        public InitializedBuilder origin(String origin)
+        {
+            putIfNotNull("origin", origin);
             return this;
         }
 

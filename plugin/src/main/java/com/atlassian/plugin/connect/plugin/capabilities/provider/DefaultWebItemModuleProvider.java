@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
+import com.atlassian.plugin.connect.plugin.redirect.RedirectRegistry;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
@@ -32,15 +33,17 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
     private final WebItemModuleDescriptorFactory webItemFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+    private final RedirectRegistry redirectRegistry;
 
     @Autowired
     public DefaultWebItemModuleProvider(WebItemModuleDescriptorFactory webItemFactory,
-                                        IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-                                        IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
+            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, final RedirectRegistry redirectRegistry)
     {
         this.webItemFactory = webItemFactory;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
+        this.redirectRegistry = redirectRegistry;
     }
 
     @Override
@@ -69,6 +72,11 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
             bean.getContext().equals(AddOnUrlContext.product) ||
             bean.getContext().equals(AddOnUrlContext.addon) && !target.isDialogTarget() && !target.isInlineDialogTarget())
         {
+            if (bean.getContext().equals(AddOnUrlContext.addon))
+            {
+                RedirectRegistry.RedirectData renderStrategy = new RedirectRegistry.RedirectData(bean.getUrl());
+                redirectRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), renderStrategy);
+            }
             descriptors.add(webItemFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean));
         }
         else

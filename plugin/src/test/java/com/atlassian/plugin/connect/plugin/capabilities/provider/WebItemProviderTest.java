@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.plugin.redirect.RedirectRegistry;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConditionModuleFragmentFactoryImpl;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.IconModuleFragmentFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ParamsModuleFragmentFactoryImpl;
@@ -62,6 +63,7 @@ public class WebItemProviderTest
     private IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private ConnectModuleProviderContext moduleProviderContext;
     private ConnectAddonBean addon;
+    private RedirectRegistry redirectRegistry;
 
     @Before
     public void setup() throws Exception
@@ -74,6 +76,7 @@ public class WebItemProviderTest
         webFragmentHelper = mock(WebFragmentHelper.class);
         iFrameRenderStrategyBuilderFactory = mock(IFrameRenderStrategyBuilderFactory.class);
         iFrameRenderStrategyRegistry = mock(IFrameRenderStrategyRegistry.class);
+        redirectRegistry = mock(RedirectRegistry.class);
 
         webItemFactory = new WebItemModuleDescriptorFactoryImpl(
                 new WebItemModuleDescriptorFactoryForTests(webInterfaceManager),
@@ -110,7 +113,7 @@ public class WebItemProviderTest
                 .withLocation("atl.admin/menu")
                 .build();
 
-        DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
+        DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, redirectRegistry);
 
         List<ModuleDescriptor> descriptors = moduleProvider.provideModules(moduleProviderContext, plugin, JSON_FIELD_NAME, newArrayList(bean));
 
@@ -132,7 +135,7 @@ public class WebItemProviderTest
                 .withContext(AddOnUrlContext.page)
                 .build();
 
-        DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
+        DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, redirectRegistry);
 
         List<ModuleDescriptor> descriptors = moduleProvider.provideModules(moduleProviderContext, plugin, JSON_FIELD_NAME, newArrayList(bean));
 
@@ -154,7 +157,7 @@ public class WebItemProviderTest
                 .withContext(AddOnUrlContext.product)
                 .build();
 
-        DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
+        DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, redirectRegistry);
 
         List<ModuleDescriptor> descriptors = moduleProvider.provideModules(moduleProviderContext, plugin, JSON_FIELD_NAME, newArrayList(bean));
 
@@ -175,7 +178,7 @@ public class WebItemProviderTest
                 .withLocation("atl.admin/menu")
                 .build();
 
-        DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
+        DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, redirectRegistry);
 
         List<ModuleDescriptor> descriptors = moduleProvider.provideModules(moduleProviderContext, plugin, JSON_FIELD_NAME, newArrayList(bean));
 
@@ -197,7 +200,7 @@ public class WebItemProviderTest
                 .withContext(AddOnUrlContext.page)
                 .build();
 
-        DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
+        DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, redirectRegistry);
 
         List<ModuleDescriptor> descriptors = moduleProvider.provideModules(moduleProviderContext, plugin, JSON_FIELD_NAME, newArrayList(bean));
 
@@ -219,7 +222,7 @@ public class WebItemProviderTest
                 .withContext(AddOnUrlContext.product)
                 .build();
 
-        DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
+        DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, redirectRegistry);
 
         List<ModuleDescriptor> descriptors = moduleProvider.provideModules(moduleProviderContext, plugin, JSON_FIELD_NAME, newArrayList(bean));
 
@@ -246,7 +249,7 @@ public class WebItemProviderTest
                 .withLocation("atl.admin/menu")
                 .build();
 
-        DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
+        DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, redirectRegistry);
 
         List<ModuleDescriptor> descriptors = moduleProvider.provideModules(moduleProviderContext, plugin, JSON_FIELD_NAME, newArrayList(bean, bean2));
 

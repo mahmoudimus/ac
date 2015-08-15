@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.api.module.webitem;
 
+import com.atlassian.plugin.connect.api.Redirect.RedirectServletPath;
 import com.atlassian.plugin.connect.api.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.iframe.servlet.ConnectIFrameServletPath;
@@ -35,10 +36,17 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
     private final AddOnUrlContext addOnUrlContext;
     private final boolean isDialog;
 
-    public RemoteWebLink(WebFragmentModuleDescriptor webFragmentModuleDescriptor, WebFragmentHelper webFragmentHelper,
-            IFrameUriBuilderFactory iFrameUriBuilderFactory, UrlVariableSubstitutor urlVariableSubstitutor,
-            PluggableParametersExtractor webFragmentModuleContextExtractor, ModuleContextFilter moduleContextFilter,
-            String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog)
+    public RemoteWebLink(WebFragmentModuleDescriptor webFragmentModuleDescriptor,
+            WebFragmentHelper webFragmentHelper,
+            IFrameUriBuilderFactory iFrameUriBuilderFactory,
+            UrlVariableSubstitutor urlVariableSubstitutor,
+            PluggableParametersExtractor webFragmentModuleContextExtractor,
+            ModuleContextFilter moduleContextFilter,
+            String url, String pluginKey,
+            String moduleKey,
+            boolean absolute,
+            AddOnUrlContext addOnUrlContext,
+            boolean isDialog)
     {
         super(webFragmentHelper, null, webFragmentModuleDescriptor);
         this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
@@ -85,13 +93,7 @@ public class RemoteWebLink extends AbstractWebItem implements WebLink
             {
                 return isDialog
                         ? urlVariableSubstitutor.append(ConnectIFrameServletPath.forModule(pluginKey, moduleKey), moduleContext)
-                        : iFrameUriBuilderFactory.builder()
-                                .addOn(pluginKey)
-                                .namespace(moduleKey)
-                                .urlTemplate(url)
-                                .context(moduleContext)
-                                .dialog(isDialog)
-                                .build();
+                        : urlVariableSubstitutor.append(req.getContextPath() + RedirectServletPath.forModule(pluginKey, moduleKey), moduleContext);
             }
             else if (addOnUrlContext == page)
             {
