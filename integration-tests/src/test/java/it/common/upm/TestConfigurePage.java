@@ -8,7 +8,6 @@ import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.upm.pageobjects.PluginManager;
-import it.common.iframe.AbstractPageTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
 import org.junit.BeforeClass;
@@ -24,7 +23,7 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.n
 /**
  * Test of addon configure page in Confluence
  */
-public class TestConfigurePage extends AbstractPageTestBase
+public class TestConfigurePage extends AbstractUpmPageTest
 {
     @Inject
     PageBinder pageBinder;
