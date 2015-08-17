@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.modules.beans.builder;
 
 import com.atlassian.plugin.connect.modules.beans.UISupportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.beans.nested.UISupportValueType;
 
 public class UISupportModuleBeanBuilder<T extends UISupportModuleBeanBuilder, B extends UISupportModuleBean> extends BaseModuleBeanBuilder<T, B>
 {
@@ -10,7 +9,7 @@ public class UISupportModuleBeanBuilder<T extends UISupportModuleBeanBuilder, B 
     private I18nProperty name;
     private I18nProperty tooltip;
     private String dataUri;
-    private UISupportValueType valueType;
+    private String valueType;
     private String i18nkey;
 
     public UISupportModuleBeanBuilder()
@@ -51,7 +50,7 @@ public class UISupportModuleBeanBuilder<T extends UISupportModuleBeanBuilder, B 
         return (T) this;
     }
 
-    public T withValueType(UISupportValueType valueType) {
+    public T withValueType(String valueType) {
         this.valueType = valueType;
         return (T) this;
     }

@@ -4,7 +4,6 @@ import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.beans.builder.UISupportModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.beans.nested.UISupportValueType;
 
 @SchemaDefinition("uiSupport")
 public class UISupportModuleBean extends BaseModuleBean
@@ -14,7 +13,7 @@ public class UISupportModuleBean extends BaseModuleBean
     private I18nProperty name;
     private I18nProperty tooltip;
     private String dataUri;
-    private UISupportValueType valueType;
+    private String valueType;
     private String i18nkey;
 
     public UISupportModuleBean(UISupportModuleBeanBuilder builder)
@@ -57,7 +56,7 @@ public class UISupportModuleBean extends BaseModuleBean
         return i18nkey;
     }
 
-    public UISupportValueType getValueType()
+    public String getValueType()
     {
         return valueType;
     }
