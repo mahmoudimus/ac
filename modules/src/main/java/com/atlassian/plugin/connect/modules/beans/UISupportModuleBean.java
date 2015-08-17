@@ -14,7 +14,6 @@ public class UISupportModuleBean extends BaseModuleBean
     private I18nProperty tooltip;
     private String dataUri;
     private String valueType;
-    private String i18nkey;
 
     public UISupportModuleBean(UISupportModuleBeanBuilder builder)
     {
@@ -49,11 +48,6 @@ public class UISupportModuleBean extends BaseModuleBean
     public I18nProperty getTooltip()
     {
         return tooltip;
-    }
-
-    public String getI18nkey()
-    {
-        return i18nkey;
     }
 
     public String getValueType()

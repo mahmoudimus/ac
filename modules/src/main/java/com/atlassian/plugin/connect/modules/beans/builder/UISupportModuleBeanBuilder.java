@@ -10,7 +10,6 @@ public class UISupportModuleBeanBuilder<T extends UISupportModuleBeanBuilder, B 
     private I18nProperty tooltip;
     private String dataUri;
     private String valueType;
-    private String i18nkey;
 
     public UISupportModuleBeanBuilder()
     {
@@ -23,7 +22,6 @@ public class UISupportModuleBeanBuilder<T extends UISupportModuleBeanBuilder, B 
         this.name = defaultBean.getName();
         this.tooltip = defaultBean.getTooltip();
         this.valueType = defaultBean.getValueType();
-        this.i18nkey = defaultBean.getI18nkey();
     }
 
     public T withDefaultOperator(String defaultOperator)
@@ -52,11 +50,6 @@ public class UISupportModuleBeanBuilder<T extends UISupportModuleBeanBuilder, B 
 
     public T withValueType(String valueType) {
         this.valueType = valueType;
-        return (T) this;
-    }
-
-    public T withI18nKey(String i18nkey) {
-        this.i18nkey = i18nkey;
         return (T) this;
     }
 
