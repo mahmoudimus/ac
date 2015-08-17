@@ -21,7 +21,7 @@ import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.n
  */
 public class TestPostInstallPage extends AbstractUpmPageTest
 {
-    @BeforeClass
+//    @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
         startConnectAddOn("postInstallPage");
