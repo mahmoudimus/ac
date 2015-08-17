@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.applinks;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserService;
 import com.atlassian.plugin.descriptors.AbstractModuleDescriptor;
 import com.atlassian.plugin.descriptors.CannotDisable;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -26,9 +26,9 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
     private final ConnectAddOnUserService connectAddOnUserService;
 
     private static final Logger log = LoggerFactory.getLogger(RemotePluginContainerModuleDescriptor.class);
-    
+
     private String addonBaseUrl;
-    
+
     public RemotePluginContainerModuleDescriptor(ConnectApplinkManager connectApplinkManager, ConnectAddOnUserService connectAddOnUserService)
     {
         super(ModuleFactory.LEGACY_MODULE_FACTORY);
@@ -49,21 +49,21 @@ public final class RemotePluginContainerModuleDescriptor extends AbstractModuleD
         }
 
         this.addonBaseUrl = displayUrl;
-        
+
         if(null != oauthElement)
         {
             String publicKey = getRequiredElementText(oauthElement, "public-key");
             connectApplinkManager.createAppLink(plugin,displayUrl,AuthenticationType.OAUTH,publicKey,"");
         }
-        
-        
+
+
     }
 
     public String getAddonBaseUrl()
     {
-        return addonBaseUrl;    
+        return addonBaseUrl;
     }
-    
+
     @Override
     public void enabled()
     {

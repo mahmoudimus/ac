@@ -13,4 +13,5 @@ public interface ConnectAddonAccessor
      * @return true if the Connect add-on is installed and enabled, otherwise false
      */
     boolean isAddonEnabled(String addOnKey);
+
 }

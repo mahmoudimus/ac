@@ -1,13 +1,13 @@
 package com.atlassian.plugin.connect.api.usermanagment;
 
-import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-
 import java.util.Set;
+
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 
 public interface ConnectAddOnUserProvisioningService
 {
-    public static String USER_PROVISIONING_ERROR = "connect.install.error.user.provisioning";
-    public static String ADDON_ADMINS_MISSING_PERMISSION = "connect.install.error.addon.admin.permission";
+    String USER_PROVISIONING_ERROR = "connect.install.error.user.provisioning";
+    String ADDON_ADMINS_MISSING_PERMISSION = "connect.install.error.addon.admin.permission";
 
     void provisionAddonUserForScopes(String username, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddOnUserInitException;
 
@@ -17,7 +17,7 @@ public interface ConnectAddOnUserProvisioningService
      *
      * @return {@link java.util.Set} of group keys (for example ["_licensed-confluence"]).
      */
-    public Set<String> getDefaultProductGroupsAlwaysExpected();
+    Set<String> getDefaultProductGroupsAlwaysExpected();
 
     /**
      * The keys of product groups, one or more of which add-on users should by default be members.
@@ -26,5 +26,5 @@ public interface ConnectAddOnUserProvisioningService
      *
      * @return {@link java.util.Set} of group keys (for example ["confluence-users"]).
      */
-    public Set<String> getDefaultProductGroupsOneOrMoreExpected();
+    Set<String> getDefaultProductGroupsOneOrMoreExpected();
 }

@@ -74,6 +74,22 @@ public class ConnectAddOnPage
         final long stopTime = System.currentTimeMillis();
         log.debug("Milliseconds to find iframe-init class on ap-content container div: {}", stopTime - startTime);
         this.containerDiv = ((WebDriverElement)containerDivElement).asWebElement();
+
+        waitForFirstScriptToLoad();
+    }
+
+    private void waitForFirstScriptToLoad()
+    {
+        runInFrame(new Callable<Void>()
+        {
+            @Override
+            public Void call() throws Exception
+            {
+                PageElement element = elementFinder.find(By.tagName("script"));
+                waitUntilTrue(element.timed().isPresent());
+                return null;
+            }
+        });
     }
 
     private void debugIframeFailure(String containerDivId, PageElement containerDivElement)

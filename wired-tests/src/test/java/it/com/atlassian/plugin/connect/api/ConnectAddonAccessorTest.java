@@ -59,11 +59,11 @@ public class ConnectAddonAccessorTest
         testPluginInstaller.uninstallAddon(addonKey);
     }
 
-
     private void installPlugin(final String addonKey) throws IOException
     {
         final ConnectAddonBean addonBean = ConnectAddonBean.newConnectAddonBean()
                 .withKey(addonKey)
+                .withLicensing(false)
                 .withDescription(ConnectAddonAccessorTest.class.getCanonicalName())
                 .withBaseurl(testPluginInstaller.getInternalAddonBaseUrl(addonKey))
                 .withAuthentication(AuthenticationBean.newAuthenticationBean().withType(AuthenticationType.JWT).build())

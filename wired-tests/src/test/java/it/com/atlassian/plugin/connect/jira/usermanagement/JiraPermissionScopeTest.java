@@ -1,5 +1,8 @@
 package it.com.atlassian.plugin.connect.jira.usermanagement;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
 import com.atlassian.jira.compatibility.bridge.project.ProjectServiceBridge;
@@ -13,17 +16,15 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.util.SimpleErrorCollection;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.util.Collections;
-import java.util.List;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

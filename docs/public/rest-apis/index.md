@@ -389,7 +389,7 @@ Atlassian Connect provides a set of REST APIs specifically designed for use by a
 }</textarea>
 </div>
             <h5><code>400</code> - application/json</h5>
-            <p>Property key longer than 255 characters.</p>
+            <p>Property key longer than 127 characters.</p>
             <h5><code>401</code> - application/json</h5>
             <p>Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.</p>
             <h5><code>404</code> - application/json</h5>
@@ -459,7 +459,7 @@ Atlassian Connect provides a set of REST APIs specifically designed for use by a
                 <h5><code>201</code> - application/json</h5>
                 <p>Property created.</p>
                 <h5><code>400</code> - application/json</h5>
-                <p>Property key longer than 255 characters.</p>
+                <p>Property key longer than 127 characters.</p>
                 <h5><code>400</code> - application/json</h5>
                 <p>Request made with invalid JSON.</p>
                 <h5><code>401</code> - application/json</h5>
@@ -529,7 +529,7 @@ Atlassian Connect provides a set of REST APIs specifically designed for use by a
                 <h5><code>204</code> - application/json</h5>
                 <p>Property deleted.</p>
                 <h5><code>400</code> - application/json</h5>
-                <p>Property key longer than 255 characters.</p>
+                <p>Property key longer than 127 characters.</p>
                 <h5><code>401</code> - application/json</h5>
                 <p>Request without credentials or with invalid credentials, e.g. by an uninstalled add-on.</p>
                 <h5><code>404</code> - application/json</h5>

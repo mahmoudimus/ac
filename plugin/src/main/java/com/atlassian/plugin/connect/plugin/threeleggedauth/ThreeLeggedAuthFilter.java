@@ -10,8 +10,10 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.util.DefaultMessage;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.auth.AuthenticationListener;
 import com.atlassian.sal.api.auth.Authenticator;
+import com.atlassian.sal.api.lifecycle.LifecycleAware;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.message.Message;
 import com.atlassian.sal.api.user.UserKey;
@@ -25,6 +27,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -40,7 +44,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.Boolean.getBoolean;
 
 @Component
-public class ThreeLeggedAuthFilter implements Filter
+@ExportAsService(LifecycleAware.class)
+public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
 {
     private final ThreeLeggedAuthService threeLeggedAuthService;
     private final ConnectAddonManager connectAddonManager;
@@ -52,6 +57,7 @@ public class ThreeLeggedAuthFilter implements Filter
 
     private final static Logger log = LoggerFactory.getLogger(ThreeLeggedAuthFilter.class);
     private static final String MSG_FORMAT_NOT_ALLOWING_IMPERSONATION = "Add-on '%s' disallowed to impersonate user '%s'";
+    private AtomicBoolean started = new AtomicBoolean(false);
 
     @Autowired
     public ThreeLeggedAuthFilter(ThreeLeggedAuthService threeLeggedAuthService,
@@ -90,6 +96,15 @@ public class ThreeLeggedAuthFilter implements Filter
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
+        // This plugin now run in phase 1. So, there is case that the filter is called before application starts.
+        // And as the filter need to access the tenant info, it should not process before application starts.
+        if (!started.get()) {
+            log.debug("Application has not started yet, filter skipped.");
+            filterChain.doFilter(request, response);
+            return;
+        }
+        log.debug("Start processing filter.");
+
         Object addOnKeyObject = servletRequest.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME);
         String addOnKey = addOnKeyObject instanceof String ? (String)addOnKeyObject : null;
 
@@ -110,6 +125,13 @@ public class ThreeLeggedAuthFilter implements Filter
         {
             processAddOnRequest(filterChain, request, response, addOnBean);
         }
+    }
+
+    @Override
+    public void onStart()
+    {
+        log.debug("Application started.");
+        started.set(true);
     }
 
     private boolean requestIsFromAJsonJwtAddOn(String addOnKey, ConnectAddonBean addOnBean)

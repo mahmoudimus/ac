@@ -97,6 +97,11 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                     remote.setDashboardItemTitle(title);
                 },
 
+                /**
+                 * Returns whether the current user is permitted to edit the dashboard item
+                 *
+                 * @param {Function} callback - the callback that handles the response
+                 */
                 isDashboardItemEditable : function(callback) {
                     remote.isDashboardItemEditable(callback);
                 },
@@ -115,14 +120,22 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
                 },
 
                 /**
-                * Open the quick create issue dialog
-                * This opens the "create issue" dialog and triggers a callback containing the list of issues created.
+                * Open the quick create issue dialog. The dialog fields may be pre-filled with supplied data. A callback will be invoked when the dialog is closed and will include an array of issues created. 
+                * 
                 * Note: This is unavailable on general admin and project admin pages.
+                * 
+                * @param {Function} callback - invoked when dialog is closed, takes a single parameter - array of issues created
+                * @param {Object} fields - contains data to pre-fill the dialog with
+                * @param {ProjectId} fields.pid - Project to pre-fill the dialog with
+                * @param {IssueType} fields.issueType - Issue type to pre-fill the dialog with
                 * @noDemo
                 * @example
                 * AP.require('jira', function(jira){
                 *   jira.openCreateIssueDialog(function(issues){
                 *       alert(issues[0]['fields']['summary']);
+                *   },{
+                *       pid: 10000,
+                *       issueType: 1
                 *   });
                 * });
                 */

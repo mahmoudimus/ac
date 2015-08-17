@@ -25,11 +25,13 @@ Contributions are encouraged! To start working on Atlassian Connect, follow this
 
 1. Ensure there is a relevant JIRA issue in project [AC](https://ecosystem.atlassian.net/browse/AC),
    [ACJIRA](https://ecosystem.atlassian.net/browse/ACJIRA) or [CE](https://ecosystem.atlassian.net/browse/CE)
-2. Create your feature branch, e.g. `feature/AC-1-implement-macro-editor`
+2. Request a QA Kickoff with [Atlassian Connect Team] (https://extranet.atlassian.com/display/ARA/Atlassian+Connect+Team) QA
+3. Create your feature branch, e.g. `feature/AC-1-implement-macro-editor`
     * The prefix `feature/` or `issue/` is required for branch builds to run (without passing builds, you cannot merge your pull request)
     * Include your issue key and a short description
-3. Commit and push
-4. Create a pull request in [Stash](https://stash.atlassian.com/projects/AC/repos/atlassian-connect/) with 1-3 reviewers from the team (depending on the complexity of the change).
+4. Commit and push
+5. Create a pull request in [Stash](https://stash.atlassian.com/projects/AC/repos/atlassian-connect/) with 1-3 reviewers from the team (depending on the complexity of the change).
+6. Request a QA Demo with [Atlassian Connect Team] (https://extranet.atlassian.com/display/ARA/Atlassian+Connect+Team) QA
 
 For more details see the [internal developer's guide](https://extranet.atlassian.com/x/cAhDg).
 
@@ -69,7 +71,6 @@ Then, start debugging using the remote debug target and thereafter run the test 
 
 To run manually
 
-    cd plugin
     mvn amps:debug -pl wired-tests -Pwired -Dproduct=<jira|confluence> -Dproduct.version=<version>
 
 

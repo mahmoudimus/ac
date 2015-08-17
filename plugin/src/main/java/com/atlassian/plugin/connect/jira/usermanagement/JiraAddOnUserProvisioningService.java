@@ -1,9 +1,18 @@
 package com.atlassian.plugin.connect.jira.usermanagement;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+
 import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.exception.ApplicationPermissionException;
 import com.atlassian.crowd.exception.GroupNotFoundException;
+import com.atlassian.crowd.exception.InvalidAuthenticationException;
 import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
@@ -34,20 +43,15 @@ import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+
 import org.ofbiz.core.entity.GenericEntityException;
 import org.ofbiz.core.entity.GenericValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.annotation.Nullable;
-import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.any;
@@ -176,7 +180,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         {
             return null != connectAddOnUserGroupProvisioningService.findGroupByKey(ADDON_ADMIN_USER_GROUP_KEY);
         }
-        catch (ApplicationNotFoundException e)
+        catch (ApplicationNotFoundException | ApplicationPermissionException | InvalidAuthenticationException e)
         {
             throw new ConnectAddOnUserInitException(e);
         }
@@ -189,28 +193,11 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
             ensureGroupExistsAndIsAdmin(ADDON_ADMIN_USER_GROUP_KEY);
             connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), ADDON_ADMIN_USER_GROUP_KEY);
         }
-        catch (GroupNotFoundException e)
+        catch (GroupNotFoundException | ApplicationNotFoundException | OperationFailedException
+                | ApplicationPermissionException | UserNotFoundException | InvalidAuthenticationException e)
         {
             // this should never happen because we've just "successfully" ensured that the group exists,
             // so if it does then it's programmer error and not part of this interface method's signature
-            throw new ConnectAddOnUserInitException(e);
-        }
-        catch (UserNotFoundException e)
-        {
-            // this should never happen because we've just "successfully" ensured that the user exists,
-            // so if it does then it's programmer error and not part of this interface method's signature
-            throw new ConnectAddOnUserInitException(e);
-        }
-        catch (ApplicationPermissionException e)
-        {
-            throw new ConnectAddOnUserInitException(e);
-        }
-        catch (OperationFailedException e)
-        {
-            throw new ConnectAddOnUserInitException(e);
-        }
-        catch (ApplicationNotFoundException e)
-        {
             throw new ConnectAddOnUserInitException(e);
         }
     }
@@ -221,31 +208,16 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         {
             connectAddOnUserGroupProvisioningService.removeUserFromGroup(user.getName(), ADDON_ADMIN_USER_GROUP_KEY);
         }
-        catch (OperationFailedException e)
+        catch (OperationFailedException | ApplicationNotFoundException
+                | ApplicationPermissionException | UserNotFoundException
+                | GroupNotFoundException | InvalidAuthenticationException e)
         {
-            throw new ConnectAddOnUserInitException(e);
-        }
-        catch (ApplicationNotFoundException e)
-        {
-            throw new ConnectAddOnUserInitException(e);
-        }
-        catch (ApplicationPermissionException e)
-        {
-            throw new ConnectAddOnUserInitException(e);
-        }
-        catch (UserNotFoundException e)
-        {
-            // shouldn't happen
-            throw new ConnectAddOnUserInitException(e);
-        }
-        catch (GroupNotFoundException e)
-        {
-            // someone removed the group, which shouldn't happen
             throw new ConnectAddOnUserInitException(e);
         }
     }
 
-    private void ensureGroupExistsAndIsAdmin(String groupKey) throws ConnectAddOnUserInitException, OperationFailedException, ApplicationNotFoundException, ApplicationPermissionException
+    private void ensureGroupExistsAndIsAdmin(String groupKey)
+            throws ConnectAddOnUserInitException, OperationFailedException, ApplicationNotFoundException, ApplicationPermissionException, InvalidAuthenticationException
     {
         final boolean created = connectAddOnUserGroupProvisioningService.ensureGroupExists(groupKey);
 
