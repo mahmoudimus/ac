@@ -1,0 +1,29 @@
+package it.common.upm;
+
+
+public enum PluginAction
+{
+    BUY,
+    CHECK_LICENSE,
+    CONFIGURE,
+    DISABLE,
+    DISMISS_REQUEST,
+    DOWNLOAD,
+    ENABLE,
+    GET_STARTED,
+    INSTALL,
+    MAKE_REQUEST,
+    MANAGE,
+    RENEW,
+    RENEW_CONTACT,
+    REQUEST_UPDATE,
+    SUBSCRIBE,
+    TRIAL_RESUME,
+    TRIAL_SUBSCRIBE,
+    TRIAL_UNSUBSCRIBE,
+    TRY,
+    UNINSTALL,
+    UNSUBSCRIBE,
+    UPDATE,
+    UPGRADE
+}
