@@ -88,7 +88,7 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
             }
             else
             {
-                user = embedded.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
+                user = embedded.createOrEnableUser(username, displayName, emailAddress, passwordCredential).getUser();
                 if (!attributes.isEmpty())
                 {
                     embedded.setAttributesOnUser(username, attributes);
@@ -98,7 +98,7 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
         }
         else
         {
-            user = embedded.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
+            user = embedded.createOrEnableUser(username, displayName, emailAddress, passwordCredential).getUser();
             if (!attributes.isEmpty())
             {
                 embedded.setAttributesOnUser(username, attributes);
@@ -112,7 +112,7 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
         User user;
         try
         {
-            user = remote.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
+            user = remote.createOrEnableUser(username, displayName, emailAddress, passwordCredential).getUser();
             if (!embedded.findUserByName(username).isPresent())
             {
                 log.debug("queueing {} for sync", username);
