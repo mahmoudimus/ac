@@ -19,6 +19,7 @@ import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUti
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -48,7 +49,7 @@ public class TestCrowdAddOnUserService
         initMocks(this);
         when(user.getName()).thenReturn(ADDON_USERNAME);
         when(connectCrowdService.createOrEnableUser(anyString(), anyString(), anyString(),
-                any(PasswordCredential.class), anyMap())).thenReturn(user);
+                any(PasswordCredential.class), anyMap())).thenReturn(new UserCreationResult(user, true));
         crowdAddOnUserService = new CrowdAddOnUserService(
                 connectAddOnUserProvisioningService,
                 connectAddOnUserGroupProvisioningService,
@@ -76,7 +77,7 @@ public class TestCrowdAddOnUserService
     }
 
     @Test
-    public void getOrCreateUserNameAddsAddonUserToGroups() throws Exception
+    public void getOrCreateUserNameAddsAddonUserToGroupsWhenUserIsNew() throws Exception
     {
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(Sets.newHashSet("always-expected-groups"));
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(Sets.newHashSet("one-or-more-expected-groups"));
@@ -86,5 +87,20 @@ public class TestCrowdAddOnUserService
         verify(connectAddOnUserGroupProvisioningService).ensureUserIsInGroup(ADDON_USERNAME, ADDON_USER_GROUP_KEY);
         verify(connectAddOnUserGroupProvisioningService).ensureUserIsInGroup(ADDON_USERNAME, "always-expected-groups");
         verify(connectAddOnUserGroupProvisioningService).ensureUserIsInGroup(ADDON_USERNAME, "one-or-more-expected-groups");
+    }
+
+    @Test
+    public void getOrCreateUserNameAddsPreExistingUserToAddonGroupOnly() throws Exception
+    {
+        when(connectCrowdService.createOrEnableUser(anyString(), anyString(), anyString(),
+                any(PasswordCredential.class), anyMap())).thenReturn(new UserCreationResult(user, false));
+
+        when(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(Sets.newHashSet("always-expected-groups"));
+        when(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(Sets.newHashSet("one-or-more-expected-groups"));
+
+        crowdAddOnUserService.getOrCreateUserName(ADDON_KEY, ADDON_NAME);
+
+        verify(connectAddOnUserGroupProvisioningService, times(1)).ensureUserIsInGroup(anyString(), anyString());
+        verify(connectAddOnUserGroupProvisioningService).ensureUserIsInGroup(ADDON_USERNAME, ADDON_USER_GROUP_KEY);
     }
 }

@@ -91,15 +91,26 @@ public class CrowdAddOnUserService implements ConnectAddOnUserService
             throws ApplicationNotFoundException, OperationFailedException, ApplicationPermissionException, UserNotFoundException, GroupNotFoundException, InvalidAuthenticationException
     {
         connectAddOnUserGroupProvisioningService.ensureGroupExists(Constants.ADDON_USER_GROUP_KEY);
-        User user = connectCrowdService.createOrEnableUser(username, addOnDisplayName, Constants.ADDON_USER_EMAIL_ADDRESS, PREVENT_LOGIN, buildConnectAddOnUserAttribute(hostProperties.getKey()));
+        UserCreationResult userCreationResult = connectCrowdService.createOrEnableUser(username, addOnDisplayName, Constants.ADDON_USER_EMAIL_ADDRESS, PREVENT_LOGIN, buildConnectAddOnUserAttribute(hostProperties.getKey()));
+        User user = userCreationResult.getUser();
 
         connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), Constants.ADDON_USER_GROUP_KEY);
+        if (userCreationResult.isNewlyCreated())
+        {
+            addNewUserToRequiredGroups(user.getName());
+        }
 
+        return user.getName();
+    }
+
+    private void addNewUserToRequiredGroups(String username)
+            throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, OperationFailedException, InvalidAuthenticationException
+    {
         for (String group : connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected())
         {
             try
             {
-                connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), group);
+                connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(username, group);
             }
             catch (GroupNotFoundException e)
             {
@@ -121,7 +132,7 @@ public class CrowdAddOnUserService implements ConnectAddOnUserService
                 // because what if the admin has removed access to an application on purpose?
                 // OR, is the add-on user having access to all applications just part of what it means to be a JIRA Connect add-on?
 
-                connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), group);
+                connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(username, group);
                 numPossibleDefaultGroupsAddedTo++;
             }
             catch (GroupNotFoundException e)
@@ -139,8 +150,6 @@ public class CrowdAddOnUserService implements ConnectAddOnUserService
                     // TODO Change error message in the case of Renaissance to say that the groups existed but had admin access, so we filtered them out
                     // or, keep this message the same but log every time we filter out an admin group
         }
-
-        return user.getName();
     }
 }
 
