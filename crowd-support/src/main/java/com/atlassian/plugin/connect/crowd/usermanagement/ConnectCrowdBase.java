@@ -35,12 +35,12 @@ public abstract class ConnectCrowdBase
         this.userReconciliation = userReconciliation;
     }
 
-    public User createOrEnableUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential)
+    public UserCreationResult createOrEnableUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential)
     {
         Optional<? extends User> user = findUserByName(username);
         if (!user.isPresent())
         {
-            return createUser(username, displayName, emailAddress, passwordCredential);
+            return new UserCreationResult(createUser(username, displayName, emailAddress, passwordCredential), true);
         }
 
         User foundUser = user.get();
@@ -49,7 +49,7 @@ public abstract class ConnectCrowdBase
         {
             updateUser(requiredUpdates.get());
         }
-        return foundUser;
+        return new UserCreationResult(foundUser, false);
     }
 
     public void disableUser(String username)
