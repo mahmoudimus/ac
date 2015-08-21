@@ -231,6 +231,9 @@ public class ModuleList extends BaseModuleBean
     @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.DashboardItemModuleProvider", products = {ProductFilter.JIRA})
     private List<DashboardItemModuleBean> jiraDashboardItems;
 
+    @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.WebSearcherModuleProvider", products = {ProductFilter.JIRA})
+    private List<WebSearcherModuleBean> webSearchers;
+
     /////////////////////////////////////////////////////
     ///////    CONFLUENCE MODULES
     /////////////////////////////////////////////////////
@@ -308,6 +311,7 @@ public class ModuleList extends BaseModuleBean
         this.webPanels = newArrayList();
         this.webSections = newArrayList();
         this.confluenceContentProperties = newArrayList();
+        this.webSearchers = newArrayList();
     }
 
     public ModuleList(BaseModuleBeanBuilder builder)
@@ -397,6 +401,9 @@ public class ModuleList extends BaseModuleBean
         if (null == jiraDashboardItems)
         {
             this.jiraDashboardItems = newArrayList();
+        }
+        if (null == webSearchers) {
+            this.webSearchers = newArrayList();
         }
     }
 
@@ -508,6 +515,10 @@ public class ModuleList extends BaseModuleBean
         return jiraDashboardItems;
     }
 
+    public List<WebSearcherModuleBean> getWebSearchers() {
+        return webSearchers;
+    }
+
     // don't call super because BaseCapabilityBean has no data
     @Override
     public boolean equals(Object otherObj)
@@ -546,6 +557,7 @@ public class ModuleList extends BaseModuleBean
                 .append(webSections, other.webSections)
                 .append(jiraReports, other.jiraReports)
                 .append(jiraDashboardItems, other.jiraDashboardItems)
+                .append(webSearchers, other.webSearchers)
                 .build();
     }
 
@@ -575,6 +587,7 @@ public class ModuleList extends BaseModuleBean
                 .append(webSections)
                 .append(jiraReports)
                 .append(jiraDashboardItems)
+                .append(webSearchers)
                 .build();
     }
     

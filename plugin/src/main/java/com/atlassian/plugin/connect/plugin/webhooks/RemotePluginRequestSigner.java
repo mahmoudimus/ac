@@ -59,7 +59,7 @@ public class RemotePluginRequestSigner implements RequestSigner
 
     private Option<String> getAuthHeader(URI uri, String pluginKey)
     {
-        return getAuthorizationGenerator(pluginKey).generate(HttpMethod.POST, uri, Collections.<String, String[]>emptyMap());
+        return getAuthorizationGenerator(pluginKey).generate(HttpMethod.GET, uri, Collections.<String, String[]>emptyMap());
     }
 
     private AuthorizationGenerator getAuthorizationGenerator(String pluginKey)
