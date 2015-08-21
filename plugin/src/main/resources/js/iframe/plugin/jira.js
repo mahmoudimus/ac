@@ -80,6 +80,10 @@ AP.define("jira", ["_dollar", "_rpc"], function ($, rpc) {
             * @exports jira
             */
             apis: {
+                refreshWorkModeView: function () {
+                    remote.refreshWorkModeView();
+                },
+
                 /**
                 * get a workflow configuration object
                 *

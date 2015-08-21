@@ -110,6 +110,15 @@
         <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
+    <web-resource key="agile-board">
+        <resource type="download" name="create-issue-dialog-rpc.js" location="/js/jira/agile-board/agile-board.js" />
+
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
+        <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
+    </web-resource>
+
+
     <url-reading-web-resource-transformer key="connect-report-transformer" name="Connect report transformer"
                                           class="com.atlassian.plugin.connect.jira.capabilities.descriptor.report.ReportModuleCssTransformer"/>
 
