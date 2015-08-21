@@ -111,7 +111,7 @@
     </web-resource>
 
     <web-resource key="agile-board">
-        <resource type="download" name="create-issue-dialog-rpc.js" location="/js/jira/agile-board/agile-board.js" />
+        <resource type="download" name="create-issue-dialog-rpc.js" location="/js/jira/agile-board/agile-board-rpc.js" />
 
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <dependency>com.atlassian.plugins.atlassian-connect-plugin:jira-ap-core</dependency>
