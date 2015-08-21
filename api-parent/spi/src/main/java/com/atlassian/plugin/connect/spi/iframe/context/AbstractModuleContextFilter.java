@@ -78,7 +78,7 @@ public abstract class AbstractModuleContextFilter<T> implements ModuleContextFil
                 }
             });
 
-            if (!permissionChecks.isEmpty() && allValidatorsGrantedPermission)
+            if (permissionChecks.isEmpty() || allValidatorsGrantedPermission)
             {
                 filtered.put(parameterName, parameterValue);
             }
