@@ -62,7 +62,6 @@ public class ConnectHttpClientFactory implements DisposableBean
     {
         HttpClientOptions options = new HttpClientOptions();
 
-        options.setIoSelectInterval(100, TimeUnit.MILLISECONDS);
         options.setThreadPrefix("atlassian-connect");
         options.setMaxConnectionsPerHost(100);
         options.setUserAgent("Atlassian-Connect/"
