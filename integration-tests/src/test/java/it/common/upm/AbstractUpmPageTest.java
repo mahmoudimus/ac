@@ -46,7 +46,6 @@ public abstract class AbstractUpmPageTest extends AbstractPageTestBase
                         .build())
                 .addRoute("/page", ConnectAppServlets.helloWorldServlet())
                 .addScope(ScopeName.READ)
-                .enableLicensing()
                 .start();
         try
         {

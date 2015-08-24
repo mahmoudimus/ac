@@ -38,7 +38,6 @@ public class TestPostInstallPage extends AbstractUpmPageTest
     @Override
     protected Link getLink(InstalledPluginDetails installedPluginDetails)
     {
-        InstalledPluginDetailsTemporaryExtension installedPluginDetailsTemporaryExtension = (InstalledPluginDetailsTemporaryExtension)installedPluginDetails;
-        return installedPluginDetailsTemporaryExtension.getPostInstallLink();
+        return installedPluginDetails.getPostInstallLink();
     }
 }
