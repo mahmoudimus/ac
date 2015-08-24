@@ -26,12 +26,10 @@ import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
-import com.google.common.base.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.net.URI;
 import java.security.GeneralSecurityException;
@@ -111,7 +109,9 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
                         link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.NONE.toString());
                         break;
                     default:
-                        log.warn("Unknown authType encountered: " + authType.name());
+                        log.warn("Unknown authType encountered, treating as NONE: " + authType.name());
+                        link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.NONE.toString());
+                        break;
                 }
                 return null;
             }
@@ -163,7 +163,9 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
                         link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.NONE.toString());
                         break;
                     default:
-                        log.warn("Unknown authType encountered: " + authType.name());
+                        log.warn("Unknown authType encountered, treating as NONE: " + authType.name());
+                        link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.NONE.toString());
+                        break;
                 }
 
                 return null;
