@@ -36,8 +36,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @JiraComponent
 public class CrowdAddOnUserService implements ConnectAddOnUserService
 {
-    // This password prevents logging in - we can't send remote crowd the pre-encrypted version, though
-    public static final PasswordCredential PREVENT_LOGIN = PasswordCredential.unencrypted("X");
+    public static final PasswordCredential PREVENT_LOGIN = PasswordCredential.NONE;
+
     private final ConnectAddOnUserProvisioningService connectAddOnUserProvisioningService;
     private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
     private static final Logger log = LoggerFactory.getLogger(CrowdAddOnUserService.class);

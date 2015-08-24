@@ -65,7 +65,7 @@ public class TestCrowdAddOnUserService
 
         verify(connectCrowdService).createOrEnableUser(ConnectAddOnUserUtil.usernameForAddon(ADDON_KEY),
                 ADDON_NAME, ConnectAddOnUserUtil.Constants.ADDON_USER_EMAIL_ADDRESS,
-                PasswordCredential.unencrypted("X"), buildConnectAddOnUserAttribute(PRODUCT_KEY));
+                PasswordCredential.NONE, buildConnectAddOnUserAttribute(PRODUCT_KEY));
     }
 
     @Test
