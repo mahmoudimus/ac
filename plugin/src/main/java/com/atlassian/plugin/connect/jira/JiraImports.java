@@ -6,6 +6,7 @@ import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.gadgets.dashboard.spi.DashboardPermissionService;
 import com.atlassian.jira.application.ApplicationAuthorizationService;
+import com.atlassian.jira.application.ApplicationRoleManager;
 import com.atlassian.jira.bc.dashboard.DashboardItemPropertyService;
 import com.atlassian.jira.bc.issue.attachment.AttachmentService;
 import com.atlassian.jira.bc.issue.comment.property.CommentPropertyService;
@@ -75,6 +76,7 @@ public class JiraImports
             @JiraImport JiraLicenseService licenseService,
             @JiraImport ("jiraPermissionManager") PermissionManager jiraPermissionManager,
             @JiraImport ApplicationAuthorizationService applicationAuthorizationService,
+            @JiraImport ApplicationRoleManager applicationRoleManager,
             @JiraImport PermissionSchemeManager permissionSchemeManager,
             @JiraImport ProjectComponentManager projectComponentManager,
             @JiraImport ProjectRoleManager projectRoleManager,
