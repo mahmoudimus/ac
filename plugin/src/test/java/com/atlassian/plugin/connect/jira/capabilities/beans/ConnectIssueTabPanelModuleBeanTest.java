@@ -37,7 +37,7 @@ public class ConnectIssueTabPanelModuleBeanTest
                 .withVersion("1.0")
                 .withLinks(links)
                 .withBaseurl("http://www.example.com")
-                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withPublicKey("S0m3Publ1cK3y").build())
+                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.JWT).build())
                 .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
                 .withModule(ConnectTabPanelModuleProvider.ISSUE_TAB_PANELS, newTabPanelBean()
                         .withName(new I18nProperty("My Issue Tab Page", "my.issueTabPage"))
