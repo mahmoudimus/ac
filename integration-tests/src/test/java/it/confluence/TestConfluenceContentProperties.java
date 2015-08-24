@@ -26,7 +26,6 @@ import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFieldType;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.beans.nested.UISupportValueType;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -131,8 +130,7 @@ public class TestConfluenceContentProperties
                                                             .withName(new I18nProperty("rank", "value"))
                                                             .withDataUri("/rest/test/rank")
                                                             .withDefaultOperator("=")
-                                                            .withI18nKey("rank")
-                                                            .withValueType(UISupportValueType.NUMBER)
+                                                            .withValueType("number")
                                                             .build())
                                                     .build(),
                                             newContentPropertyIndexExtractionConfigurationBean()
@@ -155,8 +153,7 @@ public class TestConfluenceContentProperties
                                                             .withName(new I18nProperty("category", "value"))
                                                             .withDataUri("/rest/test/category")
                                                             .withDefaultOperator("=")
-                                                            .withI18nKey("category")
-                                                            .withValueType(UISupportValueType.STRING)
+                                                            .withValueType("string")
                                                             .build())
                                                     .build()
                                     )))
