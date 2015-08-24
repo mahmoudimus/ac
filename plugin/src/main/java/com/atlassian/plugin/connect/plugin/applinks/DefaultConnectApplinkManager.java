@@ -31,12 +31,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
+import javax.inject.Inject;
 import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.security.PublicKey;
 import java.util.List;
-import javax.annotation.Nullable;
-import javax.inject.Inject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -107,10 +107,6 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
                         link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.JWT.toString());
                         link.putProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME, publicKey);
                         break;
-                    case OAUTH:
-                        oAuthLinkManager.associateProviderWithLink(link, applicationType.getId().get(), serviceProvider);
-                        registerOAuth(link, plugin, publicKey);
-                        break;
                     case NONE:
                         link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.NONE.toString());
                         break;
@@ -162,10 +158,6 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
                     case JWT:
                         link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.JWT.toString());
                         link.putProperty(JwtConstants.AppLinks.SHARED_SECRET_PROPERTY_NAME, publicKey);
-                        break;
-                    case OAUTH:
-                        oAuthLinkManager.associateProviderWithLink(link, applicationType.getId().get(), serviceProvider);
-                        registerOAuth(link, addon, publicKey);
                         break;
                     case NONE:
                         link.putProperty(AuthenticationMethod.PROPERTY_NAME, AuthenticationMethod.NONE.toString());
@@ -249,22 +241,6 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
                 {
                     return Option.some((String) prop);
                 }
-            }
-            else if (maybeAuthType.get().equals(AuthenticationType.OAUTH))
-            {
-                Option<PublicKey> maybePublicKey = this.oAuthLinkManager.getPublicKeyFromLink(applink);
-                return maybePublicKey.flatMap(new Function<PublicKey, Option<String>>()
-                {
-                    @Override
-                    public Option<String> apply(@Nullable PublicKey input)
-                    {
-                        if (input == null)
-                        {
-                            Option.none();
-                        }
-                        return Option.option(RSAKeys.toPemEncoding(input));
-                    }
-                });
             }
         }
         return Option.none();

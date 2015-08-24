@@ -339,23 +339,6 @@ public class ConnectRunner
         };
     }
 
-    @OAuth
-    public ConnectRunner addOAuth() throws NoSuchAlgorithmException, IOException
-    {
-        return addOAuth(createSignedRequestHandler(pluginKey));
-    }
-
-    @OAuth
-    public ConnectRunner addOAuth(RunnerSignedRequestHandler signedRequestHandler) throws NoSuchAlgorithmException, IOException
-    {
-        this.signedRequestHandler = signedRequestHandler;
-
-        addonBuilder.withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withPublicKey(signedRequestHandler.getLocal().getProperty(RSA_SHA1.PUBLIC_KEY).toString()).build());
-
-        //return addPermission(Permissions.CREATE_OAUTH_LINK);
-        return this;
-    }
-
     public ConnectRunner addScopes(ScopeName... scopesToAdd)
     {
         Collections.addAll(scopes, scopesToAdd);
