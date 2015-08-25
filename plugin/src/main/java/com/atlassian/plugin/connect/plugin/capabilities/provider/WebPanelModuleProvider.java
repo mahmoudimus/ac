@@ -8,13 +8,17 @@ import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrat
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel.WebPanelConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.plugin.redirect.RedirectData;
 import com.atlassian.plugin.connect.plugin.redirect.RedirectDataBuilderFactory;
 import com.atlassian.plugin.connect.plugin.redirect.RedirectRegistry;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -30,19 +34,20 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final RedirectRegistry redirectRegistry;
     private final RedirectDataBuilderFactory redirectDataBuilderFactory;
+    private final MovableWebSectionSearcher movableWebSectionSearcher;
 
-    @Autowired
     public WebPanelModuleProvider(WebPanelConnectModuleDescriptorFactory webPanelFactory,
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             RedirectRegistry redirectRegistry,
-            RedirectDataBuilderFactory redirectDataBuilderFactory)
+            RedirectDataBuilderFactory redirectDataBuilderFactory, final MovableWebSectionSearcher movableWebSectionSearcher)
     {
         this.webPanelFactory = webPanelFactory;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.redirectRegistry = redirectRegistry;
         this.redirectDataBuilderFactory = redirectDataBuilderFactory;
+        this.movableWebSectionSearcher = movableWebSectionSearcher;
     }
 
     @Override
@@ -53,6 +58,7 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         for (WebPanelModuleBean bean : beans)
         {
+            boolean doesWebPanelNeedRedirection = movableWebSectionSearcher.isWebPanelInMovableWebSection(bean, moduleProviderContext.getConnectAddonBean());
             // register an iframe rendering strategy
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(connectAddonBean.getKey())
@@ -61,19 +67,22 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
                     .urlTemplate(bean.getUrl())
                     .title(bean.getDisplayName())
                     .dimensions(bean.getLayout().getWidth(), bean.getLayout().getHeight())
-                    .redirect(true)
+                    .redirect(doesWebPanelNeedRedirection)
                     .build();
             iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), renderStrategy);
 
-            RedirectData redirectData = redirectDataBuilderFactory.builder()
-                    .addOn(connectAddonBean.getKey())
-                    .urlTemplate(bean.getUrl())
-                    .accessDeniedTemplateType(IFRAME)
-                    .title(bean.getDisplayName())
-                    .conditions(bean.getConditions())
-                    .build();
+            if (doesWebPanelNeedRedirection)
+            {
+                RedirectData redirectData = redirectDataBuilderFactory.builder()
+                        .addOn(connectAddonBean.getKey())
+                        .urlTemplate(bean.getUrl())
+                        .accessDeniedTemplateType(IFRAME)
+                        .title(bean.getDisplayName())
+                        .conditions(bean.getConditions())
+                        .build();
 
-            redirectRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), redirectData);
+                redirectRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), redirectData);
+            }
 
             String localUrl = RedirectServletPath.forModule(connectAddonBean.getKey(), bean.getUrl());
             WebPanelModuleBean newBean = WebPanelModuleBean.newWebPanelBean(bean).withUrl(localUrl).build();
@@ -84,4 +93,6 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
 
         return descriptors;
     }
+
+
 }
