@@ -3,11 +3,15 @@ package com.atlassian.plugin.connect.plugin.redirect;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.plugin.redirect.RedirectRegistry.RedirectData;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleContextParser;
 import com.atlassian.plugin.connect.plugin.iframe.context.ModuleUiParamParser;
+import com.atlassian.plugin.connect.plugin.iframe.render.strategy.IFrameRenderStrategyBuilderImpl;
+import com.atlassian.templaterenderer.TemplateRenderer;
+import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.ServletException;
@@ -23,20 +27,26 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 public class RedirectServlet extends HttpServlet
 {
     private static final Pattern PATH_PATTERN = Pattern.compile("^/([^/]+)/([^/]+)");
+
+    public static final int TEMPORARY_REDIRECT_CODE = 307;
+
     private final RedirectRegistry redirectRegistry;
     private final ModuleContextParser moduleContextParser;
     private final ModuleUiParamParser moduleUiParamParser;
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
+    private final TemplateRenderer templateRenderer;
 
     public RedirectServlet(RedirectRegistry redirectRegistry,
             ModuleContextParser moduleContextParser,
             ModuleUiParamParser moduleUiParamParser,
-            IFrameUriBuilderFactory iFrameUriBuilderFactory)
+            IFrameUriBuilderFactory iFrameUriBuilderFactory,
+            TemplateRenderer templateRenderer)
     {
         this.redirectRegistry = redirectRegistry;
         this.moduleContextParser = moduleContextParser;
         this.moduleUiParamParser = moduleUiParamParser;
         this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
+        this.templateRenderer = templateRenderer;
     }
 
     @Override
@@ -53,20 +63,48 @@ public class RedirectServlet extends HttpServlet
         String moduleKey = matcher.group(2);
 
         RedirectData redirectData = redirectRegistry.get(addOnKey, moduleKey);
+        if (redirectData == null)
+        {
+            resp.sendError(SC_NOT_FOUND);
+        }
+
         ModuleContextParameters moduleContextParameters = moduleContextParser.parseContextParameters(req);
-        Option<String> uiParameters = moduleUiParamParser.parseUiParameters(req);
-        String signedUrl = iFrameUriBuilderFactory.builder()
-                .addOn(addOnKey)
-                .namespace(moduleKey)
-                .urlTemplate(redirectData.getUrlTemplate())
-                .context(moduleContextParameters)
-                .uiParams(uiParameters)
-                .dialog(false)
-                .sign(true)
+        if (redirectData.shouldRedirect(moduleContextParameters))
+        {
+            Option<String> moduleUiParameters = moduleUiParamParser.parseUiParameters(req);
+            String signedUrl = iFrameUriBuilderFactory.builder()
+                    .addOn(addOnKey)
+                    .namespace(moduleKey)
+                    .urlTemplate(redirectData.getUrlTemplate())
+                    .context(moduleContextParameters)
+                    .uiParams(moduleUiParameters)
+                    .dialog(false) // urls used in dialog are created in ConnectIframeServlet
+                    .sign(true)
+                    .build();
+
+            redirect(resp, signedUrl);
+        }
+        else
+        {
+            rendedAccessDenied(resp, redirectData);
+        }
+    }
+
+    private void redirect(HttpServletResponse resp, String url)
+    {
+        resp.setStatus(TEMPORARY_REDIRECT_CODE);
+        resp.setHeader("location", url);
+        resp.setHeader("cache-control", "private, max-age=120");
+    }
+
+    private void rendedAccessDenied(HttpServletResponse resp, RedirectData redirectData)
+            throws IOException
+    {
+        Map<String, Object> renderContext = ImmutableMap.<String, Object>builder()
+                .put("title", StringUtils.defaultIfEmpty(redirectData.getTitle(), ""))
+                .put("decorator", IFrameRenderStrategyBuilderImpl.ATL_GENERAL)
                 .build();
 
-        resp.setStatus(307); // Temporary Redirect
-        resp.setHeader("location", signedUrl);
-        resp.setHeader("cache-control", "private, max-age=150");
+        templateRenderer.render(redirectData.getAccessDeniedTemplate(), renderContext, resp.getWriter());
     }
 }

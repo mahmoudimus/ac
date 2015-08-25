@@ -2,14 +2,16 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
-import com.atlassian.plugin.connect.plugin.redirect.RedirectRegistry;
 import com.atlassian.plugin.connect.api.Redirect.RedirectServletPath;
-import com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel.WebPanelConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
+import com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel.WebPanelConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.plugin.redirect.RedirectData;
+import com.atlassian.plugin.connect.plugin.redirect.RedirectDataBuilderFactory;
+import com.atlassian.plugin.connect.plugin.redirect.RedirectRegistry;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.plugin.redirect.RedirectData.AccessDeniedTemplateType.IFRAME;
 
 @Component
 public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelModuleBean>
@@ -27,17 +29,20 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final RedirectRegistry redirectRegistry;
+    private final RedirectDataBuilderFactory redirectDataBuilderFactory;
 
     @Autowired
     public WebPanelModuleProvider(WebPanelConnectModuleDescriptorFactory webPanelFactory,
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            RedirectRegistry redirectRegistry)
+            RedirectRegistry redirectRegistry,
+            RedirectDataBuilderFactory redirectDataBuilderFactory)
     {
         this.webPanelFactory = webPanelFactory;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.redirectRegistry = redirectRegistry;
+        this.redirectDataBuilderFactory = redirectDataBuilderFactory;
     }
 
     @Override
@@ -60,7 +65,14 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
                     .build();
             iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), renderStrategy);
 
-            RedirectRegistry.RedirectData redirectData = new RedirectRegistry.RedirectData(bean.getUrl());
+            RedirectData redirectData = redirectDataBuilderFactory.builder()
+                    .addOn(connectAddonBean.getKey())
+                    .urlTemplate(bean.getUrl())
+                    .accessDeniedTemplateType(IFRAME)
+                    .title(bean.getDisplayName())
+                    .conditions(bean.getConditions())
+                    .build();
+
             redirectRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), redirectData);
 
             String localUrl = RedirectServletPath.forModule(connectAddonBean.getKey(), bean.getUrl());

@@ -10,6 +10,8 @@ import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
+import com.atlassian.plugin.connect.plugin.redirect.RedirectData;
+import com.atlassian.plugin.connect.plugin.redirect.RedirectDataBuilderFactory;
 import com.atlassian.plugin.connect.plugin.redirect.RedirectRegistry;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
@@ -34,16 +36,20 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final RedirectRegistry redirectRegistry;
+    private final RedirectDataBuilderFactory redirectDataBuilderFactory;
 
     @Autowired
     public DefaultWebItemModuleProvider(WebItemModuleDescriptorFactory webItemFactory,
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, final RedirectRegistry redirectRegistry)
+            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+            RedirectRegistry redirectRegistry,
+            RedirectDataBuilderFactory redirectDataBuilderFactory)
     {
         this.webItemFactory = webItemFactory;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.redirectRegistry = redirectRegistry;
+        this.redirectDataBuilderFactory = redirectDataBuilderFactory;
     }
 
     @Override
@@ -74,8 +80,14 @@ public class DefaultWebItemModuleProvider implements WebItemModuleProvider
         {
             if (bean.getContext().equals(AddOnUrlContext.addon))
             {
-                RedirectRegistry.RedirectData renderStrategy = new RedirectRegistry.RedirectData(bean.getUrl());
-                redirectRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), renderStrategy);
+                RedirectData redirectData = redirectDataBuilderFactory.builder()
+                        .addOn(connectAddonBean.getKey())
+                        .urlTemplate(bean.getUrl())
+                        .accessDeniedTemplateType(RedirectData.AccessDeniedTemplateType.PAGE)
+                        .conditions(bean.getConditions())
+                        .build();
+
+                redirectRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), redirectData);
             }
             descriptors.add(webItemFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean));
         }

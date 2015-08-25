@@ -10,7 +10,7 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKey
 @Component
 public class RedirectRegistryImpl implements RedirectRegistry
 {
-    private final Map<String, Map<String, RedirectRegistry.RedirectData>> store = Maps.newConcurrentMap();
+    private final Map<String, Map<String, RedirectData>> store = Maps.newConcurrentMap();
 
     @Override
     public void register(final String addonKey, final String moduleKey, final RedirectData redirectData)
