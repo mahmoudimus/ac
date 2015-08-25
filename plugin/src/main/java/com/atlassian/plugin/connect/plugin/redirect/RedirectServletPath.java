@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.api.Redirect;
+package com.atlassian.plugin.connect.plugin.redirect;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

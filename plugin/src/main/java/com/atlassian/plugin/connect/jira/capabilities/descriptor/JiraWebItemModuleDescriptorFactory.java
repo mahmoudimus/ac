@@ -3,15 +3,11 @@ package com.atlassian.plugin.connect.jira.capabilities.descriptor;
 import com.atlassian.jira.plugin.webfragment.descriptors.JiraWebItemModuleDescriptor;
 import com.atlassian.jira.plugin.webfragment.model.JiraWebLink;
 import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.plugin.connect.api.iframe.context.ModuleContextFilter;
-import com.atlassian.plugin.connect.api.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.api.iframe.webpanel.PluggableParametersExtractor;
-import com.atlassian.plugin.connect.api.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.api.module.webitem.RemoteWebLink;
+import com.atlassian.plugin.connect.api.module.webitem.WebItemModuleDescriptorData;
+import com.atlassian.plugin.connect.api.module.webitem.WebLinkFactory;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.spi.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugin.web.model.WebLink;
@@ -39,147 +35,110 @@ public class JiraWebItemModuleDescriptorFactory implements ProductSpecificWebIte
             "admin_issues_menu",
             "admin_project_menu");
 
-    private final WebFragmentHelper webFragmentHelper;
     private final WebInterfaceManager webInterfaceManager;
-    private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
-    private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final JiraAuthenticationContext jiraAuthenticationContext;
-    private final PluggableParametersExtractor webFragmentModuleContextExtractor;
-    private final ModuleContextFilter moduleContextFilter;
+    private final WebLinkFactory webLinkFactory;
 
     public static final String WEB_ITEM_SOURCE_QUERY_PARAM = "s";
 
     @Autowired
     public JiraWebItemModuleDescriptorFactory(
-            WebFragmentHelper webFragmentHelper,
             WebInterfaceManager webInterfaceManager,
-            IFrameUriBuilderFactory iFrameUriBuilderFactory,
             JiraAuthenticationContext jiraAuthenticationContext,
-            PluggableParametersExtractor webFragmentModuleContextExtractor,
-            ModuleContextFilter moduleContextFilter,
-            UrlVariableSubstitutor urlVariableSubstitutor)
+            WebLinkFactory webLinkFactory)
     {
-        this.urlVariableSubstitutor = urlVariableSubstitutor;
-        this.webFragmentModuleContextExtractor = checkNotNull(webFragmentModuleContextExtractor);
-        this.moduleContextFilter = checkNotNull(moduleContextFilter);
-        this.jiraAuthenticationContext = checkNotNull(jiraAuthenticationContext);
-        this.iFrameUriBuilderFactory = checkNotNull(iFrameUriBuilderFactory);
-        this.webInterfaceManager = checkNotNull(webInterfaceManager);
-        this.webFragmentHelper = checkNotNull(webFragmentHelper);
+        this.jiraAuthenticationContext = jiraAuthenticationContext;
+        this.webInterfaceManager = webInterfaceManager;
+        this.webLinkFactory = webLinkFactory;
     }
 
     @Override
-    public WebItemModuleDescriptor createWebItemModuleDescriptor(String url, String pluginKey, String moduleKey, boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog, String section)
+    public WebItemModuleDescriptor createWebItemModuleDescriptor(WebItemModuleDescriptorData webItemModuleDescriptorData)
     {
-        return new RemoteJiraWebItemModuleDescriptor(jiraAuthenticationContext, webInterfaceManager, webFragmentHelper,
-                iFrameUriBuilderFactory, urlVariableSubstitutor, webFragmentModuleContextExtractor, moduleContextFilter,
-                url, pluginKey, moduleKey, absolute, addOnUrlContext, isDialog, section);
+        WebItemModuleDescriptorData webItemModuleDescriptorDataWithValidUrl = appendSourceQueryParameterToUrlIfNeeded(webItemModuleDescriptorData);
+        return new RemoteJiraWebItemModuleDescriptor(jiraAuthenticationContext, webInterfaceManager, webLinkFactory, webItemModuleDescriptorDataWithValidUrl);
+    }
+
+    private WebItemModuleDescriptorData appendSourceQueryParameterToUrlIfNeeded(WebItemModuleDescriptorData webItemModuleDescriptorData)
+    {
+        String section = webItemModuleDescriptorData.getSection();
+        AddOnUrlContext addOnUrlContext = webItemModuleDescriptorData.getAddOnUrlContext();
+        if (addOnUrlContext == AddOnUrlContext.page && isAdminSection(section))
+        {
+            String url = webItemModuleDescriptorData.getUrl();
+            String moduleKey = webItemModuleDescriptorData.getModuleKey();
+            String newUrl = addWebItemSourceQueryParamIfNotPresent(url, moduleKey);
+            return WebItemModuleDescriptorData.builder(webItemModuleDescriptorData).setUrl(newUrl).build();
+        }
+        return webItemModuleDescriptorData;
+    }
+
+    private boolean isAdminSection(final String section)
+    {
+        String[] fragments = section.split("/");
+        return fragments.length != 0 && ADMIN_MENUS_KEYS.contains(fragments[0]);
+    }
+
+    private String addWebItemSourceQueryParamIfNotPresent(String link, String key)
+    {
+        String path = getPathFromUrlTemplate(link);
+
+        Map<String, List<String>> queryListMap = UriBuilder.splitParameters(getQueryFromUrlTemplate(link));
+
+        HashMap<String, List<String>> resultingQueryMap = new HashMap<>(queryListMap);
+        if (!resultingQueryMap.containsKey(WEB_ITEM_SOURCE_QUERY_PARAM))
+        {
+            resultingQueryMap.put(WEB_ITEM_SOURCE_QUERY_PARAM, ImmutableList.of(key));
+        }
+
+        return path + "?" + UriBuilder.joinParameters(resultingQueryMap);
+    }
+
+    private String getPathFromUrlTemplate(final String localUrl)
+    {
+        if (localUrl.indexOf('?') != -1)
+        {
+            return localUrl.substring(0, localUrl.indexOf('?'));
+        }
+        return localUrl;
+    }
+
+    private String getQueryFromUrlTemplate(final String localUrl)
+    {
+        if (localUrl.indexOf('?') != -1)
+        {
+            return localUrl.substring(localUrl.indexOf('?') + 1);
+        }
+        return "";
     }
 
     private static final class RemoteJiraWebItemModuleDescriptor extends JiraWebItemModuleDescriptor
     {
-        private final WebFragmentHelper webFragmentHelper;
-        private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
-        private final UrlVariableSubstitutor urlVariableSubstitutor;
-        private final PluggableParametersExtractor webFragmentModuleContextExtractor;
-        private final ModuleContextFilter moduleContextFilter;
-        private final String url;
-        private final String pluginKey;
-        private final String moduleKey;
-        private boolean absolute;
-        private final AddOnUrlContext addOnUrlContext;
-        private final boolean isDialog;
-        private final String section;
+        private final WebLinkFactory webLinkFactory;
+        private final WebItemModuleDescriptorData webItemModuleDescriptorData;
 
         public RemoteJiraWebItemModuleDescriptor(
                 JiraAuthenticationContext jiraAuthenticationContext,
                 WebInterfaceManager webInterfaceManager,
-                WebFragmentHelper webFragmentHelper,
-                IFrameUriBuilderFactory iFrameUriBuilderFactory,
-                UrlVariableSubstitutor urlVariableSubstitutor,
-                PluggableParametersExtractor webFragmentModuleContextExtractor,
-                ModuleContextFilter moduleContextFilter,
-                String url,
-                String pluginKey,
-                String moduleKey,
-                boolean absolute, AddOnUrlContext addOnUrlContext, boolean isDialog, String section)
+                WebLinkFactory webLinkFactory,
+                WebItemModuleDescriptorData webItemModuleDescriptorData)
         {
             super(jiraAuthenticationContext, webInterfaceManager);
-            this.webFragmentHelper = webFragmentHelper;
-            this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
-            this.urlVariableSubstitutor = urlVariableSubstitutor;
-            this.webFragmentModuleContextExtractor = webFragmentModuleContextExtractor;
-            this.moduleContextFilter = moduleContextFilter;
-            this.pluginKey = pluginKey;
-            this.moduleKey = moduleKey;
-            this.absolute = absolute;
-            this.addOnUrlContext = addOnUrlContext;
-            this.isDialog = isDialog;
-            this.section = section;
-
-            this.url = appendSourceQueryParameterToUrlIfNeeded(url);
-        }
-
-        private String appendSourceQueryParameterToUrlIfNeeded(final String url)
-        {
-            if (addOnUrlContext == AddOnUrlContext.page && isAdminSection(section))
-            {
-                return addWebItemSourceQueryParamIfNotPresent(url, moduleKey);
-            }
-            return url;
+            this.webLinkFactory = webLinkFactory;
+            this.webItemModuleDescriptorData = webItemModuleDescriptorData;
         }
 
         @Override
         public WebLink getLink()
         {
-            return new JiraWebLink(new RemoteWebLink(this, webFragmentHelper, iFrameUriBuilderFactory,
-                    urlVariableSubstitutor, webFragmentModuleContextExtractor, moduleContextFilter, url, pluginKey,
-                    moduleKey, absolute, addOnUrlContext, isDialog), authenticationContext);
+            WebLink remoteWebLink = webLinkFactory.createRemoteWebLink(this, webItemModuleDescriptorData);
+            return new JiraWebLink(remoteWebLink, authenticationContext);
         }
 
         @Override
         public void destroy()
         {
             //To change body of implemented methods use File | Settings | File Templates.
-        }
-
-        private String addWebItemSourceQueryParamIfNotPresent(String link, String key)
-        {
-            String path = getPathFromUrlTemplate(link);
-
-            Map<String, List<String>> queryListMap = UriBuilder.splitParameters(getQueryFromUrlTemplate(link));
-
-            HashMap<String, List<String>> resultingQueryMap = new HashMap<>(queryListMap);
-            if (!resultingQueryMap.containsKey(WEB_ITEM_SOURCE_QUERY_PARAM))
-            {
-                resultingQueryMap.put(WEB_ITEM_SOURCE_QUERY_PARAM, ImmutableList.of(key));
-            }
-
-            return path + "?" + UriBuilder.joinParameters(resultingQueryMap);
-        }
-
-        private boolean isAdminSection(final String section)
-        {
-            String[] fragments = section.split("/");
-            return fragments.length != 0 && ADMIN_MENUS_KEYS.contains(fragments[0]);
-        }
-
-        private String getQueryFromUrlTemplate(final String localUrl)
-        {
-            if (localUrl.indexOf('?') != -1)
-            {
-                return localUrl.substring(localUrl.indexOf('?') + 1);
-            }
-            return "";
-        }
-
-        private String getPathFromUrlTemplate(final String localUrl)
-        {
-            if (localUrl.indexOf('?') != -1)
-            {
-                return localUrl.substring(0, localUrl.indexOf('?'));
-            }
-            return localUrl;
         }
     }
 }

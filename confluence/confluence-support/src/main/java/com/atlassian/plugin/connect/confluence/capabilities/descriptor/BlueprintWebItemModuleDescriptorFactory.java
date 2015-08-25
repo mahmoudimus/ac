@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.confluence.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.module.webitem.WebItemModuleDescriptorData;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.ConnectModuleDescriptorFactory;
@@ -75,10 +76,19 @@ public class BlueprintWebItemModuleDescriptorFactory
             log.debug(Dom4jUtils.printNode(webItemElement));
         }
 
-        final WebItemModuleDescriptor descriptor = productWebItemDescriptorFactory
-                .createWebItemModuleDescriptor(null, addon.getKey(), webItemKey, true, null, true, section);
+        WebItemModuleDescriptorData webItemModuleDescriptorData = WebItemModuleDescriptorData.builder()
+                .setUrl(null)
+                .setPluginKey(addon.getKey())
+                .setModuleKey(webItemKey)
+                .setAbsolute(true)
+                .setAddOnUrlContext(null)
+                .setIsDialog(true)
+                .setSection(section)
+                .build();
+
+        final WebItemModuleDescriptor descriptor = productWebItemDescriptorFactory.createWebItemModuleDescriptor(webItemModuleDescriptorData);
+
         descriptor.init(plugin, webItemElement);
         return descriptor;
     }
-
 }

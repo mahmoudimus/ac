@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.util.fixture.descriptor;
 
+import com.atlassian.plugin.connect.api.module.webitem.WebItemModuleDescriptorData;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.spi.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.web.WebInterfaceManager;
@@ -19,7 +20,7 @@ public class WebItemModuleDescriptorFactoryForTests implements ProductSpecificWe
     }
 
     @Override
-    public WebItemModuleDescriptor createWebItemModuleDescriptor(final String url, final String pluginKey, final String moduleKey, final boolean absolute, final AddOnUrlContext addOnUrlContext, final boolean isDialog, final String section)
+    public WebItemModuleDescriptor createWebItemModuleDescriptor(final WebItemModuleDescriptorData webItemModuleDescriptorData)
     {
         return new DefaultWebItemModuleDescriptor(webInterfaceManager);
     }

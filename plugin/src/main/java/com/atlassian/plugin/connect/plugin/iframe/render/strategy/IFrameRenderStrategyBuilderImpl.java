@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.issue.fields.rest.json.beans.JiraBaseUrls;
-import com.atlassian.plugin.connect.api.Redirect.RedirectServletPath;
+import com.atlassian.plugin.connect.plugin.redirect.RedirectServletPath;
 import com.atlassian.plugin.connect.api.capabilities.provider.ModuleTemplate;
 import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
-import javax.ws.rs.core.UriBuilder;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

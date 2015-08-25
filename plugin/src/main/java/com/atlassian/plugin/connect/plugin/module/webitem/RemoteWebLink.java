@@ -1,6 +1,6 @@
-package com.atlassian.plugin.connect.api.module.webitem;
+package com.atlassian.plugin.connect.plugin.module.webitem;
 
-import com.atlassian.plugin.connect.api.Redirect.RedirectServletPath;
+import com.atlassian.plugin.connect.plugin.redirect.RedirectServletPath;
 import com.atlassian.plugin.connect.api.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.iframe.servlet.ConnectIFrameServletPath;

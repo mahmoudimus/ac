@@ -7,7 +7,10 @@ import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
 import com.atlassian.plugin.connect.api.iframe.render.uri.IFrameUriBuilderFactory;
 import com.atlassian.plugin.connect.api.iframe.webpanel.PluggableParametersExtractor;
 import com.atlassian.plugin.connect.api.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.api.module.webitem.WebItemModuleDescriptorData;
+import com.atlassian.plugin.connect.api.module.webitem.WebLinkFactory;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.plugin.module.webitem.WebLinkFactoryImpl;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.util.fixture.PluginForTests;
 import com.atlassian.plugin.web.WebFragmentHelper;
@@ -76,9 +79,8 @@ public class JiraWebItemModuleDescriptorFactoryTest
 
         UrlVariableSubstitutor urlVariableSubstitutor = createUrlSubstitutor();
 
-        webItemFactory = new JiraWebItemModuleDescriptorFactory(
-                webFragmentHelper, webInterfaceManager, iFrameUriBuilderFactory, jiraAuthenticationContext,
-                webFragmentModuleContextExtractor, moduleContextFilter, urlVariableSubstitutor);
+        WebLinkFactory webLinkFactory = new WebLinkFactoryImpl(webFragmentModuleContextExtractor, iFrameUriBuilderFactory, webFragmentHelper, webInterfaceManager, urlVariableSubstitutor, moduleContextFilter);
+        webItemFactory = new JiraWebItemModuleDescriptorFactory(webInterfaceManager, jiraAuthenticationContext, webLinkFactory);
 
         when(servletRequest.getContextPath()).thenReturn("ElContexto");
 
@@ -90,14 +92,15 @@ public class JiraWebItemModuleDescriptorFactoryTest
     @Test
     public void urlPrefixIsCorrect()
     {
-        WebItemModuleDescriptor descriptor = webItemFactory.createWebItemModuleDescriptor(
-                "/myplugin?my_project_id",
-                "my-key",
-                "myLinkId",
-                false,
-                product,
-                false,
-                "section");
+        WebItemModuleDescriptor descriptor = webItemFactory.createWebItemModuleDescriptor(WebItemModuleDescriptorData.builder()
+                .setUrl("/myplugin?my_project_id")
+                .setPluginKey("my-key")
+                .setModuleKey("myLinkId")
+                .setAbsolute(false)
+                .setAddOnUrlContext(product)
+                .setIsDialog(false)
+                .setSection("section")
+                .build());
 
         descriptor.init(plugin, createElement());
         descriptor.enabled();
@@ -110,13 +113,15 @@ public class JiraWebItemModuleDescriptorFactoryTest
     public void urlIsCorrectWhenThereIsNoContext()
     {
         WebItemModuleDescriptor descriptor = webItemFactory.createWebItemModuleDescriptor(
-                "/myplugin?my_project_id={project.id}&my_project_key={project.key}",
-                "my-key",
-                "myLinkId",
-                false,
-                product,
-                false,
-                "section");
+                WebItemModuleDescriptorData.builder()
+                        .setUrl("/myplugin?my_project_id={project.id}&my_project_key={project.key}")
+                        .setPluginKey("my-key")
+                        .setModuleKey("myLinkId")
+                        .setAbsolute(false)
+                        .setAddOnUrlContext(product)
+                        .setIsDialog(false)
+                        .setSection("section")
+                        .build());
 
         descriptor.init(plugin, createElement());
         descriptor.enabled();
@@ -145,14 +150,15 @@ public class JiraWebItemModuleDescriptorFactoryTest
     public void testWebItemLinkQueryParamIsNotOverridenBySourceParamIfPresent()
     {
         String moduleKey = "myLinkId";
-        WebItemModuleDescriptor descriptor = webItemFactory.createWebItemModuleDescriptor(
-                "/myplugin?s=blabla",
-                "my-key",
-                moduleKey,
-                false,
-                AddOnUrlContext.page,
-                false,
-                "admin_system_menu");
+        WebItemModuleDescriptor descriptor = webItemFactory.createWebItemModuleDescriptor(WebItemModuleDescriptorData.builder()
+                        .setUrl("/myplugin?s=blabla")
+                        .setPluginKey("my-key")
+                        .setModuleKey(moduleKey)
+                        .setAbsolute(false)
+                        .setAddOnUrlContext(AddOnUrlContext.page)
+                        .setIsDialog(false)
+                        .setSection("admin_system_menu")
+                        .build());
 
         descriptor.init(plugin, createElement());
         descriptor.enabled();
@@ -165,14 +171,15 @@ public class JiraWebItemModuleDescriptorFactoryTest
     private void testWebItemLinkContainsAllQueryParamsForSection(String section)
     {
         String moduleKey = "myLinkId";
-        WebItemModuleDescriptor descriptor = webItemFactory.createWebItemModuleDescriptor(
-                "/myplugin",
-                "my-key",
-                moduleKey,
-                false,
-                AddOnUrlContext.page,
-                false,
-                section);
+        WebItemModuleDescriptor descriptor = webItemFactory.createWebItemModuleDescriptor(WebItemModuleDescriptorData.builder()
+                        .setUrl("/myplugin")
+                        .setPluginKey("my-key")
+                        .setModuleKey(moduleKey)
+                        .setAbsolute(false)
+                        .setAddOnUrlContext(AddOnUrlContext.page)
+                        .setIsDialog(false)
+                        .setSection(section)
+                        .build());
 
         descriptor.init(plugin, createElement());
         descriptor.enabled();
@@ -199,7 +206,7 @@ public class JiraWebItemModuleDescriptorFactoryTest
             public Object answer(final InvocationOnMock invocationOnMock) throws Throwable
             {
                 String template = (String) invocationOnMock.getArguments()[0];
-                return template.replaceAll("\\{.*?\\}","");
+                return template.replaceAll("\\{.*?\\}", "");
             }
         });
         return mock;
@@ -229,5 +236,4 @@ public class JiraWebItemModuleDescriptorFactoryTest
             }
         };
     }
-
 }

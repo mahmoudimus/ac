@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.api.capabilities.descriptor.ParamsModuleFragmentFactory;
+import com.atlassian.plugin.connect.api.module.webitem.WebItemModuleDescriptorData;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
@@ -30,7 +31,6 @@ import java.util.Map;
 import static com.atlassian.plugin.connect.spi.util.Dom4jUtils.printNode;
 import static com.google.common.collect.Lists.newArrayList;
 
-
 @Component
 public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescriptorFactory
 {
@@ -44,9 +44,9 @@ public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescript
 
     @Autowired
     public WebItemModuleDescriptorFactoryImpl(ProductSpecificWebItemModuleDescriptorFactory productWebItemDescriptorFactory,
-                                          IconModuleFragmentFactory iconModuleFragmentFactory,
-                                          ConditionModuleFragmentFactory conditionModuleFragmentFactory,
-                                          ParamsModuleFragmentFactory paramsModuleFragmentFactory)
+            IconModuleFragmentFactory iconModuleFragmentFactory,
+            ConditionModuleFragmentFactory conditionModuleFragmentFactory,
+            ParamsModuleFragmentFactory paramsModuleFragmentFactory)
     {
         this.productWebItemDescriptorFactory = productWebItemDescriptorFactory;
         this.iconModuleFragmentFactory = iconModuleFragmentFactory;
@@ -56,14 +56,14 @@ public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescript
 
     @Override
     public WebItemModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext,
-                                                          Plugin theConnectPlugin, WebItemModuleBean bean)
+            Plugin theConnectPlugin, WebItemModuleBean bean)
     {
         return createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean, Collections.<Class<? extends Condition>>emptyList());
     }
 
     @Override
     public WebItemModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin,
-                                                          WebItemModuleBean bean, Class<? extends Condition> additionalCondition)
+            WebItemModuleBean bean, Class<? extends Condition> additionalCondition)
     {
         return createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean,
                 Collections.<Class<? extends Condition>>singletonList(additionalCondition));
@@ -71,7 +71,7 @@ public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescript
 
     @Override
     public WebItemModuleDescriptor createModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin,
-                                                          WebItemModuleBean bean, Iterable<Class<? extends Condition>> additionalConditions)
+            WebItemModuleBean bean, Iterable<Class<? extends Condition>> additionalConditions)
     {
         Element webItemElement = new DOMElement("web-item");
 
@@ -167,19 +167,19 @@ public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescript
     }
 
     private WebItemModuleDescriptor createWebItemDescriptor(ConnectAddonBean addon, Plugin theConnectPlugin, Element webItemElement, String moduleKey, String url,
-                                                            boolean absolute, AddOnUrlContext urlContext, boolean isDialog, String section)
+            boolean absolute, AddOnUrlContext urlContext, boolean isDialog, String section)
     {
         webItemElement.addAttribute("system", "true");
 
-        final WebItemModuleDescriptor descriptor = productWebItemDescriptorFactory.createWebItemModuleDescriptor(
-                url
-                , addon.getKey()
-                , moduleKey
-                , absolute
-                , urlContext
-                , isDialog
-                , section);
-
+        final WebItemModuleDescriptor descriptor = productWebItemDescriptorFactory.createWebItemModuleDescriptor(WebItemModuleDescriptorData.builder()
+                .setUrl(url)
+                .setPluginKey(addon.getKey())
+                .setModuleKey(moduleKey)
+                .setAbsolute(absolute)
+                .setAddOnUrlContext(urlContext)
+                .setIsDialog(isDialog)
+                .setSection(section)
+                .build());
         descriptor.init(theConnectPlugin, webItemElement);
 
         return descriptor;

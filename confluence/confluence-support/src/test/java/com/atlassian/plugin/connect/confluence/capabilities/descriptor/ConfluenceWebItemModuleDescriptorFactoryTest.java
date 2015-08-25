@@ -1,11 +1,13 @@
 package com.atlassian.plugin.connect.confluence.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.api.iframe.webpanel.PluggableParametersExtractor;
-import com.atlassian.plugin.connect.api.module.webfragment.UrlVariableSubstitutor;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.api.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.api.iframe.render.uri.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.api.iframe.webpanel.PluggableParametersExtractor;
+import com.atlassian.plugin.connect.api.module.webfragment.UrlVariableSubstitutor;
+import com.atlassian.plugin.connect.api.module.webitem.WebItemModuleDescriptorData;
+import com.atlassian.plugin.connect.api.module.webitem.WebLinkFactory;
+import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.util.fixture.PluginForTests;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.plugin.web.WebInterfaceManager;
@@ -23,8 +25,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import javax.servlet.http.HttpServletRequest;
 
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product;
 import static org.hamcrest.CoreMatchers.is;
@@ -33,15 +35,12 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
-@Ignore("convert to wired test")
-@RunWith(MockitoJUnitRunner.class)
+@Ignore ("convert to wired test")
+@RunWith (MockitoJUnitRunner.class)
 public class ConfluenceWebItemModuleDescriptorFactoryTest
 {
     @Mock
     private WebInterfaceManager webInterfaceManager;
-
-    @Mock
-    private WebFragmentHelper webFragmentHelper;
 
     @Mock
     private HttpServletRequest servletRequest;
@@ -50,16 +49,7 @@ public class ConfluenceWebItemModuleDescriptorFactoryTest
     private ContainerContext containerContext;
 
     @Mock
-    private IFrameUriBuilderFactory iFrameUriBuilderFactory;
-
-    @Mock
-    private PluggableParametersExtractor webFragmentModuleContextExtractor;
-
-    @Mock
-    private UrlVariableSubstitutor urlVariableSubstitutor;
-
-    @Mock
-    private ModuleContextFilter moduleContextFilter;
+    private WebLinkFactory webLinkFactory;
 
     private WebItemModuleDescriptor descriptor;
 
@@ -69,23 +59,23 @@ public class ConfluenceWebItemModuleDescriptorFactoryTest
         Plugin plugin = new PluginForTests("my-key", "My Plugin");
 
         ConfluenceWebItemModuleDescriptorFactory webItemFactory =
-                new ConfluenceWebItemModuleDescriptorFactory(iFrameUriBuilderFactory,
-                        webFragmentModuleContextExtractor, moduleContextFilter, urlVariableSubstitutor);
+                new ConfluenceWebItemModuleDescriptorFactory(webLinkFactory);
 
         when(servletRequest.getContextPath()).thenReturn("ElContexto");
 
         ContainerManager.getInstance().setContainerContext(containerContext);
         when(containerContext.getComponent("webInterfaceManager")).thenReturn(webInterfaceManager);
 
-        descriptor = webItemFactory.createWebItemModuleDescriptor(
-                "/myplugin?my_project_id={project.id}&my_project_key={project.key}",
-                "my-key",
-                "myLinkId",
-                false,
-                product,
-                false,
-                "section");
-        
+        descriptor = webItemFactory.createWebItemModuleDescriptor(WebItemModuleDescriptorData.builder()
+                .setUrl("/myplugin?my_project_id={project.id}&my_project_key={project.key}")
+                .setPluginKey("my-key")
+                .setModuleKey("myLinkId")
+                .setAbsolute(false)
+                .setAddOnUrlContext(product)
+                .setIsDialog(false)
+                .setSection("section")
+                .build());
+
         descriptor.init(plugin, createElement());
         descriptor.enabled();
     }
@@ -114,7 +104,7 @@ public class ConfluenceWebItemModuleDescriptorFactoryTest
     public void urlIsCorrectWhenThereIsAContext()
     {
         assertThat(descriptor.getLink().getDisplayableUrl(servletRequest, ImmutableMap.<String, Object>of("project",
-                ImmutableMap.<String, Object>of("key", "FOO", "id", "10"))),
+                        ImmutableMap.<String, Object>of("key", "FOO", "id", "10"))),
                 is("ElContexto/myplugin?my_project_id=10&my_project_key=FOO"));
     }
 }
