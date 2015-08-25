@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.modules.gson;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.*;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.dialog.WebItemTargetOptions;
 import com.google.common.base.Supplier;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -19,7 +20,7 @@ import java.util.Map;
  */
 public class ConnectModulesGsonFactory
 {
-    public static GsonBuilder getGsonBuilder(JsonDeserializer moduleDeserializer)
+    public static GsonBuilder getGsonBuilder(JsonDeserializer<Map<String, Supplier<List<ModuleBean>>>> moduleDeserializer)
     {
         Type conditionalType = new TypeToken<List<ConditionalBean>>() {}.getType();
         Type mapStringType = new TypeToken<Map<String, String>>() {}.getType();
@@ -36,6 +37,7 @@ public class ConnectModulesGsonFactory
                 .registerTypeAdapterFactory(new NullIgnoringSetTypeAdapterFactory())
                 .registerTypeAdapter(WebItemTargetBean.class, new WebItemTargetBeanSerializer())
                 .registerTypeAdapter(JsonObject.class, new DynamicModuleSerializer())
+                .registerTypeAdapter(Supplier.class, new SupplierInstanceCreator())
                 .registerTypeAdapter(mapJsonType, moduleDeserializer)
                 .setPrettyPrinting()
                 .disableHtmlEscaping()
@@ -81,7 +83,7 @@ public class ConnectModulesGsonFactory
         }
         else
         {
-            gson = getGson();
+            gson = getGson(moduleDeserializer);
         }
 
         return gson.fromJson(json,ConnectAddonBean.class);

@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -36,6 +37,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     private String baseUrl;
     private AuthenticationBean authentication;
     private Boolean enableLicensing;
+    private Map<String, Supplier<List<ModuleBean>>> modulesTest;
     private Map<String, List<JsonObject>> modules;
     private Map<String, List<ModuleBean>> moduleBeans;
 
@@ -53,6 +55,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         this.vendor = defaultBean.getVendor();
         this.links = defaultBean.getLinks();
         this.modules = defaultBean.getModules();
+        this.modulesTest = defaultBean.getModulesTest();
         this.moduleBeans = defaultBean.getModuleBeans();
         this.lifecycle = defaultBean.getLifecycle();
         this.baseUrl = defaultBean.getBaseUrl();
