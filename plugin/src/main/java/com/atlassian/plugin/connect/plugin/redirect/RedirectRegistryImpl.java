@@ -15,9 +15,11 @@ public class RedirectRegistryImpl implements RedirectRegistry
     @Override
     public void register(final String addonKey, final String moduleKey, final RedirectData redirectData)
     {
-        synchronized (store) {
+        synchronized (store)
+        {
             Map<String, RedirectData> addonMap = store.get(addonKey);
-            if (addonMap == null) {
+            if (addonMap == null)
+            {
                 addonMap = Maps.newConcurrentMap();
                 store.put(addonKey, addonMap);
             }
@@ -31,5 +33,4 @@ public class RedirectRegistryImpl implements RedirectRegistry
         Map<String, RedirectData> addonEndpoints = store.get(addonKey);
         return addonEndpoints == null ? null : addonEndpoints.get(moduleKeyOnly(addonKey, moduleKey));
     }
-
 }

@@ -26,6 +26,11 @@ public interface IFrameRenderContextBuilder
         InitializedBuilder resizeToParent(boolean resizeToParent);
         InitializedBuilder context(String key, Object value);
         InitializedBuilder context(Map<String, Object> additionalContext);
+
+        /**
+         * @param host - origin adress of the add-on server. Origin is required to setup proper XDM connection.
+         * Is needed only if iframe points to the redirection servlet because in that case it can not be obtained from url.
+         */
         InitializedBuilder origin(String host);
         Map<String, Object> build();
     }

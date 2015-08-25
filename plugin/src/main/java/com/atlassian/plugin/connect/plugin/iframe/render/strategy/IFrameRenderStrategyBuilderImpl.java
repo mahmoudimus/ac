@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.iframe.render.strategy;
 
 import com.atlassian.fugue.Option;
-import com.atlassian.jira.issue.fields.rest.json.beans.JiraBaseUrls;
 import com.atlassian.plugin.connect.plugin.redirect.RedirectServletPath;
 import com.atlassian.plugin.connect.api.capabilities.provider.ModuleTemplate;
 import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
@@ -58,7 +57,6 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
     private final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory;
     private final TemplateRenderer templateRenderer;
     private final ConnectConditionFactory connectConditionFactory;
-    private final JiraBaseUrls jiraBaseUrls;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final RemotablePluginAccessorFactory pluginAccessorFactory;
 
@@ -89,7 +87,6 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
             final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory,
             final TemplateRenderer templateRenderer,
             final ConnectConditionFactory connectConditionFactory,
-            final JiraBaseUrls jiraBaseUrls,
             final UrlVariableSubstitutor urlVariableSubstitutor,
             final RemotablePluginAccessorFactory pluginAccessorFactory)
     {
@@ -100,7 +97,6 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.pluginAccessorFactory = pluginAccessorFactory;
         this.contentType = ContentType.TEXT_HTML.getMimeType();
-        this.jiraBaseUrls = jiraBaseUrls;
     }
 
     @Override
@@ -277,7 +273,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         Condition condition = connectConditionFactory.createCondition(addOnKey, conditionalBeans, conditionClasses);
 
         return new IFrameRenderStrategyImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory,
-                templateRenderer, jiraBaseUrls, urlVariableSubstitutor, pluginAccessorFactory,
+                templateRenderer, urlVariableSubstitutor, pluginAccessorFactory,
                 addOnKey, moduleKey, template, accessDeniedTemplate, urlTemplate, title,
                 decorator, condition, additionalRenderContext, width, height, uniqueNamespace, isDialog, isSimpleDialog,
                 resizeToParent, sign, contentType, redirect);
@@ -290,7 +286,6 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
         private final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory;
         private final TemplateRenderer templateRenderer;
-        private final JiraBaseUrls jiraBaseUrls;
         private final UrlVariableSubstitutor urlVariableSubstitutor;
         private final RemotablePluginAccessorFactory pluginAccessorFactory;
 
@@ -315,7 +310,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
 
         private IFrameRenderStrategyImpl(final IFrameUriBuilderFactory iFrameUriBuilderFactory,
                 final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory,
-                final TemplateRenderer templateRenderer, final JiraBaseUrls jiraBaseUrls,
+                final TemplateRenderer templateRenderer,
                 final UrlVariableSubstitutor urlVariableSubstitutor, final RemotablePluginAccessorFactory pluginAccessorFactory,
                 final String addOnKey, final String moduleKey,
                 final String template, final String accessDeniedTemplate, final String urlTemplate,
@@ -327,7 +322,6 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
             this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
             this.iFrameRenderContextBuilderFactory = iFrameRenderContextBuilderFactory;
             this.templateRenderer = templateRenderer;
-            this.jiraBaseUrls = jiraBaseUrls;
             this.urlVariableSubstitutor = urlVariableSubstitutor;
             this.pluginAccessorFactory = pluginAccessorFactory;
             this.addOnKey = addOnKey;
@@ -392,7 +386,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         private String buildUrl(ModuleContextParameters moduleContextParameters, Option<String> uiParameters, String namespace)
         {
             if (this.redirect) {
-                return urlVariableSubstitutor.append(jiraBaseUrls.baseUrl() + RedirectServletPath.forModule(addOnKey, moduleKey), moduleContextParameters);
+                return urlVariableSubstitutor.append(pluginAccessorFactory.getOrThrow(addOnKey).getBaseUrl() + RedirectServletPath.forModule(addOnKey, moduleKey), moduleContextParameters);
             }
             return iFrameUriBuilderFactory.builder()
                             .addOn(addOnKey)
@@ -455,7 +449,7 @@ public class IFrameRenderStrategyBuilderImpl implements IFrameRenderStrategyBuil
         public IFrameRenderStrategy toJsonRenderStrategy()
         {
             return new IFrameRenderStrategyImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory,
-                    templateRenderer, jiraBaseUrls, urlVariableSubstitutor, pluginAccessorFactory,
+                    templateRenderer, urlVariableSubstitutor, pluginAccessorFactory,
                     addOnKey, moduleKey, TEMPLATE_JSON, TEMPLATE_ACCESS_DENIED_JSON, urlTemplate, title,
                     decorator, condition, additionalRenderContext, width, height, uniqueNamespace, isDialog, isSimpleDialog,
                     resizeToParent, sign, ContentType.APPLICATION_JSON.getMimeType(), redirect);

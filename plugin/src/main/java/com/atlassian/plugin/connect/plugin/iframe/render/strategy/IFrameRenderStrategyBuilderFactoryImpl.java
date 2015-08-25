@@ -22,7 +22,6 @@ public class IFrameRenderStrategyBuilderFactoryImpl implements IFrameRenderStrat
     private final IFrameRenderContextBuilderFactory iFrameRenderContextBuilderFactory;
     private final TemplateRenderer templateRenderer;
     private final ConnectConditionFactory connectConditionFactory;
-    private final JiraBaseUrls jiraBaseUrls;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final RemotablePluginAccessorFactory pluginAccessorFactory;
 
@@ -38,7 +37,6 @@ public class IFrameRenderStrategyBuilderFactoryImpl implements IFrameRenderStrat
         this.iFrameRenderContextBuilderFactory = iFrameRenderContextBuilderFactory;
         this.templateRenderer = templateRenderer;
         this.connectConditionFactory = connectConditionFactory;
-        this.jiraBaseUrls = jiraBaseUrls;
         this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.pluginAccessorFactory = pluginAccessorFactory;
     }
@@ -47,6 +45,6 @@ public class IFrameRenderStrategyBuilderFactoryImpl implements IFrameRenderStrat
     public IFrameRenderStrategyBuilder builder()
     {
         return new IFrameRenderStrategyBuilderImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory,
-                templateRenderer, connectConditionFactory, jiraBaseUrls, urlVariableSubstitutor, pluginAccessorFactory);
+                templateRenderer, connectConditionFactory, urlVariableSubstitutor, pluginAccessorFactory);
     }
 }

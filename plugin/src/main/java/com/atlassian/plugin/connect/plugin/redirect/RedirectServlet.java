@@ -26,9 +26,11 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
  */
 public class RedirectServlet extends HttpServlet
 {
+    // It matches addOnKey and moduleKey from url
     private static final Pattern PATH_PATTERN = Pattern.compile("^/([^/]+)/([^/]+)");
 
     public static final int TEMPORARY_REDIRECT_CODE = 307;
+    public static final int REDIRECT_CACHE_TIME = 120;
 
     private final RedirectRegistry redirectRegistry;
     private final ModuleContextParser moduleContextParser;
@@ -94,7 +96,7 @@ public class RedirectServlet extends HttpServlet
     {
         resp.setStatus(TEMPORARY_REDIRECT_CODE);
         resp.setHeader("location", url);
-        resp.setHeader("cache-control", "private, max-age=120");
+        resp.setHeader("cache-control", "private, max-age=" + REDIRECT_CACHE_TIME);
     }
 
     private void rendedAccessDenied(HttpServletResponse resp, RedirectData redirectData)

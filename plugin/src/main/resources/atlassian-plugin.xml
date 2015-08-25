@@ -75,7 +75,7 @@
 
     <servlet key="addon-redirect-servlet"
              class="com.atlassian.plugin.connect.plugin.redirect.RedirectServlet">
-        <url-pattern>/redirect/*</url-pattern>
+        <url-pattern>/ac-redirect/*</url-pattern>
     </servlet>
 
     <web-panel key="connect-dialog-options" location="atl.header" class="com.atlassian.plugin.connect.plugin.dialog.DialogOptionsWebPanel"/>
