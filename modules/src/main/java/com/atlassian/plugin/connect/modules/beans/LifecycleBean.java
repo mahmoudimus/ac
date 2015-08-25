@@ -68,8 +68,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  *        <td>The host product description - this is customisable by an instance administrator.</td>
  *    </tr>
  *    <tr>
- *        <td><code>serviceEntitlementNumber</code></td>
- *        <td>Also known as the SEN, the service entitlement number is a the add-on license id.</td>
+ *        <td><code>serviceEntitlementNumber</code>
+ *        (optional)</td>
+ *        <td>Also known as the SEN, the service entitlement number is the add-on license id. This attribute will only be included  
+ *        during installation of a paid add-on.</td>
  *    </tr>
  *</table>
  *
