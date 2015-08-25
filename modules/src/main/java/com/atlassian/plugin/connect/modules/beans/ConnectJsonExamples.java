@@ -105,8 +105,8 @@ public class ConnectJsonExamples
     public static final String BLUEPRINT_EXAMPLE = createBlueprintExample();
     public static final String BLUEPRINT_TEMPLATE_EXAMPLE = createBlueprintTemplateExample();
     public static final String CONTENT_PROPERTY_EXAMPLE = createContentPropertyExample();
-    public static final String CONTENT_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE = createEntityPropertyIndexExtractionConfigurationExample();
-    public static final String CONTENT_PROPERTY_INDEX_KEY_CONFIGURATION_EXAMPLE = createEntityPropertyIndexKeyConfigurationExample();
+    public static final String CONTENT_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE = createContentPropertyIndexExtractionConfigurationExample();
+    public static final String CONTENT_PROPERTY_INDEX_KEY_CONFIGURATION_EXAMPLE = createContentPropertyIndexKeyConfigurationExample();
     public static final String MACRO_RENDER_MODES_EXAMPLE = createDynamicMacroExampleForRenderModes();
 
     public static final String LIFECYCLE_PAYLOAD_EXAMPLE = createLifecyclePayloadExample();
@@ -809,29 +809,41 @@ public class ConnectJsonExamples
 
     private static String createContentPropertyIndexExtractionConfigurationExample()
     {
-        return gson.toJson(createContentPropertyIndexExtractionConfigurationBean("attachment.size", ContentPropertyIndexFieldType.number));
+        return gson.toJson(createAttachmentTypeContentPropertyExtraction());
     }
 
     private static String createContentPropertyIndexKeyConfigurationExample()
     {
-        List<ContentPropertyIndexExtractionConfigurationBean> extractionConfiguration = Lists.newArrayList(
-                createContentPropertyIndexExtractionConfigurationBean("attachment.size", ContentPropertyIndexFieldType.number),
-                createContentPropertyIndexExtractionConfigurationBean("attachment.extension", ContentPropertyIndexFieldType.string),
-                createContentPropertyIndexExtractionConfigurationBean("attachment.updated", ContentPropertyIndexFieldType.date),
-                createContentPropertyIndexExtractionConfigurationBean("attachment.author", ContentPropertyIndexFieldType.text)
-        );
-
+        List<ContentPropertyIndexExtractionConfigurationBean> extractionConfiguration = getContentPropertyIndexExtractionConfigurationBeans();
         return gson.toJson(new ContentPropertyIndexKeyConfigurationBean("attachment", extractionConfiguration));
+    }
+
+    private static List<ContentPropertyIndexExtractionConfigurationBean> getContentPropertyIndexExtractionConfigurationBeans()
+    {
+        return Lists.newArrayList(
+                createContentPropertyIndexExtractionConfigurationBean("attachment.size", ContentPropertyIndexFieldType.number),
+                createAttachmentTypeContentPropertyExtraction(),
+                createContentPropertyIndexExtractionConfigurationBean("attachment.updated", ContentPropertyIndexFieldType.date)
+        );
+    }
+
+    private static ContentPropertyIndexExtractionConfigurationBean createAttachmentTypeContentPropertyExtraction()
+    {
+        UISupportModuleBean uiSupport = UISupportModuleBean.newUISupportModuleBean()
+                .withName(new I18nProperty("Content Type", "attachment.type.name"))
+                .withDataUri("/data/content-types")
+                .withDefaultOperator("~")
+                .withTooltip(new I18nProperty("Content Type Tooltip", "attachment.type.tooltip"))
+                .withValueType("string")
+                .build();
+
+        return createContentPropertyIndexExtractionConfigurationBean("attachment.type", ContentPropertyIndexFieldType.string, "contentType", uiSupport);
     }
 
     private static String createContentPropertyExample()
     {
-        List<ContentPropertyIndexExtractionConfigurationBean> extractionConfiguration = Lists.newArrayList(
-                createContentPropertyIndexExtractionConfigurationBean("attachment.size", ContentPropertyIndexFieldType.number),
-                createContentPropertyIndexExtractionConfigurationBean("attachment.extension", ContentPropertyIndexFieldType.string),
-                createContentPropertyIndexExtractionConfigurationBean("attachment.updated", ContentPropertyIndexFieldType.date),
-                createContentPropertyIndexExtractionConfigurationBean("attachment.author", ContentPropertyIndexFieldType.text)
-        );
+        List<ContentPropertyIndexExtractionConfigurationBean> extractionConfiguration = getContentPropertyIndexExtractionConfigurationBeans();
+
         ContentPropertyIndexKeyConfigurationBean indexConfiguration =
                 new ContentPropertyIndexKeyConfigurationBean("attachment", extractionConfiguration);
 
@@ -893,12 +905,22 @@ public class ConnectJsonExamples
         return obj;
     }
 
-    private static ContentPropertyIndexExtractionConfigurationBean
-    createContentPropertyIndexExtractionConfigurationBean(String objectName, ContentPropertyIndexFieldType type)
+    private static ContentPropertyIndexExtractionConfigurationBean createContentPropertyIndexExtractionConfigurationBean(String objectName, ContentPropertyIndexFieldType type)
     {
-        return new ContentPropertyIndexExtractionConfigurationBeanBuilder()
+        return createContentPropertyIndexExtractionConfigurationBean(objectName, type, null, null);
+    }
+
+    private static ContentPropertyIndexExtractionConfigurationBean createContentPropertyIndexExtractionConfigurationBean(String objectName,
+                                                          ContentPropertyIndexFieldType type,
+                                                          String alias, UISupportModuleBean uiSupport)
+    {
+        ContentPropertyIndexExtractionConfigurationBeanBuilder builder = new ContentPropertyIndexExtractionConfigurationBeanBuilder()
                 .withObjectName(objectName)
-                .withType(type)
-                .build();
+                .withType(type);
+        if (alias != null)
+            builder = builder.withAlias(alias);
+        if (uiSupport != null)
+            builder = builder.withUiSupport(uiSupport);
+        return builder.build();
     }
 }

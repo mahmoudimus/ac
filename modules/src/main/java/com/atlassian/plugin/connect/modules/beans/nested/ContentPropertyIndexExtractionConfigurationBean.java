@@ -6,8 +6,10 @@ import com.atlassian.plugin.connect.modules.beans.UISupportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexExtractionConfigurationBeanBuilder;
 
 /**
- * Representation of a extraction recipe for a single JSON value. For more information,
- * please see the [Confluence documentation on content properties](https://developer.atlassian.com/display/CONFDEV/Content+Properties+in+the+REST+API).
+ * Representation of a extraction recipe for a single JSON value.
+ *
+ * See the [content property](../confluence/content-property.html) documentation for an example.
+ *
  *#### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE}
@@ -42,12 +44,27 @@ public class ContentPropertyIndexExtractionConfigurationBean implements ModuleBe
     @Required
     private final ContentPropertyIndexFieldType type;
 
-    private final UISupportModuleBean uiSupport;
-
     /**
      * CQL Field name alias for this content property.
+     *
+     * By defining an alias you are exposing it to CQL and allow other macros and search features to easily use
+     * your content property in their search.
+     *
+     * Note: Aliases are defined globally so take care in your naming strategy and if possible, prefix them with
+     * your plugin name.
      */
     private final String alias;
+
+    /**
+     * The uiSupport can be used to define how your aliased field will be displayed in the CQL query builder.  Any
+     * macro or search feature that uses CQL build to build up the CQL query.
+     *
+     * By defining uiSupport your content property will appear in the CQL query builder for all macros and search
+     * features built on CQL.
+     *
+     * Note: Requires an alias to be defined.
+     */
+    private final UISupportModuleBean uiSupport;
 
     public ContentPropertyIndexExtractionConfigurationBean(ContentPropertyIndexExtractionConfigurationBeanBuilder builder)
     {

@@ -9,6 +9,8 @@ import com.atlassian.json.schema.annotation.Required;
  * should be extracted into the Confluence search index, so that they can be used later on for content search using
  * CQL.
  *
+ * See the [content property](../confluence/content-property.html) documentation for an example.
+ *
  *#### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_INDEX_KEY_CONFIGURATION_EXAMPLE}
