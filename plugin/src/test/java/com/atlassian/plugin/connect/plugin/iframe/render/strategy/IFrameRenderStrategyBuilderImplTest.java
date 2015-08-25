@@ -28,7 +28,7 @@ public class IFrameRenderStrategyBuilderImplTest
     @Test
     public void nullTitleDoesNotProduceNpe() throws IOException
     {
-        new IFrameRenderStrategyBuilderImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory, templateRenderer, connectConditionFactory, jiraBaseUrls, urlVariableSubstitutor, pluginAccessorFactory)
+        new IFrameRenderStrategyBuilderImpl(iFrameUriBuilderFactory, iFrameRenderContextBuilderFactory, templateRenderer, connectConditionFactory, urlVariableSubstitutor, pluginAccessorFactory)
                 .title(null)
                 .build()
                 .renderAccessDenied(null);
