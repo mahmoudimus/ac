@@ -124,7 +124,7 @@
     </web-resource>
 
     <listener name="JIRA License Change Listener" key="jiraLicenseChangeListener"
-              class="com.atlassian.jira.license.LicenseChangedEvent" >
+              class="com.atlassian.plugin.connect.jira.usermanagement.JiraLicenseChangeListener" >
         <description>Listens to changes to the JIRA license so addon users can be granted access to new applications</description>
     </listener>
 

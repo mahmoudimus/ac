@@ -6,20 +6,14 @@ import java.util.Set;
 import com.atlassian.application.api.ApplicationKey;
 import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.crowd.embedded.api.User;
-import com.atlassian.crowd.exception.ApplicationNotFoundException;
-import com.atlassian.crowd.exception.ApplicationPermissionException;
-import com.atlassian.crowd.exception.GroupNotFoundException;
-import com.atlassian.crowd.exception.InvalidAuthenticationException;
-import com.atlassian.crowd.exception.OperationFailedException;
-import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.jira.application.ApplicationAuthorizationService;
 import com.atlassian.jira.application.ApplicationRoleManager;
 import com.atlassian.jira.license.LicenseChangedEvent;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUsers;
+import com.atlassian.fugue.Option;
 
-import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +46,7 @@ public class JiraLicenseChangeListener
         }
 
         Set<ApplicationKey> oldKeys = event.getPreviousLicenseDetails().get().getLicensedApplications().getKeys();
-        Set<ApplicationKey> newKeys = event.getNewLicenseDetails().get().getLicensedApplications().getKeys();
+        Set<ApplicationKey> newKeys = new HashSet<>(event.getNewLicenseDetails().get().getLicensedApplications().getKeys());
         newKeys.removeAll(oldKeys);
         Set<String> newGroups = new HashSet<>();
         for (ApplicationKey key : newKeys)
