@@ -8,6 +8,9 @@ import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexEx
 /**
  * Representation of a extraction recipe for a single JSON value.
  *
+ * An extraction recipe defines which values within your JSON content property will be added to the search
+ * index and made available to CQL queries.
+ *
  * See the [content property](../confluence/content-property.html) documentation for an example.
  *
  *#### Example

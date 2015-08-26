@@ -5,9 +5,28 @@ import java.util.List;
 import com.atlassian.json.schema.annotation.Required;
 
 /**
- * Representation of a list of extraction recipes for a given content property key. It defines which JSON values
- * should be extracted into the Confluence search index, so that they can be used later on for content search using
- * CQL.
+ * Representation of a list of key configurations for a given content property. It defines which JSON values
+ * should be made available to the content property CQL search syntax.
+ *
+ * By defining a content property key and extraction such as:
+ *
+ * <pre><code>
+ * {
+ *   "propertyKey": "attachment",
+ *   "extractions": [
+ *     {
+ *       "objectName": "attachment.name",
+ *       "type": "string"
+ *     }
+ *   ]
+ * }
+ * </code></pre>
+ *
+ * You can access this property in your CQL queries as:
+ *
+ * <pre><code>
+ * space = currentSpace() and content.property[attachment].attachment.name = 'filename'
+ * </code></pre>
  *
  * See the [content property](../confluence/content-property.html) documentation for an example.
  *

@@ -911,16 +911,20 @@ public class ConnectJsonExamples
     }
 
     private static ContentPropertyIndexExtractionConfigurationBean createContentPropertyIndexExtractionConfigurationBean(String objectName,
-                                                          ContentPropertyIndexFieldType type,
-                                                          String alias, UISupportModuleBean uiSupport)
+                                                                                                                         ContentPropertyIndexFieldType type,
+                                                                                                                         String alias, UISupportModuleBean uiSupport)
     {
         ContentPropertyIndexExtractionConfigurationBeanBuilder builder = new ContentPropertyIndexExtractionConfigurationBeanBuilder()
                 .withObjectName(objectName)
                 .withType(type);
         if (alias != null)
+        {
             builder = builder.withAlias(alias);
+        }
         if (uiSupport != null)
+        {
             builder = builder.withUiSupport(uiSupport);
+        }
         return builder.build();
     }
 }
