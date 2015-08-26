@@ -7,10 +7,12 @@ import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.exception.ApplicationPermissionException;
+import com.atlassian.crowd.exception.GroupNotFoundException;
 import com.atlassian.crowd.exception.InvalidAuthenticationException;
 import com.atlassian.crowd.exception.InvalidGroupException;
 import com.atlassian.crowd.exception.InvalidUserException;
 import com.atlassian.crowd.exception.OperationFailedException;
+import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.crowd.service.client.CrowdClient;
@@ -178,5 +180,14 @@ public abstract class ConnectCrowdBase
         }
 
         return created;
+    }
+
+    public void ensureUserIsInGroups(String userKey, Set<String> groupKeys)
+            throws ApplicationNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, UserNotFoundException, InvalidAuthenticationException
+    {
+        for(String groupKey : groupKeys)
+        {
+            ensureUserIsInGroup(userKey, groupKey);
+        }
     }
 }
