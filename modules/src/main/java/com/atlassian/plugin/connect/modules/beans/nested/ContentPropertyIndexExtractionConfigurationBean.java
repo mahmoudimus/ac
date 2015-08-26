@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
 import com.atlassian.json.schema.annotation.Required;
-import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.UISupportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexExtractionConfigurationBeanBuilder;
 
@@ -15,7 +15,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexEx
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE}
  * @schemaTitle Content Property Index Extraction Configuration
  */
-public class ContentPropertyIndexExtractionConfigurationBean implements ModuleBean
+public class ContentPropertyIndexExtractionConfigurationBean extends BaseModuleBean
 {
     /**
      * The objectName to the JSON data which is supposed to be indexed. The objectName will be the key of a flatten JSON object with '.' as the delimiter.
