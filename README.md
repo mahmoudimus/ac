@@ -116,7 +116,7 @@ To run add-on descriptor validation tests:
 
 ### Updating developer documentation
 
-To generate developer documentation:
+To generate [the developer documentation](https://connect.atlassian.com):
 
     mvn clean install site
 
@@ -124,4 +124,4 @@ Also see the README in the [`docs`](docs) directory.
 
 ## License
 
-This project is licensed under the [Apache License, Version 2.0](LICENSE).
+This project is licensed under the [Apache License, Version 2.0](LICENSE.txt).
