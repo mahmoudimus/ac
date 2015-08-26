@@ -86,6 +86,11 @@ public class JiraAgileRestScopesTest extends ScopeManagerTest
                 emptyBodyForJira(ScopeName.READ, HttpMethod.PUT, "jira/rest/greenhopper/1.0/epics/EPIC-42/add", false),
                 emptyBodyForJira(ScopeName.WRITE, HttpMethod.PUT, "jira/rest/greenhopper/1.0/epics/EPIC-42/add", true),
 
+                // Remove issue from epic WRITE
+                emptyBodyForJira(null, HttpMethod.PUT, "jira/rest/greenhopper/1.0/epics/remove", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.PUT, "jira/rest/greenhopper/1.0/epics/remove", false),
+                emptyBodyForJira(ScopeName.WRITE, HttpMethod.PUT, "jira/rest/greenhopper/1.0/epics/remove", true),
+
                 // Move issues to backlog WRITE
                 emptyBodyForJira(null, HttpMethod.POST, "jira/rest/agile/1.0/backlog/issue", false),
                 emptyBodyForJira(ScopeName.READ, HttpMethod.POST, "jira/rest/agile/1.0/backlog/issue", false),

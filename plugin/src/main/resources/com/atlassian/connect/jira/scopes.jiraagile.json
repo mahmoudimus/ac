@@ -7,7 +7,7 @@
         },
         {
             "key": "WRITE",
-            "restPathKeys": ["sprintRank", "rank", "addIssueToEpic", "rankIssues", "sprint"],
+            "restPathKeys": ["sprintRank", "rank", "addIssueToEpic", "removeIssuesFromEpic", "rankIssues", "sprint"],
             "methods": ["PUT"]
         },
         {
@@ -68,6 +68,13 @@
             "key": "addIssueToEpic",
             "name": "greenhopper",
             "basePaths": ["/epics/.+/add$"],
+            "versions": ["1.0"],
+            "public": false
+        },
+        {
+            "key": "removeIssuesFromEpic",
+            "name": "greenhopper",
+            "basePaths": ["/epics/remove$"],
             "versions": ["1.0"],
             "public": false
         },
