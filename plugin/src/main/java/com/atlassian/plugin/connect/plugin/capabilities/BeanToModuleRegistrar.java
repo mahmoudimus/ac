@@ -22,6 +22,7 @@ import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,11 +153,9 @@ public class BeanToModuleRegistrar
 
     private void processFields(ConnectAddonBean addon, BeanTransformContext ctx, List<DescriptorToRegister> descriptorsToRegister)
     {
-        validateModules(addon);
-
-        for (Map.Entry<String,List<ModuleBean>> entry : addon.getModuleBeans().entrySet())
+        for (Map.Entry<String,Supplier<List<ModuleBean>>> entry : addon.getModules().entrySet())
         {
-            List<ModuleBean> beans = entry.getValue();
+            List<ModuleBean> beans = entry.getValue().get();
             ConnectModuleProvider provider = findProvider(entry.getKey());
             List<ModuleDescriptor> descriptors = provider.provideModules(new DefaultConnectModuleProviderContext(addon), ctx.getTheConnectPlugin(), beans);
             List<DescriptorToRegister> theseDescriptors = Lists.transform(descriptors, new Function<ModuleDescriptor, DescriptorToRegister>()
@@ -169,28 +168,6 @@ public class BeanToModuleRegistrar
             });
             descriptorsToRegister.addAll(theseDescriptors);
         }
-    }
-    
-    public void validateModules(ConnectAddonBean addon)
-    {
-        Map<String, List<ModuleBean>> beanMap = new HashMap<>();
-        
-        for (Map.Entry<String,List<JsonObject>> entry : addon.getModules().entrySet())
-        {
-            ConnectModuleProvider provider = findProvider(entry.getKey());
-            if(provider == null)
-            {
-                // BAD NEWS, FAIL!
-            }
-
-            List<ModuleBean> beans = provider.validate(entry.getValue(), provider.getBeanClass());
-            if(beans == null)
-            {
-                // BAD NEWS, FAIL!
-            }
-            beanMap.put(provider.getDescriptorKey(), beans);
-        }
-        addon.setModuleBeans(beanMap);
     }
 
     private ConnectModuleProvider findProvider(String descriptorKey)

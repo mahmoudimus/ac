@@ -61,9 +61,9 @@ public class ConnectAddonToPluginFactory
             pluginInfo.addParameter(ATLASSIAN_LICENSING_ENABLED, "true");
         }
 
-        if(addon.getModuleBeans() != null && addon.getModuleBeans().get("configurePage") != null)
+        if(addon.getModules() != null && addon.getModules().get("configurePage") != null)
         {
-            ConnectPageModuleBean configurePage = (ConnectPageModuleBean) addon.getModuleBeans().get("configurePage").get(0);
+            ConnectPageModuleBean configurePage = (ConnectPageModuleBean) addon.getModules().get("configurePage").get();
             if (null != configurePage && !Strings.isNullOrEmpty(configurePage.getUrl()))
             {
                 pluginInfo.addParameter(CONFIGURE_URL, ConnectIFrameServletPath.forModule(addon.getKey(), configurePage.getRawKey()));

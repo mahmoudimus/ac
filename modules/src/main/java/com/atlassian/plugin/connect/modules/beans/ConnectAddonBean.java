@@ -158,12 +158,7 @@ public class ConnectAddonBean extends BaseModuleBean
     /**
      * The list of modules this add on provides
      */
-    private Map<String, List<JsonObject>> modules;
-
-    @SchemaIgnore
-    private transient Map<String, List<ModuleBean>> moduleBeans;
-    
-    private Map<String, Supplier<List<ModuleBean>>> modulesTest;
+    private Map<String, Supplier<List<ModuleBean>>> modules;
 
     /**
      * Set of [scopes](../scopes/scopes.html) requested by this add on
@@ -216,17 +211,6 @@ public class ConnectAddonBean extends BaseModuleBean
         {
             this.modules = new HashMap<>();
         }
-
-        if (null == moduleBeans)
-        {
-            this.moduleBeans = new HashMap<>();
-        }
-
-        if (null == modulesTest)
-        {
-            this.modulesTest = new HashMap<>();
-        }
-
 
         if (null == vendor)
         {
@@ -287,25 +271,9 @@ public class ConnectAddonBean extends BaseModuleBean
         return vendor;
     }
 
-    public Map<String, List<JsonObject>> getModules()
+    public Map<String, Supplier<List<ModuleBean>>> getModules()
     {
         return modules;
-    }
-
-    public Map<String, Supplier<List<ModuleBean>>> getModulesTest()
-    {
-        return modulesTest;
-
-    }
-
-    public Map<String, List<ModuleBean>> getModuleBeans()
-    {
-        return moduleBeans;
-    }
-
-    public void setModuleBeans(Map<String, List<ModuleBean>> moduleBeans)
-    {
-        this.moduleBeans = moduleBeans;
     }
 
     public Map<String, String> getLinks()
@@ -377,8 +345,6 @@ public class ConnectAddonBean extends BaseModuleBean
                 .append(authentication, other.authentication)
                 .append(enableLicensing, other.enableLicensing)
                 .append(modules, other.modules)
-                .append(moduleBeans, other.moduleBeans)
-                .append(modulesTest, other.modulesTest)
                 .append(scopes, other.scopes)
                 .isEquals();
     }
@@ -400,8 +366,6 @@ public class ConnectAddonBean extends BaseModuleBean
                 .append(authentication)
                 .append(enableLicensing)
                 .append(modules)
-                .append(moduleBeans)
-                .append(modulesTest)
                 .append(scopes)
                 .build();
     }

@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValida
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
 import com.atlassian.sal.api.message.I18nResolver;
+import com.google.common.base.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,11 +95,11 @@ public class PageConditionsValidator implements AddOnBeanValidator
     {
         List<ConnectPageModuleBean> pages = new ArrayList<ConnectPageModuleBean>();
 
-        for (Map.Entry<String,List<ModuleBean>> entry : addonBean.getModuleBeans().entrySet())
+        for (Map.Entry<String,Supplier<List<ModuleBean>>> entry : addonBean.getModules().entrySet())
         {
-            if(entry.getValue().get(0) instanceof ConnectPageModuleBean)
+            List<ModuleBean> moduleBeans = entry.getValue().get();
+            if(moduleBeans.get(0) instanceof ConnectPageModuleBean)
             {
-                List<ModuleBean> moduleBeans = entry.getValue();
                 for (ModuleBean moduleBean : moduleBeans)
                 {
                     pages.add((ConnectPageModuleBean)moduleBean);

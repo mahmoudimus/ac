@@ -37,9 +37,7 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     private String baseUrl;
     private AuthenticationBean authentication;
     private Boolean enableLicensing;
-    private Map<String, Supplier<List<ModuleBean>>> modulesTest;
-    private Map<String, List<JsonObject>> modules;
-    private Map<String, List<ModuleBean>> moduleBeans;
+    private Map<String, Supplier<List<ModuleBean>>> modules;
 
     public ConnectAddonBeanBuilder()
     {
@@ -55,8 +53,6 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         this.vendor = defaultBean.getVendor();
         this.links = defaultBean.getLinks();
         this.modules = defaultBean.getModules();
-        this.modulesTest = defaultBean.getModulesTest();
-        this.moduleBeans = defaultBean.getModuleBeans();
         this.lifecycle = defaultBean.getLifecycle();
         this.baseUrl = defaultBean.getBaseUrl();
         this.authentication = defaultBean.getAuthentication();
@@ -100,39 +96,34 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         return (T) this;
     }
 
-    public T withModules(String fieldName, ModuleBean... beans)
+    public T withModules(String fieldName, final ModuleBean... beans)
     {
-        for (ModuleBean bean : beans)
+        final Supplier<List<ModuleBean>> moduleBeanSupplier = new Supplier<List<ModuleBean>>()
         {
-            withModule(fieldName, bean);
+            @Override
+            public List<ModuleBean> get()
+            {
+                return Arrays.asList(beans);
+            }
+        };
+        
+        if (null == modules)
+        {
+            this.modules = new HashMap<>();
         }
+        
+        if (null == modules.get(fieldName))
+        {
+            modules.put(fieldName, moduleBeanSupplier);
+        }
+        
         return (T) this;
     }
 
     public T withModule(String fieldName, ModuleBean bean)
     {
-        if (null == modules)
-        {
-            this.modules = new HashMap<>();
-        }
-        if (null == modules.get(fieldName))
-        {
-            modules.put(fieldName, new ArrayList<JsonObject>());
-        }
-
-        modules.get(fieldName).add(ConnectModulesGsonFactory.getGson().toJsonTree(bean).getAsJsonObject());
-
-        if (null == moduleBeans)
-        {
-            this.moduleBeans = new HashMap<>();
-        }
-        if (null == moduleBeans.get(fieldName))
-        {
-            moduleBeans.put(fieldName, new ArrayList<ModuleBean>());
-        }
-
-        moduleBeans.get(fieldName).add(bean);
-
+        withModules(fieldName, bean);
+        
         return (T) this;
     }
 

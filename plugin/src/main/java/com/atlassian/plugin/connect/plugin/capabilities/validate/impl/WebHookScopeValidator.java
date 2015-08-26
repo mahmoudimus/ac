@@ -34,7 +34,7 @@ public class WebHookScopeValidator implements AddOnBeanValidator
     @Override
     public void validate(final ConnectAddonBean addon) throws InvalidDescriptorException
     {
-        List<ModuleBean> webhooks = addon.getModuleBeans().get("webhooks");
+        List<ModuleBean> webhooks = addon.getModules().get("webhooks").get();
         if (webhooks != null)
         {
             for (ModuleBean moduleBean : webhooks)
