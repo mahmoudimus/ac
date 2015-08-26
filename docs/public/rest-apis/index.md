@@ -163,12 +163,14 @@ Atlassian Connect provides a set of REST APIs specifically designed for use by a
                     <tr>
                         <td class="name">
                             <code>license.supportEntitlementNumber</code>
+                            (optional)
                         </td>
                         <td class="type">
                             <code>string</code>
                         </td>
                         <td class="description last">
-                            <p>The [Support Entitlement Number](https://confluence.atlassian.com/display/Support/Finding+Your+Support+Entitlement+Number) (SEN) associated with the license.</p>
+                            <p>The [Support Entitlement Number](https://confluence.atlassian.com/display/Support/Finding+Your+Support+Entitlement+Number) (SEN) associated with the license.
+                            This attribute will be included for a licensed (paid) add-on.</p>
                         </td>
                     </tr>
                 </tbody>

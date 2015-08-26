@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.1.47-SNAPSHOT</version>
+    <version>1.1.48-SNAPSHOT</version>
     <organization>
         <name>Atlassian</name>
         <url>http://atlassian.com/</url>
@@ -771,7 +771,7 @@
         <atlassian.webresource.version>3.1.0</atlassian.webresource.version>
         <atlassian.webfragments.version>3.0.0-m7</atlassian.webfragments.version>
         <atlassian.html.encoder.version>1.4</atlassian.html.encoder.version>
-        <quickreload.version>1.3</quickreload.version>
+        <quickreload.version>1.27</quickreload.version>
         <frontend.plugin.version>0.0.22</frontend.plugin.version>
         <atlassian.jira.cross.compat.version>0.48</atlassian.jira.cross.compat.version>
 
