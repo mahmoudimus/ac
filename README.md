@@ -25,7 +25,7 @@ developer documentation.
 
 To run with Universal Plugin Manager able to connect to Atlassian Marketplace, append the following parameter to the command.
 
-     -Djvmargs='-Datlassian.upm.on.demand=true'
+    -Djvmargs='-Datlassian.upm.on.demand=true'
 
 ## Reporting a problem
 
@@ -39,9 +39,10 @@ on Atlassian Ecosystem JIRA.
 
 Contributions are encouraged!
 
-1. Create an issue in either of the Atlassian Ecosystem JIRA projects
-   [AC](https://ecosystem.atlassian.net/browse/AC), [ACJIRA](https://ecosystem.atlassian.net/browse/ACJIRA)
-   or [CE](https://ecosystem.atlassian.net/browse/CE)
+1. Create an issue in either of the following Atlassian Ecosystem JIRA projects.
+    * [AC](https://ecosystem.atlassian.net/browse/AC) (Atlassian Connect)
+    * [ACJIRA](https://ecosystem.atlassian.net/browse/ACJIRA) (JIRA Ecosystem)
+    * [CE](https://ecosystem.atlassian.net/browse/CE) (Confluence Ecosystem)
 2. If you are an Atlassian developer, follow the [internal developer's guide](https://extranet.atlassian.com/display/ARA/Atlassian+Connect+Internal+Developer%27s+Guide)
 3. Create your feature branch, e.g. `feature/AC-1-create-project`
     * The prefix `feature/` is required for branch builds to run (without passing builds, you cannot merge your pull request)
@@ -52,17 +53,17 @@ Contributions are encouraged!
 ### Repository structure
 
 * `api-parent` - the parent of all modules containing public interfaces
-  * `api` - a draft application programming interface for the plugin
-  * `spi` - a draft service provider interface for the plugin
+	* `api` - a draft application programming interface for the plugin
+	* `spi` - a draft service provider interface for the plugin
 * `bin` - utility scripts
 * `confluence` - the parent of all Confluence-specific modules
-  * `confluence-support` - support for Atlassian Connect in Confluence
-  * `confluence-reference-plugin` - a reference implementation of some SPI interfaces for Confluence
+	* `confluence-support` - support for Atlassian Connect in Confluence
+	* `confluence-reference-plugin` - a reference implementation of some SPI interfaces for Confluence
 * `crowd-support` - support for Atlassian Connect in products that use Atlassian Crowd
 * `docs` - a Node.js project for generating [the developer documentation](https://connect.atlassian.com)
 * `integration-tests` - integration tests for the plugin
 * `jira` - the parent of all JIRA-specific modules
-  * `jira-reference-plugin` - a reference implementation of some SPI interfaces for JIRA
+	* `jira-reference-plugin` - a reference implementation of some SPI interfaces for JIRA
 * `modules` - bean representations of add-on JSON descriptor elements
 * `plugin` - groups the other modules and [`atlassian-connect-js`](https://stash.atlassian.com/projects/AC/repos/atlassian-connect-js) into a plugin
 * `plugin-lifecycle-tests` - wired tests for the plugin lifecycle, requiring plugin uninstallation
@@ -90,7 +91,7 @@ To run unit tests:
 
 To run JavaScript unit tests:
 
-    mvn package -Pkarma-tests -DskipUnits
+    mvn clean package -Pkarma-tests -DskipUnits
 
 To run wired tests:
 
