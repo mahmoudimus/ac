@@ -12,7 +12,6 @@ import com.atlassian.jira.application.ApplicationRoleManager;
 import com.atlassian.jira.license.LicenseChangedEvent;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUsers;
-import com.atlassian.fugue.Option;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,28 +35,49 @@ public class JiraLicenseChangeListener
     @EventListener
     public void onLicenseChanged(LicenseChangedEvent event)
     {
-        if (!applicationAuthorizationService.rolesEnabled()
-                || event.getPreviousLicenseDetails().isEmpty() || event.getNewLicenseDetails().isEmpty())
+        boolean ignoreEvent = false;
+        log.info("Received a LicenseChangedEvent");
+        if (!applicationAuthorizationService.rolesEnabled())
         {
-            // Renaissance is disabled, the host got its license for the first time, or the host has lost its license.
-            // There shouldn't be any add-ons that we need to adjust.
-
+            log.info("License roles are not enabled");
+            ignoreEvent = true;
+        }
+        if (event.getPreviousLicenseDetails().isEmpty())
+        {
+            log.info("No previous license details");
+            ignoreEvent = true;
+        }
+        if (event.getNewLicenseDetails().isEmpty())
+        {
+            log.info("No new license details");
+            ignoreEvent = true;
+        }
+        if (ignoreEvent)
+        {
+            log.info("Ignoring LicenseChangedEvent");
             return;
+        }
+        else
+        {
+            log.info("Handling LicenseChangedEvent");
         }
 
         Set<ApplicationKey> oldKeys = event.getPreviousLicenseDetails().get().getLicensedApplications().getKeys();
         Set<ApplicationKey> newKeys = new HashSet<>(event.getNewLicenseDetails().get().getLicensedApplications().getKeys());
         newKeys.removeAll(oldKeys);
         Set<String> newGroups = new HashSet<>();
+        StringBuilder newAppsMessage = new StringBuilder("Detected new applications: ");
         for (ApplicationKey key : newKeys)
         {
+            newAppsMessage.append(key).append(" ");
             for (Group group : applicationRoleManager.getDefaultGroups(key))
             {
                 newGroups.add(group.getName());
             }
         }
+        log.info(newAppsMessage.toString());
 
-        for(User addonUser : connectAddOnUsers.getAddonUsers())
+        for (User addonUser : connectAddOnUsers.getAddonUsers())
         {
             try
             {
