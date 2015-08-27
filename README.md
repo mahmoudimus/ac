@@ -65,7 +65,7 @@ Contributions are encouraged!
 * `jira` - the parent of all JIRA-specific modules
 	* `jira-reference-plugin` - a reference implementation of some SPI interfaces for JIRA
 * `modules` - bean representations of add-on JSON descriptor elements
-* `plugin` - groups the other modules and [`atlassian-connect-js`](https://stash.atlassian.com/projects/AC/repos/atlassian-connect-js) into a plugin
+* `plugin` - groups the other modules and [`atlassian-connect-js`](https://bitbucket.org/atlassian/atlassian-connect-js) into a plugin
 * `plugin-lifecycle-tests` - wired tests for the plugin lifecycle, requiring plugin uninstallation
 * `test-support-plugin` - a collection of utility classes for unit and integration testing
 * `wired-tests` - wired tests for the plugin
