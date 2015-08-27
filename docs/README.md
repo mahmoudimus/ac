@@ -26,7 +26,7 @@ To regenerate static documentation:
 #### Descriptor modules
 
 For validation and documentation of add-on descriptors, JSON schemas are generated from the bean representations of
-add-on JSON descriptor elements in [`modules`](../modules). As part of documentation generation, these schemas are
+add-on JSON descriptor elements in `modules`. As part of documentation generation, these schemas are
 copied from `plugin` and used to generate a documentation page for each descriptor element.
 
 Documentation for descriptor beans must be valid Javadoc. If you need more control over formatting and style, use HTML
