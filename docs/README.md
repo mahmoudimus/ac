@@ -65,28 +65,6 @@ As part of documentation generation, the JSON files defining the required scope 
 All manually managed documentation pages must be written using Markdown. If you need more control over formatting and
 style, use HTML within Markdown.
 
-### Directory structure
-
-    ├── build.js - extracts JSON schema and updates harp.json with schema contents
-    ├── harp.json - acts as a global JSON that's available to the templates. Contains JSON schema used for modules docs
-    ├── package.json (standard Node.js package.json)
-    └── public
-        ├── _layout.ejs - global layout
-        ├── _partials
-        │   └── _sidebar.ejs
-        ├── assets
-        │   ├── css
-        │   │   └── styles.less
-        │   ├── images
-        │   └── js
-        ├── modules
-        │   ├── confluence - auto-generated pages for JIRA-specific descriptor modules
-        │   ├── index.md
-        │   └── jira - auto-generated pages for JIRA-specific descriptor modules
-        ├── guides
-        │   └── index.md (getting started guide)
-        └── index.md (homepage)
-
 ### Known issues
 
 The documentation generator depends on the `node-sass` library. The installation of that library is tied to your Node.js
