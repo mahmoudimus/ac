@@ -1,110 +1,128 @@
 # Atlassian Connect
 
-This is the core repository behind [Atlassian Connect](https://developer.atlassian.com/display/AC/).
+[Atlassian Connect](https://connect.atlassian.com) is a platform for developers to build add-ons to integrate with
+Atlassian’s cloud offerings. An add-on could be an integration with another existing service, new features for the
+Atlassian application, or even a new product that runs within the Atlassian application.
 
-When getting started developing within Atlassian Connect, these commands will come in handy:
+This repository contains `atlassian-connect-plugin`, the implementation of Atlassian Connect for a subset of the
+products based on [`atlassian-plugins`](https://bitbucket.org/atlassian/atlassian-plugins): JIRA and Confluence.
 
-## Prerequisites
+## Dependencies
 
-* Maven 3.2 (n.b. the Atlassian SDK currently ships with Maven 2.1)
+* JDK 7
+* Maven 3.2
 
-## Development
+## Usage
 
-The Atlassian Connect team uses [git flow](https://www.atlassian.com/git/workflows#!workflow-gitflow).
+To build and run an Atlassian product with the development version of Atlassian Connect:
 
-The `master` branch points to the latest `atlassian-connect` release. If you are looking for bleeding edge,
-you probably want to be on the `develop` branch.
+    mvn clean install
+    mvn -pl plugin amps:debug -Dproduct=<jira|confluence>
 
-## Javascript
+To run an Atlassian product with a recent release of Atlassian Connect, see
+[Release notes](https://developer.atlassian.com/static/connect/docs/latest/resources/release-notes.html) in the
+developer documentation.
 
-Most of the connect javascript is now part of it's [own project](https://stash.atlassian.com/projects/AC/repos/atlassian-connect-js/) - check there for additional instructions. The project is consumed using the package.json file in the plugin directory.
+To run with Universal Plugin Manager able to connect to Atlassian Marketplace, append the following parameter to the command.
+
+    -Djvmargs='-Datlassian.upm.on.demand=true'
+
+## Reporting a problem
+
+See [Getting help](https://developer.atlassian.com/static/connect/docs/latest/resources/getting-help.html) in the
+developer documentation or raise an issue in the [AC](https://ecosystem.atlassian.net/browse/AC) project
+on Atlassian Ecosystem JIRA.
+
+## Development guide
 
 ### Contributions
 
-Contributions are encouraged! To start working on Atlassian Connect, follow this guide:
+Contributions are encouraged!
 
-1. Ensure there is a relevant JIRA issue in project [AC](https://ecosystem.atlassian.net/browse/AC),
-   [ACJIRA](https://ecosystem.atlassian.net/browse/ACJIRA) or [CE](https://ecosystem.atlassian.net/browse/CE)
-2. Request a QA Kickoff with [Atlassian Connect Team] (https://extranet.atlassian.com/display/ARA/Atlassian+Connect+Team) QA
-3. Create your feature branch, e.g. `feature/AC-1-implement-macro-editor`
-    * The prefix `feature/` or `issue/` is required for branch builds to run (without passing builds, you cannot merge your pull request)
+1. Create an issue in one of the following Atlassian Ecosystem JIRA projects.
+    * [AC](https://ecosystem.atlassian.net/browse/AC) (Atlassian Connect)
+    * [ACJIRA](https://ecosystem.atlassian.net/browse/ACJIRA) (JIRA Ecosystem)
+    * [CE](https://ecosystem.atlassian.net/browse/CE) (Confluence Ecosystem)
+2. If you are an Atlassian developer, follow the [internal developer's guide](https://extranet.atlassian.com/display/ARA/Atlassian+Connect+Internal+Developer%27s+Guide)
+3. Create your feature branch, e.g. `feature/AC-1-create-project`
+    * The prefix `feature/` is required for branch builds to run (without passing builds, you cannot merge your pull request)
     * Include your issue key and a short description
-4. Commit and push
-5. Create a pull request in [Stash](https://stash.atlassian.com/projects/AC/repos/atlassian-connect/) with 1-3 reviewers from the team (depending on the complexity of the change).
-6. Request a QA Demo with [Atlassian Connect Team] (https://extranet.atlassian.com/display/ARA/Atlassian+Connect+Team) QA
+4. Push your changes, prefixing each commit message with the issue key
+5. Create a pull request against this repository
 
-For more details see the [internal developer's guide](https://extranet.atlassian.com/x/cAhDg).
+### Repository structure
 
-## Building
+* `api-parent` - the parent of all modules containing public interfaces
+	* `api` - a draft application programming interface for the plugin
+	* `spi` - a draft service provider interface for the plugin
+* `bin` - utility scripts
+* `confluence` - the parent of all Confluence-specific modules
+	* `confluence-support` - support for Atlassian Connect in Confluence
+	* `confluence-reference-plugin` - a reference implementation of some SPI interfaces for Confluence
+* `crowd-support` - support for Atlassian Connect in products that use Atlassian Crowd
+* `docs` - a Node.js project for generating [the developer documentation](https://connect.atlassian.com)
+* `integration-tests` - integration tests for the plugin
+* `jira` - the parent of all JIRA-specific modules
+	* `jira-reference-plugin` - a reference implementation of some SPI interfaces for JIRA
+* `modules` - bean representations of add-on JSON descriptor elements
+* `plugin` - groups the other modules and [`atlassian-connect-js`](https://bitbucket.org/atlassian/atlassian-connect-js) into a plugin
+* `plugin-lifecycle-tests` - wired tests for the plugin lifecycle, requiring plugin uninstallation
+* `test-support-plugin` - a collection of utility classes for unit and integration testing
+* `wired-tests` - wired tests for the plugin
 
-To build the plugin, run:
+### Branches
 
-    mvn clean install -DskipTests=true
+This repository uses the [git flow](https://www.atlassian.com/git/workflows#!workflow-gitflow) branching workflow.
 
-## Testing Locally
+* `master` - contains the latest release
+* `develop` - contains the stable development version
 
-To run the integration tests locally, *cd into the integration-tests directory*
+### Building
 
-    mvn clean verify -P it -DtestGroups=jira
+To build the plugin:
 
-or
+    mvn clean install
 
-    mvn clean verify -P it -DtestGroups=confluence
+### Running tests
 
-To run a single test/method, do something like:
+To run unit tests:
 
-    mvn clean verify -P it -DtestGroups=jira -Dit.test=TestPageModules#testMyGeneralLoaded
+    mvn test
 
-To run an integration test against a particular product in IDEA (only applies to tests that can run against more than one product):
-    Edit configurations -> VM Options = -DtestedProduct=<product>
+To run JavaScript unit tests:
 
-There may be an issue running with Chrome on a MAC, (see ACDEV-1842)
-To run tests with Chrome on a MAC, use -Dwebdriver.browser=chrome:<path to your own Chrome binary> -Dwebdriver.chrome.driver=<path to your own chromedriver>
+    mvn clean package -Pkarma-tests -DskipUnits
 
-### Wired Tests
+To run wired tests:
 
-Wired tests can be run from [the Plugin Test Console](https://developer.atlassian.com/display/DOCS/Run+Wired+Tests+with+the+Plugin+Test+Console) inside the host application.
-They can also be run directly with Maven or IDEA, but that requires setting the `baseUrl` parameter to point the test runner to your local instance, e.g. `-Dbaseurl=http://localhost:2990/jira`.
+    mvn clean install
+    mvn -pl wired-tests verify -Pwired
 
-To debug a test, you must first [create a remote debug target](https://developer.atlassian.com/docs/developer-tools/working-in-an-ide/creating-a-remote-debug-target).
-Then, start debugging using the remote debug target and thereafter run the test in debug mode.
+To run plug-in lifecycle tests:
 
-To run manually
+    mvn clean install
+    mvn -pl plugin-lifecycle-tests verify -PpluginLifecycle
 
-    mvn amps:debug -pl wired-tests -Pwired -Dproduct=<jira|confluence> -Dproduct.version=<version>
+To run integration tests:
 
+    mvn clean install
+    mvn -pl integration-tests verify -Pit [-DtestGroups=...]
 
-## Running
+To run add-on descriptor validation tests:
 
-To run an Atlassian product with the development version of Atlassian Connect:
+    mvn clean install
+    (cd bin/marketplace; npm install)
+    node bin/marketplace/validate-descriptors.js --type json --testReport=plugin/src/test/resources/descriptor/descriptor-validation-results.json
+    mvn -pl plugin test -DdescriptorValidation=true
 
-    mvn amps:debug -pl plugin -Dproduct=<product>
+### Updating developer documentation
 
-To run with UPM available to connect to the marketplace:
+To generate [the developer documentation](https://connect.atlassian.com):
 
-    mvn amps:debug -pl plugin -Dproduct=<product> -Dproduct.version=<version> -Djvmargs='-Datlassian.upm.on.demand=true'
+    mvn clean install site
 
-eg,
+Also see the README in the [`docs`](docs) directory.
 
-    mvn amps:debug -pl plugin -Dproduct=jira -Dproduct.version=6.1-for-AC-2 -Djvmargs='-Datlassian.upm.on.demand=true'
+## License
 
-## Reloading
-
-The atlassian connect plugin uses [quickreload](https://extranet.atlassian.com/pages/viewpage.action?pageId=2227343457).
-It will automatically reload the connect plugin as soon as it detects that the jar has changed. The recommended fastest way to make this happen
-is to keep `atlas-cli` running in the `plugin` directory, and enter the `package` command to re-build.
-
-If you want quickreload to watch and auto-load other plugins from source, add the directories to the `.quickrelaod` file in the source tree root.
-
-quickreload also automatically finds and uses the `resources` directory of our plugin
-(and any plugin it's watching that has the standard maven layout), so there is no need to set `-Dplugin.resource.directories` in `MAVEN_OPTS` anymore.
-
-To load via the Atlassian SDK, use
-
-    mvn amps:cli -pl plugin -Dproduct=jira
-
-Where `<product>` is either `jira` or `confluence`. If left empty, the plugin will run inside of JIRA
-
-To load via curl:
-
-TODO: add new upm install instructions here.
+This project is licensed under the [Apache License, Version 2.0](LICENSE.txt).
