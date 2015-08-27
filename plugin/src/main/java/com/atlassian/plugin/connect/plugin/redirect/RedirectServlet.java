@@ -26,7 +26,7 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
  */
 public class RedirectServlet extends HttpServlet
 {
-    // It matches addOnKey and moduleKey from url
+    // Matches addOnKey and moduleKey from url: /addon.key/module.key
     private static final Pattern PATH_PATTERN = Pattern.compile("^/([^/]+)/([^/]+)");
 
     public static final int TEMPORARY_REDIRECT_CODE = 307;
@@ -59,6 +59,7 @@ public class RedirectServlet extends HttpServlet
         if (!matcher.find())
         {
             resp.sendError(SC_NOT_FOUND);
+            return;
         }
 
         String addOnKey = matcher.group(1);
@@ -68,6 +69,7 @@ public class RedirectServlet extends HttpServlet
         if (redirectData == null)
         {
             resp.sendError(SC_NOT_FOUND);
+            return;
         }
 
         ModuleContextParameters moduleContextParameters = moduleContextParser.parseContextParameters(req);

@@ -53,7 +53,7 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         for (WebPanelModuleBean bean : beans)
         {
-            boolean doesWebPanelNeedRedirection = movableWebSectionSearcher.isWebPanelInMovableWebSection(bean, moduleProviderContext.getConnectAddonBean());
+            boolean webPanelNeedsRedirection = movableWebSectionSearcher.isWebPanelInMovableWebSection(bean, moduleProviderContext.getConnectAddonBean());
             // register an iframe rendering strategy
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
                     .addOn(connectAddonBean.getKey())
@@ -62,11 +62,11 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
                     .urlTemplate(bean.getUrl())
                     .title(bean.getDisplayName())
                     .dimensions(bean.getLayout().getWidth(), bean.getLayout().getHeight())
-                    .redirect(doesWebPanelNeedRedirection)
+                    .redirect(webPanelNeedsRedirection)
                     .build();
             iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), renderStrategy);
 
-            if (doesWebPanelNeedRedirection)
+            if (webPanelNeedsRedirection)
             {
                 RedirectData redirectData = redirectDataBuilderFactory.builder()
                         .addOn(connectAddonBean.getKey())

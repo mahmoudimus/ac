@@ -25,10 +25,10 @@ public class MovableWebSectionSearcher
 
     public boolean isWebPanelInMovableWebSection(final WebPanelModuleBean bean, final ConnectAddonBean connectAddonBean)
     {
-        return isMovableWebSectionOrLiveInIt(bean.getLocation(), connectAddonBean.getModules().getWebSections());
+        return isMovableWebSectionOrChildOfMovableWebSection(bean.getLocation(), connectAddonBean.getModules().getWebSections());
     }
 
-    private boolean isMovableWebSectionOrLiveInIt(final String sectionKey, List<WebSectionModuleBean> webSections)
+    private boolean isMovableWebSectionOrChildOfMovableWebSection(final String sectionKey, List<WebSectionModuleBean> webSections)
     {
         boolean isMovableWebSection = Iterables.any(movableWebSectionKeysProvider.provide(), new Predicate<String>()
         {
@@ -51,7 +51,7 @@ public class MovableWebSectionSearcher
         }
 
         final String parentSectionLocation = parentSection.get().getLocation();
-        return isMovableWebSectionOrLiveInIt(parentSectionLocation, webSections);
+        return isMovableWebSectionOrChildOfMovableWebSection(parentSectionLocation, webSections);
     }
 
     private Optional<WebSectionModuleBean> findParentSection(final String location, List<WebSectionModuleBean> webSections)
