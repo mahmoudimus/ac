@@ -39,7 +39,7 @@ on Atlassian Ecosystem JIRA.
 
 Contributions are encouraged!
 
-1. Create an issue in either of the following Atlassian Ecosystem JIRA projects.
+1. Create an issue in one of the following Atlassian Ecosystem JIRA projects.
     * [AC](https://ecosystem.atlassian.net/browse/AC) (Atlassian Connect)
     * [ACJIRA](https://ecosystem.atlassian.net/browse/ACJIRA) (JIRA Ecosystem)
     * [CE](https://ecosystem.atlassian.net/browse/CE) (Confluence Ecosystem)
