@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.jira.usermanagement;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,10 +26,13 @@ import static com.atlassian.fugue.Option.none;
 import static com.atlassian.fugue.Option.some;
 import static java.util.Arrays.asList;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anySet;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class TestJiraLicenseChangeListener
 {
@@ -48,6 +52,9 @@ public class TestJiraLicenseChangeListener
     @Before
     public void beforeEach()
     {
+        initMocks(this);
+
+        when(applicationAuthorizationService.rolesEnabled()).thenReturn(true);
         polonius = mock(User.class);
         when(polonius.getName()).thenReturn("honestman");
         charles = mock(User.class);
@@ -57,8 +64,55 @@ public class TestJiraLicenseChangeListener
         when(connectAddOnUsers.getAddonUsers()).thenReturn(asList(polonius, charles));
     }
 
-    // One or both of the license details are empty
-    // * It doesn't do anything
+    @SuppressWarnings ("unchecked")
+    @Test
+    public void onLicenseChangedIgnoresBrandNewLicense() throws Exception
+    {
+        LicenseChangedEvent event = mockLicenseKeys(Collections.<String>emptySet(), ImmutableSet.of("jira-for-skaters"));
+        jiraLicenseChangeListener.onLicenseChanged(event);
+
+        verify(applicationRoleManager, never()).getDefaultGroups(any(ApplicationKey.class));
+        verify(connectAddOnUserGroupProvisioningService, never()).ensureUserIsInGroups(anyString(), anySet());
+        verify(connectAddOnUserGroupProvisioningService, never()).ensureUserIsInGroup(anyString(), anyString());
+    }
+
+    @SuppressWarnings ("unchecked")
+    @Test
+    public void onLicenseChangedIgnoresRevokedLicense() throws Exception
+    {
+        LicenseChangedEvent event = mockLicenseKeys(ImmutableSet.of("jira-for-lepidopterists"), Collections.<String>emptySet());
+        jiraLicenseChangeListener.onLicenseChanged(event);
+
+        verify(applicationRoleManager, never()).getDefaultGroups(any(ApplicationKey.class));
+        verify(connectAddOnUserGroupProvisioningService, never()).ensureUserIsInGroups(anyString(), anySet());
+        verify(connectAddOnUserGroupProvisioningService, never()).ensureUserIsInGroup(anyString(), anyString());
+    }
+
+    @SuppressWarnings ("unchecked")
+    @Test
+    public void onLicenseChangedIgnoresEmptyLicenseEvent() throws Exception
+    {
+        LicenseChangedEvent event = mockLicenseKeys(Collections.<String>emptySet(), Collections.<String>emptySet());
+        jiraLicenseChangeListener.onLicenseChanged(event);
+
+        verify(applicationRoleManager, never()).getDefaultGroups(any(ApplicationKey.class));
+        verify(connectAddOnUserGroupProvisioningService, never()).ensureUserIsInGroups(anyString(), anySet());
+        verify(connectAddOnUserGroupProvisioningService, never()).ensureUserIsInGroup(anyString(), anyString());
+    }
+
+    @SuppressWarnings ("unchecked")
+    @Test
+    public void onLicenseChangedIsNoOpWhenRenaissanceIsOff() throws Exception
+    {
+        when(applicationAuthorizationService.rolesEnabled()).thenReturn(false);
+        LicenseChangedEvent event = mockLicenseKeys(ImmutableSet.of("jira-for-arborists"), ImmutableSet.of("jira-for-arborists", "jira-for-cattle-rustlers"));
+        jiraLicenseChangeListener.onLicenseChanged(event);
+
+        verify(applicationRoleManager, never()).getDefaultGroups(any(ApplicationKey.class));
+        verify(connectAddOnUserGroupProvisioningService, never()).ensureUserIsInGroups(anyString(), anySet());
+        verify(connectAddOnUserGroupProvisioningService, never()).ensureUserIsInGroup(anyString(), anyString());
+    }
+
 
     @Test
     public void onLicenseChangedAddsUsersToNewlyLicensedApplicationDefaultGroups() throws Exception
@@ -75,9 +129,8 @@ public class TestJiraLicenseChangeListener
 
         verify(applicationRoleManager).getDefaultGroups(ApplicationKey.valueOf(newAppKey));
         verify(applicationRoleManager, never()).getDefaultGroups(ApplicationKey.valueOf(oldAppKey));
-
-        verify(connectAddOnUserGroupProvisioningService).ensureUserIsInGroup(charles.getName(), newAppGroup.getName());
-        verify(connectAddOnUserGroupProvisioningService).ensureUserIsInGroup(polonius.getName(), newAppGroup.getName());
+        verify(connectAddOnUserGroupProvisioningService).ensureUserIsInGroups(polonius.getName(), ImmutableSet.of(newAppGroup.getName()));
+        verify(connectAddOnUserGroupProvisioningService).ensureUserIsInGroups(charles.getName(), ImmutableSet.of(newAppGroup.getName()));
     }
 
     // ensureUserIsInGroup throws for one of the users
@@ -86,7 +139,6 @@ public class TestJiraLicenseChangeListener
     @SuppressWarnings ("unchecked")
     private LicenseChangedEvent mockLicenseKeys(Set<String> oldKeys, Set<String> newKeys)
     {
-        LicenseChangedEvent event = mock(LicenseChangedEvent.class);
         LicenseDetails oldLicenseDetails = mock(LicenseDetails.class);
         LicenseDetails newLicenseDetails = mock(LicenseDetails.class);
 
@@ -109,9 +161,7 @@ public class TestJiraLicenseChangeListener
 
         Option oldDetailsOption = oldKeys.isEmpty() ? none() : some(oldLicenseDetails);
         Option newDetailsOption = newKeys.isEmpty() ? none() : some(newLicenseDetails);
-        when(event.getNewLicenseDetails()).thenReturn(oldDetailsOption);
-        when(event.getNewLicenseDetails()).thenReturn(newDetailsOption);
 
-        return event;
+        return new LicenseChangedEvent(oldDetailsOption, newDetailsOption);
     }
 }
