@@ -83,6 +83,11 @@ To build the plugin:
 
     mvn clean install
 
+The plugin build includes a Node.js project for building the JavaScript API from [`atlassian-connect-js`](https://bitbucket.org/atlassian/atlassian-connect-js).
+To skip invoking the Node.js build, append the following parameter to the command.
+
+    -DskipNpm
+
 ### Running tests
 
 To run unit tests:
