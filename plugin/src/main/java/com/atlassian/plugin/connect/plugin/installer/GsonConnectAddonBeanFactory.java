@@ -20,8 +20,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -118,7 +116,7 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
     {
 //        try
 //        {
-            JsonDeserializer moduleDeserializer = new PluginAwareModuleBeanSerializer(pluginAccessor);
+            JsonDeserializer moduleDeserializer = new PluginAwareModuleBeanDeserializer(pluginAccessor);
             return ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(jsonDescriptor, i18nCollector, moduleDeserializer);
 //        }
 //        catch (Exception e)

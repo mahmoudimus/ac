@@ -6,8 +6,8 @@ import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.Sets;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Type;
 
@@ -15,22 +15,18 @@ import java.lang.reflect.Type;
 
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderModuleDescriptor;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Collection;
 
-public class PluginAwareModuleBeanSerializer implements JsonDeserializer<Map<String, Supplier<List<ModuleBean>>>>
+public class PluginAwareModuleBeanDeserializer implements JsonDeserializer<Map<String, Supplier<List<ModuleBean>>>>
 {
     private final Map<String, ConnectModuleProvider> moduleProviders;
 
-    public PluginAwareModuleBeanSerializer(PluginAccessor pluginAccessor)
+    public PluginAwareModuleBeanDeserializer(PluginAccessor pluginAccessor)
     {
         this.moduleProviders = buildModuleProviderMap(pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class)));
     }
