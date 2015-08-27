@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
-import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.model.user.User;
 
 /**
