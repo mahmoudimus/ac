@@ -9,6 +9,7 @@ import com.atlassian.jira.entity.property.EntityProperty;
 import com.atlassian.jira.entity.property.EntityPropertyService;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.comments.Comment;
+import com.atlassian.jira.issue.issuetype.IssueType;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
@@ -18,6 +19,7 @@ import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import static org.junit.Assert.assertTrue;
 
@@ -55,6 +57,7 @@ public class JiraTestUtil
                 .withKey(key)
                 .withLead(user)
                 .withDescription(key)
+                .withProjectTemplateKey("com.atlassian.jira-core-project-templates:jira-issuetracking")
                 .build();
 
         ProjectService.CreateProjectValidationResult result = projectService.validateCreateProject(user, projectCreationData);
@@ -68,9 +71,11 @@ public class JiraTestUtil
         final ApplicationUser admin = getAdmin();
 
         Project project = createProject();
+        Collection<IssueType> issueTypes = project.getIssueTypes();
+        IssueType anyIssueType = issueTypes.iterator().next();
 
         IssueService.IssueResult issueResult = issueService.create(admin, issueService.validateCreate(admin, issueService.newIssueInputParameters()
-                .setIssueTypeId("1")
+                .setIssueTypeId(anyIssueType.getId())
                 .setReporterId(admin.getKey())
                 .setAssigneeId(admin.getKey())
                 .setDescription("Description")
