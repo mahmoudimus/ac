@@ -14,6 +14,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,25 +27,33 @@ public class DefaultModuleLocationQualifier implements ModuleLocationQualifier
     // a map of unqualified key -> qualified key for all modules that can be referenced from the locations of other
     // modules.
     private final Supplier<Map<String, String>> keyMapSupplier;
+    private final ConnectAddonBean addonBean;
 
     public DefaultModuleLocationQualifier(final ConnectAddonBean addonBean)
     {
+        this.addonBean = addonBean;
         this.keyMapSupplier = Suppliers.memoize(new Supplier<Map<String, String>>()
         {
             @Override
             public Map<String, String> get()
             {
                 return ImmutableMap.<String, String>builder()
-                        .putAll(createKeyToQualifiedKeyMap(addonBean.getModules().get("webItems").get()))
-                        .putAll(createKeyToQualifiedKeyMap(addonBean.getModules().get("webSecions").get()))
+                        .putAll(createKeyToQualifiedKeyMap(addonBean.getModules().get("webItems")))
+                        .putAll(createKeyToQualifiedKeyMap(addonBean.getModules().get("webSecions")))
                         .build();
             }
         });
     }
 
-    private Map<String, String> createKeyToQualifiedKeyMap(List<ModuleBean> beans)
+    private Map<String, String> createKeyToQualifiedKeyMap(@Nullable Supplier<List<ModuleBean>> supplier)
     {
-
+        if (supplier == null)
+        {
+            return new HashMap<>();
+        }
+        
+        List<ModuleBean> beans = supplier.get();
+        
         final ImmutableMap<String, ModuleBean> map = Maps.uniqueIndex(beans, new Function<ModuleBean, String>()
         {
             @Override
@@ -59,7 +68,7 @@ public class DefaultModuleLocationQualifier implements ModuleLocationQualifier
             @Override
             public String apply(@Nullable ModuleBean bean)
             {
-                return ((RequiredKeyBean)bean).getRawKey();
+                return ((RequiredKeyBean)bean).getKey(addonBean);
             }
         });
     }
