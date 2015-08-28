@@ -8,7 +8,9 @@ import com.google.gson.Gson;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
@@ -26,32 +28,18 @@ public class ReportModuleBeanTest
     @Test
     public void producesCorrectJSON() throws IOException
     {
-        Map<String, String> links = new HashMap<String, String>();
-        links.put("self", "http://www.example.com/capabilities");
-        links.put("homepage", "http://www.example.com");
-
-        ConnectAddonBean addon = newConnectAddonBean()
-                .withName("My Plugin")
-                .withKey("my-plugin")
-                .withVersion("1.0")
-                .withLinks(links)
-                .withBaseurl("http://www.example.com")
-                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.JWT).withPublicKey("S0m3Publ1cK3y").build())
-                .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
-                .withModules(ReportModuleProvider.DESCRIPTOR_KEY, createBeans())
-                .build();
-
-
+        List<ReportModuleBean> beans = createBeans();
+        
         Gson gson = ConnectModulesGsonFactory.getGson();
-        String json = gson.toJson(addon, ConnectAddonBean.class);
+        String json = gson.toJson(beans, List.class);
         String expectedJson = readTestFile();
 
         assertThat(json, is(sameJSONAs(expectedJson)));
     }
 
-    private static ModuleBean[] createBeans()
+    private static List<ReportModuleBean> createBeans()
     {
-        return new ReportModuleBean[] {
+        return Arrays.asList(
             ReportModuleBean.newBuilder()
                 .withKey("jira-report")
                 .withWeight(5)
@@ -67,7 +55,7 @@ public class ReportModuleBeanTest
                 .withDescription(new I18nProperty("description 2", "description i18n"))
                 .withName(new I18nProperty("report-2", "report i18n"))
                 .build()
-        };
+        );
     }
 
     private static String readTestFile() throws IOException

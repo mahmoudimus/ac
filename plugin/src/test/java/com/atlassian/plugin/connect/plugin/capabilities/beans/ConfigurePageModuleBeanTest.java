@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.capabilities.beans;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.testsupport.util.matcher.SameDeepPropertyValuesAs;
@@ -24,9 +25,9 @@ public class ConfigurePageModuleBeanTest
     @Test
     public void producesCorrectJSON() throws Exception
     {
-        ConnectAddonBean bean = createBean();
+        ConnectPageModuleBean bean = createBean();
         Gson gson = ConnectModulesGsonFactory.getGson();
-        String json = gson.toJson(bean, ConnectAddonBean.class);
+        String json = gson.toJson(bean, ConnectPageModuleBean.class);
         String expectedJson = readTestFile();
 
         assertThat(json, is(sameJSONAs(expectedJson)));
@@ -37,8 +38,8 @@ public class ConfigurePageModuleBeanTest
     {
         String json = readTestFile();
         Gson gson = ConnectModulesGsonFactory.getGson();
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
-        ConnectAddonBean bean = createBean();
+        ConnectPageModuleBean deserializedBean = gson.fromJson(json, ConnectPageModuleBean.class);
+        ConnectPageModuleBean bean = createBean();
 
         assertThat(deserializedBean, SameDeepPropertyValuesAs.sameDeepPropertyValuesAs(bean));
     }
@@ -46,32 +47,23 @@ public class ConfigurePageModuleBeanTest
     @Test
     public void roundTrippingIsPreserving()
     {
-        ConnectAddonBean originalBean = createBean();
+        ConnectPageModuleBean originalBean = createBean();
         Gson gson = ConnectModulesGsonFactory.getGson();
-        String json = gson.toJson(originalBean, ConnectAddonBean.class);
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
+        String json = gson.toJson(originalBean, ConnectPageModuleBean.class);
+        ConnectPageModuleBean deserializedBean = gson.fromJson(json, ConnectPageModuleBean.class);
 
         assertThat(deserializedBean, SameDeepPropertyValuesAs.sameDeepPropertyValuesAs(originalBean));
     }
 
-    private static ConnectAddonBean createBean()
+    private static ConnectPageModuleBean createBean()
     {
-        return newConnectAddonBean()
-                .withName("My Add-On")
-                .withKey("my-add-on")
-                .withVersion("2.0")
-                .withBaseurl("http://www.example.com")
-                .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
-                .withModule("configurePage",
-                        newPageBean()
-                                .withName(new I18nProperty("Some page", "some.page.name"))
-                                .withKey("configure-page")
-                                .withLocation("")
-                                .withUrl("/my-page")
-                                .withIcon(newIconBean().withUrl("/mypage/icon.png").withHeight(80).withWidth(80).build())
-                                .build()
-                )
-                .build();
+        return newPageBean()
+            .withName(new I18nProperty("Some page", "some.page.name"))
+            .withKey("configure-page")
+            .withLocation("")
+            .withUrl("/my-page")
+            .withIcon(newIconBean().withUrl("/mypage/icon.png").withHeight(80).withWidth(80).build())
+            .build();
     }
 
     private static String readTestFile() throws IOException
