@@ -97,15 +97,16 @@ public class CrowdAddOnUserService implements ConnectAddOnUserService
         connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), Constants.ADDON_USER_GROUP_KEY);
         if (userCreationResult.isNewlyCreated())
         {
-            addNewUserToRequiredGroups(user.getName());
+            addNewUserToRequiredGroups(user);
         }
 
         return user.getName();
     }
 
-    private void addNewUserToRequiredGroups(String username)
+    private void addNewUserToRequiredGroups(User user)
             throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, OperationFailedException, InvalidAuthenticationException
     {
+        String username = user.getName();
         for (String group : connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected())
         {
             try
