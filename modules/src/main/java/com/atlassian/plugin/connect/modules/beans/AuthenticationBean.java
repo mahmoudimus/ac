@@ -7,7 +7,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Defines the authentication type to use when signing requests between the host application and the connect add on.
- * The authentication type can be either jwt or oauth. If the type is not supplied it will default to jwt.
+ * The authentication type can be JWT or none. If the type is not supplied it will default to JWT.
  *
  *#### Example
  *
@@ -23,8 +23,7 @@ public class AuthenticationBean extends BaseModuleBean
     private AuthenticationType type;
 
     /**
-     * The public key used for asymmetric key encryption. Cannot be null if using OAUTH, and ignored when using JWT with
-     * a shared secret.
+     * The public key used for asymmetric key encryption. Ignored when using JWT with a shared secret.
      */
     private String publicKey;
 

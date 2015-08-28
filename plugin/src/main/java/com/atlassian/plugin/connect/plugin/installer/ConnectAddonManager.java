@@ -353,9 +353,7 @@ public class ConnectAddonManager
 
     public boolean isAddonEnabled(String pluginKey)
     {
-        log.info("Checking whether Connect addon '" + pluginKey + "' is enabled...");
         boolean isEnabled = beanToModuleRegistrar.descriptorsAreRegistered(pluginKey);
-        log.info("'" + pluginKey + "' is " + (isEnabled ? "enabled" : "disabled"));
         return isEnabled;
     }
 
@@ -708,19 +706,6 @@ public class ConnectAddonManager
                 .withProductType(nullToEmpty(productAccessor.getKey()))
                 .withDescription(nullToEmpty(consumer.getDescription()))
                 .withEventType(eventType);
-
-        if (null != addon && null != addon.getAuthentication() && AuthenticationType.OAUTH.equals(addon.getAuthentication().getType()))
-        {
-            // Only add user_key
-            UserProfile user = userManager.getRemoteUser();
-            if (null != user)
-            {
-                //noinspection deprecation
-                dataBuilder.withUserKey(user.getUserKey().getStringValue());
-            }
-
-            dataBuilder.withLink("oauth", nullToEmpty(baseUrl) + "/rest/atlassian-connect/latest/oauth");
-        }
 
         ConnectAddonEventData data = dataBuilder.build();
 

@@ -43,7 +43,7 @@ public class ConnectProjectTabPanelModuleBeanTest
                         .withUrl("/my-general-page")
                         .withWeight(100)
                         .build())
-                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withPublicKey("S0m3Publ1cK3y").build())
+                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.JWT).build())
                 .build();
 
         Gson gson = ConnectModulesGsonFactory.getGson();

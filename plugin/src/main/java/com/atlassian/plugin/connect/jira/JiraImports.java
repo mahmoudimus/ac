@@ -20,6 +20,7 @@ import com.atlassian.jira.bc.project.property.ProjectPropertyService;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
 import com.atlassian.jira.bc.subtask.conversion.IssueToSubTaskConversionService;
 import com.atlassian.jira.bc.subtask.conversion.SubTaskToIssueConversionService;
+import com.atlassian.jira.bc.user.UserPropertyService;
 import com.atlassian.jira.config.FeatureManager;
 import com.atlassian.jira.config.IssueTypeService;
 import com.atlassian.jira.config.SubTaskManager;
@@ -89,6 +90,7 @@ public class JiraImports
             @JiraImport TimeZoneService timeZoneService,
             @JiraImport UserIssueHistoryManager userIssueHistoryManager,
             @JiraImport UserPreferencesManager userPreferencesManager,
+            @JiraImport UserPropertyService userPropertyService,
             @JiraImport ("jiraUserManager") UserManager userManager,
             @JiraImport UserUtil userUtil,
             @JiraImport VelocityRequestContextFactory velocityRequestContextFactory,

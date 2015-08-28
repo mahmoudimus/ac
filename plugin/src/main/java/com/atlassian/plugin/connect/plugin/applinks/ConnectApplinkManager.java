@@ -17,8 +17,8 @@ public interface ConnectApplinkManager
      * Creates an {@link ApplicationLink} for a connect add-on.
      * @param plugin The plugin to create the applink for
      * @param baseUrl The baseurl of the connect addon
-     * @param authType JWT or OAUTH
-     * @param publicKey the publicKey used for asymmetric key encryption. Cannot be null if using OAUTH or JWT+RSA
+     * @param authType the authentication type, must be JWT
+     * @param publicKey the publicKey used for asymmetric key encryption. Cannot be null if using JWT+RSA
      * @param addonUserKey the user-key of the add-on user; will be stored for later retrieval when we work out the {@link java.security.Principal} for incoming requests from this add-on
      * 
      * @deprecated use the addonBean version
@@ -30,8 +30,8 @@ public interface ConnectApplinkManager
      * Creates an {@link ApplicationLink} for a connect add-on.
      * @param addon The addon to create the applink for
      * @param baseUrl The baseurl of the connect addon
-     * @param authType JWT or OAUTH
-     * @param publicKey the publicKey used for asymmetric key encryption. Cannot be null if using OAUTH or JWT+RSA
+     * @param authType the authentication type, must be JWT
+     * @param publicKey the publicKey used for asymmetric key encryption. Cannot be null if using JWT+RSA
      * @param addonUserKey the user-key of the add-on user; will be stored for later retrieval when we work out the {@link java.security.Principal} for incoming requests from this add-on
      */
     void createAppLink(ConnectAddonBean addon, String baseUrl, AuthenticationType authType, String publicKey, String addonUserKey);

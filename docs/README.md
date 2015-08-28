@@ -1,100 +1,74 @@
-# How to Doco Atlassian Connect
+# Atlassian Connect Developer Documentation
 
-This directory contains everything you need to generate documentation for Atlassian Connect. First, what does the Atlassian Connect documentation cover?
+This Node.js project produces the developer documentation for Atlassian Connect, which is publicly available at
+[https://connect.atlassian.com](https://connect.atlassian.com).
 
-* Getting started guide -- `public/guides/index.md`
-* Other potential guides -- `public/guides/*.md`
-* Module reference docs driven by JavaDoc in ModuleBeans -- these are auto generated using the JSON schema and lives in `public/modules/*`
-* Any other documentation that we can think of (e.g., FAQs, Help & Support, etc.)
+The documentation is generated using [Harp](http://harpjs.com), a static web server with built-in preprocessing.
 
-## How does it all work?
+## Development guide
 
-We use a Nodejs based static site generator called [Harp](http://harpjs.com/). It's a very simple tool that acts as a server and generator. When you're writing docs, it's nice to be able to see what it will actually look like. That's what the server is for. When we're ready to publish the docs we can generate static HTML files and publish them to DAC.
+### Generating the documentation
 
-### Directory structure
-
-    .
-    ├── README.md (this file)
-    ├── build.js (extracts JSON schema and updates harp.json with schema contents)
-    ├── harp.json (acts as a global JSON that's available to the templates. Contains JSON schema used for modules docs)
-    ├── package.json (standard Nodejs package.json)
-    └── public
-        ├── _layout.ejs (global layout)
-        ├── _partials
-        │   └── _sidebar.ejs
-        ├── assets
-        │   ├── css
-        │   │   └── styles.less
-        │   ├── images
-        │   └── js
-        ├── modules
-        │   ├── confluence (build.js will populate this with modules markdown files)
-        │   ├── index.md
-        │   └── jira (build.js will populate this with modules markdown files)
-        ├── guides
-        │   └── index.md (getting started guide)
-        └── index.md (homepage)
-
-### About Harp
-
-Harp takes everything stored under the `public` directory and preprocesses it. Harp supports Jade, Markdown, EJS, CoffeeScript, LESS, and Stylus. If you want to write plain ole HTML, CSS, JS, you can do that too. However, to adhere to a common convention, let's assume the following rules:
-
-* All guides must be written with Markdown
-* All modules JavaDocs must be written with Markdown
-* Any unconventional styling you need to apply to your doco can be done with plain ole HTML within Markdown
-
-Got it? If not, all you need to know is that you need to write your docs in Markdown!
-
-## Workflow for generating documentation
-
-Currently there are three main requirements for the docs modules:
-
-1. Json-Schema from the plugin module,
-2. Version 0.10.26 of NodeJs and
-3. Atlassian-Connect-Js repository
-
-The easiest way to fulfill all the requirements is to run the following command in the parent directory.
+From the repository root, to build the project and set up dependencies for documentation generation:
 
     mvn clean install pre-site -DskipTests
 
-### Running the server
-
-Harp has its own server that allows you to preview your doc dynamically without having to rebuild it after each change. The server will pick up changes to your Markdown and any changes to your templates or assets -- the Harp preprocessor is dynamic.
-
-It's nice that Harp picks up changes dynamically, but it doesn't automatically update the browser when these changes are detected. For that, I recommend the awesome [LiveReload](http://livereload.com/) mac app. Harp + LiveReload makes it possible to work on your doc and see your changes in real-time.
-
-To run the server, simply issue the following command:
+From this directory, to regenerate the documentation and start a web server at http://localhost:9000 with automatic change detection:
 
     npm run-script start
 
-This will launch an HTTP server on <http://localhost:9000>.
-
-You may run into node-sass binding issues if you run this command with a version of node >= 0.12.0. To fix this issue, try this command from the docs/ directory:
-
-    npm rebuild node-sass
-
-### Generating static docs
-
-You'll likely never need to do this locally since we'll probably be doing this during the builds, but if you do, it's simply:
+To regenerate static documentation:
 
     npm run-script build
 
-## A word about the JSON schema
+### Updating the documentation
 
-As awesome as Doklovic is, his JSON schema doesn't get generated dynamically. Unfortunately, it still requires Maven to do the heavy lifting. So, today, to generate the JSON schema (if you make changes to the ModuleBeans JavaDocs), you have to:
+#### Descriptor modules
 
-    mvn install -DskipTests
-    
-or just to generate the schema:
+For validation and documentation of add-on descriptors, JSON schemas are generated from the bean representations of
+add-on JSON descriptor elements in `modules`. As part of documentation generation, these schemas are
+copied from `plugin` and used to generate a documentation page for each descriptor element.
 
-	mvn process-classes
+Documentation for descriptor beans must be valid Javadoc. If you need more control over formatting and style, use HTML
+within Javadoc. Do not use Markdown within Javadoc.
 
-After you do that, you'll need to run:
+JSON schemas are generated in a two-step process using the [`json-schemagen`](https://bitbucket.org/atlassian/json-schemagen)
+Maven plugin.
 
-    npm run-script update
+* The `generate-support-docs` goal uses a custom Javadoc doclet to generate the files `jsonSchemaDocs.json` and `jsonSchemaInterfaces.json`
+* The `generate-schema` goal uses those files to produce a JSON schema
 
-This will pick up the updated JSON schema and update `harp.json` with the new schema.
+Several schemas are generated from the descriptor beans: a shallow schema excluding the module list and a schema for
+each product, including any specific modules for that product.
 
-## Doc redirects
+To regenerate the schemas after changing the source code or the Javadoc of `modules`:
 
-See https://extranet.atlassian.com/x/aYk3j
+	mvn -pl plugin process-classes
+
+To explicitly invoke the `json-schemagen` goals to generate an individual schema (using [mvnvm](http://mvnvm.org) and
+functionality introduced in Maven 3.3):
+
+    mvn --mvn-version 3.3.3 -pl plugin external.atlassian.json:json-schemagen-maven-plugin:generate-support-docs@schema-support external.atlassian.json:json-schemagen-maven-plugin:generate-schema@<jira|confluence>-schema
+
+#### JavaScript API modules
+
+As part of documentation generation, the source code of the Atlassian Connect JavaScript API is copied from `plugin` and
+used to generate a documentation page for each module with [JSDoc](http://usejsdoc.org).
+
+#### REST and RPC API scopes
+
+As part of documentation generation, the JSON files defining the required scope for each REST and RPC API method from
+`plugin` and used to generate a documentation page for each product API.
+
+#### Other pages
+
+All manually managed documentation pages must be written using Markdown. If you need more control over formatting and
+style, use HTML within Markdown.
+
+### Known issues
+
+The documentation generator depends on the `node-sass` library. The installation of that library is tied to your Node.js
+version and OS version. You may run into node-sass binding issues if you run this command with a version of Node.js
+greater than >= 0.12.0. To fix this issue, run the following command from `docs`.
+
+    npm rebuild node-sass
