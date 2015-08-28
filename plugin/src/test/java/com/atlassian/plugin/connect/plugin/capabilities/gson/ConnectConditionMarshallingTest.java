@@ -51,7 +51,7 @@ public class ConnectConditionMarshallingTest
     @Test
     public void verifySerializationWorks() throws Exception
     {
-        String expected = "[{\"condition\":\"some_condition\",\"invert\":false},{\"and\":[{\"condition\":\"some_condition2\",\"invert\":false},{\"or\":[{\"condition\":\"some_condition3\",\"invert\":false}]}]}]";
+        String expected = readAddonTestFile("conditionUnmarshalling.json");
 
         Type conditionalType = new TypeToken<List<ConditionalBean>>() {}.getType();
         List<ConditionalBean> conditionList = newArrayList();

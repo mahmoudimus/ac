@@ -1,0 +1,22 @@
+[
+  {
+    "condition": "some_condition",
+    "invert": false
+  },
+  {
+    "and": [
+      {
+        "condition": "some_condition2",
+        "invert": false
+      },
+      {
+        "or": [
+          {
+            "condition": "some_condition3",
+            "invert": false
+          }
+        ]
+      }
+    ]
+  }
+]

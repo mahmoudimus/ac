@@ -5,7 +5,6 @@ import com.atlassian.plugin.connect.modules.beans.builder.WebSectionModuleBeanBu
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.modules.gson.ModuleListDeserializer;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.junit.Test;

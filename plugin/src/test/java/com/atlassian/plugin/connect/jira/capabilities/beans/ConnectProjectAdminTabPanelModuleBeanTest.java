@@ -1,26 +1,16 @@
 package com.atlassian.plugin.connect.jira.capabilities.beans;
 
-import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean;
-import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.jira.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
 import com.opensymphony.util.FileUtils;
 import org.junit.Test;
 import org.springframework.core.io.DefaultResourceLoader;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
-import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean.newProjectAdminTabPanelBean;
-import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 import static com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory.getGson;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
 
@@ -30,7 +20,7 @@ public class ConnectProjectAdminTabPanelModuleBeanTest
     @Test
     public void producesCorrectJSON() throws Exception
     {
-        String json = getGson().toJson(createBean(), ConnectAddonBean.class);
+        String json = getGson().toJson(createBean(), ConnectProjectAdminTabPanelModuleBean.class);
         assertThat(json, is(sameJSONAs(expectedJson())));
     }
 
