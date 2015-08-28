@@ -180,7 +180,7 @@ public class WorkflowPostFunctionTest
     private ServletRequestSnapshot triggerWorkflowTransition() throws CreateException, IOException
     {
         MutableIssue issue = issueManager.getIssueObject(jiraTestUtil.createIssue().getId());
-        workflowManager.migrateIssueToWorkflow(issue, workflow, issue.getStatusObject());
+        workflowManager.migrateIssueToWorkflow(issue, workflow, issue.getStatus());
         WorkflowTransitionUtilImpl workflowTransition = new WorkflowTransitionUtilImpl(
                 authenticationContext,
                 workflowManager,

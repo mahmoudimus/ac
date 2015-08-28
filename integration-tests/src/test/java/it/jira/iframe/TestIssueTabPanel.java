@@ -11,7 +11,6 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.ParameterCapturingConditionServlet;
-import it.util.TestProject;
 import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -84,7 +83,7 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
     public void setUpTest() throws Exception
     {
         user = testUserFactory.basicUser();
-        issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for tab", user.getUsername());
+        issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for tab");
     }
 
     @Test

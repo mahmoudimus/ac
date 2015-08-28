@@ -21,8 +21,8 @@ public class JiraTestBase
     @BeforeClass
     public static void beforeClass() throws RemoteException
     {
-        project = addProject();
         deleteAllIssueTypes();
+        project = addProject();
     }
 
     @AfterClass
