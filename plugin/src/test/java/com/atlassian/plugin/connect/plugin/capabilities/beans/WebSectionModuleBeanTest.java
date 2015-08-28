@@ -22,20 +22,18 @@ import static com.atlassian.plugin.connect.testsupport.util.matcher.SameDeepProp
 import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
 import static org.junit.Assert.assertThat;
 
+import static org.mockito.Mockito.mock;
+
 public class WebSectionModuleBeanTest
 {
     @Test
     public void producesCorrectBean() throws Exception
     {
         Gson gson = ConnectModulesGsonFactory.getGson();
-
         WebSectionModuleBean webSectionBean = createWebSectionBeanBuilder().build();
-        ConnectAddonBean addon = createAddonBeanBuilder(webSectionBean).build();
-
         String json = readTestFile("defaultWebSectionTest.json");
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
-
-        assertThat(deserializedBean, sameDeepPropertyValuesAs(addon));
+        WebSectionModuleBean deserializedBean = gson.fromJson(json, WebSectionModuleBean.class);
+        assertThat(deserializedBean, sameDeepPropertyValuesAs(webSectionBean));
     }
 
     @Test
