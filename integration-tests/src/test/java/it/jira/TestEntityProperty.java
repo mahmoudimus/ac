@@ -26,12 +26,11 @@ import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public class TestEntityProperty
+public class TestEntityProperty extends JiraTestBase
 {
     private static final TestKitLocalEnvironmentData localEnvironmentData = new TestKitLocalEnvironmentData();
     private static final String ATTACHMENT_PROPERTY_KEY = "attachment";
     private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
-    private static final String PROJECT_KEY = "EP";
     private static final String JQL_ALIAS_ATTACHMENT_SIZE = "attachmentSize";
     private static final String JQL_ALIAS_ATTACHMENT_EXTENSION = "attachmentExtension";
 
@@ -80,18 +79,6 @@ public class TestEntityProperty
         {
             remotePlugin.stopAndUninstall();
         }
-    }
-
-    @Before
-    public void setup()
-    {
-        projectControl.addProject("Entity Property", PROJECT_KEY, "admin");
-    }
-
-    @After
-    public void tearDown()
-    {
-        projectControl.deleteProject(PROJECT_KEY);
     }
 
     @Test
@@ -147,8 +134,8 @@ public class TestEntityProperty
                 )
                 .start();
 
-        IssueCreateResponse firstIssueWithProperty = issueClient.createIssue(PROJECT_KEY, "First issue with attachment data");
-        IssueCreateResponse secondIssueWithProperty = issueClient.createIssue(PROJECT_KEY, "Second issue with attachment data");
+        IssueCreateResponse firstIssueWithProperty = issueClient.createIssue(project.getKey(), "First issue with attachment data");
+        IssueCreateResponse secondIssueWithProperty = issueClient.createIssue(project.getKey(), "Second issue with attachment data");
 
         // set the issue property
         JSONObject attachmentData = getAttachmentData();
@@ -170,7 +157,7 @@ public class TestEntityProperty
 
     private void setPropertyAndSearchForValue(String jqlName, Operator operator, String searchValue) throws JSONException
     {
-        IssueCreateResponse issue = issueClient.createIssue(PROJECT_KEY, "Some issue with attachment data");
+        IssueCreateResponse issue = issueClient.createIssue(project.getKey(), "Some issue with attachment data");
 
         // Issue property should be indexed during PUT operation
         JSONObject attachmentData = getAttachmentData();

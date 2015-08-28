@@ -24,7 +24,7 @@ import static org.junit.Assert.assertThat;
 
 public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
 {
-    private static final String PROJECT_KEY = "PR";
+
     private static ConnectRunner remotePlugin;
     private EntityPropertyClient issueEntityPropertyClient;
 
@@ -65,14 +65,12 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
     {
         issueEntityPropertyClient = new EntityPropertyClient(product.environmentData(), "issue");
         login(testUserFactory.admin());
-        product.backdoor().project().addProject("Entity Property", PROJECT_KEY, "admin");
     }
 
     @After
     public void tearDown()
     {
         login(testUserFactory.admin());
-        product.backdoor().project().deleteProject(PROJECT_KEY);
     }
 
     @Test
@@ -105,7 +103,7 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
 
     private IssueCreateResponse createIssue() throws RemoteException
     {
-        return product.backdoor().issues().createIssue(PROJECT_KEY, "Test issue");
+        return product.backdoor().issues().createIssue(project.getKey(), "Test issue");
     }
 
     private boolean webPanelIsVisible(String panelKey, final IssueCreateResponse issue)
