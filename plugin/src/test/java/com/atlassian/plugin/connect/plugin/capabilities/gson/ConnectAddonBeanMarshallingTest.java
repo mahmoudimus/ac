@@ -1,9 +1,11 @@
 package com.atlassian.plugin.connect.plugin.capabilities.gson;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.web.api.WebItem;
 import com.google.gson.Gson;
 import org.junit.Test;
 
@@ -97,18 +99,18 @@ public class ConnectAddonBeanMarshallingTest
     @Test
     public void singleModule() throws Exception
     {
-//        String json = readAddonTestFile("addonSingleCapability.json");
-//
-//        Gson gson = ConnectModulesGsonFactory.getGson();
-//        ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
-//
-//        List<WebItemModuleBean> moduleList = addOn.getModules().getWebItems();
-//
-//        assertEquals(1, moduleList.size());
-//
-//        WebItemModuleBean module = moduleList.get(0);
-//
-//        assertEquals("a web item", module.getName().getValue());
+        String json = readAddonTestFile("addonSingleCapability.json");
+
+        Gson gson = ConnectModulesGsonFactory.getGson();
+        ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
+
+        List<ModuleBean> moduleList = addOn.getModules().get("webItems").get();
+
+        assertEquals(1, moduleList.size());
+
+        WebItemModuleBean module = (WebItemModuleBean) moduleList.get(0);
+
+        assertEquals("a web item", module.getName().getValue());
     }
 
     /**
@@ -119,18 +121,18 @@ public class ConnectAddonBeanMarshallingTest
     @Test
     public void multiCapabilities() throws Exception
     {
-//        String json = readAddonTestFile("addonMultipleCapabilities.json");
-//
-//        Gson gson = ConnectModulesGsonFactory.getGson();
-//        ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
-//
-//        List<WebItemModuleBean> moduleList = addOn.getModules().getWebItems();
-//
-//        assertEquals(2, moduleList.size());
-//        assertEquals("a web item", moduleList.get(0).getName().getValue());
-//        assertEquals("another web item", moduleList.get(1).getName().getValue());
-//
-//        assertEquals("http://www.example.com", addOn.getBaseUrl());
+        String json = readAddonTestFile("addonMultipleCapabilities.json");
+
+        Gson gson = ConnectModulesGsonFactory.getGson();
+        ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
+
+        List<ModuleBean> moduleList = addOn.getModules().get("webItems").get();
+
+        assertEquals(2, moduleList.size());
+        assertEquals("a web item", ((WebItemModuleBean)moduleList.get(0)).getName().getValue());
+        assertEquals("another web item", ((WebItemModuleBean)moduleList.get(1)).getName().getValue());
+
+        assertEquals("http://www.example.com", addOn.getBaseUrl());
     }
 
     @Test

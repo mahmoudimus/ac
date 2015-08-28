@@ -20,6 +20,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -63,44 +65,44 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
     @Override
     public ConnectAddonBean fromJson(String jsonDescriptor, Map<String, String> i18nCollector) throws InvalidDescriptorException
     {
-//        final String schema;
-//        try
-//        {
-//            schema = connectSchemaLocator.getSchemaForCurrentProduct();
-//        }
-//        catch (IOException e)
-//        {
-//            throw new IllegalStateException("Failed to read JSON schema for descriptor", e);
-//        }
-//
-//        DescriptorValidationResult result = jsonDescriptorValidator.validate(jsonDescriptor, schema);
-//        if (!result.isWellformed())
-//        {
-//            throw new InvalidDescriptorException("Malformed connect descriptor: " + result.getReportAsString(), "connect.invalid.descriptor.malformed.json");
-//        }
-//        if (!result.isValid())
-//        {
-//            String exceptionMessage = "Invalid connect descriptor: " + result.getReportAsString();
-//            log.error(exceptionMessage);
-//
-//            String i18nKey;
-//            Serializable[] params;
-//            if (isDevModeService.isDevMode())
-//            {
-//                i18nKey = "connect.install.error.remote.descriptor.validation.dev";
-//                String validationMessage = buildErrorMessage(result);
-//                params = new Serializable[] {validationMessage};
-//            }
-//            else
-//            {
-//                i18nKey = "connect.install.error.remote.descriptor.validation";
-//                params = new Serializable[] {applicationProperties.getDisplayName()};
-//            }
-//            throw new InvalidDescriptorException(exceptionMessage, i18nKey, params);
-//        }
+        final String schema;
+        try
+        {
+            schema = connectSchemaLocator.getSchemaForCurrentProduct();
+        }
+        catch (IOException e)
+        {
+            throw new IllegalStateException("Failed to read JSON schema for descriptor", e);
+        }
+
+        DescriptorValidationResult result = jsonDescriptorValidator.validate(jsonDescriptor, schema);
+        if (!result.isWellformed())
+        {
+            throw new InvalidDescriptorException("Malformed connect descriptor: " + result.getReportAsString(), "connect.invalid.descriptor.malformed.json");
+        }
+        if (!result.isValid())
+        {
+            String exceptionMessage = "Invalid connect descriptor: " + result.getReportAsString();
+            log.error(exceptionMessage);
+
+            String i18nKey;
+            Serializable[] params;
+            if (isDevModeService.isDevMode())
+            {
+                i18nKey = "connect.install.error.remote.descriptor.validation.dev";
+                String validationMessage = buildErrorMessage(result);
+                params = new Serializable[] {validationMessage};
+            }
+            else
+            {
+                i18nKey = "connect.install.error.remote.descriptor.validation";
+                params = new Serializable[] {applicationProperties.getDisplayName()};
+            }
+            throw new InvalidDescriptorException(exceptionMessage, i18nKey, params);
+        }
 
         ConnectAddonBean addOn = fromJsonSkipValidation(jsonDescriptor,i18nCollector);
-        //addOnBeanValidatorService.validate(addOn);
+        addOnBeanValidatorService.validate(addOn);
 
         return addOn;
     }
@@ -114,17 +116,17 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
     @Override
     public ConnectAddonBean fromJsonSkipValidation(String jsonDescriptor, Map<String, String> i18nCollector)
     {
-//        try
-//        {
+        try
+        {
             JsonDeserializer moduleDeserializer = new PluginAwareModuleBeanDeserializer(pluginAccessor);
             return ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(jsonDescriptor, i18nCollector, moduleDeserializer);
-//        }
-//        catch (Exception e)
-//        {
-//            String exceptionMessage = "Invalid connect descriptor: " + e.getMessage();
-//            log.error(exceptionMessage);
-//            throw new InvalidDescriptorException(exceptionMessage, "connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
-//        }
+        }
+        catch (Exception e)
+        {
+            String exceptionMessage = "Invalid connect descriptor: " + e.getMessage();
+            log.error(exceptionMessage);
+            throw new InvalidDescriptorException(exceptionMessage, "connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
+        }
     }
 
     @Override

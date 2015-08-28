@@ -61,18 +61,18 @@ public class PageConditionValidationTest
     {
         validateFully(readConditionJson("valid-nested-remote-condition.json"));
     }
-//
-//    @Test(expected = InvalidDescriptorException.class)
-//    public void invalidConditionFails() throws Exception
-//    {
-//        validateFully(readConditionJson("invalid-condition.json"));
-//    }
-//
-//    @Test(expected = InvalidDescriptorException.class)
-//    public void invalidNestedConditionFails() throws Exception
-//    {
-//        validateFully(readConditionJson("invalid-nested-condition.json"));
-//    }
+
+    @Test(expected = InvalidDescriptorException.class)
+    public void invalidConditionFails() throws Exception
+    {
+        validateFully(readConditionJson("invalid-condition.json"));
+    }
+
+    @Test(expected = InvalidDescriptorException.class)
+    public void invalidNestedConditionFails() throws Exception
+    {
+        validateFully(readConditionJson("invalid-nested-condition.json"));
+    }
 
     private String readConditionJson(String filename) throws IOException
     {
