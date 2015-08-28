@@ -24,6 +24,9 @@ import com.google.common.base.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.atlassian.plugin.connect.crowd.usermanagement.UserCreationResult.UserNewness.NEWLY_CREATED;
+import static com.atlassian.plugin.connect.crowd.usermanagement.UserCreationResult.UserNewness.PRE_EXISTING;
+
 public abstract class ConnectCrowdBase
         implements ConnectAddOnUserGroupProvisioningService
 {
@@ -35,12 +38,12 @@ public abstract class ConnectCrowdBase
         this.userReconciliation = userReconciliation;
     }
 
-    public User createOrEnableUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential)
+    public UserCreationResult createOrEnableUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential)
     {
         Optional<? extends User> user = findUserByName(username);
         if (!user.isPresent())
         {
-            return createUser(username, displayName, emailAddress, passwordCredential);
+            return new UserCreationResult(createUser(username, displayName, emailAddress, passwordCredential), NEWLY_CREATED);
         }
 
         User foundUser = user.get();
@@ -49,7 +52,7 @@ public abstract class ConnectCrowdBase
         {
             updateUser(requiredUpdates.get());
         }
-        return foundUser;
+        return new UserCreationResult(foundUser, PRE_EXISTING);
     }
 
     public void disableUser(String username)
