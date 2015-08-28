@@ -66,14 +66,16 @@ public class JiraLicenseChangeListener
         Set<ApplicationKey> newKeys = new HashSet<>(event.getNewLicenseDetails().get().getLicensedApplications().getKeys());
         newKeys.removeAll(oldKeys);
         Set<String> newGroups = new HashSet<>();
-        StringBuilder newAppsMessage = new StringBuilder("Detected new applications: ");
+        StringBuilder newAppsMessage = new StringBuilder("Detected new applications with default groups: ");
         for (ApplicationKey key : newKeys)
         {
-            newAppsMessage.append(key).append(" ");
+            newAppsMessage.append(key).append(": [");
             for (Group group : applicationRoleManager.getDefaultGroups(key))
             {
+                newAppsMessage.append(group.getName()).append(" ");
                 newGroups.add(group.getName());
             }
+            newAppsMessage.append("]");
         }
         log.info(newAppsMessage.toString());
 
