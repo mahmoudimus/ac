@@ -3,9 +3,8 @@ package it.com.atlassian.plugin.connect.jira.util;
 import com.atlassian.jira.bc.issue.IssueService;
 import com.atlassian.jira.bc.issue.comment.CommentService;
 import com.atlassian.jira.bc.issue.comment.property.CommentPropertyService;
+import com.atlassian.jira.bc.project.ProjectCreationData;
 import com.atlassian.jira.bc.project.ProjectService;
-import com.atlassian.jira.compatibility.bridge.project.ProjectCreationData;
-import com.atlassian.jira.compatibility.bridge.project.ProjectServiceBridge;
 import com.atlassian.jira.entity.property.EntityProperty;
 import com.atlassian.jira.entity.property.EntityPropertyService;
 import com.atlassian.jira.issue.Issue;
@@ -28,21 +27,18 @@ public class JiraTestUtil
 
     private final UserManager userManager;
     private final ProjectService projectService;
-    private final ProjectServiceBridge projectServiceBridge;
     private final CommentService commentService;
     private final CommentPropertyService commentPropertyService;
     private final IssueService issueService;
 
     public JiraTestUtil(final UserManager userManager,
                         final ProjectService projectService,
-                        final ProjectServiceBridge projectServiceBridge,
                         final CommentService commentService,
                         final CommentPropertyService commentPropertyService,
                         final IssueService issueService)
     {
         this.userManager = userManager;
         this.projectService = projectService;
-        this.projectServiceBridge = projectServiceBridge;
         this.commentService = commentService;
         this.commentPropertyService = commentPropertyService;
         this.issueService = issueService;
@@ -61,7 +57,7 @@ public class JiraTestUtil
                 .withDescription(key)
                 .build();
 
-        ProjectService.CreateProjectValidationResult result = projectServiceBridge.validateCreateProject(user, projectCreationData);
+        ProjectService.CreateProjectValidationResult result = projectService.validateCreateProject(user, projectCreationData);
         return projectService.createProject(result);
     }
 
