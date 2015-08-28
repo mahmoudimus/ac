@@ -16,6 +16,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import it.util.TestProject;
 import org.hamcrest.Matchers;
 import org.junit.*;
 
@@ -39,6 +40,7 @@ public class TestEntityProperty extends JiraTestBase
     private static EntityPropertyClient entityPropertyClient;
     private static ProjectControl projectControl;
     private static SearchClient searchClient;
+    private TestProject testProject;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -79,6 +81,21 @@ public class TestEntityProperty extends JiraTestBase
         {
             remotePlugin.stopAndUninstall();
         }
+    }
+
+    /**
+     * Create a new project for easily deleting all created issues in tear-down
+     */
+    @Before
+    public void setup()
+    {
+        testProject = addProject();
+    }
+
+    @After
+    public void tearDown()
+    {
+        projectControl.deleteProject(testProject.getKey());
     }
 
     @Test
@@ -134,8 +151,8 @@ public class TestEntityProperty extends JiraTestBase
                 )
                 .start();
 
-        IssueCreateResponse firstIssueWithProperty = issueClient.createIssue(project.getKey(), "First issue with attachment data");
-        IssueCreateResponse secondIssueWithProperty = issueClient.createIssue(project.getKey(), "Second issue with attachment data");
+        IssueCreateResponse firstIssueWithProperty = issueClient.createIssue(testProject.getKey(), "First issue with attachment data");
+        IssueCreateResponse secondIssueWithProperty = issueClient.createIssue(testProject.getKey(), "Second issue with attachment data");
 
         // set the issue property
         JSONObject attachmentData = getAttachmentData();
@@ -157,7 +174,7 @@ public class TestEntityProperty extends JiraTestBase
 
     private void setPropertyAndSearchForValue(String jqlName, Operator operator, String searchValue) throws JSONException
     {
-        IssueCreateResponse issue = issueClient.createIssue(project.getKey(), "Some issue with attachment data");
+        IssueCreateResponse issue = issueClient.createIssue(testProject.getKey(), "Some issue with attachment data");
 
         // Issue property should be indexed during PUT operation
         JSONObject attachmentData = getAttachmentData();

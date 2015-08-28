@@ -11,9 +11,7 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePageWithR
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
-import it.util.TestProject;
 import it.util.TestUser;
-import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -43,7 +41,6 @@ public class TestIssueTabPanelWithJSDialog extends JiraWebDriverTestBase
 
     private TestUser user;
     private IssueCreateResponse issue;
-    private TestProject project;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception

@@ -20,15 +20,20 @@ public class JiraTestBase
     @BeforeClass
     public static void beforeClass() throws RemoteException
     {
-        String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
-        String projectId = String.valueOf(product.backdoor().project().addProjectWithTemplate(
-                "Test project " + projectKey, projectKey, "admin", "com.atlassian.jira-core-project-templates:jira-issuetracking"));
-        project = new TestProject(projectKey, projectId);
+        project = addProject();
     }
 
     @AfterClass
     public static void afterClass() throws RemoteException
     {
         product.backdoor().project().deleteProject(project.getKey());
+    }
+
+    public static TestProject addProject()
+    {
+        String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
+        String projectId = String.valueOf(product.backdoor().project().addProjectWithTemplate(
+                "Test project " + projectKey, projectKey, "admin", "com.atlassian.jira-core-project-templates:jira-issuetracking"));
+        return new TestProject(projectKey, projectId);
     }
 }

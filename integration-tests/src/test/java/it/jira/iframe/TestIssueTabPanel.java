@@ -46,7 +46,6 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
 
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
 
-    private TestProject project;
     private TestUser user;
     private IssueCreateResponse issue;
 

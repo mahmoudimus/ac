@@ -52,10 +52,7 @@ public class JiraWebDriverTestBase
 
         product.getPageBinder().override(ViewWorkflowTransitionPage.class, ExtendedViewWorkflowTransitionPage.class);
 
-        String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
-        String projectId = String.valueOf(product.backdoor().project().addProjectWithTemplate(
-                "Test project " + projectKey, projectKey, "admin", "com.atlassian.jira-core-project-templates:jira-issuetracking"));
-        project = new TestProject(projectKey, projectId);
+        project = JiraTestBase.addProject();
     }
 
     @AfterClass
