@@ -16,6 +16,8 @@ import org.mockito.Mock;
 import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.Constants.ADDON_USER_GROUP_KEY;
 import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
 import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.usernameForAddon;
+import static com.atlassian.plugin.connect.crowd.usermanagement.UserCreationResult.UserNewness.NEWLY_CREATED;
+import static com.atlassian.plugin.connect.crowd.usermanagement.UserCreationResult.UserNewness.PRE_EXISTING;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
@@ -49,7 +51,7 @@ public class TestCrowdAddOnUserService
         initMocks(this);
         when(user.getName()).thenReturn(ADDON_USERNAME);
         when(connectCrowdService.createOrEnableUser(anyString(), anyString(), anyString(),
-                any(PasswordCredential.class), anyMap())).thenReturn(new UserCreationResult(user, true));
+                any(PasswordCredential.class), anyMap())).thenReturn(new UserCreationResult(user, NEWLY_CREATED));
         crowdAddOnUserService = new CrowdAddOnUserService(
                 connectAddOnUserProvisioningService,
                 connectAddOnUserGroupProvisioningService,
@@ -93,7 +95,7 @@ public class TestCrowdAddOnUserService
     public void getOrCreateUserNameAddsPreExistingUserToAddonGroupOnly() throws Exception
     {
         when(connectCrowdService.createOrEnableUser(anyString(), anyString(), anyString(),
-                any(PasswordCredential.class), anyMap())).thenReturn(new UserCreationResult(user, false));
+                any(PasswordCredential.class), anyMap())).thenReturn(new UserCreationResult(user, PRE_EXISTING));
 
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(Sets.newHashSet("always-expected-groups"));
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(Sets.newHashSet("one-or-more-expected-groups"));
