@@ -13,10 +13,10 @@ import com.atlassian.jira.application.ApplicationRoleManager;
 import com.atlassian.jira.license.LicenseChangedEvent;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 
-import com.google.common.collect.Sets;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static com.google.common.collect.Sets.difference;
 
 public class JiraLicenseChangeListener
 {
@@ -65,29 +65,30 @@ public class JiraLicenseChangeListener
         }
 
         Set<ApplicationKey> oldKeys = event.getPreviousLicenseDetails().get().getLicensedApplications().getKeys();
-        Set<ApplicationKey> newKeys = new HashSet<>(event.getNewLicenseDetails().get().getLicensedApplications().getKeys());
-        addApplicationUsersToDefaultApplicationGroups(Sets.difference(newKeys, oldKeys));
+        Set<ApplicationKey> newKeys = event.getNewLicenseDetails().get().getLicensedApplications().getKeys();
+        addApplicationUsersToDefaultApplicationGroups(difference(newKeys, oldKeys));
     }
 
     @EventListener
     public void onLicenseConfigured(ApplicationConfigurationEvent event)
     {
+        log.info("Handling ApplicationConfigurationEvent");
         addApplicationUsersToDefaultApplicationGroups(event.getApplicationsConfigured());
     }
 
     private void addApplicationUsersToDefaultApplicationGroups(Set<ApplicationKey> keys)
     {
         Set<String> newGroups = new HashSet<>();
-        StringBuilder newAppsMessage = new StringBuilder("Found the following applicatins and groups: ");
+        StringBuilder newAppsMessage = new StringBuilder("Found the following applications and groups: ");
         for (ApplicationKey key : keys)
         {
-            newAppsMessage.append(key).append(": [");
+            newAppsMessage.append(key).append(": [ ");
             for (Group group : applicationRoleManager.getDefaultGroups(key))
             {
                 newAppsMessage.append(group.getName()).append(" ");
                 newGroups.add(group.getName());
             }
-            newAppsMessage.append("]");
+            newAppsMessage.append("] ");
         }
         log.info(newAppsMessage.toString());
 
