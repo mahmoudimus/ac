@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.jira.usermanagement;
+package com.atlassian.plugin.connect.crowd.usermanagement;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -8,10 +8,12 @@ import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.jira.application.ApplicationAuthorizationService;
+import com.atlassian.jira.application.ApplicationConfigurationEvent;
 import com.atlassian.jira.application.ApplicationRoleManager;
 import com.atlassian.jira.license.LicenseChangedEvent;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
-import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUsers;
+
+import com.google.common.collect.Sets;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,10 +66,20 @@ public class JiraLicenseChangeListener
 
         Set<ApplicationKey> oldKeys = event.getPreviousLicenseDetails().get().getLicensedApplications().getKeys();
         Set<ApplicationKey> newKeys = new HashSet<>(event.getNewLicenseDetails().get().getLicensedApplications().getKeys());
-        newKeys.removeAll(oldKeys);
+        addApplicationUsersToDefaultApplicationGroups(Sets.difference(newKeys, oldKeys));
+    }
+
+    @EventListener
+    public void onLicenseConfigured(ApplicationConfigurationEvent event)
+    {
+        addApplicationUsersToDefaultApplicationGroups(event.getApplicationsConfigured());
+    }
+
+    private void addApplicationUsersToDefaultApplicationGroups(Set<ApplicationKey> keys)
+    {
         Set<String> newGroups = new HashSet<>();
-        StringBuilder newAppsMessage = new StringBuilder("Detected new applications with default groups: ");
-        for (ApplicationKey key : newKeys)
+        StringBuilder newAppsMessage = new StringBuilder("Found the following applicatins and groups: ");
+        for (ApplicationKey key : keys)
         {
             newAppsMessage.append(key).append(": [");
             for (Group group : applicationRoleManager.getDefaultGroups(key))

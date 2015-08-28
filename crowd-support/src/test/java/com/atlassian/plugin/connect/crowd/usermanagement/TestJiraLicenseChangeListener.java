@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.jira.usermanagement;
+package com.atlassian.plugin.connect.crowd.usermanagement;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -14,7 +14,6 @@ import com.atlassian.jira.license.LicenseChangedEvent;
 import com.atlassian.jira.license.LicenseDetails;
 import com.atlassian.jira.license.MockLicensedApplications;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
-import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUsers;
 
 import com.google.common.collect.ImmutableSet;
 
