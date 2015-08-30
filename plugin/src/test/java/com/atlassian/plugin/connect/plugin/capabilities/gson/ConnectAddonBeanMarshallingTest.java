@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.plugin.installer.MockModuleBeanDeserializer;
 import com.atlassian.plugin.web.api.WebItem;
 import com.google.gson.Gson;
 import org.junit.Test;
@@ -101,7 +102,8 @@ public class ConnectAddonBeanMarshallingTest
     {
         String json = readAddonTestFile("addonSingleCapability.json");
 
-        Gson gson = ConnectModulesGsonFactory.getGson();
+        MockModuleBeanDeserializer<WebItemModuleBean> deserializer = new MockModuleBeanDeserializer<>(WebItemModuleBean.class);
+        Gson gson = ConnectModulesGsonFactory.getGson(deserializer);
         ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
 
         List<ModuleBean> moduleList = addOn.getModules().get("webItems").get();
