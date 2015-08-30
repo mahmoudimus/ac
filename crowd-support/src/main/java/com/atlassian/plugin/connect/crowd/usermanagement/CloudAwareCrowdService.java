@@ -71,24 +71,24 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
     }
 
     @Override
-    public User createOrEnableUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential)
+    public UserCreationResult createOrEnableUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential)
     {
         return createOrEnableUser(username, displayName, emailAddress, passwordCredential, Collections.<String, Set<String>>emptyMap());
     }
 
     @Override
-    public User createOrEnableUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential, Map<String, Set<String>> attributes)
+    public UserCreationResult createOrEnableUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential, Map<String, Set<String>> attributes)
     {
-        User user;
+        UserCreationResult userCreationResult;
         if (isOnDemand())
         {
             if (isConfluence())
             {
-                user = createSyncedConfluenceUser(username, displayName, emailAddress, passwordCredential, attributes);
+                userCreationResult = createSyncedConfluenceUser(username, displayName, emailAddress, passwordCredential, attributes);
             }
             else
             {
-                user = embedded.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
+                userCreationResult = embedded.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
                 if (!attributes.isEmpty())
                 {
                     embedded.setAttributesOnUser(username, attributes);
@@ -98,21 +98,21 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
         }
         else
         {
-            user = embedded.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
+            userCreationResult = embedded.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
             if (!attributes.isEmpty())
             {
                 embedded.setAttributesOnUser(username, attributes);
             }
         }
-        return user;
+        return userCreationResult;
     }
 
-    private User createSyncedConfluenceUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential, Map<String, Set<String>> attributes)
+    private UserCreationResult createSyncedConfluenceUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential, Map<String, Set<String>> attributes)
     {
-        User user;
+        UserCreationResult userCreationResult;
         try
         {
-            user = remote.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
+            userCreationResult = remote.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
             if (!embedded.findUserByName(username).isPresent())
             {
                 log.debug("queueing {} for sync", username);
@@ -135,7 +135,7 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
         {
             throw new ConnectAddOnUserInitException(e);
         }
-        return user;
+        return userCreationResult;
     }
 
     @Override

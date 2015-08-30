@@ -91,15 +91,27 @@ public class CrowdAddOnUserService implements ConnectAddOnUserService
             throws ApplicationNotFoundException, OperationFailedException, ApplicationPermissionException, UserNotFoundException, GroupNotFoundException, InvalidAuthenticationException
     {
         connectAddOnUserGroupProvisioningService.ensureGroupExists(Constants.ADDON_USER_GROUP_KEY);
-        User user = connectCrowdService.createOrEnableUser(username, addOnDisplayName, Constants.ADDON_USER_EMAIL_ADDRESS, PREVENT_LOGIN, buildConnectAddOnUserAttribute(hostProperties.getKey()));
+        UserCreationResult userCreationResult = connectCrowdService.createOrEnableUser(username, addOnDisplayName, Constants.ADDON_USER_EMAIL_ADDRESS, PREVENT_LOGIN, buildConnectAddOnUserAttribute(hostProperties.getKey()));
+        User user = userCreationResult.getUser();
 
         connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), Constants.ADDON_USER_GROUP_KEY);
+        if (userCreationResult.isNewlyCreated())
+        {
+            addNewUserToRequiredGroups(user);
+        }
 
+        return user.getName();
+    }
+
+    private void addNewUserToRequiredGroups(User user)
+            throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, OperationFailedException, InvalidAuthenticationException
+    {
+        String username = user.getName();
         for (String group : connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected())
         {
             try
             {
-                connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), group);
+                connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(username, group);
             }
             catch (GroupNotFoundException e)
             {
@@ -117,7 +129,7 @@ public class CrowdAddOnUserService implements ConnectAddOnUserService
         {
             try
             {
-                connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), group);
+                connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(username, group);
                 numPossibleDefaultGroupsAddedTo++;
             }
             catch (GroupNotFoundException e)
@@ -133,8 +145,6 @@ public class CrowdAddOnUserService implements ConnectAddOnUserService
                     "The user needs to be a member of one of these groups for basic access, otherwise the add-on will not function correctly." +
                     "Please check with an instance administrator that at least one of these groups exists and that it is not read-only.");
         }
-
-        return user.getName();
     }
 }
 
