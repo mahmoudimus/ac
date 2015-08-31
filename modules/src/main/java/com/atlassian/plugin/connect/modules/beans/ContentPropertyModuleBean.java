@@ -22,7 +22,8 @@ import com.google.common.collect.Lists;
  * alias and [UI support](../fragment/ui-support.html) in your add-on's descriptor.
  * See the [content property key](../fragment/content-property-index-key-configuration.html) documentation
  * for an example.
- * 1. Use CQL to query content based on your custom content property.
+ * 1. Use [CQL](https://developer.atlassian.com/display/CONFDEV/Advanced+Searching+using+CQL) to query content
+ * based on your custom content property.
  *
  *#### Example
  *
@@ -33,7 +34,8 @@ import com.google.common.collect.Lists;
 public class ContentPropertyModuleBean extends RequiredKeyBean
 {
     /**
-     * List of properties from which selected values are indexed.
+     * A Content Property Index Key Configuration defines which values from your JSON content property
+     * object should be indexed and made available to the CQL search syntax.
      */
     private List<ContentPropertyIndexKeyConfigurationBean> keyConfigurations;
 
