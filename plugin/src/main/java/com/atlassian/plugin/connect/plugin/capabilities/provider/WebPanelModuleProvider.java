@@ -14,6 +14,7 @@ import com.atlassian.plugin.connect.plugin.redirect.RedirectDataBuilderFactory;
 import com.atlassian.plugin.connect.plugin.redirect.RedirectRegistry;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class WebPanelModuleProvider implements ConnectModuleProvider<WebPanelMod
     private final RedirectDataBuilderFactory redirectDataBuilderFactory;
     private final MovableWebSectionSearcher movableWebSectionSearcher;
 
+    @Autowired
     public WebPanelModuleProvider(WebPanelConnectModuleDescriptorFactory webPanelFactory,
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
