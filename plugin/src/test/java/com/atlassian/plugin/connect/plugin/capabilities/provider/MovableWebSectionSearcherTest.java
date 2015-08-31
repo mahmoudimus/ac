@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
-import com.atlassian.plugin.connect.spi.web.MovableWebSectionKeysProvider;
+import com.atlassian.plugin.connect.spi.web.WebSectionLocationMetadataProvider;
 import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 
@@ -19,16 +19,16 @@ public class MovableWebSectionSearcherTest
     private final String jiraSection = "jira-section";
     private final List<String> movableSectionKeys = ImmutableList.of(movableSectionKey1, movableSectionKey2);
 
-    private final MovableWebSectionKeysProvider movableWebSectionKeysProvider = new MovableWebSectionKeysProvider()
+    private final WebSectionLocationMetadataProvider webSectionLocationMetadataProvider = new WebSectionLocationMetadataProvider()
     {
         @Override
-        public List<String> provide()
+        public List<String> getMovableWebSectionLocations()
         {
             return movableSectionKeys;
         }
     };
 
-    private final MovableWebSectionSearcher movableWebSectionSearcher = new MovableWebSectionSearcher(movableWebSectionKeysProvider);
+    private final MovableWebSectionSearcher movableWebSectionSearcher = new MovableWebSectionSearcher(webSectionLocationMetadataProvider);
 
     @Test
     public void shouldDetectThatWebPanelIsInMovableSectionWhenItIsDirectlyInMovablebSection()

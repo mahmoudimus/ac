@@ -8,7 +8,7 @@ import java.util.List;
  * Every time iframe is moved in the DOM it do the request. Because of that web panels in those web section
  * have to point to the redirect servlet which generate from them valid JWT token.
  */
-public interface MovableWebSectionKeysProvider
+public interface WebSectionLocationMetadataProvider
 {
-    List<String> provide();
+    List<String> getMovableWebSectionLocations();
 }

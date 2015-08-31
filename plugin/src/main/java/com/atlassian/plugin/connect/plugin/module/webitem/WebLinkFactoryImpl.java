@@ -40,9 +40,9 @@ public class WebLinkFactoryImpl implements WebLinkFactory
     }
 
     @Override
-    public WebLink createRemoteWebLink(WebItemModuleDescriptor webItemModuleDescriptor, WebItemModuleDescriptorData data)
+    public WebLink createRemoteWebLink(WebItemModuleDescriptor remoteWebItemModuleDescriptor, WebItemModuleDescriptorData data)
     {
-        return new RemoteWebLink(webItemModuleDescriptor, webFragmentHelper, iFrameUriBuilderFactory, urlVariableSubstitutor,
+        return new RemoteWebLink(remoteWebItemModuleDescriptor, webFragmentHelper, iFrameUriBuilderFactory, urlVariableSubstitutor,
                 webFragmentModuleContextExtractor, moduleContextFilter, data.getUrl(), data.getUrl(),
                 data.getModuleKey(), data.isAbsolute(), data.getAddOnUrlContext(), data.isDialog());
     }

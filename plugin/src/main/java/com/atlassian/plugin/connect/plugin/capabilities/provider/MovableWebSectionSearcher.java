@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
-import com.atlassian.plugin.connect.spi.web.MovableWebSectionKeysProvider;
+import com.atlassian.plugin.connect.spi.web.WebSectionLocationMetadataProvider;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -15,12 +15,12 @@ import java.util.List;
 @Component
 public class MovableWebSectionSearcher
 {
-    private final MovableWebSectionKeysProvider movableWebSectionKeysProvider;
+    private final WebSectionLocationMetadataProvider webSectionLocationMetadataProvider;
 
     @Autowired
-    public MovableWebSectionSearcher(final MovableWebSectionKeysProvider movableWebSectionKeysProvider)
+    public MovableWebSectionSearcher(final WebSectionLocationMetadataProvider webSectionLocationMetadataProvider)
     {
-        this.movableWebSectionKeysProvider = movableWebSectionKeysProvider;
+        this.webSectionLocationMetadataProvider = webSectionLocationMetadataProvider;
     }
 
     public boolean isWebPanelInMovableWebSection(final WebPanelModuleBean bean, final ConnectAddonBean connectAddonBean)
@@ -30,7 +30,7 @@ public class MovableWebSectionSearcher
 
     private boolean isMovableWebSectionOrChildOfMovableWebSection(final String sectionKey, List<WebSectionModuleBean> webSections)
     {
-        boolean isMovableWebSection = Iterables.any(movableWebSectionKeysProvider.provide(), new Predicate<String>()
+        boolean isMovableWebSection = Iterables.any(webSectionLocationMetadataProvider.getMovableWebSectionLocations(), new Predicate<String>()
         {
             @Override
             public boolean apply(final String moveableLocation)

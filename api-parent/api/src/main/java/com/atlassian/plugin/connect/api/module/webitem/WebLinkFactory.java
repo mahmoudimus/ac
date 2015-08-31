@@ -6,5 +6,5 @@ import com.atlassian.plugin.web.model.WebLink;
 
 public interface WebLinkFactory
 {
-    WebLink createRemoteWebLink(WebItemModuleDescriptor remoteConfluenceWebItemModuleDescriptor, WebItemModuleDescriptorData webItemModuleDescriptorData);
+    WebLink createRemoteWebLink(WebItemModuleDescriptor remoteWebItemModuleDescriptor, WebItemModuleDescriptorData webItemModuleDescriptorData);
 }
