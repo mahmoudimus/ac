@@ -6,12 +6,16 @@ import com.atlassian.plugin.connect.modules.beans.UISupportModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexExtractionConfigurationBeanBuilder;
 
 /**
- * Representation of a extraction recipe for a single JSON value.
+ * An extraction recipe for a single value within a content property JSON object.
  *
  * An extraction recipe defines which values within your JSON content property will be added to the search
- * index and made available to CQL queries.
+ * index and made available to CQL queries as a field.  This can allow you to track custom information
+ * and make it look like a simple field on the content object.
  *
- * See the [content property](../confluence/content-property.html) documentation for an example.
+ * You can further improve the field definition by including [UI support](../fragment/ui-support.html).
+ *
+ * See the [content property key](../fragment/content-property-index-key-configuration.html) documentation for
+ * a complete example.
  *
  *#### Example
  *

@@ -5,19 +5,35 @@ import java.util.List;
 import com.atlassian.json.schema.annotation.Required;
 
 /**
- * Representation of a list of key configurations for a given content property. It defines which JSON values
- * should be made available to the content property CQL search syntax.
+ * A Content Property Index Key Configuration defines which values from your JSON content property
+ * object should be indexed and made available to the CQL search syntax.
  *
- * By defining a content property key and extraction such as:
+ * Each content property key will define one or more
+ * [extractions](../fragment/content-property-index-extraction-configuration.html) which will allow for
+ * multiple values from your JSON content property to be used in CQL.  Each extraction defines a field
+ * that will be made available to CQL.
+ *
+ * In the [wordcount](https://bitbucket.org/mjensen/wordcount) example, we store details of the page
+ * that describe the word and character counts.
+ *
+ * After storing this JSON object as a content property:
  *
  * <pre><code>
  * {
- *   "propertyKey": "attachment",
+ *     "wordCount": 5
+ *     "characterCount": 22
+ * }
+ * </code></pre>
+ *
+ * We then define a series of extractions to allow access to the 'wordCount' and 'characterCount'
+ * properties.
+ *
+ * <pre><code>
+ * {
+ *   "propertyKey": "wordcount_addon",
  *   "extractions": [
- *     {
- *       "objectName": "attachment.name",
- *       "type": "string"
- *     }
+ *     { "objectName": "wordCount", "type": "number" },
+ *     { "objectName": "characterCount", "type": "number" }
  *   ]
  * }
  * </code></pre>
@@ -25,10 +41,37 @@ import com.atlassian.json.schema.annotation.Required;
  * You can access this property in your CQL queries as:
  *
  * <pre><code>
- * space = currentSpace() and content.property[attachment].attachment.name = 'filename'
+ * space = currentSpace() and content.property[wordcount_addon].wordCount <= 1000
  * </code></pre>
  *
- * See the [content property](../confluence/content-property.html) documentation for an example.
+ * This is constructed using the following:
+ *
+ * <pre><code>
+ * content.property[<strong>propertyKey</strong>].<strong>objectName</strong>
+ * </code></pre>
+ *
+ * <strong>NOTE:</strong> the <code>propertyKey</code> must be globally unique.  You should prefix
+ * it with the name of your plugin to ensure its unique.
+ *
+ * You can simplify the CQL syntax even further by defining an alias for the extraction:
+ *
+ * <pre><code>
+ * {
+ *   "propertyKey": "wordcount_addon",
+ *   "extractions": [
+ *     { "objectName": "wordCount", "type": "number", alias: "wordcount" }
+ *   ]
+ * }
+ * </code></pre>
+ *
+ * This allows you to refer to your data using the alias:
+ *
+ * <pre><code>
+ * space = currentSpace() and wordcount <= 1000
+ * </code></pre>
+ *
+ * <strong>NOTE:</strong> the <code>alias</code> must also be globally unique.  You should prefix
+ * it with the name of your plugin to ensure its unique.
  *
  *#### Example
  *
@@ -49,7 +92,7 @@ public class ContentPropertyIndexKeyConfigurationBean
     private final List<ContentPropertyIndexExtractionConfigurationBean> extractions;
 
     public ContentPropertyIndexKeyConfigurationBean(String propertyKey,
-            List<ContentPropertyIndexExtractionConfigurationBean> extractions)
+                                                    List<ContentPropertyIndexExtractionConfigurationBean> extractions)
     {
         this.propertyKey = propertyKey;
         this.extractions = extractions;

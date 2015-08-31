@@ -105,6 +105,7 @@ public class ConnectJsonExamples
     public static final String BLUEPRINT_EXAMPLE = createBlueprintExample();
     public static final String BLUEPRINT_TEMPLATE_EXAMPLE = createBlueprintTemplateExample();
     public static final String CONTENT_PROPERTY_EXAMPLE = createContentPropertyExample();
+    public static final String CONTENT_PROPERTY_UI_SUPPORT = createAttachmentTypeUISupportExample();
     public static final String CONTENT_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE = createContentPropertyIndexExtractionConfigurationExample();
     public static final String CONTENT_PROPERTY_INDEX_KEY_CONFIGURATION_EXAMPLE = createContentPropertyIndexKeyConfigurationExample();
     public static final String MACRO_RENDER_MODES_EXAMPLE = createDynamicMacroExampleForRenderModes();
@@ -829,15 +830,25 @@ public class ConnectJsonExamples
 
     private static ContentPropertyIndexExtractionConfigurationBean createAttachmentTypeContentPropertyExtraction()
     {
-        UISupportModuleBean uiSupport = UISupportModuleBean.newUISupportModuleBean()
+        UISupportModuleBean uiSupport = createAttachmentTypeUISupportBean();
+
+        return createContentPropertyIndexExtractionConfigurationBean("attachment.type", ContentPropertyIndexFieldType.string, "contentType", uiSupport);
+    }
+
+    private static String createAttachmentTypeUISupportExample()
+    {
+        return gson.toJson(createAttachmentTypeUISupportBean());
+    }
+
+    private static UISupportModuleBean createAttachmentTypeUISupportBean()
+    {
+        return UISupportModuleBean.newUISupportModuleBean()
                 .withName(new I18nProperty("Content Type", "attachment.type.name"))
                 .withDataUri("/data/content-types")
                 .withDefaultOperator("~")
                 .withTooltip(new I18nProperty("Content Type Tooltip", "attachment.type.tooltip"))
                 .withValueType("string")
                 .build();
-
-        return createContentPropertyIndexExtractionConfigurationBean("attachment.type", ContentPropertyIndexFieldType.string, "contentType", uiSupport);
     }
 
     private static String createContentPropertyExample()
