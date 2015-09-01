@@ -386,6 +386,12 @@
             <version>1.11</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.connect.acceptance.test</groupId>
+            <artifactId>atlassian-connect-marketplace-installer</artifactId>
+            <version>1.0-m04</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

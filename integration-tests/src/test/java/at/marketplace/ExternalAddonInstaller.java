@@ -45,8 +45,8 @@ public class ExternalAddonInstaller
     public static final String VENDORS_REST_PATH = "/rest/2.0-beta/vendors/";
     private static final String IMAGE_REST_PATH = "/rest/2.0-beta/assets/image/";
     public static final long ATLASSIAN_LABS_ID = 33202;
-    public static final int TIMEOUT_MS = 30 * 1000;
     private static final String TEST_ADDON_VERSION = "0001";
+    public static final int TIMEOUT_MS = 30 * 1000;
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final AtlassianConnectRestClient connectClient;
