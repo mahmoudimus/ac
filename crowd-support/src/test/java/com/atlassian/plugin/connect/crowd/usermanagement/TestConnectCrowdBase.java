@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
-import java.util.Map;
-import java.util.Set;
-
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
@@ -15,12 +12,13 @@ import com.atlassian.crowd.exception.OperationFailedException;
 import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.user.UserTemplate;
-
 import com.google.common.base.Optional;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+
+import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.base.Optional.absent;
 import static com.google.common.base.Optional.of;
@@ -152,6 +150,11 @@ public class TestConnectCrowdBase
         {
             throw new UnsupportedOperationException("Not implemented");
         }
-    }
 
+        @Override
+        public void invalidateSessions(String username)
+        {
+            throw new UnsupportedOperationException("Not implemented");
+        }
+    }
 }

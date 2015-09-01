@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
-import java.util.Map;
-import java.util.Set;
-
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
@@ -18,11 +15,12 @@ import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvi
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
-
 import com.google.common.base.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+import java.util.Set;
 
 import static com.atlassian.plugin.connect.crowd.usermanagement.UserCreationResult.UserNewness.NEWLY_CREATED;
 import static com.atlassian.plugin.connect.crowd.usermanagement.UserCreationResult.UserNewness.PRE_EXISTING;
@@ -185,4 +183,6 @@ public abstract class ConnectCrowdBase
 
         return created;
     }
+
+    public abstract void invalidateSessions(String username) throws OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException;
 }
