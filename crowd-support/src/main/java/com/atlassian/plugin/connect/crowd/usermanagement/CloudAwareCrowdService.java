@@ -1,14 +1,5 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedTransferQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TransferQueue;
-
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
@@ -25,14 +16,21 @@ import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.product.FeatureManager;
 import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedTransferQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TransferQueue;
 
 /**
  * This implementation seeks to encapsulate workarounds for:
@@ -262,6 +260,15 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
             userOption = embedded.findUserByName(username);
         }
         return userOption.isPresent() && userOption.get().isActive();
+    }
+
+    @Override
+    public void invalidateSessions(String username) throws OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException
+    {
+        if (isOnDemand())
+        {
+            remote.invalidateSessions(username);
+        }
     }
 
     @VisibleForTesting
