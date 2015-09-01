@@ -1,13 +1,6 @@
 # Atlassian Connect for JIRA Server and Confluence Server 
 
-<div class="aui-group">
-    <div class="aui-item ac-property-key">
-        <h5>Published</h5>
-    </div>
-    <div class="aui-item">
-        __September 2015__
-    </div>
-</div>
+Published: __September 2015__
 
 ### Building the Atlassian developer platform for the future.
 At Atlassian we spend a lot of time looking at developer opportunity. Soon, our
