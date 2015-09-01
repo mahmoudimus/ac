@@ -118,6 +118,12 @@ public class TestConnectCrowdBase
         {
             throw new UnsupportedOperationException("Not implemented");
         }
+        
+        @Override
+        protected void updateUserCredential(String username, PasswordCredential passwordCredential)
+        {
+            throw new UnsupportedOperationException("Not implemented");
+        }
 
         @Override
         protected void addGroup(String groupName)

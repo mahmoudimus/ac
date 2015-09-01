@@ -77,6 +77,26 @@ public class RemoteCrowd extends ConnectCrowdBase
             throw new ConnectAddOnUserInitException(e);
         }
     }
+    
+    protected void updateUserCredential(String username, PasswordCredential passwordCredential)
+    {
+        try
+        {
+            if (passwordCredential.equals(PasswordCredential.NONE))
+            {
+                client().updateUserCredential(username, null);
+            }
+            else
+            {
+                client().updateUserCredential(username, passwordCredential.getCredential());
+            }
+        }
+        catch (UserNotFoundException | InvalidAuthenticationException |
+                ApplicationPermissionException | OperationFailedException | InvalidCredentialException e)
+        {
+            throw new ConnectAddOnUserInitException(e);
+        }
+    }
 
     public Optional<? extends User> findUserByName(String username)
     {
