@@ -112,13 +112,13 @@ public class TestConnectCrowdBase
         }
 
         @Override
-        protected void updateUser(UserTemplate fixes)
-        {
-            throw new UnsupportedOperationException("Not implemented");
-        }
-        
-        @Override
         protected void updateUserCredential(String username, PasswordCredential passwordCredential)
+        {
+            assertThat("PasswordCredential should be NONE", passwordCredential, is(PasswordCredential.NONE));
+        }
+
+        @Override
+        protected void updateUser(UserTemplate fixes)
         {
             throw new UnsupportedOperationException("Not implemented");
         }
