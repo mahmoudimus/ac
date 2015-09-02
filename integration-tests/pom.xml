@@ -389,7 +389,7 @@
         <dependency>
             <groupId>com.atlassian.connect.acceptance.test</groupId>
             <artifactId>atlassian-connect-marketplace-installer</artifactId>
-            <version>1.0-m04</version>
+            <version>1.0-m05</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
