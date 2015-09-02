@@ -50,6 +50,7 @@ public abstract class ConnectCrowdBase
         {
             updateUser(requiredUpdates.get());
         }
+        updateUserCredential(username, passwordCredential);
         return new UserCreationResult(foundUser, PRE_EXISTING);
     }
 
@@ -145,6 +146,8 @@ public abstract class ConnectCrowdBase
             throws OperationFailedException, InvalidUserException;
 
     protected abstract void updateUser(UserTemplate fixes);
+    
+    protected abstract void updateUserCredential(String username, PasswordCredential passwordCredential);
 
     protected abstract void addGroup(String groupName)
             throws InvalidGroupException, OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException;

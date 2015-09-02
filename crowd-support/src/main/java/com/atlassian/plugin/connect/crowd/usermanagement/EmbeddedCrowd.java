@@ -117,6 +117,7 @@ public class EmbeddedCrowd extends ConnectCrowdBase
         }
     }
 
+    @Override
     protected void updateUser(UserTemplate requiredUpdates)
     {
         try
@@ -129,7 +130,22 @@ public class EmbeddedCrowd extends ConnectCrowdBase
             throw new ConnectAddOnUserInitException(e);
         }
     }
+    
+    @Override
+    protected void updateUserCredential(String username, PasswordCredential passwordCredential)
+    {
+        try
+        {
+            applicationService.updateUserCredential(getCrowdApplication(), username, passwordCredential);
+        }
+        catch (InvalidCredentialException | ApplicationPermissionException
+                | OperationFailedException | UserNotFoundException e)
+        {
+            throw new ConnectAddOnUserInitException(e);
+        }
+    }
 
+    @Override
     public Optional<? extends User> findUserByName(String username)
     {
         try
