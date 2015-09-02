@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
-import java.util.Set;
-
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
@@ -16,15 +14,16 @@ import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioni
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
-import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Set;
 
 import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.Constants;
 import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
@@ -91,15 +90,31 @@ public class CrowdAddOnUserService implements ConnectAddOnUserService
             throws ApplicationNotFoundException, OperationFailedException, ApplicationPermissionException, UserNotFoundException, GroupNotFoundException, InvalidAuthenticationException
     {
         connectAddOnUserGroupProvisioningService.ensureGroupExists(Constants.ADDON_USER_GROUP_KEY);
-        User user = connectCrowdService.createOrEnableUser(username, addOnDisplayName, Constants.ADDON_USER_EMAIL_ADDRESS, PREVENT_LOGIN, buildConnectAddOnUserAttribute(hostProperties.getKey()));
+        UserCreationResult userCreationResult = connectCrowdService.createOrEnableUser(username, addOnDisplayName, Constants.ADDON_USER_EMAIL_ADDRESS, PREVENT_LOGIN, buildConnectAddOnUserAttribute(hostProperties.getKey()));
+        User user = userCreationResult.getUser();
+        if (!userCreationResult.isNewlyCreated())
+        {
+            connectCrowdService.invalidateSessions(user.getName());
+        }
 
         connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), Constants.ADDON_USER_GROUP_KEY);
+        if (userCreationResult.isNewlyCreated())
+        {
+            addNewUserToRequiredGroups(user);
+        }
 
+        return user.getName();
+    }
+
+    private void addNewUserToRequiredGroups(User user)
+            throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, OperationFailedException, InvalidAuthenticationException
+    {
+        String username = user.getName();
         for (String group : connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected())
         {
             try
             {
-                connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), group);
+                connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(username, group);
             }
             catch (GroupNotFoundException e)
             {
@@ -117,7 +132,7 @@ public class CrowdAddOnUserService implements ConnectAddOnUserService
         {
             try
             {
-                connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), group);
+                connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(username, group);
                 numPossibleDefaultGroupsAddedTo++;
             }
             catch (GroupNotFoundException e)
@@ -133,8 +148,6 @@ public class CrowdAddOnUserService implements ConnectAddOnUserService
                     "The user needs to be a member of one of these groups for basic access, otherwise the add-on will not function correctly." +
                     "Please check with an instance administrator that at least one of these groups exists and that it is not read-only.");
         }
-
-        return user.getName();
     }
 }
 
