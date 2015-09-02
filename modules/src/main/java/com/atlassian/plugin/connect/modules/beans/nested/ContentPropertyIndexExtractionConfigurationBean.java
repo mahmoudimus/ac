@@ -12,9 +12,10 @@ import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexEx
  * index and made available to CQL queries as a field.  This can allow you to track custom information
  * and make it look like a simple field on the content object.
  *
- * You can further improve the field definition by including [UI support](../fragment/ui-support.html).
+ * You can further improve the field definition by including
+ * <a href="../fragment/ui-support.html">UI support</a>.
  *
- * See the [content property key](../fragment/content-property-index-key-configuration.html) documentation for
+ * See the <a href="../fragment/content-property-index-key-configuration.html">content property key</a> documentation for
  * a complete example.
  *
  *#### Example

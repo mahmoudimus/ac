@@ -12,8 +12,8 @@ import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
  * When you define UI support for a field, then the CQL builder will include it in all CQL features
  * in Confluence, including other CQL based macros.
  *
- * See the [content property key](../fragment/content-property-index-key-configuration.html) documentation for
- * a complete content property example.
+ * See the <a href="../fragment/content-property-index-key-configuration.html">content property key</a>
+ * documentation for a complete content property example.
  *
  *#### Example
  *
@@ -51,7 +51,7 @@ public class UISupportModuleBean extends BaseModuleBean
      * </code></pre>
      *
      * <strong>NOTE:</strong> since the call to this URL will be made from the user's browser, you need to enable
-     * (CORS)[http://www.w3.org/TR/cors/] headers for responses to this resource.
+     * <a href="http://www.w3.org/TR/cors/">CORS</a> headers for responses to this resource.
      *
      * Setting a <code>Access-Control-Allow-Origin</code> header to the URL of the Atlassian Cloud instance where
      * this addon is installed is usually enough to satisfy the CORS requirements.  This can be done by tracking
@@ -67,14 +67,16 @@ public class UISupportModuleBean extends BaseModuleBean
      *
      * The type can be one of the following values:
      *
-     * * `space` - provides a space picker and stores the result space key as the result.
-     * * `label` - provides a label picker and stores the list of labels as the result.
-     * * `user` - provides a user picker and stores the username as the result.
-     * * `contentId` - provides a content picker and stores the content id as the result.
-     * * `contentType` - provides a content type picker.
-     * * 'date' - provides a date picker
-     * * 'string' - provides a free form text field
-     * * 'number' - provides a free form text field
+     * <ul>
+     * <li>`space` - provides a space picker and stores the result space key as the result.</li>
+     * <li>`label` - provides a label picker and stores the list of labels as the result.</li>
+     * <li>`user` - provides a user picker and stores the username as the result.</li>
+     * <li>`contentId` - provides a content picker and stores the content id as the result.</li>
+     * <li>`contentType` - provides a content type picker.</li>
+     * <li>'date' - provides a date picker</li>
+     * <li>'string' - provides a free form text field</li>
+     * <li>'number' - provides a free form text field</li>
+     * </ul>
      */
     private String valueType;
 

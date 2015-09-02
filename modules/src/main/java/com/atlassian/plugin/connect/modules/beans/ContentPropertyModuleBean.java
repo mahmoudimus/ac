@@ -9,21 +9,22 @@ import com.google.common.collect.Lists;
 
 /**
  * Content properties are one of the forms of persistence available for connect, allowing your
- * addon to store json data and match it up with Confluence content.
+ * add-on to store JSON data and match it up with Confluence content.
  *
- * Values from the stored json object can be extracted and indexed and made available to CQL queries.
+ * Values from the stored JSON object can be extracted and indexed and made available to CQL queries.
  *
  * Creating a complete content property comes in three parts.
  *
- * 1. Store and update your json data as a content property
- * [using the REST API](https://developer.atlassian.com/display/CONFDEV/Content+Properties+in+the+REST+API).
- * 1. Define the [content property key](../fragment/content-property-index-key-configuration.html),
- * its [extractions](../fragment/content-property-index-extraction-configuration.html), and optionally an
- * alias and [UI support](../fragment/ui-support.html) in your add-on's descriptor.
- * See the [content property key](../fragment/content-property-index-key-configuration.html) documentation
+ * 1. Store and update your JSON data as a content property
+ * <a href="https://developer.atlassian.com/display/CONFDEV/Content+Properties+in+the+REST+API">using the REST API</a>.
+ * 1. Define the
+ * <a href="../fragment/content-property-index-key-configuration.html">content property</a> its
+ * <a href="../fragment/content-property-index-extraction-configuration.html">extractions</a>, and optionally an
+ * alias and <a href="../fragment/ui-support.html">UI support</a> in your add-on's descriptor.
+ * See the <a href="../fragment/content-property-index-key-configuration.html">content property</a> documentation
  * for an example.
- * 1. Use [CQL](https://developer.atlassian.com/display/CONFDEV/Advanced+Searching+using+CQL) to query content
- * based on your custom content property.
+ * 1. Use <a href="https://developer.atlassian.com/display/CONFDEV/Advanced+Searching+using+CQL">CQL</a>
+ * to query content based on your custom content property.
  *
  *#### Example
  *
