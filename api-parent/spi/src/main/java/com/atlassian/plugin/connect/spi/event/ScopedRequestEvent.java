@@ -22,11 +22,9 @@ public abstract class ScopedRequestEvent
     private static final List<String> XMLRPC_PATHS = ImmutableList.of("/rpc/xmlrpc");
 
     private static final List<String> JSON_RPC_PATHS = ImmutableList.of("/rpc/json-rpc/confluenceservice-v1",
-                                                                        "/rpc/json-rpc/confluenceservice-v2",
-                                                                        "/rpc/json-rpc/jirasoapservice-v2");
+                                                                        "/rpc/json-rpc/confluenceservice-v2");
 
-    private static final List<String> SOAP_PATHS = ImmutableList.of("/rpc/soap/jirasoapservice-v2",
-                                                                    "/soap/axis/confluenceservice-v2",
+    private static final List<String> SOAP_PATHS = ImmutableList.of("/soap/axis/confluenceservice-v2",
                                                                     "/soap/axis/confluenceservice-v1");
 
     private final String httpMethod;
