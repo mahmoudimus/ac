@@ -11,7 +11,7 @@ developer journeys.
 
 We've looked again at our developer platforms in light of trends, our growth,
 and these plans. As a result, we've decided not to incorporate Atlassian
-Connect in our Server products.  
+Connect in our JIRA Server and Confluence Server products.
 
 We've not made this decision in haste. Atlassian has always been keen on
 delivering a unified developer platform across all our products. It is clear if
