@@ -79,30 +79,6 @@ public class ScopedRequestEventTest
     }
 
     @Test
-    public void testJIRASoapUrlsShouldIncludeMethod() throws IOException
-    {
-        String url = "/rpc/soap/jirasoapservice-v2";
-        when(rq.getMethod()).thenReturn("GET");
-        when(rq.getRequestURI()).thenReturn(url);
-        when(rq.getInputStream()).thenReturn(new MockServletInputStream(APITestUtil.createSoapRpcPayload("method")));
-        when(rq.getContextPath()).thenReturn("");
-        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq, "");
-        assertEquals("/rpc/soap/jirasoapservice-v2/method", event.getHttpRequestUri());
-    }
-
-    @Test
-    public void testJIRAJsonRpcUrlsShouldIncludeMethod() throws IOException
-    {
-        String url = "/rpc/json-rpc/jirasoapservice-v2";
-        when(rq.getMethod()).thenReturn("GET");
-        when(rq.getRequestURI()).thenReturn(url);
-        when(rq.getInputStream()).thenReturn(new MockServletInputStream(APITestUtil.createJsonRpcPayload("method")));
-        when(rq.getContextPath()).thenReturn("");
-        ScopedRequestEvent event = new ScopedRequestDeniedEvent(rq, "");
-        assertEquals("/rpc/json-rpc/jirasoapservice-v2/method", event.getHttpRequestUri());
-    }
-
-    @Test
     public void JIRARestURLWithNumericVersionShouldBeTrimmed() throws IOException
     {
         String url = "/rest/api/2/attachment/1384754";
