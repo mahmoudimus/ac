@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
-import java.util.Map;
-import java.util.Set;
-
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
@@ -21,11 +18,12 @@ import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.group.GroupTemplate;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
-
 import com.google.common.base.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+import java.util.Set;
 
 public class EmbeddedCrowd extends ConnectCrowdBase
 {
@@ -119,6 +117,7 @@ public class EmbeddedCrowd extends ConnectCrowdBase
         }
     }
 
+    @Override
     protected void updateUser(UserTemplate requiredUpdates)
     {
         try
@@ -131,7 +130,22 @@ public class EmbeddedCrowd extends ConnectCrowdBase
             throw new ConnectAddOnUserInitException(e);
         }
     }
+    
+    @Override
+    protected void updateUserCredential(String username, PasswordCredential passwordCredential)
+    {
+        try
+        {
+            applicationService.updateUserCredential(getCrowdApplication(), username, passwordCredential);
+        }
+        catch (InvalidCredentialException | ApplicationPermissionException
+                | OperationFailedException | UserNotFoundException e)
+        {
+            throw new ConnectAddOnUserInitException(e);
+        }
+    }
 
+    @Override
     public Optional<? extends User> findUserByName(String username)
     {
         try
@@ -149,6 +163,12 @@ public class EmbeddedCrowd extends ConnectCrowdBase
             throws InvalidGroupException, OperationFailedException, ApplicationPermissionException
     {
         applicationService.addGroup(getCrowdApplication(), new GroupTemplate(groupName));
+    }
+
+    @Override
+    public void invalidateSessions(String username)
+    {
+        throw new UnsupportedOperationException("Cannot invalidate session tokens in Embedded Crowd");
     }
 
     private Application getCrowdApplication()

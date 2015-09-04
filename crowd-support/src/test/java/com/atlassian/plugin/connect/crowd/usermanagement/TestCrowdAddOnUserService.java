@@ -21,6 +21,7 @@ import static com.atlassian.plugin.connect.crowd.usermanagement.UserCreationResu
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -104,5 +105,24 @@ public class TestCrowdAddOnUserService
 
         verify(connectAddOnUserGroupProvisioningService, times(1)).ensureUserIsInGroup(anyString(), anyString());
         verify(connectAddOnUserGroupProvisioningService).ensureUserIsInGroup(ADDON_USERNAME, ADDON_USER_GROUP_KEY);
+    }
+
+    @Test
+    public void getOrCreateUserNameDoesNotInvalidateSessionsWhenUserIsNew() throws Exception
+    {
+        crowdAddOnUserService.getOrCreateUserName(ADDON_KEY, ADDON_NAME);
+
+        verify(connectCrowdService, never()).invalidateSessions(ADDON_USERNAME);
+    }
+
+    @Test
+    public void getOrCreateUserNameInvalidatesSessionsForPreExistingUser() throws Exception
+    {
+        when(connectCrowdService.createOrEnableUser(anyString(), anyString(), anyString(),
+                any(PasswordCredential.class), anyMap())).thenReturn(new UserCreationResult(user, PRE_EXISTING));
+
+        crowdAddOnUserService.getOrCreateUserName(ADDON_KEY, ADDON_NAME);
+
+        verify(connectCrowdService).invalidateSessions(ADDON_USERNAME);
     }
 }
