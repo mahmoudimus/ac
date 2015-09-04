@@ -61,7 +61,7 @@ public class TestEntityProperty extends JiraTestBase
                 .addModule(
                         "jiraEntityProperties",
                         newEntityPropertyModuleBean()
-                                .withName(new I18nProperty("JIRA Attachment indexing", "jira.attachment.indexing"))
+                                .withName(new I18nProperty("JIRA Attachment indexing", null))
                                 .withKey("jira-attachment-indexing")
                                 .withKeyConfiguration(keyConfigurationBean)
                                 .withEntityType(EntityPropertyType.issue)
@@ -143,7 +143,7 @@ public class TestEntityProperty extends JiraTestBase
                 .addModule(
                         "jiraEntityProperties",
                         newEntityPropertyModuleBean()
-                                .withName(new I18nProperty("JIRA Conflicting Attachment indexing", "jira.conflicting.attachment.indexing"))
+                                .withName(new I18nProperty("JIRA Conflicting Attachment indexing", null))
                                 .withKey("jira-conflicting-attachment-indexing")
                                 .withKeyConfiguration(keyConfigurationBean)
                                 .withEntityType(EntityPropertyType.issue)

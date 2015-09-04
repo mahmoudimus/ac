@@ -38,7 +38,7 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
                         new WebPanelModuleBeanBuilder()
                                 .withKey("issue-property-web-panel")
                                 .withLocation("atl.jira.view.issue.right.context")
-                                .withName(new I18nProperty("issue-property-web-panel", "issue-property-web-panel"))
+                                .withName(new I18nProperty("issue-property-web-panel", null))
                                 .withConditions(new SingleConditionBeanBuilder()
                                         .withCondition("entity_property_equal_to")
                                         .withParam("propertyKey", "prop")
