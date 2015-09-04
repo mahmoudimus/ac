@@ -8,10 +8,10 @@ import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKey
 import com.google.common.collect.Lists;
 
 /**
- * Content properties are one of the forms of persistence available for connect, allowing your
- * add-on to store JSON data and match it up with Confluence content.
- *
- * Values from the stored JSON object can be extracted and indexed and made available to CQL queries.
+ * Content properties are one of the forms of persistence available for Confluence Connect add-ons, allowing you
+ * to store JSON data and match it up with content.  Content Properties are stored as JSON objects and linked
+ * to content, allowing you to track extra information that your add-on needs.  Values from these JSON objects
+ * can be extracted and indexed and made available to CQL queries.
  *
  * Creating a complete content property comes in three parts.
  *
