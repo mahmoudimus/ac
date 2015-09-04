@@ -26,6 +26,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MatcherBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
+import com.atlassian.plugin.connect.modules.beans.nested.UISupportValueType;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
@@ -847,7 +848,7 @@ public class ConnectJsonExamples
                 .withDataUri("/data/content-types")
                 .withDefaultOperator("~")
                 .withTooltip(new I18nProperty("Content Type Tooltip", "attachment.type.tooltip"))
-                .withValueType("string")
+                .withValueType(UISupportValueType.STRING)
                 .build();
     }
 

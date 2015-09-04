@@ -4,6 +4,7 @@ import com.atlassian.json.schema.annotation.Required;
 import com.atlassian.json.schema.annotation.SchemaDefinition;
 import com.atlassian.plugin.connect.modules.beans.builder.UISupportModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.UISupportValueType;
 
 /**
  * The UI Support element allows you to define how your content property field will be presented in
@@ -68,17 +69,17 @@ public class UISupportModuleBean extends BaseModuleBean
      * The type can be one of the following values:
      *
      * <ul>
-     * <li>`space` - provides a space picker and stores the result space key as the result.</li>
-     * <li>`label` - provides a label picker and stores the list of labels as the result.</li>
-     * <li>`user` - provides a user picker and stores the username as the result.</li>
-     * <li>`contentId` - provides a content picker and stores the content id as the result.</li>
-     * <li>`contentType` - provides a content type picker.</li>
-     * <li>'date' - provides a date picker</li>
-     * <li>'string' - provides a free form text field</li>
-     * <li>'number' - provides a free form text field</li>
+     * <li><code>space</code> - provides a space picker and stores the result space key as the result.</li>
+     * <li><code>label</code> - provides a label picker and stores the list of labels as the result.</li>
+     * <li><code>user</code> - provides a user picker and stores the username as the result.</li>
+     * <li><code>contentId</code> - provides a content picker and stores the content id as the result.</li>
+     * <li><code>contentType</code> - provides a content type picker.</li>
+     * <li><code>date</code> - provides a date picker</li>
+     * <li><code>string</code> - provides a free form text field</li>
+     * <li><code>number</code> - provides a free form text field</li>
      * </ul>
      */
-    private String valueType;
+    private UISupportValueType valueType;
 
     public UISupportModuleBean(UISupportModuleBeanBuilder builder)
     {
@@ -115,7 +116,7 @@ public class UISupportModuleBean extends BaseModuleBean
         return tooltip;
     }
 
-    public String getValueType()
+    public UISupportValueType getValueType()
     {
         return valueType;
     }
