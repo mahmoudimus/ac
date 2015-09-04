@@ -48,12 +48,12 @@ public class TestJira extends JiraWebDriverTestBase
                 .addModules("adminPages",
                         newPageBean()
                                 .withKey(ADMIN_KEY)
-                                .withName(new I18nProperty("Addon Admin", "addon.admin"))
+                                .withName(new I18nProperty("Addon Admin", null))
                                 .withUrl("/admin")
                                 .build(),
                         newPageBean()
                                 .withKey(ADVANCED_ADMIN_KEY)
-                                .withName(new I18nProperty("Addon Advanced Admin", "addon.admin.advanced"))
+                                .withName(new I18nProperty("Addon Advanced Admin", null))
                                 .withUrl("/advanced-admin")
                                 .withLocation("advanced_menu_section/advanced_section")
                                 .build())
@@ -62,14 +62,14 @@ public class TestJira extends JiraWebDriverTestBase
                 .addModule("jiraIssueTabPanels",
                         newTabPanelBean()
                                 .withKey(ISSUE_TAB_PANEL_KEY)
-                                .withName(new I18nProperty("AC Play Issue Tab Page", "issue.tab"))
+                                .withName(new I18nProperty("AC Play Issue Tab Page", null))
                                 .withUrl("/issue-tab-panel")
                                 .build())
                 .addRoute("/issue-tab-panel", ConnectAppServlets.apRequestServlet())
                 .addModule("webItems",
                         newWebItemBean()
                                 .withKey(JIRA_ISSUE_ACTION_KEY)
-                                .withName(new I18nProperty("Test Issue Action", "issue.action"))
+                                .withName(new I18nProperty("Test Issue Action", null))
                                 .withUrl("/jia")
                                 .withLocation("operations-subtasks")
                                 .withTarget(newWebItemTargetBean().withType(WebItemTargetType.dialog).build())

@@ -9,7 +9,6 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.util.ConnectTestUserFactory;
 import it.confluence.ConfluenceWebDriverTestBase;
 import org.apache.commons.lang.RandomStringUtils;
 import org.jsoup.Jsoup;
@@ -48,7 +47,7 @@ public class TestCompatibility extends ConfluenceWebDriverTestBase
                         newDynamicContentMacroModuleBean()
                                 .withKey(MACRO_KEY)
                                 .withUrl("/maps?data={data}")
-                                .withName(new I18nProperty("Google Maps", ""))
+                                .withName(new I18nProperty("Google Maps", null))
                                 .withParameters(MacroParameterBean.newMacroParameterBean()
                                         .withIdentifier("data")
                                         .withName(new I18nProperty("Data", null))
@@ -58,7 +57,7 @@ public class TestCompatibility extends ConfluenceWebDriverTestBase
                                 .withKey(MACRO_KEY_2)
                                 .withAliases(MACRO_KEY)
                                 .withUrl("/maps")
-                                .withName(new I18nProperty(MACRO_NAME_2, ""))
+                                .withName(new I18nProperty(MACRO_NAME_2, null))
                                 .build()
                 )
                 .addRoute("/maps", echoQueryParametersServlet())

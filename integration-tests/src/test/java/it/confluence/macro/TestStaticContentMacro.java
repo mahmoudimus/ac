@@ -74,13 +74,13 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
         StaticContentMacroModuleBean storageFormatMacro = newStaticContentMacroModuleBean()
                 .withUrl("/render-storage-format")
                 .withKey(STORAGE_FORMAT_MACRO_KEY)
-                .withName(new I18nProperty(STORAGE_FORMAT_MACRO_NAME, ""))
+                .withName(new I18nProperty(STORAGE_FORMAT_MACRO_NAME, null))
                 .build();
 
         StaticContentMacroModuleBean getMacro = newStaticContentMacroModuleBean()
                 .withUrl("/render-context")
                 .withKey(GET_MACRO_KEY)
-                .withName(new I18nProperty(GET_MACRO_NAME, ""))
+                .withName(new I18nProperty(GET_MACRO_NAME, null))
                 .build();
 
         StaticContentMacroModuleBean counterMacro = newStaticContentMacroModuleBean()

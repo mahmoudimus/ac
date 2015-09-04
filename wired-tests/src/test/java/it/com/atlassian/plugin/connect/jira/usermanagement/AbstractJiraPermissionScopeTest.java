@@ -1,8 +1,5 @@
 package it.com.atlassian.plugin.connect.jira.usermanagement;
 
-import java.io.IOException;
-import java.util.List;
-
 import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.bc.project.ProjectService.CreateProjectValidationResult;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
@@ -21,13 +18,14 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
+
+import java.io.IOException;
+import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
@@ -313,6 +311,7 @@ public abstract class AbstractJiraPermissionScopeTest
                 .withKey(PROJECT_KEY)
                 .withLead(admin)
                 .withDescription("It's a trap!")
+                .withProjectTemplateKey("com.atlassian.jira-core-project-templates:jira-issuetracking")
                 .build();
 
         CreateProjectValidationResult result = projectServiceBridge.validateCreateProject(admin, projectCreationData);
