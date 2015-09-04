@@ -125,7 +125,8 @@ public class ConnectAddonBeanMarshallingTest
     {
         String json = readAddonTestFile("addonMultipleCapabilities.json");
 
-        Gson gson = ConnectModulesGsonFactory.getGson();
+        MockModuleBeanDeserializer<WebItemModuleBean> deserializer = new MockModuleBeanDeserializer<>(WebItemModuleBean.class);
+        Gson gson = ConnectModulesGsonFactory.getGson(deserializer);
         ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
 
         List<ModuleBean> moduleList = addOn.getModules().get("webItems").get();
@@ -141,7 +142,8 @@ public class ConnectAddonBeanMarshallingTest
     public void noScopes() throws IOException
     {
         String json = readAddonTestFile("addonMultipleCapabilities.json");
-        ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson().fromJson(json, ConnectAddonBean.class);
+        MockModuleBeanDeserializer<WebItemModuleBean> deserializer = new MockModuleBeanDeserializer<>(WebItemModuleBean.class);
+        ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson(deserializer).fromJson(json, ConnectAddonBean.class);
         assertThat(addOn.getScopes(), is(Collections.<ScopeName>emptySet()));
     }
 

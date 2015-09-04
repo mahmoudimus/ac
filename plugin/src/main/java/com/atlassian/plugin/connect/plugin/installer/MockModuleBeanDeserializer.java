@@ -1,9 +1,12 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
+import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.gson.ConditionalBeanSerializer;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -19,10 +22,14 @@ import java.util.Map;
 public class MockModuleBeanDeserializer<T extends ModuleBean> implements JsonDeserializer<Map<String, Supplier<List<ModuleBean>>>>
 {
     private final Class<T> beanClass;
+    private final Gson gson;
     
     public MockModuleBeanDeserializer(Class<T> beanClass)
     {
         this.beanClass = beanClass;
+        Type conditionalType = new TypeToken<List<ConditionalBean>>() {}.getType();
+
+        this.gson = new GsonBuilder().registerTypeAdapter(conditionalType, new ConditionalBeanSerializer()).create();
     }
     
     
@@ -57,7 +64,7 @@ public class MockModuleBeanDeserializer<T extends ModuleBean> implements JsonDes
         List<ModuleBean> beans = new ArrayList<>();
         for(JsonElement module : modules)
         {
-            T bean = new Gson().fromJson(module, type);
+            T bean = gson.fromJson(module, type);
             beans.add(bean);
         }
         return beans;

@@ -1,10 +1,12 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.impl.PageConditionsValidator;
 import com.atlassian.plugin.connect.plugin.condition.PageConditionsFactoryImpl;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
+import com.atlassian.plugin.connect.plugin.installer.MockModuleBeanDeserializer;
 import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.opensymphony.util.FileUtils;
@@ -81,8 +83,8 @@ public class PageConditionValidationTest
 
     public void validateFully(final String jsonDescriptor) throws Exception
     {
-
-        ConnectAddonBean addon = ConnectModulesGsonFactory.getGson().fromJson(jsonDescriptor, ConnectAddonBean.class);
+        MockModuleBeanDeserializer<ConnectPageModuleBean> deserializer = new MockModuleBeanDeserializer<>(ConnectPageModuleBean.class);
+        ConnectAddonBean addon = ConnectModulesGsonFactory.getGson(deserializer).fromJson(jsonDescriptor, ConnectAddonBean.class);
 
         conditionsValidator.validate(addon);
     }
