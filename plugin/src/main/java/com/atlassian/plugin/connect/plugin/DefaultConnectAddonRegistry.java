@@ -11,6 +11,7 @@ import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 
 import javax.inject.Inject;
@@ -19,10 +20,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Function;
 
 import static com.atlassian.fugue.Option.none;
 import static com.atlassian.fugue.Option.some;
@@ -41,6 +44,18 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
     private final Lock write = readWriteLock.writeLock();
     private final Lock read = readWriteLock.readLock();
+
+    private final Map<String, AddonSettings> settingsCache = Maps.newConcurrentMap();
+
+    //TODO: lamdable once language level is 8
+    private final Function<String, AddonSettings> settingsLoader = new Function<String, AddonSettings>()
+    {
+        @Override
+        public AddonSettings apply(String pluginKey)
+        {
+            return getAddonSettings(pluginKey, new Gson());
+        }
+    };
 
     @Inject
     public DefaultConnectAddonRegistry(PluginSettingsFactory pluginSettingsFactory, ConnectAddonBeanFactory connectAddonBeanFactory)
@@ -61,6 +76,8 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
             addonKeys.remove(pluginKey);
 
             settings.put(ADDON_LIST_KEY, new ArrayList<>(addonKeys));
+
+            settingsCache.remove(pluginKey);
         }
         finally
         {
@@ -248,6 +265,8 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
             {
                 settings.put(ADDON_LIST_KEY, new ArrayList<>(addonSet));
             }
+
+            settingsCache.remove(pluginKey);
         }
         finally
         {
@@ -258,7 +277,7 @@ public class DefaultConnectAddonRegistry implements ConnectAddonRegistry
     @Override
     public AddonSettings getAddonSettings(String pluginKey)
     {
-        return getAddonSettings(pluginKey, new Gson());
+        return settingsCache.computeIfAbsent(pluginKey, settingsLoader);
     }
 
     @Override
