@@ -71,7 +71,7 @@ public class ContentPropertyIndexSchemaModuleDescriptorFactory implements
                 if (uiSupportBean != null) {
                     Element uiSupportElement = propertyExtractionElement.addElement("ui-support");
 
-                    uiSupportElement.addAttribute("value-type", extractionBean.getType().toString());
+                    uiSupportElement.addAttribute("value-type", uiSupportBean.getValueType().toString());
                     if (uiSupportBean.getDefaultOperator() == null)
                     {
                         uiSupportElement.addAttribute("default-operator", extractionBean.getType() == ContentPropertyIndexFieldType.text ? "~" : "=");
