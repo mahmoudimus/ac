@@ -79,6 +79,7 @@ public class UISupportModuleBean extends BaseModuleBean
      * <li><code>number</code> - provides a free form text field</li>
      * </ul>
      */
+    @Required
     private UISupportValueType valueType;
 
     public UISupportModuleBean(UISupportModuleBeanBuilder builder)
