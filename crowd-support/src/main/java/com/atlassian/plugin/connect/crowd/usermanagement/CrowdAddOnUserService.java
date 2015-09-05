@@ -79,6 +79,12 @@ public class CrowdAddOnUserService implements ConnectAddOnUserService
     }
 
     @Override
+    public boolean isActive(String username)
+    {
+        return connectCrowdService.isUserActive(username);
+    }
+
+    @Override
     public String provisionAddonUserForScopes(String addOnKey, String addOnDisplayName, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
     {
         String username = getOrCreateUserName(checkNotNull(addOnKey), checkNotNull(addOnDisplayName));

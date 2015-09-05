@@ -1,8 +1,6 @@
 package com.atlassian.plugin.connect.plugin.threeleggedauth;
 
 import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.crowd.embedded.api.CrowdService;
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.jwt.core.http.auth.SimplePrincipal;
@@ -10,6 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.util.DefaultMessage;
+import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.auth.AuthenticationListener;
 import com.atlassian.sal.api.auth.Authenticator;
@@ -49,10 +48,10 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
 {
     private final ThreeLeggedAuthService threeLeggedAuthService;
     private final ConnectAddonManager connectAddonManager;
-    private final UserManager userManager;
     private final AuthenticationListener authenticationListener;
     private final JwtApplinkFinder jwtApplinkFinder;
-    private final CrowdService crowdService;
+    private final UserManager userManager;
+    private final ConnectAddOnUserService userService;
     private final String badCredentialsMessage; // protect against phishing by not saying whether the add-on, user or secret was wrong
 
     private final static Logger log = LoggerFactory.getLogger(ThreeLeggedAuthFilter.class);
@@ -63,17 +62,17 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
     public ThreeLeggedAuthFilter(ThreeLeggedAuthService threeLeggedAuthService,
                                  ConnectAddonManager connectAddonManager,
                                  UserManager userManager,
+                                 ConnectAddOnUserService userService,
                                  AuthenticationListener authenticationListener,
                                  JwtApplinkFinder jwtApplinkFinder,
-                                 CrowdService crowdService,
                                  I18nResolver i18nResolver)
     {
-        this.threeLeggedAuthService = checkNotNull(threeLeggedAuthService);
-        this.connectAddonManager = checkNotNull(connectAddonManager);
-        this.userManager = checkNotNull(userManager);
-        this.authenticationListener = checkNotNull(authenticationListener);
-        this.jwtApplinkFinder = checkNotNull(jwtApplinkFinder);
-        this.crowdService = checkNotNull(crowdService);
+        this.threeLeggedAuthService = checkNotNull(threeLeggedAuthService, "threeLeggedAuthService");
+        this.connectAddonManager = checkNotNull(connectAddonManager, "connectAddOnManager");
+        this.userManager = checkNotNull(userManager, "userManager");
+        this.userService = checkNotNull(userService, "userService");
+        this.authenticationListener = checkNotNull(authenticationListener, "authenticationListener");
+        this.jwtApplinkFinder = checkNotNull(jwtApplinkFinder, "jwtApplinkFinder");
         this.badCredentialsMessage = i18nResolver.getText("connect.3la.bad_credentials");
     }
 
@@ -269,14 +268,7 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
         }
         else
         {
-            User user = crowdService.getUser(userProfile.getUsername());
-            // no impersonating an inactive user; no zombies
-            if (user == null)
-            {
-                // if this ever happens then our internal libs disagree on what is a user and what is not
-                throw new RuntimeException(String.format("The user manager said that user '%s' exists but Crowd does not know about it.", userProfile.getUsername()));
-            }
-            else if (!user.isActive())
+            if (!userService.isActive(userProfile.getUsername()))
             {
                 String externallyVisibleMessage = String.format(MSG_FORMAT_NOT_ALLOWING_IMPERSONATION, addOnKey, subject);
                 log.debug("{} because the crowd service says that this user is inactive.", externallyVisibleMessage);
@@ -310,37 +302,31 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
         }
         else
         {
-            Object addOnUserKey = applicationLink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
+            // the AppLinks constant is "user.key", but it is used to store the username. Confusing, but for backwards compatibility we're retaining
+            // the constant name
+            Object addOnUsername = applicationLink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
 
-            if (null == addOnUserKey)
+            if (null == addOnUsername)
             {
                 log.warn(String.format("Application link '%s' for JWT issuer '%s' has no '%s' property. Incoming requests from this issuer will be authenticated as an anonymous request.",
                         applicationLink.getId(), jwtIssuer, JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME));
             }
             else
             {
-                if (addOnUserKey instanceof String)
+                if (addOnUsername instanceof String)
                 {
-                    String userKeyString = (String) addOnUserKey;
-                    User user = crowdService.getUser(userKeyString);
-
-                    // if the add-on's user has been disabled then we explicitly deny access so that admins and our add-on
-                    // lifecycle code can instantly prevent an add-on from making any calls (e.g. when an add-on is disabled)
-                    if (null == user)
+                    String username = (String) addOnUsername;
+                    if (!userService.isActive(username))
                     {
-                        throw new InvalidSubjectException(String.format("The user '%s' does not exist", userKeyString));
-                    }
-                    else if (!user.isActive())
-                    {
-                        throw new InvalidSubjectException(String.format("The user '%s' is inactive", userKeyString));
+                        throw new InvalidSubjectException(String.format("The user '%s' is inactive", username));
                     }
 
-                    userPrincipal = new SimplePrincipal(userKeyString);
+                    userPrincipal = new SimplePrincipal(username);
                 }
                 else
                 {
                     throw new IllegalStateException(String.format("ApplicationLink '%s' for JWT issuer '%s' has the non-String user key '%s'. The user key must be a String: please correct it by editing the database or, if the issuer is a Connect add-on, by re-installing it.",
-                            applicationLink.getId(), jwtIssuer, addOnUserKey));
+                            applicationLink.getId(), jwtIssuer, addOnUsername));
                 }
             }
         }

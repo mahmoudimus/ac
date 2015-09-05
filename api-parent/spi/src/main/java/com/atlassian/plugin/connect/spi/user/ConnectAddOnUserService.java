@@ -11,5 +11,7 @@ public interface ConnectAddOnUserService
 
     void disableAddonUser(String addOnKey) throws ConnectAddOnUserDisableException;
 
+    boolean isActive(String username);
+
     String provisionAddonUserForScopes(String addOnKey, String addOnDisplayName, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddOnUserInitException;
 }
