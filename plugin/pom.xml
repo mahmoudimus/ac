@@ -1002,14 +1002,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <includeExclude>+com.atlassian.plugin.connect.*</includeExclude>
-                    <scannedDependencies>
-                        <dependency>
-                            <groupId>com.atlassian.plugin</groupId>
-                            <artifactId>atlassian-spring-scanner-external-jar</artifactId>
-                        </dependency>
-                    </scannedDependencies>
-                    <verbose>false</verbose>
+                    <includeExclude>-com.atlassian.jira.compatibility.*</includeExclude>
                 </configuration>
             </plugin>
 
