@@ -1,7 +1,6 @@
 package it.jira;
 
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
-import com.atlassian.jira.testkit.client.IssueTypeControl;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import it.util.TestProject;
 import org.apache.commons.lang.RandomStringUtils;
@@ -21,7 +20,6 @@ public class JiraTestBase
     @BeforeClass
     public static void beforeClass() throws RemoteException
     {
-        deleteAllIssueTypes();
         project = addProject();
     }
 
@@ -37,14 +35,5 @@ public class JiraTestBase
         String projectId = String.valueOf(product.backdoor().project().addProjectWithTemplate(
                 "Test project " + projectKey, projectKey, "admin", "com.atlassian.jira-core-project-templates:jira-issuetracking"));
         return new TestProject(projectKey, projectId);
-    }
-
-    public static void deleteAllIssueTypes()
-    {
-        IssueTypeControl issueTypeControl = product.backdoor().issueType();
-        for (IssueTypeControl.IssueType issueType : issueTypeControl.getIssueTypes())
-        {
-            issueTypeControl.deleteIssueType(Long.valueOf(issueType.getId()));
-        }
     }
 }
