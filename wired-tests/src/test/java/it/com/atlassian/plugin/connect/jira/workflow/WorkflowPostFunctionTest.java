@@ -56,7 +56,7 @@ public class WorkflowPostFunctionTest
     private static final String INSTALLED_URL = "/installed";
 
     private static final String ADMIN_USER = "admin";
-    private static final int RESOLVE_ACTION = 11;
+    private static final int RESOLVE_ACTION = 21;
 
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
