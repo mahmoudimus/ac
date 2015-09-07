@@ -16,6 +16,7 @@ import java.lang.reflect.Type;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderModuleDescriptor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,19 @@ public class PluginAwareModuleBeanDeserializer implements JsonDeserializer<Map<S
     {
         Type rawModuleListType = new TypeToken<Map<String, List<JsonObject>>>() {}.getType();
         Map<String, List<JsonObject>> rawModuleList = context.deserialize(json, rawModuleListType);
+        
+        for(Map.Entry<String, JsonElement> entry : json.getAsJsonObject().entrySet())
+        {
+            JsonArray moduleArray = entry.getValue().getAsJsonArray();
+            List<JsonObject> modules = new ArrayList<>();
+            for (int i = 0; i < moduleArray.size(); i++)
+            {
+                JsonObject module = moduleArray.get(i).getAsJsonObject();
+                modules.add(module);
+            }
+            rawModuleList.put(entry.getKey(), modules);
+        }
+        
         assertAllModuleProvidersKnown(rawModuleList);
 
         Map<String, Supplier<List<ModuleBean>>> moduleBeanListSuppliers = new HashMap<>();
