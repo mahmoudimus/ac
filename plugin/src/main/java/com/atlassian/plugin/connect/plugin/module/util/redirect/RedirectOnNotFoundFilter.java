@@ -2,17 +2,12 @@ package com.atlassian.plugin.connect.plugin.module.util.redirect;
 
 import com.atlassian.gzipfilter.org.apache.commons.lang.StringUtils;
 import com.google.common.annotations.VisibleForTesting;
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.http.HttpHeaders;
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
