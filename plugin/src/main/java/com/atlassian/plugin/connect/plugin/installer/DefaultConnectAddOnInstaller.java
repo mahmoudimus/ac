@@ -47,7 +47,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
     private final ConnectAddonManager connectAddonManager;
     private final ConnectAddonRegistry addonRegistry;
     private final ConnectApplinkManager connectApplinkManager;
-    private final ConnectUserService connectAddOnUserService;
+    private final ConnectUserService connectUserService;
 
     private static final Logger log = LoggerFactory.getLogger(DefaultConnectAddOnInstaller.class);
 
@@ -61,7 +61,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
             ConnectAddonManager connectAddonManager,
             ConnectAddonRegistry addonRegistry,
             ConnectApplinkManager connectApplinkManager,
-            ConnectUserService connectAddOnUserService)
+            ConnectUserService connectUserService)
     {
         this.pluginController = pluginController;
         this.pluginAccessor = pluginAccessor;
@@ -72,7 +72,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
         this.connectAddonManager = connectAddonManager;
         this.addonRegistry = addonRegistry;
         this.connectApplinkManager = connectApplinkManager;
-        this.connectAddOnUserService = connectAddOnUserService;
+        this.connectUserService = connectUserService;
     }
 
     @Override
@@ -143,7 +143,7 @@ public class DefaultConnectAddOnInstaller implements ConnectAddOnInstaller
                               + pluginKey
                               + "]. Restoring previous version...", e);
                     ConnectAddonBean previousAddon = maybePreviousAddon.get();
-                    String addonUserKey = this.connectAddOnUserService.getOrCreateAddOnUserName(pluginKey,
+                    String addonUserKey = this.connectUserService.getOrCreateAddOnUserName(pluginKey,
                             previousAddon.getName());
                     addonRegistry.storeAddonSettings(pluginKey, previousSettings);
                     connectApplinkManager.createAppLink(previousAddon,

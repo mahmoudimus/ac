@@ -105,7 +105,7 @@ public class ConnectAddonManager
     private HttpClient httpClient;
     private final ConnectAddonRegistry addonRegistry;
     private final BeanToModuleRegistrar beanToModuleRegistrar;
-    private final ConnectUserService connectAddOnUserService;
+    private final ConnectUserService connectUserService;
     private final EventPublisher eventPublisher;
     private final ConsumerService consumerService;
     private final ApplicationProperties applicationProperties;
@@ -122,7 +122,7 @@ public class ConnectAddonManager
     @Inject
     public ConnectAddonManager(IsDevModeService isDevModeService, UserManager userManager,
                                RemotablePluginAccessorFactory remotablePluginAccessorFactory, ConnectAddonRegistry addonRegistry,
-                               BeanToModuleRegistrar beanToModuleRegistrar, ConnectUserService connectAddOnUserService,
+                               BeanToModuleRegistrar beanToModuleRegistrar, ConnectUserService connectUserService,
                                EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties,
                                LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext,
                                ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory,
@@ -137,7 +137,7 @@ public class ConnectAddonManager
         this.httpClient = connectHttpClientFactory.getInstance();
         this.addonRegistry = addonRegistry;
         this.beanToModuleRegistrar = beanToModuleRegistrar;
-        this.connectAddOnUserService = connectAddOnUserService;
+        this.connectUserService = connectUserService;
         this.eventPublisher = eventPublisher;
         this.consumerService = consumerService;
         this.applicationProperties = applicationProperties;
@@ -525,12 +525,12 @@ public class ConnectAddonManager
             applicationLink.removeProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
         }
 
-        connectAddOnUserService.disableAddOnUser(addOnKey);
+        connectUserService.disableAddOnUser(addOnKey);
     }
 
     private void enableAddOnUser(ConnectAddonBean addon) throws ConnectAddOnUserInitException
     {
-        String userKey = connectAddOnUserService.getOrCreateAddOnUserName(addon.getKey(), addon.getName());
+        String userKey = connectUserService.getOrCreateAddOnUserName(addon.getKey(), addon.getName());
 
         ApplicationLink applicationLink = connectApplinkManager.getAppLink(addon.getKey());
 
@@ -744,7 +744,7 @@ public class ConnectAddonManager
 
         try
         {
-            return connectAddOnUserService.provisionAddOnUserForScopes(addOn.getKey(),
+            return connectUserService.provisionAddOnUserForScopes(addOn.getKey(),
                     addOn.getName(),
                     previousScopes,
                     newScopes);
