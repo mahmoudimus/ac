@@ -810,7 +810,6 @@
         <atlassian.webhooks.version>2.0.0</atlassian.webhooks.version>
         <atlassian.webhooks.api.version>1.0.6</atlassian.webhooks.api.version>
         <atlassian.jira.webhooks.version>1.2.5</atlassian.jira.webhooks.version>
-        <commons.httpclient.version>3.1-atlassian-2</commons.httpclient.version>
 
         <atlassian.webresource.version>3.1.0</atlassian.webresource.version>
         <atlassian.webfragments.version>3.0.0-m7</atlassian.webfragments.version>

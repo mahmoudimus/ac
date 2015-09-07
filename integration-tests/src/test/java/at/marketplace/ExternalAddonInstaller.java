@@ -1,18 +1,12 @@
 package at.marketplace;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.HashSet;
-import java.util.Set;
-
+import cc.plural.jsonij.JPath;
+import cc.plural.jsonij.Value;
+import cc.plural.jsonij.parser.ParserException;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
-
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
-
-import org.apache.commons.httpclient.auth.BasicScheme;
+import it.util.TestUser;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
@@ -24,16 +18,19 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cc.plural.jsonij.JPath;
-import cc.plural.jsonij.Value;
-import cc.plural.jsonij.parser.ParserException;
-import it.util.TestUser;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -199,7 +196,7 @@ public class ExternalAddonInstaller
     private boolean addonExists() throws IOException
     {
         HttpGet get = new HttpGet(mpacUrl + ADDONS_REST_PATH + addon.getKey());
-        get.addHeader("Authorization", BasicScheme.authenticate(MarketplaceSettings.credentials(), "UTF-8"));
+        get.addHeader(BasicScheme.authenticate(MarketplaceSettings.credentials(), "UTF-8", false));
         log.info("Checking whether the test add-on already exists on the marketplace");
 
         Boolean addonFound = transformResponse(
@@ -221,7 +218,7 @@ public class ExternalAddonInstaller
     private Optional<String> getApproveUrl() throws IOException
     {
         HttpGet get = new HttpGet(mpacUrl + ADDONS_REST_PATH + addon.getKey());
-        get.addHeader("Authorization", BasicScheme.authenticate(MarketplaceSettings.credentials(), "UTF-8"));
+        get.addHeader(BasicScheme.authenticate(MarketplaceSettings.credentials(), "UTF-8", false));
         log.info("Checking for an approval url for add-on with key {}", addon.getKey());
 
         return Optional.fromNullable(transformResponse(
@@ -255,7 +252,7 @@ public class ExternalAddonInstaller
     private Optional<String> getDescriptorUrl() throws IOException
     {
         HttpGet get = new HttpGet(mpacUrl + ADDONS_REST_PATH + addon.getKey() + "/versions/latest");
-        get.addHeader("Authorization", BasicScheme.authenticate(MarketplaceSettings.credentials(), "UTF-8"));
+        get.addHeader(BasicScheme.authenticate(MarketplaceSettings.credentials(), "UTF-8", false));
         log.info("Getting descriptor url for add-on {}", addon.getKey());
 
         return Optional.fromNullable(transformResponse(
@@ -289,7 +286,7 @@ public class ExternalAddonInstaller
     private boolean vendorExists(String vendorId) throws IOException
     {
         HttpGet get = new HttpGet(mpacUrl + VENDORS_REST_PATH + vendorId);
-        get.addHeader("Authorization", BasicScheme.authenticate(MarketplaceSettings.credentials(), "UTF-8"));
+        get.addHeader(BasicScheme.authenticate(MarketplaceSettings.credentials(), "UTF-8", false));
         log.info("Checking whether vendor with ID {} exists", vendorId);
 
         Boolean vendorFound = transformResponse(
