@@ -1,19 +1,20 @@
 package com.atlassian.plugin.connect.plugin.module.webfragment;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.atlassian.plugin.connect.api.module.webfragment.UrlVariableSubstitutor;
 import com.atlassian.plugin.connect.api.service.IsDevModeService;
-import org.apache.commons.httpclient.URIException;
-import org.apache.commons.httpclient.util.URIUtil;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
@@ -93,9 +94,9 @@ public class UrlVariableSubstitutorImpl implements UrlVariableSubstitutor
         }
         try
         {
-            return URIUtil.encodeWithinQuery(value);
+            return URLEncoder.encode(value, "UTF-8");
         }
-        catch (URIException ex)
+        catch (UnsupportedEncodingException ex)
         {
             log.error("Error encoding value '" + value + "' to querystring", ex);
             return "";
