@@ -45,7 +45,6 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
 
     private static final ParameterCapturingConditionServlet PARAMETER_CAPTURING_SERVLET = new ParameterCapturingConditionServlet();
 
-    private TestUser user;
     private IssueCreateResponse issue;
 
     @BeforeClass
@@ -82,7 +81,6 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
     @Before
     public void setUpTest() throws Exception
     {
-        user = testUserFactory.basicUser();
         issue = product.backdoor().issues().createIssue(project.getKey(), "Test issue for tab");
     }
 
