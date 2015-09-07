@@ -38,7 +38,7 @@ public class AddonTestUtils
     public static WebItemModuleBean randomWebItemBean()
     {
         return newWebItemBean()
-                .withName(new I18nProperty(randomModuleKey(), ""))
+                .withName(new I18nProperty(randomModuleKey(), null))
                 .withKey(randomModuleKey())
                 .withLocation("system.nowhere")
                 .withUrl("/nowhere")

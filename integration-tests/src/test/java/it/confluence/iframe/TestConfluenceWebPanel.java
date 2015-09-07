@@ -1,7 +1,5 @@
 package it.confluence.iframe;
 
-import java.net.MalformedURLException;
-
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -12,19 +10,17 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceUserProfilePage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceViewPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-
-import it.util.ConnectTestUserFactory;
+import it.confluence.ConfluenceWebDriverTestBase;
+import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
-
-import it.confluence.ConfluenceWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
-import it.util.TestUser;
 import redstone.xmlrpc.XmlRpcFault;
+
+import java.net.MalformedURLException;
 
 import static com.atlassian.fugue.Option.some;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
@@ -67,7 +63,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
     public static void startConnectAddOn() throws Exception
     {
         editorWebPanel = WebPanelModuleBean.newWebPanelBean()
-                .withName(new I18nProperty("Editor Panel", "editor-panel"))
+                .withName(new I18nProperty("Editor Panel", null))
                 .withKey("editor-panel")
                 .withLocation("atl.editor")
                 .withUrl(IFRAME_URL_EDIT + IFRAME_URL_PARAMETERS)
@@ -76,7 +72,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
                 .build();
 
         viewWebPanel = WebPanelModuleBean.newWebPanelBean()
-                .withName(new I18nProperty("View Panel", "view-panel"))
+                .withName(new I18nProperty("View Panel", null))
                 .withKey("view-panel")
                 .withLocation("atl.general")
                 .withUrl(IFRAME_URL_VIEW + IFRAME_URL_PARAMETERS)
@@ -86,7 +82,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
                 .build();
 
         profileWebPanel = WebPanelModuleBean.newWebPanelBean()
-                .withName(new I18nProperty("Profile Panel", "profile-panel"))
+                .withName(new I18nProperty("Profile Panel", null))
                 .withKey("profile-panel")
                 .withLocation("atl.userprofile")
                 .withUrl(IFRAME_URL_PROFILE + IFRAME_URL_PARAMETERS)

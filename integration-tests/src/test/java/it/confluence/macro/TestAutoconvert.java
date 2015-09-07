@@ -19,7 +19,6 @@ import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
-import it.util.ConnectTestUserFactory;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -57,7 +56,7 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
                 .withParameters(
                         newMacroParameterBean()
                                 .withIdentifier("url")
-                                .withName(new I18nProperty("URL", ""))
+                                .withName(new I18nProperty("URL", null))
                                 .withType("string")
                                 .build())
                 .withAutoconvert(AutoconvertBean.newAutoconvertBean()
@@ -79,7 +78,7 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
                 .withParameters(
                         newMacroParameterBean()
                                 .withIdentifier("url")
-                                .withName(new I18nProperty("URL", ""))
+                                .withName(new I18nProperty("URL", null))
                                 .withType("string")
                                 .build())
                 .withAutoconvert(AutoconvertBean.newAutoconvertBean()

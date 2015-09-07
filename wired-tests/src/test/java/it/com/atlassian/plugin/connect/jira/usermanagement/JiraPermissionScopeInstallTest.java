@@ -78,12 +78,12 @@ public class JiraPermissionScopeInstallTest extends AbstractJiraPermissionScopeT
     @Test
     public void addonCannotEditIssuesInExistingProjects() throws Exception
     {
-        checkHasNoPermissionForAnyProjectAfterInstall(getReadAddOn(), Permission.EDIT_ISSUE);
+        checkHasPermissionForAllProjectsAfterInstall(getReadAddOn(), Permission.EDIT_ISSUE);
     }
 
     @Test
     public void addonCannotEditIssueInNewProject() throws Exception
     {
-        checkHasNoPermissionForNewProjectAfterInstall(getReadAddOn(), Permission.EDIT_ISSUE);
+        checkHasPermissionForNewProjectAfterInstall(getReadAddOn(), Permission.EDIT_ISSUE);
     }
 }

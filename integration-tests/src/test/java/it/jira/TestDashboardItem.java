@@ -34,9 +34,9 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import javax.inject.Inject;
 import java.util.List;
 import java.util.concurrent.Callable;
-import javax.inject.Inject;
 
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 import static com.google.common.collect.Iterables.getOnlyElement;
@@ -261,8 +261,8 @@ public class TestDashboardItem extends JiraWebDriverTestBase
                 .setVendor(newVendorBean().withName(VENDOR_NAME).withUrl("http://www.atlassian.com").build())
                 .addModules("jiraDashboardItems",
                         DashboardItemModuleBean.newBuilder()
-                                .withDescription(new I18nProperty("Description", "description.i18n"))
-                                .withName(new I18nProperty(title, "title.i18n"))
+                                .withDescription(new I18nProperty("Description", null))
+                                .withName(new I18nProperty(title, null))
                                 .withThumbnailUrl("atlassian-icon-16.png")
                                 .withUrl("/item-with-condition?dashboardItemId={dashboardItem.id}&dashboardId={dashboard.id}&view={dashboardItem.viewType}")
                                 .withConditions(DashboardItemConditionServlet.conditionBean())
@@ -306,7 +306,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
     private static DashboardItemModuleBean buildDashboardItemModule(String title, String key, boolean configurable)
     {
         return DashboardItemModuleBean.newBuilder()
-                .withDescription(new I18nProperty(DASHBOARD_ITEM_DESCRIPTION, "description.i18n.key"))
+                .withDescription(new I18nProperty(DASHBOARD_ITEM_DESCRIPTION, null))
                 .withName(new I18nProperty(title, null))
                 .withThumbnailUrl("atlassian-icon-16.png")
                 .withUrl("/dashboard-item-test?dashboardItemId={dashboardItem.id}&dashboardId={dashboard.id}&view={dashboardItem.viewType}")
