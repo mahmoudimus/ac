@@ -49,6 +49,6 @@ public class JiraPermissionScopeTransitionNewTest extends AbstractJiraPermission
     @Test
     public void testWriteToReadTransitionForNewProjects() throws Exception
     {
-        checkHasNoPermissionForNewProjectAfterTransition(getWriteAddOn(), getReadAddOn(), Permission.EDIT_ISSUE);
+        checkHasPermissionForNewProjectAfterTransition(getWriteAddOn(), getReadAddOn(), Permission.EDIT_ISSUE);
     }
 }
