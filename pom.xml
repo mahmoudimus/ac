@@ -850,7 +850,6 @@
         <blueprints.version>4.0.22</blueprints.version>
         <skipNpm>false</skipNpm>
         <clover.libversion>4.0.3</clover.libversion>
-        <javadoc.additional.params></javadoc.additional.params>
     </properties>
 
     <repositories>

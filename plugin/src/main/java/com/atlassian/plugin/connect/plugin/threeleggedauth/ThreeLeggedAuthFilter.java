@@ -8,7 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.util.DefaultMessage;
-import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.auth.AuthenticationListener;
 import com.atlassian.sal.api.auth.Authenticator;
@@ -51,7 +51,7 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
     private final AuthenticationListener authenticationListener;
     private final JwtApplinkFinder jwtApplinkFinder;
     private final UserManager userManager;
-    private final ConnectAddOnUserService userService;
+    private final ConnectUserService userService;
     private final String badCredentialsMessage; // protect against phishing by not saying whether the add-on, user or secret was wrong
 
     private final static Logger log = LoggerFactory.getLogger(ThreeLeggedAuthFilter.class);
@@ -62,7 +62,7 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
     public ThreeLeggedAuthFilter(ThreeLeggedAuthService threeLeggedAuthService,
                                  ConnectAddonManager connectAddonManager,
                                  UserManager userManager,
-                                 ConnectAddOnUserService userService,
+                                 ConnectUserService userService,
                                  AuthenticationListener authenticationListener,
                                  JwtApplinkFinder jwtApplinkFinder,
                                  I18nResolver i18nResolver)

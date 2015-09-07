@@ -41,7 +41,7 @@ import com.atlassian.plugin.connect.spi.http.ReKeyableAuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstallException;
 import com.atlassian.plugin.connect.spi.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
-import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
@@ -105,7 +105,7 @@ public class ConnectAddonManager
     private HttpClient httpClient;
     private final ConnectAddonRegistry addonRegistry;
     private final BeanToModuleRegistrar beanToModuleRegistrar;
-    private final ConnectAddOnUserService connectAddOnUserService;
+    private final ConnectUserService connectAddOnUserService;
     private final EventPublisher eventPublisher;
     private final ConsumerService consumerService;
     private final ApplicationProperties applicationProperties;
@@ -122,7 +122,7 @@ public class ConnectAddonManager
     @Inject
     public ConnectAddonManager(IsDevModeService isDevModeService, UserManager userManager,
                                RemotablePluginAccessorFactory remotablePluginAccessorFactory, ConnectAddonRegistry addonRegistry,
-                               BeanToModuleRegistrar beanToModuleRegistrar, ConnectAddOnUserService connectAddOnUserService,
+                               BeanToModuleRegistrar beanToModuleRegistrar, ConnectUserService connectAddOnUserService,
                                EventPublisher eventPublisher, ConsumerService consumerService, ApplicationProperties applicationProperties,
                                LicenseRetriever licenseRetriever, ProductAccessor productAccessor, BundleContext bundleContext,
                                ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory,
@@ -525,12 +525,12 @@ public class ConnectAddonManager
             applicationLink.removeProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
         }
 
-        connectAddOnUserService.disableAddonUser(addOnKey);
+        connectAddOnUserService.disableAddOnUser(addOnKey);
     }
 
     private void enableAddOnUser(ConnectAddonBean addon) throws ConnectAddOnUserInitException
     {
-        String userKey = connectAddOnUserService.getOrCreateUserName(addon.getKey(), addon.getName());
+        String userKey = connectAddOnUserService.getOrCreateAddOnUserName(addon.getKey(), addon.getName());
 
         ApplicationLink applicationLink = connectApplinkManager.getAppLink(addon.getKey());
 
@@ -744,10 +744,10 @@ public class ConnectAddonManager
 
         try
         {
-            return connectAddOnUserService.provisionAddonUserForScopes(addOn.getKey(),
-                                                                       addOn.getName(),
-                                                                       previousScopes,
-                                                                       newScopes);
+            return connectAddOnUserService.provisionAddOnUserForScopes(addOn.getKey(),
+                    addOn.getName(),
+                    previousScopes,
+                    newScopes);
         }
         catch (ConnectAddOnUserInitException e)
         {

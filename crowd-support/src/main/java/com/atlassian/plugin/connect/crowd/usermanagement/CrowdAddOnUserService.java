@@ -15,7 +15,7 @@ import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
-import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
@@ -25,6 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.Constants;
 import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
 import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.usernameForAddon;
@@ -33,7 +35,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @ExportAsDevService
 @ConfluenceComponent
 @JiraComponent
-public class CrowdAddOnUserService implements ConnectAddOnUserService
+public class CrowdAddOnUserService implements ConnectUserService
 {
     public static final PasswordCredential PREVENT_LOGIN = PasswordCredential.NONE;
 
@@ -54,8 +56,9 @@ public class CrowdAddOnUserService implements ConnectAddOnUserService
         this.connectAddOnUserGroupProvisioningService = checkNotNull(connectAddOnUserGroupProvisioningService);
     }
 
+    @Nonnull
     @Override
-    public String getOrCreateUserName(String addOnKey, String addOnDisplayName) throws ConnectAddOnUserInitException
+    public String getOrCreateAddOnUserName(@Nonnull String addOnKey, @Nonnull String addOnDisplayName) throws ConnectAddOnUserInitException
     {
         try
         {
@@ -73,21 +76,22 @@ public class CrowdAddOnUserService implements ConnectAddOnUserService
     }
 
     @Override
-    public void disableAddonUser(String addOnKey) throws ConnectAddOnUserDisableException
+    public void disableAddOnUser(@Nonnull String addOnKey) throws ConnectAddOnUserDisableException
     {
         connectCrowdService.disableUser(usernameForAddon(addOnKey));
     }
 
     @Override
-    public boolean isActive(String username)
+    public boolean isActive(@Nonnull String username)
     {
         return connectCrowdService.isUserActive(username);
     }
 
+    @Nonnull
     @Override
-    public String provisionAddonUserForScopes(String addOnKey, String addOnDisplayName, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
+    public String provisionAddOnUserForScopes(@Nonnull String addOnKey, @Nonnull String addOnDisplayName, @Nonnull Set<ScopeName> previousScopes, @Nonnull Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
     {
-        String username = getOrCreateUserName(checkNotNull(addOnKey), checkNotNull(addOnDisplayName));
+        String username = getOrCreateAddOnUserName(checkNotNull(addOnKey), checkNotNull(addOnDisplayName));
         connectAddOnUserProvisioningService.provisionAddonUserForScopes(username, previousScopes, newScopes);
         return username;
     }
