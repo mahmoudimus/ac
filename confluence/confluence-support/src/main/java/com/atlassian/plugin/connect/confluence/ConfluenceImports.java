@@ -49,9 +49,7 @@ public class ConfluenceImports
             @ConfluenceImport UserAccessor userAccessor,
             @ConfluenceImport WebSudoManager webSudoManager,
             @ConfluenceImport XhtmlContent xhtmlContent,
-            @ConfluenceImport CoreFeaturesManager coreFeaturesManager,
-            @ConfluenceImport ApplicationManager applicationManager,
-            @ConfluenceImport ApplicationService applicationService)
+            @ConfluenceImport CoreFeaturesManager coreFeaturesManager)
     {
     }
 }

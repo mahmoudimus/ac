@@ -65,7 +65,7 @@ public class TestCrowdAddOnUserService
     public void getOrCreateUserNameCreatesAddonUser() throws Exception
     {
         when(hostProperties.getKey()).thenReturn(PRODUCT_KEY);
-        crowdAddOnUserService.getOrCreateUserName(ADDON_KEY, ADDON_NAME);
+        crowdAddOnUserService.getOrCreateAddOnUserName(ADDON_KEY, ADDON_NAME);
 
         verify(connectCrowdService).createOrEnableUser(ConnectAddOnUserUtil.usernameForAddon(ADDON_KEY),
                 ADDON_NAME, ConnectAddOnUserUtil.Constants.ADDON_USER_EMAIL_ADDRESS,
@@ -75,7 +75,7 @@ public class TestCrowdAddOnUserService
     @Test
     public void getOrCreateUserNameCreatesAddonGroup() throws Exception
     {
-        crowdAddOnUserService.getOrCreateUserName(ADDON_KEY, ADDON_NAME);
+        crowdAddOnUserService.getOrCreateAddOnUserName(ADDON_KEY, ADDON_NAME);
         verify(connectAddOnUserGroupProvisioningService).ensureGroupExists(ADDON_USER_GROUP_KEY);
     }
 
@@ -85,7 +85,7 @@ public class TestCrowdAddOnUserService
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(Sets.newHashSet("always-expected-groups"));
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(Sets.newHashSet("one-or-more-expected-groups"));
 
-        crowdAddOnUserService.getOrCreateUserName(ADDON_KEY, ADDON_NAME);
+        crowdAddOnUserService.getOrCreateAddOnUserName(ADDON_KEY, ADDON_NAME);
 
         verify(connectAddOnUserGroupProvisioningService).ensureUserIsInGroup(ADDON_USERNAME, ADDON_USER_GROUP_KEY);
         verify(connectAddOnUserGroupProvisioningService).ensureUserIsInGroup(ADDON_USERNAME, "always-expected-groups");
@@ -101,7 +101,7 @@ public class TestCrowdAddOnUserService
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected()).thenReturn(Sets.newHashSet("always-expected-groups"));
         when(connectAddOnUserProvisioningService.getDefaultProductGroupsOneOrMoreExpected()).thenReturn(Sets.newHashSet("one-or-more-expected-groups"));
 
-        crowdAddOnUserService.getOrCreateUserName(ADDON_KEY, ADDON_NAME);
+        crowdAddOnUserService.getOrCreateAddOnUserName(ADDON_KEY, ADDON_NAME);
 
         verify(connectAddOnUserGroupProvisioningService, times(1)).ensureUserIsInGroup(anyString(), anyString());
         verify(connectAddOnUserGroupProvisioningService).ensureUserIsInGroup(ADDON_USERNAME, ADDON_USER_GROUP_KEY);
@@ -110,7 +110,7 @@ public class TestCrowdAddOnUserService
     @Test
     public void getOrCreateUserNameDoesNotInvalidateSessionsWhenUserIsNew() throws Exception
     {
-        crowdAddOnUserService.getOrCreateUserName(ADDON_KEY, ADDON_NAME);
+        crowdAddOnUserService.getOrCreateAddOnUserName(ADDON_KEY, ADDON_NAME);
 
         verify(connectCrowdService, never()).invalidateSessions(ADDON_USERNAME);
     }
@@ -121,7 +121,7 @@ public class TestCrowdAddOnUserService
         when(connectCrowdService.createOrEnableUser(anyString(), anyString(), anyString(),
                 any(PasswordCredential.class), anyMap())).thenReturn(new UserCreationResult(user, PRE_EXISTING));
 
-        crowdAddOnUserService.getOrCreateUserName(ADDON_KEY, ADDON_NAME);
+        crowdAddOnUserService.getOrCreateAddOnUserName(ADDON_KEY, ADDON_NAME);
 
         verify(connectCrowdService).invalidateSessions(ADDON_USERNAME);
     }

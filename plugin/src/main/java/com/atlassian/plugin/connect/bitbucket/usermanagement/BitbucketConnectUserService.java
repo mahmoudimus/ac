@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitExcept
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
-import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.plugin.spring.scanner.annotation.component.BitbucketComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.bitbucket.user.*;
@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 
 @ExportAsDevService
 @BitbucketComponent
-public class BitbucketConnectUserService implements ConnectAddOnUserService
+public class BitbucketConnectUserService implements ConnectUserService
 {
     private final UserAdminService userAdminService;
     private final UserService userService;
@@ -30,7 +30,7 @@ public class BitbucketConnectUserService implements ConnectAddOnUserService
     }
 
     @Override
-    public void disableAddonUser(String addOnKey) throws ConnectAddOnUserDisableException
+    public void disableAddOnUser(String addOnKey) throws ConnectAddOnUserDisableException
     {
         ApplicationUser user = getAddonUser(addOnKey);
         if (user == null)
@@ -48,7 +48,7 @@ public class BitbucketConnectUserService implements ConnectAddOnUserService
     }
 
     @Override
-    public String getOrCreateUserName(String addOnKey, String addOnDisplayName) throws ConnectAddOnUserInitException
+    public String getOrCreateAddOnUserName(String addOnKey, String addOnDisplayName) throws ConnectAddOnUserInitException
     {
         return getOrCreateUser(addOnKey, addOnDisplayName).getName();
     }
@@ -64,7 +64,7 @@ public class BitbucketConnectUserService implements ConnectAddOnUserService
 
     @Nonnull
     @Override
-    public String provisionAddonUserForScopes(@Nonnull String addonKey, @Nonnull String addonDisplayName,
+    public String provisionAddOnUserForScopes(@Nonnull String addonKey, @Nonnull String addonDisplayName,
                                       @Nonnull Set<ScopeName> previousScopes, @Nonnull Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
     {
         // just provision the user - no special actions required to enforce scopes at this time

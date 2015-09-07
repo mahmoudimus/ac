@@ -2,7 +2,7 @@
     <parent>
         <groupId>com.atlassian.pom</groupId>
         <artifactId>public-pom</artifactId>
-        <version>3.0.90</version>
+        <version>3.0.93</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
@@ -859,7 +859,6 @@
         <blueprints.version>4.0.22</blueprints.version>
         <skipNpm>false</skipNpm>
         <clover.libversion>4.0.3</clover.libversion>
-        <javadoc.additional.params />
     </properties>
 
     <repositories>
