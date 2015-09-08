@@ -5,6 +5,8 @@ import java.rmi.RemoteException;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
 
+import com.atlassian.test.ondemand.data.ConfluenceData;
+import com.atlassian.test.ondemand.data.JiraData;
 import com.google.common.base.Optional;
 
 import org.junit.After;
@@ -39,10 +41,8 @@ public class TestJiraStaticDescriptor extends JiraWebDriverTestBase
     @Test
     public void testAcActionWebItemIsPresent() throws RemoteException
     {
-        IssueCreateResponse issue = product.backdoor().issues().createIssue(project.getKey(), "Atlassian Connect Web Panel Test Issue");
-
         login(testUserFactory.basicUser());
-        product.goToViewIssue(issue.key);
+        product.goToViewIssue(String.valueOf(JiraData.Projects.EntityLinkedProject.Issues.ISSUE_WITH_WIKI_LINK));
 
         connectPageOperations.findWebItem(LINK_TEXT, WEB_ITEM_TEXT, Optional.<String>absent());
     }
