@@ -852,20 +852,22 @@ public class ConnectJsonExamples
                 .build();
     }
 
-    private static String createContentPropertyExample()
+    public static ContentPropertyModuleBean createContentPropertyExampleBean()
     {
         List<ContentPropertyIndexExtractionConfigurationBean> extractionConfiguration = getContentPropertyIndexExtractionConfigurationBeans();
 
         ContentPropertyIndexKeyConfigurationBean indexConfiguration =
                 new ContentPropertyIndexKeyConfigurationBean("attachment", extractionConfiguration);
 
-        ContentPropertyModuleBean contentPropertyModuleBean =
-                newContentPropertyModuleBean()
-                        .withName(i18nProperty("Attachment Index Document"))
-                        .withKeyConfiguration(indexConfiguration)
-                        .build();
+        return newContentPropertyModuleBean()
+                .withName(i18nProperty("Attachment Index Document"))
+                .withKeyConfiguration(indexConfiguration)
+                .build();
+    }
 
-        return gson.toJson(createJsonArray("confluenceContentProperties", contentPropertyModuleBean));
+    private static String createContentPropertyExample()
+    {
+        return gson.toJson(createJsonArray("confluenceContentProperties", createContentPropertyExampleBean()));
     }
 
     private static String createDashboardItemExample()
