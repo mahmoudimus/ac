@@ -7,9 +7,6 @@ import com.google.gson.InstanceCreator;
 import java.lang.reflect.Type;
 import java.util.List;
 
-/**
- * Created by jfurler on 24/08/2015.
- */
 public class SupplierInstanceCreator implements InstanceCreator<Supplier<List<ModuleBean>>>
 {
     

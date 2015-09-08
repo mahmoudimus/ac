@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
@@ -58,14 +59,14 @@ public class PluginAwareModuleBeanDeserializer implements JsonDeserializer<Map<S
             String descriptorKey = rawModuleListEntry.getKey();
             final List<JsonObject> rawModules = rawModuleListEntry.getValue();
             final ConnectModuleProvider moduleProvider = moduleProviders.get(descriptorKey);
-            final Supplier<List<ModuleBean>> moduleBeanSupplier = new Supplier<List<ModuleBean>>()
+            Supplier<List<ModuleBean>> moduleBeanSupplier = Suppliers.memoize(new Supplier<List<ModuleBean>>()
             {
                 @Override
                 public List<ModuleBean> get()
                 {
                     return moduleProvider.validate(rawModules, moduleProvider.getBeanClass());
                 }
-            };
+            });
             moduleBeanListSuppliers.put(descriptorKey, Suppliers.memoize(moduleBeanSupplier));
         }
 
@@ -87,7 +88,8 @@ public class PluginAwareModuleBeanDeserializer implements JsonDeserializer<Map<S
         final Set<String> unknownModuleTypes = Sets.difference(rawModuleList.keySet(), moduleProviders.keySet());
         if (!unknownModuleTypes.isEmpty())
         {
-            // Unknown module providers
+            // TODO pass an i18n key here?
+            throw new InvalidDescriptorException("Module types " + unknownModuleTypes.toString() + " listed in the descriptor are not valid.");
         }
     }
 }
