@@ -36,40 +36,45 @@ public class PluginAwareModuleBeanDeserializer implements JsonDeserializer<Map<S
     @Override
     public Map<String, Supplier<List<ModuleBean>>> deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException
     {
-        Type rawModuleListType = new TypeToken<Map<String, List<JsonObject>>>() {}.getType();
-        Map<String, List<JsonObject>> rawModuleList = context.deserialize(json, rawModuleListType);
-        
-        for(Map.Entry<String, JsonElement> entry : json.getAsJsonObject().entrySet())
-        {
-            JsonArray moduleArray = entry.getValue().getAsJsonArray();
-            List<JsonObject> modules = new ArrayList<>();
-            for (int i = 0; i < moduleArray.size(); i++)
-            {
-                JsonObject module = moduleArray.get(i).getAsJsonObject();
-                modules.add(module);
-            }
-            rawModuleList.put(entry.getKey(), modules);
-        }
-        
-        assertAllModuleProvidersKnown(rawModuleList);
-
         Map<String, Supplier<List<ModuleBean>>> moduleBeanListSuppliers = new HashMap<>();
-        for (Map.Entry<String, List<JsonObject>> rawModuleListEntry : rawModuleList.entrySet())
+        
+        for (Map.Entry<String, JsonElement> rawModule : json.getAsJsonObject().entrySet())
         {
-            String descriptorKey = rawModuleListEntry.getKey();
-            final List<JsonObject> rawModules = rawModuleListEntry.getValue();
-            final ConnectModuleProvider moduleProvider = moduleProviders.get(descriptorKey);
+            if (!moduleProviders.keySet().contains(rawModule.getKey()))
+            {
+                // TODO pass an i18n key here?
+                throw new InvalidDescriptorException("Module types " + rawModule.getKey() + " listed in the descriptor are not valid.");
+            }
+            
+            List<JsonObject> modules = new ArrayList<>();
+            if (rawModule.getValue().isJsonObject())
+            {
+                modules.add(rawModule.getValue().getAsJsonObject());
+            }
+            else
+            {
+                JsonArray moduleArray = rawModule.getValue().getAsJsonArray();
+
+                for (int i = 0; i < moduleArray.size(); i++)
+                {
+                    JsonObject module = moduleArray.get(i).getAsJsonObject();
+                    modules.add(module);
+                }
+            }
+            
+            final ConnectModuleProvider moduleProvider = moduleProviders.get(rawModule.getKey());
+            final List<JsonObject> finalModules = new ArrayList<>(modules);
             Supplier<List<ModuleBean>> moduleBeanSupplier = Suppliers.memoize(new Supplier<List<ModuleBean>>()
             {
                 @Override
                 public List<ModuleBean> get()
                 {
-                    return moduleProvider.validate(rawModules, moduleProvider.getBeanClass());
+                    return moduleProvider.validate(finalModules, moduleProvider.getBeanClass());
                 }
             });
-            moduleBeanListSuppliers.put(descriptorKey, Suppliers.memoize(moduleBeanSupplier));
+            moduleBeanListSuppliers.put(rawModule.getKey(), moduleBeanSupplier);
         }
-
+        
         return moduleBeanListSuppliers;
     }
 
@@ -81,15 +86,5 @@ public class PluginAwareModuleBeanDeserializer implements JsonDeserializer<Map<S
             moduleProviderMap.put(moduleProvider.getDescriptorKey(), moduleProvider);
         }
         return moduleProviderMap;
-    }
-
-    private void assertAllModuleProvidersKnown(Map<String, List<JsonObject>> rawModuleList)
-    {
-        final Set<String> unknownModuleTypes = Sets.difference(rawModuleList.keySet(), moduleProviders.keySet());
-        if (!unknownModuleTypes.isEmpty())
-        {
-            // TODO pass an i18n key here?
-            throw new InvalidDescriptorException("Module types " + unknownModuleTypes.toString() + " listed in the descriptor are not valid.");
-        }
     }
 }
