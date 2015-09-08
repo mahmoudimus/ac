@@ -1,22 +1,19 @@
 package com.atlassian.plugin.connect.jira.capabilities.provider;
 
+import com.atlassian.plugin.ModuleDescriptor;
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.jira.capabilities.descriptor.SearchRequestViewModuleDescriptorFactory;
+import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
+import com.atlassian.plugin.connect.spi.module.provider.AbstractConnectModuleProvider;
+import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
-import com.atlassian.plugin.connect.jira.capabilities.descriptor.SearchRequestViewModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
-import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import org.springframework.beans.factory.annotation.Autowired;
-
 @JiraComponent
-public class SearchRequestViewModuleProvider extends ConnectModuleProvider<SearchRequestViewModuleBean>
+public class SearchRequestViewModuleProvider extends AbstractConnectModuleProvider<SearchRequestViewModuleBean>
 {
     public static final String DESCRIPTOR_KEY = "jiraSearchRequestViews";
     public static final Class BEAN_CLASS = SearchRequestViewModuleBean.class;

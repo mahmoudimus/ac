@@ -10,12 +10,10 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
+import com.atlassian.plugin.connect.spi.module.provider.AbstractConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.web.Condition;
 import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +27,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  * Base class for ConnectModuleProviders of Connect Pages. Note that there is actually no P2 module descriptor. Instead
  * it is modelled as a web-item plus a servlet
  */
-public abstract class AbstractConnectPageModuleProvider extends ConnectModuleProvider<ConnectPageModuleBean>
+public abstract class AbstractConnectPageModuleProvider extends AbstractConnectModuleProvider<ConnectPageModuleBean>
 {
     private static final String RAW_CLASSIFIER = "raw";
     private static final Class BEAN_CLASS = ConnectPageModuleBean.class;

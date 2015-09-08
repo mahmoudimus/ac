@@ -5,7 +5,7 @@ import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 /**
  * @since 1.0
  */
-public abstract class NullModuleProvider extends ConnectModuleProvider
+public interface NullModuleProvider extends ConnectModuleProvider
 {
 
 }

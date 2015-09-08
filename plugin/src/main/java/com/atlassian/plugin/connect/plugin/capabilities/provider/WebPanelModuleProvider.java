@@ -8,10 +8,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel.WebP
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
+import com.atlassian.plugin.connect.spi.module.provider.AbstractConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +18,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Component
-public class WebPanelModuleProvider extends ConnectModuleProvider<WebPanelModuleBean>
+public class WebPanelModuleProvider extends AbstractConnectModuleProvider<WebPanelModuleBean>
 {
     public static final String DESCRIPTOR_KEY = "webPanels";
     public static final Class BEAN_CLASS = WebPanelModuleBean.class;

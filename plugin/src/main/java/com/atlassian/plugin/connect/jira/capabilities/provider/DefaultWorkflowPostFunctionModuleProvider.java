@@ -10,11 +10,10 @@ import com.atlassian.plugin.connect.jira.capabilities.descriptor.workflow.Workfl
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
+import com.atlassian.plugin.connect.spi.module.provider.AbstractConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -24,7 +23,8 @@ import static com.atlassian.plugin.connect.jira.capabilities.provider.JiraTempla
 
 @JiraComponent
 @ExportAsDevService
-public class DefaultWorkflowPostFunctionModuleProvider extends WorkflowPostFunctionModuleProvider
+public class DefaultWorkflowPostFunctionModuleProvider extends AbstractConnectModuleProvider<WorkflowPostFunctionModuleBean>
+        implements WorkflowPostFunctionModuleProvider
 {
     public static final String DESCRIPTOR_KEY = "jiraWorkflowPostFunctions";
     public static final Class BEAN_CLASS = WorkflowPostFunctionModuleBean.class;

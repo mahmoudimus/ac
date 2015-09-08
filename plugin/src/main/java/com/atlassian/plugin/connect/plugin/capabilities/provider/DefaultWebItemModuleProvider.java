@@ -11,10 +11,9 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.module.provider.AbstractConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +26,7 @@ import static com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameSe
 
 @Component
 @ExportAsDevService
-public class DefaultWebItemModuleProvider extends WebItemModuleProvider
+public class DefaultWebItemModuleProvider extends AbstractConnectModuleProvider<WebItemModuleBean> implements WebItemModuleProvider
 {
     public static final String DESCRIPTOR_KEY = "webItems";
     public static final Class BEAN_CLASS = WebItemModuleBean.class;

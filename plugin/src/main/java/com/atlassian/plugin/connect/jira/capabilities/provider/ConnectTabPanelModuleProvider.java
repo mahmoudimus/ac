@@ -15,20 +15,18 @@ import com.atlassian.plugin.connect.jira.iframe.tabpanel.profile.ConnectIFramePr
 import com.atlassian.plugin.connect.jira.iframe.tabpanel.project.ConnectIFrameProjectTabPanel;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
+import com.atlassian.plugin.connect.spi.module.provider.AbstractConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Map;
 
 @JiraComponent
-public abstract class ConnectTabPanelModuleProvider extends ConnectModuleProvider<ConnectTabPanelModuleBean>
+public abstract class ConnectTabPanelModuleProvider extends AbstractConnectModuleProvider<ConnectTabPanelModuleBean>
 {
     private final ConnectTabPanelModuleDescriptorFactory descriptorFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;

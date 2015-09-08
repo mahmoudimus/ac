@@ -12,12 +12,10 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
+import com.atlassian.plugin.connect.spi.module.provider.AbstractConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -30,7 +28,7 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWe
  * Instead it is modelled as a web-item plus a servlet
  */
 @JiraComponent
-public class ConnectProjectAdminTabPanelModuleProvider extends ConnectModuleProvider<ConnectProjectAdminTabPanelModuleBean>
+public class ConnectProjectAdminTabPanelModuleProvider extends AbstractConnectModuleProvider<ConnectProjectAdminTabPanelModuleBean>
 {
     public static final String DESCRIPTOR_KEY = "jiraProjectAdminTabPanels";
     public static final Class BEAN_CLASS = ConnectProjectAdminTabPanelModuleBean.class;    

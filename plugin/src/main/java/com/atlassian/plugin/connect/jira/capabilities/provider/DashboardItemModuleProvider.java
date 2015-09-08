@@ -4,20 +4,17 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.DashboardItemModuleBean;
 import com.atlassian.plugin.connect.jira.capabilities.descriptor.dashboard.DashboardItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
+import com.atlassian.plugin.connect.spi.module.provider.AbstractConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @JiraComponent
-public class DashboardItemModuleProvider extends ConnectModuleProvider<DashboardItemModuleBean>
+public class DashboardItemModuleProvider extends AbstractConnectModuleProvider<DashboardItemModuleBean>
 {
     public static final String DESCRIPTOR_KEY = "jiraDashboardItems";
     public static final Class BEAN_CLASS = DashboardItemModuleBean.class;
