@@ -18,9 +18,7 @@ import com.google.common.base.Optional;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.CheckUsernameConditionServlet;
-import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -86,7 +84,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                 .addModules("webItems",
                         newWebItemBean()
                                 .withContext(AddOnUrlContext.page)
-                                .withName(new I18nProperty("AC General Web Item", "ac.gen"))
+                                .withName(new I18nProperty("AC General Web Item", null))
                                 .withKey(PAGE_CONTEXT_WEBITEM)
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(5)
@@ -94,7 +92,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 .build(),
                         newWebItemBean()
                                 .withContext(AddOnUrlContext.addon)
-                                .withName(new I18nProperty("AC Direct To Addon Web Item", "ac.dir"))
+                                .withName(new I18nProperty("AC Direct To Addon Web Item", null))
                                 .withKey(ADDON_DIRECT_WEBITEM)
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(4)
@@ -102,14 +100,14 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 .build(),
                         newWebItemBean()
                                 .withContext(AddOnUrlContext.product)
-                                .withName(new I18nProperty("Quick project link", "ac.qp"))
+                                .withName(new I18nProperty("Quick project link", null))
                                 .withKey(PRODUCT_WEBITEM)
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(3)
                                 .withUrl("/browse/ACDEV-1234?project_key={project.key}")
                                 .build(),
                         newWebItemBean()
-                                .withName(new I18nProperty("google link", "ac.gl"))
+                                .withName(new I18nProperty("google link", null))
                                 .withKey(ABSOLUTE_WEBITEM)
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(2)
@@ -120,7 +118,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 )
                                 .build(),
                         newWebItemBean()
-                                .withName(new I18nProperty("wikipedia link", "ac.ild"))
+                                .withName(new I18nProperty("wikipedia link", null))
                                 .withKey(ABSOLUTE_WEBITEM_INLINE_DIALOG)
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)
@@ -136,7 +134,7 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                                 )
                                 .build(),
                         newWebItemBean()
-                                .withName(new I18nProperty("Webitem inlineDialog Target", "ac.awidt"))
+                                .withName(new I18nProperty("Webitem inlineDialog Target", null))
                                 .withKey(ADDON_WEBITEM_INLINE_DIALOG)
                                 .withLocation("system.top.navigation.bar")
                                 .withWeight(1)

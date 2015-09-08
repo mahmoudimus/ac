@@ -18,7 +18,7 @@ import com.google.common.collect.Lists;
  * 1. Store and update your JSON data as a content property
  * <a href="https://developer.atlassian.com/display/CONFDEV/Content+Properties+in+the+REST+API">using the REST API</a>.
  * 1. Define the
- * <a href="../fragment/content-property-index-key-configuration.html">content property</a> its
+ * <a href="../fragment/content-property-index-key-configuration.html">content property</a>, its
  * <a href="../fragment/content-property-index-extraction-configuration.html">extractions</a>, and optionally an
  * alias and <a href="../fragment/ui-support.html">UI support</a> in your add-on's descriptor.
  * See the <a href="../fragment/content-property-index-key-configuration.html">content property</a> documentation

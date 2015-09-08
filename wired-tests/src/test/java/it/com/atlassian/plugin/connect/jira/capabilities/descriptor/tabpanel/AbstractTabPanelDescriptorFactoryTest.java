@@ -37,7 +37,6 @@ public abstract class AbstractTabPanelDescriptorFactoryTest
 
     public static final String MODULE_KEY = "my-tab-panel";
     public static final String MODULE_NAME = "My Tab Panel";
-    public static final String MODULE_I18N = "my.tab.panel";
     public static final String MODULE_URL = "/myTabPanel";
     public static final int MODULE_WEIGHT = 99;
 
@@ -93,7 +92,7 @@ public abstract class AbstractTabPanelDescriptorFactoryTest
     protected ConnectTabPanelModuleBean createBean()
     {
         return newTabPanelBean()
-                .withName(new I18nProperty(MODULE_NAME, MODULE_I18N))
+                .withName(new I18nProperty(MODULE_NAME, null))
                 .withKey(MODULE_KEY)
                 .withUrl(MODULE_URL)
                 .withWeight(MODULE_WEIGHT)

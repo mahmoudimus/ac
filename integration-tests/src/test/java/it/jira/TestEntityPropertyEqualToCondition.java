@@ -24,7 +24,7 @@ import static org.junit.Assert.assertThat;
 
 public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
 {
-    private static final String PROJECT_KEY = "PR";
+
     private static ConnectRunner remotePlugin;
     private EntityPropertyClient issueEntityPropertyClient;
 
@@ -38,7 +38,7 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
                         new WebPanelModuleBeanBuilder()
                                 .withKey("issue-property-web-panel")
                                 .withLocation("atl.jira.view.issue.right.context")
-                                .withName(new I18nProperty("issue-property-web-panel", "issue-property-web-panel"))
+                                .withName(new I18nProperty("issue-property-web-panel", null))
                                 .withConditions(new SingleConditionBeanBuilder()
                                         .withCondition("entity_property_equal_to")
                                         .withParam("propertyKey", "prop")
@@ -65,14 +65,12 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
     {
         issueEntityPropertyClient = new EntityPropertyClient(product.environmentData(), "issue");
         login(testUserFactory.admin());
-        product.backdoor().project().addProject("Entity Property", PROJECT_KEY, "admin");
     }
 
     @After
     public void tearDown()
     {
         login(testUserFactory.admin());
-        product.backdoor().project().deleteProject(PROJECT_KEY);
     }
 
     @Test
@@ -105,7 +103,7 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
 
     private IssueCreateResponse createIssue() throws RemoteException
     {
-        return product.backdoor().issues().createIssue(PROJECT_KEY, "Test issue");
+        return product.backdoor().issues().createIssue(project.getKey(), "Test issue");
     }
 
     private boolean webPanelIsVisible(String panelKey, final IssueCreateResponse issue)

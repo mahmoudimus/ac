@@ -19,7 +19,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.UISupportValueType;
  *#### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_UI_SUPPORT}
- * @schemaTitle UI Support
+ * @schemaTitle User Interface Support
  */
 @SchemaDefinition("uiSupport")
 public class UISupportModuleBean extends BaseModuleBean

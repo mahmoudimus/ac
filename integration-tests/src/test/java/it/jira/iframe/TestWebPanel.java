@@ -1,8 +1,6 @@
 
 package it.jira.iframe;
 
-import java.rmi.RemoteException;
-
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
@@ -13,14 +11,14 @@ import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProfilePage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-
+import it.jira.JiraWebDriverTestBase;
+import it.servlet.ConnectAppServlets;
+import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import it.jira.JiraWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
-import it.util.TestUser;
+import java.rmi.RemoteException;
 
 import static com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean.newWebPanelBean;
 import static it.modules.ConnectAsserts.verifyIframeURLHasVersionNumber;
@@ -57,42 +55,42 @@ public final class TestWebPanel extends JiraWebDriverTestBase
                         "webPanels",
                         newWebPanelBean()
                                 .withKey(PROJECT_CONFIG_PANEL_KEY)
-                                .withName(new I18nProperty("Project Config Panel", "pcp"))
+                                .withName(new I18nProperty("Project Config Panel", null))
                                 .withLocation("webpanels.admin.summary.right-panels")
                                 .withUrl("/pcp?issue_id=${issue.id}&project_id=${project.id}")
                                 .build(),
                         newWebPanelBean()
                                 .withKey(ISSUE_PANEL_LEFT_KEY)
-                                .withName(new I18nProperty("Issue Left Web Panel", "ilwp"))
+                                .withName(new I18nProperty("Issue Left Web Panel", null))
                                 .withLocation("atl.jira.view.issue.left.context")
                                 .withUrl("/ilwp?issue_id=${issue.id}&project_id=${project.id}")
                                 .build(),
                         newWebPanelBean()
                                 .withKey(ISSUE_PANEL_LEFT2_KEY)
-                                .withName(new I18nProperty("Issue Left Web Panel 2", "ilwp2"))
+                                .withName(new I18nProperty("Issue Left Web Panel 2", null))
                                 .withLocation("atl.jira.view.issue.left.context")
                                 .withUrl("/ilwp2?my-issue-id=${issue.id}&my-project-id=${project.id}")
                                 .build(),
                         newWebPanelBean()
                                 .withKey(ISSUE_PANEL_RIGHT_KEY)
-                                .withName(new I18nProperty("Issue Right Web Panel", "irwp"))
+                                .withName(new I18nProperty("Issue Right Web Panel", null))
                                 .withLocation("atl.jira.view.issue.right.context")
                                 .withUrl("/irwp?issue_id=${issue.id}&project_id=${project.id}")
                                 .build(),
                         newWebPanelBean()
                                 .withKey(PROJECT_CONFIG_HEADER_KEY)
-                                .withName(new I18nProperty("Project Config Header Web Panel", "pch"))
+                                .withName(new I18nProperty("Project Config Header Web Panel", null))
                                 .withLocation("atl.jira.proj.config.header")
                                 .withUrl("/pch?issue_id=${issue.id}&project_id=${project.id}")
                                 .build(),
                         newWebPanelBean()
                                 .withKey(USER_PROFILE_KEY)
-                                .withName(new I18nProperty("User Profile Web Panel", "up"))
+                                .withName(new I18nProperty("User Profile Web Panel", null))
                                 .withLocation("webpanels.user.profile.summary.custom")
                                 .withUrl("/up?profile_user_key=${profileUser.key}&profile_user_name=${profileUser.name}")
                                 .build(),
                         newWebPanelBean()
-                                .withName(new I18nProperty("Panel with condition", "conditional.panel"))
+                                .withName(new I18nProperty("Panel with condition", null))
                                 .withKey(WEB_PANEL_WITH_CONDITION_KEY)
                                         // panel doesn't load properly as it 404s - not a prob for this test (asserts existence not content)
                                 .withUrl("/cwp?projectKey={project.key}")
