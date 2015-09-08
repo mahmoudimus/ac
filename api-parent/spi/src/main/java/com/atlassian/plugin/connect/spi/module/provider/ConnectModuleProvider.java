@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.spi.module.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.google.gson.Gson;
+import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public abstract class ConnectModuleProvider<T>
         List<T> beans = new ArrayList<>();
         for(JsonObject module : modules)
         {
-            T bean = new Gson().fromJson(module, type);
+            T bean = ConnectModulesGsonFactory.getGson().fromJson(module, type);
             beans.add(bean);
         }
         return beans;
