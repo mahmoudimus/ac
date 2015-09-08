@@ -13,8 +13,15 @@ import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.PluginState;
+import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.connect.api.installer.AddonSettings;
-import com.atlassian.plugin.connect.modules.beans.*;
+import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.api.service.IsDevModeService;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
@@ -22,13 +29,7 @@ import com.atlassian.plugin.connect.plugin.ConnectHttpClientFactory;
 import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
 import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.plugin.capabilities.BeanToModuleRegistrar;
-import com.atlassian.plugin.connect.spi.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.connect.plugin.license.LicenseRetriever;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.api.service.IsDevModeService;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserDisableException;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonDisabledEvent;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonEnableFailedEvent;
@@ -37,10 +38,12 @@ import com.atlassian.plugin.connect.spi.event.ConnectAddonInstalledEvent;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonUninstallFailedEvent;
 import com.atlassian.plugin.connect.spi.event.ConnectAddonUninstalledEvent;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
-import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.http.ReKeyableAuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstallException;
+import com.atlassian.plugin.connect.spi.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
+import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.features.DarkFeatureManager;
@@ -59,6 +62,9 @@ import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.SocketTimeoutException;
@@ -68,9 +74,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.core.MediaType;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
@@ -218,7 +221,7 @@ public class ConnectAddonManager
                 .setAuth(newAuthType.name())
                 .setBaseUrl(addOn.getBaseUrl())
                 .setDescriptor(jsonDescriptor)
-                .setRestartState(PluginState.DISABLED.name())
+                .setRestartState(PluginState.DISABLED)
                 .setUserKey(userKey);
 
         if (!Strings.isNullOrEmpty(newSharedSecret))
@@ -292,7 +295,15 @@ public class ConnectAddonManager
                 }
 
                 addonRegistry.storeRestartState(pluginKey, PluginState.ENABLED);
-                eventPublisher.publish(new ConnectAddonEnabledEvent(pluginKey, createEventData(pluginKey, SyncHandler.ENABLED.name().toLowerCase())));
+
+                final ConnectAddonEnabledEvent enabledEvent = new ConnectAddonEnabledEvent(pluginKey, createEventData(pluginKey, SyncHandler.ENABLED.name().toLowerCase()));
+                try
+                {
+                    eventPublisher.publish(enabledEvent);
+                }
+                catch (Exception e) {
+                    log.warn(String.format("Could not fire enabled webhook event for add-on %s, continuing anyway", pluginKey), e);
+                }
 
                 long endTime = System.currentTimeMillis();
                 log.info("Connect addon '" + addon.getKey() + "' enabled in " + (endTime - startTime) + "ms");
@@ -346,7 +357,8 @@ public class ConnectAddonManager
 
     public boolean isAddonEnabled(String pluginKey)
     {
-        return beanToModuleRegistrar.descriptorsAreRegistered(pluginKey);
+        boolean isEnabled = beanToModuleRegistrar.descriptorsAreRegistered(pluginKey);
+        return isEnabled;
     }
 
     public void uninstallConnectAddon(final String pluginKey) throws ConnectAddOnUserDisableException
@@ -437,7 +449,7 @@ public class ConnectAddonManager
                 {
                     AddonSettings uninstalledRemnant = new AddonSettings();
                     uninstalledRemnant.setSecret(maybeSharedSecret.get());
-                    uninstalledRemnant.setRestartState(PluginState.UNINSTALLED.name());
+                    uninstalledRemnant.setRestartState(PluginState.UNINSTALLED);
                     addonRegistry.storeAddonSettings(pluginKey, uninstalledRemnant); // do it in one call for efficiency
                 }
             }
@@ -522,7 +534,7 @@ public class ConnectAddonManager
 
     private void enableAddOnUser(ConnectAddonBean addon) throws ConnectAddOnUserInitException
     {
-        String userKey = connectAddOnUserService.getOrCreateUserKey(addon.getKey(), addon.getName());
+        String userKey = connectAddOnUserService.getOrCreateUserName(addon.getKey(), addon.getName());
 
         ApplicationLink applicationLink = connectApplinkManager.getAppLink(addon.getKey());
 
@@ -614,10 +626,15 @@ public class ConnectAddonManager
     }
 
     // we don't want to see "?user_key=2c9680504384c481014384c49e6a0004" in installation failure messages show to the users
-    private String removeQuery(URI installHandler)
+    private String removeQuery(URI uri)
     {
-        final String trimmed = installHandler.toString().replace(installHandler.getQuery(), "");
-        return trimmed.endsWith("?") ? trimmed.substring(0, trimmed.length()-1) : trimmed;
+        String uriString = uri.toString();
+        String query = uri.getQuery();
+        if (query != null)
+        {
+            uriString = uriString.replace(query, "");
+        }
+        return uriString.endsWith("?") ? uriString.substring(0, uriString.length()-1) : uriString;
     }
 
     private String findI18nKeyForHttpErrorCode(final int responseCode)
@@ -694,19 +711,6 @@ public class ConnectAddonManager
                 .withProductType(nullToEmpty(productAccessor.getKey()))
                 .withDescription(nullToEmpty(consumer.getDescription()))
                 .withEventType(eventType);
-
-        if (null != addon && null != addon.getAuthentication() && AuthenticationType.OAUTH.equals(addon.getAuthentication().getType()))
-        {
-            // Only add user_key
-            UserProfile user = userManager.getRemoteUser();
-            if (null != user)
-            {
-                //noinspection deprecation
-                dataBuilder.withUserKey(user.getUserKey().getStringValue());
-            }
-
-            dataBuilder.withLink("oauth", nullToEmpty(baseUrl) + "/rest/atlassian-connect/latest/oauth");
-        }
 
         ConnectAddonEventData data = dataBuilder.build();
 

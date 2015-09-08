@@ -5,7 +5,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.38-SNAPSHOT</version>
+        <version>1.1.49-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -92,7 +92,6 @@
         <dependency>
             <groupId>com.atlassian.jira.compat</groupId>
             <artifactId>jira-cross-compatibility-lib-bridge-factory</artifactId>
-            <version>${atlassian.jira.cross.compat.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -230,6 +229,11 @@
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
+                                    <groupId>com.atlassian.labs.plugins</groupId>
+                                    <artifactId>quickreload</artifactId>
+                                    <version>${quickreload.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
                                     <groupId>com.atlassian.webhooks</groupId>
                                     <artifactId>atlassian-webhooks-plugin</artifactId>
                                     <version>${atlassian.webhooks.version}</version>
@@ -308,6 +312,11 @@
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
+                                    <groupId>com.atlassian.labs.plugins</groupId>
+                                    <artifactId>quickreload</artifactId>
+                                    <version>${quickreload.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
                                     <groupId>com.atlassian.webhooks</groupId>
                                     <artifactId>atlassian-webhooks-plugin</artifactId>
                                     <version>${atlassian.webhooks.version}</version>
@@ -363,6 +372,7 @@
                             </bundledArtifacts>
                         </product>
                     </products>
+                    <enableFastdev>false</enableFastdev>
                     <testGroups>
                         <testGroup>
                             <id>confluence</id>

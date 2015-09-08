@@ -3,7 +3,7 @@
 <workflow>
   <meta name="jira.update.author.key">admin</meta>
   <meta name="jira.description"></meta>
-  <meta name="jira.updated.date">1402566180647</meta>
+  <meta name="jira.updated.date">1441581663969</meta>
   <initial-actions>
     <action id="1" name="Create">
       <validators>
@@ -31,11 +31,12 @@
     </action>
   </initial-actions>
   <steps>
-    <step id="1" name="Open">
-      <meta name="jira.status.id">1</meta>
+    <step id="1" name="To Do">
+      <meta name="jira.status.id">10000</meta>
       <actions>
-        <action id="11" name="close">
+        <action id="21" name="Done" view="fieldscreen">
           <meta name="jira.description"></meta>
+          <meta name="jira.fieldscreen.id">10005</meta>
           <results>
             <unconditional-result old-status="Not Done" status="Done" step="2">
               <post-functions>
@@ -72,8 +73,11 @@
         </action>
       </actions>
     </step>
-    <step id="2" name="Closed">
-      <meta name="jira.status.id">6</meta>
+    <step id="2" name="In Progress">
+      <meta name="jira.status.id">3</meta>
+    </step>
+    <step id="3" name="Done">
+      <meta name="jira.status.id">10001</meta>
     </step>
   </steps>
 </workflow>

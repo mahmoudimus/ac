@@ -87,7 +87,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
         return builder
                 .withKey(IMAGE_PLACEHOLDER_MACRO_KEY)
                 .withUrl(DEFAULT_MACRO_URL)
-                .withName(new I18nProperty(IMAGE_PLACEHOLDER_MACRO_NAME, ""))
+                .withName(new I18nProperty(IMAGE_PLACEHOLDER_MACRO_NAME, null))
                 .withImagePlaceholder(ImagePlaceholderBean.newImagePlaceholderBean()
                                 .withUrl("/images/placeholder.png")
                                 .withWidth(50)
@@ -97,7 +97,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
                 )
                 .withParameters(newMacroParameterBean()
                         .withIdentifier("param1")
-                        .withName(new I18nProperty("Param", ""))
+                        .withName(new I18nProperty("Param", null))
                         .withType("string")
                         .build())
                 .build();
@@ -108,7 +108,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
         return builder
                 .withKey(FEATURED_MACRO_KEY)
                 .withUrl(DEFAULT_MACRO_URL)
-                .withName(new I18nProperty(FEATURED_MACRO_NAME, ""))
+                .withName(new I18nProperty(FEATURED_MACRO_NAME, null))
                 .withIcon(newIconBean()
                                 .withUrl("images/macro-icon.png")
                                 .build()
@@ -122,7 +122,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
         return builder
                 .withUrl(DEFAULT_MACRO_URL + "?hash={macro.hash}")
                 .withKey(LONG_BODY_MACRO_KEY)
-                .withName(new I18nProperty(LONG_BODY_MACRO_NAME, ""))
+                .withName(new I18nProperty(LONG_BODY_MACRO_NAME, null))
                 .withBodyType(MacroBodyType.PLAIN_TEXT)
                 .build();
     }
@@ -132,7 +132,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
         return builder
                 .withUrl(DEFAULT_MACRO_URL + "?body={macro.body}")
                 .withKey(SHORT_BODY_MACRO_KEY)
-                .withName(new I18nProperty(SHORT_BODY_MACRO_NAME, ""))
+                .withName(new I18nProperty(SHORT_BODY_MACRO_NAME, null))
                 .withBodyType(MacroBodyType.RICH_TEXT)
                 .build();
     }
@@ -142,10 +142,10 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
         return builder
                 .withUrl(DEFAULT_MACRO_URL + "?param1={param1}")
                 .withKey(PARAMETER_MACRO_KEY)
-                .withName(new I18nProperty(PARAMETER_MACRO_NAME, ""))
+                .withName(new I18nProperty(PARAMETER_MACRO_NAME, null))
                 .withParameters(newMacroParameterBean()
                                 .withIdentifier(SINGLE_PARAM_ID)
-                                .withName(new I18nProperty(SINGLE_PARAM_NAME, ""))
+                                .withName(new I18nProperty(SINGLE_PARAM_NAME, null))
                                 .withType("string")
                                 .build()
                 )
@@ -157,42 +157,42 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
         return builder
                 .withUrl(DEFAULT_MACRO_URL)
                 .withKey(ALL_PARAMETER_TYPES_MACRO_KEY)
-                .withName(new I18nProperty(ALL_PARAMETER_TYPES_MACRO_NAME, ""))
+                .withName(new I18nProperty(ALL_PARAMETER_TYPES_MACRO_NAME, null))
                 .withParameters(
                         newMacroParameterBean()
                                 .withIdentifier("attachment")
-                                .withName(new I18nProperty("Attachment", ""))
+                                .withName(new I18nProperty("Attachment", null))
                                 .withType("attachment")
                                 .build(),
                         newMacroParameterBean()
                                 .withIdentifier("boolean")
-                                .withName(new I18nProperty("Boolean", ""))
+                                .withName(new I18nProperty("Boolean", null))
                                 .withType("boolean")
                                 .build(),
                         newMacroParameterBean()
                                 .withIdentifier("content")
-                                .withName(new I18nProperty("Confluence Content", ""))
+                                .withName(new I18nProperty("Confluence Content", null))
                                 .withType("confluence-content")
                                 .build(),
                         newMacroParameterBean()
                                 .withIdentifier("enum")
-                                .withName(new I18nProperty("Enum", ""))
+                                .withName(new I18nProperty("Enum", null))
                                 .withType("enum")
                                 .withValues("val1", "val2")
                                 .build(),
                         newMacroParameterBean()
                                 .withIdentifier("spacekey")
-                                .withName(new I18nProperty("Space Key", ""))
+                                .withName(new I18nProperty("Space Key", null))
                                 .withType("spacekey")
                                 .build(),
                         newMacroParameterBean()
                                 .withIdentifier("string")
-                                .withName(new I18nProperty("String", ""))
+                                .withName(new I18nProperty("String", null))
                                 .withType("string")
                                 .build(),
                         newMacroParameterBean()
                                 .withIdentifier("username")
-                                .withName(new I18nProperty("User Name", ""))
+                                .withName(new I18nProperty("User Name", null))
                                 .withType("username")
                                 .build()
                 )
@@ -204,7 +204,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
         return builder
                 .withKey(SIMPLE_MACRO_KEY)
                 .withUrl(DEFAULT_MACRO_URL)
-                .withName(new I18nProperty(SIMPLE_MACRO_NAME, ""))
+                .withName(new I18nProperty(SIMPLE_MACRO_NAME, null))
                 .withIcon(newIconBean()
                                 .withUrl("images/macro-icon.png")
                                 .build()
@@ -218,9 +218,9 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
         return builder
                 .withKey(CUSTOM_TITLE_EDITOR_MACRO_KEY)
                 .withUrl("/echo/params?footy={footy}")
-                .withName(new I18nProperty(CUSTOM_TITLE_EDITOR_MACRO_NAME, ""))
+                .withName(new I18nProperty(CUSTOM_TITLE_EDITOR_MACRO_NAME, null))
                 .withEditor(MacroEditorBean.newMacroEditorBean()
-                                .withInsertTitle(new I18nProperty(CUSTOM_TITLE, ""))
+                                .withInsertTitle(new I18nProperty(CUSTOM_TITLE, null))
                                 .withUrl("/render-editor")
                                 .withHeight("200px")
                                 .withWidth("300px")
@@ -234,7 +234,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
         return builder
                 .withKey(EDITOR_MACRO_KEY)
                 .withUrl("/echo/params?footy={footy}")
-                .withName(new I18nProperty(EDITOR_MACRO_NAME, ""))
+                .withName(new I18nProperty(EDITOR_MACRO_NAME, null))
                 .withEditor(MacroEditorBean.newMacroEditorBean()
                                 .withUrl("/render-editor")
                                 .withHeight("200px")
@@ -249,7 +249,7 @@ public abstract class AbstractContentMacroTest extends ConfluenceWebDriverTestBa
         return builder
                 .withKey(HIDDEN_MACRO_KEY)
                 .withUrl(DEFAULT_MACRO_URL)
-                .withName(new I18nProperty(HIDDEN_MACRO_NAME, ""))
+                .withName(new I18nProperty(HIDDEN_MACRO_NAME, null))
                 .withHidden(true)
                 .build();
     }

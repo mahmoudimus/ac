@@ -25,10 +25,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.security.Principal;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -38,6 +34,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.atlassian.jwt.JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -105,25 +104,23 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
         }
         log.debug("Start processing filter.");
 
-        Object addOnKeyObject = servletRequest.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME);
-        String addOnKey = addOnKeyObject instanceof String ? (String)addOnKeyObject : null;
+        String addOnKey = getAddonKeyFromRequest(servletRequest);
 
-        // warn if weird properties are set
-        if (null != addOnKeyObject && !(addOnKeyObject instanceof String))
+        if (!StringUtils.isEmpty(addOnKey))
         {
-            log.warn("The value of the request attribute '{}' should be a string but instead it is a '{}': '{}'. This is a programming error in the code that sets this value.",
-                    new Object[]{JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME, addOnKeyObject.getClass().getSimpleName(), addOnKeyObject});
-        }
-
-        final ConnectAddonBean addOnBean = connectAddonManager.getExistingAddon(addOnKey);
-
-        if (requestIsFromAJsonJwtAddOn(addOnKey, addOnBean))
-        {
-            filterChain.doFilter(request, response);
+            final ConnectAddonBean addonBean = connectAddonManager.getExistingAddon(addOnKey);
+            if (isJsonJwtAddon(addonBean))
+            {
+                processAddOnRequest(filterChain, request, response, addonBean);
+            }
+            else
+            {
+                filterChain.doFilter(request, response);
+            }
         }
         else
         {
-            processAddOnRequest(filterChain, request, response, addOnBean);
+            filterChain.doFilter(request, response);
         }
     }
 
@@ -134,9 +131,23 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
         started.set(true);
     }
 
-    private boolean requestIsFromAJsonJwtAddOn(String addOnKey, ConnectAddonBean addOnBean)
+    private String getAddonKeyFromRequest(ServletRequest servletRequest)
     {
-        return StringUtils.isEmpty(addOnKey) || null == addOnBean || null == addOnBean.getAuthentication() || addOnBean.getAuthentication().getType() != AuthenticationType.JWT;
+        Object addOnKeyObject = servletRequest.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME);
+        String addOnKey = addOnKeyObject instanceof String ? (String)addOnKeyObject : null;
+
+        // warn if weird properties are set
+        if (null != addOnKeyObject && !(addOnKeyObject instanceof String))
+        {
+            log.warn("The value of the request attribute '{}' should be a string but instead it is a '{}': '{}'. This is a programming error in the code that sets this value.",
+                    new Object[]{JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME, addOnKeyObject.getClass().getSimpleName(), addOnKeyObject});
+        }
+        return addOnKey;
+    }
+
+    private boolean isJsonJwtAddon(ConnectAddonBean addonBean)
+    {
+        return addonBean != null && addonBean.getAuthentication() != null && addonBean.getAuthentication().getType() == AuthenticationType.JWT;
     }
 
     private void processAddOnRequest(FilterChain filterChain, HttpServletRequest request, HttpServletResponse response, ConnectAddonBean addOnBean) throws IOException, ServletException

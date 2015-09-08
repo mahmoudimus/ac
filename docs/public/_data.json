@@ -109,12 +109,8 @@
       "title": "JIRA REST"
     },
     {
-      "filename": "jira-jsonrpc-scopes.html",
-      "title": "JIRA JSON-RPC"
-    },
-    {
-      "filename": "jira-soap-scopes.html",
-      "title": "JIRA SOAP"
+      "filename": "jira-agile-rest-scopes.html",
+      "title": "JIRA Agile REST"
     },
     {
       "filename": "confluence-rest-scopes.html",

@@ -67,7 +67,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                 .setAuthenticationToNone()
                 .addModules("webItems",
                         newWebItemBean()
-                                .withName(new I18nProperty("AC General Web Item", "ac.gen"))
+                                .withName(new I18nProperty("AC General Web Item", null))
                                 .withKey(ADDON_WEBITEM)
                                 .withLocation("system.content.action")
                                 .withWeight(1)
@@ -75,7 +75,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                                 .build(),
                         newWebItemBean()
                                 .withContext(AddOnUrlContext.addon)
-                                .withName(new I18nProperty("AC Direct To Addon Web Item", "ac.dir"))
+                                .withName(new I18nProperty("AC Direct To Addon Web Item", null))
                                 .withKey(ADDON_DIRECT_WEBITEM)
                                 .withLocation("system.content.action")
                                 .withWeight(1)
@@ -83,14 +83,14 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                                 .build(),
                         newWebItemBean()
                                 .withContext(AddOnUrlContext.product)
-                                .withName(new I18nProperty("Quick page link", "ac.qp"))
+                                .withName(new I18nProperty("Quick page link", null))
                                 .withKey(PRODUCT_WEBITEM)
                                 .withLocation("system.content.action")
                                 .withWeight(1)
                                 .withUrl("/pages/viewpage.action?pageId={page.id}&contentId={content.id}")
                                 .build(),
                         newWebItemBean()
-                                .withName(new I18nProperty("google link", "ac.gl"))
+                                .withName(new I18nProperty("google link", null))
                                 .withKey(ABSOLUTE_WEBITEM)
                                 .withLocation("system.content.action")
                                 .withWeight(1)
@@ -100,7 +100,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                                         newSingleConditionBean().withCondition("/only" + betty.getDisplayName() + "Condition").build()
                                 ).build(),
                         newWebItemBean()
-                                .withName(new I18nProperty("wikipedia link", "ac.ild"))
+                                .withName(new I18nProperty("wikipedia link", null))
                                 .withKey(ADDON_WEBITEM_INLINE_DIALOG)
                                 .withLocation("system.content.metadata")
                                 .withWeight(1)

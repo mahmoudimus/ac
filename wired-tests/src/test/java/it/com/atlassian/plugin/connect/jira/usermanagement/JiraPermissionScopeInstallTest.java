@@ -6,11 +6,12 @@ import com.atlassian.jira.compatibility.bridge.project.ProjectServiceBridge;
 import com.atlassian.jira.permission.Permission;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.user.util.UserManager;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -77,12 +78,12 @@ public class JiraPermissionScopeInstallTest extends AbstractJiraPermissionScopeT
     @Test
     public void addonCannotEditIssuesInExistingProjects() throws Exception
     {
-        checkHasNoPermissionForAnyProjectAfterInstall(getReadAddOn(), Permission.EDIT_ISSUE);
+        checkHasPermissionForAllProjectsAfterInstall(getReadAddOn(), Permission.EDIT_ISSUE);
     }
 
     @Test
     public void addonCannotEditIssueInNewProject() throws Exception
     {
-        checkHasNoPermissionForNewProjectAfterInstall(getReadAddOn(), Permission.EDIT_ISSUE);
+        checkHasPermissionForNewProjectAfterInstall(getReadAddOn(), Permission.EDIT_ISSUE);
     }
 }

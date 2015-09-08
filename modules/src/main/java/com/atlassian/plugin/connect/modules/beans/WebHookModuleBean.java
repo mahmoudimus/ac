@@ -193,8 +193,9 @@ public class WebHookModuleBean extends BeanWithParams
      */
     @Required
     private String event;
+    
     /**
-     * Specifies your add-on's POST webhook handler URL. This property has to be a relative URL.
+     * Specifies your add-on's POST webhook handler URL. This property must be a URL relative to the add-on's baseUrl. 
      */
     @Required
     @StringSchemaAttributes (format = "uri-template")

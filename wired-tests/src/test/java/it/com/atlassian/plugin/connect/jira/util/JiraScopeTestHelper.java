@@ -11,14 +11,4 @@ public class JiraScopeTestHelper
     {
         return new ScopeTestData(scope, method, path, "", expectedOutcome, "/jira");
     }
-
-    public static ScopeTestData rpcJsonBodyForJira(ScopeName scope, HttpMethod method, String path, String rpcMethod, boolean expectedOutcome)
-    {
-        return new ScopeTestData(scope, method, path, APITestUtil.createJsonRpcPayload(rpcMethod), expectedOutcome, "/jira");
-    }
-
-    public static ScopeTestData rpcSoapBodyForJira(ScopeName scope, HttpMethod method, String path, String rpcMethod, boolean expectedOutcome)
-    {
-        return new ScopeTestData(scope, method, path, APITestUtil.createSoapRpcPayload(rpcMethod), expectedOutcome, "/jira");
-    }
 }
