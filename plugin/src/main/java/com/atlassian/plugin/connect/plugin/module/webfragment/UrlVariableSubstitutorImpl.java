@@ -94,7 +94,9 @@ public class UrlVariableSubstitutorImpl implements UrlVariableSubstitutor
         }
         try
         {
-            return URLEncoder.encode(value, "UTF-8");
+            // URLEncoder.encode encodes space as '+', so we need to replace all occurrences of '+'
+            // with '%20' (the percent encoded space) to remain consistent.
+            return URLEncoder.encode(value, "UTF-8").replaceAll("\\+", "%20");
         }
         catch (UnsupportedEncodingException ex)
         {
