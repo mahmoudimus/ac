@@ -11,9 +11,8 @@
         "homepage": "http://www.example.com"
     },
     "baseUrl": "http://www.example.com",
-    "authentication": {
-        "type": "oauth",
-        "publicKey": "S0m3Publ1cK3y"
+    "authentication" : {
+        "type" : "jwt"
     },
     "modules": {
         "webSections": [

@@ -27,6 +27,7 @@ import it.servlet.condition.ParameterCapturingServlet;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.annotation.Nonnull;
@@ -140,6 +141,7 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
 
     // because we issue a new JWT when it is clicked
     @Test
+    @Ignore
     public void inlineDialogClickGetsNewJwt() throws JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtVerificationException, JwtParseException
     {
         login(testUserFactory.basicUser());

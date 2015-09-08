@@ -56,7 +56,7 @@ public class WorkflowPostFunctionTest
     private static final String INSTALLED_URL = "/installed";
 
     private static final String ADMIN_USER = "admin";
-    private static final int RESOLVE_ACTION = 11;
+    private static final int RESOLVE_ACTION = 21;
 
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
@@ -180,7 +180,7 @@ public class WorkflowPostFunctionTest
     private ServletRequestSnapshot triggerWorkflowTransition() throws CreateException, IOException
     {
         MutableIssue issue = issueManager.getIssueObject(jiraTestUtil.createIssue().getId());
-        workflowManager.migrateIssueToWorkflow(issue, workflow, issue.getStatusObject());
+        workflowManager.migrateIssueToWorkflow(issue, workflow, issue.getStatus());
         WorkflowTransitionUtilImpl workflowTransition = new WorkflowTransitionUtilImpl(
                 authenticationContext,
                 workflowManager,

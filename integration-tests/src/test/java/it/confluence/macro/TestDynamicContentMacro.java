@@ -95,9 +95,9 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         DynamicContentMacroModuleBean smallInlineMacro = newDynamicContentMacroModuleBean()
                 .withUrl("/render-no-resize-macro")
-                .withDescription(new I18nProperty(SMALL_INLINE_MACRO_DESCRIPTION, ""))
+                .withDescription(new I18nProperty(SMALL_INLINE_MACRO_DESCRIPTION, null))
                 .withKey(SMALL_INLINE_MACRO_KEY)
-                .withName(new I18nProperty(SMALL_INLINE_MACRO_NAME, ""))
+                .withName(new I18nProperty(SMALL_INLINE_MACRO_NAME, null))
                 .withOutputType(MacroOutputType.INLINE)
                 .withWidth("60px")
                 .withHeight("30px")
@@ -105,9 +105,9 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
 
         DynamicContentMacroModuleBean clientSideBodyEditingMacro = newDynamicContentMacroModuleBean()
                 .withUrl("/echo/params?body={macro.body}")
-                .withDescription(new I18nProperty(CLIENT_SIDE_BODY_MACRO_DESCRIPTION, ""))
+                .withDescription(new I18nProperty(CLIENT_SIDE_BODY_MACRO_DESCRIPTION, null))
                 .withKey(CLIENT_SIDE_BODY_MACRO_KEY)
-                .withName(new I18nProperty(CLIENT_SIDE_BODY_MACRO_NAME, ""))
+                .withName(new I18nProperty(CLIENT_SIDE_BODY_MACRO_NAME, null))
                 .withOutputType(MacroOutputType.BLOCK)
                 .withBodyType(MacroBodyType.RICH_TEXT)
                 .withEditor(MacroEditorBean.newMacroEditorBean()
@@ -120,7 +120,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         DynamicContentMacroModuleBean clientSideBodyEditingMacroScriptInjection = newDynamicContentMacroModuleBean()
                 .withUrl("/echo/params?body={macro.body}")
                 .withKey(CLIENT_SIDE_BODY_MACRO_SCRIPT_KEY)
-                .withName(new I18nProperty(CLIENT_SIDE_BODY_MACRO_SCRIPT_NAME, ""))
+                .withName(new I18nProperty(CLIENT_SIDE_BODY_MACRO_SCRIPT_NAME, null))
                 .withOutputType(MacroOutputType.BLOCK)
                 .withBodyType(MacroBodyType.RICH_TEXT)
                 .withEditor(MacroEditorBean.newMacroEditorBean()
@@ -133,7 +133,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
         DynamicContentMacroModuleBean macroInTableMacro = newDynamicContentMacroModuleBean()
                 .withUrl("/render-macro-in-table-macro")
                 .withKey(TABLE_MACRO_KEY)
-                .withName(new I18nProperty(TABLE_MACRO_NAME, ""))
+                .withName(new I18nProperty(TABLE_MACRO_NAME, null))
                 .withOutputType(MacroOutputType.BLOCK)
                 .build();
 

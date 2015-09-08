@@ -12,8 +12,7 @@
     },
     "baseUrl": "http://www.example.com",
     "authentication" : {
-        "type" : "oauth",
-        "publicKey": "S0m3Publ1cK3y"
+        "type" : "jwt"
     },
     "modules": {
         "webItems": [{

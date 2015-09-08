@@ -133,10 +133,13 @@ public class ConnectAddonBean extends BaseModuleBean
     private LifecycleBean lifecycle;
 
     /**
-     * The base url of the remote add on.
+     * The base url of the remote add-on, which is used for all communications back to the add-on instance. Once the add-on is installed in a product, the add-on's baseUrl
+     * cannot be changed without first uninstalling the add-on. This is important; choose your baseUrl wisely before making your add-on public.
+     * 
      * Only add-ons with a baseUrl starting with ``https://`` can be [installed in cloud instances](../developing/cloud-installation.html)
      * servers. ``http://`` may still be used for testing locally.
-     * Note: each add-on should have a unique baseUrl.
+     *
+     * Note: each add-on must have a unique baseUrl. If you would like to serve multiple add-ons from the same host, consider adding a path prefix into the baseUrl.
      */
     @Required
     @StringSchemaAttributes(format = "uri")

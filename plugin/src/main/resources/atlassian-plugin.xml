@@ -57,7 +57,7 @@
     
     <resource type="i18n" name="i18n" location="com.atlassian.connect.i18n"/>
 
-    <health-check key="addonsGroupHealthCheck" name="Add-on Group Health Check" class="com.atlassian.plugin.connect.plugin.AtlassianAddonsGroupHealthCheck" />
+    <health-check key="addonsGroupHealthCheck" name="Add-on Group Health Check" class="com.atlassian.plugin.connect.crowd.healthcheck.AtlassianAddonsGroupHealthCheck" />
 
     <servlet-filter key="iframe-resources" class="com.atlassian.plugin.connect.plugin.iframe.StaticResourcesFilter"
                     location="after-encoding">
@@ -153,6 +153,11 @@
     </applinks-application-type>
 
     <analytics-whitelist key="analyticsWhitelist" resource="whitelist/connect_whitelist.json"/>
+
+    <listener name="Crowd Sync Listener" key="crowdSyncListener"
+              class="com.atlassian.plugin.connect.crowd.usermanagement.ConnectCrowdSyncListener" >
+        <description>Handles synchronising of user attributes (which Crowd doesn't do for us yet)</description>
+    </listener>
 
     <ao key="add-on-properties-ao-module" name="Active Objects Module">
         <description>Datastore for add-on properties.</description>

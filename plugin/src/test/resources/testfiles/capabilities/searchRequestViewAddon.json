@@ -1,7 +1,6 @@
 {
-    "authentication": {
-        "publicKey": "S0m3Publ1cK3y",
-        "type": "oauth"
+    "authentication" : {
+        "type" : "jwt"
     },
     "baseUrl": "http://www.example.com",
     "modules": {

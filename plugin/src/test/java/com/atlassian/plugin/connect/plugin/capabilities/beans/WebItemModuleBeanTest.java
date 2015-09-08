@@ -109,8 +109,7 @@ public class WebItemModuleBeanTest
                 .withModule("webItems", webItemBean)
                 .withAuthentication(
                         newAuthenticationBean()
-                                .withType(AuthenticationType.OAUTH)
-                                .withPublicKey("S0m3Publ1cK3y").build());
+                                .withType(AuthenticationType.JWT).build());
     }
 
     private WebItemModuleBeanBuilder createWebItemBeanBuilder()

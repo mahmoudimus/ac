@@ -1,15 +1,11 @@
 package com.atlassian.plugin.connect.plugin.capabilities.event;
 
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.util.AbstractInitializingComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.lifecycle.LifecycleAware;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -33,10 +29,10 @@ public class ConnectPluginEnabledHandler extends AbstractInitializingComponent
     @Override
     protected void finalInit()
     {
-        pluginEnabled();
+        enableAddons();
     }
 
-    private void pluginEnabled()
+    private void enableAddons()
     {
         //enable all the addons if needed
         for (String addonKey : addonRegistry.getAddonKeysToEnableOnRestart())
@@ -44,5 +40,4 @@ public class ConnectPluginEnabledHandler extends AbstractInitializingComponent
             addonManager.enableConnectAddon(addonKey);
         }
     }
-
 }

@@ -18,7 +18,8 @@ public interface AddOnKeyExtractor
     /**
      * Checks to see if the request have been made from an add-on. We consider the request to be issued by and add-on
      * in the following cases.
-     * 1. When the request is coming from an add-on server, is it attributed with Plugin-Key and has to be equal to the client key.
+     * 1. When the request is coming from an add-on server, is it attributed with Plugin-Key and has to be equal to the
+     *    client key.
      * 2. When the request is coming from a browser, it comes with AP-Client-Key header.
      * This function does not check if the add-on exists, only if the the request could have been made by an add-on.
      *
@@ -29,8 +30,8 @@ public interface AddOnKeyExtractor
 
     /**
      * @param req the context {@link HttpServletRequest}
-     * @return the unique add-on id, synonymous with OAuth client key and JWT issuer, or {@code null} if 2LO authentication failed or was not
-     *         attempted
+     * @return the unique add-on id, synonymous with OAuth client key and JWT issuer, or {@code null} if 2LO
+     *         authentication failed or was not attempted
      */
     @Nullable
     String extractClientKey(@Nonnull HttpServletRequest req);

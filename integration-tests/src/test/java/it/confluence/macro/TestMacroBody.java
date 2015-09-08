@@ -13,7 +13,6 @@ import com.atlassian.plugin.connect.test.HttpUtils;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RenderedMacro;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.google.common.collect.Maps;
-import it.confluence.ConfluenceRestClient;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.confluence.MacroStorageFormatBuilder;
 import it.servlet.HttpContextServlet;
@@ -50,36 +49,36 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
     {
         DynamicContentMacroModuleBean dynamicContentMacroById = newDynamicContentMacroModuleBean()
                 .withUrl("/render-dynamic-by-id?pageId={page.id}&pageVersion={page.version}&macroId={macro.id}")
-                .withDescription(new I18nProperty("Dynamic Content Macro By Id", ""))
+                .withDescription(new I18nProperty("Dynamic Content Macro By Id", null))
                 .withKey("dynamic-macro-by-id")
-                .withName(new I18nProperty("Dynamic Macro By Id", ""))
+                .withName(new I18nProperty("Dynamic Macro By Id", null))
                 .withOutputType(MacroOutputType.BLOCK)
                 .withBodyType(MacroBodyType.RICH_TEXT)
                 .build();
 
         StaticContentMacroModuleBean staticContentMacroById = newStaticContentMacroModuleBean()
                 .withUrl("/render-static-by-id?pageId={page.id}&pageVersion={page.version}&macroId={macro.id}")
-                .withDescription(new I18nProperty("Static Content Macro By Id", ""))
+                .withDescription(new I18nProperty("Static Content Macro By Id", null))
                 .withKey("static-macro-by-id")
-                .withName(new I18nProperty("Static Macro By Id", ""))
+                .withName(new I18nProperty("Static Macro By Id", null))
                 .withOutputType(MacroOutputType.BLOCK)
                 .withBodyType(MacroBodyType.RICH_TEXT)
                 .build();
 
         DynamicContentMacroModuleBean dynamicContentMacroByHash = newDynamicContentMacroModuleBean()
                 .withUrl("/render-dynamic-by-hash?pageId={page.id}&pageVersion={page.version}&macroHash={macro.hash}")
-                .withDescription(new I18nProperty("Dynamic Content Macro By Hash", ""))
+                .withDescription(new I18nProperty("Dynamic Content Macro By Hash", null))
                 .withKey("dynamic-macro-by-hash")
-                .withName(new I18nProperty("Dynamic Macro By Hash", ""))
+                .withName(new I18nProperty("Dynamic Macro By Hash", null))
                 .withOutputType(MacroOutputType.BLOCK)
                 .withBodyType(MacroBodyType.RICH_TEXT)
                 .build();
 
         StaticContentMacroModuleBean staticContentMacroByHash = newStaticContentMacroModuleBean()
                 .withUrl("/render-static-by-hash?pageId={page.id}&pageVersion={page.version}&macroHash={macro.hash}")
-                .withDescription(new I18nProperty("Static Content Macro By Hash", ""))
+                .withDescription(new I18nProperty("Static Content Macro By Hash", null))
                 .withKey("static-macro-by-hash")
-                .withName(new I18nProperty("Static Macro By Hash", ""))
+                .withName(new I18nProperty("Static Macro By Hash", null))
                 .withOutputType(MacroOutputType.BLOCK)
                 .withBodyType(MacroBodyType.RICH_TEXT)
                 .build();
