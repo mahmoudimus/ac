@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class WebHookModuleProvider extends ConnectModuleProvider<WebHookModuleBean>
 {
-    public static final String DESCRIPTOR_KEY = "webHooks";
+    public static final String DESCRIPTOR_KEY = "webhooks";
     public static final Class BEAN_CLASS = WebHookModuleBean.class;
     
     private ConnectWebHookModuleDescriptorFactory connectWebHookModuleDescriptorFactory;
