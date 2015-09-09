@@ -56,7 +56,7 @@
         <profile>
             <id>wired</id>
             <modules>
-                <module>wired-tests</module>
+                <module>tests/wired-tests</module>
             </modules>
         </profile>
     </profiles>
