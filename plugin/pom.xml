@@ -1242,5 +1242,8 @@
             include-artifact,com.atlassian.plugins:atlassian-connect-integration-tests
         </od.testing.configuration>
         <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
+
+        <!-- Override the javadoc.additional.params field because it breaks the json schema documentation generation -->
+        <javadoc.additional.params/>
     </properties>
 </project>

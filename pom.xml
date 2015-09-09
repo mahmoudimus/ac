@@ -62,9 +62,9 @@
     </profiles>
 
     <scm>
-        <connection>scm:git:ssh://git@stash.atlassian.com:7997/ac/atlassian-connect.git</connection>
+        <connection>scm:git:https://bitbucket.org/atlassian/atlassian-connect.git</connection>
         <developerConnection>scm:git:ssh://git@stash.atlassian.com:7997/ac/atlassian-connect.git</developerConnection>
-        <url>http://stash.atlassian.com/projects/ac/repos/atlassian-connect</url>
+        <url>https://bitbucket.org/atlassian/atlassian-connect</url>
     </scm>
 
     <build>
@@ -782,7 +782,7 @@
         <atlassian.jira.testkit.version>7.0.70</atlassian.jira.testkit.version>
         <atlassian.mail.version>2.5.4</atlassian.mail.version>
         <atlassian.oauth.version>1.3.0</atlassian.oauth.version>
-        <atlassian.jwt.version>1.3.0</atlassian.jwt.version>
+        <atlassian.jwt.version>1.2.2</atlassian.jwt.version>
         <atlassian.json.schema.validator.version>1.0.4</atlassian.json.schema.validator.version>
         <atlassian.plugins.version>4.0.0-m020</atlassian.plugins.version>
         <atlassian.rest.version>2.9.13</atlassian.rest.version>
@@ -838,7 +838,7 @@
         <xvfb.enable>true</xvfb.enable>
         <atlassian.upm.on.demand>false</atlassian.upm.on.demand>
         <buildNumber>SNAPSHOT</buildNumber>
-        <atlassian.spring.scanner.version>1.2.10</atlassian.spring.scanner.version>
+        <atlassian.spring.scanner.version>1.2.2</atlassian.spring.scanner.version>
         <ao.long.timeout>180000</ao.long.timeout>
         <ao.short.timeout>30000</ao.short.timeout>
         <skipTests>false</skipTests>

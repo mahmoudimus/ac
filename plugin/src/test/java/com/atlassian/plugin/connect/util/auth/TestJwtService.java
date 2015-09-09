@@ -1,8 +1,10 @@
 package com.atlassian.plugin.connect.util.auth;
 
-import com.atlassian.jwt.Jwt;
+import com.atlassian.applinks.api.ApplicationLink;
+import com.atlassian.applinks.api.TypeNotInstalledException;
 import com.atlassian.jwt.SigningAlgorithm;
-import com.atlassian.jwt.JwtService;
+import com.atlassian.jwt.applinks.ApplinkJwt;
+import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.jwt.applinks.exception.NotAJwtPeerException;
 import com.atlassian.jwt.core.writer.NimbusJwtWriterFactory;
 import com.atlassian.jwt.exception.JwtIssuerLacksSharedSecretException;
@@ -14,8 +16,6 @@ import com.atlassian.jwt.reader.JwtClaimVerifier;
 import com.atlassian.jwt.writer.JwtWriterFactory;
 
 import java.util.Map;
-
-import javax.annotation.Nonnull;
 
 public class TestJwtService implements JwtService
 {
@@ -29,21 +29,25 @@ public class TestJwtService implements JwtService
     }
 
     @Override
-    public Jwt verifyJwt(String jwt, Map<String, ? extends JwtClaimVerifier> claimVerifiers) throws NotAJwtPeerException, JwtParseException, JwtVerificationException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException
+    public boolean isJwtPeer(ApplicationLink applicationLink)
     {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String issueJwt(String jsonPayload, String secret) throws NotAJwtPeerException, JwtSigningException
+    public ApplinkJwt verifyJwt(String jwt, Map<String, ? extends JwtClaimVerifier> claimVerifiers) throws NotAJwtPeerException, JwtParseException, JwtVerificationException, TypeNotInstalledException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException
     {
-        return issueJwt(jsonPayload, secret, SigningAlgorithm.HS256);
+        throw new UnsupportedOperationException();
     }
 
-    @Nonnull
     @Override
-    public String issueJwt(@Nonnull String jsonPayload, @Nonnull String secret, SigningAlgorithm algorithm)
+    public String issueJwt(String jsonPayload, ApplicationLink applicationLink) throws NotAJwtPeerException, JwtSigningException
     {
-        return jwtWriterFactory.macSigningWriter(algorithm, sharedSecret).jsonToJwt(jsonPayload);
+        return issueJwt(jsonPayload, sharedSecret);
     }
-}
+
+    @Override
+    public String issueJwt(String jsonPayload, String secret) throws NotAJwtPeerException, JwtSigningException
+    {
+        return jwtWriterFactory.macSigningWriter(SigningAlgorithm.HS256, sharedSecret).jsonToJwt(jsonPayload);
+    }}

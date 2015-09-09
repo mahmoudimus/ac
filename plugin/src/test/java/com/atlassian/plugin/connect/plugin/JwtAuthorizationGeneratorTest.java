@@ -3,7 +3,7 @@ package com.atlassian.plugin.connect.plugin;
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.security.auth.trustedapps.KeyFactory;
 import com.atlassian.jwt.JwtConstants;
-import com.atlassian.jwt.JwtService;
+import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.jwt.core.HttpRequestCanonicalizer;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.atlassian.oauth.Consumer;
