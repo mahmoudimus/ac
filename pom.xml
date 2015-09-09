@@ -29,7 +29,7 @@
         <module>plugin</module>
         <module>confluence</module>
         <module>jira</module>
-        <module>test-support-plugin</module>
+        <module>tests/test-support-plugin</module>
         <module>docs</module>
         <module>crowd-support</module>
     </modules>
