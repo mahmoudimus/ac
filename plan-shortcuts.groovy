@@ -53,10 +53,10 @@ runTestsStage() {
         testJobsForConfluence(
                 mavenProductParameters: ''
         )
-        testJobsForJIRA(
+            testJobsForJIRA(
                 mavenProductParameters: ''
         )
-        job(
+          job(
                 key: 'UTJ7',
                 name: 'Unit Tests'
         ) {
@@ -246,7 +246,7 @@ testJobsForConfluence(['mavenProductParameters']) {
     )
 }
 
-testJobsForJIRA(['mavenProductParameters']) {
+    testJobsForJIRA(['mavenProductParameters']) {
     lifecycleTestJob(
             key: 'JLT',
             product: 'JIRA',
@@ -280,35 +280,35 @@ testJobsForJIRA(['mavenProductParameters']) {
             groupName: 'Common Lifecycle',
             additionalMavenParameters: '#mavenProductParameters'
     )
-    integrationTestJob(
+    jiraIntegrationTestJob(
             key: 'JITM',
             product: 'JIRA',
             testGroup: 'jira-misc',
             groupName: 'Misc',
             additionalMavenParameters: '#mavenProductParameters'
     )
-    integrationTestJob(
+    jiraIntegrationTestJob(
             key: 'JITI',
             product: 'JIRA',
             testGroup: 'jira-iframe',
             groupName: 'iframe',
             additionalMavenParameters: '#mavenProductParameters'
     )
-    integrationTestJob(
+    jiraIntegrationTestJob(
             key: 'JITT',
             product: 'JIRA',
             testGroup: 'jira-item',
             groupName: 'Item',
             additionalMavenParameters: '#mavenProductParameters'
     )
-    integrationTestJob(
+    jiraIntegrationTestJob(
             key: 'JITJ',
             product: 'JIRA',
             testGroup: 'jira-jsapi',
             groupName: 'JS API FF',
             additionalMavenParameters: '#mavenProductParameters'
     )
-    integrationTestJob(
+    jiraIntegrationTestJob(
             key: 'JITJC',
             product: 'JIRA',
             testGroup: 'jira-jsapi',
@@ -347,7 +347,7 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
     }
 }
 
-wiredTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
+  wiredTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
     job(
             key: '#key',
             name: '#product - Wired Tests'
@@ -371,7 +371,29 @@ wiredTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
     }
 }
 
-integrationTestJob(['key', 'product', 'testGroup', 'groupName', 'additionalMavenParameters']) {
+  integrationTestJob(['key', 'product', 'testGroup', 'groupName', 'additionalMavenParameters']) {
+      projectIntegrationTestJob(
+              key: '#key',
+              product: '#product',
+              testGroup: '#testGroup',
+              groupName: '#groupName',
+              additionalMavenParameters: '#additionalMavenParameters',
+              project: 'tests/integration-tests'
+      )
+  }
+
+jiraIntegrationTestJob(['key', 'product', 'testGroup', 'groupName', 'additionalMavenParameters']) {
+    projectIntegrationTestJob(
+            key: '#key',
+            product: '#product',
+            testGroup: '#testGroup',
+            groupName: '#groupName',
+            additionalMavenParameters: '#additionalMavenParameters',
+            project: 'jira/jira-integration-tests'
+    )
+}
+
+projectIntegrationTestJob(['key', 'product', 'testGroup', 'groupName', 'additionalMavenParameters', 'project']) {
     job(
             key: '#key',
             name: '#product - IT #groupName'
@@ -382,10 +404,12 @@ integrationTestJob(['key', 'product', 'testGroup', 'groupName', 'additionalMaven
         mavenInstallTask()
         mavenTestTask(
                 description: 'Run Integration Tests for #product #groupName',
-                goal: 'verify -pl integration-tests -Pit -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters',
+                goal: 'verify -pl #project -Pit -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters',
                 environmentVariables: 'DISPLAY=":20" MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m" CHROME_BIN=/usr/bin/google-chrome',
         )
-        defineWebDriverOutputArtefact()
+        defineWebDriverOutputArtefact(
+                project: '#project'
+        )
     }
 }
 
@@ -554,10 +578,10 @@ displayEnv
     )
 }
 
-defineWebDriverOutputArtefact() {
+defineWebDriverOutputArtefact(['project']) {
     artifactDefinition(
             name: 'HTML dumps and screenshots',
-            location: 'integration-tests/target/webdriverTests',
+            location: '#project/target/webdriverTests',
             pattern: '**/*.*',
             shared: 'false'
     )
