@@ -38,7 +38,7 @@
         <profile>
             <id>it</id>
             <modules>
-                <module>integration-tests</module>
+                <module>tests/integration-tests</module>
             </modules>
         </profile>
         <profile>
@@ -50,7 +50,7 @@
          <profile>
             <id>freezer-release-profile</id>
             <modules>
-                <module>integration-tests</module>
+                <module>tests/integration-tests</module>
             </modules>
         </profile>
         <profile>
