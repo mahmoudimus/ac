@@ -44,7 +44,7 @@
         <profile>
             <id>pluginLifecycle</id>
             <modules>
-                <module>plugin-lifecycle-tests</module>
+                <module>tests/plugin-lifecycle-tests</module>
             </modules>
          </profile>
          <profile>
