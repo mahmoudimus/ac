@@ -569,11 +569,11 @@
                                 <testedProduct>confluence</testedProduct>
                             </systemProperties>
                             <excludes>
-                                <exclude>it/jira/**/*.java</exclude>
                                 <exclude>at/**</exclude>
                             </excludes>
                         </testGroup>
                         <testGroup>
+                            <!-- Still required for the time being, until we split out JIRA Wired tests -->
                             <id>jira</id>
                             <productIds>
                                 <productId>jira</productId>
@@ -742,63 +742,6 @@
                             </systemProperties>
                             <includes>
                                 <include>it/common/lifecycle/*.java</include>
-                            </includes>
-                        </testGroup>
-
-                        <!-- Tests of JIRA-specific functionality -->
-
-                        <testGroup>
-                            <id>jira-misc</id>
-                            <productIds>
-                                <productId>jira</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>jira</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/jira/**/*.java</include>
-                            </includes>
-                            <excludes>
-                                <exclude>it/jira/iframe/*.java</exclude>
-                                <exclude>it/jira/item/*.java</exclude>
-                                <exclude>it/jira/jsapi/*.java</exclude>
-                            </excludes>
-                        </testGroup>
-                        <testGroup>
-                            <id>jira-iframe</id>
-                            <productIds>
-                                <productId>jira</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>jira</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/jira/iframe/*.java</include>
-                            </includes>
-                        </testGroup>
-                        <testGroup>
-                            <id>jira-item</id>
-                            <productIds>
-                                <productId>jira</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>jira</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/jira/item/*.java</include>
-                            </includes>
-                        </testGroup>
-                        <testGroup>
-                            <id>jira-jsapi</id>
-                            <productIds>
-                                <productId>jira</productId>
-                            </productIds>
-                            <systemProperties>
-                                <testedProduct>jira</testedProduct>
-                            </systemProperties>
-                            <includes>
-                                <include>it/common/jsapi/*.java</include>
-                                <include>it/jira/jsapi/*.java</include>
                             </includes>
                         </testGroup>
 
