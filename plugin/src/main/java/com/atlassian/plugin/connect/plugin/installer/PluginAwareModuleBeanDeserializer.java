@@ -46,7 +46,7 @@ public class PluginAwareModuleBeanDeserializer implements JsonDeserializer<Map<S
                 throw new InvalidDescriptorException("Module types " + rawModule.getKey() + " listed in the descriptor are not valid.");
             }
             
-            List<JsonObject> modules = new ArrayList<>();
+            final List<JsonObject> modules = new ArrayList<>();
             if (rawModule.getValue().isJsonObject())
             {
                 modules.add(rawModule.getValue().getAsJsonObject());
@@ -63,13 +63,12 @@ public class PluginAwareModuleBeanDeserializer implements JsonDeserializer<Map<S
             }
             
             final ConnectModuleProvider moduleProvider = moduleProviders.get(rawModule.getKey());
-            final List<JsonObject> finalModules = new ArrayList<>(modules);
             Supplier<List<ModuleBean>> moduleBeanSupplier = Suppliers.memoize(new Supplier<List<ModuleBean>>()
             {
                 @Override
                 public List<ModuleBean> get()
                 {
-                    return moduleProvider.validate(finalModules, moduleProvider.getBeanClass());
+                    return moduleProvider.validate(modules, moduleProvider.getBeanClass());
                 }
             });
             moduleBeanListSuppliers.put(rawModule.getKey(), moduleBeanSupplier);

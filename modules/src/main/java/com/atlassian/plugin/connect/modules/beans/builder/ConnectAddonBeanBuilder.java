@@ -98,24 +98,27 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
 
     public T withModules(String fieldName, final ModuleBean... beans)
     {
-        final Supplier<List<ModuleBean>> moduleBeanSupplier = new Supplier<List<ModuleBean>>()
-        {
-            @Override
-            public List<ModuleBean> get()
-            {
-                return Arrays.asList(beans);
-            }
-        };
-        
         if (null == modules)
         {
             this.modules = new HashMap<>();
         }
-        
-        if (null == modules.get(fieldName))
+
+        final List<ModuleBean> totalBeans = new ArrayList(Arrays.asList(beans));
+        if (null != modules.get(fieldName))
         {
-            modules.put(fieldName, moduleBeanSupplier);
+            totalBeans.addAll(modules.get(fieldName).get());
         }
+
+        Supplier<List<ModuleBean>> moduleBeanSupplier = new Supplier<List<ModuleBean>>()
+        {
+            @Override
+            public List<ModuleBean> get()
+            {
+                return totalBeans;
+            }
+        };
+
+        modules.put(fieldName, moduleBeanSupplier);
         
         return (T) this;
     }
