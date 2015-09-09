@@ -63,7 +63,7 @@ public class ConnectAddonToPluginFactory
 
         if(addon.getModules() != null && addon.getModules().get("configurePage") != null)
         {
-            ConnectPageModuleBean configurePage = (ConnectPageModuleBean) addon.getModules().get("configurePage").get();
+            ConnectPageModuleBean configurePage = (ConnectPageModuleBean) addon.getModules().get("configurePage").get().get(0);
             if (null != configurePage && !Strings.isNullOrEmpty(configurePage.getUrl()))
             {
                 pluginInfo.addParameter(CONFIGURE_URL, ConnectIFrameServletPath.forModule(addon.getKey(), configurePage.getRawKey()));
