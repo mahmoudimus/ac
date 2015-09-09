@@ -48,7 +48,7 @@
     </connect-module-provider>
 
     <connect-module-provider
-            key="webHooks"
+            key="webhooks"
             class="com.atlassian.plugin.connect.plugin.capabilities.provider.WebHookModuleProvider"
             name="Web Hook Module Provider">
         <description>...</description>

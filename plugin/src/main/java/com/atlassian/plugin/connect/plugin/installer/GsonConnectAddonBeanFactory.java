@@ -1,17 +1,19 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.api.service.IsDevModeService;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.modules.schema.DescriptorValidationResult;
 import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
 import com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectSchemaLocator;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidatorService;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
-import com.atlassian.plugin.connect.api.service.IsDevModeService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.github.fge.msgsimple.provider.LoadingMessageSourceProvider;
+import com.google.common.base.Supplier;
 import com.google.gson.JsonDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -103,7 +106,8 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
 
         ConnectAddonBean addOn = fromJsonSkipValidation(jsonDescriptor,i18nCollector);
         addOnBeanValidatorService.validate(addOn);
-
+        validateModules(addOn);
+        
         return addOn;
     }
 
@@ -152,5 +156,14 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
         }
         messageBuilder.append("</ul>");
         return messageBuilder.toString();
+    }
+    
+    private void validateModules(ConnectAddonBean addOn)
+    {
+        for (Map.Entry<String, Supplier<List<ModuleBean>>> entry : addOn.getModules().entrySet())
+        {
+            // This will validate the beans and cache the result
+            entry.getValue().get();
+        }
     }
 }

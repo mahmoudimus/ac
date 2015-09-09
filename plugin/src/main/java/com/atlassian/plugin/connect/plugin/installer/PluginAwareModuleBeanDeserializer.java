@@ -4,17 +4,16 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderModuleDescriptor;
+import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.collect.Sets;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -22,7 +21,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class PluginAwareModuleBeanDeserializer implements JsonDeserializer<Map<String, Supplier<List<ModuleBean>>>>
 {
@@ -36,40 +34,44 @@ public class PluginAwareModuleBeanDeserializer implements JsonDeserializer<Map<S
     @Override
     public Map<String, Supplier<List<ModuleBean>>> deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException
     {
-        Type rawModuleListType = new TypeToken<Map<String, List<JsonObject>>>() {}.getType();
-        Map<String, List<JsonObject>> rawModuleList = context.deserialize(json, rawModuleListType);
-        
-        for(Map.Entry<String, JsonElement> entry : json.getAsJsonObject().entrySet())
-        {
-            JsonArray moduleArray = entry.getValue().getAsJsonArray();
-            List<JsonObject> modules = new ArrayList<>();
-            for (int i = 0; i < moduleArray.size(); i++)
-            {
-                JsonObject module = moduleArray.get(i).getAsJsonObject();
-                modules.add(module);
-            }
-            rawModuleList.put(entry.getKey(), modules);
-        }
-        
-        assertAllModuleProvidersKnown(rawModuleList);
-
         Map<String, Supplier<List<ModuleBean>>> moduleBeanListSuppliers = new HashMap<>();
-        for (Map.Entry<String, List<JsonObject>> rawModuleListEntry : rawModuleList.entrySet())
+        
+        for (Map.Entry<String, JsonElement> rawModule : json.getAsJsonObject().entrySet())
         {
-            String descriptorKey = rawModuleListEntry.getKey();
-            final List<JsonObject> rawModules = rawModuleListEntry.getValue();
-            final ConnectModuleProvider moduleProvider = moduleProviders.get(descriptorKey);
-            final Supplier<List<ModuleBean>> moduleBeanSupplier = new Supplier<List<ModuleBean>>()
+            if (!moduleProviders.keySet().contains(rawModule.getKey()))
+            {
+                // TODO pass an i18n key here?
+                throw new InvalidDescriptorException("Module types " + rawModule.getKey() + " listed in the descriptor are not valid.");
+            }
+            
+            final List<JsonObject> modules = new ArrayList<>();
+            if (rawModule.getValue().isJsonObject())
+            {
+                modules.add(rawModule.getValue().getAsJsonObject());
+            }
+            else
+            {
+                JsonArray moduleArray = rawModule.getValue().getAsJsonArray();
+
+                for (int i = 0; i < moduleArray.size(); i++)
+                {
+                    JsonObject module = moduleArray.get(i).getAsJsonObject();
+                    modules.add(module);
+                }
+            }
+            
+            final ConnectModuleProvider moduleProvider = moduleProviders.get(rawModule.getKey());
+            Supplier<List<ModuleBean>> moduleBeanSupplier = Suppliers.memoize(new Supplier<List<ModuleBean>>()
             {
                 @Override
                 public List<ModuleBean> get()
                 {
-                    return moduleProvider.validate(rawModules, moduleProvider.getBeanClass());
+                    return moduleProvider.validate(modules, moduleProvider.getBeanClass());
                 }
-            };
-            moduleBeanListSuppliers.put(descriptorKey, Suppliers.memoize(moduleBeanSupplier));
+            });
+            moduleBeanListSuppliers.put(rawModule.getKey(), moduleBeanSupplier);
         }
-
+        
         return moduleBeanListSuppliers;
     }
 
@@ -81,14 +83,5 @@ public class PluginAwareModuleBeanDeserializer implements JsonDeserializer<Map<S
             moduleProviderMap.put(moduleProvider.getDescriptorKey(), moduleProvider);
         }
         return moduleProviderMap;
-    }
-
-    private void assertAllModuleProvidersKnown(Map<String, List<JsonObject>> rawModuleList)
-    {
-        final Set<String> unknownModuleTypes = Sets.difference(rawModuleList.keySet(), moduleProviders.keySet());
-        if (!unknownModuleTypes.isEmpty())
-        {
-            // Unknown module providers
-        }
     }
 }
