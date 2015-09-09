@@ -21,7 +21,7 @@ productSnapshotPlanConfiguration(['productVersion']) {
     )
     trigger(
             type: 'cron',
-            cronExpression: '0 30 20 ? * 2,3,4,5,6'
+            cronExpression: '0 30 20 ? * 1,2,3,4,5'
     )
     hipChatNotification()
 }
