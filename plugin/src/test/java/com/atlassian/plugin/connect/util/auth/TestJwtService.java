@@ -50,4 +50,5 @@ public class TestJwtService implements JwtService
     public String issueJwt(String jsonPayload, String secret) throws NotAJwtPeerException, JwtSigningException
     {
         return jwtWriterFactory.macSigningWriter(SigningAlgorithm.HS256, sharedSecret).jsonToJwt(jsonPayload);
-    }}
+    }
+}
