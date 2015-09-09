@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface ConnectModuleProvider<T>
 {
+    boolean multipleModulesAllowed();
 
     String getDescriptorKey();
 

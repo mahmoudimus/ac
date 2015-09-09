@@ -20,4 +20,10 @@ public abstract class AbstractConnectModuleProvider<T> implements ConnectModuleP
         }
         return beans;
     }
+    
+    @Override
+    public boolean multipleModulesAllowed()
+    {
+        return true;
+    }
 }

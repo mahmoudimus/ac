@@ -63,5 +63,11 @@ public class ConfigurePageModuleProvider extends AbstractAdminPageModuleProvider
     {
         return DESCRIPTOR_KEY;
     }
+    
+    @Override
+    public boolean multipleModulesAllowed()
+    {
+        return false;
+    }
 
 }
