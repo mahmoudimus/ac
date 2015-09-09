@@ -509,7 +509,6 @@
                         <product>
                             <id>confluence</id>
                             <version>${atlassian.confluence.version}</version>
-                            <productDataVersion>${atlassian.confluence.productDataVersion}</productDataVersion>
                             <log4jProperties>src/test/resources/log4j-confluence.properties
                             </log4jProperties>
                             <systemPropertyVariables>
