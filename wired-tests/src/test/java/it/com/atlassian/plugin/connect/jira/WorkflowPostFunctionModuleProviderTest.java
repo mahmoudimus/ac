@@ -81,11 +81,6 @@ public class WorkflowPostFunctionModuleProviderTest
                 .withModules("jiraWorkflowPostFunctions", bean)
                 .build();
 
-        // simulate a descriptor that includes an absolute url
-        String descriptor = ConnectModulesGsonFactory.addonBeanToJson(addon);
-        descriptor = descriptor.replace("/view", BASE_URL + "/view");
-        addon = ConnectModulesGsonFactory.getGson().fromJson(descriptor, ConnectAddonBean.class);
-
         plugin = testPluginInstaller.installAddon(addon);
     }
 
@@ -104,13 +99,6 @@ public class WorkflowPostFunctionModuleProviderTest
     {
         checkWorkflowUrlIsAbsolute(RESOURCE_NAME_INPUT_PARAMETERS, "/create");
         checkWorkflowUrlIsAbsolute(RESOURCE_NAME_EDIT_PARAMETERS, "/edit");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void absoluteWorkflowLinksAreRejected() throws Exception
-    {
-        // Url's must be relative
-        checkWorkflowUrlIsAbsolute(RESOURCE_NAME_VIEW, "/view");
     }
 
     @Test
