@@ -61,14 +61,15 @@ Contributions are encouraged!
 	* `confluence-reference-plugin` - a reference implementation of some SPI interfaces for Confluence
 * `crowd-support` - support for Atlassian Connect in products that use Atlassian Crowd
 * `docs` - a Node.js project for generating [the developer documentation](https://connect.atlassian.com)
-* `integration-tests` - integration tests for the plugin
 * `jira` - the parent of all JIRA-specific modules
 	* `jira-reference-plugin` - a reference implementation of some SPI interfaces for JIRA
 * `modules` - bean representations of add-on JSON descriptor elements
 * `plugin` - groups the other modules and [`atlassian-connect-js`](https://bitbucket.org/atlassian/atlassian-connect-js) into a plugin
-* `plugin-lifecycle-tests` - wired tests for the plugin lifecycle, requiring plugin uninstallation
-* `test-support-plugin` - a collection of utility classes for unit and integration testing
-* `wired-tests` - wired tests for the plugin
+* `tests` - the parent of all non-product-specific test modules
+    * `integration-tests` - integration tests for the plugin
+    * `plugin-lifecycle-tests` - wired tests for the plugin lifecycle, requiring plugin uninstallation
+    * `test-support-plugin` - a collection of utility classes for unit and integration testing
+    * `wired-tests` - wired tests for the plugin
 
 ### Branches
 
@@ -101,17 +102,17 @@ To run JavaScript unit tests:
 To run wired tests:
 
     mvn clean install
-    mvn -pl wired-tests verify -Pwired
+    mvn -pl tests/wired-tests verify -Pwired
 
 To run plug-in lifecycle tests:
 
     mvn clean install
-    mvn -pl plugin-lifecycle-tests verify -PpluginLifecycle
+    mvn -pl tests/plugin-lifecycle-tests verify -PpluginLifecycle
 
 To run integration tests:
 
     mvn clean install
-    mvn -pl integration-tests verify -Pit [-DtestGroups=...]
+    mvn -pl tests/integration-tests verify -Pit [-DtestGroups=...]
 
 To run add-on descriptor validation tests:
 
