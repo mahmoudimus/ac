@@ -792,7 +792,7 @@
         <skipUnits>${skipTests}</skipUnits>
         <schema.generator.version>1.0.0</schema.generator.version>
         <json.schema.validator.version>2.2.5</json.schema.validator.version>
-        <node.version>v0.12.2</node.version>
+        <node.version>v0.10.26</node.version>
         <npm.version>1.4.9</npm.version>
         <node.download.root>https://nodejs.org/dist/</node.download.root>
         <npm.download.root>https://nodejs.org/dist/npm/</npm.download.root>
