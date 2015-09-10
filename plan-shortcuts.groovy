@@ -357,7 +357,7 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
         mavenInstallTask()
         mavenTestTask(
                 description: 'Run Wired Tests for #product',
-                goal: 'clover2:setup verify -pl wired-tests -Pwired,clover -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters clover2:aggregate clover2:clover',
+                goal: 'clover2:setup verify -pl tests/wired-tests -Pwired,clover -DtestGroups=#testGroup -DskipITs=false -DskipUnits #additionalMavenParameters clover2:aggregate clover2:clover',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
         )
         cloverReportArtifact(
@@ -404,7 +404,7 @@ projectIntegrationTestJob(['key', 'product', 'testGroup', 'groupName', 'addition
         mavenInstallTask()
         mavenTestTask(
                 description: 'Run Integration Tests for #product #groupName',
-                goal: 'verify -pl #project -Pit -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters',
+                goal: 'verify -pl #project -DtestGroups=#testGroup -DskipUnits -DskipITs=false #additionalMavenParameters',
                 environmentVariables: 'DISPLAY=":20" MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m" CHROME_BIN=/usr/bin/google-chrome',
         )
         defineWebDriverOutputArtefact(
