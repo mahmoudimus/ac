@@ -776,7 +776,6 @@
         <atlassian.jira.cross.compat.version>0.48</atlassian.jira.cross.compat.version>
 
         <!-- TEST STUFF -->
-        <atlassian.confluence.productDataVersion>5.8-m56</atlassian.confluence.productDataVersion>
         <atlassian.test.categories.version>0.5</atlassian.test.categories.version>
         <aui.version>5.2</aui.version>
         <gson.version>2.2.2-atlassian-1</gson.version>
