@@ -68,7 +68,9 @@ public abstract class AbstractConnectModuleProvider<T> implements ConnectModuleP
     {
         JsonDescriptorValidator jsonDescriptorValidator = new JsonDescriptorValidator();
 
-        DescriptorValidationResult result = jsonDescriptorValidator.validate(rawModules.toString(), schema);
+        String modules = "{\"" + getDescriptorKey() + "\": " + rawModules.toString() + "}";
+
+        DescriptorValidationResult result = jsonDescriptorValidator.validate(modules, schema);
         if (!result.isValid())
         {
             throw new ConnectModuleSchemaValidationException(getDescriptorKey(), result.getReportAsString());

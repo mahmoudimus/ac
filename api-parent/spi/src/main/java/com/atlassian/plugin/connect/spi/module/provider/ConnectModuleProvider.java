@@ -14,7 +14,7 @@ public interface ConnectModuleProvider<T>
 
     Class getBeanClass();
 
-    List<T> validate(JsonElement modules, Class<T> type) throws Exception;
+    List<T> validate(JsonElement modules, Class<T> type) throws ConnectModuleValidationException;
 
     List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin plugin, List<T> beans);
 }
