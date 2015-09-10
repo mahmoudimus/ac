@@ -785,6 +785,8 @@
                             <workingDirectory>../plugin</workingDirectory>
                             <nodeVersion>${node.version}</nodeVersion>
                             <npmVersion>${npm.version}</npmVersion>
+                            <nodeDownloadRoot>${node.download.root}</nodeDownloadRoot>
+                            <npmDownloadRoot>${npm.download.root}</npmDownloadRoot>
                         </configuration>
                     </execution>
                     <execution>

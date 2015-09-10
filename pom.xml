@@ -810,6 +810,8 @@
         <json.schema.validator.version>2.2.5</json.schema.validator.version>
         <node.version>v0.10.26</node.version>
         <npm.version>1.4.3</npm.version>
+        <node.download.root>https://nodejs.org/dist/</node.download.root>
+        <npm.download.root>https://nodejs.org/dist/npm/</npm.download.root>
         <blueprints.version>4.0.22</blueprints.version>
         <skipNpm>false</skipNpm>
         <clover.libversion>4.0.3</clover.libversion>
