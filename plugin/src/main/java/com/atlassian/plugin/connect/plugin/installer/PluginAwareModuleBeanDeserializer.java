@@ -36,44 +36,31 @@ public class PluginAwareModuleBeanDeserializer implements JsonDeserializer<Map<S
     {
         Map<String, Supplier<List<ModuleBean>>> moduleBeanListSuppliers = new HashMap<>();
         
-        for (Map.Entry<String, JsonElement> rawModule : json.getAsJsonObject().entrySet())
+        for (final Map.Entry<String, JsonElement> rawModuleEntry : json.getAsJsonObject().entrySet())
         {
-            if (!moduleProviders.keySet().contains(rawModule.getKey()))
+            if (!moduleProviders.keySet().contains(rawModuleEntry.getKey()))
             {
                 // TODO pass an i18n key here?
-                throw new InvalidDescriptorException("Module type " + rawModule.getKey() + " listed in the descriptor is not valid.");
+                throw new InvalidDescriptorException("Module type " + rawModuleEntry.getKey() + " listed in the descriptor is not valid.");
             }
-            final ConnectModuleProvider moduleProvider = moduleProviders.get(rawModule.getKey());
-            
-            final List<JsonObject> modules = new ArrayList<>();
-            if (rawModule.getValue().isJsonObject())
-            {
-                if (moduleProvider.multipleModulesAllowed())
-                {
-                    throw new InvalidDescriptorException("Modules of type " + rawModule.getKey() + "should be provided in a JSON array.");
-                }
-                modules.add(rawModule.getValue().getAsJsonObject());
-            }
-            else
-            {
-                JsonArray moduleArray = rawModule.getValue().getAsJsonArray();
-
-                for (int i = 0; i < moduleArray.size(); i++)
-                {
-                    JsonObject module = moduleArray.get(i).getAsJsonObject();
-                    modules.add(module);
-                }
-            }
+            final ConnectModuleProvider moduleProvider = moduleProviders.get(rawModuleEntry.getKey());
 
             Supplier<List<ModuleBean>> moduleBeanSupplier = Suppliers.memoize(new Supplier<List<ModuleBean>>()
             {
                 @Override
                 public List<ModuleBean> get()
                 {
-                    return moduleProvider.validate(modules, moduleProvider.getBeanClass());
+                    try
+                    {
+                        return moduleProvider.validate(rawModuleEntry.getValue(), moduleProvider.getBeanClass());
+                    }
+                    catch (Exception e)
+                    {
+                        throw new ModuleDeserializationException(e.getMessage());
+                    }
                 }
             });
-            moduleBeanListSuppliers.put(rawModule.getKey(), moduleBeanSupplier);
+            moduleBeanListSuppliers.put(rawModuleEntry.getKey(), moduleBeanSupplier);
         }
         
         return moduleBeanListSuppliers;

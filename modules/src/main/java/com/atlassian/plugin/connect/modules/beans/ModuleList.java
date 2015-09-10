@@ -107,11 +107,6 @@ import static com.google.common.collect.Lists.newArrayList;
 @ObjectSchemaAttributes(additionalProperties = false)
 public class ModuleList extends BaseModuleBean
 {
-    Map<Class<? extends BaseModuleBean>, List<String>> entries;
-    
-    
-    
-    
     /////////////////////////////////////////////////////
     ///////    COMMON MODULES
     /////////////////////////////////////////////////////
@@ -167,75 +162,6 @@ public class ModuleList extends BaseModuleBean
      */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.ConfigurePageModuleProvider")
     private ConnectPageModuleBean configurePage;
-
-
-    /////////////////////////////////////////////////////
-    ///////    JIRA MODULES
-    /////////////////////////////////////////////////////
-
-    /**
-     * The Issue Tab Panel module allows you to add new tabs to the 'Browse Component' page.
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.ConnectTabPanelModuleProvider", products = {ProductFilter.JIRA})
-    private List<ConnectTabPanelModuleBean> jiraIssueTabPanels;
-
-    /**
-     * The Project Admin Tab Panel module allows you to add new panels to the 'Project Admin' page.
-     *
-     * @schemaTitle Project Admin Tab Panel
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider", products = {ProductFilter.JIRA})
-    private List<ConnectProjectAdminTabPanelModuleBean> jiraProjectAdminTabPanels;
-
-    /**
-     * The Project Tab Panel module allows you to add new panels to the 'Project' page.
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.ConnectTabPanelModuleProvider", products = {ProductFilter.JIRA})
-    private List<ConnectTabPanelModuleBean> jiraProjectTabPanels;
-
-    /**
-     * The User Profile Tab Panel module allows you to add new tabs to the 'Browse Component' page.
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.ConnectTabPanelModuleProvider", products = {ProductFilter.JIRA})
-    private List<ConnectTabPanelModuleBean> jiraProfileTabPanels;
-
-    /**
-     * The Search Request View is used to display different representations of search results in the issue navigator.
-     * They will be displayed as a link in the `Export` toolbar menu.
-     *
-     * @schemaTitle Search Request View
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.SearchRequestViewModuleProvider", products = {ProductFilter.JIRA})
-    private List<SearchRequestViewModuleBean> jiraSearchRequestViews;
-
-    /**
-     * Workflow post functions execute after the workflow transition is executed
-     *
-     * @schemaTitle Workflow Post Function
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.DefaultWorkflowPostFunctionModuleProvider", products = {ProductFilter.JIRA})
-    private List<WorkflowPostFunctionModuleBean> jiraWorkflowPostFunctions;
-
-    /**
-     * The Entity Property are add-on key/value stories in certain JIRA objects, such as issues and projects.
-     * @schemaTitle Entity Property
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.EntityPropertyModuleProvider", products = {ProductFilter.JIRA})
-    private List<EntityPropertyModuleBean> jiraEntityProperties;
-
-    /**
-     * Add new report modules to JIRA projects.
-     * @schemaTitle Report
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.ReportModuleProvider", products = {ProductFilter.JIRA})
-    private List<ReportModuleBean> jiraReports;
-
-    /**
-     * Add new dashboard item to JIRA.
-     * @schemaTitle Dashboard Item
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.DashboardItemModuleProvider", products = {ProductFilter.JIRA})
-    private List<DashboardItemModuleBean> jiraDashboardItems;
 
     /////////////////////////////////////////////////////
     ///////    CONFLUENCE MODULES
@@ -296,15 +222,6 @@ public class ModuleList extends BaseModuleBean
         this.adminPages = newArrayList();
         this.dynamicContentMacros = newArrayList();
         this.generalPages = newArrayList();
-        this.jiraIssueTabPanels = newArrayList();
-        this.jiraProfileTabPanels = newArrayList();
-        this.jiraProjectAdminTabPanels = newArrayList();
-        this.jiraProjectTabPanels = newArrayList();
-        this.jiraSearchRequestViews = newArrayList();
-        this.jiraWorkflowPostFunctions = newArrayList();
-        this.jiraEntityProperties = newArrayList();
-        this.jiraReports = newArrayList();
-        this.jiraDashboardItems = newArrayList();
         this.profilePages = newArrayList();
         this.spaceToolsTabs = newArrayList();
         this.staticContentMacros = newArrayList();
@@ -320,26 +237,6 @@ public class ModuleList extends BaseModuleBean
     {
         super(builder);
 
-        if (null == jiraIssueTabPanels)
-        {
-            this.jiraIssueTabPanels = newArrayList();
-        }
-        if (null == jiraProjectAdminTabPanels)
-        {
-            this.jiraProjectAdminTabPanels = newArrayList();
-        }
-        if (null == jiraProjectTabPanels)
-        {
-            this.jiraProjectTabPanels = newArrayList();
-        }
-        if (null == jiraProfileTabPanels)
-        {
-            this.jiraProfileTabPanels = newArrayList();
-        }
-        if (null == jiraEntityProperties)
-        {
-            this.jiraEntityProperties = newArrayList();
-        }
         if (null == webItems)
         {
             this.webItems = newArrayList();
@@ -364,17 +261,9 @@ public class ModuleList extends BaseModuleBean
         {
             this.profilePages = newArrayList();
         }
-        if (null == jiraWorkflowPostFunctions)
-        {
-            this.jiraWorkflowPostFunctions = newArrayList();
-        }
         if (null == webhooks)
         {
             this.webhooks = newArrayList();
-        }
-        if (null == jiraSearchRequestViews)
-        {
-            this.jiraSearchRequestViews = newArrayList();
         }
         if (null == dynamicContentMacros)
         {
@@ -392,43 +281,15 @@ public class ModuleList extends BaseModuleBean
         {
             this.blueprints = newArrayList();
         }
-        if (null == jiraReports)
-        {
-            this.jiraReports = newArrayList();
-        }
         if (null == confluenceContentProperties)
         {
             this.confluenceContentProperties = newArrayList();
-        }
-        if (null == jiraDashboardItems)
-        {
-            this.jiraDashboardItems = newArrayList();
         }
     }
 
     public List<WebItemModuleBean> getWebItems()
     {
         return webItems;
-    }
-
-    public List<ConnectTabPanelModuleBean> getJiraIssueTabPanels()
-    {
-        return jiraIssueTabPanels;
-    }
-
-    public List<ConnectProjectAdminTabPanelModuleBean> getJiraProjectAdminTabPanels()
-    {
-        return jiraProjectAdminTabPanels;
-    }
-
-    public List<ConnectTabPanelModuleBean> getJiraProjectTabPanels()
-    {
-        return jiraProjectTabPanels;
-    }
-
-    public List<ConnectTabPanelModuleBean> getJiraProfileTabPanels()
-    {
-        return jiraProfileTabPanels;
     }
 
     public List<WebPanelModuleBean> getWebPanels()
@@ -439,21 +300,6 @@ public class ModuleList extends BaseModuleBean
     public List<WebSectionModuleBean> getWebSections()
     {
         return webSections;
-    }
-
-    public List<WorkflowPostFunctionModuleBean> getJiraWorkflowPostFunctions()
-    {
-        return jiraWorkflowPostFunctions;
-    }
-
-    public List<EntityPropertyModuleBean> getJiraEntityProperties()
-    {
-        return jiraEntityProperties;
-    }
-
-    public List<ReportModuleBean> getJiraReports()
-    {
-        return jiraReports;
     }
 
     public List<ConnectPageModuleBean> getGeneralPages()
@@ -481,11 +327,6 @@ public class ModuleList extends BaseModuleBean
         return webhooks;
     }
 
-    public List<SearchRequestViewModuleBean> getJiraSearchRequestViews()
-    {
-        return jiraSearchRequestViews;
-    }
-
     public List<DynamicContentMacroModuleBean> getDynamicContentMacros()
     {
         return dynamicContentMacros;
@@ -509,11 +350,6 @@ public class ModuleList extends BaseModuleBean
         return confluenceContentProperties;
     }
 
-    public List<DashboardItemModuleBean> getJiraDashboardItems()
-    {
-        return jiraDashboardItems;
-    }
-
     // don't call super because BaseCapabilityBean has no data
     @Override
     public boolean equals(Object otherObj)
@@ -535,13 +371,6 @@ public class ModuleList extends BaseModuleBean
                 .append(dynamicContentMacros, other.dynamicContentMacros)
                 .append(configurePage, other.configurePage)
                 .append(generalPages, other.generalPages)
-                .append(jiraIssueTabPanels, other.jiraIssueTabPanels)
-                .append(jiraProfileTabPanels, other.jiraProfileTabPanels)
-                .append(jiraProjectAdminTabPanels, other.jiraProjectAdminTabPanels)
-                .append(jiraProjectTabPanels, other.jiraProjectTabPanels)
-                .append(jiraSearchRequestViews, other.jiraSearchRequestViews)
-                .append(jiraWorkflowPostFunctions, other.jiraWorkflowPostFunctions)
-                .append(jiraEntityProperties, other.jiraEntityProperties)
                 .append(profilePages, other.profilePages)
                 .append(spaceToolsTabs, other.spaceToolsTabs)
                 .append(staticContentMacros, other.staticContentMacros)
@@ -550,8 +379,6 @@ public class ModuleList extends BaseModuleBean
                 .append(webItems, other.webItems)
                 .append(webPanels, other.webPanels)
                 .append(webSections, other.webSections)
-                .append(jiraReports, other.jiraReports)
-                .append(jiraDashboardItems, other.jiraDashboardItems)
                 .build();
     }
 
@@ -564,13 +391,6 @@ public class ModuleList extends BaseModuleBean
                 .append(dynamicContentMacros)
                 .append(configurePage)
                 .append(generalPages)
-                .append(jiraIssueTabPanels)
-                .append(jiraProfileTabPanels)
-                .append(jiraProjectAdminTabPanels)
-                .append(jiraProjectTabPanels)
-                .append(jiraSearchRequestViews)
-                .append(jiraWorkflowPostFunctions)
-                .append(jiraEntityProperties)
                 .append(profilePages)
                 .append(spaceToolsTabs)
                 .append(staticContentMacros)
@@ -579,8 +399,6 @@ public class ModuleList extends BaseModuleBean
                 .append(webItems)
                 .append(webPanels)
                 .append(webSections)
-                .append(jiraReports)
-                .append(jiraDashboardItems)
                 .build();
     }
     

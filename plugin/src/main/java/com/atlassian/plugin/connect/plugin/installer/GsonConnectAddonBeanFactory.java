@@ -71,7 +71,7 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
         final String schema;
         try
         {
-            schema = connectSchemaLocator.getSchemaForCurrentProduct();
+            schema = connectSchemaLocator.getShallowSchema();
         }
         catch (IOException e)
         {
@@ -162,8 +162,14 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
     {
         for (Map.Entry<String, Supplier<List<ModuleBean>>> entry : addOn.getModules().entrySet())
         {
-            // This will validate the beans and cache the result
-            entry.getValue().get();
+            try
+            {
+                entry.getValue().get();
+            }
+            catch (ModuleDeserializationException e)
+            {
+                throw new InvalidDescriptorException(e.getMessage());
+            }
         }
     }
 }

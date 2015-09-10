@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.spi.module.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ public interface ConnectModuleProvider<T>
 
     Class getBeanClass();
 
-    List<T> validate(List<JsonObject> modules, Class<T> type);
+    List<T> validate(JsonElement modules, Class<T> type) throws Exception;
 
     List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin plugin, List<T> beans);
 }

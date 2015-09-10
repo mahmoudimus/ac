@@ -48,6 +48,12 @@ public class DefaultConnectSchemaLocator implements ConnectSchemaLocator
     }
     
     @Override
+    public String getShallowSchema() throws IOException
+    {
+        return getSchema("shallow", RAW);
+    }
+    
+    @Override
     public String getSchema(ProductFilter productFilter) throws IOException
     {
         return getSchema(productFilter.name().toLowerCase(),RAW);

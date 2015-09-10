@@ -1032,7 +1032,7 @@
                         </goals>
                         <configuration>
                             <generatorProvider>com.atlassian.plugin.connect.jira.JiraSchemaGeneratorProvider</generatorProvider>
-                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
+                            <rootClassName>com.atlassian.plugin.connect.modules.beans.JiraModuleList</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/jira-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/jira-schema-pretty.json</prettyOutput>
                             <enumCase>insensitive</enumCase>

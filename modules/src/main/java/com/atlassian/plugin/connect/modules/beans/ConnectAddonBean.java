@@ -161,6 +161,7 @@ public class ConnectAddonBean extends BaseModuleBean
     /**
      * The list of modules this add on provides
      */
+    @SchemaIgnore("shallow")
     private Map<String, Supplier<List<ModuleBean>>> modules;
 
     /**
