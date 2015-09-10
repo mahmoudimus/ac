@@ -15,7 +15,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase
 {
-    private static final String SEARCH_TERMS = "connect";
+    private static final String SEARCH_TERMS = "Welcome to Confluence";
 
     private SearchResultPage searchResultPage;
     
@@ -45,65 +45,9 @@ public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase
                 search(SEARCH_TERMS);
                 final WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
-            }
-        });
-    }
-
-    @Test
-    public void testSearchPerformedQueryString() throws Exception
-    {
-        runInJsonRunner(product.getProductInstance().getBaseUrl(), "search_performed", new WebHookTester()
-        {
-            @Override
-            public void test(WebHookWaiter waiter) throws Exception
-            {
-                search(SEARCH_TERMS);
-                final WebHookBody body = waiter.waitForHook();
                 Assert.assertEquals(SEARCH_TERMS, body.find("query"));
-            }
-        });
-    }
-
-    @Test
-    public void testSearchPerformedResultsCount() throws Exception
-    {
-        runInJsonRunner(product.getProductInstance().getBaseUrl(), "search_performed", new WebHookTester()
-        {
-            @Override
-            public void test(WebHookWaiter waiter) throws Exception
-            {
-                search(SEARCH_TERMS);
-                final WebHookBody body = waiter.waitForHook();
                 Assert.assertEquals(searchResultPage.getMatchingResults(), Integer.parseInt(body.find("results")));
-            }
-        });
-    }
-
-    @Test
-    public void testSearchPerformedUser() throws Exception
-    {
-        runInJsonRunner(product.getProductInstance().getBaseUrl(), "search_performed", new WebHookTester()
-        {
-            @Override
-            public void test(WebHookWaiter waiter) throws Exception
-            {
-                search(SEARCH_TERMS);
-                final WebHookBody body = waiter.waitForHook();
                 Assert.assertEquals(user.getUsername(), body.find("user"));
-            }
-        });
-    }
-
-    @Test
-    public void testSearchPerformedSpaceCategory() throws Exception
-    {
-        runInJsonRunner(product.getProductInstance().getBaseUrl(), "search_performed", new WebHookTester()
-        {
-            @Override
-            public void test(WebHookWaiter waiter) throws Exception
-            {
-                search(SEARCH_TERMS);
-                final WebHookBody body = waiter.waitForHook();
                 Assert.assertEquals("conf_all", body.find("spaceCategories[0]"));
             }
         });

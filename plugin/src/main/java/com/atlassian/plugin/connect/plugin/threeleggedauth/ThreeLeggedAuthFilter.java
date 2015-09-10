@@ -102,7 +102,6 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
             filterChain.doFilter(request, response);
             return;
         }
-        log.debug("Start processing filter.");
 
         String addOnKey = getAddonKeyFromRequest(servletRequest);
 
