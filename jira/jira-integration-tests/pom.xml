@@ -11,6 +11,7 @@
 
     <artifactId>atlassian-connect-jira-integration-tests</artifactId>
     <name>Atlassian Connect - JIRA Integration Tests</name>
+    <packaging>atlassian-plugin</packaging>
 
     <dependencies>
         <dependency>
