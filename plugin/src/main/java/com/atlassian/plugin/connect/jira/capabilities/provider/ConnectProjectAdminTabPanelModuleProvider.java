@@ -102,4 +102,10 @@ public class ConnectProjectAdminTabPanelModuleProvider extends AbstractConnectMo
         return DESCRIPTOR_KEY;
     }
 
+    @Override
+    public String getSchemaPrefix()
+    {
+        return "jira";
+    }
+
 }

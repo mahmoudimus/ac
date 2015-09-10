@@ -72,4 +72,10 @@ public class DefaultBlueprintModuleProvider extends AbstractConnectModuleProvide
     {
         return DESCRIPTOR_KEY;
     }
+
+    @Override
+    public String getSchemaPrefix()
+    {
+        return "confluence";
+    }
 }

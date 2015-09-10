@@ -54,4 +54,10 @@ public class ReportModuleProvider extends AbstractConnectModuleProvider<ReportMo
     {
         return DESCRIPTOR_KEY;
     }
+
+    @Override
+    public String getSchemaPrefix()
+    {
+        return "jira";
+    }
 }

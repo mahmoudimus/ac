@@ -51,4 +51,10 @@ public class EntityPropertyModuleProvider extends AbstractConnectModuleProvider<
     {
         return DESCRIPTOR_KEY;
     }
+
+    @Override
+    public String getSchemaPrefix()
+    {
+        return "jira";
+    }
 }

@@ -60,4 +60,10 @@ public class WebHookModuleProvider extends AbstractConnectModuleProvider<WebHook
     {
         return DESCRIPTOR_KEY;
     }
+
+    @Override
+    public String getSchemaPrefix()
+    {
+        return "common";
+    }
 }

@@ -27,4 +27,10 @@ public class AdminPageModuleProvider extends AbstractAdminPageModuleProvider
     {
         return DESCRIPTOR_KEY;
     }
+
+    @Override
+    public String getSchemaPrefix()
+    {
+        return "common";
+    }
 }

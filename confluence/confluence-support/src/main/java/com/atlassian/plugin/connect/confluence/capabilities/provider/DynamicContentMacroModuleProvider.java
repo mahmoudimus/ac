@@ -70,4 +70,10 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
     {
         return DESCRIPTOR_KEY;
     }
+
+    @Override
+    public String getSchemaPrefix()
+    {
+        return "confluence";
+    }
 }

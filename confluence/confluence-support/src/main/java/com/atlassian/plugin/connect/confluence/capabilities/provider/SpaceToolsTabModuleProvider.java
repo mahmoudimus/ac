@@ -180,4 +180,10 @@ public class SpaceToolsTabModuleProvider extends AbstractConnectModuleProvider<S
     {
         return DESCRIPTOR_KEY;
     }
+
+    @Override
+    public String getSchemaPrefix()
+    {
+        return "confluence";
+    }
 }

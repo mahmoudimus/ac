@@ -63,6 +63,12 @@ public class ConfigurePageModuleProvider extends AbstractAdminPageModuleProvider
     {
         return DESCRIPTOR_KEY;
     }
+
+    @Override
+    public String getSchemaPrefix()
+    {
+        return "common";
+    }
     
     @Override
     public boolean multipleModulesAllowed()

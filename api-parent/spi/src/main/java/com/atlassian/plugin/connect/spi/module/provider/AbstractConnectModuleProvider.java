@@ -6,8 +6,6 @@ import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,8 +15,6 @@ import java.util.List;
 
 public abstract class AbstractConnectModuleProvider<T> implements ConnectModuleProvider<T>
 {
-    private static final Logger log = LoggerFactory.getLogger(AbstractConnectModuleProvider.class);
-    
     @Override
     public List<T> validate(JsonElement rawModules, Class<T> type) throws ConnectModuleValidationException
     {
@@ -26,7 +22,7 @@ public abstract class AbstractConnectModuleProvider<T> implements ConnectModuleP
         final String schema;
         try
         {
-            schema = new String(Files.readAllBytes(Paths.get("../../../classes/schema/jira-schema.json")));
+            schema = new String(Files.readAllBytes(Paths.get("../../../classes/schema/" + getSchemaPrefix() + "-schema.json")));
         }
         catch (IOException e)
         {

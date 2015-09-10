@@ -1025,6 +1025,20 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>common-schema</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>generate-schema</goal>
+                        </goals>
+                        <configuration>
+                            <generatorProvider>com.atlassian.json.schema.DefaultJsonSchemaGeneratorProvider</generatorProvider>
+                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ModuleList</rootClassName>
+                            <rawOutput>${project.build.outputDirectory}/schema/common-schema.json</rawOutput>
+                            <prettyOutput>${project.build.outputDirectory}/schema/common-schema-pretty.json</prettyOutput>
+                            <enumCase>insensitive</enumCase>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>jira-schema</id>
                         <phase>process-classes</phase>
                         <goals>
@@ -1046,7 +1060,7 @@
                         </goals>
                         <configuration>
                             <generatorProvider>com.atlassian.plugin.connect.confluence.ConfluenceSchemaGeneratorProvider</generatorProvider>
-                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
+                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ConfluenceModuleList</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/confluence-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/confluence-schema-pretty.json</prettyOutput>
                             <enumCase>insensitive</enumCase>

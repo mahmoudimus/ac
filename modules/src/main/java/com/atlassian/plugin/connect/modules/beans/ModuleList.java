@@ -163,74 +163,16 @@ public class ModuleList extends BaseModuleBean
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.ConfigurePageModuleProvider")
     private ConnectPageModuleBean configurePage;
 
-    /////////////////////////////////////////////////////
-    ///////    CONFLUENCE MODULES
-    /////////////////////////////////////////////////////
 
-    /**
-     * Dynamic content macros allow you to add a macro into a Confluence page which is rendered as an iframe.
-     *
-     * @schemaTitle Dynamic Content Macro
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.confluence.capabilities.provider.DynamicContentMacroModuleProvider", products = {ProductFilter.CONFLUENCE})
-    private List<DynamicContentMacroModuleBean> dynamicContentMacros;
-
-    /**
-     * A User Profile Page module is used to add new elements to Confluence user profiles.
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.confluence.capabilities.provider.ProfilePageModuleProvider", products = {ProductFilter.CONFLUENCE}) // Note: Jira uses jiraProfileTabPanels instead
-    private List<ConnectPageModuleBean> profilePages;
-
-    /**
-     * The Space Tools Tab module allows you to add new tabs to the Space Tools area of Confluence.
-     * @schemaTitle Space Tools Tab
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.confluence.capabilities.provider.SpaceToolsTabModuleProvider", products = {ProductFilter.CONFLUENCE})
-    private List<SpaceToolsTabModuleBean> spaceToolsTabs;
-
-    /**
-     * Static content macros allow you to add a macro into a Confluence page which is stored with the Confluence page
-     * itself. The add-on is responsible for generating the rendered XHTML in
-     * [Confluence Storage Format](https://confluence.atlassian.com/display/DOC/Confluence+Storage+Format)
-     *
-     * @schemaTitle Static Content Macro
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.confluence.capabilities.provider.StaticContentMacroModuleProvider", products = {ProductFilter.CONFLUENCE})
-    private List<StaticContentMacroModuleBean> staticContentMacros;
-
-    /**
-     * Blueprints allow your connect add on provide content creation templates.
-     *
-     * @schemaTitle Blueprint
-     */
-    @ConnectModule(value = "com.atlassian.plugin.connect.confluence.capabilities.provider.DefaultBlueprintModuleProvider", products = {ProductFilter.CONFLUENCE})
-    private List<BlueprintModuleBean> blueprints;
-
-    /**
-     * Definition of a content property index schema for an add-on. It allows extracting specific parts of the JSON
-     * documents stored as a content property values, and write them to a search index. Once stored,
-     * they can participate in a content search using CQL.
-     *
-     * @see <a href="https://developer.atlassian.com/display/CONFDEV/Content+Properties+in+the+REST+API">
-     *     developer.atlassian.com</a> for more details
-     */
-    @ConnectModule (value = "com.atlassian.plugin.connect.confluence.capabilities.provider.DefaultContentPropertyModuleProvider", products = { ProductFilter.CONFLUENCE })
-    private List<ContentPropertyModuleBean> confluenceContentProperties;
 
     public ModuleList()
     {
         this.adminPages = newArrayList();
-        this.dynamicContentMacros = newArrayList();
         this.generalPages = newArrayList();
-        this.profilePages = newArrayList();
-        this.spaceToolsTabs = newArrayList();
-        this.staticContentMacros = newArrayList();
-        this.blueprints = newArrayList();
         this.webhooks = newArrayList();
         this.webItems = newArrayList();
         this.webPanels = newArrayList();
         this.webSections = newArrayList();
-        this.confluenceContentProperties = newArrayList();
     }
 
     public ModuleList(BaseModuleBeanBuilder builder)
@@ -257,33 +199,9 @@ public class ModuleList extends BaseModuleBean
         {
             this.adminPages = newArrayList();
         }
-        if (null == profilePages)
-        {
-            this.profilePages = newArrayList();
-        }
         if (null == webhooks)
         {
             this.webhooks = newArrayList();
-        }
-        if (null == dynamicContentMacros)
-        {
-            this.dynamicContentMacros = newArrayList();
-        }
-        if (null == spaceToolsTabs)
-        {
-            this.spaceToolsTabs = newArrayList();
-        }
-        if (null == staticContentMacros)
-        {
-            this.staticContentMacros = newArrayList();
-        }
-        if (null == blueprints)
-        {
-            this.blueprints = newArrayList();
-        }
-        if (null == confluenceContentProperties)
-        {
-            this.confluenceContentProperties = newArrayList();
         }
     }
 
@@ -317,37 +235,9 @@ public class ModuleList extends BaseModuleBean
         return configurePage;
     }
 
-    public List<ConnectPageModuleBean> getProfilePages()
-    {
-        return profilePages;
-    }
-
     public List<WebHookModuleBean> getWebhooks()
     {
         return webhooks;
-    }
-
-    public List<DynamicContentMacroModuleBean> getDynamicContentMacros()
-    {
-        return dynamicContentMacros;
-    }
-
-    public List<SpaceToolsTabModuleBean> getSpaceToolsTabs() {
-        return spaceToolsTabs;
-    }
-
-    public List<StaticContentMacroModuleBean> getStaticContentMacros()
-    {
-        return staticContentMacros;
-    }
-
-    public List<BlueprintModuleBean> getBlueprints() {
-        return blueprints;
-    }
-
-    public List<ContentPropertyModuleBean> getConfluenceContentProperties()
-    {
-        return confluenceContentProperties;
     }
 
     // don't call super because BaseCapabilityBean has no data
@@ -368,13 +258,8 @@ public class ModuleList extends BaseModuleBean
 
         return new EqualsBuilder()
                 .append(adminPages, other.adminPages)
-                .append(dynamicContentMacros, other.dynamicContentMacros)
                 .append(configurePage, other.configurePage)
                 .append(generalPages, other.generalPages)
-                .append(profilePages, other.profilePages)
-                .append(spaceToolsTabs, other.spaceToolsTabs)
-                .append(staticContentMacros, other.staticContentMacros)
-                .append(blueprints, other.blueprints)
                 .append(webhooks, other.webhooks)
                 .append(webItems, other.webItems)
                 .append(webPanels, other.webPanels)
@@ -388,13 +273,8 @@ public class ModuleList extends BaseModuleBean
     {
         return new HashCodeBuilder(29, 37)
                 .append(adminPages)
-                .append(dynamicContentMacros)
                 .append(configurePage)
                 .append(generalPages)
-                .append(profilePages)
-                .append(spaceToolsTabs)
-                .append(staticContentMacros)
-                .append(blueprints)
                 .append(webhooks)
                 .append(webItems)
                 .append(webPanels)

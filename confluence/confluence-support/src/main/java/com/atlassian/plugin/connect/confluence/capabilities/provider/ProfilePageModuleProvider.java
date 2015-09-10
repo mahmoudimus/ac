@@ -48,4 +48,10 @@ public class ProfilePageModuleProvider extends AbstractConnectPageModuleProvider
     {
         return DESCRIPTOR_KEY;
     }
+
+    @Override
+    public String getSchemaPrefix()
+    {
+        return "confluence";
+    }
 }

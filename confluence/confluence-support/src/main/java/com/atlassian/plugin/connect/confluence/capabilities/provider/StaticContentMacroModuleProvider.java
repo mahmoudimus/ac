@@ -53,4 +53,10 @@ public class StaticContentMacroModuleProvider extends AbstractContentMacroModule
     {
         return DESCRIPTOR_KEY;
     }
+
+    @Override
+    public String getSchemaPrefix()
+    {
+        return "confluence";
+    }
 }

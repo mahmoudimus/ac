@@ -51,4 +51,10 @@ public class SearchRequestViewModuleProvider extends AbstractConnectModuleProvid
     {
         return DESCRIPTOR_KEY;
     }
+
+    @Override
+    public String getSchemaPrefix()
+    {
+        return "jira";
+    }
 }

@@ -106,4 +106,10 @@ public class DefaultWorkflowPostFunctionModuleProvider extends AbstractConnectMo
     {
         return DESCRIPTOR_KEY;
     }
+
+    @Override
+    public String getSchemaPrefix()
+    {
+        return "jira";
+    }
 }

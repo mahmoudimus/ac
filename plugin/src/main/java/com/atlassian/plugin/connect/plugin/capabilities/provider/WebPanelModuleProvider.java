@@ -80,6 +80,12 @@ public class WebPanelModuleProvider extends AbstractConnectModuleProvider<WebPan
     }
 
     @Override
+    public String getSchemaPrefix()
+    {
+        return "common";
+    }
+
+    @Override
     public Class getBeanClass()
     {
         return BEAN_CLASS;

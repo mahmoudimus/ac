@@ -58,6 +58,12 @@ public class WebSectionModuleProvider extends AbstractConnectModuleProvider<WebS
     }
 
     @Override
+    public String getSchemaPrefix()
+    {
+        return "common";
+    }
+
+    @Override
     public Class getBeanClass()
     {
         return BEAN_CLASS;

@@ -41,4 +41,10 @@ public class ProfileTabPanelModuleProvider extends ConnectTabPanelModuleProvider
     {
         return DESCRIPTOR_KEY;
     }
+
+    @Override
+    public String getSchemaPrefix()
+    {
+        return "jira";
+    }
 }

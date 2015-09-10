@@ -59,4 +59,10 @@ public class DefaultContentPropertyModuleProvider extends ContentPropertyModuleP
     {
         return DESCRIPTOR_KEY;
     }
+
+    @Override
+    public String getSchemaPrefix()
+    {
+        return "confluence";
+    }
 }
