@@ -3,14 +3,14 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>atlassian-connect-parent</artifactId>
+        <artifactId>atlassian-connect-tests-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.49-SNAPSHOT</version>
+        <version>1.1.51-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>atlassian-connect-integration-tests</artifactId>
-    <name>Atlassian Connect - IT Tests</name>
+    <name>Atlassian Connect - Integration Tests</name>
     <packaging>atlassian-plugin</packaging>
 
     <licenses>

@@ -5,14 +5,27 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.49-SNAPSHOT</version>
+        <version>1.1.51-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>atlassian-connect-tests</artifactId>
+    <artifactId>atlassian-connect-tests-parent</artifactId>
+    <name>Atlassian Connect - Tests Parent Pom</name>
+    <packaging>pom</packaging>
+
+    <licenses>
+        <license>
+            <name>Apache License 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <modules>
-        <module>../integration-tests</module>
+        <module>integration-tests</module>
+        <module>plugin-lifecycle-tests</module>
+        <module>test-support-plugin</module>
+        <module>wired-tests</module>
     </modules>
 
 </project>

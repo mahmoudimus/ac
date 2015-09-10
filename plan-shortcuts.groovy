@@ -14,7 +14,7 @@ commonPlanConfiguration() {
 
 productSnapshotPlanConfiguration(['productVersion']) {
     commonPlanConfiguration()
-    repository(name: 'Atlassian Connect (develop)')
+    repository(name: 'Atlassian Connect (develop) ACDEV-1998')
     variable(
             key: 'bamboo.product.version',
             value: '#productVersion'

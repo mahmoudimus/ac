@@ -1,7 +1,7 @@
 plan(
-        projectKey: 'CONNECT1998',
-        key: 'ACD',
-        name: 'Cloud Plugin - develop',
+        projectKey: 'CONNECT',
+        key: 'ACD1998',
+        name: 'zzzACDEV-1998 Cloud Plugin - develop',
         description: 'Tests atlassian-connect-plugin'
 ) {
     commonPlanConfiguration()
@@ -29,9 +29,9 @@ plan(
 }
 
 plan(
-        projectKey: 'CONNECT1998',
-        key: 'CF',
-        name: 'Cloud Plugin - Feature branches',
+        projectKey: 'CONNECT',
+        key: 'CF1998',
+        name: 'zzzACDEV-1998 Cloud Plugin - Feature branches',
         description: 'Tests feature branches of atlassian-connect-plugin'
 ) {
     commonPlanConfiguration()
@@ -53,9 +53,9 @@ plan(
 }
 
 plan(
-        projectKey: 'CONNECT1998',
-        key: 'CCM',
-        name: 'Cloud Plugin - SNAPSHOT CONF',
+        projectKey: 'CONNECT',
+        key: 'CCM1998',
+        name: 'zzzACDEV-1998 Cloud Plugin - SNAPSHOT CONF',
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest Confluence SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
@@ -75,9 +75,9 @@ plan(
 }
 
 plan(
-        projectKey: 'CONNECT1998',
-        key: 'CJM',
-        name: 'Cloud Plugin - SNAPSHOT JIRA',
+        projectKey: 'CONNECT',
+        key: 'CJM1998',
+        name: 'zzzACDEV-1998 Cloud Plugin - SNAPSHOT JIRA',
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest JIRA SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
@@ -93,9 +93,9 @@ plan(
 }
 
 plan(
-        projectKey: 'CONNECT1998',
-        key: 'CJMR',
-        name: 'Cloud Plugin - SNAPSHOT JIRA - Renaissance',
+        projectKey: 'CONNECT',
+        key: 'CJMR1998',
+        name: 'zzzACDEV-1998 Cloud Plugin - SNAPSHOT JIRA - Renaissance',
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest JIRA SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
