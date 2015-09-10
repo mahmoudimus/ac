@@ -2,14 +2,6 @@ commonPlanConfiguration() {
     permissions() {
         loggedInUser(permissions: 'read')
     }
-    notification(
-            type: 'All Builds Completed',
-            recipient: 'stash'
-    )
-    notification(
-            type: 'Change of Build Status',
-            recipient: 'watchers'
-    )
 }
 
 productSnapshotPlanConfiguration(['productVersion']) {
@@ -23,7 +15,6 @@ productSnapshotPlanConfiguration(['productVersion']) {
             type: 'cron',
             cronExpression: '0 30 20 ? * 2,3,4,5,6'
     )
-    hipChatNotification()
 }
 
 pollingTrigger(['repositoryName']) {
@@ -34,16 +25,6 @@ pollingTrigger(['repositoryName']) {
     ) {
         repository(name: '#repositoryName')
     }
-}
-
-hipChatNotification() {
-    notification(
-            type: 'All Builds Completed',
-            recipient: 'hipchat',
-            apiKey: '${bamboo.atlassian.hipchat.apikey.password}',
-            notify: 'false',
-            room: 'Atlassian Connect Cloud Team'
-    )
 }
 
 runTestsStage() {

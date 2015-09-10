@@ -7,7 +7,6 @@ plan(
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (develop) ACDEV-1998')
     pollingTrigger(repositoryName: 'Atlassian Connect (develop) ACDEV-1998')
-    hipChatNotification()
     runTestsStage()
     stage(
             name: 'Start Release',
@@ -37,10 +36,6 @@ plan(
     commonPlanConfiguration()
     repository(name: 'Atlassian Connect (branch builds) ACDEV-1998')
     pollingTrigger(repositoryName: 'Atlassian Connect (branch builds) ACDEV-1998')
-    notification(
-            type: 'All Builds Completed',
-            recipient: 'committers'
-    )
     branchMonitoring(
             enabled: 'true',
             matchingPattern: '(feature|issue)/.*',
