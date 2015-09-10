@@ -1228,7 +1228,6 @@
 
     <properties>
         <product>jira</product>
-        <skipITs>true</skipITs>
         <build.test.plugin>false</build.test.plugin>
         <devmode>true</devmode>
         <fastdev.version>2.4</fastdev.version>
