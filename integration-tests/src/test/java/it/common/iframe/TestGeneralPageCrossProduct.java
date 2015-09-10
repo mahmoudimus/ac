@@ -1,5 +1,7 @@
 package it.common.iframe;
 
+import com.atlassian.pageobjects.elements.query.Queries;
+import com.atlassian.pageobjects.elements.timeout.DefaultTimeouts;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
@@ -9,6 +11,7 @@ import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPag
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.RemotePluginAwarePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.google.common.base.Supplier;
 import it.common.MultiProductWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.CheckUsernameConditionServlet;
@@ -17,11 +20,10 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
@@ -110,9 +112,16 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
         // Regression test for AC-885 (ensure descriptor query strings are not decoded before parsing)
         loginAndVisit(testUserFactory.admin(), HomePage.class);
         RemotePluginAwarePage page = product.getPageBinder().bind(GeneralPage.class, ENCODED_SPACES_PAGE_KEY, remotePlugin.getAddon().getKey());
-        ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
+        final ConnectAddOnEmbeddedTestPage remotePluginTest = page.clickAddOnLink();
 
-        assertThat(remotePluginTest.getValueBySelector("#hello-world-message"), is("Hello world"));
+        waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), new Supplier<Boolean>()
+        {
+            @Override
+            public Boolean get()
+            {
+                return "Hello world".equals(remotePluginTest.getValueById("hello-world-message"));
+            }
+        }));
     }
 
     @Test
