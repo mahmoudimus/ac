@@ -651,7 +651,7 @@
                         <product>
                             <id>jira</id>
                             <version>${atlassian.jira.version}</version>
-                            <log4jProperties>${basedir}/../integration-tests/src/test/resources/log4j-jira.properties</log4jProperties>
+                            <log4jProperties>src/test/resources/log4j-jira.properties</log4jProperties>
                             <systemPropertyVariables>
                                 <product>jira</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
