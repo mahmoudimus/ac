@@ -1,1 +1,1 @@
-${basedir}/../plugin/target/atlassian-connect-plugin.jar
+${basedir}/../../plugin/target/atlassian-connect-plugin.jar
