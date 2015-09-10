@@ -333,7 +333,7 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
         mavenInstallTask()
         mavenTestTask(
                 description: 'Run Wired Lifecycle Tests for #product',
-                goal: 'clover2:setup verify -pl plugin-lifecycle-tests -PpluginLifecycle,clover -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters clover2:aggregate clover2:clover',
+                goal: 'clover2:setup verify -pl tests/plugin-lifecycle-tests -PpluginLifecycle,clover -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters clover2:aggregate clover2:clover',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
         )
         cloverReportArtifact(
