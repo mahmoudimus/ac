@@ -1,11 +1,14 @@
 package it.common;
 
+import com.atlassian.pageobjects.elements.query.Queries;
+import com.atlassian.pageobjects.elements.timeout.DefaultTimeouts;
 import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.client.AddOnPropertyClient;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+import com.google.common.base.Supplier;
 import it.servlet.ConnectAppServlets;
 import it.util.TestUser;
 import org.junit.AfterClass;
@@ -13,6 +16,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -72,7 +76,14 @@ public class TestAddOnPropertyCondition extends MultiProductWebDriverTestBase
     {
         addOnPropertyClient.putProperty(remotePlugin.getAddon().getKey(), "prop", "true");
 
-        assertThat(webPageIsVisible(), equalTo(true));
+        waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), new Supplier<Boolean>()
+        {
+            @Override
+            public Boolean get()
+            {
+                return webPageIsVisible();
+            }
+        }));
     }
 
     @Test
