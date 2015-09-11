@@ -33,7 +33,7 @@ public class JiraTestBase
     {
         String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
         String projectId = String.valueOf(product.backdoor().project().addProjectWithTemplate(
-                "Test project " + projectKey, projectKey, "admin", "com.atlassian.jira-core-project-templates:jira-issuetracking"));
+                "Test project " + projectKey, projectKey, "admin", "com.atlassian.jira-core-project-templates:jira-core-task-management"));
         return new TestProject(projectKey, projectId);
     }
 }

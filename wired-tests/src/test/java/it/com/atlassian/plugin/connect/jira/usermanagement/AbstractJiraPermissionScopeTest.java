@@ -311,7 +311,7 @@ public abstract class AbstractJiraPermissionScopeTest
                 .withKey(PROJECT_KEY)
                 .withLead(admin)
                 .withDescription("It's a trap!")
-                .withProjectTemplateKey("com.atlassian.jira-core-project-templates:jira-issuetracking")
+                .withProjectTemplateKey("com.atlassian.jira-core-project-templates:jira-core-task-management")
                 .build();
 
         CreateProjectValidationResult result = projectServiceBridge.validateCreateProject(admin, projectCreationData);

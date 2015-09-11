@@ -57,7 +57,7 @@ public class JiraTestUtil
                 .withKey(key)
                 .withLead(user)
                 .withDescription(key)
-                .withProjectTemplateKey("com.atlassian.jira-core-project-templates:jira-issuetracking")
+                .withProjectTemplateKey("com.atlassian.jira-core-project-templates:jira-core-task-management")
                 .build();
 
         ProjectService.CreateProjectValidationResult result = projectService.validateCreateProject(user, projectCreationData);
