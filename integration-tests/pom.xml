@@ -507,6 +507,7 @@
                             </bundledArtifacts>
                         </product>
                         <product>
+                            <containerId>tomcat7x</containerId>
                             <id>confluence</id>
                             <version>${atlassian.confluence.version}</version>
                             <log4jProperties>src/test/resources/log4j-confluence.properties
