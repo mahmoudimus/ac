@@ -15,7 +15,7 @@ import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitExcept
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.google.common.collect.Lists;
@@ -41,7 +41,7 @@ public abstract class AbstractJiraPermissionScopeTest
     private static String ADDON_KEY = "project-admin-ADDON"; // Use uppercase characters to detect username vs userkey issues
     private static final String INSTALLED = "/installed";
 
-    private final ConnectAddOnUserService connectAddOnUserService;
+    private final ConnectUserService connectUserService;
     private final PermissionManager permissionManager;
     private final ProjectService projectService;
     private final ProjectServiceBridge projectServiceBridge;
@@ -56,12 +56,12 @@ public abstract class AbstractJiraPermissionScopeTest
     private ConnectAddonBean writeAddOn;
     private ConnectAddonBean readAddOn;
 
-    public AbstractJiraPermissionScopeTest(ConnectAddOnUserService connectAddOnUserService,
+    public AbstractJiraPermissionScopeTest(ConnectUserService connectUserService,
                                                   PermissionManager permissionManager, ProjectService projectService, ProjectServiceBridge projectServiceBridge,
                                                   ProjectRoleService projectRoleService, UserManager userManager,
                                                   TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
     {
-        this.connectAddOnUserService = connectAddOnUserService;
+        this.connectUserService = connectUserService;
         this.permissionManager = permissionManager;
         this.projectService = projectService;
         this.projectServiceBridge = projectServiceBridge;
@@ -149,9 +149,9 @@ public abstract class AbstractJiraPermissionScopeTest
         return readAddOn;
     }
 
-    public ConnectAddOnUserService getConnectAddOnUserService()
+    public ConnectUserService getConnectUserService()
     {
-        return connectAddOnUserService;
+        return connectUserService;
     }
 
     public PermissionManager getPermissionManager()
@@ -294,7 +294,7 @@ public abstract class AbstractJiraPermissionScopeTest
 
     private String getAddOnUserName() throws ConnectAddOnUserInitException
     {
-        return connectAddOnUserService.getOrCreateUserName(ADDON_KEY, "It's a PROJECT_ADMIN-scoped add-on for tests!");
+        return connectUserService.getOrCreateAddOnUserName(ADDON_KEY, "It's a PROJECT_ADMIN-scoped add-on for tests!");
     }
 
     protected ApplicationUser getAddOnUser() throws ConnectAddOnUserInitException

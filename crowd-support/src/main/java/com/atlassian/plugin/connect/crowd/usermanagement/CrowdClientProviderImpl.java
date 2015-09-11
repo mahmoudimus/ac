@@ -6,10 +6,13 @@ import com.atlassian.crowd.service.client.ClientResourceLocator;
 import com.atlassian.crowd.service.client.CrowdClient;
 import com.atlassian.crowd.service.factory.CrowdClientFactory;
 
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component
+@ConfluenceComponent
+@JiraComponent
 public class CrowdClientProviderImpl implements CrowdClientProvider
 {
     private final CrowdClientFactory crowdClientFactory;
