@@ -219,22 +219,29 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
     @Test
     public void testMacroCacheFlushes() throws Exception
     {
-        login(testUserFactory.basicUser());
         String body = new MacroStorageFormatBuilder(COUNTER_MACRO_KEY).build();
         String title = randomName(COUNTER_MACRO_KEY);
         Content page = createPage(title, body);
         String pageId = String.valueOf(page.getId().asLong());
-        ConfluencePageWithRemoteMacro pageWithRemoteMacro = product.visit(ConfluencePageWithRemoteMacro.class, title, COUNTER_MACRO_NAME);
+        ConfluencePageWithRemoteMacro pageWithRemoteMacro = loginAndVisit(testUserFactory.basicUser(),
+                ConfluencePageWithRemoteMacro.class, title, COUNTER_MACRO_NAME);
         assertThat(getCounter(pageWithRemoteMacro), is(0));
 
         // stays the same on a new visit
-        pageWithRemoteMacro = product.visit(ConfluencePageWithRemoteMacro.class, title, COUNTER_MACRO_NAME);
+        pageWithRemoteMacro = refreshConfluencePageWithMacro(title, COUNTER_MACRO_NAME);
         assertThat(getCounter(pageWithRemoteMacro), is(0));
 
         clearCaches();
 
-        pageWithRemoteMacro = product.visit(ConfluencePageWithRemoteMacro.class, title, COUNTER_MACRO_NAME);
+        pageWithRemoteMacro = refreshConfluencePageWithMacro(title, COUNTER_MACRO_NAME);
         assertThat(getCounter(pageWithRemoteMacro), is(1));
+    }
+
+    private ConfluencePageWithRemoteMacro refreshConfluencePageWithMacro(String title, String counterMacroName)
+    {
+        product.getTester().getDriver().navigate().refresh();
+        ConfluencePageWithRemoteMacro pageWithRemoteMacro = product.getPageBinder().bind(ConfluencePageWithRemoteMacro.class, title, counterMacroName);
+        return pageWithRemoteMacro;
     }
 
     private static void clearCaches() throws Exception
