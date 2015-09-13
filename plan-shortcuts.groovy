@@ -282,19 +282,21 @@ testJobsForConfluence(['mavenProductParameters']) {
             groupName: 'Item',
             additionalMavenParameters: '#mavenProductParameters'
     )
-    jiraIntegrationTestJob(
+    projectIntegrationTestJob(
             key: 'JITJ',
             product: 'JIRA',
             testGroup: 'jira-jsapi',
             groupName: 'JS API FF',
-            additionalMavenParameters: '#mavenProductParameters'
+            additionalMavenParameters: '#mavenProductParameters',
+            project: 'tests/integration-tests,jira/jira-integration-tests'
     )
-    jiraIntegrationTestJob(
+    projectIntegrationTestJob(
             key: 'JITJC',
             product: 'JIRA',
             testGroup: 'jira-jsapi',
             groupName: 'JS API Chrome',
-            additionalMavenParameters: '#mavenProductParameters -Dwebdriver.browser=chrome'
+            additionalMavenParameters: '#mavenProductParameters -Dwebdriver.browser=chrome',
+            project: 'tests/integration-tests,jira/jira-integration-tests'
     )
 }
 

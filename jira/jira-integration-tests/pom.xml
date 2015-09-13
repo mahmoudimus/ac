@@ -481,7 +481,6 @@
                                 <testedProduct>jira</testedProduct>
                             </systemProperties>
                             <includes>
-                                <include>it/common/jsapi/*.java</include>
                                 <include>it/jira/jsapi/*.java</include>
                             </includes>
                         </testGroup>

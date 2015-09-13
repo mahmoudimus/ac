@@ -745,6 +745,19 @@
                             </includes>
                         </testGroup>
 
+                        <testGroup>
+                            <id>jira-jsapi</id>
+                            <productIds>
+                                <productId>jira</productId>
+                            </productIds>
+                            <systemProperties>
+                                <testedProduct>jira</testedProduct>
+                            </systemProperties>
+                            <includes>
+                                <include>it/common/jsapi/*.java</include>
+                            </includes>
+                        </testGroup>
+
                     </testGroups>
                 </configuration>
                 <dependencies>
