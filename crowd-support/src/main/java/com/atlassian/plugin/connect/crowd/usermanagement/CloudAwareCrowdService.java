@@ -15,6 +15,8 @@ import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitExcept
 import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.product.FeatureManager;
 import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
@@ -42,8 +44,9 @@ import java.util.concurrent.TransferQueue;
  * </ul>
  * so that elsewhere, the business of adding users with attributes looks simple.
  */
-@Component
 @ExportAsDevService
+@ConfluenceComponent
+@JiraComponent
 public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOnUserGroupProvisioningService, ConnectCrowdSyncService
 {
     private long syncTimeout = 10;

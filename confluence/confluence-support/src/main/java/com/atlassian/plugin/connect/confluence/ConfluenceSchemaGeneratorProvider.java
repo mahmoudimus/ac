@@ -13,6 +13,6 @@ public class ConfluenceSchemaGeneratorProvider implements JsonSchemaGeneratorPro
     @Override
     public JsonSchemaGenerator provide(EnumCase enumCase, InterfaceList interfaceList, JsonSchemaDocs schemaDocs, String ignoreFilter)
     {
-        return new ConnectSchemaGenerator(enumCase,interfaceList,schemaDocs, ignoreFilter, ProductFilter.CONFLUENCE);
+        return new ConnectSchemaGenerator(enumCase, interfaceList, schemaDocs, ignoreFilter, ProductFilter.CONFLUENCE);
     }
 }
