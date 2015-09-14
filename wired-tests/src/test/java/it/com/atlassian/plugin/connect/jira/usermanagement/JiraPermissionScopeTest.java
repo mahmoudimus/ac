@@ -106,7 +106,6 @@ public class JiraPermissionScopeTest extends AbstractJiraPermissionScopeTest
         finally
         {
             uninstallPlugin(plugin);
-            deleteJediProject();
         }
     }
 }

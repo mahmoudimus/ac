@@ -1,9 +1,7 @@
 package it.com.atlassian.plugin.connect.jira.usermanagement;
 
 import com.atlassian.jira.bc.project.ProjectService;
-import com.atlassian.jira.bc.project.ProjectService.CreateProjectValidationResult;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
-import com.atlassian.jira.compatibility.bridge.project.ProjectCreationData;
 import com.atlassian.jira.compatibility.bridge.project.ProjectServiceBridge;
 import com.atlassian.jira.permission.Permission;
 import com.atlassian.jira.project.Project;
@@ -279,7 +277,7 @@ public abstract class AbstractJiraPermissionScopeTest
             }
             plugin = testPluginInstaller.installAddon(to);
 
-            Project project = createJediProject();
+            Project project = jiraTestUtil.createProject();
             ApplicationUser addonUser = getAddOnUser();
 
             boolean hasPermission = permissionManager.hasPermission(permission.getId(), project, addonUser, false);
@@ -296,7 +294,6 @@ public abstract class AbstractJiraPermissionScopeTest
         finally
         {
             uninstallPlugin(plugin);
-            deleteJediProject();
         }
     }
 
@@ -309,32 +306,6 @@ public abstract class AbstractJiraPermissionScopeTest
     {
         String addonUserName = getAddOnUserName();
         return userManager.getUserByName(addonUserName);
-    }
-
-    protected Project createJediProject()
-    {
-        ApplicationUser admin = userManager.getUserByKey(ADMIN);
-        ProjectCreationData projectCreationData = new ProjectCreationData.Builder()
-                .withName("Knights of the Old Republic")
-                .withKey(PROJECT_KEY)
-                .withLead(admin)
-                .withDescription("It's a trap!")
-                .withProjectTemplateKey(JiraTestUtil.PROJECT_TEMPLATE_KEY_DARK_AGES)
-                .build();
-
-        CreateProjectValidationResult result = projectServiceBridge.validateCreateProject(admin, projectCreationData);
-        return projectService.createProject(result);
-    }
-
-    protected void deleteJediProject()
-    {
-        ApplicationUser admin = userManager.getUserByKey(ADMIN);
-        ProjectService.DeleteProjectValidationResult result = projectService.validateDeleteProject(admin, PROJECT_KEY);
-
-        if (result.isValid())
-        {
-            projectService.deleteProject(admin, result);
-        }
     }
 
     protected void uninstallPlugin(Plugin plugin) throws IOException
