@@ -35,7 +35,31 @@
     </modules>
 
     <profiles>
-         <profile>
+        <profile>
+            <id>no-unpack</id>
+            <activation>
+                <property>
+                    <name>skipITs</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <properties>
+                <rest.doc.generation.skip>true</rest.doc.generation.skip>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <configuration>
+                            <excludeTypes>jar</excludeTypes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
             <id>freezer-release-profile</id>
             <modules>
                 <module>tests/integration-tests</module>
