@@ -20,6 +20,7 @@ import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import it.com.atlassian.plugin.connect.jira.util.JiraTestUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -49,6 +50,7 @@ public abstract class AbstractJiraPermissionScopeTest
     private final UserManager userManager;
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
+    protected final JiraTestUtil jiraTestUtil;
 
     private ConnectAddonBean adminAddOn;
     private ConnectAddonBean projectAdminAddOn;
@@ -57,9 +59,9 @@ public abstract class AbstractJiraPermissionScopeTest
     private ConnectAddonBean readAddOn;
 
     public AbstractJiraPermissionScopeTest(ConnectAddOnUserService connectAddOnUserService,
-                                                  PermissionManager permissionManager, ProjectService projectService, ProjectServiceBridge projectServiceBridge,
-                                                  ProjectRoleService projectRoleService, UserManager userManager,
-                                                  TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
+                                           PermissionManager permissionManager, ProjectService projectService, ProjectServiceBridge projectServiceBridge,
+                                           ProjectRoleService projectRoleService, UserManager userManager,
+                                           TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator, JiraTestUtil jiraTestUtil)
     {
         this.connectAddOnUserService = connectAddOnUserService;
         this.permissionManager = permissionManager;
@@ -69,6 +71,7 @@ public abstract class AbstractJiraPermissionScopeTest
         this.userManager = userManager;
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
+        this.jiraTestUtil = jiraTestUtil;
     }
 
     @Before
@@ -311,7 +314,7 @@ public abstract class AbstractJiraPermissionScopeTest
                 .withKey(PROJECT_KEY)
                 .withLead(admin)
                 .withDescription("It's a trap!")
-                .withProjectTemplateKey("com.atlassian.jira-core-project-templates:jira-core-task-management")
+                .withProjectTemplateKey(JiraTestUtil.PROJECT_TEMPLATE_KEY_DARK_AGES)
                 .build();
 
         CreateProjectValidationResult result = projectServiceBridge.validateCreateProject(admin, projectCreationData);

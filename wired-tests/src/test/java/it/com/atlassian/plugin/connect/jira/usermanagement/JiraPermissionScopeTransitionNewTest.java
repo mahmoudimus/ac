@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 
+import it.com.atlassian.plugin.connect.jira.util.JiraTestUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -21,11 +22,24 @@ public class JiraPermissionScopeTransitionNewTest extends AbstractJiraPermission
 {
 
     public JiraPermissionScopeTransitionNewTest(ConnectAddOnUserService connectAddOnUserService,
-                                                PermissionManager permissionManager, ProjectService projectService, ProjectServiceBridge projectServiceBridge,
-                                                ProjectRoleService projectRoleService, UserManager userManager,
-                                                TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
+                                                PermissionManager permissionManager,
+                                                ProjectService projectService,
+                                                ProjectServiceBridge projectServiceBridge,
+                                                ProjectRoleService projectRoleService,
+                                                UserManager userManager,
+                                                TestPluginInstaller testPluginInstaller,
+                                                TestAuthenticator testAuthenticator,
+                                                JiraTestUtil jiraTestUtil)
     {
-        super(connectAddOnUserService, permissionManager, projectService, projectServiceBridge, projectRoleService, userManager, testPluginInstaller, testAuthenticator);
+        super(connectAddOnUserService,
+                permissionManager,
+                projectService,
+                projectServiceBridge,
+                projectRoleService,
+                userManager,
+                testPluginInstaller,
+                testAuthenticator,
+                jiraTestUtil);
     }
 
     @Test
