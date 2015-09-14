@@ -22,6 +22,11 @@
       "methods": ["POST"]
     },
     {
+      "key": "WRITE",
+      "restPathKeys": ["projectProperties"],
+      "methods": ["PUT"]
+    },
+    {
       "key": "DELETE",
       "restPathKeys": ["issue", "issueLink", "attachment", "filter", "commentProperties", "dashboardItemProperties"],
       "methods": ["DELETE"]
@@ -87,6 +92,13 @@
       "key": "mypermissions",
       "name": "api",
       "basePaths": ["/mypermissions($|/.*)"],
+      "versions": ["2", "2.0.alpha1", "latest"],
+      "public": true
+    },
+    {
+      "key": "projectProperties",
+      "name": "api",
+      "basePaths": ["/project/.+/properties/.+"],
       "versions": ["2", "2.0.alpha1", "latest"],
       "public": true
     },

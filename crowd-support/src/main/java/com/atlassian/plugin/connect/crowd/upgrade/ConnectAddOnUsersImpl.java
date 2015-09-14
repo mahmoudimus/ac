@@ -10,11 +10,12 @@ import com.atlassian.crowd.search.query.membership.MembershipQuery;
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.crowd.usermanagement.CrowdApplicationProvider;
 
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import static com.atlassian.crowd.search.EntityDescriptor.group;
 import static com.atlassian.crowd.search.EntityDescriptor.user;
@@ -26,7 +27,8 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Sets.newHashSet;
 
-@Component
+@JiraComponent
+@ConfluenceComponent
 public class ConnectAddOnUsersImpl implements ConnectAddOnUsers
 {
     private final ConnectAddonRegistry connectAddOnRegistry;
