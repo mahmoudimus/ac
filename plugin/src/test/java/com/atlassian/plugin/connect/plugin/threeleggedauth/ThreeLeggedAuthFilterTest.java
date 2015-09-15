@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.plugin.threeleggedauth;
 
-import com.atlassian.crowd.embedded.api.CrowdService;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
+import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.sal.api.auth.AuthenticationListener;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.atlassian.sal.api.user.UserManager;
@@ -27,7 +27,7 @@ public class ThreeLeggedAuthFilterTest
     private final UserManager userManagerMock;
     private final AuthenticationListener authenticationListenerMock;
     private final JwtApplinkFinder jwtApplinkFinderMock;
-    private final CrowdService crowdServiceMock;
+    private final ConnectUserService connectUserServiceMock;
     private final I18nResolver i18nResolverMock;
     private final HttpServletRequest httpServletRequestMock;
     private final HttpServletResponse httpServletResponseMock;
@@ -40,10 +40,10 @@ public class ThreeLeggedAuthFilterTest
         userManagerMock = mock(UserManager.class);
         authenticationListenerMock = mock(AuthenticationListener.class);
         jwtApplinkFinderMock = mock(JwtApplinkFinder.class);
-        crowdServiceMock = mock(CrowdService.class);
+        connectUserServiceMock = mock(ConnectUserService.class);
         i18nResolverMock = mock(I18nResolver.class);
         filter = new ThreeLeggedAuthFilter(threeLeggedAuthServiceMock,
-                connectAddonManagerMock, userManagerMock, authenticationListenerMock, jwtApplinkFinderMock, crowdServiceMock, i18nResolverMock);
+                connectAddonManagerMock, userManagerMock, connectUserServiceMock, authenticationListenerMock, jwtApplinkFinderMock, i18nResolverMock);
 
         httpServletRequestMock = mock(HttpServletRequest.class);
         httpServletResponseMock = mock(HttpServletResponse.class);

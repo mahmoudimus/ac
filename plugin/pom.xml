@@ -787,6 +787,8 @@
                             <workingDirectory>../plugin</workingDirectory>
                             <nodeVersion>${node.version}</nodeVersion>
                             <npmVersion>${npm.version}</npmVersion>
+                            <nodeDownloadRoot>${node.download.root}</nodeDownloadRoot>
+                            <npmDownloadRoot>${npm.download.root}</npmDownloadRoot>
                         </configuration>
                     </execution>
                     <execution>
@@ -1243,5 +1245,8 @@
             include-artifact,com.atlassian.plugins:atlassian-connect-integration-tests
         </od.testing.configuration>
         <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
+
+        <!-- Override the javadoc.additional.params field because it breaks the json schema documentation generation -->
+        <javadoc.additional.params/>
     </properties>
 </project>

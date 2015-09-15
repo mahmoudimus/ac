@@ -56,15 +56,11 @@ plan(
     productSnapshotPlanConfiguration(
             productVersion: '5.9.1-SNAPSHOT',
     )
-    variable(
-            key: 'bamboo.product.data.version',
-            value: '5.8-m56'
-    )
     stage(
             name: 'Run Tests'
     ) {
         testJobsForConfluence(
-                mavenProductParameters: '-Datlassian.confluence.version=${bamboo_product_version} -Datlassian.confluence.productDataVersion=${bamboo_product_data_version}'
+                mavenProductParameters: '-Datlassian.confluence.version=${bamboo_product_version}'
         )
     }
 }

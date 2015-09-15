@@ -109,6 +109,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.test.version}</version>
+        </dependency>
+        <dependency>
             <artifactId>itextpdf</artifactId>
             <groupId>com.itextpdf</groupId>
             <version>5.5.3</version>
@@ -151,6 +156,12 @@
                     <artifactId>commons-lang</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <artifactId>acceptance-data-helper</artifactId>
+            <groupId>com.atlassian.test.ondemand</groupId>
+            <version>1.0.14</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.browsers</groupId>
@@ -215,6 +226,18 @@
             <version>${atlassian.jira.version}</version>
             <scope>test</scope>
             <exclusions>
+                <exclusion>
+                    <groupId>com.atlassian.selenium</groupId>
+                    <artifactId>atlassian-pageobjects-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.atlassian.selenium</groupId>
+                    <artifactId>atlassian-pageobjects-elements</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.atlassian.selenium</groupId>
+                    <artifactId>atlassian-webdriver-core</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.apache.httpcomponents</groupId>
                     <artifactId>httpcore</artifactId>
@@ -503,7 +526,6 @@
                         <product>
                             <id>confluence</id>
                             <version>${atlassian.confluence.version}</version>
-                            <productDataVersion>${atlassian.confluence.productDataVersion}</productDataVersion>
                             <log4jProperties>src/test/resources/log4j-confluence.properties
                             </log4jProperties>
                             <systemPropertyVariables>

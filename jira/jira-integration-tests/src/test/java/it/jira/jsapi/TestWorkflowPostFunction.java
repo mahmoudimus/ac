@@ -2,11 +2,8 @@ package it.jira.jsapi;
 
 import com.atlassian.jira.pageobjects.pages.admin.workflow.AddWorkflowTransitionFunctionParamsPage;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.AddWorkflowTransitionPostFunctionPage;
-import com.atlassian.jira.pageobjects.pages.admin.workflow.CopyWorkflowDialog;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.ViewWorkflowSteps;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.ViewWorkflowTransitionPage;
-import com.atlassian.jira.pageobjects.pages.admin.workflow.WorkflowHeader;
-import com.atlassian.jira.pageobjects.pages.admin.workflow.WorkflowsPage;
 import com.atlassian.jira.workflow.JiraWorkflow;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
@@ -22,6 +19,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
+import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
 import static org.junit.Assert.assertEquals;
 
 public class TestWorkflowPostFunction extends JiraWebDriverTestBase
@@ -96,6 +94,7 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
         AddWorkflowTransitionFunctionParamsPage addTransitionPostFunctionParamsPage
                 = addTransitionPostFunctionPage.selectAndSubmitByName(WORKFLOW_POST_FUNCTION_NAME);
 
+        connectPageOperations.findWebPanel(addonAndModuleKey(addonKey, WORKFLOW_POST_FUNCTION_KEY));
         viewWorkflowTransitionPage = (ExtendedViewWorkflowTransitionPage)addTransitionPostFunctionParamsPage.submit();
 
         JiraEditWorkflowTransitionFunctionParamsPage editTransitionFunctionParamsPage

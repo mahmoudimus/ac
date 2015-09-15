@@ -15,6 +15,10 @@ import it.util.TestProject;
 public class JiraTestBase
 {
 
+    private static final String PROJECT_TEMPLATE_KEY_RENAISSANCE = "com.atlassian.jira-core-project-templates:jira-core-task-management";
+
+    private static final String PROJECT_TEMPLATE_KEY_DARK_AGES = "com.atlassian.jira-core-project-templates:jira-issuetracking";
+
     protected static JiraTestedProduct product = TestedProductProvider.getJiraTestedProduct();
 
     protected static TestProject project;
@@ -35,7 +39,13 @@ public class JiraTestBase
     {
         String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
         String projectId = String.valueOf(product.backdoor().project().addProjectWithTemplate(
-                "Test project " + projectKey, projectKey, "admin", "com.atlassian.jira-core-project-templates:jira-issuetracking"));
+                "Test project " + projectKey, projectKey, "admin", getProjectTemplateKey()));
         return new TestProject(projectKey, projectId);
+    }
+
+    private static String getProjectTemplateKey()
+    {
+        return product.backdoor().applicationRoles().isEnabled()
+                ? PROJECT_TEMPLATE_KEY_RENAISSANCE : PROJECT_TEMPLATE_KEY_DARK_AGES;
     }
 }
