@@ -89,12 +89,12 @@ public class RemoteCrowd extends ConnectCrowdBase
                 client().updateUserCredential(username, passwordCredential.getCredential());
             }
         }
-        catch (InvalidCredentialException e)
+        catch (OperationFailedException e)
         {
-            log.warn("Tried to update the add-on user credentials but crowd said the credentials were invalid: " + e.getMessage());
+            log.warn("Tried to update the add-on user credentials but the operation failed: " + e.getMessage());
         }
         catch (UserNotFoundException | InvalidAuthenticationException |
-                ApplicationPermissionException | OperationFailedException e)
+                ApplicationPermissionException | InvalidCredentialException e)
         {
             throw new ConnectAddOnUserInitException(e);
         }
