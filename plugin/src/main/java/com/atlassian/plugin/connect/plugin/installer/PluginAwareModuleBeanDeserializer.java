@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
@@ -8,15 +9,12 @@ import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException
 import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -25,9 +23,11 @@ import java.util.Map;
 public class PluginAwareModuleBeanDeserializer implements JsonDeserializer<Map<String, Supplier<List<ModuleBean>>>>
 {
     private final Map<String, ConnectModuleProvider> moduleProviders;
+    private final Plugin plugin;
 
     public PluginAwareModuleBeanDeserializer(PluginAccessor pluginAccessor)
     {
+        plugin = pluginAccessor.getEnabledPlugin("com.atlassian.plugins.atlassian-connect-plugin");
         this.moduleProviders = buildModuleProviderMap(pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class)));
     }
 
@@ -52,7 +52,7 @@ public class PluginAwareModuleBeanDeserializer implements JsonDeserializer<Map<S
                 {
                     try
                     {
-                        return moduleProvider.validate(rawModuleEntry.getValue(), moduleProvider.getBeanClass());
+                        return moduleProvider.validate(rawModuleEntry.getValue(), moduleProvider.getBeanClass(), plugin);
                     }
                     catch (Exception e)
                     {

@@ -1,28 +1,30 @@
 package com.atlassian.plugin.connect.spi.module.provider;
 
+import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.modules.schema.DescriptorValidationResult;
 import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractConnectModuleProvider<T> implements ConnectModuleProvider<T>
 {
     @Override
-    public List<T> validate(JsonElement rawModules, Class<T> type) throws ConnectModuleValidationException
+    public List<T> validate(JsonElement rawModules, Class<T> type, Plugin plugin) throws ConnectModuleValidationException
     {
 
         final String schema;
         try
         {
-            schema = new String(Files.readAllBytes(Paths.get("../../../classes/schema/" + getSchemaPrefix() + "-schema.json")));
+            InputStream in = plugin.getResourceAsStream("/schema/" + getSchemaPrefix() + "-schema.json");
+            schema = IOUtils.toString(in);
         }
         catch (IOException e)
         {
