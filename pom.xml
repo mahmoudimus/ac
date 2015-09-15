@@ -29,40 +29,36 @@
         <module>plugin</module>
         <module>confluence</module>
         <module>jira</module>
-        <module>tests</module>
+        <module>tests/test-support-plugin</module>
         <module>docs</module>
         <module>crowd-support</module>
     </modules>
 
     <profiles>
         <profile>
-            <id>no-unpack</id>
-            <activation>
-                <property>
-                    <name>skipITs</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <properties>
-                <rest.doc.generation.skip>true</rest.doc.generation.skip>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                        <configuration>
-                            <excludeTypes>jar</excludeTypes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
+            <id>it</id>
+            <modules>
+                <module>tests/integration-tests</module>
+                <module>jira/jira-integration-tests</module>
+            </modules>
         </profile>
-
         <profile>
+            <id>pluginLifecycle</id>
+            <modules>
+                <module>tests/plugin-lifecycle-tests</module>
+            </modules>
+         </profile>
+         <profile>
             <id>freezer-release-profile</id>
             <modules>
                 <module>tests/integration-tests</module>
+                <module>jira/jira-integration-tests</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>wired</id>
+            <modules>
+                <module>tests/wired-tests</module>
             </modules>
         </profile>
     </profiles>
