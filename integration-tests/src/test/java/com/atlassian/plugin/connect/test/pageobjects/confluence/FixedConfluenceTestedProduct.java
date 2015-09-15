@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.test.pageobjects.confluence;
 
-import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
+import com.atlassian.confluence.webdriver.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.pageobjects.Defaults;
 import com.atlassian.pageobjects.ProductInstance;
 import com.atlassian.pageobjects.TestedProductFactory;

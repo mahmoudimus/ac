@@ -1,6 +1,6 @@
 package it.confluence;
 
-import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
+import com.atlassian.confluence.webdriver.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;

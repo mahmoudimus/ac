@@ -1,7 +1,7 @@
 package it.confluence.macro;
 
 import com.atlassian.confluence.api.model.content.Content;
-import com.atlassian.confluence.pageobjects.page.content.ViewPage;
+import com.atlassian.confluence.webdriver.pageobjects.page.content.ViewPage;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;

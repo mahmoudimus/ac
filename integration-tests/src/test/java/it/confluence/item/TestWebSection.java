@@ -2,9 +2,9 @@ package it.confluence.item;
 
 import java.net.MalformedURLException;
 
-import com.atlassian.confluence.pageobjects.component.menu.ConfluenceMenuItem;
-import com.atlassian.confluence.pageobjects.component.menu.ToolsMenu;
-import com.atlassian.confluence.pageobjects.page.content.ViewPage;
+import com.atlassian.confluence.webdriver.pageobjects.component.menu.ConfluenceMenuItem;
+import com.atlassian.confluence.webdriver.pageobjects.component.menu.ToolsMenu;
+import com.atlassian.confluence.webdriver.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;

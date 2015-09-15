@@ -1,8 +1,8 @@
 package it.confluence.macro;
 
-import com.atlassian.confluence.pageobjects.component.dialog.MacroForm;
-import com.atlassian.confluence.pageobjects.page.content.CreatePage;
-import com.atlassian.confluence.pageobjects.page.content.Editor;
+import com.atlassian.confluence.webdriver.pageobjects.component.dialog.MacroForm;
+import com.atlassian.confluence.webdriver.pageobjects.page.content.CreatePage;
+import com.atlassian.confluence.webdriver.pageobjects.page.content.Editor;
 import com.atlassian.plugin.connect.modules.beans.BaseContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.BaseContentMacroModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;

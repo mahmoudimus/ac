@@ -1,8 +1,8 @@
 package it.confluence;
 
-import com.atlassian.confluence.pageobjects.page.admin.ConfluenceAdminHomePage;
-import com.atlassian.confluence.pageobjects.page.content.CreatePage;
-import com.atlassian.confluence.pageobjects.page.space.ViewSpaceSummaryPage;
+import com.atlassian.confluence.webdriver.pageobjects.page.admin.ConfluenceAdminHomePage;
+import com.atlassian.confluence.webdriver.pageobjects.page.content.CreatePage;
+import com.atlassian.confluence.webdriver.pageobjects.page.space.ViewSpaceSummaryPage;
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;

@@ -2,9 +2,9 @@ package it.confluence.macro;
 
 import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.it.Page;
-import com.atlassian.confluence.pageobjects.page.content.CreatePage;
-import com.atlassian.confluence.pageobjects.page.content.EditContentPage;
-import com.atlassian.confluence.pageobjects.page.content.ViewPage;
+import com.atlassian.confluence.webdriver.pageobjects.page.content.CreatePage;
+import com.atlassian.confluence.webdriver.pageobjects.page.content.EditContentPage;
+import com.atlassian.confluence.webdriver.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;

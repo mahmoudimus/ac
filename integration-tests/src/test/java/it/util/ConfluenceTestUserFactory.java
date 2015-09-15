@@ -4,7 +4,7 @@ import com.atlassian.confluence.it.User;
 import com.atlassian.confluence.it.rpc.ConfluenceRpc;
 import com.atlassian.confluence.it.usermanagement.DefaultDirectoryConfiguration;
 import com.atlassian.confluence.it.usermanagement.DefaultUserManagementHelper;
-import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
+import com.atlassian.confluence.webdriver.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.plugin.connect.test.helptips.ConfluenceHelpTipApiClient;
 import com.atlassian.plugin.connect.test.helptips.HelpTipApiClient;
 

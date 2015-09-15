@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
-import com.atlassian.confluence.pageobjects.component.dialog.AbstractDialog;
+import com.atlassian.confluence.webdriver.pageobjects.component.dialog.AbstractDialog;
 import com.atlassian.pageobjects.elements.ElementBy;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.query.Poller;

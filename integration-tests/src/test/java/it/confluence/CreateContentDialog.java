@@ -1,9 +1,9 @@
 package it.confluence;
 
-import com.atlassian.confluence.pageobjects.component.dialog.AbstractDialog;
-import com.atlassian.confluence.pageobjects.page.content.EditContentPage;
-import com.atlassian.confluence.pageobjects.page.content.Editor;
-import com.atlassian.confluence.pageobjects.page.content.EditorPage;
+import com.atlassian.confluence.webdriver.pageobjects.component.dialog.AbstractDialog;
+import com.atlassian.confluence.webdriver.pageobjects.page.content.EditContentPage;
+import com.atlassian.confluence.webdriver.pageobjects.page.content.Editor;
+import com.atlassian.confluence.webdriver.pageobjects.page.content.EditorPage;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.elements.ElementBy;
 import com.atlassian.pageobjects.elements.PageElement;

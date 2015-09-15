@@ -1,6 +1,6 @@
 package it.confluence;
 
-import com.atlassian.confluence.pageobjects.page.SearchResultPage;
+import com.atlassian.confluence.webdriver.pageobjects.page.SearchResultPage;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.plugin.connect.test.webhook.WebHookBody;
 import com.atlassian.plugin.connect.test.webhook.WebHookTester;

@@ -1,6 +1,6 @@
 package it.confluence;
 
-import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
+import com.atlassian.confluence.webdriver.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.confluence.rest.client.RemoteCQLSearchService;
 import com.atlassian.confluence.rest.client.RemoteCQLSearchServiceImpl;
 import com.atlassian.confluence.rest.client.RemoteContentPropertyService;

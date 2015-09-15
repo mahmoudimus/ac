@@ -1,6 +1,6 @@
 package it.confluence.iframe;
 
-import com.atlassian.confluence.pageobjects.page.admin.ConfluenceAdminHomePage;
+import com.atlassian.confluence.webdriver.pageobjects.page.admin.ConfluenceAdminHomePage;
 import com.atlassian.pageobjects.elements.query.Queries;
 import com.atlassian.pageobjects.elements.timeout.DefaultTimeouts;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;

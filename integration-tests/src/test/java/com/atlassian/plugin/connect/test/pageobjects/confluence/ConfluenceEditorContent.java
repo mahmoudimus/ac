@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.test.pageobjects.confluence;
 
-import com.atlassian.confluence.pageobjects.component.editor.EditorContent;
+import com.atlassian.confluence.webdriver.pageobjects.component.editor.EditorContent;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.query.Poller;
 import org.openqa.selenium.By;

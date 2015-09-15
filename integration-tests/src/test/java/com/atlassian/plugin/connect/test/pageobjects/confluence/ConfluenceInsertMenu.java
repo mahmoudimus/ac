@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.test.pageobjects.confluence;
 
-import com.atlassian.confluence.pageobjects.component.editor.toolbars.InsertDropdownMenu;
+import com.atlassian.confluence.webdriver.pageobjects.component.editor.toolbars.InsertDropdownMenu;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 

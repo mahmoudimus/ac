@@ -1,7 +1,7 @@
 package at.confluence;
 
-import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
-import com.atlassian.confluence.pageobjects.page.DashboardPage;
+import com.atlassian.confluence.webdriver.pageobjects.ConfluenceTestedProduct;
+import com.atlassian.confluence.webdriver.pageobjects.page.DashboardPage;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectPageOperations;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.test.categories.OnDemandAcceptanceTest;
