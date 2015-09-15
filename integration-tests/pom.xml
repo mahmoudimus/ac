@@ -219,6 +219,10 @@
             <scope>test</scope>
             <exclusions>
                 <exclusion>
+                    <groupId>com.atlassian.confluence</groupId>
+                    <artifactId>atlassian-confluence-pageobjects</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>javax.servlet</groupId>
                     <artifactId>servlet-api</artifactId>
                 </exclusion>
