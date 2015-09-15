@@ -1,6 +1,6 @@
 package it.util;
 
-import com.atlassian.jira.tests.TestBase;
+import com.atlassian.confluence.test.api.model.person.UserWithDetails;
 
 public class TestUser
 {
@@ -38,8 +38,8 @@ public class TestUser
         return email;
     }
 
-    public com.atlassian.confluence.it.User confUser()
+    public UserWithDetails confUser()
     {
-        return new com.atlassian.confluence.it.User(username, password, displayName, email);
+        return new UserWithDetails(null, username, displayName, password, email);
     }
 }
