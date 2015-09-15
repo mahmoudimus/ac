@@ -372,7 +372,7 @@ jiraIntegrationTestJob(['key', 'product', 'testGroup', 'groupName', 'additionalM
             testGroup: '#testGroup',
             groupName: '#groupName',
             additionalMavenParameters: '#additionalMavenParameters',
-            project: 'tests/integration-tests,jira/jira-integration-tests'
+            project: 'jira/jira-integration-tests'
     )
 }
 
