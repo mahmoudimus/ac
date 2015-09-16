@@ -80,6 +80,11 @@
             <version>${atlassian.crowd.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.crowd</groupId>
+            <artifactId>user-provisioning-plugin</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
 
         <dependency>
