@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.spi.RemotablePluginAccessorFactory;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.Maps;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.json.simple.JSONObject;
 
 import java.io.IOException;
@@ -30,8 +31,10 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
     private String namespace;
 
     public IFrameRenderContextBuilderImpl(final RemotablePluginAccessorFactory pluginAccessorFactory,
-                                          final UserManager userManager, final HostApplicationInfo hostApplicationInfo,
-                                          final UserPreferencesRetriever userPreferencesRetriever) {
+            final UserManager userManager,
+            final HostApplicationInfo hostApplicationInfo,
+            final UserPreferencesRetriever userPreferencesRetriever)
+    {
         this.pluginAccessorFactory = pluginAccessorFactory;
         this.userManager = userManager;
         this.hostApplicationInfo = hostApplicationInfo;
@@ -175,10 +178,16 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
             defaultContext.put("contextPath", hostApplicationInfo.getContextPath());
             defaultContext.put("userId", username);
             defaultContext.put("userKey", userKey);
+            defaultContext.put("userAnalyticsHash", getUserAnalyticsHash(userKey));
             defaultContext.put("timeZone", timeZone);
 
             return defaultContext;
         }
 
+    }
+
+    private String getUserAnalyticsHash(final String userKey)
+    {
+        return DigestUtils.sha512Hex(userKey);
     }
 }

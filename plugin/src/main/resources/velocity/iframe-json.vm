@@ -4,6 +4,7 @@
     "cp":"$contextPath",
     "uid":"$userId",
     "ukey":"$userKey",
+    "uhash":"$userAnalyticsHash",
     "dlg":"$!dialog",
     "simpleDlg":"$!simpleDialog",
     "general":"$!general",

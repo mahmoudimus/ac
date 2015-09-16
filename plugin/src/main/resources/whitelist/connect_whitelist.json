@@ -63,6 +63,7 @@
   "connect.addon.iframe.performance.load": [
     "addonKey",
     "moduleKey",
+    "userKeyHash",
     "value"
   ],
   "connect.addon.iframe.performance.timeout": [
