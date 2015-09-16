@@ -109,11 +109,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.test.version}</version>
-        </dependency>
-        <dependency>
             <artifactId>itextpdf</artifactId>
             <groupId>com.itextpdf</groupId>
             <version>5.5.3</version>
@@ -226,18 +221,6 @@
             <version>${atlassian.jira.version}</version>
             <scope>test</scope>
             <exclusions>
-                <exclusion>
-                    <groupId>com.atlassian.selenium</groupId>
-                    <artifactId>atlassian-pageobjects-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.atlassian.selenium</groupId>
-                    <artifactId>atlassian-pageobjects-elements</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.atlassian.selenium</groupId>
-                    <artifactId>atlassian-webdriver-core</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>org.apache.httpcomponents</groupId>
                     <artifactId>httpcore</artifactId>

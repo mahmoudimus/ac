@@ -274,8 +274,8 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
     {
         login(testUserFactory.basicUser());
         ConfluenceEditPage editPage = visitEditPage();
+        // NOTE: we don't actually need the web panel to test its condition invocation
 
-        connectPageOperations.findWebPanel(getModuleKey(SPACE_CONTEXT_PARAMETERIZED_WEB_PANEL));
         Map<String, String> conditionParams = PARAMETER_CAPTURING_SERVLET2.getParamsFromLastRequest();
 
         assertThat(conditionParams, hasEntry(equalTo("pageId"), equalTo(editPage.getPageId())));

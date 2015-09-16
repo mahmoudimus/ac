@@ -78,7 +78,6 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
     @Test
     public void verifyEntryIsNotPresentWhenUnauthenticated() throws Exception
     {
-        logout();
         IssueNavigatorViewsMenu.ViewEntry entry = findSearchRequestViewEntry();
 
         assertThat(entry.isPresent(), is(false));
