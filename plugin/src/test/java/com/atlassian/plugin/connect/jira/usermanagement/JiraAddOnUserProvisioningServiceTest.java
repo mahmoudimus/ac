@@ -22,6 +22,7 @@ import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
+import com.atlassian.plugin.connect.crowd.usermanagement.permissions.ConnectCrowdPermissions;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
@@ -31,6 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static com.google.common.collect.Sets.newHashSet;
@@ -38,8 +40,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -63,6 +67,7 @@ public class JiraAddOnUserProvisioningServiceTest
     @Mock private ApplicationRoleManager applicationRoleManager;
     private ApplicationKey applicationKey;
     @Mock private Group group;
+    @Mock private ConnectCrowdPermissions connectCrowdPermissions;
 
     private TransactionTemplate transactionTemplate = new TransactionTemplate()
     {
@@ -88,7 +93,8 @@ public class JiraAddOnUserProvisioningServiceTest
                 transactionTemplate,
                 jiraProjectPermissionManager,
                 applicationAuthorizationService,
-                applicationRoleManager);
+                applicationRoleManager,
+                connectCrowdPermissions);
 
         groups = newHashSet();
         applicationKeys = newHashSet();
@@ -99,7 +105,7 @@ public class JiraAddOnUserProvisioningServiceTest
     }
 
     @Test
-    public void testMissingAdminPermissionReturnsCorrectErrorCode()
+    public void testMissingAdminPermissionDoesNotFail()
             throws ApplicationNotFoundException,
             OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException
     {
@@ -107,21 +113,13 @@ public class JiraAddOnUserProvisioningServiceTest
 
         when(connectAddOnUserGroupProvisioningService.ensureGroupExists(ADDONS_ADMIN_GROUP)).thenReturn(false);
 
-        when(jiraPermissionManager.getGroupsWithPermission(Permissions.ADMINISTER)).thenReturn(Collections.EMPTY_LIST);
-
+        when(connectCrowdPermissions.setPermissionsForGroup(anyString())).thenReturn(false);
 
         Set<ScopeName> previousScopes = newHashSet();
         Set<ScopeName> newScopes = newHashSet(ScopeName.ADMIN);
 
-        try
-        {
-            provisioningService.provisionAddonUserForScopes(USERNAME, previousScopes, newScopes);
-            fail("Provisioning addon should not have succeeded");
-        }
-        catch (ConnectAddOnUserInitException exception)
-        {
-            assertEquals(exception.getI18nKey(), ConnectAddOnUserProvisioningService.ADDON_ADMINS_MISSING_PERMISSION);
-        }
+        provisioningService.provisionAddonUserForScopes(USERNAME, previousScopes, newScopes);
+        assertTrue(true);
     }
 
     @Test
