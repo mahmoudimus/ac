@@ -491,7 +491,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <scope>provided</scope>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
