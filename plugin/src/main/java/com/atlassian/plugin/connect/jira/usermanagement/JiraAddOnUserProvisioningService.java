@@ -42,6 +42,7 @@ import com.atlassian.jira.util.SimpleErrorCollection;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
+import com.atlassian.plugin.connect.crowd.usermanagement.permissions.ConnectCrowdPermissions;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeUtil;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
@@ -90,6 +91,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     private final PermissionManager jiraProjectPermissionManager;
     private final ApplicationAuthorizationService applicationAuthorizationService;
     private final ApplicationRoleManager applicationRoleManager;
+    private final ConnectCrowdPermissions connectCrowdPermissions;
 
     @Inject
     public JiraAddOnUserProvisioningService(GlobalPermissionManager jiraPermissionManager,
@@ -101,7 +103,8 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
             TransactionTemplate transactionTemplate,
             PermissionManager jiraProjectPermissionManager,
             ApplicationAuthorizationService applicationAuthorizationService,
-            ApplicationRoleManager applicationRoleManager)
+            ApplicationRoleManager applicationRoleManager,
+            ConnectCrowdPermissions connectCrowdPermissions)
     {
         this.jiraProjectPermissionManager = jiraProjectPermissionManager;
         this.jiraPermissionManager = checkNotNull(jiraPermissionManager);
@@ -113,6 +116,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         this.transactionTemplate = transactionTemplate;
         this.applicationAuthorizationService = applicationAuthorizationService;
         this.applicationRoleManager = applicationRoleManager;
+        this.connectCrowdPermissions = connectCrowdPermissions;
     }
 
     @Override
@@ -253,8 +257,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         {
             log.warn(String.format("Group '%s' already exists and is NOT an administrators group. " +
                     "Cannot make it an administrators group because that would elevate the privileges of existing users in this group. " +
-                    "Consequently, add-on users that need to be admins cannot be made admins by adding them to this group and making it an administrators group. " +
-                    "Aborting user setup.",
+                    "Consequently, add-on users that need to be admins cannot be made admins by adding them to this group and making it an administrators group. ",
                     groupKey));
         }
     }
@@ -263,8 +266,15 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     {
         if (!groupHasAdminPermission(groupKey))
         {
-            jiraPermissionManager.addPermission(ADMIN_PERMISSION, groupKey);
-            log.info("Granted admin permission to group '{}'.", groupKey);
+            boolean grabntedPermissions = connectCrowdPermissions.setPermissionsForGroup(groupKey);
+            if (grabntedPermissions)
+            {
+                log.info("Granted admin permission to group '{}'.", groupKey);
+            }
+            else
+            {
+                log.warn("Administrative Permissions were not given to '{}'.", groupKey);
+            }
         }
     }
 
