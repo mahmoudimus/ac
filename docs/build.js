@@ -532,8 +532,9 @@ function startHarpServerAndWatchSrcFiles() {
     var watchedFiles = srcFiles.concat(jiraSchemaSourcePath, confluenceSchemaSourcePath);
 
     var watcher = chokidar.watch(watchedFiles, {
-        persistent:true,
-        ignoreInitial:true
+        persistent: true,
+        ignored: /[\/\\]\./, // ignore .dotfiles
+        ignoreInitial: true
     });
 
     _.each(['add', 'addDir', 'change', 'unlink', 'unlinkDir'], function(event) {
