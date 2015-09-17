@@ -229,6 +229,11 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
         {
             return remote.ensureGroupExists(groupName);
         }
+        else if(!isOnDemand() && isOnDemand())
+        {
+            embedded.ensureGroupExists(groupName);
+            return remote.ensureGroupExists(groupName); 
+        }
         else
         {
             return embedded.ensureGroupExists(groupName);
