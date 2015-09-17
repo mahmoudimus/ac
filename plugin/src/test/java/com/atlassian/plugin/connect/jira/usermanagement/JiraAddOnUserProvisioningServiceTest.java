@@ -22,6 +22,7 @@ import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
+import com.atlassian.plugin.connect.crowd.usermanagement.ConnectOnDemandCheck;
 import com.atlassian.plugin.connect.crowd.usermanagement.permissions.ConnectCrowdPermissions;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.sal.api.transaction.TransactionCallback;
@@ -68,6 +69,7 @@ public class JiraAddOnUserProvisioningServiceTest
     private ApplicationKey applicationKey;
     @Mock private Group group;
     @Mock private ConnectCrowdPermissions connectCrowdPermissions;
+    @Mock private ConnectOnDemandCheck connectOnDemandCheck;
 
     private TransactionTemplate transactionTemplate = new TransactionTemplate()
     {
@@ -94,7 +96,8 @@ public class JiraAddOnUserProvisioningServiceTest
                 jiraProjectPermissionManager,
                 applicationAuthorizationService,
                 applicationRoleManager,
-                connectCrowdPermissions);
+                connectCrowdPermissions,
+                connectOnDemandCheck);
 
         groups = newHashSet();
         applicationKeys = newHashSet();
@@ -102,6 +105,7 @@ public class JiraAddOnUserProvisioningServiceTest
         applicationKeys.add(applicationKey);
         groups.add(group);
         when(group.getName()).thenReturn(REN_GROUP);
+        when(connectOnDemandCheck.isOnDemand()).thenReturn(false);
     }
 
     @Test
