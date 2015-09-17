@@ -45,7 +45,7 @@ public class TestCloudAwareCrowdServiceOnServer
     @Mock private CrowdServiceLocator crowdServiceLocator;
     @Mock private ConnectCrowdBase remote;
     @Mock private ConnectCrowdBase embedded;
-    @Mock private FeatureManager featureManager;
+    @Mock private ConnectOnDemandCheck connectOnDemandCheck;
     @Mock private CrowdClientProvider crowdClientProvider;
     @Mock private UserReconciliation userReconciliation;
 
@@ -70,9 +70,9 @@ public class TestCloudAwareCrowdServiceOnServer
 
         mockCrowdServiceLocator(crowdServiceLocator, embedded, remote);
 
-        cloudAwareCrowdService = new CloudAwareCrowdService(crowdServiceLocator, applicationService, crowdApplicationProvider, hostProperties, featureManager, crowdClientProvider, userReconciliation);
+        cloudAwareCrowdService = new CloudAwareCrowdService(crowdServiceLocator, applicationService, crowdApplicationProvider, hostProperties, connectOnDemandCheck, crowdClientProvider, userReconciliation);
 
-        when(featureManager.isOnDemand()).thenReturn(false);
+        when(connectOnDemandCheck.isOnDemand()).thenReturn(false);
         when(hostProperties.getKey()).thenReturn(isConfluence ? "confluence" : "JIRA");
     }
 

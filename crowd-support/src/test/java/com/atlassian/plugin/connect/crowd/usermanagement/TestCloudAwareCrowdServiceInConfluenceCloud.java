@@ -42,7 +42,7 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud
     @Mock private CrowdServiceLocator crowdServiceLocator;
     @Mock private ConnectCrowdBase remote;
     @Mock private ConnectCrowdBase embedded;
-    @Mock private FeatureManager featureManager;
+    @Mock private ConnectOnDemandCheck connectOnDemandCheck;
     @Mock private CrowdClientProvider crowdClientProvider;
     @Mock private UserReconciliation userReconciliation;
     @Mock private Optional userOption;
@@ -63,10 +63,10 @@ public class TestCloudAwareCrowdServiceInConfluenceCloud
 
         mockCrowdServiceLocator(crowdServiceLocator, embedded, remote);
 
-        when(featureManager.isOnDemand()).thenReturn(true);
+        when(connectOnDemandCheck.isOnDemand()).thenReturn(true);
         when(hostProperties.getKey()).thenReturn("confluence");
 
-        cloudAwareCrowdService = new CloudAwareCrowdService(crowdServiceLocator, applicationService, crowdApplicationProvider, hostProperties, featureManager, crowdClientProvider, userReconciliation);
+        cloudAwareCrowdService = new CloudAwareCrowdService(crowdServiceLocator, applicationService, crowdApplicationProvider, hostProperties, connectOnDemandCheck, crowdClientProvider, userReconciliation);
     }
 
     @SuppressWarnings ("unchecked")

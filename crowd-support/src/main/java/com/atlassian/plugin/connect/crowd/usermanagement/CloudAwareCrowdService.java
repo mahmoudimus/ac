@@ -51,7 +51,7 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
 {
     private long syncTimeout = 10;
     private HostProperties hostProperties;
-    private final FeatureManager featureManager;
+    private final ConnectOnDemandCheck connectOnDemandCheck;
     private final ConnectCrowdBase remote;
     private final ConnectCrowdBase embedded;
     private final ConcurrentHashMap<String, Map<String, Set<String>>> jiraPendingAttributes = new ConcurrentHashMap<>();
@@ -62,11 +62,11 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
     @Autowired
     public CloudAwareCrowdService(CrowdServiceLocator crowdServiceLocator,
             ApplicationService applicationService, CrowdApplicationProvider crowdApplicationProvider,
-            HostProperties hostProperties, FeatureManager featureManager,
+            HostProperties hostProperties, ConnectOnDemandCheck connectOnDemandCheck,
             CrowdClientProvider crowdClientProvider, UserReconciliation userReconciliation)
     {
         this.hostProperties = hostProperties;
-        this.featureManager = featureManager;
+        this.connectOnDemandCheck = connectOnDemandCheck;
         this.remote = crowdServiceLocator.remote(crowdClientProvider, userReconciliation);
         this.embedded = crowdServiceLocator.embedded(applicationService, userReconciliation, crowdApplicationProvider);
     }
@@ -282,7 +282,7 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
 
     private boolean isOnDemand()
     {
-        return featureManager.isOnDemand();
+        return connectOnDemandCheck.isOnDemand();
     }
 
     private boolean isConfluence()
