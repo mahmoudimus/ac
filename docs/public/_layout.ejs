@@ -6,6 +6,21 @@
    for (var i = 1; i < current.path.length; i++) {
       relDocRoot += "../";
    }
+
+   var module;
+   if (current.path[0] === 'modules') {
+       switch (current.path.length) {
+           case 2:
+               module = entities.root[current.source];
+               break;
+           case 3:
+               module = entities[current.path[1]][current.path[2]];
+               break;
+       }
+   }
+
+   var pageTitle = module ? module.name + ' - ' + title : title;
+
 %>
 
 <!DOCTYPE html>
@@ -15,7 +30,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=EDGE">
     <title>
-        <%= title %>
+        <%= pageTitle %>
     </title>
     <link rel="icon" type="image/png" href="<%= relDocRoot %>assets/images/favicon.png" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/codemirror.min.css" media="all">
@@ -96,20 +111,6 @@
                 <div class="aui-page-panel-inner">
                     <%- partial('_partials/_sidebar.ejs', { relDocRoot: relDocRoot }) %>
                     <section class="aui-page-panel-content ac-page">
-                        <%
-                            var module;
-                            if (current.path[0] === 'modules') {
-                                switch (current.path.length) {
-                                    case 2:
-                                        module = entities.root[current.source];
-                                        break;
-                                    case 3:
-                                        module = entities[current.path[1]][current.path[2]];
-                                        break;
-                                }
-                            }
-                        %>
-
                         <% if (module) { %>
                             <%- partial('modules/_child_layout.jade', { module: module, relDocRoot: relDocRoot }) %>
                         <% } else { %>
@@ -122,7 +123,7 @@
         <footer id="footer" role="contentinfo">
             <section class="footer-body">
                 <ul id="aui-footer-list">
-                    <li>Copyright &copy; 2009-2014 Atlassian</li>
+                    <li>Copyright &copy; 2009-2015 Atlassian</li>
                 </ul>
                 <div id="footer-logo">
                     <a href="http://www.atlassian.com/">Atlassian</a>
