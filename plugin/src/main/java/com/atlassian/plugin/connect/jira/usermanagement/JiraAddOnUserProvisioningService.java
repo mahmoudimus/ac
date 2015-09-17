@@ -271,17 +271,15 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     {
         if (!groupHasAdminPermission(groupKey))
         {
-            boolean grantedPermissions = false;
-            if (connectOnDemandCheck.isOnDemand())
+            boolean grantedPermissionsRemote = false,
+                    onDemand = connectOnDemandCheck.isOnDemand();
+            if (onDemand)
             {
-                grantedPermissions = connectCrowdPermissions.setPermissionsForGroup(groupKey);
+                grantedPermissionsRemote = connectCrowdPermissions.setPermissionsForGroup(groupKey);
             }
-            else
-            {
-                grantedPermissions = jiraPermissionManager.addPermission(ADMIN_PERMISSION, groupKey);
-            }
+            boolean grantedPermissionsEmbedded = jiraPermissionManager.addPermission(ADMIN_PERMISSION, groupKey);
 
-            if (grantedPermissions)
+            if ((onDemand && grantedPermissionsRemote) || (!onDemand && grantedPermissionsEmbedded))
             {
                 log.info("Granted admin permission to group '{}'.", groupKey);
             }
