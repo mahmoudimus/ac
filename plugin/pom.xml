@@ -499,6 +499,11 @@
             <version>${ao.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.atlassian.crowd</groupId>
+            <artifactId>user-provisioning-plugin</artifactId>
+            <version>${atlassian.user.provisioning.version}</version>
+        </dependency>
 
     </dependencies>
 
@@ -706,6 +711,11 @@
                                     <artifactId>jira-projects-plugin</artifactId>
                                     <version>${atlassian.jira.projects.plugin.version}</version>
                                 </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.crowd</groupId>
+                                    <artifactId>user-provisioning-plugin</artifactId>
+                                    <version>${atlassian.user.provisioning.version}</version>
+                                </pluginArtifact>
                             </pluginArtifacts>
                         </product>
                         <product>
@@ -756,6 +766,11 @@
                                     <groupId>com.atlassian.confluence.plugins</groupId>
                                     <artifactId>confluence-create-content-plugin</artifactId>
                                     <version>${blueprints.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.crowd</groupId>
+                                    <artifactId>user-provisioning-plugin</artifactId>
+                                    <version>${atlassian.user.provisioning.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
 

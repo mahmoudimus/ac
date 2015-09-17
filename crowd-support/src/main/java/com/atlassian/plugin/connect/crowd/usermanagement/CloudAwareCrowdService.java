@@ -1,5 +1,14 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedTransferQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TransferQueue;
+
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
@@ -18,21 +27,14 @@ import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
+import com.atlassian.usermanagement.client.api.UserManagementLockService;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedTransferQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TransferQueue;
 
 /**
  * This implementation seeks to encapsulate workarounds for:
@@ -52,6 +54,7 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
     private long syncTimeout = 10;
     private HostProperties hostProperties;
     private final FeatureManager featureManager;
+    private final UserManagementLockService userManagementLockService;
     private final ConnectCrowdBase remote;
     private final ConnectCrowdBase embedded;
     private final ConcurrentHashMap<String, Map<String, Set<String>>> jiraPendingAttributes = new ConcurrentHashMap<>();
@@ -63,10 +66,11 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
     public CloudAwareCrowdService(CrowdServiceLocator crowdServiceLocator,
             ApplicationService applicationService, CrowdApplicationProvider crowdApplicationProvider,
             HostProperties hostProperties, FeatureManager featureManager,
-            CrowdClientProvider crowdClientProvider, UserReconciliation userReconciliation)
+            CrowdClientProvider crowdClientProvider, UserReconciliation userReconciliation, UserManagementLockService userManagementLockService)
     {
         this.hostProperties = hostProperties;
         this.featureManager = featureManager;
+        this.userManagementLockService = userManagementLockService;
         this.remote = crowdServiceLocator.remote(crowdClientProvider, userReconciliation);
         this.embedded = crowdServiceLocator.embedded(applicationService, userReconciliation, crowdApplicationProvider);
     }

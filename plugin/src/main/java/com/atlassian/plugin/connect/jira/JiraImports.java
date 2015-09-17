@@ -110,7 +110,8 @@ public class JiraImports
             @JiraImport IssueTypePropertyService issueTypePropertyService,
             @JiraImport ProjectPropertyService projectPropertyService,
             @JiraImport DashboardItemPropertyService dashboardItemPropertyService,
-            @JiraImport IssueTypeService issueTypeService)
+            @JiraImport IssueTypeService issueTypeService,
+            @JiraImport com.atlassian.usermanagement.client.api.UserManagementLockService userManagementLockService)
     {
     }
 }
