@@ -263,10 +263,11 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         }
         else if (!groupHasAdminPermission(groupKey))
         {
-            log.warn(String.format("Group '%s' already exists and is NOT an administrators group. " +
+            throw new ConnectAddOnUserInitException(String.format("Group '%s' already exists and is NOT an administrators group. " +
                     "Cannot make it an administrators group because that would elevate the privileges of existing users in this group. " +
-                    "Consequently, add-on users that need to be admins cannot be made admins by adding them to this group and making it an administrators group. ",
-                    groupKey));
+                    "Consequently, add-on users that need to be admins cannot be made admins by adding them to this group and making it an administrators group. " +
+                    "Aborting user setup.",
+                    groupKey), ConnectAddOnUserProvisioningService.ADDON_ADMINS_MISSING_PERMISSION);
         }
     }
 
