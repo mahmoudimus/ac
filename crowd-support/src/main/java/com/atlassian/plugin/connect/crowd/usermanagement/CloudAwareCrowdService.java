@@ -27,7 +27,6 @@ import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-import com.atlassian.usermanagement.client.api.UserManagementLockService;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
@@ -54,7 +53,6 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
     private long syncTimeout = 10;
     private HostProperties hostProperties;
     private final FeatureManager featureManager;
-    private final UserManagementLockService userManagementLockService;
     private final ConnectCrowdBase remote;
     private final ConnectCrowdBase embedded;
     private final ConcurrentHashMap<String, Map<String, Set<String>>> jiraPendingAttributes = new ConcurrentHashMap<>();
@@ -66,11 +64,10 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
     public CloudAwareCrowdService(CrowdServiceLocator crowdServiceLocator,
             ApplicationService applicationService, CrowdApplicationProvider crowdApplicationProvider,
             HostProperties hostProperties, FeatureManager featureManager,
-            CrowdClientProvider crowdClientProvider, UserReconciliation userReconciliation, UserManagementLockService userManagementLockService)
+            CrowdClientProvider crowdClientProvider, UserReconciliation userReconciliation)
     {
         this.hostProperties = hostProperties;
         this.featureManager = featureManager;
-        this.userManagementLockService = userManagementLockService;
         this.remote = crowdServiceLocator.remote(crowdClientProvider, userReconciliation);
         this.embedded = crowdServiceLocator.embedded(applicationService, userReconciliation, crowdApplicationProvider);
     }

@@ -52,6 +52,8 @@ import com.atlassian.jira.web.session.SessionSearchObjectManagerFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.imports.JiraImport;
 import com.atlassian.plugin.web.WebFragmentHelper;
+import com.atlassian.usermanagement.client.api.ManagedPermissionsService;
+import com.atlassian.usermanagement.client.api.UserManagementLockService;
 
 /**
  * This class does nothing but is here to centralize the JIRA component imports.
@@ -111,7 +113,8 @@ public class JiraImports
             @JiraImport ProjectPropertyService projectPropertyService,
             @JiraImport DashboardItemPropertyService dashboardItemPropertyService,
             @JiraImport IssueTypeService issueTypeService,
-            @JiraImport com.atlassian.usermanagement.client.api.UserManagementLockService userManagementLockService)
+            @JiraImport UserManagementLockService userManagementLockService,
+            @JiraImport ManagedPermissionsService managedPermissionsService)
     {
     }
 }
