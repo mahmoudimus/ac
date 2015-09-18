@@ -53,7 +53,6 @@ import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.imports.JiraImport;
 import com.atlassian.plugin.web.WebFragmentHelper;
 import com.atlassian.usermanagement.client.api.ManagedPermissionsService;
-import com.atlassian.usermanagement.client.api.UserManagementLockService;
 
 /**
  * This class does nothing but is here to centralize the JIRA component imports.
@@ -112,9 +111,7 @@ public class JiraImports
             @JiraImport IssueTypePropertyService issueTypePropertyService,
             @JiraImport ProjectPropertyService projectPropertyService,
             @JiraImport DashboardItemPropertyService dashboardItemPropertyService,
-            @JiraImport IssueTypeService issueTypeService,
-            @JiraImport UserManagementLockService userManagementLockService,
-            @JiraImport ManagedPermissionsService managedPermissionsService)
+            @JiraImport IssueTypeService issueTypeService)
     {
     }
 }
