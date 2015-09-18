@@ -20,7 +20,6 @@ import com.atlassian.sal.api.net.Request;
 import com.atlassian.sal.api.net.ResponseException;
 
 import org.apache.commons.httpclient.Cookie;
-import org.apache.http.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +52,7 @@ public class ConnectCrowdPermissionsClientImpl
         try
         {
             executeAsSysadmin(POST, "/rest/um/1/accessconfig/group?productId=product%3Ajira%3Ajira", "[\"atlassian-addons-admin\"]");
-            executeAsSysadmin(PUT, "/rest/um/1/accessconfig/group?hostId=jira&productId=product%3Ajira%3Ajira", "{name: \"atlassian-addons-admin\", use: \"NONE\", admin: \"DIRECT\", defaultUse: false}");
+            executeAsSysadmin(PUT, "/rest/um/1/accessconfig/group?hostId=jira&productId=product%3Ajira%3Ajira", "{\"name\": \"atlassian-addons-admin\", \"use\": \"NONE\", \"admin\": \"DIRECT\", \"defaultUse\": false}");
         }
         catch (InactiveAccountException
                 | ApplicationPermissionException
@@ -81,7 +80,7 @@ public class ConnectCrowdPermissionsClientImpl
         ApplicationLinkRequest request = crowd.createAuthenticatedRequestFactory().createRequest(methodType, url);
         request.addHeader("Cookie", generateSysadminCookie(crowd.getDisplayUrl().getHost()).toExternalForm());
         request.addHeader("Content-Type", "application/json");
-        request.setEntity(new StringEntity(jsonString, "UTF-8"));
+        request.setEntity(jsonString);
         return request.execute();
     }
 
