@@ -1,5 +1,5 @@
 <%
-    var auiVersion = "5.7.16";
+    var auiVersion = "5.8.14";
 
     // calculate the relative path to the document root from the page depth
     var relDocRoot = "";
@@ -62,7 +62,7 @@
             var depth = <%= current.path.length %>;
             // Get rid of double slashes
             var pathname = window.location.pathname.replace(/\/+/g,'/');
-            return '/' + _(pathname.split('/')).compact().initial(depth - pathname.endsWith('/')).join('/');
+                    return '/' + _.compact(pathname.split('/')).slice(0, -depth + pathname.endsWith('/')).join('/');
         });
     </script>
 </head>
@@ -125,11 +125,8 @@
         </section>
         <footer id="footer" role="contentinfo">
             <section class="footer-body">
-                <ul id="aui-footer-list">
-                    <li>Copyright &copy; 2009-2015 Atlassian</li>
-                </ul>
                 <div id="footer-logo">
-                    <a href="http://www.atlassian.com/">Atlassian</a>
+                    <a href="http://www.atlassian.com/" target="_blank">Atlassian</a>
                 </div>
             </section>
         </footer>
