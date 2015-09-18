@@ -230,6 +230,11 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
         {
             return remote.ensureGroupExists(groupName);
         }
+        else if (isJira() && isOnDemand())
+        {
+            embedded.ensureGroupExists(groupName);
+            return remote.ensureGroupExists(groupName);
+        }
         else
         {
             return embedded.ensureGroupExists(groupName);
@@ -289,6 +294,11 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
     private boolean isConfluence()
     {
         return hostProperties.getKey().equalsIgnoreCase("confluence");
+    }
+
+    private boolean isJira()
+    {
+        return hostProperties.getKey().equalsIgnoreCase("jira");
     }
 
 }
