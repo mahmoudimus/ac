@@ -2,14 +2,15 @@ package it.com.atlassian.plugin.connect.plugin.rest.addons;
 
 import com.atlassian.httpclient.api.HttpStatus;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.http.HttpMethod;
+import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.license.LicenseHandler;
@@ -17,9 +18,8 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.gson.reflect.TypeToken;
-import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import it.com.atlassian.plugin.connect.util.request.RequestUtil;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.junit.After;
 import org.junit.Before;
@@ -174,9 +174,7 @@ public class AddonsResourceTest
 
         assertResponseStatusCode(request, response, HttpStatus.OK);
         Object[] expectedAddonKeys = new String[]{addonKey, otherAddonKey};
-        AddonsInterpretation addonsRepresentation = response.getJsonBody(new TypeToken<AddonsInterpretation>()
-        {
-        }.getType());
+        AddonsInterpretation addonsRepresentation = response.getJsonBody(AddonsInterpretation.class);
         Iterable<String> addonKeys = Iterables.transform(addonsRepresentation.addons, new Function<AddonInterpretation, String>()
         {
             @Override
@@ -334,9 +332,9 @@ public class AddonsResourceTest
                 .setUri(requestUtil.getApplicationRestUrl(REST_BASE + "/" + addonKey + "/reinstall"));
     }
 
-    private int getStatusCode(RequestUtil.Response response)
+    private int getResponseBodyStatusCode(RequestUtil.Response response) throws IOException
     {
-        return ((Double) response.getJsonBody().get("status-code")).intValue();
+        return Integer.valueOf(response.getJsonBody().get("status-code").toString());
     }
 
     private void assertResponseStatusCode(RequestUtil.Request request, RequestUtil.Response response, HttpStatus status)
@@ -367,17 +365,17 @@ public class AddonsResourceTest
         assertThat(String.format("Unexpected response value for header %s", headerName), headerFields.get(headerName), hasItem(value));
     }
 
-    private void assertErrorResponseStatusCode(RequestUtil.Request request, RequestUtil.Response response, HttpStatus status)
+    private void assertErrorResponseStatusCode(RequestUtil.Request request, RequestUtil.Response response, HttpStatus status) throws IOException
     {
         String requestString = String.format("%s %s", request.getMethod(), request.getUri());
         assertThat(String.format("Expected status code %s not received for %s", status, requestString), status.code, equalTo(response.getStatusCode()));
-        assertThat(String.format("Status code not present in response body for %s", status, requestString), status.code, equalTo(getStatusCode(response)));
+        assertThat(String.format("Status code not present in response body for %s", status, requestString), status.code, equalTo(getResponseBodyStatusCode(response)));
     }
 
     /**
      * @see com.atlassian.plugin.connect.plugin.rest.data.RestAddons
      */
-    private static class AddonsInterpretation
+    public static class AddonsInterpretation
     {
 
         @JsonProperty
@@ -387,7 +385,8 @@ public class AddonsResourceTest
     /**
      * @see com.atlassian.plugin.connect.plugin.rest.data.RestLimitedAddon
      */
-    private static class AddonInterpretation
+    @JsonIgnoreProperties(ignoreUnknown=true)
+    public static class AddonInterpretation
     {
 
         @JsonProperty
@@ -409,7 +408,7 @@ public class AddonsResourceTest
     /**
      * @see com.atlassian.plugin.connect.plugin.rest.data.RestHost
      */
-    private static class HostInterpretation
+    public static class HostInterpretation
     {
 
         @JsonProperty
@@ -422,7 +421,7 @@ public class AddonsResourceTest
     /**
      * @see com.atlassian.plugin.connect.plugin.rest.data.RestAddonLicense
      */
-    private static class AddonLicenseInterpretation
+    public static class AddonLicenseInterpretation
     {
 
         @JsonProperty
@@ -441,7 +440,7 @@ public class AddonsResourceTest
     /**
      * @see com.atlassian.plugin.connect.plugin.rest.data.RestContact
      */
-    public class ContactInterpretation
+    public static class ContactInterpretation
     {
 
         @JsonProperty
@@ -449,11 +448,5 @@ public class AddonsResourceTest
 
         @JsonProperty
         public String email;
-
-        public ContactInterpretation(String name, String email)
-        {
-            this.name = name;
-            this.email = email;
-        }
     }
 }

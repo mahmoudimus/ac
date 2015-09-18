@@ -1,7 +1,5 @@
 package it.com.atlassian.plugin.connect.plugin.installer;
 
-import java.io.IOException;
-
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
@@ -27,12 +25,11 @@ import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.upm.spi.PluginInstallException;
-
-import com.google.gson.JsonParser;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.io.IOException;
 
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static org.junit.Assert.assertEquals;
@@ -94,7 +91,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
             String payload = request.getEntity();
 
-            boolean hasSharedSecret = new JsonParser().parse(payload).getAsJsonObject().has(SHARED_SECRET_FIELD_NAME);
+            boolean hasSharedSecret = hasPayloadField(payload, SHARED_SECRET_FIELD_NAME);
             assertTrue("field " + SHARED_SECRET_FIELD_NAME + " not found in request payload: " + payload, hasSharedSecret);
 
         }
@@ -125,8 +122,8 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
             ServletRequestSnapshot installRequest = testFilterResults.getRequest(addonKey, INSTALLED);
             String installPayload = installRequest.getEntity();
 
-            String sharedSecret = new JsonParser().parse(installPayload).getAsJsonObject().get(SHARED_SECRET_FIELD_NAME).getAsString();
-            String clientKey = new JsonParser().parse(installPayload).getAsJsonObject().get(CLIENT_KEY_FIELD_NAME).getAsString();
+            String sharedSecret = getPayloadField(installPayload, SHARED_SECRET_FIELD_NAME);
+            String clientKey = getPayloadField(installPayload, CLIENT_KEY_FIELD_NAME);
 
             WaitUntil.invoke(new WaitUntil.WaitCondition()
             {
@@ -178,7 +175,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
 
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, INSTALLED);
             String payload = request.getEntity();
-            boolean hasUserKey = new JsonParser().parse(payload).getAsJsonObject().has(USER_KEY_FIELD_NAME);
+            boolean hasUserKey = hasPayloadField(payload, USER_KEY_FIELD_NAME);
 
             assertTrue("field " + USER_KEY_FIELD_NAME + " found in request payload: " + payload, !hasUserKey);
 
@@ -209,8 +206,8 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
             ServletRequestSnapshot installRequest = testFilterResults.getRequest(addonKey, INSTALLED);
             String installPayload = installRequest.getEntity();
 
-            String sharedSecret = new JsonParser().parse(installPayload).getAsJsonObject().get(SHARED_SECRET_FIELD_NAME).getAsString();
-            String clientKey = new JsonParser().parse(installPayload).getAsJsonObject().get(CLIENT_KEY_FIELD_NAME).getAsString();
+            String sharedSecret = getPayloadField(installPayload, SHARED_SECRET_FIELD_NAME);
+            String clientKey = getPayloadField(installPayload, CLIENT_KEY_FIELD_NAME);
 
             testPluginInstaller.uninstallAddon(plugin);
             plugin = null;
@@ -253,7 +250,7 @@ public class AddonLifecycleJwtTest extends AbstractAddonLifecycleTest
 
             ServletRequestSnapshot request = testFilterResults.getRequest(addonKey, UNINSTALLED);
             String payload = request.getEntity();
-            boolean hasUserKey = new JsonParser().parse(payload).getAsJsonObject().has(USER_KEY_FIELD_NAME);
+            boolean hasUserKey = hasPayloadField(payload, USER_KEY_FIELD_NAME);
 
             assertTrue("field " + USER_KEY_FIELD_NAME + " found in request payload: " + payload, !hasUserKey);
 

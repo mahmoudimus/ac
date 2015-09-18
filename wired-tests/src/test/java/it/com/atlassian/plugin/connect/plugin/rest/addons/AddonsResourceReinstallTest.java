@@ -12,9 +12,9 @@ import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.features.DarkFeatureManager;
-import com.google.gson.JsonParser;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import it.com.atlassian.plugin.connect.util.request.RequestUtil;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -110,7 +110,10 @@ public class AddonsResourceReinstallTest
         }
     }
 
-    private String getSharedSecret(final String installPayload) {return new JsonParser().parse(installPayload).getAsJsonObject().get(SHARED_SECRET_FIELD_NAME).getAsString();}
+    private String getSharedSecret(final String installPayload) throws IOException
+    {
+        return new ObjectMapper().readTree(installPayload).path(SHARED_SECRET_FIELD_NAME).asText();
+    }
 
     private RequestUtil.Response getAddonByKey(String addonKey) throws IOException
     {
