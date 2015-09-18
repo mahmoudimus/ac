@@ -146,11 +146,6 @@
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
-                                    <groupId>com.atlassian.crowd</groupId>
-                                    <artifactId>user-provisioning-plugin</artifactId>
-                                    <version>${atlassian.user.provisioning.version}</version>
-                                </pluginArtifact>
-                                <pluginArtifact>
                                     <groupId>com.atlassian.webhooks</groupId>
                                     <artifactId>atlassian-webhooks-plugin</artifactId>
                                     <version>${atlassian.webhooks.version}</version>

@@ -624,12 +624,6 @@
                 <version>${atlassian.crowd.version}</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency>
-                <groupId>com.atlassian.crowd</groupId>
-                <artifactId>user-provisioning-plugin</artifactId>
-                <version>${atlassian.user.provisioning.version}</version>
-                <scope>provided</scope>
-            </dependency>
 
             <dependency>
                 <groupId>com.atlassian.event</groupId>
