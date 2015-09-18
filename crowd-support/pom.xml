@@ -85,7 +85,22 @@
             <artifactId>user-provisioning-plugin</artifactId>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>${commons.httpclient.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -114,5 +129,10 @@
         <version>${atlassian.plugins.version}</version>
         <scope>test</scope>
     </dependency>
+        <dependency>
+            <groupId>com.atlassian.applinks</groupId>
+            <artifactId>applinks-api</artifactId>
+            <version>${applinks.api.version}</version>
+        </dependency>
     </dependencies>
 </project>

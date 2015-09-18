@@ -792,6 +792,7 @@
         <atlassian.jwt.version>1.2.2</atlassian.jwt.version>
         <atlassian.json.schema.validator.version>1.0.4</atlassian.json.schema.validator.version>
         <atlassian.plugins.version>4.0.0-m020</atlassian.plugins.version>
+        <applinks.api.version>5.0.0</applinks.api.version>
         <atlassian.rest.version>2.9.13</atlassian.rest.version>
         <atlassian.sal.version>2.10.0</atlassian.sal.version>
         <atlassian.selenium.version>2.2.1-m01-jira-1</atlassian.selenium.version>
