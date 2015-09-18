@@ -22,6 +22,8 @@ import com.atlassian.usermanagement.client.api.exception.UserManagementException
 
 import org.apache.commons.httpclient.Cookie;
 import org.apache.http.entity.StringEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.atlassian.fugue.Iterables.first;
@@ -32,6 +34,8 @@ import static com.atlassian.sal.api.net.Request.MethodType.PUT;
 public class ConnectCrowdPermissionsClientImpl
         implements ConnectCrowdPermissionsClient
 {
+    private static final Logger log = LoggerFactory.getLogger(ConnectCrowdPermissionsClientImpl.class);
+
     private final ApplicationLinkService applicationLinkService;
     private final CrowdClientProvider crowdClientProvider;
 
@@ -54,6 +58,7 @@ public class ConnectCrowdPermissionsClientImpl
         }
         catch (CredentialsRequiredException | UserManagementException | ResponseException e)
         {
+            log.warn("Could not grant remote admin permission to the group " + groupName + "due to the following exception", e);
             return false;
         }
         return true;
