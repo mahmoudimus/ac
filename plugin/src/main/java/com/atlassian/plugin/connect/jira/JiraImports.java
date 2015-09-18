@@ -1,8 +1,12 @@
 package com.atlassian.plugin.connect.jira;
 
+import javax.inject.Inject;
+
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.gadgets.dashboard.spi.DashboardPermissionService;
+import com.atlassian.jira.application.ApplicationAuthorizationService;
+import com.atlassian.jira.application.ApplicationRoleManager;
 import com.atlassian.jira.bc.dashboard.DashboardItemPropertyService;
 import com.atlassian.jira.bc.issue.attachment.AttachmentService;
 import com.atlassian.jira.bc.issue.comment.property.CommentPropertyService;
@@ -16,6 +20,7 @@ import com.atlassian.jira.bc.project.property.ProjectPropertyService;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
 import com.atlassian.jira.bc.subtask.conversion.IssueToSubTaskConversionService;
 import com.atlassian.jira.bc.subtask.conversion.SubTaskToIssueConversionService;
+import com.atlassian.jira.bc.user.UserPropertyService;
 import com.atlassian.jira.config.FeatureManager;
 import com.atlassian.jira.config.IssueTypeService;
 import com.atlassian.jira.config.SubTaskManager;
@@ -48,8 +53,6 @@ import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.imports.JiraImport;
 import com.atlassian.plugin.web.WebFragmentHelper;
 
-import javax.inject.Inject;
-
 /**
  * This class does nothing but is here to centralize the JIRA component imports.
  * This is so we have a single place to put the annotations instead of scattering them around the entire project
@@ -72,6 +75,8 @@ public class JiraImports
             @JiraImport JiraBaseUrls jiraBaseUrls,
             @JiraImport JiraLicenseService licenseService,
             @JiraImport ("jiraPermissionManager") PermissionManager jiraPermissionManager,
+            @JiraImport ApplicationAuthorizationService applicationAuthorizationService,
+            @JiraImport ApplicationRoleManager applicationRoleManager,
             @JiraImport PermissionSchemeManager permissionSchemeManager,
             @JiraImport ProjectComponentManager projectComponentManager,
             @JiraImport ProjectRoleManager projectRoleManager,
@@ -85,6 +90,7 @@ public class JiraImports
             @JiraImport TimeZoneService timeZoneService,
             @JiraImport UserIssueHistoryManager userIssueHistoryManager,
             @JiraImport UserPreferencesManager userPreferencesManager,
+            @JiraImport UserPropertyService userPropertyService,
             @JiraImport ("jiraUserManager") UserManager userManager,
             @JiraImport UserUtil userUtil,
             @JiraImport VelocityRequestContextFactory velocityRequestContextFactory,

@@ -1,9 +1,7 @@
 package it.com.atlassian.plugin.connect.jira.usermanagement;
 
 import com.atlassian.jira.bc.project.ProjectService;
-import com.atlassian.jira.bc.project.ProjectService.CreateProjectValidationResult;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
-import com.atlassian.jira.compatibility.bridge.project.ProjectCreationData;
 import com.atlassian.jira.compatibility.bridge.project.ProjectServiceBridge;
 import com.atlassian.jira.permission.Permission;
 import com.atlassian.jira.project.Project;
@@ -11,15 +9,16 @@ import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import it.com.atlassian.plugin.connect.jira.util.JiraTestUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -41,7 +40,7 @@ public abstract class AbstractJiraPermissionScopeTest
     private static String ADDON_KEY = "project-admin-ADDON"; // Use uppercase characters to detect username vs userkey issues
     private static final String INSTALLED = "/installed";
 
-    private final ConnectAddOnUserService connectAddOnUserService;
+    private final ConnectUserService connectUserService;
     private final PermissionManager permissionManager;
     private final ProjectService projectService;
     private final ProjectServiceBridge projectServiceBridge;
@@ -49,6 +48,7 @@ public abstract class AbstractJiraPermissionScopeTest
     private final UserManager userManager;
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
+    protected final JiraTestUtil jiraTestUtil;
 
     private ConnectAddonBean adminAddOn;
     private ConnectAddonBean projectAdminAddOn;
@@ -56,12 +56,17 @@ public abstract class AbstractJiraPermissionScopeTest
     private ConnectAddonBean writeAddOn;
     private ConnectAddonBean readAddOn;
 
-    public AbstractJiraPermissionScopeTest(ConnectAddOnUserService connectAddOnUserService,
-                                                  PermissionManager permissionManager, ProjectService projectService, ProjectServiceBridge projectServiceBridge,
-                                                  ProjectRoleService projectRoleService, UserManager userManager,
-                                                  TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
+    public AbstractJiraPermissionScopeTest(ConnectUserService connectUserService,
+                                           PermissionManager permissionManager,
+                                           ProjectService projectService,
+                                           ProjectServiceBridge projectServiceBridge,
+                                           ProjectRoleService projectRoleService,
+                                           UserManager userManager,
+                                           TestPluginInstaller testPluginInstaller,
+                                           TestAuthenticator testAuthenticator,
+                                           JiraTestUtil jiraTestUtil)
     {
-        this.connectAddOnUserService = connectAddOnUserService;
+        this.connectUserService = connectUserService;
         this.permissionManager = permissionManager;
         this.projectService = projectService;
         this.projectServiceBridge = projectServiceBridge;
@@ -69,6 +74,7 @@ public abstract class AbstractJiraPermissionScopeTest
         this.userManager = userManager;
         this.testPluginInstaller = testPluginInstaller;
         this.testAuthenticator = testAuthenticator;
+        this.jiraTestUtil = jiraTestUtil;
     }
 
     @Before
@@ -149,9 +155,9 @@ public abstract class AbstractJiraPermissionScopeTest
         return readAddOn;
     }
 
-    public ConnectAddOnUserService getConnectAddOnUserService()
+    public ConnectUserService getConnectUserService()
     {
-        return connectAddOnUserService;
+        return connectUserService;
     }
 
     public PermissionManager getPermissionManager()
@@ -250,11 +256,11 @@ public abstract class AbstractJiraPermissionScopeTest
             boolean hasPermission = permissionManager.hasPermission(permission.getId(), project, addonUser, false);
             if (!hasPermission && permissionMustExist)
             {
-                projectAdminErrors.add("Add-on user " + addonUser.getKey() + " should have '"+ permission +"' permission for project " + project.getKey());
+                projectAdminErrors.add("Add-on user " + addonUser.getKey() + " should have '" + permission + "' permission for project " + project.getKey());
             }
             else if (hasPermission && !permissionMustExist)
             {
-                projectAdminErrors.add("Add-on user " + addonUser.getKey() + " should not have '"+ permission +"' permission for project " + project.getKey());
+                projectAdminErrors.add("Add-on user " + addonUser.getKey() + " should not have '" + permission + "' permission for project " + project.getKey());
             }
         }
         return projectAdminErrors;
@@ -271,7 +277,7 @@ public abstract class AbstractJiraPermissionScopeTest
             }
             plugin = testPluginInstaller.installAddon(to);
 
-            Project project = createJediProject();
+            Project project = jiraTestUtil.createProject();
             ApplicationUser addonUser = getAddOnUser();
 
             boolean hasPermission = permissionManager.hasPermission(permission.getId(), project, addonUser, false);
@@ -282,50 +288,24 @@ public abstract class AbstractJiraPermissionScopeTest
             }
             else
             {
-                assertFalse("Add-on user " + addonUser.getName() + " should not have '"+ permission +"'  permission for project " + PROJECT_KEY, hasPermission);
+                assertFalse("Add-on user " + addonUser.getName() + " should not have '" + permission + "'  permission for project " + PROJECT_KEY, hasPermission);
             }
         }
         finally
         {
             uninstallPlugin(plugin);
-            deleteJediProject();
         }
     }
 
     private String getAddOnUserName() throws ConnectAddOnUserInitException
     {
-        return connectAddOnUserService.getOrCreateUserKey(ADDON_KEY, "It's a PROJECT_ADMIN-scoped add-on for tests!");
+        return connectUserService.getOrCreateAddOnUserName(ADDON_KEY, "It's a PROJECT_ADMIN-scoped add-on for tests!");
     }
 
     protected ApplicationUser getAddOnUser() throws ConnectAddOnUserInitException
     {
         String addonUserName = getAddOnUserName();
         return userManager.getUserByName(addonUserName);
-    }
-
-    protected Project createJediProject()
-    {
-        ApplicationUser admin = userManager.getUserByKey(ADMIN);
-        ProjectCreationData projectCreationData = new ProjectCreationData.Builder()
-                .withName("Knights of the Old Republic")
-                .withKey(PROJECT_KEY)
-                .withLead(admin)
-                .withDescription("It's a trap!")
-                .build();
-
-        CreateProjectValidationResult result = projectServiceBridge.validateCreateProject(admin, projectCreationData);
-        return projectService.createProject(result);
-    }
-
-    protected void deleteJediProject()
-    {
-        ApplicationUser admin = userManager.getUserByKey(ADMIN);
-        ProjectService.DeleteProjectValidationResult result = projectService.validateDeleteProject(admin, PROJECT_KEY);
-
-        if(result.isValid())
-        {
-            projectService.deleteProject(admin, result);
-        }
     }
 
     protected void uninstallPlugin(Plugin plugin) throws IOException

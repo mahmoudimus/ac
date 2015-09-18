@@ -6,11 +6,13 @@ import com.atlassian.jira.compatibility.bridge.project.ProjectServiceBridge;
 import com.atlassian.jira.permission.Permission;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.user.util.UserManager;
-import com.atlassian.plugin.connect.plugin.usermanagement.ConnectAddOnUserService;
+import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
+
+import it.com.atlassian.plugin.connect.jira.util.JiraTestUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -18,12 +20,26 @@ import org.junit.runner.RunWith;
 @RunWith(AtlassianPluginsTestRunner.class)
 public class JiraPermissionScopeInstallTest extends AbstractJiraPermissionScopeTest
 {
-    public JiraPermissionScopeInstallTest(ConnectAddOnUserService connectAddOnUserService,
-                                          PermissionManager permissionManager, ProjectService projectService, ProjectServiceBridge projectServiceBridge,
-                                          ProjectRoleService projectRoleService, UserManager userManager,
-                                          TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
+
+    public JiraPermissionScopeInstallTest(ConnectUserService connectUserService,
+                                          PermissionManager permissionManager,
+                                          ProjectService projectService,
+                                          ProjectServiceBridge projectServiceBridge,
+                                          ProjectRoleService projectRoleService,
+                                          UserManager userManager,
+                                          TestPluginInstaller testPluginInstaller,
+                                          TestAuthenticator testAuthenticator,
+                                          JiraTestUtil jiraTestUtil)
     {
-       super(connectAddOnUserService, permissionManager, projectService, projectServiceBridge, projectRoleService, userManager, testPluginInstaller, testAuthenticator);
+        super(connectUserService,
+                permissionManager,
+                projectService,
+                projectServiceBridge,
+                projectRoleService,
+                userManager,
+                testPluginInstaller,
+                testAuthenticator,
+                jiraTestUtil);
     }
 
     @Test
@@ -77,12 +93,12 @@ public class JiraPermissionScopeInstallTest extends AbstractJiraPermissionScopeT
     @Test
     public void addonCannotEditIssuesInExistingProjects() throws Exception
     {
-        checkHasNoPermissionForAnyProjectAfterInstall(getReadAddOn(), Permission.EDIT_ISSUE);
+        checkHasPermissionForAllProjectsAfterInstall(getReadAddOn(), Permission.EDIT_ISSUE);
     }
 
     @Test
     public void addonCannotEditIssueInNewProject() throws Exception
     {
-        checkHasNoPermissionForNewProjectAfterInstall(getReadAddOn(), Permission.EDIT_ISSUE);
+        checkHasPermissionForNewProjectAfterInstall(getReadAddOn(), Permission.EDIT_ISSUE);
     }
 }

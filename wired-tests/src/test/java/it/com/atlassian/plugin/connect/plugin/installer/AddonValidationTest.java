@@ -180,16 +180,6 @@ public class AddonValidationTest
     }
 
     @Test
-    public void testOAuthAuthenticationWithNoTls() throws Exception
-    {
-        ConnectAddonBean bean = testBeanBuilderWithAuth(AuthenticationType.OAUTH)
-                .withBaseurl("http://example.com/no-tls")
-                .build();
-
-        installExpectingUpmErrorCode(bean, "connect.install.error.base_url.no_tls");
-    }
-
-    @Test
     public void testWebhookRequiringReadScopeWithNoReadScope() throws Exception
     {
         ConnectAddonBean bean = testBeanBuilderWithAuth(AuthenticationType.NONE)
@@ -267,12 +257,6 @@ public class AddonValidationTest
                 .withBaseurl("example.com")
                 .build();
         installExpectingUpmErrorCode(bean, "connect.install.error.base_url.no_scheme");
-    }
-
-    @Test
-    public void testOAuthAuthenticationWithSchemelessBaseUrl() throws Exception
-    {
-        installExpectingUpmErrorCode(testBeanBuilderWithAuth(AuthenticationType.OAUTH).withBaseurl("example.com").build(), "connect.install.error.base_url.no_scheme");
     }
 
     @Test

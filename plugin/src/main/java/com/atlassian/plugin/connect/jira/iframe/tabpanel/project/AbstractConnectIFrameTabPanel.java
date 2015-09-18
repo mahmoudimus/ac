@@ -1,9 +1,11 @@
 package com.atlassian.plugin.connect.jira.iframe.tabpanel.project;
 
+import com.atlassian.jira.compatibility.bridge.project.browse.BrowseContextHelperBridge;
 import com.atlassian.jira.plugin.TabPanelModuleDescriptor;
 import com.atlassian.jira.plugin.browsepanel.TabPanel;
 import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
 import com.atlassian.jira.project.browse.BrowseContext;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.web.ExecutingHttpRequest;
 import com.atlassian.plugin.connect.api.iframe.context.ModuleContextFilter;
 import com.atlassian.plugin.connect.api.iframe.context.ModuleContextParameters;
@@ -15,7 +17,7 @@ import com.google.common.collect.Maps;
 import java.util.Map;
 
 import static com.atlassian.jira.plugin.webfragment.JiraWebInterfaceManager.CONTEXT_KEY_HELPER;
-import static com.atlassian.jira.plugin.webfragment.JiraWebInterfaceManager.CONTEXT_KEY_USER;
+import static com.atlassian.jira.plugin.webfragment.JiraWebInterfaceManager.CONTEXT_KEY_USERNAME;
 import static com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyUtil.renderToString;
 import static com.atlassian.plugin.connect.spi.iframe.webpanel.WebFragmentModuleContextExtractor.MODULE_CONTEXT_KEY;
 
@@ -26,11 +28,13 @@ public abstract class AbstractConnectIFrameTabPanel<D extends TabPanelModuleDesc
 {
     private final IFrameRenderStrategy iFrameRenderStrategy;
     private final ModuleContextFilter moduleContextFilter;
+    private final BrowseContextHelperBridge browseContextHelper;
 
-    protected AbstractConnectIFrameTabPanel(IFrameRenderStrategy iFrameRenderStrategy, ModuleContextFilter moduleContextFilter)
+    protected AbstractConnectIFrameTabPanel(IFrameRenderStrategy iFrameRenderStrategy, ModuleContextFilter moduleContextFilter, BrowseContextHelperBridge browseContextHelper)
     {
         this.iFrameRenderStrategy = iFrameRenderStrategy;
         this.moduleContextFilter = moduleContextFilter;
+        this.browseContextHelper = browseContextHelper;
     }
 
     @Override
@@ -73,9 +77,10 @@ public abstract class AbstractConnectIFrameTabPanel<D extends TabPanelModuleDesc
     {
         JiraHelper helper = new JiraHelper(ExecutingHttpRequest.get(), ctx.getProject(), ctx.createParameterMap());
         conditionContext.put(CONTEXT_KEY_HELPER, helper);
-        if (ctx.getUser() != null)
+        ApplicationUser user = browseContextHelper.getUser(ctx);
+        if (user != null)
         {
-            conditionContext.put(CONTEXT_KEY_USER, ctx.getUser());
+            conditionContext.put(CONTEXT_KEY_USERNAME, user.getUsername());
         }
         conditionContext.put(MODULE_CONTEXT_KEY, createUnfilteredContext(ctx));
     }

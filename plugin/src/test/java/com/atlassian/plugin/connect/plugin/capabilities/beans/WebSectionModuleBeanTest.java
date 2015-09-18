@@ -84,8 +84,7 @@ public class WebSectionModuleBeanTest
                 .withModules("webSections", webSectionBeans)
                 .withAuthentication(
                         newAuthenticationBean()
-                                .withType(AuthenticationType.OAUTH)
-                                .withPublicKey("S0m3Publ1cK3y").build());
+                                .withType(AuthenticationType.JWT).build());
     }
 
     private WebSectionModuleBeanBuilder createWebSectionBeanBuilder()

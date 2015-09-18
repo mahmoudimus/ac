@@ -1,9 +1,5 @@
 package it.jira;
 
-import java.rmi.RemoteException;
-import java.util.Locale;
-import java.util.concurrent.Callable;
-
 import com.atlassian.jira.pageobjects.JiraTestedProduct;
 import com.atlassian.jira.pageobjects.pages.AddPermissionPage;
 import com.atlassian.jira.pageobjects.pages.EditPermissionsPage;
@@ -14,16 +10,18 @@ import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.plugin.connect.test.pageobjects.jira.workflow.ExtendedViewWorkflowTransitionPage;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
-
+import it.util.ConnectTestUserFactory;
+import it.util.JiraTestUserFactory;
+import it.util.TestProject;
+import it.util.TestUser;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 
-import it.util.ConnectTestUserFactory;
-import it.util.JiraTestUserFactory;
-import it.util.TestProject;
-import it.util.TestUser;
+import java.rmi.RemoteException;
+import java.util.Locale;
+import java.util.concurrent.Callable;
 
 public class JiraWebDriverTestBase
 {
@@ -54,10 +52,7 @@ public class JiraWebDriverTestBase
 
         product.getPageBinder().override(ViewWorkflowTransitionPage.class, ExtendedViewWorkflowTransitionPage.class);
 
-
-        String projectKey = RandomStringUtils.randomAlphabetic(4).toUpperCase(Locale.US);
-        String projectId = String.valueOf(product.backdoor().project().addProject("Test project " + projectKey, projectKey, "admin"));
-        project = new TestProject(projectKey, projectId);
+        project = JiraTestBase.addProject();
     }
 
     @AfterClass

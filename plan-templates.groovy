@@ -14,15 +14,14 @@ plan(
             manual: 'true'
     ) {
         job(
-                key: 'VTM',
-                name: 'Version, tag and merge',
-                description: 'Sets new pom versions, git-tags, merges to master, pushes to master and develop'
+                key: 'REL',
+                name: 'Merge and increment version'
         ) {
             maven32Requirement()
             checkoutDefaultRepositoryTask()
             task(
                     type: 'script',
-                    description: 'Merge to Master and Update Development Version',
+                    description: 'Merge to master and increment POM versions on develop',
                     script: 'bin/advance_versions_and_tag.sh'
             )
         }
@@ -60,17 +59,13 @@ plan(
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest Confluence SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
-            productVersion: '5.9.0-SNAPSHOT',
-    )
-    variable(
-            key: 'bamboo.product.data.version',
-            value: '5.8-m56'
+            productVersion: '5.9.1-SNAPSHOT',
     )
     stage(
             name: 'Run Tests'
     ) {
         testJobsForConfluence(
-                mavenProductParameters: '-Datlassian.confluence.version=${bamboo_product_version} -Datlassian.confluence.productDataVersion=${bamboo_product_data_version}'
+                mavenProductParameters: '-Datlassian.confluence.version=${bamboo_product_version}'
         )
     }
 }
@@ -82,17 +77,31 @@ plan(
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest JIRA SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
-            productVersion: '7.0.0-SNAPSHOT',
-    )
-    variable(
-            key: 'bamboo.jira.testkit.version',
-            value: '7.0.40'
+            productVersion: '7.0.0-DA-SNAPSHOT',
     )
     stage(
             name: 'Run Tests'
     ) {
         testJobsForJIRA(
-                mavenProductParameters: '-Datlassian.jira.version=${bamboo_product_version} -Datlassian.jira.testkit.version=${bamboo_jira_testkit_version}'
+                mavenProductParameters: '-Datlassian.jira.version=${bamboo_product_version}'
+        )
+    }
+}
+
+plan(
+        projectKey: 'CONNECT',
+        key: 'CJMR',
+        name: 'Cloud Plugin - SNAPSHOT JIRA - Renaissance',
+        description: 'Tests the develop branch of atlassian-connect-plugin against the latest JIRA SNAPSHOT version'
+) {
+    productSnapshotPlanConfiguration(
+            productVersion: '7.0.0-DA-SNAPSHOT',
+    )
+    stage(
+            name: 'Run Tests'
+    ) {
+        testJobsForJIRA(
+                mavenProductParameters: '-Datlassian.jira.version=${bamboo_product_version} -Djvmargs="-Datlassian.darkfeature.com.atlassian.jira.config.CoreFeatures.LICENSE_ROLES_ENABLED=true"'
         )
     }
 }

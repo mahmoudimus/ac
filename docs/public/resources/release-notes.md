@@ -33,6 +33,21 @@ or Confluence Cloud with Atlassian Connect as follows:
     <span data-include="../assets/includes/runproduct-vagrant.html">Loading...</span>
 </div>
 
+## [1.1.52](../release-notes/1-1-0.html#1.1.52)
+* Reduce required scope for JIRA project properties to WRITE [AC-1686](https://ecosystem.atlassian.net/browse/AC-1686)
+
+## [1.1.48](../release-notes/1-1-0.html#1.1.48)
+* JIRA: Whitelist REST API endpoint for unassigning epic from issues [ACJIRA-542](https://ecosystem.atlassian.net/browse/ACJIRA-542)
+
+## [1.1.47](../release-notes/1-1-0.html#1.1.47)
+* Remove OAuth 1.0 as an authentication type in the descriptor [AC-1688](https://ecosystem.atlassian.net/browse/AC-1688)
+
+## [1.1.42](../release-notes/1-1-0.html#1.1.42)
+* JIRA: Whitelist REST API for JIRA Agile [ACJIRA-491](https://ecosystem.atlassian.net/browse/ACJIRA-491)
+
+## [1.1.41](../release-notes/1-1-0.html#1.1.41)
+* JIRA: Fix issue and project permission conditions [AC-1666](https://ecosystem.atlassian.net/browse/AC-1666)
+
 ## [1.1.37](../release-notes/1-1-0.html#1.1.37)
 * JIRA: Added ability to open Create Issue Dialog from the addon [ACJIRA-113](https://ecosystem.atlassian.net/browse/ACJIRA-113)
 * JIRA: Added API to check if user is allowed to modify the dashboard [ACJIRA-436](https://ecosystem.atlassian.net/browse/ACJIRA-436)

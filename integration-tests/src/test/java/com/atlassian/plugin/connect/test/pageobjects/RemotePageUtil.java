@@ -1,12 +1,15 @@
 package com.atlassian.plugin.connect.test.pageobjects;
 
+import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.webdriver.AtlassianWebDriver;
 import com.google.common.base.Function;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +19,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import org.apache.commons.lang3.StringUtils;
 
 import static com.google.common.collect.Maps.newHashMap;
 
@@ -116,6 +118,29 @@ public class RemotePageUtil
     public static <T> T findInContextHelper(final String src, final Function<List<NameValuePair>, T> function)
     {
         return function.apply(URLEncodedUtils.parse(URI.create(src), "UTF-8"));
+    }
+
+    /**
+     * Attempts to click the given link. If an error occurs, attempt to follow the link using the keyboard.
+     *
+     * Hack added to recover from the following exception, thrown consistently upon the second click on a navigation bar
+     * web item in Firefox.
+     *
+     * UnknownServerException: Component returned failure code: 0x80004005 (NS_ERROR_FAILURE) [nsIDOMWindowUtils.sendMouseEventToWindow]
+     *
+     * @param link the link to follow
+     */
+    public static void clickAddonLinkWithKeyboardFallback(PageElement link)
+    {
+        try
+        {
+            link.click();
+        }
+        catch (WebDriverException e)
+        {
+            log.debug("Tried to click the link '{}' but got '{}', resorted to keyboard interaction.", link, e);
+            link.type("\r");
+        }
     }
 
     private final static Function<List<NameValuePair>, Map<String, String>> FIND_ALL_IN_CONTEXT_FUNCTION = new Function<List<NameValuePair>, Map<String, String>>()

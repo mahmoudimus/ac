@@ -77,7 +77,7 @@ public class ConnectProjectAdminTabPanelModuleBeanTest
                         .withWeight(100)
                         .withLocation("a-location")
                         .build())
-                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.OAUTH).withPublicKey("S0m3Publ1cK3y").build())
+                .withAuthentication(newAuthenticationBean().withType(AuthenticationType.JWT).build())
                 .build();
     }
 
