@@ -34,12 +34,13 @@ var plugins = {
     'jwt-plugin': 'com.atlassian.jwt:jwt-plugin',
     'json-schema-validator-atlassian-bundle': 'com.atlassian.bundles:json-schema-validator-atlassian-bundle',
     'atlassian-universal-plugin-manager-plugin': 'com.atlassian.upm:atlassian-universal-plugin-manager-plugin',
-    'atlassian-webhooks-plugin': 'com.atlassian.webhooks:atlassian-webhooks-plugin'
+    'atlassian-webhooks-plugin': 'com.atlassian.webhooks:atlassian-webhooks-plugin',
+    'user-provisioning-plugin': 'com.atlassian.crowd:user-provisioning-plugin'
 };
 
 var connectPlugin = 'com.atlassian.plugins:atlassian-connect-plugin';
 var baseCommand = 'atlas-run-standalone --product {{product}} ' +
-    '--version {{productVersion}} --bundled-plugins {{bundledPlugins}} ' +
+    '--version {{productVersion}} --data-version {{dataVersion}} --bundled-plugins {{bundledPlugins}} ' +
     '--jvmargs -Datlassian.upm.on.demand=true';
 
 var versionOverrides = {
@@ -169,6 +170,7 @@ function createProductRunCommand(product, env) {
     return baseCommand
         .replace('{{product}}', product)
         .replace('{{productVersion}}', versions[env][product])
+        .replace('{{dataVersion}}', versions[env][product])
         .replace('{{bundledPlugins}}', bundledPlugins[env][product].join(',') + ',' + connectPlugin + ':' + versions[env].connect);
 }
 
