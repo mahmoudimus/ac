@@ -1,5 +1,14 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedTransferQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TransferQueue;
+
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
@@ -18,21 +27,13 @@ import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedTransferQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TransferQueue;
 
 /**
  * This implementation seeks to encapsulate workarounds for:
@@ -229,6 +230,12 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
         {
             return remote.ensureGroupExists(groupName);
         }
+        else if (isJira() && isOnDemand())
+        {
+            boolean eCreated = embedded.ensureGroupExists(groupName);
+            boolean rCreated = remote.ensureGroupExists(groupName);
+            return eCreated || rCreated;
+        }
         else
         {
             return embedded.ensureGroupExists(groupName);
@@ -288,6 +295,11 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
     private boolean isConfluence()
     {
         return hostProperties.getKey().equalsIgnoreCase("confluence");
+    }
+
+    private boolean isJira()
+    {
+        return hostProperties.getKey().equalsIgnoreCase("jira");
     }
 
 }
