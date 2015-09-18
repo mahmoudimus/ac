@@ -52,8 +52,8 @@ public class ConnectCrowdPermissionsClientImpl
     {
         try
         {
-            executeAsSysadmin(POST, "/admin/rest/um/1/accessconfig/group?productId=product:jira:jira", "[\"atlassian-addons-admin\"]");
-            executeAsSysadmin(PUT, "/admin/rest/um/1/accessconfig/group?hostId=jira&productId=product:jira:jira", "{name: \"atlassian-addons-admin\", use: \"NONE\", admin: \"DIRECT\", defaultUse: false}");
+            executeAsSysadmin(POST, "/rest/um/1/accessconfig/group?productId=product%3Ajira%3Ajira", "[\"atlassian-addons-admin\"]");
+            executeAsSysadmin(PUT, "/rest/um/1/accessconfig/group?hostId=jira&productId=product%3Ajira%3Ajira", "{name: \"atlassian-addons-admin\", use: \"NONE\", admin: \"DIRECT\", defaultUse: false}");
         }
         catch (InactiveAccountException
                 | ApplicationPermissionException
@@ -69,7 +69,7 @@ public class ConnectCrowdPermissionsClientImpl
         return true;
     }
 
-    private String executeAsSysadmin(Request.MethodType methodType, String url, String JSONString)
+    private String executeAsSysadmin(Request.MethodType methodType, String url, String jsonString)
             throws CredentialsRequiredException, ResponseException, ApplicationPermissionException, InactiveAccountException, ApplicationAccessDeniedException, OperationFailedException, InvalidAuthenticationException
     {
         Option<ApplicationLink> possibleCrowd = first(applicationLinkService.getApplicationLinks(CrowdApplicationType.class));
@@ -81,7 +81,7 @@ public class ConnectCrowdPermissionsClientImpl
         ApplicationLinkRequest request = crowd.createAuthenticatedRequestFactory().createRequest(methodType, url);
         request.addHeader("Cookie", generateSysadminCookie(crowd.getDisplayUrl().getHost()).toExternalForm());
         request.addHeader("Content-Type", "application/json");
-        request.setEntity(new StringEntity(JSONString, "UTF-8"));
+        request.setEntity(new StringEntity(jsonString, "UTF-8"));
         return request.execute();
     }
 
