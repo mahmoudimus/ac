@@ -64,7 +64,8 @@ public class TestConfigurePage extends AbstractPageTestBase
 
         try
         {
-            final PluginManagerPage upm = loginAndVisit(testUserFactory.admin(), PluginManagerPage.class);
+            login(testUserFactory.admin());
+            final PluginManagerPage upm = product.visit(PluginManagerPage.class);
 
             upm.clickConfigurePluginButton(anotherPlugin.getAddon().getKey(), "page");
             product.getPageBinder().bind(ConnectAddOnEmbeddedTestPage.class, anotherPlugin.getAddon().getKey(), "page", true); // will throw if it fails to load
