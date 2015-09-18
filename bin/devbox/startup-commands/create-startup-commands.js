@@ -34,8 +34,7 @@ var plugins = {
     'jwt-plugin': 'com.atlassian.jwt:jwt-plugin',
     'json-schema-validator-atlassian-bundle': 'com.atlassian.bundles:json-schema-validator-atlassian-bundle',
     'atlassian-universal-plugin-manager-plugin': 'com.atlassian.upm:atlassian-universal-plugin-manager-plugin',
-    'atlassian-webhooks-plugin': 'com.atlassian.webhooks:atlassian-webhooks-plugin',
-    'user-provisioning-plugin': 'com.atlassian.crowd:user-provisioning-plugin'
+    'atlassian-webhooks-plugin': 'com.atlassian.webhooks:atlassian-webhooks-plugin'
 };
 
 var connectPlugin = 'com.atlassian.plugins:atlassian-connect-plugin';
