@@ -1,5 +1,6 @@
 package it.common.lifecycle;
 
+import com.atlassian.plugin.connect.modules.beans.GeneralPageModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -50,6 +51,7 @@ public class TestUpgrade
                                 .withUrl("/pg")
                                 .withWeight(1234)
                                 .build())
+                .addModuleMeta(new GeneralPageModuleMeta())
                 .addRoute("/pg", ConnectAppServlets.helloWorldServlet());
         plugin0.start().stopAndUninstall();
         plugin0 = null;
@@ -65,6 +67,7 @@ public class TestUpgrade
                                 .withUrl("/pg")
                                 .withWeight(1234)
                                 .build())
+                .addModuleMeta(new GeneralPageModuleMeta())
                 .addRoute("/pg", ConnectAppServlets.helloWorldServlet());
         plugin1.start();
 

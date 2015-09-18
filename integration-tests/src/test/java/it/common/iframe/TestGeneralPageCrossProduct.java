@@ -1,6 +1,7 @@
 package it.common.iframe;
 
 import com.atlassian.pageobjects.page.HomePage;
+import com.atlassian.plugin.connect.modules.beans.GeneralPageModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
@@ -68,6 +69,7 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
                                 .withUrl("/fsg")
                                 .withLocation(getGloballyVisibleLocation())
                                 .build())
+                .addModuleMeta(new GeneralPageModuleMeta())
                 .addRoute("/rpg", ConnectAppServlets.apRequestServlet())
                 .addRoute("/ob", ConnectAppServlets.helloWorldServlet())
                 .addRoute("/only" + betty.getDisplayName() + "Condition", new CheckUsernameConditionServlet(betty))

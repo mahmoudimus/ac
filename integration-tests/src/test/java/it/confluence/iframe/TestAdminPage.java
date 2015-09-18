@@ -1,6 +1,7 @@
 package it.confluence.iframe;
 
 import com.atlassian.confluence.pageobjects.page.admin.ConfluenceAdminHomePage;
+import com.atlassian.plugin.connect.modules.beans.AdminPageModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
@@ -55,6 +56,7 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
                                 .withWeight(1234)
                                 .withConditions(toggleableConditionBean())
                                 .build())
+                .addModuleMeta(new AdminPageModuleMeta())
                 .addRoute("/pg", ConnectAppServlets.helloWorldServlet())
                 .start();
     }

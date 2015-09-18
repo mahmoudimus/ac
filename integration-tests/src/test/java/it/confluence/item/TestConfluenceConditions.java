@@ -1,6 +1,8 @@
 package it.confluence.item;
 
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.WebPanelModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
@@ -132,6 +134,8 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
                                                 "?pageId={page.id}&spaceKey={space.key}&spaceId={space.id}").build()
                                 )
                                 .build())
+                .addModuleMeta(new WebItemModuleMeta())
+                .addModuleMeta(new WebPanelModuleMeta())
                 .addRoute(onlyBarneyConditionUrl, new CheckUsernameConditionServlet(barney))
                 .addRoute(onlyBettyConditionUrl, new CheckUsernameConditionServlet(betty))
                 .addRoute(PARAMETER_CAPTURE_CONDITION_URL, PARAMETER_CAPTURING_SERVLET)

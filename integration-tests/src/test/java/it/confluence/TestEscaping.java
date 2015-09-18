@@ -6,6 +6,12 @@ import com.atlassian.confluence.pageobjects.page.space.ViewSpaceSummaryPage;
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.AdminPageModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.GeneralPageModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ProfilePageModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
@@ -119,6 +125,12 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
                                 .withUrl(MODULE_URL)
                                 .build()
                 )
+                .addModuleMeta(new GeneralPageModuleMeta())
+                .addModuleMeta(new WebItemModuleMeta())
+                .addModuleMeta(new AdminPageModuleMeta())
+                .addModuleMeta(new DynamicContentMacroModuleMeta())
+                .addModuleMeta(new ProfilePageModuleMeta())
+                .addModuleMeta(new SpaceToolsTabModuleMeta())
                 .addRoute(MODULE_URL, ConnectAppServlets.helloWorldServlet())
                 .start();
 

@@ -4,6 +4,7 @@ import com.atlassian.jira.pageobjects.dialogs.quickedit.CreateIssueDialog;
 import com.atlassian.jira.pageobjects.elements.GlobalMessage;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.pageobjects.page.HomePage;
+import com.atlassian.plugin.connect.modules.beans.GeneralPageModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
@@ -72,6 +73,7 @@ public class TestJiraIssueCreate extends JiraWebDriverTestBase
                                 .withUrl("/pg?project_id={project.id}&project_key={project.key}")
                                 .withWeight(1234)
                                 .build())
+                .addModuleMeta(new GeneralPageModuleMeta())
                 .addRoute("/pg", ConnectAppServlets.quickCreateIssueServlet())
                 .start();
     }

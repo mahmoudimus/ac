@@ -6,7 +6,9 @@ import com.atlassian.plugin.connect.api.capabilities.descriptor.url.AbsoluteAddO
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.confluence.capabilities.descriptor.macro.StaticContentMacroModuleDescriptorFactory;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleMeta;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
@@ -18,9 +20,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 @ConfluenceComponent
 public class StaticContentMacroModuleProvider extends AbstractContentMacroModuleProvider<StaticContentMacroModuleBean>
 {
-    public static final String DESCRIPTOR_KEY = "staticContentMacros";
-    public static final Class BEAN_CLASS = StaticContentMacroModuleBean.class;
-    
     private final StaticContentMacroModuleDescriptorFactory macroModuleDescriptorFactory;
 
     @Autowired
@@ -32,7 +31,8 @@ public class StaticContentMacroModuleProvider extends AbstractContentMacroModule
                                             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
                                             ConnectAddonI18nManager connectAddonI18nManager)
     {
-        super(webItemModuleDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory, connectAddonI18nManager, BEAN_CLASS);
+        super(webItemModuleDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, 
+                iFrameRenderStrategyBuilderFactory, connectAddonI18nManager);
         this.macroModuleDescriptorFactory = macroModuleDescriptorFactory;
     }
 
@@ -43,20 +43,14 @@ public class StaticContentMacroModuleProvider extends AbstractContentMacroModule
     }
 
     @Override
-    public Class getBeanClass()
-    {
-        return BEAN_CLASS;
-    }
-
-    @Override
-    public String getDescriptorKey()
-    {
-        return DESCRIPTOR_KEY;
-    }
-
-    @Override
     public String getSchemaPrefix()
     {
         return "confluence";
+    }
+
+    @Override
+    public ConnectModuleMeta getMeta()
+    {
+        return new StaticContentMacroModuleMeta();
     }
 }

@@ -10,6 +10,7 @@ import com.atlassian.jwt.exception.JwtUnknownIssuerException;
 import com.atlassian.jwt.exception.JwtVerificationException;
 import com.atlassian.jwt.reader.JwtClaimVerifier;
 import com.atlassian.pageobjects.Page;
+import com.atlassian.plugin.connect.modules.beans.ConfigurePageModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
@@ -77,6 +78,7 @@ public class TestInstallFailure extends MultiProductWebDriverTestBase
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
         .addUninstallLifecycle()
         .addModule("configurePage", pageBeanBuilder.build())
+        .addModuleMeta(new ConfigurePageModuleMeta())
         .addJWT(installUninstallHandler)
         .addRoute(route, ConnectAppServlets.helloWorldServlet())
         .addRoute(ConnectRunner.UNINSTALLED_PATH, installUninstallHandler)

@@ -2,7 +2,9 @@ package it.jira.item;
 
 
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.GeneralPageModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.dialog.DialogOptionsBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -157,6 +159,8 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                         absoluteWebItemWithDialogOptions(false),
                         absoluteWebItemWithDialogOptions(null)
                 )
+                .addModuleMeta(new GeneralPageModuleMeta())
+                .addModuleMeta(new WebItemModuleMeta())
                 .addRoute("/only" + barney.getDisplayName() + "Condition", new CheckUsernameConditionServlet(barney.getUsername()))
                 .addRoute("/only" + betty.getDisplayName() + "Condition", new CheckUsernameConditionServlet(betty.getUsername()))
                 .addRoute("/irwi?issue_id={issue.id}&project_key={project.key}&pid={project.id}", ConnectAppServlets.helloWorldServlet())

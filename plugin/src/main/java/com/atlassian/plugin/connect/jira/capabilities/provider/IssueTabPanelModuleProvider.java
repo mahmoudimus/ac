@@ -8,17 +8,16 @@ import com.atlassian.plugin.connect.jira.capabilities.descriptor.tabpanel.Connec
 import com.atlassian.plugin.connect.jira.capabilities.descriptor.tabpanel.ConnectTabPanelModuleDescriptorFactory;
 import com.atlassian.plugin.connect.jira.iframe.tabpanel.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.jira.iframe.tabpanel.issue.ConnectIFrameIssueTabPanel;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
+import com.atlassian.plugin.connect.modules.beans.IssueTabPanelModuleMeta;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
-import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 public class IssueTabPanelModuleProvider extends ConnectTabPanelModuleProvider
 {
-    public static final String DESCRIPTOR_KEY = "jiraIssueTabPanels";
-
     @Autowired
     public IssueTabPanelModuleProvider(ConnectTabPanelModuleDescriptorFactory descriptorFactory,
                                          IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
@@ -37,14 +36,14 @@ public class IssueTabPanelModuleProvider extends ConnectTabPanelModuleProvider
     }
 
     @Override
-    public String getDescriptorKey()
-    {
-        return DESCRIPTOR_KEY;
-    }
-
-    @Override
     public String getSchemaPrefix()
     {
         return "jira";
+    }
+
+    @Override
+    public ConnectModuleMeta getMeta()
+    {
+        return new IssueTabPanelModuleMeta();
     }
 }

@@ -1,5 +1,6 @@
 package it.common.rest;
 
+import com.atlassian.plugin.connect.modules.beans.GeneralPageModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.rest.license.LicenseDetailsRepresentation;
@@ -45,6 +46,7 @@ public class TestLicenseRestResource extends MultiProductWebDriverTestBase
                             .withName(new I18nProperty("Hello World", null))
                             .withUrl("/hello_world")
                             .build())
+                    .addModuleMeta(new GeneralPageModuleMeta())
                     .addRoute("/hello_world", ConnectAppServlets.helloWorldServlet())
                     .start();
 

@@ -3,7 +3,9 @@ package com.atlassian.plugin.connect.jira.capabilities.provider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.jira.capabilities.descriptor.SearchRequestViewModuleDescriptorFactory;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
+import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleMeta;
 import com.atlassian.plugin.connect.spi.module.provider.AbstractConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
@@ -15,9 +17,6 @@ import java.util.List;
 @JiraComponent
 public class SearchRequestViewModuleProvider extends AbstractConnectModuleProvider<SearchRequestViewModuleBean>
 {
-    public static final String DESCRIPTOR_KEY = "jiraSearchRequestViews";
-    public static final Class BEAN_CLASS = SearchRequestViewModuleBean.class;
-    
     private final SearchRequestViewModuleDescriptorFactory searchRequestViewModuleDescriptorFactory;
 
     @Autowired
@@ -39,22 +38,16 @@ public class SearchRequestViewModuleProvider extends AbstractConnectModuleProvid
 
         return moduleDescriptors;
     }
-    
-    @Override
-    public Class getBeanClass()
-    {
-        return BEAN_CLASS;
-    }
-
-    @Override
-    public String getDescriptorKey()
-    {
-        return DESCRIPTOR_KEY;
-    }
 
     @Override
     public String getSchemaPrefix()
     {
         return "jira";
+    }
+
+    @Override
+    public ConnectModuleMeta getMeta()
+    {
+        return new SearchRequestViewModuleMeta();
     }
 }

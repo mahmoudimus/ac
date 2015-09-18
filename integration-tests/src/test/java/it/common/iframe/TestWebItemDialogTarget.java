@@ -1,6 +1,7 @@
 package it.common.iframe;
 
 import com.atlassian.pageobjects.page.HomePage;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
@@ -57,6 +58,7 @@ public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
                                 .withLocation(getGloballyVisibleLocation())
                                 .build()
                 )
+                .addModuleMeta(new WebItemModuleMeta())
                 .addRoute("/rpd", ConnectAppServlets.dialogServlet())
                 .addRoute("/fsd", ConnectAppServlets.sizeToParentServlet())
                 .start();

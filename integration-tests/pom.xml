@@ -94,6 +94,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.atlassian.upm</groupId>
+            <artifactId>upm-spi</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian</groupId>
             <artifactId>atlassian-test-categories</artifactId>
             <scope>test</scope>

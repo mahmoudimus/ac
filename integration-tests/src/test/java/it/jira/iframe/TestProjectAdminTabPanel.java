@@ -2,6 +2,7 @@ package it.jira.iframe;
 
 import com.atlassian.jira.pageobjects.project.ProjectConfigTabs;
 import com.atlassian.jira.pageobjects.project.summary.ProjectSummaryPageTab;
+import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.jira.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
@@ -68,6 +69,7 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
                                     "?projectKey={project.key}&projectId={project.id}").build()
                         )
                         .build())
+                .addModuleMeta(new ConnectProjectAdminTabPanelModuleMeta())
                 .addRoute("/pct", ConnectAppServlets.apRequestServlet())
                 .addRoute(PARAMETER_CAPTURE_URL, PARAMETER_CAPTURING_SERVLET)
                 .start();

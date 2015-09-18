@@ -2,7 +2,9 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebHookModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.module.provider.AbstractConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
@@ -16,9 +18,6 @@ import java.util.List;
 @Component
 public class WebHookModuleProvider extends AbstractConnectModuleProvider<WebHookModuleBean>
 {
-    public static final String DESCRIPTOR_KEY = "webhooks";
-    public static final Class BEAN_CLASS = WebHookModuleBean.class;
-    
     private ConnectWebHookModuleDescriptorFactory connectWebHookModuleDescriptorFactory;
 
     @Autowired
@@ -50,20 +49,14 @@ public class WebHookModuleProvider extends AbstractConnectModuleProvider<WebHook
     }
 
     @Override
-    public Class getBeanClass()
-    {
-        return BEAN_CLASS;
-    }
-
-    @Override
-    public String getDescriptorKey()
-    {
-        return DESCRIPTOR_KEY;
-    }
-
-    @Override
     public String getSchemaPrefix()
     {
         return "common";
+    }
+
+    @Override
+    public ConnectModuleMeta getMeta()
+    {
+        return new WebItemModuleMeta();
     }
 }

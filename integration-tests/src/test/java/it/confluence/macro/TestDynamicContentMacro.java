@@ -6,6 +6,7 @@ import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.confluence.pageobjects.page.content.EditContentPage;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
@@ -179,6 +180,7 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                         slowMacro,
                         dynamicMacroWithFallback
                 )
+                .addModuleMeta(new DynamicContentMacroModuleMeta())
                 .addRoute(DEFAULT_MACRO_URL, ConnectAppServlets.helloWorldServlet())
                 .addRoute("/render-editor", ConnectAppServlets.macroEditor())
                 .addRoute("/macro-body-editor", ConnectAppServlets.macroBodyEditor(EDITED_MACRO_BODY))

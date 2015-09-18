@@ -5,6 +5,8 @@ import java.net.MalformedURLException;
 import com.atlassian.confluence.pageobjects.component.menu.ConfluenceMenuItem;
 import com.atlassian.confluence.pageobjects.component.menu.ToolsMenu;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.WebSectionModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
@@ -66,6 +68,8 @@ public class TestWebSection extends ConfluenceWebDriverTestBase
                                 .withKey(WEB_SECTION_ID)
                                 .build()
                 )
+                .addModuleMeta(new WebItemModuleMeta())
+                .addModuleMeta(new WebSectionModuleMeta())
                 .start();
     }
 

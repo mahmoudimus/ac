@@ -5,6 +5,7 @@ import cc.plural.jsonij.JSON;
 import cc.plural.jsonij.Value;
 import cc.plural.jsonij.parser.ParserException;
 
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -56,6 +57,7 @@ public final class WebHookTestServlet extends HttpServlet
                         .withUrl(webHookPath)
                         .withEvent(eventId)
                         .build())
+                .addModuleMeta(new WebItemModuleMeta())
                 .addRoute(webHookPath, servlet)
                 .addScope(ScopeName.READ)
                 .addJWT(new WebHookTestServlet()) // different servlet for installed callback so that tests can inspect only the webhooks
@@ -89,6 +91,7 @@ public final class WebHookTestServlet extends HttpServlet
         ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .addInstallLifecycle()
                 .addModule("webItems", randomWebItemBean())
+                .addModuleMeta(new WebItemModuleMeta())
                 .addRoute(ConnectRunner.INSTALLED_PATH, servlet)
                 .start();
 
@@ -115,7 +118,8 @@ public final class WebHookTestServlet extends HttpServlet
         ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .setAuthenticationToNone()
                 .addEnableLifecycle()
-                .addModule("webItems",randomWebItemBean())
+                .addModule("webItems", randomWebItemBean())
+                .addModuleMeta(new WebItemModuleMeta())
                 .addRoute(ConnectRunner.ENABLED_PATH, servlet)
                 .start();
 
@@ -167,7 +171,8 @@ public final class WebHookTestServlet extends HttpServlet
         final WebHookTestServlet servlet = new WebHookTestServlet();
         ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .addUninstallLifecycle()
-                .addModule("webItems",randomWebItemBean())
+                .addModule("webItems", randomWebItemBean())
+                .addModuleMeta(new WebItemModuleMeta())
                 .addRoute(ConnectRunner.UNINSTALLED_PATH, servlet)
                 .start();
 
@@ -197,6 +202,7 @@ public final class WebHookTestServlet extends HttpServlet
                 .addModule("webhooks", newWebHookBean().withEvent(eventId).withUrl(path).build())
                 .addRoute(path, servlet)
                 .addModule("webItems", randomWebItemBean())
+                .addModuleMeta(new WebItemModuleMeta())
                 .addScope(ScopeName.READ) // for receiving web hooks
                 .start();
 

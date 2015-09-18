@@ -3,7 +3,9 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebPanelModuleMeta;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel.WebPanelConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
@@ -20,9 +22,6 @@ import java.util.List;
 @Component
 public class WebPanelModuleProvider extends AbstractConnectModuleProvider<WebPanelModuleBean>
 {
-    public static final String DESCRIPTOR_KEY = "webPanels";
-    public static final Class BEAN_CLASS = WebPanelModuleBean.class;
-    
     private final WebPanelConnectModuleDescriptorFactory webPanelFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
@@ -74,20 +73,14 @@ public class WebPanelModuleProvider extends AbstractConnectModuleProvider<WebPan
     }
 
     @Override
-    public String getDescriptorKey()
-    {
-        return DESCRIPTOR_KEY;
-    }
-
-    @Override
     public String getSchemaPrefix()
     {
         return "common";
     }
 
     @Override
-    public Class getBeanClass()
+    public ConnectModuleMeta getMeta()
     {
-        return BEAN_CLASS;
+        return new WebPanelModuleMeta();
     }
 }

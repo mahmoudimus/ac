@@ -12,6 +12,7 @@ import com.atlassian.jwt.exception.JwtVerificationException;
 import com.atlassian.jwt.reader.JwtClaimVerifier;
 import com.atlassian.jwt.reader.JwtReader;
 import com.atlassian.pageobjects.page.HomePage;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
@@ -86,6 +87,7 @@ public class TestWebItemJwtReissue extends MultiProductWebDriverTestBase
                                 .withLocation(getGloballyVisibleLocation())
                                 .build()
                 )
+                .addModuleMeta(new WebItemModuleMeta())
                 .addRoute(PARAMETER_CAPTURE_DIALOG_PATH, ConnectAppServlets.wrapContextAwareServlet(PARAMETER_CAPTURING_DIALOG_SERVLET))
                 .addRoute(PARAMETER_CAPTURE_INLINE_DIALOG_PATH, ConnectAppServlets.wrapContextAwareServlet(PARAMETER_CAPTURING_INLINE_DIALOG_SERVLET))
                 .start();

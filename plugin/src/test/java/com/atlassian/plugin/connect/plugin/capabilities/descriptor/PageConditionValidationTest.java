@@ -1,12 +1,13 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.GeneralPageModuleMeta;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.impl.PageConditionsValidator;
 import com.atlassian.plugin.connect.plugin.condition.PageConditionsFactoryImpl;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
-import com.atlassian.plugin.connect.plugin.installer.MockModuleBeanDeserializer;
+import com.atlassian.plugin.connect.plugin.installer.StaticModuleBeanDeserializer;
 import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.opensymphony.util.FileUtils;
@@ -28,7 +29,7 @@ public class PageConditionValidationTest
 {
     @Mock
     private I18nResolver i18nResolver;
-
+    private ConnectModuleMeta moduleMeta = new GeneralPageModuleMeta();
     private PageConditionsFactory pageConditionsFactory = new PageConditionsFactoryImpl();
     private PageConditionsValidator conditionsValidator;
 
@@ -36,7 +37,6 @@ public class PageConditionValidationTest
     public void setup()
     {
         when(i18nResolver.getText(anyString(), anyString(), anyString())).thenReturn("error message");
-
         this.conditionsValidator = new PageConditionsValidator(i18nResolver, pageConditionsFactory);
     }
 
@@ -83,7 +83,7 @@ public class PageConditionValidationTest
 
     public void validateFully(final String jsonDescriptor) throws Exception
     {
-        MockModuleBeanDeserializer<ConnectPageModuleBean> deserializer = new MockModuleBeanDeserializer<>(ConnectPageModuleBean.class);
+        StaticModuleBeanDeserializer deserializer = new StaticModuleBeanDeserializer(moduleMeta);
         ConnectAddonBean addon = ConnectModulesGsonFactory.getGson(deserializer).fromJson(jsonDescriptor, ConnectAddonBean.class);
 
         conditionsValidator.validate(addon);

@@ -2,7 +2,9 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebSectionModuleMeta;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebSectionModuleDescriptorFactory;
 
 import com.atlassian.plugin.connect.spi.module.provider.AbstractConnectModuleProvider;
@@ -17,9 +19,6 @@ import java.util.List;
 @Component
 public class WebSectionModuleProvider extends AbstractConnectModuleProvider<WebSectionModuleBean>
 {
-    public static final String DESCRIPTOR_KEY = "webSections";
-    public static final Class BEAN_CLASS = WebSectionModuleBean.class;
-    
     private final ConnectWebSectionModuleDescriptorFactory webSectionFactory;
 
     @Autowired
@@ -52,20 +51,14 @@ public class WebSectionModuleProvider extends AbstractConnectModuleProvider<WebS
     }
 
     @Override
-    public String getDescriptorKey()
-    {
-        return DESCRIPTOR_KEY;
-    }
-
-    @Override
     public String getSchemaPrefix()
     {
         return "common";
     }
 
     @Override
-    public Class getBeanClass()
+    public ConnectModuleMeta getMeta()
     {
-        return BEAN_CLASS;
+        return new WebSectionModuleMeta();
     }
 }

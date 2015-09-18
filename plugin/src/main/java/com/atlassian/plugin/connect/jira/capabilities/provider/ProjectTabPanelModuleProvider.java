@@ -8,17 +8,16 @@ import com.atlassian.plugin.connect.jira.capabilities.descriptor.tabpanel.Connec
 import com.atlassian.plugin.connect.jira.capabilities.descriptor.tabpanel.ConnectTabPanelModuleDescriptorFactory;
 import com.atlassian.plugin.connect.jira.iframe.tabpanel.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.jira.iframe.tabpanel.project.ConnectIFrameProjectTabPanel;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ProjectTabPanelModuleMeta;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
-import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 public class ProjectTabPanelModuleProvider extends ConnectTabPanelModuleProvider
 {
-    public static final String DESCRIPTOR_KEY = "jiraProjectTabPanels";
-
     @Autowired
     public ProjectTabPanelModuleProvider(ConnectTabPanelModuleDescriptorFactory descriptorFactory,
                                          IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
@@ -35,16 +34,16 @@ public class ProjectTabPanelModuleProvider extends ConnectTabPanelModuleProvider
 
         return provideModules(moduleProviderContext, theConnectPlugin, beans, hints);
     }
-
-    @Override
-    public String getDescriptorKey()
-    {
-        return DESCRIPTOR_KEY;
-    }
-
+    
     @Override
     public String getSchemaPrefix()
     {
         return "jira";
+    }
+
+    @Override
+    public ConnectModuleMeta getMeta()
+    {
+        return new ProjectTabPanelModuleMeta();
     }
 }

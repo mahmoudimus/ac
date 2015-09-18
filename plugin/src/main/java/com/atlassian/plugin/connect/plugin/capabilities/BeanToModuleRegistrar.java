@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.api.integration.plugins.DynamicDescriptorReg
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebHookModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
@@ -128,20 +129,21 @@ public class BeanToModuleRegistrar
         LifecycleBean lifecycle = addon.getLifecycle();
         ConnectAddonBeanBuilder builder = newConnectAddonBean(addon);
 
+        WebHookModuleMeta meta = new WebHookModuleMeta();
         if (!Strings.isNullOrEmpty(lifecycle.getEnabled()))
         {
             //add webhook
-            builder.withModule(WebHookModuleProvider.DESCRIPTOR_KEY, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_ENABLED).withUrl(lifecycle.getEnabled()).build());
+            builder.withModule(meta.getDescriptorKey(), newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_ENABLED).withUrl(lifecycle.getEnabled()).build());
         }
         if (!Strings.isNullOrEmpty(lifecycle.getDisabled()))
         {
             //add webhook
-            builder.withModule(WebHookModuleProvider.DESCRIPTOR_KEY, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_DISABLED).withUrl(lifecycle.getDisabled()).build());
+            builder.withModule(meta.getDescriptorKey(), newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_DISABLED).withUrl(lifecycle.getDisabled()).build());
         }
         if (!Strings.isNullOrEmpty(lifecycle.getUninstalled()))
         {
             //add webhook
-            builder.withModule(WebHookModuleProvider.DESCRIPTOR_KEY, newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_UNINSTALLED).withUrl(lifecycle.getUninstalled()).build());
+            builder.withModule(meta.getDescriptorKey(), newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_UNINSTALLED).withUrl(lifecycle.getUninstalled()).build());
         }
 
         return builder.build();
@@ -174,7 +176,7 @@ public class BeanToModuleRegistrar
 
         for(ConnectModuleProvider provider: providers)
         {
-            if(provider.getDescriptorKey().equals(descriptorKey))
+            if(provider.getMeta().getDescriptorKey().equals(descriptorKey))
             {
                 return provider;
             }

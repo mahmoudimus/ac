@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.jira.capabilities.beans;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.opensymphony.util.FileUtils;
 import org.junit.Test;

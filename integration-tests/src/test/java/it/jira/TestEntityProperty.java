@@ -8,6 +8,7 @@ import com.atlassian.jira.testkit.client.restclient.*;
 import com.atlassian.jira.testkit.client.util.TestKitLocalEnvironmentData;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
+import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.*;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -67,6 +68,7 @@ public class TestEntityProperty extends JiraTestBase
                                 .withEntityType(EntityPropertyType.issue)
                                 .build()
                 )
+                .addModuleMeta(new EntityPropertyModuleMeta())
                 .start();
         issueClient = new IssuesControl(localEnvironmentData, new IssueTypeControl(localEnvironmentData));
         entityPropertyClient = new EntityPropertyClient(localEnvironmentData, "issue");
@@ -149,6 +151,7 @@ public class TestEntityProperty extends JiraTestBase
                                 .withEntityType(EntityPropertyType.issue)
                                 .build()
                 )
+                .addModuleMeta(new EntityPropertyModuleMeta())
                 .start();
 
         IssueCreateResponse firstIssueWithProperty = issueClient.createIssue(testProject.getKey(), "First issue with attachment data");

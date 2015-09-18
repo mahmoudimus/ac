@@ -40,7 +40,6 @@ public class ConnectModulesGsonFactory
                 .registerTypeAdapterFactory(new NullIgnoringSetTypeAdapterFactory())
                 .registerTypeAdapter(WebItemTargetBean.class, new WebItemTargetBeanSerializer())
                 .registerTypeAdapter(Supplier.class, new SupplierInstanceCreator())
-                .registerTypeAdapter(mapJsonType, new DefaultModuleSerializer())
                 .setPrettyPrinting()
                 .disableHtmlEscaping()
                 ;

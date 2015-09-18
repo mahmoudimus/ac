@@ -1,5 +1,6 @@
 package it.common.jsapi;
 
+import com.atlassian.plugin.connect.modules.beans.GeneralPageModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteCookieGeneralPage;
@@ -33,6 +34,7 @@ public class TestCookie extends MultiProductWebDriverTestBase
                                 .withKey(PAGE_KEY)
                                 .build()
                 )
+                .addModuleMeta(new GeneralPageModuleMeta())
                 .addRoute("/pg", ConnectAppServlets.cookieServlet())
                 .start();
     }

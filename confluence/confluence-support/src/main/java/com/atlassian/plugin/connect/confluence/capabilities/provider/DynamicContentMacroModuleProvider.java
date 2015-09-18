@@ -8,7 +8,9 @@ import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrat
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.confluence.capabilities.descriptor.macro.DynamicContentMacroModuleDescriptorFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.integration.plugins.ConnectAddonI18nManager;
@@ -22,8 +24,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 public class DynamicContentMacroModuleProvider extends AbstractContentMacroModuleProvider<DynamicContentMacroModuleBean>
 {
     public static final String CONTENT_CLASSIFIER = "content";
-    public static final String DESCRIPTOR_KEY = "dynamicContentMacros";
-    public static final Class BEAN_CLASS = DynamicContentMacroModuleBean.class;
 
     private final DynamicContentMacroModuleDescriptorFactory dynamicContentMacroModuleDescriptorFactory;
 
@@ -36,7 +36,8 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
                                              IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
 										     ConnectAddonI18nManager connectAddonI18nManager)
     {
-        super(webItemModuleDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory, connectAddonI18nManager, BEAN_CLASS);
+        super(webItemModuleDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, 
+                iFrameRenderStrategyBuilderFactory, connectAddonI18nManager);
         this.dynamicContentMacroModuleDescriptorFactory = macroModuleDescriptorFactory;
     }
 
@@ -60,20 +61,14 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
     }
 
     @Override
-    public Class getBeanClass()
-    {
-        return BEAN_CLASS;
-    }
-
-    @Override
-    public String getDescriptorKey()
-    {
-        return DESCRIPTOR_KEY;
-    }
-
-    @Override
     public String getSchemaPrefix()
     {
         return "confluence";
+    }
+
+    @Override
+    public ConnectModuleMeta getMeta()
+    {
+        return new DynamicContentMacroModuleMeta();
     }
 }

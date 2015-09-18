@@ -5,6 +5,7 @@ import com.atlassian.jira.pageobjects.pages.admin.workflow.AddWorkflowTransition
 import com.atlassian.jira.pageobjects.pages.admin.workflow.ViewWorkflowSteps;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.ViewWorkflowTransitionPage;
 import com.atlassian.jira.workflow.JiraWorkflow;
+import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
@@ -60,6 +61,7 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
                                 .withDescription(new I18nProperty("workflow post function description", null))
                                 .build()
                         )
+                .addModuleMeta(new WorkflowPostFunctionModuleMeta())
                 .addRoute("/wpf-view", ConnectAppServlets.helloWorldServlet())
                 .addRoute("/wpf-edit", ConnectAppServlets.helloWorldServlet())
                 .addRoute("/wpf-create", ConnectAppServlets.workflowPostFunctionServlet())

@@ -1,5 +1,6 @@
 package it.common.jsapi;
 
+import com.atlassian.plugin.connect.modules.beans.GeneralPageModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
@@ -42,6 +43,7 @@ public class TestRequest extends MultiProductWebDriverTestBase
                                 .withUrl(pageUrl)
                                 .withLocation(getGloballyVisibleLocation())
                                 .build())
+                .addModuleMeta(new GeneralPageModuleMeta())
                 .addRoute(pageUrl, ConnectAppServlets.apRequestServlet())
                 .addScope(ScopeName.READ)
                 .start();

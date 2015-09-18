@@ -1,5 +1,6 @@
 package it.common.lifecycle;
 
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -61,6 +62,7 @@ public class TestLifecycle
         ConnectRunner plugin1 = new ConnectRunner(baseUrl,pluginKey)
                 .addDisableLifecycle()
                 .addModule("webItems", randomWebItemBean())
+                .addModuleMeta(new WebItemModuleMeta())
                 .setAuthenticationToNone()
                 .addRoute(ConnectRunner.DISABLED_PATH, servlet);
         try
@@ -85,6 +87,7 @@ public class TestLifecycle
                 .addUninstallLifecycle()
                 .setAuthenticationToNone()
                 .addModule("webItems", randomWebItemBean())
+                .addModuleMeta(new WebItemModuleMeta())
                 .addRoute(ConnectRunner.UNINSTALLED_PATH, servlet);
         try
         {

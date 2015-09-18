@@ -4,6 +4,7 @@ import com.atlassian.jira.pageobjects.pages.viewissue.ViewIssuePage;
 import com.atlassian.jira.pageobjects.util.Tracer;
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebPanelModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.jira.RemoteRefreshIssuePageWebPanel;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -41,6 +42,7 @@ public class TestJiraRefreshIssuePage extends JiraWebDriverTestBase
         addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
                 .setAuthenticationToNone()
                 .addModules("webPanels", refreshIssuePageWebPanelModuleBean)
+                .addModuleMeta(new WebPanelModuleMeta())
                 .addRoute(REFRESH_ISSUE_PAGE_WEB_PANEL_PATH, ConnectAppServlets.refreshIssuePageButtonServlet())
                 .start();
     }

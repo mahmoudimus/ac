@@ -2,6 +2,8 @@ package it.jira.iframe;
 
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.jira.capabilities.provider.ConnectTabPanelModuleProvider;
+import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.IssueTabPanelModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
@@ -63,6 +65,7 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
                         )
                         .withWeight(1234)
                         .build())
+                .addModuleMeta(new IssueTabPanelModuleMeta())
                 .addRoute("/ipp", ConnectAppServlets.apRequestServlet())
                 .addRoute(PARAMETER_CAPTURE_URL, PARAMETER_CAPTURING_SERVLET)
                 .addScope(ScopeName.READ)

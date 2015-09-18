@@ -6,6 +6,8 @@ import com.atlassian.plugin.connect.confluence.capabilities.descriptor.Blueprint
 import com.atlassian.plugin.connect.confluence.capabilities.descriptor.BlueprintModuleDescriptorFactory;
 import com.atlassian.plugin.connect.confluence.capabilities.descriptor.BlueprintWebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.modules.beans.BlueprintModuleBean;
+import com.atlassian.plugin.connect.modules.beans.BlueprintModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.spi.module.provider.AbstractConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
@@ -19,9 +21,6 @@ import java.util.List;
 @ExportAsDevService
 public class DefaultBlueprintModuleProvider extends AbstractConnectModuleProvider<BlueprintModuleBean> implements BlueprintModuleProvider
 {
-    public static final String DESCRIPTOR_KEY = "blueprints";
-    public static final Class BEAN_CLASS = BlueprintModuleBean.class;
-    
     private final BlueprintWebItemModuleDescriptorFactory blueprintModuleWebItemDescriptorFactory;
     private final BlueprintModuleDescriptorFactory blueprintModuleDescriptorFactory;
     private final BlueprintContentTemplateModuleDescriptorFactory blueprintContentTemplateModuleDescriptorFactory;
@@ -62,20 +61,14 @@ public class DefaultBlueprintModuleProvider extends AbstractConnectModuleProvide
     }
 
     @Override
-    public Class getBeanClass()
-    {
-        return BEAN_CLASS;
-    }
-
-    @Override
-    public String getDescriptorKey()
-    {
-        return DESCRIPTOR_KEY;
-    }
-
-    @Override
     public String getSchemaPrefix()
     {
         return "confluence";
+    }
+
+    @Override
+    public ConnectModuleMeta getMeta()
+    {
+        return new BlueprintModuleMeta();
     }
 }

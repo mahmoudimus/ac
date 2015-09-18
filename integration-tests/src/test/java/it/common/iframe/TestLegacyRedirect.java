@@ -1,5 +1,6 @@
 package it.common.iframe;
 
+import com.atlassian.plugin.connect.modules.beans.GeneralPageModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -44,7 +45,7 @@ public class TestLegacyRedirect extends MultiProductWebDriverTestBase
                                 .withKey(ADDON_GENERALPAGE)
                                 .build()
                 )
-
+                .addModuleMeta(new GeneralPageModuleMeta())
                 .addRoute("/pg", ConnectAppServlets.customMessageServlet("hi"))
                 .start();
     }

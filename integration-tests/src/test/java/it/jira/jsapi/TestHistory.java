@@ -1,5 +1,6 @@
 package it.jira.jsapi;
 
+import com.atlassian.plugin.connect.modules.beans.GeneralPageModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteHistoryGeneralPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -44,6 +45,7 @@ public class TestHistory extends JiraWebDriverTestBase
                                 .withConditions(toggleableConditionBean())
                                 .withWeight(1234)
                                 .build())
+                .addModuleMeta(new GeneralPageModuleMeta())
                 .addRoute("/history-general-page", ConnectAppServlets.historyServlet())
                 .start();
     }

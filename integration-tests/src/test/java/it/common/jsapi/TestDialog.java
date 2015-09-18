@@ -1,6 +1,8 @@
 package it.common.jsapi;
 
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.GeneralPageModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
@@ -72,6 +74,8 @@ public class TestDialog extends MultiProductWebDriverTestBase
                                         .build())
                                 .build()
                 )
+                .addModuleMeta(new GeneralPageModuleMeta())
+                .addModuleMeta(new WebItemModuleMeta())
                 .addRoute("/pg", ConnectAppServlets.openDialogServlet())
                 .addRoute("/my-dialog-url", ConnectAppServlets.closeDialogServlet())
                 .addRoute("/general-page", ConnectAppServlets.openDialogServlet(ADDON_WEBITEM_DIALOG))

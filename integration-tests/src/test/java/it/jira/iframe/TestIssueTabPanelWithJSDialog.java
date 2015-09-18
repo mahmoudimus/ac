@@ -2,6 +2,8 @@ package it.jira.iframe;
 
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.jira.capabilities.provider.ConnectTabPanelModuleProvider;
+import com.atlassian.plugin.connect.modules.beans.GeneralPageModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.IssueTabPanelModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
@@ -63,6 +65,8 @@ public class TestIssueTabPanelWithJSDialog extends JiraWebDriverTestBase
                                 .withKey(ADDON_DIALOG)
                                 .build()
                 )
+                .addModuleMeta(new IssueTabPanelModuleMeta())
+                .addModuleMeta(new GeneralPageModuleMeta())
                 .addRoute("/ippd", ConnectAppServlets.openDialogServlet())
                 .addRoute("/my-dialog-url", ConnectAppServlets.closeDialogServlet())
                 .addScope(ScopeName.READ)

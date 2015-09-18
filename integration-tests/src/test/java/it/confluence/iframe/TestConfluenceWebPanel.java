@@ -2,6 +2,7 @@ package it.confluence.iframe;
 
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WebPanelModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;
@@ -93,6 +94,7 @@ public class TestConfluenceWebPanel extends ConfluenceWebDriverTestBase
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), "cwp-plugin")
                 .setAuthenticationToNone()
                 .addModules(WEB_PANELS, editorWebPanel, viewWebPanel, profileWebPanel)
+                .addModuleMeta(new WebPanelModuleMeta())
                 .addRoute(IFRAME_URL_EDIT, ConnectAppServlets.customMessageServlet(IFRAME_CONTENT_EDIT, false))
                 .addRoute(IFRAME_URL_VIEW, ConnectAppServlets.customMessageServlet(IFRAME_CONTENT_VIEW, false))
                 .addRoute(IFRAME_URL_PROFILE, ConnectAppServlets.customMessageServlet(IFRAME_CONTENT_PROFILE, false))

@@ -2,6 +2,7 @@ package it.jira.iframe;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.pageobjects.pages.ViewProfilePage;
+import com.atlassian.plugin.connect.modules.beans.ProfileTabPanelModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
@@ -64,6 +65,7 @@ public class TestProfileTabPanel extends JiraWebDriverTestBase
                                         newSingleConditionBean().withCondition(PARAMETER_CAPTURE_URL +
                                                 "?pUserKey={profileUser.key}&pUserName={profileUser.name}").build())
                                 .build())
+                .addModuleMeta(new ProfileTabPanelModuleMeta())
                 .addRoute("/myProfileAddon", ConnectAppServlets.apRequestServlet())
                 .addRoute(PARAMETER_CAPTURE_URL, PARAMETER_CAPTURING_SERVLET)
                 .start();

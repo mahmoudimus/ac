@@ -2,6 +2,7 @@ package it.jira.item;
 
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
@@ -116,6 +117,7 @@ public class TestJiraConditions extends JiraWebDriverTestBase
                                     "?issueId={issue.id}&projectKey={project.key}").build()
                         )
                         .build())
+                .addModuleMeta(new WebItemModuleMeta())
                 .addRoute(onlyBarneyConditionUrl, new CheckUsernameConditionServlet(barney))
                 .addRoute(onlyBettyConditionUrl, new CheckUsernameConditionServlet(betty))
                 .addRoute(PARAMETER_CAPTURE_URL, PARAMETER_CAPTURING_SERVLET)

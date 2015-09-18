@@ -13,7 +13,9 @@ import com.atlassian.plugin.connect.confluence.iframe.context.SpaceToolsContextI
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleBean;
+import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.modules.beans.XWorkActionModuleBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
@@ -42,9 +44,6 @@ import static com.google.common.collect.Lists.newArrayList;
 @ConfluenceComponent
 public class SpaceToolsTabModuleProvider extends AbstractConnectModuleProvider<SpaceToolsTabModuleBean>
 {
-    public static final String DESCRIPTOR_KEY = "spaceToolsTabs";
-    public static final Class BEAN_CLASS = SpaceToolsTabModuleBean.class;
-    
     @VisibleForTesting
     public static final String SPACE_TOOLS_SECTION = "system.space.tools";
     @VisibleForTesting
@@ -170,20 +169,14 @@ public class SpaceToolsTabModuleProvider extends AbstractConnectModuleProvider<S
     }
 
     @Override
-    public Class getBeanClass()
-    {
-        return BEAN_CLASS;
-    }
-
-    @Override
-    public String getDescriptorKey()
-    {
-        return DESCRIPTOR_KEY;
-    }
-
-    @Override
     public String getSchemaPrefix()
     {
         return "confluence";
+    }
+
+    @Override
+    public ConnectModuleMeta getMeta()
+    {
+        return new SpaceToolsTabModuleMeta();
     }
 }

@@ -3,6 +3,7 @@ package it.confluence.item;
 import com.atlassian.fugue.Pair;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
+import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
@@ -110,7 +111,7 @@ public class TestConfluenceWebItem extends ConfluenceWebDriverTestBase
                                         newWebItemTargetBean().withType(WebItemTargetType.inlineDialog).build()
                                 )
                                 .build())
-
+                .addModuleMeta(new WebItemModuleMeta())
                 .addRoute("/only" + barney.getDisplayName() + "Condition", new CheckUsernameConditionServlet(barney))
                 .addRoute("/only" + betty.getDisplayName() + "Condition", new CheckUsernameConditionServlet(betty))
                 .addRoute("/irwi?page_id={page.id}&content_id={content.id}", ConnectAppServlets.helloWorldServlet())

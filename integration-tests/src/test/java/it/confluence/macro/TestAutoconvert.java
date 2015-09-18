@@ -10,7 +10,9 @@ import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.pageobjects.elements.query.TimedQuery;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MatcherBean;
@@ -98,6 +100,8 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
                 .addScope(ScopeName.ADMIN) // for using ap.request
                 .addModules("dynamicContentMacros", dynamicMacroWithAutoconvert)
                 .addModules("staticContentMacros", staticMacroWithAutoconvert)
+                .addModuleMeta(new DynamicContentMacroModuleMeta())
+                .addModuleMeta(new StaticContentMacroModuleMeta())
                 .addRoute("/dynamic-macro", ConnectAppServlets.helloWorldServlet())
                 .addRoute("/static-macro", ConnectAppServlets.dynamicMacroStaticServlet())
                 .start();

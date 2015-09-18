@@ -1,6 +1,7 @@
 package it.jira.iframe;
 
 import com.atlassian.jira.pageobjects.pages.JiraAdminHomePage;
+import com.atlassian.plugin.connect.modules.beans.AdminPageModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
@@ -58,6 +59,7 @@ public class TestAdminPage extends JiraWebDriverTestBase
                                 .withUrl("/pg")
                                 .withWeight(1234)
                                 .build())
+                .addModuleMeta(new AdminPageModuleMeta())
                 .addRoute("/pg", ConnectAppServlets.sizeToParentServlet())
                 .start();
     }

@@ -3,7 +3,9 @@ package it.confluence.macro;
 import com.atlassian.confluence.api.model.content.Content;
 import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
+import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
@@ -111,6 +113,8 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
                 .addScope(ScopeName.ADMIN) // for using ap.request
                 .addModules("dynamicContentMacros", dynamicContentMacroById, dynamicContentMacroByHash)
                 .addModules("staticContentMacros", staticContentMacroById, staticContentMacroByHash)
+                .addModuleMeta(new DynamicContentMacroModuleMeta())
+                .addModuleMeta(new StaticContentMacroModuleMeta())
                 .addRoute("/installed", installHandlerServlet)
                 .addRoute("/render-dynamic-by-id", new HttpContextServlet(new MacroBodyServlet(MacroBodyServlet.CollectionType.BY_ID, baseUrl, addonKey, installHandlerServlet, dynamicMacroBodyHandler)))
                 .addRoute("/render-static-by-id", new HttpContextServlet(new MacroBodyServlet(MacroBodyServlet.CollectionType.BY_ID, baseUrl, addonKey, installHandlerServlet, staticMacroBodyHandler)))
