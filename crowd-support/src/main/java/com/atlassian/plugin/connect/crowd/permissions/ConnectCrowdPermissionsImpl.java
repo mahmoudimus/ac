@@ -17,16 +17,19 @@ public class ConnectCrowdPermissionsImpl implements ConnectCrowdPermissions
 {
     private final UserManagementLockService userManagementLockService;
     private final ManagedPermissionsService managedPermissionsService;
+    private final ConnectCrowdPermissionsClient connectCrowdPermissionsClient;
     private final FeatureManager featureManager;
 
     @Autowired
     public ConnectCrowdPermissionsImpl(
             UserManagementLockService userManagementLockService,
             ManagedPermissionsService managedPermissionsService,
+            ConnectCrowdPermissionsClient connectCrowdPermissionsClient,
             FeatureManager featureManager)
     {
         this.userManagementLockService = userManagementLockService;
         this.managedPermissionsService = managedPermissionsService;
+        this.connectCrowdPermissionsClient = connectCrowdPermissionsClient;
         this.featureManager = featureManager;
     }
 
@@ -58,6 +61,6 @@ public class ConnectCrowdPermissionsImpl implements ConnectCrowdPermissions
 
     private boolean grantAdminPermission(String groupName)
     {
-        return false;
+        return connectCrowdPermissionsClient.grantAdminPermission(groupName);
     }
 }
