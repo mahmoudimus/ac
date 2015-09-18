@@ -10,10 +10,9 @@ import com.atlassian.jwt.writer.JwtJsonBuilder;
 import com.atlassian.jwt.writer.JwtWriter;
 import com.atlassian.jwt.writer.JwtWriterFactory;
 import com.atlassian.plugin.connect.api.http.HttpMethod;
+import com.atlassian.plugin.connect.testsupport.util.auth.TestConstants;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
-import com.google.gson.Gson;
-import com.atlassian.plugin.connect.testsupport.util.auth.TestConstants;
 import net.oauth.OAuth;
 import net.oauth.OAuthAccessor;
 import net.oauth.OAuthConsumer;
@@ -24,12 +23,13 @@ import net.oauth.signature.OAuthSignatureMethod;
 import net.oauth.signature.RSA_SHA1;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 
+import javax.ws.rs.core.Response.Status;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -38,7 +38,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.ws.rs.core.Response.Status;
 
 public class RequestUtil
 {
@@ -327,23 +326,20 @@ public class RequestUtil
         {
             return headerFields;
         }
+
         public String getBody()
         {
             return body;
         }
 
-        public Map getJsonBody()
+        public Map getJsonBody() throws IOException
         {
-            Gson gson = new Gson();
-            return gson.fromJson(body, Map.class);
+            return new ObjectMapper().readValue(body, Map.class);
         }
 
-        public <T> T getJsonBody(Class<T> bodyClass) {
-            return new Gson().fromJson(body, bodyClass);
-        }
-
-        public <T> T getJsonBody(Type bodyType) {
-            return new Gson().fromJson(body, bodyType);
+        public <T> T getJsonBody(Class<T> bodyClass) throws IOException
+        {
+            return new ObjectMapper().readValue(body, bodyClass);
         }
     }
 }

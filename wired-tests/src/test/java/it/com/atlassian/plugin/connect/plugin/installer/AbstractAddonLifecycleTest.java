@@ -1,7 +1,5 @@
 package it.com.atlassian.plugin.connect.plugin.installer;
 
-import java.io.IOException;
-
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
@@ -27,10 +25,10 @@ import com.atlassian.sal.api.features.DarkFeatureManager;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
-
-import com.google.gson.JsonParser;
-
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
+
+import java.io.IOException;
 
 import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.usernameForAddon;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
@@ -292,14 +290,14 @@ public abstract class AbstractAddonLifecycleTest
         }
     }
 
-    protected String parseClientKey(ServletRequestSnapshot request)
+    protected String parseClientKey(ServletRequestSnapshot request) throws IOException
     {
-        return new JsonParser().parse(request.getEntity()).getAsJsonObject().get(CLIENT_KEY_FIELD_NAME).getAsString();
+        return getPayloadField(request.getEntity(), CLIENT_KEY_FIELD_NAME);
     }
 
-    protected String parseSharedSecret(ServletRequestSnapshot request)
+    protected String parseSharedSecret(ServletRequestSnapshot request) throws IOException
     {
-        return signCallbacksWithJwt() ? new JsonParser().parse(request.getEntity()).getAsJsonObject().get(SHARED_SECRET_FIELD_NAME).getAsString() : null;
+        return signCallbacksWithJwt() ? getPayloadField(request.getEntity(), SHARED_SECRET_FIELD_NAME) : null;
     }
 
     @Test
@@ -462,7 +460,7 @@ public abstract class AbstractAddonLifecycleTest
 
             testPluginInstaller.disableAddon(addonKey);
 
-            waitForWebhook(addonKey,DISABLED);
+            waitForWebhook(addonKey, DISABLED);
 
             ServletRequestSnapshot request = testFilterResults.getRequest(finalKey, DISABLED);
             Option<String> maybeHeader = getVersionHeader(request);
@@ -649,6 +647,16 @@ public abstract class AbstractAddonLifecycleTest
         {
             darkFeatureManager.disableFeatureForAllUsers(DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY);
         }
+    }
+
+    protected boolean hasPayloadField(String payload, String fieldName) throws IOException
+    {
+        return !new ObjectMapper().readTree(payload).path(fieldName).isMissingNode();
+    }
+
+    protected String getPayloadField(String installPayload, String fieldName) throws IOException
+    {
+        return new ObjectMapper().readTree(installPayload).path(fieldName).asText();
     }
 
     private void testEnabledCallback() throws IOException
