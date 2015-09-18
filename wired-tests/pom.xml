@@ -229,6 +229,11 @@
                             </systemPropertyVariables>
                             <pluginArtifacts>
                                 <pluginArtifact>
+                                    <groupId>com.atlassian.crowd</groupId>
+                                    <artifactId>user-provisioning-plugin</artifactId>
+                                    <version>${atlassian.user.provisioning.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
                                     <groupId>com.atlassian.labs.plugins</groupId>
                                     <artifactId>quickreload</artifactId>
                                     <version>${quickreload.version}</version>
