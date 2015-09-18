@@ -256,8 +256,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
             GrantResult result = connectCrowdPermissions.giveAdminPermission(groupKey);
             if (result == REMOTE_GRANT_FAILED)
             {
-                // TODO Better log message
-                log.warn("Remote grant failed");
+                log.warn("Failed to grant '{}' administrative rights through the Remote UM REST API", groupKey);
             }
             ensureGroupHasAdminPermission(groupKey);
         }
@@ -275,8 +274,16 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     {
         if (!groupHasAdminPermission(groupKey))
         {
-            jiraPermissionManager.addPermission(ADMIN_PERMISSION, groupKey);
-            log.info("Granted admin permission to group '{}'.", groupKey);
+            boolean permissionGranted = jiraPermissionManager.addPermission(ADMIN_PERMISSION, groupKey);
+            if (permissionGranted)
+            {
+                log.info("Granted admin permission to group '{}'.", groupKey);
+            }
+            else
+            {
+                log.warn("Failed to grant '{}' administrative rights through the deprecated jira API", groupKey);
+            }
+
         }
     }
 

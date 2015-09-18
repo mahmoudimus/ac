@@ -62,7 +62,7 @@ public class ConnectCrowdPermissionsClientImpl
                 | CredentialsRequiredException
                 | ResponseException e)
         {
-            log.warn("Could not grant remote admin permission to the group " + groupName + "due to the following exception", e);
+            log.warn("Could not grant remote admin permission to the group '{}' due to the following exception: {} -> {}", new Object[] {groupName, e.getClass().getSimpleName(), e.getMessage()});
             return false;
         }
         return true;
