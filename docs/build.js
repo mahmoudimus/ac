@@ -117,6 +117,7 @@ function entityToModel(schemaEntity) {
     var model = {
         id: schemaEntity.id,
         name: name,
+        title: name,
         slug: slugify(schemaEntity.pageName || name),
         description: description,
         type: schemaEntity.type

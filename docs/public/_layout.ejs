@@ -1,5 +1,5 @@
 <%
-    var auiVersion = "5.7.16"
+    var auiVersion = "5.7.16";
 
     // calculate the relative path to the document root from the page depth
     var relDocRoot = "";
@@ -17,6 +17,7 @@
                  module = entities[current.path[1]][current.path[2]];
                  break;
          }
+        title = module.title;
     }
 
 %>
