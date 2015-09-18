@@ -20,6 +20,8 @@ import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
+import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
@@ -34,7 +36,8 @@ import static com.google.common.collect.Sets.newHashSet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -95,7 +98,7 @@ public class JiraAddOnUserProvisioningServiceTest
     }
 
     @Test
-    public void testMissingAdminPermissionDoesntThrowErrors()
+    public void testMissingAdminPermissionReturnsCorrectErrorCode()
             throws ApplicationNotFoundException,
             OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException
     {
@@ -109,8 +112,15 @@ public class JiraAddOnUserProvisioningServiceTest
         Set<ScopeName> previousScopes = newHashSet();
         Set<ScopeName> newScopes = newHashSet(ScopeName.ADMIN);
 
-        provisioningService.provisionAddonUserForScopes(USERNAME, previousScopes, newScopes);
-        assertTrue(true);
+        try
+        {
+            provisioningService.provisionAddonUserForScopes(USERNAME, previousScopes, newScopes);
+            fail("Provisioning addon should not have succeeded");
+        }
+        catch (ConnectAddOnUserInitException exception)
+        {
+            assertEquals(exception.getI18nKey(), ConnectAddOnUserProvisioningService.ADDON_ADMINS_MISSING_PERMISSION);
+        }
     }
 
     @Test
