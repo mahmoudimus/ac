@@ -1,25 +1,23 @@
-<% var auiVersion = "5.7.16" %>
-
 <%
-   // calculate the relative path to the document root from the page depth
-   var relDocRoot = "";
-   for (var i = 1; i < current.path.length; i++) {
-      relDocRoot += "../";
-   }
+    var auiVersion = "5.7.16"
 
-   var module;
-   if (current.path[0] === 'modules') {
-       switch (current.path.length) {
-           case 2:
-               module = entities.root[current.source];
-               break;
-           case 3:
-               module = entities[current.path[1]][current.path[2]];
-               break;
-       }
-   }
+    // calculate the relative path to the document root from the page depth
+    var relDocRoot = "";
+    for (var i = 1; i < current.path.length; i++) {
+        relDocRoot += "../";
+    }
 
-   var pageTitle = module ? module.name + ' - ' + title : title;
+    var module;
+    if (current.path[0] === 'modules') {
+         switch (current.path.length) {
+             case 2:
+                 module = entities.root[current.source];
+                 break;
+             case 3:
+                 module = entities[current.path[1]][current.path[2]];
+                 break;
+         }
+    }
 
 %>
 
@@ -30,7 +28,11 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=EDGE">
     <title>
-        <%= pageTitle %>
+        <% if (title) {%>
+            <%= title %> - <%= siteTitle %>
+        <% } else { %>
+            <%= siteTitle %>
+        <% } %>
     </title>
     <link rel="icon" type="image/png" href="<%= relDocRoot %>assets/images/favicon.png" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/codemirror.min.css" media="all">

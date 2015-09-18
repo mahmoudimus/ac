@@ -1,0 +1,23 @@
+{
+  "introduction": {
+    "filename": "introduction.html",
+    "title": "Introduction"
+  },
+  "getting-started": {
+    "filename": "getting-started.html",
+    "title": "Getting started"
+  },
+  "project-activity-tutorial": {
+    "filename": "project-activity-tutorial.html",
+    "title": "Tutorial: JIRA activity"
+  },
+  "confluence-gardener-tutorial": {
+    "filename": "confluence-gardener-tutorial.html",
+    "title": "Tutorial: Confluence Gardener",
+    "new": true
+  },
+  "connect-cookbook": {
+    "filename": "connect-cookbook.html",
+    "title": "Connect cookbook"
+  }
+}

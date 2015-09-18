@@ -11,7 +11,7 @@ var chokidar = require("chokidar");
 var jsonPath = require("JSONPath").eval;
 var program = require("commander");
 var dereferencer = require("./de-ref");
-var harp = require("harp")
+var harp = require("harp");
 
 var buildDir = "./target";
 var genSrcPrefix = buildDir + "/gensrc";
