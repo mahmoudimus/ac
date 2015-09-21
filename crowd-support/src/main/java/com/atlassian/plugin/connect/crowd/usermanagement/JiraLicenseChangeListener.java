@@ -15,6 +15,7 @@ import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvi
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.google.common.collect.Sets.difference;
 
@@ -26,6 +27,7 @@ public class JiraLicenseChangeListener
     private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
     private final ApplicationAuthorizationService applicationAuthorizationService;
 
+    @Autowired
     public JiraLicenseChangeListener(ApplicationRoleManager applicationRoleManager, ConnectAddOnUsers connectAddOnUsers, ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService, ApplicationAuthorizationService applicationAuthorizationService)
     {
         this.applicationRoleManager = applicationRoleManager;
