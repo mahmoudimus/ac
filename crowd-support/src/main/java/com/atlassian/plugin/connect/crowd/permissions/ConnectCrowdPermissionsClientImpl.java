@@ -31,14 +31,15 @@ public class ConnectCrowdPermissionsClientImpl
     }
 
     @Override
-    public boolean grantAdminPermission(String groupName)
+    public boolean grantAdminPermission(String groupName, String productId, String applicationId)
     {
         try
         {
             connectCrowdSysadminHttpClient.executeAsSysadmin(POST,
-                    "/rest/um/1/accessconfig/group?productId=product%3Ajira%3Ajira", "[\"atlassian-addons-admin\"]");
+                    String.format("/rest/um/1/accessconfig/group?productId=product%3A{}%3A{}", productId, applicationId), String.format("[\"{}\"]", groupName));
             connectCrowdSysadminHttpClient.executeAsSysadmin(PUT,
-                    "/rest/um/1/accessconfig/group?hostId=jira&productId=product%3Ajira%3Ajira", "{\"name\": \"atlassian-addons-admin\", \"use\": \"NONE\", \"admin\": \"DIRECT\", \"defaultUse\": false}");
+                    String.format("/rest/um/1/accessconfig/group?hostId={}&productId=product%3A{}%3A{}", productId, productId, applicationId),
+                    String.format("{\"name\": \"{}\", \"use\": \"NONE\", \"admin\": \"DIRECT\", \"defaultUse\": false}", groupName));
         }
         catch (InactiveAccountException
                 | ApplicationPermissionException
