@@ -22,4 +22,10 @@ public class ConfluenceFeatureManager implements FeatureManager
     {
         return coreFeaturesManager.isOnDemand();
     }
+
+    @Override
+    public boolean isPermissionsManagedByUM()
+    {
+        return false;
+    }
 }
