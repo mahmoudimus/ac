@@ -259,7 +259,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
             GrantResult result = giveAdminPermission(groupKey);
             if (result == REMOTE_GRANT_FAILED)
             {
-                log.warn("Failed to grant '{}' administrative rights through the Remote UM REST API", groupKey);
+                throw new ConnectAddOnUserInitException(String.format("Failed to grant '%s' administrative rights through the Remote UM REST API", groupKey));
             }
             ensureGroupHasAdminPermission(groupKey);
         }
