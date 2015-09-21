@@ -40,7 +40,9 @@ import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInA
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -90,7 +92,8 @@ public class JiraAddOnUserProvisioningServiceTest
                 transactionTemplate,
                 jiraProjectPermissionManager,
                 applicationAuthorizationService,
-                applicationRoleManager, null);
+                applicationRoleManager,
+                connectCrowdPermissions);
 
         groups = newHashSet();
         applicationKeys = newHashSet();
@@ -144,13 +147,13 @@ public class JiraAddOnUserProvisioningServiceTest
 
         provisioningService.provisionAddonUserForScopes(USERNAME, previousScopes, newScopes);
 
-        verify(connectCrowdPermissions).giveAdminPermission(anyString(), "jira", "jira");
+        verify(connectCrowdPermissions).giveAdminPermission(anyString(), eq("jira"), eq("jira"));
 
         when(applicationAuthorizationService.rolesEnabled()).thenReturn(true);
 
         provisioningService.provisionAddonUserForScopes(USERNAME, previousScopes, newScopes);
 
-        verify(connectCrowdPermissions).giveAdminPermission(anyString(), "jira", "jira-admin");
+        verify(connectCrowdPermissions).giveAdminPermission(anyString(), eq("jira"), eq("jira-admin"));
     }
 
     @Test

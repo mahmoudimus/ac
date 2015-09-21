@@ -65,7 +65,7 @@ public class TestConnectCrowdPermissionsClientImpl
     public void grantAdminPermissionPostsAdminsGroupToAccessConfigEndpoint()
             throws Exception
     {
-        connectCrowdPermissionsClient.grantAdminPermission("group-name");
+        connectCrowdPermissionsClient.grantAdminPermission("atlassian-addons-admin", "jira", "jira");
 
         verify(connectCrowdSysadminHttpClient).executeAsSysadmin(eq(POST), eq(ACCESS_CONFIG_URL), dataCaptor.capture());
         final List<String> providedData = (List<String>) new JSONParser().parse(dataCaptor.getValue());
@@ -77,7 +77,7 @@ public class TestConnectCrowdPermissionsClientImpl
     public void grantAdminPermissionPutsAdminConfigToAccesConfigEndpoint()
             throws Exception
     {
-        connectCrowdPermissionsClient.grantAdminPermission("group-name");
+        connectCrowdPermissionsClient.grantAdminPermission("group-name", "jira", "jira");
 
         verify(connectCrowdSysadminHttpClient).executeAsSysadmin(eq(PUT), eq(HOST_ACCESS_CONFIG_URL), dataCaptor.capture());
         final Map<String, Object> providedData = (Map<String, Object>) new JSONParser().parse(dataCaptor.getValue());

@@ -36,10 +36,10 @@ public class ConnectCrowdPermissionsClientImpl
         try
         {
             connectCrowdSysadminHttpClient.executeAsSysadmin(POST,
-                    String.format("/rest/um/1/accessconfig/group?productId=product%3A{}%3A{}", productId, applicationId), String.format("[\"{}\"]", groupName));
+                    "/rest/um/1/accessconfig/group?productId=product%3A" + productId + "%3A" + applicationId, String.format("[\"%s\"]", groupName));
             connectCrowdSysadminHttpClient.executeAsSysadmin(PUT,
-                    String.format("/rest/um/1/accessconfig/group?hostId={}&productId=product%3A{}%3A{}", productId, productId, applicationId),
-                    String.format("{\"name\": \"{}\", \"use\": \"NONE\", \"admin\": \"DIRECT\", \"defaultUse\": false}", groupName));
+                    "/rest/um/1/accessconfig/group?hostId=" + productId + "&productId=product%3A" + productId + "%3A" + applicationId,
+                    String.format("{\"name\": \"%s\", \"use\": \"NONE\", \"admin\": \"DIRECT\", \"defaultUse\": false}", groupName));
         }
         catch (InactiveAccountException
                 | ApplicationPermissionException
