@@ -1,6 +1,5 @@
 package it.common.lifecycle;
 
-import com.atlassian.fugue.Option;
 import com.atlassian.jwt.core.reader.JwtIssuerSharedSecretService;
 import com.atlassian.jwt.core.reader.JwtIssuerValidator;
 import com.atlassian.jwt.core.reader.NimbusJwtReaderFactory;
@@ -9,14 +8,14 @@ import com.atlassian.jwt.exception.JwtParseException;
 import com.atlassian.jwt.exception.JwtUnknownIssuerException;
 import com.atlassian.jwt.exception.JwtVerificationException;
 import com.atlassian.jwt.reader.JwtClaimVerifier;
-import com.atlassian.pageobjects.Page;
-import com.atlassian.plugin.connect.modules.beans.ConfigurePageModuleMeta;
-import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanBuilder;
+import com.atlassian.pageobjects.page.HomePage;
+import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.modules.beans.GeneralPageModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
-import com.atlassian.plugin.connect.test.pageobjects.LinkedRemoteContent;
+import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.upm.pageobjects.PluginManager;
 import com.google.common.collect.ImmutableMap;
@@ -24,7 +23,6 @@ import it.common.MultiProductWebDriverTestBase;
 import it.modules.ConnectAsserts;
 import it.servlet.ConnectAppServlets;
 import it.servlet.InstallHandlerServlet;
-import it.util.ConnectTestUserFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,8 +38,6 @@ import java.security.NoSuchAlgorithmException;
 
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem.ItemMatchingMode.LINK_TEXT;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -55,7 +51,7 @@ public class TestInstallFailure extends MultiProductWebDriverTestBase
     protected static final String MY_AWESOME_PAGE = "My Awesome Page";
     protected static final String MY_AWESOME_PAGE_KEY = "my-awesome-page";
     protected static final String URL = "/" + MY_AWESOME_PAGE_KEY;
-    protected static final CustomInstallationHandlerServlet installUninstallHandler = new CustomInstallationHandlerServlet();;
+    protected static final CustomInstallationHandlerServlet installUninstallHandler = new CustomInstallationHandlerServlet();
     protected static ConnectRunner remotePlugin;
 
     private String sharedSecret;
@@ -69,21 +65,21 @@ public class TestInstallFailure extends MultiProductWebDriverTestBase
         int query = URL.indexOf("?");
         String route = query > -1 ? URL.substring(0, query) : URL;
 
-        ConnectPageModuleBeanBuilder pageBeanBuilder = newPageBean();
-        pageBeanBuilder.withName(new I18nProperty(MY_AWESOME_PAGE, null))
+        ConnectPageModuleBean pageBean = newPageBean()
+                .withName(new I18nProperty(MY_AWESOME_PAGE, null))
                 .withKey(MY_AWESOME_PAGE_KEY)
                 .withUrl(URL)
-                .withWeight(1234);
+                .withLocation(getGloballyVisibleLocation()).build();
 
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
-        .addUninstallLifecycle()
-        .addModule("configurePage", pageBeanBuilder.build())
-        .addModuleMeta(new ConfigurePageModuleMeta())
-        .addJWT(installUninstallHandler)
-        .addRoute(route, ConnectAppServlets.helloWorldServlet())
-        .addRoute(ConnectRunner.UNINSTALLED_PATH, installUninstallHandler)
-        .addScope(ScopeName.ADMIN)
-        .disableInstallationStatusCheck();
+                .addUninstallLifecycle()
+                .addModules("generalPages", pageBean)
+                .addModuleMeta(new GeneralPageModuleMeta())
+                .addJWT(installUninstallHandler)
+                .addRoute(route, ConnectAppServlets.helloWorldServlet())
+                .addRoute(ConnectRunner.UNINSTALLED_PATH, installUninstallHandler)
+                .addScope(ScopeName.ADMIN)
+                .disableInstallationStatusCheck();
     }
 
     public void installAddonSuccess() throws Exception
@@ -156,24 +152,21 @@ public class TestInstallFailure extends MultiProductWebDriverTestBase
 
     public void assertPageLinkWorks() throws MalformedURLException, URISyntaxException, JwtVerificationException, JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException, JwtParseException
     {
-        login(testUserFactory.admin());
+        loginAndVisit(testUserFactory.basicUser(), HomePage.class);
 
-        PluginManager page = product.visit(PluginManager.class);
-        revealLinkIfNecessary(page);
-
-        LinkedRemoteContent addonPage = connectPageOperations.findConnectPage(LINK_TEXT,
-                "Configure",
-                Option.<String>none(), awesomePageModuleKey);
-
-        ConnectAddOnEmbeddedTestPage addonContentPage = addonPage.click();
+        GeneralPage page = product.getPageBinder().bind(GeneralPage.class, MY_AWESOME_PAGE_KEY, remotePlugin.getAddon().getKey());
+        ConnectAddOnEmbeddedTestPage addonContentPage = page.clickAddOnLink();
 
         ConnectAsserts.verifyContainsStandardAddOnQueryParamters(addonContentPage.getIframeQueryParams(),
                 product.getProductInstance().getContextPath());
 
-
         final String jwt = addonContentPage.getIframeQueryParams().get("jwt");
         assertNotNull(jwt);
+        assertValidJwt(jwt);
+    }
 
+    private void assertValidJwt(String jwt) throws JwtParseException, JwtVerificationException, JwtUnknownIssuerException, JwtIssuerLacksSharedSecretException
+    {
         final JwtIssuerSharedSecretService sharedSecretService = new JwtIssuerSharedSecretService()
         {
 
@@ -201,12 +194,6 @@ public class TestInstallFailure extends MultiProductWebDriverTestBase
         // Can't think of a meaningful assertion for this test as it is just the absence of an exception that indicates
         // success
         readerFactory.getReader(jwt).read(jwt, ImmutableMap.<String, JwtClaimVerifier>of());
-    }
-
-    protected <T extends Page> void revealLinkIfNecessary(T page)
-    {
-        // hmmm not pretty
-        ((PluginManager) page).expandPluginRow(pluginKey);
     }
 
     private static class CustomInstallationHandlerServlet extends HttpServlet

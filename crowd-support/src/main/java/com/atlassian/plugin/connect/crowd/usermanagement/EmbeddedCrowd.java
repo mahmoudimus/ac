@@ -138,8 +138,11 @@ public class EmbeddedCrowd extends ConnectCrowdBase
         {
             applicationService.updateUserCredential(getCrowdApplication(), username, passwordCredential);
         }
-        catch (InvalidCredentialException | ApplicationPermissionException
-                | OperationFailedException | UserNotFoundException e)
+        catch (OperationFailedException e)
+        {
+            log.warn("Tried to update the add-on user credentials but the operation failed: " + e.getMessage());
+        }
+        catch ( ApplicationPermissionException | UserNotFoundException | InvalidCredentialException e)
         {
             throw new ConnectAddOnUserInitException(e);
         }

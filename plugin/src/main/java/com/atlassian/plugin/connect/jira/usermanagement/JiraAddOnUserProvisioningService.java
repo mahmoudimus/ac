@@ -42,6 +42,8 @@ import com.atlassian.jira.util.SimpleErrorCollection;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
+import com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions;
+import com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions.GrantResult;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeUtil;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
@@ -58,6 +60,7 @@ import org.ofbiz.core.entity.GenericValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions.GrantResult.REMOTE_GRANT_FAILED;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.any;
 
@@ -88,6 +91,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
     private final TransactionTemplate transactionTemplate;
     private final PermissionManager jiraProjectPermissionManager;
+    private final ConnectCrowdPermissions connectCrowdPermissions;
     private final ApplicationAuthorizationService applicationAuthorizationService;
     private final ApplicationRoleManager applicationRoleManager;
 
@@ -101,9 +105,11 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
             TransactionTemplate transactionTemplate,
             PermissionManager jiraProjectPermissionManager,
             ApplicationAuthorizationService applicationAuthorizationService,
-            ApplicationRoleManager applicationRoleManager)
+            ApplicationRoleManager applicationRoleManager,
+            ConnectCrowdPermissions connectCrowdPermissions)
     {
         this.jiraProjectPermissionManager = jiraProjectPermissionManager;
+        this.connectCrowdPermissions = connectCrowdPermissions;
         this.jiraPermissionManager = checkNotNull(jiraPermissionManager);
         this.projectManager = checkNotNull(projectManager);
         this.userManager = checkNotNull(userManager);
@@ -247,6 +253,11 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
 
         if (created)
         {
+            GrantResult result = connectCrowdPermissions.giveAdminPermission(groupKey);
+            if (result == REMOTE_GRANT_FAILED)
+            {
+                log.warn("Failed to grant '{}' administrative rights through the Remote UM REST API", groupKey);
+            }
             ensureGroupHasAdminPermission(groupKey);
         }
         else if (!groupHasAdminPermission(groupKey))
@@ -263,8 +274,16 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     {
         if (!groupHasAdminPermission(groupKey))
         {
-            jiraPermissionManager.addPermission(ADMIN_PERMISSION, groupKey);
-            log.info("Granted admin permission to group '{}'.", groupKey);
+            boolean permissionGranted = jiraPermissionManager.addPermission(ADMIN_PERMISSION, groupKey);
+            if (permissionGranted)
+            {
+                log.info("Granted admin permission to group '{}'.", groupKey);
+            }
+            else
+            {
+                log.warn("Failed to grant '{}' administrative rights through the deprecated jira API", groupKey);
+            }
+
         }
     }
 
