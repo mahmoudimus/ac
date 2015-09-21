@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.modules.gson;
+package com.atlassian.plugin.connect.testsupport;
 
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.google.common.base.Function;

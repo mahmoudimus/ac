@@ -75,8 +75,6 @@ public class TestWebSection extends JiraWebDriverTestBase
                             .withKey(WEB_SECTION_ID)
                             .build()
                 )
-                .addModuleMeta(new WebItemModuleMeta())
-                .addModuleMeta(new WebSectionModuleMeta())
                 .addRoute("/pg", ConnectAppServlets.helloWorldServlet())
                 .start();
     }

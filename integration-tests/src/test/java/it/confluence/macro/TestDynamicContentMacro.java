@@ -180,7 +180,6 @@ public class TestDynamicContentMacro extends AbstractContentMacroTest
                         slowMacro,
                         dynamicMacroWithFallback
                 )
-                .addModuleMeta(new DynamicContentMacroModuleMeta())
                 .addRoute(DEFAULT_MACRO_URL, ConnectAppServlets.helloWorldServlet())
                 .addRoute("/render-editor", ConnectAppServlets.macroEditor())
                 .addRoute("/macro-body-editor", ConnectAppServlets.macroBodyEditor(EDITED_MACRO_BODY))

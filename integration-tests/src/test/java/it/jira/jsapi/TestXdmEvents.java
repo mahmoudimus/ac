@@ -46,7 +46,6 @@ public class TestXdmEvents extends JiraWebDriverTestBase
                                 .withLocation("atl.jira.view.issue.right.context")
                                 .withUrl("/xdmEventsPanelA3")
                                 .build())
-                .addModuleMeta(new WebPanelModuleMeta())
                 .addRoute("/xdmEventsPanelA1", newServlet(new XdmEventsPanelServlet("A1")))
                 .addRoute("/xdmEventsPanelA2", newServlet(new XdmEventsPanelServlet("A2")))
                 .addRoute("/xdmEventsPanelA3", newServlet(new XdmEventsPanelServlet("A3")))
@@ -61,7 +60,6 @@ public class TestXdmEvents extends JiraWebDriverTestBase
                                 .withLocation("atl.jira.view.issue.right.context")
                                 .withUrl("/xdmEventsPanelB1")
                                 .build())
-                .addModuleMeta(new WebPanelModuleMeta())
                 .addRoute("/xdmEventsPanelB1", newServlet(new XdmEventsPanelServlet("B1")))
                 .start();
     }

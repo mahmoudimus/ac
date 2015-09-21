@@ -61,7 +61,6 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
                                 .withDescription(new I18nProperty("workflow post function description", null))
                                 .build()
                         )
-                .addModuleMeta(new WorkflowPostFunctionModuleMeta())
                 .addRoute("/wpf-view", ConnectAppServlets.helloWorldServlet())
                 .addRoute("/wpf-edit", ConnectAppServlets.helloWorldServlet())
                 .addRoute("/wpf-create", ConnectAppServlets.workflowPostFunctionServlet())

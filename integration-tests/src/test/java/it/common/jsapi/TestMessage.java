@@ -34,7 +34,6 @@ public class TestMessage extends MultiProductWebDriverTestBase
                                 .withLocation(getGloballyVisibleLocation())
                                 .build()
                 )
-                .addModuleMeta(new GeneralPageModuleMeta())
                 .addRoute("/pg", ConnectAppServlets.openMessageServlet())
                 .start();
     }

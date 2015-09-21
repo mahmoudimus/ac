@@ -100,8 +100,6 @@ public class TestAutoconvert extends ConfluenceWebDriverTestBase
                 .addScope(ScopeName.ADMIN) // for using ap.request
                 .addModules("dynamicContentMacros", dynamicMacroWithAutoconvert)
                 .addModules("staticContentMacros", staticMacroWithAutoconvert)
-                .addModuleMeta(new DynamicContentMacroModuleMeta())
-                .addModuleMeta(new StaticContentMacroModuleMeta())
                 .addRoute("/dynamic-macro", ConnectAppServlets.helloWorldServlet())
                 .addRoute("/static-macro", ConnectAppServlets.dynamicMacroStaticServlet())
                 .start();

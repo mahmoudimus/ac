@@ -117,7 +117,6 @@ public class TestJiraConditions extends JiraWebDriverTestBase
                                     "?issueId={issue.id}&projectKey={project.key}").build()
                         )
                         .build())
-                .addModuleMeta(new WebItemModuleMeta())
                 .addRoute(onlyBarneyConditionUrl, new CheckUsernameConditionServlet(barney))
                 .addRoute(onlyBettyConditionUrl, new CheckUsernameConditionServlet(betty))
                 .addRoute(PARAMETER_CAPTURE_URL, PARAMETER_CAPTURING_SERVLET)

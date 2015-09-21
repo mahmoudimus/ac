@@ -40,8 +40,10 @@ import com.atlassian.plugin.connect.test.HttpUtils;
 import com.atlassian.plugin.connect.test.Utils;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
 
+import com.atlassian.plugin.connect.testsupport.DefaultModuleSerializer;
 import com.google.common.collect.ImmutableMap;
 
+import com.google.gson.Gson;
 import org.apache.commons.lang.NotImplementedException;
 import org.bouncycastle.openssl.PEMWriter;
 import org.eclipse.jetty.server.Server;
@@ -475,10 +477,23 @@ public class ConnectRunner
         @Override
         protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
         {
-            String json = ConnectModulesGsonFactory.getGson(serializer).toJson(addon);
+            String json = getGson().toJson(addon);
             response.setContentType(MediaType.APPLICATION_JSON);
             response.getWriter().write(json);
             response.getWriter().close();
+        }
+        
+        private Gson getGson()
+        {
+            if (serializer.hasMetas())
+            {
+                return ConnectModulesGsonFactory.getGson(serializer);
+            }
+            else
+            {
+                return ConnectModulesGsonFactory.getGsonBuilder()
+                        .registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), new DefaultModuleSerializer()).create();
+            }
         }
     }
 

@@ -47,7 +47,6 @@ public class TestAddOnPropertyCondition extends MultiProductWebDriverTestBase
                                         .withParam("value", "true")
                                         .build())
                                 .build())
-                .addModuleMeta(new GeneralPageModuleMeta())
                 .addRoute("/pg", ConnectAppServlets.sizeToParentServlet())
                 .start();
     }

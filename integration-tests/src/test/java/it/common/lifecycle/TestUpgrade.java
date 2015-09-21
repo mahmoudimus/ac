@@ -51,7 +51,6 @@ public class TestUpgrade
                                 .withUrl("/pg")
                                 .withWeight(1234)
                                 .build())
-                .addModuleMeta(new GeneralPageModuleMeta())
                 .addRoute("/pg", ConnectAppServlets.helloWorldServlet());
         plugin0.start().stopAndUninstall();
         plugin0 = null;
@@ -67,7 +66,6 @@ public class TestUpgrade
                                 .withUrl("/pg")
                                 .withWeight(1234)
                                 .build())
-                .addModuleMeta(new GeneralPageModuleMeta())
                 .addRoute("/pg", ConnectAppServlets.helloWorldServlet());
         plugin1.start();
 

@@ -83,7 +83,6 @@ public class TestGeneralPage extends JiraWebDriverTestBase
                                 "?project_id={project.id}&project_key={project.key}").build())
                         .withWeight(1234)
                         .build())
-                .addModuleMeta(new GeneralPageModuleMeta())
                 .addRoute("/pg", ConnectAppServlets.sizeToParentServlet())
                 .addRoute(PARAMETER_CAPTURE_CONDITION_URL, PARAMETER_CAPTURING_SERVLET)
                 .start();

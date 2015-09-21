@@ -34,7 +34,6 @@ public class TestCookie extends MultiProductWebDriverTestBase
                                 .withKey(PAGE_KEY)
                                 .build()
                 )
-                .addModuleMeta(new GeneralPageModuleMeta())
                 .addRoute("/pg", ConnectAppServlets.cookieServlet())
                 .start();
     }

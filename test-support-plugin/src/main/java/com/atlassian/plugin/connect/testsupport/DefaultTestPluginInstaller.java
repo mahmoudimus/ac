@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.testsupport;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilter;
@@ -12,8 +13,11 @@ import com.atlassian.upm.spi.PluginControlHandler;
 import com.atlassian.upm.spi.PluginInstallHandler;
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 import com.google.common.io.Files;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang.StringUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -23,6 +27,9 @@ import org.springframework.beans.factory.DisposableBean;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -43,8 +50,9 @@ public class DefaultTestPluginInstaller implements TestPluginInstaller, Disposab
     @Override
     public Plugin installAddon(ConnectAddonBean bean) throws IOException
     {
-        String json = ConnectModulesGsonFactory.addonBeanToJson(bean);
-        return installAddon(json);
+        Gson gson = ConnectModulesGsonFactory.getGsonBuilder()
+                .registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), new DefaultModuleSerializer()).create();
+        return installAddon(gson.toJson(bean));
     }
 
     @Override

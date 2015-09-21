@@ -17,12 +17,16 @@ import java.util.Map;
  */
 public class ConnectModulesGsonFactory
 {
-    private static Type mapJsonType = new TypeToken<Map<String, Supplier<List<ModuleBean>>>>() {}.getType();
+    private static Type moduleJsonType = new TypeToken<Map<String, Supplier<List<ModuleBean>>>>() {}.getType();
     
+    public static Type getModuleJsonType()
+    {
+        return moduleJsonType;
+    }
     
     public static GsonBuilder getGsonBuilder(JsonDeserializer<Map<String, Supplier<List<ModuleBean>>>> moduleDeserializer)
     {
-        return getGsonBuilder().registerTypeAdapter(mapJsonType, moduleDeserializer);
+        return getGsonBuilder().registerTypeAdapter(moduleJsonType, moduleDeserializer);
     }
 
     public static GsonBuilder getGsonBuilder()
@@ -39,7 +43,6 @@ public class ConnectModulesGsonFactory
                 .registerTypeAdapterFactory(new LowercaseEnumTypeAdapterFactory())
                 .registerTypeAdapterFactory(new NullIgnoringSetTypeAdapterFactory())
                 .registerTypeAdapter(WebItemTargetBean.class, new WebItemTargetBeanSerializer())
-                .registerTypeAdapter(mapJsonType, new DefaultModuleSerializer())
                 .registerTypeAdapter(Supplier.class, new SupplierInstanceCreator())
                 .setPrettyPrinting()
                 .disableHtmlEscaping()

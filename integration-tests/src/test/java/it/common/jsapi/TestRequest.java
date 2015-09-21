@@ -43,7 +43,6 @@ public class TestRequest extends MultiProductWebDriverTestBase
                                 .withUrl(pageUrl)
                                 .withLocation(getGloballyVisibleLocation())
                                 .build())
-                .addModuleMeta(new GeneralPageModuleMeta())
                 .addRoute(pageUrl, ConnectAppServlets.apRequestServlet())
                 .addScope(ScopeName.READ)
                 .start();

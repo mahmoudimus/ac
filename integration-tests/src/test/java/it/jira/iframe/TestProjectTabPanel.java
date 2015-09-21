@@ -65,7 +65,6 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
                         )
                         .build()
                 )
-                .addModuleMeta(new ProjectTabPanelModuleMeta())
                 .addRoute("/ptp", ConnectAppServlets.apRequestServlet())
                 .addRoute(PARAMETER_CAPTURE_URL, PARAMETER_CAPTURING_SERVLET)
                 .start();

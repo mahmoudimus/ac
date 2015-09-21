@@ -65,8 +65,6 @@ public class TestIssueTabPanelWithJSDialog extends JiraWebDriverTestBase
                                 .withKey(ADDON_DIALOG)
                                 .build()
                 )
-                .addModuleMeta(new IssueTabPanelModuleMeta())
-                .addModuleMeta(new GeneralPageModuleMeta())
                 .addRoute("/ippd", ConnectAppServlets.openDialogServlet())
                 .addRoute("/my-dialog-url", ConnectAppServlets.closeDialogServlet())
                 .addScope(ScopeName.READ)

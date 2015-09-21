@@ -56,7 +56,6 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
                                 .withWeight(1234)
                                 .withConditions(toggleableConditionBean())
                                 .build())
-                .addModuleMeta(new AdminPageModuleMeta())
                 .addRoute("/pg", ConnectAppServlets.helloWorldServlet())
                 .start();
     }

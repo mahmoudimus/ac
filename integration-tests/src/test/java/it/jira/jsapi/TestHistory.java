@@ -45,7 +45,6 @@ public class TestHistory extends JiraWebDriverTestBase
                                 .withConditions(toggleableConditionBean())
                                 .withWeight(1234)
                                 .build())
-                .addModuleMeta(new GeneralPageModuleMeta())
                 .addRoute("/history-general-page", ConnectAppServlets.historyServlet())
                 .start();
     }

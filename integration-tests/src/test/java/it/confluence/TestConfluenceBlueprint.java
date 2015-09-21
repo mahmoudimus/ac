@@ -50,7 +50,6 @@ public final class TestConfluenceBlueprint extends ConfluenceWebDriverTestBase
                                         .withUrl("/template.xml")
                                         .build())
                                 .build())
-                .addModuleMeta(new BlueprintModuleMeta())
                 .addRoute("/template.xml", ConnectAppServlets.blueprintTemplateServlet())
                 .addScope(ScopeName.READ)
                 .start();

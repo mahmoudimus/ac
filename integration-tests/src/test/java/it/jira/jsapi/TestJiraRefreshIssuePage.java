@@ -42,7 +42,6 @@ public class TestJiraRefreshIssuePage extends JiraWebDriverTestBase
         addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
                 .setAuthenticationToNone()
                 .addModules("webPanels", refreshIssuePageWebPanelModuleBean)
-                .addModuleMeta(new WebPanelModuleMeta())
                 .addRoute(REFRESH_ISSUE_PAGE_WEB_PANEL_PATH, ConnectAppServlets.refreshIssuePageButtonServlet())
                 .start();
     }

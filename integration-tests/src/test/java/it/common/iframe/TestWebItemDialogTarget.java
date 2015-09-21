@@ -58,7 +58,6 @@ public class TestWebItemDialogTarget extends MultiProductWebDriverTestBase
                                 .withLocation(getGloballyVisibleLocation())
                                 .build()
                 )
-                .addModuleMeta(new WebItemModuleMeta())
                 .addRoute("/rpd", ConnectAppServlets.dialogServlet())
                 .addRoute("/fsd", ConnectAppServlets.sizeToParentServlet())
                 .start();

@@ -58,7 +58,6 @@ public final class WebHookTestServlet extends HttpServlet
                         .withUrl(webHookPath)
                         .withEvent(eventId)
                         .build())
-                .addModuleMeta(new WebHookModuleMeta())
                 .addRoute(webHookPath, servlet)
                 .addScope(ScopeName.READ)
                 .addJWT(new WebHookTestServlet()) // different servlet for installed callback so that tests can inspect only the webhooks
@@ -92,7 +91,6 @@ public final class WebHookTestServlet extends HttpServlet
         ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .addInstallLifecycle()
                 .addModule("webItems", randomWebItemBean())
-                .addModuleMeta(new WebItemModuleMeta())
                 .addRoute(ConnectRunner.INSTALLED_PATH, servlet)
                 .start();
 
@@ -120,7 +118,6 @@ public final class WebHookTestServlet extends HttpServlet
                 .setAuthenticationToNone()
                 .addEnableLifecycle()
                 .addModule("webItems", randomWebItemBean())
-                .addModuleMeta(new WebItemModuleMeta())
                 .addRoute(ConnectRunner.ENABLED_PATH, servlet)
                 .start();
 
@@ -173,7 +170,6 @@ public final class WebHookTestServlet extends HttpServlet
         ConnectRunner runner = new ConnectRunner(baseUrl, pluginKey)
                 .addUninstallLifecycle()
                 .addModule("webItems", randomWebItemBean())
-                .addModuleMeta(new WebItemModuleMeta())
                 .addRoute(ConnectRunner.UNINSTALLED_PATH, servlet)
                 .start();
 
@@ -201,10 +197,8 @@ public final class WebHookTestServlet extends HttpServlet
         ConnectRunner runner = new ConnectRunner(baseUrl, addOnKey)
                 .setAuthenticationToNone()
                 .addModule("webhooks", newWebHookBean().withEvent(eventId).withUrl(path).build())
-                .addModuleMeta(new WebHookModuleMeta())
                 .addRoute(path, servlet)
                 .addModule("webItems", randomWebItemBean())
-                .addModuleMeta(new WebItemModuleMeta())
                 .addScope(ScopeName.READ) // for receiving web hooks
                 .start();
 

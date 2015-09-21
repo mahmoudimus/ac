@@ -60,7 +60,6 @@ public class TestJira extends JiraWebDriverTestBase
                                 .withUrl("/advanced-admin")
                                 .withLocation("advanced_menu_section/advanced_section")
                                 .build())
-                .addModuleMeta(new AdminPageModuleMeta())
                 .addRoute("/admin", ConnectAppServlets.apRequestServlet())
                 .addRoute("/advanced-admin", ConnectAppServlets.apRequestServlet())
                 .addModule("jiraIssueTabPanels",
@@ -69,7 +68,6 @@ public class TestJira extends JiraWebDriverTestBase
                                 .withName(new I18nProperty("AC Play Issue Tab Page", null))
                                 .withUrl("/issue-tab-panel")
                                 .build())
-                .addModuleMeta(new IssueTabPanelModuleMeta())
                 .addRoute("/issue-tab-panel", ConnectAppServlets.apRequestServlet())
                 .addModule("webItems",
                         newWebItemBean()
@@ -79,7 +77,6 @@ public class TestJira extends JiraWebDriverTestBase
                                 .withLocation("operations-subtasks")
                                 .withTarget(newWebItemTargetBean().withType(WebItemTargetType.dialog).build())
                                 .build())
-                .addModuleMeta(new WebItemModuleMeta())
                 .addRoute("/jia", ConnectAppServlets.dialogServlet())
                 .addScope(ScopeName.READ)
                 .start();

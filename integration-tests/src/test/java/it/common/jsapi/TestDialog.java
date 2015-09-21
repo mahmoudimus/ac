@@ -74,8 +74,6 @@ public class TestDialog extends MultiProductWebDriverTestBase
                                         .build())
                                 .build()
                 )
-                .addModuleMeta(new GeneralPageModuleMeta())
-                .addModuleMeta(new WebItemModuleMeta())
                 .addRoute("/pg", ConnectAppServlets.openDialogServlet())
                 .addRoute("/my-dialog-url", ConnectAppServlets.closeDialogServlet())
                 .addRoute("/general-page", ConnectAppServlets.openDialogServlet(ADDON_WEBITEM_DIALOG))

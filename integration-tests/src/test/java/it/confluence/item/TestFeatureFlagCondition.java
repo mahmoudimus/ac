@@ -49,7 +49,6 @@ public class TestFeatureFlagCondition extends ConfluenceWebDriverTestBase
                                     .build()
                         )
                         .build())
-                .addModuleMeta(new WebItemModuleMeta())
                 .start();
     }
 

@@ -74,7 +74,6 @@ public class TestInstallFailure extends MultiProductWebDriverTestBase
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .addUninstallLifecycle()
                 .addModules("generalPages", pageBean)
-                .addModuleMeta(new GeneralPageModuleMeta())
                 .addJWT(installUninstallHandler)
                 .addRoute(route, ConnectAppServlets.helloWorldServlet())
                 .addRoute(ConnectRunner.UNINSTALLED_PATH, installUninstallHandler)

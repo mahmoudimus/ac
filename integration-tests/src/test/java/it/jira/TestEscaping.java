@@ -99,7 +99,6 @@ public class TestEscaping extends JiraWebDriverTestBase
                                 .withWeight(1) // avoid ending up in 'More' menu
                                 .build()
                 )
-                .addModuleMeta(new GeneralPageModuleMeta())
                 .addModule("webItems",
                         newWebItemBean()
                                 .withName(new I18nProperty(MODULE_NAME, null))
@@ -111,7 +110,6 @@ public class TestEscaping extends JiraWebDriverTestBase
                                 .withWeight(1) // avoid ending up in 'More' menu
                                 .build()
                 )
-                .addModuleMeta(new WebItemModuleMeta())
                 .addModule("adminPages",
                         newPageBean()
                                 .withName(new I18nProperty(MODULE_NAME, null))
@@ -119,7 +117,6 @@ public class TestEscaping extends JiraWebDriverTestBase
                                 .withUrl(MODULE_URL)
                                 .build()
                 )
-                .addModuleMeta(new AdminPageModuleMeta())
                 .addModule("jiraIssueTabPanels",
                         newTabPanelBean()
                                 .withName(new I18nProperty(MODULE_NAME, null))
@@ -127,7 +124,6 @@ public class TestEscaping extends JiraWebDriverTestBase
                                 .withUrl(MODULE_URL)
                                 .build()
                 )
-                .addModuleMeta(new IssueTabPanelModuleMeta())
                 .addModule("jiraProfileTabPanels",
                         newTabPanelBean()
                                 .withName(new I18nProperty(MODULE_NAME, null))
@@ -135,7 +131,6 @@ public class TestEscaping extends JiraWebDriverTestBase
                                 .withUrl(MODULE_URL)
                                 .build()
                 )
-                .addModuleMeta(new ProfileTabPanelModuleMeta())
                 .addModule("jiraProjectAdminTabPanels",
                         newProjectAdminTabPanelBean()
                                 .withName(new I18nProperty(MODULE_NAME, null))
@@ -144,7 +139,6 @@ public class TestEscaping extends JiraWebDriverTestBase
                                 .withLocation("projectgroup4")
                                 .build()
                 )
-                .addModuleMeta(new ConnectProjectAdminTabPanelModuleMeta())
                 .addModule("jiraProjectTabPanels",
                         newTabPanelBean()
                                 .withName(new I18nProperty(MODULE_NAME, null))
@@ -152,7 +146,6 @@ public class TestEscaping extends JiraWebDriverTestBase
                                 .withUrl(MODULE_URL)
                                 .build()
                 )
-                .addModuleMeta(new ProjectTabPanelModuleMeta())
                 .addModule("jiraSearchRequestViews",
                         newSearchRequestViewModuleBean()
                                 .withName(new I18nProperty(MODULE_NAME, null))
@@ -161,7 +154,6 @@ public class TestEscaping extends JiraWebDriverTestBase
                                 .withDescription(new I18nProperty(MODULE_NAME, null))
                                 .build()
                 )
-                .addModuleMeta(new SearchRequestViewModuleMeta())
                 .addModule("webPanels",
                         newWebPanelBean()
                                 .withName(new I18nProperty(MODULE_NAME, null))
@@ -170,7 +162,6 @@ public class TestEscaping extends JiraWebDriverTestBase
                                 .withLocation("atl.jira.view.issue.right.context")
                                 .build()
                 )
-                .addModuleMeta(new WebPanelModuleMeta())
                 .addModule("jiraWorkflowPostFunctions",
                         newWorkflowPostFunctionBean()
                                 .withName(new I18nProperty(MODULE_NAME, null))
@@ -179,7 +170,6 @@ public class TestEscaping extends JiraWebDriverTestBase
                                 .withDescription(new I18nProperty(MODULE_NAME, null))
                                 .build()
                 )
-                .addModuleMeta(new WorkflowPostFunctionModuleMeta())
                 .addRoute(MODULE_URL, ConnectAppServlets.helloWorldServlet())
                 .start();
     }

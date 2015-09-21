@@ -31,7 +31,6 @@ public class TestConfluenceCloseMacroEditor extends ConfluenceWebDriverTestBase
         addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), "my-plugin")
                 .setAuthenticationToNone()
                 .addModules("staticContentMacros", editorMacroModuleBean)
-                .addModuleMeta(new StaticContentMacroModuleMeta())
                 .addRoute("/render-editor", ConnectAppServlets.macroEditor())
                 .addRoute("/echo/params", ConnectAppServlets.echoQueryParametersServlet())
                 .start();

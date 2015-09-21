@@ -134,8 +134,6 @@ public class TestConfluenceConditions extends ConfluenceWebDriverTestBase
                                                 "?pageId={page.id}&spaceKey={space.key}&spaceId={space.id}").build()
                                 )
                                 .build())
-                .addModuleMeta(new WebItemModuleMeta())
-                .addModuleMeta(new WebPanelModuleMeta())
                 .addRoute(onlyBarneyConditionUrl, new CheckUsernameConditionServlet(barney))
                 .addRoute(onlyBettyConditionUrl, new CheckUsernameConditionServlet(betty))
                 .addRoute(PARAMETER_CAPTURE_CONDITION_URL, PARAMETER_CAPTURING_SERVLET)

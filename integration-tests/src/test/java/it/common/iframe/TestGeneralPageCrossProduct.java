@@ -69,7 +69,6 @@ public class TestGeneralPageCrossProduct extends MultiProductWebDriverTestBase
                                 .withUrl("/fsg")
                                 .withLocation(getGloballyVisibleLocation())
                                 .build())
-                .addModuleMeta(new GeneralPageModuleMeta())
                 .addRoute("/rpg", ConnectAppServlets.apRequestServlet())
                 .addRoute("/ob", ConnectAppServlets.helloWorldServlet())
                 .addRoute("/only" + betty.getDisplayName() + "Condition", new CheckUsernameConditionServlet(betty))

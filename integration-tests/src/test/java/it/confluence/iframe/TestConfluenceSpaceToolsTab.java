@@ -54,7 +54,6 @@ public class TestConfluenceSpaceToolsTab extends ConfluenceWebDriverTestBase
                         .withUrl("/pg")
                         .build()
                 )
-                .addModuleMeta(new SpaceToolsTabModuleMeta())
                 .addRoute("/pg", ConnectAppServlets.helloWorldServlet())
                 .start();
     }

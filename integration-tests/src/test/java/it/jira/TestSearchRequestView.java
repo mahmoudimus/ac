@@ -54,7 +54,6 @@ public class TestSearchRequestView extends JiraWebDriverTestBase
                             newSingleConditionBean().withCondition("user_is_logged_in").build(),
                             toggleableConditionBean()
                         ).build())
-                .addModuleMeta(new SearchRequestViewModuleMeta())
                 .addRoute(SERVLET_URL, ConnectAppServlets.wrapContextAwareServlet(searchRequestViewServlet))
                 .start();
     }

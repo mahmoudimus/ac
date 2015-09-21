@@ -48,7 +48,6 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
                                         .build())
                                 .withUrl("/content")
                                 .build())
-                .addModuleMeta(new WebPanelModuleMeta())
                 .addRoute("/content", ConnectAppServlets.customMessageServlet("Web panel displayed"))
                 .start();
     }

@@ -61,7 +61,6 @@ public class TestCompatibility extends ConfluenceWebDriverTestBase
                                 .withName(new I18nProperty(MACRO_NAME_2, null))
                                 .build()
                 )
-                .addModuleMeta(new DynamicContentMacroModuleMeta())
                 .addRoute("/maps", echoQueryParametersServlet())
                 .start();
     }

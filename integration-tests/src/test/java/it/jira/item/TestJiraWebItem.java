@@ -159,8 +159,6 @@ public class TestJiraWebItem extends JiraWebDriverTestBase
                         absoluteWebItemWithDialogOptions(false),
                         absoluteWebItemWithDialogOptions(null)
                 )
-                .addModuleMeta(new GeneralPageModuleMeta())
-                .addModuleMeta(new WebItemModuleMeta())
                 .addRoute("/only" + barney.getDisplayName() + "Condition", new CheckUsernameConditionServlet(barney.getUsername()))
                 .addRoute("/only" + betty.getDisplayName() + "Condition", new CheckUsernameConditionServlet(betty.getUsername()))
                 .addRoute("/irwi?issue_id={issue.id}&project_key={project.key}&pid={project.id}", ConnectAppServlets.helloWorldServlet())

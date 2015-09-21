@@ -113,8 +113,6 @@ public class TestMacroBody extends ConfluenceWebDriverTestBase
                 .addScope(ScopeName.ADMIN) // for using ap.request
                 .addModules("dynamicContentMacros", dynamicContentMacroById, dynamicContentMacroByHash)
                 .addModules("staticContentMacros", staticContentMacroById, staticContentMacroByHash)
-                .addModuleMeta(new DynamicContentMacroModuleMeta())
-                .addModuleMeta(new StaticContentMacroModuleMeta())
                 .addRoute("/installed", installHandlerServlet)
                 .addRoute("/render-dynamic-by-id", new HttpContextServlet(new MacroBodyServlet(MacroBodyServlet.CollectionType.BY_ID, baseUrl, addonKey, installHandlerServlet, dynamicMacroBodyHandler)))
                 .addRoute("/render-static-by-id", new HttpContextServlet(new MacroBodyServlet(MacroBodyServlet.CollectionType.BY_ID, baseUrl, addonKey, installHandlerServlet, staticMacroBodyHandler)))

@@ -73,7 +73,6 @@ public class TestJiraIssueCreate extends JiraWebDriverTestBase
                                 .withUrl("/pg?project_id={project.id}&project_key={project.key}")
                                 .withWeight(1234)
                                 .build())
-                .addModuleMeta(new GeneralPageModuleMeta())
                 .addRoute("/pg", ConnectAppServlets.quickCreateIssueServlet())
                 .start();
     }

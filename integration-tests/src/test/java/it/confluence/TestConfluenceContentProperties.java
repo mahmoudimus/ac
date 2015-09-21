@@ -123,7 +123,6 @@ public class TestConfluenceContentProperties
             new ConnectRunner(baseUrl, AddonTestUtils.randomAddOnKey())
                     .setAuthenticationToNone()
                     .addModules("confluenceContentProperties", moduleBean)
-                    .addModuleMeta(new ContentPropertyModuleMeta())
                     .start();
 
             executor = createExecutor();

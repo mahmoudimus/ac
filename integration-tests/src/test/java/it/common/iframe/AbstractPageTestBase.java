@@ -5,7 +5,6 @@ import java.net.URISyntaxException;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
-import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectPageModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
@@ -48,17 +47,17 @@ public class AbstractPageTestBase extends MultiProductWebDriverTestBase
     @Rule
     public TestRule resetToggleableCondition = runner.resetToggleableConditionRule();
 
-    protected static void startConnectAddOn(String fieldName, ConnectModuleMeta meta) throws Exception
+    protected static void startConnectAddOn(String fieldName) throws Exception
     {
-        startConnectAddOn(fieldName, meta, URL);
+        startConnectAddOn(fieldName, URL);
     }
 
-    protected static void startConnectAddOn(String fieldName, ConnectModuleMeta meta, String url) throws Exception
+    protected static void startConnectAddOn(String fieldName, String url) throws Exception
     {
-        startConnectAddOn(fieldName, meta, url, newPageBean());
+        startConnectAddOn(fieldName, url, newPageBean());
     }
 
-    protected static void startConnectAddOn(String fieldName, ConnectModuleMeta meta, String url, ConnectPageModuleBeanBuilder pageBeanBuilder) throws Exception
+    protected static void startConnectAddOn(String fieldName, String url, ConnectPageModuleBeanBuilder pageBeanBuilder) throws Exception
     {
         pageBeanBuilder.withName(new I18nProperty(MY_AWESOME_PAGE, null))
                 .withKey(MY_AWESOME_PAGE_KEY)
@@ -71,7 +70,6 @@ public class AbstractPageTestBase extends MultiProductWebDriverTestBase
 
         runner = new ConnectRunner(product.getProductInstance().getBaseUrl(), AddonTestUtils.randomAddOnKey())
                 .addModule(fieldName, pageBeanBuilder.build())
-                .addModuleMeta(meta)
                 .setAuthenticationToNone()
                 .addRoute(route, ConnectAppServlets.apRequestServlet())
                 .start();

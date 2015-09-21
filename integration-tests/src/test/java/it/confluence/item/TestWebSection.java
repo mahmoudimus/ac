@@ -68,8 +68,6 @@ public class TestWebSection extends ConfluenceWebDriverTestBase
                                 .withKey(WEB_SECTION_ID)
                                 .build()
                 )
-                .addModuleMeta(new WebItemModuleMeta())
-                .addModuleMeta(new WebSectionModuleMeta())
                 .start();
     }
 

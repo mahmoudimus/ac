@@ -34,7 +34,6 @@ public class TestAmd extends MultiProductWebDriverTestBase
                                 .withUrl("/amdTest")
                                 .withLocation(getGloballyVisibleLocation())
                                 .build())
-                .addModuleMeta(new GeneralPageModuleMeta())
                 .addRoute("/amdTest", ConnectAppServlets.amdTestServlet())
                 .addScope(ScopeName.READ)
                 .start();

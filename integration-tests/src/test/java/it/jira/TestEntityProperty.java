@@ -68,7 +68,6 @@ public class TestEntityProperty extends JiraTestBase
                                 .withEntityType(EntityPropertyType.issue)
                                 .build()
                 )
-                .addModuleMeta(new EntityPropertyModuleMeta())
                 .start();
         issueClient = new IssuesControl(localEnvironmentData, new IssueTypeControl(localEnvironmentData));
         entityPropertyClient = new EntityPropertyClient(localEnvironmentData, "issue");
@@ -151,7 +150,6 @@ public class TestEntityProperty extends JiraTestBase
                                 .withEntityType(EntityPropertyType.issue)
                                 .build()
                 )
-                .addModuleMeta(new EntityPropertyModuleMeta())
                 .start();
 
         IssueCreateResponse firstIssueWithProperty = issueClient.createIssue(testProject.getKey(), "First issue with attachment data");

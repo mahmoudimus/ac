@@ -27,6 +27,11 @@ public class StaticModuleBeanDeserializer extends ModuleBeanDeserializer
     {
         moduleMetas.add(moduleMeta);
     }
+    
+    public boolean hasMetas()
+    {
+        return !moduleMetas.isEmpty();
+    }
 
     @Override
     protected List<ModuleBean> deserializeModulesOfSameType(Map.Entry<String, JsonElement> modules)

@@ -47,7 +47,6 @@ public class TestSessionIntegrity extends MultiProductWebDriverTestBase
                         .withName(new I18nProperty("Page", null))
                         .withUrl("/page")
                         .build())
-                .addModuleMeta(new GeneralPageModuleMeta())
                 .addJWT(installHandler)
                 .addScope(ScopeName.READ)
                 .addRoute("/page", ConnectAppServlets.helloWorldServlet())

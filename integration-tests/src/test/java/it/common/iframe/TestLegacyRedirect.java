@@ -45,7 +45,6 @@ public class TestLegacyRedirect extends MultiProductWebDriverTestBase
                                 .withKey(ADDON_GENERALPAGE)
                                 .build()
                 )
-                .addModuleMeta(new GeneralPageModuleMeta())
                 .addRoute("/pg", ConnectAppServlets.customMessageServlet("hi"))
                 .start();
     }

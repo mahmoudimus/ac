@@ -59,7 +59,6 @@ public class TestAdminPage extends JiraWebDriverTestBase
                                 .withUrl("/pg")
                                 .withWeight(1234)
                                 .build())
-                .addModuleMeta(new AdminPageModuleMeta())
                 .addRoute("/pg", ConnectAppServlets.sizeToParentServlet())
                 .start();
     }

@@ -125,12 +125,6 @@ public class TestEscaping extends ConfluenceWebDriverTestBase
                                 .withUrl(MODULE_URL)
                                 .build()
                 )
-                .addModuleMeta(new GeneralPageModuleMeta())
-                .addModuleMeta(new WebItemModuleMeta())
-                .addModuleMeta(new AdminPageModuleMeta())
-                .addModuleMeta(new DynamicContentMacroModuleMeta())
-                .addModuleMeta(new ProfilePageModuleMeta())
-                .addModuleMeta(new SpaceToolsTabModuleMeta())
                 .addRoute(MODULE_URL, ConnectAppServlets.helloWorldServlet())
                 .start();
 

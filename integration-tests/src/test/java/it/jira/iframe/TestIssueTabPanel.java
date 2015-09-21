@@ -65,7 +65,6 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
                         )
                         .withWeight(1234)
                         .build())
-                .addModuleMeta(new IssueTabPanelModuleMeta())
                 .addRoute("/ipp", ConnectAppServlets.apRequestServlet())
                 .addRoute(PARAMETER_CAPTURE_URL, PARAMETER_CAPTURING_SERVLET)
                 .addScope(ScopeName.READ)

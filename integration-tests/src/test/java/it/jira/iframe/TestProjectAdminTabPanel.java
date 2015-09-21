@@ -69,7 +69,6 @@ public class TestProjectAdminTabPanel extends JiraWebDriverTestBase
                                     "?projectKey={project.key}&projectId={project.id}").build()
                         )
                         .build())
-                .addModuleMeta(new ConnectProjectAdminTabPanelModuleMeta())
                 .addRoute("/pct", ConnectAppServlets.apRequestServlet())
                 .addRoute(PARAMETER_CAPTURE_URL, PARAMETER_CAPTURING_SERVLET)
                 .start();

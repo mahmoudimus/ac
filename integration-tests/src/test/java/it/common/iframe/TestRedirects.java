@@ -42,7 +42,6 @@ public class TestRedirects
                         .withName(new I18nProperty("Page", null))
                         .withUrl("/page")
                         .build())
-                .addModuleMeta(new GeneralPageModuleMeta())
                 .addRoute("/page", new MessageServlet())
                 .setAuthenticationToNone()
                 .start();

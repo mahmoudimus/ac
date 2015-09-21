@@ -110,7 +110,6 @@ public class TestStaticContentMacro extends AbstractContentMacroTest
                         hiddenMacro,
                         counterMacro
                 )
-                .addModuleMeta(new StaticContentMacroModuleMeta())
                 .addRoute(DEFAULT_MACRO_URL, ConnectAppServlets.wrapContextAwareServlet(parameterServlet))
                 .addRoute("/render-editor", ConnectAppServlets.macroEditor())
                 .addRoute("/echo/params", ConnectAppServlets.echoQueryParametersServlet())

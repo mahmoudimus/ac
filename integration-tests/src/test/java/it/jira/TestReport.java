@@ -69,7 +69,6 @@ public class TestReport extends JiraWebDriverTestBase
                                 .withName(new I18nProperty(secondTestReport.title, null))
                                 .withKey(secondTestReport.key)
                                 .build())
-                .addModuleMeta(new ReportModuleMeta())
                 .addRoute("/report", ConnectAppServlets.apRequestServlet())
                 .start();
     }

@@ -62,7 +62,6 @@ public class TestLifecycle
         ConnectRunner plugin1 = new ConnectRunner(baseUrl,pluginKey)
                 .addDisableLifecycle()
                 .addModule("webItems", randomWebItemBean())
-                .addModuleMeta(new WebItemModuleMeta())
                 .setAuthenticationToNone()
                 .addRoute(ConnectRunner.DISABLED_PATH, servlet);
         try
@@ -87,7 +86,6 @@ public class TestLifecycle
                 .addUninstallLifecycle()
                 .setAuthenticationToNone()
                 .addModule("webItems", randomWebItemBean())
-                .addModuleMeta(new WebItemModuleMeta())
                 .addRoute(ConnectRunner.UNINSTALLED_PATH, servlet);
         try
         {
