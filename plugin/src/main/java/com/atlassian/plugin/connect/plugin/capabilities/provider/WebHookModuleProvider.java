@@ -4,7 +4,7 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
-import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.WebHookModuleMeta;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebHookModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.module.provider.AbstractConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
@@ -57,6 +57,6 @@ public class WebHookModuleProvider extends AbstractConnectModuleProvider<WebHook
     @Override
     public ConnectModuleMeta getMeta()
     {
-        return new WebItemModuleMeta();
+        return new WebHookModuleMeta();
     }
 }

@@ -3,6 +3,7 @@ package it.jira;
 import com.atlassian.jira.projects.pageobjects.webdriver.page.ReportsPage;
 import com.atlassian.plugin.connect.modules.beans.ReportCategory;
 import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ReportModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
@@ -68,6 +69,7 @@ public class TestReport extends JiraWebDriverTestBase
                                 .withName(new I18nProperty(secondTestReport.title, null))
                                 .withKey(secondTestReport.key)
                                 .build())
+                .addModuleMeta(new ReportModuleMeta())
                 .addRoute("/report", ConnectAppServlets.apRequestServlet())
                 .start();
     }

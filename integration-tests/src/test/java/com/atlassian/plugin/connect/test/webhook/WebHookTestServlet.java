@@ -5,6 +5,7 @@ import cc.plural.jsonij.JSON;
 import cc.plural.jsonij.Value;
 import cc.plural.jsonij.parser.ParserException;
 
+import com.atlassian.plugin.connect.modules.beans.WebHookModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
@@ -57,7 +58,7 @@ public final class WebHookTestServlet extends HttpServlet
                         .withUrl(webHookPath)
                         .withEvent(eventId)
                         .build())
-                .addModuleMeta(new WebItemModuleMeta())
+                .addModuleMeta(new WebHookModuleMeta())
                 .addRoute(webHookPath, servlet)
                 .addScope(ScopeName.READ)
                 .addJWT(new WebHookTestServlet()) // different servlet for installed callback so that tests can inspect only the webhooks
@@ -200,6 +201,7 @@ public final class WebHookTestServlet extends HttpServlet
         ConnectRunner runner = new ConnectRunner(baseUrl, addOnKey)
                 .setAuthenticationToNone()
                 .addModule("webhooks", newWebHookBean().withEvent(eventId).withUrl(path).build())
+                .addModuleMeta(new WebHookModuleMeta())
                 .addRoute(path, servlet)
                 .addModule("webItems", randomWebItemBean())
                 .addModuleMeta(new WebItemModuleMeta())

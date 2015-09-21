@@ -11,7 +11,7 @@ public class ContentPropertyModuleMeta implements ConnectModuleMeta
     @Override
     public String getDescriptorKey()
     {
-        return "contentProperties";
+        return "confluenceContentProperties";
     }
 
     @Override

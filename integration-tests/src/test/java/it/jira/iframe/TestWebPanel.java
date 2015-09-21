@@ -2,6 +2,7 @@
 package it.jira.iframe;
 
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
+import com.atlassian.plugin.connect.modules.beans.WebPanelModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
@@ -100,6 +101,7 @@ public final class TestWebPanel extends JiraWebDriverTestBase
                                 .withConditions(toggleableConditionBean())
                                 .build()
                 )
+                .addModuleMeta(new WebPanelModuleMeta())
                 .addRoute("/pcp", ConnectAppServlets.customMessageServlet("pcp-OK"))
                 .addRoute("/ilwp", ConnectAppServlets.customMessageServlet("ilwp-OK"))
                 .addRoute("/ilwp2", ConnectAppServlets.customMessageServlet("ilwp2-OK"))

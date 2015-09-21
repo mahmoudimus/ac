@@ -1,6 +1,7 @@
 package it.common;
 
 import com.atlassian.pageobjects.page.HomePage;
+import com.atlassian.plugin.connect.modules.beans.GeneralPageModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
@@ -46,6 +47,7 @@ public class TestAddOnPropertyCondition extends MultiProductWebDriverTestBase
                                         .withParam("value", "true")
                                         .build())
                                 .build())
+                .addModuleMeta(new GeneralPageModuleMeta())
                 .addRoute("/pg", ConnectAppServlets.sizeToParentServlet())
                 .start();
     }

@@ -7,6 +7,7 @@ import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.plugin.connect.modules.beans.DashboardItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.DashboardItemModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
@@ -74,6 +75,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
                 .addModules("jiraDashboardItems",
                         buildDashboardItemModule(DASHBOARD_ITEM_TITLE, DASHBOARD_ITEM_KEY, true),
                         buildDashboardItemModule(NON_CONFIGURABLE_DASHBOARD_ITEM_TITLE, NON_CONFIGURABLE_DASHBOARD_ITEM_KEY, false))
+                .addModuleMeta(new DashboardItemModuleMeta())
                 .addRoute("/dashboard-item-test", ConnectAppServlets.dashboardItemServlet(Lists.newArrayList(
                         new TestServletContextExtractor(DASHBOARD_ITEM_ID_QUERY_PARAM),
                         new TestServletContextExtractor(DASHBOARD_ID_QUERY_PARAM))))

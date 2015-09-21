@@ -4,6 +4,7 @@ import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.jira.testkit.client.restclient.EntityPropertyClient;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
+import com.atlassian.plugin.connect.modules.beans.WebPanelModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.WebPanelModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -47,6 +48,7 @@ public class TestEntityPropertyEqualToCondition extends JiraWebDriverTestBase
                                         .build())
                                 .withUrl("/content")
                                 .build())
+                .addModuleMeta(new WebPanelModuleMeta())
                 .addRoute("/content", ConnectAppServlets.customMessageServlet("Web panel displayed"))
                 .start();
     }

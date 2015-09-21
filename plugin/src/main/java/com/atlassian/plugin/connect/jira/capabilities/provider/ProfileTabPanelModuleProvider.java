@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.jira.iframe.tabpanel.profile.ConnectIFramePr
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ProfilePageModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ProfileTabPanelModuleMeta;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -44,6 +45,6 @@ public class ProfileTabPanelModuleProvider extends ConnectTabPanelModuleProvider
     @Override
     public ConnectModuleMeta getMeta()
     {
-        return new ProfilePageModuleMeta();
+        return new ProfileTabPanelModuleMeta();
     }
 }
