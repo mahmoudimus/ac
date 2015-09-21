@@ -271,6 +271,7 @@ public class TestDashboardItem extends JiraWebDriverTestBase
                                 .withKey(moduleKey)
                                 .configurable(true)
                                 .build())
+                .addModuleMeta(new DashboardItemModuleMeta())
                 .addRoute("/item-with-condition", ConnectAppServlets.dashboardItemServlet(Lists.newArrayList(
                         new TestServletContextExtractor(DASHBOARD_ITEM_ID_QUERY_PARAM),
                         new TestServletContextExtractor(DASHBOARD_ID_QUERY_PARAM))))
