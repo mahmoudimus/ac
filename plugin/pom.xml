@@ -1035,7 +1035,7 @@
                         </goals>
                         <configuration>
                             <generatorProvider>com.atlassian.json.schema.DefaultJsonSchemaGeneratorProvider</generatorProvider>
-                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ModuleList</rootClassName>
+                            <rootClassName>com.atlassian.plugin.connect.plugin.descriptor.CommonModuleList</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/common-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/common-schema-pretty.json</prettyOutput>
                             <enumCase>insensitive</enumCase>
@@ -1048,7 +1048,7 @@
                             <goal>generate-schema</goal>
                         </goals>
                         <configuration>
-                            <generatorProvider>com.atlassian.plugin.connect.jira.JiraSchemaGeneratorProvider</generatorProvider>
+                            <generatorProvider>com.atlassian.plugin.connect.api.capabilities.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
                             <rootClassName>com.atlassian.plugin.connect.modules.beans.JiraModuleList</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/jira-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/jira-schema-pretty.json</prettyOutput>
@@ -1062,8 +1062,8 @@
                             <goal>generate-schema</goal>
                         </goals>
                         <configuration>
-                            <generatorProvider>com.atlassian.plugin.connect.confluence.ConfluenceSchemaGeneratorProvider</generatorProvider>
-                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ConfluenceModuleList</rootClassName>
+                            <generatorProvider>com.atlassian.plugin.connect.api.capabilities.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
+                            <rootClassName>com.atlassian.plugin.connect.confluence.ConfluenceModuleList</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/confluence-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/confluence-schema-pretty.json</prettyOutput>
                             <enumCase>insensitive</enumCase>
@@ -1076,7 +1076,7 @@
                             <goal>generate-schema</goal>
                         </goals>
                         <configuration>
-                            <generatorProvider>com.atlassian.json.schema.DefaultJsonSchemaGeneratorProvider</generatorProvider>
+                            <generatorProvider>com.atlassian.plugin.connect.api.capabilities.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
                             <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
                             <ignoreFilter>shallow</ignoreFilter>
                             <rawOutput>${project.build.outputDirectory}/schema/shallow-schema.json</rawOutput>
