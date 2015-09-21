@@ -44,7 +44,7 @@
             var depth = <%= current.path.length %>;
             // Get rid of double slashes
             var pathname = window.location.pathname.replace(/\/+/g,'/');
-            return '/' + _(pathname.split('/')).compact().initial(depth - pathname.endsWith('/')).join('/');
+            return '/' + _.compact(pathname.split('/')).slice(0, -depth + pathname.endsWith('/')).join('/');
         });
     </script>
 </head>

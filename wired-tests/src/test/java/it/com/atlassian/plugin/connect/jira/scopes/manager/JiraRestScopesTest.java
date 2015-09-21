@@ -125,7 +125,27 @@ public class JiraRestScopesTest extends ScopeManagerTest
 
                 // configuration requires READ
                 emptyBodyForJira(null, HttpMethod.GET, "/jira/rest/api/2/configuration", false),
-                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/configuration", true)));
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/configuration", true),
+
+                // reading project properties requires READ
+                emptyBodyForJira(null, HttpMethod.GET, "/jira/rest/api/2/project/ABC-123/properties/some-property-name", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.GET, "/jira/rest/api/2/project/ABC-123/properties/some-property-name", true),
+
+                // writing project properties requires WRITE
+                emptyBodyForJira(null, HttpMethod.PUT, "/jira/rest/api/2/project/ABC-123/properties/some-property-name", false),
+                emptyBodyForJira(ScopeName.READ, HttpMethod.PUT, "/jira/rest/api/2/project/ABC-123/properties/some-property-name", false),
+                emptyBodyForJira(ScopeName.WRITE, HttpMethod.PUT, "/jira/rest/api/2/project/ABC-123/properties/some-property-name", true),
+
+                // mutating other project data requires PROJECT_ADMIN
+                emptyBodyForJira(ScopeName.DELETE, HttpMethod.PUT, "/jira/rest/api/2/project/ABC-123/role", false),
+                emptyBodyForJira(ScopeName.PROJECT_ADMIN, HttpMethod.PUT, "/jira/rest/api/2/project/ABC-123/role", true),
+                emptyBodyForJira(ScopeName.DELETE, HttpMethod.PUT, "/jira/rest/api/2/project/ABC-123/avatar", false),
+                emptyBodyForJira(ScopeName.PROJECT_ADMIN, HttpMethod.PUT, "/jira/rest/api/2/project/ABC-123/avatar", true),
+                emptyBodyForJira(ScopeName.DELETE, HttpMethod.POST, "/jira/rest/api/2/project/ABC-123/avatar", false),
+                emptyBodyForJira(ScopeName.PROJECT_ADMIN, HttpMethod.POST, "/jira/rest/api/2/project/ABC-123/avatar", true),
+                emptyBodyForJira(ScopeName.DELETE, HttpMethod.DELETE, "/jira/rest/api/2/project/ABC-123/avatar/123", false),
+                emptyBodyForJira(ScopeName.PROJECT_ADMIN, HttpMethod.DELETE, "/jira/rest/api/2/project/ABC-123/avatar/123", true)
+        ));
 
         // never allow an add-on to change a user's details or password
         for (ScopeName scopeName : asList(ScopeName.WRITE, ScopeName.DELETE, ScopeName.ADMIN))

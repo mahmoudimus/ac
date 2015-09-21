@@ -14,7 +14,7 @@ package com.atlassian.plugin.connect.modules.util;
  */
 public enum ProductFilter
 {
-    ALL, JIRA, CONFLUENCE, BAMBOO, STASH, CROWD, FECRU;
+    ALL, JIRA, CONFLUENCE, BAMBOO, STASH, BITBUCKET, CROWD, FECRU;
 
     public static boolean hasProduct(String productName)
     {
