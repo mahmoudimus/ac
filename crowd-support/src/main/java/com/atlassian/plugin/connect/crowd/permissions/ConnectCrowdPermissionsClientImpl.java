@@ -68,6 +68,10 @@ public class ConnectCrowdPermissionsClientImpl
         return true;
     }
 
+    // This code is adapted from com.atlassian.usermanagement.client.impl.UserManagementRequestServiceImpl#executeAsSysadmin
+    // in the https://stash.atlassian.com/projects/UN/repos/user-management repo.
+    // https://ecosystem.atlassian.net/browse/ACDEV-2237 has been raised to move to a stable means of granting admin permission
+    // provided by the user management plugin, once one becomes available.
     private String executeAsSysadmin(Request.MethodType methodType, String url, String jsonString)
             throws CredentialsRequiredException, ResponseException, ApplicationPermissionException, InactiveAccountException, ApplicationAccessDeniedException, OperationFailedException, InvalidAuthenticationException
     {
