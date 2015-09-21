@@ -5,7 +5,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.48-SNAPSHOT</version>
+        <version>1.1.53-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -151,6 +151,12 @@
                     <artifactId>commons-lang</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <artifactId>acceptance-data-helper</artifactId>
+            <groupId>com.atlassian.test.ondemand</groupId>
+            <version>1.0.14</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.browsers</groupId>
@@ -503,7 +509,6 @@
                         <product>
                             <id>confluence</id>
                             <version>${atlassian.confluence.version}</version>
-                            <productDataVersion>${atlassian.confluence.productDataVersion}</productDataVersion>
                             <log4jProperties>src/test/resources/log4j-confluence.properties
                             </log4jProperties>
                             <systemPropertyVariables>

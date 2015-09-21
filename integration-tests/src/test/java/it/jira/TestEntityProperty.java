@@ -16,6 +16,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import it.util.TestProject;
 import org.hamcrest.Matchers;
 import org.junit.*;
 
@@ -26,12 +27,11 @@ import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public class TestEntityProperty
+public class TestEntityProperty extends JiraTestBase
 {
     private static final TestKitLocalEnvironmentData localEnvironmentData = new TestKitLocalEnvironmentData();
     private static final String ATTACHMENT_PROPERTY_KEY = "attachment";
     private static final String PLUGIN_KEY = AddonTestUtils.randomAddOnKey();
-    private static final String PROJECT_KEY = "EP";
     private static final String JQL_ALIAS_ATTACHMENT_SIZE = "attachmentSize";
     private static final String JQL_ALIAS_ATTACHMENT_EXTENSION = "attachmentExtension";
 
@@ -40,6 +40,7 @@ public class TestEntityProperty
     private static EntityPropertyClient entityPropertyClient;
     private static ProjectControl projectControl;
     private static SearchClient searchClient;
+    private TestProject testProject;
 
     @BeforeClass
     public static void startConnectAddOn() throws Exception
@@ -60,7 +61,7 @@ public class TestEntityProperty
                 .addModule(
                         "jiraEntityProperties",
                         newEntityPropertyModuleBean()
-                                .withName(new I18nProperty("JIRA Attachment indexing", "jira.attachment.indexing"))
+                                .withName(new I18nProperty("JIRA Attachment indexing", null))
                                 .withKey("jira-attachment-indexing")
                                 .withKeyConfiguration(keyConfigurationBean)
                                 .withEntityType(EntityPropertyType.issue)
@@ -82,16 +83,19 @@ public class TestEntityProperty
         }
     }
 
+    /**
+     * Create a new project for easily deleting all created issues in tear-down
+     */
     @Before
     public void setup()
     {
-        projectControl.addProject("Entity Property", PROJECT_KEY, "admin");
+        testProject = addProject();
     }
 
     @After
     public void tearDown()
     {
-        projectControl.deleteProject(PROJECT_KEY);
+        projectControl.deleteProject(testProject.getKey());
     }
 
     @Test
@@ -139,7 +143,7 @@ public class TestEntityProperty
                 .addModule(
                         "jiraEntityProperties",
                         newEntityPropertyModuleBean()
-                                .withName(new I18nProperty("JIRA Conflicting Attachment indexing", "jira.conflicting.attachment.indexing"))
+                                .withName(new I18nProperty("JIRA Conflicting Attachment indexing", null))
                                 .withKey("jira-conflicting-attachment-indexing")
                                 .withKeyConfiguration(keyConfigurationBean)
                                 .withEntityType(EntityPropertyType.issue)
@@ -147,8 +151,8 @@ public class TestEntityProperty
                 )
                 .start();
 
-        IssueCreateResponse firstIssueWithProperty = issueClient.createIssue(PROJECT_KEY, "First issue with attachment data");
-        IssueCreateResponse secondIssueWithProperty = issueClient.createIssue(PROJECT_KEY, "Second issue with attachment data");
+        IssueCreateResponse firstIssueWithProperty = issueClient.createIssue(testProject.getKey(), "First issue with attachment data");
+        IssueCreateResponse secondIssueWithProperty = issueClient.createIssue(testProject.getKey(), "Second issue with attachment data");
 
         // set the issue property
         JSONObject attachmentData = getAttachmentData();
@@ -170,7 +174,7 @@ public class TestEntityProperty
 
     private void setPropertyAndSearchForValue(String jqlName, Operator operator, String searchValue) throws JSONException
     {
-        IssueCreateResponse issue = issueClient.createIssue(PROJECT_KEY, "Some issue with attachment data");
+        IssueCreateResponse issue = issueClient.createIssue(testProject.getKey(), "Some issue with attachment data");
 
         // Issue property should be indexed during PUT operation
         JSONObject attachmentData = getAttachmentData();

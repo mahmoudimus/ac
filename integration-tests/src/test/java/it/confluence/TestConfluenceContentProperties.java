@@ -105,7 +105,7 @@ public class TestConfluenceContentProperties
 
             ContentPropertyModuleBean moduleBean = newContentPropertyModuleBean()
                     .withKey("content-prop-module-key")
-                    .withName(new I18nProperty("My Content Property Indexing module", "my.18n.name"))
+                    .withName(new I18nProperty("My Content Property Indexing module", null))
                     .withKeyConfiguration(
                             new ContentPropertyIndexKeyConfigurationBean(PROPERTY_KEY,
                                     newArrayList(

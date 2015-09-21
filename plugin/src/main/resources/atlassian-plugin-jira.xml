@@ -8,6 +8,8 @@
         <package>com.atlassian.plugin.connect.plugin.rest</package>
     </rest>
 
+    <health-check key="addonsGroupHealthCheck" name="Add-on Group Health Check" class="com.atlassian.plugin.connect.crowd.healthcheck.AtlassianAddonsGroupHealthCheck" />
+
     <!-- JavaScript and CSS resource inclusions for relevant contexts -->
 
     <web-resource key="atlassian-connect-resources" name="Connect resources for inclusion on every page.">

@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <artifactId>atlassian-public-pom</artifactId>
         <groupId>com.atlassian.pom</groupId>
-        <version>42</version>
+        <artifactId>public-pom</artifactId>
+        <version>3.0.93</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.1.48-SNAPSHOT</version>
+    <version>1.1.53-SNAPSHOT</version>
     <organization>
         <name>Atlassian</name>
         <url>http://atlassian.com/</url>
@@ -61,6 +61,12 @@
         </profile>
     </profiles>
 
+    <scm>
+        <connection>scm:git:https://bitbucket.org/atlassian/atlassian-connect.git</connection>
+        <developerConnection>scm:git:ssh://git@stash.atlassian.com:7997/ac/atlassian-connect.git</developerConnection>
+        <url>https://bitbucket.org/atlassian/atlassian-connect</url>
+    </scm>
+
     <build>
         <finalName>${project.artifactId}</finalName>
         <pluginManagement>
@@ -85,6 +91,35 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>2.9.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>1.4</version>
+                    <executions>
+                        <execution>
+                            <id>ban-milestones-and-release-candidates</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <banVersionDeps>
+                                        <excludes>
+                                            <!-- Connect currently depends on milestones of atlassian-plugins-webfragment,
+                                            atlassian-plugins-osgi, atlassian-plugins-core and atlassian-plugins-osgi-bridge
+                                            -->
+                                            <exclude>com.atlassian.plugins</exclude>
+                                            <exclude>com.atlassian.upm</exclude>
+                                            <!-- still depend on a milestone -->
+                                            <exclude>external.atlassian.json</exclude>
+                                        </excludes>
+                                    </banVersionDeps>
+                                </rules>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <artifactId>maven-site-plugin</artifactId>
@@ -606,7 +641,7 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.4</version>
+                <version>${commons.io.version}</version>
             </dependency>
             <!--Non-ancient version of Xerces for unit tests -->
             <dependency>
@@ -735,21 +770,22 @@
         <amps.version>5.1.10</amps.version>
         <atlassian.analytics.version>3.68</atlassian.analytics.version>
         <atlassian.applinks.version>4.2.4</atlassian.applinks.version>
+        <atlassian.crowd.version>2.8.3</atlassian.crowd.version>
         <atlassian.confluence.version>5.9.0-OD-60-008</atlassian.confluence.version>
-        <atlassian.crowd.version>2.8.2</atlassian.crowd.version>
         <atlassian.event.version>2.3.5</atlassian.event.version>
         <atlassian.fugue.version>1.1</atlassian.fugue.version>
         <atlassian.healthcheck.version>2.0.4</atlassian.healthcheck.version>
         <atlassian.httpclient.version>0.20.1</atlassian.httpclient.version>
         <atlassian.httpclient.api.version>0.17</atlassian.httpclient.api.version>
-        <atlassian.jira.version>7.0.0-OD-01-193</atlassian.jira.version>
+        <atlassian.jira.version>7.0.0-OD-05-001</atlassian.jira.version>
         <atlassian.jira.rest.version>${atlassian.jira.version}</atlassian.jira.rest.version>
-        <atlassian.jira.testkit.version>7.0.70</atlassian.jira.testkit.version>
+        <atlassian.jira.testkit.version>7.0.74</atlassian.jira.testkit.version>
         <atlassian.mail.version>2.5.4</atlassian.mail.version>
         <atlassian.oauth.version>1.3.0</atlassian.oauth.version>
         <atlassian.jwt.version>1.2.2</atlassian.jwt.version>
         <atlassian.json.schema.validator.version>1.0.4</atlassian.json.schema.validator.version>
         <atlassian.plugins.version>4.0.0-m020</atlassian.plugins.version>
+        <applinks.api.version>5.0.0</applinks.api.version>
         <atlassian.rest.version>2.9.13</atlassian.rest.version>
         <atlassian.sal.version>2.10.0</atlassian.sal.version>
         <atlassian.selenium.version>2.2.1-m01-jira-1</atlassian.selenium.version>
@@ -776,7 +812,6 @@
         <atlassian.jira.cross.compat.version>0.48</atlassian.jira.cross.compat.version>
 
         <!-- TEST STUFF -->
-        <atlassian.confluence.productDataVersion>5.8-m56</atlassian.confluence.productDataVersion>
         <atlassian.test.categories.version>0.5</atlassian.test.categories.version>
         <aui.version>5.2</aui.version>
         <gson.version>2.2.2-atlassian-1</gson.version>
@@ -798,6 +833,7 @@
         <!-- BUILD STUFF -->
         <commons.lang.version>2.6</commons.lang.version>
         <commons.lang3.version>3.1</commons.lang3.version>
+        <commons.io.version>2.4</commons.io.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xvfb.enable>true</xvfb.enable>
         <atlassian.upm.on.demand>false</atlassian.upm.on.demand>
@@ -811,6 +847,8 @@
         <json.schema.validator.version>2.2.5</json.schema.validator.version>
         <node.version>v0.10.26</node.version>
         <npm.version>1.4.3</npm.version>
+        <node.download.root>https://nodejs.org/dist/</node.download.root>
+        <npm.download.root>https://nodejs.org/dist/npm/</npm.download.root>
         <blueprints.version>4.0.22</blueprints.version>
         <skipNpm>false</skipNpm>
         <clover.libversion>4.0.3</clover.libversion>

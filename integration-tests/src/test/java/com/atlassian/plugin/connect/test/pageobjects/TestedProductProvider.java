@@ -52,23 +52,25 @@ public class TestedProductProvider
     {
         if (testedProduct instanceof JiraTestedProduct)
         {
-            customizeJiraTestedProduct(testedProduct);
+            customizeJiraTestedProduct((JiraTestedProduct)testedProduct);
         }
         else if (testedProduct instanceof ConfluenceTestedProduct)
         {
-            customizeConfluenceTestedProduct(testedProduct);
+            customizeConfluenceTestedProduct((ConfluenceTestedProduct)testedProduct);
         }
         return testedProduct;
     }
 
-    private static void customizeJiraTestedProduct(TestedProduct testedProduct)
+    private static void customizeJiraTestedProduct(JiraTestedProduct testedProduct)
     {
+        testedProduct.backdoor().darkFeatures().enableForSite("jira.onboarding.feature.disabled");
+
         testedProduct.getPageBinder().override(AdminHomePage.class, JiraAdminSummaryPage.class);
         testedProduct.getPageBinder().override(GeneralPage.class, JiraGeneralPage.class);
         testedProduct.getPageBinder().override(HomePage.class, DashboardPage.class);
     }
 
-    private static void customizeConfluenceTestedProduct(TestedProduct testedProduct)
+    private static void customizeConfluenceTestedProduct(ConfluenceTestedProduct testedProduct)
     {
         testedProduct.getPageBinder().override(GeneralPage.class, ConfluenceGeneralPage.class);
     }

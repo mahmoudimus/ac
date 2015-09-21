@@ -17,10 +17,12 @@ import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.user.UserTemplate;
 
 import com.google.common.base.Optional;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+
+import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.base.Optional.absent;
 import static com.google.common.base.Optional.of;
@@ -114,6 +116,12 @@ public class TestConnectCrowdBase
         }
 
         @Override
+        protected void updateUserCredential(String username, PasswordCredential passwordCredential)
+        {
+            assertThat("PasswordCredential should be NONE", passwordCredential, is(PasswordCredential.NONE));
+        }
+
+        @Override
         protected void updateUser(UserTemplate fixes)
         {
             throw new UnsupportedOperationException("Not implemented");
@@ -146,6 +154,11 @@ public class TestConnectCrowdBase
         {
             throw new UnsupportedOperationException("Not implemented");
         }
-    }
 
+        @Override
+        public void invalidateSessions(String username)
+        {
+            throw new UnsupportedOperationException("Not implemented");
+        }
+    }
 }

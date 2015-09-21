@@ -50,10 +50,4 @@ public class ProjectTabPanelDescriptoryFactoryTest extends AbstractTabPanelDescr
     {
         assertEquals(MODULE_NAME, ((ConnectProjectTabPanelModuleDescriptor) getDescriptorFromInstalledPlugin()).getLabel());
     }
-
-    @Test
-    public void createsElementWithCorrectLabelKey()
-    {
-        assertEquals(MODULE_I18N, ((ConnectProjectTabPanelModuleDescriptor) getDescriptor()).getLabelKey());
-    }
 }

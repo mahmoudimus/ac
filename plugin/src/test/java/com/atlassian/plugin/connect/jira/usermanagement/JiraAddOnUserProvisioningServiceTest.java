@@ -88,7 +88,7 @@ public class JiraAddOnUserProvisioningServiceTest
                 transactionTemplate,
                 jiraProjectPermissionManager,
                 applicationAuthorizationService,
-                applicationRoleManager);
+                applicationRoleManager, null);
 
         groups = newHashSet();
         applicationKeys = newHashSet();

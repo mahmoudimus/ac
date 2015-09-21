@@ -1,7 +1,5 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
-import java.util.Set;
-
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
@@ -16,15 +14,18 @@ import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioni
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.spi.host.HostProperties;
-import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserService;
 import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Set;
+
+import javax.annotation.Nonnull;
 
 import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.Constants;
 import static com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserUtil.buildConnectAddOnUserAttribute;
@@ -34,7 +35,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @ExportAsDevService
 @ConfluenceComponent
 @JiraComponent
-public class CrowdAddOnUserService implements ConnectAddOnUserService
+public class CrowdAddOnUserService implements ConnectUserService
 {
     public static final PasswordCredential PREVENT_LOGIN = PasswordCredential.NONE;
 
@@ -55,8 +56,9 @@ public class CrowdAddOnUserService implements ConnectAddOnUserService
         this.connectAddOnUserGroupProvisioningService = checkNotNull(connectAddOnUserGroupProvisioningService);
     }
 
+    @Nonnull
     @Override
-    public String getOrCreateUserName(String addOnKey, String addOnDisplayName) throws ConnectAddOnUserInitException
+    public String getOrCreateAddOnUserName(@Nonnull String addOnKey, @Nonnull String addOnDisplayName) throws ConnectAddOnUserInitException
     {
         try
         {
@@ -74,15 +76,22 @@ public class CrowdAddOnUserService implements ConnectAddOnUserService
     }
 
     @Override
-    public void disableAddonUser(String addOnKey) throws ConnectAddOnUserDisableException
+    public void disableAddOnUser(@Nonnull String addOnKey) throws ConnectAddOnUserDisableException
     {
         connectCrowdService.disableUser(usernameForAddon(addOnKey));
     }
 
     @Override
-    public String provisionAddonUserForScopes(String addOnKey, String addOnDisplayName, Set<ScopeName> previousScopes, Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
+    public boolean isActive(@Nonnull String username)
     {
-        String username = getOrCreateUserName(checkNotNull(addOnKey), checkNotNull(addOnDisplayName));
+        return connectCrowdService.isUserActive(username);
+    }
+
+    @Nonnull
+    @Override
+    public String provisionAddOnUserForScopes(@Nonnull String addOnKey, @Nonnull String addOnDisplayName, @Nonnull Set<ScopeName> previousScopes, @Nonnull Set<ScopeName> newScopes) throws ConnectAddOnUserInitException
+    {
+        String username = getOrCreateAddOnUserName(checkNotNull(addOnKey), checkNotNull(addOnDisplayName));
         connectAddOnUserProvisioningService.provisionAddonUserForScopes(username, previousScopes, newScopes);
         return username;
     }
@@ -93,19 +102,23 @@ public class CrowdAddOnUserService implements ConnectAddOnUserService
         connectAddOnUserGroupProvisioningService.ensureGroupExists(Constants.ADDON_USER_GROUP_KEY);
         UserCreationResult userCreationResult = connectCrowdService.createOrEnableUser(username, addOnDisplayName, Constants.ADDON_USER_EMAIL_ADDRESS, PREVENT_LOGIN, buildConnectAddOnUserAttribute(hostProperties.getKey()));
         User user = userCreationResult.getUser();
-
+        if (!userCreationResult.isNewlyCreated())
+        {
+            connectCrowdService.invalidateSessions(user.getName());
+        }
         connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), Constants.ADDON_USER_GROUP_KEY);
         if (userCreationResult.isNewlyCreated())
         {
-            addNewUserToRequiredGroups(user.getName());
+            addNewUserToRequiredGroups(user);
         }
 
         return user.getName();
     }
 
-    private void addNewUserToRequiredGroups(String username)
+    private void addNewUserToRequiredGroups(User user)
             throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, OperationFailedException, InvalidAuthenticationException
     {
+        String username = user.getName();
         for (String group : connectAddOnUserProvisioningService.getDefaultProductGroupsAlwaysExpected())
         {
             try
@@ -128,10 +141,6 @@ public class CrowdAddOnUserService implements ConnectAddOnUserService
         {
             try
             {
-                // TODO if we're re-enabling an add-on, we don't want to add the add-on user to all the license role groups,
-                // because what if the admin has removed access to an application on purpose?
-                // OR, is the add-on user having access to all applications just part of what it means to be a JIRA Connect add-on?
-
                 connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(username, group);
                 numPossibleDefaultGroupsAddedTo++;
             }

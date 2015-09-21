@@ -11,4 +11,6 @@ public interface FeatureManager
      * @return true if the product is running in OnDemand mode
      */
     boolean isOnDemand();
+
+    boolean isPermissionsManagedByUM();
 }

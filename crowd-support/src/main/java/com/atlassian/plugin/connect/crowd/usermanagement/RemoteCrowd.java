@@ -1,8 +1,5 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
-import java.util.Map;
-import java.util.Set;
-
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
@@ -21,11 +18,12 @@ import com.atlassian.crowd.model.group.GroupTemplate;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.crowd.service.client.CrowdClient;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
-
 import com.google.common.base.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+import java.util.Set;
 
 public class RemoteCrowd extends ConnectCrowdBase
 {
@@ -73,6 +71,30 @@ public class RemoteCrowd extends ConnectCrowdBase
         }
         catch (InvalidUserException | InvalidAuthenticationException
                 | ApplicationPermissionException | OperationFailedException | UserNotFoundException e)
+        {
+            throw new ConnectAddOnUserInitException(e);
+        }
+    }
+    
+    protected void updateUserCredential(String username, PasswordCredential passwordCredential)
+    {
+        try
+        {
+            if (passwordCredential.equals(PasswordCredential.NONE))
+            {
+                client().updateUserCredential(username, null);
+            }
+            else
+            {
+                client().updateUserCredential(username, passwordCredential.getCredential());
+            }
+        }
+        catch (OperationFailedException e)
+        {
+            log.warn("Tried to update the add-on user credentials but the operation failed: " + e.getMessage());
+        }
+        catch (UserNotFoundException | InvalidAuthenticationException |
+                ApplicationPermissionException | InvalidCredentialException e)
         {
             throw new ConnectAddOnUserInitException(e);
         }
@@ -156,5 +178,11 @@ public class RemoteCrowd extends ConnectCrowdBase
             group = null;
         }
         return group;
+    }
+
+    @Override
+    public void invalidateSessions(String username) throws OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException
+    {
+        client().invalidateSSOTokensForUser(username);
     }
 }

@@ -3,11 +3,14 @@ package com.atlassian.plugin.connect.crowd.usermanagement;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.model.user.UserTemplate;
 
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.base.Optional;
 
 import org.springframework.stereotype.Component;
 
-@Component
+@ConfluenceComponent
+@JiraComponent
 public class UserReconciliationImpl implements UserReconciliation
 {
     @Override
