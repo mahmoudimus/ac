@@ -35,8 +35,14 @@
             </div>
             <%- partial('_module_list.ejs', {modules: entities.common, relDocRoot: relDocRoot }) %>
 
+            <div class="aui-nav-heading">
+                <strong>JIRA Modules</strong>
+            </div>
             <%- partial('_module_list.ejs', {modules: entities.jira, relDocRoot: relDocRoot }) %>
 
+            <div class="aui-nav-heading">
+                <strong>Confluence Modules</strong>
+            </div>
             <%- partial('_module_list.ejs', {modules: entities.confluence, relDocRoot: relDocRoot }) %>
 
             <div class="aui-nav-heading">

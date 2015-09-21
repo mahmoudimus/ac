@@ -21,6 +21,8 @@ var srcFiles = ["public", "package.json"];
 var jiraSchemaSourcePath =       '../plugin/target/classes/schema/jira-schema.json';
 var confluenceSchemaSourcePath = '../plugin/target/classes/schema/confluence-schema.json';
 
+var shallowSchemaPath =       'schema/schema/shallow-schema.json';
+var commonSchemaPath =       'schema/schema/common-schema.json';
 var jiraSchemaPath =       'schema/schema/jira-schema.json';
 var confluenceSchemaPath = 'schema/schema/confluence-schema.json';
 var jiraScopesPath =       'schema/com/atlassian/connect/jira/scopes.jira.json';
@@ -229,43 +231,22 @@ function findRootEntities(schemas) {
 /**
  * Find module types supported by a particular product (webItemModuleBean, staticContentMacroModuleBean, etc.)
  */
-function findProductModules(schemas, productId, productDisplayName) {
-    // find product modules
-    var productModules = jsonPath(schemas, "$." + productId + ".properties.modules.properties.*");
+function findModules(schemas, productDisplayName) {
+    var productModules = jsonPath(schemas, "$.properties.*");
+
     // unwrap array types
     productModules = _.map(productModules, function (moduleOrArray) {
         return moduleOrArray.type === "array" ? moduleOrArray.items : moduleOrArray;
     });
-    var moduleList = schemas[productId].properties.modules;
-    // the module list serves as our landing page for each product's modules
-    moduleList.pageName = "index";
-    moduleList.title = productDisplayName + " Modules";
-    // make the module list the first entry
-    productModules.unshift(moduleList);
-    return productModules;
-}
 
-function moduleArraysIntersection(modules1, modules2) {
-    return _.filter(modules1, function(module1) {
-        return _.any(modules2, function(module2) {
-            return module1.id === module2.id && module1.title === module2.title;
-        });
-    });
-}
-
-function moduleArraysDifference(modules1, modules2) {
-    return _.reject(modules1, function(module1) {
-        return _.any(modules2, function(module2) {
-            return module1.id === module2.id && module1.title === module2.title;
-        });
-    });
+    return entitiesToModel(productModules);
 }
 
 /**
  * Find JSON fragments that only exist nested inside other module types.
  */
 function findFragmentEntities(schemas) {
-    var entities = jsonPath(schemas, "$.*.properties.modules.properties.*.items.properties..*");
+    var entities = jsonPath(schemas, "$.*.properties.*.items.properties..*");
     entities = _.filter(entities, function(obj) {
         // object must have an id and not be a primitive array
         return obj && typeof obj === "object" && obj.id && obj.type === "object";
@@ -435,21 +416,17 @@ function rebuildHarpSite() {
     compileJsDocs();
 
     var schemas = {
+        shallow: fs.readJsonSync(shallowSchemaPath),
+        common: fs.readJsonSync(commonSchemaPath),
         jira: fs.readJsonSync(jiraSchemaPath),
         confluence: fs.readJsonSync(confluenceSchemaPath)
     };
 
-    var jiraModules = findProductModules(schemas, "jira", "JIRA");
-    var confluenceModules = findProductModules(schemas, "confluence", "Confluence");
-    var commonModules = moduleArraysIntersection(jiraModules, confluenceModules);
-    jiraModules = moduleArraysDifference(jiraModules, commonModules);
-    confluenceModules = moduleArraysDifference(confluenceModules, commonModules);
-
     var entities = {
         root: findRootEntities(schemas),
-        common: entitiesToModel(commonModules),
-        jira: entitiesToModel(jiraModules),
-        confluence: entitiesToModel(confluenceModules),
+        common: findModules(schemas.common, "Common"),
+        jira: findModules(schemas.jira, "JIRA"),
+        confluence: findModules(schemas.confluence, "Confluence"),
         fragment: findFragmentEntities(schemas)
     };
 

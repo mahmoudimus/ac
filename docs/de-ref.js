@@ -7,6 +7,8 @@ var sourceSchemaDirectory = "../plugin/target/classes/";
 var targetSchemaDirectory = "schema/";
 
 var files = {
+    shallowSchema:    'schema/shallow-schema.json',
+    commonSchema:     'schema/common-schema.json',
     jiraSchema:       'schema/jira-schema.json',
     confluenceSchema: 'schema/confluence-schema.json',
     jiraScopes:       'com/atlassian/connect/jira/scopes.jira.json',
