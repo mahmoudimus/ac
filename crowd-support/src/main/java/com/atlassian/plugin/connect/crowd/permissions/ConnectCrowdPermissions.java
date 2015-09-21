@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.crowd.permissions;
 
 public interface ConnectCrowdPermissions
 {
-    ConnectCrowdPermissionsImpl.GrantResult giveAdminPermission(String groupName);
+    GrantResult giveAdminPermission(String groupName);
 
     enum GrantResult
     {
