@@ -76,7 +76,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
      */
     private static final String ADDON_ADMIN_USER_GROUP_KEY = "atlassian-addons-admin";
     private static final String ADMIN_APPLICATION_ID = "jira";
-    private static final String ADMIN_APPLICATION_ID_ROLES_ENDABLED = "jira-admin";
+    private static final String ADMIN_APPLICATION_ID_ROLES_ENABLED = "jira-admin";
     private static final String PRODUCT_ID = "jira";
 
     private static final ImmutableSet<String> DEFAULT_GROUPS_ALWAYS_EXPECTED = ImmutableSet.of();
@@ -277,7 +277,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     {
         if (applicationAuthorizationService.rolesEnabled())
         {
-            return connectCrowdPermissions.giveAdminPermission(groupKey, PRODUCT_ID, ADMIN_APPLICATION_ID_ROLES_ENDABLED);
+            return connectCrowdPermissions.giveAdminPermission(groupKey, PRODUCT_ID, ADMIN_APPLICATION_ID_ROLES_ENABLED);
         }
         else
         {
