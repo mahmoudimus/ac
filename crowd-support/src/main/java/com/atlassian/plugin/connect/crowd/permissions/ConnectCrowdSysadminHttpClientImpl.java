@@ -1,5 +1,7 @@
 package com.atlassian.plugin.connect.crowd.permissions;
 
+import java.net.HttpCookie;
+
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.ApplicationLinkRequest;
 import com.atlassian.applinks.api.ApplicationLinkService;
@@ -19,7 +21,6 @@ import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.sal.api.net.Request;
 import com.atlassian.sal.api.net.ResponseException;
 
-import org.apache.commons.httpclient.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.atlassian.fugue.Iterables.first;
@@ -57,13 +58,13 @@ public class ConnectCrowdSysadminHttpClientImpl
         }
         ReadOnlyApplicationLink crowd = possibleCrowd.get();
         ApplicationLinkRequest request = crowd.createAuthenticatedRequestFactory().createRequest(methodType, url);
-        request.addHeader("Cookie", generateSysadminCookie(crowd.getDisplayUrl().getHost()).toExternalForm());
+        request.addHeader("Cookie", generateSysadminCookie().toString());
         request.addHeader("Content-Type", "application/json");
         request.setEntity(jsonString);
         request.execute();
     }
 
-    private Cookie generateSysadminCookie(String host)
+    private HttpCookie generateSysadminCookie()
             throws InactiveAccountException, OperationFailedException,
             ApplicationAccessDeniedException, ApplicationPermissionException,
             InvalidAuthenticationException
@@ -73,7 +74,7 @@ public class ConnectCrowdSysadminHttpClientImpl
                 new ValidationFactor[] {}, "jira");
         {
             String ssoToken = crowdClientProvider.getCrowdClient().authenticateSSOUserWithoutValidatingPassword(sysadminAuthenticationContext);
-            return new Cookie(host, "studio.crowd.tokenkey", ssoToken);
+            return new HttpCookie("studio.crowd.tokenkey", ssoToken);
         }
     }
 }
