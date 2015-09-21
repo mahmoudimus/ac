@@ -3,12 +3,12 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.51-SNAPSHOT</version>
+        <version>1.1.54-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>atlassian-connect-plugin</artifactId>
-    <name>Atlassian Connect - Plugin</name>
+    <name>Atlassian Connect Plugin</name>
     <packaging>atlassian-plugin</packaging>
 
     <licenses>
@@ -1259,5 +1259,8 @@
             include-artifact,com.atlassian.plugins:atlassian-connect-integration-tests
         </od.testing.configuration>
         <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
+
+        <!-- Override the javadoc.additional.params field because it breaks the json schema documentation generation -->
+        <javadoc.additional.params />
     </properties>
 </project>

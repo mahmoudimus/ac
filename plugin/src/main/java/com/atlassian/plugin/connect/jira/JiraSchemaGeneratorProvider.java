@@ -13,6 +13,6 @@ public class JiraSchemaGeneratorProvider implements JsonSchemaGeneratorProvider
     @Override
     public JsonSchemaGenerator provide(EnumCase enumCase, InterfaceList interfaceList, JsonSchemaDocs schemaDocs, String ignoreFilter)
     {
-        return new ConnectSchemaGenerator(enumCase,interfaceList,schemaDocs, ignoreFilter, ProductFilter.JIRA);
+        return new ConnectSchemaGenerator(enumCase, interfaceList, schemaDocs, ignoreFilter, ProductFilter.JIRA);
     }
 }
