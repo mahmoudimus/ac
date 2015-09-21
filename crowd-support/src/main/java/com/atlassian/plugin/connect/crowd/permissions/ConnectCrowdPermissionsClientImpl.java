@@ -37,19 +37,6 @@ public class ConnectCrowdPermissionsClientImpl
         this.connectCrowdSysadminHttpClient = connectCrowdSysadminHttpClient;
     }
 
-    private String addProductUri(String productId, String applicationId)
-    {
-        return new UriBuilder().setPath(CONFIG_PATH)
-                .addQueryParameter("productId", "product:" + productId + ":" + applicationId).toString();
-    }
-
-    private String configureProductUri(String productId, String applicationId)
-    {
-        return new UriBuilder().setPath(CONFIG_PATH)
-                .addQueryParameter("hostId", productId)
-                .addQueryParameter("productId", "product:" + productId + ":" + applicationId).toString();
-    }
-
     @Override
     public boolean grantAdminPermission(String groupName, String productId, String applicationId)
     {
@@ -70,6 +57,19 @@ public class ConnectCrowdPermissionsClientImpl
             return false;
         }
         return true;
+    }
+
+    private String addProductUri(String productId, String applicationId)
+    {
+        return new UriBuilder().setPath(CONFIG_PATH)
+                .addQueryParameter("productId", "product:" + productId + ":" + applicationId).toString();
+    }
+
+    private String configureProductUri(String productId, String applicationId)
+    {
+        return new UriBuilder().setPath(CONFIG_PATH)
+                .addQueryParameter("hostId", productId)
+                .addQueryParameter("productId", "product:" + productId + ":" + applicationId).toString();
     }
 
     @SuppressWarnings ("unchecked")
