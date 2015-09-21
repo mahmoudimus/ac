@@ -75,6 +75,9 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
      * The group which is created to house all add-on users which have administrative rights.
      */
     private static final String ADDON_ADMIN_USER_GROUP_KEY = "atlassian-addons-admin";
+    private static final String ADMIN_APPLICATION_ID = "jira";
+    private static final String ADMIN_APPLICATION_ID_ROLES_ENDABLED = "jira-admin";
+    private static final String PRODUCT_ID = "jira";
 
     private static final ImmutableSet<String> DEFAULT_GROUPS_ALWAYS_EXPECTED = ImmutableSet.of();
     private static final ImmutableSet<String> DEFAULT_GROUPS_ONE_OR_MORE_EXPECTED = ImmutableSet.of("jira-users", "users");
@@ -253,7 +256,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
 
         if (created)
         {
-            GrantResult result = connectCrowdPermissions.giveAdminPermission(groupKey);
+            GrantResult result = giveAdminPermission(groupKey);
             if (result == REMOTE_GRANT_FAILED)
             {
                 log.warn("Failed to grant '{}' administrative rights through the Remote UM REST API", groupKey);
@@ -267,6 +270,18 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
                     "Consequently, add-on users that need to be admins cannot be made admins by adding them to this group and making it an administrators group. " +
                     "Aborting user setup.",
                     groupKey), ConnectAddOnUserProvisioningService.ADDON_ADMINS_MISSING_PERMISSION);
+        }
+    }
+
+    private GrantResult giveAdminPermission(String groupKey)
+    {
+        if (applicationAuthorizationService.rolesEnabled())
+        {
+            return connectCrowdPermissions.giveAdminPermission(groupKey, PRODUCT_ID, ADMIN_APPLICATION_ID_ROLES_ENDABLED);
+        }
+        else
+        {
+            return connectCrowdPermissions.giveAdminPermission(groupKey, PRODUCT_ID, ADMIN_APPLICATION_ID);
         }
     }
 
