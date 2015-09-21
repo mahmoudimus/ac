@@ -50,7 +50,7 @@ public class TestConnectCrowdPermissionsClientImpl
         ))
         {
             makeRequestMethodThrow(exception);
-            assertThat(connectCrowdPermissionsClient.grantAdminPermission("group-name"), is(false));
+            assertThat(connectCrowdPermissionsClient.grantAdminPermission("group-name", "product-id", "application-id"), is(false));
         }
     }
 

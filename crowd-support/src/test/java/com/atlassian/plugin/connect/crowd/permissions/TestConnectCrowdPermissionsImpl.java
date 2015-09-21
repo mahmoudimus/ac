@@ -30,16 +30,16 @@ public class TestConnectCrowdPermissionsImpl
 
         when(featureManager.isOnDemand()).thenReturn(true);
         when(featureManager.isPermissionsManagedByUM()).thenReturn(true);
-        when(connectCrowdPermissionsClient.grantAdminPermission(anyString()))
+        when(connectCrowdPermissionsClient.grantAdminPermission(anyString(), anyString(), anyString()))
                 .thenReturn(true);
     }
 
     @Test
     public void grantsAdminPermissionToSpecifiedGroup()
     {
-        new ConnectCrowdPermissionsImpl(connectCrowdPermissionsClient, featureManager).giveAdminPermission("group-name");
+        new ConnectCrowdPermissionsImpl(connectCrowdPermissionsClient, featureManager).giveAdminPermission("group-name", "product-id", "application-id");
 
-        verify(connectCrowdPermissionsClient).grantAdminPermission("group-name");
+        verify(connectCrowdPermissionsClient).grantAdminPermission("group-name", "product-id", "application-id");
     }
 
     @Test
@@ -47,7 +47,7 @@ public class TestConnectCrowdPermissionsImpl
     {
         final ConnectCrowdPermissions connectCrowdPermissions =
                 new ConnectCrowdPermissionsImpl(connectCrowdPermissionsClient, featureManager);
-        assertThat(connectCrowdPermissions.giveAdminPermission("group-name"), is(REMOTE_GRANT_SUCCEEDED));
+        assertThat(connectCrowdPermissions.giveAdminPermission("group-name", "product-id", "application-id"), is(REMOTE_GRANT_SUCCEEDED));
     }
 
     @Test
@@ -59,19 +59,19 @@ public class TestConnectCrowdPermissionsImpl
         when(featureManager.isOnDemand()).thenReturn(false);
         when(featureManager.isPermissionsManagedByUM()).thenReturn(true);
 
-        assertThat(connectCrowdPermissions.giveAdminPermission("group-name"), is(NO_REMOTE_GRANT_NEEDED));
+        assertThat(connectCrowdPermissions.giveAdminPermission("group-name", "product-id", "application-id"), is(NO_REMOTE_GRANT_NEEDED));
         verifyZeroInteractions(connectCrowdPermissionsClient);
 
         when(featureManager.isOnDemand()).thenReturn(false);
         when(featureManager.isPermissionsManagedByUM()).thenReturn(false);
 
-        assertThat(connectCrowdPermissions.giveAdminPermission("group-name"), is(NO_REMOTE_GRANT_NEEDED));
+        assertThat(connectCrowdPermissions.giveAdminPermission("group-name", "product-id", "application-id"), is(NO_REMOTE_GRANT_NEEDED));
         verifyZeroInteractions(connectCrowdPermissionsClient);
 
         when(featureManager.isOnDemand()).thenReturn(true);
         when(featureManager.isPermissionsManagedByUM()).thenReturn(false);
 
-        assertThat(connectCrowdPermissions.giveAdminPermission("group-name"), is(NO_REMOTE_GRANT_NEEDED));
+        assertThat(connectCrowdPermissions.giveAdminPermission("group-name", "product-id", "application-id"), is(NO_REMOTE_GRANT_NEEDED));
         verifyZeroInteractions(connectCrowdPermissionsClient);
     }
 }
