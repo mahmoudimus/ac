@@ -130,17 +130,32 @@ public class JiraAddOnUserProvisioningServiceTest
     }
 
     @Test
-    public void testAdminGrantProvidesCorrectProductAndApplicationId()
+    public void testAdminGrantProvidesCorrectProductAndApplicationIdInRenaissance()
             throws ApplicationPermissionException,
             OperationFailedException, ApplicationNotFoundException, InvalidAuthenticationException
     {
         when(userManager.getUserByName(USERNAME)).thenReturn(adminUser);
-
         when(connectAddOnUserGroupProvisioningService.ensureGroupExists(ADDONS_ADMIN_GROUP)).thenReturn(true);
-
-        when(applicationAuthorizationService.rolesEnabled()).thenReturn(false);
-
         when(connectCrowdPermissions.giveAdminPermission(anyString(), anyString(), anyString())).thenReturn(ConnectCrowdPermissions.GrantResult.REMOTE_GRANT_SUCCEEDED);
+        when(applicationAuthorizationService.rolesEnabled()).thenReturn(true);
+
+        Set<ScopeName> previousScopes = newHashSet();
+        Set<ScopeName> newScopes = newHashSet(ScopeName.ADMIN);
+
+        provisioningService.provisionAddonUserForScopes(USERNAME, previousScopes, newScopes);
+
+        verify(connectCrowdPermissions).giveAdminPermission(anyString(), eq("jira"), eq("jira-admin"));
+    }
+
+    @Test
+    public void testAdminGrantProvidesCorrectProductAndApplicationIdInDarkAges()
+            throws ApplicationPermissionException,
+            OperationFailedException, ApplicationNotFoundException, InvalidAuthenticationException
+    {
+        when(userManager.getUserByName(USERNAME)).thenReturn(adminUser);
+        when(connectAddOnUserGroupProvisioningService.ensureGroupExists(ADDONS_ADMIN_GROUP)).thenReturn(true);
+        when(connectCrowdPermissions.giveAdminPermission(anyString(), anyString(), anyString())).thenReturn(ConnectCrowdPermissions.GrantResult.REMOTE_GRANT_SUCCEEDED);
+        when(applicationAuthorizationService.rolesEnabled()).thenReturn(false);
 
         Set<ScopeName> previousScopes = newHashSet();
         Set<ScopeName> newScopes = newHashSet(ScopeName.ADMIN);
@@ -148,12 +163,6 @@ public class JiraAddOnUserProvisioningServiceTest
         provisioningService.provisionAddonUserForScopes(USERNAME, previousScopes, newScopes);
 
         verify(connectCrowdPermissions).giveAdminPermission(anyString(), eq("jira"), eq("jira"));
-
-        when(applicationAuthorizationService.rolesEnabled()).thenReturn(true);
-
-        provisioningService.provisionAddonUserForScopes(USERNAME, previousScopes, newScopes);
-
-        verify(connectCrowdPermissions).giveAdminPermission(anyString(), eq("jira"), eq("jira-admin"));
     }
 
     @Test
