@@ -178,7 +178,7 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
             defaultContext.put("contextPath", hostApplicationInfo.getContextPath());
             defaultContext.put("userId", username);
             defaultContext.put("userKey", userKey);
-            defaultContext.put("userAnalyticsHash", getUserAnalyticsHash(userKey));
+            defaultContext.put("userAnalyticsHash", getUserKeyHash(userKey));
             defaultContext.put("timeZone", timeZone);
 
             return defaultContext;
@@ -186,7 +186,7 @@ public class IFrameRenderContextBuilderImpl implements IFrameRenderContextBuilde
 
     }
 
-    private String getUserAnalyticsHash(final String userKey)
+    private String getUserKeyHash(final String userKey)
     {
         return DigestUtils.sha512Hex(userKey);
     }
