@@ -40,7 +40,7 @@ import com.atlassian.plugin.connect.test.HttpUtils;
 import com.atlassian.plugin.connect.test.Utils;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
 
-import com.atlassian.plugin.connect.testsupport.DefaultModuleSerializer;
+import com.atlassian.plugin.connect.modules.gson.DefaultModuleSerializer;
 import com.google.common.collect.ImmutableMap;
 
 import com.google.gson.Gson;

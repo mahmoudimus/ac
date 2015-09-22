@@ -76,6 +76,7 @@ public class ConnectModulesGsonFactory
 
     public static String addonBeanToJson(ConnectAddonBean bean)
     {
-        return getGson().toJson(bean);
+        Gson gson = getGsonBuilder().registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), new DefaultModuleSerializer()).create();
+        return gson.toJson(bean);
     }
 }
