@@ -59,6 +59,7 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
 
     private static final Map<String, String[]> GET_PARAMS_STRING_ARRAY = Collections.singletonMap("param", new String[] { "param value" });
     private static final URI FULL_PATH_URI = URI.create(FULL_PATH_URL);
+    private static final URI FULL_PATH_URI_WITH_PARAM = URI.create(FULL_PATH_URL + "?param=param%20value");
     private static final URI GET_PATH = URI.create("/path");
     private static final URI UNEXPECTED_ABSOLUTE_URI = URI.create("http://www.example.com/path");
     private static final String SECRET = "secret";
@@ -119,6 +120,13 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
             throws ExecutionException, InterruptedException
     {
         assertThat(createRemotePluginAccessor().createGetUrl(FULL_PATH_URI, GET_PARAMS_STRING_ARRAY), is(OUTGOING_FULL_GET_URL));
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void createdRemotePluginAccessorThrowsIAEWhenDuplicateParams()
+            throws ExecutionException, InterruptedException
+    {
+        assertThat(createRemotePluginAccessor().createGetUrl(FULL_PATH_URI_WITH_PARAM, GET_PARAMS_STRING_ARRAY), is(OUTGOING_FULL_GET_URL));
     }
 
     @Test
