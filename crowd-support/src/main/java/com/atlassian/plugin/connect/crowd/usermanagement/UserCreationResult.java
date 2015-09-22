@@ -1,8 +1,8 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
-import com.atlassian.crowd.embedded.api.User;
-
 import javax.annotation.Nonnull;
+
+import com.atlassian.crowd.embedded.api.User;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
