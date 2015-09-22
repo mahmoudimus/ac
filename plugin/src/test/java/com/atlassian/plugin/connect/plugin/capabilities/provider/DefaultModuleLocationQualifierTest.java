@@ -54,23 +54,23 @@ public class DefaultModuleLocationQualifierTest
     @Test
     public void returnsQualifiedKeyWhenMatchesWebItemKeyExactly()
     {
-//        assertThat(locationQualifier.processLocation(TOOLS_MENU), is(qualify(TOOLS_MENU)));
+        assertThat(locationQualifier.processLocation(TOOLS_MENU), is(qualify(TOOLS_MENU)));
     }
 
     @Test
     public void substitutesAllKeysInLocation()
     {
-//        assertThat(locationQualifier.processLocation(TOOLS_MENU + '/' + WEB_SECTION_KEY),
-//                is(qualify(TOOLS_MENU) + '/' + qualify(WEB_SECTION_KEY)));
+        assertThat(locationQualifier.processLocation(TOOLS_MENU + '/' + WEB_SECTION_KEY),
+                is(qualify(TOOLS_MENU) + '/' + qualify(WEB_SECTION_KEY)));
     }
 
     @Test
     public void substitutesOnlyKeysInLocation()
     {
-//        final String segment = "should-not-be-qualified";
-//
-//        assertThat(locationQualifier.processLocation(TOOLS_MENU + '/' + segment),
-//                is(qualify(TOOLS_MENU) + '/' + segment));
+        final String segment = "should-not-be-qualified";
+
+        assertThat(locationQualifier.processLocation(TOOLS_MENU + '/' + segment),
+                is(qualify(TOOLS_MENU) + '/' + segment));
     }
 
     private String qualify(String str)

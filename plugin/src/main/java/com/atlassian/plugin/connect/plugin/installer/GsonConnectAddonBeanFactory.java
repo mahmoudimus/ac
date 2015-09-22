@@ -106,7 +106,7 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
         ConnectAddonBean addOn = fromJsonSkipValidation(jsonDescriptor,i18nCollector);
         validateModules(addOn);
         addOnBeanValidatorService.validate(addOn);
-        
+
         return addOn;
     }
 
