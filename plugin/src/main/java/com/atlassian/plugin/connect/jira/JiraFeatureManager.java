@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.jira;
 
+import com.atlassian.jira.config.CoreFeatures;
 import com.atlassian.plugin.connect.spi.product.FeatureManager;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 
@@ -20,5 +21,11 @@ public class JiraFeatureManager implements FeatureManager
     public boolean isOnDemand()
     {
         return featureManager.isOnDemand();
+    }
+
+    @Override
+    public boolean isPermissionsManagedByUM()
+    {
+        return featureManager.isEnabled(CoreFeatures.PERMISSIONS_MANAGED_BY_UM);
     }
 }

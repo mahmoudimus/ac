@@ -1,8 +1,6 @@
 package it.confluence.iframe;
 
 import com.atlassian.confluence.pageobjects.page.admin.ConfluenceAdminHomePage;
-import com.atlassian.pageobjects.elements.query.Queries;
-import com.atlassian.pageobjects.elements.timeout.DefaultTimeouts;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
@@ -11,7 +9,6 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceAdminP
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConnectConfluenceAdminHomePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.plugin.connect.test.utils.IframeUtils;
-import com.google.common.base.Supplier;
 import it.confluence.ConfluenceWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import org.junit.AfterClass;
@@ -22,11 +19,11 @@ import org.junit.rules.TestRule;
 
 import java.net.URI;
 
-import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
 import static it.servlet.condition.ToggleableConditionServlet.toggleableConditionBean;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -83,15 +80,8 @@ public class TestAdminPage extends ConfluenceWebDriverTestBase
 
         // TODO Admin page web-item location has incorrect text ("OSGi")
 
-        final ConnectAddOnEmbeddedTestPage addonContentsPage = adminPage.clickAddOnLink();
-        waitUntilTrue(Queries.forSupplier(new DefaultTimeouts(), new Supplier<Boolean>()
-        {
-            @Override
-            public Boolean get()
-            {
-                return "Hello world".equals(addonContentsPage.getValueById("hello-world-message"));
-            }
-        }));
+        ConnectAddOnEmbeddedTestPage addonContentsPage = adminPage.clickAddOnLink();
+        assertEquals("Hello world", addonContentsPage.getValueBySelector("#hello-world-message"));
     }
 
     @Test

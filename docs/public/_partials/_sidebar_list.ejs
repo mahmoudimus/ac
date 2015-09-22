@@ -12,8 +12,8 @@
 
 <ul class="aui-nav">
     <%
-    for (var i in public._data[category]) {
-        var page = public._data[category][i];
+    for (var i in public[category]._data) {
+        var page = public[category]._data[i];
     %>
         <li <%= selected(category + '/' + page.filename) %>>
             <a href="<%= (page.url ? page.url : (relDocRoot + category + '/' + page.filename)) %>"><%= page.title %>

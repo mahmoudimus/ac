@@ -745,6 +745,7 @@ public class ConnectJsonExamples
                 new EntityPropertyIndexKeyConfigurationBean(extractionConfiguration, "attachment");
 
         EntityPropertyModuleBean entityPropertyModuleBean = newEntityPropertyModuleBean()
+                .withKey("attachment-entity-property")
                 .withName(i18nProperty("Attachment Index Document"))
                 .withEntityType(EntityPropertyType.issue)
                 .withKeyConfiguration(issueAttachmentIndexConfiguration)
