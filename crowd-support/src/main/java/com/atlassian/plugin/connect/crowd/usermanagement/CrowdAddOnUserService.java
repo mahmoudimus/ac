@@ -106,6 +106,7 @@ public class CrowdAddOnUserService implements ConnectUserService
         {
             connectCrowdService.invalidateSessions(user.getName());
         }
+
         connectAddOnUserGroupProvisioningService.ensureUserIsInGroup(user.getName(), Constants.ADDON_USER_GROUP_KEY);
         if (userCreationResult.isNewlyCreated())
         {
@@ -156,8 +157,6 @@ public class CrowdAddOnUserService implements ConnectUserService
                     "We expect at least one of these groups to exist - exactly which one should exist depends on the version of the instance." +
                     "The user needs to be a member of one of these groups for basic access, otherwise the add-on will not function correctly." +
                     "Please check with an instance administrator that at least one of these groups exists and that it is not read-only.");
-                    // TODO Change error message in the case of Renaissance to say that the groups existed but had admin access, so we filtered them out
-                    // or, keep this message the same but log every time we filter out an admin group
         }
     }
 }
