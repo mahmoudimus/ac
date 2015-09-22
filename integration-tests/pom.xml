@@ -5,7 +5,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.51-SNAPSHOT</version>
+        <version>1.1.55-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -107,11 +107,6 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.test.version}</version>
         </dependency>
         <dependency>
             <artifactId>itextpdf</artifactId>
@@ -226,18 +221,6 @@
             <version>${atlassian.jira.version}</version>
             <scope>test</scope>
             <exclusions>
-                <exclusion>
-                    <groupId>com.atlassian.selenium</groupId>
-                    <artifactId>atlassian-pageobjects-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.atlassian.selenium</groupId>
-                    <artifactId>atlassian-pageobjects-elements</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.atlassian.selenium</groupId>
-                    <artifactId>atlassian-webdriver-core</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>org.apache.httpcomponents</groupId>
                     <artifactId>httpcore</artifactId>

@@ -42,6 +42,8 @@ import com.atlassian.jira.util.SimpleErrorCollection;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
+import com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions;
+import com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions.GrantResult;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeUtil;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
@@ -58,6 +60,7 @@ import org.ofbiz.core.entity.GenericValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions.GrantResult.REMOTE_GRANT_FAILED;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.any;
 
@@ -72,6 +75,9 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
      * The group which is created to house all add-on users which have administrative rights.
      */
     private static final String ADDON_ADMIN_USER_GROUP_KEY = "atlassian-addons-admin";
+    private static final String ADMIN_APPLICATION_ID = "jira";
+    private static final String ADMIN_APPLICATION_ID_ROLES_ENABLED = "jira-admin";
+    private static final String PRODUCT_ID = "jira";
 
     private static final ImmutableSet<String> DEFAULT_GROUPS_ALWAYS_EXPECTED = ImmutableSet.of();
     private static final ImmutableSet<String> DEFAULT_GROUPS_ONE_OR_MORE_EXPECTED = ImmutableSet.of("jira-users", "users");
@@ -88,6 +94,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     private final ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
     private final TransactionTemplate transactionTemplate;
     private final PermissionManager jiraProjectPermissionManager;
+    private final ConnectCrowdPermissions connectCrowdPermissions;
     private final ApplicationAuthorizationService applicationAuthorizationService;
     private final ApplicationRoleManager applicationRoleManager;
 
@@ -101,9 +108,11 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
             TransactionTemplate transactionTemplate,
             PermissionManager jiraProjectPermissionManager,
             ApplicationAuthorizationService applicationAuthorizationService,
-            ApplicationRoleManager applicationRoleManager)
+            ApplicationRoleManager applicationRoleManager,
+            ConnectCrowdPermissions connectCrowdPermissions)
     {
         this.jiraProjectPermissionManager = jiraProjectPermissionManager;
+        this.connectCrowdPermissions = connectCrowdPermissions;
         this.jiraPermissionManager = checkNotNull(jiraPermissionManager);
         this.projectManager = checkNotNull(projectManager);
         this.userManager = checkNotNull(userManager);
@@ -247,6 +256,11 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
 
         if (created)
         {
+            GrantResult result = giveAdminPermission(groupKey);
+            if (result == REMOTE_GRANT_FAILED)
+            {
+                throw new ConnectAddOnUserInitException(String.format("Failed to grant '%s' administrative rights through the Remote UM REST API", groupKey));
+            }
             ensureGroupHasAdminPermission(groupKey);
         }
         else if (!groupHasAdminPermission(groupKey))
@@ -259,12 +273,32 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         }
     }
 
+    private GrantResult giveAdminPermission(String groupKey)
+    {
+        if (applicationAuthorizationService.rolesEnabled())
+        {
+            return connectCrowdPermissions.giveAdminPermission(groupKey, PRODUCT_ID, ADMIN_APPLICATION_ID_ROLES_ENABLED);
+        }
+        else
+        {
+            return connectCrowdPermissions.giveAdminPermission(groupKey, PRODUCT_ID, ADMIN_APPLICATION_ID);
+        }
+    }
+
     private void ensureGroupHasAdminPermission(String groupKey)
     {
         if (!groupHasAdminPermission(groupKey))
         {
-            jiraPermissionManager.addPermission(ADMIN_PERMISSION, groupKey);
-            log.info("Granted admin permission to group '{}'.", groupKey);
+            boolean permissionGranted = jiraPermissionManager.addPermission(ADMIN_PERMISSION, groupKey);
+            if (permissionGranted)
+            {
+                log.info("Granted admin permission to group '{}'.", groupKey);
+            }
+            else
+            {
+                log.warn("Failed to grant '{}' administrative rights through the deprecated jira API", groupKey);
+            }
+
         }
     }
 

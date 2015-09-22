@@ -22,11 +22,11 @@ import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
+import com.atlassian.plugin.connect.crowd.permissions.ConnectCrowdPermissions;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 
-import org.hamcrest.collection.IsEmptyCollection;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,6 +40,9 @@ import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInA
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -63,6 +66,7 @@ public class JiraAddOnUserProvisioningServiceTest
     @Mock private ApplicationRoleManager applicationRoleManager;
     private ApplicationKey applicationKey;
     @Mock private Group group;
+    @Mock private ConnectCrowdPermissions connectCrowdPermissions;
 
     private TransactionTemplate transactionTemplate = new TransactionTemplate()
     {
@@ -88,7 +92,8 @@ public class JiraAddOnUserProvisioningServiceTest
                 transactionTemplate,
                 jiraProjectPermissionManager,
                 applicationAuthorizationService,
-                applicationRoleManager);
+                applicationRoleManager,
+                connectCrowdPermissions);
 
         groups = newHashSet();
         applicationKeys = newHashSet();
@@ -122,6 +127,42 @@ public class JiraAddOnUserProvisioningServiceTest
         {
             assertEquals(exception.getI18nKey(), ConnectAddOnUserProvisioningService.ADDON_ADMINS_MISSING_PERMISSION);
         }
+    }
+
+    @Test
+    public void testAdminGrantProvidesCorrectProductAndApplicationIdInRenaissance()
+            throws ApplicationPermissionException,
+            OperationFailedException, ApplicationNotFoundException, InvalidAuthenticationException
+    {
+        when(userManager.getUserByName(USERNAME)).thenReturn(adminUser);
+        when(connectAddOnUserGroupProvisioningService.ensureGroupExists(ADDONS_ADMIN_GROUP)).thenReturn(true);
+        when(connectCrowdPermissions.giveAdminPermission(anyString(), anyString(), anyString())).thenReturn(ConnectCrowdPermissions.GrantResult.REMOTE_GRANT_SUCCEEDED);
+        when(applicationAuthorizationService.rolesEnabled()).thenReturn(true);
+
+        Set<ScopeName> previousScopes = newHashSet();
+        Set<ScopeName> newScopes = newHashSet(ScopeName.ADMIN);
+
+        provisioningService.provisionAddonUserForScopes(USERNAME, previousScopes, newScopes);
+
+        verify(connectCrowdPermissions).giveAdminPermission(anyString(), eq("jira"), eq("jira-admin"));
+    }
+
+    @Test
+    public void testAdminGrantProvidesCorrectProductAndApplicationIdInDarkAges()
+            throws ApplicationPermissionException,
+            OperationFailedException, ApplicationNotFoundException, InvalidAuthenticationException
+    {
+        when(userManager.getUserByName(USERNAME)).thenReturn(adminUser);
+        when(connectAddOnUserGroupProvisioningService.ensureGroupExists(ADDONS_ADMIN_GROUP)).thenReturn(true);
+        when(connectCrowdPermissions.giveAdminPermission(anyString(), anyString(), anyString())).thenReturn(ConnectCrowdPermissions.GrantResult.REMOTE_GRANT_SUCCEEDED);
+        when(applicationAuthorizationService.rolesEnabled()).thenReturn(false);
+
+        Set<ScopeName> previousScopes = newHashSet();
+        Set<ScopeName> newScopes = newHashSet(ScopeName.ADMIN);
+
+        provisioningService.provisionAddonUserForScopes(USERNAME, previousScopes, newScopes);
+
+        verify(connectCrowdPermissions).giveAdminPermission(anyString(), eq("jira"), eq("jira"));
     }
 
     @Test
