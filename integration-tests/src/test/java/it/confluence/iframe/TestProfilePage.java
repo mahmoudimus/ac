@@ -1,6 +1,7 @@
 package it.confluence.iframe;
 
 import com.atlassian.fugue.Option;
+import com.atlassian.plugin.connect.modules.beans.ProfilePageModuleMeta;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceUserProfilePage;
@@ -27,7 +28,7 @@ public class TestProfilePage extends AbstractPageTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        startConnectAddOn("profilePages", "/my-awesome-profile?profile_user={profileUser.name}&profile_key={profileUser.key}");
+        startConnectAddOn("profilePages", new ProfilePageModuleMeta(), "/my-awesome-profile?profile_user={profileUser.name}&profile_key={profileUser.key}");
     }
 
     @Test

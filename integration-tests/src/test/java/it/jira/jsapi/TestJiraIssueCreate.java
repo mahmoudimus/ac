@@ -3,44 +3,26 @@ package it.jira.jsapi;
 import com.atlassian.jira.pageobjects.dialogs.quickedit.CreateIssueDialog;
 import com.atlassian.jira.pageobjects.elements.GlobalMessage;
 import com.atlassian.pageobjects.elements.query.Poller;
-import com.atlassian.pageobjects.page.HomePage;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
-import com.atlassian.plugin.connect.test.pageobjects.InsufficientPermissionsPage;
-import com.atlassian.plugin.connect.test.pageobjects.jira.JiraGeneralPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.RemoteQuickCreateIssueGeneralPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import com.atlassian.plugin.connect.test.utils.IframeUtils;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
-import it.servlet.condition.ParameterCapturingConditionServlet;
-import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Map;
 
-import static com.atlassian.jira.pageobjects.dialogs.quickedit.FieldPicker.SUMMARY;
 import static com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean.newPageBean;
-import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
-import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.moduleKeyOnly;
-import static it.modules.ConnectAsserts.verifyContainsStandardAddOnQueryParamters;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test of general page in JIRA

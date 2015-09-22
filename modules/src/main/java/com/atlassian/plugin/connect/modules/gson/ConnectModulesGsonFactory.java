@@ -17,12 +17,16 @@ import java.util.Map;
  */
 public class ConnectModulesGsonFactory
 {
-    private static Type mapJsonType = new TypeToken<Map<String, Supplier<List<ModuleBean>>>>() {}.getType();
+    private static Type moduleJsonType = new TypeToken<Map<String, Supplier<List<ModuleBean>>>>() {}.getType();
     
+    public static Type getModuleJsonType()
+    {
+        return moduleJsonType;
+    }
     
     public static GsonBuilder getGsonBuilder(JsonDeserializer<Map<String, Supplier<List<ModuleBean>>>> moduleDeserializer)
     {
-        return getGsonBuilder().registerTypeAdapter(mapJsonType, moduleDeserializer);
+        return getGsonBuilder().registerTypeAdapter(moduleJsonType, moduleDeserializer);
     }
 
     public static GsonBuilder getGsonBuilder()
@@ -40,7 +44,6 @@ public class ConnectModulesGsonFactory
                 .registerTypeAdapterFactory(new NullIgnoringSetTypeAdapterFactory())
                 .registerTypeAdapter(WebItemTargetBean.class, new WebItemTargetBeanSerializer())
                 .registerTypeAdapter(Supplier.class, new SupplierInstanceCreator())
-                .registerTypeAdapter(mapJsonType, new DefaultModuleSerializer())
                 .setPrettyPrinting()
                 .disableHtmlEscaping()
                 ;
@@ -73,6 +76,7 @@ public class ConnectModulesGsonFactory
 
     public static String addonBeanToJson(ConnectAddonBean bean)
     {
-        return getGson().toJson(bean);
+        Gson gson = getGsonBuilder().registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), new DefaultModuleSerializer()).create();
+        return gson.toJson(bean);
     }
 }

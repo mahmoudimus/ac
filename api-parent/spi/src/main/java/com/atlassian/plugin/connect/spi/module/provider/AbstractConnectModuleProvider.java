@@ -36,9 +36,9 @@ public abstract class AbstractConnectModuleProvider<T> implements ConnectModuleP
         List<T> beans = new ArrayList<>();
         if (rawModules.isJsonObject())
         {
-            if (multipleModulesAllowed())
+            if (getMeta().multipleModulesAllowed())
             {
-                throw new ConnectModuleValidationException(getDescriptorKey(), "Modules should be provided in a JSON array.");
+                throw new ConnectModuleValidationException(getMeta().getDescriptorKey(), "Modules should be provided in a JSON array.");
             }
             beans.add(deserializer.fromJson(rawModules, type));
         }
@@ -56,22 +56,16 @@ public abstract class AbstractConnectModuleProvider<T> implements ConnectModuleP
         return beans;
     }
     
-    @Override
-    public boolean multipleModulesAllowed()
-    {
-        return true;
-    }
-    
     protected void validateAgainstSchema(JsonElement rawModules, String schema) throws ConnectModuleSchemaValidationException
     {
         JsonDescriptorValidator jsonDescriptorValidator = new JsonDescriptorValidator();
 
-        String modules = "{\"" + getDescriptorKey() + "\": " + rawModules.toString() + "}";
+        String modules = "{\"" + getMeta().getDescriptorKey() + "\": " + rawModules.toString() + "}";
 
         DescriptorValidationResult result = jsonDescriptorValidator.validate(modules, schema);
         if (!result.isValid())
         {
-            throw new ConnectModuleSchemaValidationException(getDescriptorKey(), result.getReportAsString());
+            throw new ConnectModuleSchemaValidationException(getMeta().getDescriptorKey(), result.getReportAsString(), modules);
         }
         
     }

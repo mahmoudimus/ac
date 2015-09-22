@@ -25,6 +25,7 @@ import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
@@ -32,14 +33,17 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.api.http.HttpMethod;
+import com.atlassian.plugin.connect.plugin.installer.StaticModuleBeanDeserializer;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.Environment;
 import com.atlassian.plugin.connect.test.HttpUtils;
 import com.atlassian.plugin.connect.test.Utils;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
 
+import com.atlassian.plugin.connect.modules.gson.DefaultModuleSerializer;
 import com.google.common.collect.ImmutableMap;
 
+import com.google.gson.Gson;
 import org.apache.commons.lang.NotImplementedException;
 import org.bouncycastle.openssl.PEMWriter;
 import org.eclipse.jetty.server.Server;
@@ -81,6 +85,7 @@ public class ConnectRunner
     private ToggleableConditionServlet toggleableConditionServlet;
     private SignedRequestHandler signedRequestHandler;
     private ConnectAddonBean addon;
+    private StaticModuleBeanDeserializer serializer = new StaticModuleBeanDeserializer();
 
     private int port;
     private Server server;
@@ -250,6 +255,12 @@ public class ConnectRunner
     public ConnectRunner addModules(String fieldName, ModuleBean... beans)
     {
         addonBuilder.withModules(fieldName, beans);
+        return this;
+    }
+    
+    public ConnectRunner addModuleMeta(ConnectModuleMeta meta)
+    {
+        serializer.addModuleMeta(meta);
         return this;
     }
 
@@ -466,10 +477,23 @@ public class ConnectRunner
         @Override
         protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
         {
-            String json = ConnectModulesGsonFactory.getGson().toJson(addon);
+            String json = getGson().toJson(addon);
             response.setContentType(MediaType.APPLICATION_JSON);
             response.getWriter().write(json);
             response.getWriter().close();
+        }
+        
+        private Gson getGson()
+        {
+            if (serializer.hasMetas())
+            {
+                return ConnectModulesGsonFactory.getGson(serializer);
+            }
+            else
+            {
+                return ConnectModulesGsonFactory.getGsonBuilder()
+                        .registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), new DefaultModuleSerializer()).create();
+            }
         }
     }
 

@@ -2,6 +2,7 @@ package it.common.iframe;
 
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.Page;
+import com.atlassian.plugin.connect.modules.beans.ConfigurePageModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
@@ -30,7 +31,7 @@ public class TestConfigurePage extends AbstractPageTestBase
     @BeforeClass
     public static void startConnectAddOn() throws Exception
     {
-        startConnectAddOn("configurePage");
+        startConnectAddOn("configurePage", new ConfigurePageModuleMeta());
     }
 
     @Test
@@ -58,6 +59,7 @@ public class TestConfigurePage extends AbstractPageTestBase
                         .withLocation("")
                         .withUrl("/page")
                         .build())
+                .addModuleMeta(new ConfigurePageModuleMeta())
                 .addRoute("/page", ConnectAppServlets.helloWorldServlet())
                 .addScope(ScopeName.READ)
                 .start();

@@ -8,7 +8,6 @@ import com.atlassian.json.schema.scanner.model.InterfaceList;
 
 public class ConnectSchemaGeneratorProvider implements JsonSchemaGeneratorProvider
 {
-
     @Override
     public JsonSchemaGenerator provide(EnumCase enumCase, InterfaceList interfaceList, JsonSchemaDocs schemaDocs, String ignoreFilter)
     {

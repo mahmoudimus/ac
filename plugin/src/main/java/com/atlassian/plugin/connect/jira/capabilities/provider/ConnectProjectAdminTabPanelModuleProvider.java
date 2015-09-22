@@ -10,9 +10,11 @@ import com.atlassian.plugin.connect.jira.condition.IsProjectAdminCondition;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.module.provider.AbstractConnectModuleProvider;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.collect.ImmutableList;
@@ -30,8 +32,6 @@ import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWe
 @JiraComponent
 public class ConnectProjectAdminTabPanelModuleProvider extends AbstractConnectModuleProvider<ConnectProjectAdminTabPanelModuleBean>
 {
-    public static final String DESCRIPTOR_KEY = "jiraProjectAdminTabPanels";
-    public static final Class BEAN_CLASS = ConnectProjectAdminTabPanelModuleBean.class;    
     public static final String PROJECT_ADMIN_TAB_PANELS = "jiraProjectAdminTabPanels";
     private static final String ADMIN_ACTIVE_TAB = "adminActiveTab";
 
@@ -91,15 +91,9 @@ public class ConnectProjectAdminTabPanelModuleProvider extends AbstractConnectMo
     }
 
     @Override
-    public Class getBeanClass()
+    public ConnectModuleMeta getMeta()
     {
-        return BEAN_CLASS;
-    }
-
-    @Override
-    public String getDescriptorKey()
-    {
-        return DESCRIPTOR_KEY;
+        return new ConnectProjectAdminTabPanelModuleMeta();
     }
 
     @Override

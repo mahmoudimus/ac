@@ -41,7 +41,6 @@ import static com.google.common.collect.Lists.newArrayList;
 public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMacroModuleBean>
         extends AbstractConnectModuleProvider<T>
 {
-    public final Class<T> BEAN_CLASS;
     private static final Logger log = LoggerFactory.getLogger(AbstractContentMacroModuleProvider.class);
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final HostContainer hostContainer;
@@ -55,8 +54,7 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                                               AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
                                               IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
                                               IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-                                              ConnectAddonI18nManager connectAddonI18nManager,
-                                              Class beanClass)
+                                              ConnectAddonI18nManager connectAddonI18nManager)
     {
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
         this.hostContainer = hostContainer;
@@ -64,7 +62,6 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.connectAddonI18nManager = connectAddonI18nManager;
-        this.BEAN_CLASS = beanClass;
     }
 
     protected abstract ModuleDescriptor createMacroModuleDescriptor(ConnectModuleProviderContext moduleProviderContext,

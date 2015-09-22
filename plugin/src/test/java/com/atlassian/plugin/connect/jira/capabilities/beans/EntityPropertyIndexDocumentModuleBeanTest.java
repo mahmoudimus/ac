@@ -2,12 +2,15 @@ package com.atlassian.plugin.connect.jira.capabilities.beans;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
+import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexType;
 import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.plugin.installer.ModuleBeanDeserializer;
+import com.atlassian.plugin.connect.plugin.installer.StaticModuleBeanDeserializer;
 import com.google.common.collect.Lists;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -70,7 +73,8 @@ public class EntityPropertyIndexDocumentModuleBeanTest
     public void addOnWithEntityPropertyParsed() throws IOException
     {
         ConnectAddonBean bean = createAddOnBean();
-        String expectedJson = ConnectModulesGsonFactory.getGson().toJson(bean, ConnectAddonBean.class);
+        ModuleBeanDeserializer deserializer = new StaticModuleBeanDeserializer(new EntityPropertyModuleMeta());
+        String expectedJson = ConnectModulesGsonFactory.getGson(deserializer).toJson(bean, ConnectAddonBean.class);
 
         assertThat(readTestFile("entityPropertyAddon.json"), is(sameJSONAs(expectedJson)));
     }

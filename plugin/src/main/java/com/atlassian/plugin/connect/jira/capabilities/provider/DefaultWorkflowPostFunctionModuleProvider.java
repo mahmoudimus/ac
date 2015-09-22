@@ -8,7 +8,9 @@ import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrat
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.jira.capabilities.descriptor.workflow.WorkflowPostFunctionModuleDescriptorFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
+import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.spi.module.provider.AbstractConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
@@ -26,9 +28,6 @@ import static com.atlassian.plugin.connect.jira.capabilities.provider.JiraTempla
 public class DefaultWorkflowPostFunctionModuleProvider extends AbstractConnectModuleProvider<WorkflowPostFunctionModuleBean>
         implements WorkflowPostFunctionModuleProvider
 {
-    public static final String DESCRIPTOR_KEY = "jiraWorkflowPostFunctions";
-    public static final Class BEAN_CLASS = WorkflowPostFunctionModuleBean.class;
-    
     private final WorkflowPostFunctionModuleDescriptorFactory workflowPostFunctionFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
@@ -96,20 +95,14 @@ public class DefaultWorkflowPostFunctionModuleProvider extends AbstractConnectMo
     }
 
     @Override
-    public Class getBeanClass()
-    {
-        return BEAN_CLASS;
-    }
-
-    @Override
-    public String getDescriptorKey()
-    {
-        return DESCRIPTOR_KEY;
-    }
-
-    @Override
     public String getSchemaPrefix()
     {
         return "jira";
+    }
+
+    @Override
+    public ConnectModuleMeta getMeta()
+    {
+        return new WorkflowPostFunctionModuleMeta();
     }
 }

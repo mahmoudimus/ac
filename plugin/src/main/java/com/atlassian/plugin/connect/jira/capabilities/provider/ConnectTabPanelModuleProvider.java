@@ -32,8 +32,6 @@ public abstract class ConnectTabPanelModuleProvider extends AbstractConnectModul
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
-    
-    public static final Class BEAN_CLASS = ConnectTabPanelModuleBean.class;
     public static final String ISSUE_TAB_PANELS = "jiraIssueTabPanels";
     public static final String PROJECT_TAB_PANELS = "jiraProjectTabPanels";
     public static final String PROFILE_TAB_PANELS = "jiraProfileTabPanels";
@@ -89,11 +87,5 @@ public abstract class ConnectTabPanelModuleProvider extends AbstractConnectModul
         }
 
         return builder.build();
-    }
-
-    @Override
-    public Class getBeanClass()
-    {
-        return BEAN_CLASS;
     }
 }
