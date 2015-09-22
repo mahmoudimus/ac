@@ -9,30 +9,47 @@ var marketplace = require('./marketplace'),
     colors = require('colors'),
     util = require('util');
 
-var jiraSchemaPath = '../../plugin/target/classes/schema/jira-schema.json',
-    confluenceSchemaPath = '../../plugin/target/classes/schema/confluence-schema.json',
-    jiraSchema,
-    confluenceSchema;
+var baseSchemaFile = '../../plugin/target/classes/schema/shallow-schema.json',
+    moduleSchemaFiles = [
+        '../../plugin/target/classes/schema/common-schema.json',
+        '../../plugin/target/classes/schema/confluence-schema.json',
+        '../../plugin/target/classes/schema/jira-schema.json'
+    ];
 
-var schemaExists = function(schemaPath) {
-    return fs.existsSync(path.resolve(__dirname, schemaPath));
+var buildSchema = function() {
+    ensureSchemaFilesExist();
+    var baseSchema = loadJsonFile(baseSchemaFile);
+    var moduleSchemas = moduleSchemaFiles.map(loadJsonFile);
+    baseSchema.properties.modules.additionalProperties = false;
+    baseSchema.properties.modules.properties = moduleSchemas.map(function(schema) {
+        return schema.properties;
+    }).reduce(_.merge);
+    baseSchema.definitions = moduleSchemas.concat(baseSchema).map(function(schema) {
+        return schema.definitions;
+    }).reduce(_.merge);
+    return baseSchema;
+}
+
+var ensureSchemaFilesExist = function() {
+    var schemaFiles = moduleSchemaFiles.concat(baseSchemaFile);
+    for (var schemaName in schemaFiles) {
+        if (!fileExists(schemaFiles[schemaName])) {
+            console.error("Could not load schema file " + file + ". Please build the project.");
+            process.exit();
+        }
+    }
+}
+
+var fileExists = function(filePath) {
+    return fs.existsSync(path.resolve(__dirname, filePath));
 };
 
-var loadSchema = function(schemaPath) {
-    return JSON.parse(fs.readFileSync(path.resolve(__dirname, schemaPath), 'utf8'));
+var loadJsonFile = function(filePath) {
+    return JSON.parse(fs.readFileSync(path.resolve(__dirname, filePath), 'utf8'));
 }
 
-if (!schemaExists(jiraSchemaPath) || !schemaExists(confluenceSchemaPath)) {
-    console.error("No schema found in path. Please build Atlassian Connect.");
-    process.exit();
-} else {
-    jiraSchema = loadSchema(jiraSchemaPath);
-    confluenceSchema = loadSchema(confluenceSchemaPath);
-}
-
-var warned = false,
-    validationResults = [],
-    counter = 0;
+var validationResults = [],
+    schema = buildSchema();
 
 function validate(opts, addonKey, descriptorFilename, descriptor, schema, callback) {
     validator.validateDescriptor(descriptor, schema, function (errors) {
@@ -113,8 +130,6 @@ downloader.run({
         }
 
         var app = _.pluck(compatibleApps, "key")[0];
-
-        var schema = (app === "confluence" ? confluenceSchema : jiraSchema);
 
         marketplace.requestQueue().push({
             self: this,

@@ -127,7 +127,7 @@ runTestsStage() {
             task(
                     type: 'nodejs',
                     description: 'Generate Validator Test Output',
-                    arguments: '--type json --testReport=plugin/src/test/resources/descriptor/descriptor-validation-results.json',
+                    arguments: '--debug --type json --testReport=plugin/src/test/resources/descriptor/descriptor-validation-results.json',
                     script: 'bin/marketplace/validate-descriptors.js',
                     executable: 'Node.js 0.10'
             )
