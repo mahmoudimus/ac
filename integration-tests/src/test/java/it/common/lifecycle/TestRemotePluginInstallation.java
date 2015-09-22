@@ -1,7 +1,6 @@
 package it.common.lifecycle;
 
 import com.atlassian.pageobjects.page.HomePage;
-import com.atlassian.plugin.connect.modules.beans.GeneralPageModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.GeneralPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;

@@ -2,7 +2,6 @@ package it.confluence.iframe;
 
 import com.atlassian.pageobjects.Page;
 import com.atlassian.plugin.connect.modules.beans.WebPanelModuleBean;
-import com.atlassian.plugin.connect.modules.beans.WebPanelModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebPanel;

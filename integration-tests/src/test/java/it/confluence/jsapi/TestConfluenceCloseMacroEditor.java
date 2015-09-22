@@ -2,7 +2,6 @@ package it.confluence.jsapi;
 
 import com.atlassian.confluence.pageobjects.page.content.CreatePage;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
-import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleMeta;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.RemoteMacroEditorDialog;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.confluence.ConfluenceWebDriverTestBase;

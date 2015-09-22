@@ -12,7 +12,6 @@ import com.atlassian.plugin.connect.modules.beans.WebHookModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
-import com.atlassian.plugin.connect.plugin.capabilities.provider.WebHookModuleProvider;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;

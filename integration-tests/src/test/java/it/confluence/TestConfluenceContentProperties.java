@@ -23,7 +23,6 @@ import com.atlassian.confluence.rest.client.impl.RemoteLongTaskServiceImpl;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
-import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFieldType;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;

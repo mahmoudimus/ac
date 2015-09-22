@@ -5,7 +5,6 @@ import com.atlassian.confluence.pageobjects.page.content.ViewPage;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
-import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluencePageWithRemoteMacro;

@@ -7,7 +7,6 @@ import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.PageElementFinder;
 import com.atlassian.pageobjects.elements.query.Poller;
 import com.atlassian.plugin.connect.modules.beans.DashboardItemModuleBean;
-import com.atlassian.plugin.connect.modules.beans.DashboardItemModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;

@@ -2,8 +2,6 @@ package it.jira.item;
 
 import com.atlassian.jira.pageobjects.components.menu.JiraAuiDropdownMenu;
 import com.atlassian.pageobjects.elements.PageElement;
-import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
-import com.atlassian.plugin.connect.modules.beans.WebSectionModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewProjectPage;

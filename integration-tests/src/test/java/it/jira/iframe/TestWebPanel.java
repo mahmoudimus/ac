@@ -2,7 +2,6 @@
 package it.jira.iframe;
 
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
-import com.atlassian.plugin.connect.modules.beans.WebPanelModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;

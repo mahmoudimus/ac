@@ -3,7 +3,6 @@ package it.jira;
 import com.atlassian.jira.projects.pageobjects.webdriver.page.ReportsPage;
 import com.atlassian.plugin.connect.modules.beans.ReportCategory;
 import com.atlassian.plugin.connect.modules.beans.ReportModuleBean;
-import com.atlassian.plugin.connect.modules.beans.ReportModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;

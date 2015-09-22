@@ -3,7 +3,6 @@ package it.confluence;
 import java.io.IOException;
 
 import com.atlassian.confluence.pageobjects.page.DashboardPage;
-import com.atlassian.plugin.connect.modules.beans.BlueprintModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;

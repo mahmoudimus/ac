@@ -1,6 +1,5 @@
 package it.jira.iframe;
 
-import com.atlassian.plugin.connect.modules.beans.ProjectTabPanelModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.jira.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;

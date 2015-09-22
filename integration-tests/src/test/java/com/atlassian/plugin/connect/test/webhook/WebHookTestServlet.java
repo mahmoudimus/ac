@@ -5,8 +5,6 @@ import cc.plural.jsonij.JSON;
 import cc.plural.jsonij.Value;
 import cc.plural.jsonij.parser.ParserException;
 
-import com.atlassian.plugin.connect.modules.beans.WebHookModuleMeta;
-import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;

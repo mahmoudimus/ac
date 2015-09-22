@@ -8,7 +8,6 @@ import com.atlassian.jira.testkit.client.restclient.*;
 import com.atlassian.jira.testkit.client.util.TestKitLocalEnvironmentData;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
-import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.*;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;

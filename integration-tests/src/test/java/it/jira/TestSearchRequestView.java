@@ -2,7 +2,6 @@ package it.jira;
 
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
-import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.test.pageobjects.jira.IssueNavigatorViewsMenu;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraAdvancedSearchPage;

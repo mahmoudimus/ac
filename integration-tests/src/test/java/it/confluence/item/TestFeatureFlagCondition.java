@@ -1,7 +1,6 @@
 package it.confluence.item;
 
 import com.atlassian.confluence.it.rpc.ConfluenceRpc;
-import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.test.AddonTestUtils;

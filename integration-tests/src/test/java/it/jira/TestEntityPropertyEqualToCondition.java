@@ -4,7 +4,6 @@ import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.jira.testkit.client.restclient.EntityPropertyClient;
 import com.atlassian.jira.util.json.JSONException;
 import com.atlassian.jira.util.json.JSONObject;
-import com.atlassian.plugin.connect.modules.beans.WebPanelModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.WebPanelModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;

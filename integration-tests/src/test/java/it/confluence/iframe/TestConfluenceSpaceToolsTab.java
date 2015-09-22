@@ -8,7 +8,6 @@ import com.atlassian.confluence.pageobjects.page.space.ViewSpaceSummaryPage;
 import com.atlassian.fugue.Option;
 import com.atlassian.pageobjects.elements.query.Queries;
 import com.atlassian.pageobjects.elements.timeout.DefaultTimeouts;
-import com.atlassian.plugin.connect.modules.beans.SpaceToolsTabModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.confluence.capabilities.provider.SpaceToolsTabModuleProvider;

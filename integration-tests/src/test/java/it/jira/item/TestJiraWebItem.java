@@ -2,9 +2,7 @@ package it.jira.item;
 
 
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
-import com.atlassian.plugin.connect.modules.beans.GeneralPageModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
-import com.atlassian.plugin.connect.modules.beans.WebItemModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetType;
 import com.atlassian.plugin.connect.modules.beans.builder.nested.dialog.DialogOptionsBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
