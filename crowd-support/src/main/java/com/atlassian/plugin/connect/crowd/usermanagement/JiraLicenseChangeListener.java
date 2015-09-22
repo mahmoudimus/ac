@@ -8,7 +8,6 @@ import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.jira.application.ApplicationAuthorizationService;
-import com.atlassian.jira.application.ApplicationConfigurationEvent;
 import com.atlassian.jira.application.ApplicationRoleManager;
 import com.atlassian.jira.license.LicenseChangedEvent;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvisioningService;
@@ -69,13 +68,6 @@ public class JiraLicenseChangeListener
         Set<ApplicationKey> oldKeys = event.getPreviousLicenseDetails().get().getLicensedApplications().getKeys();
         Set<ApplicationKey> newKeys = event.getNewLicenseDetails().get().getLicensedApplications().getKeys();
         addApplicationUsersToDefaultApplicationGroups(difference(newKeys, oldKeys));
-    }
-
-    @EventListener
-    public void onLicenseConfigured(ApplicationConfigurationEvent event)
-    {
-        log.info("Handling ApplicationConfigurationEvent");
-        addApplicationUsersToDefaultApplicationGroups(event.getApplicationsConfigured());
     }
 
     private void addApplicationUsersToDefaultApplicationGroups(Set<ApplicationKey> keys)

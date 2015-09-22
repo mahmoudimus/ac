@@ -130,11 +130,6 @@
         <description>Listens to changes to the JIRA license so addon users can be granted access to new applications</description>
     </listener>
 
-    <listener name="JIRA Application Configuration Event Listener" key="jiraApplicationConfiguredListener"
-              class="com.atlassian.plugin.connect.crowd.usermanagement.JiraLicenseChangeListener" >
-        <description>Listens to changes to the JIRA Application Configuration so addon users can be granted access to new applications use groups</description>
-    </listener>
-
 </application>
 
 
