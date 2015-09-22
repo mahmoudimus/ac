@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
+import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleValidationException;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.gson.JsonDeserializationContext;
@@ -42,7 +43,7 @@ public abstract class ModuleBeanDeserializer implements JsonDeserializer<Map<Str
                     {
                         return deserializeModulesOfSameType(rawModuleEntry);
                     }
-                    catch (Exception e)
+                    catch (ConnectModuleValidationException e)
                     {
                         throw new ModuleDeserializationException(e.getMessage());
                     }
@@ -79,5 +80,5 @@ public abstract class ModuleBeanDeserializer implements JsonDeserializer<Map<Str
     
     protected abstract boolean multipleModulesAllowed(String moduleType);
     
-    protected abstract List<ModuleBean> deserializeModulesOfSameType(Map.Entry<String, JsonElement> modules) throws Exception;
+    protected abstract List<ModuleBean> deserializeModulesOfSameType(Map.Entry<String, JsonElement> modules) throws ConnectModuleValidationException;
 }

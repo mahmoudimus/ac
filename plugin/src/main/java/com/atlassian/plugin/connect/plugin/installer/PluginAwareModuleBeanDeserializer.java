@@ -5,6 +5,7 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderModuleDescriptor;
+import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleValidationException;
 import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
 import com.google.gson.JsonElement;
 
@@ -35,7 +36,7 @@ public class PluginAwareModuleBeanDeserializer extends ModuleBeanDeserializer
     }
 
     @Override
-    protected List<ModuleBean> deserializeModulesOfSameType(Map.Entry<String, JsonElement> moduleEntry) throws Exception
+    protected List<ModuleBean> deserializeModulesOfSameType(Map.Entry<String, JsonElement> moduleEntry) throws ConnectModuleValidationException
     {
         final ConnectModuleProvider moduleProvider = moduleProviders.get(moduleEntry.getKey());
         return moduleProvider.validate(moduleEntry.getValue(), moduleProvider.getMeta().getBeanClass(), plugin);
