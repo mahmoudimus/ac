@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.atlassian.application.api.ApplicationKey;
 import com.atlassian.crowd.embedded.api.Group;
+import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.application.ApplicationAuthorizationService;
@@ -26,7 +27,10 @@ import static com.atlassian.fugue.Option.some;
 import static java.util.Arrays.asList;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anySet;
+import static org.mockito.Matchers.anySetOf;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -45,6 +49,7 @@ public class TestJiraLicenseChangeListener
     private ConnectAddOnUsers connectAddOnUsers;
     @Mock
     private ConnectAddOnUserGroupProvisioningService connectAddOnUserGroupProvisioningService;
+
     private User polonius;
     private User charles;
 
@@ -132,8 +137,26 @@ public class TestJiraLicenseChangeListener
         verify(connectAddOnUserGroupProvisioningService).ensureUserIsInGroups(charles.getName(), ImmutableSet.of(newAppGroup.getName()));
     }
 
-    // ensureUserIsInGroup throws for one of the users
-    // * The rest of the users still get added
+    @Test
+    public void onLicenseChangedAddsSecondUsersWhenExceptionOccursForFirst()
+            throws Exception
+    {
+        String oldAppKey = "jira-for-actors";
+        String newAppKey = "jira-for-playwrights";
+        LicenseChangedEvent event = mockLicenseKeys(
+                ImmutableSet.of(oldAppKey), ImmutableSet.of(oldAppKey, newAppKey));
+        Group newAppGroup = mock(Group.class);
+        when(newAppGroup.getName()).thenReturn("playwrights");
+        when(applicationRoleManager.getDefaultGroups(any(ApplicationKey.class))).thenReturn(ImmutableSet.of(newAppGroup));
+
+        String missingUsername = polonius.getName();
+        doThrow(new UserNotFoundException(missingUsername)).when(connectAddOnUserGroupProvisioningService).ensureUserIsInGroups(eq(missingUsername), anySetOf(String.class));
+
+        jiraLicenseChangeListener.onLicenseChanged(event);
+
+        verify(connectAddOnUserGroupProvisioningService).ensureUserIsInGroups(missingUsername, ImmutableSet.of(newAppGroup.getName()));
+        verify(connectAddOnUserGroupProvisioningService).ensureUserIsInGroups(charles.getName(), ImmutableSet.of(newAppGroup.getName()));
+    }
 
     @SuppressWarnings ("unchecked")
     private LicenseChangedEvent mockLicenseKeys(Set<String> oldKeys, Set<String> newKeys)
