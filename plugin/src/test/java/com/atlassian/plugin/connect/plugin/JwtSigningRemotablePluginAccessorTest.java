@@ -2,9 +2,10 @@ package com.atlassian.plugin.connect.plugin;
 
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.jwt.JwtConstants;
-import com.atlassian.jwt.applinks.JwtService;
+import com.atlassian.jwt.JwtService;
 import com.atlassian.jwt.core.HttpRequestCanonicalizer;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
+import com.atlassian.jwt.writer.JwtJsonBuilderFactory;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
@@ -13,6 +14,7 @@ import com.atlassian.plugin.connect.plugin.applinks.DefaultConnectApplinkManager
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.api.http.HttpMethod;
+import com.atlassian.plugin.connect.util.auth.TestJwtJsonBuilderFactory;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
@@ -613,7 +615,10 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
                 .withBaseurl(baseUrl)
                 .build();
 
-        return new JwtSigningRemotablePluginAccessor(addon, baseUrlSupplier, jwtService, consumerService,
-                connectApplinkManager, mockCachingHttpContentRetriever(), userManager);
+        // create a JwtJsonBuilder that injects context.user into the JWT token
+        JwtJsonBuilderFactory jwtBuilderFactory = new TestJwtJsonBuilderFactory(new SubjectJwtClaimWriter(userManager));
+
+        return new JwtSigningRemotablePluginAccessor(addon, baseUrlSupplier, jwtBuilderFactory, jwtService, consumerService,
+                connectApplinkManager, mockCachingHttpContentRetriever());
     }
 }

@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.plugin.applinks.ConnectApplinkManager;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.api.util.UriBuilderUtils;
 import com.atlassian.plugin.connect.spi.util.http.HttpContentRetriever;
+import com.atlassian.plugin.connect.util.auth.TestJwtJsonBuilderFactory;
 import com.atlassian.plugin.connect.util.auth.TestJwtService;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
@@ -57,7 +58,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class JwtSigningInteroperabilityTest
 {
-    public static final String SHARED_SECRET = "s0m3-sh@r3d-s3cr37";
+    public static final String SHARED_SECRET = "s0m3-sh@r3d-s3cr37-s0m3-sh@r3d-s3cr37";
 
     private static class SignedUrlTest
     {
@@ -147,11 +148,11 @@ public class JwtSigningInteroperabilityTest
 
         signer = new JwtSigningRemotablePluginAccessor(addon,
                 baseUrlSupplier,
-                new TestJwtService(SHARED_SECRET),
+                new TestJwtJsonBuilderFactory(new SubjectJwtClaimWriter(userManager)),
+                new TestJwtService(),
                 consumerService,
                 connectApplinkManager,
-                httpContentRetriever,
-                userManager);
+                httpContentRetriever);
     }
 
     @Test

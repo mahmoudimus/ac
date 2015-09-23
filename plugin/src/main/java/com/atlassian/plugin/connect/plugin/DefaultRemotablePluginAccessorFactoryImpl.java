@@ -5,7 +5,8 @@ import com.atlassian.applinks.api.event.ApplicationLinkAddedEvent;
 import com.atlassian.applinks.api.event.ApplicationLinkDeletedEvent;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.jwt.applinks.JwtService;
+import com.atlassian.jwt.JwtService;
+import com.atlassian.jwt.writer.JwtJsonBuilderFactory;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.Plugin;
@@ -22,7 +23,6 @@ import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
-import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.CopyOnWriteMap;
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
@@ -48,9 +48,9 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
     private final PluginAccessor pluginAccessor;
     private final ApplicationProperties applicationProperties;
     private final EventPublisher eventPublisher;
+    private final JwtJsonBuilderFactory jwtBuilderFactory;
     private final JwtService jwtService;
     private final ConsumerService consumerService;
-    private final UserManager userManager;
     private final ConnectAddonBeanFactory connectAddonBeanFactory;
 
     private final Map<String, RemotablePluginAccessor> accessors;
@@ -59,16 +59,16 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
 
     @Autowired
     public DefaultRemotablePluginAccessorFactoryImpl(ConnectApplinkManager connectApplinkManager,
-                                                 ConnectAddonRegistry connectAddonRegistry,
-                                                 OAuthLinkManager oAuthLinkManager,
-                                                 CachingHttpContentRetriever httpContentRetriever,
-                                                 PluginAccessor pluginAccessor,
-                                                 ApplicationProperties applicationProperties,
-                                                 EventPublisher eventPublisher,
-                                                 JwtService jwtService,
-                                                 ConsumerService consumerService,
-                                                 UserManager userManager, 
-                                                 ConnectAddonBeanFactory connectAddonBeanFactory)
+                                                     ConnectAddonRegistry connectAddonRegistry,
+                                                     OAuthLinkManager oAuthLinkManager,
+                                                     CachingHttpContentRetriever httpContentRetriever,
+                                                     PluginAccessor pluginAccessor,
+                                                     ApplicationProperties applicationProperties,
+                                                     EventPublisher eventPublisher,
+                                                     JwtJsonBuilderFactory jwtBuilderFactory,
+                                                     JwtService jwtService,
+                                                     ConsumerService consumerService,
+                                                     ConnectAddonBeanFactory connectAddonBeanFactory)
     {
         this.connectApplinkManager = connectApplinkManager;
         this.connectAddonRegistry = connectAddonRegistry;
@@ -78,9 +78,9 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
         this.applicationProperties = applicationProperties;
         this.eventPublisher = eventPublisher;
         this.consumerService = consumerService;
-        this.userManager = userManager;
         this.connectAddonBeanFactory = connectAddonBeanFactory;
         this.eventPublisher.register(this);
+        this.jwtBuilderFactory = jwtBuilderFactory;
         this.jwtService = jwtService;
 
         this.accessors = CopyOnWriteMap.newHashMap();
@@ -309,8 +309,8 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
 
         if (AuthenticationMethod.JWT.equals(authenticationMethod))
         {
-            return new JwtSigningRemotablePluginAccessor(addon, displayUrl, jwtService, consumerService,
-                    connectApplinkManager, httpContentRetriever, userManager);
+            return new JwtSigningRemotablePluginAccessor(addon, displayUrl, jwtBuilderFactory, jwtService,
+                    consumerService, connectApplinkManager, httpContentRetriever);
         }
         else if (AuthenticationMethod.NONE.equals(authenticationMethod))
         {
@@ -362,8 +362,8 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
         if (AuthenticationMethod.JWT.equals(authenticationMethod))
         {
             final ConnectAddonBean addon = connectAddonBeanFactory.fromJsonSkipValidation(connectAddonRegistry.getDescriptor(pluginKey));
-            return new JwtSigningRemotablePluginAccessor(addon, displayUrl, jwtService, consumerService,
-                    connectApplinkManager, httpContentRetriever, userManager);
+            return new JwtSigningRemotablePluginAccessor(addon, displayUrl, jwtBuilderFactory, jwtService,
+                    consumerService, connectApplinkManager, httpContentRetriever);
         }
         else if (AuthenticationMethod.NONE.equals(authenticationMethod))
         {

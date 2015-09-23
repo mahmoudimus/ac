@@ -3,9 +3,11 @@ package com.atlassian.plugin.connect.plugin;
 import com.atlassian.fugue.Option;
 import com.atlassian.jira.security.auth.trustedapps.KeyFactory;
 import com.atlassian.jwt.JwtConstants;
-import com.atlassian.jwt.applinks.JwtService;
+import com.atlassian.jwt.JwtService;
 import com.atlassian.jwt.core.HttpRequestCanonicalizer;
+import com.atlassian.jwt.core.writer.JsonSmartJwtJsonBuilderFactory;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
+import com.atlassian.jwt.writer.JwtJsonBuilderFactory;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
@@ -52,8 +54,8 @@ public class JwtAuthorizationGeneratorTest
     private JwtService jwtService;
     @Mock
     private ConsumerService consumerService;
-
     private AuthorizationGenerator generator;
+    private JwtJsonBuilderFactory jwtBuilderFactory = new JsonSmartJwtJsonBuilderFactory();
 
     @Test
     public void authorizationHeaderContainsJwt()
@@ -119,7 +121,7 @@ public class JwtAuthorizationGeneratorTest
     @Test(expected = NullPointerException.class)
     public void nullBaseUrlResultsInException()
     {
-        new JwtAuthorizationGenerator(jwtService, constantSecretSupplier(SECRET), consumerService, null);
+        new JwtAuthorizationGenerator(jwtService, jwtBuilderFactory, constantSecretSupplier(SECRET), consumerService, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -181,7 +183,7 @@ public class JwtAuthorizationGeneratorTest
     {
         when(jwtService.issueJwt(any(String.class), eq(SECRET))).thenReturn(A_MOCK_JWT);
         when(consumerService.getConsumer()).thenReturn(Consumer.key("whatever").name("whatever").signatureMethod(Consumer.SignatureMethod.HMAC_SHA1).publicKey(new KeyFactory.InvalidPublicKey(new Exception())).build());
-        generator = new JwtAuthorizationGenerator(jwtService, constantSecretSupplier(SECRET), consumerService, A_URI_BASE);
+        generator = new JwtAuthorizationGenerator(jwtService, new JsonSmartJwtJsonBuilderFactory(), constantSecretSupplier(SECRET), consumerService, A_URI_BASE);
         generate();
     }
 
@@ -215,7 +217,7 @@ public class JwtAuthorizationGeneratorTest
 
     private String generateGet(String url, String baseUrl, Map<String, String[]> params)
     {
-        return new JwtAuthorizationGenerator(jwtService, constantSecretSupplier(SECRET), consumerService, URI.create(baseUrl)).generate(HttpMethod.GET, URI.create(url), params).get();
+        return new JwtAuthorizationGenerator(jwtService, jwtBuilderFactory, constantSecretSupplier(SECRET), consumerService, URI.create(baseUrl)).generate(HttpMethod.GET, URI.create(url), params).get();
     }
 
     private static ArgumentMatcher<String> hasClaim(final String claimName)

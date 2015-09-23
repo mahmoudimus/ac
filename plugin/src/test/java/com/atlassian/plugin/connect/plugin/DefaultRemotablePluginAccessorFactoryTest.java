@@ -5,7 +5,8 @@ import com.atlassian.applinks.api.ApplicationType;
 import com.atlassian.applinks.api.event.ApplicationLinkAddedEvent;
 import com.atlassian.applinks.api.event.ApplicationLinkDeletedEvent;
 import com.atlassian.event.api.EventPublisher;
-import com.atlassian.jwt.applinks.JwtService;
+import com.atlassian.jwt.JwtService;
+import com.atlassian.jwt.writer.JwtJsonBuilderFactory;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
@@ -24,7 +25,7 @@ import com.atlassian.plugin.event.events.PluginDisabledEvent;
 import com.atlassian.plugin.event.events.PluginEnabledEvent;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.user.UserManager;
+
 import com.google.common.base.Supplier;
 
 import org.junit.Before;
@@ -58,9 +59,9 @@ public class DefaultRemotablePluginAccessorFactoryTest
     @Mock private ConnectAddOnIdentifierService connectIdentifier;
     @Mock private OAuthLinkManager oAuthLinkManager;
     @Mock private PluginRetrievalService pluginRetrievalService;
+    @Mock private JwtJsonBuilderFactory jwtBuilderFactory;
     @Mock private JwtService jwtService;
     @Mock private ConsumerService consumerService;
-    @Mock private UserManager userManager;
     @Mock private ConnectAddonBeanFactory connectAddonBeanFactory;
 
     private DefaultRemotablePluginAccessorFactory factory;
@@ -74,7 +75,7 @@ public class DefaultRemotablePluginAccessorFactoryTest
         when(pluginAccessor.getPlugin(PLUGIN_KEY)).thenReturn(plugin);
 
         when(connectApplinkManager.getAppLink(PLUGIN_KEY)).thenReturn(mock(ApplicationLink.class));
-        factory = new DefaultRemotablePluginAccessorFactoryImpl(connectApplinkManager, descriptorRegistry, oAuthLinkManager, mockCachingHttpContentRetriever(), pluginAccessor, applicationProperties, eventPublisher,jwtService, consumerService, userManager, connectAddonBeanFactory);
+        factory = new DefaultRemotablePluginAccessorFactoryImpl(connectApplinkManager, descriptorRegistry, oAuthLinkManager, mockCachingHttpContentRetriever(), pluginAccessor, applicationProperties, eventPublisher, jwtBuilderFactory, jwtService, consumerService, connectAddonBeanFactory);
     }
 
     @Test
