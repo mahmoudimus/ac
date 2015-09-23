@@ -338,6 +338,11 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>com.atlassian.bitbucket.server</groupId>
+            <artifactId>bitbucket-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.plugins</groupId>
             <artifactId>atlassian-plugins-core</artifactId>
             <scope>provided</scope>
@@ -545,6 +550,7 @@
                     <enableFastdev>false</enableFastdev>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
+                    <extractDependencies>true</extractDependencies>
                     <testBundleExcludes>
                         <testBundleExclude>
                             <groupId>com.atlassian.plugin</groupId>
@@ -744,6 +750,47 @@
                                     <version>${blueprints.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
+                        </product>
+<!--
+                        <product>
+                            <id>bitbucket</id>
+                            <version>${atlassian.bitbucket.server.version}</version>
+                            <systemPropertyVariables>
+                                <product>bitbucket</product>
+                                <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
+                            </systemPropertyVariables>
+                            <pluginArtifacts>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.labs.plugins</groupId>
+                                    <artifactId>quickreload</artifactId>
+                                    <version>${quickreload.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.webhooks</groupId>
+                                    <artifactId>atlassian-webhooks-plugin</artifactId>
+                                    <version>${atlassian.webhooks.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.httpclient</groupId>
+                                    <artifactId>atlassian-httpclient-plugin</artifactId>
+                                    <version>${atlassian.httpclient.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.jwt</groupId>
+                                    <artifactId>jwt-plugin</artifactId>
+                                    <version>${atlassian.jwt.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <artifactId>json-schema-validator-atlassian-bundle</artifactId>
+                                    <groupId>com.atlassian.bundles</groupId>
+                                    <version>${atlassian.json.schema.validator.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>atlassian-connect-test-support-plugin</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
+                            </pluginArtifacts>
 
                             <bundledArtifacts>
                                 <bundledArtifact>
@@ -758,6 +805,7 @@
                                 </bundledArtifact>
                             </bundledArtifacts>
                         </product>
+                        -->
                     </products>
                 </configuration>
             </plugin>
@@ -1039,6 +1087,20 @@
                             <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/confluence-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/confluence-schema-pretty.json</prettyOutput>
+                            <enumCase>insensitive</enumCase>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>bitbucket-schema</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>generate-schema</goal>
+                        </goals>
+                        <configuration>
+                            <generatorProvider>com.atlassian.plugin.connect.bitbucket.BitbucketSchemaGeneratorProvider</generatorProvider>
+                            <rootClassName>com.atlassian.plugin.connect.modules.beans.ConnectAddonBean</rootClassName>
+                            <rawOutput>${project.build.outputDirectory}/schema/bitbucket-schema.json</rawOutput>
+                            <prettyOutput>${project.build.outputDirectory}/schema/bitbucket-schema-pretty.json</prettyOutput>
                             <enumCase>insensitive</enumCase>
                         </configuration>
                     </execution>
