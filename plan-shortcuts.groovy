@@ -127,7 +127,7 @@ runTestsStage() {
             task(
                     type: 'nodejs',
                     description: 'Generate Validator Test Output',
-                    arguments: '--type json --testReport=plugin/src/test/resources/descriptor/descriptor-validation-results.json',
+                    arguments: '--debug --type json --testReport=plugin/src/test/resources/descriptor/descriptor-validation-results.json',
                     script: 'bin/marketplace/validate-descriptors.js',
                     executable: 'Node.js 0.10'
             )
@@ -136,6 +136,12 @@ runTestsStage() {
                     description: 'Run Add-On Descriptor Validation Tests',
                     goal: '-pl plugin test -DdescriptorValidation=true -DskipTests',
                     environmentVariables: 'DISPLAY=":20" MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m" CHROME_BIN=/usr/bin/google-chrome',
+            )
+            artifactDefinition(
+                    name: 'Global schema',
+                    location: 'plugin/target/classes/schema/global-schema.json',
+                    pattern: '*.json',
+                    shared: 'false'
             )
             artifactDefinition(
                     name: 'Validator output',
