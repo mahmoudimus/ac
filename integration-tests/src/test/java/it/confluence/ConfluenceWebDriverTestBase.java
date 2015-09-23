@@ -32,6 +32,7 @@ import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceEditor
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceInsertMenu;
 import com.atlassian.plugin.connect.test.pageobjects.confluence.ConfluenceOps;
 import com.atlassian.util.concurrent.LazyReference;
+import com.atlassian.webdriver.testing.rule.JavaScriptErrorsRule;
 import com.atlassian.webdriver.testing.rule.LogPageSourceRule;
 import com.atlassian.webdriver.testing.rule.WebDriverScreenshotRule;
 import com.sun.jersey.api.client.UniformInterfaceException;
@@ -124,6 +125,9 @@ public class ConfluenceWebDriverTestBase
 
     @Rule
     public LogPageSourceRule pageSourceRule = new LogPageSourceRule();
+
+    @Rule
+    public JavaScriptErrorsRule javaScriptErrorsRule = new JavaScriptErrorsRule();
 
     @BeforeClass
     public static void confluenceTestSetup() throws Exception
