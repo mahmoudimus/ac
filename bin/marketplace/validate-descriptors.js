@@ -14,9 +14,12 @@ var baseSchemaFile = '../../plugin/target/classes/schema/shallow-schema.json',
         '../../plugin/target/classes/schema/common-schema.json',
         '../../plugin/target/classes/schema/confluence-schema.json',
         '../../plugin/target/classes/schema/jira-schema.json'
-    ];
+    ],
+    builtSchemaFile = '../../plugin/target/classes/schema/global-schema.json'
+    ;
 
 var buildSchema = function() {
+    console.log("Building schema...");
     ensureSchemaFilesExist();
     var baseSchema = loadJsonFile(baseSchemaFile);
     var moduleSchemas = moduleSchemaFiles.map(loadJsonFile);
@@ -45,11 +48,17 @@ var fileExists = function(filePath) {
 };
 
 var loadJsonFile = function(filePath) {
-    return JSON.parse(fs.readFileSync(path.resolve(__dirname, filePath), 'utf8'));
+    return JSON.parse(fs.readFileSync(path.resolve(__dirname, filePath)));
+}
+
+var saveJsonFile = function(object, filePath) {
+    fs.writeFileSync(filePath, JSON.stringify(object, null, 2))
 }
 
 var validationResults = [],
     schema = buildSchema();
+
+saveJsonFile(schema, builtSchemaFile);
 
 function validate(opts, addonKey, descriptorFilename, descriptor, schema, callback) {
     validator.validateDescriptor(descriptor, schema, function (errors) {
