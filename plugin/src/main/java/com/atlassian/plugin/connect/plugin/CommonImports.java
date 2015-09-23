@@ -12,6 +12,7 @@ import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
 import com.atlassian.jwt.JwtService;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
+import com.atlassian.jwt.writer.JwtJsonBuilderFactory;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
 import com.atlassian.oauth.serviceprovider.ServiceProviderTokenStore;
@@ -79,6 +80,7 @@ public class CommonImports
             @ComponentImport HttpClientFactory httpClientFactory,
             @ComponentImport ModuleDescriptorWebHookListenerRegistry webHookListenerRegistry,
             @ComponentImport RemotePluginLicenseService remotePluginLicenseService,
+            @ComponentImport JwtJsonBuilderFactory jwtBuilderFactory,
             @ComponentImport JwtService jwtService,
             @ComponentImport JwtApplinkFinder jwtApplinkFinder,
             @ComponentImport ServiceProviderTokenStore serviceProviderTokenStore,

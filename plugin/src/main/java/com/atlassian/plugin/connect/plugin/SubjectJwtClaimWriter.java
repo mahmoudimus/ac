@@ -13,6 +13,7 @@ import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -24,6 +25,7 @@ public class SubjectJwtClaimWriter implements JwtClaimWriter
 {
     private final UserManager userManager;
 
+    @Autowired
     public SubjectJwtClaimWriter(UserManager userManager)
     {
         this.userManager = userManager;
