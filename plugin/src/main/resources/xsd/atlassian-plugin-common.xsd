@@ -15,7 +15,11 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:enumeration>
+<<<<<<< HEAD
             <xs:enumeration value="stash"/>
+=======
+            <xs:enumeration value="bitbucket"/>
+>>>>>>> 64f09b7... STASHDEV-8947 Add support for Bitbucket Server
             <xs:enumeration value="bamboo"/>
             <xs:enumeration value="refapp">
                 <xs:annotation>
@@ -24,6 +28,7 @@
                     </xs:documentation>
                 </xs:annotation>
             </xs:enumeration>
+            <xs:enumeration value="stash"/>
             <xs:enumeration value="container">
                 <xs:annotation>
                     <xs:documentation>
