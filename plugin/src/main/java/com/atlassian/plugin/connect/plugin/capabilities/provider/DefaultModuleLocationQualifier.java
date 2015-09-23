@@ -39,7 +39,7 @@ public class DefaultModuleLocationQualifier implements ModuleLocationQualifier
             {
                 return ImmutableMap.<String, String>builder()
                         .putAll(createKeyToQualifiedKeyMap(addonBean.getModules().get("webItems")))
-                        .putAll(createKeyToQualifiedKeyMap(addonBean.getModules().get("webSecions")))
+                        .putAll(createKeyToQualifiedKeyMap(addonBean.getModules().get("webSections")))
                         .build();
             }
         });
