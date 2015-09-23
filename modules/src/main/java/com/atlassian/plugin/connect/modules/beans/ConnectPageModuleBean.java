@@ -31,12 +31,13 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * * They are dynamically resized based on the inner content or relative browser window sizing
  * * They appear without borders, making them look like a non-iframed fragment of the page
  * * For general-pages, you can also opt to size your iframe to take up all of the browser window's space (instead of resizing to its internal content).
- *   To do this, add the data-option attribute "sizeToParent:true" in the script tag for all.js. For example, using ACE:
+ * * To do this, add the data-option attribute "sizeToParent:true" in the script tag for all.js. It is also possible to hide footer for such pages.
+ * * For example, using ACE:
  *
  *   <pre><code>
  *&lt;script src=&quot;{{hostScriptUrl}}&quot;
  *       type=&quot;text/javascript&quot;
- *       data-options=&quot;sizeToParent:true&quot;&gt;
+ *       data-options=&quot;sizeToParent:true;hideFooter:true&quot;&gt;
  *&lt;/script&gt;
  *   </code></pre>
  *

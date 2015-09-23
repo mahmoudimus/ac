@@ -43,10 +43,10 @@ public class TestConfluenceWebHooksUI extends ConfluenceWebDriverTestBase
             public void test(WebHookWaiter waiter) throws Exception
             {
                 search(SEARCH_TERMS);
+
                 final WebHookBody body = waiter.waitForHook();
                 assertNotNull(body);
                 Assert.assertEquals(SEARCH_TERMS, body.find("query"));
-                Assert.assertEquals(searchResultPage.getMatchingResults(), Integer.parseInt(body.find("results")));
                 Assert.assertEquals(user.getUsername(), body.find("user"));
                 Assert.assertEquals("conf_all", body.find("spaceCategories[0]"));
             }

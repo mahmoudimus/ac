@@ -42,11 +42,11 @@
             "compatibilities": [
                 {
                     "application": "jira",
-                    "minBuild": 6328
+                    "cloud": true
                 },
                 {
                     "application": "confluence",
-                    "minBuild": 5780
+                    "cloud": true
                 }
             ],
             "media": {},
