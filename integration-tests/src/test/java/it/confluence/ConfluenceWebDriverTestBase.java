@@ -242,6 +242,7 @@ public class ConfluenceWebDriverTestBase
         final Editor editor = editorPage.getEditor();
         enableMacrosDropdown(editorPage);
         final InsertDropdownMenu insertDropdownMenu = editor.openInsertMenu();
+        insertDropdownMenu.waitUntilVisible(); // CE-222 is the insert menu opening?
         MacroBrowserDialog macroBrowserDialog = insertDropdownMenu.clickInsertMacro();
         MacroItem macro = macroBrowserDialog.searchForFirst(macroName);
         return new MacroBrowserAndEditor(macroBrowserDialog, macro, null);
