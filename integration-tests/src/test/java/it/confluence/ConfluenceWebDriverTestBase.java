@@ -38,14 +38,20 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 import it.util.ConfluenceTestUserFactory;
 import it.util.ConnectTestUserFactory;
 import it.util.TestUser;
+import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.Callable;
 
 /**
@@ -241,11 +247,36 @@ public class ConfluenceWebDriverTestBase
     {
         final Editor editor = editorPage.getEditor();
         enableMacrosDropdown(editorPage);
+        takeScreenshot("findMacroInBrowser-enableMacrosDownload");
         final InsertDropdownMenu insertDropdownMenu = editor.openInsertMenu();
         insertDropdownMenu.waitUntilVisible(); // CE-222 is the insert menu opening?
-        MacroBrowserDialog macroBrowserDialog = insertDropdownMenu.clickInsertMacro();
+        takeScreenshot("findMacroInBrowser-insertDropdownMenuVisible");
+//        MacroBrowserDialog macroBrowserDialog = insertDropdownMenu.clickInsertMacro();
+//        MacroBrowserDialog macroBrowserDialog = insertDropdownMenu.clickInsertMacro();
+        insertDropdownMenu.click(InsertDropdownMenu.InsertItem.MACRO);
+        takeScreenshot("findMacroInBrowser-click");
+        MacroBrowserDialog macroBrowserDialog = product.getPageBinder().bind(MacroBrowserDialog.class);
+        takeScreenshot("findMacroInBrowser-MacroBrowserDialogBind");
+        macroBrowserDialog.waitUntilMacroBrowserVisible();
         MacroItem macro = macroBrowserDialog.searchForFirst(macroName);
         return new MacroBrowserAndEditor(macroBrowserDialog, macro, null);
+    }
+
+    public void takeScreenshot(String name)
+    {
+        try
+        {
+            WebDriver driver = product.getTester().getDriver().getDriver();
+            if (driver instanceof TakesScreenshot) {
+                File tempFile = ((TakesScreenshot) driver)
+                        .getScreenshotAs(OutputType.FILE);
+                FileUtils.copyFile(tempFile, new File(String.format("target/webdriverTests/%s/%s.png", getClass().getName(),name)));
+            }
+        }
+        catch (IOException e)
+        {
+            // ignore for now
+        }
     }
 
     protected void enableMacrosDropdown(CreatePage editorPage)
