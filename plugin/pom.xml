@@ -126,6 +126,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>atlassian-connect-bitbucket-support</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>atlassian-connect-confluence-support</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -567,6 +572,7 @@
                             com.atlassian.plugin.connect.spi*;version="${project.version}",
                             com.atlassian.plugin.connect.plugin*;version="${project.version}",
                             com.atlassian.plugin.connect.modules*,
+                            com.atlassian.plugin.connect.bitbucket*;version="${project.version}",
                             com.atlassian.plugin.connect.confluence*;version="${project.version}",
                             com.atlassian.plugin.connect.jira*;version="${project.version}",
                             com.atlassian.plugin.connect.crowd*;version="${project.version}"
@@ -708,6 +714,37 @@
                                 </bundledArtifact>
                             </bundledArtifacts>
                         </product>
+            <!--
+                        <product>
+                            <id>bitbucket</id>
+                            <version>${atlassian.bitbucket.server.version}</version>
+                            <systemPropertyVariables>
+                                <product>bitbucket</product>
+                                <atlassian.dev.mode>${devmode}</atlassian.dev.mode>
+                            </systemPropertyVariables>
+                            <pluginArtifacts>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.labs.plugins</groupId>
+                                    <artifactId>quickreload</artifactId>
+                                    <version>${quickreload.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <artifactId>json-schema-validator-atlassian-bundle</artifactId>
+                                    <groupId>com.atlassian.bundles</groupId>
+                                    <version>${atlassian.json.schema.validator.version}</version>
+                                </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>atlassian-connect-test-support-plugin</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
+                            </pluginArtifacts>
+                             <bundledArtifacts>
+                                 <bundledArtifact>
+                                 </bundledArtifact>
+                             </bundledArtifacts>
+                         </product>
+                        -->
                     </products>
                 </configuration>
             </plugin>
@@ -804,6 +841,20 @@
                             <rootClassName>com.atlassian.plugin.connect.plugin.CommonModuleList</rootClassName>
                             <rawOutput>${project.build.outputDirectory}/schema/common-schema.json</rawOutput>
                             <prettyOutput>${project.build.outputDirectory}/schema/common-schema-pretty.json</prettyOutput>
+                            <enumCase>insensitive</enumCase>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>bitbucket-schema</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>generate-schema</goal>
+                        </goals>
+                        <configuration>
+                            <generatorProvider>com.atlassian.plugin.connect.plugin.descriptor.ConnectSchemaGeneratorProvider</generatorProvider>
+                            <rootClassName>com.atlassian.plugin.connect.bitbucket.BitbucketModuleList</rootClassName>
+                            <rawOutput>${project.build.outputDirectory}/schema/bitbucket-schema.json</rawOutput>
+                            <prettyOutput>${project.build.outputDirectory}/schema/bitbucket-schema-pretty.json</prettyOutput>
                             <enumCase>insensitive</enumCase>
                         </configuration>
                     </execution>
