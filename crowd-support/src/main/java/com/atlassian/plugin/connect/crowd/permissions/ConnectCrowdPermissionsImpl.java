@@ -24,13 +24,12 @@ public class ConnectCrowdPermissionsImpl implements ConnectCrowdPermissions
         this.featureManager = featureManager;
     }
 
-
     @Override
-    public GrantResult giveAdminPermission(String groupName)
+    public GrantResult giveAdminPermission(String groupName, String productId, String applicationId)
     {
         if (featureManager.isOnDemand() && featureManager.isPermissionsManagedByUM())
         {
-            return connectCrowdPermissionsClient.grantAdminPermission(groupName) ? REMOTE_GRANT_SUCCEEDED : REMOTE_GRANT_FAILED;
+            return connectCrowdPermissionsClient.grantAdminPermission(groupName, productId, applicationId) ? REMOTE_GRANT_SUCCEEDED : REMOTE_GRANT_FAILED;
         }
         else
         {

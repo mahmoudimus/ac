@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.1.54-SNAPSHOT</version>
+    <version>1.1.55-SNAPSHOT</version>
     <organization>
         <name>Atlassian</name>
         <url>http://atlassian.com/</url>
@@ -790,7 +790,7 @@
         <atlassian.sal.version>2.10.0</atlassian.sal.version>
         <atlassian.selenium.version>2.2.1-m01-jira-1</atlassian.selenium.version>
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>
-        <atlassian.connect-js.version>3.1.6</atlassian.connect-js.version>
+        <atlassian.connect-js.version>3.1.7</atlassian.connect-js.version>
         <atlassian.connect-js.path>git+ssh://git@stash.atlassian.com:7997/ac/atlassian-connect-js.git#${atlassian.connect-js.version}</atlassian.connect-js.path>
         <atlassian.jira.projects.plugin.version>1.20.0-D20150217T051447</atlassian.jira.projects.plugin.version>
 
@@ -802,7 +802,6 @@
         <atlassian.webhooks.version>2.0.0</atlassian.webhooks.version>
         <atlassian.webhooks.api.version>1.0.6</atlassian.webhooks.api.version>
         <atlassian.jira.webhooks.version>1.2.5</atlassian.jira.webhooks.version>
-        <commons.httpclient.version>3.1-atlassian-2</commons.httpclient.version>
 
         <atlassian.webresource.version>3.1.0</atlassian.webresource.version>
         <atlassian.webfragments.version>3.0.0-m7</atlassian.webfragments.version>

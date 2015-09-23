@@ -125,6 +125,11 @@
         <condition class="com.atlassian.plugin.connect.plugin.module.ConnectAddonsInstalledCondition"/>
     </web-resource>
 
+    <listener name="JIRA License Change Listener" key="jiraLicenseChangeListener"
+              class="com.atlassian.plugin.connect.crowd.usermanagement.JiraLicenseChangeListener" >
+        <description>Listens to changes to the JIRA license so addon users can be granted access to new applications</description>
+    </listener>
+
 </application>
 
 

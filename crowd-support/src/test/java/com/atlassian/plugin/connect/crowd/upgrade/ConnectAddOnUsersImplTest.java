@@ -9,6 +9,7 @@ import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.search.EntityDescriptor;
 import com.atlassian.crowd.search.query.membership.MembershipQuery;
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.crowd.usermanagement.ConnectAddOnUsersImpl;
 import com.atlassian.plugin.connect.crowd.usermanagement.CrowdApplicationProvider;
 
 import org.hamcrest.Description;
@@ -61,10 +62,10 @@ public class ConnectAddOnUsersImplTest
     }
 
     @Test
-    public void getAddonUsersToUpgradeForHostProductFiltersFromMembersOfAddonsGroup()
+    public void getAddonUsersForHostProductFiltersFromMembersOfAddonsGroup()
             throws ApplicationNotFoundException
     {
-        connectAddOnUsers.getAddonUsersToUpgradeForHostProduct();
+        connectAddOnUsers.getAddonUsers();
 
         ArgumentCaptor<MembershipQuery> userQueryCaptor = ArgumentCaptor.forClass(MembershipQuery.class);
         verify(applicationService).searchDirectGroupRelationships(eq(application), userQueryCaptor.capture());
@@ -80,43 +81,13 @@ public class ConnectAddOnUsersImplTest
     }
 
     @Test
-    public void getAddonUsersToUpgradeForHostProductRetrievesAddonsForRegisteredAddonUsers()
+    public void getAddonUsersForHostProductRetrievesAddonsForRegisteredAddonUsers()
             throws ApplicationNotFoundException
     {
-        Iterable<User> users = connectAddOnUsers.getAddonUsersToUpgradeForHostProduct();
+        Iterable<User> users = connectAddOnUsers.getAddonUsers();
 
         assertThat(users, IsIterableWithSize.<User>iterableWithSize(1));
         assertThat(users, contains(hasName("addon_rad-jira-addon")));
-    }
-
-    @SuppressWarnings ("unchecked")
-    @Test
-    public void getAddonUsersToCleanRetrievesAddonsForRegisteredAddonUsers()
-            throws ApplicationNotFoundException
-    {
-        Iterable<User> users = connectAddOnUsers.getAddonUsersToClean();
-
-        assertThat(users, IsIterableWithSize.<User>iterableWithSize(2));
-        assertThat(users, contains(hasName("addon_rad-jira-addon"), hasName("addon_rad-confluence-addon")));
-    }
-
-    @Test
-    public void getAddonUsersToCleanFiltersFromMembersOfAddonsGroup()
-            throws ApplicationNotFoundException
-    {
-        connectAddOnUsers.getAddonUsersToClean();
-
-        ArgumentCaptor<MembershipQuery> userQueryCaptor = ArgumentCaptor.forClass(MembershipQuery.class);
-        verify(applicationService).searchDirectGroupRelationships(eq(application), userQueryCaptor.capture());
-
-        @SuppressWarnings ("unchecked")
-        MembershipQuery<User> userQuery = userQueryCaptor.getValue();
-
-        assertThat(userQuery, notNullValue());
-        assertThat(userQuery.isFindChildren(), is(true));
-        assertThat(userQuery.getEntityNameToMatch(), is("atlassian-addons"));
-        assertThat(userQuery.getEntityToMatch(), is(EntityDescriptor.group()));
-        assertThat(userQuery.getMaxResults(), is(ALL_RESULTS));
     }
 
     private Matcher<User> hasName(final String name)

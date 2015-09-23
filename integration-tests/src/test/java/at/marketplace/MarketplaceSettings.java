@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
@@ -38,11 +39,11 @@ public class MarketplaceSettings
         return credentials;
     }
 
-    public static org.apache.commons.httpclient.UsernamePasswordCredentials credentials()
+    public static Credentials credentials()
     {
         String username = System.getProperty("mpac.username", "");
         String password = System.getProperty("mpac.password", "");
 
-        return new org.apache.commons.httpclient.UsernamePasswordCredentials(username, password);
+        return new UsernamePasswordCredentials(username, password);
     }
 }

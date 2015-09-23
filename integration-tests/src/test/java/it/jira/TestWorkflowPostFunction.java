@@ -1,4 +1,4 @@
-package it.jira.jsapi;
+package it.jira;
 
 import com.atlassian.jira.pageobjects.pages.admin.workflow.AddWorkflowTransitionFunctionParamsPage;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.AddWorkflowTransitionPostFunctionPage;
