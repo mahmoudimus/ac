@@ -45,9 +45,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
@@ -69,6 +69,7 @@ public class ConfluenceWebDriverTestBase
     protected static ConnectTestUserFactory testUserFactory;
     protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(
             product.getPageBinder(), product.getTester().getDriver());
+    private final Logger logger = LoggerFactory.getLogger(ConfluenceWebDriverTestBase.class);
 
     private boolean hasBeenFocused;
     protected ConfluenceRestClient restClient = new ConfluenceRestClient(getProduct(), testUserFactory.admin());
@@ -268,14 +269,40 @@ public class ConfluenceWebDriverTestBase
 
     public void takeScreenshot(String name)
     {
+        WebDriver driver = product.getTester().getDriver().getDriver();
         try
         {
-            WebDriver driver = product.getTester().getDriver().getDriver();
-            if (driver instanceof TakesScreenshot) {
-                File tempFile = ((TakesScreenshot) driver)
-                        .getScreenshotAs(OutputType.FILE);
-                FileUtils.copyFile(tempFile, new File(String.format("target/webdriverTests/%s/%s.png", getClass().getName(),name)));
+            Capabilities cap = ((RemoteWebDriver) driver).getCapabilities();
+
+            String browsername = cap.getBrowserName();
+            String browserVersion = "";
+            // This block to find out IE Version number
+            if ("internet explorer".equalsIgnoreCase(browsername))
+            {
+                String uAgent = (String) ((JavascriptExecutor) driver).executeScript("return navigator.userAgent;");
+                System.out.println(uAgent);
+                //uAgent return as "MSIE 8.0 Windows" for IE8
+                if (uAgent.contains("MSIE") && uAgent.contains("Windows"))
+                {
+                    browserVersion = uAgent.substring(uAgent.indexOf("MSIE") + 5, uAgent.indexOf("Windows") - 2);
+                }
+                else if (uAgent.contains("Trident/7.0"))
+                {
+                    browserVersion = "11.0";
+                }
             }
+            else
+            {
+                //Browser version for Firefox and Chrome
+                browserVersion = cap.getVersion();// .split(".")[0];
+            }
+
+            // take an extra screenshot
+            File tempFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+            FileUtils.copyFile(tempFile, new File(String.format("target/webdriverTests/%s/%s.png", getClass().getName(), name)));
+
+            logger.warn("using browser [ {} ] version [ {} ] screenshot [ {} ]", new Object[]{browsername, browserVersion, name});
+
         }
         catch (IOException e)
         {
@@ -359,7 +386,7 @@ public class ConfluenceWebDriverTestBase
         }
         catch (Throwable t)
         {
-            LoggerFactory.getLogger(ConfluenceWebDriverTestBase.class).warn(t.getMessage());
+            logger.warn(t.getMessage());
         }
     }
 
