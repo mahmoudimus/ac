@@ -275,24 +275,6 @@
                 <groupId>com.atlassian.selenium</groupId>
                 <artifactId>atlassian-webdriver-core</artifactId>
                 <version>${atlassian.selenium.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.google.collections</groupId>
-                        <artifactId>google-collections</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.httpcomponents</groupId>
-                        <artifactId>httpclient</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.atlassian.browsers</groupId>
-                        <artifactId>atlassian-browsers-linux64</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-log4j12</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>

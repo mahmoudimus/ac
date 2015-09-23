@@ -139,10 +139,6 @@
                     <artifactId>httpclient</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.atlassian.browsers</groupId>
-                    <artifactId>atlassian-browsers-linux64</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-log4j12</artifactId>
                 </exclusion>
@@ -350,18 +346,6 @@
             <artifactId>ka-func-test-framework</artifactId>
             <version>6.2.23</version>
             <exclusions>
-                <exclusion>
-                    <groupId>com.atlassian.browsers</groupId>
-                    <artifactId>atlassian-browsers-windows</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.atlassian.browsers</groupId>
-                    <artifactId>atlassian-browsers-linux</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.atlassian.browsers</groupId>
-                    <artifactId>atlassian-browsers-linux64</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>org.apache.httpcomponents</groupId>
                     <artifactId>httpclient</artifactId>
