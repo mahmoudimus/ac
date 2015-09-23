@@ -52,7 +52,7 @@ var loadJsonFile = function(filePath) {
 }
 
 var saveJsonFile = function(object, filePath) {
-    fs.writeFileSync(filePath, JSON.stringify(object, null, 2))
+    fs.writeFileSync(path.resolve(__dirname, filePath), JSON.stringify(object, null, 2))
 }
 
 var validationResults = [],
