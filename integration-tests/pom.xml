@@ -159,12 +159,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.browsers</groupId>
-            <artifactId>atlassian-browsers-linux64</artifactId>
-            <version>2.4</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.atlassian.httpclient</groupId>
             <artifactId>atlassian-httpclient-api</artifactId>
             <scope>test</scope>
