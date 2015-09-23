@@ -252,62 +252,11 @@ public class ConfluenceWebDriverTestBase
     {
         final Editor editor = editorPage.getEditor();
         enableMacrosDropdown(editorPage);
-        takeScreenshot("findMacroInBrowser-enableMacrosDownload");
         final InsertDropdownMenu insertDropdownMenu = editor.openInsertMenu();
-        insertDropdownMenu.waitUntilVisible(); // CE-222 is the insert menu opening?
-        takeScreenshot("findMacroInBrowser-insertDropdownMenuVisible");
-//        MacroBrowserDialog macroBrowserDialog = insertDropdownMenu.clickInsertMacro();
-//        MacroBrowserDialog macroBrowserDialog = insertDropdownMenu.clickInsertMacro();
-        insertDropdownMenu.click(InsertDropdownMenu.InsertItem.MACRO);
-        takeScreenshot("findMacroInBrowser-click");
-        MacroBrowserDialog macroBrowserDialog = product.getPageBinder().bind(MacroBrowserDialog.class);
-        takeScreenshot("findMacroInBrowser-MacroBrowserDialogBind");
-        macroBrowserDialog.waitUntilMacroBrowserVisible();
+        insertDropdownMenu.waitUntilVisible();
+        MacroBrowserDialog macroBrowserDialog = insertDropdownMenu.clickInsertMacro();
         MacroItem macro = macroBrowserDialog.searchForFirst(macroName);
         return new MacroBrowserAndEditor(macroBrowserDialog, macro, null);
-    }
-
-    public void takeScreenshot(String name)
-    {
-        WebDriver driver = product.getTester().getDriver().getDriver();
-        try
-        {
-            Capabilities cap = ((RemoteWebDriver) driver).getCapabilities();
-
-            String browsername = cap.getBrowserName();
-            String browserVersion = "";
-            // This block to find out IE Version number
-            if ("internet explorer".equalsIgnoreCase(browsername))
-            {
-                String uAgent = (String) ((JavascriptExecutor) driver).executeScript("return navigator.userAgent;");
-                System.out.println(uAgent);
-                //uAgent return as "MSIE 8.0 Windows" for IE8
-                if (uAgent.contains("MSIE") && uAgent.contains("Windows"))
-                {
-                    browserVersion = uAgent.substring(uAgent.indexOf("MSIE") + 5, uAgent.indexOf("Windows") - 2);
-                }
-                else if (uAgent.contains("Trident/7.0"))
-                {
-                    browserVersion = "11.0";
-                }
-            }
-            else
-            {
-                //Browser version for Firefox and Chrome
-                browserVersion = cap.getVersion();// .split(".")[0];
-            }
-
-            // take an extra screenshot
-            File tempFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-            FileUtils.copyFile(tempFile, new File(String.format("target/webdriverTests/%s/%s.png", getClass().getName(), name)));
-
-            logger.warn("using browser [ {} ] version [ {} ] screenshot [ {} ]", new Object[]{browsername, browserVersion, name});
-
-        }
-        catch (IOException e)
-        {
-            // ignore for now
-        }
     }
 
     protected void enableMacrosDropdown(CreatePage editorPage)
