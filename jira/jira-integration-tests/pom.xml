@@ -28,6 +28,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <artifactId>acceptance-data-helper</artifactId>
+            <groupId>com.atlassian.test.ondemand</groupId>
+            <version>1.0.14</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <scope>test</scope>
