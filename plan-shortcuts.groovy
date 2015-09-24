@@ -313,10 +313,9 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
         )
         commonRequirements()
         checkoutDefaultRepositoryTask()
-        mavenInstallTask()
         mavenTestTask(
                 description: 'Run Wired Lifecycle Tests for #product',
-                goal: 'clover2:setup verify -pl tests/plugin-lifecycle-tests -PpluginLifecycle,clover -DtestGroups=#testGroup -DskipUnits -DskipITs=false #additionalMavenParameters clover2:aggregate clover2:clover',
+                goal: 'clover2:setup verify -pl tests/plugin-lifecycle-tests -PpluginLifecycle,clover -am -DtestGroups=#testGroup -DskipUnits -DskipITs=false #additionalMavenParameters clover2:aggregate clover2:clover',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
         )
         cloverReportArtifact(
@@ -337,10 +336,9 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
     ) {
         commonRequirements()
         checkoutDefaultRepositoryTask()
-        mavenInstallTask()
         mavenTestTask(
                 description: 'Run Wired Tests for #product',
-                goal: 'clover2:setup verify -pl tests/wired-tests -Pwired,clover -DtestGroups=#testGroup -DskipITs=false -DskipUnits #additionalMavenParameters clover2:aggregate clover2:clover',
+                goal: 'clover2:setup verify -pl tests/wired-tests -Pwired,clover -am -DtestGroups=#testGroup -DskipITs=false -DskipUnits #additionalMavenParameters clover2:aggregate clover2:clover',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
         )
         cloverReportArtifact(
@@ -384,10 +382,9 @@ projectIntegrationTestJob(['key', 'product', 'testGroup', 'groupName', 'addition
         commonRequirements()
         checkoutDefaultRepositoryTask()
         setupVncTask()
-        mavenInstallTask()
         mavenTestTask(
                 description: 'Run Integration Tests for #product #groupName',
-                goal: 'verify -pl #project -Pit -DtestGroups=#testGroup -DskipUnits -DskipITs=false #additionalMavenParameters',
+                goal: 'verify -pl #project -Pit -am -DtestGroups=#testGroup -DskipUnits -DskipITs=false #additionalMavenParameters',
                 environmentVariables: 'DISPLAY=":20" MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m" CHROME_BIN=/usr/bin/google-chrome',
         )
         defineWebDriverOutputArtefact(
@@ -420,13 +417,6 @@ checkoutDefaultRepositoryTask() {
             type: 'checkout',
             description: 'Checkout Default Repository',
             cleanCheckout: 'true'
-    )
-}
-
-mavenInstallTask() {
-    mavenTask(
-            description: 'Install',
-            goal: 'install -DskipUnits'
     )
 }
 
