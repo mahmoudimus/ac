@@ -43,6 +43,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
@@ -62,6 +63,7 @@ public class ConfluenceWebDriverTestBase
     protected static ConnectTestUserFactory testUserFactory;
     protected static ConnectPageOperations connectPageOperations = new ConnectPageOperations(
             product.getPageBinder(), product.getTester().getDriver());
+    private final Logger logger = LoggerFactory.getLogger(ConfluenceWebDriverTestBase.class);
 
     private boolean hasBeenFocused;
     protected ConfluenceRestClient restClient = new ConfluenceRestClient(getProduct(), testUserFactory.admin());
@@ -242,6 +244,7 @@ public class ConfluenceWebDriverTestBase
         final Editor editor = editorPage.getEditor();
         enableMacrosDropdown(editorPage);
         final InsertDropdownMenu insertDropdownMenu = editor.openInsertMenu();
+        insertDropdownMenu.waitUntilVisible();
         MacroBrowserDialog macroBrowserDialog = insertDropdownMenu.clickInsertMacro();
         MacroItem macro = macroBrowserDialog.searchForFirst(macroName);
         return new MacroBrowserAndEditor(macroBrowserDialog, macro, null);
@@ -323,7 +326,7 @@ public class ConfluenceWebDriverTestBase
         }
         catch (Throwable t)
         {
-            LoggerFactory.getLogger(ConfluenceWebDriverTestBase.class).warn(t.getMessage());
+            logger.warn(t.getMessage());
         }
     }
 
