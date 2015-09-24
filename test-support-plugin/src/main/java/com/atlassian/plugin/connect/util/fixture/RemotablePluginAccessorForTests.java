@@ -4,6 +4,7 @@ import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.connect.api.util.UriBuilderUtils;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
+import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.Promise;
@@ -76,7 +77,7 @@ public class RemotablePluginAccessorForTests implements RemotablePluginAccessor
     }
 
     @Override
-    public Promise<String> executeAsync(HttpMethod method, URI path, Map<String, String[]> params, Map<String, String> headers)
+    public Promise<String> executeAsync(HttpMethod method, URI path, Map<String, String[]> params, Map<String, String> headers, UserProfile remoteUser)
     {
         return null;
     }

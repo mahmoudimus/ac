@@ -3,12 +3,13 @@ package com.atlassian.plugin.connect.plugin;
 import com.atlassian.fugue.Option;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.connect.api.util.UriBuilderUtils;
-import com.atlassian.plugin.connect.spi.util.http.HttpContentRetriever;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.spi.PermissionDeniedException;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
-import com.atlassian.plugin.connect.api.http.HttpMethod;
+import com.atlassian.plugin.connect.spi.util.http.HttpContentRetriever;
+import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.google.common.base.Function;
@@ -116,7 +117,7 @@ public class OAuthSigningRemotablePluginAccessor extends DefaultRemotablePluginA
             this.oAuthLinkManager = oAuthLinkManager;
         }
 
-        public Option<String> generate(HttpMethod method, URI url, Map<String, String[]> parameters)
+        public Option<String> generate(HttpMethod method, URI url, Map<String, String[]> parameters, UserProfile remoteUser)
         {
             return option(oAuthLinkManager.generateAuthorizationHeader(method, serviceProvider, url, UriBuilderUtils.toListFormat(parameters)));
         }

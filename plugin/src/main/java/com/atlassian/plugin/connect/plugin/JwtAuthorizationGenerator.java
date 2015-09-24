@@ -71,19 +71,26 @@ public class JwtAuthorizationGenerator implements ReKeyableAuthorizationGenerato
     }
 
     @Override
-    public Option<String> generate(HttpMethod httpMethod, URI url, Map<String, String[]> parameters)
+    public Option<String> generate(HttpMethod httpMethod, URI url, Map<String, String[]> parameters, UserProfile remoteUser)
     {
-        return Option.some(generate(httpMethod, url, parameters, checkNotNull(secretSupplier.get())));
+        return Option.some(generate(httpMethod, url, parameters, remoteUser, checkNotNull(secretSupplier.get())));
     }
 
     @Override
-    public String generate(HttpMethod httpMethod, URI url, Map<String, String[]> parameters, String secret)
+    public String generate(HttpMethod httpMethod, URI url, Map<String, String[]> parameters, UserProfile remoteUser, String secret)
     {
         checkArgument(null != parameters, "Parameters Map argument cannot be null");
-        return JWT_AUTH_HEADER_PREFIX + encodeJwt(httpMethod, url, addOnBaseUrl, parameters, null, consumerService.getConsumer().getKey(), jwtService, secret);
+        return JWT_AUTH_HEADER_PREFIX + encodeJwt(httpMethod, url, addOnBaseUrl, parameters, remoteUser, consumerService.getConsumer().getKey(), jwtService, secret);
     }
 
     static String encodeJwt(HttpMethod httpMethod, URI targetPath, URI addOnBaseUrl, Map<String, String[]> params, UserManager userManager, String issuerId, JwtService jwtService, String secret)
+    {
+        UserProfile remoteUser = userManager == null ? null : userManager.getRemoteUser();
+
+        return encodeJwt(httpMethod, targetPath, addOnBaseUrl, params, remoteUser, issuerId, jwtService, secret);
+    }
+
+    static String encodeJwt(HttpMethod httpMethod, URI targetPath, URI addOnBaseUrl, Map<String, String[]> params, UserProfile remoteUser, String issuerId, JwtService jwtService, String secret)
     {
         checkArgument(null != httpMethod, "HttpMethod argument cannot be null");
         checkArgument(null != targetPath, "URI argument cannot be null");
@@ -94,8 +101,6 @@ public class JwtAuthorizationGenerator implements ReKeyableAuthorizationGenerato
                 .issuedAt(TimeUtil.currentTimeSeconds())
                 .expirationTime(TimeUtil.currentTimePlusNSeconds(JWT_EXPIRY_WINDOW_SECONDS))
                 .issuer(issuerId);
-
-        UserProfile remoteUser = userManager == null ? null : userManager.getRemoteUser();
 
         Map<String, Object> jwtContextClaim = Maps.newHashMap();
 

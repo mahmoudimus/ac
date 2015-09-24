@@ -574,14 +574,14 @@ public class ConnectAddonManager
         return null != addon.getAuthentication() && AuthenticationType.JWT.equals(addon.getAuthentication().getType());
     }
 
-    private static Option<String> getAuthHeader(final URI callbackUri, final AuthorizationGenerator authorizationGenerator)
+    private Option<String> getAuthHeader(final URI callbackUri, final AuthorizationGenerator authorizationGenerator)
     {
-        return authorizationGenerator.generate(HttpMethod.POST, callbackUri, Collections.<String, String[]>emptyMap());
+        return authorizationGenerator.generate(HttpMethod.POST, callbackUri, Collections.<String, String[]>emptyMap(), userManager.getRemoteUser());
     }
 
-    private static String getAuthHeader(final URI callbackUri, final ReKeyableAuthorizationGenerator authorizationGenerator, final String secret)
+    private String getAuthHeader(final URI callbackUri, final ReKeyableAuthorizationGenerator authorizationGenerator, final String secret)
     {
-        return authorizationGenerator.generate(HttpMethod.POST, callbackUri, Collections.<String, String[]>emptyMap(), secret);
+        return authorizationGenerator.generate(HttpMethod.POST, callbackUri, Collections.<String, String[]>emptyMap(), userManager.getRemoteUser(), secret);
     }
 
     private Response getSyncHandlerResponse(String addOnKey, URI callbackUri, String jsonEventData, Option<String> authHeader) throws LifecycleCallbackException

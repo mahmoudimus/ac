@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.spi.util.http;
 
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.api.http.HttpMethod;
+import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.util.concurrent.Promise;
 
 import java.net.URI;
@@ -26,6 +27,7 @@ public interface HttpContentRetriever
      * @param url                    the url to hit
      * @param parameters             the parameters to use.
      * @param headers                the headers
+     * @param remoteUser             the user profile of the logged in user generating the authorization value
      * @param addOnKey               the key of the add-on from which to retrieve the content
      * @return a promise of the retrieved content
      * @since 0.10
@@ -35,6 +37,7 @@ public interface HttpContentRetriever
                                  URI url,
                                  Map<String, String[]> parameters,
                                  Map<String, String> headers,
+                                 UserProfile remoteUser,
                                  String addOnKey);
 
 }

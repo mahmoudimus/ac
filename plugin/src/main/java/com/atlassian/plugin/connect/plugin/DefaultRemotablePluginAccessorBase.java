@@ -1,27 +1,26 @@
 package com.atlassian.plugin.connect.plugin;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.connect.api.util.UriBuilderUtils;
 import com.atlassian.plugin.connect.plugin.util.PathBuilder;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.plugin.connect.spi.util.http.HttpContentRetriever;
+import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.Promise;
-
 import com.google.common.base.Supplier;
-
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -59,13 +58,15 @@ public abstract class DefaultRemotablePluginAccessorBase implements RemotablePlu
     public Promise<String> executeAsync(HttpMethod method,
                                         URI targetPath,
                                         Map<String, String[]> params,
-                                        Map<String, String> headers)
+                                        Map<String, String> headers,
+                                        UserProfile remoteUser)
     {
         return httpContentRetriever.async(getAuthorizationGenerator(),
                 method,
                 getTargetUrl(targetPath),
                 params,
                 headers,
+                remoteUser,
                 getKey());
     }
 

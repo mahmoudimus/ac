@@ -49,7 +49,7 @@ public class OAuthSigningRemotablePluginAccessorTest extends BaseSigningRemotabl
     @Test
     public void createdRemotePluginAccessorCorrectlyCallsTheHttpContentRetriever() throws ExecutionException, InterruptedException
     {
-        assertThat(createRemotePluginAccessor().executeAsync(HttpMethod.GET, GET_PATH, GET_PARAMS_STRING_ARRAY, UNAUTHED_GET_HEADERS).get(), is(EXPECTED_GET_RESPONSE));
+        assertThat(createRemotePluginAccessor().executeAsync(HttpMethod.GET, GET_PATH, GET_PARAMS_STRING_ARRAY, UNAUTHED_GET_HEADERS, null).get(), is(EXPECTED_GET_RESPONSE));
     }
 
     @Test

@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.spi.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
+import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.webhooks.spi.plugin.RequestSigner;
 import org.osgi.framework.BundleContext;
 
@@ -31,10 +32,12 @@ public class RemotePluginRequestSigner implements RequestSigner
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final ConnectAddOnIdentifierService jsonConnectAddOnIdentifierService;
     private final BundleContext bundleContext;
+    private final UserManager userManager;
 
     @Inject
-    public RemotePluginRequestSigner(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory, JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, BundleContext bundleContext)
+    public RemotePluginRequestSigner(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory, JsonConnectAddOnIdentifierService jsonConnectAddOnIdentifierService, BundleContext bundleContext, UserManager userManager)
     {
+        this.userManager = userManager;
         this.remotablePluginAccessorFactory = checkNotNull(remotablePluginAccessorFactory);
         this.jsonConnectAddOnIdentifierService = checkNotNull(jsonConnectAddOnIdentifierService);
         this.bundleContext = checkNotNull(bundleContext);
@@ -59,7 +62,7 @@ public class RemotePluginRequestSigner implements RequestSigner
 
     private Option<String> getAuthHeader(URI uri, String pluginKey)
     {
-        return getAuthorizationGenerator(pluginKey).generate(HttpMethod.POST, uri, Collections.<String, String[]>emptyMap());
+        return getAuthorizationGenerator(pluginKey).generate(HttpMethod.POST, uri, Collections.<String, String[]>emptyMap(), userManager.getRemoteUser());
     }
 
     private AuthorizationGenerator getAuthorizationGenerator(String pluginKey)

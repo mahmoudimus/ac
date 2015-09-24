@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.spi.util.http.HttpContentRetriever;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.api.http.HttpMethod;
+import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Supplier;
 
 import java.net.URI;
@@ -35,7 +36,7 @@ public class NoAuthRemotablePluginAccessor extends DefaultRemotablePluginAccesso
         return new AuthorizationGenerator()
         {
             @Override
-            public Option<String> generate(final HttpMethod method, final URI url, final Map<String, String[]> parameters)
+            public Option<String> generate(HttpMethod method, URI url, Map<String, String[]> parameters, UserProfile remoteUser)
             {
                 return Option.none(String.class);
             }

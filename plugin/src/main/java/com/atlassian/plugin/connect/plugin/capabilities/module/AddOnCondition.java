@@ -14,6 +14,7 @@ import com.atlassian.plugin.connect.spi.event.AddOnConditionFailedEvent;
 import com.atlassian.plugin.connect.spi.event.AddOnConditionInvokedEvent;
 import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.web.Condition;
+import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.util.concurrent.Promise;
 import org.apache.commons.lang3.time.StopWatch;
 import org.json.simple.JSONObject;
@@ -51,17 +52,20 @@ public class AddOnCondition implements Condition
     private final RemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
     private final PluggableParametersExtractor webFragmentModuleContextExtractor;
+    private final UserManager userManager;
     private final EventPublisher eventPublisher;
     private BundleContext bundleContext;
 
-    public AddOnCondition(final RemotablePluginAccessorFactory remotablePluginAccessorFactory,
-                          final IFrameUriBuilderFactory iFrameUriBuilderFactory,
-                          final PluggableParametersExtractor webFragmentModuleContextExtractor,
+    public AddOnCondition(RemotablePluginAccessorFactory remotablePluginAccessorFactory,
+                          IFrameUriBuilderFactory iFrameUriBuilderFactory,
+                          PluggableParametersExtractor webFragmentModuleContextExtractor,
+                          UserManager userManager,
                           EventPublisher eventPublisher, BundleContext bundleContext)
     {
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
         this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
         this.webFragmentModuleContextExtractor = webFragmentModuleContextExtractor;
+        this.userManager = userManager;
         this.eventPublisher = eventPublisher;
         this.bundleContext = bundleContext;
     }
@@ -104,8 +108,7 @@ public class AddOnCondition implements Condition
         final Map<String, String> httpHeaders = Collections.singletonMap(HttpHeaderNames.ATLASSIAN_CONNECT_VERSION,
                 version);
         Promise<String> responsePromise = remotablePluginAccessorFactory.getOrThrow(cfg.getAddOnKey())
-                .executeAsync(HttpMethod.GET, uri,
-                        Collections.<String, String[]>emptyMap(), httpHeaders);
+                .executeAsync(HttpMethod.GET, uri, Collections.<String, String[]>emptyMap(), httpHeaders, userManager.getRemoteUser());
 
         String response;
         try
@@ -115,7 +118,7 @@ public class AddOnCondition implements Condition
         catch (Exception e)
         {
             final long elapsedMillisecs = stopWatch.getTime();
-            final String message = String.format(String.format("Request to addon condition URL failed: %s", cfg));
+            final String message = String.format("Request to addon condition URL failed: %s", cfg);
             log.warn(message, e);
             eventPublisher.publish(new AddOnConditionFailedEvent(cfg.getAddOnKey(), uriPath, elapsedMillisecs, getErrorMessage(e, message)));
             return false;

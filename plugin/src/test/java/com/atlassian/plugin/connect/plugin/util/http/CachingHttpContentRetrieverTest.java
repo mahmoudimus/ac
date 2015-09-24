@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.features.DarkFeatureManager;
+import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
@@ -26,6 +27,7 @@ import java.util.Map;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -55,14 +57,14 @@ public class CachingHttpContentRetrieverTest
     {
         final URI url = URI.create("https://example.com/path");
         final URI baseUrl = URI.create("https://example.com");
-        httpContentRetriever.async(authorizationGenerator, HttpMethod.GET, url, PARAMS, HEADERS, "add-on key");
-        verify(authorizationGenerator).generate(HttpMethod.GET, url, PARAMS);
+        httpContentRetriever.async(authorizationGenerator, HttpMethod.GET, url, PARAMS, HEADERS, null, "add-on key");
+        verify(authorizationGenerator).generate(HttpMethod.GET, url, PARAMS, null);
     }
 
     @Before
     public void beforeEachTest()
     {
-        when(authorizationGenerator.generate(any(HttpMethod.class), any(URI.class), anyMap())).thenReturn(Option.<String>none());
+        when(authorizationGenerator.generate(any(HttpMethod.class), any(URI.class), anyMap(), any(UserProfile.class))).thenReturn(Option.<String>none());
         when(pluginRetrievalService.getPlugin()).thenReturn(plugin);
         when(plugin.getPluginInformation()).thenReturn(pluginInformation);
         when(httpClientFactory.getInstance()).thenReturn(httpClient);

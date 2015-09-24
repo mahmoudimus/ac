@@ -13,6 +13,7 @@ import com.atlassian.plugin.connect.api.util.UriBuilderUtils;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
+import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.uri.Uri;
 import com.atlassian.uri.UriBuilder;
 import com.atlassian.util.concurrent.Promise;
@@ -73,6 +74,7 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
                                  URI url,
                                  Map<String, String[]> parameters,
                                  Map<String, String> headers,
+                                 UserProfile remoteUser,
                                  String addOnKey)
     {
         checkState(METHOD_MAPPING.keySet().contains(method), "The only valid methods are: %s", METHOD_MAPPING.keySet());
@@ -81,7 +83,7 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
 
         Request.Builder request = httpClient.newRequest(getFullUrl(method, url, parameters));
         request = request.setAttributes(getAttributes(addOnKey));
-        Option<String> authHeaderValue = getAuthHeaderValue(authorizationGenerator, method, url, parameters);
+        Option<String> authHeaderValue = getAuthHeaderValue(authorizationGenerator, method, url, parameters, remoteUser);
         Map<String, String> allHeaders = getAllHeaders(headers, authHeaderValue);
         request = request.setHeaders(allHeaders);
 
@@ -128,9 +130,9 @@ public final class CachingHttpContentRetriever implements HttpContentRetriever
         return allHeaders.build();
     }
 
-    private Option<String> getAuthHeaderValue(AuthorizationGenerator authorizationGenerator, HttpMethod method, URI url, Map<String, String[]> allParameters)
+    private Option<String> getAuthHeaderValue(AuthorizationGenerator authorizationGenerator, HttpMethod method, URI url, Map<String, String[]> allParameters, UserProfile remoteUser)
     {
-        return authorizationGenerator.generate(method, url, allParameters);
+        return authorizationGenerator.generate(method, url, allParameters, remoteUser);
     }
 
     private static class OkFunction implements Function<Response, String>

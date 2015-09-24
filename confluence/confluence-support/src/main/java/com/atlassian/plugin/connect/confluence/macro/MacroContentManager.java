@@ -109,7 +109,7 @@ public class MacroContentManager implements DisposableBean
                                     Map<String, String> headers, final ConversionContext conversionContext,
                                     final RemotablePluginAccessor accessor)
     {
-        Promise<String> promise = accessor.executeAsync(method, path, urlParameters, headers);
+        Promise<String> promise = accessor.executeAsync(method, path, urlParameters, headers, userManager.getRemoteUser());
 
         try
         {

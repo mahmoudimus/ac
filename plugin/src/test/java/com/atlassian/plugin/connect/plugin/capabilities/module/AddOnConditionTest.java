@@ -18,7 +18,9 @@ import com.atlassian.plugin.connect.spi.event.AddOnConditionFailedEvent;
 import com.atlassian.plugin.connect.spi.event.AddOnConditionInvokedEvent;
 import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
+import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
+import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.util.concurrent.Promises;
 import org.hamcrest.CustomTypeSafeMatcher;
@@ -40,6 +42,7 @@ import java.util.TimeZone;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.osgi.framework.Constants.BUNDLE_VERSION;
@@ -133,6 +136,9 @@ public class AddOnConditionTest
     @Mock
     private Dictionary bundleHeaders;
 
+    @Mock
+    private UserProfile remoteUser;
+
     private AddOnCondition addonCondition;
 
     @Before
@@ -158,6 +164,7 @@ public class AddOnConditionTest
         addonCondition = new AddOnCondition(remotablePluginAccessorFactory,
                 iFrameUriBuilderFactory,
                 webFragmentModuleContextExtractor,
+                userManager,
                 eventPublisher,
                 bundleContext);
 
@@ -165,6 +172,12 @@ public class AddOnConditionTest
         when(licenseRetriever.getLicenseStatus(anyString())).thenReturn(LicenseStatus.ACTIVE);
         when(localeHelper.getLocaleTag()).thenReturn("foo");
         when(bundleContext.getBundle()).thenReturn(bundle);
+
+        UserKey userKey = new UserKey("remoteUserKey");
+
+        when(remoteUser.getUserKey()).thenReturn(userKey);
+        when(remoteUser.getUsername()).thenReturn("remoteUsername");
+        when(userManager.getRemoteUser()).thenReturn(remoteUser);
         when(bundle.getHeaders()).thenReturn(bundleHeaders);
         when(bundleHeaders.get(BUNDLE_VERSION)).thenReturn("1.2.3");
     }
@@ -299,7 +312,7 @@ public class AddOnConditionTest
     private void invokeWhenSuccessfulResponse()
     {
         when(remotablePluginAccessor.executeAsync(any(HttpMethod.class), any(URI.class),
-                any(Map.class), any(Map.class))).thenReturn(Promises.promise("{\"shouldDisplay\": true}"));
+                any(Map.class), any(Map.class), any(UserProfile.class))).thenReturn(Promises.promise("{\"shouldDisplay\": true}"));
 
         invokeCondition();
     }
@@ -308,7 +321,7 @@ public class AddOnConditionTest
     private void invokeWhenMalformedJson()
     {
         when(remotablePluginAccessor.executeAsync(any(HttpMethod.class), any(URI.class),
-                any(Map.class), any(Map.class))).thenReturn(Promises.promise("not json"));
+                any(Map.class), any(Map.class), any(UserProfile.class))).thenReturn(Promises.promise("not json"));
 
         invokeCondition();
     }
@@ -317,7 +330,7 @@ public class AddOnConditionTest
     private void invokeWhenErrorResponse()
     {
         when(remotablePluginAccessor.executeAsync(any(HttpMethod.class), any(URI.class),
-                any(Map.class), any(Map.class))).thenReturn(
+                any(Map.class), any(Map.class), any(UserProfile.class))).thenReturn(
                 Promises.rejected(new RuntimeException("oops"), String.class));
 
         invokeCondition();
