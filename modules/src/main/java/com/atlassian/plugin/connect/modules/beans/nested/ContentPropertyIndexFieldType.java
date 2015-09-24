@@ -5,5 +5,5 @@ public enum ContentPropertyIndexFieldType
     number,
     string,
     text,
-    date
+    date;
 }
