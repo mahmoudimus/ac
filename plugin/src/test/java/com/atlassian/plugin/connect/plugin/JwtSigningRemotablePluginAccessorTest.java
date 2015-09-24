@@ -41,6 +41,12 @@ import java.util.concurrent.ExecutionException;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 import static com.atlassian.jwt.JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX;
+import static com.atlassian.plugin.connect.plugin.util.matcher.JwtClaimLongMatcher.hasJwtClaimWithLongValue;
+import static com.atlassian.plugin.connect.plugin.util.matcher.JwtClaimMatcher.hasJwtClaim;
+import static com.atlassian.plugin.connect.plugin.util.matcher.JwtClaimMatcher.hasJwtClaimWithValue;
+import static com.atlassian.plugin.connect.plugin.util.matcher.JwtClaimsetMatcher.hasJwtClaimset;
+import static com.atlassian.plugin.connect.plugin.util.matcher.JwtContextClaimMatcher.hasJwtContextKey;
+import static com.atlassian.plugin.connect.plugin.util.matcher.JwtContextClaimMatcher.hasJwtContextKeyWithValue;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
@@ -220,28 +226,28 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
     public void customContextUserObjectPresent()
     {
         createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
-        verify(jwtService).issueJwt(argThat(hasContextKey("user")), eq(SECRET));
+        verify(jwtService).issueJwt(argThat(hasJwtContextKey("user")), eq(SECRET));
     }
 
     @Test
     public void customContextUserKeyIsCorrect()
     {
         createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
-        verify(jwtService).issueJwt(argThat(hasContextKeyWithValue("user.userKey", USER_KEY)), eq(SECRET));
+        verify(jwtService).issueJwt(argThat(hasJwtContextKeyWithValue("user.userKey", USER_KEY)), eq(SECRET));
     }
 
     @Test
     public void customContextUsernameIsCorrect()
     {
         createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
-        verify(jwtService).issueJwt(argThat(hasContextKeyWithValue("user.username", USER_NAME)), eq(SECRET));
+        verify(jwtService).issueJwt(argThat(hasJwtContextKeyWithValue("user.username", USER_NAME)), eq(SECRET));
     }
 
     @Test
     public void customContextDisplayNameIsCorrect()
     {
         createRemotePluginAccessor().signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
-        verify(jwtService).issueJwt(argThat(hasContextKeyWithValue("user.displayName", USER_DISPLAY_NAME)), eq(SECRET));
+        verify(jwtService).issueJwt(argThat(hasJwtContextKeyWithValue("user.displayName", USER_DISPLAY_NAME)), eq(SECRET));
     }
 
     @Test
@@ -263,7 +269,7 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
 
         createRemotePluginAccessor(userManager).signGetUrl(GET_PATH, GET_PARAMS_STRING_ARRAY);
 
-        verify(jwtService).issueJwt(argThat(not(hasContextKey("user"))), eq(SECRET));
+        verify(jwtService).issueJwt(argThat(not(hasJwtContextKey("user"))), eq(SECRET));
     }
 
     @Test
@@ -297,264 +303,62 @@ public class JwtSigningRemotablePluginAccessorTest extends BaseSigningRemotableP
 
     private ArgumentMatcher<String> hasExactlyTheseClaims(String... claimNames)
     {
-        return new ClaimNamesMatcher(claimNames);
+        return hasJwtClaimset(claimNames);
     }
 
     private ArgumentMatcher<String> hasContextClaim()
     {
-        return new StringClaimMatcher("context");
-    }
-
-    private ArgumentMatcher<String> hasContextKeyWithValue(String key, String value)
-    {
-        return new ContextClaimMatcher(key, value);
-    }
-
-    private ArgumentMatcher<String> hasContextKey(String key)
-    {
-        return new ContextClaimMatcher(key);
+        return hasJwtClaim("context");
     }
 
     private ArgumentMatcher<String> hasAnyIssuedAtTime()
     {
-        return new StringClaimMatcher("iat");
+        return hasJwtClaim("iat");
     }
 
     private ArgumentMatcher<String> hasIssuedAtTimeCloseToNow()
     {
-        return new LongClaimMatcher("iat", System.currentTimeMillis() / 1000, 3); // issued within 3 seconds of now
+        return hasJwtClaimWithLongValue("iat", System.currentTimeMillis() / 1000, 3); // issued within 3 seconds of now
     }
 
     private ArgumentMatcher<String> hasAnyExpirationTime()
     {
-        return new StringClaimMatcher("exp");
+        return hasJwtClaim("exp");
     }
 
     private ArgumentMatcher<String> hasExpiresAtTimeCloseToDefaultWindowFromNow()
     {
-        return new LongClaimMatcher("exp", System.currentTimeMillis() / 1000 + 3 * 60, 3); // expires within 3 seconds of 3 minutes from now
+        return hasJwtClaimWithLongValue("exp", System.currentTimeMillis() / 1000 + 3 * 60, 3); // expires within 3 seconds of 3 minutes from now
     }
 
     private ArgumentMatcher<String> hasAnyQueryHash()
     {
-        return new StringClaimMatcher(JwtConstants.Claims.QUERY_HASH);
+        return hasJwtClaim(JwtConstants.Claims.QUERY_HASH);
     }
 
     private ArgumentMatcher<String> hasQueryHash(String queryHash)
     {
-        return new StringClaimMatcher(JwtConstants.Claims.QUERY_HASH, queryHash);
+        return hasJwtClaimWithValue(JwtConstants.Claims.QUERY_HASH, queryHash);
     }
 
     private ArgumentMatcher<String> hasAnyIssuer()
     {
-        return new StringClaimMatcher("iss");
+        return hasJwtClaim("iss");
     }
 
     private ArgumentMatcher<String> hasIssuer(String issuer)
     {
-        return new StringClaimMatcher("iss", issuer);
+        return hasJwtClaimWithValue("iss", issuer);
     }
 
     private ArgumentMatcher<String> hasAnySubject()
     {
-        return new StringClaimMatcher("sub");
+        return hasJwtClaim("sub");
     }
 
     private ArgumentMatcher<String> hasSubject(String sub)
     {
-        return new StringClaimMatcher("sub", sub);
-    }
-
-    private static class StringClaimMatcher extends ArgumentMatcher<String>
-    {
-        private final String claimName;
-        private final String expectedClaimValue;
-        private final boolean valueMatters;
-
-        StringClaimMatcher(String claimName)
-        {
-            this.claimName = claimName;
-            this.expectedClaimValue = null;
-            this.valueMatters = false;
-        }
-
-        StringClaimMatcher(String claimName, String expectedClaimValue)
-        {
-            this.claimName = claimName;
-            this.expectedClaimValue = expectedClaimValue;
-            this.valueMatters = true;
-        }
-
-        @Override
-        public boolean matches(Object argument)
-        {
-            assertThat(argument, is(instanceOf(String.class)));
-            try
-            {
-                JSONObject jsonObject = (JSONObject) new JSONParser(JSONParser.MODE_JSON_SIMPLE).parse((String) argument);
-                boolean hasClaim = jsonObject.containsKey(claimName);
-                return valueMatters ? hasClaim && Objects.equal(expectedClaimValue, jsonObject.get(claimName)) : hasClaim;
-            }
-            catch (ParseException e)
-            {
-                throw new RuntimeException(e);
-            }
-        }
-
-        @Override
-        public void describeTo(Description description)
-        {
-            description.appendText("Expecting claim \"" + claimName + "\" to have value ");
-            description.appendValue(expectedClaimValue);
-        }
-    }
-
-    private static class LongClaimMatcher extends ArgumentMatcher<String>
-    {
-        private final String claimName;
-        private final long expectedClaimValue;
-        private final long tolerance;
-
-        private LongClaimMatcher(String claimName, long expectedClaimValue, long tolerance)
-        {
-            this.claimName = claimName;
-            this.expectedClaimValue = expectedClaimValue;
-            this.tolerance = tolerance;
-        }
-
-        @Override
-        public boolean matches(Object argument)
-        {
-            assertThat(argument, is(instanceOf(String.class)));
-            try
-            {
-                JSONObject jsonObject = (JSONObject) new JSONParser(JSONParser.MODE_JSON_SIMPLE).parse((String) argument);
-
-                if (jsonObject.containsKey(claimName))
-                {
-                    Object actualClaimValue = jsonObject.get(claimName);
-                    Long actualClaimLong = null;
-
-                    if (actualClaimValue instanceof Number)
-                    {
-                        actualClaimLong = ((Number) actualClaimValue).longValue();
-                    }
-                    else if (null != actualClaimValue)
-                    {
-                        actualClaimLong = Long.parseLong(actualClaimValue.toString());
-                    }
-
-                    if (null != actualClaimLong)
-                    {
-                        return Math.abs(actualClaimLong - expectedClaimValue) <= tolerance;
-                    }
-                }
-
-                return false;
-            }
-            catch (ParseException e)
-            {
-                throw new RuntimeException(e);
-            }
-        }
-
-        @Override
-        public void describeTo(Description description)
-        {
-            description.appendText(String.format("Expecting claim \"%s\" to be within %d of %d", claimName, tolerance, expectedClaimValue));
-        }
-    }
-
-    private static class ClaimNamesMatcher extends ArgumentMatcher<String>
-    {
-        private final Set<String> expectedClaimNames;
-
-        private ClaimNamesMatcher(String... expectedClaimNames)
-        {
-            this.expectedClaimNames = new HashSet<String>(Arrays.asList(expectedClaimNames));
-        }
-
-        @Override
-        public boolean matches(Object argument)
-        {
-            assertThat(argument, is(instanceOf(String.class)));
-            try
-            {
-                JSONObject jsonObject = (JSONObject) new JSONParser(JSONParser.MODE_JSON_SIMPLE).parse((String) argument);
-                return jsonObject.keySet().equals(expectedClaimNames);
-            }
-            catch (ParseException e)
-            {
-                throw new RuntimeException(e);
-            }
-        }
-
-        @Override
-        public void describeTo(Description description)
-        {
-            description.appendText("Expecting exactly these claims: ");
-            description.appendValueList("[", ",", "]", expectedClaimNames);
-        }
-    }
-
-    private static class ContextClaimMatcher extends ArgumentMatcher<String>
-    {
-        private final String key;
-        private final String expectedValue;
-
-        private ContextClaimMatcher(String key, String expectedValue)
-        {
-            this.key = key;
-            this.expectedValue = expectedValue;
-        }
-
-        private ContextClaimMatcher(String key)
-        {
-            this.key = key;
-            this.expectedValue = null;
-        }
-
-        @Override
-        public boolean matches(Object argument)
-        {
-            assertThat(argument, is(instanceOf(String.class)));
-            try
-            {
-                JSONObject jsonObject = (JSONObject) new JSONParser(JSONParser.MODE_JSON_SIMPLE).parse((String) argument);
-                boolean hasClaim = jsonObject.containsKey("context");
-                if (hasClaim)
-                {
-                    JSONObject contextClaim = (JSONObject) jsonObject.get("context");
-                    // Nested searching of json keys. eg, "foo.bar" does: object.get('foo').get('bar')
-                    // Doesn't currently handle keys which have literal . characters in the value, eg object.get('foo.bar') (meh)
-                    String[] keys = key.split("\\.");
-                    Object value = contextClaim;
-                    for (String key : keys)
-                    {
-                        if (value instanceof JSONObject)
-                        {
-                            value = ((JSONObject) value).get(key);
-                        } else if (value == null) {
-                            return false;
-                        } else {
-                            throw new RuntimeException(value.toString() + " is not a JSONObject and could not be deserialised");
-                        }
-                    }
-                    return expectedValue == null ? value != null : Objects.equal(expectedValue, value);
-                }
-                return false;
-            }
-            catch (ParseException e)
-            {
-                throw new RuntimeException(e);
-            }
-        }
-
-        @Override
-        public void describeTo(Description description)
-        {
-            description.appendText("Expected context of " + key + " to be " + expectedValue);
-        }
+        return hasJwtClaimWithValue("sub", sub);
     }
 
     private RemotablePluginAccessor createRemotePluginAccessor()

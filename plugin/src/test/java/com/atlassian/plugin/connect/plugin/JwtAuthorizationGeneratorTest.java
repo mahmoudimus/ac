@@ -11,6 +11,8 @@ import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.api.http.HttpMethod;
+import com.atlassian.sal.api.user.UserKey;
+import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;
@@ -31,9 +33,14 @@ import java.util.Collections;
 import java.util.Map;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.JWT_AUTH_HEADER_PREFIX;
+import static com.atlassian.plugin.connect.plugin.util.matcher.JwtClaimMatcher.hasJwtClaim;
+import static com.atlassian.plugin.connect.plugin.util.matcher.JwtClaimMatcher.hasJwtClaimWithValue;
+import static com.atlassian.plugin.connect.plugin.util.matcher.JwtContextClaimMatcher.hasJwtContextKey;
+import static com.atlassian.plugin.connect.plugin.util.matcher.JwtContextClaimMatcher.hasJwtContextKeyWithValue;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -47,11 +54,16 @@ public class JwtAuthorizationGeneratorTest
     private static final URI A_URI_BASE = URI.create("http://any.url");
     private static final URI A_URI = URI.create(A_URI_BASE.toString() + "/path?b_param=b+value+with+spaces&c_param=c_value");
     private static final String SECRET = "secret";
+    private static final String USER_KEY = "bruceWayne";
+    private static final String USER_NAME = "bwayne";
+    private static final String USER_DISPLAY_NAME = "Bruce 'Batman' Wayne";
 
     @Mock
     private JwtService jwtService;
     @Mock
     private ConsumerService consumerService;
+    @Mock
+    private UserProfile userProfile;
 
     private AuthorizationGenerator generator;
 
@@ -64,31 +76,31 @@ public class JwtAuthorizationGeneratorTest
     @Test
     public void hasIssuerClaim()
     {
-        verify(jwtService).issueJwt(argThat(hasClaim("iss")), eq(SECRET));
+        verify(jwtService).issueJwt(argThat(hasJwtClaim("iss")), eq(SECRET));
     }
 
     @Test
     public void hasIssuedAtClaim()
     {
-        verify(jwtService).issueJwt(argThat(hasClaim("iat")), eq(SECRET));
+        verify(jwtService).issueJwt(argThat(hasJwtClaim("iat")), eq(SECRET));
     }
 
     @Test
     public void hasExpiresAtClaim()
     {
-        verify(jwtService).issueJwt(argThat(hasClaim("exp")), eq(SECRET));
+        verify(jwtService).issueJwt(argThat(hasJwtClaim("exp")), eq(SECRET));
     }
 
     @Test
-    public void hasNoSubjectClaim()
+    public void subjectClaimIsUserKey()
     {
-        verify(jwtService).issueJwt(argThat(hasNoSuchClaim("sub")), eq(SECRET));
+        verify(jwtService).issueJwt(argThat(hasJwtClaimWithValue("sub", USER_KEY)), eq(SECRET));
     }
 
     @Test
     public void hasQueryHashClaim()
     {
-        verify(jwtService).issueJwt(argThat(hasClaim(JwtConstants.Claims.QUERY_HASH)), eq(SECRET));
+        verify(jwtService).issueJwt(argThat(hasJwtClaim(JwtConstants.Claims.QUERY_HASH)), eq(SECRET));
     }
 
     @Test
@@ -96,6 +108,30 @@ public class JwtAuthorizationGeneratorTest
     {
         final String expectedQueryHash = generateQueryHash(HttpMethod.POST, A_URI.getPath(), "", ALL_PARAMS);
         verify(jwtService).issueJwt(argThat(hasQueryHash(expectedQueryHash)), eq(SECRET));
+    }
+
+    @Test
+    public void customContextUserObjectPresent()
+    {
+        verify(jwtService).issueJwt(argThat(hasJwtContextKey("user")), eq(SECRET));
+    }
+
+    @Test
+    public void customContextUserKeyIsCorrect()
+    {
+        verify(jwtService).issueJwt(argThat(hasJwtContextKeyWithValue("user.userKey", USER_KEY)), eq(SECRET));
+    }
+
+    @Test
+    public void customContextUsernameIsCorrect()
+    {
+        verify(jwtService).issueJwt(argThat(hasJwtContextKeyWithValue("user.username", USER_NAME)), eq(SECRET));
+    }
+
+    @Test
+    public void customContextDisplayNameIsCorrect()
+    {
+        verify(jwtService).issueJwt(argThat(hasJwtContextKeyWithValue("user.displayName", USER_DISPLAY_NAME)), eq(SECRET));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -181,6 +217,11 @@ public class JwtAuthorizationGeneratorTest
     {
         when(jwtService.issueJwt(any(String.class), eq(SECRET))).thenReturn(A_MOCK_JWT);
         when(consumerService.getConsumer()).thenReturn(Consumer.key("whatever").name("whatever").signatureMethod(Consumer.SignatureMethod.HMAC_SHA1).publicKey(new KeyFactory.InvalidPublicKey(new Exception())).build());
+
+        when(userProfile.getUsername()).thenReturn(USER_NAME);
+        when(userProfile.getUserKey()).thenReturn(new UserKey(USER_KEY));
+        when(userProfile.getFullName()).thenReturn(USER_DISPLAY_NAME);
+
         generator = new JwtAuthorizationGenerator(jwtService, constantSecretSupplier(SECRET), consumerService, A_URI_BASE);
         generate();
     }
@@ -199,7 +240,7 @@ public class JwtAuthorizationGeneratorTest
 
     private ArgumentMatcher<String> hasQueryHash(String expectedQueryHash)
     {
-        return hasClaim(JwtConstants.Claims.QUERY_HASH, expectedQueryHash, true);
+        return hasJwtClaimWithValue(JwtConstants.Claims.QUERY_HASH, expectedQueryHash);
     }
 
     private String generateQueryHash(HttpMethod httpMethod, String targetUrl, String baseUrl, Map<String, String[]> params) throws UnsupportedEncodingException, NoSuchAlgorithmException
@@ -210,69 +251,11 @@ public class JwtAuthorizationGeneratorTest
 
     private Option<String> generate()
     {
-        return generator.generate(HttpMethod.POST, A_URI, PARAMS, null);
+        return generator.generate(HttpMethod.POST, A_URI, PARAMS, userProfile);
     }
 
     private String generateGet(String url, String baseUrl, Map<String, String[]> params)
     {
-        return new JwtAuthorizationGenerator(jwtService, constantSecretSupplier(SECRET), consumerService, URI.create(baseUrl)).generate(HttpMethod.GET, URI.create(url), params, null).get();
-    }
-
-    private static ArgumentMatcher<String> hasClaim(final String claimName)
-    {
-        return hasClaim(claimName, null, false);
-    }
-
-    private static ArgumentMatcher<String> hasClaim(final String claimName, final String expectedValue, final boolean checkValue)
-    {
-        return new ArgumentMatcher<String>()
-        {
-            @Override
-            public boolean matches(Object actual)
-            {
-                JsonObject json = new JsonParser().parse((String) actual).getAsJsonObject();
-                boolean matches = actual instanceof String
-                        && !StringUtils.isEmpty((String) actual)
-                        && json.has(claimName);
-
-                if (matches && checkValue)
-                {
-                    String actualClaimValue = json.get(claimName).getAsString();
-                    matches = null == actualClaimValue ? null == expectedValue : actualClaimValue.equals(expectedValue);
-                }
-
-                return matches;
-            }
-
-            @Override
-            public void describeTo(Description description)
-            {
-                description.appendText("JSON encoded string with claim ").appendValue(claimName);
-
-                if (checkValue)
-                {
-                    description.appendText(" having value ").appendValue(expectedValue);
-                }
-            }
-        };
-    }
-
-    private static ArgumentMatcher<String> hasNoSuchClaim(final String claimName)
-    {
-        return new ArgumentMatcher<String>()
-        {
-            @Override
-            public boolean matches(Object argument)
-            {
-                return !hasClaim(claimName).matches(argument);
-            }
-
-            @Override
-            public void describeTo(Description description)
-            {
-                description.appendText("not ");
-                hasClaim(claimName).describeTo(description);
-            }
-        };
+        return new JwtAuthorizationGenerator(jwtService, constantSecretSupplier(SECRET), consumerService, URI.create(baseUrl)).generate(HttpMethod.GET, URI.create(url), params, userProfile).get();
     }
 }
