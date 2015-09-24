@@ -19,18 +19,7 @@ public abstract class AbstractConnectModuleProvider<T> implements ConnectModuleP
     @Override
     public List<T> validate(JsonElement rawModules, Class<T> type, Plugin plugin) throws ConnectModuleValidationException
     {
-
-        final String schema;
-        try
-        {
-            InputStream in = plugin.getResourceAsStream("/schema/" + getSchemaPrefix() + "-schema.json");
-            schema = IOUtils.toString(in);
-        }
-        catch (IOException e)
-        {
-            throw new IllegalStateException("Failed to read JSON schema for descriptor", e);
-        }
-        validateAgainstSchema(rawModules, schema);
+        validateAgainstSchema(rawModules, plugin);
         
         Gson deserializer = ConnectModulesGsonFactory.getGson();
         List<T> beans = new ArrayList<>();
@@ -56,8 +45,24 @@ public abstract class AbstractConnectModuleProvider<T> implements ConnectModuleP
         return beans;
     }
     
-    protected void validateAgainstSchema(JsonElement rawModules, String schema) throws ConnectModuleSchemaValidationException
+    protected void validateAgainstSchema(JsonElement rawModules, Plugin plugin) throws ConnectModuleSchemaValidationException
     {
+        if (getSchemaPrefix() == null)
+        {
+            return;
+        }
+
+        final String schema;
+        try
+        {
+            InputStream in = plugin.getResourceAsStream("/schema/" + getSchemaPrefix() + "-schema.json");
+            schema = IOUtils.toString(in);
+        }
+        catch (IOException e)
+        {
+            throw new IllegalStateException("Failed to read JSON schema for descriptor", e);
+        }
+        
         JsonDescriptorValidator jsonDescriptorValidator = new JsonDescriptorValidator();
 
         String modules = "{\"" + getMeta().getDescriptorKey() + "\": " + rawModules.toString() + "}";
