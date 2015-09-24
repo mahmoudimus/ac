@@ -58,6 +58,7 @@
         <profile>
             <id>wired</id>
             <modules>
+                <module>jira/jira-reference-plugin</module>
                 <module>tests/wired-tests</module>
             </modules>
         </profile>
