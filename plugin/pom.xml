@@ -767,8 +767,6 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <nodeDownloadRoot>${node.download.root}</nodeDownloadRoot>
-                            <npmDownloadRoot>${npm.download.root}</npmDownloadRoot>
                             <workingDirectory>../plugin</workingDirectory>
                             <nodeVersion>${node.version}</nodeVersion>
                             <npmVersion>${npm.version}</npmVersion>

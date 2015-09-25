@@ -61,8 +61,6 @@
                         </goals>
                         <phase>pre-site</phase>
                         <configuration>
-                            <nodeDownloadRoot>${node.download.root}</nodeDownloadRoot>
-                            <npmDownloadRoot>${npm.download.root}</npmDownloadRoot>
                             <nodeVersion>${node.version}</nodeVersion>
                             <npmVersion>${npm.version}</npmVersion>
                             <nodeDownloadRoot>${node.download.root}</nodeDownloadRoot>
