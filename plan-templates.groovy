@@ -40,7 +40,6 @@ plan(
             enabled: 'true',
             matchingPattern: '(feature|issue)/.*',
             timeOfInactivityInDays: '14',
-            notificationStrategy: 'INHERIT',
             remoteJiraBranchLinkingEnabled: 'true'
     )
 
