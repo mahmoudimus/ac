@@ -162,9 +162,6 @@ public class TestConfluenceContentProperties
 
             assertFalse("Key configurations should not be empty", moduleBean.getKeyConfigurations().isEmpty());
 
-
-            System.out.println("Installing connect module to : " + baseUrl);
-
             runner = new ConnectRunner(baseUrl, AddonTestUtils.randomAddOnKey())
                     .setAuthenticationToNone()
                     .addModules("confluenceContentProperties", moduleBean)
@@ -242,8 +239,6 @@ public class TestConfluenceContentProperties
                 .key(PROPERTY_KEY)
                 .value(new JsonString(propertyValue.toString()))
                 .build();
-
-        System.out.println(contentProperty.getValue());
 
         Promise<JsonContentProperty> prop = contentPropertyService.create(contentProperty);
 

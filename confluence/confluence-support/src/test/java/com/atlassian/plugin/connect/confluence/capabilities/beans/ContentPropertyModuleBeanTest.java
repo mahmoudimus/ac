@@ -26,8 +26,6 @@ public class ContentPropertyModuleBeanTest
         String json = gson.toJson(bean, ConnectAddonBean.class);
         String expectedJson = readTestFile();
 
-        System.out.println(json);
-
         assertThat(json, is(sameJSONAs(expectedJson)));
     }
 
