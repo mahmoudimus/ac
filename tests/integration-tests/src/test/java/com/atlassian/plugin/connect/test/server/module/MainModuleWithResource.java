@@ -7,7 +7,7 @@ import org.dom4j.Element;
 import static com.atlassian.fugue.Option.*;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-abstract class MainModuleWithResource<T extends MainModuleWithResource> extends AbstractModuleWithResource<T>
+public abstract class MainModuleWithResource<T extends MainModuleWithResource> extends AbstractModuleWithResource<T>
 {
     private final String key;
     private Option<String> name = none();
