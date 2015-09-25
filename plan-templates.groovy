@@ -1,12 +1,13 @@
 plan(
         projectKey: 'CONNECT',
-        key: 'ACD1998',
-        name: 'zzzACDEV-1998 Cloud Plugin - develop',
+        key: 'ACD',
+        name: 'Cloud Plugin - develop',
         description: 'Tests atlassian-connect-plugin'
 ) {
     commonPlanConfiguration()
-    repository(name: 'Atlassian Connect (develop) ACDEV-1998')
-    pollingTrigger(repositoryName: 'Atlassian Connect (develop) ACDEV-1998')
+    repository(name: 'Atlassian Connect (develop)')
+    pollingTrigger(repositoryName: 'Atlassian Connect (develop)')
+    hipChatNotification()
     runTestsStage()
     stage(
             name: 'Start Release',
@@ -29,17 +30,22 @@ plan(
 
 plan(
         projectKey: 'CONNECT',
-        key: 'CF1998',
-        name: 'zzzACDEV-1998 Cloud Plugin - Feature branches',
+        key: 'CF',
+        name: 'Cloud Plugin - Feature branches',
         description: 'Tests feature branches of atlassian-connect-plugin'
 ) {
     commonPlanConfiguration()
-    repository(name: 'Atlassian Connect (branch builds) ACDEV-1998')
-    pollingTrigger(repositoryName: 'Atlassian Connect (branch builds) ACDEV-1998')
+    repository(name: 'Atlassian Connect (branch builds)')
+    pollingTrigger(repositoryName: 'Atlassian Connect (branch builds)')
+    notification(
+            type: 'All Builds Completed',
+            recipient: 'committers'
+    )
     branchMonitoring(
             enabled: 'true',
             matchingPattern: '(feature|issue)/.*',
             timeOfInactivityInDays: '14',
+            notificationStrategy: 'INHERIT',
             remoteJiraBranchLinkingEnabled: 'true'
     )
 
@@ -48,8 +54,8 @@ plan(
 
 plan(
         projectKey: 'CONNECT',
-        key: 'CCM1998',
-        name: 'zzzACDEV-1998 Cloud Plugin - SNAPSHOT CONF',
+        key: 'CCM',
+        name: 'Cloud Plugin - SNAPSHOT CONF',
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest Confluence SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
@@ -66,8 +72,8 @@ plan(
 
 plan(
         projectKey: 'CONNECT',
-        key: 'CJM1998',
-        name: 'zzzACDEV-1998 Cloud Plugin - SNAPSHOT JIRA',
+        key: 'CJM',
+        name: 'Cloud Plugin - SNAPSHOT JIRA',
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest JIRA SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
@@ -84,8 +90,8 @@ plan(
 
 plan(
         projectKey: 'CONNECT',
-        key: 'CJMR1998',
-        name: 'zzzACDEV-1998 Cloud Plugin - SNAPSHOT JIRA - Renaissance',
+        key: 'CJMR',
+        name: 'Cloud Plugin - SNAPSHOT JIRA - Renaissance',
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest JIRA SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
