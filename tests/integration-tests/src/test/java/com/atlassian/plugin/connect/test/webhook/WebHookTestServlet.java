@@ -10,6 +10,8 @@ import com.atlassian.plugin.connect.plugin.HttpHeaderNames;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -27,6 +29,9 @@ import static com.atlassian.plugin.connect.test.AddonTestUtils.randomWebItemBean
 
 public final class WebHookTestServlet extends HttpServlet
 {
+
+    private static final Logger log = LoggerFactory.getLogger(WebHookTestServlet.class);
+
     private volatile BlockingDeque<WebHookBody> webHooksQueue = new LinkedBlockingDeque<WebHookBody>();
 
     @Override
@@ -256,7 +261,7 @@ public final class WebHookTestServlet extends HttpServlet
             Value value = path.evaluate(body);
             if (value == null)
             {
-                System.out.println("Can't find expression '" + expression + "' in\n" + body.toJSON());
+                log.warn("Can't find expression '" + expression + "' in\n" + body.toJSON());
                 return null;
             } else
             {

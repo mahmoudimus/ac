@@ -49,7 +49,6 @@ public class AddonsResourceTest
 {
     final static String TIMEBOMB_WILDCARD_PLUGIN_LICENSE = "AAACKw0ODAoPeNqFVNuO2jAQfc9XROpbpaCYm7pIkcolXWjZLILQVqu+mGRg3Tp25AuUv69xkk2ygPqQh4xnzsw5c+wPsQZ3Bonb8100HPXRaOC74SZ2uz7qOxsQRxCLWTB5fIi9n9vvfe/by8vcm/joh7MkCTAJ8TmHCGcQxKZsET06mzAKzOcNfN9JBD+lnUZmML1Efo1MzyNQnoNwEs72HZwocoRACQ2mSCdkR6EVLDHCvzkR5xlWEKx68zq13aIItrr8JgK3AFdaJK/4CjGn+kCY7HzsMJ3NuVSQbiUIGSDfiXS2A/G8LwIeaiTHgmAasvQNZwYyESRXhLMgBqlcWkzo7rlwizo3raaTTnjEVGObbaerkcda8TUwOBUHT5gwBQyz5EqLi44tHUyAajCZLSWmAmwjW9hFqOf5yOs+FPUVxSnVhrqIeAoy8J0lluqJp2RPIA1Qb4j6D5/6/mAwRA5nKWSYpcV4O5ztOH+DmdjfJU8wHR+AKatamXOtb3nQ5FAAuKHhLHJBZJtKrVJzs3bV/0MPU2LVDqM4XK/Wi03oGL2UwQmNxDQw3hCUwGesKJaSYNZJeFb77S58m/kaMq6gpI7K69D2+iVyjbYn8hXOt/pYdvdJVIXNJjdHW1HM7Do2eldb1eY/iwNmRBZ2HFcCFAa5HqicxbwSW/aH8ROr+t26be9N12RjF/51sR7fW3fFrZn/xcTC8zuHF4u0r9K02KNb0/gH0dzB7jAsAhR57uHDWPnpB6fEIvWR5ojy91DbLgIUICMxFTZJcgaUcq46PBpkDHzwBOY=X02q2";
 
-    private static final Logger LOG = LoggerFactory.getLogger(AddonsResourceTest.class);
     private static String REST_BASE = "/atlassian-connect/1/addons";
 
     private final TestPluginInstaller testPluginInstaller;
@@ -70,20 +69,6 @@ public class AddonsResourceTest
         this.connectAddonRegistry = connectAddonRegistry;
         this.licenseHandler = licenseHandler;
         this.requestUtil = new RequestUtil(applicationProperties);
-    }
-
-    @BeforeClass
-    public void setUpClass()
-    {
-        Iterable<String> installedAddonKeys = testPluginInstaller.getInstalledAddonKeys();
-        if (installedAddonKeys.iterator().hasNext())
-        {
-            System.out.println("*** INSTALLED ADD-ONS: ");
-            for (String key : installedAddonKeys)
-            {
-                LOG.debug("*** " + key);
-            }
-        }
     }
 
     @Before

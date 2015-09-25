@@ -1,5 +1,19 @@
 package com.atlassian.plugin.connect.api.service;
 
+import net.oauth.OAuthAccessor;
+import net.oauth.OAuthConsumer;
+import net.oauth.OAuthException;
+import net.oauth.OAuthMessage;
+import net.oauth.OAuthProblemException;
+import net.oauth.OAuthServiceProvider;
+import net.oauth.SimpleOAuthValidator;
+import net.oauth.server.OAuthServlet;
+import net.oauth.signature.RSA_SHA1;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -7,16 +21,6 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import net.oauth.*;
-import net.oauth.server.OAuthServlet;
-import net.oauth.signature.RSA_SHA1;
 
 /**
  */
@@ -105,7 +109,7 @@ public abstract class AbstractOauthSignedRequestHandler
             sb.append("Validation failed: \n");
             sb.append("problem: ").append(ex.getProblem()).append("\n");
             sb.append("parameters: ").append(ex.getParameters()).append("\n");
-            System.err.println(sb.toString());
+            log.error(sb.toString());
             throw new ServletException(ex);
         }
         catch (OAuthException e)
