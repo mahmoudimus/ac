@@ -2,7 +2,7 @@
     <parent>
         <groupId>com.atlassian.pom</groupId>
         <artifactId>public-pom</artifactId>
-        <version>3.0.93</version>
+        <version>3.0.96</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
@@ -749,11 +749,11 @@
     </dependencyManagement>
     <properties>
         <!-- VERSIONS -->
-        <amps.version>5.1.10</amps.version>
+        <amps.version>6.0.8</amps.version>
         <atlassian.analytics.version>3.68</atlassian.analytics.version>
         <atlassian.applinks.version>4.2.4</atlassian.applinks.version>
         <atlassian.crowd.version>2.8.3</atlassian.crowd.version>
-        <atlassian.confluence.version>5.9.1-OD-2015.39.1-0001</atlassian.confluence.version>
+        <atlassian.confluence.version>5.9.1-SNAPSHOT</atlassian.confluence.version>
         <atlassian.event.version>2.3.5</atlassian.event.version>
         <atlassian.fugue.version>1.1</atlassian.fugue.version>
         <atlassian.healthcheck.version>2.0.4</atlassian.healthcheck.version>
@@ -830,7 +830,7 @@
         <npm.version>1.4.3</npm.version>
         <node.download.root>https://nodejs.org/dist/</node.download.root>
         <npm.download.root>https://nodejs.org/dist/npm/</npm.download.root>
-        <blueprints.version>4.0.22</blueprints.version>
+        <blueprints.version>5.2.2</blueprints.version>
         <skipNpm>false</skipNpm>
         <clover.libversion>4.0.3</clover.libversion>
     </properties>
