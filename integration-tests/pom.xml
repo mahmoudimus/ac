@@ -486,6 +486,7 @@
                         </product>
                         <product>
                             <id>confluence</id>
+                            <containerId>tomcat7x</containerId>
                             <version>${atlassian.confluence.version}</version>
                             <log4jProperties>src/test/resources/log4j-confluence.properties
                             </log4jProperties>
