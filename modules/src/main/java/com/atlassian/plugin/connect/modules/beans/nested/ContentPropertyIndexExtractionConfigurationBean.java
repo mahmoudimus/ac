@@ -1,16 +1,29 @@
 package com.atlassian.plugin.connect.modules.beans.nested;
 
 import com.atlassian.json.schema.annotation.Required;
+import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
+import com.atlassian.plugin.connect.modules.beans.UISupportModuleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexExtractionConfigurationBeanBuilder;
 
 /**
- * Representation of a extraction recipe for a single JSON value. For more information,
- * please see the [Confluence documentation on content properties](https://developer.atlassian.com/display/CONFDEV/Content+Properties+in+the+REST+API).
+ * An extraction recipe for a single value within a content property JSON object.
+ *
+ * An extraction recipe defines which values within your JSON content property will be added to the search
+ * index and made available to CQL queries as a field.  This can allow you to track custom information
+ * and make it look like a simple field on the content object.
+ *
+ * You can further improve the field definition by including
+ * <a href="../fragment/ui-support.html">UI support</a>.
+ *
+ * See the <a href="../fragment/content-property-index-key-configuration.html">content property key</a> documentation for
+ * a complete example.
+ *
  *#### Example
  *
  * @exampleJson {@link com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples#CONTENT_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE}
  * @schemaTitle Content Property Index Extraction Configuration
  */
-public class ContentPropertyIndexExtractionConfigurationBean
+public class ContentPropertyIndexExtractionConfigurationBean extends BaseModuleBean
 {
     /**
      * The objectName to the JSON data which is supposed to be indexed. The objectName will be the key of a flatten JSON object with '.' as the delimiter.
@@ -22,6 +35,7 @@ public class ContentPropertyIndexExtractionConfigurationBean
      */
     @Required
     private final String objectName;
+
     /**
      * The type of the referenced value.
      *
@@ -38,10 +52,39 @@ public class ContentPropertyIndexExtractionConfigurationBean
     @Required
     private final ContentPropertyIndexFieldType type;
 
-    public ContentPropertyIndexExtractionConfigurationBean(String objectName, ContentPropertyIndexFieldType type)
+    /**
+     * CQL Field name alias for this content property.
+     *
+     * By defining an alias you are exposing it to CQL and allow other macros and search features to easily use
+     * your content property in their search.
+     *
+     * Note: Aliases are defined globally so take care in your naming strategy and if possible, prefix them with
+     * your plugin name.
+     */
+    private final String alias;
+
+    /**
+     * The uiSupport can be used to define how your aliased field will be displayed in the CQL query builder.  Any
+     * macro or search feature that uses CQL build to build up the CQL query.
+     *
+     * By defining uiSupport your content property will appear in the CQL query builder for all macros and search
+     * features built on CQL.
+     *
+     * Note: Requires an alias to be defined.
+     */
+    private final UISupportModuleBean uiSupport;
+
+    public ContentPropertyIndexExtractionConfigurationBean(ContentPropertyIndexExtractionConfigurationBeanBuilder builder)
     {
-        this.objectName = objectName;
-        this.type = type;
+        this.objectName = builder.getObjectName();
+        this.type = builder.getType();
+        this.alias = builder.getAlias();
+        this.uiSupport = builder.getUiSupport();
+    }
+
+    public static ContentPropertyIndexExtractionConfigurationBeanBuilder newContentPropertyIndexExtractionConfigurationBean()
+    {
+        return new ContentPropertyIndexExtractionConfigurationBeanBuilder();
     }
 
     public String getObjectName()
@@ -52,5 +95,15 @@ public class ContentPropertyIndexExtractionConfigurationBean
     public ContentPropertyIndexFieldType getType()
     {
         return type;
+    }
+
+    public String getAlias()
+    {
+        return alias;
+    }
+
+    public UISupportModuleBean getUiSupport()
+    {
+        return uiSupport;
     }
 }

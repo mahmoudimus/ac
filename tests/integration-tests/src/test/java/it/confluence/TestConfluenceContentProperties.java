@@ -23,10 +23,10 @@ import com.atlassian.confluence.rest.client.impl.RemoteLongTaskServiceImpl;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
-import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFieldType;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
+import com.atlassian.plugin.connect.modules.beans.nested.UISupportValueType;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
@@ -51,6 +51,8 @@ import java.util.List;
 import java.util.concurrent.Executors;
 
 import static com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean.newContentPropertyModuleBean;
+import static com.atlassian.plugin.connect.modules.beans.UISupportModuleBean.newUISupportModuleBean;
+import static com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean.newContentPropertyIndexExtractionConfigurationBean;
 import static com.google.common.collect.Lists.newArrayList;
 import static junit.framework.TestCase.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -72,6 +74,8 @@ public class TestConfluenceContentProperties
     private static final String NUMERIC_FIELD_OBJECT_KEY = "likes";
     private static final String DATE_FIELD_OBJECT_KEY = "editTime";
     private static final String STRING_FIELD_OBJECT_KEY = "tags";
+    private static final String STRING_FIELD_OBJECT_ALIAS_KEY = "category";
+    private static final String NUMERIC_FIELD_OBJECT_ALIAS_KEY = "rank";
 
     // values
     private static final int NUMERIC_VALUE = 5;
@@ -79,10 +83,15 @@ public class TestConfluenceContentProperties
     private static final DateTime DATE_VALUE = new DateTime().withDate(2001, 1, 1).withTimeAtStartOfDay();
     private static final String STRING_VALUE = "stringToMatch";
     private static final String ALT_STRING_VALUE = "differentValue";
+    private static final String STRING_VALUE_FOR_ALIAS = "knowledge";
+    private static final String ALT_STRING_VALUE_FOR_ALIAS = "people";
+    private static final int NUMERIC_VALUE_FOR_ALIAS = 1;
+    private static final int ALT_NUMERIC_VALUE_FOR_ALIAS = 2;
 
     private static String baseUrl;
-    private static List<Exception> setupFailure = new ArrayList<Exception>();
+    private static List<Exception> setupFailure = new ArrayList<>();
     private static ListeningExecutorService executor;
+    private static ConnectRunner runner;
 
     private RemoteContentService contentService;
     private RemoteSpaceService spaceService;
@@ -99,6 +108,7 @@ public class TestConfluenceContentProperties
     @BeforeClass
     public static void initRunner() throws Exception
     {
+
         try
         {
             baseUrl = TestedProductProvider.getConfluenceTestedProduct().getProductInstance().getBaseUrl();
@@ -109,17 +119,53 @@ public class TestConfluenceContentProperties
                     .withKeyConfiguration(
                             new ContentPropertyIndexKeyConfigurationBean(PROPERTY_KEY,
                                     newArrayList(
-                                            new ContentPropertyIndexExtractionConfigurationBean(TEXT_FIELD_OBJECT_KEY, ContentPropertyIndexFieldType.text),
-                                            new ContentPropertyIndexExtractionConfigurationBean(NUMERIC_FIELD_OBJECT_KEY, ContentPropertyIndexFieldType.number),
-                                            new ContentPropertyIndexExtractionConfigurationBean(DATE_FIELD_OBJECT_KEY, ContentPropertyIndexFieldType.date),
-                                            new ContentPropertyIndexExtractionConfigurationBean(STRING_FIELD_OBJECT_KEY, ContentPropertyIndexFieldType.string))))
+                                            newContentPropertyIndexExtractionConfigurationBean()
+                                                    .withObjectName(TEXT_FIELD_OBJECT_KEY)
+                                                    .withType(ContentPropertyIndexFieldType.text)
+                                                    .build(),
+                                            newContentPropertyIndexExtractionConfigurationBean()
+                                                    .withObjectName(NUMERIC_FIELD_OBJECT_ALIAS_KEY)
+                                                    .withType(ContentPropertyIndexFieldType.number)
+                                                    .withAlias(NUMERIC_FIELD_OBJECT_ALIAS_KEY)
+                                                    .withUiSupport(newUISupportModuleBean()
+                                                            .withName(new I18nProperty("rank", "value"))
+                                                            .withDataUri("/rest/test/rank")
+                                                            .withDefaultOperator("=")
+                                                            .withValueType(UISupportValueType.NUMBER)
+                                                            .build())
+                                                    .build(),
+                                            newContentPropertyIndexExtractionConfigurationBean()
+                                                    .withObjectName(DATE_FIELD_OBJECT_KEY)
+                                                    .withType(ContentPropertyIndexFieldType.date)
+                                                    .build(),
+                                            newContentPropertyIndexExtractionConfigurationBean()
+                                                    .withObjectName(NUMERIC_FIELD_OBJECT_KEY)
+                                                    .withType(ContentPropertyIndexFieldType.number)
+                                                    .build(),
+                                            newContentPropertyIndexExtractionConfigurationBean()
+                                                    .withObjectName(STRING_FIELD_OBJECT_KEY)
+                                                    .withType(ContentPropertyIndexFieldType.string)
+                                                    .build(),
+                                            newContentPropertyIndexExtractionConfigurationBean()
+                                                    .withObjectName(STRING_FIELD_OBJECT_ALIAS_KEY)
+                                                    .withType(ContentPropertyIndexFieldType.string)
+                                                    .withAlias(STRING_FIELD_OBJECT_ALIAS_KEY)
+                                                    .withUiSupport(newUISupportModuleBean()
+                                                            .withName(new I18nProperty("category", "value"))
+                                                            .withDataUri("/rest/test/category")
+                                                            .withDefaultOperator("=")
+                                                            .withValueType(UISupportValueType.STRING)
+                                                            .build())
+                                                    .build()
+                                    )))
                     .build();
 
             assertFalse("Key configurations should not be empty", moduleBean.getKeyConfigurations().isEmpty());
 
+
             System.out.println("Installing connect module to : " + baseUrl);
 
-            new ConnectRunner(baseUrl, AddonTestUtils.randomAddOnKey())
+            runner = new ConnectRunner(baseUrl, AddonTestUtils.randomAddOnKey())
                     .setAuthenticationToNone()
                     .addModules("confluenceContentProperties", moduleBean)
                     .start();
@@ -188,6 +234,8 @@ public class TestConfluenceContentProperties
         propertyValue.add(STRING_FIELD_OBJECT_KEY, new JsonPrimitive(STRING_VALUE));
         propertyValue.add(NUMERIC_FIELD_OBJECT_KEY, new JsonPrimitive(NUMERIC_VALUE));
         propertyValue.add(DATE_FIELD_OBJECT_KEY, new JsonPrimitive(DATE_VALUE.toString(ISODateTimeFormat.dateTime())));
+        propertyValue.add(STRING_FIELD_OBJECT_ALIAS_KEY, new JsonPrimitive(STRING_VALUE_FOR_ALIAS));
+        propertyValue.add(NUMERIC_FIELD_OBJECT_ALIAS_KEY, new JsonPrimitive(NUMERIC_VALUE_FOR_ALIAS));
 
         JsonContentProperty contentProperty = JsonContentProperty.builder()
                 .content(contentToFind.get())
@@ -204,6 +252,8 @@ public class TestConfluenceContentProperties
         otherProperty.add(STRING_FIELD_OBJECT_KEY, new JsonPrimitive(ALT_STRING_VALUE));
         otherProperty.add(NUMERIC_FIELD_OBJECT_KEY, new JsonPrimitive(1));
         otherProperty.add(DATE_FIELD_OBJECT_KEY, new JsonPrimitive(new DateTime().toString(ISODateTimeFormat.dateTime())));
+        otherProperty.add(STRING_FIELD_OBJECT_ALIAS_KEY, new JsonPrimitive(ALT_STRING_VALUE_FOR_ALIAS));
+        otherProperty.add(NUMERIC_FIELD_OBJECT_ALIAS_KEY, new JsonPrimitive(ALT_NUMERIC_VALUE_FOR_ALIAS));
 
         Promise<JsonContentProperty> otherProp = contentPropertyService.create(JsonContentProperty.builder()
                 .content(contentWithOtherProperty.get())
@@ -216,8 +266,12 @@ public class TestConfluenceContentProperties
     }
 
     @AfterClass
-    public static void tearDownClass()
+    public static void tearDownClass() throws Exception
     {
+        if (runner != null)
+        {
+            runner.stopAndUninstall();
+        }
         executor.shutdown();
     }
 
@@ -277,6 +331,18 @@ public class TestConfluenceContentProperties
         assertHasOneMatchingItem(response, contentToFind);
 
         response = executeCql(String.format("content.property[%s].%s >= 2001-01-02", PROPERTY_KEY, DATE_FIELD_OBJECT_KEY));
+        assertHasOneMatchingItem(response, contentWithOtherProperty);
+    }
+
+    @Test
+    public void testStringContentPropertyWithAlias() throws Exception {
+        PageResponse<Content> response = executeCql(String.format("%s = %s", STRING_FIELD_OBJECT_ALIAS_KEY, STRING_VALUE_FOR_ALIAS));
+        assertHasOneMatchingItem(response, contentToFind);
+    }
+
+    @Test
+    public void testNumericContentPropertyWithAlias() throws Exception {
+        PageResponse<Content> response = executeCql(String.format("%s > %d", NUMERIC_FIELD_OBJECT_ALIAS_KEY, NUMERIC_VALUE_FOR_ALIAS));
         assertHasOneMatchingItem(response, contentWithOtherProperty);
     }
 

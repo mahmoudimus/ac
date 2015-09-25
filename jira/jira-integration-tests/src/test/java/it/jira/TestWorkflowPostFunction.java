@@ -1,4 +1,4 @@
-package it.jira.jsapi;
+package it.jira;
 
 import com.atlassian.jira.pageobjects.pages.admin.workflow.AddWorkflowTransitionFunctionParamsPage;
 import com.atlassian.jira.pageobjects.pages.admin.workflow.AddWorkflowTransitionPostFunctionPage;
@@ -11,12 +11,13 @@ import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.jira.workflow.ExtendedViewWorkflowTransitionPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.workflow.JiraEditWorkflowTransitionFunctionParamsPage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
-import it.jira.JiraWebDriverTestBase;
-import it.servlet.ConnectAppServlets;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import it.servlet.ConnectAppServlets;
 
 import static com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean.newWorkflowPostFunctionBean;
 import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndModuleKey;
@@ -42,14 +43,14 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
                 .addRoute(ConnectRunner.INSTALLED_PATH, ConnectAppServlets.helloWorldServlet())
                 .addModules("jiraWorkflowPostFunctions",
                         newWorkflowPostFunctionBean()
-                            .withName(new I18nProperty(WORKFLOW_POST_FUNCTION_NAME, null))
-                            .withKey(WORKFLOW_POST_FUNCTION_KEY)
-                            .withView(new UrlBean("/wpf-view?config={postFunction.config}"))
-                            .withEdit(new UrlBean("/wpf-edit?config={postFunction.config}"))
-                            .withCreate(new UrlBean("/wpf-create"))
-                            .withTriggered(new UrlBean("/wpf-triggered"))
-                            .withDescription(new I18nProperty("workflow post function description", null))
-                            .build(),
+                                .withName(new I18nProperty(WORKFLOW_POST_FUNCTION_NAME, null))
+                                .withKey(WORKFLOW_POST_FUNCTION_KEY)
+                                .withView(new UrlBean("/wpf-view?config={postFunction.config}"))
+                                .withEdit(new UrlBean("/wpf-edit?config={postFunction.config}"))
+                                .withCreate(new UrlBean("/wpf-create"))
+                                .withTriggered(new UrlBean("/wpf-triggered"))
+                                .withDescription(new I18nProperty("workflow post function description", null))
+                                .build(),
                         newWorkflowPostFunctionBean()
                                 .withName(new I18nProperty(WORKFLOW_POST_FUNCTION_INVALID_NAME, null))
                                 .withKey(WORKFLOW_POST_FUNCTION_INVALID_KEY)
@@ -59,7 +60,7 @@ public class TestWorkflowPostFunction extends JiraWebDriverTestBase
                                 .withTriggered(new UrlBean("/wpf-triggered"))
                                 .withDescription(new I18nProperty("workflow post function description", null))
                                 .build()
-                        )
+                )
                 .addRoute("/wpf-view", ConnectAppServlets.helloWorldServlet())
                 .addRoute("/wpf-edit", ConnectAppServlets.helloWorldServlet())
                 .addRoute("/wpf-create", ConnectAppServlets.workflowPostFunctionServlet())

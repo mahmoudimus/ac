@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.crowd.upgrade;
+package com.atlassian.plugin.connect.crowd.usermanagement;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -8,7 +8,6 @@ import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.crowd.model.user.User;
 import com.atlassian.crowd.search.query.membership.MembershipQuery;
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.crowd.usermanagement.CrowdApplicationProvider;
 
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
@@ -46,18 +45,17 @@ public class ConnectAddOnUsersImpl implements ConnectAddOnUsers
     }
 
     @Override
-    public Iterable<User> getAddonUsersToUpgradeForHostProduct()
-            throws ApplicationNotFoundException
+    public Iterable<User> getAddonUsers()
     {
-        return filter(applicationService.searchDirectGroupRelationships(crowdApplicationProvider.getCrowdApplication(), membershipQuery),
-                isHostProductAddonUserKey());
-    }
-
-    @Override
-    public Iterable<User> getAddonUsersToClean()
-            throws ApplicationNotFoundException
-    {
-        return applicationService.searchDirectGroupRelationships(crowdApplicationProvider.getCrowdApplication(), membershipQuery);
+        try
+        {
+            return filter(applicationService.searchDirectGroupRelationships(crowdApplicationProvider.getCrowdApplication(), membershipQuery),
+                    isHostProductAddonUserKey());
+        }
+        catch (ApplicationNotFoundException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     private Predicate<User> isHostProductAddonUserKey()

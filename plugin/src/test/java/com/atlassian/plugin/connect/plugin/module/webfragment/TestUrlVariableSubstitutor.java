@@ -45,6 +45,18 @@ public class TestUrlVariableSubstitutor
     }
 
     @Test
+    public void testSubstitutionWhenContextValueContainsSpaceAndUnicode()
+    {
+        MatcherAssert.assertThat(SUBSTITUTOR.replace("thing={oh_my_encoding}", CONTEXT), is("thing=%C3%86%20%C3%A6"));
+    }
+
+    @Test
+    public void testSubstitutionWhenContextValueContainsPlus()
+    {
+        MatcherAssert.assertThat(SUBSTITUTOR.replace("thing={life_meaning}", CONTEXT), is("thing=21%2B21"));
+    }
+
+    @Test
     public void testSubstitutionWhenTheContextValueIsAlsoTheParameterName()
     {
         // this is a silly URL but UrlVariableSubstitutor should still do as asked
@@ -77,6 +89,8 @@ public class TestUrlVariableSubstitutor
         context.put("page", Collections.singletonMap("id", 1234));
         context.put("foo", "bah");
         context.put("uh_oh", null);
+        context.put("oh_my_encoding", "Æ æ");
+        context.put("life_meaning", "21+21");
         return context;
     }
 }
