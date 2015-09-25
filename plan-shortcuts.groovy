@@ -313,6 +313,7 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
         )
         commonRequirements()
         checkoutDefaultRepositoryTask()
+        mavenInstallTask()
         mavenTestTask(
                 description: 'Run Wired Lifecycle Tests for #product',
                 goal: 'clover2:setup verify -pl tests/plugin-lifecycle-tests -PpluginLifecycle,clover -am -DtestGroups=#testGroup -DskipUnits -DskipITs=false #additionalMavenParameters clover2:aggregate clover2:clover',
@@ -336,6 +337,7 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
     ) {
         commonRequirements()
         checkoutDefaultRepositoryTask()
+        mavenInstallTask()
         mavenTestTask(
                 description: 'Run Wired Tests for #product',
                 goal: 'clover2:setup verify -pl tests/wired-tests -Pwired,clover -am -DtestGroups=#testGroup -DskipITs=false -DskipUnits #additionalMavenParameters clover2:aggregate clover2:clover',
@@ -382,6 +384,7 @@ projectIntegrationTestJob(['key', 'product', 'testGroup', 'groupName', 'addition
         commonRequirements()
         checkoutDefaultRepositoryTask()
         setupVncTask()
+        mavenInstallTask()
         mavenTestTask(
                 description: 'Run Integration Tests for #product #groupName',
                 goal: 'verify -pl #project -Pit -am -DtestGroups=#testGroup -DskipUnits -DskipITs=false #additionalMavenParameters',
@@ -417,6 +420,13 @@ checkoutDefaultRepositoryTask() {
             type: 'checkout',
             description: 'Checkout Default Repository',
             cleanCheckout: 'true'
+    )
+}
+
+mavenInstallTask() {
+    mavenTask(
+            description: 'Install',
+            goal: 'install -DskipUnits'
     )
 }
 
