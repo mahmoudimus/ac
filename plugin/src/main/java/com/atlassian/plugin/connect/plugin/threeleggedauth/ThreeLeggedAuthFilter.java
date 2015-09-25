@@ -207,15 +207,18 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
     {
         if (getBoolean(SYS_PROP_ALLOW_IMPERSONATION))
         {
-            log.warn("Allowing add-on '{}' to impersonate user '{}' because the system property '{}' is set to true.", new String[]{ addOnBean.getKey(), subject, SYS_PROP_ALLOW_IMPERSONATION });
+            log.info("Allowing add-on '{}' to impersonate user '{}' because the system property '{}' is set to true.", new String[]{ addOnBean.getKey(), subject, SYS_PROP_ALLOW_IMPERSONATION });
             return getUserProfile(request, response, addOnBean.getKey(), subject);
         }
         else
         {
             if (threeLeggedAuthService.shouldSilentlyIgnoreUserAgencyRequest(subject, addOnBean))
             {
-                log.warn("Ignoring subject claim '{}' on incoming request '{}' from Connect add-on '{}' because the {} said so.",
-                        new String[]{subject, request.getRequestURI(), addOnBean.getKey(), threeLeggedAuthService.getClass().getSimpleName()});
+                if (log.isDebugEnabled())
+                {
+                    log.debug("Ignoring subject claim '{}' on incoming request '{}' from Connect add-on '{}' because the {} said so.",
+                            new String[] { subject, request.getRequestURI(), addOnBean.getKey(), threeLeggedAuthService.getClass().getSimpleName() });
+                }
                 return null;
             }
             else
@@ -225,13 +228,13 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
                 // a valid grant must exist
                 if (threeLeggedAuthService.hasGrant(userProfile.getUserKey(), addOnBean))
                 {
-                    log.info("Allowing add-on '{}' to impersonate user '{}' because a user-agent grant exists.", addOnBean.getKey(), subject);
+                    log.debug("Allowing add-on '{}' to impersonate user '{}' because a user-agent grant exists.", addOnBean.getKey(), subject);
                     return userProfile;
                 }
                 else
                 {
                     String externallyVisibleMessage = String.format(MSG_FORMAT_NOT_ALLOWING_IMPERSONATION, addOnBean.getKey(), subject);
-                    log.warn("{} because this user has not granted user-agent rights to this add-on, or the grant has expired.", externallyVisibleMessage);
+                    log.info("{} because this user has not granted user-agent rights to this add-on, or the grant has expired.", externallyVisibleMessage);
                     fail(request, response, externallyVisibleMessage, HttpServletResponse.SC_FORBIDDEN);
                     throw new InvalidSubjectException(subject);
                 }
