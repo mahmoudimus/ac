@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.test.pageobjects.jira;
 
+import com.atlassian.jira.pageobjects.pages.viewissue.ViewIssuePage;
 import com.atlassian.pageobjects.Page;
 import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.elements.PageElementFinder;
@@ -14,19 +15,19 @@ import javax.inject.Inject;
 /**
  * A ViewIssue page that is expected to have a panel provided by a remote plugin.
  */
-public class JiraViewIssuePage implements Page
+public class JiraViewIssuePage extends ViewIssuePage implements Page
 {
     private String issueKey;
 
     @Inject
-    private com.atlassian.webdriver.AtlassianWebDriver driver;
-    @Inject
     private PageBinder pageBinder;
+
     @Inject
     private PageElementFinder pageElementFinder;
 
     public JiraViewIssuePage(String issueKey)
     {
+        super(issueKey);
         this.issueKey = issueKey;
     }
 
