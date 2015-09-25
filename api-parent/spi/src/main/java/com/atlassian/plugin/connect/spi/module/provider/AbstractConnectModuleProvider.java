@@ -20,7 +20,11 @@ public abstract class AbstractConnectModuleProvider<T> implements ConnectModuleP
     public List<T> validate(JsonElement rawModules, Class<T> type, Plugin plugin) throws ConnectModuleValidationException
     {
         validateAgainstSchema(rawModules, plugin);
-        
+        return deserializeIntoBeans(rawModules, type);
+    }
+    
+    protected List<T> deserializeIntoBeans(JsonElement rawModules, Class<T> type) throws ConnectModuleValidationException
+    {
         Gson deserializer = ConnectModulesGsonFactory.getGson();
         List<T> beans = new ArrayList<>();
         if (rawModules.isJsonObject())
@@ -41,7 +45,6 @@ public abstract class AbstractConnectModuleProvider<T> implements ConnectModuleP
                 beans.add(deserializer.fromJson(module, type));
             }
         }
-
         return beans;
     }
     

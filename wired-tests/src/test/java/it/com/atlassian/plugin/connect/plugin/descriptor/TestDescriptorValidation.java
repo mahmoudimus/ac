@@ -45,4 +45,25 @@ public class TestDescriptorValidation
         String json = readAddonTestFile("webitem/invalidStylesWebItemTest.json");
         connectAddonBeanFactory.fromJson(json);
     }
+    
+    @Test
+    public void testGoodDescriptorWithPluginProvidedModule() throws Exception
+    {
+        String json = readAddonTestFile("descriptorWithPluginProvidedModule.json");
+        connectAddonBeanFactory.fromJson(json);
+    }
+    
+    @Test(expected = InvalidDescriptorException.class)
+    public void invalidModuleType() throws Exception
+    {
+        String json = readAddonTestFile("descriptorWithUnknownModuleType.json");
+        connectAddonBeanFactory.fromJson(json);
+    }
+    
+    @Test(expected = InvalidDescriptorException.class)
+    public void moduleValidationFails() throws Exception
+    {
+        String json = readAddonTestFile("descriptorWithInvalidModuleBody.json");
+        connectAddonBeanFactory.fromJson(json);
+    }
 }

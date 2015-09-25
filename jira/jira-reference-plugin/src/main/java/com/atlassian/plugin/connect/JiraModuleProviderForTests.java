@@ -11,7 +11,7 @@ import com.google.gson.JsonElement;
 
 import java.util.List;
 
-public class TestJiraModuleProvider extends AbstractConnectModuleProvider<TestJiraModuleBean> 
+public class JiraModuleProviderForTests extends AbstractConnectModuleProvider<JiraModuleBeanForTests>
 {
 
     @Override
@@ -40,14 +40,25 @@ public class TestJiraModuleProvider extends AbstractConnectModuleProvider<TestJi
             @Override
             public Class getBeanClass()
             {
-                return TestJiraModuleBean.class;
+                return JiraModuleBeanForTests.class;
             }
         };
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin plugin, List<TestJiraModuleBean> beans)
+    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin plugin, List<JiraModuleBeanForTests> beans)
     {
-        return ImmutableList.of((ModuleDescriptor)new TestJiraModuleDescriptor());
+        return ImmutableList.of((ModuleDescriptor)new JiraModuleDescriptorForTests());
+    }
+    
+    @Override
+    public List<JiraModuleBeanForTests> validate(JsonElement rawModules, Class<JiraModuleBeanForTests> type, Plugin plugin) throws ConnectModuleValidationException
+    {
+        List<JiraModuleBeanForTests> beans = super.validate(rawModules, type, plugin);
+        if(beans.get(0).getKey().equals("bad"))
+        {
+            throw new ConnectModuleValidationException(getMeta().getDescriptorKey(), "Key is bad!");
+        }
+        return beans;
     }
 }
