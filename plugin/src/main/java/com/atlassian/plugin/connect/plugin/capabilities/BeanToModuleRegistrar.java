@@ -15,7 +15,7 @@ import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectM
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderModuleDescriptor;
+import com.atlassian.plugin.connect.plugin.descriptor.ConnectModuleProviderModuleDescriptor;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
