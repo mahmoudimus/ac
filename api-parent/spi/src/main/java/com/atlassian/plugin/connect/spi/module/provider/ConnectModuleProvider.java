@@ -13,7 +13,7 @@ public interface ConnectModuleProvider<T>
     
     ConnectModuleMeta getMeta();
 
-    List<T> validate(JsonElement modules, Class<T> type, Plugin plugin) throws ConnectModuleValidationException;
+    List<T> validate(String modules, Class<T> type, Plugin plugin) throws ConnectModuleValidationException;
 
     List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin plugin, List<T> beans);
 }

@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -17,17 +18,18 @@ import java.util.List;
 public abstract class AbstractConnectModuleProvider<T> implements ConnectModuleProvider<T>
 {
     @Override
-    public List<T> validate(JsonElement rawModules, Class<T> type, Plugin plugin) throws ConnectModuleValidationException
+    public List<T> validate(String rawModules, Class<T> type, Plugin plugin) throws ConnectModuleValidationException
     {
         validateAgainstSchema(rawModules, plugin);
         return deserializeIntoBeans(rawModules, type);
     }
     
-    protected List<T> deserializeIntoBeans(JsonElement rawModules, Class<T> type) throws ConnectModuleValidationException
+    protected List<T> deserializeIntoBeans(String rawModules, Class<T> type) throws ConnectModuleValidationException
     {
+        JsonElement modulesElement = new JsonParser().parse(rawModules);
         Gson deserializer = ConnectModulesGsonFactory.getGson();
         List<T> beans = new ArrayList<>();
-        if (rawModules.isJsonObject())
+        if (modulesElement.isJsonObject())
         {
             if (getMeta().multipleModulesAllowed())
             {
@@ -37,7 +39,7 @@ public abstract class AbstractConnectModuleProvider<T> implements ConnectModuleP
         }
         else
         {
-            JsonArray moduleArray = rawModules.getAsJsonArray();
+            JsonArray moduleArray = modulesElement.getAsJsonArray();
 
             for (int i = 0; i < moduleArray.size(); i++)
             {
@@ -48,7 +50,7 @@ public abstract class AbstractConnectModuleProvider<T> implements ConnectModuleP
         return beans;
     }
     
-    protected void validateAgainstSchema(JsonElement rawModules, Plugin plugin) throws ConnectModuleSchemaValidationException
+    protected void validateAgainstSchema(String rawModules, Plugin plugin) throws ConnectModuleSchemaValidationException
     {
         if (getSchemaPrefix() == null)
         {
@@ -68,7 +70,7 @@ public abstract class AbstractConnectModuleProvider<T> implements ConnectModuleP
         
         JsonDescriptorValidator jsonDescriptorValidator = new JsonDescriptorValidator();
 
-        String modules = "{\"" + getMeta().getDescriptorKey() + "\": " + rawModules.toString() + "}";
+        String modules = "{\"" + getMeta().getDescriptorKey() + "\": " + rawModules + "}";
 
         DescriptorValidationResult result = jsonDescriptorValidator.validate(modules, schema);
         if (!result.isValid())

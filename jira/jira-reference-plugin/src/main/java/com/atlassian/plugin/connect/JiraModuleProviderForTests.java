@@ -52,7 +52,7 @@ public class JiraModuleProviderForTests extends AbstractConnectModuleProvider<Ji
     }
     
     @Override
-    public List<JiraModuleBeanForTests> validate(JsonElement rawModules, Class<JiraModuleBeanForTests> type, Plugin plugin) throws ConnectModuleValidationException
+    public List<JiraModuleBeanForTests> validate(String rawModules, Class<JiraModuleBeanForTests> type, Plugin plugin) throws ConnectModuleValidationException
     {
         List<JiraModuleBeanForTests> beans = super.validate(rawModules, type, plugin);
         if(beans.get(0).getKey().equals("bad"))
