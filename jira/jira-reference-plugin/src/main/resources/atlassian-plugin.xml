@@ -14,4 +14,11 @@
         </validators>
     </connect-context-parameters-resolver>
 
+    <connect-module-provider
+            key="testJiraModules"
+            class="com.atlassian.plugin.connect.JiraModuleProviderForTests"
+            name="Test Jira Module Provider">
+        <description>...</description>
+    </connect-module-provider>
+
 </atlassian-plugin>

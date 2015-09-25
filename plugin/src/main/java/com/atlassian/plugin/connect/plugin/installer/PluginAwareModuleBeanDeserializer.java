@@ -39,7 +39,7 @@ public class PluginAwareModuleBeanDeserializer extends ModuleBeanDeserializer
     protected List<ModuleBean> deserializeModulesOfSameType(Map.Entry<String, JsonElement> moduleEntry) throws ConnectModuleValidationException
     {
         final ConnectModuleProvider moduleProvider = moduleProviders.get(moduleEntry.getKey());
-        return moduleProvider.validate(moduleEntry.getValue(), moduleProvider.getMeta().getBeanClass(), plugin);
+        return moduleProvider.validate(moduleEntry.getValue().toString(), moduleProvider.getMeta().getBeanClass(), plugin);
     }
     
     @Override
