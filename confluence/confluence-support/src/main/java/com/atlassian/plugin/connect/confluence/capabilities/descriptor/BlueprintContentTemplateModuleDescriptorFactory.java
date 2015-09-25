@@ -78,11 +78,6 @@ public class BlueprintContentTemplateModuleDescriptorFactory
         return descriptor;
     }
 
-    public static void main(String[] args)
-    {
-        System.out.println(createTemplateURL("base", "resource"));
-    }
-
     private static String createTemplateURL(String baseUrl, String blueprintResource)
     {
         StringBuilder buffer = new StringBuilder();

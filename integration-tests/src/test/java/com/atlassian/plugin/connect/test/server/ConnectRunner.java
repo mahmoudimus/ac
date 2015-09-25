@@ -1,5 +1,48 @@
 package com.atlassian.plugin.connect.test.server;
 
+import com.atlassian.pageobjects.TestedProduct;
+import com.atlassian.plugin.connect.api.OAuth;
+import com.atlassian.plugin.connect.api.http.HttpMethod;
+import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
+import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
+import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
+import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
+import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
+import com.atlassian.plugin.connect.modules.gson.DefaultModuleSerializer;
+import com.atlassian.plugin.connect.plugin.installer.StaticModuleBeanDeserializer;
+import com.atlassian.plugin.connect.test.AddonTestUtils;
+import com.atlassian.plugin.connect.test.Environment;
+import com.atlassian.plugin.connect.test.HttpUtils;
+import com.atlassian.plugin.connect.test.Utils;
+import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
+import com.google.common.collect.ImmutableMap;
+import com.google.gson.Gson;
+import it.servlet.ConnectAppServlets;
+import it.servlet.ContextServlet;
+import it.servlet.HttpContextServlet;
+import it.servlet.InstallHandlerServlet;
+import it.servlet.condition.ToggleableConditionServlet;
+import org.apache.commons.lang.NotImplementedException;
+import org.bouncycastle.openssl.PEMWriter;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.junit.rules.TestRule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -13,53 +56,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.MediaType;
-
-import com.atlassian.pageobjects.TestedProduct;
-import com.atlassian.plugin.connect.api.OAuth;
-import com.atlassian.plugin.connect.api.service.SignedRequestHandler;
-import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
-import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
-import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
-import com.atlassian.plugin.connect.modules.beans.ModuleBean;
-import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
-import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.api.http.HttpMethod;
-import com.atlassian.plugin.connect.plugin.installer.StaticModuleBeanDeserializer;
-import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.Environment;
-import com.atlassian.plugin.connect.test.HttpUtils;
-import com.atlassian.plugin.connect.test.Utils;
-import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
-
-import com.atlassian.plugin.connect.modules.gson.DefaultModuleSerializer;
-import com.google.common.collect.ImmutableMap;
-
-import com.google.gson.Gson;
-import org.apache.commons.lang.NotImplementedException;
-import org.bouncycastle.openssl.PEMWriter;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.junit.rules.TestRule;
-
-import it.servlet.ConnectAppServlets;
-import it.servlet.ContextServlet;
-import it.servlet.HttpContextServlet;
-import it.servlet.InstallHandlerServlet;
-import it.servlet.condition.ToggleableConditionServlet;
-import net.oauth.signature.RSA_SHA1;
-
-import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -75,6 +71,8 @@ public class ConnectRunner
     public static final String DISABLED_PATH = "/disabled-lifecycle";
     public static final String UNINSTALLED_PATH = "/uninstalled-lifecycle";
     private static final String REGISTRATION_ROUTE = "/register";
+
+    private static final Logger log = LoggerFactory.getLogger(ConnectRunner.class);
 
     private final String productBaseUrl;
     private final AtlassianConnectRestClient installer;
@@ -423,7 +421,7 @@ public class ConnectRunner
         list.addHandler(context);
         server.start();
 
-        System.out.println("Started Atlassian Connect Add-On at " + displayUrl + REGISTRATION_ROUTE);
+        log.info("Started Atlassian Connect Add-On at " + displayUrl + REGISTRATION_ROUTE);
         register();
         return this;
     }
