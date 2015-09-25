@@ -1,5 +1,7 @@
 package it.jira.item;
 
+import java.util.Map;
+
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
 import com.atlassian.plugin.connect.modules.beans.AddOnUrlContext;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
@@ -8,16 +10,17 @@ import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.pageobjects.RemoteWebItem;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraViewIssuePage;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
+
 import com.google.common.base.Optional;
-import it.jira.JiraWebDriverTestBase;
-import it.servlet.condition.ParameterCapturingConditionServlet;
-import it.util.TestUser;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.Map;
+import it.jira.JiraWebDriverTestBase;
+import it.servlet.condition.ParameterCapturingConditionServlet;
+import it.util.TestUser;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
