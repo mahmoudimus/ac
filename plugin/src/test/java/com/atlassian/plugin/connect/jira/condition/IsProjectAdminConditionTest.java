@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.jira.condition;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 import com.atlassian.jira.bc.project.ProjectAction;
 import com.atlassian.jira.bc.project.ProjectService;
@@ -113,9 +114,9 @@ public class IsProjectAdminConditionTest
             }
 
             @SuppressWarnings ("unchecked")
-            public <T> T getComponentSafely(Class<T> componentClass)
+            public <T> Optional<T> getComponentSafely(Class<T> componentClass)
             {
-                return (T) projectService;
+                return Optional.of((T) projectService);
             }
 
             @Override
