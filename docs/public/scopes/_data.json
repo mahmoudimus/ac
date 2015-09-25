@@ -1,0 +1,18 @@
+{
+  "jira-rest-scopes": {
+    "filename": "jira-rest-scopes.html",
+    "title": "JIRA REST"
+  },
+  "confluence-rest-scopes": {
+    "filename": "confluence-rest-scopes.html",
+    "title": "Confluence REST"
+  },
+  "confluence-jsonrpc-scopes": {
+    "filename": "confluence-jsonrpc-scopes.html",
+    "title": "Confluence JSON-RPC"
+  },
+  "confluence-xmlrpc-scopes": {
+    "filename": "confluence-xmlrpc-scopes.html",
+    "title": "Confluence XML-RPC"
+  }
+}

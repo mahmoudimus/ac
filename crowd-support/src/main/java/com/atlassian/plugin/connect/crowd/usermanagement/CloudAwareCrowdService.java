@@ -209,6 +209,16 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
     }
 
     @Override
+    public void ensureUserIsInGroups(String username, Set<String> groupNames)
+            throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, InvalidAuthenticationException
+    {
+        for(String groupName : groupNames)
+        {
+            ensureUserIsInGroup(username, groupName);
+        }
+    }
+
+    @Override
     public void removeUserFromGroup(String username, String groupName)
             throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, InvalidAuthenticationException
     {

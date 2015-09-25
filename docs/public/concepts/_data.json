@@ -1,0 +1,39 @@
+{
+  "security": {
+    "filename": "security.html",
+    "title": "Security"
+  },
+  "authentication": {
+    "filename": "authentication.html",
+    "title": "Authentication"
+  },
+  "understanding-jwt": {
+    "filename": "understanding-jwt.html",
+    "title": "Understanding JWT"
+  },
+  "conditions": {
+    "filename": "conditions.html",
+    "title": "Conditions"
+  },
+  "context-parameters": {
+    "filename": "context-parameters.html",
+    "title": "Context parameters"
+  },
+  "styling-with-aui": {
+    "filename": "styling-with-aui.html",
+    "title": "Styling add-ons with AUI"
+  },
+  "licensing": {
+    "filename": "licensing.html",
+    "title": "Licensing"
+  },
+  "cloud-development": {
+    "filename": "cloud-development.html",
+    "title": "Cloud development"
+  },
+  "hosted-data-storage": {
+    "filename": "hosted-data-storage.html",
+    "title": "Hosted data storage",
+    "new": true
+  }
+}

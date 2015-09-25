@@ -1,6 +1,7 @@
 {
     "globals": {
-        "title": "Atlassian Connect Documentation",
+        "title": "",
+        "siteTitle": "Atlassian Connect Documentation",
         "subtitle": "Documentation"
     }
 }

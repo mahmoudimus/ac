@@ -11,7 +11,7 @@ var chokidar = require("chokidar");
 var jsonPath = require("JSONPath").eval;
 var program = require("commander");
 var dereferencer = require("./de-ref");
-var harp = require("harp")
+var harp = require("harp");
 
 var buildDir = "./target";
 var genSrcPrefix = buildDir + "/gensrc";
@@ -120,6 +120,7 @@ function entityToModel(schemaEntity) {
     var model = {
         id: schemaEntity.id,
         name: name,
+        title: name,
         slug: slugify(schemaEntity.pageName || name),
         description: description,
         type: schemaEntity.type
@@ -514,8 +515,9 @@ function startHarpServerAndWatchSrcFiles() {
     var watchedFiles = srcFiles.concat(jiraSchemaSourcePath, confluenceSchemaSourcePath);
 
     var watcher = chokidar.watch(watchedFiles, {
-        persistent:true,
-        ignoreInitial:true
+        persistent: true,
+        ignored: /[\/\\]\./, // ignore .dotfiles
+        ignoreInitial: true
     });
 
     _.each(['add', 'addDir', 'change', 'unlink', 'unlinkDir'], function(event) {

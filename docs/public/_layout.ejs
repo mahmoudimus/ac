@@ -1,11 +1,25 @@
-<% var auiVersion = "5.8.14" %>
-
 <%
-   // calculate the relative path to the document root from the page depth
-   var relDocRoot = "";
-   for (var i = 1; i < current.path.length; i++) {
-      relDocRoot += "../";
-   }
+    var auiVersion = "5.8.14";
+
+    // calculate the relative path to the document root from the page depth
+    var relDocRoot = "";
+    for (var i = 1; i < current.path.length; i++) {
+        relDocRoot += "../";
+    }
+
+    var module;
+    if (current.path[0] === 'modules') {
+         switch (current.path.length) {
+             case 2:
+                 module = entities.root[current.source];
+                 break;
+             case 3:
+                 module = entities[current.path[1]][current.path[2]];
+                 break;
+         }
+        title = module.title;
+    }
+
 %>
 
 <!DOCTYPE html>
@@ -15,7 +29,11 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=EDGE">
     <title>
-        <%= title %>
+        <% if (title) {%>
+            <%= title %> - <%= siteTitle %>
+        <% } else { %>
+            <%= siteTitle %>
+        <% } %>
     </title>
     <link rel="icon" type="image/png" href="<%= relDocRoot %>assets/images/favicon.png" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/codemirror.min.css" media="all">
@@ -44,7 +62,7 @@
             var depth = <%= current.path.length %>;
             // Get rid of double slashes
             var pathname = window.location.pathname.replace(/\/+/g,'/');
-            return '/' + _.compact(pathname.split('/')).slice(0, -depth + pathname.endsWith('/')).join('/');
+                    return '/' + _.compact(pathname.split('/')).slice(0, -depth + pathname.endsWith('/')).join('/');
         });
     </script>
 </head>
@@ -96,20 +114,6 @@
                 <div class="aui-page-panel-inner">
                     <%- partial('_partials/_sidebar.ejs', { relDocRoot: relDocRoot }) %>
                     <section class="aui-page-panel-content ac-page">
-                        <%
-                            var module;
-                            if (current.path[0] === 'modules') {
-                                switch (current.path.length) {
-                                    case 2:
-                                        module = entities.root[current.source];
-                                        break;
-                                    case 3:
-                                        module = entities[current.path[1]][current.path[2]];
-                                        break;
-                                }
-                            }
-                        %>
-
                         <% if (module) { %>
                             <%- partial('modules/_child_layout.jade', { module: module, relDocRoot: relDocRoot }) %>
                         <% } else { %>

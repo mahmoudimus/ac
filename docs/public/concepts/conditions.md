@@ -98,7 +98,7 @@ referenced.
 
 * `entity` - the entity on which the property has been stored
   * Common: [`addon`](hosted-data-storage.html)
-  * JIRA: `project`, `issue`, `issuetype`, `comment`
+  * JIRA: `project`, `issue`, `user`, `issuetype`, `comment`, `dashboarditem`
 * `propertyKey` - the key of the property to check
 * `value` - the value to compare the property value against
 

@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.plugins</groupId>
     <artifactId>atlassian-connect-parent</artifactId>
-    <version>1.1.54-SNAPSHOT</version>
+    <version>1.1.55-SNAPSHOT</version>
     <organization>
         <name>Atlassian</name>
         <url>http://atlassian.com/</url>
@@ -148,8 +148,8 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
@@ -275,24 +275,6 @@
                 <groupId>com.atlassian.selenium</groupId>
                 <artifactId>atlassian-webdriver-core</artifactId>
                 <version>${atlassian.selenium.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.google.collections</groupId>
-                        <artifactId>google-collections</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.httpcomponents</groupId>
-                        <artifactId>httpclient</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.atlassian.browsers</groupId>
-                        <artifactId>atlassian-browsers-linux64</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-log4j12</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
@@ -771,7 +753,7 @@
         <atlassian.analytics.version>3.68</atlassian.analytics.version>
         <atlassian.applinks.version>4.2.4</atlassian.applinks.version>
         <atlassian.crowd.version>2.8.3</atlassian.crowd.version>
-        <atlassian.confluence.version>5.9.0-OD-60-008</atlassian.confluence.version>
+        <atlassian.confluence.version>5.9.1-OD-2015.39.1-0001</atlassian.confluence.version>
         <atlassian.event.version>2.3.5</atlassian.event.version>
         <atlassian.fugue.version>1.1</atlassian.fugue.version>
         <atlassian.healthcheck.version>2.0.4</atlassian.healthcheck.version>
@@ -790,7 +772,7 @@
         <atlassian.sal.version>2.10.0</atlassian.sal.version>
         <atlassian.selenium.version>2.2.1-m01-jira-1</atlassian.selenium.version>
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>
-        <atlassian.connect-js.version>3.1.6</atlassian.connect-js.version>
+        <atlassian.connect-js.version>3.1.7</atlassian.connect-js.version>
         <atlassian.connect-js.path>git+ssh://git@stash.atlassian.com:7997/ac/atlassian-connect-js.git#${atlassian.connect-js.version}</atlassian.connect-js.path>
         <atlassian.jira.projects.plugin.version>1.20.0-D20150217T051447</atlassian.jira.projects.plugin.version>
 
@@ -802,7 +784,6 @@
         <atlassian.webhooks.version>2.0.0</atlassian.webhooks.version>
         <atlassian.webhooks.api.version>1.0.6</atlassian.webhooks.api.version>
         <atlassian.jira.webhooks.version>1.2.5</atlassian.jira.webhooks.version>
-        <commons.httpclient.version>3.1-atlassian-2</commons.httpclient.version>
 
         <atlassian.webresource.version>3.1.0</atlassian.webresource.version>
         <atlassian.webfragments.version>3.0.0-m7</atlassian.webfragments.version>

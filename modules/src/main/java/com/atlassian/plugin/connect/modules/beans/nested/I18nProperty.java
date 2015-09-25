@@ -75,6 +75,10 @@ public class I18nProperty
         return new I18nProperty("", "");
     }
 
+    public String getKeyOrValue() {
+        return hasI18n() ? getI18n() : getValue();
+    }
+
     @Override
     public boolean equals(Object otherObj)
     {

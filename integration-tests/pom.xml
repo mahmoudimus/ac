@@ -5,7 +5,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.54-SNAPSHOT</version>
+        <version>1.1.55-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -150,10 +150,6 @@
                     <artifactId>httpclient</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.atlassian.browsers</groupId>
-                    <artifactId>atlassian-browsers-linux64</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-log4j12</artifactId>
                 </exclusion>
@@ -168,12 +164,6 @@
             <groupId>com.atlassian.test.ondemand</groupId>
             <version>1.0.14</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.atlassian.browsers</groupId>
-            <artifactId>atlassian-browsers-linux64</artifactId>
-            <version>2.4</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.atlassian.httpclient</groupId>
@@ -367,18 +357,6 @@
             <artifactId>ka-func-test-framework</artifactId>
             <version>6.2.23</version>
             <exclusions>
-                <exclusion>
-                    <groupId>com.atlassian.browsers</groupId>
-                    <artifactId>atlassian-browsers-windows</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.atlassian.browsers</groupId>
-                    <artifactId>atlassian-browsers-linux</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.atlassian.browsers</groupId>
-                    <artifactId>atlassian-browsers-linux64</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>org.apache.httpcomponents</groupId>
                     <artifactId>httpclient</artifactId>
