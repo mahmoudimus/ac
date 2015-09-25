@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.confluence.capabilities.beans;
 
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectJsonExamples;
+import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.testsupport.util.matcher.SameDeepPropertyValuesAs;
 import com.atlassian.plugin.connect.util.io.TestFileReader;
@@ -10,8 +10,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
-import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static uk.co.datumedge.hamcrest.json.SameJSONAs.sameJSONAs;
@@ -21,9 +19,9 @@ public class ContentPropertyModuleBeanTest
     @Test
     public void producesCorrectJSON() throws Exception
     {
-        ConnectAddonBean bean = createBean();
+        ContentPropertyModuleBean bean = createBean();
         Gson gson = ConnectModulesGsonFactory.getGson();
-        String json = gson.toJson(bean, ConnectAddonBean.class);
+        String json = gson.toJson(bean, ContentPropertyModuleBean.class);
         String expectedJson = readTestFile();
 
         assertThat(json, is(sameJSONAs(expectedJson)));
@@ -34,8 +32,8 @@ public class ContentPropertyModuleBeanTest
     {
         String json = readTestFile();
         Gson gson = ConnectModulesGsonFactory.getGson();
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
-        ConnectAddonBean bean = createBean();
+        ContentPropertyModuleBean deserializedBean = gson.fromJson(json, ContentPropertyModuleBean.class);
+        ContentPropertyModuleBean bean = createBean();
 
         assertThat(deserializedBean, SameDeepPropertyValuesAs.sameDeepPropertyValuesAs(bean));
     }
@@ -43,29 +41,21 @@ public class ContentPropertyModuleBeanTest
     @Test
     public void roundTrippingIsPreserving()
     {
-        ConnectAddonBean originalBean = createBean();
+        ContentPropertyModuleBean originalBean = createBean();
         Gson gson = ConnectModulesGsonFactory.getGson();
-        String json = gson.toJson(originalBean, ConnectAddonBean.class);
-        ConnectAddonBean deserializedBean = gson.fromJson(json, ConnectAddonBean.class);
+        String json = gson.toJson(originalBean, ContentPropertyModuleBean.class);
+        ContentPropertyModuleBean deserializedBean = gson.fromJson(json, ContentPropertyModuleBean.class);
 
         assertThat(deserializedBean, SameDeepPropertyValuesAs.sameDeepPropertyValuesAs(originalBean));
     }
 
-    private static ConnectAddonBean createBean()
+    private static ContentPropertyModuleBean createBean()
     {
-        return newConnectAddonBean()
-                .withName("My Add-On")
-                .withKey("my-add-on")
-                .withVersion("2.0")
-                .withBaseurl("http://www.example.com")
-                .withVendor(newVendorBean().withName("Atlassian").withUrl("http://www.atlassian.com").build())
-                .withModule("confluenceContentProperties", ConnectJsonExamples.createContentPropertyExampleBean())
-                .build();
+        return ConnectJsonExamples.createContentPropertyExampleBean();
     }
 
     private static String readTestFile() throws IOException
     {
-        return TestFileReader.readAddonTestFile("contentPropertyAddon.json");
+        return TestFileReader.readAddonTestFile("contentProperty.json");
     }
-
 }

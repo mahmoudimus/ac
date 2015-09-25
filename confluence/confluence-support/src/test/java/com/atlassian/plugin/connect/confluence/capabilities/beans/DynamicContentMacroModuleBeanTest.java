@@ -132,7 +132,7 @@ public class DynamicContentMacroModuleBeanTest
 
     private static String readTestFile() throws IOException
     {
-        return TestFileReader.readAddonTestFile("dynamicContentMacroAddon.json");
+        return TestFileReader.readAddonTestFile("dynamicContentMacro.json");
     }
 
 }

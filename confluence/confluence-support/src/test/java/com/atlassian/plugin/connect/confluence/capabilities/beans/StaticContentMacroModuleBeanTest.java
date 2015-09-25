@@ -108,7 +108,7 @@ public class StaticContentMacroModuleBeanTest
 
     private static String readTestFile() throws IOException
     {
-        return readAddonTestFile("staticContentMacroAddon.json");
+        return readAddonTestFile("staticContentMacro.json");
     }
 
 }
