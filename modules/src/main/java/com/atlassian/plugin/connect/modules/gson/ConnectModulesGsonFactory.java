@@ -24,7 +24,6 @@ public class ConnectModulesGsonFactory
         Type mapStringType = new TypeToken<Map<String, String>>() {}.getType();
 
         return new GsonBuilder()
-                .registerTypeAdapter(conditionalListType, new ConditionalBeanSerializer())
                 .registerTypeAdapterFactory(new ConditionalBeanTypeAdapterFactory(conditionalListType))
                 .registerTypeAdapter(LifecycleBean.class, new LifecycleSerializer())
                 .registerTypeHierarchyAdapter(List.class, new IgnoredEmptyCollectionSerializer())
