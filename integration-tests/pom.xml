@@ -39,7 +39,6 @@
                         <groupId>com.atlassian.maven.plugins</groupId>
                         <artifactId>maven-amps-plugin</artifactId>
                         <configuration>
-                            <containerId>tomcat7x</containerId>
                             <skipITs>true</skipITs>
                             <skipManifestValidation>true</skipManifestValidation>
                             <skipRestDocGeneration>true</skipRestDocGeneration>
