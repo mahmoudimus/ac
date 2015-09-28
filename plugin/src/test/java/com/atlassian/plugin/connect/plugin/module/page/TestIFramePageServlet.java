@@ -50,7 +50,7 @@ public class TestIFramePageServlet
     @Test
     public void testProductContext() throws Exception
     {
-        doGet(ImmutableMap.of("product-context", "{\"hello\":\"world\"}"));
+        doGet(ImmutableMap.of("product-context", new String[]{"{\"hello\":\"world\"}"}));
 
         Map<String, Object> productContext = getActualProductContext();
         assertEquals("world", productContext.get("hello"));
@@ -60,19 +60,19 @@ public class TestIFramePageServlet
     public void testArbitraryParams() throws Exception
     {
         contextParamNameToSymbolicName.put("foo.bar", "foo.bar");
-        doGet(ImmutableMap.of("foo.bar", "baz"));
+        doGet(ImmutableMap.of("foo.bar", new String[]{"baz"}));
 
         Map<String, Object> productContext = getActualProductContext();
         assertEquals("baz", productContext.get("foo.bar"));
     }
 
-    private void doGet(Map<String, String> requestParams) throws ServletException, IOException
+    private void doGet(Map<String, String[]> requestParams) throws ServletException, IOException
     {
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getParameterMap()).thenReturn(requestParams);
-        for (Map.Entry<String, String> requestParam : requestParams.entrySet())
+        for (Map.Entry<String, String[]> requestParam : requestParams.entrySet())
         {
-            when(request.getParameter(requestParam.getKey())).thenReturn(requestParam.getValue());
+            when(request.getParameter(requestParam.getKey())).thenReturn(requestParam.getValue()[0]);
         }
         HttpServletResponse response = mock(HttpServletResponse.class);
         servlet.doGet(request, response);
