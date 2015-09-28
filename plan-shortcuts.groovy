@@ -53,10 +53,10 @@ runTestsStage() {
         testJobsForConfluence(
                 mavenProductParameters: ''
         )
-            testJobsForJIRA(
+        testJobsForJIRA(
                 mavenProductParameters: ''
         )
-          job(
+        job(
                 key: 'UTJ7',
                 name: 'Unit Tests'
         ) {
@@ -246,7 +246,7 @@ testJobsForConfluence(['mavenProductParameters']) {
     )
 }
 
-    testJobsForJIRA(['mavenProductParameters']) {
+testJobsForJIRA(['mavenProductParameters']) {
     lifecycleTestJob(
             key: 'JLT',
             product: 'JIRA',
@@ -349,7 +349,7 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
     }
 }
 
-  wiredTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
+wiredTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
     job(
             key: '#key',
             name: '#product - Wired Tests'
@@ -373,7 +373,7 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
     }
 }
 
-  integrationTestJob(['key', 'product', 'testGroup', 'groupName', 'additionalMavenParameters']) {
+integrationTestJob(['key', 'product', 'testGroup', 'groupName', 'additionalMavenParameters']) {
       projectIntegrationTestJob(
               key: '#key',
               product: '#product',
