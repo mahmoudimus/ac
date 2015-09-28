@@ -18,25 +18,25 @@
                     "value": "a web item",
                     "i18n":"name.key"
                 },
-                    "conditions": [
-                        {
-                            "or": [
-                                {
-                                    "condition": "can_attach_file_to_issue",
-                                    "invert": false
-                                },
-                                {
-                                    "condition": "is_issue_assigned_to_current_user",
-                                    "invert": false
-                                }
-                            ]
-                        },
-                        {
-                            "condition": "user_is_logged_in",
-                            "invert": false
-                        }
-                    ],
-                    "type": "and"
+                "conditions": [
+                    {
+                        "or": [
+                            {
+                                "condition": "can_attach_file_to_issue",
+                                "invert": false
+                            },
+                            {
+                                "condition": "is_issue_assigned_to_current_user",
+                                "invert": false
+                            }
+                        ]
+                    },
+                    {
+                        "condition": "user_is_logged_in",
+                        "invert": false
+                    }
+                ],
+                "type": "and"
             }
         ]
     }
