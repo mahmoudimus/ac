@@ -769,7 +769,7 @@
         <atlassian.plugins.version>4.0.0-m020</atlassian.plugins.version>
         <applinks.api.version>5.0.0</applinks.api.version>
         <atlassian.rest.version>2.9.13</atlassian.rest.version>
-        <atlassian.sal.version>2.10.0</atlassian.sal.version>
+        <atlassian.sal.version>3.0.5</atlassian.sal.version>
         <atlassian.selenium.version>2.2.1-m01-jira-1</atlassian.selenium.version>
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>
         <atlassian.connect-js.version>3.1.7</atlassian.connect-js.version>
