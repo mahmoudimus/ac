@@ -63,7 +63,7 @@ public class TestIFramePageServlet
         doGet(ImmutableMap.of("foo.bar", new String[]{"baz"}));
 
         Map<String, Object> productContext = getActualProductContext();
-        assertEquals("baz", productContext.get("foo.bar"));
+        assertEquals("baz", ((String[])productContext.get("foo.bar"))[0]);
     }
 
     private void doGet(Map<String, String[]> requestParams) throws ServletException, IOException
