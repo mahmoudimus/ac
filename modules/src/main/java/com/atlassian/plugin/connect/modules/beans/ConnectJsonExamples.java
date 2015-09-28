@@ -2,34 +2,7 @@ package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
 import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexExtractionConfigurationBeanBuilder;
-import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
-import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
-import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
-import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
-import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean;
-import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFieldType;
-import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexKeyConfigurationBean;
-import com.atlassian.plugin.connect.modules.beans.nested.EmbeddedStaticContentMacroBean;
-import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexExtractionConfigurationBean;
-import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexKeyConfigurationBean;
-import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyIndexType;
-import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyType;
-import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
-import com.atlassian.plugin.connect.modules.beans.nested.ImagePlaceholderBean;
-import com.atlassian.plugin.connect.modules.beans.nested.LinkBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroBodyType;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
-import com.atlassian.plugin.connect.modules.beans.nested.MatcherBean;
-import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
-import com.atlassian.plugin.connect.modules.beans.nested.UISupportValueType;
-import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
-import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
-import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
+import com.atlassian.plugin.connect.modules.beans.nested.*;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.DialogOptions;
 import com.atlassian.plugin.connect.modules.beans.nested.dialog.InlineDialogOptions;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
@@ -59,6 +32,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean.
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
+import static java.util.Arrays.asList;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ConnectJsonExamples
@@ -613,19 +587,17 @@ public class ConnectJsonExamples
 
     private static String createCompositeConditionExample()
     {
-        CompositeConditionBean bean = newCompositeConditionBean()
-                .withType(CompositeConditionType.AND)
+        List<ConditionalBean> conditions = asList(
+            newCompositeConditionBean()
+                .withType(CompositeConditionType.OR)
                 .withConditions(
-                        newCompositeConditionBean()
-                                .withType(CompositeConditionType.OR)
-                                .withConditions(
-                                        newSingleConditionBean().withCondition("can_attach_file_to_issue").build(),
-                                        newSingleConditionBean().withCondition("is_issue_assigned_to_current_user").build()
-                                ).build()
-                        , newSingleConditionBean().withCondition("user_is_logged_in").build()
-                ).build();
+                        newSingleConditionBean().withCondition("can_attach_file_to_issue").build(),
+                        newSingleConditionBean().withCondition("is_issue_assigned_to_current_user").build()
+                ).build(),
+            newSingleConditionBean().withCondition("user_is_logged_in").build()
+        );
 
-        return gson.toJson(createJsonObject("conditions", bean));
+        return gson.toJson(createJsonObject("conditions", conditions));
     }
 
     private static String createUrlExample()

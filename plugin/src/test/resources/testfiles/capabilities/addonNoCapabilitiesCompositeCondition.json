@@ -35,8 +35,7 @@
                         "condition": "user_is_logged_in",
                         "invert": false
                     }
-                ],
-                "type": "and"
+                ]
             }
         ]
     }
