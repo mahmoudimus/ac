@@ -28,8 +28,8 @@
         <module>modules</module>
         <module>plugin</module>
         <module>confluence</module>
-        <module>jira</module>
-        <module>test-support-plugin</module>
+        <module>jira/jira-reference-plugin</module>
+        <module>tests/test-support-plugin</module>
         <module>docs</module>
         <module>crowd-support</module>
     </modules>
@@ -38,25 +38,27 @@
         <profile>
             <id>it</id>
             <modules>
-                <module>integration-tests</module>
+                <module>tests/integration-tests</module>
+                <module>jira/jira-integration-tests</module>
             </modules>
         </profile>
         <profile>
             <id>pluginLifecycle</id>
             <modules>
-                <module>plugin-lifecycle-tests</module>
+                <module>tests/plugin-lifecycle-tests</module>
             </modules>
          </profile>
          <profile>
             <id>freezer-release-profile</id>
             <modules>
-                <module>integration-tests</module>
+                <module>tests/integration-tests</module>
+                <module>jira/jira-integration-tests</module>
             </modules>
         </profile>
         <profile>
             <id>wired</id>
             <modules>
-                <module>wired-tests</module>
+                <module>tests/wired-tests</module>
             </modules>
         </profile>
     </profiles>
@@ -788,8 +790,8 @@
         <atlassian.webresource.version>3.1.0</atlassian.webresource.version>
         <atlassian.webfragments.version>3.0.0-m7</atlassian.webfragments.version>
         <atlassian.html.encoder.version>1.4</atlassian.html.encoder.version>
-        <quickreload.version>1.27</quickreload.version>
-        <frontend.plugin.version>0.0.22</frontend.plugin.version>
+        <quickreload.version>1.28</quickreload.version>
+        <frontend.plugin.version>0.0.25</frontend.plugin.version>
         <atlassian.jira.cross.compat.version>0.48</atlassian.jira.cross.compat.version>
 
         <!-- TEST STUFF -->
@@ -810,6 +812,7 @@
         <atlassian.jira.projects.version>1.20.0-D20150217T051447</atlassian.jira.projects.version>
         <functest.version>0.7.1</functest.version>
         <functestbasics.version>1.9.7</functestbasics.version>
+        <skipITs>true</skipITs>
 
         <!-- BUILD STUFF -->
         <commons.lang.version>2.6</commons.lang.version>

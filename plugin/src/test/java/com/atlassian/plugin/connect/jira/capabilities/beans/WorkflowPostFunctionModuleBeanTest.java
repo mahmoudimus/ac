@@ -74,7 +74,6 @@ public class WorkflowPostFunctionModuleBeanTest
     public void verifyAddOnMarshalling() throws Exception
     {
         String json = readTestFile();
-        System.out.println(json);
         Gson gson = ConnectModulesGsonFactory.getGson();
         WorkflowPostFunctionModuleBean addOn = gson.fromJson(json, WorkflowPostFunctionModuleBean.class);
 

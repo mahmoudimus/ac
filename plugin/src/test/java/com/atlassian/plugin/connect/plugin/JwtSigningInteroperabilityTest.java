@@ -234,7 +234,6 @@ public class JwtSigningInteroperabilityTest
 
     private void write(SigningTests tests) throws IOException
     {
-        System.out.println(tests.toJSON(new StringBuilder()));
         String filePath = System.getProperty("jwtinteroptest.file");
         if (null != filePath)
         {

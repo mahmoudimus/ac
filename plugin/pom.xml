@@ -636,7 +636,7 @@
                         <product>
                             <id>jira</id>
                             <version>${atlassian.jira.version}</version>
-                            <log4jProperties>${basedir}/../integration-tests/src/test/resources/log4j-jira.properties</log4jProperties>
+                            <log4jProperties>src/test/resources/log4j-jira.properties</log4jProperties>
                             <systemPropertyVariables>
                                 <product>jira</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
@@ -1213,7 +1213,6 @@
 
     <properties>
         <product>jira</product>
-        <skipITs>true</skipITs>
         <build.test.plugin>false</build.test.plugin>
         <devmode>true</devmode>
         <fastdev.version>2.4</fastdev.version>
