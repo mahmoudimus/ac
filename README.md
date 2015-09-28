@@ -63,6 +63,7 @@ Contributions are encouraged!
 * `docs` - a Node.js project for generating [the developer documentation](https://connect.atlassian.com)
 * `jira` - the parent of all JIRA-specific modules
 	* `jira-reference-plugin` - a reference implementation of some SPI interfaces for JIRA
+	* `jira-integration-tests` - jira-specific integration tests for the plugin
 * `modules` - bean representations of add-on JSON descriptor elements
 * `plugin` - groups the other modules and [`atlassian-connect-js`](https://bitbucket.org/atlassian/atlassian-connect-js) into a plugin
 * `tests` - the parent of all non-product-specific test modules
@@ -102,17 +103,15 @@ To run JavaScript unit tests:
 To run wired tests:
 
     mvn clean install
-    mvn -pl tests/wired-tests verify -Pwired
+    mvn -pl tests/wired-tests verify -am -Pwired
 
 To run plug-in lifecycle tests:
 
-    mvn clean install
-    mvn -pl tests/plugin-lifecycle-tests verify -PpluginLifecycle
+    mvn -pl tests/plugin-lifecycle-tests verify -am -PpluginLifecycle
 
 To run integration tests:
 
-    mvn clean install
-    mvn -pl tests/integration-tests verify -Pit [-DtestGroups=...]
+    mvn -pl tests/integration-tests verify -Pit -am [-DtestGroups=...]
 
 To run add-on descriptor validation tests:
 
