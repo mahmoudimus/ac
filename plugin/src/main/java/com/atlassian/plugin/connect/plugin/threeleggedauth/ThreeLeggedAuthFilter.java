@@ -129,6 +129,12 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
         started.set(true);
     }
 
+    @Override
+    public void onStop()
+    {
+        started.set(false);
+    }
+
     private String getAddonKeyFromRequest(ServletRequest servletRequest)
     {
         Object addOnKeyObject = servletRequest.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME);
