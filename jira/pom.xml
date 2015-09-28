@@ -13,6 +13,7 @@
 
     <modules>
         <module>jira-reference-plugin</module>
+        <module>jira-integration-tests</module>
     </modules>
 
 </project>
