@@ -139,6 +139,7 @@
                 <groupId>com.atlassian.maven.plugins</groupId>
                 <artifactId>maven-amps-plugin</artifactId>
                 <configuration>
+                    <containerId>tomcat7x</containerId>
                     <skipManifestValidation>true</skipManifestValidation>
                     <skipRestDocGeneration>true</skipRestDocGeneration>
                     <enableFastdev>false</enableFastdev>

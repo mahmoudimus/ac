@@ -39,6 +39,7 @@
                         <groupId>com.atlassian.maven.plugins</groupId>
                         <artifactId>maven-amps-plugin</artifactId>
                         <configuration>
+                            <containerId>tomcat7x</containerId>
                             <skipITs>true</skipITs>
                             <skipManifestValidation>true</skipManifestValidation>
                             <skipRestDocGeneration>true</skipRestDocGeneration>
@@ -68,6 +69,7 @@
                         <groupId>com.atlassian.maven.plugins</groupId>
                         <artifactId>maven-amps-plugin</artifactId>
                         <configuration>
+                            <containerId>tomcat7x</containerId>
                             <skipRestDocGeneration>true</skipRestDocGeneration>
                             <systemPropertyVariables>
                                 <mpac.username>${env.bamboo_mpac_staging_username}</mpac.username>

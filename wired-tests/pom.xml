@@ -39,6 +39,7 @@
                         <groupId>com.atlassian.maven.plugins</groupId>
                         <artifactId>maven-amps-plugin</artifactId>
                         <configuration>
+                            <containerId>tomcat7x</containerId>
                             <skipITs>true</skipITs>
                             <skipManifestValidation>true</skipManifestValidation>
                             <skipRestDocGeneration>true</skipRestDocGeneration>
@@ -204,6 +205,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <containerId>tomcat7x</containerId>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <skipRestDocGeneration>true</skipRestDocGeneration>
@@ -213,7 +215,6 @@
                             <artifactId>atlassian-connect-modules</artifactId>
                         </testBundleExclude>
                     </testBundleExcludes>
-
                     <systemPropertyVariables>
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                         <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>

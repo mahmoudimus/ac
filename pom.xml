@@ -186,6 +186,7 @@
                 <artifactId>maven-amps-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
+                    <containerId>tomcat7x</containerId>
                     <extractDependencies>true</extractDependencies>
                     <skipManifestValidation>true</skipManifestValidation>
                     <!-- disable as much as we can -->
@@ -769,7 +770,7 @@
         <atlassian.plugins.version>4.0.0-m020</atlassian.plugins.version>
         <applinks.api.version>5.0.0</applinks.api.version>
         <atlassian.rest.version>2.9.13</atlassian.rest.version>
-        <atlassian.sal.version>3.0.5</atlassian.sal.version>
+        <atlassian.sal.version>3.0.0</atlassian.sal.version>
         <atlassian.selenium.version>2.2.1-m01-jira-1</atlassian.selenium.version>
         <atlassian.templaterenderer.version>1.4.2.2</atlassian.templaterenderer.version>
         <atlassian.connect-js.version>3.1.7</atlassian.connect-js.version>
@@ -806,7 +807,7 @@
         <slf4j.version>1.6.4</slf4j.version>
         <spring.version>2.5.6</spring.version>
         <webdriver.browser>firefox</webdriver.browser>
-        <plugin.testrunner.version>1.2.0</plugin.testrunner.version>
+        <plugin.testrunner.version>1.2.3</plugin.testrunner.version>
         <atlassian.jira.projects.version>1.20.0-D20150217T051447</atlassian.jira.projects.version>
         <functest.version>0.7.1</functest.version>
         <functestbasics.version>1.9.7</functestbasics.version>
@@ -830,7 +831,7 @@
         <npm.version>1.4.3</npm.version>
         <node.download.root>https://nodejs.org/dist/</node.download.root>
         <npm.download.root>https://nodejs.org/dist/npm/</npm.download.root>
-        <blueprints.version>4.0.22</blueprints.version>
+        <blueprints.version>5.2.3</blueprints.version>
         <skipNpm>false</skipNpm>
         <clover.libversion>4.0.3</clover.libversion>
     </properties>
