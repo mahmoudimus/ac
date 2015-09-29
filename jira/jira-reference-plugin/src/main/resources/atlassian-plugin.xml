@@ -3,12 +3,6 @@
         <description>${project.description}</description>
         <version>${project.version}</version>
         <vendor name="${project.organization.name}" url="${project.organization.url}"/>
-        <bundle-instructions>
-            <Import-Package>
-                com.atlassian.plugin.connect*,
-                *;resolution:=optional
-            </Import-Package>
-        </bundle-instructions>
     </plugin-info>
 
     <connect-context-parameters-resolver key="test-connect-context-parameters-resolver">
