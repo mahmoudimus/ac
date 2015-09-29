@@ -2,7 +2,10 @@ package com.atlassian.plugin.connect.plugin.capabilities.gson;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
+import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.google.gson.Gson;
 import org.junit.Test;
@@ -16,6 +19,10 @@ import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestF
 import static com.google.common.collect.Sets.newHashSet;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.core.CombinableMatcher.both;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -48,6 +55,28 @@ public class ConnectAddonBeanMarshallingTest
         assertEquals(2, addOn.getLinks().size());
         assertEquals("http://www.example.com", addOn.getLinks().get("homepage"));
         assertEquals("http://www.example.com/capabilities", addOn.getLinks().get("self"));
+    }
+
+    /**
+     * Verifies basic marshalling and a composite condition copied from our docs.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void verifyCompositeCondition() throws Exception
+    {
+        String json = readAddonTestFile("addonNoCapabilitiesCompositeCondition.json");
+
+        Gson gson = ConnectModulesGsonFactory.getGson();
+        ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
+
+        assertThat(addOn.getModules().getWebItems(), contains(hasProperty("conditions", contains(
+                both(instanceOf(CompositeConditionBean.class)).and(hasProperty("conditions", contains(
+                        both(instanceOf(SingleConditionBean.class)).and(hasProperty("condition", is("can_attach_file_to_issue"))),
+                        both(instanceOf(SingleConditionBean.class)).and(hasProperty("condition", is("is_issue_assigned_to_current_user")))
+                    ))).and(hasProperty("type", is(CompositeConditionType.OR))),
+                both(instanceOf(SingleConditionBean.class)).and(hasProperty("condition", is("user_is_logged_in")))
+        ))));
     }
 
     /**

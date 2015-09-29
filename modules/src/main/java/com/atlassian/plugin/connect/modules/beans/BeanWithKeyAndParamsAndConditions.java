@@ -11,7 +11,7 @@ import static com.google.common.collect.Lists.newArrayList;
 public class BeanWithKeyAndParamsAndConditions extends BeanWithKeyAndParams
 {
     /**
-     * Conditions can be added to display only when all the given conditions are true.
+     * <a href="../../concepts/conditions.html">Conditions</a> can be added to display only when all the given conditions are true.
      */
     private List<ConditionalBean> conditions;
 
