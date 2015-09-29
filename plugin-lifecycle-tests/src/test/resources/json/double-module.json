@@ -11,12 +11,36 @@
         "type": "none"
     },
     "modules": {
-        "jiraTestModules": [
+        "webItems": [
             {
-                "key": "my-double-item-one"
+                "url": "/webitem",
+                "location": "atl.admin/menu",
+                "context": "addon",
+                "weight": 100,
+                "target": {
+                    "type": "page",
+                    "options": {}
+                },
+                "name": {
+                    "value": "My Web Item",
+                    "i18n": "my.webitem"
+                },
+                "key":"my-double-item-one"
             },
             {
-                "key": "my-double-item-two"
+                "url": "/webitem",
+                "location": "atl.admin/menu",
+                "context": "addon",
+                "weight": 100,
+                "target": {
+                    "type": "page",
+                    "options": {}
+                },
+                "name": {
+                    "value": "My Web Item",
+                    "i18n": "my.webitem"
+                },
+                "key":"my-double-item-one"
             }
         ]
     },
