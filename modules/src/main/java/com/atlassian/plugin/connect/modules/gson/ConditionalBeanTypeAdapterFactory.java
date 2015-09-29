@@ -68,14 +68,13 @@ public class ConditionalBeanTypeAdapterFactory implements TypeAdapterFactory
             }
         }
 
-        private void writeCompositeConditionBean(JsonWriter jsonWriter, CompositeConditionBean conditionalBean) throws IOException
+        private void writeCompositeConditionBean(JsonWriter jsonWriter, CompositeConditionBean compositeConditionBean) throws IOException
         {
-            CompositeConditionBean ccb = conditionalBean;
             jsonWriter.beginObject()
-                    .name(ccb.getType().toString().toLowerCase())
+                    .name(compositeConditionBean.getType().toString().toLowerCase())
                     .beginArray();
 
-            for (ConditionalBean subBean : ccb.getConditions())
+            for (ConditionalBean subBean : compositeConditionBean.getConditions())
             {
                 write(jsonWriter, subBean);
             }
