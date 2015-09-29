@@ -60,15 +60,15 @@ public class ConditionalBeanTypeAdapterFactory implements TypeAdapterFactory
         {
             if (SingleConditionBean.class.isAssignableFrom(conditionalBean.getClass()))
             {
-                writeSingleConditionBean(jsonWriter, (SingleConditionBean) conditionalBean);
+                writeConditionBean(jsonWriter, (SingleConditionBean) conditionalBean);
             }
             else if (CompositeConditionBean.class.isAssignableFrom(conditionalBean.getClass()))
             {
-                writeCompositeConditionBean(jsonWriter, (CompositeConditionBean) conditionalBean);
+                writeConditionBean(jsonWriter, (CompositeConditionBean) conditionalBean);
             }
         }
 
-        private void writeCompositeConditionBean(JsonWriter jsonWriter, CompositeConditionBean compositeConditionBean) throws IOException
+        private void writeConditionBean(JsonWriter jsonWriter, CompositeConditionBean compositeConditionBean) throws IOException
         {
             jsonWriter.beginObject()
                     .name(compositeConditionBean.getType().toString().toLowerCase())
@@ -83,7 +83,7 @@ public class ConditionalBeanTypeAdapterFactory implements TypeAdapterFactory
                     .endObject();
         }
 
-        private void writeSingleConditionBean(JsonWriter jsonWriter, SingleConditionBean singleConditionBean) throws IOException
+        private void writeConditionBean(JsonWriter jsonWriter, SingleConditionBean singleConditionBean) throws IOException
         {
             final Map<String, String> params = singleConditionBean.getParams();
             jsonWriter.beginObject()
