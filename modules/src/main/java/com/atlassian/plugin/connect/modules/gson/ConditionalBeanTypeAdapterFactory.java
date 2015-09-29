@@ -84,9 +84,8 @@ public class ConditionalBeanTypeAdapterFactory implements TypeAdapterFactory
                     .endObject();
         }
 
-        private void writeSingleConditionBean(JsonWriter jsonWriter, SingleConditionBean conditionalBean) throws IOException
+        private void writeSingleConditionBean(JsonWriter jsonWriter, SingleConditionBean singleConditionBean) throws IOException
         {
-            SingleConditionBean singleConditionBean = conditionalBean;
             final Map<String, String> params = singleConditionBean.getParams();
             jsonWriter.beginObject()
                     .name("condition").value(singleConditionBean.getCondition())
