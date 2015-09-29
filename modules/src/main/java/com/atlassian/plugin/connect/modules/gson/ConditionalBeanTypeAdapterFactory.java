@@ -101,6 +101,7 @@ public class ConditionalBeanTypeAdapterFactory implements TypeAdapterFactory
 
         private void writeParams(JsonWriter jsonWriter, Map<String, String> params) throws IOException
         {
+            jsonWriter.name("params");
             jsonWriter.beginObject();
 
             for (Map.Entry<String, String> param : params.entrySet())
