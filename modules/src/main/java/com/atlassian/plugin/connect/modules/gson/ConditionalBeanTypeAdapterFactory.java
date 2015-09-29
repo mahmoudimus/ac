@@ -148,7 +148,15 @@ public class ConditionalBeanTypeAdapterFactory implements TypeAdapterFactory
                 }
                 else if ("invert".equals(nextPropertyName))
                 {
-                    invert = jsonReader.nextBoolean();
+                    // the strings "true" and "false" have historically been successfully parsed
+                    if (jsonReader.peek().equals(JsonToken.STRING))
+                    {
+                        invert = Boolean.valueOf(jsonReader.nextString());
+                    }
+                    else
+                    {
+                        invert = jsonReader.nextBoolean();
+                    }
                 }
                 else if ("params".equals(nextPropertyName))
                 {
