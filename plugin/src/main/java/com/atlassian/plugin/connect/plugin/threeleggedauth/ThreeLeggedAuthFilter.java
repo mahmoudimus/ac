@@ -228,13 +228,13 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
                 // a valid grant must exist
                 if (threeLeggedAuthService.hasGrant(userProfile.getUserKey(), addOnBean))
                 {
-                    log.debug("Allowing add-on '{}' to impersonate user '{}' because a user-agent grant exists.", addOnBean.getKey(), subject);
+                    log.info("Allowing add-on '{}' to impersonate user '{}' because a user-agent grant exists.", addOnBean.getKey(), subject);
                     return userProfile;
                 }
                 else
                 {
                     String externallyVisibleMessage = String.format(MSG_FORMAT_NOT_ALLOWING_IMPERSONATION, addOnBean.getKey(), subject);
-                    log.info("{} because this user has not granted user-agent rights to this add-on, or the grant has expired.", externallyVisibleMessage);
+                    log.debug("{} because this user has not granted user-agent rights to this add-on, or the grant has expired.", externallyVisibleMessage);
                     fail(request, response, externallyVisibleMessage, HttpServletResponse.SC_FORBIDDEN);
                     throw new InvalidSubjectException(subject);
                 }
