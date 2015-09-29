@@ -134,7 +134,7 @@ runTestsStage() {
             setupVncTask()
             mavenTestTask(
                     description: 'Run Add-On Descriptor Validation Tests',
-                    goal: '-pl plugin test -DdescriptorValidation=true -DskipTests',
+                    goal: '-pl plugin test -am -DdescriptorValidation=true -DskipTests',
                     environmentVariables: 'DISPLAY=":20" MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m" CHROME_BIN=/usr/bin/google-chrome',
             )
             artifactDefinition(
@@ -286,40 +286,42 @@ testJobsForJIRA(['mavenProductParameters']) {
             groupName: 'Common Lifecycle',
             additionalMavenParameters: '#mavenProductParameters'
     )
-    integrationTestJob(
+    jiraIntegrationTestJob(
             key: 'JITM',
             product: 'JIRA',
             testGroup: 'jira-misc',
             groupName: 'Misc',
             additionalMavenParameters: '#mavenProductParameters'
     )
-    integrationTestJob(
+    jiraIntegrationTestJob(
             key: 'JITI',
             product: 'JIRA',
             testGroup: 'jira-iframe',
             groupName: 'iframe',
             additionalMavenParameters: '#mavenProductParameters'
     )
-    integrationTestJob(
+    jiraIntegrationTestJob(
             key: 'JITT',
             product: 'JIRA',
             testGroup: 'jira-item',
             groupName: 'Item',
             additionalMavenParameters: '#mavenProductParameters'
     )
-    integrationTestJob(
+    projectIntegrationTestJob(
             key: 'JITJ',
             product: 'JIRA',
             testGroup: 'jira-jsapi',
             groupName: 'JS API FF',
-            additionalMavenParameters: '#mavenProductParameters'
+            additionalMavenParameters: '#mavenProductParameters',
+            project: 'tests/integration-tests,jira/jira-integration-tests'
     )
-    integrationTestJob(
+    projectIntegrationTestJob(
             key: 'JITJC',
             product: 'JIRA',
             testGroup: 'jira-jsapi',
             groupName: 'JS API Chrome',
-            additionalMavenParameters: '#mavenProductParameters -Dwebdriver.browser=chrome'
+            additionalMavenParameters: '#mavenProductParameters -Dwebdriver.browser=chrome',
+            project: 'tests/integration-tests,jira/jira-integration-tests'
     )
 }
 
@@ -339,7 +341,7 @@ lifecycleTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
         mavenInstallTask()
         mavenTestTask(
                 description: 'Run Wired Lifecycle Tests for #product',
-                goal: 'clover2:setup verify -pl plugin-lifecycle-tests -PpluginLifecycle,clover -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters clover2:aggregate clover2:clover',
+                goal: 'clover2:setup verify -pl tests/plugin-lifecycle-tests -PpluginLifecycle,clover -am -DtestGroups=#testGroup -DskipUnits -DskipITs=false #additionalMavenParameters clover2:aggregate clover2:clover',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
         )
         cloverReportArtifact(
@@ -363,7 +365,7 @@ wiredTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
         mavenInstallTask()
         mavenTestTask(
                 description: 'Run Wired Tests for #product',
-                goal: 'clover2:setup verify -pl wired-tests -Pwired,clover -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters clover2:aggregate clover2:clover',
+                goal: 'clover2:setup verify -pl tests/wired-tests -Pwired,clover -am -DtestGroups=#testGroup -DskipITs=false -DskipUnits #additionalMavenParameters clover2:aggregate clover2:clover',
                 environmentVariables: 'MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m"',
         )
         cloverReportArtifact(
@@ -378,6 +380,28 @@ wiredTestJob(['key', 'product', 'testGroup', 'additionalMavenParameters']) {
 }
 
 integrationTestJob(['key', 'product', 'testGroup', 'groupName', 'additionalMavenParameters']) {
+      projectIntegrationTestJob(
+              key: '#key',
+              product: '#product',
+              testGroup: '#testGroup',
+              groupName: '#groupName',
+              additionalMavenParameters: '#additionalMavenParameters',
+              project: 'tests/integration-tests'
+      )
+  }
+
+jiraIntegrationTestJob(['key', 'product', 'testGroup', 'groupName', 'additionalMavenParameters']) {
+    projectIntegrationTestJob(
+            key: '#key',
+            product: '#product',
+            testGroup: '#testGroup',
+            groupName: '#groupName',
+            additionalMavenParameters: '#additionalMavenParameters',
+            project: 'jira/jira-integration-tests'
+    )
+}
+
+projectIntegrationTestJob(['key', 'product', 'testGroup', 'groupName', 'additionalMavenParameters', 'project']) {
     job(
             key: '#key',
             name: '#product - IT #groupName'
@@ -388,10 +412,12 @@ integrationTestJob(['key', 'product', 'testGroup', 'groupName', 'additionalMaven
         mavenInstallTask()
         mavenTestTask(
                 description: 'Run Integration Tests for #product #groupName',
-                goal: 'verify -pl integration-tests -Pit -DtestGroups=#testGroup -DskipUnits #additionalMavenParameters',
+                goal: 'verify -pl #project -Pit -am -DtestGroups=#testGroup -DskipUnits -DskipITs=false #additionalMavenParameters',
                 environmentVariables: 'DISPLAY=":20" MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=256m" CHROME_BIN=/usr/bin/google-chrome',
         )
-        defineWebDriverOutputArtefact()
+        defineWebDriverOutputArtefact(
+                project: '#project'
+        )
     }
 }
 
@@ -560,10 +586,10 @@ displayEnv
     )
 }
 
-defineWebDriverOutputArtefact() {
+defineWebDriverOutputArtefact(['project']) {
     artifactDefinition(
             name: 'HTML dumps and screenshots',
-            location: 'integration-tests/target/webdriverTests',
+            location: '#project/target/webdriverTests',
             pattern: '**/*.*',
             shared: 'false'
     )

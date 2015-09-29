@@ -13,13 +13,21 @@ From the repository root, to build the project and set up dependencies for docum
 
     mvn clean install pre-site -DskipTests
 
-From this directory, to regenerate the documentation and start a web server at http://localhost:9000 with automatic change detection:
+To regenerate the documentation and start a web server at http://localhost:9000 with automatic change detection:
 
+    cd docs
+    npm i
     npm run-script start
 
 To regenerate static documentation:
 
+    cd docs
+    npm i
     npm run-script build
+
+If you are in the `docs` directory and your npm commands result in `Error: ``libsass`` bindings not found. Try reinstalling ``node-sass``?` then run:
+
+    npm rebuild node-sass
 
 ### Updating the documentation
 

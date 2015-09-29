@@ -4,7 +4,6 @@ import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataB
 import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexExtractionConfigurationBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
-import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFieldType;
@@ -59,6 +58,7 @@ import static com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean.
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
+import static java.util.Arrays.asList;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ConnectJsonExamples
@@ -613,19 +613,17 @@ public class ConnectJsonExamples
 
     private static String createCompositeConditionExample()
     {
-        CompositeConditionBean bean = newCompositeConditionBean()
-                .withType(CompositeConditionType.AND)
+        List<ConditionalBean> conditions = asList(
+            newCompositeConditionBean()
+                .withType(CompositeConditionType.OR)
                 .withConditions(
-                        newCompositeConditionBean()
-                                .withType(CompositeConditionType.OR)
-                                .withConditions(
-                                        newSingleConditionBean().withCondition("can_attach_file_to_issue").build(),
-                                        newSingleConditionBean().withCondition("is_issue_assigned_to_current_user").build()
-                                ).build()
-                        , newSingleConditionBean().withCondition("user_is_logged_in").build()
-                ).build();
+                        newSingleConditionBean().withCondition("can_attach_file_to_issue").build(),
+                        newSingleConditionBean().withCondition("is_issue_assigned_to_current_user").build()
+                ).build(),
+            newSingleConditionBean().withCondition("user_is_logged_in").build()
+        );
 
-        return gson.toJson(createJsonObject("conditions", bean));
+        return gson.toJson(createJsonObject("conditions", conditions));
     }
 
     private static String createUrlExample()
