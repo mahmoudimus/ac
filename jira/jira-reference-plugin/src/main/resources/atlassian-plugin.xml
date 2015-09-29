@@ -3,6 +3,12 @@
         <description>${project.description}</description>
         <version>${project.version}</version>
         <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+        <bundle-instructions>
+            <Import-Package>
+                com.atlassian.plugin.connect*,
+                *;resolution:=optional
+            </Import-Package>
+        </bundle-instructions>
     </plugin-info>
 
     <connect-context-parameters-resolver key="test-connect-context-parameters-resolver">
@@ -13,6 +19,11 @@
             <validator class="com.atlassian.plugin.connect.TestJiraContextParametersValidator"/>
         </validators>
     </connect-context-parameters-resolver>
+    
+    <component-import key="iFrameRenderStrategyBuilderFactory" interface="com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory"/>
+    <component-import key="iFrameRenderStrategyRegistry" interface="com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry"/>
+    <component-import key="webItemModuleDescriptorFactory" interface="com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory"/>
+
 
     <connect-module-provider
             key="testJiraModules"

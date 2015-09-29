@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.module.webitem.ProductSpecificWebItemModuleDescriptorFactory;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.google.common.base.Joiner;
@@ -32,6 +33,7 @@ import static com.google.common.collect.Lists.newArrayList;
 
 
 @Component
+@ExportAsDevService
 public class WebItemModuleDescriptorFactoryImpl implements WebItemModuleDescriptorFactory
 {
     private static final Logger log = LoggerFactory.getLogger(WebItemModuleDescriptorFactoryImpl.class);

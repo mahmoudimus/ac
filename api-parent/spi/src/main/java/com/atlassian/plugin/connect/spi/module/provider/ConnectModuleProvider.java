@@ -10,7 +10,7 @@ import java.util.List;
 public interface ConnectModuleProvider<T>
 {
     String getSchemaPrefix();
-    
+
     ConnectModuleMeta getMeta();
 
     List<T> validate(String modules, Class<T> type, Plugin plugin) throws ConnectModuleValidationException;

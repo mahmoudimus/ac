@@ -1,18 +1,26 @@
 package com.atlassian.plugin.connect;
 
-import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
+import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
-import com.atlassian.plugin.connect.spi.module.provider.AbstractConnectModuleProvider;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.capabilities.provider.AbstractConnectPageModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleValidationException;
-import com.google.common.collect.ImmutableList;
-import com.google.gson.JsonElement;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-public class JiraModuleProviderForTests extends AbstractConnectModuleProvider<JiraModuleBeanForTests>
+@Component
+public class JiraModuleProviderForTests extends AbstractConnectPageModuleProvider
 {
+    @Autowired
+    public JiraModuleProviderForTests(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, WebItemModuleDescriptorFactory webItemModuleDescriptorFactory)
+    {
+        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory);
+    }
 
     @Override
     public String getSchemaPrefix()
@@ -40,25 +48,37 @@ public class JiraModuleProviderForTests extends AbstractConnectModuleProvider<Ji
             @Override
             public Class getBeanClass()
             {
-                return JiraModuleBeanForTests.class;
+                return ConnectPageModuleBean.class;
             }
         };
     }
-
-    @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin plugin, List<JiraModuleBeanForTests> beans)
-    {
-        return ImmutableList.of((ModuleDescriptor)new JiraModuleDescriptorForTests());
-    }
     
     @Override
-    public List<JiraModuleBeanForTests> validate(String rawModules, Class<JiraModuleBeanForTests> type, Plugin plugin) throws ConnectModuleValidationException
+    public List<ConnectPageModuleBean> validate(String rawModules, Class<ConnectPageModuleBean> type, Plugin plugin) throws ConnectModuleValidationException
     {
-        List<JiraModuleBeanForTests> beans = super.validate(rawModules, type, plugin);
-        if(beans.get(0).getKey().equals("bad"))
+        List<ConnectPageModuleBean> beans = super.validate(rawModules, type, plugin);
+        if(beans.get(0).getRawKey().equals("bad"))
         {
             throw new ConnectModuleValidationException(getMeta().getDescriptorKey(), "Key is bad!");
         }
         return beans;
+    }
+
+    @Override
+    protected String getDecorator()
+    {
+        return "atl.general";
+    }
+
+    @Override
+    protected String getDefaultSection()
+    {
+        return "system.top.navigation.bar";
+    }
+
+    @Override
+    protected int getDefaultWeight()
+    {
+        return 0;
     }
 }

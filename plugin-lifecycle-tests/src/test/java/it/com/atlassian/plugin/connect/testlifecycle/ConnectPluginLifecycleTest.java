@@ -254,6 +254,14 @@ public class ConnectPluginLifecycleTest
         assertStateAndModuleCount(doubleModuleAddon, PluginState.ENABLED, 2, "second check");
     }
 
+    @Test
+    public void installConnectWithPluginProvidedModuleSucceeds() throws Exception
+    {
+        theConnectPlugin = installConnectPlugin();
+        singleModuleAddon = installAndEnableAddon(SINGLE_MODULE_ADDON);
+//        assertStateAndModuleCount();
+    }
+
     private Plugin installConnectPlugin() throws IOException
     {
         return testPluginInstaller.installPlugin(getConnectPluginJar());

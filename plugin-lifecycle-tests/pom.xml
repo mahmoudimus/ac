@@ -180,6 +180,11 @@
                                     <artifactId>json-schema-validator-atlassian-bundle</artifactId>
                                     <version>${atlassian.json.schema.validator.version}</version>
                                 </pluginArtifact>
+                                <pluginArtifact>
+                                    <groupId>com.atlassian.plugins</groupId>
+                                    <artifactId>atlassian-connect-jira-reference-plugin</artifactId>
+                                    <version>${project.version}</version>
+                                </pluginArtifact>
                             </pluginArtifacts>
 
                             <bundledArtifacts>
