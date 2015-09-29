@@ -136,10 +136,12 @@ public class ConditionalBeanTypeAdapterFactory implements TypeAdapterFactory
                 else if ("and".equals(nextPropertyName))
                 {
                     compositeConditionType = CompositeConditionType.AND;
+                    compositeBeans = gson.fromJson(jsonReader, conditionalListType);
                 }
                 else if ("or".equals(nextPropertyName))
                 {
                     compositeConditionType = CompositeConditionType.OR;
+                    compositeBeans = gson.fromJson(jsonReader, conditionalListType);
                 }
                 else if ("condition".equals(nextPropertyName))
                 {
