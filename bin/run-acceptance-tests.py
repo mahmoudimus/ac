@@ -10,6 +10,9 @@ RUNNER_URL = 'git@bitbucket.org:atlassian/acceptance-tests-runner.git'
 def parseArgs(args):
     parsed = {}
 
+    if '-h' in args:
+        return usage()
+
     parsed['url'] = args.pop()
     if parsed['url'][0:8].lower() != 'https://':
         return usage()
@@ -98,6 +101,8 @@ def usage():
         {file} [-a /path/to/at/runner] [ -s | --skip-build ] [ -n | --npm ] -p <mpac-password> <https://freezer.instance.url>
 
         OPTIONS:
+
+        -h              Print the help (this)
 
         -p              The mpac staging credentials for atlassian-connect-bot@atlassian.com, needed to install the test add-on
 
