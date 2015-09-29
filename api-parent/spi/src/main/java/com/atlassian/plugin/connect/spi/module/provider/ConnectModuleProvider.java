@@ -2,16 +2,17 @@ package com.atlassian.plugin.connect.spi.module.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.google.gson.JsonElement;
 
 import java.util.List;
 
-public interface ConnectModuleProvider<T>
+public interface ConnectModuleProvider<T extends BaseModuleBean>
 {
     String getSchemaPrefix();
 
-    ConnectModuleMeta getMeta();
+    ConnectModuleMeta<T> getMeta();
 
     List<T> validate(String modules, Class<T> type, Plugin plugin) throws ConnectModuleValidationException;
 

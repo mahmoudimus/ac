@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.spi.module.provider;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.modules.schema.DescriptorValidationResult;
 import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
@@ -15,7 +16,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractConnectModuleProvider<T> implements ConnectModuleProvider<T>
+public abstract class AbstractConnectModuleProvider<T extends BaseModuleBean> implements ConnectModuleProvider<T>
 {
     @Override
     public List<T> validate(String rawModules, Class<T> type, Plugin plugin) throws ConnectModuleValidationException
