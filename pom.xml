@@ -189,8 +189,6 @@
                 <extensions>true</extensions>
                 <configuration>
                     <containerId>tomcat7x</containerId>
-                    <productVersion>${atlassian.confluence.version}</productVersion>
-                    <productDataVersion>${atlassian.confluence.version}</productDataVersion>
                     <extractDependencies>true</extractDependencies>
                     <skipManifestValidation>true</skipManifestValidation>
                     <!-- disable as much as we can -->
