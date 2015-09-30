@@ -548,6 +548,8 @@
                 <configuration>
                     <containerId>tomcat7x</containerId>
                     <enableDevToolbox>false</enableDevToolbox>
+                    <productVersion>${atlassian.confluence.version}</productVersion>
+                    <productDataVersion>${atlassian.confluence.version}</productDataVersion>
                     <enableFastdev>false</enableFastdev>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
@@ -693,6 +695,13 @@
                                     <version>${atlassian.jira.projects.plugin.version}</version>
                                 </pluginArtifact>
                             </pluginArtifacts>
+                            <bundledArtifacts>
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.upm</groupId>
+                                    <artifactId>atlassian-universal-plugin-manager-javascript-tests</artifactId>
+                                    <version>${atlassian.upm.version}</version>
+                                </bundledArtifact>
+                            </bundledArtifacts>
                         </product>
                         <product>
                             <id>confluence</id>
@@ -750,6 +759,11 @@
                                     <groupId>com.atlassian.devrel</groupId>
                                     <artifactId>developer-toolbox-plugin</artifactId>
                                     <version>${toolbox.version}</version>
+                                </bundledArtifact>
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.upm</groupId>
+                                    <artifactId>atlassian-universal-plugin-manager-javascript-tests</artifactId>
+                                    <version>${atlassian.upm.version}</version>
                                 </bundledArtifact>
                             </bundledArtifacts>
                         </product>
