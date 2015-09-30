@@ -20,11 +20,11 @@ public class ConnectModulesGsonFactory
 {
     public static GsonBuilder getGsonBuilder()
     {
-        Type conditionalType = new TypeToken<List<ConditionalBean>>() {}.getType();
+        Type conditionalListType = new TypeToken<List<ConditionalBean>>() {}.getType();
         Type mapStringType = new TypeToken<Map<String, String>>() {}.getType();
 
         return new GsonBuilder()
-                .registerTypeAdapter(conditionalType, new ConditionalBeanSerializer())
+                .registerTypeAdapterFactory(new ConditionalBeanTypeAdapterFactory(conditionalListType))
                 .registerTypeAdapter(LifecycleBean.class, new LifecycleSerializer())
                 .registerTypeHierarchyAdapter(List.class, new IgnoredEmptyCollectionSerializer())
                 .registerTypeAdapter(mapStringType, new IgnoredEmptyMapSerializer())
