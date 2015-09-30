@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class StaticModuleBeanDeserializer extends ModuleBeanDeserializer
+public class StaticAvailableModuleTypes implements AvailableModuleTypes
 {    
     private final Set<ConnectModuleMeta> moduleMetas;
     
-    public StaticModuleBeanDeserializer(ConnectModuleMeta... moduleMetas)
+    public StaticAvailableModuleTypes(ConnectModuleMeta... moduleMetas)
     {
         this.moduleMetas = new HashSet<>(Arrays.asList(moduleMetas));
     }
@@ -34,7 +34,7 @@ public class StaticModuleBeanDeserializer extends ModuleBeanDeserializer
     }
 
     @Override
-    protected List<ModuleBean> deserializeModulesOfSameType(Map.Entry<String, JsonElement> modules)
+    public List<ModuleBean> deserializeModulesOfSameType(Map.Entry<String, JsonElement> modules)
     {
         Gson deserializer = ConnectModulesGsonFactory.getGson();
         List<ModuleBean> beans = new ArrayList<>();
@@ -57,7 +57,7 @@ public class StaticModuleBeanDeserializer extends ModuleBeanDeserializer
         
     }
     
-    private ConnectModuleMeta getModuleMeta(String type)
+    public ConnectModuleMeta getModuleMeta(String type)
     {
         for (ConnectModuleMeta moduleMeta : moduleMetas)
         {
@@ -70,13 +70,13 @@ public class StaticModuleBeanDeserializer extends ModuleBeanDeserializer
     }
 
     @Override
-    protected boolean validModuleType(String moduleType)
+    public boolean validModuleType(String moduleType)
     {
         return getModuleMeta(moduleType) != null;
     }
     
     @Override
-    protected boolean multipleModulesAllowed(String moduleType)
+    public boolean multipleModulesAllowed(String moduleType)
     {
         return getModuleMeta(moduleType).multipleModulesAllowed();
     }

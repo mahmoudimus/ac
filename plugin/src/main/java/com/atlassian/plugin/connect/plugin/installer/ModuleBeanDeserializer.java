@@ -18,9 +18,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class ModuleBeanDeserializer implements JsonDeserializer<Map<String, Supplier<List<ModuleBean>>>>, JsonSerializer<Map<String, Supplier<List<ModuleBean>>>>
+public class ModuleBeanDeserializer implements JsonDeserializer<Map<String, Supplier<List<ModuleBean>>>>, JsonSerializer<Map<String, Supplier<List<ModuleBean>>>>
 {
-
+    private AvailableModuleTypes providers;
+    
+    public ModuleBeanDeserializer(AvailableModuleTypes providers)
+    {
+        this.providers = providers;
+    }
+    
+    
     @Override
     public Map<String, Supplier<List<ModuleBean>>> deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException
     {
@@ -28,25 +35,20 @@ public abstract class ModuleBeanDeserializer implements JsonDeserializer<Map<Str
 
         for (final Map.Entry<String, JsonElement> rawModuleEntry : json.getAsJsonObject().entrySet())
         {
-            if (!validModuleType(rawModuleEntry.getKey()))
+            if (!providers.validModuleType(rawModuleEntry.getKey()))
             {
                 // TODO pass an i18n key here?
                 throw new InvalidDescriptorException("Module type " + rawModuleEntry.getKey() + " listed in the descriptor is not valid.");
             }
 
-            Supplier<List<ModuleBean>> moduleBeanSupplier = Suppliers.memoize(new Supplier<List<ModuleBean>>()
-            {
-                @Override
-                public List<ModuleBean> get()
+            Supplier<List<ModuleBean>> moduleBeanSupplier = Suppliers.memoize(() -> {
+                try
                 {
-                    try
-                    {
-                        return deserializeModulesOfSameType(rawModuleEntry);
-                    }
-                    catch (ConnectModuleValidationException e)
-                    {
-                        throw new ModuleDeserializationException(e.getMessage());
-                    }
+                    return providers.deserializeModulesOfSameType(rawModuleEntry);
+                }
+                catch (ConnectModuleValidationException e)
+                {
+                    throw new ModuleDeserializationException(e.getMessage());
                 }
             });
             moduleBeanListSuppliers.put(rawModuleEntry.getKey(), moduleBeanSupplier);
@@ -63,7 +65,7 @@ public abstract class ModuleBeanDeserializer implements JsonDeserializer<Map<Str
         {
             List<ModuleBean> moduleBeans = entry.getValue().get();
             JsonElement element;
-            if (multipleModulesAllowed(entry.getKey()))
+            if (providers.multipleModulesAllowed(entry.getKey()))
             {
                 element = context.serialize(moduleBeans);
             }
@@ -75,10 +77,5 @@ public abstract class ModuleBeanDeserializer implements JsonDeserializer<Map<Str
         }
         return object;
     }
-    
-    protected abstract boolean validModuleType(String moduleType);
-    
-    protected abstract boolean multipleModulesAllowed(String moduleType);
-    
-    protected abstract List<ModuleBean> deserializeModulesOfSameType(Map.Entry<String, JsonElement> modules) throws ConnectModuleValidationException;
+
 }

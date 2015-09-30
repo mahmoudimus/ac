@@ -15,7 +15,8 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.modules.gson.DefaultModuleSerializer;
-import com.atlassian.plugin.connect.plugin.installer.StaticModuleBeanDeserializer;
+import com.atlassian.plugin.connect.plugin.installer.ModuleBeanDeserializer;
+import com.atlassian.plugin.connect.plugin.installer.StaticAvailableModuleTypes;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.Environment;
 import com.atlassian.plugin.connect.test.HttpUtils;
@@ -84,7 +85,7 @@ public class ConnectRunner
     private ToggleableConditionServlet toggleableConditionServlet;
     private SignedRequestHandler signedRequestHandler;
     private ConnectAddonBean addon;
-    private StaticModuleBeanDeserializer serializer = new StaticModuleBeanDeserializer();
+    private StaticAvailableModuleTypes moduleTypes = new StaticAvailableModuleTypes();
 
     private int port;
     private Server server;
@@ -259,7 +260,7 @@ public class ConnectRunner
     
     public ConnectRunner addModuleMeta(ConnectModuleMeta meta)
     {
-        serializer.addModuleMeta(meta);
+        moduleTypes.addModuleMeta(meta);
         return this;
     }
 
@@ -485,9 +486,9 @@ public class ConnectRunner
         private Gson getGson()
         {
             GsonBuilder builder = ConnectModulesGsonFactory.getGsonBuilder();
-            if (serializer.hasMetas())
+            if (moduleTypes.hasMetas())
             {
-                builder = builder.registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), serializer);
+                builder = builder.registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), new ModuleBeanDeserializer(moduleTypes));
             }
             else
             {

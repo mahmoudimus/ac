@@ -121,8 +121,8 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
     {
         try
         {
-            JsonDeserializer moduleDeserializer = new PluginAwareModuleBeanDeserializer(pluginAccessor);
-            return ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(jsonDescriptor, i18nCollector, moduleDeserializer);
+            JsonDeserializer deserializer = new ModuleBeanDeserializer(new PluginAvailableModuleTypes(pluginAccessor));
+            return ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(jsonDescriptor, i18nCollector, deserializer);
         }
         catch (Exception e)
         {

@@ -10,7 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.EntityPropertyType;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.installer.ModuleBeanDeserializer;
-import com.atlassian.plugin.connect.plugin.installer.StaticModuleBeanDeserializer;
+import com.atlassian.plugin.connect.plugin.installer.StaticAvailableModuleTypes;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import org.junit.BeforeClass;
@@ -74,7 +74,7 @@ public class EntityPropertyIndexDocumentModuleBeanTest
     public void addOnWithEntityPropertyParsed() throws IOException
     {
         ConnectAddonBean bean = createAddOnBean();
-        ModuleBeanDeserializer deserializer = new StaticModuleBeanDeserializer(new EntityPropertyModuleMeta());
+        ModuleBeanDeserializer deserializer = new ModuleBeanDeserializer(new StaticAvailableModuleTypes(new EntityPropertyModuleMeta()));
         Gson gson = ConnectModulesGsonFactory.getGsonBuilder().registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), deserializer).create();
         String expectedJson = gson.toJson(bean, ConnectAddonBean.class);
 

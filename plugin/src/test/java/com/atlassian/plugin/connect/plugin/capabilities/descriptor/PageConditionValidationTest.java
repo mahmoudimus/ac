@@ -7,7 +7,9 @@ import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.impl.PageConditionsValidator;
 import com.atlassian.plugin.connect.plugin.condition.PageConditionsFactoryImpl;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
-import com.atlassian.plugin.connect.plugin.installer.StaticModuleBeanDeserializer;
+import com.atlassian.plugin.connect.plugin.installer.AvailableModuleTypes;
+import com.atlassian.plugin.connect.plugin.installer.ModuleBeanDeserializer;
+import com.atlassian.plugin.connect.plugin.installer.StaticAvailableModuleTypes;
 import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.google.gson.Gson;
@@ -30,7 +32,7 @@ public class PageConditionValidationTest
 {
     @Mock
     private I18nResolver i18nResolver;
-    private ConnectModuleMeta moduleMeta = new GeneralPageModuleMeta();
+    private AvailableModuleTypes moduleTypes = new StaticAvailableModuleTypes(new GeneralPageModuleMeta());
     private PageConditionsFactory pageConditionsFactory = new PageConditionsFactoryImpl();
     private PageConditionsValidator conditionsValidator;
 
@@ -84,7 +86,7 @@ public class PageConditionValidationTest
 
     public void validateFully(final String jsonDescriptor) throws Exception
     {
-        StaticModuleBeanDeserializer deserializer = new StaticModuleBeanDeserializer(moduleMeta);
+        ModuleBeanDeserializer deserializer = new ModuleBeanDeserializer(moduleTypes);
         Gson gson = ConnectModulesGsonFactory.getGsonBuilder().registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), deserializer).create();
         ConnectAddonBean addon = gson.fromJson(jsonDescriptor, ConnectAddonBean.class);
 

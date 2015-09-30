@@ -14,12 +14,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PluginAwareModuleBeanDeserializer extends ModuleBeanDeserializer
+public class PluginAvailableModuleTypes implements AvailableModuleTypes
 {
     private final Map<String, ConnectModuleProvider> moduleProviders;
     private final Plugin plugin;
 
-    public PluginAwareModuleBeanDeserializer(PluginAccessor pluginAccessor)
+    public PluginAvailableModuleTypes(PluginAccessor pluginAccessor)
     {
         plugin = pluginAccessor.getEnabledPlugin("com.atlassian.plugins.atlassian-connect-plugin");
         this.moduleProviders = buildModuleProviderMap(pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class)));
@@ -36,20 +36,20 @@ public class PluginAwareModuleBeanDeserializer extends ModuleBeanDeserializer
     }
 
     @Override
-    protected List<ModuleBean> deserializeModulesOfSameType(Map.Entry<String, JsonElement> moduleEntry) throws ConnectModuleValidationException
+    public List<ModuleBean> deserializeModulesOfSameType(Map.Entry<String, JsonElement> moduleEntry) throws ConnectModuleValidationException
     {
         final ConnectModuleProvider moduleProvider = moduleProviders.get(moduleEntry.getKey());
         return moduleProvider.validate(moduleEntry.getValue().toString(), moduleProvider.getMeta().getBeanClass(), plugin);
     }
     
     @Override
-    protected boolean multipleModulesAllowed(String moduleType)
+    public boolean multipleModulesAllowed(String moduleType)
     {
         return moduleProviders.get(moduleType).getMeta().multipleModulesAllowed();
     }
     
     @Override
-    protected boolean validModuleType(String moduleType)
+    public boolean validModuleType(String moduleType)
     {
         return moduleProviders.keySet().contains(moduleType);
     }
