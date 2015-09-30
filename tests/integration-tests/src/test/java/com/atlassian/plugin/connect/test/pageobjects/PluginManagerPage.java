@@ -52,18 +52,15 @@ public class PluginManagerPage implements Page
     {
         for (WebElement element : driver.findElements(By.className("upm-plugin-name")))
         {
+            System.out.println(element.getText());
             if (element.getText().trim().equals(pluginKeyAndName))
             {
                 element.click();
                 By byConfigure = By.linkText("Configure");
                 driver.waitUntilElementIsVisible(byConfigure);
                 WebElement configureLink = driver.findElement(byConfigure);
-                if (configureLink.getAttribute("href").endsWith(
-                        pluginKeyAndName + "/" + pageKey))
-                {
-                    configureLink.click();
-                    return;
-                }
+                configureLink.click();
+                return;
             }
         }
         throw new IllegalStateException("Didn't find plugin " + pluginKeyAndName);
