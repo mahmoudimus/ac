@@ -53,12 +53,6 @@ public class GsonConnectAddonBeanFactoryTest
     @Mock
     private IsDevModeService isDevModeService;
 
-    @Before
-    public void setUp() throws IOException
-    {
-        when(connectSchemaLocator.getSchemaForCurrentProduct()).thenReturn("fake-schema");
-    }
-
     @Test(expected = InvalidDescriptorException.class)
     public void shouldRejectMalformedDescriptor()
     {

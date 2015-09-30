@@ -28,35 +28,11 @@ public class DefaultConnectSchemaLocator implements ConnectSchemaLocator
         this.applicationProperties = applicationProperties;
         this.plugin = pluginRetrievalService.getPlugin();
     }
-
-    @Override
-    public String getPrettySchemaForCurrentProduct() throws IOException
-    {
-        return getSchema(getFilterForCurrentProduct().name().toLowerCase(),PRETTY);
-    }
-
-    @Override
-    public String getPrettySchema(ProductFilter productFilter) throws IOException
-    {
-        return getSchema(productFilter.name().toLowerCase(),PRETTY);
-    }
-
-    @Override
-    public String getSchemaForCurrentProduct() throws IOException
-    {
-        return getSchema(getFilterForCurrentProduct().name().toLowerCase(),RAW);
-    }
     
     @Override
     public String getShallowSchema() throws IOException
     {
         return getSchema("shallow", RAW);
-    }
-    
-    @Override
-    public String getSchema(ProductFilter productFilter) throws IOException
-    {
-        return getSchema(productFilter.name().toLowerCase(),RAW);
     }
 
     @Override
