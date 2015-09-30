@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.plugin.installer.ModuleBeanDeserializer;
 import com.atlassian.plugin.connect.plugin.installer.StaticModuleBeanDeserializer;
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -74,7 +75,8 @@ public class EntityPropertyIndexDocumentModuleBeanTest
     {
         ConnectAddonBean bean = createAddOnBean();
         ModuleBeanDeserializer deserializer = new StaticModuleBeanDeserializer(new EntityPropertyModuleMeta());
-        String expectedJson = ConnectModulesGsonFactory.getGson(deserializer).toJson(bean, ConnectAddonBean.class);
+        Gson gson = ConnectModulesGsonFactory.getGsonBuilder().registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), deserializer).create();
+        String expectedJson = gson.toJson(bean, ConnectAddonBean.class);
 
         assertThat(readTestFile("entityPropertyAddon.json"), is(sameJSONAs(expectedJson)));
     }

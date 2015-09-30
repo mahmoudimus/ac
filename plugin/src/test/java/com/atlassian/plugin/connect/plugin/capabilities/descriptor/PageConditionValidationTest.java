@@ -10,6 +10,7 @@ import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException
 import com.atlassian.plugin.connect.plugin.installer.StaticModuleBeanDeserializer;
 import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
 import com.atlassian.sal.api.message.I18nResolver;
+import com.google.gson.Gson;
 import com.opensymphony.util.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,7 +85,8 @@ public class PageConditionValidationTest
     public void validateFully(final String jsonDescriptor) throws Exception
     {
         StaticModuleBeanDeserializer deserializer = new StaticModuleBeanDeserializer(moduleMeta);
-        ConnectAddonBean addon = ConnectModulesGsonFactory.getGson(deserializer).fromJson(jsonDescriptor, ConnectAddonBean.class);
+        Gson gson = ConnectModulesGsonFactory.getGsonBuilder().registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), deserializer).create();
+        ConnectAddonBean addon = gson.fromJson(jsonDescriptor, ConnectAddonBean.class);
 
         conditionsValidator.validate(addon);
     }

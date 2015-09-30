@@ -22,15 +22,10 @@ import java.util.Map;
 public class ConnectModulesGsonFactory
 {
     private static Type moduleJsonType = new TypeToken<Map<String, Supplier<List<ModuleBean>>>>() {}.getType();
-    
+
     public static Type getModuleJsonType()
     {
         return moduleJsonType;
-    }
-    
-    public static GsonBuilder getGsonBuilder(JsonDeserializer<Map<String, Supplier<List<ModuleBean>>>> moduleDeserializer)
-    {
-        return getGsonBuilder().registerTypeAdapter(moduleJsonType, moduleDeserializer);
     }
 
     public static GsonBuilder getGsonBuilder()
@@ -52,11 +47,6 @@ public class ConnectModulesGsonFactory
                 ;
     }
 
-    public static Gson getGson(JsonDeserializer<Map<String, Supplier<List<ModuleBean>>>> moduleDeserializer)
-    {
-        return getGsonBuilder(moduleDeserializer).create();
-    }
-
     public static Gson getGson()
     {
         return getGsonBuilder().create();
@@ -64,17 +54,12 @@ public class ConnectModulesGsonFactory
 
     public static ConnectAddonBean addonFromJsonWithI18nCollector(String json, Map<String,String> i18nCollector, JsonDeserializer<Map<String, Supplier<List<ModuleBean>>>> moduleDeserializer)
     {
-        Gson gson;
+        GsonBuilder builder = getGsonBuilder().registerTypeAdapter(moduleJsonType, moduleDeserializer);
         if(null != i18nCollector)
         {
-            gson = getGsonBuilder(moduleDeserializer).registerTypeAdapter(I18nProperty.class,new I18nCollectingDeserializer(i18nCollector)).create();
+            builder = builder.registerTypeAdapter(I18nProperty.class, new I18nCollectingDeserializer(i18nCollector));
         }
-        else
-        {
-            gson = getGson(moduleDeserializer);
-        }
-
-        return gson.fromJson(json,ConnectAddonBean.class);
+        return builder.create().fromJson(json, ConnectAddonBean.class);
     }
 
     public static String addonBeanToJson(ConnectAddonBean bean)

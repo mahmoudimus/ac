@@ -74,7 +74,7 @@ public class ConnectAddonBeanMarshallingTest
         String json = readAddonTestFile("addonNoCapabilitiesCompositeCondition.json");
 
         StaticModuleBeanDeserializer deserializer = new StaticModuleBeanDeserializer(moduleMeta);
-        Gson gson = ConnectModulesGsonFactory.getGson(deserializer);
+        Gson gson = ConnectModulesGsonFactory.getGsonBuilder().registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), deserializer).create();
         ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
 
         assertThat(addOn.getModules().get("webItems").get(), contains(hasProperty("conditions", contains(
@@ -136,7 +136,7 @@ public class ConnectAddonBeanMarshallingTest
         String json = readAddonTestFile("addonSingleCapability.json");
 
         StaticModuleBeanDeserializer deserializer = new StaticModuleBeanDeserializer(moduleMeta);
-        Gson gson = ConnectModulesGsonFactory.getGson(deserializer);
+        Gson gson = ConnectModulesGsonFactory.getGsonBuilder().registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), deserializer).create();
         ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
 
         List<ModuleBean> moduleList = addOn.getModules().get("webItems").get();
@@ -159,7 +159,7 @@ public class ConnectAddonBeanMarshallingTest
         String json = readAddonTestFile("addonMultipleCapabilities.json");
 
         StaticModuleBeanDeserializer deserializer = new StaticModuleBeanDeserializer(moduleMeta);
-        Gson gson = ConnectModulesGsonFactory.getGson(deserializer);
+        Gson gson = ConnectModulesGsonFactory.getGsonBuilder().registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), deserializer).create();
         ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
 
         List<ModuleBean> moduleList = addOn.getModules().get("webItems").get();
@@ -176,7 +176,8 @@ public class ConnectAddonBeanMarshallingTest
     {
         String json = readAddonTestFile("addonMultipleCapabilities.json");
         StaticModuleBeanDeserializer deserializer = new StaticModuleBeanDeserializer(moduleMeta);
-        ConnectAddonBean addOn = ConnectModulesGsonFactory.getGson(deserializer).fromJson(json, ConnectAddonBean.class);
+        Gson gson = ConnectModulesGsonFactory.getGsonBuilder().registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), deserializer).create();
+        ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
         assertThat(addOn.getScopes(), is(Collections.<ScopeName>emptySet()));
     }
 

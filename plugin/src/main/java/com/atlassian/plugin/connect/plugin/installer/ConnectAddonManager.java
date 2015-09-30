@@ -55,6 +55,7 @@ import com.atlassian.uri.UriBuilder;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+import com.google.gson.Gson;
 import com.google.gson.JsonDeserializer;
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.BundleContext;
@@ -672,8 +673,9 @@ public class ConnectAddonManager
      */
     private ConnectAddonBean unmarshallDescriptor(final String pluginKey)
     {
-        JsonDeserializer moduleDeserializer = new PluginAwareModuleBeanDeserializer(pluginAccessor);
-        return ConnectModulesGsonFactory.getGson(moduleDeserializer).fromJson(addonRegistry.getDescriptor(pluginKey), ConnectAddonBean.class);
+        JsonDeserializer deserializer = new PluginAwareModuleBeanDeserializer(pluginAccessor);
+        Gson gson = ConnectModulesGsonFactory.getGsonBuilder().registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), deserializer).create();
+        return gson.fromJson(addonRegistry.getDescriptor(pluginKey), ConnectAddonBean.class);
     }
 
     @VisibleForTesting

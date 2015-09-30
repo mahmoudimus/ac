@@ -29,7 +29,7 @@ public class WebSectionModuleBeanTest
         WebSectionModuleBean deserializedBean = gson.fromJson(json, WebSectionModuleBean.class);
         assertThat(deserializedBean, sameDeepPropertyValuesAs(webSectionBean));
     }
-m
+
     @Test
     public void producesCorrectBeanWithFunkyWebSections() throws Exception
     {

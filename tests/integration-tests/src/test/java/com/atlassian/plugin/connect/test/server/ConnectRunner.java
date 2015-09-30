@@ -23,6 +23,7 @@ import com.atlassian.plugin.connect.test.Utils;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import it.servlet.ConnectAppServlets;
 import it.servlet.ContextServlet;
 import it.servlet.HttpContextServlet;
@@ -483,15 +484,16 @@ public class ConnectRunner
         
         private Gson getGson()
         {
+            GsonBuilder builder = ConnectModulesGsonFactory.getGsonBuilder();
             if (serializer.hasMetas())
             {
-                return ConnectModulesGsonFactory.getGson(serializer);
+                builder = builder.registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), serializer);
             }
             else
             {
-                return ConnectModulesGsonFactory.getGsonBuilder()
-                        .registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), new DefaultModuleSerializer()).create();
+                builder = builder.registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), new DefaultModuleSerializer());
             }
+            return builder.create();
         }
     }
 
