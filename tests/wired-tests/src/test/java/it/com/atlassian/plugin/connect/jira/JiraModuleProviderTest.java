@@ -18,13 +18,13 @@ import static it.com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTe
 public class JiraModuleProviderTest extends AbstractConnectAddonTest
 {
     private final TestPluginInstaller testPluginInstaller;
-    
+
     public JiraModuleProviderTest(WebItemModuleProvider webItemModuleProvider, TestPluginInstaller testPluginInstaller, TestAuthenticator testAuthenticator)
     {
         super(webItemModuleProvider, testPluginInstaller, testAuthenticator);
         this.testPluginInstaller = testPluginInstaller;
     }
-    
+
     @Test
     public void goodThingsHappen() throws IOException
     {
