@@ -4,7 +4,6 @@ import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.WebSectionModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.modules.gson.ModuleListDeserializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.junit.Test;
@@ -30,12 +29,11 @@ public class WebSectionModuleBeanTest
         WebSectionModuleBean deserializedBean = gson.fromJson(json, WebSectionModuleBean.class);
         assertThat(deserializedBean, sameDeepPropertyValuesAs(webSectionBean));
     }
-
+m
     @Test
     public void producesCorrectBeanWithFunkyWebSections() throws Exception
     {
         final GsonBuilder gsonBuilder = ConnectModulesGsonFactory.getGsonBuilder();
-        gsonBuilder.registerTypeAdapter(List.class, new ModuleListDeserializer<>(WebSectionModuleBean.class));
         Gson gson = gsonBuilder.create();
 
         WebSectionModuleBean webSectionBean = createWebSectionBeanBuilder().build();
