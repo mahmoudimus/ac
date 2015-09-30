@@ -28,7 +28,7 @@
                 "key":"my-double-item-one"
             },
             {
-                "url": "/webitem",
+                "url": "/other-webitem",
                 "location": "atl.admin/menu",
                 "context": "addon",
                 "weight": 100,
@@ -37,10 +37,10 @@
                     "options": {}
                 },
                 "name": {
-                    "value": "My Web Item",
-                    "i18n": "my.webitem"
+                    "value": "My Other Web Item",
+                    "i18n": "my.other.webitem"
                 },
-                "key":"my-double-item-one"
+                "key":"my-double-item-two"
             }
         ]
     },

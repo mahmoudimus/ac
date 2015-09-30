@@ -73,7 +73,8 @@ public class ConnectAddonBeanMarshallingTest
     {
         String json = readAddonTestFile("addonNoCapabilitiesCompositeCondition.json");
 
-        Gson gson = ConnectModulesGsonFactory.getGson();
+        StaticModuleBeanDeserializer deserializer = new StaticModuleBeanDeserializer(moduleMeta);
+        Gson gson = ConnectModulesGsonFactory.getGson(deserializer);
         ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
 
         assertThat(addOn.getModules().get("webItems").get(), contains(hasProperty("conditions", contains(
