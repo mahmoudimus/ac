@@ -20,12 +20,10 @@ public class DefaultConnectSchemaLocator implements ConnectSchemaLocator
     public static final String PRETTY = "/schema/%s-schema-pretty.json";
 
     private final Plugin plugin;
-    private final ApplicationProperties applicationProperties;
 
     @Inject
-    public DefaultConnectSchemaLocator(PluginRetrievalService pluginRetrievalService, ApplicationProperties applicationProperties)
+    public DefaultConnectSchemaLocator(PluginRetrievalService pluginRetrievalService)
     {
-        this.applicationProperties = applicationProperties;
         this.plugin = pluginRetrievalService.getPlugin();
     }
     
@@ -53,10 +51,5 @@ public class DefaultConnectSchemaLocator implements ConnectSchemaLocator
         InputStream in = plugin.getResourceAsStream(path);
                 
         return IOUtils.toString(in);
-    }
-
-    private ProductFilter getFilterForCurrentProduct()
-    {
-        return ProductFilter.valueOf(applicationProperties.getDisplayName().toUpperCase());
     }
 }
