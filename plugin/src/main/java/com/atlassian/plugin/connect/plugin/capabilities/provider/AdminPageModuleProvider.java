@@ -4,6 +4,7 @@ import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrat
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.AdminPageModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class AdminPageModuleProvider extends AbstractAdminPageModuleProvider
     }
 
     @Override
-    public ConnectModuleMeta getMeta()
+    public ConnectModuleMeta<ConnectPageModuleBean> getMeta()
     {
         return new AdminPageModuleMeta();
     }

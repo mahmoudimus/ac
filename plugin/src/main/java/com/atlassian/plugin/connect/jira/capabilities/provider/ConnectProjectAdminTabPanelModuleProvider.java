@@ -91,7 +91,7 @@ public class ConnectProjectAdminTabPanelModuleProvider extends AbstractConnectMo
     }
 
     @Override
-    public ConnectModuleMeta getMeta()
+    public ConnectModuleMeta<ConnectProjectAdminTabPanelModuleBean> getMeta()
     {
         return new ConnectProjectAdminTabPanelModuleMeta();
     }

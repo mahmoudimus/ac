@@ -175,7 +175,7 @@ public class SpaceToolsTabModuleProvider extends AbstractConnectModuleProvider<S
     }
 
     @Override
-    public ConnectModuleMeta getMeta()
+    public ConnectModuleMeta<SpaceToolsTabModuleBean> getMeta()
     {
         return new SpaceToolsTabModuleMeta();
     }

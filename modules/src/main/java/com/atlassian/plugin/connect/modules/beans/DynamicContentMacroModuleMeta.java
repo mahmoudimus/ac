@@ -1,10 +1,8 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class DynamicContentMacroModuleMeta implements ConnectModuleMeta
+public class DynamicContentMacroModuleMeta implements ConnectModuleMeta<DynamicContentMacroModuleBean>
 {
-    public static final String DESCRIPTOR_KEY = "dynamicContentMacros";
-    public static final Class BEAN_CLASS = DynamicContentMacroModuleBean.class;
-    
+
     @Override
     public boolean multipleModulesAllowed()
     {
@@ -12,14 +10,14 @@ public class DynamicContentMacroModuleMeta implements ConnectModuleMeta
     }
 
     @Override
-    public Class getBeanClass()
+    public Class<DynamicContentMacroModuleBean> getBeanClass()
     {
-        return BEAN_CLASS;
+        return DynamicContentMacroModuleBean.class;
     }
 
     @Override
     public String getDescriptorKey()
     {
-        return DESCRIPTOR_KEY;
+        return "dynamicContentMacros";
     }
 }

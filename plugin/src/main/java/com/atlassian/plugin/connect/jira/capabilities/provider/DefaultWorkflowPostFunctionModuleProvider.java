@@ -101,7 +101,7 @@ public class DefaultWorkflowPostFunctionModuleProvider extends AbstractConnectMo
     }
 
     @Override
-    public ConnectModuleMeta getMeta()
+    public ConnectModuleMeta<WorkflowPostFunctionModuleBean> getMeta()
     {
         return new WorkflowPostFunctionModuleMeta();
     }

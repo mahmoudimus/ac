@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class WorkflowPostFunctionModuleMeta implements ConnectModuleMeta
+public class WorkflowPostFunctionModuleMeta implements ConnectModuleMeta<WorkflowPostFunctionModuleBean>
 {
     @Override
     public boolean multipleModulesAllowed()
@@ -15,7 +15,7 @@ public class WorkflowPostFunctionModuleMeta implements ConnectModuleMeta
     }
 
     @Override
-    public Class getBeanClass()
+    public Class<WorkflowPostFunctionModuleBean> getBeanClass()
     {
         return WorkflowPostFunctionModuleBean.class;
     }

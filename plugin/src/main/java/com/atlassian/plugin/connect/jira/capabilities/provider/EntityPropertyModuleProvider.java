@@ -46,7 +46,7 @@ public class EntityPropertyModuleProvider extends AbstractConnectModuleProvider<
     }
 
     @Override
-    public ConnectModuleMeta getMeta()
+    public ConnectModuleMeta<EntityPropertyModuleBean> getMeta()
     {
         return new EntityPropertyModuleMeta();
     }

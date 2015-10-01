@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class EntityPropertyModuleMeta implements ConnectModuleMeta
+public class EntityPropertyModuleMeta implements ConnectModuleMeta<EntityPropertyModuleBean>
 {
     @Override
     public boolean multipleModulesAllowed()
@@ -15,7 +15,7 @@ public class EntityPropertyModuleMeta implements ConnectModuleMeta
     }
 
     @Override
-    public Class getBeanClass()
+    public Class<EntityPropertyModuleBean> getBeanClass()
     {
         return EntityPropertyModuleBean.class;
     }

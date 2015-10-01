@@ -47,7 +47,7 @@ public class ConfigurePageModuleProvider extends AbstractAdminPageModuleProvider
             return ImmutableList.of(descriptor);
         }
         
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override
@@ -63,7 +63,7 @@ public class ConfigurePageModuleProvider extends AbstractAdminPageModuleProvider
     }
 
     @Override
-    public ConnectModuleMeta getMeta()
+    public ConnectModuleMeta<ConnectPageModuleBean> getMeta()
     {
         return new ConfigurePageModuleMeta();
     }

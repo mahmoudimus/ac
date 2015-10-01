@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class SpaceToolsTabModuleMeta implements ConnectModuleMeta
+public class SpaceToolsTabModuleMeta implements ConnectModuleMeta<SpaceToolsTabModuleBean>
 {
     @Override
     public boolean multipleModulesAllowed()
@@ -15,7 +15,7 @@ public class SpaceToolsTabModuleMeta implements ConnectModuleMeta
     }
 
     @Override
-    public Class getBeanClass()
+    public Class<SpaceToolsTabModuleBean> getBeanClass()
     {
         return SpaceToolsTabModuleBean.class;
     }

@@ -46,7 +46,7 @@ public class SearchRequestViewModuleProvider extends AbstractConnectModuleProvid
     }
 
     @Override
-    public ConnectModuleMeta getMeta()
+    public ConnectModuleMeta<SearchRequestViewModuleBean> getMeta()
     {
         return new SearchRequestViewModuleMeta();
     }

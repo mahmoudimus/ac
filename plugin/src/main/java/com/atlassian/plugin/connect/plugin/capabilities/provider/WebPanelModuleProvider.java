@@ -79,7 +79,7 @@ public class WebPanelModuleProvider extends AbstractConnectModuleProvider<WebPan
     }
 
     @Override
-    public ConnectModuleMeta getMeta()
+    public ConnectModuleMeta<WebPanelModuleBean> getMeta()
     {
         return new WebPanelModuleMeta();
     }

@@ -46,7 +46,7 @@ public class DashboardItemModuleProvider extends AbstractConnectModuleProvider<D
     }
 
     @Override
-    public ConnectModuleMeta getMeta()
+    public ConnectModuleMeta<DashboardItemModuleBean> getMeta()
     {
         return new DashboardItemModuleMeta();
     }

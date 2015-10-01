@@ -29,9 +29,9 @@ public class JiraModuleProviderForTests extends AbstractConnectPageModuleProvide
     }
 
     @Override
-    public ConnectModuleMeta getMeta()
+    public ConnectModuleMeta<ConnectPageModuleBean> getMeta()
     {
-        return new ConnectModuleMeta()
+        return new ConnectModuleMeta<ConnectPageModuleBean>()
         {
             @Override
             public boolean multipleModulesAllowed()
@@ -46,7 +46,7 @@ public class JiraModuleProviderForTests extends AbstractConnectPageModuleProvide
             }
 
             @Override
-            public Class getBeanClass()
+            public Class<ConnectPageModuleBean> getBeanClass()
             {
                 return ConnectPageModuleBean.class;
             }

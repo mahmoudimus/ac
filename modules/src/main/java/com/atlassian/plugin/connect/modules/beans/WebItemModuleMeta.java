@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class WebItemModuleMeta implements ConnectModuleMeta
+public class WebItemModuleMeta implements ConnectModuleMeta<WebItemModuleBean>
 {
     @Override
     public boolean multipleModulesAllowed()
@@ -15,7 +15,7 @@ public class WebItemModuleMeta implements ConnectModuleMeta
     }
 
     @Override
-    public Class getBeanClass()
+    public Class<WebItemModuleBean> getBeanClass()
     {
         return WebItemModuleBean.class;
     }
