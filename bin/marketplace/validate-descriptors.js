@@ -10,34 +10,51 @@ var marketplace = require('./marketplace'),
     util = require('util');
 
 var baseSchemaFile = '../../plugin/target/classes/schema/shallow-schema.json',
-    moduleSchemaFiles = [
-        '../../plugin/target/classes/schema/common-schema.json',
-        '../../plugin/target/classes/schema/confluence-schema.json',
-        '../../plugin/target/classes/schema/jira-schema.json'
+    commonModuleSchemaFiles = [
+        '../../plugin/target/classes/schema/common-schema.json'
     ],
-    builtSchemaFile = '../../plugin/target/classes/schema/global-schema.json'
-    ;
+    productConfigurations = {
+        confluence: {
+            moduleSchemaFiles: [
+                '../../plugin/target/classes/schema/confluence-schema.json'
+            ],
+            outputSchemaFile: '../../plugin/target/classes/schema/confluence-global-schema.json'
+        },
+        jira: {
+            moduleSchemaFiles: [
+                '../../plugin/target/classes/schema/jira-schema.json'
+            ],
+            outputSchemaFile: '../../plugin/target/classes/schema/jira-global-schema.json'
+        }
+    };
 
-var buildSchema = function() {
+var buildSchema = function(productConfiguration) {
     console.log("Building schema...");
-    ensureSchemaFilesExist();
-    var baseSchema = loadJsonFile(baseSchemaFile);
+
+    ensureSchemaFilesExist(productConfiguration.moduleSchemaFiles);
+
+    var schema = loadJsonFile(baseSchemaFile);
+    var moduleSchemaFiles = commonModuleSchemaFiles.concat(productConfiguration.moduleSchemaFiles);
     var moduleSchemas = moduleSchemaFiles.map(loadJsonFile);
-    baseSchema.properties.modules.additionalProperties = false;
-    baseSchema.properties.modules.properties = moduleSchemas.map(function(schema) {
+
+    schema.properties.modules.additionalProperties = false;
+    schema.properties.modules.properties = moduleSchemas.map(function(schema) {
         return schema.properties;
     }).reduce(_.merge);
-    baseSchema.definitions = moduleSchemas.concat(baseSchema).map(function(schema) {
+    schema.definitions = moduleSchemas.concat(schema).map(function(schema) {
         return schema.definitions;
     }).reduce(_.merge);
-    return baseSchema;
+
+    saveJsonFile(schema, productConfiguration.outputSchemaFile);
+
+    return schema;
 }
 
-var ensureSchemaFilesExist = function() {
-    var schemaFiles = moduleSchemaFiles.concat(baseSchemaFile);
-    for (var schemaName in schemaFiles) {
-        if (!fileExists(schemaFiles[schemaName])) {
-            console.error("Could not load schema file " + file + ". Please build the project.");
+var ensureSchemaFilesExist = function(productModuleSchemaFiles) {
+    var schemaFiles = commonModuleSchemaFiles.concat(baseSchemaFile).concat(productModuleSchemaFiles);
+    for (var i = 0; i < schemaFiles.length; i++) {
+        if (!fileExists(schemaFiles[i])) {
+            console.error("Could not load schema file " + schemaFiles[i] + ". Please build the project.");
             process.exit();
         }
     }
@@ -56,9 +73,7 @@ var saveJsonFile = function(object, filePath) {
 }
 
 var validationResults = [],
-    schema = buildSchema();
-
-saveJsonFile(schema, builtSchemaFile);
+    schemas = _.mapValues(productConfigurations, buildSchema);
 
 function validate(opts, addonKey, descriptorFilename, descriptor, schema, callback) {
     validator.validateDescriptor(descriptor, schema, function (errors) {
@@ -139,6 +154,8 @@ downloader.run({
         }
 
         var app = _.pluck(compatibleApps, "key")[0];
+
+        var schema = (app === "confluence" ? schemas.confluence : schemas.jira);
 
         marketplace.requestQueue().push({
             self: this,
