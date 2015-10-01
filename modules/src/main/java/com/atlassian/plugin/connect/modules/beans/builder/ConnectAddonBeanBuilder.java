@@ -116,7 +116,14 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
             totalBeans.addAll(modules.get(fieldName).get());
         }
 
-        Supplier<List<ModuleBean>> moduleBeanSupplier = () -> totalBeans;
+        Supplier<List<ModuleBean>> moduleBeanSupplier = new Supplier<List<ModuleBean>>()
+        {
+            @Override
+            public List<ModuleBean> get()
+            {
+                return totalBeans;
+            }
+        };
 
         modules.put(fieldName, moduleBeanSupplier);
         
