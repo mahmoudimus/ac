@@ -548,8 +548,6 @@
                 <configuration>
                     <containerId>tomcat7x</containerId>
                     <enableDevToolbox>false</enableDevToolbox>
-                    <productVersion>${atlassian.confluence.version}</productVersion>
-                    <productDataVersion>${atlassian.confluence.version}</productDataVersion>
                     <enableFastdev>false</enableFastdev>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
