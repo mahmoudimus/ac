@@ -16,6 +16,6 @@ public final class ConnectModuleProviderModuleDescriptorFactory extends SingleMo
     @Autowired
     public ConnectModuleProviderModuleDescriptorFactory(@Qualifier("hostContainer") final HostContainer hostContainer)
     {
-        super(hostContainer, "connect-module-provider", ConnectModuleProviderModuleDescriptor.class);
+        super(hostContainer, "connect-module", ConnectModuleProviderModuleDescriptor.class);
     }
 }

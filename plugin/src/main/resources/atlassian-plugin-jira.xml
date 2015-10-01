@@ -8,68 +8,68 @@
         <package>com.atlassian.plugin.connect.plugin.rest</package>
     </rest>
 
-    <connect-module-provider
+    <connect-module
             key="jiraDashboardItems"
             class="com.atlassian.plugin.connect.jira.capabilities.provider.DashboardItemModuleProvider"
             name="Dashboard Item Module Provider">
         <description>...</description>
-    </connect-module-provider>
+    </connect-module>
 
-    <connect-module-provider
+    <connect-module
             key="jiraEntityProperties"
             class="com.atlassian.plugin.connect.jira.capabilities.provider.EntityPropertyModuleProvider"
             name="Entity Property Module Provider">
         <description>...</description>
-    </connect-module-provider>
+    </connect-module>
 
-    <connect-module-provider
+    <connect-module
             key="jiraProjectAdminTabPanels"
             class="com.atlassian.plugin.connect.jira.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider"
             name="Project Admin Tab Panel Module Provider">
         <description>...</description>
-    </connect-module-provider>
+    </connect-module>
 
-    <connect-module-provider
+    <connect-module
             key="jiraReports"
             class="com.atlassian.plugin.connect.jira.capabilities.provider.ReportModuleProvider"
             name="Report Module Provider">
         <description>...</description>
-    </connect-module-provider>
+    </connect-module>
 
-    <connect-module-provider
+    <connect-module
             key="jiraSearchRequestViews"
             class="com.atlassian.plugin.connect.jira.capabilities.provider.SearchRequestViewModuleProvider"
             name="Search Request View Module Provider">
         <description>...</description>
-    </connect-module-provider>
+    </connect-module>
 
-    <connect-module-provider
+    <connect-module
             key="jiraWorkflowPostFunctions"
             class="com.atlassian.plugin.connect.jira.capabilities.provider.DefaultWorkflowPostFunctionModuleProvider"
             name="Workflow Post Function Module Provider">
         <description>...</description>
-    </connect-module-provider>
+    </connect-module>
 
-    <connect-module-provider
+    <connect-module
             key="jiraIssueTabPanels"
             class="com.atlassian.plugin.connect.jira.capabilities.provider.IssueTabPanelModuleProvider"
             name="Issue Tab Panel Module Provider">
         <description>...</description>
-    </connect-module-provider>
+    </connect-module>
 
-    <connect-module-provider
+    <connect-module
             key="jiraProjectTabPanels"
             class="com.atlassian.plugin.connect.jira.capabilities.provider.ProjectTabPanelModuleProvider"
             name="Project Tab Panel Module Provider">
         <description>...</description>
-    </connect-module-provider>
+    </connect-module>
 
-    <connect-module-provider
+    <connect-module
             key="jiraProfileTabPanels"
             class="com.atlassian.plugin.connect.jira.capabilities.provider.ProfileTabPanelModuleProvider"
             name="Profile Tab Panel Module Provider">
         <description>...</description>
-    </connect-module-provider>
+    </connect-module>
     
     <health-check key="addonsGroupHealthCheck" name="Add-on Group Health Check" class="com.atlassian.plugin.connect.crowd.healthcheck.AtlassianAddonsGroupHealthCheck" />
 
