@@ -4,6 +4,7 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.google.common.base.Function;
@@ -52,6 +53,12 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
 
     public ConnectAddonBeanBuilder(ConnectAddonBean defaultBean)
     {
+        this((ShallowConnectAddonBean)defaultBean);
+        this.modules = defaultBean.getModules();
+    }
+    
+    public ConnectAddonBeanBuilder(ShallowConnectAddonBean defaultBean)
+    {
         this.key = defaultBean.getKey();
         this.name = defaultBean.getName();
         this.version = defaultBean.getVersion();
@@ -59,7 +66,6 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
         this.description = defaultBean.getDescription();
         this.vendor = defaultBean.getVendor();
         this.links = defaultBean.getLinks();
-        this.modules = defaultBean.getModules();
         this.lifecycle = defaultBean.getLifecycle();
         this.baseUrl = defaultBean.getBaseUrl();
         this.authentication = defaultBean.getAuthentication();
@@ -133,6 +139,13 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     public T withModule(String fieldName, ModuleBean bean)
     {
         withModules(fieldName, bean);
+        
+        return (T) this;
+    }
+    
+    public T withModuleList(Map<String, Supplier<List<ModuleBean>>> modules)
+    {
+        this.modules = modules;
         
         return (T) this;
     }

@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleValidationException;
 import com.google.common.base.Supplier;
@@ -26,7 +27,6 @@ public class ModuleBeanDeserializer implements JsonDeserializer<Map<String, Supp
     {
         this.providers = providers;
     }
-    
     
     @Override
     public Map<String, Supplier<List<ModuleBean>>> deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException

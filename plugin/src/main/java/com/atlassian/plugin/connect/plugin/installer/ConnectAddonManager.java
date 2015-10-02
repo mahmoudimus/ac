@@ -673,9 +673,7 @@ public class ConnectAddonManager
      */
     private ConnectAddonBean unmarshallDescriptor(final String pluginKey)
     {
-        JsonDeserializer deserializer = new ModuleBeanDeserializer(new PluginAvailableModuleTypes(pluginAccessor));
-        Gson gson = ConnectModulesGsonFactory.getGsonBuilder().registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), deserializer).create();
-        return gson.fromJson(addonRegistry.getDescriptor(pluginKey), ConnectAddonBean.class);
+        return connectAddonBeanFactory.fromJsonSkipValidation(addonRegistry.getDescriptor(pluginKey));
     }
 
     @VisibleForTesting

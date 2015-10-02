@@ -5,6 +5,7 @@ import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrat
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.capabilities.provider.AbstractConnectPageModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleValidationException;
@@ -54,9 +55,9 @@ public class JiraModuleProviderForTests extends AbstractConnectPageModuleProvide
     }
     
     @Override
-    public List<ConnectPageModuleBean> validate(String rawModules, Class<ConnectPageModuleBean> type, Plugin plugin) throws ConnectModuleValidationException
+    public List<ConnectPageModuleBean> validate(String rawModules, Class<ConnectPageModuleBean> type, Plugin plugin, ShallowConnectAddonBean bean) throws ConnectModuleValidationException
     {
-        List<ConnectPageModuleBean> beans = super.validate(rawModules, type, plugin);
+        List<ConnectPageModuleBean> beans = super.validate(rawModules, type, plugin, bean);
         if(beans.get(0).getRawKey().equals("bad"))
         {
             throw new ConnectModuleValidationException(getMeta().getDescriptorKey(), "Key is bad!");

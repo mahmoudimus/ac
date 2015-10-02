@@ -4,6 +4,8 @@ import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.service.IsDevModeService;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
+import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.modules.schema.DescriptorValidationResult;
 import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
@@ -16,6 +18,8 @@ import com.atlassian.sal.api.message.I18nResolver;
 import com.github.fge.msgsimple.provider.LoadingMessageSourceProvider;
 import com.google.common.base.Supplier;
 import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -104,6 +108,7 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
         }
 
         ConnectAddonBean addOn = fromJsonSkipValidation(jsonDescriptor,i18nCollector);
+
         validateModules(addOn);
         addOnBeanValidatorService.validate(addOn);
 
@@ -121,8 +126,12 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
     {
         try
         {
-            JsonDeserializer deserializer = new ModuleBeanDeserializer(new PluginAvailableModuleTypes(pluginAccessor));
-            return ConnectModulesGsonFactory.addonFromJsonWithI18nCollector(jsonDescriptor, i18nCollector, deserializer);
+            JsonElement element = new JsonParser().parse(jsonDescriptor);
+            ShallowConnectAddonBean shallowBean = ConnectModulesGsonFactory.shallowAddonFromJsonWithI18nCollector(element, i18nCollector);
+            ModuleBeanDeserializer moduleDeserializer = new ModuleBeanDeserializer(new PluginAvailableModuleTypes(pluginAccessor, shallowBean));
+            Map<String, Supplier<List<ModuleBean>>> moduleList = ConnectModulesGsonFactory.moduleListFromJson(element, moduleDeserializer);
+
+            return new ConnectAddonBeanBuilder(shallowBean).withModuleList(moduleList).build();
         }
         catch (Exception e)
         {

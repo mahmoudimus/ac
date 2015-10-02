@@ -4,12 +4,16 @@ import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemTargetBean;
+import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.google.common.base.Supplier;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -51,15 +55,24 @@ public class ConnectModulesGsonFactory
     {
         return getGsonBuilder().create();
     }
-
-    public static ConnectAddonBean addonFromJsonWithI18nCollector(String json, Map<String,String> i18nCollector, JsonDeserializer<Map<String, Supplier<List<ModuleBean>>>> moduleDeserializer)
+    
+    public static ShallowConnectAddonBean shallowAddonFromJsonWithI18nCollector(JsonElement addonJson, Map<String,String> i18nCollector)
     {
-        GsonBuilder builder = getGsonBuilder().registerTypeAdapter(moduleJsonType, moduleDeserializer);
+        GsonBuilder builder = getGsonBuilder();
         if(null != i18nCollector)
         {
             builder = builder.registerTypeAdapter(I18nProperty.class, new I18nCollectingDeserializer(i18nCollector));
         }
-        return builder.create().fromJson(json, ConnectAddonBean.class);
+        return builder.create().fromJson(addonJson, ShallowConnectAddonBean.class);
+    }
+    
+    public static Map<String, Supplier<List<ModuleBean>>> moduleListFromJson(JsonElement addonJson, 
+                                                                             JsonDeserializer<Map<String, Supplier<List<ModuleBean>>>> moduleDeserializer)
+    {
+        GsonBuilder builder = getGsonBuilder().registerTypeAdapter(moduleJsonType, moduleDeserializer);
+        JsonElement modulesJson = addonJson.getAsJsonObject().get("modules");
+        return builder.create().fromJson(modulesJson, moduleJsonType);
+        
     }
 
     public static String addonBeanToJson(ConnectAddonBean bean)

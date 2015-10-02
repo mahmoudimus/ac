@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.spi.module.provider;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.modules.schema.DescriptorValidationResult;
 import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
@@ -19,9 +20,9 @@ import java.util.List;
 public abstract class AbstractConnectModuleProvider<T extends BaseModuleBean> implements ConnectModuleProvider<T>
 {
     @Override
-    public List<T> validate(String rawModules, Class<T> type, Plugin plugin) throws ConnectModuleValidationException
+    public List<T> validate(String rawModules, Class<T> type, Plugin plugin, ShallowConnectAddonBean bean) throws ConnectModuleValidationException
     {
-        validateAgainstSchema(rawModules, plugin);
+        validateAgainstSchema(rawModules, plugin, bean);
         return deserializeIntoBeans(rawModules, type);
     }
     
@@ -51,7 +52,7 @@ public abstract class AbstractConnectModuleProvider<T extends BaseModuleBean> im
         return beans;
     }
     
-    protected void validateAgainstSchema(String rawModules, Plugin plugin) throws ConnectModuleSchemaValidationException
+    protected void validateAgainstSchema(String rawModules, Plugin plugin, ShallowConnectAddonBean bean) throws ConnectModuleSchemaValidationException
     {
         if (getSchemaPrefix() == null)
         {
