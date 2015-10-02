@@ -509,6 +509,11 @@
                                     <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
                                     <version>${atlassian.upm.version}</version>
                                 </bundledArtifact>
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.upm</groupId>
+                                    <artifactId>atlassian-universal-plugin-manager-javascript-tests</artifactId>
+                                    <version>${atlassian.upm.version}</version>
+                                </bundledArtifact>
                             </bundledArtifacts>
                         </product>
                         <product>
@@ -562,6 +567,11 @@
                                 <bundledArtifact>
                                     <groupId>com.atlassian.upm</groupId>
                                     <artifactId>atlassian-universal-plugin-manager-plugin</artifactId>
+                                    <version>${atlassian.upm.version}</version>
+                                </bundledArtifact>
+                                <bundledArtifact>
+                                    <groupId>com.atlassian.upm</groupId>
+                                    <artifactId>atlassian-universal-plugin-manager-javascript-tests</artifactId>
                                     <version>${atlassian.upm.version}</version>
                                 </bundledArtifact>
                             </bundledArtifacts>
