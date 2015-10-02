@@ -52,7 +52,6 @@ public class PluginManagerPage implements Page
     {
         for (WebElement element : driver.findElements(By.className("upm-plugin-name")))
         {
-            System.out.println(element.getText());
             if (element.getText().trim().equals(pluginKeyAndName))
             {
                 element.click();
