@@ -160,4 +160,10 @@ and does not intend to ever make it available to cloud customers, then [Plugins 
 add-ons](https://developer.atlassian.com/display/DOCS/Getting+Started) will continue to be supported
 for development.
 
-### [FAQS for P2 developers.](./faqs-for-p2-developers.html)
+### Atlassian Connect for JIRA Server and Confluence Server
+
+Please see: [Atlassian Connect for JIRA Server and Confluence Server](./connect-for-server.html)
+
+### FAQS for P2 developers
+
+Please see: [FAQS for P2 developers](./faqs-for-p2-developers.html)

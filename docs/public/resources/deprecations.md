@@ -82,7 +82,7 @@ Atlassian Connect is replacing the OAuth 1.0 2LO implementation with JWT.
         <h5>Atlassian Cloud removal</h5>
     </div>
     <div class="aui-item">
-        __May, 2014__
+        __August, 2015__
     </div>
 </div>
 <div class="aui-group">

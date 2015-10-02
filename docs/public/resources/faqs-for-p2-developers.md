@@ -9,8 +9,7 @@ JavaScript, and front-end coding can encourage this.
 
 ### Should I maintain different add-ons for cloud and server instances?
 We expect that most current vendors will start by writing a new Atlassian Connect add-on for
-cloud products while maintaining their current Plugins 2 add-on for on-premises. In the future, vendors
-will be able to sell Atlassian Connect add-ons to cloud and server customers. We hope
+cloud products while maintaining their current Plugins 2 add-on for on-premises. We hope
 that over time, most vendors will transition fully to the Atlassian Connect model. This has two
 significant advantages:
 

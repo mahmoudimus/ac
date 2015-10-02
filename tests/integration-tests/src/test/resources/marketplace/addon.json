@@ -1,0 +1,89 @@
+{
+    "_embedded": {
+        "version": {
+            "_embedded": {
+                "highlights": [
+                    {
+                        "_links": {
+                            "screenshot": <%=screenshot asset goes here=>,
+                            "thumbnail": <%=thumbnail asset goes here=>
+                        },
+                        "title": "I wanna write the very test",
+                        "body": "<strong>That no test ever was</strong>"
+                    },
+                    {
+                        "_links": {
+                            "screenshot": <%=screenshot asset goes here=>,
+                            "thumbnail": <%=thumbnail asset goes here=>
+                        },
+                        "title": "To catch bugs is my real test",
+                        "body": "<strong>To fix them is my cause</strong>"
+                    },
+                    {
+                        "_links": {
+                            "screenshot": <%=screenshot asset goes here=>,
+                            "thumbnail": <%=thumbnail asset goes here=>
+                        },
+                        "title": "I will travel the happy paths",
+                        "body": "<strong>Searching far and wide...</strong>"
+                    }
+
+                ],
+                "screenshots": []
+            },
+            "_links": {
+                "agreement": {
+                    "href": "http://www.atlassian.com/licensing/marketplace/publisheragreement"
+                },
+                "artifact": {
+                    "href": "<%=descriptor url goes here=>"
+                }
+            },
+            "compatibilities": [
+                {
+                    "application": "jira",
+                    "cloud": true
+                },
+                {
+                    "application": "confluence",
+                    "cloud": true
+                }
+            ],
+            "media": {},
+            "name": "1.0",
+            "paymentModel": "free",
+            "release": {
+                "beta": false,
+                "date": "2015-02-19",
+                "license": {
+                    "id": "asl"
+                },
+                "supported": false
+            },
+            "status": "public",
+            "text": {
+                "moreDetails": "",
+                "releaseSummary": "The first and only version"
+            },
+            "vendorLinks": {}
+        }
+    },
+    "_links": {
+        "categories": [],
+        "logo": {
+            "href": "<%=logo url goes here=>"
+        },
+        "vendor": {
+            "href": "/rest/2.0-beta/vendors/<%=vendor id goes here=>"
+        }
+    },
+    "enableAtlassianAnswers": false,
+    "key": "<%=key goes here=>",
+    "name": "<%=name goes here=>",
+    "status": "public",
+    "summary": "I wanna be the very test that no test ever was.",
+    "tagLine": "Regressions: gotta catch them all",
+    "vendorLinks": {
+        "privacy": "https://www.atlassian.com/legal/privacy-policy"
+    }
+}

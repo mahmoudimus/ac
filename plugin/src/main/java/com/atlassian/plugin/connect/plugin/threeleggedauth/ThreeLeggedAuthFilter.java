@@ -1,8 +1,6 @@
 package com.atlassian.plugin.connect.plugin.threeleggedauth;
 
 import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.crowd.embedded.api.CrowdService;
-import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jwt.JwtConstants;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.jwt.core.http.auth.SimplePrincipal;
@@ -10,6 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.plugin.installer.ConnectAddonManager;
 import com.atlassian.plugin.connect.plugin.util.DefaultMessage;
+import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.auth.AuthenticationListener;
 import com.atlassian.sal.api.auth.Authenticator;
@@ -25,10 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.security.Principal;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -38,6 +33,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.atlassian.jwt.JwtConstants.AppLinks.SYS_PROP_ALLOW_IMPERSONATION;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -49,10 +47,10 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
 {
     private final ThreeLeggedAuthService threeLeggedAuthService;
     private final ConnectAddonManager connectAddonManager;
-    private final UserManager userManager;
     private final AuthenticationListener authenticationListener;
     private final JwtApplinkFinder jwtApplinkFinder;
-    private final CrowdService crowdService;
+    private final UserManager userManager;
+    private final ConnectUserService userService;
     private final String badCredentialsMessage; // protect against phishing by not saying whether the add-on, user or secret was wrong
 
     private final static Logger log = LoggerFactory.getLogger(ThreeLeggedAuthFilter.class);
@@ -63,17 +61,17 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
     public ThreeLeggedAuthFilter(ThreeLeggedAuthService threeLeggedAuthService,
                                  ConnectAddonManager connectAddonManager,
                                  UserManager userManager,
+                                 ConnectUserService userService,
                                  AuthenticationListener authenticationListener,
                                  JwtApplinkFinder jwtApplinkFinder,
-                                 CrowdService crowdService,
                                  I18nResolver i18nResolver)
     {
-        this.threeLeggedAuthService = checkNotNull(threeLeggedAuthService);
-        this.connectAddonManager = checkNotNull(connectAddonManager);
-        this.userManager = checkNotNull(userManager);
-        this.authenticationListener = checkNotNull(authenticationListener);
-        this.jwtApplinkFinder = checkNotNull(jwtApplinkFinder);
-        this.crowdService = checkNotNull(crowdService);
+        this.threeLeggedAuthService = checkNotNull(threeLeggedAuthService, "threeLeggedAuthService");
+        this.connectAddonManager = checkNotNull(connectAddonManager, "connectAddOnManager");
+        this.userManager = checkNotNull(userManager, "userManager");
+        this.userService = checkNotNull(userService, "userService");
+        this.authenticationListener = checkNotNull(authenticationListener, "authenticationListener");
+        this.jwtApplinkFinder = checkNotNull(jwtApplinkFinder, "jwtApplinkFinder");
         this.badCredentialsMessage = i18nResolver.getText("connect.3la.bad_credentials");
     }
 
@@ -103,27 +101,24 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
             filterChain.doFilter(request, response);
             return;
         }
-        log.debug("Start processing filter.");
 
-        Object addOnKeyObject = servletRequest.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME);
-        String addOnKey = addOnKeyObject instanceof String ? (String)addOnKeyObject : null;
+        String addOnKey = getAddonKeyFromRequest(servletRequest);
 
-        // warn if weird properties are set
-        if (null != addOnKeyObject && !(addOnKeyObject instanceof String))
+        if (!StringUtils.isEmpty(addOnKey))
         {
-            log.warn("The value of the request attribute '{}' should be a string but instead it is a '{}': '{}'. This is a programming error in the code that sets this value.",
-                    new Object[]{JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME, addOnKeyObject.getClass().getSimpleName(), addOnKeyObject});
-        }
-
-        final ConnectAddonBean addOnBean = connectAddonManager.getExistingAddon(addOnKey);
-
-        if (requestIsFromAJsonJwtAddOn(addOnKey, addOnBean))
-        {
-            filterChain.doFilter(request, response);
+            final ConnectAddonBean addonBean = connectAddonManager.getExistingAddon(addOnKey);
+            if (isJsonJwtAddon(addonBean))
+            {
+                processAddOnRequest(filterChain, request, response, addonBean);
+            }
+            else
+            {
+                filterChain.doFilter(request, response);
+            }
         }
         else
         {
-            processAddOnRequest(filterChain, request, response, addOnBean);
+            filterChain.doFilter(request, response);
         }
     }
 
@@ -134,9 +129,23 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
         started.set(true);
     }
 
-    private boolean requestIsFromAJsonJwtAddOn(String addOnKey, ConnectAddonBean addOnBean)
+    private String getAddonKeyFromRequest(ServletRequest servletRequest)
     {
-        return StringUtils.isEmpty(addOnKey) || null == addOnBean || null == addOnBean.getAuthentication() || addOnBean.getAuthentication().getType() != AuthenticationType.JWT;
+        Object addOnKeyObject = servletRequest.getAttribute(JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME);
+        String addOnKey = addOnKeyObject instanceof String ? (String)addOnKeyObject : null;
+
+        // warn if weird properties are set
+        if (null != addOnKeyObject && !(addOnKeyObject instanceof String))
+        {
+            log.warn("The value of the request attribute '{}' should be a string but instead it is a '{}': '{}'. This is a programming error in the code that sets this value.",
+                    new Object[]{JwtConstants.HttpRequests.ADD_ON_ID_ATTRIBUTE_NAME, addOnKeyObject.getClass().getSimpleName(), addOnKeyObject});
+        }
+        return addOnKey;
+    }
+
+    private boolean isJsonJwtAddon(ConnectAddonBean addonBean)
+    {
+        return addonBean != null && addonBean.getAuthentication() != null && addonBean.getAuthentication().getType() == AuthenticationType.JWT;
     }
 
     private void processAddOnRequest(FilterChain filterChain, HttpServletRequest request, HttpServletResponse response, ConnectAddonBean addOnBean) throws IOException, ServletException
@@ -198,15 +207,18 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
     {
         if (getBoolean(SYS_PROP_ALLOW_IMPERSONATION))
         {
-            log.warn("Allowing add-on '{}' to impersonate user '{}' because the system property '{}' is set to true.", new String[]{ addOnBean.getKey(), subject, SYS_PROP_ALLOW_IMPERSONATION });
+            log.info("Allowing add-on '{}' to impersonate user '{}' because the system property '{}' is set to true.", new String[]{ addOnBean.getKey(), subject, SYS_PROP_ALLOW_IMPERSONATION });
             return getUserProfile(request, response, addOnBean.getKey(), subject);
         }
         else
         {
             if (threeLeggedAuthService.shouldSilentlyIgnoreUserAgencyRequest(subject, addOnBean))
             {
-                log.warn("Ignoring subject claim '{}' on incoming request '{}' from Connect add-on '{}' because the {} said so.",
-                        new String[]{subject, request.getRequestURI(), addOnBean.getKey(), threeLeggedAuthService.getClass().getSimpleName()});
+                if (log.isDebugEnabled())
+                {
+                    log.debug("Ignoring subject claim '{}' on incoming request '{}' from Connect add-on '{}' because the {} said so.",
+                            new String[] { subject, request.getRequestURI(), addOnBean.getKey(), threeLeggedAuthService.getClass().getSimpleName() });
+                }
                 return null;
             }
             else
@@ -222,7 +234,7 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
                 else
                 {
                     String externallyVisibleMessage = String.format(MSG_FORMAT_NOT_ALLOWING_IMPERSONATION, addOnBean.getKey(), subject);
-                    log.warn("{} because this user has not granted user-agent rights to this add-on, or the grant has expired.", externallyVisibleMessage);
+                    log.debug("{} because this user has not granted user-agent rights to this add-on, or the grant has expired.", externallyVisibleMessage);
                     fail(request, response, externallyVisibleMessage, HttpServletResponse.SC_FORBIDDEN);
                     throw new InvalidSubjectException(subject);
                 }
@@ -269,14 +281,7 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
         }
         else
         {
-            User user = crowdService.getUser(userProfile.getUsername());
-            // no impersonating an inactive user; no zombies
-            if (user == null)
-            {
-                // if this ever happens then our internal libs disagree on what is a user and what is not
-                throw new RuntimeException(String.format("The user manager said that user '%s' exists but Crowd does not know about it.", userProfile.getUsername()));
-            }
-            else if (!user.isActive())
+            if (!userService.isActive(userProfile.getUsername()))
             {
                 String externallyVisibleMessage = String.format(MSG_FORMAT_NOT_ALLOWING_IMPERSONATION, addOnKey, subject);
                 log.debug("{} because the crowd service says that this user is inactive.", externallyVisibleMessage);
@@ -310,37 +315,31 @@ public class ThreeLeggedAuthFilter implements Filter, LifecycleAware
         }
         else
         {
-            Object addOnUserKey = applicationLink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
+            // the AppLinks constant is "user.key", but it is used to store the username. Confusing, but for backwards compatibility we're retaining
+            // the constant name
+            Object addOnUsername = applicationLink.getProperty(JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME);
 
-            if (null == addOnUserKey)
+            if (null == addOnUsername)
             {
                 log.warn(String.format("Application link '%s' for JWT issuer '%s' has no '%s' property. Incoming requests from this issuer will be authenticated as an anonymous request.",
                         applicationLink.getId(), jwtIssuer, JwtConstants.AppLinks.ADD_ON_USER_KEY_PROPERTY_NAME));
             }
             else
             {
-                if (addOnUserKey instanceof String)
+                if (addOnUsername instanceof String)
                 {
-                    String userKeyString = (String) addOnUserKey;
-                    User user = crowdService.getUser(userKeyString);
-
-                    // if the add-on's user has been disabled then we explicitly deny access so that admins and our add-on
-                    // lifecycle code can instantly prevent an add-on from making any calls (e.g. when an add-on is disabled)
-                    if (null == user)
+                    String username = (String) addOnUsername;
+                    if (!userService.isActive(username))
                     {
-                        throw new InvalidSubjectException(String.format("The user '%s' does not exist", userKeyString));
-                    }
-                    else if (!user.isActive())
-                    {
-                        throw new InvalidSubjectException(String.format("The user '%s' is inactive", userKeyString));
+                        throw new InvalidSubjectException(String.format("The user '%s' is inactive", username));
                     }
 
-                    userPrincipal = new SimplePrincipal(userKeyString);
+                    userPrincipal = new SimplePrincipal(username);
                 }
                 else
                 {
                     throw new IllegalStateException(String.format("ApplicationLink '%s' for JWT issuer '%s' has the non-String user key '%s'. The user key must be a String: please correct it by editing the database or, if the issuer is a Connect add-on, by re-installing it.",
-                            applicationLink.getId(), jwtIssuer, addOnUserKey));
+                            applicationLink.getId(), jwtIssuer, addOnUsername));
                 }
             }
         }

@@ -39,7 +39,7 @@ var plugins = {
 
 var connectPlugin = 'com.atlassian.plugins:atlassian-connect-plugin';
 var baseCommand = 'atlas-run-standalone --product {{product}} ' +
-    '--version {{productVersion}} --bundled-plugins {{bundledPlugins}} ' +
+    '--version {{productVersion}} --data-version {{dataVersion}} --bundled-plugins {{bundledPlugins}} ' +
     '--jvmargs -Datlassian.upm.on.demand=true';
 
 var versionOverrides = {
@@ -169,6 +169,7 @@ function createProductRunCommand(product, env) {
     return baseCommand
         .replace('{{product}}', product)
         .replace('{{productVersion}}', versions[env][product])
+        .replace('{{dataVersion}}', versions[env][product])
         .replace('{{bundledPlugins}}', bundledPlugins[env][product].join(',') + ',' + connectPlugin + ':' + versions[env].connect);
 }
 

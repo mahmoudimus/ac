@@ -1,16 +1,15 @@
 package com.atlassian.plugin.connect.crowd.usermanagement;
 
-import java.util.Map;
-import java.util.Set;
-
 import com.atlassian.crowd.embedded.api.PasswordCredential;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.exception.ApplicationPermissionException;
+import com.atlassian.crowd.exception.GroupNotFoundException;
 import com.atlassian.crowd.exception.InvalidAuthenticationException;
 import com.atlassian.crowd.exception.InvalidGroupException;
 import com.atlassian.crowd.exception.InvalidUserException;
 import com.atlassian.crowd.exception.OperationFailedException;
+import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.crowd.model.group.Group;
 import com.atlassian.crowd.model.user.UserTemplate;
 import com.atlassian.crowd.service.client.CrowdClient;
@@ -18,11 +17,15 @@ import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserGroupProvi
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitException;
 import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserProvisioningService;
 import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
-
 import com.google.common.base.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+import java.util.Set;
+
+import static com.atlassian.plugin.connect.crowd.usermanagement.UserCreationResult.UserNewness.NEWLY_CREATED;
+import static com.atlassian.plugin.connect.crowd.usermanagement.UserCreationResult.UserNewness.PRE_EXISTING;
 
 public abstract class ConnectCrowdBase
         implements ConnectAddOnUserGroupProvisioningService
@@ -35,12 +38,12 @@ public abstract class ConnectCrowdBase
         this.userReconciliation = userReconciliation;
     }
 
-    public User createOrEnableUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential)
+    public UserCreationResult createOrEnableUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential)
     {
         Optional<? extends User> user = findUserByName(username);
         if (!user.isPresent())
         {
-            return createUser(username, displayName, emailAddress, passwordCredential);
+            return new UserCreationResult(createUser(username, displayName, emailAddress, passwordCredential), NEWLY_CREATED);
         }
 
         User foundUser = user.get();
@@ -49,7 +52,8 @@ public abstract class ConnectCrowdBase
         {
             updateUser(requiredUpdates.get());
         }
-        return foundUser;
+        updateUserCredential(username, passwordCredential);
+        return new UserCreationResult(foundUser, PRE_EXISTING);
     }
 
     public void disableUser(String username)
@@ -144,6 +148,8 @@ public abstract class ConnectCrowdBase
             throws OperationFailedException, InvalidUserException;
 
     protected abstract void updateUser(UserTemplate fixes);
+    
+    protected abstract void updateUserCredential(String username, PasswordCredential passwordCredential);
 
     protected abstract void addGroup(String groupName)
             throws InvalidGroupException, OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException;
@@ -179,4 +185,15 @@ public abstract class ConnectCrowdBase
 
         return created;
     }
+
+    public void ensureUserIsInGroups(String userKey, Set<String> groupKeys)
+            throws ApplicationNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, UserNotFoundException, InvalidAuthenticationException
+    {
+        for(String groupKey : groupKeys)
+        {
+            ensureUserIsInGroup(userKey, groupKey);
+        }
+    }
+
+    public abstract void invalidateSessions(String username) throws OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException;
 }

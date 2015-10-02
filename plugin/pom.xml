@@ -3,12 +3,12 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.45-SNAPSHOT</version>
+        <version>1.1.55-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>atlassian-connect-plugin</artifactId>
-    <name>Atlassian Connect - Plugin</name>
+    <name>Atlassian Connect Plugin</name>
     <packaging>atlassian-plugin</packaging>
 
     <licenses>
@@ -20,6 +20,7 @@
     </licenses>
 
     <dependencies>
+
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
@@ -382,22 +383,6 @@
             <version>${atlassian.html.encoder.version}</version>
         </dependency>
         <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>${commons.httpclient.version}</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <scope>provided</scope>
@@ -651,7 +636,7 @@
                         <product>
                             <id>jira</id>
                             <version>${atlassian.jira.version}</version>
-                            <log4jProperties>${basedir}/../integration-tests/src/test/resources/log4j-jira.properties</log4jProperties>
+                            <log4jProperties>src/test/resources/log4j-jira.properties</log4jProperties>
                             <systemPropertyVariables>
                                 <product>jira</product>
                                 <atlassian.upm.on.demand>${atlassian.upm.on.demand}</atlassian.upm.on.demand>
@@ -711,7 +696,7 @@
                         <product>
                             <id>confluence</id>
                             <version>${atlassian.confluence.version}</version>
-                            <log4jProperties>${basedir}/../integration-tests/src/test/resources/log4j-confluence.properties</log4jProperties>
+                            <log4jProperties>src/test/resources/log4j-confluence.properties</log4jProperties>
                             <jvmArgs>-Xmx512m -XX:MaxPermSize=512m</jvmArgs>
                             <systemPropertyVariables>
                                 <product>confluence</product>
@@ -785,6 +770,8 @@
                             <workingDirectory>../plugin</workingDirectory>
                             <nodeVersion>${node.version}</nodeVersion>
                             <npmVersion>${npm.version}</npmVersion>
+                            <nodeDownloadRoot>${node.download.root}</nodeDownloadRoot>
+                            <npmDownloadRoot>${npm.download.root}</npmDownloadRoot>
                         </configuration>
                     </execution>
                     <execution>
@@ -1096,8 +1083,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <compilerArgument>-proc:none</compilerArgument>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
@@ -1226,7 +1213,6 @@
 
     <properties>
         <product>jira</product>
-        <skipITs>true</skipITs>
         <build.test.plugin>false</build.test.plugin>
         <devmode>true</devmode>
         <fastdev.version>2.4</fastdev.version>
@@ -1242,5 +1228,8 @@
             include-artifact,com.atlassian.plugins:atlassian-connect-integration-tests
         </od.testing.configuration>
         <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
+
+        <!-- Override the javadoc.additional.params field because it breaks the json schema documentation generation -->
+        <javadoc.additional.params />
     </properties>
 </project>
