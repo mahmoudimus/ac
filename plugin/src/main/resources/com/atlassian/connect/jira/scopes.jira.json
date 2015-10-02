@@ -3,7 +3,7 @@
     {
       "key": "READ",
       "restPathKeys": ["issuetype", "issue", "resolution", "serverInfo", "version", "component", "search", "priority", "customFieldOption", "issueLink", "issueLinkType", "status", "statuscategory", "attachment", "field", "project", "mypermissions", "user", "filter", "myself", "userPicker", "groupsPicker", "auditing", "jql", "configuration", "commentProperties", "dashboardItemProperties"],
-      "pathKeys": ["download attachments", "project avatars", "user avatars", "thumbnails"],
+      "pathKeys": ["download attachments", "project avatars", "user avatars", "avatars", "thumbnails"],
       "methods": ["GET"]
     },
     {
@@ -291,6 +291,10 @@
       {
         "key": "user avatars",
         "paths": ["/secure/useravatar"]
+      },
+      {
+        "key": "avatars",
+        "paths": ["/secure/viewavatar"]
       },
       {
         "key": "thumbnails",
