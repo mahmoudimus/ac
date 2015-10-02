@@ -13,7 +13,21 @@
 
     <modules>
         <module>jira-reference-plugin</module>
-        <module>jira-integration-tests</module>
     </modules>
+
+    <profiles>
+        <profile>
+            <id>it</id>
+            <modules>
+                <module>jira-integration-tests</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>freezer-release-profile</id>
+            <modules>
+                <module>jira-integration-tests</module>
+            </modules>
+        </profile>
+    </profiles>
 
 </project>
