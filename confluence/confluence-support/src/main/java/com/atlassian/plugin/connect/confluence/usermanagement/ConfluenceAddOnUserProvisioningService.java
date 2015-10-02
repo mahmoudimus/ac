@@ -289,7 +289,7 @@ public class ConfluenceAddOnUserProvisioningService implements ConnectAddOnUserP
 
     private void grantAddonUserPermissionToSpace(String permissionName, Space space, ConfluenceUser confluenceAddonUser)
     {
-        if (!spacePermissionManager.hasPermission(permissionName, space, confluenceAddonUser))
+        if (!spacePermissionManager.hasPermissionNoExemptions(permissionName, space, confluenceAddonUser))
         {
             SpacePermission permission = new SpacePermission(permissionName, space, null, confluenceAddonUser);
             spacePermissionManager.savePermission(permission);
