@@ -67,7 +67,7 @@ public class DefaultBlueprintModuleProvider extends AbstractConnectModuleProvide
     }
 
     @Override
-    public ConnectModuleMeta getMeta()
+    public ConnectModuleMeta<BlueprintModuleBean> getMeta()
     {
         return new BlueprintModuleMeta();
     }

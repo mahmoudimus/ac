@@ -1,10 +1,8 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class StaticContentMacroModuleMeta implements ConnectModuleMeta
+public class StaticContentMacroModuleMeta implements ConnectModuleMeta<StaticContentMacroModuleBean>
 {
-    public static final String DESCRIPTOR_KEY = "staticContentMacros";
-    public static final Class BEAN_CLASS = StaticContentMacroModuleBean.class;
-    
+
     @Override
     public boolean multipleModulesAllowed()
     {
@@ -12,14 +10,14 @@ public class StaticContentMacroModuleMeta implements ConnectModuleMeta
     }
 
     @Override
-    public Class getBeanClass()
+    public Class<StaticContentMacroModuleBean> getBeanClass()
     {
-        return BEAN_CLASS;
+        return StaticContentMacroModuleBean.class;
     }
 
     @Override
     public String getDescriptorKey()
     {
-        return DESCRIPTOR_KEY;
+        return "staticContentMacros";
     }
 }

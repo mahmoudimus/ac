@@ -42,7 +42,7 @@ public class IssueTabPanelModuleProvider extends ConnectTabPanelModuleProvider
     }
 
     @Override
-    public ConnectModuleMeta getMeta()
+    public ConnectModuleMeta<ConnectTabPanelModuleBean> getMeta()
     {
         return new IssueTabPanelModuleMeta();
     }

@@ -42,7 +42,7 @@ public class ProjectTabPanelModuleProvider extends ConnectTabPanelModuleProvider
     }
 
     @Override
-    public ConnectModuleMeta getMeta()
+    public ConnectModuleMeta<ConnectTabPanelModuleBean> getMeta()
     {
         return new ProjectTabPanelModuleMeta();
     }

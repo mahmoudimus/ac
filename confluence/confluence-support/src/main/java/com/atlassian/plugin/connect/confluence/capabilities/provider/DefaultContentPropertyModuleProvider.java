@@ -41,7 +41,7 @@ public class DefaultContentPropertyModuleProvider extends ContentPropertyModuleP
     }
 
     @Override
-    public ConnectModuleMeta getMeta()
+    public ConnectModuleMeta<ContentPropertyModuleBean> getMeta()
     {
         return new ContentPropertyModuleMeta();
     }

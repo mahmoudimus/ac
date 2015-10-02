@@ -55,7 +55,7 @@ public class WebHookModuleProvider extends AbstractConnectModuleProvider<WebHook
     }
 
     @Override
-    public ConnectModuleMeta getMeta()
+    public ConnectModuleMeta<WebHookModuleBean> getMeta()
     {
         return new WebHookModuleMeta();
     }

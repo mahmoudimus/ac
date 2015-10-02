@@ -110,7 +110,7 @@ public class DefaultWebItemModuleProvider extends AbstractConnectModuleProvider<
     }
 
     @Override
-    public ConnectModuleMeta getMeta()
+    public ConnectModuleMeta<WebItemModuleBean> getMeta()
     {
         return new WebItemModuleMeta();
     }

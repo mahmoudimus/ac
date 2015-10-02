@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class DashboardItemModuleMeta implements ConnectModuleMeta
+public class DashboardItemModuleMeta implements ConnectModuleMeta<DashboardItemModuleBean>
 {
     @Override
     public boolean multipleModulesAllowed()
@@ -15,7 +15,7 @@ public class DashboardItemModuleMeta implements ConnectModuleMeta
     }
 
     @Override
-    public Class getBeanClass()
+    public Class<DashboardItemModuleBean> getBeanClass()
     {
         return DashboardItemModuleBean.class;
     }

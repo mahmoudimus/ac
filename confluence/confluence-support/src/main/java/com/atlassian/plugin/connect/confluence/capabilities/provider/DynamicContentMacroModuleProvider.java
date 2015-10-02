@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrat
 import com.atlassian.plugin.connect.confluence.capabilities.descriptor.macro.DynamicContentMacroModuleDescriptorFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
@@ -67,7 +68,7 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
     }
 
     @Override
-    public ConnectModuleMeta getMeta()
+    public ConnectModuleMeta<DynamicContentMacroModuleBean> getMeta()
     {
         return new DynamicContentMacroModuleMeta();
     }

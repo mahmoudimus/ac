@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class SearchRequestViewModuleMeta implements ConnectModuleMeta
+public class SearchRequestViewModuleMeta implements ConnectModuleMeta<SearchRequestViewModuleBean>
 {
     @Override
     public boolean multipleModulesAllowed()
@@ -15,7 +15,7 @@ public class SearchRequestViewModuleMeta implements ConnectModuleMeta
     }
 
     @Override
-    public Class getBeanClass()
+    public Class<SearchRequestViewModuleBean> getBeanClass()
     {
         return SearchRequestViewModuleBean.class;
     }

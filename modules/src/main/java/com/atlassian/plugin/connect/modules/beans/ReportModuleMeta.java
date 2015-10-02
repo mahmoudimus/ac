@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class ReportModuleMeta implements ConnectModuleMeta
+public class ReportModuleMeta implements ConnectModuleMeta<ReportModuleBean>
 {
     @Override
     public boolean multipleModulesAllowed()
@@ -15,7 +15,7 @@ public class ReportModuleMeta implements ConnectModuleMeta
     }
 
     @Override
-    public Class getBeanClass()
+    public Class<ReportModuleBean> getBeanClass()
     {
         return ReportModuleBean.class;
     }

@@ -46,17 +46,14 @@ public class BeanToModuleRegistrar
 
     private final ConcurrentHashMap<String, DynamicDescriptorRegistration.Registration> registrations;
     private final ContainerManagedPlugin theConnectPlugin;
-    private final ApplicationProperties applicationProperties;
     private final PluginAccessor pluginAccessor;
 
     @Autowired
     public BeanToModuleRegistrar(DynamicDescriptorRegistration dynamicDescriptorRegistration,
                                  PluginRetrievalService pluginRetrievalService,
-                                 ApplicationProperties applicationProperties,
                                  PluginAccessor pluginAccessor)
     {
         this.dynamicDescriptorRegistration = dynamicDescriptorRegistration;
-        this.applicationProperties = applicationProperties;
         this.theConnectPlugin = (ContainerManagedPlugin) pluginRetrievalService.getPlugin();
         this.registrations = new ConcurrentHashMap<>();
         this.pluginAccessor = pluginAccessor;
@@ -72,13 +69,11 @@ public class BeanToModuleRegistrar
 
         List<DescriptorToRegister> descriptorsToRegister = new ArrayList<DescriptorToRegister>();
 
-        BeanTransformContext ctx = new BeanTransformContext(theConnectPlugin, ProductFilter.valueOf(applicationProperties.getDisplayName().toUpperCase()));
-
         //we MUST add in the lifecycle webhooks first
         addon = getCapabilitiesWithLifecycleWebhooks(addon);
 
         //now process the module fields
-        processFields(addon, ctx, descriptorsToRegister);
+        processFields(addon, theConnectPlugin, descriptorsToRegister);
 
 
         if (!descriptorsToRegister.isEmpty())
@@ -115,7 +110,7 @@ public class BeanToModuleRegistrar
             return reg.getRegisteredDescriptors();
         }
         
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
     
     public boolean descriptorsAreRegistered(String pluginKey)
@@ -150,13 +145,13 @@ public class BeanToModuleRegistrar
     
 
 
-    private void processFields(ConnectAddonBean addon, BeanTransformContext ctx, List<DescriptorToRegister> descriptorsToRegister)
+    private void processFields(ConnectAddonBean addon, ContainerManagedPlugin theConnectPlugin, List<DescriptorToRegister> descriptorsToRegister)
     {
         for (Map.Entry<String,Supplier<List<ModuleBean>>> entry : addon.getModules().entrySet())
         {
             List<ModuleBean> beans = entry.getValue().get();
             ConnectModuleProvider provider = findProvider(entry.getKey());
-            List<ModuleDescriptor> descriptors = provider.provideModules(new DefaultConnectModuleProviderContext(addon), ctx.getTheConnectPlugin(), beans);
+            List<ModuleDescriptor> descriptors = provider.provideModules(new DefaultConnectModuleProviderContext(addon), theConnectPlugin, beans);
             List<DescriptorToRegister> theseDescriptors = Lists.transform(descriptors, new Function<ModuleDescriptor, DescriptorToRegister>()
             {
                 @Override
@@ -181,27 +176,5 @@ public class BeanToModuleRegistrar
             }
         }
         return null;
-    }
-
-    private class BeanTransformContext
-    {
-        private final Plugin theConnectPlugin;
-        private final ProductFilter appFilter;
-
-        private BeanTransformContext(Plugin theConnectPlugin, ProductFilter appFilter)
-        {
-            this.theConnectPlugin = theConnectPlugin;
-            this.appFilter = appFilter;
-        }
-
-        private Plugin getTheConnectPlugin()
-        {
-            return theConnectPlugin;
-        }
-
-        private ProductFilter getAppFilter()
-        {
-            return appFilter;
-        }
     }
 }

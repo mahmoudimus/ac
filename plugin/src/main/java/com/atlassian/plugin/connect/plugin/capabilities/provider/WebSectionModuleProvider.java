@@ -57,7 +57,7 @@ public class WebSectionModuleProvider extends AbstractConnectModuleProvider<WebS
     }
 
     @Override
-    public ConnectModuleMeta getMeta()
+    public ConnectModuleMeta<WebSectionModuleBean> getMeta()
     {
         return new WebSectionModuleMeta();
     }

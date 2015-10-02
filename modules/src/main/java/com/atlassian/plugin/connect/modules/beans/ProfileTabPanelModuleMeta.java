@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class ProfileTabPanelModuleMeta implements ConnectModuleMeta
+public class ProfileTabPanelModuleMeta implements ConnectModuleMeta<ConnectTabPanelModuleBean>
 {
     @Override
     public boolean multipleModulesAllowed()
@@ -15,7 +15,7 @@ public class ProfileTabPanelModuleMeta implements ConnectModuleMeta
     }
 
     @Override
-    public Class getBeanClass()
+    public Class<ConnectTabPanelModuleBean> getBeanClass()
     {
         return ConnectTabPanelModuleBean.class;
     }

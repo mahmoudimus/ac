@@ -43,7 +43,7 @@ public class ProfileTabPanelModuleProvider extends ConnectTabPanelModuleProvider
     }
 
     @Override
-    public ConnectModuleMeta getMeta()
+    public ConnectModuleMeta<ConnectTabPanelModuleBean> getMeta()
     {
         return new ProfileTabPanelModuleMeta();
     }

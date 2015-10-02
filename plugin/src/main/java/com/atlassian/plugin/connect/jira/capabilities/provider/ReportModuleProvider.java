@@ -49,7 +49,7 @@ public class ReportModuleProvider extends AbstractConnectModuleProvider<ReportMo
     }
 
     @Override
-    public ConnectModuleMeta getMeta()
+    public ConnectModuleMeta<ReportModuleBean> getMeta()
     {
         return new ReportModuleMeta();
     }

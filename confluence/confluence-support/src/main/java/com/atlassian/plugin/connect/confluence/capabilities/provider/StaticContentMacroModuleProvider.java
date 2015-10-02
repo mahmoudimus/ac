@@ -49,7 +49,7 @@ public class StaticContentMacroModuleProvider extends AbstractContentMacroModule
     }
 
     @Override
-    public ConnectModuleMeta getMeta()
+    public ConnectModuleMeta<StaticContentMacroModuleBean> getMeta()
     {
         return new StaticContentMacroModuleMeta();
     }

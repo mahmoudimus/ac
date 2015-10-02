@@ -1,6 +1,6 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class ConfigurePageModuleMeta implements ConnectModuleMeta
+public class ConfigurePageModuleMeta implements ConnectModuleMeta<ConnectPageModuleBean>
 {
     @Override
     public boolean multipleModulesAllowed()
@@ -15,7 +15,7 @@ public class ConfigurePageModuleMeta implements ConnectModuleMeta
     }
 
     @Override
-    public Class getBeanClass()
+    public Class<ConnectPageModuleBean> getBeanClass()
     {
         return ConnectPageModuleBean.class;
     }
