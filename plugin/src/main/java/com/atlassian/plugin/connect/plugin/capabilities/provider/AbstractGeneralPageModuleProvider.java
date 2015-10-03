@@ -10,15 +10,15 @@ import com.atlassian.plugin.web.Condition;
 
 import java.util.Collections;
 
-public abstract class AbstractAdminPageModuleProvider extends AbstractConnectPageModuleProvider
+public abstract class AbstractGeneralPageModuleProvider extends AbstractConnectPageModuleProvider
 {
-    public static final String ATL_ADMIN_DECORATOR = "atl.admin";
+    public static final String ATL_GENERAL_DECORATOR = "atl.general";
     private final ProductAccessor productAccessor;
 
-    public AbstractAdminPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-            ProductAccessor productAccessor)
+    public AbstractGeneralPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+                                             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                                             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+                                             ProductAccessor productAccessor)
     {
         super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory);
         this.productAccessor = productAccessor;
@@ -27,30 +27,18 @@ public abstract class AbstractAdminPageModuleProvider extends AbstractConnectPag
     @Override
     protected String getDecorator()
     {
-        return ATL_ADMIN_DECORATOR;
+        return ATL_GENERAL_DECORATOR;
     }
 
     @Override
     protected String getDefaultSection()
     {
-        return productAccessor.getPreferredAdminSectionKey();
+        return productAccessor.getPreferredGeneralSectionKey();
     }
 
     @Override
     protected int getDefaultWeight()
     {
-        return productAccessor.getPreferredAdminWeight();
-    }
-
-    @Override
-    protected Iterable<Class<? extends Condition>> getConditionClasses()
-    {
-        return Collections.<Class<? extends Condition>>singletonList(UserIsAdminCondition.class);
-    }
-
-    @Override
-    protected boolean needsEscaping()
-    {
-        return productAccessor.needsAdminPageNameEscaping();
+        return productAccessor.getPreferredGeneralWeight();
     }
 }
