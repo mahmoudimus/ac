@@ -8,10 +8,12 @@ import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrat
 import com.atlassian.plugin.connect.api.iframe.servlet.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.module.provider.AbstractConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleValidationException;
 import com.atlassian.plugin.web.Condition;
 import com.google.common.collect.ImmutableList;
 
@@ -34,14 +36,17 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
+    private final PageConditionsValidator pageConditionsValidator;
 
     public AbstractConnectPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
                                              IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-                                             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory)
+                                             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+                                             PageConditionsValidator pageConditionsValidator)
     {
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.webItemModuleDescriptorFactory = checkNotNull(webItemModuleDescriptorFactory);
+        this.pageConditionsValidator = pageConditionsValidator;
     }
 
     @Override
@@ -125,4 +130,11 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
 
     protected abstract int getDefaultWeight();
 
+    @Override
+    public List<ConnectPageModuleBean> validate(String rawModules, Class<ConnectPageModuleBean> type, Plugin plugin, ShallowConnectAddonBean bean) throws ConnectModuleValidationException
+    {
+        List<ConnectPageModuleBean> pageBeans = super.validate(rawModules, type, plugin, bean);
+        pageConditionsValidator.validate(bean, pageBeans, getMeta().getDescriptorKey());
+        return pageBeans;
+    }
 }

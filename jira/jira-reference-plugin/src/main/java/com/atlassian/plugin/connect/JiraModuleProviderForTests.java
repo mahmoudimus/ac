@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrat
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
+import com.atlassian.plugin.connect.spi.capabilities.provider.PageConditionsValidator;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.capabilities.provider.AbstractConnectPageModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleValidationException;
@@ -18,9 +19,12 @@ import java.util.List;
 public class JiraModuleProviderForTests extends AbstractConnectPageModuleProvider
 {
     @Autowired
-    public JiraModuleProviderForTests(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, WebItemModuleDescriptorFactory webItemModuleDescriptorFactory)
+    public JiraModuleProviderForTests(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory, 
+                                      IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, 
+                                      WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+                                      PageConditionsValidator pageConditionsValidator)
     {
-        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory);
+        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory, pageConditionsValidator);
     }
 
     @Override

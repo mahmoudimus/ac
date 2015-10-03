@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrat
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.spi.capabilities.provider.PageConditionsValidator;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.capabilities.provider.AbstractConnectPageModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
@@ -47,6 +48,7 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
     @Mock protected BundleContext bundleContext;
     @Mock protected ProductAccessor productAccessor;
     @Mock protected ApplicationProperties applicationProperties;
+    @Mock protected PageConditionsValidator pageConditionsValidator;
 
     private T moduleProvider;
 

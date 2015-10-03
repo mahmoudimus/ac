@@ -3,11 +3,16 @@ package com.atlassian.plugin.connect.plugin.capabilities.provider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
+import com.atlassian.plugin.connect.plugin.capabilities.WebHookScopeService;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebHookModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.module.provider.AbstractConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleValidationException;
+import com.atlassian.webhooks.spi.provider.WebHook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,11 +24,14 @@ import java.util.List;
 public class WebHookModuleProvider extends AbstractConnectModuleProvider<WebHookModuleBean>
 {
     private ConnectWebHookModuleDescriptorFactory connectWebHookModuleDescriptorFactory;
+    private WebHookScopeValidator webHookScopeValidator;
 
     @Autowired
-    public WebHookModuleProvider(ConnectWebHookModuleDescriptorFactory connectWebHookModuleDescriptorFactory)
+    public WebHookModuleProvider(ConnectWebHookModuleDescriptorFactory connectWebHookModuleDescriptorFactory,
+                                 WebHookScopeValidator webHookScopeValidator)
     {
         this.connectWebHookModuleDescriptorFactory = connectWebHookModuleDescriptorFactory;
+        this.webHookScopeValidator = webHookScopeValidator;
     }
 
     @Override
@@ -58,5 +66,13 @@ public class WebHookModuleProvider extends AbstractConnectModuleProvider<WebHook
     public ConnectModuleMeta<WebHookModuleBean> getMeta()
     {
         return new WebHookModuleMeta();
+    }
+    
+    @Override
+    public List<WebHookModuleBean> validate(String rawModules, Class<WebHookModuleBean> type, Plugin plugin, ShallowConnectAddonBean bean) throws ConnectModuleValidationException
+    {
+        List<WebHookModuleBean> webhooks = super.validate(rawModules, type, plugin, bean);
+        webHookScopeValidator.validate(bean, webhooks);
+        return webhooks;
     }
 }

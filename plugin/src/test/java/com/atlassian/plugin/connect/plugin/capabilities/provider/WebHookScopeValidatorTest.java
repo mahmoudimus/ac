@@ -1,10 +1,11 @@
-package com.atlassian.plugin.connect.plugin.capabilities.validate.impl;
+package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.WebHookModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.WebHookScopeService;
+import com.atlassian.plugin.connect.plugin.capabilities.provider.WebHookScopeValidator;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.google.common.collect.ImmutableSet;
 import org.junit.Before;
@@ -13,7 +14,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import static org.mockito.Mockito.when;
@@ -36,7 +40,7 @@ public class WebHookScopeValidatorTest
     @Test
     public void shouldAcceptBeanWithoutWebhooks()
     {
-        webHookScopeValidator.validate(ConnectAddonBean.newConnectAddonBean().build());
+        webHookScopeValidator.validate(ConnectAddonBean.newConnectAddonBean().build(), new ArrayList<>());
     }
 
     @Test(expected = InvalidDescriptorException.class)
@@ -74,6 +78,7 @@ public class WebHookScopeValidatorTest
 
         when(webHookScopeService.getRequiredScope(event)).thenReturn(requiredScope);
 
-        webHookScopeValidator.validate(addonBean);
+        List<WebHookModuleBean> beanList = Collections.singletonList(webHookModuleBean);
+        webHookScopeValidator.validate(addonBean, beanList);
     }
 }

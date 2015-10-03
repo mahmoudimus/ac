@@ -7,6 +7,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.GeneralPageModuleMeta;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.capabilities.provider.AbstractConnectPageModuleProvider;
+import com.atlassian.plugin.connect.spi.capabilities.provider.PageConditionsValidator;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,9 +22,10 @@ public class GeneralPageModuleProvider extends AbstractConnectPageModuleProvider
     public GeneralPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
                                      IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
                                      WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+                                     PageConditionsValidator pageConditionsValidator,
                                      ProductAccessor productAccessor)
     {
-        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory);
+        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory, pageConditionsValidator);
         this.productAccessor = productAccessor;
     }
 

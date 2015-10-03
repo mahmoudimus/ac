@@ -1,27 +1,31 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.GeneralPageModuleMeta;
+import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.plugin.capabilities.validate.impl.PageConditionsValidator;
 import com.atlassian.plugin.connect.plugin.condition.PageConditionsFactoryImpl;
-import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.installer.AvailableModuleTypes;
 import com.atlassian.plugin.connect.plugin.installer.ModuleBeanDeserializer;
 import com.atlassian.plugin.connect.plugin.installer.StaticAvailableModuleTypes;
+import com.atlassian.plugin.connect.spi.capabilities.provider.PageConditionsValidator;
 import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
+import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleValidationException;
 import com.atlassian.sal.api.message.I18nResolver;
-import com.google.gson.Gson;
-import com.opensymphony.util.FileUtils;
+import com.google.common.base.Supplier;
+import com.google.common.collect.Lists;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.core.io.DefaultResourceLoader;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import static com.atlassian.plugin.connect.util.io.TestFileReader.readAddonTestFile;
 import static org.mockito.Matchers.anyString;
@@ -40,7 +44,7 @@ public class PageConditionValidationTest
     public void setup()
     {
         when(i18nResolver.getText(anyString(), anyString(), anyString())).thenReturn("error message");
-        this.conditionsValidator = new PageConditionsValidator(i18nResolver, pageConditionsFactory);
+        this.conditionsValidator = new PageConditionsValidator(pageConditionsFactory);
     }
 
     @Test
@@ -67,13 +71,13 @@ public class PageConditionValidationTest
         validateFully(readConditionJson("valid-nested-remote-condition.json"));
     }
 
-    @Test(expected = InvalidDescriptorException.class)
+    @Test(expected = ConnectModuleValidationException.class)
     public void invalidConditionFails() throws Exception
     {
         validateFully(readConditionJson("invalid-condition.json"));
     }
 
-    @Test(expected = InvalidDescriptorException.class)
+    @Test(expected = ConnectModuleValidationException.class)
     public void invalidNestedConditionFails() throws Exception
     {
         validateFully(readConditionJson("invalid-nested-condition.json"));
@@ -86,15 +90,14 @@ public class PageConditionValidationTest
 
     public void validateFully(final String jsonDescriptor) throws Exception
     {
+        JsonElement element = new JsonParser().parse(jsonDescriptor);
+        ShallowConnectAddonBean addon = ConnectModulesGsonFactory.shallowAddonFromJsonWithI18nCollector(element, null);
+
         ModuleBeanDeserializer deserializer = new ModuleBeanDeserializer(moduleTypes);
-        Gson gson = ConnectModulesGsonFactory.getGsonBuilder().registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), deserializer).create();
-        ConnectAddonBean addon = gson.fromJson(jsonDescriptor, ConnectAddonBean.class);
+        Map<String, Supplier<List<ModuleBean>>> moduleMap = ConnectModulesGsonFactory.moduleListFromJson(element, deserializer);
 
-        conditionsValidator.validate(addon);
-    }
-
-    private String getSchema() throws IOException
-    {
-        return FileUtils.readFile(new DefaultResourceLoader().getResource("classpath:/schema/jira-schema.json").getFile());
+        List<ModuleBean> modules = moduleMap.get("generalPages").get();
+        List<ConnectPageModuleBean> pageModules = Lists.transform(modules, genericBean -> (ConnectPageModuleBean) genericBean);
+        conditionsValidator.validate(addon, pageModules, "generalPages");
     }
 }

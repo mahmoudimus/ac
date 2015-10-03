@@ -14,10 +14,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValida
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.message.I18nResolver;
 import com.github.fge.msgsimple.provider.LoadingMessageSourceProvider;
 import com.google.common.base.Supplier;
-import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import org.slf4j.Logger;
@@ -70,11 +68,8 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
     public ConnectAddonBean fromJson(String jsonDescriptor, Map<String, String> i18nCollector) throws InvalidDescriptorException
     {
         validateDescriptorAgainstSchema(jsonDescriptor);
-
         ConnectAddonBean addon = fromJsonSkipValidation(jsonDescriptor,i18nCollector);
-        validateModules(addon);
         addOnBeanValidatorService.validate(addon);
-        validateModules(addon);
 
         return addon;
     }
@@ -179,21 +174,4 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
         return messageBuilder.toString();
     }
 
-    // TODO: I've implemented this in the ModuleValidator class, where I think it makes more sense,
-    // but it should be called before PageConditionsValidator and WebHookScopeValidator because those guys try to get modules.
-    // Can't work out how to guarantee the ordering of the validators.
-    private void validateModules(ConnectAddonBean addOn)
-    {
-        for (Map.Entry<String, Supplier<List<ModuleBean>>> entry : addOn.getModules().entrySet())
-        {
-            try
-            {
-                entry.getValue().get();
-            }
-            catch (ModuleDeserializationException e)
-            {
-                throw new InvalidDescriptorException(e.getMessage());
-            }
-        }
-    }
 }

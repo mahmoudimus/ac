@@ -1,25 +1,18 @@
-package com.atlassian.plugin.connect.plugin.capabilities.validate.impl;
+package com.atlassian.plugin.connect.spi.capabilities.provider;
 
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
-import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
-import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidator;
-import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
-import com.atlassian.sal.api.message.I18nResolver;
-import com.google.common.base.Supplier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleValidationException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import static com.atlassian.plugin.connect.modules.util.ConditionUtils.isRemoteCondition;
 
@@ -30,21 +23,19 @@ import static com.atlassian.plugin.connect.modules.util.ConditionUtils.isRemoteC
  * @since 1.0
  */
 @Named("page-conditions-validator")
-public class PageConditionsValidator implements AddOnBeanValidator
+public class PageConditionsValidator
 {
-    private static final Logger log = LoggerFactory.getLogger(PageConditionsValidator.class);
     private final PageConditionsFactory pageConditionsFactory;
 
     @Inject
-    public PageConditionsValidator(I18nResolver i18nResolver, PageConditionsFactory pageConditionsFactory)
+    public PageConditionsValidator(PageConditionsFactory pageConditionsFactory)
     {
         this.pageConditionsFactory = pageConditionsFactory;
     }
 
-    @Override
-    public void validate(ConnectAddonBean addonBean) throws InvalidDescriptorException
+    public void validate(ShallowConnectAddonBean addonBean, List<ConnectPageModuleBean> pages, String descriptorKey) throws ConnectModuleValidationException
     {
-        List<SingleConditionBean> conditions = getPageModuleConditions(addonBean);
+        List<SingleConditionBean> conditions = getPageModuleConditions(pages);
         
         for(SingleConditionBean condition : conditions)
         {
@@ -53,17 +44,15 @@ public class PageConditionsValidator implements AddOnBeanValidator
             {
                 String exceptionMessage = String.format("The add-on (%s) includes a Page Module with an unsupported condition (%s)", addonBean.getKey(),conditionString);
 
-                throw new InvalidDescriptorException(exceptionMessage, "connect.install.error.page.with.invalid.condition", addonBean.getKey(),conditionString);
+                throw new ConnectModuleValidationException(descriptorKey, exceptionMessage);
             }
         }
     }
 
-    private List<SingleConditionBean> getPageModuleConditions(ConnectAddonBean addonBean)
+    private List<SingleConditionBean> getPageModuleConditions(List<ConnectPageModuleBean> pages)
     {
         List<SingleConditionBean> singleConditions = new ArrayList<SingleConditionBean>();
-        
-        List<ConnectPageModuleBean> pages = getPageModules(addonBean);
-        
+
         for(ConnectPageModuleBean page : pages)
         {
             singleConditions.addAll(extractSingleConditions(page.getConditions()));
@@ -89,24 +78,5 @@ public class PageConditionsValidator implements AddOnBeanValidator
         }
         
         return singleConditions;
-    }
-
-    private List<ConnectPageModuleBean> getPageModules(ConnectAddonBean addonBean)
-    {
-        List<ConnectPageModuleBean> pages = new ArrayList<ConnectPageModuleBean>();
-
-        for (Map.Entry<String,Supplier<List<ModuleBean>>> entry : addonBean.getModules().entrySet())
-        {
-            List<ModuleBean> moduleBeans = entry.getValue().get();
-            if(moduleBeans.get(0) instanceof ConnectPageModuleBean)
-            {
-                for (ModuleBean moduleBean : moduleBeans)
-                {
-                    pages.add((ConnectPageModuleBean)moduleBean);
-                }
-            }
-        }
-       
-        return pages;
     }
 }
