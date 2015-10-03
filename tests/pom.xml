@@ -22,10 +22,34 @@
     </licenses>
 
     <modules>
-        <module>integration-tests</module>
-        <module>plugin-lifecycle-tests</module>
         <module>test-support-plugin</module>
-        <module>wired-tests</module>
     </modules>
+
+    <profiles>
+        <profile>
+            <id>it</id>
+            <modules>
+                <module>integration-tests</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>pluginLifecycle</id>
+            <modules>
+                <module>plugin-lifecycle-tests</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>wired</id>
+            <modules>
+                <module>wired-tests</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>freezer-release-profile</id>
+            <modules>
+                <module>integration-tests</module>
+            </modules>
+        </profile>
+    </profiles>
 
 </project>

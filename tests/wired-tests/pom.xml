@@ -225,6 +225,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <containerId>tomcat7x</containerId>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
                     <skipRestDocGeneration>true</skipRestDocGeneration>
@@ -234,7 +235,6 @@
                             <artifactId>atlassian-connect-modules</artifactId>
                         </testBundleExclude>
                     </testBundleExcludes>
-
                     <systemPropertyVariables>
                         <atlassian.mail.senddisabled>false</atlassian.mail.senddisabled>
                         <sun.net.http.allowRestrictedHeaders>true</sun.net.http.allowRestrictedHeaders>
