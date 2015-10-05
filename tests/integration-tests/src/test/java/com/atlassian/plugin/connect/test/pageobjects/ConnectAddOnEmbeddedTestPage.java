@@ -47,12 +47,6 @@ public class ConnectAddOnEmbeddedTestPage extends ConnectAddOnPage
         return getValue("location");
     }
 
-    @OAuth
-    public String getConsumerKey()
-    {
-        return getValue("consumerKey");
-    }
-
     public String getClientHttpStatus()
     {
         return waitForValue("client-http-status");

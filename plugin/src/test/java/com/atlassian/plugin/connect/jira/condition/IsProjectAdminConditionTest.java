@@ -113,12 +113,6 @@ public class IsProjectAdminConditionTest
                 return (T) projectService;
             }
 
-            @SuppressWarnings ("unchecked")
-            public <T> Optional<T> getComponentSafely(Class<T> componentClass)
-            {
-                return Optional.of((T) projectService);
-            }
-
             @Override
             public <T> T getComponentOfType(Class<T> componentClass)
             {

@@ -3,7 +3,6 @@ package com.atlassian.plugin.connect.plugin.threeleggedauth;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.user.UserKey;
-import com.google.common.annotations.VisibleForTesting;
 import org.apache.velocity.util.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -28,28 +27,10 @@ public class AddOnSpecificImpersonationService implements ThreeLeggedAuthService
         Arrays.sort(AUTHORISED_ADD_ON_KEYS);
     }
 
-
-    @Override
-    public boolean grant(UserKey userKey, ConnectAddonBean addOnBean) throws NoUserAgencyException
-    {
-        return false;
-    }
-
-    @Override
-    public boolean grant(UserKey userKey, ConnectAddonBean addOnBean, long expiryWindowLengthMillis) throws NoUserAgencyException
-    {
-        return false;
-    }
-
     @Override
     public boolean hasGrant(UserKey userKey, ConnectAddonBean addOnBean)
     {
         return hasGrant(addOnBean);
-    }
-
-    @Override
-    public void revokeAll(String addOnKey)
-    {
     }
 
     @Override

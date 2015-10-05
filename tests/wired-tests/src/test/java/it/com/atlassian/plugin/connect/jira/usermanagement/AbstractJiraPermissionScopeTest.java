@@ -2,7 +2,6 @@ package it.com.atlassian.plugin.connect.jira.usermanagement;
 
 import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
-import com.atlassian.jira.compatibility.bridge.project.ProjectServiceBridge;
 import com.atlassian.jira.permission.Permission;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.PermissionManager;
@@ -35,7 +34,7 @@ import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractJiraPermissionScopeTest
 {
-    private static final String ADMIN = "admin";
+
     private static final String PROJECT_KEY = "JEDI";
     private static String ADDON_KEY = "project-admin-ADDON"; // Use uppercase characters to detect username vs userkey issues
     private static final String INSTALLED = "/installed";
@@ -43,7 +42,6 @@ public abstract class AbstractJiraPermissionScopeTest
     private final ConnectUserService connectUserService;
     private final PermissionManager permissionManager;
     private final ProjectService projectService;
-    private final ProjectServiceBridge projectServiceBridge;
     private final ProjectRoleService projectRoleService;
     private final UserManager userManager;
     private final TestPluginInstaller testPluginInstaller;
@@ -59,7 +57,6 @@ public abstract class AbstractJiraPermissionScopeTest
     public AbstractJiraPermissionScopeTest(ConnectUserService connectUserService,
                                            PermissionManager permissionManager,
                                            ProjectService projectService,
-                                           ProjectServiceBridge projectServiceBridge,
                                            ProjectRoleService projectRoleService,
                                            UserManager userManager,
                                            TestPluginInstaller testPluginInstaller,
@@ -69,7 +66,6 @@ public abstract class AbstractJiraPermissionScopeTest
         this.connectUserService = connectUserService;
         this.permissionManager = permissionManager;
         this.projectService = projectService;
-        this.projectServiceBridge = projectServiceBridge;
         this.projectRoleService = projectRoleService;
         this.userManager = userManager;
         this.testPluginInstaller = testPluginInstaller;
@@ -153,11 +149,6 @@ public abstract class AbstractJiraPermissionScopeTest
     public ConnectAddonBean getReadAddOn()
     {
         return readAddOn;
-    }
-
-    public ConnectUserService getConnectUserService()
-    {
-        return connectUserService;
     }
 
     public PermissionManager getPermissionManager()

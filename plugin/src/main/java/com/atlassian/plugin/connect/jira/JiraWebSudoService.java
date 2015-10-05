@@ -26,10 +26,4 @@ public class JiraWebSudoService implements WebSudoService
     {
         jiraWebSudoManager.startSession(request, response);
     }
-
-    @Override
-    public String getWebSudoSessionKey()
-    {
-        return SessionKeys.WEBSUDO_TIMESTAMP;
-    }
 }

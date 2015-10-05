@@ -1,5 +1,6 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
+import com.atlassian.plugin.connect.api.service.IsDevModeService;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.modules.schema.DescriptorValidationResult;
@@ -7,9 +8,7 @@ import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
 import com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectSchemaLocator;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidatorService;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
-import com.atlassian.plugin.connect.api.service.IsDevModeService;
 import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.sal.api.message.I18nResolver;
 import com.github.fge.msgsimple.provider.LoadingMessageSourceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,21 +32,19 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
     private final JsonDescriptorValidator jsonDescriptorValidator;
     private final ConnectSchemaLocator connectSchemaLocator;
     private final ApplicationProperties applicationProperties;
-    private final I18nResolver i18nResolver;
     private final AddOnBeanValidatorService addOnBeanValidatorService;
     private final IsDevModeService isDevModeService;
 
     @Autowired
     public GsonConnectAddonBeanFactory(final JsonDescriptorValidator jsonDescriptorValidator,
             final AddOnBeanValidatorService addOnBeanValidatorService, final ConnectSchemaLocator connectSchemaLocator,
-            final ApplicationProperties applicationProperties, I18nResolver i18nResolver,
+            final ApplicationProperties applicationProperties,
             IsDevModeService isDevModeService)
     {
         this.jsonDescriptorValidator = jsonDescriptorValidator;
         this.addOnBeanValidatorService = addOnBeanValidatorService;
         this.connectSchemaLocator = connectSchemaLocator;
         this.applicationProperties = applicationProperties;
-        this.i18nResolver = i18nResolver;
         this.isDevModeService = isDevModeService;
     }
 

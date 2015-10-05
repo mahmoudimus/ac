@@ -22,7 +22,6 @@ import org.openqa.selenium.WebElement;
  */
 public class RemoteQuickCreateIssueGeneralPage extends ConnectAddOnPage implements Page
 {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Inject
     protected AtlassianWebDriver driver;

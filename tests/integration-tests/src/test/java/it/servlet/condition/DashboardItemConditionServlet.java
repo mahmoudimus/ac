@@ -15,7 +15,6 @@ import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionB
 public class DashboardItemConditionServlet extends HttpServlet
 {
     public static final String DASHBOARD_ITEM_CONDITION_URL = "/dashboardItemConditon";
-    public static final AtomicInteger count = new AtomicInteger(0);
 
     private final String expectedUser;
     private final List<String> expectedMode;

@@ -40,7 +40,6 @@ public class JiraAddonLifecycleTest
     protected final TestPluginInstaller testPluginInstaller;
     protected final AddonTestFilterResults testFilterResults;
     private final GlobalPermissionManager jiraPermissionManager;
-    private final I18nResolver i18nResolver;
 
     protected ConnectAddonBean testBean;
     private Plugin plugin = null;
@@ -66,7 +65,6 @@ public class JiraAddonLifecycleTest
         this.jiraPermissionManager = jiraPermissionManager;
         this.testPluginInstaller = testPluginInstaller;
         this.testFilterResults = testFilterResults;
-        this.i18nResolver = i18nResolver;
     }
 
     @Test

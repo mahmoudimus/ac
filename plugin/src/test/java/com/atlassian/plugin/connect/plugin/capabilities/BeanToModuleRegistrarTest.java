@@ -8,10 +8,10 @@ import com.atlassian.plugin.connect.modules.beans.ModuleList;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.WebHookModuleBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.plugin.module.AutowireWithConnectPluginDecorator;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.module.ContainerAccessor;
+import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.osgi.factory.OsgiPlugin;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -42,12 +42,10 @@ public class BeanToModuleRegistrarTest
     @Mock private WebHookScopeService webHookScopeService;
 
     private ConnectAddonBean connectAddonBean;
-    private LifecycleBean lifecycleBean;
-    private ModuleList moduleList;
-    
+
     @Mock private OsgiPlugin plugin;
     @Mock private Bundle bundle;
-    @Mock private AutowireWithConnectPluginDecorator theConnectPlugin;
+    @Mock private ContainerManagedPlugin theConnectPlugin;
     @Mock private ContainerAccessor containerAccessor;
     
 

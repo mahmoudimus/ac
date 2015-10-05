@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.iframe;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.service.IsDevModeService;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -25,8 +26,6 @@ import java.io.InputStream;
 import java.util.Calendar;
 import java.util.regex.Pattern;
 
-import static com.atlassian.plugin.connect.plugin.util.DevModeUtil.DEV_MODE_ENABLED;
-
 /**
  * Provides static host resources for plugin iframes
  */
@@ -39,13 +38,15 @@ public class StaticResourcesFilter implements Filter
     private static final Pattern RESOURCE_PATTERN = Pattern.compile("(all(-debug)?\\.(js|css))|(aui/.*)");
     private static final Logger log = LoggerFactory.getLogger(StaticResourcesFilter.class);
     private static Plugin plugin;
+    private final IsDevModeService isDevModeService;
 
     private FilterConfig config;
     private LoadingCache<String, CacheEntry> loadingCache;
 
-    public StaticResourcesFilter(PluginRetrievalService pluginRetrievalService)
+    public StaticResourcesFilter(PluginRetrievalService pluginRetrievalService, IsDevModeService isDevModeService)
     {
         plugin = pluginRetrievalService.getPlugin();
+        this.isDevModeService = isDevModeService;
     }
 
     @Override
@@ -160,7 +161,7 @@ public class StaticResourcesFilter implements Filter
             sos.close();
         }
 
-        if (DEV_MODE_ENABLED)
+        if (isDevModeService.isDevMode())
         {
             loadingCache.invalidate(localPath);
         }

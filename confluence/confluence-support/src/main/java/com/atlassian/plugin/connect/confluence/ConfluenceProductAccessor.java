@@ -9,12 +9,9 @@ import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.spi.product.ConditionClassResolver;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
-import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -78,14 +75,6 @@ public final class ConfluenceProductAccessor implements ProductAccessor
     public String getPreferredProfileSectionKey()
     {
         return "system.profile";
-    }
-
-    @Override
-    public Map<String, String> getLinkContextParams()
-    {
-        return ImmutableMap.of(
-                "page_id", "$!page.id",
-                "page_type", "$!page.type");
     }
 
     @Override
