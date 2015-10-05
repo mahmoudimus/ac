@@ -3,7 +3,7 @@
     <parent>
         <artifactId>atlassian-connect-parent</artifactId>
         <groupId>com.atlassian.plugins</groupId>
-        <version>1.1.44-SNAPSHOT</version>
+        <version>1.1.55-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -14,5 +14,20 @@
     <modules>
         <module>jira-reference-plugin</module>
     </modules>
+
+    <profiles>
+        <profile>
+            <id>it</id>
+            <modules>
+                <module>jira-integration-tests</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>freezer-release-profile</id>
+            <modules>
+                <module>jira-integration-tests</module>
+            </modules>
+        </profile>
+    </profiles>
 
 </project>

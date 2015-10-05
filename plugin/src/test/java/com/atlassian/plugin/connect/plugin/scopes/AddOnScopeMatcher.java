@@ -4,6 +4,8 @@ import com.atlassian.plugin.connect.spi.scope.AddOnScope;
 import com.atlassian.plugin.connect.spi.scope.AddOnScopeApiPath;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
@@ -11,6 +13,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class AddOnScopeMatcher extends BaseMatcher<AddOnScope>
 {
+
+    private static final Logger log = LoggerFactory.getLogger(AddOnScopeMatcher.class);
+
     private final String key;
     private final Collection<AddOnScopeApiPath> paths;
 
@@ -25,7 +30,7 @@ public class AddOnScopeMatcher extends BaseMatcher<AddOnScope>
     {
         if (!(item instanceof AddOnScope))
         {
-            System.out.println("Not an AddOnScope: " + item);
+            log.debug("Not an AddOnScope: " + item);
             return false;
         }
 
@@ -33,12 +38,12 @@ public class AddOnScopeMatcher extends BaseMatcher<AddOnScope>
 
         if (!key.equals(scope.getKey()))
         {
-            System.out.println(key + " != " + scope.getKey());
+            log.debug(key + " != " + scope.getKey());
         }
 
         if (!paths.equals(scope.getPaths()))
         {
-            System.out.println(paths.toString() + " != " + scope.getPaths());
+            log.debug(paths.toString() + " != " + scope.getPaths());
         }
 
         return key.equals(scope.getKey()) && paths.equals(scope.getPaths());

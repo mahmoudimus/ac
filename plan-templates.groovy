@@ -61,15 +61,11 @@ plan(
     productSnapshotPlanConfiguration(
             productVersion: '5.9.1-SNAPSHOT',
     )
-    variable(
-            key: 'bamboo.product.data.version',
-            value: '5.8-m56'
-    )
     stage(
             name: 'Run Tests'
     ) {
         testJobsForConfluence(
-                mavenProductParameters: '-Datlassian.confluence.version=${bamboo_product_version} -Datlassian.confluence.productDataVersion=${bamboo_product_data_version}'
+                mavenProductParameters: '-Datlassian.confluence.version=${bamboo_product_version}'
         )
     }
 }
@@ -81,17 +77,13 @@ plan(
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest JIRA SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
-            productVersion: '7.0.0-SNAPSHOT',
-    )
-    variable(
-            key: 'bamboo.jira.testkit.version',
-            value: '7.0.40'
+            productVersion: '7.0.0-DA-SNAPSHOT',
     )
     stage(
             name: 'Run Tests'
     ) {
         testJobsForJIRA(
-                mavenProductParameters: '-Datlassian.jira.version=${bamboo_product_version} -Datlassian.jira.testkit.version=${bamboo_jira_testkit_version}'
+                mavenProductParameters: '-Datlassian.jira.version=${bamboo_product_version}'
         )
     }
 }
@@ -103,17 +95,13 @@ plan(
         description: 'Tests the develop branch of atlassian-connect-plugin against the latest JIRA SNAPSHOT version'
 ) {
     productSnapshotPlanConfiguration(
-            productVersion: '7.0.0-SNAPSHOT',
-    )
-    variable(
-            key: 'bamboo.jira.testkit.version',
-            value: '7.0.40'
+            productVersion: '7.0.0-DA-SNAPSHOT',
     )
     stage(
             name: 'Run Tests'
     ) {
         testJobsForJIRA(
-                mavenProductParameters: '-Datlassian.jira.version=${bamboo_product_version} -Datlassian.jira.testkit.version=${bamboo_jira_testkit_version} -Djvmargs="-Datlassian.darkfeature.com.atlassian.jira.config.CoreFeatures.LICENSE_ROLES_ENABLED=true"'
+                mavenProductParameters: '-Datlassian.jira.version=${bamboo_product_version} -Djvmargs="-Datlassian.darkfeature.com.atlassian.jira.config.CoreFeatures.LICENSE_ROLES_ENABLED=true"'
         )
     }
 }

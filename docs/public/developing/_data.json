@@ -1,0 +1,22 @@
+{
+  "developing-locally": {
+    "filename": "developing-locally.html",
+    "title": "Developing locally"
+  },
+  "cloud-installation": {
+    "filename": "cloud-installation.html",
+    "title": "Installing in the cloud"
+  },
+  "selling-on-marketplace": {
+    "filename": "selling-on-marketplace.html",
+    "title": "Selling on Marketplace"
+  },
+  "operations": {
+    "filename": "operations.html",
+    "title": "Operations guide"
+  },
+  "upgrades": {
+    "filename": "upgrades.html",
+    "title": "Upgrading your add-on"
+  }
+}

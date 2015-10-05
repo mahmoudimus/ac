@@ -58,6 +58,12 @@ public class StartableForPlugins implements LifecycleAware, DisposableBean
         }
     }
 
+    @Override
+    public void onStop()
+    {
+        started = false;
+    }
+
     private void runRunnablesForPlugin(String key)
     {
         if (runnables.containsKey(key) && pluginAccessor.isPluginEnabled(key))

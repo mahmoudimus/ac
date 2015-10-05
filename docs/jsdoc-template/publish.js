@@ -670,11 +670,13 @@ exports.publish = function ( taffyData, opts, tutorials ) {
         for ( var longname in helper.longnameToUrl ) {
             var mods = helper.find( modules, {longname : longname} );
             
-            for(var mod in mods){
+            for(var mod in mods) {
                 var url = helper.longnameToUrl[longname];
-                urls[url] = {
+                var filePath = url.replace(/\.html/, '');
+                urls[filePath] = {
                     name: ucfirst(mods[mod].name),
-                    selfLink: 'javascript/' + url.replace(/\.html/, '')
+                    title: ucfirst(mods[mod].name),
+                    selfLink: 'javascript/' + filePath
                 };
             }
         }

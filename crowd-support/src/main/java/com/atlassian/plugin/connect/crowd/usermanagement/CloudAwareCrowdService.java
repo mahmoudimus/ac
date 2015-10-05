@@ -24,6 +24,8 @@ import com.atlassian.plugin.connect.api.usermanagment.ConnectAddOnUserInitExcept
 import com.atlassian.plugin.connect.spi.host.HostProperties;
 import com.atlassian.plugin.connect.spi.product.FeatureManager;
 import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -32,7 +34,6 @@ import com.google.common.base.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * This implementation seeks to encapsulate workarounds for:
@@ -44,8 +45,9 @@ import org.springframework.stereotype.Component;
  * </ul>
  * so that elsewhere, the business of adding users with attributes looks simple.
  */
-@Component
 @ExportAsDevService
+@ConfluenceComponent
+@JiraComponent
 public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOnUserGroupProvisioningService, ConnectCrowdSyncService
 {
     private long syncTimeout = 10;
@@ -71,24 +73,24 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
     }
 
     @Override
-    public User createOrEnableUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential)
+    public UserCreationResult createOrEnableUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential)
     {
         return createOrEnableUser(username, displayName, emailAddress, passwordCredential, Collections.<String, Set<String>>emptyMap());
     }
 
     @Override
-    public User createOrEnableUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential, Map<String, Set<String>> attributes)
+    public UserCreationResult createOrEnableUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential, Map<String, Set<String>> attributes)
     {
-        User user;
+        UserCreationResult userCreationResult;
         if (isOnDemand())
         {
             if (isConfluence())
             {
-                user = createSyncedConfluenceUser(username, displayName, emailAddress, passwordCredential, attributes);
+                userCreationResult = createSyncedConfluenceUser(username, displayName, emailAddress, passwordCredential, attributes);
             }
             else
             {
-                user = embedded.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
+                userCreationResult = embedded.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
                 if (!attributes.isEmpty())
                 {
                     embedded.setAttributesOnUser(username, attributes);
@@ -98,21 +100,21 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
         }
         else
         {
-            user = embedded.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
+            userCreationResult = embedded.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
             if (!attributes.isEmpty())
             {
                 embedded.setAttributesOnUser(username, attributes);
             }
         }
-        return user;
+        return userCreationResult;
     }
 
-    private User createSyncedConfluenceUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential, Map<String, Set<String>> attributes)
+    private UserCreationResult createSyncedConfluenceUser(String username, String displayName, String emailAddress, PasswordCredential passwordCredential, Map<String, Set<String>> attributes)
     {
-        User user;
+        UserCreationResult userCreationResult;
         try
         {
-            user = remote.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
+            userCreationResult = remote.createOrEnableUser(username, displayName, emailAddress, passwordCredential);
             if (!embedded.findUserByName(username).isPresent())
             {
                 log.debug("queueing {} for sync", username);
@@ -135,7 +137,7 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
         {
             throw new ConnectAddOnUserInitException(e);
         }
-        return user;
+        return userCreationResult;
     }
 
     @Override
@@ -207,6 +209,16 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
     }
 
     @Override
+    public void ensureUserIsInGroups(String username, Set<String> groupNames)
+            throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, InvalidAuthenticationException
+    {
+        for(String groupName : groupNames)
+        {
+            ensureUserIsInGroup(username, groupName);
+        }
+    }
+
+    @Override
     public void removeUserFromGroup(String username, String groupName)
             throws ApplicationNotFoundException, UserNotFoundException, ApplicationPermissionException, GroupNotFoundException, OperationFailedException, InvalidAuthenticationException
     {
@@ -227,6 +239,12 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
         if (isConfluence() && isOnDemand())
         {
             return remote.ensureGroupExists(groupName);
+        }
+        else if (isJira() && isOnDemand())
+        {
+            boolean eCreated = embedded.ensureGroupExists(groupName);
+            boolean rCreated = remote.ensureGroupExists(groupName);
+            return eCreated || rCreated;
         }
         else
         {
@@ -264,6 +282,15 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
         return userOption.isPresent() && userOption.get().isActive();
     }
 
+    @Override
+    public void invalidateSessions(String username) throws OperationFailedException, ApplicationPermissionException, InvalidAuthenticationException
+    {
+        if (isOnDemand())
+        {
+            remote.invalidateSessions(username);
+        }
+    }
+
     @VisibleForTesting
     void setSyncTimeout(long timeoutSeconds)
     {
@@ -278,6 +305,11 @@ public class CloudAwareCrowdService implements ConnectCrowdService, ConnectAddOn
     private boolean isConfluence()
     {
         return hostProperties.getKey().equalsIgnoreCase("confluence");
+    }
+
+    private boolean isJira()
+    {
+        return hostProperties.getKey().equalsIgnoreCase("jira");
     }
 
 }

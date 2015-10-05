@@ -27,8 +27,10 @@ public class I18nProperty
     private String value;
 
     /**
+     * <b>NOTE</b> This property is reserved for future localization support. The semantics of this property are not
+     * defined, and specifying a value for it is not recommended.
+     *
      * The localization key for the human-readable value.
-     * If this key is provided, it will be looked up in an I18n properties file to get the value.
      */
     private String i18n;
 
@@ -71,6 +73,10 @@ public class I18nProperty
     public static I18nProperty empty()
     {
         return new I18nProperty("", "");
+    }
+
+    public String getKeyOrValue() {
+        return hasI18n() ? getI18n() : getValue();
     }
 
     @Override
