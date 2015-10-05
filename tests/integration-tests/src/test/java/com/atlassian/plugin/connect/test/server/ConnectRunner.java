@@ -15,7 +15,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.modules.gson.DefaultModuleSerializer;
-import com.atlassian.plugin.connect.plugin.installer.ModuleBeanDeserializer;
+import com.atlassian.plugin.connect.plugin.installer.ModuleListDeserializer;
 import com.atlassian.plugin.connect.plugin.installer.StaticAvailableModuleTypes;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
 import com.atlassian.plugin.connect.test.Environment;
@@ -488,7 +488,7 @@ public class ConnectRunner
             GsonBuilder builder = ConnectModulesGsonFactory.getGsonBuilder();
             if (moduleTypes.hasMetas())
             {
-                builder = builder.registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), new ModuleBeanDeserializer(moduleTypes));
+                builder = builder.registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), new ModuleListDeserializer(moduleTypes));
             }
             else
             {

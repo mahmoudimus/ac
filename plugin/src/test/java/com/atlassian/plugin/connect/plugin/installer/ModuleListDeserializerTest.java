@@ -2,7 +2,6 @@ package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleValidationException;
 import com.google.common.base.Supplier;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
@@ -20,15 +19,14 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ModuleBeanDeserializerTest extends TestCase
+public class ModuleListDeserializerTest extends TestCase
 {
     @InjectMocks
-    private ModuleBeanDeserializer moduleBeanDeserializer;
+    private ModuleListDeserializer moduleListDeserializer;
 
     @Mock
     private AvailableModuleTypes providers;
@@ -51,14 +49,14 @@ public class ModuleBeanDeserializerTest extends TestCase
     public void unknownModuleTypeShouldThrowException() throws Exception
     {
         when(providers.validModuleType(anyString())).thenReturn(false);
-        moduleBeanDeserializer.deserialize(testJsonElement, Object.class, context);
+        moduleListDeserializer.deserialize(testJsonElement, Object.class, context);
     }
 
     @Test
     public void deserializationReturnsCorrectNumberOfSuppliers() throws Exception
     {
         when(providers.validModuleType(anyString())).thenReturn(true);
-        Map<String, Supplier<List<ModuleBean>>> map = moduleBeanDeserializer.deserialize(testJsonElement, Object.class, context);
+        Map<String, Supplier<List<ModuleBean>>> map = moduleListDeserializer.deserialize(testJsonElement, Object.class, context);
         assertThat(map.size(), equalTo(2));
     }
     

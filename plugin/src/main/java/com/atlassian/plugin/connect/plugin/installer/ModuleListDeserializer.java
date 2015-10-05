@@ -19,11 +19,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ModuleBeanDeserializer implements JsonDeserializer<Map<String, Supplier<List<ModuleBean>>>>, JsonSerializer<Map<String, Supplier<List<ModuleBean>>>>
+public class ModuleListDeserializer implements JsonDeserializer<Map<String, Supplier<List<ModuleBean>>>>, JsonSerializer<Map<String, Supplier<List<ModuleBean>>>>
 {
     private AvailableModuleTypes providers;
     
-    public ModuleBeanDeserializer(AvailableModuleTypes providers)
+    public ModuleListDeserializer(AvailableModuleTypes providers)
     {
         this.providers = providers;
     }
