@@ -641,14 +641,6 @@
                 <scope>runtime</scope>
             </dependency>
 
-            <!-- cross-compatibility -->
-            <dependency>
-                <groupId>com.atlassian.jira.compat</groupId>
-                <artifactId>jira-cross-compatibility-lib-bridge-factory</artifactId>
-                <version>${atlassian.jira.cross.compat.version}</version>
-                <scope>compile</scope>
-            </dependency>
-
             <dependency>
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>

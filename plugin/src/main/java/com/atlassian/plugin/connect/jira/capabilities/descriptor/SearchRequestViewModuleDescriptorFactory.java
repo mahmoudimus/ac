@@ -1,11 +1,6 @@
 package com.atlassian.plugin.connect.jira.capabilities.descriptor;
 
-import java.net.URISyntaxException;
-import java.util.Collections;
-
-import com.atlassian.jira.compatibility.bridge.issue.views.SearchRequestViewUtilsBridge;
 import com.atlassian.jira.issue.views.util.SearchRequestViewBodyWriterUtil;
-import com.atlassian.jira.issue.views.util.SearchRequestViewUtils;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestURLHandler;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptor;
 import com.atlassian.jira.plugin.searchrequestview.SearchRequestViewModuleDescriptorImpl;
@@ -14,25 +9,27 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.api.capabilities.descriptor.ConditionModuleFragmentFactory;
+import com.atlassian.plugin.connect.api.iframe.render.uri.IFrameUriBuilderFactory;
+import com.atlassian.plugin.connect.jira.capabilities.util.DelegatingComponentAccessor;
+import com.atlassian.plugin.connect.jira.searchrequestview.ConnectConditionDescriptorFactory;
+import com.atlassian.plugin.connect.jira.searchrequestview.RemoteSearchRequestView;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.SearchRequestViewModuleBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
-import com.atlassian.plugin.connect.jira.capabilities.util.DelegatingComponentAccessor;
-import com.atlassian.plugin.connect.api.iframe.render.uri.IFrameUriBuilderFactory;
-import com.atlassian.plugin.connect.jira.searchrequestview.ConnectConditionDescriptorFactory;
-import com.atlassian.plugin.connect.jira.searchrequestview.RemoteSearchRequestView;
 import com.atlassian.plugin.module.ModuleFactory;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.web.Condition;
 import com.atlassian.plugin.web.conditions.AlwaysDisplayCondition;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.templaterenderer.TemplateRenderer;
-
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.net.URISyntaxException;
+import java.util.Collections;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -47,7 +44,6 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
     private final SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil;
     private final TemplateRenderer templateRenderer;
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
-    private final SearchRequestViewUtilsBridge searchRequestViewUtils;
 
     @Autowired
     public SearchRequestViewModuleDescriptorFactory(JiraAuthenticationContext authenticationContext,
@@ -57,8 +53,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
                                                     SearchRequestViewBodyWriterUtil searchRequestViewBodyWriterUtil,
                                                     TemplateRenderer templateRenderer,
                                                     IFrameUriBuilderFactory iFrameUriBuilderFactory,
-                                                    DelegatingComponentAccessor componentAccessor,
-                                                    SearchRequestViewUtilsBridge searchRequestViewUtils)
+                                                    DelegatingComponentAccessor componentAccessor)
     {
         this.authenticationContext = checkNotNull(authenticationContext);
         this.urlHandler = checkNotNull(componentAccessor.getComponent(SearchRequestURLHandler.class));
@@ -68,7 +63,6 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
         this.searchRequestViewBodyWriterUtil = checkNotNull(searchRequestViewBodyWriterUtil);
         this.templateRenderer = checkNotNull(templateRenderer);
         this.iFrameUriBuilderFactory = checkNotNull(iFrameUriBuilderFactory);
-        this.searchRequestViewUtils = checkNotNull(searchRequestViewUtils);
     }
 
     @Override
@@ -134,8 +128,7 @@ public class SearchRequestViewModuleDescriptorFactory implements ConnectModuleDe
                             bean.getKey(addon),
                             bean.createUri(),
                             bean.getDisplayName(), 
-                            authenticationContext,
-                            searchRequestViewUtils);
+                            authenticationContext);
                 }
                 catch (URISyntaxException e)
                 {
