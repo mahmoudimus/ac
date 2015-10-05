@@ -238,6 +238,20 @@ public class ModuleList extends BaseModuleBean
     @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.DashboardItemModuleProvider", products = {ProductFilter.JIRA})
     private List<DashboardItemModuleBean> jiraDashboardItems;
 
+    /**
+     * Add global permission to JIRA.
+     * @schemaTitle Global Permissions
+     */
+    @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.GlobalPermissionModuleProvider", products = {ProductFilter.JIRA})
+    private List<GlobalPermissionModuleBean> jiraGlobalPermissions;
+
+    /**
+     * Add project permission to JIRA.
+     * @schemaTitle Project Permissions
+     */
+    @ConnectModule(value = "com.atlassian.plugin.connect.jira.capabilities.provider.ProjectPermissionModuleProvider", products = {ProductFilter.JIRA})
+    private List<ProjectPermissionModuleBean> jiraProjectPermissions;
+
     /////////////////////////////////////////////////////
     ///////    CONFLUENCE MODULES
     /////////////////////////////////////////////////////
@@ -306,6 +320,8 @@ public class ModuleList extends BaseModuleBean
         this.jiraEntityProperties = newArrayList();
         this.jiraReports = newArrayList();
         this.jiraDashboardItems = newArrayList();
+        this.jiraGlobalPermissions = newArrayList();
+        this.jiraProjectPermissions = newArrayList();
         this.profilePages = newArrayList();
         this.spaceToolsTabs = newArrayList();
         this.staticContentMacros = newArrayList();
@@ -404,6 +420,14 @@ public class ModuleList extends BaseModuleBean
         if (null == jiraDashboardItems)
         {
             this.jiraDashboardItems = newArrayList();
+        }
+        if (null == jiraGlobalPermissions)
+        {
+            this.jiraGlobalPermissions = newArrayList();
+        }
+        if (null == jiraProjectPermissions)
+        {
+            this.jiraProjectPermissions = newArrayList();
         }
     }
 
@@ -520,6 +544,11 @@ public class ModuleList extends BaseModuleBean
         return jiraDashboardItems;
     }
 
+    public List<GlobalPermissionModuleBean> getJiraGlobalPermissions()
+    {
+        return jiraGlobalPermissions;
+    }
+
     // don't call super because BaseCapabilityBean has no data
     @Override
     public boolean equals(Object otherObj)
@@ -559,6 +588,7 @@ public class ModuleList extends BaseModuleBean
                 .append(webSections, other.webSections)
                 .append(jiraReports, other.jiraReports)
                 .append(jiraDashboardItems, other.jiraDashboardItems)
+                .append(jiraGlobalPermissions, other.jiraGlobalPermissions)
                 .build();
     }
 
@@ -589,6 +619,7 @@ public class ModuleList extends BaseModuleBean
                 .append(webSections)
                 .append(jiraReports)
                 .append(jiraDashboardItems)
+                .append(jiraGlobalPermissions)
                 .build();
     }
     

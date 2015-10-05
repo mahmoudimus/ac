@@ -1,0 +1,29 @@
+[
+    {
+        "key": "jira-project-permission-1",
+        "name": {
+            "value": "Name1",
+            "i18n": "name1.i18n"
+        },
+        "description": {
+            "value": "Description1",
+            "i18n": "description1.i18n"
+        },
+        "conditions": [
+            {
+                "condition": "user_is_logged_in"
+            }
+        ]
+    },
+    {
+        "key": "jira-project-permission-2",
+        "name": {
+            "value": "Name2",
+            "i18n": "name2.i18n"
+        },
+        "description": {
+            "value": "Description2",
+            "i18n": "description2.i18n"
+        }
+    }
+]

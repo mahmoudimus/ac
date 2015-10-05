@@ -1,9 +1,5 @@
 package com.atlassian.plugin.connect.jira.condition;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-
 import com.atlassian.jira.bc.project.ProjectAction;
 import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.component.ComponentAccessor;
@@ -11,13 +7,16 @@ import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.ApplicationUser;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -106,6 +105,12 @@ public class IsProjectAdminConditionTest
     {
         ComponentAccessor.initialiseWorker(new ComponentAccessor.Worker()
         {
+            @Override
+            public <T> Optional<T> getComponentSafely(final Class<T> aClass)
+            {
+                return Optional.empty();
+            }
+
             @Override
             @SuppressWarnings("unchecked")
             public <T> T getComponent(Class<T> componentClass)

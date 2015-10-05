@@ -74,6 +74,7 @@ public class ConnectJsonExamples
     public static final String ENTITY_PROPERTY_EXAMPLE = createEntityPropertyExample();
     public static final String ENTITY_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE = createEntityPropertyIndexExtractionConfigurationExample();
     public static final String ENTITY_PROPERTY_INDEX_KEY_CONFIGURATION_EXAMPLE = createEntityPropertyIndexKeyConfigurationExample();
+    public static final String GLOBAL_PERMISSION_EXAMPLE = createGlobalPermissionExample();
     public static final String I18N_EXAMPLE = createI18nExample();
     public static final String ICON_EXAMPLE = createIconExample();
     public static final String IMAGE_PLACEHOLDER_EXAMPLE = createImagePlaceholderExample();
@@ -88,6 +89,7 @@ public class ConnectJsonExamples
     public static final String POST_FUNCTION_EXAMPLE = createPostFunctionExample();
     public static final String DASHBOARD_ITEM_EXAMPLE = createDashboardItemExample();
     public static final String PRJ_ADMIN_PAGE_EXAMPLE = createProjectAdminPageExample();
+    public static final String PROJECT_PERMISSION_EXAMPLE = createProjectPermissionExample();
     public static final String REPORT_EXAMPLE = createReportExample();
     public static final String SCOPES_EXAMPLE = createScopesExample();
     public static final String SEARCH_VIEW_EXAMPLE = createSearchViewExample();
@@ -103,6 +105,7 @@ public class ConnectJsonExamples
     public static final String WEBITEM_TARGET_DIALOG_EXAMPLE = createWebitemTargetDialogOptionsExample();
     public static final String WEBPANEL_EXAMPLE = createWebPanelExample();
     public static final String WEBSECTION_EXAMPLE = createWebSectionExample();
+
     public static final String BLUEPRINT_EXAMPLE = createBlueprintExample();
     public static final String BLUEPRINT_TEMPLATE_EXAMPLE = createBlueprintTemplateExample();
     public static final String CONTENT_PROPERTY_EXAMPLE = createContentPropertyExample();
@@ -199,7 +202,6 @@ public class ConnectJsonExamples
     {
         return new I18nProperty(name, null);
     }
-
 
     private static EmbeddedStaticContentMacroBean createEmbeddedStaticMacroBeanStatic()
     {
@@ -318,7 +320,6 @@ public class ConnectJsonExamples
                 "jiraProfileTabPanels", userProfileTabPanelBean
         ));
         return gson.toJson(object);
-
     }
 
     private static String createReportExample()
@@ -374,6 +375,30 @@ public class ConnectJsonExamples
                 .build();
 
         return gson.toJson(createModuleArray("webSections", webSectionModuleBean));
+    }
+
+    private static String createGlobalPermissionExample()
+    {
+        GlobalPermissionModuleBean globalPermissionModuleBean = GlobalPermissionModuleBean.newGlobalPermissionModuleBean()
+                .withKey("my-global-permission")
+                .withName(i18nProperty("My Global Permission"))
+                .withDescription(i18nProperty("Custom global permission for my add-on"))
+                .withAnonymusAllowed(false)
+                .build();
+
+        return gson.toJson(createModuleArray("jiraGlobalPermissions", globalPermissionModuleBean));
+    }
+
+    private static String createProjectPermissionExample()
+    {
+        ProjectPermissionModuleBean projectPermissionModuleBean = ProjectPermissionModuleBean.newProjectPermissionModuleBean()
+                .withKey("my-project-permission")
+                .withName(i18nProperty("My Project Permission"))
+                .withDescription(i18nProperty("Custom project permission for attachments"))
+                .withCategory(ProjectPermissionCategory.ATTACHMENTS)
+                .build();
+
+        return gson.toJson(createModuleArray("jiraProjectPermissions", projectPermissionModuleBean));
     }
 
     private static String createBlueprintExample()

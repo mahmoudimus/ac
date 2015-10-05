@@ -10,6 +10,7 @@ import com.atlassian.applinks.spi.util.TypeAccessor;
 import com.atlassian.crowd.embedded.api.CrowdService;
 import com.atlassian.event.api.EventPublisher;
 import com.atlassian.httpclient.api.factory.HttpClientFactory;
+import com.atlassian.jira.security.plugin.GlobalPermissionTypesManager;
 import com.atlassian.jwt.applinks.JwtApplinkFinder;
 import com.atlassian.jwt.applinks.JwtService;
 import com.atlassian.oauth.consumer.ConsumerService;
