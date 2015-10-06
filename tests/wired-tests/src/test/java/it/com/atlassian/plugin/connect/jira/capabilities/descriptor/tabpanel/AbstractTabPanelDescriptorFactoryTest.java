@@ -128,11 +128,6 @@ public abstract class AbstractTabPanelDescriptorFactoryTest
                 ).build();
     }
 
-    //tests the children need to run due to knowledge of which jira descriptor they inherit from
-    public abstract void createsElementWithCorrectOrder();
-
-    public abstract void createsElementWithCorrectClass();
-
     //common tests
     @Test
     public void createsElementWithCorrectKey()

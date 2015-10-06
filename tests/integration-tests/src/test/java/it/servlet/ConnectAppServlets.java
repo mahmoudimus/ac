@@ -7,8 +7,6 @@ import com.google.common.collect.Lists;
 import it.servlet.condition.ParameterCapturingServlet;
 import it.servlet.iframe.CustomMessageServlet;
 import it.servlet.iframe.MustacheServlet;
-import it.servlet.macro.ExtendedMacroServlet;
-import it.servlet.macro.SimpleMacroServlet;
 
 import javax.servlet.http.HttpServlet;
 
@@ -187,17 +185,6 @@ public class ConnectAppServlets
     public static HttpServlet cookieServlet()
     {
         return wrapContextAwareServlet(new MustacheServlet("iframe-cookie.mu"));
-    }
-
-
-    public static HttpServlet macroSimple()
-    {
-        return wrapContextAwareServlet(new SimpleMacroServlet());
-    }
-
-    public static HttpServlet macroExtended()
-    {
-        return wrapContextAwareServlet(new ExtendedMacroServlet());
     }
 
     public static HttpServlet macroEditor()

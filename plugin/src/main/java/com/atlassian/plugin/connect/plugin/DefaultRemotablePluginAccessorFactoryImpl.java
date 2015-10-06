@@ -153,16 +153,6 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
      * @deprecated use {@code get(String pluginKey)} or {@code get(ConnectAddonBean addon)} instead
      */
     @Deprecated
-    @Override
-    public RemotablePluginAccessor get(Plugin plugin)
-    {
-        return get(plugin, plugin.getKey());
-    }
-
-    /**
-     * @deprecated use {@code get(String pluginKey)} or {@code get(ConnectAddonBean addon)} instead
-     */
-    @Deprecated
     private RemotablePluginAccessor get(final Plugin plugin, final String pluginKey)
     {
         // this will potentially create multiple instances if called quickly, but we don't really
@@ -289,8 +279,7 @@ public final class DefaultRemotablePluginAccessorFactoryImpl implements DefaultR
      * @deprecated use {@code create(ConnectAddonBean addon, Supplier<URI> displayUrl)} instead
      */
     @Deprecated
-    @Override
-    public RemotablePluginAccessor create(ConnectAddonBean addon, Supplier<URI> displayUrl)
+    private RemotablePluginAccessor create(ConnectAddonBean addon, Supplier<URI> displayUrl)
     {
         ApplicationLink appLink = connectApplinkManager.getAppLink(addon.getKey());
         AuthenticationMethod authenticationMethod = null;

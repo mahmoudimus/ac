@@ -42,12 +42,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.atlassian.jira.compat</groupId>
-            <artifactId>jira-cross-compatibility-lib-bridge-factory</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
         <!-- TODO: get schema-validator and guava 15.0+ versions into the products so we don't have to bundle them -->
         <dependency>
             <groupId>com.github.fge</groupId>
@@ -552,7 +546,6 @@
                     <enableFastdev>false</enableFastdev>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
-                    <versionOverridesPath>${basedir}/../bin/amps-overrides.properties</versionOverridesPath>
                     <testBundleExcludes>
                         <testBundleExclude>
                             <groupId>com.atlassian.plugin</groupId>
@@ -1002,9 +995,6 @@
                         <phase>process-classes</phase>
                     </execution>
                 </executions>
-                <configuration>
-                    <includeExclude>-com.atlassian.jira.compatibility.*</includeExclude>
-                </configuration>
             </plugin>
 
             <!-- this MUST run after compilation -->

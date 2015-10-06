@@ -1,17 +1,12 @@
 package at.marketplace;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.HashSet;
-import java.util.Set;
-
+import cc.plural.jsonij.JPath;
+import cc.plural.jsonij.Value;
+import cc.plural.jsonij.parser.ParserException;
 import com.atlassian.plugin.connect.test.client.AtlassianConnectRestClient;
-
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
-
+import it.util.TestUser;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
@@ -30,10 +25,12 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cc.plural.jsonij.JPath;
-import cc.plural.jsonij.Value;
-import cc.plural.jsonij.parser.ParserException;
-import it.util.TestUser;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -216,40 +213,6 @@ public class ExternalAddonInstaller
                 }, true);
         log.info(addonFound ? "Found an existing instance of the add-on" : "Didn't find an existing instance of the add-on");
         return addonFound;
-    }
-
-    private Optional<String> getApproveUrl() throws IOException
-    {
-        HttpGet get = new HttpGet(mpacUrl + ADDONS_REST_PATH + addon.getKey());
-        get.addHeader(BasicScheme.authenticate(MarketplaceSettings.credentials(), "UTF-8", false));
-        log.info("Checking for an approval url for add-on with key {}", addon.getKey());
-
-        return Optional.fromNullable(transformResponse(
-                get,
-                new HashSet<>(asList(200, 404)),
-                "Error checking for approval url",
-                new Function<CloseableHttpResponse, String>()
-                {
-                    @Override
-                    public String apply(CloseableHttpResponse response)
-                    {
-                        if (response.getStatusLine().getStatusCode() != 200)
-                        {
-                            return null;
-                        }
-
-                        try
-                        {
-                            String entity = EntityUtils.toString(response.getEntity());
-                            Value approveValue = JPath.evaluate(entity, "_links/approve/href");
-                            return approveValue == null ? null : approveValue.getString();
-                        }
-                        catch (ParserException | IOException e)
-                        {
-                            throw new RuntimeException("Error parsing approval url", e);
-                        }
-                    }
-                }, true));
     }
 
     private Optional<String> getDescriptorUrl() throws IOException

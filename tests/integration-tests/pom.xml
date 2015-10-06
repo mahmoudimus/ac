@@ -195,6 +195,10 @@
                     <groupId>org.hamcrest</groupId>
                     <artifactId>hamcrest-library</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.atlassian.upm</groupId>
+                    <artifactId>atlassian-universal-plugin-manager-pageobjects</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -289,6 +293,29 @@
                 <exclusion>
                     <groupId>org.hamcrest</groupId>
                     <artifactId>hamcrest-library</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.upm</groupId>
+            <artifactId>atlassian-universal-plugin-manager-pageobjects</artifactId>
+            <version>${atlassian.upm.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.collections</groupId>
+                    <artifactId>google-collections</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.atlassian.bundles</groupId>
+                    <artifactId>google-collections</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.atlassian.selenium</groupId>
+                    <artifactId>atlassian-pageobjects-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.atlassian.selenium</groupId>
+                    <artifactId>atlassian-webdriver-core</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -622,6 +649,7 @@
                             </systemProperties>
                             <includes>
                                 <include>it/common/iframe/*.java</include>
+                                <include>it/common/upm/*.java</include>
                             </includes>
                         </testGroup>
                         <testGroup>

@@ -35,7 +35,6 @@ public class TestJiraIssueCreate extends JiraWebDriverTestBase
     private static ConnectRunner remotePlugin;
 
     private static String addonKey;
-    private String awesomePageModuleKey;
 
     @Rule
     public TestRule resetToggleableCondition = remotePlugin.resetToggleableConditionRule();
@@ -65,12 +64,6 @@ public class TestJiraIssueCreate extends JiraWebDriverTestBase
         {
             remotePlugin.stopAndUninstall();
         }
-    }
-
-    @Before
-    public void beforeEachTest()
-    {
-        this.awesomePageModuleKey = addonAndModuleKey(addonKey, KEY_MY_AWESOME_PAGE);
     }
 
     @Test

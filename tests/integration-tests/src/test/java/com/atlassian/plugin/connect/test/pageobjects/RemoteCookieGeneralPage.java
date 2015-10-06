@@ -18,7 +18,6 @@ import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
  */
 public class RemoteCookieGeneralPage extends ConnectGeneralTestPage
 {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Inject
     protected AtlassianWebDriver driver;

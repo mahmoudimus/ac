@@ -44,11 +44,6 @@ public class ConnectIFrameProfileTabPanel implements ViewProfilePanel
     {
     }
 
-    public String getHtml(final User user)
-    {
-        return getHtml(ApplicationUsers.from(user));
-    }
-
     public String getHtml(ApplicationUser user)
     {
         ModuleContextParameters unfilteredContext = createUnfilteredContext(user);

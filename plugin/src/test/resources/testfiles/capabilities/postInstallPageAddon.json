@@ -1,0 +1,13 @@
+{
+    "url": "/my-page",
+    "icon": {
+        "width": 80,
+        "height": 80,
+        "url": "/mypage/icon.png"
+    },
+    "name": {
+        "value": "Some page",
+        "i18n": "some.page.name"
+    },
+    "key":"post-install-page"
+}

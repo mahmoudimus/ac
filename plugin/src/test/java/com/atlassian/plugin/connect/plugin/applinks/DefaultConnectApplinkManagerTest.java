@@ -154,7 +154,7 @@ public class DefaultConnectApplinkManagerTest
 
         when(applicationLinkServiceProvider.getMutatingApplicationLinkService()).thenReturn(applicationLinkService);
         connectApplinkManager = new DefaultConnectApplinkManager(applicationLinkServiceProvider, typeAccessor,
-                pluginSettingsFactory, oAuthLinkManager, transactionTemplate);
+                pluginSettingsFactory, transactionTemplate);
 
         when(connectApplicationType.getId()).thenReturn(RemotePluginContainerApplicationTypeImpl.TYPE_ID);
     }

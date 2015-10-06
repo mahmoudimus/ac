@@ -10,16 +10,12 @@ import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderCon
 import com.atlassian.webhooks.spi.plugin.WebHookModuleDescriptor;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ConnectWebHookModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebHookModuleBean, WebHookModuleDescriptor>
 {
-    private static final Logger log = LoggerFactory.getLogger(ConnectWebHookModuleDescriptorFactory.class);
-    
     private final ParamsModuleFragmentFactory paramsModuleFragmentFactory;
     private final ConnectContainerUtil autowireUtil;
 

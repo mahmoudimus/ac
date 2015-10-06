@@ -4,6 +4,7 @@ import java.io.IOException;
 
 public interface ConnectSchemaLocator
 {
+
     String getSchema(String schemaPrefix) throws IOException;
 
     String getPrettySchema(String schemaPrefix) throws IOException;

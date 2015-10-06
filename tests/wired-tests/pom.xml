@@ -98,11 +98,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.atlassian.jira.compat</groupId>
-            <artifactId>jira-cross-compatibility-lib-bridge-factory</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>com.atlassian.confluence.plugins</groupId>
             <artifactId>confluence-create-content-plugin</artifactId>
             <scope>provided</scope>

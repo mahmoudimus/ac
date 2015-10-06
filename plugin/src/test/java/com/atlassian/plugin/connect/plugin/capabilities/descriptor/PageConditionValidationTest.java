@@ -12,13 +12,11 @@ import com.atlassian.plugin.connect.plugin.installer.StaticAvailableModuleTypes;
 import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.google.gson.Gson;
-import com.opensymphony.util.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.core.io.DefaultResourceLoader;
 
 import java.io.IOException;
 
@@ -39,7 +37,7 @@ public class PageConditionValidationTest
     public void setup()
     {
         when(i18nResolver.getText(anyString(), anyString(), anyString())).thenReturn("error message");
-        this.conditionsValidator = new PageConditionsValidator(i18nResolver, pageConditionsFactory);
+        this.conditionsValidator = new PageConditionsValidator(pageConditionsFactory);
     }
 
     @Test
@@ -90,10 +88,5 @@ public class PageConditionValidationTest
         ConnectAddonBean addon = gson.fromJson(jsonDescriptor, ConnectAddonBean.class);
 
         conditionsValidator.validate(addon);
-    }
-
-    private String getSchema() throws IOException
-    {
-        return FileUtils.readFile(new DefaultResourceLoader().getResource("classpath:/schema/jira-schema.json").getFile());
     }
 }

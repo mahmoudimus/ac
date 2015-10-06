@@ -7,10 +7,10 @@ import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.ApplicationProperties;
 import org.apache.commons.io.IOUtils;
 
-import java.io.IOException;
-import java.io.InputStream;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.io.IOException;
+import java.io.InputStream;
 
 @Named
 @ExportAsService
@@ -26,7 +26,7 @@ public class DefaultConnectSchemaLocator implements ConnectSchemaLocator
     {
         this.plugin = pluginRetrievalService.getPlugin();
     }
-    
+
     @Override
     public String getShallowSchema() throws IOException
     {

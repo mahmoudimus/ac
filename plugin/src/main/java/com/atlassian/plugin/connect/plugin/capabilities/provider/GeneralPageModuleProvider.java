@@ -6,16 +6,13 @@ import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.GeneralPageModuleMeta;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.capabilities.provider.AbstractConnectPageModuleProvider;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GeneralPageModuleProvider extends AbstractConnectPageModuleProvider
+public class GeneralPageModuleProvider extends AbstractGeneralPageModuleProvider
 {
-    public static final String ATL_GENERAL_DECORATOR = "atl.general";
-    private final ProductAccessor productAccessor;
 
     @Autowired
     public GeneralPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
@@ -23,8 +20,8 @@ public class GeneralPageModuleProvider extends AbstractConnectPageModuleProvider
                                      WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
                                      ProductAccessor productAccessor)
     {
-        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory);
-        this.productAccessor = productAccessor;
+        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory,
+                productAccessor);
     }
 
     @Override

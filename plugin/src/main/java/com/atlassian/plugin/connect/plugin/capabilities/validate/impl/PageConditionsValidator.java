@@ -9,7 +9,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidator;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
-import com.atlassian.sal.api.message.I18nResolver;
 import com.google.common.base.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +35,7 @@ public class PageConditionsValidator implements AddOnBeanValidator
     private final PageConditionsFactory pageConditionsFactory;
 
     @Inject
-    public PageConditionsValidator(I18nResolver i18nResolver, PageConditionsFactory pageConditionsFactory)
+    public PageConditionsValidator(PageConditionsFactory pageConditionsFactory)
     {
         this.pageConditionsFactory = pageConditionsFactory;
     }

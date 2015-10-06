@@ -168,11 +168,6 @@ public class ConnectAddonManager
         return addonRegistry.getAllAddonKeys();
     }
 
-    public Iterable<ConnectAddonBean> getAllAddonBeans()
-    {
-        return addonRegistry.getAllAddonBeans();
-    }
-
     /**
      * This method is public for test visibility. In preference, please use
      * {@link com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstaller#install(String)}
@@ -679,21 +674,21 @@ public class ConnectAddonManager
     @VisibleForTesting
     String createEventData(String pluginKey, String eventType)
     {
-        return createEventDataInternal(pluginKey, eventType, null, null);
+        return createEventDataInternal(pluginKey, eventType, null);
     }
 
     String createEventDataForInstallation(String pluginKey, String sharedSecret, ConnectAddonBean addon)
     {
-        return createEventDataInternal(pluginKey, SyncHandler.INSTALLED.name().toLowerCase(), sharedSecret, addon);
+        return createEventDataInternal(pluginKey, SyncHandler.INSTALLED.name().toLowerCase(), sharedSecret);
     }
 
     String createEventDataForUninstallation(String pluginKey, ConnectAddonBean addon)
     {
-        return createEventDataInternal(pluginKey, SyncHandler.UNINSTALLED.name().toLowerCase(), null, addon);
+        return createEventDataInternal(pluginKey, SyncHandler.UNINSTALLED.name().toLowerCase(), null);
     }
 
     // NB: the sharedSecret should be distributed synchronously and only on installation
-    private String createEventDataInternal(String pluginKey, String eventType, String sharedSecret, ConnectAddonBean addon)
+    private String createEventDataInternal(String pluginKey, String eventType, String sharedSecret)
     {
         final Consumer consumer = checkNotNull(consumerService.getConsumer()); // checkNotNull() otherwise we NPE below
 

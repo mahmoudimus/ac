@@ -2,7 +2,6 @@ package it.com.atlassian.plugin.connect.jira.usermanagement;
 
 import com.atlassian.jira.bc.project.ProjectService;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
-import com.atlassian.jira.compatibility.bridge.project.ProjectServiceBridge;
 import com.atlassian.jira.permission.Permission;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.PermissionManager;
@@ -37,7 +36,6 @@ public class JiraPermissionScopeTest extends AbstractJiraPermissionScopeTest
     public JiraPermissionScopeTest(ConnectUserService connectUserService,
                                    PermissionManager permissionManager,
                                    ProjectService projectService,
-                                   ProjectServiceBridge projectServiceBridge,
                                    ProjectRoleService projectRoleService,
                                    UserManager userManager,
                                    TestPluginInstaller testPluginInstaller,
@@ -47,7 +45,6 @@ public class JiraPermissionScopeTest extends AbstractJiraPermissionScopeTest
         super(connectUserService,
                 permissionManager,
                 projectService,
-                projectServiceBridge,
                 projectRoleService,
                 userManager,
                 testPluginInstaller,

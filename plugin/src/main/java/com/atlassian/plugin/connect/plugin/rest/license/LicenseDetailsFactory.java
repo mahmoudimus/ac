@@ -1,14 +1,11 @@
 package com.atlassian.plugin.connect.plugin.rest.license;
 
-import java.util.Date;
-
-import com.atlassian.plugin.connect.plugin.rest.license.LicenseDetailsRepresentation;
 import com.atlassian.upm.api.license.entity.Contact;
 import com.atlassian.upm.api.license.entity.PluginLicense;
-
 import com.google.common.base.Function;
-
 import org.joda.time.DateTime;
+
+import java.util.Date;
 
 import static com.google.common.collect.Iterables.transform;
 

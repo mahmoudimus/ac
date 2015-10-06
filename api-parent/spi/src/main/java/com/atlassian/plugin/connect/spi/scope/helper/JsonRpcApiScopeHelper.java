@@ -31,11 +31,6 @@ public final class JsonRpcApiScopeHelper
     private final String httpMethod;
     private transient final Iterable<ApiResourceInfo> apiResourceInfo;
 
-    public JsonRpcApiScopeHelper(final String path, Collection<String> methods)
-    {
-        this(path, methods, "POST");
-    }
-
     public JsonRpcApiScopeHelper(final String path, Collection<String> methods, final String httpMethod)
     {
         this.path = path;

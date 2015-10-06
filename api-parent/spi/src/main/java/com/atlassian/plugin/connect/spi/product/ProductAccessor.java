@@ -23,8 +23,6 @@ public interface ProductAccessor extends HostProperties
 
     String getPreferredProfileSectionKey();
 
-    Map<String, String> getLinkContextParams();
-
     ConditionClassResolver getConditions();
 
     boolean needsAdminPageNameEscaping();
