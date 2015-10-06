@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.jira.capabilities.descriptor.tabpanel;
 
-import com.atlassian.jira.compatibility.bridge.plugin.issuetabpanel.ShowPanelRequestHelperBridge;
 import com.atlassian.jira.plugin.issuetabpanel.IssueTabPanel3;
 import com.atlassian.jira.plugin.issuetabpanel.IssueTabPanelModuleDescriptorImpl;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -20,25 +19,22 @@ public class ConnectIssueTabPanelModuleDescriptor extends IssueTabPanelModuleDes
 {
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final ModuleContextFilter moduleContextFilter;
-    private final ShowPanelRequestHelperBridge showPanelRequestHelperBridge;
 
     public ConnectIssueTabPanelModuleDescriptor(JiraAuthenticationContext authenticationContext,
             ModuleFactory moduleFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            ModuleContextFilter moduleContextFilter,
-            ShowPanelRequestHelperBridge showPanelRequestHelperBridge)
+            ModuleContextFilter moduleContextFilter)
     {
         super(authenticationContext, moduleFactory);
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.moduleContextFilter = moduleContextFilter;
-        this.showPanelRequestHelperBridge = showPanelRequestHelperBridge;
     }
 
     @Override
     public IssueTabPanel3 getModule()
     {
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyRegistry.getOrThrow(addonKeyOnly(getKey()), moduleKeyOnly(getKey()));
-        return new ConnectIFrameIssueTabPanel(renderStrategy, moduleContextFilter, showPanelRequestHelperBridge);
+        return new ConnectIFrameIssueTabPanel(renderStrategy, moduleContextFilter);
     }
 
     @Override
