@@ -27,6 +27,13 @@
     </connect-module>
 
     <connect-module
+            key="postInstallPage"
+            class="com.atlassian.plugin.connect.plugin.capabilities.provider.PostInstallPageModuleProvider"
+            name="Post Install Page Module Provider">
+        <description>...</description>
+    </connect-module>
+
+    <connect-module
             key="webItems"
             class="com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultWebItemModuleProvider"
             name="Web Item Module Provider">

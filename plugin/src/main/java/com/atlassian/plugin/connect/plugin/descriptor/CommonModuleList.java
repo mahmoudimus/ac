@@ -55,6 +55,12 @@ public class CommonModuleList extends BaseModuleBean
      */
     private ConnectPageModuleBean configurePage;
 
+    /**
+     * A post-install page module is used to provide information about the add-on after it is installed.
+     * It's link will appear in the add-ons entry in 'Manage Add-ons'.
+     */
+    private ConnectPageModuleBean postInstallPage;
+
     private CommonModuleList()
     {
     }
