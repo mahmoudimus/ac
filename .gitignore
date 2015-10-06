@@ -1,4 +1,3 @@
-.stashconfig.yml
 .DS_Store
 target
 .idea
@@ -9,9 +8,6 @@ target
 *.swo
 *~
 *.log
-wiki
-smoke-tests/repository
-tags
 *.releaseBackup
 pom.release.xml
 *debuglog.txt
@@ -27,4 +23,3 @@ plugin/node
 plugin/src/main/resources/js/core
 plugin/src/main/resources/css/core
 .vagrant
-

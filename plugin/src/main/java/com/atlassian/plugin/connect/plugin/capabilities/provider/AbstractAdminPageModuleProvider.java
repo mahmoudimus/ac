@@ -12,6 +12,7 @@ import java.util.Collections;
 
 public abstract class AbstractAdminPageModuleProvider extends AbstractConnectPageModuleProvider
 {
+    public static final String ATL_ADMIN_DECORATOR = "atl.admin";
     private final ProductAccessor productAccessor;
 
     public AbstractAdminPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
@@ -26,7 +27,7 @@ public abstract class AbstractAdminPageModuleProvider extends AbstractConnectPag
     @Override
     protected String getDecorator()
     {
-        return "atl.admin";
+        return ATL_ADMIN_DECORATOR;
     }
 
     @Override

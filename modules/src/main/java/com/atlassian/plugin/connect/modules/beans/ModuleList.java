@@ -157,10 +157,17 @@ public class ModuleList extends BaseModuleBean
 
     /**
      * A configure page module is a page module used to configure the addon itself.
-     * It's link will appear in the add-ons entry in 'Manage Add-ons'.
+     * Its link will appear in the add-on's entry in 'Manage Add-ons'.
      */
     @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.ConfigurePageModuleProvider")
     private ConnectPageModuleBean configurePage;
+
+    /**
+     * A post-install page module is used to provide information about the add-on after it is installed.
+     * Its link will appear in the add-on's entry in 'Manage Add-ons'.
+     */
+    @ConnectModule("com.atlassian.plugin.connect.plugin.capabilities.provider.PostInstallPageModuleProvider")
+    private ConnectPageModuleBean postInstallPage;
 
 
     /////////////////////////////////////////////////////
@@ -465,6 +472,11 @@ public class ModuleList extends BaseModuleBean
         return configurePage;
     }
 
+    public ConnectPageModuleBean getPostInstallPage()
+    {
+        return postInstallPage;
+    }
+
     public List<ConnectPageModuleBean> getProfilePages()
     {
         return profilePages;
@@ -528,6 +540,7 @@ public class ModuleList extends BaseModuleBean
                 .append(adminPages, other.adminPages)
                 .append(dynamicContentMacros, other.dynamicContentMacros)
                 .append(configurePage, other.configurePage)
+                .append(postInstallPage, other.postInstallPage)
                 .append(generalPages, other.generalPages)
                 .append(jiraIssueTabPanels, other.jiraIssueTabPanels)
                 .append(jiraProfileTabPanels, other.jiraProfileTabPanels)
@@ -557,6 +570,7 @@ public class ModuleList extends BaseModuleBean
                 .append(adminPages)
                 .append(dynamicContentMacros)
                 .append(configurePage)
+                .append(postInstallPage)
                 .append(generalPages)
                 .append(jiraIssueTabPanels)
                 .append(jiraProfileTabPanels)

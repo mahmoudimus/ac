@@ -101,11 +101,6 @@ public final class RestApiScopeHelper
         private final Collection<String> methods;
         private final boolean pathIsRegex;
 
-        public RestScope(String name, Collection<String> versions, String basePath, Collection<String> methods)
-        {
-            this(name, versions, basePath, methods, false);
-        }
-
         public RestScope(String name, Collection<String> versions, String basePath, Collection<String> methods, boolean pathIsRegex)
         {
             this.name = name;

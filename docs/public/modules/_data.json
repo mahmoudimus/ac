@@ -1,11 +1,14 @@
 {
-    "index.html": {
-        "title": "Overview"
-    },
-    "lifecycle.html": {
+    "lifecycle": {
+        "filename": "lifecycle.html",
         "title": "Lifecycle"
     },
-    "authentication.html": {
+    "authentication": {
+        "filename": "authentication.html",
         "title": "Authentication"
+    },
+    "plugin-vendor": {
+      "filename": "plugin-vendor.html",
+      "title": "Plugin Vendor"
     }
 }

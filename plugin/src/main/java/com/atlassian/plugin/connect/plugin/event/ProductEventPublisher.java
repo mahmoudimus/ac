@@ -64,6 +64,12 @@ public class ProductEventPublisher implements LifecycleAware
         }
     }
 
+    @Override
+    public void onStop()
+    {
+        started = false;
+    }
+
     private void saveCurrentVersion(String type, String currentVersion)
     {
         pluginSettingsFactory.createGlobalSettings().put(getSettingsKey(type), currentVersion);

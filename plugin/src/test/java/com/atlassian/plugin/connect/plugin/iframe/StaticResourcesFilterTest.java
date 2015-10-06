@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.plugin.iframe;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.service.IsDevModeService;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Before;
@@ -44,13 +45,14 @@ public class StaticResourcesFilterTest
         when(pluginRetrievalService.getPlugin()).thenReturn(plugin);
         when(plugin.getResourceAsStream(JS_FILE)).thenReturn(new ByteArrayInputStream(JS_DATA));
         when(plugin.getResourceAsStream(OTHER_JS_FILE)).thenReturn(new ByteArrayInputStream(JS_DATA));
+        IsDevModeService isDevModeService = mock(IsDevModeService.class);
 
         FilterConfig config = mock(FilterConfig.class);
         ServletContext context = mock(ServletContext.class);
         when(config.getServletContext()).thenReturn(context);
         when(context.getMimeType(JS_FILE)).thenReturn("text/javascript");
 
-        filter = new StaticResourcesFilter(pluginRetrievalService);
+        filter = new StaticResourcesFilter(pluginRetrievalService, isDevModeService);
         filter.init(config);
     }
 

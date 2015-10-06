@@ -13,13 +13,13 @@ From the repository root, to build the project and set up dependencies for docum
 
     mvn clean install pre-site -DskipTests
 
-From this directory, to regenerate the documentation and start a web server at http://localhost:9000 with automatic change detection:
+To regenerate the documentation and start a web server at http://localhost:9000 with automatic change detection:
 
-    npm run-script start
+    (cd docs; npm run-script start)
 
 To regenerate static documentation:
 
-    npm run-script build
+    (cd docs; npm run-script build)
 
 ### Updating the documentation
 

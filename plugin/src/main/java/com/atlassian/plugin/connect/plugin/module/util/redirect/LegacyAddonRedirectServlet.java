@@ -3,9 +3,8 @@ package com.atlassian.plugin.connect.plugin.module.util.redirect;
 import com.atlassian.plugin.connect.spi.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
 import com.atlassian.uri.Uri;
-import com.atlassian.uri.UriBuilder;
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.lang.Validate;
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
 import java.io.IOException;
-import java.net.URI;
 import java.util.Map;
 
 /**
@@ -35,21 +33,6 @@ public final class LegacyAddonRedirectServlet extends HttpServlet
     public LegacyAddonRedirectServlet(DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory)
     {
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
-    }
-
-    /**
-     * @param appKey the app key
-     * @param path the request path
-     * @return a relative url that doesn't include the context path
-     * @deprecated will be removed for 1.0
-     */
-    @Deprecated
-    public static String getPermanentRedirectUrl(String appKey, URI path)
-    {
-        return new UriBuilder(Uri.parse("/plugins/servlet/redirect/permanent"))
-                .addQueryParameter(LegacyAddonRedirectServlet.APP_KEY_PARAM, appKey)
-                .addQueryParameter(LegacyAddonRedirectServlet.APP_URL_PARAM, path.toString())
-                .toString();
     }
 
     /**

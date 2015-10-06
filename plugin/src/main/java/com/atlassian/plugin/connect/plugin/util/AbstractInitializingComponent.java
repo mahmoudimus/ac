@@ -60,6 +60,9 @@ public abstract class AbstractInitializingComponent implements InitializingBean,
     }
 
     @Override
+    public void onStop() {}
+
+    @Override
     public void destroy() throws Exception
     {
         eventPublisher.unregister(this);

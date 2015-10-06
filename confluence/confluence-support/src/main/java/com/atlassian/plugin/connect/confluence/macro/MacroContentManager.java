@@ -7,19 +7,16 @@ import com.atlassian.confluence.event.events.content.page.PageViewEvent;
 import com.atlassian.confluence.xhtml.api.XhtmlContent;
 import com.atlassian.event.api.EventListener;
 import com.atlassian.event.api.EventPublisher;
+import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.connect.api.iframe.render.uri.IFrameUriBuilder;
-import com.atlassian.plugin.connect.api.util.UriBuilderUtils;
 import com.atlassian.plugin.connect.api.util.http.ContentRetrievalErrors;
 import com.atlassian.plugin.connect.api.util.http.ContentRetrievalException;
 import com.atlassian.plugin.connect.spi.DefaultRemotablePluginAccessorFactory;
 import com.atlassian.plugin.connect.spi.RemotablePluginAccessor;
-import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.connect.spi.util.http.HttpContentRetriever;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
-import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.sal.api.user.UserProfile;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.util.concurrent.Promise;
 import com.google.common.collect.ImmutableList;
@@ -28,13 +25,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
 import java.util.Map;
 import java.util.regex.Pattern;
-import javax.inject.Inject;
 
 /**
  * TODO once we drop XML, refactor this to take into account that we no longer support specifying a method type and to
@@ -47,7 +44,6 @@ public class MacroContentManager implements DisposableBean
     private final StorageFormatCleaner xhtmlCleaner;
     private final MacroContentLinkParser macroContentLinkParser;
     private final HttpContentRetriever cachingHttpContentRetriever;
-    private final UserManager userManager;
     private final XhtmlContent xhtmlUtils;
     private final DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory;
     private final TemplateRenderer templateRenderer;
@@ -60,7 +56,6 @@ public class MacroContentManager implements DisposableBean
             EventPublisher eventPublisher,
             HttpContentRetriever cachingHttpContentRetriever,
             MacroContentLinkParser macroContentLinkParser,
-            UserManager userManager,
             XhtmlContent xhtmlUtils,
             StorageFormatCleaner cleaner,
             DefaultRemotablePluginAccessorFactory remotablePluginAccessorFactory,
@@ -69,7 +64,6 @@ public class MacroContentManager implements DisposableBean
         this.eventPublisher = eventPublisher;
         this.cachingHttpContentRetriever = cachingHttpContentRetriever;
         this.transactionTemplate = transactionTemplate;
-        this.userManager = userManager;
         this.xhtmlUtils = xhtmlUtils;
         this.remotablePluginAccessorFactory = remotablePluginAccessorFactory;
         this.templateRenderer = templateRenderer;
@@ -77,19 +71,6 @@ public class MacroContentManager implements DisposableBean
         // HACK: Use ComponentLocator until fix for CONFDEV-7103 is available.
         this.xhtmlCleaner = cleaner;
         this.macroContentLinkParser = macroContentLinkParser;
-    }
-
-    public String getStaticContent(final MacroInstance macroInstance)
-    {
-        final UserProfile author = userManager.getRemoteUser();
-        final String username = author == null ? "" : author.getUsername();
-        final String userKey = author == null ? "" : author.getUserKey().getStringValue();
-        final Map<String, String[]> urlParameters = UriBuilderUtils.toMultiValue(macroInstance.getUrlParameters(username, userKey));
-
-        Map<String, String> headers = macroInstance.getHeaders(username, userKey);
-
-        return getStaticContent(macroInstance.method, macroInstance.getPath(), urlParameters, headers,
-                macroInstance.conversionContext, macroInstance.getRemotablePluginAccessor());
     }
 
     public String getStaticContent(HttpMethod method, URI path, Map<String, String[]> urlParameters,

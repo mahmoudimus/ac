@@ -1,15 +1,14 @@
 package com.atlassian.plugin.connect.spi.util;
 
 import com.atlassian.security.xml.SecureXmlParserFactory;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-
 import org.dom4j.io.SAXReader;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 /**
  * XML utility methods need by all parts of Remotable Plugins
@@ -38,10 +37,5 @@ public final class XmlUtils
         xmlReader.setEntityResolver(EMPTY_ENTITY_RESOLVER);
 
         return new SAXReader(xmlReader, validating);
-    }
-
-    public static SAXReader createSecureValidatingSaxReader()
-    {
-        return createReader(true);
     }
 }

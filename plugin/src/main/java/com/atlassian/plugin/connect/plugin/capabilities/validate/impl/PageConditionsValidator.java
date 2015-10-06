@@ -10,16 +10,15 @@ import com.atlassian.plugin.connect.modules.util.ConnectReflectionHelper;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidator;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
-import com.atlassian.sal.api.message.I18nResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import javax.inject.Inject;
-import javax.inject.Named;
 
 import static com.atlassian.plugin.connect.modules.util.ConditionUtils.isRemoteCondition;
 
@@ -33,13 +32,11 @@ import static com.atlassian.plugin.connect.modules.util.ConditionUtils.isRemoteC
 public class PageConditionsValidator implements AddOnBeanValidator
 {
     private static final Logger log = LoggerFactory.getLogger(PageConditionsValidator.class);
-    private final I18nResolver i18nResolver;
     private final PageConditionsFactory pageConditionsFactory;
 
     @Inject
-    public PageConditionsValidator(I18nResolver i18nResolver, PageConditionsFactory pageConditionsFactory)
+    public PageConditionsValidator(PageConditionsFactory pageConditionsFactory)
     {
-        this.i18nResolver = i18nResolver;
         this.pageConditionsFactory = pageConditionsFactory;
     }
 

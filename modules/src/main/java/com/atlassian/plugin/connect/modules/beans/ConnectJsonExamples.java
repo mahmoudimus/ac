@@ -1,9 +1,9 @@
 package com.atlassian.plugin.connect.modules.beans;
 
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonEventDataBuilder;
+import com.atlassian.plugin.connect.modules.beans.builder.ContentPropertyIndexExtractionConfigurationBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.AutoconvertBean;
 import com.atlassian.plugin.connect.modules.beans.nested.BlueprintTemplateBean;
-import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionBean;
 import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexExtractionConfigurationBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ContentPropertyIndexFieldType;
@@ -25,6 +25,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.MacroRenderModesBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MatcherBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
+import com.atlassian.plugin.connect.modules.beans.nested.UISupportValueType;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.modules.beans.nested.VendorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.WebPanelLayout;
@@ -57,8 +58,9 @@ import static com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean.
 import static com.atlassian.plugin.connect.modules.beans.nested.MacroParameterBean.newMacroParameterBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean.newSingleConditionBean;
 import static com.atlassian.plugin.connect.modules.beans.nested.VendorBean.newVendorBean;
+import static java.util.Arrays.asList;
 
-@SuppressWarnings ("UnusedDeclaration")
+@SuppressWarnings("UnusedDeclaration")
 public class ConnectJsonExamples
 {
     private static final Gson gson = ConnectModulesGsonFactory.getGsonBuilder().setPrettyPrinting().create();
@@ -104,8 +106,9 @@ public class ConnectJsonExamples
     public static final String BLUEPRINT_EXAMPLE = createBlueprintExample();
     public static final String BLUEPRINT_TEMPLATE_EXAMPLE = createBlueprintTemplateExample();
     public static final String CONTENT_PROPERTY_EXAMPLE = createContentPropertyExample();
-    public static final String CONTENT_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE = createEntityPropertyIndexExtractionConfigurationExample();
-    public static final String CONTENT_PROPERTY_INDEX_KEY_CONFIGURATION_EXAMPLE = createEntityPropertyIndexKeyConfigurationExample();
+    public static final String CONTENT_PROPERTY_UI_SUPPORT = createAttachmentTypeUISupportExample();
+    public static final String CONTENT_PROPERTY_INDEX_EXTRACTION_CONFIGURATION_EXAMPLE = createContentPropertyIndexExtractionConfigurationExample();
+    public static final String CONTENT_PROPERTY_INDEX_KEY_CONFIGURATION_EXAMPLE = createContentPropertyIndexKeyConfigurationExample();
     public static final String MACRO_RENDER_MODES_EXAMPLE = createDynamicMacroExampleForRenderModes();
 
     public static final String LIFECYCLE_PAYLOAD_EXAMPLE = createLifecyclePayloadExample();
@@ -230,6 +233,11 @@ public class ConnectJsonExamples
                 .withKey("my-config-page")
                 .withUrl("/my-config-page")
                 .build();
+        ConnectPageModuleBean postInstallPageModuleBean = ConnectPageModuleBean.newPageBean()
+                .withName(new I18nProperty("My Post-Install Page", "mypostinstallpage.name"))
+                .withKey("my-post-install-page")
+                .withUrl("/my-post-install-page")
+                .build();
         ConnectPageModuleBean userProfilePageModuleBean = ConnectPageModuleBean.newPageBean()
                 .withName(i18nProperty("My Confluence User Profile Page"))
                 .withKey("my-confluence-user-profile-page")
@@ -240,6 +248,7 @@ public class ConnectJsonExamples
                 "generalPages", generalPageModuleBean,
                 "adminPages", adminPageModuleBean,
                 "configurePage", configurePageModuleBean,
+                "postInstallPage", postInstallPageModuleBean,
                 "profilePages", userProfilePageModuleBean
         ));
         return gson.toJson(object);
@@ -610,19 +619,17 @@ public class ConnectJsonExamples
 
     private static String createCompositeConditionExample()
     {
-        CompositeConditionBean bean = newCompositeConditionBean()
-                .withType(CompositeConditionType.AND)
+        List<ConditionalBean> conditions = asList(
+            newCompositeConditionBean()
+                .withType(CompositeConditionType.OR)
                 .withConditions(
-                        newCompositeConditionBean()
-                                .withType(CompositeConditionType.OR)
-                                .withConditions(
-                                        newSingleConditionBean().withCondition("can_attach_file_to_issue").build(),
-                                        newSingleConditionBean().withCondition("is_issue_assigned_to_current_user").build()
-                                ).build()
-                        , newSingleConditionBean().withCondition("user_is_logged_in").build()
-                ).build();
+                        newSingleConditionBean().withCondition("can_attach_file_to_issue").build(),
+                        newSingleConditionBean().withCondition("is_issue_assigned_to_current_user").build()
+                ).build(),
+            newSingleConditionBean().withCondition("user_is_logged_in").build()
+        );
 
-        return gson.toJson(createJsonObject("conditions", bean));
+        return gson.toJson(createJsonObject("conditions", conditions));
     }
 
     private static String createUrlExample()
@@ -742,6 +749,7 @@ public class ConnectJsonExamples
                 new EntityPropertyIndexKeyConfigurationBean(extractionConfiguration, "attachment");
 
         EntityPropertyModuleBean entityPropertyModuleBean = newEntityPropertyModuleBean()
+                .withKey("attachment-entity-property")
                 .withName(i18nProperty("Attachment Index Document"))
                 .withEntityType(EntityPropertyType.issue)
                 .withKeyConfiguration(issueAttachmentIndexConfiguration)
@@ -767,7 +775,8 @@ public class ConnectJsonExamples
         return gson.toJson(issueAttachmentIndexConfiguration);
     }
 
-    private static String createAutoconvertExample() {
+    private static String createAutoconvertExample()
+    {
         DynamicContentMacroModuleBean dynamicMacroWithAutoconvert = newDynamicContentMacroModuleBean()
                 .withUrl("/dynamic-macro?url={url}")
                 .withKey("dynamic-macro-with-autoconvert")
@@ -795,7 +804,8 @@ public class ConnectJsonExamples
         return gson.toJson(dynamicMacroWithAutoconvert);
     }
 
-    private static String createMatcherExample() {
+    private static String createMatcherExample()
+    {
 
         MatcherBean matcher = MatcherBean.newMatcherBean()
                 .withPattern("https://www.facebook.com/{}/about")
@@ -806,39 +816,63 @@ public class ConnectJsonExamples
 
     private static String createContentPropertyIndexExtractionConfigurationExample()
     {
-        return gson.toJson(new ContentPropertyIndexExtractionConfigurationBean("attachment.size", ContentPropertyIndexFieldType.number));
+        return gson.toJson(createAttachmentTypeContentPropertyExtraction());
     }
 
     private static String createContentPropertyIndexKeyConfigurationExample()
     {
-        List<ContentPropertyIndexExtractionConfigurationBean> extractionConfiguration = Lists.newArrayList(
-                new ContentPropertyIndexExtractionConfigurationBean("attachment.size", ContentPropertyIndexFieldType.number),
-                new ContentPropertyIndexExtractionConfigurationBean("attachment.extension", ContentPropertyIndexFieldType.string),
-                new ContentPropertyIndexExtractionConfigurationBean("attachment.updated", ContentPropertyIndexFieldType.date),
-                new ContentPropertyIndexExtractionConfigurationBean("attachment.author", ContentPropertyIndexFieldType.text)
-        );
-
+        List<ContentPropertyIndexExtractionConfigurationBean> extractionConfiguration = getContentPropertyIndexExtractionConfigurationBeans();
         return gson.toJson(new ContentPropertyIndexKeyConfigurationBean("attachment", extractionConfiguration));
+    }
+
+    private static List<ContentPropertyIndexExtractionConfigurationBean> getContentPropertyIndexExtractionConfigurationBeans()
+    {
+        return Lists.newArrayList(
+                createContentPropertyIndexExtractionConfigurationBean("attachment.size", ContentPropertyIndexFieldType.number),
+                createAttachmentTypeContentPropertyExtraction(),
+                createContentPropertyIndexExtractionConfigurationBean("attachment.updated", ContentPropertyIndexFieldType.date)
+        );
+    }
+
+    private static ContentPropertyIndexExtractionConfigurationBean createAttachmentTypeContentPropertyExtraction()
+    {
+        UISupportModuleBean uiSupport = createAttachmentTypeUISupportBean();
+
+        return createContentPropertyIndexExtractionConfigurationBean("attachment.type", ContentPropertyIndexFieldType.string, "contentType", uiSupport);
+    }
+
+    private static String createAttachmentTypeUISupportExample()
+    {
+        return gson.toJson(createAttachmentTypeUISupportBean());
+    }
+
+    private static UISupportModuleBean createAttachmentTypeUISupportBean()
+    {
+        return UISupportModuleBean.newUISupportModuleBean()
+                .withName(new I18nProperty("Content Type", "attachment.type.name"))
+                .withDataUri("/data/content-types")
+                .withDefaultOperator("~")
+                .withTooltip(new I18nProperty("Content Type Tooltip", "attachment.type.tooltip"))
+                .withValueType(UISupportValueType.STRING)
+                .build();
+    }
+
+    public static ContentPropertyModuleBean createContentPropertyExampleBean()
+    {
+        List<ContentPropertyIndexExtractionConfigurationBean> extractionConfiguration = getContentPropertyIndexExtractionConfigurationBeans();
+
+        ContentPropertyIndexKeyConfigurationBean indexConfiguration =
+                new ContentPropertyIndexKeyConfigurationBean("attachment", extractionConfiguration);
+
+        return newContentPropertyModuleBean()
+                .withName(i18nProperty("Attachment Index Document"))
+                .withKeyConfiguration(indexConfiguration)
+                .build();
     }
 
     private static String createContentPropertyExample()
     {
-        List<ContentPropertyIndexExtractionConfigurationBean> extractionConfiguration = Lists.newArrayList(
-                new ContentPropertyIndexExtractionConfigurationBean("attachment.size", ContentPropertyIndexFieldType.number),
-                new ContentPropertyIndexExtractionConfigurationBean("attachment.extension", ContentPropertyIndexFieldType.string),
-                new ContentPropertyIndexExtractionConfigurationBean("attachment.updated", ContentPropertyIndexFieldType.date),
-                new ContentPropertyIndexExtractionConfigurationBean("attachment.author", ContentPropertyIndexFieldType.text)
-        );
-        ContentPropertyIndexKeyConfigurationBean indexConfiguration =
-                new ContentPropertyIndexKeyConfigurationBean("attachment", extractionConfiguration);
-
-        ContentPropertyModuleBean contentPropertyModuleBean =
-                newContentPropertyModuleBean()
-                        .withName(i18nProperty("Attachment Index Document"))
-                        .withKeyConfiguration(indexConfiguration)
-                        .build();
-
-        return gson.toJson(createJsonArray("confluenceContentProperties", contentPropertyModuleBean));
+        return gson.toJson(createJsonArray("confluenceContentProperties", createContentPropertyExampleBean()));
     }
 
     private static String createDashboardItemExample()
@@ -888,5 +922,28 @@ public class ConnectJsonExamples
         JsonObject obj = new JsonObject();
         obj.add("modules", modulesObject);
         return obj;
+    }
+
+    private static ContentPropertyIndexExtractionConfigurationBean createContentPropertyIndexExtractionConfigurationBean(String objectName, ContentPropertyIndexFieldType type)
+    {
+        return createContentPropertyIndexExtractionConfigurationBean(objectName, type, null, null);
+    }
+
+    private static ContentPropertyIndexExtractionConfigurationBean createContentPropertyIndexExtractionConfigurationBean(String objectName,
+                                                                                                                         ContentPropertyIndexFieldType type,
+                                                                                                                         String alias, UISupportModuleBean uiSupport)
+    {
+        ContentPropertyIndexExtractionConfigurationBeanBuilder builder = new ContentPropertyIndexExtractionConfigurationBeanBuilder()
+                .withObjectName(objectName)
+                .withType(type);
+        if (alias != null)
+        {
+            builder = builder.withAlias(alias);
+        }
+        if (uiSupport != null)
+        {
+            builder = builder.withUiSupport(uiSupport);
+        }
+        return builder.build();
     }
 }
