@@ -8,13 +8,12 @@ import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.capabilities.provider.AbstractConnectPageModuleProvider;
-import com.atlassian.plugin.connect.spi.capabilities.provider.PageConditionsValidator;
+import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.util.fixture.PluginForTests;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
-import com.atlassian.sal.api.ApplicationProperties;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -22,7 +21,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.osgi.framework.BundleContext;
 
 import java.util.List;
 
@@ -45,16 +43,14 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
     @Mock protected WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     @Mock protected IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     @Mock protected IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
-    @Mock protected BundleContext bundleContext;
     @Mock protected ProductAccessor productAccessor;
-    @Mock protected ApplicationProperties applicationProperties;
-    @Mock protected PageConditionsValidator pageConditionsValidator;
+    @Mock protected PageConditionsFactory pageConditionsFactory;
 
     private T moduleProvider;
 
     protected Plugin plugin = new PluginForTests(PLUGIN_KEY, "pluginName");
     protected ConnectAddonBean addon = newConnectAddonBean().withKey(PLUGIN_KEY).build();
-    private ConnectModuleProviderContext moduleProviderContext = new DefaultConnectModuleProviderContext(addon);
+    private ConnectModuleProviderContext moduleProviderContext = mock(ConnectModuleProviderContext.class);
 
     private List<ConnectPageModuleBean> beans = ImmutableList.of(
             ConnectPageModuleBean.newPageBean().build()

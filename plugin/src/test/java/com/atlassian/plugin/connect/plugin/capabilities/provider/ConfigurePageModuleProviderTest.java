@@ -15,7 +15,7 @@ public class ConfigurePageModuleProviderTest extends AbstractPageModuleProviderT
     protected ConfigurePageModuleProvider createPageModuleProvider()
     {
         return new ConfigurePageModuleProvider(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
-                webItemModuleDescriptorFactory, pageConditionsValidator, productAccessor);
+                webItemModuleDescriptorFactory, pageConditionsFactory, productAccessor);
     }
 
     @Test

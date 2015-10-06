@@ -18,7 +18,6 @@
     <component-import key="iFrameRenderStrategyRegistry" interface="com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry"/>
     <component-import key="webItemModuleDescriptorFactory" interface="com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory"/>
 
-
     <connect-module
             key="testJiraModules"
             class="com.atlassian.plugin.connect.JiraModuleProviderForTests"

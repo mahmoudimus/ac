@@ -15,7 +15,7 @@ public class ProfilePageModuleProviderTest extends AbstractPageModuleProviderTes
     protected ProfilePageModuleProvider createPageModuleProvider()
     {
         return new ProfilePageModuleProvider(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
-                webItemModuleDescriptorFactory, pageConditionsValidator, productAccessor);
+                webItemModuleDescriptorFactory, pageConditionsFactory, productAccessor);
     }
 
     @Test

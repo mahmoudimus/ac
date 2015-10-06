@@ -14,7 +14,7 @@ public class GeneralPageModuleProviderTest extends AbstractPageModuleProviderTes
     protected GeneralPageModuleProvider createPageModuleProvider()
     {
         return new GeneralPageModuleProvider(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
-                webItemModuleDescriptorFactory, pageConditionsValidator, productAccessor);
+                webItemModuleDescriptorFactory, pageConditionsFactory, productAccessor);
     }
 
     @Test
