@@ -85,11 +85,6 @@ public class ParameterCapturingConditionServlet extends HttpServlet
         });
     }
 
-    public Map<String, String[]> getAllParamsFromLastRequest()
-    {
-        return paramsFromLastRequest;
-    }
-
     public Map<String, String> getParamsFromLastRequest()
     {
         return Maps.transformValues(paramsFromLastRequest, HEAD_ARRAY);

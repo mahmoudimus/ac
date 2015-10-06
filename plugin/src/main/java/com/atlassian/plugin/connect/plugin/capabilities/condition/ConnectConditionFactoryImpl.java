@@ -35,21 +35,6 @@ public class ConnectConditionFactoryImpl implements ConnectConditionFactory
     }
 
     @Override
-    public Condition createCondition(final String addOnKey, final List<ConditionalBean> conditionalBeans)
-    {
-        return createCondition(addOnKey, conditionalBeans, Collections.<Class<? extends Condition>>emptyList());
-    }
-
-    @Override
-    public Condition createCondition(final String addOnKey, final List<ConditionalBean> conditionalBeans,
-            final Class<? extends Condition> additionalCondition)
-    {
-        List<Class<? extends Condition>> conditionList = Lists.newArrayList();
-        conditionList.add(additionalCondition);
-        return createCondition(addOnKey, conditionalBeans, conditionList);
-    }
-
-    @Override
     public Condition createCondition(final String addOnKey, final List<ConditionalBean> conditionalBeans,
             final Iterable<Class<? extends Condition>> additionalConditions)
     {

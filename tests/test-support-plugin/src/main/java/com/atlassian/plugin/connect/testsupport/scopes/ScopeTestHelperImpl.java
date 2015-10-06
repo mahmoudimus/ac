@@ -25,7 +25,6 @@ import static java.util.Arrays.asList;
 public class ScopeTestHelperImpl implements ScopeTestHelper
 {
     private static final Logger log = LoggerFactory.getLogger(ScopeTestHelperImpl.class);
-    private static final UserKey USER_KEY = null;
 
     private final TestPluginInstaller testPluginInstaller;
 

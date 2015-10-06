@@ -551,7 +551,6 @@
                     <enableFastdev>false</enableFastdev>
                     <skipManifestValidation>true</skipManifestValidation>
                     <jvmArgs>-Xmx1024m -XX:MaxPermSize=256m</jvmArgs>
-                    <versionOverridesPath>${basedir}/../bin/amps-overrides.properties</versionOverridesPath>
                     <testBundleExcludes>
                         <testBundleExclude>
                             <groupId>com.atlassian.plugin</groupId>

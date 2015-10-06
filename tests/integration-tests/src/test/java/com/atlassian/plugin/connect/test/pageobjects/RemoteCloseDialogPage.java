@@ -25,7 +25,6 @@ import static com.atlassian.plugin.connect.test.pageobjects.RemotePageUtil.runIn
  */
 public class RemoteCloseDialogPage extends AbstractConnectIFrameComponent<RemoteCloseDialogPage>
 {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Inject
     protected AtlassianWebDriver driver;

@@ -9,10 +9,7 @@ import com.atlassian.plugin.connect.jira.condition.JiraConditions;
 import com.atlassian.plugin.connect.spi.product.ConditionClassResolver;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
-import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Map;
 
 @JiraComponent
 public final class JiraProductAccessor implements ProductAccessor
@@ -67,16 +64,6 @@ public final class JiraProductAccessor implements ProductAccessor
     public String getPreferredProfileSectionKey()
     {
         return "system.user.options/personal";
-    }
-
-    @Override
-    public Map<String, String> getLinkContextParams()
-    {
-        return ImmutableMap.of(
-                "project_id", "$!helper.project.id",
-                "project_key", "$!helper.project.key",
-                "issue_id", "$!issue.id",
-                "issue_key", "$!issue.key");
     }
 
     @Override

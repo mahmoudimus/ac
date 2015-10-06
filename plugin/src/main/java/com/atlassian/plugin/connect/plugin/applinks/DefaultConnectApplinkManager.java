@@ -9,15 +9,12 @@ import com.atlassian.applinks.spi.link.MutatingApplicationLinkService;
 import com.atlassian.applinks.spi.util.TypeAccessor;
 import com.atlassian.fugue.Option;
 import com.atlassian.jwt.JwtConstants;
-import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.util.RSAKeys;
 import com.atlassian.plugin.Plugin;
-import com.atlassian.plugin.PluginInformation;
 import com.atlassian.plugin.PluginParseException;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.plugin.OAuthLinkManager;
 import com.atlassian.plugin.connect.spi.AuthenticationMethod;
 import com.atlassian.plugin.connect.spi.applinks.MutatingApplicationLinkServiceProvider;
 import com.atlassian.plugin.connect.spi.applinks.RemotePluginContainerApplicationType;
@@ -47,16 +44,14 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
     protected final MutatingApplicationLinkService applicationLinkService;
     private final TypeAccessor typeAccessor;
     private final PluginSettingsFactory pluginSettingsFactory;
-    private final OAuthLinkManager oAuthLinkManager;
     protected final TransactionTemplate transactionTemplate;
 
     @Inject
-    public DefaultConnectApplinkManager(MutatingApplicationLinkServiceProvider applicationLinkServiceProvider, TypeAccessor typeAccessor, PluginSettingsFactory pluginSettingsFactory, OAuthLinkManager oAuthLinkManager, TransactionTemplate transactionTemplate)
+    public DefaultConnectApplinkManager(MutatingApplicationLinkServiceProvider applicationLinkServiceProvider, TypeAccessor typeAccessor, PluginSettingsFactory pluginSettingsFactory, TransactionTemplate transactionTemplate)
     {
         this.applicationLinkService = applicationLinkServiceProvider.getMutatingApplicationLinkService();
         this.typeAccessor = typeAccessor;
         this.pluginSettingsFactory = pluginSettingsFactory;
-        this.oAuthLinkManager = oAuthLinkManager;
         this.transactionTemplate = transactionTemplate;
     }
 
@@ -324,39 +319,6 @@ public class DefaultConnectApplinkManager implements ConnectApplinkManager
     {
         URI dummyUri = URI.create("http://localhost");
         return new ServiceProvider(dummyUri, dummyUri, dummyUri);
-    }
-
-    /**
-     * @deprecated use {@code registerOAuth(ApplicationLink link, ConnectAddonBean addon, String publicKey)} instead
-     */
-    @Deprecated
-    private void registerOAuth(ApplicationLink link, Plugin plugin, String publicKey)
-    {
-        String pluginKey = plugin.getKey();
-
-        final PluginInformation pluginInfo = plugin.getPluginInformation();
-        final String name = plugin.getName();
-        final String description = pluginInfo.getDescription();
-
-        final PublicKey publicKeyObj = getPublicKey(publicKey);
-
-        Consumer consumer = Consumer.key(pluginKey).name(name != null ? name : pluginKey).publicKey(publicKeyObj).description(description).build();
-
-        oAuthLinkManager.associateConsumerWithLink(link, consumer);
-    }
-
-    private void registerOAuth(ApplicationLink link, ConnectAddonBean addon, String publicKey)
-    {
-        String pluginKey = addon.getKey();
-
-        final String name = addon.getName();
-        final String description = addon.getDescription();
-
-        final PublicKey publicKeyObj = getPublicKey(publicKey);
-
-        Consumer consumer = Consumer.key(pluginKey).name(name != null ? name : pluginKey).publicKey(publicKeyObj).description(description).build();
-
-        oAuthLinkManager.associateConsumerWithLink(link, consumer);
     }
 
     protected final PublicKey getPublicKey(String publicKeyText)

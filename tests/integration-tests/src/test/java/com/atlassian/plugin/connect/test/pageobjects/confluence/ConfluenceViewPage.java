@@ -1,9 +1,11 @@
 package com.atlassian.plugin.connect.test.pageobjects.confluence;
 
+import com.atlassian.pageobjects.Page;
+
 /**
  * View confluence pages.
  */
-public class ConfluenceViewPage extends ConfluenceBasePage
+public class ConfluenceViewPage implements Page
 {
     private final String pageId;
 

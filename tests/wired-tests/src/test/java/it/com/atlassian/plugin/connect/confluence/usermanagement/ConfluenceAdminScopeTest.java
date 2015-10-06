@@ -17,10 +17,9 @@ public class ConfluenceAdminScopeTest extends ConfluenceAdminScopeTestBase
     public ConfluenceAdminScopeTest(TestPluginInstaller testPluginInstaller,
                                     JwtApplinkFinder jwtApplinkFinder,
                                     PermissionManager confluencePermissionManager,
-                                    UserManager userManager,
                                     TestAuthenticator testAuthenticator)
     {
-        super(testPluginInstaller, jwtApplinkFinder, confluencePermissionManager, userManager, testAuthenticator);
+        super(testPluginInstaller, jwtApplinkFinder, confluencePermissionManager, testAuthenticator);
     }
 
     @Override

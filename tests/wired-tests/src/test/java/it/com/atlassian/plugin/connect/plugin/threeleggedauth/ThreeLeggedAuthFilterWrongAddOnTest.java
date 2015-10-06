@@ -3,16 +3,15 @@ package it.com.atlassian.plugin.connect.plugin.threeleggedauth;
 import com.atlassian.crowd.manager.application.ApplicationManager;
 import com.atlassian.crowd.manager.application.ApplicationService;
 import com.atlassian.jwt.writer.JwtWriterFactory;
-import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
+import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.threeleggedauth.NoUserAgencyException;
-import com.atlassian.plugin.connect.plugin.threeleggedauth.ThreeLeggedAuthService;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
+import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.user.UserManager;
-import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import it.com.atlassian.plugin.connect.util.request.RequestUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,12 +32,11 @@ public class ThreeLeggedAuthFilterWrongAddOnTest extends ThreeLeggedAuthFilterTe
                                                JwtWriterFactory jwtWriterFactory,
                                                ConnectAddonRegistry connectAddonRegistry,
                                                ApplicationProperties applicationProperties,
-                                               ThreeLeggedAuthService threeLeggedAuthService,
                                                ApplicationService applicationService,
                                                ApplicationManager applicationManager,
                                                UserManager userManager)
     {
-        super(testPluginInstaller, testAuthenticator, testFilterResults, jwtWriterFactory, connectAddonRegistry, applicationProperties, threeLeggedAuthService, applicationService, applicationManager, userManager);
+        super(testPluginInstaller, testAuthenticator, testFilterResults, jwtWriterFactory, connectAddonRegistry, applicationProperties, applicationService, applicationManager, userManager);
     }
 
     @Override

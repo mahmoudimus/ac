@@ -7,10 +7,10 @@ import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.sal.api.ApplicationProperties;
 import org.apache.commons.io.IOUtils;
 
-import java.io.IOException;
-import java.io.InputStream;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.io.IOException;
+import java.io.InputStream;
 
 @Named
 @ExportAsService
@@ -30,27 +30,9 @@ public class DefaultConnectSchemaLocator implements ConnectSchemaLocator
     }
 
     @Override
-    public String getPrettySchemaForCurrentProduct() throws IOException
-    {
-        return getSchema(getFilterForCurrentProduct().name().toLowerCase(),PRETTY);
-    }
-
-    @Override
-    public String getPrettySchema(ProductFilter productFilter) throws IOException
-    {
-        return getSchema(productFilter.name().toLowerCase(),PRETTY);
-    }
-
-    @Override
     public String getSchemaForCurrentProduct() throws IOException
     {
         return getSchema(getFilterForCurrentProduct().name().toLowerCase(),RAW);
-    }
-    
-    @Override
-    public String getSchema(ProductFilter productFilter) throws IOException
-    {
-        return getSchema(productFilter.name().toLowerCase(),RAW);
     }
 
     @Override

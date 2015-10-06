@@ -119,10 +119,6 @@ public class ConnectDashboardItemModuleDescriptor extends AbstractModuleDescript
             return Option.some("atlassian-connect/connect-dashboard-item");
         }
 
-        public Option<String> getWebResourceKey() {
-            return Option.none();
-        }
-
         @Override
         public void renderContent(final Writer writer, final Map<String, Object> context)
         {

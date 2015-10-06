@@ -64,13 +64,6 @@ public final class IFrameRendererImpl implements IFrameRenderer
     }
 
     @Override
-    @Deprecated
-    public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUsername) throws IOException
-    {
-        return render(iframeContext, extraPath, queryParams, remoteUsername, Collections.<String, Object>emptyMap());
-    }
-
-    @Override
     public String render(IFrameContext iframeContext, String extraPath, Map<String, String[]> queryParams, String remoteUsername, Map<String, Object> productContext) throws IOException
     {
         return renderWithTemplate(prepareContext(iframeContext, extraPath, queryParams, remoteUsername, productContext), "velocity/deprecated/iframe-body.vm");
