@@ -626,6 +626,7 @@
                                 <exclude>it/common/iframe/*.java</exclude>
                                 <exclude>it/common/jsapi/*.java</exclude>
                                 <exclude>it/common/lifecycle/*.java</exclude>
+                                <exclude>it/common/upm/*.java</exclude>
                             </excludes>
                         </testGroup>
                         <testGroup>
@@ -741,6 +742,7 @@
                                 <exclude>it/common/iframe/*.java</exclude>
                                 <exclude>it/common/jsapi/*.java</exclude>
                                 <exclude>it/common/lifecycle/*.java</exclude>
+                                <exclude>it/common/upm/*.java</exclude>
                             </excludes>
                         </testGroup>
                         <testGroup>
@@ -753,6 +755,7 @@
                             </systemProperties>
                             <includes>
                                 <include>it/common/iframe/*.java</include>
+                                <include>it/common/upm/*.java</include>
                             </includes>
                         </testGroup>
                         <testGroup>
