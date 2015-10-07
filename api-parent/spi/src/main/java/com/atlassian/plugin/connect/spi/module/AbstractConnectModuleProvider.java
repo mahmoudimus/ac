@@ -80,7 +80,7 @@ public abstract class AbstractConnectModuleProvider<T extends BaseModuleBean> im
 
     private void assertMultipleModulesAllowed() throws ConnectModuleValidationException
     {
-        if (getMeta().multipleModulesAllowed())
+        if (!getMeta().multipleModulesAllowed())
         {
             throw new ConnectModuleValidationException(getMeta().getDescriptorKey(), "Modules should be provided in a JSON array.");
         }
@@ -88,7 +88,7 @@ public abstract class AbstractConnectModuleProvider<T extends BaseModuleBean> im
 
     private void assertMultipleModulesNotAllowed() throws ConnectModuleValidationException
     {
-        if (!getMeta().multipleModulesAllowed())
+        if (getMeta().multipleModulesAllowed())
         {
             throw new ConnectModuleValidationException(getMeta().getDescriptorKey(), "Modules should be provided in a JSON array.");
         }
