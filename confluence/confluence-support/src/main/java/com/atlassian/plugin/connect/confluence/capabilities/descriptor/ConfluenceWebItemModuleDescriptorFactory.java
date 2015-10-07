@@ -29,7 +29,6 @@ public class ConfluenceWebItemModuleDescriptorFactory implements ProductSpecific
     @Override
     public WebItemModuleDescriptor createWebItemModuleDescriptor(WebItemModuleDescriptorData webItemModuleDescriptorData)
     {
-        WebFragmentHelper webFragmentHelper = ComponentLocator.getComponent(WebFragmentHelper.class);
         return new RemoteConfluenceWebItemModuleDescriptor(webLinkFactory, webItemModuleDescriptorData);
     }
 

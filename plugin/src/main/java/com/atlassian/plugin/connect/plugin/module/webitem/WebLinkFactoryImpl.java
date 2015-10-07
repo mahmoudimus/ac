@@ -7,7 +7,6 @@ import com.atlassian.plugin.connect.api.module.webfragment.UrlVariableSubstituto
 import com.atlassian.plugin.connect.api.module.webitem.WebItemModuleDescriptorData;
 import com.atlassian.plugin.connect.api.module.webitem.WebLinkFactory;
 import com.atlassian.plugin.web.WebFragmentHelper;
-import com.atlassian.plugin.web.WebInterfaceManager;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugin.web.model.WebLink;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,6 @@ public class WebLinkFactoryImpl implements WebLinkFactory
     private final PluggableParametersExtractor webFragmentModuleContextExtractor;
     private final IFrameUriBuilderFactory iFrameUriBuilderFactory;
     private final WebFragmentHelper webFragmentHelper;
-    private final WebInterfaceManager webInterfaceManager;
     private final UrlVariableSubstitutor urlVariableSubstitutor;
     private final ModuleContextFilter moduleContextFilter;
 
@@ -27,14 +25,12 @@ public class WebLinkFactoryImpl implements WebLinkFactory
     public WebLinkFactoryImpl(PluggableParametersExtractor webFragmentModuleContextExtractor,
             IFrameUriBuilderFactory iFrameUriBuilderFactory,
             WebFragmentHelper webFragmentHelper,
-            WebInterfaceManager webInterfaceManager,
             UrlVariableSubstitutor urlVariableSubstitutor,
             ModuleContextFilter moduleContextFilter)
     {
         this.webFragmentModuleContextExtractor = webFragmentModuleContextExtractor;
         this.iFrameUriBuilderFactory = iFrameUriBuilderFactory;
         this.webFragmentHelper = webFragmentHelper;
-        this.webInterfaceManager = webInterfaceManager;
         this.urlVariableSubstitutor = urlVariableSubstitutor;
         this.moduleContextFilter = moduleContextFilter;
     }

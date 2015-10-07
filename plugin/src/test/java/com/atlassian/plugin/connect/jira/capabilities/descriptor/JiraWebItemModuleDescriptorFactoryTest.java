@@ -31,8 +31,8 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
-import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.product;
 import static org.hamcrest.CoreMatchers.is;
@@ -79,7 +79,7 @@ public class JiraWebItemModuleDescriptorFactoryTest
 
         UrlVariableSubstitutor urlVariableSubstitutor = createUrlSubstitutor();
 
-        WebLinkFactory webLinkFactory = new WebLinkFactoryImpl(webFragmentModuleContextExtractor, iFrameUriBuilderFactory, webFragmentHelper, webInterfaceManager, urlVariableSubstitutor, moduleContextFilter);
+        WebLinkFactory webLinkFactory = new WebLinkFactoryImpl(webFragmentModuleContextExtractor, iFrameUriBuilderFactory, webFragmentHelper, urlVariableSubstitutor, moduleContextFilter);
         webItemFactory = new JiraWebItemModuleDescriptorFactory(webInterfaceManager, jiraAuthenticationContext, webLinkFactory);
 
         when(servletRequest.getContextPath()).thenReturn("ElContexto");
