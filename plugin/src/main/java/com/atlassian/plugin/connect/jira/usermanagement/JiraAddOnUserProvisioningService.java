@@ -9,7 +9,6 @@ import java.util.Set;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
-import com.atlassian.application.api.ApplicationKey;
 import com.atlassian.crowd.embedded.api.Group;
 import com.atlassian.crowd.exception.ApplicationNotFoundException;
 import com.atlassian.crowd.exception.ApplicationPermissionException;
@@ -21,7 +20,6 @@ import com.atlassian.crowd.exception.UserNotFoundException;
 import com.atlassian.jira.application.ApplicationAuthorizationService;
 import com.atlassian.jira.application.ApplicationRole;
 import com.atlassian.jira.application.ApplicationRoleAdminService;
-import com.atlassian.jira.application.ApplicationRoleManager;
 import com.atlassian.jira.bc.ServiceOutcome;
 import com.atlassian.jira.bc.projectroles.ProjectRoleService;
 import com.atlassian.jira.permission.PermissionSchemeManager;
@@ -99,7 +97,6 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
     private final PermissionManager jiraProjectPermissionManager;
     private final ConnectCrowdPermissions connectCrowdPermissions;
     private final ApplicationAuthorizationService applicationAuthorizationService;
-    private final ApplicationRoleManager applicationRoleManager;
     private final ApplicationRoleAdminService applicationRoleAdminService;
 
     @Inject
@@ -112,7 +109,6 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
             TransactionTemplate transactionTemplate,
             PermissionManager jiraProjectPermissionManager,
             ApplicationAuthorizationService applicationAuthorizationService,
-            ApplicationRoleManager applicationRoleManager,
             ConnectCrowdPermissions connectCrowdPermissions,
             ApplicationRoleAdminService applicationRoleAdminService)
     {
@@ -126,7 +122,6 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         this.connectAddOnUserGroupProvisioningService = checkNotNull(connectAddOnUserGroupProvisioningService);
         this.transactionTemplate = transactionTemplate;
         this.applicationAuthorizationService = applicationAuthorizationService;
-        this.applicationRoleManager = applicationRoleManager;
         this.applicationRoleAdminService = applicationRoleAdminService;
     }
 
