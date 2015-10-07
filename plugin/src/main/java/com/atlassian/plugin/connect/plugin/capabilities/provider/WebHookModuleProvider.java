@@ -35,11 +35,11 @@ public class WebHookModuleProvider extends AbstractConnectModuleProvider<WebHook
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<WebHookModuleBean> beans)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WebHookModuleBean> modules, Plugin theConnectPlugin, ConnectModuleProviderContext moduleProviderContext)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<>();
 
-        for (WebHookModuleBean bean: beans)
+        for (WebHookModuleBean bean: modules)
         {
             descriptors.addAll(beanToDescriptors(moduleProviderContext, theConnectPlugin, bean));
         }
@@ -69,10 +69,10 @@ public class WebHookModuleProvider extends AbstractConnectModuleProvider<WebHook
     }
     
     @Override
-    public List<WebHookModuleBean> validate(String rawModules, Class<WebHookModuleBean> type, Plugin plugin, ShallowConnectAddonBean bean) throws ConnectModuleValidationException
+    public List<WebHookModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, Plugin plugin, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
     {
-        List<WebHookModuleBean> webhooks = super.validate(rawModules, type, plugin, bean);
-        webHookScopeValidator.validate(bean, webhooks);
+        List<WebHookModuleBean> webhooks = super.deserializeAddonDescriptorModules(jsonModuleListEntry, plugin, descriptor);
+        webHookScopeValidator.validate(descriptor, webhooks);
         return webhooks;
     }
 }

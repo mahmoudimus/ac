@@ -39,11 +39,11 @@ public class DefaultBlueprintModuleProvider extends AbstractConnectModuleProvide
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<BlueprintModuleBean> beans)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<BlueprintModuleBean> modules, final Plugin theConnectPlugin, final ConnectModuleProviderContext moduleProviderContext)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 
-        for (BlueprintModuleBean bean : beans)
+        for (BlueprintModuleBean bean : modules)
         {
             builder.add(
                     blueprintModuleWebItemDescriptorFactory.createModuleDescriptor(moduleProviderContext,

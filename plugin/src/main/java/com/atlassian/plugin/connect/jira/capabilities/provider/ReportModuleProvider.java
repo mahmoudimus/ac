@@ -33,9 +33,9 @@ public class ReportModuleProvider extends AbstractConnectModuleProvider<ReportMo
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<ReportModuleBean> beans)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ReportModuleBean> modules, final Plugin theConnectPlugin, final ConnectModuleProviderContext moduleProviderContext)
     {
-        return Lists.transform(beans, new Function<ReportModuleBean, ModuleDescriptor>()
+        return Lists.transform(modules, new Function<ReportModuleBean, ModuleDescriptor>()
         {
             @Override
             public ModuleDescriptor apply(final ReportModuleBean bean)

@@ -59,9 +59,9 @@ public class JiraModuleProviderForTests extends AbstractConnectPageModuleProvide
     }
     
     @Override
-    public List<ConnectPageModuleBean> validate(String rawModules, Class<ConnectPageModuleBean> type, Plugin plugin, ShallowConnectAddonBean bean) throws ConnectModuleValidationException
+    public List<ConnectPageModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, Plugin plugin, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
     {
-        List<ConnectPageModuleBean> beans = super.validate(rawModules, type, plugin, bean);
+        List<ConnectPageModuleBean> beans = super.deserializeAddonDescriptorModules(jsonModuleListEntry, plugin, descriptor);
         if(beans.get(0).getRawKey().equals("bad"))
         {
             throw new ConnectModuleValidationException(getMeta().getDescriptorKey(), "Key is bad!");

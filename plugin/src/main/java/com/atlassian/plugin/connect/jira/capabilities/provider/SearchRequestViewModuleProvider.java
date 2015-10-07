@@ -29,11 +29,11 @@ public class SearchRequestViewModuleProvider extends AbstractConnectModuleProvid
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<SearchRequestViewModuleBean> beans)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<SearchRequestViewModuleBean> modules, final Plugin theConnectPlugin, final ConnectModuleProviderContext moduleProviderContext)
     {
         List<ModuleDescriptor> moduleDescriptors = new ArrayList<>();
 
-        for (SearchRequestViewModuleBean bean : beans)
+        for (SearchRequestViewModuleBean bean : modules)
         {
             ModuleDescriptor descriptor = searchRequestViewModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, bean);
             moduleDescriptors.add(descriptor);

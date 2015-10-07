@@ -31,10 +31,9 @@ public class DefaultContentPropertyModuleProvider extends ContentPropertyModuleP
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext,
-                                                 final Plugin plugin, List<ContentPropertyModuleBean> beans)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ContentPropertyModuleBean> modules, final Plugin plugin, final ConnectModuleProviderContext moduleProviderContext)
     {
-        return Lists.transform(beans, bean -> contentPropertyIndexFactory.createModuleDescriptor(moduleProviderContext, plugin, bean));
+        return Lists.transform(modules, bean -> contentPropertyIndexFactory.createModuleDescriptor(moduleProviderContext, plugin, bean));
     }
 
     @Override

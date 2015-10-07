@@ -30,9 +30,9 @@ public class DashboardItemModuleProvider extends AbstractConnectModuleProvider<D
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<DashboardItemModuleBean> beans)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<DashboardItemModuleBean> modules, final Plugin theConnectPlugin, final ConnectModuleProviderContext moduleProviderContext)
     {
-        return Lists.transform(beans, new Function<DashboardItemModuleBean, ModuleDescriptor>()
+        return Lists.transform(modules, new Function<DashboardItemModuleBean, ModuleDescriptor>()
         {
             @Override
             public ModuleDescriptor apply(final DashboardItemModuleBean bean)

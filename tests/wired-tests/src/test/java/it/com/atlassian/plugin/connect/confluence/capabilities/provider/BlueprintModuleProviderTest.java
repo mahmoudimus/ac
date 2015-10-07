@@ -89,7 +89,7 @@ public class BlueprintModuleProviderTest
         {
             plugin = testPluginInstaller.installAddon(addon);
 
-            List<ModuleDescriptor> descriptors = blueprintModuleProvider.provideModules(moduleProviderContext, plugin, newArrayList(bean));
+            List<ModuleDescriptor> descriptors = blueprintModuleProvider.createPluginModuleDescriptors(newArrayList(bean), plugin, moduleProviderContext);
 
             // should get a WebItem Descriptor and a Blueprint Descriptor
             assertEquals(3, descriptors.size());

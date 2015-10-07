@@ -104,8 +104,8 @@ public abstract class AbstractConnectAddonTest
 
         plugin = testPluginInstaller.installAddon(addon);
 
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(
-                new DefaultConnectModuleProviderContext(addon), plugin, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(
+                newArrayList(bean), plugin, new DefaultConnectModuleProviderContext(addon));
 
         assertEquals(1, descriptors.size());
 

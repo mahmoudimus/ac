@@ -38,13 +38,13 @@ public class PostInstallPageModuleProvider extends AbstractGeneralPageModuleProv
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<ConnectPageModuleBean> beans)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConnectPageModuleBean> modules, Plugin theConnectPlugin, ConnectModuleProviderContext moduleProviderContext)
     {
-        super.provideModules(moduleProviderContext, theConnectPlugin, beans);
+        super.createPluginModuleDescriptors(modules, theConnectPlugin, moduleProviderContext);
 
-        if(null != beans && !beans.isEmpty())
+        if(null != modules && !modules.isEmpty())
         {
-            ConnectPageModuleBean postInstallBean = beans.get(0);
+            ConnectPageModuleBean postInstallBean = modules.get(0);
             ModuleDescriptor descriptor = new PostInstallPageModuleDescriptor();
             descriptor.init(theConnectPlugin, new DOMElement("connectPostInstallPage").addAttribute("key",
                     postInstallBean.getKey(moduleProviderContext.getConnectAddonBean())));

@@ -68,14 +68,14 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
                                                                     Plugin theConnectPlugin, T macroBean);
 
     @Override
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<T> beans)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<T> modules, final Plugin theConnectPlugin, final ConnectModuleProviderContext moduleProviderContext)
     {
         List<ModuleDescriptor> moduleDescriptors = newArrayList();
 
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         MacroI18nBuilder i18nBuilder = new MacroI18nBuilder(connectAddonBean.getKey());
 
-        for (T bean : beans)
+        for (T bean : modules)
         {
             moduleDescriptors.addAll(createModuleDescriptors(moduleProviderContext, theConnectPlugin, bean));
             i18nBuilder.add(bean, connectAddonBean);

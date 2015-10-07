@@ -46,12 +46,12 @@ public class DefaultWorkflowPostFunctionModuleProvider extends AbstractConnectMo
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<WorkflowPostFunctionModuleBean> beans)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WorkflowPostFunctionModuleBean> modules, final Plugin theConnectPlugin, final ConnectModuleProviderContext moduleProviderContext)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<>();
 
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
-        for (WorkflowPostFunctionModuleBean bean : beans)
+        for (WorkflowPostFunctionModuleBean bean : modules)
         {
             // register render strategies for iframe workflow views
             if (bean.hasCreate())

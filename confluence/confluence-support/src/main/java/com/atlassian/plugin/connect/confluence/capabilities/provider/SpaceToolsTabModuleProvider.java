@@ -77,11 +77,11 @@ public class SpaceToolsTabModuleProvider extends AbstractConnectModuleProvider<S
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<SpaceToolsTabModuleBean> beans)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<SpaceToolsTabModuleBean> modules, final Plugin theConnectPlugin, final ConnectModuleProviderContext moduleProviderContext)
     {
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         List<ModuleDescriptor> moduleDescriptors = newArrayList();
-        for (SpaceToolsTabModuleBean bean : beans)
+        for (SpaceToolsTabModuleBean bean : modules)
         {
             XWorkActionModuleBean actionBean = createActionBean(connectAddonBean, bean);
             moduleDescriptors.add(xWorkActionDescriptorFactory.create(connectAddonBean, theConnectPlugin, actionBean));

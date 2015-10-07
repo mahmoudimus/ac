@@ -54,12 +54,12 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<ConnectPageModuleBean> beans)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConnectPageModuleBean> modules, Plugin theConnectPlugin, ConnectModuleProviderContext moduleProviderContext)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
 
-        for (ConnectPageModuleBean bean : beans)
+        for (ConnectPageModuleBean bean : modules)
         {
             // register a render strategy for our iframe page
             IFrameRenderStrategy pageRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
@@ -135,9 +135,9 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
     protected abstract int getDefaultWeight();
 
     @Override
-    public List<ConnectPageModuleBean> validate(String rawModules, Class<ConnectPageModuleBean> type, Plugin plugin, ShallowConnectAddonBean bean) throws ConnectModuleValidationException
+    public List<ConnectPageModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, Plugin plugin, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
     {
-        List<ConnectPageModuleBean> pageBeans = super.validate(rawModules, type, plugin, bean);
+        List<ConnectPageModuleBean> pageBeans = super.deserializeAddonDescriptorModules(jsonModuleListEntry, plugin, descriptor);
         validateConditions(pageBeans);
         return pageBeans;
     }

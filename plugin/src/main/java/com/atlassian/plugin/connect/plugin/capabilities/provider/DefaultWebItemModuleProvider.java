@@ -50,11 +50,11 @@ public class DefaultWebItemModuleProvider extends AbstractConnectModuleProvider<
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<WebItemModuleBean> beans)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WebItemModuleBean> modules, Plugin theConnectPlugin, ConnectModuleProviderContext moduleProviderContext)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<ModuleDescriptor>();
 
-        for (WebItemModuleBean bean : beans)
+        for (WebItemModuleBean bean : modules)
         {
             descriptors.addAll(beanToDescriptors(moduleProviderContext, theConnectPlugin, bean));
         }

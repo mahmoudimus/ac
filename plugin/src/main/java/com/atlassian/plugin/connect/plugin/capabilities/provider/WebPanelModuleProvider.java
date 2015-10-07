@@ -40,12 +40,12 @@ public class WebPanelModuleProvider extends AbstractConnectModuleProvider<WebPan
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<WebPanelModuleBean> beans)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WebPanelModuleBean> modules, Plugin theConnectPlugin, ConnectModuleProviderContext moduleProviderContext)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<>();
 
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
-        for (WebPanelModuleBean bean : beans)
+        for (WebPanelModuleBean bean : modules)
         {
             // register an iframe rendering strategy
             IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()

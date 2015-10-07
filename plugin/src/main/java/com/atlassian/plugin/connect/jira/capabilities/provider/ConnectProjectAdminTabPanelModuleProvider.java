@@ -52,12 +52,12 @@ public class ConnectProjectAdminTabPanelModuleProvider extends AbstractConnectMo
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<ConnectProjectAdminTabPanelModuleBean> beans)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConnectProjectAdminTabPanelModuleBean> modules, final Plugin theConnectPlugin, final ConnectModuleProviderContext moduleProviderContext)
     {
         ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
 
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
-        for (ConnectProjectAdminTabPanelModuleBean bean : beans)
+        for (ConnectProjectAdminTabPanelModuleBean bean : modules)
         {
             // render a web item for our tab
             WebItemModuleBean webItemModuleBean = newWebItemBean()

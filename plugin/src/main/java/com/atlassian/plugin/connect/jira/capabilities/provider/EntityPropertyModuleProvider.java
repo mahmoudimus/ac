@@ -30,9 +30,9 @@ public class EntityPropertyModuleProvider extends AbstractConnectModuleProvider<
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<EntityPropertyModuleBean> beans)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<EntityPropertyModuleBean> modules, final Plugin theConnectPlugin, final ConnectModuleProviderContext moduleProviderContext)
     {
-        return Lists.transform(beans, new Function<EntityPropertyModuleBean, ModuleDescriptor>()
+        return Lists.transform(modules, new Function<EntityPropertyModuleBean, ModuleDescriptor>()
         {
             @Override
             public ModuleDescriptor apply(final EntityPropertyModuleBean bean)

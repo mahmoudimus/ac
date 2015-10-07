@@ -7,7 +7,6 @@ import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
 import com.atlassian.plugin.connect.modules.schema.DescriptorValidationResult;
 import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import org.apache.commons.io.IOUtils;
@@ -15,43 +14,41 @@ import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractConnectModuleProvider<T extends BaseModuleBean> implements ConnectModuleProvider<T>
 {
     @Override
-    public List<T> validate(String rawModules, Class<T> type, Plugin plugin, ShallowConnectAddonBean bean) throws ConnectModuleValidationException
+    public List<T> deserializeAddonDescriptorModules(String jsonModuleListEntry, Plugin plugin, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
     {
-        validateAgainstSchema(rawModules, plugin, bean);
-        return deserializeIntoBeans(rawModules, type);
+        validateAgainstSchema(jsonModuleListEntry, plugin, descriptor);
+        return deserializeAddonDescriptorModules(jsonModuleListEntry);
     }
     
-    protected List<T> deserializeIntoBeans(String rawModules, Class<T> type) throws ConnectModuleValidationException
+    protected List<T> deserializeAddonDescriptorModules(String jsonModuleListEntry) throws ConnectModuleValidationException
     {
-        JsonElement modulesElement = new JsonParser().parse(rawModules);
-        Gson deserializer = ConnectModulesGsonFactory.getGson();
-        List<T> beans = new ArrayList<>();
+        JsonElement modulesElement = new JsonParser().parse(jsonModuleListEntry);
+        Gson gson = ConnectModulesGsonFactory.getGson();
+        List<T> beans;
         if (modulesElement.isJsonObject())
         {
-            if (getMeta().multipleModulesAllowed())
-            {
-                throw new ConnectModuleValidationException(getMeta().getDescriptorKey(), "Modules should be provided in a JSON array.");
-            }
-            beans.add(deserializer.fromJson(rawModules, type));
+            assertMultipleModulesNotAllowed();
+            T module = gson.fromJson(jsonModuleListEntry, getMeta().getBeanClass());
+            beans = Collections.singletonList(module);
         }
         else
         {
-            JsonArray moduleArray = modulesElement.getAsJsonArray();
-
-            for (int i = 0; i < moduleArray.size(); i++)
+            assertMultipleModulesAllowed();
+            beans = new ArrayList<>();
+            for (JsonElement moduleElement : modulesElement.getAsJsonArray())
             {
-                JsonElement module = moduleArray.get(i);
-                beans.add(deserializer.fromJson(module, type));
+                beans.add(gson.fromJson(moduleElement, getMeta().getBeanClass()));
             }
         }
         return beans;
     }
-    
+
     protected void validateAgainstSchema(String rawModules, Plugin plugin, ShallowConnectAddonBean bean) throws ConnectModuleSchemaValidationException
     {
         if (getSchemaPrefix() == null)
@@ -79,7 +76,21 @@ public abstract class AbstractConnectModuleProvider<T extends BaseModuleBean> im
         {
             throw new ConnectModuleSchemaValidationException(getMeta().getDescriptorKey(), result.getReportAsString(), modules);
         }
-        
     }
-    
+
+    private void assertMultipleModulesAllowed() throws ConnectModuleValidationException
+    {
+        if (getMeta().multipleModulesAllowed())
+        {
+            throw new ConnectModuleValidationException(getMeta().getDescriptorKey(), "Modules should be provided in a JSON array.");
+        }
+    }
+
+    private void assertMultipleModulesNotAllowed() throws ConnectModuleValidationException
+    {
+        if (!getMeta().multipleModulesAllowed())
+        {
+            throw new ConnectModuleValidationException(getMeta().getDescriptorKey(), "Modules should be provided in a JSON array.");
+        }
+    }
 }

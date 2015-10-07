@@ -107,7 +107,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = getConnectPlugin();
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(moduleProviderContext, plugin, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), plugin, moduleProviderContext);
 
         assertEquals(1, descriptors.size());
 
@@ -129,7 +129,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = getConnectPlugin();
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(moduleProviderContext, plugin, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), plugin, moduleProviderContext);
 
         assertEquals(1, descriptors.size());
 
@@ -151,7 +151,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = getConnectPlugin();
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(moduleProviderContext, plugin, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), plugin, moduleProviderContext);
 
         assertEquals(1, descriptors.size());
 
@@ -173,7 +173,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = getConnectPlugin();
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(moduleProviderContext, plugin, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), plugin, moduleProviderContext);
 
         assertEquals(1, descriptors.size());
 
@@ -270,7 +270,7 @@ public class WebItemModuleProviderTest
                 .build();
 
         Plugin plugin = getConnectPlugin();
-        List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(moduleProviderContext, plugin, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), plugin, moduleProviderContext);
 
         assertEquals(1, descriptors.size());
 
@@ -304,8 +304,8 @@ public class WebItemModuleProviderTest
         {
             plugin = testPluginInstaller.installAddon(addon);
 
-            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(moduleProviderContext,
-                    getConnectPlugin(), newArrayList(bean));
+            List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean), getConnectPlugin(), moduleProviderContext
+            );
 
             assertEquals(1, descriptors.size());
 
@@ -357,8 +357,8 @@ public class WebItemModuleProviderTest
         {
             plugin = testPluginInstaller.installAddon(addon);
 
-            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(
-                    moduleProviderContext, getConnectPlugin(), newArrayList(bean));
+            List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(
+                    newArrayList(bean), getConnectPlugin(), moduleProviderContext);
 
             assertEquals(1, descriptors.size());
 
@@ -409,8 +409,8 @@ public class WebItemModuleProviderTest
         {
             plugin = testPluginInstaller.installAddon(addon);
 
-            List<ModuleDescriptor> descriptors = webItemModuleProvider.provideModules(moduleProviderContext,
-                    getConnectPlugin(), newArrayList(bean, bean2));
+            List<ModuleDescriptor> descriptors = webItemModuleProvider.createPluginModuleDescriptors(newArrayList(bean, bean2), getConnectPlugin(), moduleProviderContext
+            );
 
             assertEquals(2, descriptors.size());
 

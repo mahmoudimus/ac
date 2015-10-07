@@ -35,12 +35,12 @@ public class ProfileTabPanelModuleProvider extends ConnectTabPanelModuleProvider
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(final ConnectModuleProviderContext moduleProviderContext, final Plugin theConnectPlugin, List<ConnectTabPanelModuleBean> beans)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConnectTabPanelModuleBean> modules, final Plugin theConnectPlugin, final ConnectModuleProviderContext moduleProviderContext)
     {
         TabPanelDescriptorHints hints = new TabPanelDescriptorHints("profile-tab-page",
                 ConnectViewProfilePanelModuleDescriptor.class, ConnectIFrameProfileTabPanel.class);
 
-        return provideModules(moduleProviderContext, theConnectPlugin, beans, hints);
+        return provideModules(moduleProviderContext, theConnectPlugin, modules, hints);
     }
 
     @Override

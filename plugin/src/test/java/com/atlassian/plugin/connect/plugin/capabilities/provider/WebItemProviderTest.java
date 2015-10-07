@@ -112,7 +112,7 @@ public class WebItemProviderTest
 
         DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(moduleProviderContext, plugin, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.createPluginModuleDescriptors(newArrayList(bean), plugin, moduleProviderContext);
 
         assertEquals(1, descriptors.size());
 
@@ -134,7 +134,7 @@ public class WebItemProviderTest
 
         DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(moduleProviderContext, plugin, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.createPluginModuleDescriptors(newArrayList(bean), plugin, moduleProviderContext);
 
         assertEquals(1, descriptors.size());
 
@@ -156,7 +156,7 @@ public class WebItemProviderTest
 
         DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(moduleProviderContext, plugin, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.createPluginModuleDescriptors(newArrayList(bean), plugin, moduleProviderContext);
 
         assertEquals(1, descriptors.size());
 
@@ -177,7 +177,7 @@ public class WebItemProviderTest
 
         DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(moduleProviderContext, plugin, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.createPluginModuleDescriptors(newArrayList(bean), plugin, moduleProviderContext);
 
         assertEquals(1, descriptors.size());
 
@@ -199,7 +199,7 @@ public class WebItemProviderTest
 
         DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(moduleProviderContext, plugin, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.createPluginModuleDescriptors(newArrayList(bean), plugin, moduleProviderContext);
 
         assertEquals(1, descriptors.size());
 
@@ -221,7 +221,7 @@ public class WebItemProviderTest
 
         DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(moduleProviderContext, plugin, newArrayList(bean));
+        List<ModuleDescriptor> descriptors = moduleProvider.createPluginModuleDescriptors(newArrayList(bean), plugin, moduleProviderContext);
 
         assertEquals(1, descriptors.size());
 
@@ -248,7 +248,7 @@ public class WebItemProviderTest
 
         DefaultWebItemModuleProvider moduleProvider = new DefaultWebItemModuleProvider(webItemFactory, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
 
-        List<ModuleDescriptor> descriptors = moduleProvider.provideModules(moduleProviderContext, plugin, newArrayList(bean, bean2));
+        List<ModuleDescriptor> descriptors = moduleProvider.createPluginModuleDescriptors(newArrayList(bean, bean2), plugin, moduleProviderContext);
 
         assertEquals(2, descriptors.size());
 

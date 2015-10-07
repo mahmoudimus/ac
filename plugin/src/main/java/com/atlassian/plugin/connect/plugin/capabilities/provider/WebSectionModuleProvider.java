@@ -31,11 +31,11 @@ public class WebSectionModuleProvider extends AbstractConnectModuleProvider<WebS
     }
 
     @Override
-    public List<ModuleDescriptor> provideModules(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, List<WebSectionModuleBean> beans)
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WebSectionModuleBean> modules, Plugin theConnectPlugin, ConnectModuleProviderContext moduleProviderContext)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<>();
 
-        for (WebSectionModuleBean bean : beans)
+        for (WebSectionModuleBean bean : modules)
         {
             descriptors.addAll(beanToDescriptors(moduleProviderContext, theConnectPlugin, bean));
         }
