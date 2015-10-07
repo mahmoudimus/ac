@@ -8,6 +8,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.capabilities.provider.AbstractConnectPageModuleProvider;
+import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,9 +19,12 @@ import java.util.List;
 public class JiraModuleProviderForTests extends AbstractConnectPageModuleProvider
 {
     @Autowired
-    public JiraModuleProviderForTests(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory, IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, WebItemModuleDescriptorFactory webItemModuleDescriptorFactory)
+    public JiraModuleProviderForTests(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory, 
+                                      IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, 
+                                      WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+                                      PageConditionsFactory pageConditionsFactory)
     {
-        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory);
+        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory, pageConditionsFactory);
     }
 
     @Override

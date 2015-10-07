@@ -14,7 +14,7 @@ public class GeneralPageModuleProviderTest extends AbstractPageModuleProviderTes
     protected GeneralPageModuleProvider createPageModuleProvider()
     {
         return new GeneralPageModuleProvider(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
-                webItemModuleDescriptorFactory, productAccessor);
+                webItemModuleDescriptorFactory, pageConditionsFactory, productAccessor);
     }
 
     @Test
@@ -28,26 +28,5 @@ public class GeneralPageModuleProviderTest extends AbstractPageModuleProviderTes
     {
         verify(productAccessor).getPreferredGeneralWeight();
     }
-
-    // handling explicitly as only one test on it
-//    private ArgumentMatcher<IFrameServletBean> hasGeneralParamSet()
-//    {
-//        return new ArgumentMatcher<IFrameServletBean>()
-//        {
-//            @Override
-//            public boolean matches(Object item)
-//            {
-//                assertThat(item, is(instanceOf(IFrameServletBean.class)));
-//                IFrameServletBean iFrameServletBean = (IFrameServletBean) item;
-//                return Objects.equal(iFrameServletBean.getiFrameParams().getAsMap().get("general"), "1");
-//            }
-//
-//            @Override
-//            public void describeTo(Description description)
-//            {
-//                description.appendText("IFrameServletBean with iframe param param general = 1");
-//            }
-//        };
-//    }
 
 }

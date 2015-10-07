@@ -6,6 +6,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.GeneralPageModuleMeta;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,28 +19,10 @@ public class GeneralPageModuleProvider extends AbstractGeneralPageModuleProvider
     public GeneralPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
                                      IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
                                      WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+                                     PageConditionsFactory pageConditionsFactory,
                                      ProductAccessor productAccessor)
     {
-        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory,
-                productAccessor);
-    }
-
-    @Override
-    protected int getDefaultWeight()
-    {
-        return productAccessor.getPreferredGeneralWeight();
-    }
-
-    @Override
-    protected String getDefaultSection()
-    {
-        return productAccessor.getPreferredGeneralSectionKey();
-    }
-
-    @Override
-    protected String getDecorator()
-    {
-        return ATL_GENERAL_DECORATOR;
+        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory, pageConditionsFactory, productAccessor);
     }
 
     @Override

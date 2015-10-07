@@ -9,6 +9,7 @@ import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.PostInstallPageModuleMeta;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.PostInstallPageModuleDescriptor;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.google.common.collect.ImmutableList;
@@ -26,10 +27,11 @@ public class PostInstallPageModuleProvider extends AbstractGeneralPageModuleProv
     public PostInstallPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
                                          IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
                                          WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+                                         PageConditionsFactory pageConditionsFactory,
                                          ProductAccessor productAccessor)
     {
         super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory,
-                productAccessor);
+                pageConditionsFactory, productAccessor);
     }
 
     @Override

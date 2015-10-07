@@ -1,11 +1,10 @@
-package com.atlassian.plugin.connect.plugin.capabilities.validate.impl;
+package com.atlassian.plugin.connect.plugin.capabilities.provider;
 
-import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.plugin.capabilities.WebHookScopeService;
-import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidator;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -21,7 +20,7 @@ import java.util.List;
  * @since 1.0
  */
 @Named ("web-hook-scopes-validator")
-public class WebHookScopeValidator implements AddOnBeanValidator
+public class WebHookScopeValidator
 {
     private final WebHookScopeService webHookScopeService;
 
@@ -31,10 +30,8 @@ public class WebHookScopeValidator implements AddOnBeanValidator
         this.webHookScopeService = webHookScopeService;
     }
 
-    @Override
-    public void validate(final ConnectAddonBean addon) throws InvalidDescriptorException
+    public void validate(final ShallowConnectAddonBean addon, List<WebHookModuleBean> webhooks) throws InvalidDescriptorException
     {
-        List<ModuleBean> webhooks = addon.getModules().get("webhooks");
         if (webhooks != null)
         {
             for (ModuleBean moduleBean : webhooks)

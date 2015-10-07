@@ -69,9 +69,7 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
     public ConnectAddonBean fromJson(String jsonDescriptor, Map<String, String> i18nCollector) throws InvalidDescriptorException
     {
         validateDescriptorAgainstSchema(jsonDescriptor);
-
         ConnectAddonBean addon = fromJsonSkipValidation(jsonDescriptor,i18nCollector);
-        validateModules(addon);
         addOnBeanValidatorService.validate(addon);
 
         return addon;
@@ -175,13 +173,5 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
         }
         messageBuilder.append("</ul>");
         return messageBuilder.toString();
-    }
-
-    // TODO: I've implemented this in the ModuleValidator class, where I think it makes more sense,
-    // but it should be called before PageConditionsValidator and WebHookScopeValidator because those guys try to get modules.
-    // Can't work out how to guarantee the ordering of the validators.
-    private void validateModules(ConnectAddonBean addon)
-    {
-        new ModuleValidator().validate(addon);
     }
 }

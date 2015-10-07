@@ -4,6 +4,7 @@ import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrat
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.capabilities.provider.AbstractConnectPageModuleProvider;
+import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 
 public abstract class AbstractGeneralPageModuleProvider extends AbstractConnectPageModuleProvider
@@ -16,9 +17,11 @@ public abstract class AbstractGeneralPageModuleProvider extends AbstractConnectP
     public AbstractGeneralPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
                                              IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
                                              WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+                                             PageConditionsFactory pageConditionsFactory,
                                              ProductAccessor productAccessor)
     {
-        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory);
+        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory,
+                pageConditionsFactory);
         this.productAccessor = productAccessor;
     }
 

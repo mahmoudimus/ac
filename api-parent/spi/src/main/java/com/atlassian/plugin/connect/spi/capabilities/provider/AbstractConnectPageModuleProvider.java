@@ -8,10 +8,15 @@ import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrat
 import com.atlassian.plugin.connect.api.iframe.servlet.ConnectIFrameServletPath;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
+import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
+import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
+import com.atlassian.plugin.connect.modules.util.ConditionUtils;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
+import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
 import com.atlassian.plugin.connect.spi.module.provider.AbstractConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleValidationException;
 import com.atlassian.plugin.web.Condition;
 import com.google.common.collect.ImmutableList;
 
@@ -20,6 +25,7 @@ import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.AddOnUrlContext.page;
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
+import static com.atlassian.plugin.connect.modules.util.ConditionUtils.isRemoteCondition;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -34,14 +40,17 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
+    private final PageConditionsFactory pageConditionsFactory;
 
     public AbstractConnectPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
                                              IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-                                             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory)
+                                             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+                                             PageConditionsFactory pageConditionsFactory)
     {
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.webItemModuleDescriptorFactory = checkNotNull(webItemModuleDescriptorFactory);
+        this.pageConditionsFactory = pageConditionsFactory;
     }
 
     @Override
@@ -125,4 +134,31 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
 
     protected abstract int getDefaultWeight();
 
+    @Override
+    public List<ConnectPageModuleBean> validate(String rawModules, Class<ConnectPageModuleBean> type, Plugin plugin, ShallowConnectAddonBean bean) throws ConnectModuleValidationException
+    {
+        List<ConnectPageModuleBean> pageBeans = super.validate(rawModules, type, plugin, bean);
+        validateConditions(pageBeans);
+        return pageBeans;
+    }
+
+    protected void validateConditions(List<ConnectPageModuleBean> pageBeans) throws ConnectModuleValidationException
+    {
+        for (ConnectPageModuleBean page : pageBeans)
+        {
+            for (SingleConditionBean condition : ConditionUtils.getSingleConditionsRecursively(page.getConditions()))
+            {
+                assertValidPageCondition(page, condition.getCondition());
+            }
+        }
+    }
+
+    private void assertValidPageCondition(ConnectPageModuleBean page, String conditionString) throws ConnectModuleValidationException
+    {
+        if (!pageConditionsFactory.getConditionNames().contains(conditionString) && !isRemoteCondition(conditionString))
+        {
+            String exceptionMessage = String.format("The add-on (%s) includes a Page Module with an unsupported condition (%s)", page.getRawKey(), conditionString);
+            throw new ConnectModuleValidationException(getMeta().getDescriptorKey(), exceptionMessage);
+        }
+    }
 }
