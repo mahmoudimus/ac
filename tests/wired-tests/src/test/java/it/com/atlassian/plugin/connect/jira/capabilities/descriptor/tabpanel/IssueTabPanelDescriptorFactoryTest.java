@@ -3,12 +3,13 @@ package it.com.atlassian.plugin.connect.jira.capabilities.descriptor.tabpanel;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.jira.capabilities.descriptor.tabpanel.ConnectIssueTabPanelModuleDescriptor;
 import com.atlassian.plugin.connect.jira.capabilities.descriptor.tabpanel.ConnectTabPanelModuleDescriptorFactory;
-import com.atlassian.plugin.connect.jira.capabilities.provider.ConnectTabPanelModuleProvider;
+import com.atlassian.plugin.connect.jira.capabilities.provider.IssueTabPanelModuleProvider;
 import com.atlassian.plugin.connect.jira.iframe.tabpanel.TabPanelDescriptorHints;
+import com.atlassian.plugin.connect.modules.beans.IssueTabPanelModuleMeta;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.plugins.osgi.test.Application;
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
-import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -26,9 +27,15 @@ public class IssueTabPanelDescriptorFactoryTest extends AbstractTabPanelDescript
     }
 
     @Override
+    protected String getModuleFieldName()
+    {
+        return new IssueTabPanelModuleMeta().getDescriptorKey();
+    }
+
+    @Override
     protected TabPanelDescriptorHints getDescriptorHints()
     {
-        return ConnectTabPanelModuleProvider.FIELD_TO_HINTS.get(ConnectTabPanelModuleProvider.ISSUE_TAB_PANELS);
+        return IssueTabPanelModuleProvider.HINTS;
     }
 
     @Test

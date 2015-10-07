@@ -25,6 +25,8 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
 {
     public static final String CONTENT_CLASSIFIER = "content";
 
+    private static final DynamicContentMacroModuleMeta META = new DynamicContentMacroModuleMeta();
+
     private final DynamicContentMacroModuleDescriptorFactory dynamicContentMacroModuleDescriptorFactory;
 
     @Autowired
@@ -69,6 +71,6 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
     @Override
     public ConnectModuleMeta<DynamicContentMacroModuleBean> getMeta()
     {
-        return new DynamicContentMacroModuleMeta();
+        return META;
     }
 }

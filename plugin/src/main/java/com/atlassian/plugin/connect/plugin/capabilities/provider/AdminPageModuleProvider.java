@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 public class AdminPageModuleProvider extends AbstractAdminPageModuleProvider
 {
 
+    private static final AdminPageModuleMeta META = new AdminPageModuleMeta();
+
     @Autowired
     public AdminPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
@@ -35,6 +37,6 @@ public class AdminPageModuleProvider extends AbstractAdminPageModuleProvider
     @Override
     public ConnectModuleMeta<ConnectPageModuleBean> getMeta()
     {
-        return new AdminPageModuleMeta();
+        return META;
     }
 }

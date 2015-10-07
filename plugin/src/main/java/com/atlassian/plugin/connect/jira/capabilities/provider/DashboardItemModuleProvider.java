@@ -18,6 +18,9 @@ import java.util.List;
 @JiraComponent
 public class DashboardItemModuleProvider extends AbstractConnectModuleProvider<DashboardItemModuleBean>
 {
+
+    private static final DashboardItemModuleMeta META = new DashboardItemModuleMeta();
+
     private final DashboardItemModuleDescriptorFactory dashboardItemModuleDescriptorFactory;
 
     @Autowired
@@ -48,6 +51,6 @@ public class DashboardItemModuleProvider extends AbstractConnectModuleProvider<D
     @Override
     public ConnectModuleMeta<DashboardItemModuleBean> getMeta()
     {
-        return new DashboardItemModuleMeta();
+        return META;
     }
 }

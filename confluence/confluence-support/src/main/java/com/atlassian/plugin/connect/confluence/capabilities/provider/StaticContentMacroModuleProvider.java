@@ -20,6 +20,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 @ConfluenceComponent
 public class StaticContentMacroModuleProvider extends AbstractContentMacroModuleProvider<StaticContentMacroModuleBean>
 {
+
+    private static final StaticContentMacroModuleMeta META = new StaticContentMacroModuleMeta();
+
     private final StaticContentMacroModuleDescriptorFactory macroModuleDescriptorFactory;
 
     @Autowired
@@ -51,6 +54,6 @@ public class StaticContentMacroModuleProvider extends AbstractContentMacroModule
     @Override
     public ConnectModuleMeta<StaticContentMacroModuleBean> getMeta()
     {
-        return new StaticContentMacroModuleMeta();
+        return META;
     }
 }

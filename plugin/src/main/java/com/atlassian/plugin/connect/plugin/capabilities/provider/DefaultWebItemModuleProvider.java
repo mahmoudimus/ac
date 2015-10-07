@@ -30,6 +30,9 @@ import static com.atlassian.plugin.connect.plugin.iframe.servlet.ConnectIFrameSe
 @ExportAsDevService
 public class DefaultWebItemModuleProvider extends AbstractConnectModuleProvider<WebItemModuleBean> implements WebItemModuleProvider
 {
+
+    private static final WebItemModuleMeta META = new WebItemModuleMeta();
+
     private static final String DEFAULT_DIALOG_DIMENSION = "100%"; // NB: the client (js) may size the parent of the iframe if the opening is done from JS
 
     private final WebItemModuleDescriptorFactory webItemFactory;
@@ -112,7 +115,7 @@ public class DefaultWebItemModuleProvider extends AbstractConnectModuleProvider<
     @Override
     public ConnectModuleMeta<WebItemModuleBean> getMeta()
     {
-        return new WebItemModuleMeta();
+        return META;
     }
 
 }

@@ -23,6 +23,9 @@ import java.util.List;
 @Component
 public class PostInstallPageModuleProvider extends AbstractGeneralPageModuleProvider
 {
+
+    private static final PostInstallPageModuleMeta META = new PostInstallPageModuleMeta();
+
     @Autowired
     public PostInstallPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
                                          IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
@@ -61,7 +64,7 @@ public class PostInstallPageModuleProvider extends AbstractGeneralPageModuleProv
     @Override
     public ConnectModuleMeta<ConnectPageModuleBean> getMeta()
     {
-        return new PostInstallPageModuleMeta();
+        return META;
     }
 
     @Override

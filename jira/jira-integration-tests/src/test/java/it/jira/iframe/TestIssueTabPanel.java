@@ -1,7 +1,6 @@
 package it.jira.iframe;
 
 import com.atlassian.jira.rest.api.issue.IssueCreateResponse;
-import com.atlassian.plugin.connect.jira.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
@@ -11,7 +10,6 @@ import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.ParameterCapturingConditionServlet;
-import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -52,7 +50,7 @@ public class TestIssueTabPanel extends JiraWebDriverTestBase
     {
         remotePlugin = new ConnectRunner(product.getProductInstance().getBaseUrl(), PLUGIN_KEY)
                 .setAuthenticationToNone()
-                .addModule(ConnectTabPanelModuleProvider.ISSUE_TAB_PANELS, newTabPanelBean()
+                .addModule("jiraIssueTabPanels", newTabPanelBean()
                         .withName(new I18nProperty("Issue Tab Panel", null))
                         .withKey(MODULE_KEY)
                         .withUrl("/ipp?issue_id={issue.id}&project_id={project.id}&project_key={project.key}")

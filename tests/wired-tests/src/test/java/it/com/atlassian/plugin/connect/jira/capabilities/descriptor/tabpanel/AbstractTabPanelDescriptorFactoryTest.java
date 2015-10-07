@@ -4,16 +4,15 @@ import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.util.ConnectPluginInfo;
+import com.atlassian.plugin.connect.jira.capabilities.descriptor.tabpanel.ConnectTabPanelModuleDescriptorFactory;
+import com.atlassian.plugin.connect.jira.iframe.tabpanel.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.jira.capabilities.descriptor.tabpanel.ConnectTabPanelModuleDescriptorFactory;
-import com.atlassian.plugin.connect.jira.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
-import com.atlassian.plugin.connect.jira.iframe.tabpanel.TabPanelDescriptorHints;
-import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
+import com.atlassian.plugin.connect.testsupport.util.AddonUtil;
 import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import org.junit.After;
 import org.junit.Before;
@@ -123,10 +122,11 @@ public abstract class AbstractTabPanelDescriptorFactoryTest
                 .withKey(pluginKey)
                 .withName(PLUGIN_NAME)
                 .withAuthentication(newAuthenticationBean().withType(AuthenticationType.NONE).build())
-                .withModule(ConnectTabPanelModuleProvider.DESCRIPTOR_TO_FIELD.get(getDescriptorHints().getDescriptorClass()),
-                        bean
-                ).build();
+                .withModule(getModuleFieldName(), bean)
+                .build();
     }
+
+    protected abstract String getModuleFieldName();
 
     //common tests
     @Test

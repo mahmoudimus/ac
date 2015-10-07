@@ -15,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ConfluenceComponent
 public class ProfilePageModuleProvider extends AbstractConnectPageModuleProvider
 {
+
+    private static final ProfilePageModuleMeta META = new ProfilePageModuleMeta();
+
     private final ProductAccessor productAccessor;
 
     @Autowired
@@ -55,6 +58,6 @@ public class ProfilePageModuleProvider extends AbstractConnectPageModuleProvider
     @Override
     public ConnectModuleMeta<ConnectPageModuleBean> getMeta()
     {
-        return new ProfilePageModuleMeta();
+        return META;
     }
 }

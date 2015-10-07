@@ -17,6 +17,9 @@ import java.util.List;
 @JiraComponent
 public class SearchRequestViewModuleProvider extends AbstractConnectModuleProvider<SearchRequestViewModuleBean>
 {
+
+    private static final SearchRequestViewModuleMeta META = new SearchRequestViewModuleMeta();
+
     private final SearchRequestViewModuleDescriptorFactory searchRequestViewModuleDescriptorFactory;
 
     @Autowired
@@ -48,6 +51,6 @@ public class SearchRequestViewModuleProvider extends AbstractConnectModuleProvid
     @Override
     public ConnectModuleMeta<SearchRequestViewModuleBean> getMeta()
     {
-        return new SearchRequestViewModuleMeta();
+        return META;
     }
 }

@@ -1,17 +1,13 @@
 package it.jira.iframe;
 
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.jira.capabilities.provider.ConnectTabPanelModuleProvider;
 import com.atlassian.plugin.connect.test.AddonTestUtils;
-import com.atlassian.plugin.connect.test.helptips.JiraHelpTipApiClient;
 import com.atlassian.plugin.connect.test.pageobjects.ConnectAddOnEmbeddedTestPage;
 import com.atlassian.plugin.connect.test.pageobjects.jira.JiraProjectSummaryPageWithAddonTab;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import it.jira.JiraWebDriverTestBase;
 import it.servlet.ConnectAppServlets;
 import it.servlet.condition.ParameterCapturingConditionServlet;
-import it.util.ConnectTestUserFactory;
-import it.util.TestUser;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -52,7 +48,7 @@ public class TestProjectTabPanel extends JiraWebDriverTestBase
 
         addon = new ConnectRunner(product.getProductInstance().getBaseUrl(), ADDON_KEY)
                 .setAuthenticationToNone()
-                .addModule(ConnectTabPanelModuleProvider.PROJECT_TAB_PANELS, newTabPanelBean()
+                .addModule("jiraProjectTabPanels", newTabPanelBean()
                         .withName(new I18nProperty(MODULE_TITLE, null))
                         .withKey(MODULE_KEY)
                         .withUrl("/ptp")

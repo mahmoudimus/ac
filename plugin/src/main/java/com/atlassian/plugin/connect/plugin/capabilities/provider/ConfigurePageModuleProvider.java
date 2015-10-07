@@ -23,6 +23,9 @@ import java.util.List;
 @Component
 public class ConfigurePageModuleProvider extends AbstractAdminPageModuleProvider
 {
+
+    private static final ConfigurePageModuleMeta META = new ConfigurePageModuleMeta();
+
     @Autowired
     public ConfigurePageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
@@ -67,7 +70,6 @@ public class ConfigurePageModuleProvider extends AbstractAdminPageModuleProvider
     @Override
     public ConnectModuleMeta<ConnectPageModuleBean> getMeta()
     {
-        return new ConfigurePageModuleMeta();
+        return META;
     }
-
 }

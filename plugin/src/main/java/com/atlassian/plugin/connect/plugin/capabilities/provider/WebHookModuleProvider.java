@@ -20,6 +20,9 @@ import java.util.List;
 @Component
 public class WebHookModuleProvider extends AbstractConnectModuleProvider<WebHookModuleBean>
 {
+
+    private static final WebHookModuleMeta META = new WebHookModuleMeta();
+
     private ConnectWebHookModuleDescriptorFactory connectWebHookModuleDescriptorFactory;
     private WebHookScopeValidator webHookScopeValidator;
 
@@ -62,7 +65,7 @@ public class WebHookModuleProvider extends AbstractConnectModuleProvider<WebHook
     @Override
     public ConnectModuleMeta<WebHookModuleBean> getMeta()
     {
-        return new WebHookModuleMeta();
+        return META;
     }
     
     @Override

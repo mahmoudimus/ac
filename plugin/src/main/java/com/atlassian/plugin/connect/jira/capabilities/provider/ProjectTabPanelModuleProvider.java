@@ -12,12 +12,20 @@ import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ProjectTabPanelModuleMeta;
 import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
+import com.google.common.annotations.VisibleForTesting;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 public class ProjectTabPanelModuleProvider extends ConnectTabPanelModuleProvider
 {
+
+    @VisibleForTesting
+    public static final TabPanelDescriptorHints HINTS = new TabPanelDescriptorHints(
+            "project-tab-page", ConnectProjectTabPanelModuleDescriptor.class, ConnectIFrameProjectTabPanel.class);
+
+    private static final ProjectTabPanelModuleMeta META = new ProjectTabPanelModuleMeta();
+
     @Autowired
     public ProjectTabPanelModuleProvider(ConnectTabPanelModuleDescriptorFactory descriptorFactory,
                                          IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
@@ -44,6 +52,6 @@ public class ProjectTabPanelModuleProvider extends ConnectTabPanelModuleProvider
     @Override
     public ConnectModuleMeta<ConnectTabPanelModuleBean> getMeta()
     {
-        return new ProjectTabPanelModuleMeta();
+        return META;
     }
 }

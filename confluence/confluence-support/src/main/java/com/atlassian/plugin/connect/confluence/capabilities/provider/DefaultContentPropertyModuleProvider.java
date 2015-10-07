@@ -19,6 +19,9 @@ import java.util.List;
 @ConfluenceComponent
 public class DefaultContentPropertyModuleProvider extends ContentPropertyModuleProvider
 {
+
+    private static final ContentPropertyModuleMeta META = new ContentPropertyModuleMeta();
+
     private final ContentPropertyIndexSchemaModuleDescriptorFactory contentPropertyIndexFactory;
 
     @Autowired
@@ -43,6 +46,6 @@ public class DefaultContentPropertyModuleProvider extends ContentPropertyModuleP
     @Override
     public ConnectModuleMeta<ContentPropertyModuleBean> getMeta()
     {
-        return new ContentPropertyModuleMeta();
+        return META;
     }
 }

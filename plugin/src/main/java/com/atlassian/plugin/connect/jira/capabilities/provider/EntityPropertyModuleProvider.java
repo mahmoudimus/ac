@@ -18,6 +18,9 @@ import java.util.List;
 @JiraComponent
 public class EntityPropertyModuleProvider extends AbstractConnectModuleProvider<EntityPropertyModuleBean>
 {
+
+    private static final EntityPropertyModuleMeta META = new EntityPropertyModuleMeta();
+
     private final ConnectEntityPropertyModuleDescriptorFactory descriptorFactory;
 
     @Autowired
@@ -48,6 +51,6 @@ public class EntityPropertyModuleProvider extends AbstractConnectModuleProvider<
     @Override
     public ConnectModuleMeta<EntityPropertyModuleBean> getMeta()
     {
-        return new EntityPropertyModuleMeta();
+        return META;
     }
 }

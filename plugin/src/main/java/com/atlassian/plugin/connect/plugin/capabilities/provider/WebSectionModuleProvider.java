@@ -19,6 +19,9 @@ import java.util.List;
 @Component
 public class WebSectionModuleProvider extends AbstractConnectModuleProvider<WebSectionModuleBean>
 {
+
+    private static final WebSectionModuleMeta META = new WebSectionModuleMeta();
+
     private final ConnectWebSectionModuleDescriptorFactory webSectionFactory;
 
     @Autowired
@@ -59,6 +62,6 @@ public class WebSectionModuleProvider extends AbstractConnectModuleProvider<WebS
     @Override
     public ConnectModuleMeta<WebSectionModuleBean> getMeta()
     {
-        return new WebSectionModuleMeta();
+        return META;
     }
 }

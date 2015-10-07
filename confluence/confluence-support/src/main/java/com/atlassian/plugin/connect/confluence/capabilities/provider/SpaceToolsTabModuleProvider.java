@@ -55,6 +55,8 @@ public class SpaceToolsTabModuleProvider extends AbstractConnectModuleProvider<S
     @VisibleForTesting
     public static final String SPACE_ADMIN_KEY_SUFFIX = "-legacy-space-admin";
 
+    private static final SpaceToolsTabModuleMeta META = new SpaceToolsTabModuleMeta();
+
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final XWorkActionDescriptorFactory xWorkActionDescriptorFactory;
     private final ProductAccessor productAccessor;
@@ -177,6 +179,6 @@ public class SpaceToolsTabModuleProvider extends AbstractConnectModuleProvider<S
     @Override
     public ConnectModuleMeta<SpaceToolsTabModuleBean> getMeta()
     {
-        return new SpaceToolsTabModuleMeta();
+        return META;
     }
 }

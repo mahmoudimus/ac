@@ -22,6 +22,9 @@ import java.util.List;
 @Component
 public class WebPanelModuleProvider extends AbstractConnectModuleProvider<WebPanelModuleBean>
 {
+
+    private static final WebPanelModuleMeta META = new WebPanelModuleMeta();
+
     private final WebPanelConnectModuleDescriptorFactory webPanelFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
@@ -81,6 +84,6 @@ public class WebPanelModuleProvider extends AbstractConnectModuleProvider<WebPan
     @Override
     public ConnectModuleMeta<WebPanelModuleBean> getMeta()
     {
-        return new WebPanelModuleMeta();
+        return META;
     }
 }

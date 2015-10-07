@@ -21,6 +21,9 @@ import java.util.List;
 @ExportAsDevService
 public class DefaultBlueprintModuleProvider extends AbstractConnectModuleProvider<BlueprintModuleBean> implements BlueprintModuleProvider
 {
+
+    private static final BlueprintModuleMeta META = new BlueprintModuleMeta();
+
     private final BlueprintWebItemModuleDescriptorFactory blueprintModuleWebItemDescriptorFactory;
     private final BlueprintModuleDescriptorFactory blueprintModuleDescriptorFactory;
     private final BlueprintContentTemplateModuleDescriptorFactory blueprintContentTemplateModuleDescriptorFactory;
@@ -69,6 +72,6 @@ public class DefaultBlueprintModuleProvider extends AbstractConnectModuleProvide
     @Override
     public ConnectModuleMeta<BlueprintModuleBean> getMeta()
     {
-        return new BlueprintModuleMeta();
+        return META;
     }
 }

@@ -28,6 +28,9 @@ import static com.atlassian.plugin.connect.jira.capabilities.provider.JiraTempla
 public class DefaultWorkflowPostFunctionModuleProvider extends AbstractConnectModuleProvider<WorkflowPostFunctionModuleBean>
         implements WorkflowPostFunctionModuleProvider
 {
+
+    private static final WorkflowPostFunctionModuleMeta META = new WorkflowPostFunctionModuleMeta();
+
     private final WorkflowPostFunctionModuleDescriptorFactory workflowPostFunctionFactory;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
@@ -103,6 +106,6 @@ public class DefaultWorkflowPostFunctionModuleProvider extends AbstractConnectMo
     @Override
     public ConnectModuleMeta<WorkflowPostFunctionModuleBean> getMeta()
     {
-        return new WorkflowPostFunctionModuleMeta();
+        return META;
     }
 }

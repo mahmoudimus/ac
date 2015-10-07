@@ -21,6 +21,9 @@ import java.util.List;
 @JiraComponent
 public class ReportModuleProvider extends AbstractConnectModuleProvider<ReportModuleBean>
 {
+
+    private static final ReportModuleMeta META = new ReportModuleMeta();
+
     private final ConnectReportModuleDescriptorFactory moduleDescriptorFactory;
 
     @Autowired
@@ -51,6 +54,6 @@ public class ReportModuleProvider extends AbstractConnectModuleProvider<ReportMo
     @Override
     public ConnectModuleMeta<ReportModuleBean> getMeta()
     {
-        return new ReportModuleMeta();
+        return META;
     }
 }

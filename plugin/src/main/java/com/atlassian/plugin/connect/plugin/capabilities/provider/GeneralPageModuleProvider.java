@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 public class GeneralPageModuleProvider extends AbstractGeneralPageModuleProvider
 {
 
+    private static final GeneralPageModuleMeta META = new GeneralPageModuleMeta();
+
     @Autowired
     public GeneralPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
                                      IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
@@ -34,6 +36,6 @@ public class GeneralPageModuleProvider extends AbstractGeneralPageModuleProvider
     @Override
     public ConnectModuleMeta<ConnectPageModuleBean> getMeta()
     {
-        return new GeneralPageModuleMeta();
+        return META;
     }
 }
