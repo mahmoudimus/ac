@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.modules.schema.DescriptorValidationResult;
 import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
 import com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectSchemaLocator;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidatorService;
+import com.atlassian.plugin.connect.plugin.capabilities.validate.impl.ModuleValidator;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -72,7 +73,6 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
         ConnectAddonBean addon = fromJsonSkipValidation(jsonDescriptor,i18nCollector);
         validateModules(addon);
         addOnBeanValidatorService.validate(addon);
-        validateModules(addon);
 
         return addon;
     }
@@ -180,18 +180,8 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
     // TODO: I've implemented this in the ModuleValidator class, where I think it makes more sense,
     // but it should be called before PageConditionsValidator and WebHookScopeValidator because those guys try to get modules.
     // Can't work out how to guarantee the ordering of the validators.
-    private void validateModules(ConnectAddonBean addOn)
+    private void validateModules(ConnectAddonBean addon)
     {
-        for (Map.Entry<String, Supplier<List<ModuleBean>>> entry : addOn.getModules().entrySet())
-        {
-            try
-            {
-                entry.getValue().get();
-            }
-            catch (ModuleDeserializationException e)
-            {
-                throw new InvalidDescriptorException(e.getMessage());
-            }
-        }
+        new ModuleValidator().validate(addon);
     }
 }

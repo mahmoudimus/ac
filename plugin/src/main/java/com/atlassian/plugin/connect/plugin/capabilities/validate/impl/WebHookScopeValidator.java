@@ -8,7 +8,6 @@ import com.atlassian.plugin.connect.plugin.capabilities.WebHookScopeService;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidator;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 
 import javax.inject.Inject;
@@ -35,24 +34,20 @@ public class WebHookScopeValidator implements AddOnBeanValidator
     @Override
     public void validate(final ConnectAddonBean addon) throws InvalidDescriptorException
     {
-        Supplier<List<ModuleBean>> webhooksSupplier = addon.getModules().get("webhooks");
-        if(webhooksSupplier != null)
+        List<ModuleBean> webhooks = addon.getModules().get("webhooks");
+        if (webhooks != null)
         {
-            List<ModuleBean> webhooks = webhooksSupplier.get();
-            if (webhooks != null)
+            for (ModuleBean moduleBean : webhooks)
             {
-                for (ModuleBean moduleBean : webhooks)
-                {
-                    WebHookModuleBean webHookModuleBean = (WebHookModuleBean) moduleBean;
-                    final ScopeName requiredScope = webHookScopeService.getRequiredScope(webHookModuleBean.getEvent());
+                WebHookModuleBean webHookModuleBean = (WebHookModuleBean) moduleBean;
+                final ScopeName requiredScope = webHookScopeService.getRequiredScope(webHookModuleBean.getEvent());
 
-                    if (!Iterables.any(addon.getScopes(), new ImpliedScopePredicate(requiredScope)))
-                    {
-                        String exceptionMessage = String.format("Add-on '%s' requests web hook '%s' but not the '%s' scope "
-                                        + "required to receive it. Please request this scope in your descriptor.", addon.getKey(),
-                                webHookModuleBean.getEvent(), requiredScope);
-                        throw new InvalidDescriptorException(exceptionMessage, "connect.install.error.missing.scope", requiredScope);
-                    }
+                if (!Iterables.any(addon.getScopes(), new ImpliedScopePredicate(requiredScope)))
+                {
+                    String exceptionMessage = String.format("Add-on '%s' requests web hook '%s' but not the '%s' scope "
+                                    + "required to receive it. Please request this scope in your descriptor.", addon.getKey(),
+                            webHookModuleBean.getEvent(), requiredScope);
+                    throw new InvalidDescriptorException(exceptionMessage, "connect.install.error.missing.scope", requiredScope);
                 }
             }
         }

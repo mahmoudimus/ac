@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.plugin.capabilities;
 
 import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.api.integration.plugins.DescriptorToRegister;
 import com.atlassian.plugin.connect.api.integration.plugins.DynamicDescriptorRegistration;
@@ -9,20 +8,18 @@ import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.LifecycleBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleMeta;
-import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
-import com.atlassian.plugin.connect.modules.util.ProductFilter;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
+import com.atlassian.plugin.connect.plugin.descriptor.ConnectModuleProviderModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.plugin.webhooks.PluginsWebHookProvider;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
-import com.atlassian.plugin.connect.plugin.descriptor.ConnectModuleProviderModuleDescriptor;
+import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
-import com.atlassian.sal.api.ApplicationProperties;
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
-import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -35,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.WebHookModuleBean.newWebHookBean;
 
 @Component
@@ -67,14 +63,14 @@ public class BeanToModuleRegistrar
             return;
         }
 
-        List<DescriptorToRegister> descriptorsToRegister = new ArrayList<DescriptorToRegister>();
+        List<DescriptorToRegister> descriptorsToRegister = new ArrayList<>();
+        ConnectModuleProviderContext moduleProviderContext = new DefaultConnectModuleProviderContext(addon);
+        getDescriptorsToRegisterForModules(addon.getModules(), theConnectPlugin, moduleProviderContext, descriptorsToRegister);
 
-        //we MUST add in the lifecycle webhooks first
-        addon = getCapabilitiesWithLifecycleWebhooks(addon);
-
-        //now process the module fields
-        processFields(addon, theConnectPlugin, descriptorsToRegister);
-
+        List<ModuleBean> lifecycleWebhooks = getLifecycleWebhooks(addon.getLifecycle());
+        Map<String, List<ModuleBean>> lifecycleWebhookModuleList
+                = Collections.singletonMap(new WebHookModuleMeta().getDescriptorKey(), lifecycleWebhooks);
+        getDescriptorsToRegisterForModules(lifecycleWebhookModuleList, theConnectPlugin, moduleProviderContext, descriptorsToRegister);
 
         if (!descriptorsToRegister.isEmpty())
         {
@@ -118,40 +114,34 @@ public class BeanToModuleRegistrar
         return registrations.containsKey(pluginKey);
     }
 
-    private ConnectAddonBean getCapabilitiesWithLifecycleWebhooks(ConnectAddonBean addon)
+    private List<ModuleBean> getLifecycleWebhooks(LifecycleBean lifecycle)
     {
-        LifecycleBean lifecycle = addon.getLifecycle();
-        ConnectAddonBeanBuilder builder = newConnectAddonBean(addon);
-
-        WebHookModuleMeta meta = new WebHookModuleMeta();
+        List<ModuleBean> webhooks = new ArrayList<>();
         if (!Strings.isNullOrEmpty(lifecycle.getEnabled()))
         {
-            //add webhook
-            builder.withModule(meta.getDescriptorKey(), newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_ENABLED).withUrl(lifecycle.getEnabled()).build());
+            webhooks.add(newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_ENABLED).withUrl(lifecycle.getEnabled()).build());
         }
         if (!Strings.isNullOrEmpty(lifecycle.getDisabled()))
         {
-            //add webhook
-            builder.withModule(meta.getDescriptorKey(), newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_DISABLED).withUrl(lifecycle.getDisabled()).build());
+            webhooks.add(newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_DISABLED).withUrl(lifecycle.getDisabled()).build());
         }
         if (!Strings.isNullOrEmpty(lifecycle.getUninstalled()))
         {
-            //add webhook
-            builder.withModule(meta.getDescriptorKey(), newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_UNINSTALLED).withUrl(lifecycle.getUninstalled()).build());
+            webhooks.add(newWebHookBean().withEvent(PluginsWebHookProvider.CONNECT_ADDON_UNINSTALLED).withUrl(lifecycle.getUninstalled()).build());
         }
-
-        return builder.build();
+        return webhooks;
     }
-    
 
-
-    private void processFields(ConnectAddonBean addon, ContainerManagedPlugin theConnectPlugin, List<DescriptorToRegister> descriptorsToRegister)
+    private void getDescriptorsToRegisterForModules(Map<String, List<ModuleBean>> moduleList,
+                                                    ContainerManagedPlugin theConnectPlugin,
+                                                    ConnectModuleProviderContext moduleProviderContext,
+                                                    List<DescriptorToRegister> descriptorsToRegister)
     {
-        for (Map.Entry<String,Supplier<List<ModuleBean>>> entry : addon.getModules().entrySet())
+        for (Map.Entry<String, List<ModuleBean>> entry : moduleList.entrySet())
         {
-            List<ModuleBean> beans = entry.getValue().get();
+            List<ModuleBean> beans = entry.getValue();
             ConnectModuleProvider provider = findProvider(entry.getKey());
-            List<ModuleDescriptor> descriptors = provider.provideModules(new DefaultConnectModuleProviderContext(addon), theConnectPlugin, beans);
+            List<ModuleDescriptor> descriptors = provider.provideModules(moduleProviderContext, theConnectPlugin, beans);
             List<DescriptorToRegister> theseDescriptors = Lists.transform(descriptors, new Function<ModuleDescriptor, DescriptorToRegister>()
             {
                 @Override
@@ -166,15 +156,28 @@ public class BeanToModuleRegistrar
 
     private ConnectModuleProvider findProvider(String descriptorKey)
     {
-        Collection<ConnectModuleProvider> providers = pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class));
-
-        for(ConnectModuleProvider provider: providers)
+        Collection<ConnectModuleProvider> providers = pluginAccessor.getModules(
+                new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class));
+        Optional<ConnectModuleProvider> providerOptional = findProvider(descriptorKey, providers);
+        if (!providerOptional.isPresent())
         {
-            if(provider.getMeta().getDescriptorKey().equals(descriptorKey))
-            {
-                return provider;
-            }
+            // Shouldn't happen, descriptor deserialization should have failed
+            throw new IllegalStateException("Could not find module provider for descriptor registration");
         }
-        return null;
+        return providerOptional.get();
+    }
+
+    private Optional<ConnectModuleProvider> findProvider(String descriptorKey, Collection<ConnectModuleProvider> providers)
+    {
+        // return Iterables.tryFind(providers, (provider) -> provider.getMeta().getDescriptorKey().equals(descriptorKey));
+        for (ConnectModuleProvider provider : providers)
+        {
+            if (provider.getMeta().getDescriptorKey().equals(descriptorKey))
+            {
+                return Optional.of(provider);
+            }
+
+        }
+        return Optional.absent();
     }
 }

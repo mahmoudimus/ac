@@ -9,7 +9,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidator;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
 import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
-import com.google.common.base.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,9 +93,9 @@ public class PageConditionsValidator implements AddOnBeanValidator
     {
         List<ConnectPageModuleBean> pages = new ArrayList<ConnectPageModuleBean>();
 
-        for (Map.Entry<String,Supplier<List<ModuleBean>>> entry : addonBean.getModules().entrySet())
+        for (Map.Entry<String, List<ModuleBean>> entry : addonBean.getModules().entrySet())
         {
-            List<ModuleBean> moduleBeans = entry.getValue().get();
+            List<ModuleBean> moduleBeans = entry.getValue();
             if(moduleBeans.get(0) instanceof ConnectPageModuleBean)
             {
                 for (ModuleBean moduleBean : moduleBeans)

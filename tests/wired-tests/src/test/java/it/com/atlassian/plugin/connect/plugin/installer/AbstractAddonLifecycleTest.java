@@ -111,7 +111,6 @@ public abstract class AbstractAddonLifecycleTest
         this.baseBean = newConnectAddonBean()
                 .withName(PLUGIN_NAME)
                 .withAuthentication(authBean)
-                .withModule("webItems", randomWebItemBean())
                 .build();
 
         addonKey = ModuleKeyUtils.randomName(pluginKeyPrefix);

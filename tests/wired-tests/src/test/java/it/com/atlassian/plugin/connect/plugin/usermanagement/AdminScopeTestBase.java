@@ -111,7 +111,6 @@ public abstract class AdminScopeTestBase
                 .withDescription(getClass().getCanonicalName())
                 .withAuthentication(AuthenticationBean.newAuthenticationBean().withType(AuthenticationType.JWT).build())
                 .withLifecycle(LifecycleBean.newLifecycleBean().withInstalled("/installed").build())
-                .withModule("webItems", randomWebItemBean())
                 .build();
     }
 

@@ -28,7 +28,6 @@ import java.util.List;
 import static com.atlassian.plugin.connect.modules.beans.AuthenticationBean.newAuthenticationBean;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonBean.newConnectAddonBean;
 import static com.atlassian.plugin.connect.modules.beans.LifecycleBean.newLifecycleBean;
-import static com.atlassian.plugin.connect.testsupport.util.AddonUtil.randomWebItemBean;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -86,7 +85,6 @@ public abstract class AbstractJiraPermissionScopeTest
                                 .withInstalled(INSTALLED)
                                 .build()
                 )
-                .withModule("webItems", randomWebItemBean())
                 .build();
 
         this.adminAddOn = newConnectAddonBean(baseBean)

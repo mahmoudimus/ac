@@ -51,12 +51,6 @@ public class ConnectAddonBeanBuilder<T extends ConnectAddonBeanBuilder, B extend
     {
     }
 
-    public ConnectAddonBeanBuilder(ConnectAddonBean defaultBean)
-    {
-        this((ShallowConnectAddonBean)defaultBean);
-        this.modules = defaultBean.getModules();
-    }
-    
     public ConnectAddonBeanBuilder(ShallowConnectAddonBean defaultBean)
     {
         this.key = defaultBean.getKey();

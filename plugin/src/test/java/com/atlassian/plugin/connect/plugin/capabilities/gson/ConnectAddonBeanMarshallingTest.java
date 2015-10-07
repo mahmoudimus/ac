@@ -78,7 +78,7 @@ public class ConnectAddonBeanMarshallingTest
         Gson gson = ConnectModulesGsonFactory.getGsonBuilder().registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), deserializer).create();
         ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
 
-        assertThat(addOn.getModules().get("webItems").get(), contains(hasProperty("conditions", contains(
+        assertThat(addOn.getModules().get("webItems"), contains(hasProperty("conditions", contains(
                 both(instanceOf(CompositeConditionBean.class)).and(hasProperty("conditions", contains(
                         both(instanceOf(SingleConditionBean.class)).and(hasProperty("condition", is("can_attach_file_to_issue"))),
                         both(instanceOf(SingleConditionBean.class)).and(hasProperty("condition", is("is_issue_assigned_to_current_user")))
@@ -140,7 +140,7 @@ public class ConnectAddonBeanMarshallingTest
         Gson gson = ConnectModulesGsonFactory.getGsonBuilder().registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), deserializer).create();
         ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
 
-        List<ModuleBean> moduleList = addOn.getModules().get("webItems").get();
+        List<ModuleBean> moduleList = addOn.getModules().get("webItems");
 
         assertEquals(1, moduleList.size());
 
@@ -163,7 +163,7 @@ public class ConnectAddonBeanMarshallingTest
         Gson gson = ConnectModulesGsonFactory.getGsonBuilder().registerTypeAdapter(ConnectModulesGsonFactory.getModuleJsonType(), deserializer).create();
         ConnectAddonBean addOn = gson.fromJson(json, ConnectAddonBean.class);
 
-        List<ModuleBean> moduleList = addOn.getModules().get("webItems").get();
+        List<ModuleBean> moduleList = addOn.getModules().get("webItems");
 
         assertEquals(2, moduleList.size());
         assertEquals("a web item", ((WebItemModuleBean)moduleList.get(0)).getName().getValue());

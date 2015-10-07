@@ -45,16 +45,14 @@ public class DefaultModuleLocationQualifier implements ModuleLocationQualifier
         });
     }
 
-    private Map<String, String> createKeyToQualifiedKeyMap(@Nullable Supplier<List<ModuleBean>> supplier)
+    private Map<String, String> createKeyToQualifiedKeyMap(@Nullable List<ModuleBean> modules)
     {
-        if (supplier == null)
+        if (modules == null)
         {
             return new HashMap<>();
         }
         
-        List<ModuleBean> beans = supplier.get();
-        
-        final ImmutableMap<String, ModuleBean> map = Maps.uniqueIndex(beans, new Function<ModuleBean, String>()
+        final ImmutableMap<String, ModuleBean> map = Maps.uniqueIndex(modules, new Function<ModuleBean, String>()
         {
             @Override
             public String apply(@Nullable ModuleBean bean)
