@@ -1,5 +1,12 @@
 <application key="confluence">
 
+    <connect-module key="blueprint-module" class="com.atlassian.plugin.connect.confluence.capabilities.provider.DefaultBlueprintModuleProvider"/>
+    <connect-module key="content-property-module" class="com.atlassian.plugin.connect.confluence.capabilities.provider.DefaultContentPropertyModuleProvider"/>
+    <connect-module key="dynamic-content-macro-module" class="com.atlassian.plugin.connect.confluence.capabilities.provider.DynamicContentMacroModuleProvider"/>
+    <connect-module key="profile-page-module" class="com.atlassian.plugin.connect.confluence.capabilities.provider.ProfilePageModuleProvider"/>
+    <connect-module key="space-tools-tab-module" class="com.atlassian.plugin.connect.confluence.capabilities.provider.SpaceToolsTabModuleProvider"/>
+    <connect-module key="static-content-macro-module" class="com.atlassian.plugin.connect.confluence.capabilities.provider.StaticContentMacroModuleProvider"/>
+
     <resource type="i18n" key="addon-18n" name="confluence-addon-i18n" location="connect-addons"/>
 
     <health-check key="addonsGroupHealthCheck" name="Add-on Group Health Check" class="com.atlassian.plugin.connect.crowd.healthcheck.AtlassianAddonsGroupHealthCheck" />
@@ -16,48 +23,6 @@
         <package>com.atlassian.plugin.connect.plugin.rest</package>
         <package>com.atlassian.plugin.connect.confluence.macro.rest</package>
     </rest>
-
-    <connect-module
-            key="profilePages"
-            class="com.atlassian.plugin.connect.confluence.capabilities.provider.ProfilePageModuleProvider"
-            name="Profile Page Module Provider">
-        <description>...</description>
-    </connect-module>
-
-    <connect-module
-            key="blueprints"
-            class="com.atlassian.plugin.connect.confluence.capabilities.provider.DefaultBlueprintModuleProvider"
-            name="Blueprint Module Provider">
-        <description>...</description>
-    </connect-module>
-
-    <connect-module
-            key="confluenceContentProperties"
-            class="com.atlassian.plugin.connect.confluence.capabilities.provider.DefaultContentPropertyModuleProvider"
-            name="Content Property Module Provider">
-        <description>...</description>
-    </connect-module>
-
-    <connect-module
-            key="dynamicContentMacros"
-            class="com.atlassian.plugin.connect.confluence.capabilities.provider.DynamicContentMacroModuleProvider"
-            name="Dynamic Content Macro Module Provider">
-        <description>...</description>
-    </connect-module>
-    
-    <connect-module
-            key="spaceToolsTabs"
-            class="com.atlassian.plugin.connect.confluence.capabilities.provider.SpaceToolsTabModuleProvider"
-            name="Space Tool Module Provider">
-        <description>...</description>
-    </connect-module>
-    
-    <connect-module
-            key="staticContentMacros"
-            class="com.atlassian.plugin.connect.confluence.capabilities.provider.StaticContentMacroModuleProvider"
-            name="Static Content Macro Module Provider">
-        <description>...</description>
-    </connect-module>
 
     <!-- JavaScript and CSS resource inclusions for relevant contexts -->
 

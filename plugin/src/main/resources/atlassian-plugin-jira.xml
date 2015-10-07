@@ -1,5 +1,15 @@
 <application key="jira">
 
+    <connect-module key="jiraDashboardItems" class="com.atlassian.plugin.connect.jira.capabilities.provider.DashboardItemModuleProvider"/>
+    <connect-module key="jiraEntityProperties" class="com.atlassian.plugin.connect.jira.capabilities.provider.EntityPropertyModuleProvider"/>
+    <connect-module key="jiraIssueTabPanels" class="com.atlassian.plugin.connect.jira.capabilities.provider.IssueTabPanelModuleProvider"/>
+    <connect-module key="jiraProjectTabPanels" class="com.atlassian.plugin.connect.jira.capabilities.provider.ProjectTabPanelModuleProvider"/>
+    <connect-module key="jiraProjectAdminTabPanels" class="com.atlassian.plugin.connect.jira.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider"/>
+    <connect-module key="jiraProfileTabPanels" class="com.atlassian.plugin.connect.jira.capabilities.provider.ProfileTabPanelModuleProvider"/>
+    <connect-module key="jiraReports" class="com.atlassian.plugin.connect.jira.capabilities.provider.ReportModuleProvider"/>
+    <connect-module key="jiraSearchRequestViews" class="com.atlassian.plugin.connect.jira.capabilities.provider.SearchRequestViewModuleProvider"/>
+    <connect-module key="jiraWorkflowPostFunctions" class="com.atlassian.plugin.connect.jira.capabilities.provider.DefaultWorkflowPostFunctionModuleProvider"/>
+
     <resource type="i18n" key="addon-18n" name="jira-addon-i18n" location="com.atlassian.plugin.connect.jira.integration.plugins.ConnectAddonResourceBundle"/>
 
     <rest key="rest" path="/atlassian-connect" version="1">
@@ -8,69 +18,6 @@
         <package>com.atlassian.plugin.connect.plugin.rest</package>
     </rest>
 
-    <connect-module
-            key="jiraDashboardItems"
-            class="com.atlassian.plugin.connect.jira.capabilities.provider.DashboardItemModuleProvider"
-            name="Dashboard Item Module Provider">
-        <description>...</description>
-    </connect-module>
-
-    <connect-module
-            key="jiraEntityProperties"
-            class="com.atlassian.plugin.connect.jira.capabilities.provider.EntityPropertyModuleProvider"
-            name="Entity Property Module Provider">
-        <description>...</description>
-    </connect-module>
-
-    <connect-module
-            key="jiraProjectAdminTabPanels"
-            class="com.atlassian.plugin.connect.jira.capabilities.provider.ConnectProjectAdminTabPanelModuleProvider"
-            name="Project Admin Tab Panel Module Provider">
-        <description>...</description>
-    </connect-module>
-
-    <connect-module
-            key="jiraReports"
-            class="com.atlassian.plugin.connect.jira.capabilities.provider.ReportModuleProvider"
-            name="Report Module Provider">
-        <description>...</description>
-    </connect-module>
-
-    <connect-module
-            key="jiraSearchRequestViews"
-            class="com.atlassian.plugin.connect.jira.capabilities.provider.SearchRequestViewModuleProvider"
-            name="Search Request View Module Provider">
-        <description>...</description>
-    </connect-module>
-
-    <connect-module
-            key="jiraWorkflowPostFunctions"
-            class="com.atlassian.plugin.connect.jira.capabilities.provider.DefaultWorkflowPostFunctionModuleProvider"
-            name="Workflow Post Function Module Provider">
-        <description>...</description>
-    </connect-module>
-
-    <connect-module
-            key="jiraIssueTabPanels"
-            class="com.atlassian.plugin.connect.jira.capabilities.provider.IssueTabPanelModuleProvider"
-            name="Issue Tab Panel Module Provider">
-        <description>...</description>
-    </connect-module>
-
-    <connect-module
-            key="jiraProjectTabPanels"
-            class="com.atlassian.plugin.connect.jira.capabilities.provider.ProjectTabPanelModuleProvider"
-            name="Project Tab Panel Module Provider">
-        <description>...</description>
-    </connect-module>
-
-    <connect-module
-            key="jiraProfileTabPanels"
-            class="com.atlassian.plugin.connect.jira.capabilities.provider.ProfileTabPanelModuleProvider"
-            name="Profile Tab Panel Module Provider">
-        <description>...</description>
-    </connect-module>
-    
     <health-check key="addonsGroupHealthCheck" name="Add-on Group Health Check" class="com.atlassian.plugin.connect.crowd.healthcheck.AtlassianAddonsGroupHealthCheck" />
 
     <!-- JavaScript and CSS resource inclusions for relevant contexts -->
