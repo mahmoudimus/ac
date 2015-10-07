@@ -1,13 +1,5 @@
 package it.com.atlassian.plugin.connect.plugin.rest.addons;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
-import javax.ws.rs.core.HttpHeaders;
-
 import com.atlassian.httpclient.api.HttpStatus;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.http.HttpMethod;
@@ -26,16 +18,21 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import it.com.atlassian.plugin.connect.util.request.RequestUtil;
 import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import it.com.atlassian.plugin.connect.util.request.RequestUtil;
+import javax.ws.rs.core.HttpHeaders;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import static com.atlassian.plugin.connect.testsupport.util.AddonUtil.randomWebItemBean;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -52,7 +49,9 @@ public class AddonsResourceTest
     public static final int LICENSED_ADDON_KEY_COUNT = 100;
     public static final String TIMEBOMB_100_PLUGIN_LICENSE_PATH = "testfiles.licenses/timebomb-ac-test-json-0..99.license";
 
-    private static String REST_BASE = "/atlassian-connect/1/addons";
+    private static final String REST_BASE = "/atlassian-connect/1/addons";
+
+    private static int addonCount = 0;
 
     private final TestPluginInstaller testPluginInstaller;
     private final TestAuthenticator testAuthenticator;
@@ -268,7 +267,13 @@ public class AddonsResourceTest
         // the wildcard license isn't returned if we ask for a specific add-on's license
         //
         // A range of 100 licenses, combined with our teardown method that uninstalls the add-on, makes conflicts very unlikely.
-        return "ac-test-json-" + random.nextInt(LICENSED_ADDON_KEY_COUNT);
+
+        if (addonCount >= LICENSED_ADDON_KEY_COUNT)
+        {
+            throw new IllegalStateException("Ran out of licensed test add-ons");
+        }
+
+        return "ac-test-json-" + addonCount++;
     }
 
     private Plugin installJsonAddon(String addonKey) throws IOException
