@@ -13,13 +13,9 @@ import static org.junit.Assert.assertEquals;
 public class ConnectPluginInfoTest
 {
     private static final String BUILD_PROPERTIES = "/build.properties";
-    private static final String PLUGIN_VERSION = "plugin.version";
-    private static final String BUILD_NUMBER = "build.number";
     private static final String UNFILTERED_VARIABLE = "project.groupId";
 
     private static String pluginKey;
-    private static String pluginVersion;
-    private static String buildNumber;
 
     @Before
     public void setUp() throws Exception
@@ -44,14 +40,10 @@ public class ConnectPluginInfoTest
         {
             // needed for local testing
             pluginKey = "com.atlassian.plugins.atlassian-connect-plugin";
-            pluginVersion = "0.0";
-            buildNumber = "0";
         }
         else
         {
             pluginKey = key;
-            pluginVersion = buildProperties.getProperty(PLUGIN_VERSION);
-            buildNumber = buildProperties.getProperty(BUILD_NUMBER);
         }
     }
 

@@ -5,7 +5,6 @@ package com.atlassian.plugin.connect.spi;
  */
 public interface ConnectAddOnIdentifierService
 {
-    public static final String CONNECT_ADDON_HEADER = "Atlassian-Connect-Addon";
 
     boolean isConnectAddOn(String pluginKey);
 }

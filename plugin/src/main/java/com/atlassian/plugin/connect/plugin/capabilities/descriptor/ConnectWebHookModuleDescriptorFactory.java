@@ -2,38 +2,28 @@ package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.capabilities.descriptor.ParamsModuleFragmentFactory;
-import com.atlassian.plugin.connect.spi.capabilities.descriptor.ConnectModuleDescriptorFactory;
+import com.atlassian.plugin.connect.api.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
+import com.atlassian.plugin.connect.spi.capabilities.descriptor.ConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
-import com.atlassian.plugin.connect.api.capabilities.util.ConnectContainerUtil;
-import com.atlassian.plugin.connect.plugin.installer.ConnectAddonToPluginFactory;
-import com.atlassian.plugin.connect.plugin.module.webhook.RemotablePluginsPluginUriResolver;
 import com.atlassian.webhooks.spi.plugin.WebHookModuleDescriptor;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ConnectWebHookModuleDescriptorFactory implements ConnectModuleDescriptorFactory<WebHookModuleBean, WebHookModuleDescriptor>
 {
-    private static final Logger log = LoggerFactory.getLogger(ConnectWebHookModuleDescriptorFactory.class);
-    
     private final ParamsModuleFragmentFactory paramsModuleFragmentFactory;
     private final ConnectContainerUtil autowireUtil;
-    private final RemotablePluginsPluginUriResolver uriResolver;
-    private final ConnectAddonToPluginFactory addonToPluginFactory;
 
     @Autowired
-    public ConnectWebHookModuleDescriptorFactory(ParamsModuleFragmentFactory paramsModuleFragmentFactory, ConnectContainerUtil autowireUtil, RemotablePluginsPluginUriResolver uriResolver, ConnectAddonToPluginFactory addonToPluginFactory)
+    public ConnectWebHookModuleDescriptorFactory(ParamsModuleFragmentFactory paramsModuleFragmentFactory, ConnectContainerUtil autowireUtil)
     {
         this.paramsModuleFragmentFactory = paramsModuleFragmentFactory;
         this.autowireUtil = autowireUtil;
-        this.uriResolver = uriResolver;
-        this.addonToPluginFactory = addonToPluginFactory;
     }
 
     @Override

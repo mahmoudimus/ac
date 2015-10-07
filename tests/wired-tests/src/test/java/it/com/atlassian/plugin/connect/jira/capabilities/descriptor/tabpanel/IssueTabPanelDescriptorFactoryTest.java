@@ -32,14 +32,12 @@ public class IssueTabPanelDescriptorFactoryTest extends AbstractTabPanelDescript
     }
 
     @Test
-    @Override
     public void createsElementWithCorrectOrder()
     {
         assertEquals(MODULE_WEIGHT, ((ConnectIssueTabPanelModuleDescriptor) getDescriptor()).getOrder());
     }
 
     @Test
-    @Override
     public void createsElementWithCorrectClass()
     {
         assertEquals(getDescriptorHints().getModuleClass().getName(), ((ConnectIssueTabPanelModuleDescriptor) getDescriptor()).getModuleClassName());

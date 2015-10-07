@@ -99,11 +99,6 @@ public class ConnectPageOperations
         return existsElementWithId(IframeUtils.iframeId(webPanelId));
     }
 
-    public boolean existsTabPanel(String tabPanelId)
-    {
-        return existsElementWithId(tabPanelId);
-    }
-
     private boolean existsElementWithId(final String id)
     {
         return driver.elementExists(By.id(id));
@@ -115,11 +110,6 @@ public class ConnectPageOperations
     }
 
     public LinkedRemoteContent findTabPanel(String webItemId, Option<String> dropDownMenuId, String pageKey)
-    {
-        return findRemoteLinkedContent(webItemId, dropDownMenuId, pageKey);
-    }
-
-    public LinkedRemoteContent findConnectPage(String webItemId, Option<String> dropDownMenuId, String pageKey)
     {
         return findRemoteLinkedContent(webItemId, dropDownMenuId, pageKey);
     }

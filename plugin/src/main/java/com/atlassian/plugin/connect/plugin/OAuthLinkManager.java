@@ -3,17 +3,15 @@ package com.atlassian.plugin.connect.plugin;
 import com.atlassian.applinks.api.ApplicationLink;
 import com.atlassian.applinks.api.auth.types.OAuthAuthenticationProvider;
 import com.atlassian.applinks.spi.auth.AuthenticationConfigurationManager;
-import com.atlassian.fugue.Option;
 import com.atlassian.oauth.Consumer;
 import com.atlassian.oauth.Request;
 import com.atlassian.oauth.ServiceProvider;
 import com.atlassian.oauth.consumer.ConsumerService;
 import com.atlassian.oauth.serviceprovider.ServiceProviderConsumerStore;
-import com.atlassian.plugin.connect.plugin.util.OAuthHelper;
 import com.atlassian.plugin.connect.api.http.HttpMethod;
+import com.atlassian.plugin.connect.plugin.util.OAuthHelper;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import net.oauth.OAuth;
 import net.oauth.OAuthAccessor;
@@ -33,7 +31,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -72,51 +69,9 @@ public class OAuthLinkManager
         this.oauthValidator = new SimpleOAuthValidator();
     }
 
-    public Option<PublicKey> getPublicKeyFromLink(ApplicationLink link)
-    {
-        Object prop = link.getProperty(OAUTH_INCOMING_CONSUMERKEY);
-        if(prop != null && prop instanceof String)
-        {
-            Consumer consumer = this.serviceProviderConsumerStore.get((String) prop);
-            if(consumer != null)
-            {
-                return Option.option(consumer.getPublicKey());
-            }
-        }
-        return Option.none();
-    }
-
-    public void associateConsumerWithLink(ApplicationLink link, Consumer consumer)
-    {
-        unassociateConsumer(consumer);
-
-        // this logic was copied from ual
-        serviceProviderConsumerStore.put(consumer);
-        link.putProperty(OAUTH_INCOMING_CONSUMERKEY, consumer.getKey());
-    }
-
-    private void unassociateConsumer(Consumer consumer)
-    {
-        String key = consumer.getKey();
-        if (serviceProviderConsumerStore.get(key) != null)
-        {
-            serviceProviderConsumerStore.remove(key);
-        }
-    }
-
     public boolean isAppAssociated(String appKey)
     {
         return serviceProviderConsumerStore.get(appKey) != null;
-    }
-
-    public void associateProviderWithLink(ApplicationLink link, String key, ServiceProvider serviceProvider)
-    {
-        unassociateProviderWithLink(link);
-        authenticationConfigurationManager.registerProvider(link.getId(), OAuthAuthenticationProvider.class,
-                ImmutableMap.of(CONSUMER_KEY_OUTBOUND, key, SERVICE_PROVIDER_REQUEST_TOKEN_URL,
-                        serviceProvider.getRequestTokenUri().toString(), SERVICE_PROVIDER_ACCESS_TOKEN_URL,
-                        serviceProvider.getAccessTokenUri().toString(), SERVICE_PROVIDER_AUTHORIZE_URL,
-                        serviceProvider.getAccessTokenUri().toString()));
     }
 
     public void unassociateProviderWithLink(ApplicationLink link)

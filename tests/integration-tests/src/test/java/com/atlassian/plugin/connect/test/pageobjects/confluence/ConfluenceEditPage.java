@@ -1,9 +1,11 @@
 package com.atlassian.plugin.connect.test.pageobjects.confluence;
 
+import com.atlassian.pageobjects.Page;
+
 /**
  * Edit Confluence pages.
  */
-public class ConfluenceEditPage extends ConfluenceBasePage
+public class ConfluenceEditPage implements Page
 {
     private final String pageId;
 

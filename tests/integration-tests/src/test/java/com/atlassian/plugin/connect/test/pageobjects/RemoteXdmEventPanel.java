@@ -26,7 +26,6 @@ import static com.atlassian.plugin.connect.test.pageobjects.RemotePageUtil.runIn
  */
 public class RemoteXdmEventPanel
 {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Inject
     protected AtlassianWebDriver driver;

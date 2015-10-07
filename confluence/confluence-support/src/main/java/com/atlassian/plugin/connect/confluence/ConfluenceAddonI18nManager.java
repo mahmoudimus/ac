@@ -1,19 +1,15 @@
 package com.atlassian.plugin.connect.confluence;
 
-import com.atlassian.event.api.EventPublisher;
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.spi.integration.plugins.ConnectAddonI18nManager;
-import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import com.atlassian.plugin.util.resource.AlternativeDirectoryResourceLoader;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -21,8 +17,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-import javax.inject.Inject;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
@@ -30,23 +24,17 @@ import static com.google.common.collect.Maps.newHashMap;
 @ConfluenceComponent
 public class ConfluenceAddonI18nManager implements InitializingBean, ConnectAddonI18nManager
 {
-    private static final Logger log = LoggerFactory.getLogger(ConnectAddonI18nManager.class);
 
     public static final String CACHES_DIR = "connect";
     public static final String I18N_FILE = "connect-addons.properties";
 
-    private final AtomicBoolean started = new AtomicBoolean(false);
     private final ApplicationProperties applicationProperties;
-    private final EventPublisher eventPublisher;
-    private final Plugin theConnectPlugin;
     private final ConcurrentHashMap<String,String> i18nProps;
 
     @Inject
-    public ConfluenceAddonI18nManager(ApplicationProperties applicationProperties, EventPublisher eventPublisher, PluginRetrievalService pluginRetrievalService)
+    public ConfluenceAddonI18nManager(ApplicationProperties applicationProperties)
     {
         this.applicationProperties = applicationProperties;
-        this.eventPublisher = eventPublisher;
-        this.theConnectPlugin = pluginRetrievalService.getPlugin();
         this.i18nProps = new ConcurrentHashMap<String, String>();
     }
 

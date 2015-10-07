@@ -4,11 +4,9 @@ import com.atlassian.confluence.pageobjects.component.dialog.AbstractDialog;
 import com.atlassian.confluence.pageobjects.page.content.EditContentPage;
 import com.atlassian.confluence.pageobjects.page.content.Editor;
 import com.atlassian.confluence.pageobjects.page.content.EditorPage;
-import com.atlassian.pageobjects.PageBinder;
 import com.atlassian.pageobjects.elements.ElementBy;
 import com.atlassian.pageobjects.elements.PageElement;
 import com.atlassian.pageobjects.elements.query.Poller;
-import com.google.inject.Inject;
 import org.openqa.selenium.By;
 
 import java.util.concurrent.TimeUnit;
@@ -21,7 +19,7 @@ import static org.hamcrest.Matchers.is;
  */
 public class CreateContentDialog extends AbstractDialog
 {
-    @Inject protected PageBinder pageBinder;
+
     @ElementBy(cssSelector = ".create-dialog-create-button") PageElement saveButton;
 
     public CreateContentDialog()

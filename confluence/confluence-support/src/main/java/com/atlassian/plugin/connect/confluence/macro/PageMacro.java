@@ -27,7 +27,7 @@ public final class PageMacro extends AbstractRemoteMacro
             RemotablePluginAccessorFactory remotablePluginAccessorFactory
     )
     {
-        super(remotablePluginAccessorFactory, remoteMacroInfo);
+        super(remoteMacroInfo);
         this.userManager = userManager;
         this.iframeContext = iframeContext;
         this.iFrameRenderer = iFrameRenderer;

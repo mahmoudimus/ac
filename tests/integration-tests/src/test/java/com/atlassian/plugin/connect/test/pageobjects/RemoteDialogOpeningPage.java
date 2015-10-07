@@ -20,7 +20,6 @@ import static com.atlassian.pageobjects.elements.query.Poller.waitUntilTrue;
  */
 public class RemoteDialogOpeningPage extends ConnectAddOnPage implements Page
 {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private  static final int REMOTE_DIALOG_WAIT_MS = 50000;
 

@@ -1,15 +1,13 @@
 package com.atlassian.plugin.connect.plugin.capabilities.descriptor;
 
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.capabilities.descriptor.ConditionModuleFragmentFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.builder.SingleConditionBeanBuilder;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
-import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultConnectModuleProviderContext;
-import com.atlassian.plugin.connect.plugin.module.webfragment.UrlValidator;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
+import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.util.fixture.descriptor.WebSectionModuleDescriptorFactoryForTests;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ContainerManagedPlugin;
@@ -32,7 +30,10 @@ import static com.atlassian.plugin.connect.modules.util.ModuleKeyUtils.addonAndM
 import static com.atlassian.plugin.connect.testsupport.util.matcher.ConditionMatchers.isCompositeConditionContaining;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyList;
+import static org.mockito.Mockito.anyMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.when;
 
 @ConvertToWiredTest
 @RunWith(MockitoJUnitRunner.class)
@@ -40,16 +41,13 @@ public class ConnectWebSectionModuleDescriptorFactoryTest
 {
     private static final String CONDITION_CLASSNAME = Condition.class.getName();
 
-    private interface PluginForTests extends Plugin, ContainerManagedPlugin {}
-
     private WebSectionModuleDescriptor descriptor;
 
-    @Mock private PluginForTests plugin;
+    @Mock private ContainerManagedPlugin plugin;
     @Mock private HostContainer hostContainer;
     @Mock private WebInterfaceManager webInterfaceManager;
     @Mock private UserManager userManager;
     @Mock private IFrameRenderer iFrameRenderer;
-    @Mock private UrlValidator urlValidator;
     @Mock private ConditionModuleFragmentFactory conditionModuleFragmentFactory;
     @Mock private WebFragmentHelper webFragmentHelper;
     @Mock private Condition condition;

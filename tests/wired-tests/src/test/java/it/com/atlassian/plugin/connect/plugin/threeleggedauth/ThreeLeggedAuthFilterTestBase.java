@@ -19,22 +19,21 @@ import com.atlassian.jwt.writer.JwtJsonBuilder;
 import com.atlassian.jwt.writer.JwtWriter;
 import com.atlassian.jwt.writer.JwtWriterFactory;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.http.HttpMethod;
+import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
 import com.atlassian.plugin.connect.modules.beans.AuthenticationType;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.ScopeName;
-import com.atlassian.plugin.connect.api.registry.ConnectAddonRegistry;
-import com.atlassian.plugin.connect.plugin.threeleggedauth.ThreeLeggedAuthService;
-import com.atlassian.plugin.connect.api.http.HttpMethod;
 import com.atlassian.plugin.connect.testsupport.TestPluginInstaller;
 import com.atlassian.plugin.connect.testsupport.filter.AddonTestFilterResults;
 import com.atlassian.plugin.connect.testsupport.filter.ServletRequestSnapshot;
+import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.common.collect.ImmutableSet;
-import com.atlassian.plugin.connect.testsupport.util.auth.TestAuthenticator;
 import it.com.atlassian.plugin.connect.util.request.RequestUtil;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -69,7 +68,6 @@ public abstract class ThreeLeggedAuthFilterTestBase
     private final UserManager userManager;
     private final AtomicReference<Plugin> installedPlugin = new AtomicReference<Plugin>();
 
-    protected final ThreeLeggedAuthService threeLeggedAuthService;
     protected final RequestUtil requestUtil;
 
     protected ConnectAddonBean addOnBean;
@@ -80,7 +78,6 @@ public abstract class ThreeLeggedAuthFilterTestBase
     protected String SUBJECT_USERNAME = "admin";
     protected String SUBJECT_USERKEY;
     protected String INACTIVE_USERNAME = "inactive_user";
-    protected String INACTIVE_USERKEY;
     protected String NON_EXISTENT_USERKEY = "non_existent_user";
 
     private static final String REQUEST_PATH = "/path";
@@ -91,7 +88,6 @@ public abstract class ThreeLeggedAuthFilterTestBase
             JwtWriterFactory jwtWriterFactory,
             ConnectAddonRegistry connectAddonRegistry,
             ApplicationProperties applicationProperties,
-            ThreeLeggedAuthService threeLeggedAuthService,
             ApplicationService applicationService,
             ApplicationManager applicationManager, final UserManager userManager)
     {
@@ -101,7 +97,6 @@ public abstract class ThreeLeggedAuthFilterTestBase
         this.jwtWriterFactory = jwtWriterFactory;
         this.connectAddonRegistry = connectAddonRegistry;
         this.applicationProperties = applicationProperties;
-        this.threeLeggedAuthService = threeLeggedAuthService;
         this.applicationManager = applicationManager;
         this.applicationService = applicationService;
         this.userManager = userManager;
@@ -123,7 +118,6 @@ public abstract class ThreeLeggedAuthFilterTestBase
     {
         globalImpersonationWasEnabled = isGlobalImpersonationEnabled();
         SUBJECT_USERKEY = getUserKeyForUserName(SUBJECT_USERNAME);
-        INACTIVE_USERKEY = getUserKeyForUserName(INACTIVE_USERNAME);
     }
 
     @After
