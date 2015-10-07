@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect.plugin.redirect;
 
-import com.atlassian.plugin.connect.api.capabilities.provider.ModuleTemplate;
 import com.atlassian.plugin.connect.modules.beans.ConditionalBean;
 import com.atlassian.plugin.connect.plugin.capabilities.condition.ConnectConditionFactory;
 import com.atlassian.plugin.connect.plugin.redirect.RedirectData.AccessDeniedTemplateType;
@@ -10,6 +9,7 @@ import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -85,7 +85,7 @@ public class RedirectDataBuilderBuilderFactoryImpl implements RedirectDataBuilde
         @Override
         public RedirectData build()
         {
-            Condition condition = connectConditionFactory.createCondition(addOnKey, conditionalBeans);
+            Condition condition = connectConditionFactory.createCondition(addOnKey, conditionalBeans, Collections.emptyList());
             return new RedirectData(title, urlTemplate, condition, accessDeniedTemplateType);
         }
     }
