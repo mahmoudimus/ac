@@ -15,7 +15,7 @@ public class PostInstallPageModuleProviderTest extends AbstractPageModuleProvide
     protected PostInstallPageModuleProvider createPageModuleProvider()
     {
         return new PostInstallPageModuleProvider(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
-                webItemModuleDescriptorFactory, productAccessor);
+                webItemModuleDescriptorFactory, pageConditionsFactory, productAccessor);
     }
 
     @Test
