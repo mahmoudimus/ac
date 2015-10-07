@@ -6,12 +6,14 @@ import com.atlassian.plugin.connect.spi.condition.UserIsAdminCondition;
 import com.atlassian.plugin.connect.spi.condition.UserIsLoggedInCondition;
 import com.atlassian.plugin.connect.spi.condition.UserIsSysAdminCondition;
 import com.atlassian.plugin.connect.spi.product.ConditionClassResolver;
+import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.features.DarkFeatureEnabledCondition;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
 @Component
+@ExportAsDevService
 public class PageConditionsFactoryImpl implements PageConditionsFactory
 {
     public static final String FEATURE_FLAG = "feature_flag";
