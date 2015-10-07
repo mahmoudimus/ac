@@ -6,8 +6,8 @@ import com.atlassian.plugin.connect.jira.capabilities.descriptor.ConnectEntityPr
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleBean;
 import com.atlassian.plugin.connect.modules.beans.EntityPropertyModuleMeta;
-import com.atlassian.plugin.connect.spi.module.provider.AbstractConnectModuleProvider;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.AbstractConnectModuleProvider;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;

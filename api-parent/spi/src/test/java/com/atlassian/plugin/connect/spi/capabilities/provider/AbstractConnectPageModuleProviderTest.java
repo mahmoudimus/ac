@@ -10,7 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.CompositeConditionType;
 import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleValidationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

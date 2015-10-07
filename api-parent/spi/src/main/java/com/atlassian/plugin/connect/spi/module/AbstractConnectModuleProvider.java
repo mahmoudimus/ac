@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.spi.module.provider;
+package com.atlassian.plugin.connect.spi.module;
 
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;

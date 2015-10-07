@@ -7,7 +7,7 @@ import com.atlassian.plugin.connect.api.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.jira.iframe.tabpanel.TabPanelDescriptorHints;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import org.apache.commons.lang.StringEscapeUtils;

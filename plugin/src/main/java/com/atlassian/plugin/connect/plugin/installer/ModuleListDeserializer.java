@@ -2,7 +2,7 @@ package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleValidationException;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.gson.JsonDeserializationContext;

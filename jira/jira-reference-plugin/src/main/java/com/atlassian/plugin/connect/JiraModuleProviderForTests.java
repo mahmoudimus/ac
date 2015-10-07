@@ -9,7 +9,7 @@ import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.capabilities.provider.AbstractConnectPageModuleProvider;
 import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

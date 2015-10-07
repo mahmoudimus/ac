@@ -7,8 +7,8 @@ import com.atlassian.plugin.connect.modules.beans.WebSectionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WebSectionModuleMeta;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.ConnectWebSectionModuleDescriptorFactory;
 
-import com.atlassian.plugin.connect.spi.module.provider.AbstractConnectModuleProvider;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.AbstractConnectModuleProvider;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -9,7 +9,7 @@ import com.atlassian.plugin.connect.modules.beans.builder.WebPanelModuleBeanBuil
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel.WebPanelConnectModuleDescriptor;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel.WebPanelConnectModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.module.ModuleLocationQualifier;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.web.ProductWebPanelElementEnhancer;
 import org.dom4j.Element;
 import org.hamcrest.Description;

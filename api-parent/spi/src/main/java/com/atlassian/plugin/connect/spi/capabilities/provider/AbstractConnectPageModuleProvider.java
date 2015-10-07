@@ -14,9 +14,9 @@ import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.modules.util.ConditionUtils;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
-import com.atlassian.plugin.connect.spi.module.provider.AbstractConnectModuleProvider;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.spi.module.AbstractConnectModuleProvider;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleValidationException;
 import com.atlassian.plugin.web.Condition;
 import com.google.common.collect.ImmutableList;
 

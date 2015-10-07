@@ -1,11 +1,10 @@
-package com.atlassian.plugin.connect.spi.module.provider;
+package com.atlassian.plugin.connect.spi.module;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
-import com.google.gson.JsonElement;
 
 import java.util.List;
 

@@ -9,13 +9,12 @@ import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrat
 import com.atlassian.plugin.connect.confluence.capabilities.descriptor.macro.DynamicContentMacroModuleDescriptorFactory;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
-import com.atlassian.plugin.connect.modules.beans.ConnectPageModuleBean;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.integration.plugins.ConnectAddonI18nManager;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import org.springframework.beans.factory.annotation.Autowired;

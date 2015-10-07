@@ -6,7 +6,7 @@ import com.atlassian.plugin.connect.api.capabilities.util.ConnectContainerUtil;
 import com.atlassian.plugin.connect.modules.beans.WebHookModuleBean;
 import com.atlassian.plugin.connect.modules.util.ModuleKeyUtils;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.ConnectModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.webhooks.spi.plugin.WebHookModuleDescriptor;
 import org.dom4j.Element;
 import org.dom4j.dom.DOMElement;

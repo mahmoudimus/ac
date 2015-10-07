@@ -11,7 +11,7 @@ import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleMeta;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.integration.plugins.ConnectAddonI18nManager;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import org.springframework.beans.factory.annotation.Autowired;

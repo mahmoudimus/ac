@@ -13,9 +13,9 @@ import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelMod
 import com.atlassian.plugin.connect.modules.beans.ConnectProjectAdminTabPanelModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WebItemModuleBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.module.provider.AbstractConnectModuleProvider;
+import com.atlassian.plugin.connect.spi.module.AbstractConnectModuleProvider;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.google.common.collect.ImmutableList;
 import org.springframework.beans.factory.annotation.Autowired;

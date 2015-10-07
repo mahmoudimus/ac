@@ -10,8 +10,8 @@ import com.atlassian.plugin.connect.plugin.capabilities.descriptor.webpanel.WebP
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
-import com.atlassian.plugin.connect.spi.module.provider.AbstractConnectModuleProvider;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.AbstractConnectModuleProvider;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

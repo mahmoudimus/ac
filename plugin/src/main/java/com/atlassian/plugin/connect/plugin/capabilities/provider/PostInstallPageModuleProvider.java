@@ -10,7 +10,7 @@ import com.atlassian.plugin.connect.modules.beans.PostInstallPageModuleMeta;
 import com.atlassian.plugin.connect.plugin.capabilities.descriptor.PostInstallPageModuleDescriptor;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.google.common.collect.ImmutableList;
 import org.dom4j.dom.DOMElement;

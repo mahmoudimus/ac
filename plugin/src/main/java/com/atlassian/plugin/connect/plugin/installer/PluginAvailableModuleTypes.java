@@ -4,9 +4,9 @@ import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProvider;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProvider;
 import com.atlassian.plugin.connect.plugin.descriptor.ConnectModuleProviderModuleDescriptor;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleValidationException;
 import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
 import com.google.gson.JsonElement;
 

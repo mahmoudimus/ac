@@ -15,7 +15,7 @@ import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean
 import com.atlassian.plugin.connect.modules.beans.nested.I18nProperty;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
 import com.atlassian.plugin.connect.spi.module.IFrameRenderer;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.util.fixture.ConnectContainerUtilForTests;
 import com.atlassian.plugin.elements.ResourceDescriptor;

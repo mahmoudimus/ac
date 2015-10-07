@@ -1,7 +1,7 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleValidationException;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleValidationException;
 import com.google.gson.JsonElement;
 
 import java.util.List;

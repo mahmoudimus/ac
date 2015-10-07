@@ -11,7 +11,7 @@ import com.atlassian.plugin.connect.jira.iframe.tabpanel.project.ConnectIFramePr
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ConnectTabPanelModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ProjectTabPanelModuleMeta;
-import com.atlassian.plugin.connect.spi.module.provider.ConnectModuleProviderContext;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

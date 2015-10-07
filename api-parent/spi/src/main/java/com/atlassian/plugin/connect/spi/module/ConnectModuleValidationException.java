@@ -1,4 +1,4 @@
-package com.atlassian.plugin.connect.spi.module.provider;
+package com.atlassian.plugin.connect.spi.module;
 
 public class ConnectModuleValidationException extends Exception
 {
