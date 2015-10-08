@@ -188,6 +188,8 @@ def run(args):
 
 def configure(args):
     write_idea_config(args.freezer_instance_url, args.mpac_password)
+    print('\nAn "Acceptance Tests" run configuration has been added to your IDEA settings. (We deleted any we found by the same name)')
+    print('\nTo run it, go to [Run] > [Run...] > [Acceptance Tests]\n')
 
 def options():
     parser = argparse.ArgumentParser(description="Build the freezer release profile then run" + \
@@ -208,7 +210,7 @@ def options():
         help='Credentials of the host we\'re installing connect onto, in the form username:password')
     run_via_runner.set_defaults(func=run)
 
-    config = subparsers.add_parser('config', help='Add acceptance test run configuration to IDEA')
+    config = subparsers.add_parser('configure', help='Add acceptance test run configuration to IDEA')
     config.set_defaults(func=configure)
 
     parser.add_argument('-p', '--mpac-password', required=True,\
