@@ -1,11 +1,12 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import com.atlassian.plugin.connect.modules.schema.DescriptorValidationResult;
-import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
-import com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectSchemaLocator;
-import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidatorService;
-import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
+import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.api.service.IsDevModeService;
+import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidatorService;
+import com.atlassian.plugin.connect.plugin.descriptor.DescriptorValidationResult;
+import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.message.I18nResolver;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
@@ -20,11 +21,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.io.IOException;
 import java.io.Serializable;
+import java.net.URL;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -36,13 +38,13 @@ public class GsonConnectAddonBeanFactoryTest
     private GsonConnectAddonBeanFactory addonBeanFactory;
 
     @Mock
-    private JsonDescriptorValidator jsonDescriptorValidator;
+    private ConnectJsonSchemaValidator schemaValidator;
 
     @Mock
     private AddOnBeanValidatorService addOnBeanValidatorService;
 
     @Mock
-    private ConnectSchemaLocator connectSchemaLocator;
+    private PluginRetrievalService pluginRetrievalService;
 
     @Mock
     private ApplicationProperties applicationProperties;
@@ -53,10 +55,19 @@ public class GsonConnectAddonBeanFactoryTest
     @Mock
     private IsDevModeService isDevModeService;
 
+    @Mock
+    private Plugin plugin;
+
+    @Before
+    public void setUp()
+    {
+        when(pluginRetrievalService.getPlugin()).thenReturn(plugin);
+    }
+
     @Test(expected = InvalidDescriptorException.class)
     public void shouldRejectMalformedDescriptor()
     {
-        when(jsonDescriptorValidator.validate(anyString(), anyString())).thenReturn(new DescriptorValidationResult(false, false, null, null));
+        when(schemaValidator.validate(anyString(), any(URL.class))).thenReturn(new DescriptorValidationResult(false, false, null, null));
         assertFromJsonReturnsErrorMessage("connect.invalid.descriptor.malformed.json");
     }
 
@@ -65,7 +76,7 @@ public class GsonConnectAddonBeanFactoryTest
     {
         String applicationName = "My App";
         when(applicationProperties.getDisplayName()).thenReturn(applicationName);
-        when(jsonDescriptorValidator.validate(anyString(), anyString())).thenReturn(new DescriptorValidationResult(true, false, null, null));
+        when(schemaValidator.validate(anyString(), any(URL.class))).thenReturn(new DescriptorValidationResult(true, false, null, null));
         assertFromJsonReturnsErrorMessage("connect.install.error.remote.descriptor.validation", applicationName);
     }
 
@@ -75,7 +86,7 @@ public class GsonConnectAddonBeanFactoryTest
         ListProcessingReport report = createProcessingReportWithErrors(ImmutableSet.of("An error", "Another error"));
 
         when(isDevModeService.isDevMode()).thenReturn(true);
-        when(jsonDescriptorValidator.validate(anyString(), anyString())).thenReturn(new DescriptorValidationResult(report));
+        when(schemaValidator.validate(anyString(), any(URL.class))).thenReturn(new DescriptorValidationResult(report));
         assertFromJsonReturnsErrorMessage("connect.install.error.remote.descriptor.validation.dev", "<ul><li>An error<li>Another error</ul>");
     }
 

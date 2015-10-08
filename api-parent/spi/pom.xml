@@ -37,11 +37,15 @@
         </dependency>
 
         <dependency>
+            <groupId>com.atlassian.plugins</groupId>
+            <artifactId>atlassian-plugins-osgi-bridge</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.atlassian.applinks</groupId>
             <artifactId>applinks-spi</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>com.atlassian.jwt</groupId>
             <artifactId>jwt-api</artifactId>
@@ -118,7 +122,6 @@
         <dependency>
             <groupId>external.atlassian.json</groupId>
             <artifactId>json-schemagen-core</artifactId>
-            <version>${schema.generator.version}</version>
             <scope>provided</scope>
         </dependency>
 

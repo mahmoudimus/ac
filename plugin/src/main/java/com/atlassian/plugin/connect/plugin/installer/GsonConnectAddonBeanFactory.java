@@ -1,18 +1,17 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
 import com.atlassian.plugin.PluginAccessor;
+import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidationResult;
+import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.api.service.IsDevModeService;
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
 import com.atlassian.plugin.connect.modules.beans.builder.ConnectAddonBeanBuilder;
 import com.atlassian.plugin.connect.modules.gson.ConnectModulesGsonFactory;
-import com.atlassian.plugin.connect.modules.schema.DescriptorValidationResult;
-import com.atlassian.plugin.connect.modules.schema.JsonDescriptorValidator;
-import com.atlassian.plugin.connect.plugin.capabilities.schema.ConnectSchemaLocator;
 import com.atlassian.plugin.connect.plugin.capabilities.validate.AddOnBeanValidatorService;
-import com.atlassian.plugin.connect.plugin.capabilities.validate.impl.ModuleValidator;
 import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.github.fge.msgsimple.provider.LoadingMessageSourceProvider;
@@ -26,8 +25,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.io.Serializable;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -37,23 +36,24 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
 {
     private static final Logger log = LoggerFactory.getLogger(GsonConnectAddonBeanFactory.class);
 
-    private final JsonDescriptorValidator jsonDescriptorValidator;
-    private final ConnectSchemaLocator connectSchemaLocator;
+    private final ConnectJsonSchemaValidator descriptorSchemaValidator;
     private final ApplicationProperties applicationProperties;
     private final AddOnBeanValidatorService addOnBeanValidatorService;
-    private final IsDevModeService isDevModeService;
+    private final PluginRetrievalService pluginRetrievalService;
     private final PluginAccessor pluginAccessor;
+    private final IsDevModeService isDevModeService;
 
     @Autowired
-    public GsonConnectAddonBeanFactory(final JsonDescriptorValidator jsonDescriptorValidator,
-            final AddOnBeanValidatorService addOnBeanValidatorService, final ConnectSchemaLocator connectSchemaLocator,
-            final ApplicationProperties applicationProperties,
-            IsDevModeService isDevModeService,
-            PluginAccessor pluginAccessor)
+    public GsonConnectAddonBeanFactory(ConnectJsonSchemaValidator descriptorSchemaValidator,
+            AddOnBeanValidatorService addOnBeanValidatorService,
+            ApplicationProperties applicationProperties,
+            PluginRetrievalService pluginRetrievalService,
+            PluginAccessor pluginAccessor,
+            IsDevModeService isDevModeService)
     {
-        this.jsonDescriptorValidator = jsonDescriptorValidator;
+        this.descriptorSchemaValidator = descriptorSchemaValidator;
         this.addOnBeanValidatorService = addOnBeanValidatorService;
-        this.connectSchemaLocator = connectSchemaLocator;
+        this.pluginRetrievalService = pluginRetrievalService;
         this.applicationProperties = applicationProperties;
         this.isDevModeService = isDevModeService;
         this.pluginAccessor = pluginAccessor;
@@ -116,26 +116,16 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
 
     private void validateDescriptorAgainstSchema(String jsonDescriptor)
     {
-        final String schema = getShallowSchema();
-        DescriptorValidationResult result = jsonDescriptorValidator.validate(jsonDescriptor, schema);
+        ConnectJsonSchemaValidationResult result = descriptorSchemaValidator.validate(jsonDescriptor, getShallowSchemaUrl());
         assertValidDescriptorValidationResult(result);
     }
 
-    private String getShallowSchema()
+    private URL getShallowSchemaUrl()
     {
-        final String schema;
-        try
-        {
-            schema = connectSchemaLocator.getShallowSchema();
-        }
-        catch (IOException e)
-        {
-            throw new IllegalStateException("Failed to read JSON schema for descriptor", e);
-        }
-        return schema;
+        return pluginRetrievalService.getPlugin().getResource("/schema/shallow-schema.json");
     }
 
-    private void assertValidDescriptorValidationResult(DescriptorValidationResult result)
+    private void assertValidDescriptorValidationResult(ConnectJsonSchemaValidationResult result)
     {
         if (!result.isWellformed())
         {
@@ -163,7 +153,7 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
         }
     }
 
-    private String buildErrorMessage(DescriptorValidationResult result)
+    private String buildErrorMessage(ConnectJsonSchemaValidationResult result)
     {
         StringBuilder messageBuilder = new StringBuilder("<ul>");
         for (String message : result.getReportMessages())

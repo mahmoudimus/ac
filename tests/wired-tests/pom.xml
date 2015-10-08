@@ -198,12 +198,6 @@
             <groupId>com.github.fge</groupId>
             <artifactId>json-schema-validator</artifactId>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.github.fge</groupId>
-                    <artifactId>msg-simple</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 

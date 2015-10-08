@@ -1,7 +1,7 @@
 <application key="confluence">
 
-    <connect-module key="blueprint-module" class="com.atlassian.plugin.connect.confluence.capabilities.provider.DefaultBlueprintModuleProvider"/>
-    <connect-module key="content-property-module" class="com.atlassian.plugin.connect.confluence.capabilities.provider.DefaultContentPropertyModuleProvider"/>
+    <connect-module key="blueprint-module" class="com.atlassian.plugin.connect.confluence.capabilities.provider.BlueprintModuleProviderImpl"/>
+    <connect-module key="content-property-module" class="com.atlassian.plugin.connect.confluence.capabilities.provider.ContentPropertyModuleProvider"/>
     <connect-module key="dynamic-content-macro-module" class="com.atlassian.plugin.connect.confluence.capabilities.provider.DynamicContentMacroModuleProvider"/>
     <connect-module key="profile-page-module" class="com.atlassian.plugin.connect.confluence.capabilities.provider.ProfilePageModuleProvider"/>
     <connect-module key="space-tools-tab-module" class="com.atlassian.plugin.connect.confluence.capabilities.provider.SpaceToolsTabModuleProvider"/>

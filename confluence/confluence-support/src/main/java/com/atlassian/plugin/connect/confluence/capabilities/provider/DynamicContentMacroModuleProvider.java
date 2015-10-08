@@ -3,6 +3,7 @@ package com.atlassian.plugin.connect.confluence.capabilities.provider;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
+import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
@@ -16,6 +17,7 @@ import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDes
 import com.atlassian.plugin.connect.spi.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.hostcontainer.HostContainer;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.ConfluenceComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,22 +32,31 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
     private final DynamicContentMacroModuleDescriptorFactory dynamicContentMacroModuleDescriptorFactory;
 
     @Autowired
-    public DynamicContentMacroModuleProvider(DynamicContentMacroModuleDescriptorFactory macroModuleDescriptorFactory,
-                                             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                                             @Qualifier("hostContainer") HostContainer hostContainer,
-                                             AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
-                                             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-                                             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-										     ConnectAddonI18nManager connectAddonI18nManager)
+    public DynamicContentMacroModuleProvider(PluginRetrievalService pluginRetrievalService,
+            DynamicContentMacroModuleDescriptorFactory macroModuleDescriptorFactory,
+            WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+            @Qualifier("hostContainer") HostContainer hostContainer,
+            AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
+            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+            ConnectAddonI18nManager connectAddonI18nManager,
+            ConnectJsonSchemaValidator schemaValidator)
     {
-        super(webItemModuleDescriptorFactory, hostContainer, absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, 
-                iFrameRenderStrategyBuilderFactory, connectAddonI18nManager);
+        super(pluginRetrievalService, schemaValidator, webItemModuleDescriptorFactory, hostContainer,
+                absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory,
+                connectAddonI18nManager);
         this.dynamicContentMacroModuleDescriptorFactory = macroModuleDescriptorFactory;
     }
 
     @Override
+    public ConnectModuleMeta<DynamicContentMacroModuleBean> getMeta()
+    {
+        return META;
+    }
+
+    @Override
     protected ModuleDescriptor createMacroModuleDescriptor(ConnectModuleProviderContext moduleProviderContext,
-                                                           Plugin theConnectPlugin, DynamicContentMacroModuleBean macroBean)
+            Plugin theConnectPlugin, DynamicContentMacroModuleBean macroBean)
     {
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
@@ -59,18 +70,7 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
 
         iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), macroBean.getRawKey(), CONTENT_CLASSIFIER, renderStrategy);
 
-        return dynamicContentMacroModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, macroBean);
-    }
-
-    @Override
-    public String getSchemaPrefix()
-    {
-        return "confluence";
-    }
-
-    @Override
-    public ConnectModuleMeta<DynamicContentMacroModuleBean> getMeta()
-    {
-        return META;
+        return dynamicContentMacroModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext,
+                pluginRetrievalService.getPlugin(), macroBean);
     }
 }

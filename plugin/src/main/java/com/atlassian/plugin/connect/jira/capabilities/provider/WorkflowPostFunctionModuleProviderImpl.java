@@ -2,6 +2,7 @@ package com.atlassian.plugin.connect.jira.capabilities.provider;
 
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategy;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilder;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
@@ -12,8 +13,8 @@ import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleBean;
 import com.atlassian.plugin.connect.modules.beans.WorkflowPostFunctionModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.UrlBean;
-import com.atlassian.plugin.connect.spi.module.AbstractConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ import static com.atlassian.plugin.connect.jira.capabilities.provider.JiraTempla
 
 @JiraComponent
 @ExportAsDevService
-public class DefaultWorkflowPostFunctionModuleProvider extends AbstractConnectModuleProvider<WorkflowPostFunctionModuleBean>
+public class WorkflowPostFunctionModuleProviderImpl extends AbstractJiraConnectModuleProvider<WorkflowPostFunctionModuleBean>
         implements WorkflowPostFunctionModuleProvider
 {
 
@@ -36,17 +37,26 @@ public class DefaultWorkflowPostFunctionModuleProvider extends AbstractConnectMo
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
 
     @Autowired
-    public DefaultWorkflowPostFunctionModuleProvider(WorkflowPostFunctionModuleDescriptorFactory workflowPostFunctionFactory,
-                                                     IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-                                                     IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
+    public WorkflowPostFunctionModuleProviderImpl(PluginRetrievalService pluginRetrievalService,
+            ConnectJsonSchemaValidator schemaValidator,
+            WorkflowPostFunctionModuleDescriptorFactory workflowPostFunctionFactory,
+            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry)
     {
+        super(pluginRetrievalService, schemaValidator);
         this.workflowPostFunctionFactory = workflowPostFunctionFactory;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WorkflowPostFunctionModuleBean> modules, final Plugin theConnectPlugin, final ConnectModuleProviderContext moduleProviderContext)
+    public ConnectModuleMeta<WorkflowPostFunctionModuleBean> getMeta()
+    {
+        return META;
+    }
+
+    @Override
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<WorkflowPostFunctionModuleBean> modules, final ConnectModuleProviderContext moduleProviderContext)
     {
         List<ModuleDescriptor> descriptors = new ArrayList<>();
 
@@ -67,7 +77,7 @@ public class DefaultWorkflowPostFunctionModuleProvider extends AbstractConnectMo
                 registerIFrameRenderStrategy(connectAddonBean, bean, WorkflowPostFunctionResource.VIEW, bean.getView());
             }
 
-            descriptors.add(beanToDescriptor(moduleProviderContext, theConnectPlugin, bean));
+            descriptors.add(beanToDescriptor(moduleProviderContext, pluginRetrievalService.getPlugin(), bean));
         }
 
         return descriptors;
@@ -95,17 +105,5 @@ public class DefaultWorkflowPostFunctionModuleProvider extends AbstractConnectMo
         IFrameRenderStrategy renderStrategy = builder.build();
 
         iFrameRenderStrategyRegistry.register(addon.getKey(), bean.getRawKey(), resource.getResource(), renderStrategy);
-    }
-
-    @Override
-    public String getSchemaPrefix()
-    {
-        return "jira";
-    }
-
-    @Override
-    public ConnectModuleMeta<WorkflowPostFunctionModuleBean> getMeta()
-    {
-        return META;
     }
 }

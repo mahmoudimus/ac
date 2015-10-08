@@ -1,6 +1,7 @@
 package com.atlassian.plugin.connect.confluence.capabilities.provider;
 
 import com.atlassian.plugin.Plugin;
+import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.confluence.capabilities.descriptor.XWorkActionDescriptorFactory;
@@ -17,6 +18,7 @@ import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDes
 import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -49,6 +51,8 @@ public class SpaceToolsTabModuleProviderTest
             .withUrl("/test.destination")
             .build();
 
+    @Mock private PluginRetrievalService pluginRetrievalService;
+    @Mock private ConnectJsonSchemaValidator schemaValidator;
     @Mock private WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     @Mock private ProductAccessor productAccessor;
     @Mock private Plugin plugin;
@@ -67,8 +71,9 @@ public class SpaceToolsTabModuleProviderTest
         this.addon = newConnectAddonBean().withKey("my-plugin").build();
         this.moduleProviderContext = mock(ConnectModuleProviderContext.class);
         when(moduleProviderContext.getConnectAddonBean()).thenReturn(addon);
-        provider = new SpaceToolsTabModuleProvider(webItemModuleDescriptorFactory, xWorkActionDescriptorFactory,
-                productAccessor, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
+        provider = new SpaceToolsTabModuleProvider(pluginRetrievalService, schemaValidator,
+                webItemModuleDescriptorFactory,  xWorkActionDescriptorFactory, productAccessor,
+                iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry);
         when(plugin.getKey()).thenReturn("my-plugin");
     }
 
@@ -80,7 +85,7 @@ public class SpaceToolsTabModuleProviderTest
                 .withLocation("test-location")
                 .build();
 
-        provider.createPluginModuleDescriptors(ImmutableList.of(bean), plugin, moduleProviderContext);
+        provider.createPluginModuleDescriptors(ImmutableList.of(bean), moduleProviderContext);
 
         WebItemBeans webItems = captureWebItemBeans();
 
@@ -101,7 +106,7 @@ public class SpaceToolsTabModuleProviderTest
     @Test
     public void testWebItemUrl()
     {
-        provider.createPluginModuleDescriptors(ImmutableList.of(DEFAULTS_BEAN), plugin, moduleProviderContext);
+        provider.createPluginModuleDescriptors(ImmutableList.of(DEFAULTS_BEAN), moduleProviderContext);
 
         WebItemBeans webItems = captureWebItemBeans();
         String expectedUrl = "/plugins/atlassian-connect/my-plugin/test-module.action?key=${space.key}";
@@ -113,7 +118,7 @@ public class SpaceToolsTabModuleProviderTest
     public void testWebItemDefaultWeight()
     {
         when(productAccessor.getPreferredGeneralWeight()).thenReturn(666);
-        provider.createPluginModuleDescriptors(ImmutableList.of(DEFAULTS_BEAN), plugin, moduleProviderContext);
+        provider.createPluginModuleDescriptors(ImmutableList.of(DEFAULTS_BEAN), moduleProviderContext);
 
         WebItemBeans webItems = captureWebItemBeans();
         assertEquals(666, webItems.spaceTools.getWeight());
@@ -123,7 +128,7 @@ public class SpaceToolsTabModuleProviderTest
     @Test
     public void testSpaceToolsWebItemDefaultLocation()
     {
-        provider.createPluginModuleDescriptors(ImmutableList.of(DEFAULTS_BEAN), plugin, moduleProviderContext);
+        provider.createPluginModuleDescriptors(ImmutableList.of(DEFAULTS_BEAN), moduleProviderContext);
 
         WebItemBeans webItems = captureWebItemBeans();
         assertEquals(SpaceToolsTabModuleProvider.SPACE_TOOLS_SECTION + "/" + SpaceToolsTabModuleProvider.DEFAULT_LOCATION, webItems.spaceTools.getLocation());
@@ -133,7 +138,7 @@ public class SpaceToolsTabModuleProviderTest
     @Test
     public void testAction()
     {
-        provider.createPluginModuleDescriptors(ImmutableList.of(DEFAULTS_BEAN), plugin, moduleProviderContext);
+        provider.createPluginModuleDescriptors(ImmutableList.of(DEFAULTS_BEAN), moduleProviderContext);
         XWorkActionModuleBean actionModuleBean = captureActionBean();
 
         assertEquals("/plugins/atlassian-connect/my-plugin", actionModuleBean.getNamespace());
@@ -145,7 +150,7 @@ public class SpaceToolsTabModuleProviderTest
     @Ignore
     public void testActionContextData()
     {
-        provider.createPluginModuleDescriptors(ImmutableList.of(DEFAULTS_BEAN), plugin, moduleProviderContext);
+        provider.createPluginModuleDescriptors(ImmutableList.of(DEFAULTS_BEAN), moduleProviderContext);
         XWorkActionModuleBean actionModuleBean = captureActionBean();
 
         SpaceToolsTabContext context = (SpaceToolsTabContext) actionModuleBean.getParameters().get("context");
@@ -160,7 +165,7 @@ public class SpaceToolsTabModuleProviderTest
     @Test
     public void testActionInterceptor()
     {
-        provider.createPluginModuleDescriptors(ImmutableList.of(DEFAULTS_BEAN), plugin, moduleProviderContext);
+        provider.createPluginModuleDescriptors(ImmutableList.of(DEFAULTS_BEAN), moduleProviderContext);
         XWorkActionModuleBean actionModuleBean = captureActionBean();
 
         XWorkInterceptorBean interceptorBean = actionModuleBean.getInterceptorsBeans().get(0);

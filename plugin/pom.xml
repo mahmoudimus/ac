@@ -31,7 +31,6 @@
         <dependency>
             <groupId>external.atlassian.json</groupId>
             <artifactId>json-schemagen-core</artifactId>
-            <version>${schema.generator.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -47,12 +46,6 @@
             <groupId>com.github.fge</groupId>
             <artifactId>json-schema-validator</artifactId>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.github.fge</groupId>
-                    <artifactId>msg-simple</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.github.fge</groupId>
@@ -68,7 +61,6 @@
         <dependency>
             <groupId>com.atlassian.bundles</groupId>
             <artifactId>json-schema-validator-atlassian-bundle</artifactId>
-            <version>${atlassian.json.schema.validator.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -1001,7 +993,6 @@
             <plugin>
                 <groupId>external.atlassian.json</groupId>
                 <artifactId>json-schemagen-maven-plugin</artifactId>
-                <version>${schema.generator.version}</version>
                 <executions>
                     <execution>
                         <id>schema-support</id>

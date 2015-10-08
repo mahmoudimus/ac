@@ -1,12 +1,13 @@
-package com.atlassian.plugin.connect.modules.schema;
+package com.atlassian.plugin.connect.plugin.descriptor;
 
+import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidationResult;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jsonschema.core.report.ListProcessingReport;
 import com.github.fge.jsonschema.core.report.ProcessingMessage;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
-public class DescriptorValidationResult
+public class DescriptorValidationResult implements ConnectJsonSchemaValidationResult
 {
     private final boolean isWellformed;
     private final boolean isValid;
@@ -28,26 +29,31 @@ public class DescriptorValidationResult
         this.report = report;
     }
 
+    @Override
     public boolean isWellformed()
     {
         return isWellformed;
     }
 
+    @Override
     public boolean isValid()
     {
         return isValid;
     }
 
+    @Override
     public String getJsonReport()
     {
         return jsonReport;
     }
 
+    @Override
     public String getReportAsString()
     {
         return messageReport;
     }
 
+    @Override
     public Iterable<String> getReportMessages()
     {
         return Iterables.transform(report, new Function<ProcessingMessage, String>()

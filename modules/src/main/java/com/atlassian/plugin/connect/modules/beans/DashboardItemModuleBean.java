@@ -70,7 +70,6 @@ public class DashboardItemModuleBean extends BeanWithKeyAndParamsAndConditions
 
     public DashboardItemModuleBean()
     {
-        super();
         this.description = I18nProperty.empty();
         this.url = "";
         this.configurable = false;

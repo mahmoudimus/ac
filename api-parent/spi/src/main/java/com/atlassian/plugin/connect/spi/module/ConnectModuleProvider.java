@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.spi.module;
 
 import com.atlassian.plugin.ModuleDescriptor;
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.modules.beans.BaseModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
@@ -33,24 +32,19 @@ public interface ConnectModuleProvider<T extends BaseModuleBean>
      * The module list entry is a valid JSON element (object or array)
      *
      * @param jsonModuleListEntry the string representation of the module list entry JSON element
-     * @param plugin the atlassian-connect plugin
      * @param descriptor the add-on descriptor (without the module list)
      * @return the module beans deserialized from the module list entry
      * @throws ConnectModuleValidationException if the syntax or semantics of the module list entry is invalid
      */
-    List<T> deserializeAddonDescriptorModules(String jsonModuleListEntry, Plugin plugin,
-            ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException;
+    List<T> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor)
+            throws ConnectModuleValidationException;
 
     /**
      * Creates plugin module descriptors representing the given list of add-on modules.
      *
      * @param modules the add-on modules for which to create plugin module descriptors
-     * @param plugin
      * @param moduleProviderContext
      * @return the plugin module descriptors created
      */
-    List<ModuleDescriptor> createPluginModuleDescriptors(List<T> modules, Plugin plugin,
-            ConnectModuleProviderContext moduleProviderContext);
-
-    String getSchemaPrefix();
+    List<ModuleDescriptor> createPluginModuleDescriptors(List<T> modules, ConnectModuleProviderContext moduleProviderContext);
 }

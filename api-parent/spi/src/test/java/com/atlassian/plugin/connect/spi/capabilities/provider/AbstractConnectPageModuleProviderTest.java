@@ -11,6 +11,7 @@ import com.atlassian.plugin.connect.modules.beans.nested.SingleConditionBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
 import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
 import com.atlassian.plugin.connect.spi.module.ConnectModuleValidationException;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,15 +31,25 @@ public class AbstractConnectPageModuleProviderTest
 
     private AbstractConnectPageModuleProvider provider;
 
-    @Mock private WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
-    @Mock private IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
-    @Mock private IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
-    @Mock private PageConditionsFactory pageConditionsFactory;
+    @Mock
+    private PluginRetrievalService pluginRetrievalService;
+
+    @Mock
+    private WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
+
+    @Mock
+    private IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
+
+    @Mock
+    private IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
+
+    @Mock
+    private PageConditionsFactory pageConditionsFactory;
 
     @Before
     public void setUp()
     {
-        provider = new AbstractConnectPageModuleProviderForTesting(iFrameRenderStrategyBuilderFactory,
+        provider = new AbstractConnectPageModuleProviderForTesting(pluginRetrievalService, iFrameRenderStrategyBuilderFactory,
                 iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory, pageConditionsFactory);
         when(pageConditionsFactory.getConditionNames()).thenReturn(Collections.singleton(VALID_CONDITION));
     }
@@ -100,19 +111,14 @@ public class AbstractConnectPageModuleProviderTest
 
     private static class AbstractConnectPageModuleProviderForTesting extends AbstractConnectPageModuleProvider
     {
-        public AbstractConnectPageModuleProviderForTesting(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-                                                           IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-                                                           WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                                                           PageConditionsFactory pageConditionsFactory)
+        public AbstractConnectPageModuleProviderForTesting(PluginRetrievalService pluginRetrievalService,
+                IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+                IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+                WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+                PageConditionsFactory pageConditionsFactory)
         {
-            super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
+            super(pluginRetrievalService, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
                     webItemModuleDescriptorFactory, pageConditionsFactory);
-        }
-
-        @Override
-        public String getSchemaPrefix()
-        {
-            return null;
         }
 
         @Override

@@ -8,6 +8,7 @@ import com.atlassian.confluence.plugin.descriptor.XhtmlMacroModuleDescriptor;
 import com.atlassian.plugin.ModuleDescriptor;
 import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.capabilities.descriptor.url.AbsoluteAddOnUrlConverter;
+import com.atlassian.plugin.connect.api.descriptor.ConnectJsonSchemaValidator;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilder;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
@@ -23,6 +24,7 @@ import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.util.fixture.PluginForTests;
 import com.atlassian.plugin.hostcontainer.HostContainer;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.servlet.descriptors.ServletModuleDescriptor;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.atlassian.plugin.webresource.WebResourceModuleDescriptor;
@@ -55,6 +57,11 @@ import static org.mockito.Mockito.when;
 public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractContentMacroModuleProvider,
         B extends BaseContentMacroModuleBean, T extends BaseContentMacroModuleBeanBuilder<T, B>>
 {
+
+    @Mock
+    protected PluginRetrievalService pluginRetrievalService;
+    @Mock
+    protected ConnectJsonSchemaValidator schemaValidator;
     @Mock
     protected WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     @Mock
@@ -104,7 +111,7 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
         T builder = createMacroBeanBuilder()
                 .withName(new I18nProperty("The Macro Name", "macro.name.key"))
                 .withUrl("/my-macro");
-        List<ModuleDescriptor> modules = moduleProvider.createPluginModuleDescriptors(Lists.newArrayList(builder.build()), plugin, moduleProviderContext);
+        List<ModuleDescriptor> modules = moduleProvider.createPluginModuleDescriptors(Lists.newArrayList(builder.build()), moduleProviderContext);
         assertThat(modules, containsInAnyOrder(is(instanceOf(XhtmlMacroModuleDescriptor.class))));
     }
 
@@ -115,7 +122,7 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
                 .withName(new I18nProperty("The Macro Name", "macro.name.key"))
                 .withUrl("/my-macro")
                 .withFeatured(true);
-        List<ModuleDescriptor> modules = moduleProvider.createPluginModuleDescriptors(Lists.newArrayList(builder.build()), plugin, moduleProviderContext);
+        List<ModuleDescriptor> modules = moduleProvider.createPluginModuleDescriptors(Lists.newArrayList(builder.build()), moduleProviderContext);
         assertThat(modules, containsInAnyOrder(
                 is(instanceOf(XhtmlMacroModuleDescriptor.class)),
                 is(instanceOf(WebItemModuleDescriptor.class))
@@ -130,7 +137,7 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
                 .withUrl("/my-macro")
                 .withFeatured(true)
                 .withIcon(IconBean.newIconBean().withUrl("/assets/image.png").build());
-        List<ModuleDescriptor> modules = moduleProvider.createPluginModuleDescriptors(Lists.newArrayList(builder.build()), plugin, moduleProviderContext);
+        List<ModuleDescriptor> modules = moduleProvider.createPluginModuleDescriptors(Lists.newArrayList(builder.build()), moduleProviderContext);
         assertThat(modules, containsInAnyOrder(
                 is(instanceOf(XhtmlMacroModuleDescriptor.class)),
                 is(instanceOf(WebItemModuleDescriptor.class)),
@@ -152,7 +159,7 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
                         .withHeight("100px")
                         .build()
                 );
-        List<ModuleDescriptor> modules = moduleProvider.createPluginModuleDescriptors(Lists.newArrayList(builder.build()), plugin, moduleProviderContext);
+        List<ModuleDescriptor> modules = moduleProvider.createPluginModuleDescriptors(Lists.newArrayList(builder.build()), moduleProviderContext);
         assertThat(modules, containsInAnyOrder(
                 is(instanceOf(XhtmlMacroModuleDescriptor.class)),
                 is(instanceOf(ServletModuleDescriptor.class)),
@@ -170,7 +177,7 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
                                                           .withUrl("/images/placeholder.png")
                                                           .build()
                 );
-        List<ModuleDescriptor> modules = moduleProvider.createPluginModuleDescriptors(Lists.newArrayList(builder.build()), plugin, moduleProviderContext);
+        List<ModuleDescriptor> modules = moduleProvider.createPluginModuleDescriptors(Lists.newArrayList(builder.build()), moduleProviderContext);
         Macro macro = getMacro(modules);
         assertThat(macro, is(instanceOf(EditorImagePlaceholder.class)));
     }
@@ -283,7 +290,7 @@ public abstract class AbstractContentMacroModuleProviderTest<P extends AbstractC
 
     private ImagePlaceholder getImagePlaceholder(T builder, Map<String, String> parameters)
     {
-        List<ModuleDescriptor> modules = moduleProvider.createPluginModuleDescriptors(Lists.newArrayList(builder.build()), plugin, moduleProviderContext);
+        List<ModuleDescriptor> modules = moduleProvider.createPluginModuleDescriptors(Lists.newArrayList(builder.build()), moduleProviderContext);
         EditorImagePlaceholder macro = (EditorImagePlaceholder) getMacro(modules);
         return macro.getImagePlaceholder(parameters, mock(ConversionContext.class));
     }

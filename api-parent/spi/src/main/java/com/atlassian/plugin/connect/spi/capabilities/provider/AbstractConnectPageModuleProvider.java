@@ -17,9 +17,10 @@ import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
 import com.atlassian.plugin.connect.spi.module.AbstractConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.module.ConnectModuleValidationException;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.web.Condition;
-import com.google.common.collect.ImmutableList;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,16 +38,19 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
 {
     private static final String RAW_CLASSIFIER = "raw";
 
+    private final PluginRetrievalService pluginRetrievalService;
     private final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     private final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final PageConditionsFactory pageConditionsFactory;
 
-    public AbstractConnectPageModuleProvider(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-                                             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-                                             WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                                             PageConditionsFactory pageConditionsFactory)
+    public AbstractConnectPageModuleProvider(PluginRetrievalService pluginRetrievalService,
+            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+            WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+            PageConditionsFactory pageConditionsFactory)
     {
+        this.pluginRetrievalService = pluginRetrievalService;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.webItemModuleDescriptorFactory = checkNotNull(webItemModuleDescriptorFactory);
@@ -54,39 +58,22 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
     }
 
     @Override
-    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConnectPageModuleBean> modules, Plugin theConnectPlugin, ConnectModuleProviderContext moduleProviderContext)
+    public List<ConnectPageModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry,
+            ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
     {
-        ImmutableList.Builder<ModuleDescriptor> builder = ImmutableList.builder();
+        List<ConnectPageModuleBean> pageBeans = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
+        validateConditions(pageBeans);
+        return pageBeans;
+    }
+
+    @Override
+    public List<ModuleDescriptor> createPluginModuleDescriptors(List<ConnectPageModuleBean> modules, ConnectModuleProviderContext moduleProviderContext)
+    {
+        List<ModuleDescriptor> descriptors = new ArrayList<>();
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
 
         for (ConnectPageModuleBean bean : modules)
         {
-            // register a render strategy for our iframe page
-            IFrameRenderStrategy pageRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                    .addOn(connectAddonBean.getKey())
-                    .module(bean.getKey(connectAddonBean))
-                    .pageTemplate()
-                    .urlTemplate(bean.getUrl())
-                    .decorator(getDecorator())
-                    .conditions(bean.getConditions())
-                    .conditionClasses(getConditionClasses())
-                    .title(bean.getDisplayName())
-                    .resizeToParent(true)
-                    .build();
-            iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), pageRenderStrategy);
-
-            // and an additional strategy for raw content, in case the user wants to use it as a dialog target
-            IFrameRenderStrategy rawRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
-                    .addOn(connectAddonBean.getKey())
-                    .module(bean.getKey(connectAddonBean))
-                    .genericBodyTemplate()
-                    .urlTemplate(bean.getUrl())
-                    .conditions(bean.getConditions())
-                    .conditionClasses(getConditionClasses())
-                    .dimensions("100%", "100%") // the client (js) will size the parent of the iframe
-                    .build();
-            iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), bean.getRawKey(), RAW_CLASSIFIER, rawRenderStrategy);
-
             if (hasWebItem())
             {
                 // create a web item targeting the iframe page
@@ -105,12 +92,43 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
                         .setNeedsEscaping(needsEscaping())
                         .build();
 
-                builder.add(webItemModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin,
-                        webItemBean, getConditionClasses()));
+                descriptors.add(webItemModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext,
+                        pluginRetrievalService.getPlugin(), webItemBean, getConditionClasses()));
             }
+
+            registerIframeRenderStrategy(bean, connectAddonBean);
         }
 
-        return builder.build();
+        return descriptors;
+    }
+
+    protected void registerIframeRenderStrategy(ConnectPageModuleBean page, ConnectAddonBean connectAddonBean)
+    {
+        // register a render strategy for our iframe page
+        IFrameRenderStrategy pageRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
+                .addOn(connectAddonBean.getKey())
+                .module(page.getKey(connectAddonBean))
+                .pageTemplate()
+                .urlTemplate(page.getUrl())
+                .decorator(getDecorator())
+                .conditions(page.getConditions())
+                .conditionClasses(getConditionClasses())
+                .title(page.getDisplayName())
+                .resizeToParent(true)
+                .build();
+        iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), page.getRawKey(), pageRenderStrategy);
+
+        // and an additional strategy for raw content, in case the user wants to use it as a dialog target
+        IFrameRenderStrategy rawRenderStrategy = iFrameRenderStrategyBuilderFactory.builder()
+                .addOn(connectAddonBean.getKey())
+                .module(page.getKey(connectAddonBean))
+                .genericBodyTemplate()
+                .urlTemplate(page.getUrl())
+                .conditions(page.getConditions())
+                .conditionClasses(getConditionClasses())
+                .dimensions("100%", "100%") // the client (js) will size the parent of the iframe
+                .build();
+        iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), page.getRawKey(), RAW_CLASSIFIER, rawRenderStrategy);
     }
 
     protected boolean needsEscaping()
@@ -133,14 +151,6 @@ public abstract class AbstractConnectPageModuleProvider extends AbstractConnectM
     protected abstract String getDefaultSection();
 
     protected abstract int getDefaultWeight();
-
-    @Override
-    public List<ConnectPageModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, Plugin plugin, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
-    {
-        List<ConnectPageModuleBean> pageBeans = super.deserializeAddonDescriptorModules(jsonModuleListEntry, plugin, descriptor);
-        validateConditions(pageBeans);
-        return pageBeans;
-    }
 
     protected void validateConditions(List<ConnectPageModuleBean> pageBeans) throws ConnectModuleValidationException
     {

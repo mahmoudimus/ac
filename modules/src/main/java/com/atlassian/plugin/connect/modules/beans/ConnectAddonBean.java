@@ -18,7 +18,6 @@ public class ConnectAddonBean extends ShallowConnectAddonBean
 
     public ConnectAddonBean()
     {
-        super();
         this.modules = new HashMap<>();
     }
 

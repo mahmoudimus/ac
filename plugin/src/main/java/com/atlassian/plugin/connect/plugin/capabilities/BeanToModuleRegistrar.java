@@ -141,7 +141,7 @@ public class BeanToModuleRegistrar
         {
             List<ModuleBean> beans = entry.getValue();
             ConnectModuleProvider provider = findProvider(entry.getKey());
-            List<ModuleDescriptor> descriptors = provider.createPluginModuleDescriptors(beans, theConnectPlugin, moduleProviderContext);
+            List<ModuleDescriptor> descriptors = provider.createPluginModuleDescriptors(beans, moduleProviderContext);
             List<DescriptorToRegister> theseDescriptors = Lists.transform(descriptors, new Function<ModuleDescriptor, DescriptorToRegister>()
             {
                 @Override

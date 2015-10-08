@@ -1,7 +1,6 @@
 package com.atlassian.plugin.connect.spi.module;
 
 import com.atlassian.plugin.connect.modules.beans.ConnectAddonBean;
-import com.atlassian.plugin.connect.spi.module.ModuleLocationQualifier;
 
 /**
  * A context for ConnectModuleProviders.
@@ -25,4 +24,3 @@ public interface ConnectModuleProviderContext
      */
     ModuleLocationQualifier getLocationQualifier();
 }
-

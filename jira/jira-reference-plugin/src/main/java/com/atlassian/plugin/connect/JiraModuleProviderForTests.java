@@ -1,6 +1,5 @@
 package com.atlassian.plugin.connect;
 
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyBuilderFactory;
 import com.atlassian.plugin.connect.api.iframe.render.strategy.IFrameRenderStrategyRegistry;
 import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
@@ -10,6 +9,7 @@ import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDes
 import com.atlassian.plugin.connect.spi.capabilities.provider.AbstractConnectPageModuleProvider;
 import com.atlassian.plugin.connect.spi.condition.PageConditionsFactory;
 import com.atlassian.plugin.connect.spi.module.ConnectModuleValidationException;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,18 +19,14 @@ import java.util.List;
 public class JiraModuleProviderForTests extends AbstractConnectPageModuleProvider
 {
     @Autowired
-    public JiraModuleProviderForTests(IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory, 
-                                      IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry, 
-                                      WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
-                                      PageConditionsFactory pageConditionsFactory)
+    public JiraModuleProviderForTests(PluginRetrievalService pluginRetrievalService,
+            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
+            IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
+            WebItemModuleDescriptorFactory webItemModuleDescriptorFactory,
+            PageConditionsFactory pageConditionsFactory)
     {
-        super(iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry, webItemModuleDescriptorFactory, pageConditionsFactory);
-    }
-
-    @Override
-    public String getSchemaPrefix()
-    {
-        return null;
+        super(pluginRetrievalService, iFrameRenderStrategyBuilderFactory, iFrameRenderStrategyRegistry,
+                webItemModuleDescriptorFactory, pageConditionsFactory);
     }
 
     @Override
@@ -57,12 +53,12 @@ public class JiraModuleProviderForTests extends AbstractConnectPageModuleProvide
             }
         };
     }
-    
+
     @Override
-    public List<ConnectPageModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, Plugin plugin, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
+    public List<ConnectPageModuleBean> deserializeAddonDescriptorModules(String jsonModuleListEntry, ShallowConnectAddonBean descriptor) throws ConnectModuleValidationException
     {
-        List<ConnectPageModuleBean> beans = super.deserializeAddonDescriptorModules(jsonModuleListEntry, plugin, descriptor);
-        if(beans.get(0).getRawKey().equals("bad"))
+        List<ConnectPageModuleBean> beans = super.deserializeAddonDescriptorModules(jsonModuleListEntry, descriptor);
+        if (beans.get(0).getRawKey().equals("bad"))
         {
             throw new ConnectModuleValidationException(getMeta().getDescriptorKey(), "Key is bad!");
         }

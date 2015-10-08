@@ -12,6 +12,7 @@ import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
 import com.atlassian.plugin.connect.util.annotation.ConvertToWiredTest;
 import com.atlassian.plugin.connect.util.fixture.PluginForTests;
+import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.web.descriptors.WebItemModuleDescriptor;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
@@ -38,6 +39,7 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
 {
     private static final String PLUGIN_KEY = "pluginKey";
 
+    @Mock protected PluginRetrievalService pluginRetrievalService;
     @Mock protected WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     @Mock protected IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
     @Mock protected IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
@@ -93,6 +95,6 @@ public abstract class AbstractPageModuleProviderTest<T extends AbstractConnectPa
 
     private void provideModules()
     {
-        moduleProvider.createPluginModuleDescriptors(beans, plugin, moduleProviderContext);
+        moduleProvider.createPluginModuleDescriptors(beans, moduleProviderContext);
     }
 }

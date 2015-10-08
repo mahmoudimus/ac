@@ -9,7 +9,7 @@
     <connect-module key="general-page-module" class="com.atlassian.plugin.connect.plugin.capabilities.provider.GeneralPageModuleProvider"/>
     <connect-module key="configure-page-module" class="com.atlassian.plugin.connect.plugin.capabilities.provider.ConfigurePageModuleProvider"/>
     <connect-module key="post-install-page-module" class="com.atlassian.plugin.connect.plugin.capabilities.provider.PostInstallPageModuleProvider"/>
-    <connect-module key="web-item-module" class="com.atlassian.plugin.connect.plugin.capabilities.provider.DefaultWebItemModuleProvider"/>
+    <connect-module key="web-item-module" class="com.atlassian.plugin.connect.plugin.capabilities.provider.WebItemModuleProviderImpl"/>
     <connect-module key="web-panel-module" class="com.atlassian.plugin.connect.plugin.capabilities.provider.WebPanelModuleProvider"/>
     <connect-module key="web-section-module" class="com.atlassian.plugin.connect.plugin.capabilities.provider.WebSectionModuleProvider"/>
     <connect-module key="webhook-module" class="com.atlassian.plugin.connect.plugin.capabilities.provider.WebHookModuleProvider"/>
@@ -19,11 +19,6 @@
     <servlet-filter key="iframe-resources" class="com.atlassian.plugin.connect.plugin.iframe.StaticResourcesFilter"
                     location="after-encoding">
         <url-pattern>/atlassian-connect/*</url-pattern>
-    </servlet-filter>
-
-    <servlet-filter key="schema-resources" class="com.atlassian.plugin.connect.plugin.capabilities.schema.SchemaFilter"
-                    location="after-encoding" weight="90">
-        <url-pattern>/atlassian-connect/schema/*</url-pattern>
     </servlet-filter>
 
     <!-- the 3LA filter needs to run after the JWT filter (to read attributes on the request) and before the ApiScopingFilter (to set the principal) -->

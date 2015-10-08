@@ -613,9 +613,27 @@
                 <version>${gson.version}</version>
             </dependency>
             <dependency>
+                <groupId>external.atlassian.json</groupId>
+                <artifactId>json-schemagen-core</artifactId>
+                <version>${schema.generator.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.github.fge</groupId>
                 <artifactId>json-schema-validator</artifactId>
                 <version>${json.schema.validator.version}</version>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.github.fge</groupId>
+                        <artifactId>msg-simple</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.bundles</groupId>
+                <artifactId>json-schema-validator-atlassian-bundle</artifactId>
+                <version>${atlassian.json.schema.validator.version}</version>
                 <scope>provided</scope>
             </dependency>
 
