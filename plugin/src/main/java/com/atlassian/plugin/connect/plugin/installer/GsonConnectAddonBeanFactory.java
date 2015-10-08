@@ -14,14 +14,11 @@ import com.atlassian.plugin.connect.plugin.descriptor.InvalidDescriptorException
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsDevService;
 import com.atlassian.sal.api.ApplicationProperties;
-import com.github.fge.msgsimple.provider.LoadingMessageSourceProvider;
 import com.google.common.base.Supplier;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +29,7 @@ import java.util.Map;
 
 @ExportAsDevService
 @Component
-public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, DisposableBean, InitializingBean
+public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
 {
     private static final Logger log = LoggerFactory.getLogger(GsonConnectAddonBeanFactory.class);
 
@@ -99,19 +96,6 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory, Dis
             log.error(exceptionMessage);
             throw new InvalidDescriptorException(exceptionMessage, "connect.install.error.remote.descriptor.validation", applicationProperties.getDisplayName());
         }
-    }
-
-    @Override
-    public void destroy() throws Exception
-    {
-        //JDEV-29184 -  we need to explicitly clean up threads in the underlying msg-simple library provided by the json-schema-validator
-        LoadingMessageSourceProvider.shutdown();
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception
-    {
-        LoadingMessageSourceProvider.restartIfNeeded();
     }
 
     private void validateDescriptorAgainstSchema(String jsonDescriptor)

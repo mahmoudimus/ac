@@ -11,7 +11,10 @@ import com.github.fge.jsonschema.core.report.ListReportProvider;
 import com.github.fge.jsonschema.core.report.LogLevel;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
+import com.github.fge.msgsimple.provider.LoadingMessageSourceProvider;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -19,7 +22,7 @@ import java.net.URL;
 
 @Component
 @ExportAsService(ConnectJsonSchemaValidator.class)
-public class ConnectJsonSchemaValidatorImpl implements ConnectJsonSchemaValidator
+public class ConnectJsonSchemaValidatorImpl implements ConnectJsonSchemaValidator, InitializingBean, DisposableBean
 {
 
     private final JsonSchemaFactory factory;
@@ -29,6 +32,19 @@ public class ConnectJsonSchemaValidatorImpl implements ConnectJsonSchemaValidato
         this.factory = JsonSchemaFactory.newBuilder()
                 .setReportProvider(new ListReportProvider(LogLevel.ERROR, LogLevel.FATAL))
                 .freeze();
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception
+    {
+        LoadingMessageSourceProvider.restartIfNeeded();
+    }
+
+    @Override
+    public void destroy() throws Exception
+    {
+        //JDEV-29184 -  we need to explicitly clean up threads in the underlying msg-simple library provided by the json-schema-validator
+        LoadingMessageSourceProvider.shutdown();
     }
 
     @Override
