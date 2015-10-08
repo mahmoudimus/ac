@@ -1,22 +1,10 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class WebSectionModuleMeta implements ConnectModuleMeta<WebSectionModuleBean>
+public class WebSectionModuleMeta extends ConnectModuleMeta<WebSectionModuleBean>
 {
-    @Override
-    public boolean multipleModulesAllowed()
-    {
-        return true;
-    }
 
-    @Override
-    public String getDescriptorKey()
+    public WebSectionModuleMeta()
     {
-        return "webSections";
-    }
-
-    @Override
-    public Class<WebSectionModuleBean> getBeanClass()
-    {
-        return WebSectionModuleBean.class;
+        super("webSections", WebSectionModuleBean.class);
     }
 }

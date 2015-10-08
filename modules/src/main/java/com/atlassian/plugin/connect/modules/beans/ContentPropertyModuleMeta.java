@@ -1,22 +1,10 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class ContentPropertyModuleMeta implements ConnectModuleMeta<ContentPropertyModuleBean>
+public class ContentPropertyModuleMeta extends ConnectModuleMeta<ContentPropertyModuleBean>
 {
-    @Override
-    public boolean multipleModulesAllowed()
-    {
-        return true;
-    }
 
-    @Override
-    public String getDescriptorKey()
+    public ContentPropertyModuleMeta()
     {
-        return "confluenceContentProperties";
-    }
-
-    @Override
-    public Class<ContentPropertyModuleBean> getBeanClass()
-    {
-        return ContentPropertyModuleBean.class;
+        super("confluenceContentProperties", ContentPropertyModuleBean.class);
     }
 }

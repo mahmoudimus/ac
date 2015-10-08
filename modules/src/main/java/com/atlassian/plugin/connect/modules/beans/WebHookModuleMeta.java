@@ -1,22 +1,10 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class WebHookModuleMeta implements ConnectModuleMeta<WebHookModuleBean>
+public class WebHookModuleMeta extends ConnectModuleMeta<WebHookModuleBean>
 {
-    @Override
-    public boolean multipleModulesAllowed()
-    {
-        return true;
-    }
 
-    @Override
-    public String getDescriptorKey()
+    public WebHookModuleMeta()
     {
-        return "webhooks";
-    }
-
-    @Override
-    public Class<WebHookModuleBean> getBeanClass()
-    {
-        return WebHookModuleBean.class;
+        super("webhooks", WebHookModuleBean.class);
     }
 }

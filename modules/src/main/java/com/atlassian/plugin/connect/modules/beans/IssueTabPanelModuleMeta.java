@@ -1,22 +1,10 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class IssueTabPanelModuleMeta implements ConnectModuleMeta<ConnectTabPanelModuleBean>
+public class IssueTabPanelModuleMeta extends ConnectModuleMeta<ConnectTabPanelModuleBean>
 {
-    @Override
-    public boolean multipleModulesAllowed()
-    {
-        return true;
-    }
 
-    @Override
-    public String getDescriptorKey()
+    public IssueTabPanelModuleMeta()
     {
-        return "jiraIssueTabPanels";
-    }
-
-    @Override
-    public Class<ConnectTabPanelModuleBean> getBeanClass()
-    {
-        return ConnectTabPanelModuleBean.class;
+        super("jiraIssueTabPanels", ConnectTabPanelModuleBean.class);
     }
 }

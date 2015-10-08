@@ -1,22 +1,16 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class PostInstallPageModuleMeta implements ConnectModuleMeta<ConnectPageModuleBean>
+public class PostInstallPageModuleMeta extends ConnectModuleMeta<ConnectPageModuleBean>
 {
+
+    public PostInstallPageModuleMeta()
+    {
+        super("postInstallPage", ConnectPageModuleBean.class);
+    }
+
     @Override
     public boolean multipleModulesAllowed()
     {
         return false;
-    }
-
-    @Override
-    public String getDescriptorKey()
-    {
-        return "postInstallPage";
-    }
-
-    @Override
-    public Class<ConnectPageModuleBean> getBeanClass()
-    {
-        return ConnectPageModuleBean.class;
     }
 }

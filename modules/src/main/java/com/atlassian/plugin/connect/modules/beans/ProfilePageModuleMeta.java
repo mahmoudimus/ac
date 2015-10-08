@@ -1,22 +1,10 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class ProfilePageModuleMeta implements ConnectModuleMeta<ConnectPageModuleBean>
+public class ProfilePageModuleMeta extends ConnectModuleMeta<ConnectPageModuleBean>
 {
-    @Override
-    public boolean multipleModulesAllowed()
-    {
-        return true;
-    }
 
-    @Override
-    public String getDescriptorKey()
+    public ProfilePageModuleMeta()
     {
-        return "profilePages";
-    }
-
-    @Override
-    public Class<ConnectPageModuleBean> getBeanClass()
-    {
-        return ConnectPageModuleBean.class;
+        super("profilePages", ConnectPageModuleBean.class);
     }
 }

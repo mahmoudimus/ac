@@ -1,22 +1,10 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class DashboardItemModuleMeta implements ConnectModuleMeta<DashboardItemModuleBean>
+public class DashboardItemModuleMeta extends ConnectModuleMeta<DashboardItemModuleBean>
 {
-    @Override
-    public boolean multipleModulesAllowed()
-    {
-        return true;
-    }
 
-    @Override
-    public String getDescriptorKey()
+    public DashboardItemModuleMeta()
     {
-        return "jiraDashboardItems";
-    }
-
-    @Override
-    public Class<DashboardItemModuleBean> getBeanClass()
-    {
-        return DashboardItemModuleBean.class;
+        super("jiraDashboardItems", DashboardItemModuleBean.class);
     }
 }

@@ -1,23 +1,10 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class StaticContentMacroModuleMeta implements ConnectModuleMeta<StaticContentMacroModuleBean>
+public class StaticContentMacroModuleMeta extends ConnectModuleMeta<StaticContentMacroModuleBean>
 {
 
-    @Override
-    public boolean multipleModulesAllowed()
+    public StaticContentMacroModuleMeta()
     {
-        return true;
-    }
-
-    @Override
-    public Class<StaticContentMacroModuleBean> getBeanClass()
-    {
-        return StaticContentMacroModuleBean.class;
-    }
-
-    @Override
-    public String getDescriptorKey()
-    {
-        return "staticContentMacros";
+        super("staticContentMacros", StaticContentMacroModuleBean.class);
     }
 }

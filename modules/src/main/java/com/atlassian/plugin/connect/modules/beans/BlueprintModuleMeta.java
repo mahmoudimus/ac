@@ -1,22 +1,10 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class BlueprintModuleMeta implements ConnectModuleMeta<BlueprintModuleBean>
+public class BlueprintModuleMeta extends ConnectModuleMeta<BlueprintModuleBean>
 {
-    @Override
-    public boolean multipleModulesAllowed()
-    {
-        return true;
-    }
 
-    @Override
-    public String getDescriptorKey()
+    public BlueprintModuleMeta()
     {
-        return "blueprints";
-    }
-
-    @Override
-    public Class<BlueprintModuleBean> getBeanClass()
-    {
-        return BlueprintModuleBean.class;
+        super("blueprints", BlueprintModuleBean.class);
     }
 }

@@ -124,26 +124,7 @@ public class AbstractConnectPageModuleProviderTest
         @Override
         public ConnectModuleMeta<ConnectPageModuleBean> getMeta()
         {
-            return new ConnectModuleMeta<ConnectPageModuleBean>()
-            {
-                @Override
-                public boolean multipleModulesAllowed()
-                {
-                    return false;
-                }
-
-                @Override
-                public String getDescriptorKey()
-                {
-                    return null;
-                }
-
-                @Override
-                public Class<ConnectPageModuleBean> getBeanClass()
-                {
-                    return ConnectPageModuleBean.class;
-                }
-            };
+            return new ConnectModuleMeta<ConnectPageModuleBean>(null, ConnectPageModuleBean.class) {};
         }
 
         @Override

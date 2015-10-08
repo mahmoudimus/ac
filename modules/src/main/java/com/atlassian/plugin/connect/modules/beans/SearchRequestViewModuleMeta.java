@@ -1,22 +1,10 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class SearchRequestViewModuleMeta implements ConnectModuleMeta<SearchRequestViewModuleBean>
+public class SearchRequestViewModuleMeta extends ConnectModuleMeta<SearchRequestViewModuleBean>
 {
-    @Override
-    public boolean multipleModulesAllowed()
-    {
-        return true;
-    }
 
-    @Override
-    public String getDescriptorKey()
+    public SearchRequestViewModuleMeta()
     {
-        return "jiraSearchRequestViews";
-    }
-
-    @Override
-    public Class<SearchRequestViewModuleBean> getBeanClass()
-    {
-        return SearchRequestViewModuleBean.class;
+        super("jiraSearchRequestViews", SearchRequestViewModuleBean.class);
     }
 }

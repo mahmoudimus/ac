@@ -32,26 +32,7 @@ public class JiraModuleProviderForTests extends AbstractConnectPageModuleProvide
     @Override
     public ConnectModuleMeta<ConnectPageModuleBean> getMeta()
     {
-        return new ConnectModuleMeta<ConnectPageModuleBean>()
-        {
-            @Override
-            public boolean multipleModulesAllowed()
-            {
-                return true;
-            }
-
-            @Override
-            public String getDescriptorKey()
-            {
-                return "jiraTestModules";
-            }
-
-            @Override
-            public Class<ConnectPageModuleBean> getBeanClass()
-            {
-                return ConnectPageModuleBean.class;
-            }
-        };
+        return new ConnectModuleMeta<ConnectPageModuleBean>("jiraTestModules", ConnectPageModuleBean.class) {};
     }
 
     @Override

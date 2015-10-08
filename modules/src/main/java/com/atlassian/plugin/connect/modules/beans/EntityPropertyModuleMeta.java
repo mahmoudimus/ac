@@ -1,22 +1,10 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class EntityPropertyModuleMeta implements ConnectModuleMeta<EntityPropertyModuleBean>
+public class EntityPropertyModuleMeta extends ConnectModuleMeta<EntityPropertyModuleBean>
 {
-    @Override
-    public boolean multipleModulesAllowed()
-    {
-        return true;
-    }
 
-    @Override
-    public String getDescriptorKey()
+    public EntityPropertyModuleMeta()
     {
-        return "jiraEntityProperties";
-    }
-
-    @Override
-    public Class<EntityPropertyModuleBean> getBeanClass()
-    {
-        return EntityPropertyModuleBean.class;
+        super("jiraEntityProperties", EntityPropertyModuleBean.class);
     }
 }

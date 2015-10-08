@@ -1,22 +1,10 @@
 package com.atlassian.plugin.connect.modules.beans;
 
-public class ReportModuleMeta implements ConnectModuleMeta<ReportModuleBean>
+public class ReportModuleMeta extends ConnectModuleMeta<ReportModuleBean>
 {
-    @Override
-    public boolean multipleModulesAllowed()
-    {
-        return true;
-    }
 
-    @Override
-    public String getDescriptorKey()
+    public ReportModuleMeta()
     {
-        return "jiraReports";
-    }
-
-    @Override
-    public Class<ReportModuleBean> getBeanClass()
-    {
-        return ReportModuleBean.class;
+        super("jiraReports", ReportModuleBean.class);
     }
 }
