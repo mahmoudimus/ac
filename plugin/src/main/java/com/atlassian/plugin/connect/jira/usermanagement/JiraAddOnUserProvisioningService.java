@@ -154,7 +154,7 @@ public class JiraAddOnUserProvisioningService implements ConnectAddOnUserProvisi
         else
         {
             ErrorCollection errorCollection = applicationRolesOutcome.getErrorCollection();
-            log.warn("An error occurred while getting application roles: {}", errorCollection.getErrorMessages().toString());
+            throw new ConnectAddOnUserInitException("An error occurred while getting application roles: " + errorCollection.getErrorMessages());
         }
         return groupSet;
     }
