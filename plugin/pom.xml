@@ -588,6 +588,8 @@
                             org.osgi.framework;
                             <!-- End pa / pi imports -->
 
+                            com.atlassian.jwt*;version="${atlassian.jwt.version}",
+
                             com.github.fge.jsonschema.validator;version="${atlassian.json.schema.validator.version}",
                             com.github.fge.jsonschema.core*;version="1.2.4",
                             com.github.fge.jsonschema.cfg*;version="${json.schema.validator.version}",
