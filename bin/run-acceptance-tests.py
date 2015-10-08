@@ -1,49 +1,12 @@
 #!/usr/bin/env python
-import os, sys
+import os, sys, argparse
 import xml.etree.ElementTree as ET
 from contextlib import contextmanager
 from subprocess import call
 
 WRONG_CWD = 'Please run this script from the atlassian connect source root'
 RUNNER_URL = 'git@bitbucket.org:atlassian/acceptance-tests-runner.git'
-
-def parseArgs(args):
-    parsed = {}
-
-    if '-h' in args:
-        return usage()
-
-    parsed['url'] = args.pop()
-    if parsed['url'][0:8].lower() != 'https://':
-        return usage()
-
-    if not '-p' in args:
-        return usage()
-
-    parsed['mpac-password'] = args.pop(args.index('-p') + 1)
-    args.remove('-p')
-
-    if '--skip-build' in args:
-        parsed['skip-build'] = True
-        args.remove('--skip-build')
-
-    if '-s' in args:
-        parsed['skip-build'] = True
-        args.remove('-s')
-
-    if '-n' in args:
-        parsed['npm'] = True
-        args.remove('-n')
-
-    if '--npm' in args:
-        parsed['npm'] = True
-        args.remove('--npm')
-
-
-    if '-a' in args:
-        parsed['runner-path'] = args[args.index('-a') + 1]
-
-    return parsed
+RUNNER_TMP_PATH = '/tmp/acceptance-tests-runner'
 
 def get_version():
     if os.path.split(os.getcwd())[-1] == 'bin':
@@ -51,75 +14,53 @@ def get_version():
 
     if not os.path.exists('pom.xml'):
         print(WRONG_CWD)
-        return
+        exit(2)
 
     pom = ET.parse('pom.xml').getroot()
     if not pom.find('{http://maven.apache.org/POM/4.0.0}artifactId').text == 'atlassian-connect-parent':
         print(WRONG_CWD)
-        return
+        exit(2)
 
     return pom.find('{http://maven.apache.org/POM/4.0.0}version').text
 
 def build(includeNpm):
-    args = ['mvn', 'install', '-DskipTests', '-Pfreezer-release-profile']
+    maven_args = ['mvn', 'install', '-DskipTests', '-Pfreezer-release-profile']
     if not includeNpm:
-        args.append('-DskipNpm')
-    call(args)
+        maven_args.append('-DskipNpm')
+    return call(maven_args)
 
 def clone(path):
     if not os.path.exists(path):
         call(['git', 'clone', RUNNER_URL, path])
 
-def run_ats(path, url, mpac_password):
-    clone(path)
+def run_ats(path, version, url, mpac_password):
     with cd(path):
-        call(['git', 'checkout', '0a8964d'])
-        call(['mvn', 'clean'])
-        call([
-                'env',
-                'bamboo_mpac_staging_username=atlassian-connect-bot@atlassian.com',
-                'bamboo_mpac_staging_password=' + mpac_password,
-                './prepare-and-run-artifact-od-tests.py',
-                '--force-java-version', '8',
-                '--force-mvn-version', '3',
-                '-g', 'com.atlassian.plugins',
-                '-a', 'atlassian-connect-integration-tests',
-                '-v', '1.1.55-SNAPSHOT',
-                '--remote-url', url
-            ])
-        print('\n\n')
-        call(['tail', '-14', os.path.join('logs', 'master.log')])
-        print('\n\n')
-        print('LOG AVAILABLE AT: {}'.format(os.path.join(path, 'logs', 'master.log')))
+        with co('0a8964d'):
+            call(['mvn', 'clean'])
+            call([
+                    'env',
+                    'bamboo_mpac_staging_username=atlassian-connect-bot@atlassian.com',
+                    'bamboo_mpac_staging_password=' + mpac_password,
+                    './prepare-and-run-artifact-od-tests.py',
+                    '--force-java-version', '8',
+                    '--force-mvn-version', '3',
+                    '-g', 'com.atlassian.plugins',
+                    '-a', 'atlassian-connect-integration-tests',
+                    '-v', version,
+                    '--remote-url', url
+                ])
+            print('\n\n')
+            call(['tail', '-14', os.path.join('logs', 'master.log')])
+            print('\n\n')
+            print('LOG AVAILABLE AT: {}'.format(os.path.join(path, 'logs', 'master.log')))
 
-def usage():
-     print("""
-        Builds the freezer release profile then runs the acceptance tests against the nominated instance
-
-        USAGE:
-
-        {file} [-a /path/to/at/runner] [ -s | --skip-build ] [ -n | --npm ] -p <mpac-password> <https://freezer.instance.url>
-
-        OPTIONS:
-
-        -h              Print the help (this)
-
-        -p              The mpac staging credentials for atlassian-connect-bot@atlassian.com, needed to install the test add-on
-
-        -a              The path to a local checkout of the acceptance test runner (git@bitbucket.org:atlassian/acceptance-tests-runner.git)
-                        this seems not to 'just work' after revision 0a8964d, so it is recommended you have that revision checked out.
-                        If -a is not specified, the acceptance test runner will be checked out in the /tmp/ directory
-
-        -s              Skip building the freezer profile; use the one already in your local maven repository
-        --skip-build
-
-        -n              Also build the npm stuff (only required if you haven't built it before in the working copy you are using)
-        --npm
-
-        <https://freezer.instance.url>  The url of the freezer instance to run tests against.
-                                        For best results, provision yoursef one here: https://jira-bamboo.internal.atlassian.com/browse/ATR-CREATE
-
-     """.format(file=__file__))
+@contextmanager
+def co(revision):
+    call(['git', 'checkout', revision])
+    try:
+        yield
+    finally:
+        call(['git', 'checkout', '@{-1}'])
 
 @contextmanager
 def cd(path):
@@ -130,19 +71,55 @@ def cd(path):
     finally:
         os.chdir(cwd)
 
-if __name__ == "__main__":
-    args = parseArgs(sys.argv)
+def options():
+    parser = argparse.ArgumentParser(description="Build the freezer release profile then run" + \
+        "the acceptance tests against the nominated instance")
 
-    if args is None:
-        exit(1)
+    subparsers = parser.add_subparsers()
 
+    run_via_runner = subparsers.add_parser('run', help='Run via the AT runner script')
+    run_via_runner.add_argument('-s', '--skip-build', action='store_true', default=False,\
+        help='Skip building the freezer profile; use the build already in your local maven repository')
+    run_via_runner.add_argument('-n', '--npm', action='store_true', default=False,\
+        help='Also build the npm stuff (only required if you haven\'t built it before in the working copy you are using)')
+    run_via_runner.add_argument('-a', '--at-runner-path', default=RUNNER_TMP_PATH,\
+    help="""The path to a local checkout of the
+        acceptance test runner (git@bitbucket.org:atlassian/acceptance-tests-runner.git)')
+        If not specified, the the acceptance test runner will be checked out in the /tmp/ directory""")
+    run_via_runner.add_argument('-i', '--install-plugin', action='store_true',\
+        help='Re-install the plugin onto the host instance')
+    run_via_runner.add_argument('-c', '--host-credentials', default='admin:admin',\
+        help='Credentials of the host we\'re installing connect onto, in the form username:password')
+    run_via_runner.set_defaults(func=run)
+
+    config = subparsers.add_parser('config', help='Add AT runner config to IDEA')
+    config.set_defaults(func=configure)
+
+    parser.add_argument('-p', '--mpac-password', required=True,\
+        help='The ac-connect-bot@atlassian.com password, required to install the test add-on if it\'s missing')
+
+    parser.add_argument('freezer_instance_url',\
+        help="""The url of the freezer instance to run tests against.
+        For best results, provision yoursef one here: https://jira-bamboo.internal.atlassian.com/browse/ATR-CREATE""")
+
+    return parser
+
+def run(args):
     version = get_version()
-    if version is None:
-        exit(1)
 
-    if not 'skip-build' in args:
-        build('npm' in args)
+    if not args.skip_build:
+        if build(args.npm) > 0:
+            exit(3)
 
-    runner_path = args.get('runner-path', '/tmp/acceptance-tests-runner')
-    run_ats(runner_path, args['url'], args['mpac-password'])
+    path = args.at_runner_path
+    if not os.path.exists(path):
+        clone(path)
 
+    run_ats(path, version, args.freezer_instance_url, args.mpac_password)
+
+def configure(args):
+    pass
+
+if __name__ == "__main__":
+    args = options().parse_args()
+    args.func(args)
