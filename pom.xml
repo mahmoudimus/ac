@@ -774,7 +774,6 @@
         <atlassian.html.encoder.version>1.4</atlassian.html.encoder.version>
         <quickreload.version>1.28</quickreload.version>
         <frontend.plugin.version>0.0.25</frontend.plugin.version>
-        <atlassian.jira.cross.compat.version>0.48</atlassian.jira.cross.compat.version>
 
         <!-- TEST STUFF -->
         <atlassian.test.categories.version>0.5</atlassian.test.categories.version>

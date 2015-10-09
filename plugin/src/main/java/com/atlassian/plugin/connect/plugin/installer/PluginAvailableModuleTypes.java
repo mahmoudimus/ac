@@ -1,11 +1,10 @@
 package com.atlassian.plugin.connect.plugin.installer;
 
-import com.atlassian.plugin.Plugin;
 import com.atlassian.plugin.PluginAccessor;
 import com.atlassian.plugin.connect.modules.beans.ModuleBean;
 import com.atlassian.plugin.connect.modules.beans.ShallowConnectAddonBean;
-import com.atlassian.plugin.connect.spi.module.ConnectModuleProvider;
 import com.atlassian.plugin.connect.plugin.descriptor.ConnectModuleProviderModuleDescriptor;
+import com.atlassian.plugin.connect.spi.module.ConnectModuleProvider;
 import com.atlassian.plugin.connect.spi.module.ConnectModuleValidationException;
 import com.atlassian.plugin.predicate.ModuleDescriptorOfClassPredicate;
 import com.google.gson.JsonElement;
@@ -18,12 +17,10 @@ import java.util.Map;
 public class PluginAvailableModuleTypes implements AvailableModuleTypes
 {
     private final Map<String, ConnectModuleProvider> moduleProviders;
-    private final Plugin plugin;
     private final ShallowConnectAddonBean addonBean;
 
     public PluginAvailableModuleTypes(PluginAccessor pluginAccessor, ShallowConnectAddonBean addonBean)
     {
-        plugin = pluginAccessor.getEnabledPlugin("com.atlassian.plugins.atlassian-connect-plugin");
         this.moduleProviders = buildModuleProviderMap(pluginAccessor.getModules(new ModuleDescriptorOfClassPredicate<>(ConnectModuleProviderModuleDescriptor.class)));
         this.addonBean = addonBean;
     }
