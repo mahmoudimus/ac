@@ -10,6 +10,7 @@ import com.atlassian.confluence.rest.client.RemoteContentServiceImpl;
 import com.atlassian.confluence.rest.client.RemoteLongTaskService;
 import com.atlassian.confluence.rest.client.RemoteSpaceService;
 import com.atlassian.confluence.rest.client.RemoteSpaceServiceImpl;
+import com.atlassian.confluence.rest.client.RestClientFactory;
 import com.atlassian.confluence.rest.client.authentication.AuthenticatedWebResourceProvider;
 import com.atlassian.confluence.rest.client.impl.RemoteLongTaskServiceImpl;
 import com.google.common.util.concurrent.ListeningExecutorService;
@@ -37,7 +38,7 @@ public class ConfluenceRestClient
     public ConfluenceRestClient(ConfluenceTestedProduct product, TestUser admin)
     {
         AuthenticatedWebResourceProvider authenticatedWebResourceProvider = new AuthenticatedWebResourceProvider(
-                ConfluenceRestClientFactory.newClient(),product.getProductInstance().getBaseUrl(), "");
+                RestClientFactory.newClient(), product.getProductInstance().getBaseUrl(), "");
         authenticatedWebResourceProvider.setAuthContext(admin.getUsername(), admin.getPassword().toCharArray());
         contentService = new RemoteContentServiceImpl(authenticatedWebResourceProvider, executor);
         spaceService = new RemoteSpaceServiceImpl(authenticatedWebResourceProvider, executor);

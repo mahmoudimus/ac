@@ -18,6 +18,7 @@ import com.atlassian.confluence.rest.client.RemoteContentServiceImpl;
 import com.atlassian.confluence.rest.client.RemoteLongTaskService;
 import com.atlassian.confluence.rest.client.RemoteSpaceService;
 import com.atlassian.confluence.rest.client.RemoteSpaceServiceImpl;
+import com.atlassian.confluence.rest.client.RestClientFactory;
 import com.atlassian.confluence.rest.client.authentication.AuthenticatedWebResourceProvider;
 import com.atlassian.confluence.rest.client.impl.RemoteLongTaskServiceImpl;
 import com.atlassian.fugue.Iterables;
@@ -193,7 +194,7 @@ public class TestConfluenceContentProperties
 
     private void initConfluenceClient()
     {
-        AuthenticatedWebResourceProvider authenticatedWebResourceProvider = new AuthenticatedWebResourceProvider(ConfluenceRestClientFactory.newClient(), baseUrl, "");
+        AuthenticatedWebResourceProvider authenticatedWebResourceProvider = new AuthenticatedWebResourceProvider(RestClientFactory.newClient(), baseUrl, "");
         authenticatedWebResourceProvider.setAuthContext("admin", "admin".toCharArray());
 
         contentService = new RemoteContentServiceImpl(authenticatedWebResourceProvider, executor);
