@@ -11,7 +11,6 @@ import com.atlassian.plugin.connect.modules.beans.ConnectModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.StaticContentMacroModuleMeta;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
@@ -35,12 +34,10 @@ public class StaticContentMacroModuleProvider extends AbstractContentMacroModule
             @Qualifier("hostContainer") HostContainer hostContainer,
             AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            ConnectAddonI18nManager connectAddonI18nManager)
+            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory)
     {
         super(pluginRetrievalService, schemaValidator, webItemModuleDescriptorFactory, hostContainer,
-                absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory,
-                connectAddonI18nManager);
+                absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory);
         this.macroModuleDescriptorFactory = macroModuleDescriptorFactory;
     }
 
@@ -51,8 +48,8 @@ public class StaticContentMacroModuleProvider extends AbstractContentMacroModule
     }
 
     @Override
-    protected ModuleDescriptor createMacroModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin theConnectPlugin, StaticContentMacroModuleBean macroBean)
+    protected ModuleDescriptor createMacroModuleDescriptor(ConnectModuleProviderContext moduleProviderContext, Plugin plugin, StaticContentMacroModuleBean macroBean)
     {
-        return macroModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, theConnectPlugin, macroBean);
+        return macroModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext, plugin, macroBean);
     }
 }

@@ -59,14 +59,8 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
     @Override
     public ConnectAddonBean fromJson(final String jsonDescriptor) throws InvalidDescriptorException
     {
-        return fromJson(jsonDescriptor,null);
-    }
-
-    @Override
-    public ConnectAddonBean fromJson(String jsonDescriptor, Map<String, String> i18nCollector) throws InvalidDescriptorException
-    {
         validateDescriptorAgainstSchema(jsonDescriptor);
-        ConnectAddonBean addon = fromJsonSkipValidation(jsonDescriptor,i18nCollector);
+        ConnectAddonBean addon = fromJsonSkipValidation(jsonDescriptor);
         addOnBeanValidatorService.validate(addon);
 
         return addon;
@@ -75,19 +69,12 @@ public class GsonConnectAddonBeanFactory implements ConnectAddonBeanFactory
     @Override
     public ConnectAddonBean fromJsonSkipValidation(final String jsonDescriptor)
     {
-        return fromJsonSkipValidation(jsonDescriptor,null);
-    }
-
-    @Override
-    public ConnectAddonBean fromJsonSkipValidation(String jsonDescriptor, Map<String, String> i18nCollector)
-    {
         try
         {
             JsonElement element = new JsonParser().parse(jsonDescriptor);
-            ShallowConnectAddonBean shallowBean = ConnectModulesGsonFactory.shallowAddonFromJsonWithI18nCollector(element, i18nCollector);
+            ShallowConnectAddonBean shallowBean = ConnectModulesGsonFactory.shallowAddonFromJson(element);
             ModuleListDeserializer moduleDeserializer = new ModuleListDeserializer(new PluginAvailableModuleTypes(pluginAccessor, shallowBean));
             Map<String, Supplier<List<ModuleBean>>> moduleList = ConnectModulesGsonFactory.moduleListFromJson(element, moduleDeserializer);
-
             return new ConnectAddonBeanBuilder(shallowBean).withModuleList(moduleList).build();
         }
         catch (Exception e)

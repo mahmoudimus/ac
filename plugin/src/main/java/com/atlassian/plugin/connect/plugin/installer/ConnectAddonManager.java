@@ -40,10 +40,9 @@ import com.atlassian.plugin.connect.spi.event.ConnectAddonUninstalledEvent;
 import com.atlassian.plugin.connect.spi.http.AuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.http.ReKeyableAuthorizationGenerator;
 import com.atlassian.plugin.connect.spi.installer.ConnectAddOnInstallException;
-import com.atlassian.plugin.connect.spi.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.connect.spi.product.ProductAccessor;
-import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.plugin.connect.spi.user.ConnectAddOnUserDisableException;
+import com.atlassian.plugin.connect.spi.user.ConnectUserService;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.sal.api.features.DarkFeatureManager;
@@ -55,8 +54,6 @@ import com.atlassian.uri.UriBuilder;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
-import com.google.gson.Gson;
-import com.google.gson.JsonDeserializer;
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -66,21 +63,18 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.MediaType;
-import java.io.IOException;
 import java.io.Serializable;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static com.atlassian.jwt.JwtConstants.HttpRequests.AUTHORIZATION_HEADER;
 import static com.atlassian.plugin.connect.modules.beans.ConnectAddonEventData.newConnectAddonEventData;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
-import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Arrays.asList;
 
 /**
@@ -96,7 +90,6 @@ public class ConnectAddonManager
     private static final String DARK_FEATURE_DISABLE_SIGN_INSTALL_WITH_PREV_KEY = "connect.lifecycle.install.sign_with_prev_key.disable";
 
     private static final String USER_KEY = "user_key";
-    private final PluginAccessor pluginAccessor;
 
     public enum SyncHandler
     {
@@ -120,7 +113,6 @@ public class ConnectAddonManager
     private final I18nResolver i18nResolver;
     private final ConnectAddonBeanFactory connectAddonBeanFactory;
     private final SharedSecretService sharedSecretService;
-    private final ConnectAddonI18nManager i18nManager;
     private final DarkFeatureManager darkFeatureManager;
 
     @Inject
@@ -132,7 +124,6 @@ public class ConnectAddonManager
                                ConnectApplinkManager connectApplinkManager, I18nResolver i18nResolver, ConnectAddonBeanFactory connectAddonBeanFactory,
                                SharedSecretService sharedSecretService,
                                ConnectHttpClientFactory connectHttpClientFactory,
-                               ConnectAddonI18nManager i18nManager,
                                DarkFeatureManager darkFeatureManager,
                                PluginAccessor pluginAccessor)
     {
@@ -153,9 +144,7 @@ public class ConnectAddonManager
         this.i18nResolver = i18nResolver;
         this.connectAddonBeanFactory = connectAddonBeanFactory;
         this.sharedSecretService = sharedSecretService;
-        this.i18nManager = i18nManager;
         this.darkFeatureManager = darkFeatureManager;
-        this.pluginAccessor = pluginAccessor;
     }
 
     public boolean hasDescriptor(String pluginKey)
@@ -183,23 +172,8 @@ public class ConnectAddonManager
     {
         long startTime = System.currentTimeMillis();
 
-        Map<String, String> i18nCollector = newHashMap();
-        ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor,i18nCollector);
+        ConnectAddonBean addOn = connectAddonBeanFactory.fromJson(jsonDescriptor);
         String pluginKey = addOn.getKey();
-
-        if(!i18nCollector.isEmpty())
-        {
-            try
-            {
-                i18nManager.add(pluginKey,i18nCollector);
-            }
-            catch (IOException e)
-            {
-                //just logging for now... do we really want to throw for this?
-                log.error("Unable to write i18n props for addon '" + pluginKey + "'",e);
-            }
-        }
-
         String previousDescriptor = addonRegistry.getDescriptor(pluginKey);
 
         AuthenticationType newAuthType = addOn.getAuthentication().getType();

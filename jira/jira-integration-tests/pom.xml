@@ -13,6 +13,77 @@
     <name>Atlassian Connect - JIRA Integration Tests</name>
     <packaging>atlassian-plugin</packaging>
 
+    <profiles>
+        <profile>
+            <id>freezer-release-profile</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <properties>
+                                <skipTests>true</skipTests>
+                            </properties>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.atlassian.maven.plugins</groupId>
+                        <artifactId>maven-amps-plugin</artifactId>
+                        <configuration>
+                            <skipITs>true</skipITs>
+                            <skipManifestValidation>true</skipManifestValidation>
+                            <skipRestDocGeneration>true</skipRestDocGeneration>
+                            <noWebapp>true</noWebapp>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>ondemand-acceptance-tests</id>
+            <properties>
+                <skipITs>false</skipITs>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <includes>
+                                <include>at/**</include>
+                            </includes>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.atlassian.maven.plugins</groupId>
+                        <artifactId>maven-amps-plugin</artifactId>
+                        <configuration>
+                            <containerId>tomcat7x</containerId>
+                            <skipRestDocGeneration>true</skipRestDocGeneration>
+                            <systemPropertyVariables>
+                                <mpac.username>${env.bamboo_mpac_staging_username}</mpac.username>
+                                <mpac.password>${env.bamboo_mpac_staging_password}</mpac.password>
+                            </systemPropertyVariables>
+                            <testGroups>
+                                <testGroup>
+                                    <id>acceptance-tests</id>
+                                    <excludes>
+                                        <exclude>it/**</exclude>
+                                    </excludes>
+                                    <includes>
+                                        <include>at/**</include>
+                                    </includes>
+                                </testGroup>
+                            </testGroups>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>

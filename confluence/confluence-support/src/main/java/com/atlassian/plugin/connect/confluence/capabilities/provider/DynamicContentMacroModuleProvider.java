@@ -14,7 +14,6 @@ import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleBean;
 import com.atlassian.plugin.connect.modules.beans.DynamicContentMacroModuleMeta;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroOutputType;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.osgi.bridge.external.PluginRetrievalService;
@@ -29,7 +28,7 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
 
     private static final DynamicContentMacroModuleMeta META = new DynamicContentMacroModuleMeta();
 
-    private final DynamicContentMacroModuleDescriptorFactory dynamicContentMacroModuleDescriptorFactory;
+    private final DynamicContentMacroModuleDescriptorFactory macroModuleDescriptorFactory;
 
     @Autowired
     public DynamicContentMacroModuleProvider(PluginRetrievalService pluginRetrievalService,
@@ -39,13 +38,11 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
             AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
             IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            ConnectAddonI18nManager connectAddonI18nManager,
             ConnectJsonSchemaValidator schemaValidator)
     {
         super(pluginRetrievalService, schemaValidator, webItemModuleDescriptorFactory, hostContainer,
-                absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory,
-                connectAddonI18nManager);
-        this.dynamicContentMacroModuleDescriptorFactory = macroModuleDescriptorFactory;
+                absoluteAddOnUrlConverter, iFrameRenderStrategyRegistry, iFrameRenderStrategyBuilderFactory);
+        this.macroModuleDescriptorFactory = macroModuleDescriptorFactory;
     }
 
     @Override
@@ -56,7 +53,7 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
 
     @Override
     protected ModuleDescriptor createMacroModuleDescriptor(ConnectModuleProviderContext moduleProviderContext,
-            Plugin theConnectPlugin, DynamicContentMacroModuleBean macroBean)
+            Plugin plugin, DynamicContentMacroModuleBean macroBean)
     {
         final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
         IFrameRenderStrategy renderStrategy = iFrameRenderStrategyBuilderFactory.builder()
@@ -70,7 +67,7 @@ public class DynamicContentMacroModuleProvider extends AbstractContentMacroModul
 
         iFrameRenderStrategyRegistry.register(connectAddonBean.getKey(), macroBean.getRawKey(), CONTENT_CLASSIFIER, renderStrategy);
 
-        return dynamicContentMacroModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext,
+        return macroModuleDescriptorFactory.createModuleDescriptor(moduleProviderContext,
                 pluginRetrievalService.getPlugin(), macroBean);
     }
 }

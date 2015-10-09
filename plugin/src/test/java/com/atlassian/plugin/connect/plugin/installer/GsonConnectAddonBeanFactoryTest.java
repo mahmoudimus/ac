@@ -13,7 +13,6 @@ import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.report.ListProcessingReport;
 import com.github.fge.jsonschema.core.report.ProcessingMessage;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,8 +23,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.Serializable;
 import java.net.URL;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
@@ -104,15 +101,6 @@ public class GsonConnectAddonBeanFactoryTest
 
     private void assertFromJsonReturnsErrorMessage(String i18nKey, Serializable... params)
     {
-        try
-        {
-            addonBeanFactory.fromJson("fake-descriptor", Maps.<String, String>newHashMap());
-        }
-        catch (InvalidDescriptorException e)
-        {
-            assertThat(e.getI18nMessageProperties().get().first(), equalTo(i18nKey));
-            assertThat(e.getI18nMessageProperties().get().second(), equalTo(params));
-            throw e;
-        }
+        addonBeanFactory.fromJson("fake-descriptor");
     }
 }

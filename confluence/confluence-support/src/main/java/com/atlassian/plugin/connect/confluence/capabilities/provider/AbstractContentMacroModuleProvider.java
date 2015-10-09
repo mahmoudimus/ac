@@ -20,7 +20,6 @@ import com.atlassian.plugin.connect.modules.beans.nested.IconBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MacroEditorBean;
 import com.atlassian.plugin.connect.modules.beans.nested.MatcherBean;
 import com.atlassian.plugin.connect.spi.capabilities.descriptor.WebItemModuleDescriptorFactory;
-import com.atlassian.plugin.connect.spi.integration.plugins.ConnectAddonI18nManager;
 import com.atlassian.plugin.connect.spi.module.ConnectModuleProviderContext;
 import com.atlassian.plugin.hostcontainer.HostContainer;
 import com.atlassian.plugin.module.ModuleFactory;
@@ -33,7 +32,6 @@ import org.dom4j.dom.DOMElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.List;
 
 import static com.atlassian.plugin.connect.modules.beans.WebItemModuleBean.newWebItemBean;
@@ -48,7 +46,6 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
     private final WebItemModuleDescriptorFactory webItemModuleDescriptorFactory;
     private final HostContainer hostContainer;
     private final AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter;
-    private final ConnectAddonI18nManager connectAddonI18nManager;
     protected final IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry;
     protected final IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory;
 
@@ -58,8 +55,8 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
             HostContainer hostContainer,
             AbsoluteAddOnUrlConverter absoluteAddOnUrlConverter,
             IFrameRenderStrategyRegistry iFrameRenderStrategyRegistry,
-            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory,
-            ConnectAddonI18nManager connectAddonI18nManager)
+            IFrameRenderStrategyBuilderFactory iFrameRenderStrategyBuilderFactory)
+
     {
         super(pluginRetrievalService, schemaValidator);
         this.webItemModuleDescriptorFactory = webItemModuleDescriptorFactory;
@@ -67,35 +64,19 @@ public abstract class AbstractContentMacroModuleProvider<T extends BaseContentMa
         this.absoluteAddOnUrlConverter = absoluteAddOnUrlConverter;
         this.iFrameRenderStrategyRegistry = iFrameRenderStrategyRegistry;
         this.iFrameRenderStrategyBuilderFactory = iFrameRenderStrategyBuilderFactory;
-        this.connectAddonI18nManager = connectAddonI18nManager;
     }
 
     protected abstract ModuleDescriptor createMacroModuleDescriptor(ConnectModuleProviderContext moduleProviderContext,
-            Plugin theConnectPlugin, T macroBean);
+            Plugin plugin, T macroBean);
 
     @Override
     public List<ModuleDescriptor> createPluginModuleDescriptors(List<T> modules, final ConnectModuleProviderContext moduleProviderContext)
     {
-        Plugin plugin = pluginRetrievalService.getPlugin();
-        final ConnectAddonBean connectAddonBean = moduleProviderContext.getConnectAddonBean();
-
         List<ModuleDescriptor> moduleDescriptors = newArrayList();
-        MacroI18nBuilder i18nBuilder = new MacroI18nBuilder(connectAddonBean.getKey());
-        for (T bean : modules)
+        for (T macros : modules)
         {
-            moduleDescriptors.addAll(createModuleDescriptors(moduleProviderContext, plugin, bean));
-            i18nBuilder.add(bean, connectAddonBean);
+            moduleDescriptors.addAll(createModuleDescriptors(moduleProviderContext, pluginRetrievalService.getPlugin(), macros));
         }
-
-        try
-        {
-            connectAddonI18nManager.add(connectAddonBean.getKey(), i18nBuilder.getI18nProperties());
-        }
-        catch (IOException e)
-        {
-            log.error("Unable to register I18n properties for addon: " + connectAddonBean.getKey(), e);
-        }
-
         return moduleDescriptors;
     }
 

@@ -10,8 +10,6 @@
     <connect-module key="jiraSearchRequestViews" class="com.atlassian.plugin.connect.jira.capabilities.provider.SearchRequestViewModuleProvider"/>
     <connect-module key="jiraWorkflowPostFunctions" class="com.atlassian.plugin.connect.jira.capabilities.provider.WorkflowPostFunctionModuleProviderImpl"/>
 
-    <resource type="i18n" key="addon-18n" name="jira-addon-i18n" location="com.atlassian.plugin.connect.jira.integration.plugins.ConnectAddonResourceBundle"/>
-
     <rest key="rest" path="/atlassian-connect" version="1">
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
