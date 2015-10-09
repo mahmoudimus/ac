@@ -24,7 +24,7 @@ def get_version():
     return pom.find('{http://maven.apache.org/POM/4.0.0}version').text
 
 def build(includeNpm):
-    maven_args = ['mvn', 'install', '-DskipTests', '-Pfreezer-release-profile']
+    maven_args = ['mvn', 'clean', 'install', '-DskipTests', '-Pfreezer-release-profile']
     if not includeNpm:
         maven_args.append('-DskipNpm')
     return call(maven_args)
@@ -38,21 +38,22 @@ def run_ats(path, version, url, mpac_password):
         with revision('stable_1_x'):
             call(['mvn', 'clean'])
             call(['pip', 'install', '-r', 'requirements.txt'])
-            call([
-                    'env',
-                    'bamboo_mpac_staging_username=atlassian-connect-bot@atlassian.com',
-                    'bamboo_mpac_staging_password=' + mpac_password,
-                    './prepare-and-run-artifact-od-tests.py',
-                    '--force-java-version', '8',
-                    '--force-mvn-version', '3',
-                    '-g', 'com.atlassian.plugins',
-                    '-a', 'atlassian-connect-integration-tests',
-                    '-v', version,
-                    '--remote-url', url
-                ])
-            print('\n\n')
-            call(['tail', '-14', os.path.join('logs', 'master.log')])
-            print('\n\n')
+            for artifact in ('atlassian-connect-integration-tests', 'atlassian-connect-jira-integration-tests'):
+                call([
+                        'env',
+                        'bamboo_mpac_staging_username=atlassian-connect-bot@atlassian.com',
+                        'bamboo_mpac_staging_password=' + mpac_password,
+                        './prepare-and-run-artifact-od-tests.py',
+                        '--force-java-version', '8',
+                        '--force-mvn-version', '3',
+                        '-g', 'com.atlassian.plugins',
+                        '-a', artifact,
+                        '-v', version,
+                        '--remote-url', url
+                    ])
+                print('\n\n')
+                call(['tail', '-14', os.path.join('logs', 'master.log')])
+                print('\n\n')
             print('LOG AVAILABLE AT: {}'.format(os.path.join(path, 'logs', 'master.log')))
 
 @contextmanager

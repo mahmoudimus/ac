@@ -1229,6 +1229,7 @@
             use-java,8
             use-maven,3
             include-artifact,com.atlassian.plugins:atlassian-connect-integration-tests
+            include-artifact,com.atlassian.plugins:atlassian-connect-jira-integration-tests
         </od.testing.configuration>
         <addonconfig.maxpropertiesperplugin>50</addonconfig.maxpropertiesperplugin>
 
