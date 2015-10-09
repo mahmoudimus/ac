@@ -152,12 +152,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.atlassian.jira.compat</groupId>
-            <artifactId>jira-cross-compatibility-lib-bridge-factory</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-core</artifactId>
             <scope>provided</scope>
