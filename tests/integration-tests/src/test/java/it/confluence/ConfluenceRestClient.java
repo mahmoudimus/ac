@@ -37,9 +37,15 @@ public class ConfluenceRestClient
 
     public ConfluenceRestClient(ConfluenceTestedProduct product, TestUser admin)
     {
+        this(product, admin.getUsername(), admin.getPassword());
+
+    }
+
+    public ConfluenceRestClient(ConfluenceTestedProduct product, String username, String password)
+    {
         AuthenticatedWebResourceProvider authenticatedWebResourceProvider = new AuthenticatedWebResourceProvider(
                 RestClientFactory.newClient(), product.getProductInstance().getBaseUrl(), "");
-        authenticatedWebResourceProvider.setAuthContext(admin.getUsername(), admin.getPassword().toCharArray());
+        authenticatedWebResourceProvider.setAuthContext(username, password.toCharArray());
         contentService = new RemoteContentServiceImpl(authenticatedWebResourceProvider, executor);
         spaceService = new RemoteSpaceServiceImpl(authenticatedWebResourceProvider, executor);
         contentPropertyService = new RemoteContentPropertyServiceImpl(authenticatedWebResourceProvider, executor);

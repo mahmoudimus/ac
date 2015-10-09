@@ -9,18 +9,7 @@ import com.atlassian.confluence.api.model.content.Space;
 import com.atlassian.confluence.api.model.longtasks.LongTaskStatus;
 import com.atlassian.confluence.api.model.longtasks.LongTaskSubmission;
 import com.atlassian.confluence.api.model.pagination.PageResponse;
-import com.atlassian.confluence.rest.client.RemoteCQLSearchService;
-import com.atlassian.confluence.rest.client.RemoteCQLSearchServiceImpl;
-import com.atlassian.confluence.rest.client.RemoteContentPropertyService;
-import com.atlassian.confluence.rest.client.RemoteContentPropertyServiceImpl;
-import com.atlassian.confluence.rest.client.RemoteContentService;
-import com.atlassian.confluence.rest.client.RemoteContentServiceImpl;
-import com.atlassian.confluence.rest.client.RemoteLongTaskService;
-import com.atlassian.confluence.rest.client.RemoteSpaceService;
-import com.atlassian.confluence.rest.client.RemoteSpaceServiceImpl;
-import com.atlassian.confluence.rest.client.RestClientFactory;
-import com.atlassian.confluence.rest.client.authentication.AuthenticatedWebResourceProvider;
-import com.atlassian.confluence.rest.client.impl.RemoteLongTaskServiceImpl;
+import com.atlassian.confluence.pageobjects.ConfluenceTestedProduct;
 import com.atlassian.fugue.Iterables;
 import com.atlassian.fugue.Option;
 import com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean;
@@ -33,8 +22,6 @@ import com.atlassian.plugin.connect.test.pageobjects.TestedProductProvider;
 import com.atlassian.plugin.connect.test.server.ConnectRunner;
 import com.atlassian.util.concurrent.Promise;
 import com.atlassian.util.concurrent.Promises;
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.joda.time.DateTime;
@@ -49,7 +36,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
 
 import static com.atlassian.plugin.connect.modules.beans.ContentPropertyModuleBean.newContentPropertyModuleBean;
 import static com.atlassian.plugin.connect.modules.beans.UISupportModuleBean.newUISupportModuleBean;
@@ -91,14 +77,9 @@ public class TestConfluenceContentProperties
 
     private static String baseUrl;
     private static List<Exception> setupFailure = new ArrayList<>();
-    private static ListeningExecutorService executor;
     private static ConnectRunner runner;
-
-    private RemoteContentService contentService;
-    private RemoteSpaceService spaceService;
-    private RemoteContentPropertyService contentPropertyService;
-    private RemoteLongTaskService longTaskService;
-    private RemoteCQLSearchService cqlSearchService;
+    private static ConfluenceTestedProduct product = TestedProductProvider.getConfluenceTestedProduct();
+    private static ConfluenceRestClient restClient = new ConfluenceRestClient(product, "admin", "admin");
 
     private Promise<Content> contentToFind;
     private Promise<Content> contentWithOtherProperty;
@@ -167,8 +148,6 @@ public class TestConfluenceContentProperties
                     .setAuthenticationToNone()
                     .addModules("confluenceContentProperties", moduleBean)
                     .start();
-
-            executor = createExecutor();
         }
         catch (Exception ex)
         {
@@ -182,45 +161,26 @@ public class TestConfluenceContentProperties
     {
         if (!setupFailure.isEmpty())
             throw setupFailure.get(0);
-        initConfluenceClient();
         setupData();
-    }
-
-    private static ListeningExecutorService createExecutor()
-    {
-        return MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(3)); // approx 20% faster
-//        return MoreExecutors.sameThreadExecutor();
-    }
-
-    private void initConfluenceClient()
-    {
-        AuthenticatedWebResourceProvider authenticatedWebResourceProvider = new AuthenticatedWebResourceProvider(RestClientFactory.newClient(), baseUrl, "");
-        authenticatedWebResourceProvider.setAuthContext("admin", "admin".toCharArray());
-
-        contentService = new RemoteContentServiceImpl(authenticatedWebResourceProvider, executor);
-        spaceService = new RemoteSpaceServiceImpl(authenticatedWebResourceProvider, executor);
-        contentPropertyService = new RemoteContentPropertyServiceImpl(authenticatedWebResourceProvider, executor);
-        cqlSearchService = new RemoteCQLSearchServiceImpl(authenticatedWebResourceProvider, executor);
-        longTaskService = new RemoteLongTaskServiceImpl(authenticatedWebResourceProvider, executor);
     }
 
     private void setupData() throws Exception
     {
         String spaceKey = "PROPTEST"+spaceCount++;
-        space = spaceService.create(Space.builder().key(spaceKey).name("Content property Test Space").build(), false).get();
-        contentToFind = contentService.create(Content.builder(ContentType.PAGE)
+        space = restClient.spaces().create(Space.builder().key(spaceKey).name("Content property Test Space").build(), false).get();
+        contentToFind = restClient.content().create(Content.builder(ContentType.PAGE)
                 .space(space)
                 .body("<p>Page content</p>", ContentRepresentation.STORAGE)
                 .title("Page to find")
                 .build());
 
-        contentWithOtherProperty = contentService.create(Content.builder(ContentType.PAGE)
+        contentWithOtherProperty = restClient.content().create(Content.builder(ContentType.PAGE)
                 .space(space)
                 .body("<p>Dont find this one</p>", ContentRepresentation.STORAGE)
                 .title("Page with different property")
                 .build());
 
-        Promise<Content> contentWithoutProperty = contentService.create(Content.builder(ContentType.PAGE)
+        Promise<Content> contentWithoutProperty = restClient.content().create(Content.builder(ContentType.PAGE)
                 .space(space)
                 .body("<p>Dont find this one</p>", ContentRepresentation.STORAGE)
                 .title("Page without properties")
@@ -241,7 +201,7 @@ public class TestConfluenceContentProperties
                 .value(new JsonString(propertyValue.toString()))
                 .build();
 
-        Promise<JsonContentProperty> prop = contentPropertyService.create(contentProperty);
+        Promise<JsonContentProperty> prop = restClient.contentProperties().create(contentProperty);
 
         JsonObject otherProperty = new JsonObject();
         otherProperty.add(TEXT_FIELD_OBJECT_KEY, new JsonPrimitive("Other text"));
@@ -251,7 +211,7 @@ public class TestConfluenceContentProperties
         otherProperty.add(STRING_FIELD_OBJECT_ALIAS_KEY, new JsonPrimitive(ALT_STRING_VALUE_FOR_ALIAS));
         otherProperty.add(NUMERIC_FIELD_OBJECT_ALIAS_KEY, new JsonPrimitive(ALT_NUMERIC_VALUE_FOR_ALIAS));
 
-        Promise<JsonContentProperty> otherProp = contentPropertyService.create(JsonContentProperty.builder()
+        Promise<JsonContentProperty> otherProp = restClient.contentProperties().create(JsonContentProperty.builder()
                 .content(contentWithOtherProperty.get())
                 .key(PROPERTY_KEY)
                 .value(new JsonString(otherProperty.toString()))
@@ -268,23 +228,22 @@ public class TestConfluenceContentProperties
         {
             runner.stopAndUninstall();
         }
-        executor.shutdown();
     }
 
     @After
     public void tearDown() throws Exception
     {
-        Promise<LongTaskSubmission> task = spaceService.delete(Space.builder().key(space.getKey()).build());
+        Promise<LongTaskSubmission> task = restClient.spaces().delete(Space.builder().key(space.getKey()).build());
 
         // this should be moved into RemoteLongTaskService
-        Option<LongTaskStatus> longTaskStatus = longTaskService.get(task.get().getId()).get();
+        Option<LongTaskStatus> longTaskStatus = restClient.longTasks().get(task.get().getId()).get();
 
         final int waitTime = 50;
         final int retry = 100;
         for (int i = 0 ; longTaskStatus.get().getPercentageComplete() < 100; i++)
         {
             Thread.sleep(50); // wait for the space deletion to finish
-            longTaskStatus = longTaskService.get(task.get().getId()).get();
+            longTaskStatus = restClient.longTasks().get(task.get().getId()).get();
             if (i > 100)
                 fail("Delete space long task has not yet completed after " + waitTime * retry);
         }
@@ -358,7 +317,7 @@ public class TestConfluenceContentProperties
             // confluence's index queue flushes every 5 secs (see config of IndexQueueFlusher), we don't have a rest client method to wait on this indexing
             for (int i = 0; i < retries; i++)
             {
-                PageResponse<Content> result = cqlSearchService.searchContent(cql).get();
+                PageResponse<Content> result = restClient.cqlSearch().searchContent(cql).get();
                 if (result.size() >= 1)
                     return result;
 
