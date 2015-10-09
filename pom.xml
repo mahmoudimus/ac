@@ -221,6 +221,11 @@
                 <version>2.4</version>
                 <!-- !versions 2.5 and 2.5.1 broke tree filtering -->
             </plugin>
+            <plugin>
+                <groupId>external.atlassian.json</groupId>
+                <artifactId>json-schemagen-maven-plugin</artifactId>
+                <version>${schema.generator.version}</version>
+            </plugin>
         </plugins>
     </build>
     <reporting>
