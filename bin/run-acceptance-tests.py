@@ -7,21 +7,7 @@ from subprocess import call
 WRONG_CWD = 'Please run this script from the atlassian connect source root'
 RUNNER_URL = 'git@bitbucket.org:atlassian/acceptance-tests-runner.git'
 RUNNER_TMP_PATH = '/tmp/acceptance-tests-runner'
-
-def get_version():
-    if os.path.split(os.getcwd())[-1] == 'bin':
-        os.chdir('..')
-
-    if not os.path.exists('pom.xml'):
-        print(WRONG_CWD)
-        exit(2)
-
-    pom = ET.parse('pom.xml').getroot()
-    if not pom.find('{http://maven.apache.org/POM/4.0.0}artifactId').text == 'atlassian-connect-parent':
-        print(WRONG_CWD)
-        exit(2)
-
-    return pom.find('{http://maven.apache.org/POM/4.0.0}version').text
+RUNNER_BRANCH = 'stable_1_x'
 
 def build(includeNpm):
     maven_args = ['mvn', 'clean', 'install', '-DskipTests', '-Pfreezer-release-profile']
@@ -31,30 +17,27 @@ def build(includeNpm):
 
 def clone(path):
     if not os.path.exists(path):
-        call(['git', 'clone', RUNNER_URL, path])
+        call(['git', 'clone', RUNNER_URL, path, '-b', RUNNER_BRANCH])
 
-def run_ats(path, version, url, mpac_password):
+def run_ats(path, url, mpac_password):
+    trigger_path = os.path.join(os.getcwd(), 'plugin')
     with cd(path):
-        with revision('stable_1_x'):
+        with revision(RUNNER_BRANCH):
             call(['mvn', 'clean'])
             call(['pip', 'install', '-r', 'requirements.txt'])
-            for artifact in ('atlassian-connect-integration-tests', 'atlassian-connect-jira-integration-tests'):
-                call([
-                        'env',
-                        'bamboo_mpac_staging_username=atlassian-connect-bot@atlassian.com',
-                        'bamboo_mpac_staging_password=' + mpac_password,
-                        './prepare-and-run-artifact-od-tests.py',
-                        '--force-java-version', '8',
-                        '--force-mvn-version', '3',
-                        '-g', 'com.atlassian.plugins',
-                        '-a', artifact,
-                        '-v', version,
-                        '--remote-url', url
-                    ])
-                print('\n\n')
-                call(['tail', '-14', os.path.join('logs', 'master.log')])
-                print('\n\n')
-            print('LOG AVAILABLE AT: {}'.format(os.path.join(path, 'logs', 'master.log')))
+            call(['./get-gav-from-project.py', '--module-path', trigger_path, '--output-file', 'module.json'])
+            call(['./discover-od-test-artifacts.py', '--trigger-gav-file', 'module.json', '--trigger-only'])
+            call([
+                    'env',
+                    'bamboo_mpac_staging_username=atlassian-connect-bot@atlassian.com',
+                    'bamboo_mpac_staging_password=' + mpac_password,
+                    './run-all-od-tests.py',
+                    '--skip-data-restore',
+                    '--report-missing-tests',
+                    '--flk-disable-rerunning',
+                    '--remote-instance', url
+                ])
+            print('\n\nLOG AVAILABLE AT: {}'.format(os.path.join(path, 'logs', 'master.log')))
 
 @contextmanager
 def revision(ref):
@@ -176,7 +159,12 @@ def config_vm_arguments(url, password):
     ])
 
 def run(args):
-    version = get_version()
+    if os.path.split(os.getcwd())[-1] == 'bin':
+        os.chdir('..')
+
+    if not os.path.exists('pom.xml'):
+        print(WRONG_CWD)
+        exit(2)
 
     if not args.skip_build:
         if build(args.npm) > 0:
@@ -186,7 +174,7 @@ def run(args):
     if not os.path.exists(path):
         clone(path)
 
-    run_ats(path, version, args.freezer_instance_url, args.mpac_password)
+    run_ats(path, args.freezer_instance_url, args.mpac_password)
 
 def configure(args):
     write_idea_config(args.freezer_instance_url, args.mpac_password)
@@ -194,7 +182,7 @@ def configure(args):
     print('\nTo run it, go to [Run] > [Run...] > [Acceptance Tests]\n')
 
 def options():
-    parser = argparse.ArgumentParser(description="Build the freezer release profile then run" + \
+    parser = argparse.ArgumentParser(description="Build the freezer release profile then run " + \
         "the acceptance tests against the nominated instance")
 
     subparsers = parser.add_subparsers()
