@@ -50,6 +50,9 @@
         </profile>
         <profile>
             <id>ondemand-acceptance-tests</id>
+            <properties>
+                <skipITs>false</skipITs>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -59,9 +62,6 @@
                             <includes>
                                 <include>at/**</include>
                             </includes>
-                            <properties>
-                                <skipTests>true</skipTests>
-                            </properties>
                         </configuration>
                     </plugin>
                     <plugin>
@@ -74,16 +74,15 @@
                                 <mpac.username>${env.bamboo_mpac_staging_username}</mpac.username>
                                 <mpac.password>${env.bamboo_mpac_staging_password}</mpac.password>
                             </systemPropertyVariables>
-                            <functionalTestPattern>at/**/*.java</functionalTestPattern>
                             <testGroups>
                                 <testGroup>
-                                    <id>jira</id>
-                                    <productIds>
-                                        <productId>jira</productId>
-                                    </productIds>
+                                    <id>acceptance-tests</id>
                                     <excludes>
                                         <exclude>it/**</exclude>
                                     </excludes>
+                                    <includes>
+                                        <include>at/**</include>
+                                    </includes>
                                 </testGroup>
                             </testGroups>
                         </configuration>
@@ -305,6 +304,10 @@
                 <exclusion>
                     <groupId>com.atlassian.selenium</groupId>
                     <artifactId>atlassian-webdriver-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpmime</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
